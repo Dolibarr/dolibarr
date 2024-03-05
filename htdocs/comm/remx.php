@@ -38,13 +38,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'bills', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Security check
-$socid = GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('socid', 'int');
+$socid = GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
@@ -69,16 +69,13 @@ if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
 }
 
 if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permissiontocreate) {
-	//if ($user->rights->societe->creer)
-	//if ($user->hasRight('facture', 'creer'))
-
 	$amount_ttc_1 = GETPOST('amount_ttc_1', 'alpha');
 	$amount_ttc_1 = price2num($amount_ttc_1);
 	$amount_ttc_2 = GETPOST('amount_ttc_2', 'alpha');
 	$amount_ttc_2 = price2num($amount_ttc_2);
 
 	$error = 0;
-	$remid = (GETPOST("remid", 'int') ? GETPOST("remid", 'int') : 0);
+	$remid = (GETPOSTINT("remid") ? GETPOSTINT("remid") : 0);
 	$discount = new DiscountAbsolute($db);
 	$res = $discount->fetch($remid);
 	if (!($res > 0)) {
@@ -151,7 +148,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 		$newid2 = $newdiscount2->create($user);
 		if ($res > 0 && $newid1 > 0 && $newid2 > 0) {
 			$db->commit();
-			header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id.($backtopage ? '&backtopage='.urlencode($backtopage) : '')); // To avoid pb whith back
+			header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id.($backtopage ? '&backtopage='.urlencode($backtopage) : '')); // To avoid pb with back
 			exit;
 		} else {
 			$db->rollback();
@@ -160,9 +157,6 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 }
 
 if ($action == 'setremise' && $permissiontocreate) {
-	//if ($user->rights->societe->creer)
-	//if ($user->hasRight('facture', 'creer'))
-
 	$amount = price2num(GETPOST('amount', 'alpha'), '', 2);
 	$desc = GETPOST('desc', 'alpha');
 	$tva_tx = GETPOST('tva_tx', 'alpha');
@@ -200,9 +194,6 @@ if ($action == 'setremise' && $permissiontocreate) {
 }
 
 if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes' && $permissiontocreate) {
-	//if ($user->rights->societe->creer)
-	//if ($user->hasRight('facture', 'creer'))
-
 	$db->begin();
 
 	$discount = new DiscountAbsolute($db);
@@ -210,7 +201,7 @@ if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes'
 	$result = $discount->delete($user);
 	if ($result > 0) {
 		$db->commit();
-		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id); // To avoid pb whith back
+		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id); // To avoid pb with back
 		exit;
 	} else {
 		setEventMessages($discount->error, $discount->errors, 'errors');

@@ -43,10 +43,10 @@ $langs->loadLangs(array("companies", "website"));
 
 
 // Get parameters
-$id = GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('socid', 'int');
+$id = GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 
 $action 	 = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';               // The action 'add', 'create', 'edit', 'update', 'view', ...
-$show_files  = GETPOST('show_files', 'int');
+$show_files  = GETPOSTINT('show_files');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'websitelist';  // To manage different context of search
 $backtopage  = GETPOST('backtopage', 'alpha');                                              // Go back to a dedicated page
 $optioncss   = GETPOST('optioncss', 'aZ');                                                  // Option for the css output (always '' except when 'print')
@@ -54,10 +54,10 @@ $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -86,7 +86,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($objectwebsiteaccount
 
 unset($objectwebsiteaccount->fields['fk_soc']); // Remove this field, we are already on the thirdparty
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($objectwebsiteaccount->fields as $key => $val) {
@@ -123,7 +123,7 @@ if ($id > 0) {
 }
 
 // Security check
-$id = GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('socid', 'int');
+$id = GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 if ($user->socid) {
 	$id = $user->socid;
 }
@@ -419,10 +419,10 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 
@@ -664,8 +664,8 @@ if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords 
 	$urlsource .= str_replace('&amp;', '&', $param);
 
 	$filedir = $diroutputmassaction;
-	$genallowed = $user->rights->mymodule->read;
-	$delallowed = $user->rights->mymodule->create;
+	$genallowed = $user->hasRight('mymodule', 'read');
+	$delallowed = $user->hasRight('mymodule', 'create');
 
 	print $formfile->showdocuments('massfilesarea_mymodule', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }

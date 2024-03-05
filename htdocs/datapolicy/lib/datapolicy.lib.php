@@ -41,13 +41,6 @@ function datapolicyAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
-	if (getDolGlobalString('DATAPOLICY_ENABLE_EMAILS') || getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-		$head[$h][0] = DOL_URL_ROOT."/datapolicy/admin/setupmail.php";
-		$head[$h][1] = $langs->trans("DATAPOLICYMail");
-		$head[$h][2] = 'emailing';
-		$h++;
-	}
-
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'datapolicy');
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'datapolicy', 'remove');

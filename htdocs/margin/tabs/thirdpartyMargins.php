@@ -30,15 +30,15 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 $langs->loadLangs(array("companies", "bills", "products", "margins"));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -185,7 +185,7 @@ if ($socid > 0) {
 	$sql .= " AND f.fk_soc = $socid";
 	$sql .= " AND d.buy_price_ht IS NOT NULL";
 	// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
-	// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
+	// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredictable.
 	if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
 		$sql .= " AND d.buy_price_ht <> 0";
 	}
@@ -202,7 +202,7 @@ if ($socid > 0) {
 		print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "&amp;socid=".$object->id, $sortfield, $sortorder, '', $num, $num, '');
 
 		$i = 0;
-		print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print "<table class=\"noborder\" width=\"100%\">";
 
 		print '<tr class="liste_titre">';
@@ -294,7 +294,7 @@ if ($socid > 0) {
 	print '<br>';
 	$db->free($result);
 } else {
-	dol_print_error('', 'Parameter socid not defined');
+	dol_print_error(null, 'Parameter socid not defined');
 }
 
 

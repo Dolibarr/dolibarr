@@ -70,7 +70,7 @@ if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket
 if ($action == 'deletefile' || $action == 'deletelink') {
 	$langs->load("companies"); // Need for string DeleteFile+ConfirmDeleteFiles
 	print $form->formconfirm(
-		$_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOST('linkid', 'int').(empty($param) ? '' : $param),
+		$_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOSTINT('linkid').(empty($param) ? '' : $param),
 		$langs->trans('DeleteFile'),
 		$langs->trans('ConfirmDeleteFile'),
 		'confirm_deletefile',
@@ -159,5 +159,5 @@ $formfile->list_of_documents(
 print "<br>";
 
 //List of links
-$formfile->listOfLinks($object, $permission, $action, GETPOST('linkid', 'int'), $param);
+$formfile->listOfLinks($object, $permission, $action, GETPOSTINT('linkid'), $param);
 print "<br>";

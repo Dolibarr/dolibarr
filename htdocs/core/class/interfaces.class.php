@@ -20,7 +20,7 @@
 /**
  *   \file		    htdocs/core/class/interfaces.class.php
  *   \ingroup		core
- *   \brief			Fichier de la classe de gestion des triggers
+ *   \brief			Fichier de la class de gestion des triggers
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
@@ -37,6 +37,11 @@ class Interfaces
 	public $db;
 
 	public $dir; // Directory with all core and external triggers files
+
+	/**
+	 * @var string		Last module name in error
+	 */
+	public $lastmoduleerror;
 
 	/**
 	 * @var string[] Error codes (or messages)
@@ -59,10 +64,10 @@ class Interfaces
 	 *   This function call all qualified triggers.
 	 *
 	 *   @param		string		$action     Trigger event code
-	 *   @param     object		$object     Objet concerned. Some context information may also be provided into array property object->context.
-	 *   @param     User		$user       Objet user
-	 *   @param     Translate	$langs      Objet lang
-	 *   @param     Conf		$conf       Objet conf
+	 *   @param     object		$object     Object concerned. Some context information may also be provided into array property object->context.
+	 *   @param     User		$user       Object user
+	 *   @param     Translate	$langs      Object lang
+	 *   @param     Conf		$conf       Object conf
 	 *   @return    int         			Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
 	 */
 	public function run_triggers($action, $object, $user, $langs, $conf)
@@ -90,12 +95,12 @@ class Interfaces
 		}
 
 		$nbfile = $nbtotal = $nbok = $nbko = 0;
+		$this->lastmoduleerror = '';
 
 		$files = array();
 		$modules = array();
 		$orders = array();
 		$i = 0;
-
 
 		$dirtriggers = array_merge(array('/core/triggers'), $conf->modules_parts['triggers']);
 		foreach ($dirtriggers as $reldir) {
@@ -215,6 +220,7 @@ class Interfaces
 					//dol_syslog("Error in trigger ".$action." - result = ".$result." - Nb of error string returned = ".count($objMod->errors), LOG_ERR);
 					$nbtotal++;
 					$nbko++;
+					$this->lastmoduleerror = $modName;
 					if (!empty($objMod->errors)) {
 						$this->errors = array_merge($this->errors, $objMod->errors);
 					} elseif (!empty($objMod->error)) {
@@ -228,7 +234,7 @@ class Interfaces
 		}
 
 		if ($nbko) {
-			dol_syslog(get_class($this)."::run_triggers action=".$action." Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko." - Nb of error string returned in this->errors = ".count($this->errors), LOG_ERR);
+			dol_syslog(get_class($this)."::run_triggers action=".$action." Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko.($this->lastmoduleerror ? " - Last module in error: ".$this->lastmoduleerror : "")." - Nb of error string returned in this->errors = ".count($this->errors), LOG_ERR);
 			return -$nbko;
 		} else {
 			//dol_syslog(get_class($this)."::run_triggers Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_DEBUG);

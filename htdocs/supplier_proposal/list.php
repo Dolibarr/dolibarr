@@ -49,18 +49,18 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'propal', 'supplier_proposal', 'compta', 'bills', 'orders', 'products'));
 
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'supplierproposallist';
 $mode = GETPOST('mode', 'alpha');
 
-$search_user = GETPOST('search_user', 'int');
-$search_sale = GETPOST('search_sale', 'int');
+$search_user = GETPOSTINT('search_user');
+$search_sale = GETPOSTINT('search_sale');
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_societe = GETPOST('search_societe', 'alpha');
 $search_societe_alias = GETPOST('search_societe_alias', 'alpha');
@@ -68,24 +68,24 @@ $search_login = GETPOST('search_login', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
-$search_country = GETPOST("search_country", 'int');
-$search_date_startday = GETPOST('search_date_startday', 'int');
-$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
-$search_date_startyear = GETPOST('search_date_startyear', 'int');
-$search_date_endday = GETPOST('search_date_endday', 'int');
-$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
-$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_country = GETPOSTINT("search_country");
+$search_date_startday = GETPOSTINT('search_date_startday');
+$search_date_startmonth = GETPOSTINT('search_date_startmonth');
+$search_date_startyear = GETPOSTINT('search_date_startyear');
+$search_date_endday = GETPOSTINT('search_date_endday');
+$search_date_endmonth = GETPOSTINT('search_date_endmonth');
+$search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_date_valid_startday = GETPOST('search_date_valid_startday', 'int');
-$search_date_valid_startmonth = GETPOST('search_date_valid_startmonth', 'int');
-$search_date_valid_startyear = GETPOST('search_date_valid_startyear', 'int');
-$search_date_valid_endday = GETPOST('search_date_valid_endday', 'int');
-$search_date_valid_endmonth = GETPOST('search_date_valid_endmonth', 'int');
-$search_date_valid_endyear = GETPOST('search_date_valid_endyear', 'int');
+$search_date_valid_startday = GETPOSTINT('search_date_valid_startday');
+$search_date_valid_startmonth = GETPOSTINT('search_date_valid_startmonth');
+$search_date_valid_startyear = GETPOSTINT('search_date_valid_startyear');
+$search_date_valid_endday = GETPOSTINT('search_date_valid_endday');
+$search_date_valid_endmonth = GETPOSTINT('search_date_valid_endmonth');
+$search_date_valid_endyear = GETPOSTINT('search_date_valid_endyear');
 $search_date_valid_start = dol_mktime(0, 0, 0, $search_date_valid_startmonth, $search_date_valid_startday, $search_date_valid_startyear);	// Use tzserver
 $search_date_valid_end = dol_mktime(23, 59, 59, $search_date_valid_endmonth, $search_date_valid_endday, $search_date_valid_endyear);
-$search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
+$search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
 $search_montant_vat = GETPOST('search_montant_vat', 'alpha');
 $search_montant_ttc = GETPOST('search_montant_ttc', 'alpha');
@@ -94,8 +94,8 @@ $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
-$search_status = GETPOST('search_status', 'int');
-$search_product_category = GETPOST('search_product_category', 'int');
+$search_status = GETPOST('search_status', 'intcomma');
+$search_product_category = GETPOSTINT('search_product_category');
 
 $object_statut = $db->escape(GETPOST('supplier_proposal_statut'));
 $search_btn = GETPOST('button_search', 'alpha');
@@ -106,10 +106,10 @@ $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all'
 $mesg = (GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 
 $optioncss = GETPOST('optioncss', 'alpha');
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -204,8 +204,8 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
-$permissiontoread = $user->rights->supplier_proposal->lire;
-$permissiontodelete = $user->rights->supplier_proposal->supprimer;
+$permissiontoread = $user->hasRight('supplier_proposal', 'lire');
+$permissiontodelete = $user->hasRight('supplier_proposal', 'supprimer');
 
 
 /*
@@ -312,7 +312,7 @@ $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= ' sp.rowid, sp.note_public, sp.note_private, sp.total_ht, sp.total_tva, sp.total_ttc, sp.localtax1, sp.localtax2, sp.ref, sp.fk_statut as status, sp.fk_user_author, sp.date_valid, sp.date_livraison as dp,';
 $sql .= ' sp.fk_multicurrency, sp.multicurrency_code, sp.multicurrency_tx, sp.multicurrency_total_ht, sp.multicurrency_total_tva as multicurrency_total_vat, sp.multicurrency_total_ttc,';
-$sql .= ' sp.datec as date_creation, sp.tms as date_update,';
+$sql .= ' sp.datec as date_creation, sp.tms as date_modification,';
 $sql .= " p.rowid as project_id, p.ref as project_ref,";
 $sql .= " u.firstname, u.lastname, u.photo, u.login, u.statut as ustatus, u.admin, u.employee, u.email as uemail";
 // Add fields from extrafields
@@ -673,7 +673,7 @@ if ($resql) {
 		foreach ($fieldstosearchall as $key => $val) {
 			$fieldstosearchall[$key] = $langs->trans($val);
 		}
-		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).implode(', ', $fieldstosearchall).'</div>';
 	}
 
 	$i = 0;
@@ -696,7 +696,7 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view products
-	if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
+	if (isModEnabled('category') && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -719,7 +719,7 @@ if ($resql) {
 	}
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	print '<div class="div-table-responsive">';
@@ -1028,7 +1028,7 @@ if ($resql) {
 				print '<div class="box-flex-container kanban">';
 			}
 			// Output Kanban
-			// TODO Use a cahe on user
+			// TODO Use a cache on user
 			$userstatic->fetch($obj->fk_user_author);
 			$objectstatic->delivery_date = $obj->dp;
 			print $objectstatic->getKanbanView('', array('thirdparty'=>$companystatic, 'userauthor'=>$userstatic, 'selected' => in_array($obj->id, $arrayofselected)));
@@ -1284,7 +1284,7 @@ if ($resql) {
 			// Date modification
 			if (!empty($arrayfields['sp.tms']['checked'])) {
 				print '<td class="center nowraponall">';
-				print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+				print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1358,8 +1358,8 @@ if ($resql) {
 
 	$filedir = $diroutputmassaction;
 
-	$genallowed = $user->rights->supplier_proposal->lire;
-	$delallowed = $user->rights->supplier_proposal->creer;
+	$genallowed = $user->hasRight('supplier_proposal', 'lire');
+	$delallowed = $user->hasRight('supplier_proposal', 'creer');
 
 	print $formfile->showdocuments('massfilesarea_supplier_proposal', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 } else {

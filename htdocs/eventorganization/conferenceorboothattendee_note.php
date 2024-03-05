@@ -80,7 +80,7 @@ dol_include_once('/eventorganization/lib/eventorganization_conferenceorboothatte
 $langs->loadLangs(array('eventorganization', 'companies'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
@@ -106,8 +106,8 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Permissions
-$permissionnote = $user->rights->eventorganization->conferenceorboothattendee->write; // Used by the include of actions_setnotes.inc.php
-$permissiontoadd = $user->rights->eventorganization->conferenceorboothattendee->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissionnote = $user->hasRight('eventorganization', 'conferenceorboothattendee', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->hasRight('eventorganization', 'conferenceorboothattendee', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 
 

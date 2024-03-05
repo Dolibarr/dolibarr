@@ -135,6 +135,7 @@ function GetLegendSkills()
 function getRankOrderResults($obj)
 {
 	global $langs;
+
 	$results = array(
 		'greater' => array(
 			'title' => $langs->trans('MaxlevelGreaterThanShort'),
@@ -157,7 +158,7 @@ function getRankOrderResults($obj)
 	} elseif ($obj->rankorder < $obj->required_rank) {
 		$key = 'lesser';
 	}
-	return '<span title="'.strtoupper($obj->label).': ' .$results[$key]['title']. '" class="radio_js_bloc_number TNote_1" style="' . htmlspecialchars($results[$key]['style'], ENT_QUOTES) . '">' . strtoupper(substr($obj->label, 0, 3)) .(strlen($obj->label) > 3 ? '..' : '').'</span>';
+	return '<span title="'.dol_escape_htmltag($obj->label).': ' .$results[$key]['title']. '" class="radio_js_bloc_number TNote_1" style="' . dol_escape_htmltag($results[$key]['style']) . '">' . dol_trunc($obj->label, 4).'</span>';
 }
 
 /**

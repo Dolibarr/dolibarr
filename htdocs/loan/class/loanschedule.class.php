@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017       Florian HENRY           <florian.henry@atm-consulting.fr>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,14 +47,14 @@ class LoanSchedule extends CommonObject
 
 	public $bank_account;
 	public $bank_line;
-	/**
-	 * @var string Create date
-	 */
-	public $datec;
-	public $tms;
 
 	/**
-	 * @var string Payment date
+	 * @var int|string Creation date
+	 */
+	public $datec;
+
+	/**
+	 * @var int|string Payment date
 	 */
 	public $datep;
 
@@ -69,7 +69,8 @@ class LoanSchedule extends CommonObject
 	public $fk_typepayment;
 
 	/**
-	 * @var int Payment ID
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
@@ -317,7 +318,7 @@ class LoanSchedule extends CommonObject
 			$this->note_public = trim($this->note_public);
 		}
 		if (isset($this->fk_bank)) {
-			$this->fk_bank = trim($this->fk_bank);
+			$this->fk_bank = (int) $this->fk_bank;
 		}
 		if (isset($this->fk_payment_loan)) {
 			$this->fk_payment_loan = (int) $this->fk_payment_loan;
@@ -435,8 +436,6 @@ class LoanSchedule extends CommonObject
 	 */
 	public function fetchAll($loanid)
 	{
-		global $langs;
-
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.fk_loan,";

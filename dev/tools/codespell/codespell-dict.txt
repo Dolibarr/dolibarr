@@ -9,6 +9,7 @@ aploha->alpha
 aplohanothtml->alphanohtml
 aplphanothtml->alphanohtml
 choosed->chosen
+dokument->document
 dolibar->dolibarr
 dollibar->dolibarr
 dollibarr->dolibarr

@@ -148,7 +148,8 @@ class ExtraFields
 
 		$result = 0;
 
-		if ($type == 'separate') {
+		if ($type == 'separator' || $type == 'separate') {
+			$type = 'separate';
 			$unique = 0;
 			$required = 0;
 		}	// Force unique and not required if this is a separator field to avoid troubles.
@@ -170,7 +171,7 @@ class ExtraFields
 			$err2 = $this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
 				$this->error = '';
-				$this->errno = 0;
+				$this->errno = '0';
 				return 1;
 			} else {
 				return -2;
@@ -290,7 +291,7 @@ class ExtraFields
 	 *  @param  array|string	$param			Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @param  int				$alwayseditable	Is attribute always editable regardless of the document status
 	 *  @param	string			$perms			Permission to check
-	 *  @param	string			$list			Visibily
+	 *  @param	string			$list			Visibility
 	 *  @param	string			$help			Help on tooltip
 	 *  @param  string          $default        Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string          $computed       Computed value
@@ -464,7 +465,7 @@ class ExtraFields
 				$sql .= " FROM ".$this->db->prefix()."extrafields";
 				$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'";
 				$sql .= " AND name = '".$this->db->escape($attrname)."'";
-				//$sql.= " AND entity IN (0,".$conf->entity.")";      Do not test on entity here. We want to see if there is still on field remaning in other entities before deleting field in table
+				//$sql.= " AND entity IN (0,".$conf->entity.")";      Do not test on entity here. We want to see if there is still on field remaining in other entities before deleting field in table
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
@@ -663,7 +664,7 @@ class ExtraFields
 	 *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
-	 *  @param	string	$list				Visiblity
+	 *  @param	string	$list				Visibility
 	 *  @param	string	$help				Help on tooltip.
 	 *  @param  string  $default            Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string  $computed           Computed value
@@ -736,7 +737,7 @@ class ExtraFields
 			}
 
 			if ($entity === '' || $entity != '0') {
-				// We dont want on all entities, we delete all and current
+				// We don't want on all entities, we delete all and current
 				$sql_del = "DELETE FROM ".$this->db->prefix()."extrafields";
 				$sql_del .= " WHERE name = '".$this->db->escape($attrname)."'";
 				$sql_del .= " AND entity IN (0, ".($entity === '' ? $conf->entity : $entity).")";
@@ -824,7 +825,7 @@ class ExtraFields
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Load the array of extrafields defintion $this->attributes
+	 * 	Load the array of extrafields definition $this->attributes
 	 *
 	 * 	@param	string		$elementtype		Type of element ('all' = all or $object->table_element like 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
@@ -933,7 +934,7 @@ class ExtraFields
 	 * @param  string        $keyprefix      		Suffix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param  string        $morecss        		More css (to defined size of field. Old behaviour: may also be a numeric)
 	 * @param  int           $objectid       		Current object id
-	 * @param  string        $extrafieldsobjectkey	The key to use to store retreived data (commonly $object->table_element)
+	 * @param  string        $extrafieldsobjectkey	The key to use to store retrieved data (commonly $object->table_element)
 	 * @param  int	         $mode                  1=Used for search filters
 	 * @return string
 	 */
@@ -1442,28 +1443,28 @@ class ExtraFields
 							// Pattern for word=$ID$
 							$word = '\b[a-zA-Z0-9-\.-_]+\b=\$ID\$';
 
-							// Removing space arount =, ( and )
+							// Removing spaces around =, ( and )
 							$InfoFieldList[4] = preg_replace('# *(=|\(|\)) *#', '$1', $InfoFieldList[4]);
 
 							$nbPreg = 1;
 							// While we have parenthesis
 							while ($nbPreg != 0) {
-								// Init des compteurs
+								// Initialise counters
 								$nbPregRepl = $nbPregSel = 0;
-								// On retire toutes les parenthèses sans = avant
+								// Remove all parenthesis not preceded with '=' sign
 								$InfoFieldList[4] = preg_replace('#([^=])(\([^)^(]*('.$word.')[^)^(]*\))#', '$1 $3 ', $InfoFieldList[4], -1, $nbPregRepl);
-								// On retire les espaces autour des = et parenthèses
+								// Remove all escape characters around '=' and parenthesis
 								$InfoFieldList[4] = preg_replace('# *(=|\(|\)) *#', '$1', $InfoFieldList[4]);
-								// On retire toutes les parenthèses avec = avant
+								// Remove all parentheses preceded with '='
 								$InfoFieldList[4] = preg_replace('#\b[a-zA-Z0-9-\.-_]+\b=\([^)^(]*('.$word.')[^)^(]*\)#', '$1 ', $InfoFieldList[4], -1, $nbPregSel);
-								// On retire les espaces autour des = et parenthèses
+								// On retire les escapes autour des = et parenthèses
 								$InfoFieldList[4] = preg_replace('# *(=|\(|\)) *#', '$1', $InfoFieldList[4]);
 
-								// Calcul du compteur général pour la boucle
+								// UPdate the totals counter for the loop
 								$nbPreg = $nbPregRepl + $nbPregSel;
 							}
 
-							// Si l'on a un AND ou un OR, avant ou après
+							// In case there is AND ou OR, before or after
 							$matchCondition = array();
 							preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#', $InfoFieldList[4], $matchCondition);
 							while (!empty($matchCondition[0])) {
@@ -1483,7 +1484,7 @@ class ExtraFields
 									}
 								}
 
-								// Si l'on a un AND ou un OR, avant ou après
+								// In case there is AND ou OR, before or after
 								preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#', $InfoFieldList[4], $matchCondition);
 							}
 						} else {
@@ -1585,8 +1586,8 @@ class ExtraFields
 		} elseif ($type == 'link') {
 			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
 			/* Removed.
-			The selectForForms is called with parameter $objectfield defined, so tha app can retreive the filter inside the ajax component instead of being provided as parameters. The
-			filter was use to pass SQL requests leading to serious SQL injection problem. This should not be possible. Also the call of the ajax was broken by some WAF.
+			The selectForForms is called with parameter $objectfield defined, so that the app can retrieve the filter inside the ajax component instead of being provided as parameters. The
+			filter was used to pass SQL requests leading to serious SQL injection problems. This should not be possible. Also the call of the ajax was broken by some WAF.
 			if (strpos($param_list[0], '$ID$') !== false && !empty($objectid)) {
 				$param_list[0] = str_replace('$ID$', $objectid, $param_list[0]);
 			}*/
@@ -1629,7 +1630,7 @@ class ExtraFields
 	 * @param   string	$value          		Value to show
 	 * @param	string	$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
 	 * @param	string	$extrafieldsobjectkey	Required (for example $object->table_element).
-	 * @return	string							Formated value
+	 * @return	string							Formatted value
 	 */
 	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '')
 	{
@@ -1940,7 +1941,7 @@ class ExtraFields
 			$out = '';
 
 			// Only if something to display (perf)
-			if ($value) {		// If we have -1 here, pb is into insert, not into ouptut (fix insert instead of changing code here to compensate)
+			if ($value) {		// If we have -1 here, pb is into insert, not into output (fix insert instead of changing code here to compensate)
 				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
 
 				$InfoFieldList = explode(":", $param_list[0]);
@@ -1982,7 +1983,7 @@ class ExtraFields
 	 *
 	 * @param   string	$key            		Key of attribute
 	 * @param	string	$extrafieldsobjectkey	If defined, use the new method to get extrafields data
-	 * @return	string							Formated value
+	 * @return	string							Formatted value
 	 */
 	public function getAlignFlag($key, $extrafieldsobjectkey = '')
 	{
@@ -2048,11 +2049,11 @@ class ExtraFields
 		$expand_display = false;
 		if (is_array($extrafield_param_list) && count($extrafield_param_list) > 0) {
 			$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
-			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? (empty($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) ? false : true) : ($extrafield_collapse_display_value == 2 ? false : true));
+			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOSTINT('ignorecollapsesetup')) ? (empty($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) ? false : true) : ($extrafield_collapse_display_value == 2 ? false : true));
 		}
 		$disabledcookiewrite = 0;
 		if ($mode == 'create') {
-			// On create mode, force separator group to not be collapsable
+			// On create mode, force separator group to not be collapsible
 			$extrafield_collapse_display_value = 1;
 			$expand_display = true;	// We force group to be shown expanded
 			$disabledcookiewrite = 1; // We keep status of group unchanged into the cookie
@@ -2206,13 +2207,13 @@ class ExtraFields
 
 				if (in_array($key_type, array('date'))) {
 					// Clean parameters
-					$value_key = dol_mktime(12, 0, 0, GETPOST("options_".$key."month", 'int'), GETPOST("options_".$key."day", 'int'), GETPOST("options_".$key."year", 'int'));
+					$value_key = dol_mktime(12, 0, 0, GETPOSTINT("options_".$key."month"), GETPOSTINT("options_".$key."day"), GETPOSTINT("options_".$key."year"));
 				} elseif (in_array($key_type, array('datetime'))) {
 					// Clean parameters
-					$value_key = dol_mktime(GETPOST("options_".$key."hour", 'int'), GETPOST("options_".$key."min", 'int'), GETPOST("options_".$key."sec", 'int'), GETPOST("options_".$key."month", 'int'), GETPOST("options_".$key."day", 'int'), GETPOST("options_".$key."year", 'int'), 'tzuserrel');
+					$value_key = dol_mktime(GETPOSTINT("options_".$key."hour"), GETPOSTINT("options_".$key."min"), GETPOSTINT("options_".$key."sec"), GETPOSTINT("options_".$key."month"), GETPOSTINT("options_".$key."day"), GETPOSTINT("options_".$key."year"), 'tzuserrel');
 				} elseif (in_array($key_type, array('datetimegmt'))) {
 					// Clean parameters
-					$value_key = dol_mktime(GETPOST("options_".$key."hour", 'int'), GETPOST("options_".$key."min", 'int'), GETPOST("options_".$key."sec", 'int'), GETPOST("options_".$key."month", 'int'), GETPOST("options_".$key."day", 'int'), GETPOST("options_".$key."year", 'int'), 'gmt');
+					$value_key = dol_mktime(GETPOSTINT("options_".$key."hour"), GETPOSTINT("options_".$key."min"), GETPOSTINT("options_".$key."sec"), GETPOSTINT("options_".$key."month"), GETPOSTINT("options_".$key."day"), GETPOSTINT("options_".$key."year"), 'gmt');
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					$value_arr = GETPOST("options_".$key, 'array'); // check if an array
 					if (!empty($value_arr)) {
@@ -2303,14 +2304,14 @@ class ExtraFields
 						$value_key = array();
 						// values provided as a component year, month, day, etc.
 						if (GETPOST($dateparamname_start . 'year')) {
-							$value_key['start'] = dol_mktime(0, 0, 0, GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int'));
+							$value_key['start'] = dol_mktime(0, 0, 0, GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'));
 						}
 						if (GETPOST($dateparamname_start . 'year')) {
-							$value_key['end'] = dol_mktime(23, 59, 59, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'));
+							$value_key['end'] = dol_mktime(23, 59, 59, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'));
 						}
 					} elseif (GETPOST($keysuffix."options_".$key.$keyprefix."year")) {
 						// Clean parameters
-						$value_key = dol_mktime(12, 0, 0, GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'));
+						$value_key = dol_mktime(12, 0, 0, GETPOSTINT($keysuffix."options_".$key.$keyprefix."month"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."day"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."year"));
 					} else {
 						continue; // Value was not provided, we should not set it.
 					}
@@ -2319,26 +2320,26 @@ class ExtraFields
 					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
 					if (GETPOST($dateparamname_start . 'year') && GETPOST($dateparamname_end . 'year')) {
 						// values provided as a date pair (start date + end date), each date being broken down as year, month, day, etc.
-						$dateparamname_end_hour = GETPOST($dateparamname_end . 'hour', 'int') != '-1' ? GETPOST($dateparamname_end . 'hour', 'int') : '23';
-						$dateparamname_end_min = GETPOST($dateparamname_end . 'min', 'int') != '-1' ? GETPOST($dateparamname_end . 'min', 'int') : '59';
-						$dateparamname_end_sec = GETPOST($dateparamname_end . 'sec', 'int') != '-1' ? GETPOST($dateparamname_end . 'sec', 'int') : '59';
+						$dateparamname_end_hour = GETPOSTINT($dateparamname_end . 'hour') != '-1' ? GETPOSTINT($dateparamname_end . 'hour') : '23';
+						$dateparamname_end_min = GETPOSTINT($dateparamname_end . 'min') != '-1' ? GETPOSTINT($dateparamname_end . 'min') : '59';
+						$dateparamname_end_sec = GETPOSTINT($dateparamname_end . 'sec') != '-1' ? GETPOSTINT($dateparamname_end . 'sec') : '59';
 						if ($key_type == 'datetimegmt') {
 							$value_key = array(
-								'start' => dol_mktime(GETPOST($dateparamname_start . 'hour', 'int'), GETPOST($dateparamname_start . 'min', 'int'), GETPOST($dateparamname_start . 'sec', 'int'), GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int'), 'gmt'),
-								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'), 'gmt')
+								'start' => dol_mktime(GETPOSTINT($dateparamname_start . 'hour'), GETPOSTINT($dateparamname_start . 'min'), GETPOSTINT($dateparamname_start . 'sec'), GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'gmt'),
+								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'gmt')
 							);
 						} else {
 							$value_key = array(
-								'start' => dol_mktime(GETPOST($dateparamname_start . 'hour', 'int'), GETPOST($dateparamname_start . 'min', 'int'), GETPOST($dateparamname_start . 'sec', 'int'), GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int'), 'tzuserrel'),
-								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'), 'tzuserrel')
+								'start' => dol_mktime(GETPOSTINT($dateparamname_start . 'hour'), GETPOSTINT($dateparamname_start . 'min'), GETPOSTINT($dateparamname_start . 'sec'), GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'tzuserrel'),
+								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'tzuserrel')
 							);
 						}
 					} elseif (GETPOST($keysuffix."options_".$key.$keyprefix."year")) {
 						// Clean parameters
 						if ($key_type == 'datetimegmt') {
-							$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."sec", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'), 'gmt');
+							$value_key = dol_mktime(GETPOSTINT($keysuffix."options_".$key.$keyprefix."hour"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."min"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."sec"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."month"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."day"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."year"), 'gmt');
 						} else {
-							$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."sec", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'), 'tzuserrel');
+							$value_key = dol_mktime(GETPOSTINT($keysuffix."options_".$key.$keyprefix."hour"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."min"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."sec"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."month"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."day"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."year"), 'tzuserrel');
 						}
 					} else {
 						continue; // Value was not provided, we should not set it.

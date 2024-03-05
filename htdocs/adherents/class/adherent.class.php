@@ -7,7 +7,7 @@
  * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2018	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015-2023	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024	Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2019	Thibault FOUCART		<support@ptibogxiv.net>
@@ -103,10 +103,17 @@ class Adherent extends CommonObject
 	public $fullname;
 
 	/**
-	 * @var string The civility code, not an integer
+	 * @var string
+	 * @deprecated
+	 * @see $civility_code
 	 */
 	public $civility_id;
+
+	/**
+	 * @var string The civility code, not an integer (ex: 'MR', 'MME', 'MLE', etc.)
+	 */
 	public $civility_code;
+
 	public $civility;
 
 	/**
@@ -270,7 +277,7 @@ class Adherent extends CommonObject
 	public $partnerships = array();
 
 	/**
-	 * @var Facture		To store the created invoice into subscriptionComplementaryActions()
+	 * @var Facture|null		To store the created invoice into subscriptionComplementaryActions()
 	 */
 	public $invoice;
 
@@ -352,7 +359,7 @@ class Adherent extends CommonObject
 		$this->db = $db;
 		$this->statut = self::STATUS_DRAFT;
 		$this->status = self::STATUS_DRAFT;
-		// l'adherent n'est pas public par defaut
+		// l'adherent n'est pas public par default
 		$this->public = 0;
 		// les champs optionnels sont vides
 		$this->array_options = array();
@@ -372,7 +379,7 @@ class Adherent extends CommonObject
 	 *  @param 	string	$addr_bcc           Email bcc
 	 *  @param 	int		$deliveryreceipt	Ask a delivery receipt
 	 *  @param	int		$msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
-	 *  @param	string	$errors_to			erros to
+	 *  @param	string	$errors_to			errors to
 	 *  @param	string	$moreinheader		Add more html headers
 	 *  @deprecated since V18
 	 *  @see sendEmail()
@@ -398,7 +405,7 @@ class Adherent extends CommonObject
 	 *  @param 	string	$addr_bcc           Email bcc
 	 *  @param 	int		$deliveryreceipt	Ask a delivery receipt
 	 *  @param	int		$msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
-	 *  @param	string	$errors_to			erros to
+	 *  @param	string	$errors_to			errors to
 	 *  @param	string	$moreinheader		Add more html headers
 	 * 	@since V18
 	 *  @return	int							Return integer <0 if KO, >0 if OK
@@ -570,7 +577,7 @@ class Adherent extends CommonObject
 	/**
 	 *	Create a member into database
 	 *
-	 *	@param	User	$user        	Objet user qui demande la creation
+	 *	@param	User	$user        	Object user qui demande la creation
 	 *	@param  int		$notrigger		1 ne declenche pas les triggers, 0 sinon
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
@@ -586,7 +593,7 @@ class Adherent extends CommonObject
 		$this->import_key = trim($this->import_key);
 
 		// Check parameters
-		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEMail($this->email)) {
+		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEmail($this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
 			return -1;
@@ -730,7 +737,7 @@ class Adherent extends CommonObject
 		$this->url = $this->url ? clean_url($this->url, 0) : '';
 		$this->setUpperOrLowerCase();
 		// Check parameters
-		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEMail($this->email)) {
+		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEmail($this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
 			return -1;
@@ -747,13 +754,13 @@ class Adherent extends CommonObject
 		$sql .= ", login = ".($this->login ? "'".$this->db->escape($this->login)."'" : "null");
 		$sql .= ", societe = ".($this->company ? "'".$this->db->escape($this->company)."'" : ($this->societe ? "'".$this->db->escape($this->societe)."'" : "null"));
 		if ($this->socid) {
-			$sql .= ", fk_soc = ".($this->socid > 0 ? $this->db->escape($this->socid) : "null");	 // Must be modified only when creating from a third-party
+			$sql .= ", fk_soc = ".($this->socid > 0 ? (int) $this->socid : "null");	 // Must be modified only when creating from a third-party
 		}
 		$sql .= ", address = ".($this->address ? "'".$this->db->escape($this->address)."'" : "null");
 		$sql .= ", zip = ".($this->zip ? "'".$this->db->escape($this->zip)."'" : "null");
 		$sql .= ", town = ".($this->town ? "'".$this->db->escape($this->town)."'" : "null");
-		$sql .= ", country = ".($this->country_id > 0 ? $this->db->escape($this->country_id) : "null");
-		$sql .= ", state_id = ".($this->state_id > 0 ? $this->db->escape($this->state_id) : "null");
+		$sql .= ", country = ".($this->country_id > 0 ? (int) $this->country_id : "null");
+		$sql .= ", state_id = ".($this->state_id > 0 ? (int) $this->state_id : "null");
 		$sql .= ", email = '".$this->db->escape($this->email)."'";
 		$sql .= ", url = ".(!empty($this->url) ? "'".$this->db->escape($this->url)."'" : "null");
 		$sql .= ", socialnetworks = ".($this->socialnetworks ? "'".$this->db->escape(json_encode($this->socialnetworks))."'" : "null");
@@ -764,9 +771,9 @@ class Adherent extends CommonObject
 		$sql .= ", note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", photo = ".($this->photo ? "'".$this->db->escape($this->photo)."'" : "null");
 		$sql .= ", public = '".$this->db->escape($this->public)."'";
-		$sql .= ", statut = ".$this->db->escape($this->statut);
+		$sql .= ", statut = ".(int) $this->statut;
 		$sql .= ", default_lang = ".(!empty($this->default_lang) ? "'".$this->db->escape($this->default_lang)."'" : "null");
-		$sql .= ", fk_adherent_type = ".$this->db->escape($this->typeid);
+		$sql .= ", fk_adherent_type = ".(int) $this->typeid;
 		$sql .= ", morphy = '".$this->db->escape($this->morphy)."'";
 		$sql .= ", birth = ".($this->birth ? "'".$this->db->idate($this->birth)."'" : "null");
 
@@ -912,7 +919,7 @@ class Adherent extends CommonObject
 
 					dol_syslog(get_class($this)."::update update linked thirdparty");
 
-					// This member is linked with a thirdparty, so we also update thirdparty informations
+					// This member is linked with a thirdparty, so we also update thirdparty information
 					// if this is an update.
 					$lthirdparty = new Societe($this->db);
 					$result = $lthirdparty->fetch($this->fk_soc);
@@ -1118,10 +1125,10 @@ class Adherent extends CommonObject
 	 *
 	 *    @param	User	$user           Object user de l'utilisateur qui fait la modification
 	 *    @param 	string	$password       New password (to generate if empty)
-	 *    @param    int		$isencrypted    0 ou 1 si il faut crypter le mot de passe en base (0 par defaut)
-	 *	  @param	int		$notrigger		1=Ne declenche pas les triggers
+	 *    @param    int		$isencrypted    0 ou 1 if the password needs to be encrypted in the DB (default: 0)
+	 *	  @param	int		$notrigger		1=Does not raise the triggers
 	 *    @param	int		$nosyncuser		Do not synchronize linked user
-	 *    @return   string           		If OK return clear password, 0 if no change, < 0 if error
+	 *    @return   string|int				Clear password if change ok, 0 if no change, <0 if error
 	 */
 	public function setPassword($user, $password = '', $isencrypted = 0, $notrigger = 0, $nosyncuser = 0)
 	{
@@ -1171,7 +1178,7 @@ class Adherent extends CommonObject
 				if ($this->user_id && !$nosyncuser) {
 					require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-					// This member is linked with a user, so we also update users informations
+					// This member is linked with a user, so we also update users information
 					// if this is an update.
 					$luser = new User($this->db);
 					$result = $luser->fetch($this->user_id);
@@ -1277,7 +1284,7 @@ class Adherent extends CommonObject
 		}
 
 		// Add link to third party for current member
-		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = ".($thirdpartyid > 0 ? $thirdpartyid : 'null');
+		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = ".($thirdpartyid > 0 ? (int) $thirdpartyid : 'null');
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setThirdPartyId", LOG_DEBUG);
@@ -1410,7 +1417,7 @@ class Adherent extends CommonObject
 				$this->ref = $obj->ref;
 				$this->ref_ext = $obj->ref_ext;
 
-				$this->civility_id = $obj->civility_code; // Bad. Kept for backard compatibility
+				$this->civility_id = $obj->civility_code; // Bad. Kept for backward compatibility
 				$this->civility_code = $obj->civility_code;
 				$this->civility = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
 
@@ -1694,7 +1701,7 @@ class Adherent extends CommonObject
 		dol_syslog("subscriptionComplementaryActions subscriptionid=".$subscriptionid." option=".$option." accountid=".$accountid." datesubscription=".$datesubscription." paymentdate=".
 			$paymentdate." label=".$label." amount=".$amount." num_chq=".$num_chq." autocreatethirdparty=".$autocreatethirdparty);
 
-		// Insert into bank account directlty (if option choosed for) + link to llx_subscription if option is 'bankdirect'
+		// Insert into bank account directlty (if option chosen for) + link to llx_subscription if option is 'bankdirect'
 		if ($option == 'bankdirect' && $accountid) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -1705,7 +1712,7 @@ class Adherent extends CommonObject
 
 			$insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, '', $user, $emetteur_nom, $emetteur_banque);
 			if ($insertid > 0) {
-				$inserturlid = $acct->add_url_line($insertid, $this->id, DOL_URL_ROOT.'/adherents/card.php?rowid=', $this->getFullname($langs), 'member');
+				$inserturlid = $acct->add_url_line($insertid, $this->id, DOL_URL_ROOT.'/adherents/card.php?rowid=', $this->getFullName($langs), 'member');
 				if ($inserturlid > 0) {
 					// Update table subscription
 					$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET fk_bank=".((int) $insertid);
@@ -1728,7 +1735,7 @@ class Adherent extends CommonObject
 			}
 		}
 
-		// If option choosed, we create invoice
+		// If option chosen, we create invoice
 		if (($option == 'bankviainvoice' && $accountid) || $option == 'invoiceonly') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/paymentterm.class.php';
@@ -1817,7 +1824,7 @@ class Adherent extends CommonObject
 				// Add line to draft invoice
 				$idprodsubscription = 0;
 				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled("product") || isModEnabled("service"))) {
-					$idprodsubscription = $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS;
+					$idprodsubscription = getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS');
 				}
 
 				$vattouse = 0;
@@ -1825,6 +1832,7 @@ class Adherent extends CommonObject
 					$vattouse = get_default_tva($mysoc, $mysoc, $idprodsubscription);
 				}
 				//print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$result = $invoice->addline($label, 0, 1, $vattouse, 0, 0, $idprodsubscription, 0, $datesubscription, '', 0, 0, '', 'TTC', $amount, 1);
 				if ($result <= 0) {
 					$this->error = $invoice->error;
@@ -1854,7 +1862,7 @@ class Adherent extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 				$amounts = array();
-				$amounts[$invoice->id] = price2num($amount);
+				$amounts[$invoice->id] = (float) price2num($amount);
 
 				$paiement = new Paiement($this->db);
 				$paiement->datepaye = $paymentdate;
@@ -2034,7 +2042,7 @@ class Adherent extends CommonObject
 	}
 
 	/**
-	 *		Functiun to exlude (set adherent.status to -2) a member
+	 *		Functiun to exclude (set adherent.status to -2) a member
 	 *		TODO
 	 *		A private note should be added to know why the member has been excluded
 	 *		For historical purpose it add an "extra-subscription" type excluded
@@ -2169,7 +2177,7 @@ class Adherent extends CommonObject
 			}
 		}
 
-		if ($conf->global->ADHERENT_USE_SPIP && isModEnabled('mailmanspip')) {
+		if (getDolGlobalString('ADHERENT_USE_SPIP') && isModEnabled('mailmanspip')) {
 			$result = $mailmanspip->del_to_spip($this);
 			if ($result < 0) {
 				$this->errors[] = $mailmanspip->error;
@@ -2250,7 +2258,7 @@ class Adherent extends CommonObject
 		}
 		$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs);
 		// show categories for this record only in ajax to not overload lists
-		if (isModEnabled('categorie') && !$nofetch) {
+		if (isModEnabled('category') && !$nofetch) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
 			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_MEMBER, 1);
@@ -2461,15 +2469,13 @@ class Adherent extends CommonObject
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Charge indicateurs this->nb de tableau de bord
+	 *      Load indicators this->nb in state board
 	 *
 	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $conf;
 
 		$this->nb = array();
@@ -2497,7 +2503,7 @@ class Adherent extends CommonObject
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *      @param	User	$user   		Objet user
+	 *      @param	User	$user   		Object user
 	 *      @param  string	$mode           "expired" for membership to renew, "shift" for member to validate
 	 *      @return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
@@ -2579,7 +2585,7 @@ class Adherent extends CommonObject
 	 *  Create a document onto disk according to template module.
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
@@ -2598,7 +2604,7 @@ class Adherent extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('ADHERENT_ADDON_PDF')) {
-				$modele = $conf->global->ADHERENT_ADDON_PDF;
+				$modele = getDolGlobalString('ADHERENT_ADDON_PDF');
 			}
 		}
 
@@ -2620,12 +2626,12 @@ class Adherent extends CommonObject
 		global $user, $langs;
 		$now = dol_now();
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'ABC001';
 		$this->entity = 1;
 		$this->specimen = 1;
-		$this->civility_id = 0;
+		$this->civility_id = 'MR';
 		$this->lastname = 'DOLIBARR';
 		$this->firstname = 'SPECIMEN';
 		$this->gender = 'man';
@@ -2697,7 +2703,7 @@ class Adherent extends CommonObject
 			$dn = getDolGlobalString('LDAP_KEY_MEMBERS') . "=".$info[getDolGlobalString('LDAP_KEY_MEMBERS')]."," . getDolGlobalString('LDAP_MEMBER_DN');
 		}
 		if ($mode == 1) {
-			$dn = $conf->global->LDAP_MEMBER_DN;
+			$dn = getDolGlobalString('LDAP_MEMBER_DN');
 		}
 		if ($mode == 2) {
 			$dn = getDolGlobalString('LDAP_KEY_MEMBERS') . "=".$info[getDolGlobalString('LDAP_KEY_MEMBERS')];
@@ -2709,9 +2715,9 @@ class Adherent extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *	Initialise tableau info (tableau des attributs LDAP)
+	 *	Initialise tableau info (tableau des attributes LDAP)
 	 *
-	 *	@return		array		Tableau info des attributs
+	 *	@return		array		Tableau info des attributes
 	 */
 	public function _load_ldap_info()
 	{
@@ -2812,7 +2818,7 @@ class Adherent extends CommonObject
 		// When password is modified
 		if (!empty($this->pass)) {
 			if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')) {
-				$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')] = $this->pass; // this->pass = mot de passe non crypte
+				$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')] = $this->pass; // this->pass = Unencrypted password
 			}
 			if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')) {
 				$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
@@ -2832,7 +2838,7 @@ class Adherent extends CommonObject
 			} elseif (!empty($this->pass_indatabase)) {
 				// Use $this->pass_indatabase value if exists
 				if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')) {
-					$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
+					$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')] = $this->pass_indatabase; // $this->pass_indatabase = Unencrypted password
 				}
 				if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')) {
 					$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass_indatabase, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
@@ -2905,7 +2911,7 @@ class Adherent extends CommonObject
 		$sql = "SELECT count(mc.email) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 		$sql .= " WHERE mc.email = '".$this->db->escape($this->email)."'";
-		$sql .= " AND mc.statut NOT IN (-1,0)"; // -1 erreur, 0 non envoye, 1 envoye avec succes
+		$sql .= " AND mc.statut NOT IN (-1,0)"; // -1 erreur, 0 non envoye, 1 envoye avec success
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -2991,7 +2997,7 @@ class Adherent extends CommonObject
 
 		$blockingerrormsg = '';
 
-		if (!isModEnabled('adherent')) { // Should not happen. If module disabled, cron job should not be visible.
+		if (!isModEnabled('member')) { // Should not happen. If module disabled, cron job should not be visible.
 			$langs->load("agenda");
 			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;
@@ -3174,7 +3180,7 @@ class Adherent extends CommonObject
 			return 1;
 		} else {
 			$this->output = 'Found '.($nbok + $nbko).' members to send reminder to.';
-			$this->output .= ' Send email successfuly to '.$nbok.' members';
+			$this->output .= ' Send email successfully to '.$nbok.' members';
 			if (is_array($listofmembersok)) {
 				$listofids = '';
 				$i = 0;

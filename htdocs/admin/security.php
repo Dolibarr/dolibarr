@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-// Allow/Disallow change to clear passwords once passwords are crypted
+// Allow/Disallow change to clear passwords once passwords are encrypted
 $allow_disable_encryption = true;
 
 
@@ -484,11 +485,11 @@ print '</form>';
 
 print '<br>';
 
-if (GETPOST('info', 'int') > 0) {
+if (GETPOSTINT('info') > 0) {
 	if (function_exists('password_hash')) {
 		print $langs->trans("Note: The function password_hash exists on your PHP")."<br>\n";
 	} else {
-		print $langs->trans("Note: The function password_hash does not exists on your PHP")."<br>\n";
+		print $langs->trans("Note: The function password_hash does not exist on your PHP")."<br>\n";
 	}
 	print 'MAIN_SECURITY_HASH_ALGO = '.getDolGlobalString('MAIN_SECURITY_HASH_ALGO')."<br>\n";
 	print 'MAIN_SECURITY_SALT = '.getDolGlobalString('MAIN_SECURITY_SALT')."<br>\n";

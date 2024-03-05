@@ -50,7 +50,7 @@ $mode       = GETPOST('mode', 'aZ');
 $sref = GETPOST("sref", 'alpha');
 $snom = GETPOST("snom", 'alpha');
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$type = GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT;
+$type = GETPOSTISSET('type') ? GETPOSTINT('type') : Product::TYPE_PRODUCT;
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_warehouse = GETPOST('search_warehouse', 'alpha');
 $search_batch = GETPOST('search_batch', 'alpha');
@@ -58,15 +58,15 @@ $search_toolowstock = GETPOST('search_toolowstock');
 $search_subjecttolotserial = GETPOST('search_subjecttolotserial');
 $tosell = GETPOST("tosell");
 $tobuy = GETPOST("tobuy");
-$fourn_id = GETPOST("fourn_id", 'int');
-$sbarcode = GETPOST("sbarcode", 'int');
+$fourn_id = GETPOSTINT("fourn_id");
+$sbarcode = GETPOSTINT("sbarcode");
 $search_stock_physique = GETPOST('search_stock_physique', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -75,15 +75,15 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $object = new Product($db);
 $search_sale = GETPOST("search_sale");
 if (GETPOSTISSET('catid')) {
-	$search_categ = GETPOST('catid', 'int');
+	$search_categ = GETPOSTINT('catid');
 } else {
-	$search_categ = GETPOST('search_categ', 'int');
+	$search_categ = GETPOSTINT('search_categ');
 }
-$search_warehouse_categ = GETPOST('search_warehouse_categ', 'int');
+$search_warehouse_categ = GETPOSTINT('search_warehouse_categ');
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -101,23 +101,23 @@ if (!$sortorder) {
 }
 
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
 		$search[$key] = GETPOST('search_'.$key, 'alpha');
 	}
 	if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
-		$search[$key.'_dtstart'] = dol_mktime(0, 0, 0, GETPOST('search_'.$key.'_dtstartmonth', 'int'), GETPOST('search_'.$key.'_dtstartday', 'int'), GETPOST('search_'.$key.'_dtstartyear', 'int'));
-		$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOST('search_'.$key.'_dtendmonth', 'int'), GETPOST('search_'.$key.'_dtendday', 'int'), GETPOST('search_'.$key.'_dtendyear', 'int'));
+		$search[$key.'_dtstart'] = dol_mktime(0, 0, 0, GETPOSTINT('search_'.$key.'_dtstartmonth'), GETPOSTINT('search_'.$key.'_dtstartday'), GETPOSTINT('search_'.$key.'_dtstartyear'));
+		$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOSTINT('search_'.$key.'_dtendmonth'), GETPOSTINT('search_'.$key.'_dtendday'), GETPOSTINT('search_'.$key.'_dtendyear'));
 	}
 }
 $key = 'sellby';
-$search[$key.'_dtstart'] = dol_mktime(0, 0, 0, GETPOST('search_'.$key.'_dtstartmonth', 'int'), GETPOST('search_'.$key.'_dtstartday', 'int'), GETPOST('search_'.$key.'_dtstartyear', 'int'));
-$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOST('search_'.$key.'_dtendmonth', 'int'), GETPOST('search_'.$key.'_dtendday', 'int'), GETPOST('search_'.$key.'_dtendyear', 'int'));
+$search[$key.'_dtstart'] = dol_mktime(0, 0, 0, GETPOSTINT('search_'.$key.'_dtstartmonth'), GETPOSTINT('search_'.$key.'_dtstartday'), GETPOSTINT('search_'.$key.'_dtstartyear'));
+$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOSTINT('search_'.$key.'_dtendmonth'), GETPOSTINT('search_'.$key.'_dtendday'), GETPOSTINT('search_'.$key.'_dtendyear'));
 $key = 'eatby';
-$search[$key.'_dtstart'] = dol_mktime(0, 0, 0, GETPOST('search_'.$key.'_dtstartmonth', 'int'), GETPOST('search_'.$key.'_dtstartday', 'int'), GETPOST('search_'.$key.'_dtstartyear', 'int'));
-$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOST('search_'.$key.'_dtendmonth', 'int'), GETPOST('search_'.$key.'_dtendday', 'int'), GETPOST('search_'.$key.'_dtendyear', 'int'));
+$search[$key.'_dtstart'] = dol_mktime(0, 0, 0, GETPOSTINT('search_'.$key.'_dtstartmonth'), GETPOSTINT('search_'.$key.'_dtstartday'), GETPOSTINT('search_'.$key.'_dtstartyear'));
+$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOSTINT('search_'.$key.'_dtendmonth'), GETPOSTINT('search_'.$key.'_dtendday'), GETPOSTINT('search_'.$key.'_dtendyear'));
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas = GETPOST("canvas");
@@ -560,14 +560,14 @@ if ($search_categ > 0) {
 
 // Filter on categories
 $moreforfilter = '';
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto($langs->trans('ProductsCategoriesShort'), 'category', 'class="pictofixedwidth"');
 	$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1, $langs->trans("ProductsCategoryShort"), 'maxwidth400');
 	$moreforfilter .= '</div>';
 }
 // Filter on warehouse categories
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto($langs->trans('StockCategoriesShort'), 'category', 'class="pictofixedwidth"');
 	$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_WAREHOUSE, $search_warehouse_categ, 'search_warehouse_categ', 1, $langs->trans("StockCategoriesShort"), 'maxwidth400');

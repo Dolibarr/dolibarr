@@ -51,7 +51,7 @@ class CUnits extends CommonDict
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb		$db      Database handler
+	 *  @param      DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -88,7 +88,7 @@ class CUnits extends CommonDict
 			$this->unit_type = trim($this->unit_type);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 		if (isset($this->scale)) {
 			$this->scale = trim($this->scale);
@@ -229,18 +229,19 @@ class CUnits extends CommonDict
 		$sql .= " t.scale,";
 		$sql .= " t.active";
 		$sql .= " FROM ".$this->db->prefix()."c_units as t";
+
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid' || $key == 't.active' || $key == 't.scale') {
-					$sqlwhere[] = $key." = ".((int) $value);
+					$sqlwhere[] = $this->db->sanitize($key)." = ".((int) $value);
 				} elseif (strpos($key, 'date') !== false) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
+					$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
 				} elseif ($key == 't.unit_type' || $key == 't.code' || $key == 't.short_label') {
-					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
+					$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->escape($value)."'";
 				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+					$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 				}
 			}
 		}
@@ -280,7 +281,7 @@ class CUnits extends CommonDict
 			return $this->records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -318,7 +319,7 @@ class CUnits extends CommonDict
 			$this->scale = trim($this->scale);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Check parameters
@@ -406,12 +407,9 @@ class CUnits extends CommonDict
 	 */
 	public function getUnitFromCode($code, $mode = 'code', $unit_type = '')
 	{
-		if ($mode == 'short_label') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid', 0, " AND unit_type = '".$this->db->escape($unit_type)."'");
-		} elseif ($mode == 'code') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'code', 'rowid', 0, " AND unit_type = '". $this->db->escape($unit_type) ."'");
+		if ($mode == 'short_label' || $mode == 'code') {
+			return dol_getIdFromCode($this->db, $code, 'c_units', $mode, 'rowid', 0, " AND unit_type = '".$this->db->escape($unit_type)."'");
 		}
-
 		return $code;
 	}
 
@@ -460,7 +458,7 @@ class CUnits extends CommonDict
 			// TODO : add base col into unit dictionary table
 			$unit = $this->db->fetch_object($sql);
 			if ($unit) {
-				// TODO : if base exists in unit dictionary table, remove this convertion exception and update convertion infos in database.
+				// TODO : if base exists in unit dictionary table, remove this conversion exception and update conversion infos in database.
 				// Example time hour currently scale 3600 will become scale 2 base 60
 				if ($unit->unit_type == 'time') {
 					return (float) $unit->scale;

@@ -107,7 +107,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 
 			// TODO Find a generic solution
 			if (preg_match('/search_project_user=__search_project_user__/', $shorturl)) {
-				$search_project_user = GETPOST('search_project_user', 'int');
+				$search_project_user = GETPOSTINT('search_project_user');
 				if ($search_project_user) {
 					$shorturl = preg_replace('/search_project_user=__search_project_user__/', 'search_project_user='.$search_project_user, $shorturl);
 				} else {
@@ -193,10 +193,8 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
  */
 function print_start_menu_array_auguria()
 {
-	global $conf;
-
 	print '<div class="tmenudiv">';
-	print '<ul role="navigation" class="tmenu"'.(!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '' : ' title="Top menu"').'>';
+	print '<ul role="navigation" class="tmenu"'.(getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? ' alt="Top menu"' : '').'>';
 }
 
 /**
@@ -356,7 +354,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 	$newmenu = $menuArbo->menuLeftCharger($newmenu, $mainmenu, $leftmenu, ($user->socid ? 1 : 0), 'auguria', $tabMenu);
 
 	// We update newmenu for special dynamic menus
-	if (isModEnabled('banque') && $user->hasRight('banque', 'lire') && $mainmenu == 'bank') {	// Entry for each bank account
+	if (isModEnabled('bank') && $user->hasRight('banque', 'lire') && $mainmenu == 'bank') {	// Entry for each bank account
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Required for to get Account::TYPE_CASH for example
 
 		$sql = "SELECT rowid, label, courant, rappro, courant";
@@ -410,7 +408,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					$nature = '';
 
 					// Must match array $sourceList defined into journals_list.php
-					if ($objp->nature == 2 && isModEnabled('facture') && !getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_SALES')) {
+					if ($objp->nature == 2 && isModEnabled('invoice') && !getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_SALES')) {
 						$nature = "sells";
 					}
 					if ($objp->nature == 3
@@ -418,7 +416,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 						&& !getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_PURCHASES')) {
 						$nature = "purchases";
 					}
-					if ($objp->nature == 4 && isModEnabled('banque')) {
+					if ($objp->nature == 4 && isModEnabled('bank')) {
 						$nature = "bank";
 					}
 					if ($objp->nature == 5 && isModEnabled('expensereport') && !getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS')) {
@@ -449,7 +447,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					$i++;
 				}
 			} else {
-				// Should not happend. Entries are added
+				// Should not happen. Entries are added
 				$newmenu->add('', $langs->trans("NoJournalDefined"), 2, $user->hasRight('accounting', 'comptarapport', 'lire'));
 			}
 		} else {

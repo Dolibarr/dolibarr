@@ -24,7 +24,7 @@
 /**
  * \file       htdocs/core/lib/bank.lib.php
  * \ingroup    bank
- * \brief      Ensemble de fonctions de base pour le module banque
+ * \brief      Ensemble de functions de base pour le module banque
  */
 
 
@@ -273,11 +273,11 @@ function various_payment_prepare_head($object)
 }
 
 /**
- *      Check SWIFT informations for a bank account
+ *      Check SWIFT information for a bank account
  *
  *      @param  Account     $account    A bank account (used to get BIC/SWIFT)
  *      @param	string		$swift		Swift value (used to get BIC/SWIFT, param $account non used if provided)
- *      @return boolean                 True if informations are valid, false otherwise
+ *      @return boolean                 True if information are valid, false otherwise
  */
 function checkSwiftForAccount(Account $account = null, $swift = null)
 {
@@ -294,11 +294,11 @@ function checkSwiftForAccount(Account $account = null, $swift = null)
 }
 
 /**
- *      Check IBAN number informations for a bank account.
+ *      Check IBAN number information for a bank account.
  *
  *      @param  Account     $account    	A bank account
  *      @param	string		$ibantocheck	Bank account number (used to get BAN, $account not used if provided)
- *      @return boolean                 	True if informations are valid, false otherwise
+ *      @return boolean                 	True if information are valid, false otherwise
  */
 function checkIbanForAccount(Account $account = null, $ibantocheck = null)
 {
@@ -338,10 +338,10 @@ function getIbanHumanReadable(Account $account)
 }
 
 /**
- * 		Check account number informations for a bank account
+ * 		Check account number information for a bank account
  *
  * 		@param	Account		$account    A bank account
- * 		@return boolean           		True if informations are valid, false otherwise
+ * 		@return boolean           		True if information are valid, false otherwise
  */
 function checkBanForAccount($account)
 {
@@ -361,13 +361,13 @@ function checkBanForAccount($account)
 
 	if ($country_code == 'FR') { // France rules
 		$coef = array(62, 34, 3);
-		// Concatenation des differents codes.
+		// Concatenate the code parts
 		$rib = strtolower(trim($account->code_banque).trim($account->code_guichet).trim($account->number).trim($account->cle));
-		// On remplace les eventuelles lettres par des chiffres.
+		// On replace les eventuelles lettres par des chiffres.
 		//$rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz","12345678912345678912345678");	//Ne marche pas
 		$rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz", "12345678912345678923456789");
-		// Separation du rib en 3 groupes de 7 + 1 groupe de 2.
-		// Multiplication de chaque groupe par les coef du tableau
+		// Separation du rib en 3 groups de 7 + 1 group de 2.
+		// Multiplication de chaque group par les coef du tableau
 
 		for ($i = 0, $s = 0; $i < 3; $i++) {
 			$code = substr($rib, 7 * $i, 7);
@@ -395,9 +395,9 @@ function checkBanForAccount($account)
 	}
 	if ($country_code == 'AU') {  // Australian
 		if (strlen($account->code_banque) > 7) {
-			return false; // Sould be 6 but can be 123-456
+			return false; // Should be 6 but can be 123-456
 		} elseif (strlen($account->code_banque) < 6) {
-			return false; // Sould be 6
+			return false; // Should be 6
 		} else {
 			return true;
 		}

@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
@@ -40,13 +40,13 @@ if (isModEnabled("banque")) {
 $langs->loadLangs(array('bills', 'banks', 'companies'));
 
 // Security check
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// TODO ajouter regle pour restreindre acces paiement
+// TODO ajouter regle pour restreindre access paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentVAT($db);
@@ -188,7 +188,7 @@ print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $
 print '<tr><td>'.$langs->trans('Note').'</td><td class="wordbreak sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlcleanlastbr($object->note_private)).'</td></tr>';
 
 // Bank account
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	if ($object->bank_account) {
 		$bankline = new AccountLine($db);
 		$bankline->fetch($object->bank_line);
@@ -210,7 +210,7 @@ print dol_get_fiche_end();
 
 
 /*
- * List of social contributions payed
+ * List of social contributions paid
  */
 
 $disable_delete = 0;
@@ -257,7 +257,7 @@ if ($resql) {
 			print '<td class="right"><span class="amount">'.price($objp->tva_amount).'</span></td>';
 			// Status
 			print '<td class="center">'.$tva->getLibStatut(4, $objp->amount).'</td>';
-			// Amount payed
+			// Amount paid
 			print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 			print "</tr>\n";
 			if ($objp->paye == 1) {	// If at least one invoice is paid, disable delete

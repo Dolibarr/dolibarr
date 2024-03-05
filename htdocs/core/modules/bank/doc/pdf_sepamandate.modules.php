@@ -264,7 +264,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$ics = $tmpbankfordirectdebit->ics;	// ICS for direct debit
 				}
 				if (empty($ics) && getDolGlobalString('PRELEVEMENT_ICS')) {
-					$ics = $conf->global->PRELEVEMENT_ICS;
+					$ics = getDolGlobalString('PRELEVEMENT_ICS');
 				}
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("CreditorIdentifier").' ('.$outputlangs->transnoentitiesnoconv("ICS").') : '.$ics, 0, 'L');
 
@@ -534,7 +534,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *	@param	TCPDF				$pdf           	Object PDF
 	 *	@param  CompanyBankAccount	$object         Object invoice
 	 *	@param	int					$posy			Position depart
-	 *	@param	Translate			$outputlangs	Objet langs
+	 *	@param	Translate			$outputlangs	Object langs
 	 *	@return int									Position pour suite
 	 */
 	protected function _signature_area(&$pdf, $object, $posy, $outputlangs)
@@ -576,7 +576,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *  @param  CompanyBankAccount	$object     	Object to show
 	 *  @param  int	    			$showaddress    0=no, 1=yes
 	 *  @param  Translate			$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   		Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -657,6 +657,8 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 			}
 		}
 		*/
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

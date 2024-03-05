@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin', 'companies', 'ldap'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userldap'; // To manage different context of search
 
@@ -66,7 +66,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	if ($action == 'dolibarr2ldap') {
 		$ldap = new Ldap();
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 
 		if ($result > 0) {
 			$info = $object->_load_ldap_info();
@@ -124,7 +124,7 @@ print '</tr>';
 
 if (getDolGlobalString('LDAP_SERVER_TYPE') == "activedirectory") {
 	$ldap = new Ldap();
-	$result = $ldap->connect_bind();
+	$result = $ldap->connectBind();
 	if ($result > 0) {
 		$userSID = $ldap->getObjectSid($object->login);
 	}
@@ -169,7 +169,7 @@ if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 
 
 
-// Affichage attributs LDAP
+// Affichage attributes LDAP
 print load_fiche_titre($langs->trans("LDAPInformationsForThisUser"));
 
 print '<table class="noborder centpercent">';
@@ -181,7 +181,7 @@ print '</tr>';
 
 // Lecture LDAP
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result > 0) {
 	$info = $object->_load_ldap_info();
 	$dn = $object->_load_ldap_dn($info, 1);

@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array("accountancy", "compta"));
 
 $action = GETPOST('action', 'aZ09');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
@@ -52,34 +52,34 @@ if ($type == 'sub') {
 	$context_default = 'bookkeepingbyaccountlist';
 }
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : $context_default;
-$search_date_startyear =  GETPOST('search_date_startyear', 'int');
-$search_date_startmonth =  GETPOST('search_date_startmonth', 'int');
-$search_date_startday =  GETPOST('search_date_startday', 'int');
-$search_date_endyear =  GETPOST('search_date_endyear', 'int');
-$search_date_endmonth =  GETPOST('search_date_endmonth', 'int');
-$search_date_endday =  GETPOST('search_date_endday', 'int');
+$search_date_startyear =  GETPOSTINT('search_date_startyear');
+$search_date_startmonth =  GETPOSTINT('search_date_startmonth');
+$search_date_startday =  GETPOSTINT('search_date_startday');
+$search_date_endyear =  GETPOSTINT('search_date_endyear');
+$search_date_endmonth =  GETPOSTINT('search_date_endmonth');
+$search_date_endday =  GETPOSTINT('search_date_endday');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
-$search_date_export_startyear =  GETPOST('search_date_export_startyear', 'int');
-$search_date_export_startmonth =  GETPOST('search_date_export_startmonth', 'int');
-$search_date_export_startday =  GETPOST('search_date_export_startday', 'int');
-$search_date_export_endyear =  GETPOST('search_date_export_endyear', 'int');
-$search_date_export_endmonth =  GETPOST('search_date_export_endmonth', 'int');
-$search_date_export_endday =  GETPOST('search_date_export_endday', 'int');
+$search_doc_date = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+$search_date_export_startyear =  GETPOSTINT('search_date_export_startyear');
+$search_date_export_startmonth =  GETPOSTINT('search_date_export_startmonth');
+$search_date_export_startday =  GETPOSTINT('search_date_export_startday');
+$search_date_export_endyear =  GETPOSTINT('search_date_export_endyear');
+$search_date_export_endmonth =  GETPOSTINT('search_date_export_endmonth');
+$search_date_export_endday =  GETPOSTINT('search_date_export_endday');
 $search_date_export_start = dol_mktime(0, 0, 0, $search_date_export_startmonth, $search_date_export_startday, $search_date_export_startyear);
 $search_date_export_end = dol_mktime(23, 59, 59, $search_date_export_endmonth, $search_date_export_endday, $search_date_export_endyear);
-$search_date_validation_startyear =  GETPOST('search_date_validation_startyear', 'int');
-$search_date_validation_startmonth =  GETPOST('search_date_validation_startmonth', 'int');
-$search_date_validation_startday =  GETPOST('search_date_validation_startday', 'int');
-$search_date_validation_endyear =  GETPOST('search_date_validation_endyear', 'int');
-$search_date_validation_endmonth =  GETPOST('search_date_validation_endmonth', 'int');
-$search_date_validation_endday =  GETPOST('search_date_validation_endday', 'int');
+$search_date_validation_startyear =  GETPOSTINT('search_date_validation_startyear');
+$search_date_validation_startmonth =  GETPOSTINT('search_date_validation_startmonth');
+$search_date_validation_startday =  GETPOSTINT('search_date_validation_startday');
+$search_date_validation_endyear =  GETPOSTINT('search_date_validation_endyear');
+$search_date_validation_endmonth =  GETPOSTINT('search_date_validation_endmonth');
+$search_date_validation_endday =  GETPOSTINT('search_date_validation_endday');
 $search_date_validation_start = dol_mktime(0, 0, 0, $search_date_validation_startmonth, $search_date_validation_startday, $search_date_validation_startyear);
 $search_date_validation_end = dol_mktime(23, 59, 59, $search_date_validation_endmonth, $search_date_validation_endday, $search_date_validation_endyear);
 $search_import_key = GETPOST("search_import_key", 'alpha');
 
-$search_account_category = GETPOST('search_account_category', 'int');
+$search_account_category = GETPOSTINT('search_account_category');
 
 $search_accountancy_code_start = GETPOST('search_accountancy_code_start', 'alpha');
 if ($search_accountancy_code_start == - 1) {
@@ -91,7 +91,7 @@ if ($search_accountancy_code_end == - 1) {
 }
 $search_doc_ref = GETPOST('search_doc_ref', 'alpha');
 $search_label_operation = GETPOST('search_label_operation', 'alpha');
-$search_mvt_num = GETPOST('search_mvt_num', 'int');
+$search_mvt_num = GETPOSTINT('search_mvt_num');
 $search_direction = GETPOST('search_direction', 'alpha');
 $search_ledger_code = GETPOST('search_ledger_code', 'array');
 $search_debit = GETPOST('search_debit', 'alpha');
@@ -104,11 +104,11 @@ if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_
 }
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $optioncss = GETPOST('optioncss', 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0) {
 	$page = 0;
 }
@@ -282,7 +282,7 @@ if (empty($reshook)) {
 	}
 	if (!empty($search_doc_date)) {
 		$filter['t.doc_date'] = $search_doc_date;
-		$param .= '&doc_datemonth='.GETPOST('doc_datemonth', 'int').'&doc_dateday='.GETPOST('doc_dateday', 'int').'&doc_dateyear='.GETPOST('doc_dateyear', 'int');
+		$param .= '&doc_datemonth='.GETPOSTINT('doc_datemonth').'&doc_dateday='.GETPOSTINT('doc_dateday').'&doc_dateyear='.GETPOSTINT('doc_dateyear');
 	}
 	if ($search_account_category != '-1' && !empty($search_account_category)) {
 		require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
@@ -295,7 +295,7 @@ if (empty($reshook)) {
 				$listofaccountsforgroup2[] = "'".$db->escape($tmpval['id'])."'";
 			}
 		}
-		$filter['t.search_accounting_code_in'] = join(',', $listofaccountsforgroup2);
+		$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
 		$param .= '&search_account_category='.urlencode($search_account_category);
 	}
 	if (!empty($search_accountancy_code_start)) {
@@ -650,7 +650,7 @@ if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accountin
 if ($user->hasRight('accounting', 'mouvements', 'supprimer')) {
 	$arrayofmassactions['predeletebookkeepingwriting'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('preunletteringauto', 'preunletteringmanual', 'predeletebookkeepingwriting'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('preunletteringauto', 'preunletteringmanual', 'predeletebookkeepingwriting'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction($massaction, $arrayofmassactions);

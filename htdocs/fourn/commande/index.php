@@ -55,7 +55,7 @@ $hookmanager->initHooks(array('orderssuppliersindex'));
  * 	View
  */
 
-llxHeader('', $langs->trans("SuppliersOrdersArea"));
+llxHeader('', $langs->trans("SuppliersOrdersArea"), '', '', 0, 0, '', '', '', 'mod-supplier-order page-stats');
 
 $commandestatic = new CommandeFournisseur($db);
 $userstatic = new User($db);
@@ -93,8 +93,8 @@ if ($resql) {
 	$total = 0;
 	$dataseries = array();
 	$vals = array();
-	//	0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
-	//	-> 7=Canceled/Never received -> (reopen) 3=Process runing
+	//	0=Draft -> 1=Validated -> 2=Approved -> 3=Process running -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
+	//	-> 7=Canceled/Never received -> (reopen) 3=Process running
 	//	-> 6=Canceled -> (reopen) 2=Approved
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);

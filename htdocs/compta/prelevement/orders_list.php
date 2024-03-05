@@ -45,10 +45,10 @@ $mode = GETPOST('mode', 'alpha');
 $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -64,22 +64,22 @@ if (!$sortfield) {
 }
 
 // Get supervariables
-$statut = GETPOST('statut', 'int');
+$statut = GETPOSTINT('statut');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 
 $bon = new BonPrelevement($db);
 $hookmanager->initHooks(array('withdrawalsreceiptslist'));
 
-$usercancreate = $user->rights->prelevement->bons->creer;
+$usercancreate = $user->hasRight('prelevement', 'bons', 'creer');
 $permissiontodelete = $user->hasRight('prelevement', 'creer');
 if ($type == 'bank-transfer') {
-	$usercancreate = $user->rights->paymentbybanktransfer->create;
+	$usercancreate = $user->hasRight('paymentbybanktransfer', 'create');
 	$permissiontodelete = $user->hasRight('paymentbybanktransfer', 'create');
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -152,7 +152,11 @@ if (($massaction == "delete" || ($action == 'delete' && $confirm == 'yes')) && $
 }
 $objectclass = 'BonPrelevement';
 $objectlabel = 'BonPrelevement';
-$uploaddir = $conf->prelevement->dir_output;
+if ($type == 'bank-transfer') {
+	$uploaddir = $conf->paymentbybanktransfer->dir_output;
+} else {
+	$uploaddir = $conf->prelevement->dir_output;
+}
 include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 /*
@@ -310,10 +314,10 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search

@@ -64,7 +64,7 @@ if (function_exists('socket_create')) {
 	if (function_exists('xdebug_get_profiler_filename')) {
 		print xdebug_get_profiler_filename() ? "(currently on into file ".xdebug_get_profiler_filename().")" : "(currently off)";
 	} else {
-		print "(currenlty not available)";
+		print "(currently not available)";
 	}
 	print ":<br>\n";
 	print 'xdebug.profiler_enable = '.ini_get('xdebug.profiler_enable')."<br>\n";

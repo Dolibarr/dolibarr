@@ -45,15 +45,15 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 	// Clean parameters
 	$PBX_IDENTIFIANT = "2"; // Identifiant pour v2 test
 	if (getDolGlobalString('PAYBOX_PBX_IDENTIFIANT')) {
-		$PBX_IDENTIFIANT = $conf->global->PAYBOX_PBX_IDENTIFIANT;
+		$PBX_IDENTIFIANT = getDolGlobalString('PAYBOX_PBX_IDENTIFIANT');
 	}
 	$IBS_SITE = "1999888"; // Site test
 	if (getDolGlobalString('PAYBOX_IBS_SITE')) {
-		$IBS_SITE = $conf->global->PAYBOX_IBS_SITE;
+		$IBS_SITE = getDolGlobalString('PAYBOX_IBS_SITE');
 	}
 	$IBS_RANG = "99"; // Rang test
 	if (getDolGlobalString('PAYBOX_IBS_RANG')) {
-		$IBS_RANG = $conf->global->PAYBOX_IBS_RANG;
+		$IBS_RANG = getDolGlobalString('PAYBOX_IBS_RANG');
 	}
 	$IBS_DEVISE = "840"; // Currency (Dollar US by default)
 	if ($CURRENCY == 'EUR') {
@@ -65,44 +65,44 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 
 	$URLPAYBOX = "";
 	if ($conf->global->PAYBOX_CGI_URL_V1) {
-		$URLPAYBOX = $conf->global->PAYBOX_CGI_URL_V1;
+		$URLPAYBOX = getDolGlobalString('PAYBOX_CGI_URL_V1');
 	}
 	if ($conf->global->PAYBOX_CGI_URL_V2) {
-		$URLPAYBOX = $conf->global->PAYBOX_CGI_URL_V2;
+		$URLPAYBOX = getDolGlobalString('PAYBOX_CGI_URL_V2');
 	}
 
 	if (empty($IBS_DEVISE)) {
-		dol_print_error('', "Paybox setup param PAYBOX_IBS_DEVISE not defined");
+		dol_print_error(null, "Paybox setup param PAYBOX_IBS_DEVISE not defined");
 		return -1;
 	}
 	if (empty($URLPAYBOX)) {
-		dol_print_error('', "Paybox setup param PAYBOX_CGI_URL_V1 and PAYBOX_CGI_URL_V2 undefined");
+		dol_print_error(null, "Paybox setup param PAYBOX_CGI_URL_V1 and PAYBOX_CGI_URL_V2 undefined");
 		return -1;
 	}
 	if (empty($IBS_SITE)) {
-		dol_print_error('', "Paybox setup param PAYBOX_IBS_SITE not defined");
+		dol_print_error(null, "Paybox setup param PAYBOX_IBS_SITE not defined");
 		return -1;
 	}
 	if (empty($IBS_RANG)) {
-		dol_print_error('', "Paybox setup param PAYBOX_IBS_RANG not defined");
+		dol_print_error(null, "Paybox setup param PAYBOX_IBS_RANG not defined");
 		return -1;
 	}
 
 	$conf->global->PAYBOX_HASH = 'sha512';
 
-	// Definition des parametres vente produit pour paybox
+	// Definition des parameters vente produit pour paybox
 	$IBS_CMD = $TAG;
 	$IBS_TOTAL = $PRICE * 100; // En centimes
 	$IBS_MODE = 1; // Mode formulaire
 	$IBS_PORTEUR = $EMAIL;
-	$IBS_RETOUR = "montant:M;ref:R;auto:A;trans:T"; // Format des parametres du get de validation en reponse (url a definir sous paybox)
+	$IBS_RETOUR = "montant:M;ref:R;auto:A;trans:T"; // Format of the validation GET parameter in reply (url to define for paybox)
 	$IBS_TXT = ' '; // Use a space
 	$IBS_EFFECTUE = $urlok;
 	$IBS_ANNULE = $urlko;
 	$IBS_REFUSE = $urlko;
 	$IBS_BKGD = "#FFFFFF";
 	$IBS_WAIT = "2000";
-	$IBS_LANG = "GBR"; // By default GBR=english (FRA, GBR, ESP, ITA et DEU...)
+	$IBS_LANG = "GBR"; // By default GBR=English (FRA, GBR, ESP, ITA et DEU...)
 	if (preg_match('/^FR/i', $langs->defaultlang)) {
 		$IBS_LANG = "FRA";
 	}
@@ -124,7 +124,7 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 	$IBS_OUTPUT = 'E';
 	$PBX_SOURCE = 'HTML';
 	$PBX_TYPEPAIEMENT = 'CARTE';
-	$PBX_HASH = $conf->global->PAYBOX_HASH;
+	$PBX_HASH = getDolGlobalString('PAYBOX_HASH');
 	$PBX_TIME = dol_print_date(dol_now(), 'dayhourrfc', 'gmt');
 
 	$msg = "PBX_IDENTIFIANT=".$PBX_IDENTIFIANT.

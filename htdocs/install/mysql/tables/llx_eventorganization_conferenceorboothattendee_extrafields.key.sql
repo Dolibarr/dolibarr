@@ -15,5 +15,5 @@
 
 
 -- BEGIN MODULEBUILDER INDEXES
-ALTER TABLE llx_eventorganization_conferenceorboothattendee_extrafields ADD INDEX idx_conferenceorboothattendee_fk_object(fk_object);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee_extrafields ADD UNIQUE INDEX uk_conferenceorboothattendee_fk_object (fk_object);
 -- END MODULEBUILDER INDEXES

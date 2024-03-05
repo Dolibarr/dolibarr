@@ -35,9 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 $langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal", "bills", "contracts"));
 
 // Get parameters
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
-$section = GETPOST('section', 'int') ? GETPOST('section', 'int') : GETPOST('section_id', 'int');
+$section = GETPOSTINT('section') ? GETPOSTINT('section') : GETPOSTINT('section_id');
 $module = GETPOST('module', 'alpha');
 if (!$section) {
 	$section = 0;
@@ -46,10 +46,10 @@ $section_dir = GETPOST('section_dir', 'alpha');
 
 $search_doc_ref = GETPOST('search_doc_ref', 'alpha');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -161,7 +161,7 @@ if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes') {
 }
 
 // Refresh directory view
-// This refresh list of dirs, not list of files (for preformance reason). List of files is refresh only if dir was not synchronized.
+// This refresh list of dirs, not list of files (for performance reason). List of files is refresh only if dir was not synchronized.
 // To refresh content of dir with cache, just open the dir in edit mode.
 if ($action == 'refreshmanual') {
 	$ecmdirtmp = new EcmDirectory($db);
@@ -323,17 +323,17 @@ if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 		$rowspan++;
 		$sectionauto[] = array('position'=>30, 'level'=>1, 'module'=>'propal', 'test'=>isModEnabled('propal'), 'label'=>$langs->trans("Proposals"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Proposals")));
 	}
-	if (isModEnabled('contrat')) {
+	if (isModEnabled('contract')) {
 		$rowspan++;
-		$sectionauto[] = array('position'=>40, 'level'=>1, 'module'=>'contract', 'test'=>isModEnabled('contrat'), 'label'=>$langs->trans("Contracts"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Contracts")));
+		$sectionauto[] = array('position'=>40, 'level'=>1, 'module'=>'contract', 'test'=>isModEnabled('contract'), 'label'=>$langs->trans("Contracts"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Contracts")));
 	}
-	if (isModEnabled('commande')) {
+	if (isModEnabled('order')) {
 		$rowspan++;
-		$sectionauto[] = array('position'=>50, 'level'=>1, 'module'=>'order', 'test'=>isModEnabled('commande'), 'label'=>$langs->trans("CustomersOrders"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Orders")));
+		$sectionauto[] = array('position'=>50, 'level'=>1, 'module'=>'order', 'test'=>isModEnabled('order'), 'label'=>$langs->trans("CustomersOrders"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Orders")));
 	}
-	if (isModEnabled('facture')) {
+	if (isModEnabled('invoice')) {
 		$rowspan++;
-		$sectionauto[] = array('position'=>60, 'level'=>1, 'module'=>'invoice', 'test'=>isModEnabled('facture'), 'label'=>$langs->trans("CustomersInvoices"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Invoices")));
+		$sectionauto[] = array('position'=>60, 'level'=>1, 'module'=>'invoice', 'test'=>isModEnabled('invoice'), 'label'=>$langs->trans("CustomersInvoices"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Invoices")));
 	}
 	if (isModEnabled('supplier_proposal')) {
 		$langs->load("supplier_proposal");
@@ -366,10 +366,10 @@ if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 		$rowspan++;
 		$sectionauto[] = array('position'=>140, 'level'=>1, 'module'=>'project_task', 'test'=>isModEnabled('project'), 'label'=>$langs->trans("Tasks"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Tasks")));
 	}
-	if (isModEnabled('ficheinter')) {
+	if (isModEnabled('intervention')) {
 		$langs->load("interventions");
 		$rowspan++;
-		$sectionauto[] = array('position'=>150, 'level'=>1, 'module'=>'fichinter', 'test'=>isModEnabled('ficheinter'), 'label'=>$langs->trans("Interventions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Interventions")));
+		$sectionauto[] = array('position'=>150, 'level'=>1, 'module'=>'fichinter', 'test'=>isModEnabled('intervention'), 'label'=>$langs->trans("Interventions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Interventions")));
 	}
 	if (isModEnabled('expensereport')) {
 		$langs->load("trips");
@@ -381,12 +381,12 @@ if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 		$rowspan++;
 		$sectionauto[] = array('position'=>170, 'level'=>1, 'module'=>'holiday', 'test'=>isModEnabled('holiday'), 'label'=>$langs->trans("Holidays"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Holidays")));
 	}
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		$langs->load("banks");
 		$rowspan++;
-		$sectionauto[] = array('position'=>180, 'level'=>1, 'module'=>'banque', 'test'=>isModEnabled('banque'), 'label'=>$langs->trans("BankAccount"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount")));
+		$sectionauto[] = array('position'=>180, 'level'=>1, 'module'=>'banque', 'test'=>isModEnabled('bank'), 'label'=>$langs->trans("BankAccount"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount")));
 		$rowspan++;
-		$sectionauto[] = array('position'=>190, 'level'=>1, 'module'=>'chequereceipt', 'test'=>isModEnabled('banque'), 'label'=>$langs->trans("CheckReceipt"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("CheckReceipt")));
+		$sectionauto[] = array('position'=>190, 'level'=>1, 'module'=>'chequereceipt', 'test'=>isModEnabled('bank'), 'label'=>$langs->trans("CheckReceipt"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("CheckReceipt")));
 	}
 	if (isModEnabled('mrp')) {
 		$langs->load("mrp");

@@ -38,20 +38,6 @@ class box_scheduled_jobs extends ModeleBoxes
 	public $depends = array("cron");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string params
-	 */
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -115,6 +101,8 @@ class box_scheduled_jobs extends ModeleBoxes
 							$cronstatic->ref = $objp->rowid;
 							$cronstatic->label = $langs->trans($objp->label);
 							$cronstatic->status = $objp->status;
+							$cronstatic->processing = $objp->processing;
+							$cronstatic->lastresult = $objp->lastresult ?? '';
 							$cronstatic->datenextrun = $this->db->jdate($objp->datenextrun);
 							$cronstatic->datelastrun = $this->db->jdate($objp->datelastrun);
 						}

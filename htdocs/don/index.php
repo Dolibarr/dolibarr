@@ -56,7 +56,7 @@ $donstatic = new Don($db);
 
 $help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
 
-llxHeader('', $langs->trans("Donations"), $help_url);
+llxHeader('', $langs->trans("Donations"), $help_url, '', 0, 0, '', '', '', 'mod-donation page-index');
 
 $nb = array();
 $somme = array();

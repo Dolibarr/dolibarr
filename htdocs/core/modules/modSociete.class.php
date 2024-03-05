@@ -138,8 +138,8 @@ class modSociete extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 121; // id de la permission
 		$this->rights[$r][1] = 'Read third parties'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'lire';
 
 		/*$r++;
@@ -162,8 +162,8 @@ class modSociete extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 122; // id de la permission
 		$this->rights[$r][1] = 'Create and update third parties'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'creer';
 
 		/* $r++;
@@ -186,15 +186,15 @@ class modSociete extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 125; // id de la permission
 		$this->rights[$r][1] = 'Delete third parties'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
 		$this->rights[$r][0] = 126; // id de la permission
 		$this->rights[$r][1] = 'Export third parties'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'export';
 
 		$r++;
@@ -226,32 +226,32 @@ class modSociete extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 281; // id de la permission
 		$this->rights[$r][1] = 'Read contacts'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 282; // id de la permission
 		$this->rights[$r][1] = 'Create and update contact'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = 283; // id de la permission
 		$this->rights[$r][1] = 'Delete contacts'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'supprimer';
 
 		$r++;
 		$this->rights[$r][0] = 286; // id de la permission
 		$this->rights[$r][1] = 'Export contacts'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'export';
 
@@ -868,7 +868,7 @@ class modSociete extends DolibarrModules
 			'sr.default_rib' => 'Default',
 			'sr.rum' => 'RUM',
 			'sr.frstrecur' => "WithdrawMode",
-			'sr.type' => "Type ban is defaut",
+			'sr.type' => "Type ban is default",
 		);
 
 		$this->import_convertvalue_array[$r] = array(

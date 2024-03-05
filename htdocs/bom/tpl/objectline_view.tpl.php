@@ -25,8 +25,8 @@
  * $conf
  * $langs
  * $forceall (0 by default, 1 for supplier invoices/orders)
- * $element     (used to test $user->rights->$element->creer)
- * $permtoedit  (used to replace test $user->rights->$element->creer)
+ * $element     (used to test $user->hasRight($element, 'creer'))
+ * $permtoedit  (used to replace test $user->hasRight($element, 'creer'))
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
@@ -43,6 +43,9 @@ if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
+
+'@phan-var-force CommonObject $this
+ @phan-var-force CommonObject $object';
 
 global $filtertype;
 if (empty($filtertype)) {
@@ -127,7 +130,7 @@ print '</td>';
 // Qty
 print '<td class="linecolqty nowrap right">';
 $coldisplay++;
-echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
+echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formatting role of function price
 print '</td>';
 
 if ($filtertype != 1) {
@@ -146,7 +149,7 @@ if ($filtertype != 1) {
 	print '</td>';
 	print '<td class="linecoldisablestockchange nowrap right">';
 	$coldisplay++;
-	echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formating role of function price
+	echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formatting role of function price
 	print '</td>';
 
 	print '<td class="linecolefficiency nowrap right">';
@@ -244,7 +247,7 @@ if ($action == 'selectlines') {
 print '</tr>';
 
 // Select of all the sub-BOM lines
-// From this pont to the end of the file, we only take care of sub-BOM lines
+// From this point to the end of the file, we only take care of sub-BOM lines
 $sql = 'SELECT rowid, fk_bom_child, fk_product, qty FROM '.MAIN_DB_PREFIX.'bom_bomline AS bl';
 $sql.= ' WHERE fk_bom ='. (int) $tmpbom->id;
 $resql = $object->db->query($sql);
@@ -328,7 +331,7 @@ if ($resql) {
 			$workstation = new Workstation($this->db);
 			$res = $workstation->fetch($sub_bom_product->fk_default_workstation);
 			if ($res > 0) {
-				$sub_bom_line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+				$sub_bom_line->total_cost = (float) price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
 			}
 
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_line->total_cost, 'MT')).'</span></td>';

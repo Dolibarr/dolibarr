@@ -72,7 +72,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 					var autoselect = '.((int) $autoselect).';
 					var options = '.json_encode($ajaxoptions).'; /* Option of actions to do after keyup, or after select */
 
-					/* Remove selected id as soon as we type or delete a char (it means old selection is wrong). Use keyup/down instead of change to avoid loosing the product id. This is needed only for select of predefined product */
+					/* Remove selected id as soon as we type or delete a char (it means old selection is wrong). Use keyup/down instead of change to avoid losing the product id. This is needed only for select of predefined product */
 					$("input#search_'.$htmlnamejquery.'").keydown(function(e) {
 						if (e.keyCode != 9)		/* If not "Tab" key */
 						{
@@ -161,6 +161,14 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												 price_ttc: item.price_ttc,
 												 price_unit_ht: item.price_unit_ht,
 												 price_unit_ht_locale: item.price_unit_ht_locale,
+		';
+	if (isModEnabled('multicurrency')) {
+		$script .= '
+												multicurrency_code: item.multicurrency_code,
+												multicurrency_unitprice: item.multicurrency_unitprice,
+		';
+	}
+		$script .= '
 												 description : item.description,
 												 ref_customer: item.ref_customer,
 												 tva_tx: item.tva_tx,
@@ -192,6 +200,13 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 							$("#'.$htmlnamejquery.'").attr("data-tvatx", ui.item.tva_tx);
 							$("#'.$htmlnamejquery.'").attr("data-default-vat-code", ui.item.default_vat_code);
 	';
+	if (isModEnabled('multicurrency')) {
+		$script .= '
+							// For multi-currency values
+							$("#'.$htmlnamejquery.'").attr("data-multicurrency-code", ui.item.multicurrency_code);
+							$("#'.$htmlnamejquery.'").attr("data-multicurrency-unitprice", ui.item.multicurrency_unitprice);
+		';
+	}
 	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 		$script .= '
 							// For customer price when PRODUIT_CUSTOMER_PRICES_BY_QTY is on
@@ -511,7 +526,9 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 						if ($(data.element).attr("data-html") != undefined) {
 							/* If property html set, we decode html entities and use this. */
 							/* Note that HTML content must have been sanitized from js with dol_escape_htmltag(xxx, 0, 0, \'\', 0, 1) when building the select option. */
-							return htmlEntityDecodeJs($(data.element).attr("data-html"));
+							if (typeof htmlEntityDecodeJs === "function") {
+								return htmlEntityDecodeJs($(data.element).attr("data-html"));
+							}
 						}
 						return data.text;
 					},
@@ -617,7 +634,7 @@ function ajax_event($htmlname, $events)
  *  @param	int		$revertonoff			1=Revert on/off
  *  @param	int		$strict					Use only "disabled" with delConstant and "enabled" with setConstant
  *  @param	int		$forcereload			Force to reload page if we click/change value (this is supported only when there is no 'alert' option in input)
- *  @param	string	$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin.
+ *  @param	int		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin.
  *  @param	int		$forcenoajax			1 = Force to use a ahref link instead of ajax code.
  *  @param	int		$setzeroinsteadofdel	1 = Set constantto '0' instead of deleting it
  *  @param	string	$suffix					Suffix to use on the name of the switch_on picto. Example: '', '_red'

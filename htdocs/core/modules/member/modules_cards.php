@@ -95,7 +95,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 	// Positionne le modele sur le nom du modele a utiliser
 	if (!dol_strlen($modele)) {
 		if (getDolGlobalString('ADHERENT_CARDS_ADDON_PDF')) {
-			$code = $conf->global->ADHERENT_CARDS_ADDON_PDF;
+			$code = getDolGlobalString('ADHERENT_CARDS_ADDON_PDF');
 		} else {
 			$code = $modele;
 		}
@@ -156,7 +156,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 			return -1;
 		}
 	} else {
-		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
+		dol_print_error(null, $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
 		return -1;
 	}
 }

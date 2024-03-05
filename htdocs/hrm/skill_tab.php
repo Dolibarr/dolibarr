@@ -51,11 +51,11 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sk
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $TSkillsToAdd = GETPOST('fk_skill', 'array');
 $objecttype = GETPOST('objecttype', 'alpha');
 $TNote = GETPOST('TNote', 'array');
-$lineid = GETPOST('lineid', 'int');
+$lineid = GETPOSTINT('lineid');
 
 if (empty($objecttype)) {
 	$objecttype = 'job';
@@ -159,7 +159,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'saveSkill') {
 		if (!empty($TNote)) {
 			foreach ($TNote as $skillId => $rank) {
-				$TSkills = $skill->fetchAll('ASC', 't.rowid', 0, 0, array('customsql' => 'fk_object=' . ((int) $id) . " AND objecttype='" . $db->escape($objecttype) . "' AND fk_skill = " . ((int) $skillId)));
+				$TSkills = $skill->fetchAll('ASC', 't.rowid', 0, 0, '(fk_object:=:'.((int) $id).") AND (objecttype:=:'".$db->escape($objecttype)."') AND (fk_skill:=:".((int) $skillId).')');
 				if (is_array($TSkills) && !empty($TSkills)) {
 					foreach ($TSkills as $tmpObj) {
 						$tmpObj->rankorder = $rank;
@@ -474,7 +474,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$resql = $db->query($sql);
 		$num = $db->num_rows($resql);
 
-		print_barre_liste($langs->trans("Evaluations"), $page, $_SERVER["PHP_SELF"], '', '', '', '', $num, $num, $evaltmp->picto, 0);
+		//num of evaluations for each user
+		$sqlEval = "SELECT rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
+		$sqlEval .= " WHERE e.fk_user = ".((int) $id);
+		$rslt = $db->query($sqlEval);
+		$numEval = $db->num_rows($sqlEval);
+
+		print_barre_liste($langs->trans("Evaluations"), $page, $_SERVER["PHP_SELF"], '', '', '', '', $numEval, $numEval, $evaltmp->picto, 0);
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelines" class="noborder centpercent" width="100%">';
@@ -524,6 +530,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print $evaltmp->getLibStatut(2);
 				print '</td>';
 				print '<td class="linecolrank tdoverflowmax300">';
+
 				if (!is_array($object)) {
 					print $object->result;
 				} else {

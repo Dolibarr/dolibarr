@@ -42,14 +42,12 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	}
 
 	/**
-	 * Is the module active ?
+	 * Is the logger active ?
 	 *
-	 * @return int
+	 * @return int		1 if logger enabled
 	 */
 	public function isActive()
 	{
-		global $conf;
-
 		// This function does not exists on some ISP (Ex: Free in France)
 		if (!function_exists('openlog')) {
 			return 0;

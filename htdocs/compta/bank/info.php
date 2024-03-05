@@ -34,8 +34,8 @@ $langs->loadLangs(array('banks', 'categories', 'companies'));
 
 
 // Get Parameters
-$id = GETPOST("rowid", 'int');
-$accountid = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
+$id = GETPOSTINT("rowid");
+$accountid = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('account'));
 $ref = GETPOST('ref', 'alpha');
 
 

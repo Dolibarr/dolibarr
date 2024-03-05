@@ -56,7 +56,7 @@ if (GETPOSTISSET('mode')) {
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
-$page_y = GETPOST('page_y', 'int');
+$page_y = GETPOSTINT('page_y');
 $search_keyword = GETPOST('search_keyword', 'alpha');
 $search_status = GETPOST('search_status', 'alpha');
 $search_nature = GETPOST('search_nature', 'alpha');
@@ -66,9 +66,9 @@ $search_version = GETPOST('search_version', 'alpha');
 // For dolistore search
 $options              = array();
 $options['per_page']  = 20;
-$options['categorie'] = ((int) (GETPOST('categorie', 'int') ? GETPOST('categorie', 'int') : 0));
-$options['start']     = ((int) (GETPOST('start', 'int') ? GETPOST('start', 'int') : 0));
-$options['end']       = ((int) (GETPOST('end', 'int') ? GETPOST('end', 'int') : 0));
+$options['categorie'] = ((int) (GETPOSTINT('categorie') ? GETPOSTINT('categorie') : 0));
+$options['start']     = ((int) (GETPOSTINT('start') ? GETPOSTINT('start') : 0));
+$options['end']       = ((int) (GETPOSTINT('end') ? GETPOSTINT('end') : 0));
 $options['search']    = GETPOST('search_keyword', 'alpha');
 $dolistore            = new Dolistore(false);
 
@@ -224,7 +224,7 @@ if ($action == 'install') {
 				$modulenamearrays[$modulename] = $modulename;
 				//var_dump($modulenamearrays);exit;
 
-				// Lop on each packacge of the metapackage
+				// Lop on each package of the metapackage
 				foreach ($modulenamearrays as $modulenameval) {
 					if (strpos($modulenameval, '#') === 0) {
 						continue; // Discard comments
@@ -485,7 +485,7 @@ foreach ($modulesdir as $dir) {
 								dol_syslog("Module ".get_class($objMod)." not qualified");
 							}
 						} else {
-							print "admin/modules.php Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
+							print info_admin("admin/modules.php Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)", 0, 0, '1', 'warning');
 						}
 					} catch (Exception $e) {
 						dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
@@ -558,7 +558,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		$deschelp .= '<div class="info hideonsmartphone">'.$desc."<br></div>\n";
 	}
 	if (getDolGlobalString('MAIN_SETUP_MODULES_INFO')) {	// Show a custom message
-		$deschelp .= '<div class="info">'.$langs->trans($conf->global->MAIN_SETUP_MODULES_INFO)."<br></div>\n";
+		$deschelp .= '<div class="info">'.$langs->trans(getDolGlobalString('MAIN_SETUP_MODULES_INFO'))."<br></div>\n";
 	}
 	if ($deschelp) {
 		$deschelp .= '<br>';
@@ -940,7 +940,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		} else { // Module not yet activated
 			// Set $codeenabledisable
 			if (!empty($objMod->always_enabled)) {
-				// A 'always_enabled' module should not never be disabled. If this happen, we keep a link to reenable it.
+				// A 'always_enabled' module should not never be disabled. If this happen, we keep a link to re-enable it.
 				$codeenabledisable .= '<!-- Message to show: an always_enabled module has been disabled -->'."\n";
 				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param.'"';
 				$codeenabledisable .= '>';
@@ -1119,7 +1119,7 @@ if ($mode == 'marketplace') {
 	print '<br>';
 
 	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
-		// $options is array with filter criterias
+		// $options is array with filter criteria
 		//var_dump($options);
 		$dolistore->getRemoteCategories();
 		$dolistore->getRemoteProducts($options);
@@ -1148,9 +1148,9 @@ if ($mode == 'marketplace') {
 		print $nextlink;
 		print '</form>';
 
-
 		print '</div></div>';
-		print '<div class="clearboth"></div>'; ?>
+		print '<div class="clearboth"></div>';
+		?>
 
 			<div id="category-tree-left">
 				<ul class="tree">
@@ -1247,7 +1247,7 @@ if ($mode == 'deploy') {
 
 			print $langs->trans("YouCanSubmitFile").'<br><br>';
 
-			$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
+			$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 			$maxphp = @ini_get('upload_max_filesize'); // In unknown
 			if (preg_match('/k$/i', $maxphp)) {
 				$maxphp = preg_replace('/k$/i', '', $maxphp);

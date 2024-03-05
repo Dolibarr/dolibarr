@@ -46,29 +46,9 @@ class box_last_knowledgerecord extends ModeleBoxes
 	public $boxlabel;
 
 	/**
-	 * @var array box dependancies
+	 * @var array box dependencies
 	 */
 	public $depends = array("knowledgemanagement");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string param
-	 */
-	public $param;
-
-	/**
-	 * @var array box info heads
-	 */
-	public $info_box_head = array();
-
-	/**
-	 * @var array box info content
-	 */
-	public $info_box_contents = array();
 
 	/**
 	 * Constructor

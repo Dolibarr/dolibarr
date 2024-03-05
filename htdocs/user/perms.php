@@ -39,11 +39,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $module = GETPOST('module', 'alpha');
-$rights = GETPOST('rights', 'int');
+$rights = GETPOSTINT('rights');
 $updatedmodulename = GETPOST('updatedmodulename', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userperms'; // To manage different context of search
 
@@ -493,7 +493,7 @@ if ($result) {
 		*/
 
 		if (GETPOSTISSET('forbreakperms_'.$obj->module)) {
-			$ishidden = GETPOST('forbreakperms_'.$obj->module, 'int');
+			$ishidden = GETPOSTINT('forbreakperms_'.$obj->module);
 		} elseif (in_array($j, $cookietohidegrouparray)) {	// If j is among list of hidden group
 			$ishidden = 1;
 		} else {
@@ -517,7 +517,7 @@ if ($result) {
 
 			$j++;
 			if (GETPOSTISSET('forbreakperms_'.$obj->module)) {
-				$ishidden = GETPOST('forbreakperms_'.$obj->module, 'int');
+				$ishidden = GETPOSTINT('forbreakperms_'.$obj->module);
 			} elseif (in_array($j, $cookietohidegrouparray)) {	// If j is among list of hidden group
 				$ishidden = 1;
 			} else {

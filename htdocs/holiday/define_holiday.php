@@ -41,16 +41,16 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('optioncss', 'aZ');
 
 $search_name = GETPOST('search_name', 'alpha');
-$search_supervisor = GETPOST('search_supervisor', 'int');
+$search_supervisor = GETPOSTINT('search_supervisor');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $confirm = GETPOST('confirm', 'alpha');
 
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -273,7 +273,7 @@ if ($massaction == 'preincreaseholiday') {
 	$formquestion [] = array( 'type' => 'other',
 		'name' => 'nbdaysholydays',
 		'label' => $langs->trans("NumberDayAddMass"),
-		'value' => '<input name="nbdaysholidays" class="maxwidth75" id="nbdaysholidays" value="'.GETPOST('nbdaysholidays', 'int').'">'
+		'value' => '<input name="nbdaysholidays" class="maxwidth75" id="nbdaysholidays" value="'.GETPOSTINT('nbdaysholidays').'">'
 	);
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassIncreaseHoliday"), $langs->trans("ConfirmMassIncreaseHolidayQuestion", count($toselect)), "increaseholiday", $formquestion, 1, 0, 200, 500, 1);
 }
@@ -291,11 +291,11 @@ print "</div><br>\n";
 
 $filters = '';
 
-// Filter on array of ids of all childs
+// Filter on array of ids of all children
 $userchilds = array();
 if (!$user->hasRight('holiday', 'readall')) {
 	$userchilds = $user->getAllChildIds(1);
-	$filters .= ' AND u.rowid IN ('.$db->sanitize(join(', ', $userchilds)).')';
+	$filters .= ' AND u.rowid IN ('.$db->sanitize(implode(', ', $userchilds)).')';
 }
 if (!empty($search_name)) {
 	$filters .= natural_search(array('u.firstname', 'u.lastname'), $search_name);
@@ -330,7 +330,7 @@ if (count($typeleaves) == 0) {
 	$selectedfields = '';
 	if ($massactionbutton) {
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-		$selectedfields .= ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+		$selectedfields .= ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 	}
 

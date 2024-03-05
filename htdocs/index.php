@@ -58,8 +58,8 @@ if ($nbmodulesnotautoenabled <= getDolGlobalString('MAIN_MIN_NB_ENABLED_MODULE_F
 }
 if (GETPOST('addbox')) {	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'int');
-	$userid = GETPOST('userid', 'int');
+	$zone = GETPOSTINT('areacode');
+	$userid = GETPOSTINT('userid');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
 
@@ -120,7 +120,7 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 	if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install")) {
 		$langs->load("errors");
 		//if (!empty($message)) $message.='<br>';
-		$message .= info_admin($langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+		$message .= info_admin($langs->transnoentities("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
 	}
 
 	// Conf files must be in read only mode
@@ -128,7 +128,7 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 		$langs->load("errors");
 		//$langs->load("other");
 		//if (!empty($message)) $message.='<br>';
-		$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+		$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
 	}
 
 	$object = new stdClass();
@@ -137,9 +137,9 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 	if ($reshook == 0) {
 		$message .= $hookmanager->resPrint;
 	}
-	if ($message) {
-		print $message.'<br>';
-		//$message.='<br>';
+	if ($message) {	// $message is an HTML string.
+		print dol_string_onlythesehtmltags($message, 1, 0, 0, 0, array('div', 'span', 'b'));
+		print '<br>';
 		//print info_admin($langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
 	}
 }
@@ -206,7 +206,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
 	}
 
 	// Number of sales orders
-	if (isModEnabled('commande')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_CUSTOMER') && $user->hasRight('commande', 'lire')) {
+	if (isModEnabled('order')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_CUSTOMER') && $user->hasRight('commande', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		$board = new Commande($db);
 		// Number of customer orders to be shipped (validated and in progress)
@@ -228,7 +228,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
 	}
 
 	// Number of contract / services enabled (delayed)
-	if (isModEnabled('contrat')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_CONTRACT') && $user->hasRight('contrat', 'lire')) {
+	if (isModEnabled('contract')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_CONTRACT') && $user->hasRight('contrat', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 		$board = new Contrat($db);
 		$dashboardlines[$board->element.'_inactive'] = $board->load_board($user, "inactive");
@@ -246,7 +246,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
 	}
 
 	// Number of invoices customers (paid)
-	if (isModEnabled('facture') && !getDolGlobalString('MAIN_DISABLE_BLOCK_CUSTOMER') && $user->hasRight('facture', 'lire')) {
+	if (isModEnabled('invoice') && !getDolGlobalString('MAIN_DISABLE_BLOCK_CUSTOMER') && $user->hasRight('facture', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$board = new Facture($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
@@ -260,7 +260,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
 	}
 
 	// Number of transactions to conciliate
-	if (isModEnabled('banque')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_BANK') && $user->hasRight('banque', 'lire') && !$user->socid) {
+	if (isModEnabled('bank')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_BANK') && $user->hasRight('banque', 'lire') && !$user->socid) {
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$board = new Account($db);
 		$nb = $board->countAccountToReconcile(); // Get nb of account to reconciliate
@@ -271,7 +271,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
 
 
 	// Number of cheque to send
-	if (isModEnabled('banque')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_BANK') && $user->hasRight('banque', 'lire') && !$user->socid) {
+	if (isModEnabled('bank')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_BANK') && $user->hasRight('banque', 'lire') && !$user->socid) {
 		if (!getDolGlobalString('BANK_DISABLE_CHECK_DEPOSIT')) {
 			include_once DOL_DOCUMENT_ROOT . '/compta/paiement/cheque/class/remisecheque.class.php';
 			$board = new RemiseCheque($db);
@@ -290,7 +290,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
 	}
 
 	// Number of foundation members
-	if (isModEnabled('adherent')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_ADHERENT') && $user->hasRight('adherent', 'lire') && !$user->socid) {
+	if (isModEnabled('member')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_ADHERENT') && $user->hasRight('adherent', 'lire') && !$user->socid) {
 		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$board = new Adherent($db);
 		$dashboardlines[$board->element.'_shift'] = $board->load_board($user, 'shift');
@@ -793,7 +793,7 @@ $db->close();
 
 /**
  *  Show weather logo. Logo to show depends on $totallate and values for
- *  $conf->global->MAIN_METEO_LEVELx
+ *  conf 'MAIN_METEO_LEVELx'
  *
  *  @param      int     $totallate      Nb of element late
  *  @param      string  $text           Text to show on logo
@@ -811,23 +811,20 @@ function showWeather($totallate, $text, $options, $morecss = '')
 
 
 /**
- *  get weather level
- *  $conf->global->MAIN_METEO_LEVELx
+ *  get weather status for conf 'MAIN_METEO_LEVELx'
  *
  *  @param      int     $totallate      Nb of element late
  *  @return     stdClass                Return img tag of weather
  */
 function getWeatherStatus($totallate)
 {
-	global $conf;
-
 	$weather = new stdClass();
 	$weather->picto = '';
 
 	$offset = 0;
 	$factor = 10; // By default
 
-	$used_conf = !getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE') ? 'MAIN_METEO_LEVEL' : 'MAIN_METEO_PERCENTAGE_LEVEL';
+	$used_conf = (getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE') ? 'MAIN_METEO_PERCENTAGE_LEVEL' : 'MAIN_METEO_LEVEL');
 
 	$weather->level = 0;
 	$level0 = $offset;

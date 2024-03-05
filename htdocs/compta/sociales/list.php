@@ -49,36 +49,36 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sc
 $mode = GETPOST('mode', 'alpha');
 
 
-$search_ref = GETPOST('search_ref', 'int');
+$search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
-$search_typeid = GETPOST('search_typeid', 'int');
+$search_typeid = GETPOSTINT('search_typeid');
 $search_amount = GETPOST('search_amount', 'alpha');
-$search_status = GETPOST('search_status', 'int');
-$search_date_startday = GETPOST('search_date_startday', 'int');
-$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
-$search_date_startyear = GETPOST('search_date_startyear', 'int');
-$search_date_endday = GETPOST('search_date_endday', 'int');
-$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
-$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_status = GETPOST('search_status', 'intcomma');
+$search_date_startday = GETPOSTINT('search_date_startday');
+$search_date_startmonth = GETPOSTINT('search_date_startmonth');
+$search_date_startyear = GETPOSTINT('search_date_startyear');
+$search_date_endday = GETPOSTINT('search_date_endday');
+$search_date_endmonth = GETPOSTINT('search_date_endmonth');
+$search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_date_limit_startday = GETPOST('search_date_limit_startday', 'int');
-$search_date_limit_startmonth = GETPOST('search_date_limit_startmonth', 'int');
-$search_date_limit_startyear = GETPOST('search_date_limit_startyear', 'int');
-$search_date_limit_endday = GETPOST('search_date_limit_endday', 'int');
-$search_date_limit_endmonth = GETPOST('search_date_limit_endmonth', 'int');
-$search_date_limit_endyear = GETPOST('search_date_limit_endyear', 'int');
+$search_date_limit_startday = GETPOSTINT('search_date_limit_startday');
+$search_date_limit_startmonth = GETPOSTINT('search_date_limit_startmonth');
+$search_date_limit_startyear = GETPOSTINT('search_date_limit_startyear');
+$search_date_limit_endday = GETPOSTINT('search_date_limit_endday');
+$search_date_limit_endmonth = GETPOSTINT('search_date_limit_endmonth');
+$search_date_limit_endyear = GETPOSTINT('search_date_limit_endyear');
 $search_date_limit_start = dol_mktime(0, 0, 0, $search_date_limit_startmonth, $search_date_limit_startday, $search_date_limit_startyear);
 $search_date_limit_end = dol_mktime(23, 59, 59, $search_date_limit_endmonth, $search_date_limit_endday, $search_date_limit_endyear);
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_users = GETPOST('search_users');
-$search_type = GETPOST('search_type', 'int');
-$search_account = GETPOST('search_account', 'int');
+$search_type = GETPOSTINT('search_type');
+$search_account = GETPOSTINT('search_account');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST("sortorder", 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 
 if (empty($page) || $page == -1) {
 	$page = 0; // If $page is not defined, or '' or -1
@@ -94,7 +94,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-$filtre = GETPOST("filtre", 'int');
+$filtre = GETPOSTINT("filtre");
 
 $arrayfields = array(
 	'cs.rowid'		=>array('label'=>"Ref", 'checked'=>1, 'position'=>10),
@@ -109,7 +109,7 @@ $arrayfields = array(
 	'cs.paye'		=>array('label'=>"Status", 'checked'=>1, 'position'=>110),
 );
 
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	$arrayfields['cs.fk_account'] = array('checked'=>-1, 'position'=>90, 'label'=>"DefaultBankAccount");
 }
 
@@ -123,7 +123,7 @@ $permissiontoadd = $user->hasRight('tax', 'charges', 'creer');
 $permissiontodelete = $user->hasRight('tax', 'charges', 'supprimer');
 
 // Security check
-$socid = GETPOST("socid", 'int');
+$socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }

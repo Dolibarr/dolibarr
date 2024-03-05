@@ -109,7 +109,7 @@ $server->wsdl->addComplexType(
 );
 
 /*
- * Les catégories filles, sous tableau dez la catégorie
+ * The child categories, sub-tables of the category
  */
 $server->wsdl->addComplexType(
 	'FillesArray',
@@ -255,20 +255,20 @@ function getCategory($authentication, $id)
 
 				$cats = $categorie->get_filles();
 				if (count($cats) > 0) {
-					foreach ($cats as $fille) {
+					foreach ($cats as $child_cat) {
 						$dir = (!empty($conf->categorie->dir_output) ? $conf->categorie->dir_output : $conf->service->dir_output);
-						$pdir = get_exdir($fille->id, 2, 0, 0, $categorie, 'category').$fille->id."/photos/";
+						$pdir = get_exdir($child_cat->id, 2, 0, 0, $categorie, 'category').$child_cat->id."/photos/";
 						$dir = $dir.'/'.$pdir;
 						$cat['filles'][] = array(
-							'id'=>$fille->id,
+							'id'=>$child_cat->id,
 							'id_mere' => $categorie->id_mere,
-							'label'=>$fille->label,
-							'description'=>$fille->description,
-							'socid'=>$fille->socid,
-							//'visible'=>$fille->visible,
-							'type'=>$fille->type,
+							'label'=>$child_cat->label,
+							'description'=>$child_cat->description,
+							'socid'=>$child_cat->socid,
+							//'visible'=>$child_cat->visible,
+							'type'=>$child_cat->type,
 							'dir' => $pdir,
-							'photos' => $fille->liste_photos($dir, $nbmax)
+							'photos' => $child_cat->liste_photos($dir, $nbmax)
 						);
 					}
 				}

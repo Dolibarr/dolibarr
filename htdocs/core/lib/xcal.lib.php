@@ -359,7 +359,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 
 		// Url
 		if (empty($url)) {
-			$url = $urlwithroot."/public/agenda/agendaexport.php?format=rss&exportkey=".urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY);
+			$url = $urlwithroot."/public/agenda/agendaexport.php?format=rss&exportkey=".urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY'));
 		}
 		fwrite($fichier, "<link><![CDATA[".$url."]]></link>\n");
 

@@ -39,24 +39,24 @@ $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal'
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $file_manager = GETPOST('file_manager', 'alpha');
-$section = GETPOST('section', 'int') ? GETPOST('section', 'int') : GETPOST('section_id', 'int');
+$section = GETPOSTINT('section') ? GETPOSTINT('section') : GETPOSTINT('section_id');
 if (!$section) {
 	$section = 0;
 }
 $section_dir = GETPOST('section_dir', 'alpha');
-$overwritefile = GETPOST('overwritefile', 'int');
+$overwritefile = GETPOSTINT('overwritefile');
 
 if (empty($action) && $file_manager) {
 	$action = 'file_manager';
 }
-$pageid  = GETPOST('pageid', 'int');
+$pageid  = GETPOSTINT('pageid');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -153,7 +153,7 @@ if ($action == 'confirm_deletesection' && GETPOST('confirm', 'alpha') == 'yes') 
 }
 
 // Refresh directory view
-// This refresh list of dirs, not list of files (for preformance reason). List of files is refresh only if dir was not synchronized.
+// This refresh list of dirs, not list of files (for performance reason). List of files is refresh only if dir was not synchronized.
 // To refresh content of dir with cache, just open the dir in edit mode.
 if ($action == 'refreshmanual') {
 	$ecmdirtmp = new EcmDirectory($db);

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2023  Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -475,7 +475,7 @@ class Loan extends CommonObject
 	 *  Return label of loan status (unpaid, paid)
 	 *
 	 *  @param  int		$mode			0=label, 1=short label, 2=Picto + Short label, 3=Picto, 4=Picto + Label
-	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount paid if you have it, 1 otherwise)
+	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 *  @return string					Label
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
@@ -489,7 +489,7 @@ class Loan extends CommonObject
 	 *
 	 *  @param  int		$status			Id status
 	 *  @param  int		$mode			0=Label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Label, 5=Short label + Picto
-	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount paid if you have it, 1 otherwise)
+	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 *  @return string					Label
 	 */
 	public function LibStatut($status, $mode = 0, $alreadypaid = -1)
@@ -609,7 +609,7 @@ class Loan extends CommonObject
 	 *  Used to build previews or test instances.
 	 * 	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -631,6 +631,8 @@ class Loan extends CommonObject
 		$this->capital = 20000;
 		$this->nbterm = 48;
 		$this->rate = 4.3;
+
+		return 1;
 	}
 
 	/**

@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
@@ -50,10 +50,10 @@ $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product
 $hookmanager->initHooks(array('productstatspropal'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -67,8 +67,8 @@ if (!$sortfield) {
 	$sortfield = "p.datep";
 }
 
-$search_month = GETPOST('search_month', 'int');
-$search_year = GETPOST('search_year', 'int');
+$search_month = GETPOSTINT('search_month');
+$search_year = GETPOSTINT('search_year');
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$search_month = '';
@@ -142,13 +142,13 @@ if ($id > 0 || !empty($ref)) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, p.rowid as propalid, p.ref, d.total_ht as amount,";
 			$sql .= " p.ref_client,";
 			$sql .= "p.datep, p.fk_statut as statut, d.rowid, d.qty";
-			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			}
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ",".MAIN_DB_PREFIX."propal as p";
 			$sql .= ", ".MAIN_DB_PREFIX."propaldet as d";
-			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE p.fk_soc = s.rowid";
@@ -161,7 +161,7 @@ if ($id > 0 || !empty($ref)) {
 			if (!empty($search_year)) {
 				$sql .= ' AND YEAR(p.datep) IN ('.$db->sanitize($search_year).')';
 			}
-			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($socid) {

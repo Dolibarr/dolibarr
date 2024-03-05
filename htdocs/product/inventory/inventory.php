@@ -18,7 +18,7 @@
 /**
  *   	\file       htdocs/product/inventory/inventory.php
  *		\ingroup    inventory
- *		\brief      Tabe to enter counting
+ *		\brief      Tab to enter counting
  */
 
 // Load Dolibarr environment
@@ -35,7 +35,7 @@ include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 $langs->loadLangs(array("stocks", "other", "productbatch"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -43,8 +43,8 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $listoffset = GETPOST('listoffset', 'alpha');
-$limit = GETPOST('limit', 'int') > 0 ? GETPOST('limit', 'int') : $conf->liste_limit;
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$limit = GETPOSTINT('limit') > 0 ? GETPOSTINT('limit') : $conf->liste_limit;
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }
@@ -52,9 +52,9 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$fk_warehouse = GETPOST('fk_warehouse', 'int');
-$fk_product = GETPOST('fk_product', 'int');
-$lineid = GETPOST('lineid', 'int');
+$fk_warehouse = GETPOSTINT('fk_warehouse');
+$fk_product = GETPOSTINT('fk_product');
+$lineid = GETPOSTINT('lineid');
 $batch = GETPOST('batch', 'alphanohtml');
 $totalExpectedValuation = 0;
 $totalRealValuation = 0;
@@ -75,7 +75,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -104,11 +104,11 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 
 
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$permissiontoadd = $user->rights->stock->creer;
-	$permissiontodelete = $user->rights->stock->supprimer;
+	$permissiontoadd = $user->hasRight('stock', 'creer');
+	$permissiontodelete = $user->hasRight('stock', 'supprimer');
 } else {
-	$permissiontoadd = $user->rights->stock->inventory_advance->write;
-	$permissiontodelete = $user->rights->stock->inventory_advance->write;
+	$permissiontoadd = $user->hasRight('stock', 'inventory_advance', 'write');
+	$permissiontodelete = $user->hasRight('stock', 'inventory_advance', 'write');
 }
 
 $now = dol_now();
@@ -430,7 +430,7 @@ llxHeader('', $langs->trans('Inventory'), $help_url);
 
 // Part to show record
 if ($object->id <= 0) {
-	dol_print_error('', 'Bad value for object id');
+	dol_print_error(null, 'Bad value for object id');
 	exit;
 }
 
@@ -954,10 +954,10 @@ print '</tr>';
 if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
 	print '<tr>';
 	print '<td>';
-	print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? GETPOST('fk_warehouse', 'int') : $object->fk_warehouse), 'fk_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'maxwidth300');
+	print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? GETPOSTINT('fk_warehouse') : $object->fk_warehouse), 'fk_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'maxwidth300');
 	print '</td>';
 	print '<td>';
-	print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOST('fk_product', 'int') : $object->fk_product), 'fk_product', '', 0, 0, -1, 2, '', 0, null, 0, '1', 0, 'maxwidth300');
+	print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOSTINT('fk_product') : $object->fk_product), 'fk_product', '', 0, 0, -1, 2, '', 0, null, 0, '1', 0, 'maxwidth300');
 	print '</td>';
 	if (isModEnabled('productbatch')) {
 		print '<td>';

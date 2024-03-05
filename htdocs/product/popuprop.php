@@ -36,7 +36,7 @@ $langs->loadLangs(array('commande', 'propal', 'bills', 'other', 'products'));
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-$type = GETPOST("type", "int");
+$type = GETPOSTINT("type");
 $mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : '';
 
 // Security check
@@ -44,10 +44,10 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1

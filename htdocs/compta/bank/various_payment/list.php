@@ -42,18 +42,18 @@ $mode      = GETPOST('mode', 'alpha');
 $massaction = GETPOST('massaction', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$search_ref = GETPOST('search_ref', 'int');
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$search_ref = GETPOST('search_ref', 'alpha');
 $search_user = GETPOST('search_user', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
-$search_datep_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
-$search_datep_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
-$search_datev_start = dol_mktime(0, 0, 0, GETPOST('search_date_value_startmonth', 'int'), GETPOST('search_date_value_startday', 'int'), GETPOST('search_date_value_startyear', 'int'));
-$search_datev_end = dol_mktime(23, 59, 59, GETPOST('search_date_value_endmonth', 'int'), GETPOST('search_date_value_endday', 'int'), GETPOST('search_date_value_endyear', 'int'));
+$search_datep_start = dol_mktime(0, 0, 0, GETPOSTINT('search_date_startmonth'), GETPOSTINT('search_date_startday'), GETPOSTINT('search_date_startyear'));
+$search_datep_end = dol_mktime(23, 59, 59, GETPOSTINT('search_date_endmonth'), GETPOSTINT('search_date_endday'), GETPOSTINT('search_date_endyear'));
+$search_datev_start = dol_mktime(0, 0, 0, GETPOSTINT('search_date_value_startmonth'), GETPOSTINT('search_date_value_startday'), GETPOSTINT('search_date_value_startyear'));
+$search_datev_end = dol_mktime(23, 59, 59, GETPOSTINT('search_date_value_endmonth'), GETPOSTINT('search_date_value_endday'), GETPOSTINT('search_date_value_endyear'));
 $search_amount_deb = GETPOST('search_amount_deb', 'alpha');
 $search_amount_cred = GETPOST('search_amount_cred', 'alpha');
-$search_bank_account = GETPOST('search_account', 'int');
-$search_bank_entry = GETPOST('search_bank_entry', 'int');
+$search_bank_account = GETPOSTINT('search_account');
+$search_bank_entry = GETPOST('search_bank_entry', 'alpha');
 $search_accountancy_account = GETPOST("search_accountancy_account");
 if ($search_accountancy_account == - 1) {
 	$search_accountancy_account = '';
@@ -63,22 +63,22 @@ if ($search_accountancy_subledger == - 1) {
 	$search_accountancy_subledger = '';
 }
 if (empty($search_datep_start)) {
-	$search_datep_start = GETPOST("search_datep_start", 'int');
+	$search_datep_start = GETPOSTINT("search_datep_start");
 }
 if (empty($search_datep_end)) {
-	$search_datep_end = GETPOST("search_datep_end", 'int');
+	$search_datep_end = GETPOSTINT("search_datep_end");
 }
 if (empty($search_datev_start)) {
-	$search_datev_start = GETPOST("search_datev_start", 'int');
+	$search_datev_start = GETPOSTINT("search_datev_start");
 }
 if (empty($search_datev_end)) {
-	$search_datev_end = GETPOST("search_datev_end", 'int');
+	$search_datev_end = GETPOSTINT("search_datev_end");
 }
-$search_type_id = GETPOST('search_type_id', 'int');
+$search_type_id = GETPOSTINT('search_type_id');
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -163,8 +163,8 @@ $arrayfields = array(
 	'datev'			=>array('label'=>"DateValue", 'checked'=>-1, 'position'=>130),
 	'type'			=>array('label'=>"PaymentMode", 'checked'=>1, 'position'=>140),
 	'project'		=>array('label'=>"Project", 'checked'=>1, 'position'=>200, "enabled"=>isModEnabled('project')),
-	'bank'			=>array('label'=>"BankAccount", 'checked'=>1, 'position'=>300, "enabled"=>isModEnabled("banque")),
-	'entry'			=>array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>310, "enabled"=>isModEnabled("banque")),
+	'bank'			=>array('label'=>"BankAccount", 'checked'=>1, 'position'=>300, "enabled"=>isModEnabled("bank")),
+	'entry'			=>array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>310, "enabled"=>isModEnabled("bank")),
 	'account'		=>array('label'=>"AccountAccountingShort", 'checked'=>1, 'position'=>400, "enabled"=>isModEnabled('accounting')),
 	'subledger'		=>array('label'=>"SubledgerAccount", 'checked'=>1, 'position'=>410, "enabled"=>isModEnabled('accounting')),
 	'debit'			=>array('label'=>"Debit", 'checked'=>1, 'position'=>500),
@@ -174,7 +174,7 @@ $arrayfields = array(
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Security check
-$socid = GETPOST("socid", "int");
+$socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -457,7 +457,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if VARIOUSPAYMENT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $arrayofmassactions = array();
@@ -465,11 +465,11 @@ $arrayofmassactions = array();
 $moreforfilter= '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search

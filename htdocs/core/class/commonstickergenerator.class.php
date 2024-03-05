@@ -34,11 +34,11 @@
 // 1.1  : +	: Added unit in the constructor
 //	  + : Now Positions start @ (1,1).. then the first image @top-left of a page is (1,1)
 //	  + : Added in the description of a label :
-//		font-size	: defaut char size (can be changed by calling Set_Char_Size(xx);
+//		font-size	: default char size (can be changed by calling Set_Char_Size(xx);
 //		paper-size	: Size of the paper for this sheet (thanx to Al Canton)
 //		metric		: type of unit used in this description
 //				  You can define your label properties in inches by setting metric to 'in'
-//				  and printing in millimiter by setting unit to 'mm' in constructor.
+//				  and printing in millimeter by setting unit to 'mm' in constructor.
 //	  Added some labels :
 //	        5160, 5161, 5162, 5163,5164 : thanx to Al Canton : acanton@adams-blake.com
 //		8600 						: thanx to Kunal Walia : kunal@u.washington.edu
@@ -93,7 +93,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	protected $_Height = 0;
 	// Hauteur des caracteres
 	protected $_Char_Size = 10;
-	// Hauteur par defaut d'une ligne
+	// Hauteur par default d'une ligne
 	protected $_Line_Height = 10;
 	// Type of metric.. Will help to calculate good values
 	protected $_Metric = 'mm';
@@ -122,9 +122,9 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Function to build PDF on disk, then output on HTTP strem.
+	 *  Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *  @param	array		$arrayofrecords  	Array of record informations (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
+	 *  @param	array		$arrayofrecords  	Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
 	 *  @param  Translate	$outputlangs     	Lang object for output language
 	 *  @param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@param	string		$outputdir			Output directory for pdf file
@@ -218,6 +218,8 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	 * @param int	$epaisseur			Epaisseur
 	 * @param int	$taille             Size
 	 * @return void
+	 *
+	 * @phan-suppress PhanPluginSuspiciousParamPosition
 	 */
 	protected function _Croix(&$pdf, $x1 = 0, $y1 = 0, $x2 = 210, $y2 = 297, $epaisseur = 1, $taille = 4)
 	{

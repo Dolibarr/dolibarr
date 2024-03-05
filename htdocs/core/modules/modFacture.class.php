@@ -44,7 +44,7 @@ class modFacture extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user;
+		global $conf, $langs, $user;
 
 		$this->db = $db;
 		$this->numero = 30;
@@ -487,7 +487,9 @@ class modFacture extends DolibarrModules
 
 		// Exports
 		//--------
-		$r = 1;
+		$r = 0;
+
+		$langs->loadLangs(array("suppliers", "multicurrency", "bills"));
 
 		$alias_product_perentity = !getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') ? "p" : "ppe";
 

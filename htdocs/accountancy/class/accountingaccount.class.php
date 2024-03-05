@@ -632,7 +632,7 @@ class AccountingAccount extends CommonObject
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account ";
-			$sql .= "SET ".$fieldtouse." = '0'";
+			$sql .= "SET ".$this->db->sanitize($fieldtouse)." = 0";
 			$sql .= " WHERE rowid = ".((int) $id);
 
 			dol_syslog(get_class($this)."::accountDeactivate ".$fieldtouse, LOG_DEBUG);
@@ -670,7 +670,7 @@ class AccountingAccount extends CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account";
-		$sql .= " SET ".$fieldtouse." = '1'";
+		$sql .= " SET ".$this->db->sanitize($fieldtouse)." = 1";
 		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::account_activate ".$fieldtouse, LOG_DEBUG);
@@ -740,9 +740,7 @@ class AccountingAccount extends CommonObject
 	 */
 	public function getAccountingCodeToBind(Societe $buyer, Societe $seller, Product $product, $facture, $factureDet, $accountingAccount = array(), $type = '')
 	{
-		global $conf;
 		global $hookmanager;
-
 		// Instantiate hooks for external modules
 		$hookmanager->initHooks(array('accountancyBindingCalculation'));
 
@@ -880,9 +878,9 @@ class AccountingAccount extends CommonObject
 				if ($factureDet->desc == "(DEPOSIT)" || $facture->type == $facture::TYPE_DEPOSIT) {
 					$accountdeposittoventilated = new self($this->db);
 					if ($type == 'customer') {
-						$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+						$result = $accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 1);
 					} elseif ($type == 'supplier') {
-						$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT, 1);
+						$result = $accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 1);
 					}
 					if (isset($result) && $result < 0) {
 						return -1;
@@ -903,9 +901,9 @@ class AccountingAccount extends CommonObject
 					if ($facture->type == $facture::TYPE_CREDIT_NOTE && $invoiceSource->type == $facture::TYPE_DEPOSIT) {
 						$accountdeposittoventilated = new self($this->db);
 						if ($type == 'customer') {
-							$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+							$accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 1);
 						} elseif ($type == 'supplier') {
-							$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT, 1);
+							$accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 1);
 						}
 						$code_l = $accountdeposittoventilated->ref;
 						$code_p = '';

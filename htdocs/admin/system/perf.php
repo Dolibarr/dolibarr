@@ -495,7 +495,7 @@ if ($resql) {
 		if (!getDolGlobalString('PRODUIT_USE_SEARCH_TO_SELECT')) {
 			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUIT_USE_SEARCH_TO_SELECT');
 		} else {
-			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUIT_USE_SEARCH_TO_SELECT', $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUIT_USE_SEARCH_TO_SELECT', getDolGlobalString('PRODUIT_USE_SEARCH_TO_SELECT'));
 		}
 	} else {
 		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
@@ -516,7 +516,7 @@ if ($resql) {
 		if (!getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) {
 			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_USE_SEARCH_TO_SELECT');
 		} else {
-			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_USE_SEARCH_TO_SELECT', $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_USE_SEARCH_TO_SELECT', getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT'));
 		}
 	} else {
 		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ThirdParties"));
@@ -537,7 +537,7 @@ if ($resql) {
 		if (!getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT')) {
 			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("Contacts"), 'CONTACT_USE_SEARCH_TO_SELECT');
 		} else {
-			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("Contacts"), 'CONTACT_USE_SEARCH_TO_SELECT', $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("Contacts"), 'CONTACT_USE_SEARCH_TO_SELECT', getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT'));
 		}
 	} else {
 		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("Contacts"));
@@ -558,7 +558,7 @@ if ($resql) {
 		if (!getDolGlobalString('PROJECT_USE_SEARCH_TO_SELECT')) {
 			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("Projects"), 'PROJECT_USE_SEARCH_TO_SELECT');
 		} else {
-			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("Projects"), 'PROJECT_USE_SEARCH_TO_SELECT', $conf->global->PROJECT_USE_SEARCH_TO_SELECT);
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("Projects"), 'PROJECT_USE_SEARCH_TO_SELECT', getDolGlobalString('PROJECT_USE_SEARCH_TO_SELECT'));
 		}
 	} else {
 		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("Projects"));
@@ -585,7 +585,7 @@ if ($resql) {
 			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUCT_DONOTSEARCH_ANYWHERE');
 			print $langs->trans("YouHaveXObjectUseSearchOptimDesc");
 		} else {
-			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUCT_DONOTSEARCH_ANYWHERE', $conf->global->PRODUCT_DONOTSEARCH_ANYWHERE);
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUCT_DONOTSEARCH_ANYWHERE', getDolGlobalString('PRODUCT_DONOTSEARCH_ANYWHERE'));
 		}
 	} else {
 		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
@@ -608,7 +608,7 @@ if ($resql) {
 			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_DONOTSEARCH_ANYWHERE');
 			print $langs->trans("YouHaveXObjectUseSearchOptimDesc");
 		} else {
-			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_DONOTSEARCH_ANYWHERE', $conf->global->COMPANY_DONOTSEARCH_ANYWHERE);
+			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_DONOTSEARCH_ANYWHERE', getDolGlobalString('COMPANY_DONOTSEARCH_ANYWHERE'));
 		}
 	} else {
 		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ThirdParties"));

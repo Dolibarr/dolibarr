@@ -171,7 +171,7 @@ class Import
 						}
 
 						// Permission
-						$this->array_import_perms[$i] = $user->rights->import->run;
+						$this->array_import_perms[$i] = $user->hasRight('import', 'run');
 						// Icon
 						$this->array_import_icon[$i] = (isset($module->import_icon[$r]) ? $module->import_icon[$r] : $module->picto);
 						// Code of dataset export
@@ -186,9 +186,9 @@ class Import
 						$this->array_import_fields[$i] = $module->import_fields_array[$r];
 						// Array of hidden fields to import (key=field, value=label)
 						$this->array_import_fieldshidden[$i] = (isset($module->import_fieldshidden_array[$r]) ? $module->import_fieldshidden_array[$r] : '');
-						// Tableau des entites a exporter (cle=champ, valeur=entite)
+						// Array of entiteis to export (key=field, value=entity)
 						$this->array_import_entities[$i] = $module->import_entities_array[$r];
-						// Tableau des alias a exporter (cle=champ, valeur=alias)
+						// Array of aliases to export (key=field, value=alias)
 						$this->array_import_regex[$i] = (isset($module->import_regex_array[$r]) ? $module->import_regex_array[$r] : '');
 						// Array of columns allowed as UPDATE options
 						$this->array_import_updatekeys[$i] = (isset($module->import_updatekeys_array[$r]) ? $module->import_updatekeys_array[$r] : '');
@@ -235,7 +235,7 @@ class Import
 
 		dol_syslog(get_class($this)."::build_example_file ".$model);
 
-		// Creation de la classe d'import du model Import_XXX
+		// Create the import class for the model Import_XXX
 		$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
 		$file = "import_".$model.".modules.php";
 		$classname = "Import".$model;

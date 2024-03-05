@@ -376,12 +376,12 @@ function getContact($authentication, $id, $ref_ext)
  * Create Contact
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Contact		$contact		    $contact
+ * @param	array		$contact		    $contact
  * @return	array							Array result
  */
 function createContact($authentication, $contact)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -490,7 +490,7 @@ function createContact($authentication, $contact)
  */
 function getContactsForThirdParty($authentication, $idthirdparty)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: getContactsForThirdParty login=".$authentication['login']." idthirdparty=".$idthirdparty);
 
@@ -613,7 +613,7 @@ function getContactsForThirdParty($authentication, $idthirdparty)
  * Update a contact
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Contact		$contact		    Contact
+ * @param	array		$contact		    Contact
  * @return	array							Array result
  */
 function updateContact($authentication, $contact)

@@ -3,8 +3,8 @@ WorkflowSetup=Workflow-moduuli asennus
 WorkflowDesc=Tämä moduuli tarjoaa joitain automaattisia toimintoja. Tekijän oletus työnkulku on auki (voit tehdä asioita haluamassasi järjestyksessä), mutta täällä voit aktivoida joitain automaattisia toimintoja.
 ThereIsNoWorkflowToModify=Aktivoiduilla moduuleilla ei ole käytettävissä työnkulun muutoksia.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automaattisesti luo myyntitilaus, kun Tarjouspyyntö on allekirjoitettu (uuden tilauksen summa on sama kuin <span class='notranslatessa '>tarjous</span>)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automaattisesti luo asiakkaan lasku, kun Tarjouspyyntö on allekirjoitettu (uudessa laskussa on sama summa kuin <span class='notranslatessa '>tarjous</span>)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a sales order after a commercial proposal is signed (the new order will have same amount as the proposal)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (the new invoice will have same amount as the proposal)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=luo asiakkaan lasku automaattisesti, kun sopimus on vahvistettu
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automaattisesti luo asiakkaan lasku myyntitilauksen sulkemisen jälkeen (uudessa laskussa on sama summa kuin tilauksessa)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=Lippua luotaessa automaattisesti luo väliintulo.
@@ -16,9 +16,9 @@ descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Luokittele linkitetyt lähdemyyntitil
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Luokittele linkitetyt lähdemyyntitilaukset toimitetuiksi, kun lähetys vahvistetaan (ja, jos kaikkien lähetysten toimitettu määrä on sama kuin päivitettävässä tilauksessa)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Luokittele linkitetyn lähteen myyntitilaus lähetetyksi, kun lähetys on suljettu (ja, jos kaikkien lähetysten lähetysmäärä on sama kuin päivitettävässä tilauksessa)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Luokittele linkitetty lähde Toimittaja tarjous laskutetuksi, kun ostolasku on vahvistettu (<span> class='notranslate'>ja</span>, jos laskun summa on sama kuin linkitettyjen ehdotusten kokonaissumma)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposals)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Luokittele linkitetty lähde Hankinta tilaus laskutetuksi, kun ostolasku on vahvistettu (<span class='notranslate'>ja laskun summa on sama kuin linkitettyjen tilausten kokonaissumma)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked orders)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Luokittele linkitetyn lähteen Hankinta tilaus vastaanotetuksi, kun vastaanotto on vahvistettu (ja, jos kaikkien vastaanottojen vastaanottama määrä on sama kuin kohdassa Hankinta päivitysjärjestys)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Luokittele linkitetyn lähteen Hankinta tilaus vastaanotetuksi, kun vastaanotto suljetaan (ja, jos kaikkien vastaanottojen vastaanottama määrä on sama kuin kohdassa Hankinta päivitysjärjestys)
 # Autoclassify shipment

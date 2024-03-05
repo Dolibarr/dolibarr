@@ -81,7 +81,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 		}
 
 		if (getDolGlobalString('INVOICE_NUMBERING_TERRE_FORCE_PREFIX')) {
-			$this->prefixinvoice = $conf->global->INVOICE_NUMBERING_TERRE_FORCE_PREFIX;
+			$this->prefixinvoice = getDolGlobalString('INVOICE_NUMBERING_TERRE_FORCE_PREFIX');
 		}
 	}
 
@@ -201,7 +201,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 * @param   Societe		$objsoc		Object third party
 	 * @param   Facture		$invoice	Object invoice
 	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string       			Next ref value or last ref if $mode is 'last', <= 0 if KO
+	 * @return  string|int<-1,0>       	Next ref value or last ref if $mode is 'last', -1 or 0 if KO
 	 */
 	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{
@@ -262,7 +262,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 			return $ref;
 		} elseif ($mode == 'next') {
 			$date = $invoice->date; // This is invoice date (not creation date)
-			$yymm = strftime("%y%m", $date);
+			$yymm = dol_print_date($date, "%y%m");
 
 			if ($max >= (pow(10, 4) - 1)) {
 				$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
@@ -273,7 +273,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 			dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
 			return $prefix.$yymm."-".$num;
 		} else {
-			dol_print_error('', 'Bad parameter for getNextValue');
+			dol_print_error(null, 'Bad parameter for getNextValue');
 		}
 
 		return 0;
@@ -285,7 +285,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 *  @param  Societe     $objsoc         Object third party
 	 *  @param  string      $objforref      Object for number to search
 	 *  @param   string     $mode           'next' for next value or 'last' for last value
-	 *  @return  string                     Next free value
+	 *  @return  string|int<-1,0>           Next free value, -1 or 0 if error
 	 */
 	public function getNumRef($objsoc, $objforref, $mode = 'next')
 	{

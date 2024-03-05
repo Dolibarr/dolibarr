@@ -69,7 +69,7 @@ if ($dolibarr_main_db_type == "sqlite") {
 if ($dolibarr_main_db_type == "sqlite3") {
 	$choix = 5;
 }
-//if (empty($choix)) dol_print_error('','Database type '.$dolibarr_main_db_type.' not supported into step2.php page');
+//if (empty($choix)) dol_print_error(null,'Database type '.$dolibarr_main_db_type.' not supported into step2.php page');
 
 
 // Now we load forced values from install.forced.php file.

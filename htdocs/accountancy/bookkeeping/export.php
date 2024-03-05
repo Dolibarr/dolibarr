@@ -43,55 +43,55 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "compta"));
 
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bookkeepinglist';
-$search_mvt_num = GETPOST('search_mvt_num', 'int');
+$search_mvt_num = GETPOSTINT('search_mvt_num');
 $search_doc_type = GETPOST("search_doc_type", 'alpha');
 $search_doc_ref = GETPOST("search_doc_ref", 'alpha');
-$search_date_startyear =  GETPOST('search_date_startyear', 'int');
-$search_date_startmonth =  GETPOST('search_date_startmonth', 'int');
-$search_date_startday =  GETPOST('search_date_startday', 'int');
-$search_date_endyear =  GETPOST('search_date_endyear', 'int');
-$search_date_endmonth =  GETPOST('search_date_endmonth', 'int');
-$search_date_endday =  GETPOST('search_date_endday', 'int');
+$search_date_startyear =  GETPOSTINT('search_date_startyear');
+$search_date_startmonth =  GETPOSTINT('search_date_startmonth');
+$search_date_startday =  GETPOSTINT('search_date_startday');
+$search_date_endyear =  GETPOSTINT('search_date_endyear');
+$search_date_endmonth =  GETPOSTINT('search_date_endmonth');
+$search_date_endday =  GETPOSTINT('search_date_endday');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
-$search_date_creation_startyear =  GETPOST('search_date_creation_startyear', 'int');
-$search_date_creation_startmonth =  GETPOST('search_date_creation_startmonth', 'int');
-$search_date_creation_startday =  GETPOST('search_date_creation_startday', 'int');
-$search_date_creation_endyear =  GETPOST('search_date_creation_endyear', 'int');
-$search_date_creation_endmonth =  GETPOST('search_date_creation_endmonth', 'int');
-$search_date_creation_endday =  GETPOST('search_date_creation_endday', 'int');
+$search_doc_date = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+$search_date_creation_startyear =  GETPOSTINT('search_date_creation_startyear');
+$search_date_creation_startmonth =  GETPOSTINT('search_date_creation_startmonth');
+$search_date_creation_startday =  GETPOSTINT('search_date_creation_startday');
+$search_date_creation_endyear =  GETPOSTINT('search_date_creation_endyear');
+$search_date_creation_endmonth =  GETPOSTINT('search_date_creation_endmonth');
+$search_date_creation_endday =  GETPOSTINT('search_date_creation_endday');
 $search_date_creation_start = dol_mktime(0, 0, 0, $search_date_creation_startmonth, $search_date_creation_startday, $search_date_creation_startyear);
 $search_date_creation_end = dol_mktime(23, 59, 59, $search_date_creation_endmonth, $search_date_creation_endday, $search_date_creation_endyear);
-$search_date_modification_startyear =  GETPOST('search_date_modification_startyear', 'int');
-$search_date_modification_startmonth =  GETPOST('search_date_modification_startmonth', 'int');
-$search_date_modification_startday =  GETPOST('search_date_modification_startday', 'int');
-$search_date_modification_endyear =  GETPOST('search_date_modification_endyear', 'int');
-$search_date_modification_endmonth =  GETPOST('search_date_modification_endmonth', 'int');
-$search_date_modification_endday =  GETPOST('search_date_modification_endday', 'int');
+$search_date_modification_startyear =  GETPOSTINT('search_date_modification_startyear');
+$search_date_modification_startmonth =  GETPOSTINT('search_date_modification_startmonth');
+$search_date_modification_startday =  GETPOSTINT('search_date_modification_startday');
+$search_date_modification_endyear =  GETPOSTINT('search_date_modification_endyear');
+$search_date_modification_endmonth =  GETPOSTINT('search_date_modification_endmonth');
+$search_date_modification_endday =  GETPOSTINT('search_date_modification_endday');
 $search_date_modification_start = dol_mktime(0, 0, 0, $search_date_modification_startmonth, $search_date_modification_startday, $search_date_modification_startyear);
 $search_date_modification_end = dol_mktime(23, 59, 59, $search_date_modification_endmonth, $search_date_modification_endday, $search_date_modification_endyear);
-$search_date_export_startyear =  GETPOST('search_date_export_startyear', 'int');
-$search_date_export_startmonth =  GETPOST('search_date_export_startmonth', 'int');
-$search_date_export_startday =  GETPOST('search_date_export_startday', 'int');
-$search_date_export_endyear =  GETPOST('search_date_export_endyear', 'int');
-$search_date_export_endmonth =  GETPOST('search_date_export_endmonth', 'int');
-$search_date_export_endday =  GETPOST('search_date_export_endday', 'int');
+$search_date_export_startyear =  GETPOSTINT('search_date_export_startyear');
+$search_date_export_startmonth =  GETPOSTINT('search_date_export_startmonth');
+$search_date_export_startday =  GETPOSTINT('search_date_export_startday');
+$search_date_export_endyear =  GETPOSTINT('search_date_export_endyear');
+$search_date_export_endmonth =  GETPOSTINT('search_date_export_endmonth');
+$search_date_export_endday =  GETPOSTINT('search_date_export_endday');
 $search_date_export_start = dol_mktime(0, 0, 0, $search_date_export_startmonth, $search_date_export_startday, $search_date_export_startyear);
 $search_date_export_end = dol_mktime(23, 59, 59, $search_date_export_endmonth, $search_date_export_endday, $search_date_export_endyear);
-$search_date_validation_startyear =  GETPOST('search_date_validation_startyear', 'int');
-$search_date_validation_startmonth =  GETPOST('search_date_validation_startmonth', 'int');
-$search_date_validation_startday =  GETPOST('search_date_validation_startday', 'int');
-$search_date_validation_endyear =  GETPOST('search_date_validation_endyear', 'int');
-$search_date_validation_endmonth =  GETPOST('search_date_validation_endmonth', 'int');
-$search_date_validation_endday =  GETPOST('search_date_validation_endday', 'int');
+$search_date_validation_startyear =  GETPOSTINT('search_date_validation_startyear');
+$search_date_validation_startmonth =  GETPOSTINT('search_date_validation_startmonth');
+$search_date_validation_startday =  GETPOSTINT('search_date_validation_startday');
+$search_date_validation_endyear =  GETPOSTINT('search_date_validation_endyear');
+$search_date_validation_endmonth =  GETPOSTINT('search_date_validation_endmonth');
+$search_date_validation_endday =  GETPOSTINT('search_date_validation_endday');
 $search_date_validation_start = dol_mktime(0, 0, 0, $search_date_validation_startmonth, $search_date_validation_startday, $search_date_validation_startyear);
 $search_date_validation_end = dol_mktime(23, 59, 59, $search_date_validation_endmonth, $search_date_validation_endday, $search_date_validation_endyear);
 $search_import_key = GETPOST("search_import_key", 'alpha');
@@ -104,7 +104,7 @@ if (GETPOST("button_export_file_x") || GETPOST("button_export_file.x") || GETPOS
 	$action = 'export_file';
 }
 
-$search_account_category = GETPOST('search_account_category', 'int');
+$search_account_category = GETPOSTINT('search_account_category');
 
 $search_accountancy_code = GETPOST("search_accountancy_code", 'alpha');
 $search_accountancy_code_start = GETPOST('search_accountancy_code_start', 'alpha');
@@ -134,11 +134,11 @@ $search_lettering_code = GETPOST('search_lettering_code', 'alpha');
 $search_not_reconciled = GETPOST('search_not_reconciled', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $optioncss = GETPOST('optioncss', 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0) {
 	$page = 0;
 }
@@ -159,7 +159,7 @@ $hookmanager->initHooks(array('bookkeepingexport'));
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
-if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOST('page', 'int') == '' && !GETPOST('noreset', 'int') && $user->hasRight('accounting', 'mouvements', 'export')) {
+if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOSTINT('page') == '' && !GETPOSTINT('noreset') && $user->hasRight('accounting', 'mouvements', 'export')) {
 	if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('restore_lastsearch_values') && !GETPOST('search_accountancy_code_start')) {
 		$query = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 		$query .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."' limit 1";
@@ -352,7 +352,7 @@ if (empty($reshook)) {
 				$listofaccountsforgroup2[] = "'".$db->escape($tmpval['id'])."'";
 			}
 		}
-		$filter['t.search_accounting_code_in'] = join(',', $listofaccountsforgroup2);
+		$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
 		$param .= '&search_account_category='.urlencode($search_account_category);
 	}
 	if (!empty($search_accountancy_code)) {
@@ -459,7 +459,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setreexport') {
-		$setreexport = GETPOST('value', 'int');
+		$setreexport = GETPOSTINT('value');
 		if (!dolibarr_set_const($db, "ACCOUNTING_REEXPORT", $setreexport, 'yesno', 0, '', $conf->entity)) {
 			$error++;
 		}
@@ -505,6 +505,7 @@ $sql .= " t.label_operation,";
 $sql .= " t.debit,";
 $sql .= " t.credit,";
 $sql .= " t.lettering_code,";
+$sql .= " t.date_lettering,";
 $sql .= " t.montant as amount,";
 $sql .= " t.sens,";
 $sql .= " t.fk_user_author,";
@@ -513,6 +514,7 @@ $sql .= " t.code_journal,";
 $sql .= " t.journal_label,";
 $sql .= " t.piece_num,";
 $sql .= " t.date_creation,";
+$sql .= " t.date_lim_reglement,";
 $sql .= " t.tms as date_modification,";
 $sql .= " t.date_export,";
 $sql .= " t.date_validated as date_validation,";
@@ -551,7 +553,7 @@ if (count($filter) > 0) {
 			$sqlwhere[] = 't.lettering_code IS NULL';
 		} elseif ($key == 't.code_journal' && !empty($value)) {
 			if (is_array($value)) {
-				$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+				$sqlwhere[] = natural_search("t.code_journal", implode(',', $value), 3, 1);
 			} else {
 				$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 			}
@@ -575,18 +577,46 @@ if (count($sqlwhere) > 0) {
 // Export into a file with format defined into setup (FEC, CSV, ...)
 // Must be after definition of $sql
 if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements', 'export')) {
-	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). fetchAll() currently consumes too much memory on large export.
-	// Replace this with the query($sql) and loop on each line to export them.
-	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', (!getDolGlobalString('ACCOUNTING_REEXPORT') ? 0 : 1));
+	// Export files then exit
+	$accountancyexport = new AccountancyExport($db);
+
+	$error = 0;
+	$nbtotalofrecords = 0;
+
+	// Open transaction to read lines to export, export them and update field date_export or date_validated
+	$db->begin();
+
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	$db->free($resql);
+
+	//$sqlforexport = $sql;
+	//$sqlforexport .= $db->order($sortfield, $sortorder);
+
+
+	// TODO Call the fetchAll for a $limit and $offset
+	// Replace the fetchAll to get all ->line followed by call to ->export(). fetchAll() currently consumes too much memory on large export.
+	// Replace this with the query($sqlforexport) on a limited block and loop on each line to export them.
+	$limit = 0;
+	$offset = 0;
+	$result = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter, 'AND', (getDolGlobalString('ACCOUNTING_REEXPORT') ? 1 : 0));
 
 	if ($result < 0) {
+		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
-		// Export files then exit
-		$accountancyexport = new AccountancyExport($db);
-
-		$formatexport = GETPOST('formatexport', 'int');
+		$formatexport = GETPOSTINT('formatexport');
 		$notexportlettering = GETPOST('notexportlettering', 'alpha');
+
 
 		if (!empty($notexportlettering)) {
 			if (is_array($object->lines)) {
@@ -602,9 +632,9 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 		$withAttachment = !empty(trim(GETPOST('notifiedexportfull', 'alphanohtml'))) ? 1 : 0;
 
 		// Output data on screen or download
-		$result = $accountancyexport->export($object->lines, $formatexport, $withAttachment);
+		//$result = $accountancyexport->export($object->lines, $formatexport, $withAttachment);
+		$result = $accountancyexport->export($object->lines, $formatexport, $withAttachment, 1, 1, 1);
 
-		$error = 0;
 		if ($result < 0) {
 			$error++;
 		} else {
@@ -612,11 +642,9 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 				if (is_array($object->lines)) {
 					dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported", LOG_DEBUG);
 
-					// Specify as export : update field date_export or date_validated
-					$db->begin();
-
 					// TODO Merge update for each line into one global using rowid IN (list of movement ids)
 					foreach ($object->lines as $movement) {
+						// Update the line to set date_export and/or date_validated (if not already set !)
 						$now = dol_now();
 
 						$setfields = '';
@@ -629,7 +657,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 
 						if ($setfields) {
 							$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
-							$sql .= " SET ".$setfields;
+							$sql .= " SET ".$db->sanitize($setfields);
 							$sql .= " WHERE rowid = ".((int) $movement->id);
 
 							$result = $db->query($sql);
@@ -640,23 +668,45 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 						}
 					}
 
-					if (!$error) {
-						$db->commit();
-					} else {
-						$error++;
+					if ($error) {
 						$accountancyexport->errors[] = $langs->trans('NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated');
-						$db->rollback();
 					}
 				}
 			}
 		}
-
-		if ($error) {
-			setEventMessages('', $accountancyexport->errors, 'errors');
-			header('Location: '.$_SERVER['PHP_SELF']);
-		}
-		exit(); // download or show errors
 	}
+
+	if (!$error) {
+		$db->commit();
+
+		$downloadFilePath = $accountancyexport->generatedfiledata['downloadFilePath'];
+		$downloadFileMimeType = $accountancyexport->generatedfiledata['downloadFileMimeType'];
+		$downloadFileFullName = $accountancyexport->generatedfiledata['downloadFileFullName'];
+
+		// No error, we can output the file
+		top_httphead($downloadFileMimeType);
+
+		header('Content-Description: File Transfer');
+		// Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, attachment=need user action to open)
+		$attachment = 1;
+		if ($attachment) {
+			header('Content-Disposition: attachment; filename="'.$downloadFileFullName.'"');
+		} else {
+			header('Content-Disposition: inline; filename="'.$downloadFileFullName.'"');
+		}
+		// Ajout directives pour resoudre bug IE
+		header('Cache-Control: Public, must-revalidate');
+		header('Pragma: public');
+		header('Content-Length: ' . dol_filesize($downloadFilePath));
+
+		readfileLowMemory($downloadFilePath);
+	} else {
+		$db->rollback();
+
+		setEventMessages('', $accountancyexport->errors, 'errors');
+		header('Location: '.$_SERVER['PHP_SELF']);
+	}
+	exit(); // download or show errors
 }
 
 
@@ -848,7 +898,7 @@ if (!getDolGlobalString('ACCOUNTING_REEXPORT')) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 if ($massactionbutton && $contextpage != 'poslist') {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -1087,7 +1137,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print "</tr>\n";
 
 
-$line = new BookKeepingLine();
+$line = new BookKeepingLine($db);
 
 // Loop on record
 // --------------------------------------------------------------------

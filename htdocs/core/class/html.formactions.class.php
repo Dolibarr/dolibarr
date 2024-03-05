@@ -253,7 +253,7 @@ class FormActions
 					// Ref
 					print '<td class="nowraponall">'.$actioncomm->getNomUrl(1, -1).'</td>';
 
-					// Onwer
+					// Owner
 					print '<td class="nowraponall tdoverflowmax125">';
 					if (!empty($actioncomm->userownerid)) {
 						if (isset($cacheusers[$actioncomm->userownerid]) && is_object($cacheusers[$actioncomm->userownerid])) {

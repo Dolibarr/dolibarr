@@ -50,11 +50,11 @@ if (isModEnabled('productbatch')) {
 }
 
 	// Security check
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 $ref = GETPOST('ref');
-$lineid = GETPOST('lineid', 'int');
+$lineid = GETPOSTINT('lineid');
 $action = GETPOST('action', 'aZ09');
-$fk_default_warehouse = GETPOST('fk_default_warehouse', 'int');
+$fk_default_warehouse = GETPOSTINT('fk_default_warehouse');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
@@ -70,7 +70,7 @@ $hookmanager->initHooks(array('ordersupplierdispatch'));
 // Recuperation de l'id de projet
 $projectid = 0;
 if (GETPOSTISSET("projectid")) {
-	$projectid = GETPOST("projectid", 'int');
+	$projectid = GETPOSTINT("projectid");
 }
 
 $object = new Reception($db);
@@ -98,11 +98,11 @@ if ($id > 0 || !empty($ref)) {
 }
 
 if (empty($conf->reception->enabled)) {
-	$permissiontoreceive = $user->rights->fournisseur->commande->receptionner;
-	$permissiontocontrol = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande->receptionner)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande_advance->check)));
+	$permissiontoreceive = $user->hasRight('fournisseur', 'commande', 'receptionner');
+	$permissiontocontrol = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('fournisseur', 'commande', 'receptionner')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('fournisseur', 'commande_advance', 'check')));
 } else {
-	$permissiontoreceive = $user->rights->reception->creer;
-	$permissiontocontrol = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->creer)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->reception_advance->validate)));
+	$permissiontoreceive = $user->hasRight('reception', 'creer');
+	$permissiontocontrol = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'reception_advance', 'validate')));
 }
 
 // $id is id of a reception
@@ -161,13 +161,13 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 			$dDLC = '';
 			if ($modebatch == "batch") {
 				$lot = GETPOST('lot_number_'.$reg[1].'_'.$reg[2]);
-				$dDLUO = dol_mktime(12, 0, 0, GETPOST('dluo_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dluo_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dluo_'.$reg[1].'_'.$reg[2].'year', 'int'));
-				$dDLC = dol_mktime(12, 0, 0, GETPOST('dlc_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'year', 'int'));
+				$dDLUO = dol_mktime(12, 0, 0, GETPOSTINT('dluo_'.$reg[1].'_'.$reg[2].'month'), GETPOSTINT('dluo_'.$reg[1].'_'.$reg[2].'day'), GETPOSTINT('dluo_'.$reg[1].'_'.$reg[2].'year'));
+				$dDLC = dol_mktime(12, 0, 0, GETPOSTINT('dlc_'.$reg[1].'_'.$reg[2].'month'), GETPOSTINT('dlc_'.$reg[1].'_'.$reg[2].'day'), GETPOSTINT('dlc_'.$reg[1].'_'.$reg[2].'year'));
 			}
 
 			if (getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT')) {
 				if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
-					$dto = GETPOST("dto_".$reg[1].'_'.$reg[2], 'int');
+					$dto = GETPOSTINT("dto_".$reg[1].'_'.$reg[2]);
 					if (!empty($dto)) {
 						$unit_price = price2num(GETPOST("pu_".$reg[1]) * (100 - $dto) / 100, 'MU');
 					}
@@ -177,7 +177,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 
 			// We ask to move a qty
 			if (($modebatch == "batch" && GETPOST($qty) > 0) || ($modebatch == "barcode" && GETPOST($qty) != 0)) {
-				if (!(GETPOST($ent, 'int') > 0)) {
+				if (!(GETPOSTINT($ent) > 0)) {
 					dol_syslog('No dispatch for line '.$key.' as no warehouse was chosen.');
 					$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').' '.($numline);
 					setEventMessages($langs->trans('ErrorFieldRequired', $text), null, 'errors');
@@ -193,7 +193,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 						} else {
 							$qtystart = $supplierorderdispatch->qty;
 							$supplierorderdispatch->qty = GETPOST($qty);
-							$supplierorderdispatch->fk_entrepot = GETPOST($ent, 'int');
+							$supplierorderdispatch->fk_entrepot = GETPOSTINT($ent);
 							if ($modebatch == "batch") {
 								$supplierorderdispatch->eatby = $dDLUO;
 								$supplierorderdispatch->sellby = $dDLC;
@@ -205,7 +205,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 								$error++;
 							}
 
-							// If module stock is enabled and the stock decrease is done on edtion of this page
+							// If module stock is enabled and the stock decrease is done on edition of this page
 							/*
 							if (!$error && GETPOST($ent, 'int') > 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
 								$mouv = new MouvementStock($db);
@@ -245,7 +245,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 							*/
 						}
 					} else {
-						$result = $objectsrc->dispatchProduct($user, GETPOST($prod, 'int'), GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), $dDLUO, $dDLC, $lot, GETPOST($fk_commandefourndet, 'int'), 0, $object->id);
+						$result = $objectsrc->dispatchProduct($user, GETPOSTINT($prod), GETPOST($qty), GETPOSTINT($ent), GETPOST($pu), GETPOST('comment'), $dDLUO, $dDLC, $lot, GETPOSTINT($fk_commandefourndet), 0, $object->id);
 						if ($result < 0) {
 							setEventMessages($objectsrc->error, $objectsrc->errors, 'errors');
 							$error++;
@@ -254,7 +254,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 
 					if (!$error && getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT')) {
 						if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
-							$dto = price2num(GETPOST("dto_".$reg[1].'_'.$reg[2], 'int'), '');
+							$dto = price2num(GETPOSTINT("dto_".$reg[1].'_'.$reg[2]), '');
 							if (empty($dto)) {
 								$dto = 0;
 							}
@@ -267,7 +267,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 								$sql .= ", price=".price2num(GETPOST($pu), 'MU')."*quantity";
 								$sql .= ", remise_percent = ".((float) $dto);
 								$sql .= " WHERE fk_soc=".((int) $object->socid);
-								$sql .= " AND fk_product=".((int) GETPOST($prod, 'int'));
+								$sql .= " AND fk_product=".(GETPOSTINT($prod));
 
 								$resql = $db->query($sql);
 							}
@@ -389,7 +389,7 @@ if ($id > 0 || !empty($ref)) {
 	print '<table class="border tableforfield" width="100%">';
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
+	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('order')) {
 		print '<tr><td>';
 		print $langs->trans("RefOrder").'</td>';
 		print '<td colspan="3">';
@@ -803,7 +803,7 @@ if ($id > 0 || !empty($ref)) {
 								// Qty to dispatch
 								print '<td class="right">';
 								print '<a href="#" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
-								print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-type="'.$type.'" data-index="'.$i.'" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : $objd->qty).'" data-expected="'.$objd->qty.'">';
+								print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-type="'.$type.'" data-index="'.$i.'" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOSTINT('qty'.$suffix) : $objd->qty).'" data-expected="'.$objd->qty.'">';
 								print '</td>';
 								print '<td>';
 								if (isModEnabled('productbatch') && $objp->tobatch > 0) {
@@ -976,7 +976,7 @@ if ($id > 0 || !empty($ref)) {
 							// Qty to dispatch
 							print '<td class="right">';
 							print '<a href="#" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
-							print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-index="'.$i.'" data-type="text" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (!getDolGlobalString('SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO') ? $remaintodispatch : 0)).'" data-expected="'.$remaintodispatch.'">';
+							print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-index="'.$i.'" data-type="text" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOSTINT('qty'.$suffix) : (!getDolGlobalString('SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO') ? $remaintodispatch : 0)).'" data-expected="'.$remaintodispatch.'">';
 							print '</td>';
 							print '<td>';
 							if (isModEnabled('productbatch') && $objp->tobatch > 0) {

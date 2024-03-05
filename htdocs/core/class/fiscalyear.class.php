@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2020       OScss-Shop          <support@oscss-shop.fr>
- * Copyright (C) 2023       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -317,7 +317,7 @@ class Fiscalyear extends CommonObject
 		global $conf, $langs, $user;
 
 		if (empty($this->ref)) {
-			$this->ref = $this->id;
+			$this->ref = (string) $this->id;
 		}
 
 		if (!empty($conf->dol_no_mouse_hover)) {

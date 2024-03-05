@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Florian Henry   <florian.henry@open-concept.pro>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +62,6 @@ class ProductCustomerPrice extends CommonObject
 	public $entity;
 
 	public $datec = '';
-	public $tms = '';
 
 	/**
 	 * @var int ID
@@ -105,7 +105,7 @@ class ProductCustomerPrice extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db handler
+	 * @param DoliDB $db handler
 	 */
 	public function __construct($db)
 	{
@@ -128,13 +128,13 @@ class ProductCustomerPrice extends CommonObject
 		// Clean parameters
 
 		if (isset($this->entity)) {
-			$this->entity = trim($this->entity);
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->fk_product)) {
-			$this->fk_product = trim($this->fk_product);
+			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->fk_soc)) {
-			$this->fk_soc = trim($this->fk_soc);
+			$this->fk_soc = (int) $this->fk_soc;
 		}
 		if (isset($this->ref_customer)) {
 			$this->ref_customer = trim($this->ref_customer);
@@ -167,7 +167,7 @@ class ProductCustomerPrice extends CommonObject
 			$this->localtax2_tx = trim($this->localtax2_tx);
 		}
 		if (isset($this->fk_user)) {
-			$this->fk_user = trim($this->fk_user);
+			$this->fk_user = (int) $this->fk_user;
 		}
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
@@ -421,15 +421,15 @@ class ProductCustomerPrice extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) {				// To allow $filter['YEAR(s.dated)']=>$year
-					$sql .= " AND ".$key." = '".$this->db->escape($value)."'";
+					$sql .= " AND ".$this->db->sanitize($key)." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'soc.nom') {
-					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
+					$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 				} elseif ($key == 'prod.ref' || $key == 'prod.label') {
-					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
+					$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 				} elseif ($key == 't.price' || $key == 't.price_ttc') {
-					$sql .= " AND ".$key." LIKE '%".price2num($value)."%'";
+					$sql .= " AND ".$this->db->sanitize($key)." = ".((float) price2num($value));
 				} else {
-					$sql .= " AND ".$key." = ".((int) $value);
+					$sql .= " AND ".$this->db->sanitize($key)." = ".((int) $value);
 				}
 			}
 		}
@@ -598,7 +598,7 @@ class ProductCustomerPrice extends CommonObject
 	 * @param int $forceupdateaffiliate update price on each soc child
 	 * @return int Return integer <0 if KO, >0 if OK
 	 */
-	public function update($user = 0, $notrigger = 0, $forceupdateaffiliate = 0)
+	public function update(User $user, $notrigger = 0, $forceupdateaffiliate = 0)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -606,13 +606,13 @@ class ProductCustomerPrice extends CommonObject
 		// Clean parameters
 
 		if (isset($this->entity)) {
-			$this->entity = trim($this->entity);
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->fk_product)) {
-			$this->fk_product = trim($this->fk_product);
+			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->fk_soc)) {
-			$this->fk_soc = trim($this->fk_soc);
+			$this->fk_soc = (int) $this->fk_soc;
 		}
 		if (isset($this->ref_customer)) {
 			$this->ref_customer = trim($this->ref_customer);
@@ -645,7 +645,7 @@ class ProductCustomerPrice extends CommonObject
 			$this->localtax2_tx = trim($this->localtax2_tx);
 		}
 		if (isset($this->fk_user)) {
-			$this->fk_user = trim($this->fk_user);
+			$this->fk_user = (int) $this->fk_user;
 		}
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
@@ -1001,17 +1001,17 @@ class ProductCustomerPrice extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 
-		$this->entity = '';
+		$this->entity = 0;
 		$this->datec = '';
-		$this->tms = '';
-		$this->fk_product = '';
-		$this->fk_soc = '';
+		$this->tms = dol_now();
+		$this->fk_product = 0;
+		$this->fk_soc = 0;
 		$this->ref_customer = '';
 		$this->price = '';
 		$this->price_ttc = '';
@@ -1023,8 +1023,10 @@ class ProductCustomerPrice extends CommonObject
 		$this->recuperableonly = '';
 		$this->localtax1_tx = '';
 		$this->localtax2_tx = '';
-		$this->fk_user = '';
+		$this->fk_user = 0;
 		$this->import_key = '';
+
+		return 1;
 	}
 }
 

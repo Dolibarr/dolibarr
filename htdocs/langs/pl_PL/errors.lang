@@ -300,7 +300,7 @@ ErrorAjaxRequestFailed=Żądanie nie powiodło się
 ErrorThirpdartyOrMemberidIsMandatory=Osoba trzecia lub członek spółki jest obowiązkowa
 ErrorFailedToWriteInTempDirectory=Nie udało się zapisać w katalogu tymczasowym
 ErrorQuantityIsLimitedTo=Ilość jest ograniczona do %s
-ErrorFailedToLoadThirdParty=Nie udało się znaleźć/załadować strony trzeciej z id=%s, email=%s, name=<span class='notranslate'> %s</rozpiętość>
+ErrorFailedToLoadThirdParty=Failed to find/load third party from id=%s, email=%s, name=%s
 ErrorThisPaymentModeIsNotSepa=Ten sposób płatności nie jest kontem bankowym
 ErrorStripeCustomerNotFoundCreateFirst=Klient Stripe nie jest ustawiony dla tej strony trzeciej (lub ma ustawioną wartość usuniętą po stronie Stripe). Najpierw utwórz go (lub dołącz ponownie).
 ErrorCharPlusNotSupportedByImapForSearch=Wyszukiwanie IMAP nie jest w stanie przeszukać nadawcy ani odbiorcy ciągu zawierającego znak +

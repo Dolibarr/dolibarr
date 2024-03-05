@@ -34,22 +34,22 @@ $error = 0;
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "accountancy", "compta"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $cancel = GETPOST('cancel', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$cat_id = GETPOST('account_category', 'int');
+$cat_id = GETPOSTINT('account_category');
 $selectcpt = GETPOST('cpt_bk', 'array');
-$cpt_id = GETPOST('cptid', 'int');
+$cpt_id = GETPOSTINT('cptid');
 
 if ($cat_id == 0) {
 	$cat_id = null;
 }
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -113,9 +113,10 @@ if ($action == 'delete') {
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
+$title= $langs->trans('AccountingCategory');
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxHeader('', $langs->trans('AccountingCategory'), $help_url);
+llxHeader('', $title, $help_url);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 $titlepicto = 'setup';

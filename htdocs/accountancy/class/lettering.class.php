@@ -282,10 +282,10 @@ class Lettering extends BookKeeping
 	/**
 	 *
 	 * @param	array		$ids			ids array
-	 * @param	boolean		$notrigger		no trigger
+	 * @param	int			$notrigger		no trigger
 	 * @return	int
 	 */
-	public function updateLettering($ids = array(), $notrigger = false)
+	public function updateLettering($ids = array(), $notrigger = 0)
 	{
 		$error = 0;
 
@@ -363,10 +363,10 @@ class Lettering extends BookKeeping
 	/**
 	 *
 	 * @param	array		$ids			ids array
-	 * @param	boolean		$notrigger		no trigger
+	 * @param	int			$notrigger		no trigger
 	 * @return	int
 	 */
-	public function deleteLettering($ids, $notrigger = false)
+	public function deleteLettering($ids, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -671,11 +671,11 @@ class Lettering extends BookKeeping
 		$bookkeeping_lines_by_type = array();
 		foreach (self::$doc_type_infos as $doc_type => $doc_type_info) {
 			// Get all fk_doc by doc_type from bank ids
-			$sql = "SELECT DISTINCT dp." . $doc_type_info['doc_payment_table_fk_doc'] . " AS fk_doc";
-			$sql .= " FROM " . MAIN_DB_PREFIX . $doc_type_info['payment_table'] . " AS p";
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $doc_type_info['doc_payment_table'] . " AS dp ON dp." . $doc_type_info['doc_payment_table_fk_payment'] . " = p.rowid";
-			$sql .= " WHERE p." . $doc_type_info['payment_table_fk_bank'] . " IN (" . $this->db->sanitize(implode(',', $bank_ids)) . ")";
-			$sql .= " AND dp." . $doc_type_info['doc_payment_table_fk_doc'] . " > 0";
+			$sql = "SELECT DISTINCT dp." . $this->db->sanitize($doc_type_info['doc_payment_table_fk_doc']) . " AS fk_doc";
+			$sql .= " FROM " . MAIN_DB_PREFIX . $this->db->sanitize($doc_type_info['payment_table']) . " AS p";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($doc_type_info['doc_payment_table']) . " AS dp ON dp." . $this->db->sanitize($doc_type_info['doc_payment_table_fk_payment']) . " = p.rowid";
+			$sql .= " WHERE p." . $this->db->sanitize($doc_type_info['payment_table_fk_bank']) . " IN (" . $this->db->sanitize(implode(',', $bank_ids)) . ")";
+			$sql .= " AND dp." . $this->db->sanitize($doc_type_info['doc_payment_table_fk_doc']) . " > 0";
 
 			dol_syslog(__METHOD__ . " - Get all fk_doc by doc_type from list of bank ids for '" . $doc_type . "'", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -726,11 +726,11 @@ class Lettering extends BookKeeping
 		$bank_ids = array();
 
 		// Get all fk_doc by doc_type from bank ids
-		$sql = "SELECT DISTINCT p." . $doc_type_info['payment_table_fk_bank'] . " AS fk_doc";
-		$sql .= " FROM " . MAIN_DB_PREFIX . $doc_type_info['payment_table'] . " AS p";
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $doc_type_info['doc_payment_table'] . " AS dp ON dp." . $doc_type_info['doc_payment_table_fk_payment'] . " = p.rowid";
-		$sql .= " WHERE dp." . $doc_type_info['doc_payment_table_fk_doc'] . " IN (" . $this->db->sanitize(implode(',', $document_ids)) . ")";
-		$sql .= " AND p." . $doc_type_info['payment_table_fk_bank'] . " > 0";
+		$sql = "SELECT DISTINCT p." . $this->db->sanitize($doc_type_info['payment_table_fk_bank']) . " AS fk_doc";
+		$sql .= " FROM " . MAIN_DB_PREFIX . $this->db->sanitize($doc_type_info['payment_table']) . " AS p";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($doc_type_info['doc_payment_table']) . " AS dp ON dp." . $this->db->sanitize($doc_type_info['doc_payment_table_fk_payment']) . " = p.rowid";
+		$sql .= " WHERE dp." . $this->db->sanitize($doc_type_info['doc_payment_table_fk_doc']) . " IN (" . $this->db->sanitize(implode(',', $document_ids)) . ")";
+		$sql .= " AND p." . $this->db->sanitize($doc_type_info['payment_table_fk_bank']) . " > 0";
 
 		dol_syslog(__METHOD__ . " - Get all bank ids from list of document ids of a type '" . $doc_type . "'", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -781,10 +781,10 @@ class Lettering extends BookKeeping
 		$link_by_element = array();
 		$element_by_link = array();
 		foreach ($doc_type_info['linked_info'] as $linked_info) {
-			$sql = "SELECT DISTINCT tl2." . $linked_info['fk_link'] . " AS fk_link, tl2." . $linked_info['fk_doc'] . " AS fk_doc";
-			$sql .= " FROM " . MAIN_DB_PREFIX . $linked_info['table'] . " AS tl";
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $linked_info['table'] . " AS tl2 ON tl2." . $linked_info['fk_link'] . " = tl." . $linked_info['fk_link'];
-			$sql .= " WHERE tl." . $linked_info['fk_doc'] . " IN (" . $this->db->sanitize(implode(',', $document_ids)) . ")";
+			$sql = "SELECT DISTINCT tl2." . $this->db->sanitize($linked_info['fk_link']) . " AS fk_link, tl2." . $this->db->sanitize($linked_info['fk_doc']) . " AS fk_doc";
+			$sql .= " FROM " . MAIN_DB_PREFIX . $this->db->sanitize($linked_info['table']) . " AS tl";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($linked_info['table']) . " AS tl2 ON tl2." . $this->db->sanitize($linked_info['fk_link']) . " = tl." . $this->db->sanitize($linked_info['fk_link']);
+			$sql .= " WHERE tl." . $this->db->sanitize($linked_info['fk_doc']) . " IN (" . $this->db->sanitize(implode(',', $document_ids)) . ")";
 
 			dol_syslog(__METHOD__ . " - Get document lines", LOG_DEBUG);
 			$resql = $this->db->query($sql);

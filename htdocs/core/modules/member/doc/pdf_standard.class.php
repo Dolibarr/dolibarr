@@ -5,6 +5,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo	<jlb@j1b.org>
  * Copyright (C) 2006-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 Francis Appels  <francis.appels@yahoo.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,7 +120,7 @@ class pdf_standard extends CommonStickerGenerator
 
 		$member = new Adherent($db);
 		$member->id = $idmember;
-		$member->ref = $idmember;
+		$member->ref = (string) $idmember;
 
 		// Define photo
 		$dir = $conf->adherent->dir_output;
@@ -262,7 +263,7 @@ class pdf_standard extends CommonStickerGenerator
 	/**
 	 *	Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *	@param	Adherent	$object		        Member object. Old usage: Array of record informations (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
+	 *	@param	Adherent	$object		        Member object. Old usage: Array of record information (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
 	 *	@param	Translate	$outputlangs		Lang object for output language
 	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file. Example: '5161', 'AVERYC32010', 'CARD', ...
 	 *	@param	string		$mode				Tell if doc module is called for 'member', ...
@@ -342,7 +343,7 @@ class pdf_standard extends CommonStickerGenerator
 
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) {
-			dol_print_error('', 'ErrorBadTypeForCard'.$this->code);
+			dol_print_error(null, 'ErrorBadTypeForCard'.$this->code);
 			exit;
 		}
 
@@ -373,7 +374,7 @@ class pdf_standard extends CommonStickerGenerator
 			$title = $outputlangs->transnoentities('MembersCards');
 			$keywords = $outputlangs->transnoentities('MembersCards')." ".$outputlangs->transnoentities("Foundation")." ".$outputlangs->convToOutputCharset($mysoc->name);
 		} else {
-			dol_print_error('', 'Bad value for $mode');
+			dol_print_error(null, 'Bad value for $mode');
 			return -1;
 		}
 
@@ -418,7 +419,7 @@ class pdf_standard extends CommonStickerGenerator
 		$pdf->SetAutoPageBreak(false);
 
 		$this->_Metric_Doc = $this->Tformat['metric'];
-		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja servie
+		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja service
 		$posX = 1;
 		$posY = 1;
 		if ($posX > 0) {

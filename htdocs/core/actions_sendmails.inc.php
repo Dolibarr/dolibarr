@@ -91,7 +91,7 @@ if (GETPOST('removAll', 'alpha')) {
 	foreach ($listofpaths as $key => $value) {
 		$pathtodelete = $value;
 		$filetodelete = $listofnames[$key];
-		$result = dol_delete_file($pathtodelete, 1); // Delete uploded Files
+		$result = dol_delete_file($pathtodelete, 1); // Delete uploaded Files
 
 		$langs->load("other");
 		setEventMessages($langs->trans("FileWasRemoved", $filetodelete), null, 'mesgs');
@@ -155,7 +155,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				}
 			}
 		} else {
-			dol_print_error('', "Use actions_sendmails.in.php for an element/object '".$object->element."' that is not supported");
+			dol_print_error(null, "Use actions_sendmails.in.php for an element/object '".$object->element."' that is not supported");
 		}
 
 		if (is_object($hookmanager)) {
@@ -309,6 +309,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			}
 
 			$replyto = dol_string_nospecial(GETPOST('replytoname'), ' ', array(",")).' <'.GETPOST('replytomail').'>';
+
 			$message = GETPOST('message', 'restricthtml');
 			$subject = GETPOST('subject', 'restricthtml');
 
@@ -454,7 +455,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						if (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 							$mesg .= '<br>Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
 						} else {
-							$mesg .= '<br>Unkown Error, please refers to your administrator';
+							$mesg .= '<br>Unknown Error, please refer to your administrator';
 						}
 					}
 					$mesg .= '</div>';

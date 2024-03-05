@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 /**
  *       \file       htdocs/core/modules/societe/mod_codeclient_leopard.php
  *       \ingroup    societe
- *       \brief      Fichier de la classe des gestion leopard des codes clients
+ *       \brief      Fichier de la class des gestion leopard des codes clients
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php';
@@ -32,42 +33,26 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
 class mod_codeclient_leopard extends ModeleThirdPartyCode
 {
 	/*
-	 * Attention ce module est utilise par defaut si aucun module n'a
-	 * ete definit dans la configuration
+	 * Attention ce module est utilise par default si aucun module n'a
+	 * ete definite dans la configuration
 	 *
 	 * Le fonctionnement de celui-ci doit donc rester le plus ouvert possible
 	 */
 
-	/**
-	 * @var string model name
-	 */
+	// variables inherited from ModeleThirdPartyCode class
 	public $name = 'Leopard';
-
-	public $code_modifiable; // Code modifiable
-
-	public $code_modifiable_invalide; // Code modifiable si il est invalide
-
-	public $code_modifiable_null; // Code modifiables si il est null
-
-	public $code_null; // Code facultatif
-
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto;
+	public $version = 'dolibarr';
 
 
 	/**
 	 *	Constructor
+	 *
+	 *	@param DoliDB		$db		Database object
 	 */
-	public function __construct()
+	public function __construct($db)
 	{
+		$this->db = $db;
+
 		$this->code_null = 1;
 		$this->code_modifiable = 1;
 		$this->code_modifiable_invalide = 1;
@@ -110,7 +95,6 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	 */
 	public function getNextValue($objsoc = 0, $type = -1)
 	{
-		global $langs;
 		return '';
 	}
 
@@ -130,8 +114,6 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	 */
 	public function verif($db, &$code, $soc, $type)
 	{
-		global $conf;
-
 		$result = 0;
 		$code = trim($code);
 

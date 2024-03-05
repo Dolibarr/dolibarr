@@ -71,8 +71,8 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 			$this->prefixcustomeraccountancycode = '';
 			$this->prefixsupplieraccountancycode = '';
 		} else {
-			$this->prefixcustomeraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER;
-			$this->prefixsupplieraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER;
+			$this->prefixcustomeraccountancycode = getDolGlobalString('COMPANY_AQUARIUM_MASK_CUSTOMER');
+			$this->prefixsupplieraccountancycode = getDolGlobalString('COMPANY_AQUARIUM_MASK_SUPPLIER');
 		}
 	}
 
@@ -106,7 +106,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$texte .= $langs->trans("ModuleCompanyCodeSupplier".$this->name, '{s1}')."<br>\n";
 		$texte = str_replace(array('{s1}', '{s2}'), array($s1, $s2), $texte);
 		$texte .= "<br>\n";
-		if (!isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || !empty($conf->global->$conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) {
+		if (getDolGlobalInt('COMPANY_AQUARIUM_REMOVE_SPECIAL')) {
 			$texte .= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
 		}
 		//if (!empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)) $texte.=$langs->trans('COMPANY_AQUARIUM_REMOVE_ALPHA').' = '.yn($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)."<br>\n";

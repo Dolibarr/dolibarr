@@ -41,37 +41,38 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'compta', 'companies'));
 
-$action				= GETPOST('action', 'alpha');
-$massaction			= GETPOST('massaction', 'alpha');
-$confirm			= GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'alpha');
+$massaction = GETPOST('massaction', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
-$contextpage		= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'paymentlist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'paymentlist';
 
-$facid				= GETPOST('facid', 'int');
-$socid				= GETPOST('socid', 'int');
-$userid = GETPOST('userid', 'int');
+$facid = GETPOSTINT('facid');
+$socid = GETPOSTINT('socid');
+$userid = GETPOSTINT('userid');
 
 $search_ref = GETPOST("search_ref", "alpha");
-$search_date_startday = GETPOST('search_date_startday', 'int');
-$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
-$search_date_startyear = GETPOST('search_date_startyear', 'int');
-$search_date_endday = GETPOST('search_date_endday', 'int');
-$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
-$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_startday = GETPOSTINT('search_date_startday');
+$search_date_startmonth = GETPOSTINT('search_date_startmonth');
+$search_date_startyear = GETPOSTINT('search_date_startyear');
+$search_date_endday = GETPOSTINT('search_date_endday');
+$search_date_endmonth = GETPOSTINT('search_date_endmonth');
+$search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_company = GETPOST("search_company", 'alpha');
 $search_paymenttype = GETPOST("search_paymenttype");
-$search_account = GETPOST("search_account", "int");
+$search_account = GETPOSTINT("search_account");
 $search_payment_num = GETPOST('search_payment_num', 'alpha');
 $search_amount = GETPOST("search_amount", 'alpha'); // alpha because we must be able to search on "< x"
 $search_status = GETPOST('search_status', 'intcomma');
-$search_sale = GETPOST('search_sale', 'int');
+$search_sale = GETPOSTINT('search_sale');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield			= GETPOST('sortfield', 'aZ09comma');
-$sortorder			= GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$mode = GETPOST('mode', 'alpha');
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 
 if (empty($page) || $page == -1) {
 	$page = 0; // If $page is not defined, or '' or -1
@@ -102,8 +103,8 @@ $arrayfields = array(
 	'p.datep'			=> array('label'=>"Date", 'checked'=>1, 'position'=>20),
 	's.nom'				=> array('label'=>"ThirdParty", 'checked'=>1, 'position'=>30),
 	'c.libelle'			=> array('label'=>"Type", 'checked'=>1, 'position'=>40),
-	'transaction'		=> array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>50, 'enabled'=>(isModEnabled("banque"))),
-	'ba.label'			=> array('label'=>"Account", 'checked'=>1, 'position'=>60, 'enabled'=>(isModEnabled("banque"))),
+	'transaction'		=> array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>50, 'enabled'=>(isModEnabled("bank"))),
+	'ba.label'			=> array('label'=>"BankAccount", 'checked'=>1, 'position'=>60, 'enabled'=>(isModEnabled("bank"))),
 	'p.num_paiement'	=> array('label'=>"Numero", 'checked'=>1, 'position'=>70, 'tooltip'=>"ChequeOrTransferNumber"),
 	'p.amount'			=> array('label'=>"Amount", 'checked'=>1, 'position'=>80),
 	'p.statut'			=> array('label'=>"Status", 'checked'=>1, 'position'=>90, 'enabled'=>(getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION'))),
@@ -176,7 +177,7 @@ $bankline = new AccountLine($db);
 llxHeader('', $langs->trans('ListPayment'));
 
 if (GETPOST("orphelins", "alpha")) {
-	// Payments not linked to an invoice. Should not happend. For debug only.
+	// Payments not linked to an invoice. Should not happen. For debug only.
 	$sql = "SELECT p.rowid, p.ref, p.datep, p.amount, p.statut, p.num_paiement as num_payment,";
 	$sql .= " c.code as paiement_code";
 
@@ -391,11 +392,11 @@ if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 $massactionbutton = '';
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2018-2023 Charlene Benke		<charlene@patas-monkey.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,46 +20,35 @@
 
 /**
  *  \file       htdocs/core/modules/holiday/mod_holiday_madonna.php
- *  \ingroup    contract
- *  \brief      File of class to manage contract numbering rules Serpis
+ *  \ingroup    holiday
+ *  \brief      File of class to manage holiday numbering rules Madonna
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/holiday/modules_holiday.php';
 
 /**
- * 	Class to manage contract numbering rules madonna
+ * 	Class to manage holiday numbering rules Madonna
  */
 class mod_holiday_madonna extends ModelNumRefHolidays
 {
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
+
+	// variables inherited from ModelNumRefHolidays class
+	public $name = 'Madonna';
 	public $version = 'dolibarr';
 
+	// variables not inherited
+
+	/**
+	 * @var string
+	 */
 	public $prefix = 'HL';
 
 	/**
-	 * @var string Error code (or message)
+	 *	Constructor
 	 */
-	public $error = '';
-
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Madonna';
-
-	/**
-	 * @var string model name
-	 */
-	public $name = 'Madonna';
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto = 1;
-
+	public function __construct()
+	{
+		$this->code_auto = 1;
+	}
 
 	/**
 	 *	Return default description of numbering model
@@ -125,7 +115,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *
 	 *	@param	Societe		$objsoc     third party object
 	 *	@param	Object		$holiday	Holiday object
-	 *	@return string      			Value if OK, 0 if KO
+	 *	@return string|-1      			Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $holiday)
 	{
@@ -170,7 +160,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *
 	 *	@param	User		$fuser     	User object
 	 *	@param	Object		$objforref	Holiday object
-	 *	@return string      			Value if OK, 0 if KO
+	 *	@return string|-1      			Value if OK, -1 if KO
 	 */
 	public function holiday_get_num($fuser, $objforref)
 	{

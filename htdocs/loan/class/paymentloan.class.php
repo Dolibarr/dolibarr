@@ -56,8 +56,6 @@ class PaymentLoan extends CommonObject
 	 */
 	public $datec = '';
 
-	public $tms = '';
-
 	/**
 	 * @var string Payment date
 	 */
@@ -77,7 +75,8 @@ class PaymentLoan extends CommonObject
 	public $fk_typepayment;
 
 	/**
-	 * @var int Payment ID
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
@@ -505,7 +504,7 @@ class PaymentLoan extends CommonObject
 		$error = 0;
 		$this->db->begin();
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);

@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
 $contact = new Contact($db);
 
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 // Security check
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
@@ -117,7 +117,7 @@ if ($company->id) {
 	}
 }
 
-// Personal informations
+// Personal information
 $v->setPhoneNumber($contact->phone_perso, "TYPE=HOME;VOICE");
 if ($contact->birthday) {
 	$v->setBirthday($contact->birthday);

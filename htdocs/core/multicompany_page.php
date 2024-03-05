@@ -42,7 +42,7 @@ if (!defined('NOREQUIREMENU')) {
 require_once '../main.inc.php';
 
 $action = GETPOST('action', 'aZ');
-$entityid = GETPOST('entity', 'int');
+$entityid = GETPOSTINT('entity');
 $backtourl = GETPOST('backtourl');
 if (empty($backtourl)) {
 	$backtourl = DOL_URL_ROOT;

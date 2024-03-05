@@ -119,7 +119,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	 * 	Return next free value
 	 *
 	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @return string|0      			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{
@@ -161,7 +161,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 
 			$prefix = "ER";
 			if (getDolGlobalString('EXPENSE_REPORT_PREFIX')) {
-				$prefix = $conf->global->EXPENSE_REPORT_PREFIX;
+				$prefix = getDolGlobalString('EXPENSE_REPORT_PREFIX');
 			}
 			$newref = str_replace(' ', '_', $user_author_infos).$expld_car.$prefix.$newref.$expld_car.dol_print_date($object->date_debut, '%y%m%d');
 

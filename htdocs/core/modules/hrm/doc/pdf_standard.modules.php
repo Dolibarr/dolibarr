@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 class pdf_standard extends ModelePDFEvaluation
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -268,7 +268,6 @@ class pdf_standard extends ModelePDFEvaluation
 				}
 
 				$iniY = $tab_top + 7;
-				$initialY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
 				$pdf->setTopMargin($tab_top_newpage);
@@ -454,7 +453,7 @@ class pdf_standard extends ModelePDFEvaluation
 	 * @param	Evaluation		$object             Object to show
 	 * @param   int         	$linenumber         line number
 	 * @param   int         	$curY               current y position
-	 * @param   int         	$default_font_size  default siez of font
+	 * @param   int         	$default_font_size  default font size
 	 * @param   Translate   	$outputlangs        Object lang for output
 	 * @param	int				$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
 	 * @return  void
@@ -521,7 +520,7 @@ class pdf_standard extends ModelePDFEvaluation
 	 *  @param  Evaluation		$object     	Object to show
 	 *  @param  int	    		$showaddress    0=no, 1=yes
 	 *  @param  Translate		$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   	Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -583,7 +582,7 @@ class pdf_standard extends ModelePDFEvaluation
 			// Sender properties
 			$carac_emetteur = '';
 
-			// employee informations
+			// employee information
 			$employee = new User($this->db);
 			$employee->fetch($object->fk_user);
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities('Employee').' : '.$outputlangs->convToOutputCharset(ucfirst($employee->firstname) . ' ' . strtoupper($employee->lastname));
@@ -611,7 +610,7 @@ class pdf_standard extends ModelePDFEvaluation
 			/*$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($posx, $posy - 5);
-			$pdf->MultiCell(190, 5, $outputlangs->transnoentities("Informations"), '', 'L');*/
+			$pdf->MultiCell(190, 5, $outputlangs->transnoentities("Information"), '', 'L');*/
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(224, 224, 224);
 			$pdf->MultiCell(190, $hautcadre, "", 0, 'R', 1);
@@ -625,6 +624,8 @@ class pdf_standard extends ModelePDFEvaluation
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->MultiCell(190, 4, $carac_emetteur, 0, 'L');
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

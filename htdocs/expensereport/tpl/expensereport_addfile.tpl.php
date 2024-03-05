@@ -13,7 +13,7 @@ if ($action == 'editline') {
 print '<td colspan="'.($action == 'editline' ? $colspan - 1 : $colspan).'">';
 
 $modulepart = 'expensereport';
-$permission = $user->rights->expensereport->creer;
+$permission = $user->hasRight('expensereport', 'creer');
 
 // We define var to enable the feature to add prefix of uploaded files
 $savingdocmask = '';

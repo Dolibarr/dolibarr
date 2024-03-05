@@ -46,10 +46,10 @@ $type = GETPOST('type', 'alphanohtml');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -113,7 +113,7 @@ if (empty($reshook)) {
 		$search_field1 = '';
 		$search_field2 = '';
 		$search_date_creation = '';
-		$search_date_update = '';
+		$search_date_modification = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -175,7 +175,7 @@ if ($sRefSupplier) {
 	$sql .= natural_search('ppf.ref_fourn', $sRefSupplier);
 }
 if (GETPOST('type')) {
-	$sql .= " AND p.fk_product_type = ".GETPOST('type', 'int');
+	$sql .= " AND p.fk_product_type = ".GETPOSTINT('type');
 }
 if ($sref) {
 	$sql .= natural_search('p.ref', $sref);

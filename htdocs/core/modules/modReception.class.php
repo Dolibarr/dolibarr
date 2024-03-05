@@ -136,8 +136,8 @@ class modReception extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = $this->numero.$r; // id de la permission
 		$this->rights[$r][1] = 'Envoyer les receptions aux clients'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'reception_advance';
 		$this->rights[$r][5] = 'send';
 
@@ -170,7 +170,7 @@ class modReception extends DolibarrModules
 		$shipment = new CommandeFournisseur($this->db);
 		$contact_arrays = $shipment->liste_type_contact('external', '', 0, 0, '');
 		if (is_array($contact_arrays) && count($contact_arrays) > 0) {
-			$idcontacts = join(',', array_keys($shipment->liste_type_contact('external', '', 0, 0, '')));
+			$idcontacts = implode(',', array_keys($shipment->liste_type_contact('external', '', 0, 0, '')));
 		} else {
 			$idcontacts = 0;
 		}

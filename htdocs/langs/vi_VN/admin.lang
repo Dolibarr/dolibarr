@@ -245,7 +245,7 @@ ActivatableOn=Có thể kích hoạt trên
 SourceFile=Tập tin nguồn
 AvailableOnlyIfJavascriptAndAjaxNotDisabled=Chỉ có sẵn nếu JavaScript không bị vô hiệu hóa
 Required=Được yêu cầu
-UsedOnlyWithTypeOption=Được dùng chỉ bởi một vài tùy chọn chương trình nghị sự 
+UsedOnlyWithTypeOption=Được dùng chỉ bởi một vài tùy chọn chương trình nghị sự
 Security=Bảo mật
 Passwords=Mật khẩu
 DoNotStoreClearPassword=Mã hóa mật khẩu được lưu trữ trong cơ sở dữ liệu (KHÔNG phải là văn bản thuần túy). Rất khuyến khích kích hoạt tùy chọn này.
@@ -323,7 +323,7 @@ FixOnTransifex=Sửa bản dịch trên nền tảng dịch trực tuyến của
 SubmitTranslation=Nếu bản dịch cho ngôn ngữ này chưa hoàn thành hoặc bạn thấy có lỗi, bạn có thể sửa lỗi này bằng cách chỉnh sửa các tệp trong thư mục <b>langs / %s</b> và gửi thay đổi của bạn tới www.transifex.com/dolibarr-association/dolibarr/
 SubmitTranslationENUS=Nếu bản dịch cho ngôn ngữ này chưa hoàn chỉnh hoặc bạn phát hiện thấy lỗi, bạn có thể sửa lỗi này bằng cách chỉnh sửa tệp vào thư mục <b>langs/%s </b> và gửi các tệp đã sửa đổi trên dolibarr.org/forum hoặc, nếu bạn là nhà phát triển, có PR trên github.com/Dolibarr/dolibarr
 ModuleSetup=Cài đặt module
-ModulesSetup=Thiết lập Mô-đun / Ứng dụng 
+ModulesSetup=Thiết lập Mô-đun / Ứng dụng
 ModuleFamilyBase=Hệ thống
 ModuleFamilyCrm=Quản lý quan hệ khách hàng (CRM)
 ModuleFamilySrm=Quản lý quan hệ nhà cung cấp (VRM)
@@ -1197,6 +1197,7 @@ Skin=Chủ đề giao diện
 DefaultSkin=Chủ đề giao diện mặc định
 MaxSizeList=Chiều dài tối đa cho danh sách
 DefaultMaxSizeList=Độ dài tối đa mặc định cho danh sách
+DisplayGrandTotalInList=Display grand total (for all pages) in lists footer
 DefaultMaxSizeShortList=Độ dài tối đa mặc định cho danh sách ngắn (ví dụ: trong thẻ khách hàng)
 MessageOfDay=Tin trong ngày
 MessageLogin=Tin trang đăng nhập
@@ -1249,7 +1250,7 @@ SetupDescription2=Hai phần sau đây là bắt buộc (hai mục đầu tiên 
 SetupDescription3=<a href="%s">%s -> %s</a> <br><br>Các tham số cơ bản được sử dụng để tùy chỉnh hành vi mặc định của ứng dụng của bạn (ví dụ: đối với các tính năng liên quan đến quốc gia).
 SetupDescription4=<a href="%s">%s -> %s</a> <br> Phần mềm này là một bộ gồm nhiều mô-đun/ứng dụng, tất cả đều ít nhiều độc lập nhau. Các mô-đun liên quan đến nhu cầu của bạn phải được kích hoạt và cấu hình. Các mục/tùy chọn sẽ được thêm vào menu với sự kích hoạt của một mô-đun.
 SetupDescription5=Các menu thiết lập khác quản lý các tham số tùy chọn.
-SetupDescriptionLink=<a href="%s">%s - %s<span class='notranslate'></a>< /nhịp>
+SetupDescriptionLink=<a href="%s">%s - %s</a>
 SetupDescription3b=Các tham số cơ bản được sử dụng để tùy chỉnh hành vi mặc định của ứng dụng của bạn (ví dụ: đối với các tính năng liên quan đến quốc gia).
 SetupDescription4b=Phần mềm này là một bộ gồm nhiều mô-đun/ứng dụng. Các mô-đun liên quan đến nhu cầu của bạn phải được kích hoạt. Các mục menu sẽ xuất hiện khi kích hoạt các mô-đun này.
 AuditedSecurityEvents=Các sự kiện bảo mật được kiểm tra
@@ -2293,7 +2294,7 @@ InstallAndUpgradeLockedBy=Cài đặt và nâng cấp bị khóa bởi tệp <b>
 InstallLockedBy=Cài đặt/Cài đặt lại bị khóa bởi tệp <b>%s</b>
 InstallOfAddonIsNotBlocked=Cài đặt các addon không bị khóa. Tạo một tệp <b>installmodules.lock</b> vào thư mục <b>%s</b> để chặn cài đặt các tiện ích bổ sung/mô-đun bên ngoài.
 OldImplementation=Cách triển khai cũ
-PDF_SHOW_LINK_TO_ONLINE_PAYMENT=Nếu một số mô-đun thanh toán trực tuyến được bật (Paypal, Stripe, ...), hãy thêm liên kết trên tệp PDF để tạo <span class='notranslate'>thanh toán</ trực tuyến nhịp>
+PDF_SHOW_LINK_TO_ONLINE_PAYMENT=If some online payment modules are enabled (Paypal, Stripe, ...), add a link on the PDF to make the online payment
 DashboardDisableGlobal=Vô hiệu hóa trên toàn cầu tất cả các ngón tay cái của các đối tượng đang mở
 BoxstatsDisableGlobal=Tắt thống kê toàn bộ hộp
 DashboardDisableBlocks=Thumbs của các đối tượng đang mở (để xử lý hoặc xử lý muộn) trên bảng điều khiển chính
@@ -2433,3 +2434,12 @@ UrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server 
 ExportUseForce=Use the parameter -f
 ExportUseForceHelp=Force to continue the export even when an error is found (Backup may not be reliable)
 CustomPrompt=Custom prompts
+AiDescription=AI (Artificial Intelligence) features
+AiDescriptionLong=Provides AI (Artificial Intelligence) features in different part of the application. Need external AI API.
+AI_KEY_API_CHATGPT= Key for ChatGPT IA api
+AiSetup=AI module setup
+AiCustomPrompt=AI customs prompt
+AI_CONFIGURATIONS_PROMPT=Custom prompt
+ImageGeneration=Image generation
+AIPromptForFeatures=AI custom prompts for features
+EnterAnIP=Enter an IP address

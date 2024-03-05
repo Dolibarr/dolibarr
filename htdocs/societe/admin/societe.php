@@ -93,7 +93,7 @@ if ($action == 'updateoptions') {
 	}
 
 	if (GETPOST('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')) {
-		$customertypedefault = GETPOST('defaultcustomertype', 'int');
+		$customertypedefault = GETPOSTINT('defaultcustomertype');
 		$res = dolibarr_set_const($db, "THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT", $customertypedefault, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
@@ -169,7 +169,7 @@ if ($action == 'setdoc') {
 
 //Activate Set accountancy code customer invoice mandatory
 if ($action == "setaccountancycodecustomerinvoicemandatory") {
-	$setaccountancycodecustomerinvoicemandatory = GETPOST('value', 'int');
+	$setaccountancycodecustomerinvoicemandatory = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "SOCIETE_ACCOUNTANCY_CODE_CUSTOMER_INVOICE_MANDATORY", $setaccountancycodecustomerinvoicemandatory, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -183,7 +183,7 @@ if ($action == "setaccountancycodecustomerinvoicemandatory") {
 
 //Activate Set vat id unique
 if ($action == "setvatintraunique") {
-	$setvatintraunique = GETPOST('value', 'int');
+	$setvatintraunique = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "SOCIETE_VAT_INTRA_UNIQUE", $setvatintraunique, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -197,7 +197,7 @@ if ($action == "setvatintraunique") {
 
 //Activate Set ref in list
 if ($action == "setaddrefinlist") {
-	$setaddrefinlist = GETPOST('value', 'int');
+	$setaddrefinlist = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "SOCIETE_ADD_REF_IN_LIST", $setaddrefinlist, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -211,7 +211,7 @@ if ($action == "setaddrefinlist") {
 
 //Activate Set vat in list
 if ($action == "setvatinlist") {
-	$setvatinlist = GETPOST('value', 'int');
+	$setvatinlist = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "SOCIETE_SHOW_VAT_IN_LIST", $setvatinlist, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -223,9 +223,9 @@ if ($action == "setvatinlist") {
 	}
 }
 
-//Activate Set adress in list
+//Activate Set address in list
 if ($action == "setaddadressinlist") {
-	$val = GETPOST('value', 'int');
+	$val = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "COMPANY_SHOW_ADDRESS_SELECTLIST", $val, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -239,7 +239,7 @@ if ($action == "setaddadressinlist") {
 
 //Activate Set email phone town in contact list
 if ($action == "setaddemailphonetownincontactlist") {
-	$val = GETPOST('value', 'int');
+	$val = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST", $val, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -253,7 +253,7 @@ if ($action == "setaddemailphonetownincontactlist") {
 
 //Activate Ask For Preferred Shipping Method
 if ($action == "setaskforshippingmet") {
-	$setaskforshippingmet = GETPOST('value', 'int');
+	$setaskforshippingmet = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "SOCIETE_ASK_FOR_SHIPPING_METHOD", $setaskforshippingmet, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -267,7 +267,7 @@ if ($action == "setaskforshippingmet") {
 
 // Activate "Disable prospect/customer type"
 if ($action == "setdisableprospectcustomer") {
-	$setdisableprospectcustomer = GETPOST('value', 'int');
+	$setdisableprospectcustomer = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "SOCIETE_DISABLE_PROSPECTSCUSTOMERS", $setdisableprospectcustomer, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -322,7 +322,7 @@ if ($action == 'sethideinactivethirdparty') {
 	}
 }
 if ($action == 'setonsearchandlistgooncustomerorsuppliercard') {
-	$setonsearchandlistgooncustomerorsuppliercard = GETPOST('value', 'int');
+	$setonsearchandlistgooncustomerorsuppliercard = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD", $setonsearchandlistgooncustomerorsuppliercard, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -391,7 +391,8 @@ foreach ($dirsociete as $dirroot) {
 					dol_syslog($e->getMessage(), LOG_ERR);
 				}
 
-				$modCodeTiers = new $file();
+				/** @var ModeleThirdPartyCode $modCodeTiers */
+				$modCodeTiers = new $file($db);
 
 				// Show modules according to features level
 				if ($modCodeTiers->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -605,7 +606,7 @@ foreach ($dirsociete as $dirroot) {
 					} else {
 						if (versioncompare($module->phpmin, versionphparray()) > 0) {
 							print '<td class="center">'."\n";
-							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion", join('.', $module->phpmin))), 'switch_off');
+							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion", implode('.', $module->phpmin))), 'switch_off');
 							print "</td>";
 						} else {
 							print '<td class="center">'."\n";
@@ -873,7 +874,7 @@ if (getDolGlobalString('CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST')) {
 print '</a></td>';
 print '</tr>';
 
-if (isModEnabled("expedition")) {
+if (isModEnabled("delivery_note")) {
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 0) {	// Visible on experimental only because seems to not be implemented everywhere (only on proposal)
 		print '<tr class="oddeven">';
 		print '<td width="80%">'.$langs->trans("AskForPreferredShippingMethod").'</td>';

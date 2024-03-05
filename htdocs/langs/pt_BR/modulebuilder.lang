@@ -8,7 +8,6 @@ ModuleBuilderDeschooks=Esta aba é dedicada aos ganchos.
 ModuleBuilderDescwidgets=Esta aba é dedicada a gerenciar / construir widgets.
 ModuleBuilderDescbuildpackage=Você pode gerar aqui um arquivo de pacote "pronto para distribuir" (um arquivo .zip normalizado) do seu módulo e um arquivo de documentação "pronto para distribuir". Basta clicar no botão para criar o pacote ou arquivo de documentação.
 EnterNameOfModuleToDeleteDesc=Você pode excluir seu módulo. AVISO: Todos os arquivos de codificação do módulo (gerados ou criados manualmente) e dados estruturados e documentação serão apagados!
-EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
 BuildDocumentation=Documentação de compilação
 ModuleIsLive=Este módulo foi ativado. Qualquer alteração pode interromper um recurso atual ao vivo.
 DescriptionLong=Longa descrição

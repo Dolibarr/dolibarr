@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,12 +127,6 @@ class Menubase
 	public $langs;
 
 	/**
-	 * @var string Not used
-	 * @deprecated
-	 */
-	public $level;
-
-	/**
 	 * @var string Name family/module for left menu (setup, info, ...)
 	 */
 	public $leftmenu;
@@ -183,7 +177,7 @@ class Menubase
 	 */
 	public function create($user = null)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		// Clean parameters
 		if (!isset($this->enabled)) {
@@ -208,9 +202,6 @@ class Menubase
 		$this->user = (int) $this->user;
 		if (empty($this->position)) {
 			$this->position = 0;
-		}
-		if (!$this->level) {
-			$this->level = 0;
 		}
 
 		// Check parameters
@@ -487,7 +478,7 @@ class Menubase
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -497,8 +488,8 @@ class Menubase
 		$this->module = 'specimen';
 		$this->type = 'top';
 		$this->mainmenu = '';
-		$this->fk_menu = '0';
-		$this->position = '';
+		$this->fk_menu = 0;
+		$this->position = 0;
 		$this->url = 'http://dummy';
 		$this->target = '';
 		$this->title = 'Specimen menu';
@@ -506,8 +497,10 @@ class Menubase
 		$this->leftmenu = '';
 		$this->perms = '';
 		$this->enabled = '';
-		$this->user = '';
-		$this->tms = '';
+		$this->user = 0;
+		$this->tms = dol_now();
+
+		return 1;
 	}
 
 
@@ -572,7 +565,7 @@ class Menubase
 		// We initialize newmenu with first already found menu entries
 		$this->newmenu = $newmenu;
 
-		// Now complete $this->newmenu->list to add entries found into $tabMenu that are childs of mainmenu=$menutopid, using the fk_menu link that is int (old method)
+		// Now complete $this->newmenu->list to add entries found into $tabMenu that are children of mainmenu=$menutopid, using the fk_menu link that is int (old method)
 		$this->recur($tabMenu, $menutopid, 1);
 
 		// Now complete $this->newmenu->list when fk_menu value is -1 (left menu added by modules with no top menu)
@@ -631,7 +624,7 @@ class Menubase
 	 *  @param	string	$myleftmenu     Value for left that defined leftmenu
 	 *  @param  int		$type_user      Looks for menu entry for 0=Internal users, 1=External users
 	 *  @param  string	$menu_handler   Name of menu_handler used ('auguria', 'eldy'...)
-	 *  @param  array	$tabMenu        Array to store new entries found (in most cases, it's empty, but may be alreay filled)
+	 *  @param  array	$tabMenu        Array to store new entries found (in most cases, it's empty, but may be already filled)
 	 *  @return int     		        >0 if OK, <0 if KO
 	 */
 	public function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)

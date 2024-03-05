@@ -47,17 +47,17 @@ $confirm = GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ09');
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-$id = GETPOST('rowid', 'int') ? GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$id = GETPOSTINT('rowid') ? GETPOSTINT('rowid') : GETPOSTINT('id');
 $rowid = $id;
 $ref = GETPOST('ref', 'alphanohtml');
-$typeid = GETPOST('typeid', 'int');
+$typeid = GETPOSTINT('typeid');
 $cancel = GETPOST('cancel');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -86,9 +86,9 @@ $errmsg = '';
 $hookmanager->initHooks(array('subscription'));
 
 // PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
+$hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
+$hidedesc = (GETPOSTINT('hidedesc') ? GETPOSTINT('hidedesc') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
+$hideref = (GETPOSTINT('hideref') ? GETPOSTINT('hideref') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
 $datefrom = 0;
 $dateto = 0;
@@ -153,17 +153,17 @@ if (empty($reshook) && $action == 'confirm_create_thirdparty' && $confirm == 'ye
 if (empty($reshook) && $action == 'setuserid' && ($user->hasRight('user', 'self', 'creer') || $user->hasRight('user', 'user', 'creer'))) {
 	$error = 0;
 	if (!$user->hasRight('user', 'user', 'creer')) {    // If can edit only itself user, we can link to itself only
-		if (GETPOST("userid", 'int') != $user->id && GETPOST("userid", 'int') != $object->user_id) {
+		if (GETPOSTINT("userid") != $user->id && GETPOSTINT("userid") != $object->user_id) {
 			$error++;
 			setEventMessages($langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly"), null, 'errors');
 		}
 	}
 
 	if (!$error) {
-		if (GETPOST("userid", 'int') != $object->user_id) {  // If link differs from currently in database
-			$result = $object->setUserId(GETPOST("userid", 'int'));
+		if (GETPOSTINT("userid") != $object->user_id) {  // If link differs from currently in database
+			$result = $object->setUserId(GETPOSTINT("userid"));
 			if ($result < 0) {
-				dol_print_error('', $object->error);
+				dol_print_error(null, $object->error);
 			}
 			$action = '';
 		}
@@ -173,9 +173,9 @@ if (empty($reshook) && $action == 'setuserid' && ($user->hasRight('user', 'self'
 if (empty($reshook) && $action == 'setsocid') {
 	$error = 0;
 	if (!$error) {
-		if (GETPOST('socid', 'int') != $object->fk_soc) {    // If link differs from currently in database
+		if (GETPOSTINT('socid') != $object->fk_soc) {    // If link differs from currently in database
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
-			$sql .= " WHERE fk_soc = '".GETPOST('socid', 'int')."'";
+			$sql .= " WHERE fk_soc = '".GETPOSTINT('socid')."'";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -183,16 +183,16 @@ if (empty($reshook) && $action == 'setsocid') {
 					$othermember = new Adherent($db);
 					$othermember->fetch($obj->rowid);
 					$thirdparty = new Societe($db);
-					$thirdparty->fetch(GETPOST('socid', 'int'));
+					$thirdparty->fetch(GETPOSTINT('socid'));
 					$error++;
 					setEventMessages($langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty", $othermember->getFullName($langs), $othermember->login, $thirdparty->name), null, 'errors');
 				}
 			}
 
 			if (!$error) {
-				$result = $object->setThirdPartyId(GETPOST('socid', 'int'));
+				$result = $object->setThirdPartyId(GETPOSTINT('socid'));
 				if ($result < 0) {
-					dol_print_error('', $object->error);
+					dol_print_error(null, $object->error);
 				}
 				$action = '';
 			}
@@ -208,26 +208,26 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 	$result = $object->fetch($rowid);
 	$result = $adht->fetch($object->typeid);
 
-	// Subscription informations
+	// Subscription information
 	$datesubscription = 0;
 	$datesubend = 0;
 	$defaultdelay = !empty($adht->duration_value) ? $adht->duration_value : 1;
 	$defaultdelayunit = !empty($adht->duration_unit) ? $adht->duration_unit : 'y';
 	$paymentdate = ''; // Do not use 0 here, default value is '' that means not filled where 0 means 1970-01-01
-	if (GETPOST("reyear", "int") && GETPOST("remonth", "int") && GETPOST("reday", "int")) {
-		$datesubscription = dol_mktime(0, 0, 0, GETPOST("remonth", "int"), GETPOST("reday", "int"), GETPOST("reyear", "int"));
+	if (GETPOSTINT("reyear") && GETPOSTINT("remonth") && GETPOSTINT("reday")) {
+		$datesubscription = dol_mktime(0, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 	}
-	if (GETPOST("endyear", 'int') && GETPOST("endmonth", 'int') && GETPOST("endday", 'int')) {
-		$datesubend = dol_mktime(0, 0, 0, GETPOST("endmonth", 'int'), GETPOST("endday", 'int'), GETPOST("endyear", 'int'));
+	if (GETPOSTINT("endyear") && GETPOSTINT("endmonth") && GETPOSTINT("endday")) {
+		$datesubend = dol_mktime(0, 0, 0, GETPOSTINT("endmonth"), GETPOSTINT("endday"), GETPOSTINT("endyear"));
 	}
-	if (GETPOST("paymentyear", 'int') && GETPOST("paymentmonth", 'int') && GETPOST("paymentday", 'int')) {
-		$paymentdate = dol_mktime(0, 0, 0, GETPOST("paymentmonth", 'int'), GETPOST("paymentday", 'int'), GETPOST("paymentyear", 'int'));
+	if (GETPOSTINT("paymentyear") && GETPOSTINT("paymentmonth") && GETPOSTINT("paymentday")) {
+		$paymentdate = dol_mktime(0, 0, 0, GETPOSTINT("paymentmonth"), GETPOSTINT("paymentday"), GETPOSTINT("paymentyear"));
 	}
 	$amount = price2num(GETPOST("subscription", 'alpha')); // Amount of subscription
 	$label = GETPOST("label");
 
-	// Payment informations
-	$accountid = GETPOST("accountid", 'int');
+	// Payment information
+	$accountid = GETPOSTINT("accountid");
 	$operation = GETPOST("operation", "alphanohtml"); // Payment mode
 	$num_chq = GETPOST("num_chq", "alphanohtml");
 	$emetteur_nom = GETPOST("chqemetteur");
@@ -273,7 +273,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 			$action = 'addsubscription';
 		} else {
 			// If an amount has been provided, we check also fields that becomes mandatory when amount is not null.
-			if (isModEnabled('banque') && GETPOST("paymentsave") != 'none') {
+			if (isModEnabled('bank') && GETPOST("paymentsave") != 'none') {
 				if (GETPOST("subscription")) {
 					if (!GETPOST("label")) {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label"));
@@ -287,14 +287,14 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 						$error++;
 						$action = 'addsubscription';
 					}
-					if (GETPOST("paymentsave") != 'invoiceonly' && !(GETPOST("accountid", 'int') > 0)) {
+					if (GETPOST("paymentsave") != 'invoiceonly' && !(GETPOSTINT("accountid") > 0)) {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("FinancialAccount"));
 						setEventMessages($errmsg, null, 'errors');
 						$error++;
 						$action = 'addsubscription';
 					}
 				} else {
-					if (GETPOST("accountid", 'int')) {
+					if (GETPOSTINT("accountid")) {
 						$errmsg = $langs->trans("ErrorDoNotProvideAccountsIfNullAmount");
 						setEventMessages($errmsg, null, 'errors');
 						$error++;
@@ -373,7 +373,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 
 					// Get email content from template
 					$arraydefaultmessage = null;
-					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+					$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION');
 
 					if (!empty($labeltouse)) {
 						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
@@ -583,7 +583,7 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border tableforfield centpercent">';
 
 // Tags / Categories
-if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	print '<tr><td>'.$langs->trans("Categories").'</td>';
 	print '<td colspan="2">';
 	print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
@@ -608,7 +608,7 @@ if (getDolGlobalInt('MAIN_MULTILANGS')) {
 
 // Public
 $linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '');
-print '<tr><td>'.$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist).'</td><td class="valeur">'.yn($object->public).'</td></tr>';
+print '<tr><td>'.$form->textwithpicto($langs->trans("PublicFile"), $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist), 1, 'help', '', 0, 3, 'publicfile').'</td><td class="valeur">'.yn($object->public).'</td></tr>';
 
 // Other attributes
 $cols = 2;
@@ -744,7 +744,7 @@ if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 		print_liste_field_titre('DateStart', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 		print_liste_field_titre('DateEnd', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 		print_liste_field_titre('Amount', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
-		if (isModEnabled('banque')) {
+		if (isModEnabled('bank')) {
 			print_liste_field_titre('Account', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 		}
 		print "</tr>\n";
@@ -779,7 +779,7 @@ if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 			print '<td class="center">'.dol_print_date($db->jdate($objp->dateh), 'day')."</td>\n";
 			print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day')."</td>\n";
 			print '<td class="right amount">'.price($objp->subscription).'</td>';
-			if (isModEnabled('banque')) {
+			if (isModEnabled('bank')) {
 				print '<td class="right">';
 				if ($objp->bid) {
 					$accountstatic->label = $objp->label;
@@ -808,7 +808,7 @@ if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 
 		if (empty($num)) {
 			$colspan = 6;
-			if (isModEnabled('banque')) {
+			if (isModEnabled('bank')) {
 				$colspan++;
 			}
 			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
@@ -824,6 +824,14 @@ if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 if (($action != 'addsubscription' && $action != 'create_thirdparty')) {
 	// Shon online payment link
 	$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
+
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook > 0) {
+		if (isset($hookmanager->resArray['showonlinepaymenturl'])) {
+			$useonlinepayment = $hookmanager->resArray['showonlinepaymenturl'];
+		}
+	}
 
 	if ($useonlinepayment) {
 		print '<br>';
@@ -857,11 +865,11 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 			$bankviainvoice = 1;
 		}
 	} else {
-		if (getDolGlobalString('ADHERENT_BANK_USE') == 'bankviainvoice' && isModEnabled('banque') && isModEnabled('societe') && isModEnabled('facture')) {
+		if (getDolGlobalString('ADHERENT_BANK_USE') == 'bankviainvoice' && isModEnabled('bank') && isModEnabled('societe') && isModEnabled('invoice')) {
 			$bankviainvoice = 1;
-		} elseif (getDolGlobalString('ADHERENT_BANK_USE') == 'bankdirect' && isModEnabled('banque')) {
+		} elseif (getDolGlobalString('ADHERENT_BANK_USE') == 'bankdirect' && isModEnabled('bank')) {
 			$bankdirect = 1;
-		} elseif (getDolGlobalString('ADHERENT_BANK_USE') == 'invoiceonly' && isModEnabled('banque') && isModEnabled('societe') && isModEnabled('facture')) {
+		} elseif (getDolGlobalString('ADHERENT_BANK_USE') == 'invoiceonly' && isModEnabled('bank') && isModEnabled('societe') && isModEnabled('invoice')) {
 			$invoiceonly = 1;
 		}
 	}
@@ -869,7 +877,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	print "\n\n<!-- Form add subscription -->\n";
 
 	if ($conf->use_javascript_ajax) {
-		//var_dump($bankdirect.'-'.$bankviainvoice.'-'.$invoiceonly.'-'.empty($conf->global->ADHERENT_BANK_USE));
+		//var_dump($bankdirect.'-'.$bankviainvoice.'-'.$invoiceonly);
 		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
 					$(".bankswitchclass, .bankswitchclass2").'.(($bankdirect || $bankviainvoice) ? 'show()' : 'hide()').';
@@ -972,7 +980,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	$currentmonth = dol_print_date($now, "%m");
 	print '<td class="fieldrequired">'.$langs->trans("DateSubscription").'</td><td>';
 	if (GETPOST('reday')) {
-		$datefrom = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+		$datefrom = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 	}
 	if (!$datefrom) {
 		$datefrom = $object->datevalid;
@@ -993,7 +1001,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 
 	// Date end subscription
 	if (GETPOST('endday')) {
-		$dateto = dol_mktime(0, 0, 0, GETPOST('endmonth', 'int'), GETPOST('endday', 'int'), GETPOST('endyear', 'int'));
+		$dateto = dol_mktime(0, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
 	}
 	if (!$dateto) {
 		if (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH')) {
@@ -1021,7 +1029,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 		print '"></td></tr>';
 
 		// Complementary action
-		if ((isModEnabled('banque') || isModEnabled('facture')) && !getDolGlobalString('ADHERENT_SUBSCRIPTION_HIDECOMPLEMENTARYACTIONS')) {
+		if ((isModEnabled('bank') || isModEnabled('invoice')) && !getDolGlobalString('ADHERENT_SUBSCRIPTION_HIDECOMPLEMENTARYACTIONS')) {
 			$company = new Societe($db);
 			if ($object->socid) {
 				$result = $company->fetch($object->socid);
@@ -1034,13 +1042,13 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 
 			print '<input type="radio" class="moreaction" id="none" name="paymentsave" value="none"'.(empty($bankdirect) && empty($invoiceonly) && empty($bankviainvoice) ? ' checked' : '').'>';
 			print '<label for="none"> '.$langs->trans("None").'</label><br>';
-			// Add entry into bank accoun
-			if (isModEnabled('banque')) {
+			// Add entry into bank account
+			if (isModEnabled('bank')) {
 				print '<input type="radio" class="moreaction" id="bankdirect" name="paymentsave" value="bankdirect"'.(!empty($bankdirect) ? ' checked' : '');
 				print '><label for="bankdirect">  '.$langs->trans("MoreActionBankDirect").'</label><br>';
 			}
 			// Add invoice with no payments
-			if (isModEnabled('societe') && isModEnabled('facture')) {
+			if (isModEnabled('societe') && isModEnabled('invoice')) {
 				print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.(!empty($invoiceonly) ? ' checked' : '');
 				//if (empty($object->fk_soc)) print ' disabled';
 				print '><label for="invoiceonly"> '.$langs->trans("MoreActionInvoiceOnly");
@@ -1061,7 +1069,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 				}
 				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled('product') || isModEnabled('service'))) {
 					$prodtmp = new Product($db);
-					$result = $prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+					$result = $prodtmp->fetch(getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS'));
 					if ($result < 0) {
 						setEventMessage($prodtmp->error, 'errors');
 					}
@@ -1070,7 +1078,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 				print '</label><br>';
 			}
 			// Add invoice with payments
-			if (isModEnabled('banque') && isModEnabled('societe') && isModEnabled('facture')) {
+			if (isModEnabled('bank') && isModEnabled('societe') && isModEnabled('invoice')) {
 				print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.(!empty($bankviainvoice) ? ' checked' : '');
 				//if (empty($object->fk_soc)) print ' disabled';
 				print '><label for="bankviainvoice">  '.$langs->trans("MoreActionBankViaInvoice");
@@ -1091,7 +1099,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 				}
 				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled('product')|| isModEnabled('service'))) {
 					$prodtmp = new Product($db);
-					$result = $prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+					$result = $prodtmp->fetch(getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS'));
 					if ($result < 0) {
 						setEventMessage($prodtmp->error, 'errors');
 					}
@@ -1158,7 +1166,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 		$outputlangs->loadLangs(array("main", "members"));
 		// Get email content from template
 		$arraydefaultmessage = null;
-		$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+		$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION');
 
 		if (!empty($labeltouse)) {
 			$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);

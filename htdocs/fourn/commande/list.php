@@ -52,52 +52,52 @@ $langs->loadLangs(array("orders", "sendings", 'deliveries', 'companies', 'compta
 // Get Parameters
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'supplierorderlist';
 $mode = GETPOST('mode', 'alpha');
 
 // Search Criteria
-$search_date_order_startday = GETPOST('search_date_order_startday', 'int');
-$search_date_order_startmonth = GETPOST('search_date_order_startmonth', 'int');
-$search_date_order_startyear = GETPOST('search_date_order_startyear', 'int');
-$search_date_order_endday = GETPOST('search_date_order_endday', 'int');
-$search_date_order_endmonth = GETPOST('search_date_order_endmonth', 'int');
-$search_date_order_endyear = GETPOST('search_date_order_endyear', 'int');
+$search_date_order_startday = GETPOSTINT('search_date_order_startday');
+$search_date_order_startmonth = GETPOSTINT('search_date_order_startmonth');
+$search_date_order_startyear = GETPOSTINT('search_date_order_startyear');
+$search_date_order_endday = GETPOSTINT('search_date_order_endday');
+$search_date_order_endmonth = GETPOSTINT('search_date_order_endmonth');
+$search_date_order_endyear = GETPOSTINT('search_date_order_endyear');
 $search_date_order_start = dol_mktime(0, 0, 0, $search_date_order_startmonth, $search_date_order_startday, $search_date_order_startyear);	// Use tzserver
 $search_date_order_end = dol_mktime(23, 59, 59, $search_date_order_endmonth, $search_date_order_endday, $search_date_order_endyear);
 
-$search_date_delivery_startday = GETPOST('search_date_delivery_startday', 'int');
-$search_date_delivery_startmonth = GETPOST('search_date_delivery_startmonth', 'int');
-$search_date_delivery_startyear = GETPOST('search_date_delivery_startyear', 'int');
-$search_date_delivery_endday = GETPOST('search_date_delivery_endday', 'int');
-$search_date_delivery_endmonth = GETPOST('search_date_delivery_endmonth', 'int');
-$search_date_delivery_endyear = GETPOST('search_date_delivery_endyear', 'int');
+$search_date_delivery_startday = GETPOSTINT('search_date_delivery_startday');
+$search_date_delivery_startmonth = GETPOSTINT('search_date_delivery_startmonth');
+$search_date_delivery_startyear = GETPOSTINT('search_date_delivery_startyear');
+$search_date_delivery_endday = GETPOSTINT('search_date_delivery_endday');
+$search_date_delivery_endmonth = GETPOSTINT('search_date_delivery_endmonth');
+$search_date_delivery_endyear = GETPOSTINT('search_date_delivery_endyear');
 $search_date_delivery_start = dol_mktime(0, 0, 0, $search_date_delivery_startmonth, $search_date_delivery_startday, $search_date_delivery_startyear);	// Use tzserver
 $search_date_delivery_end = dol_mktime(23, 59, 59, $search_date_delivery_endmonth, $search_date_delivery_endday, $search_date_delivery_endyear);
 
-$search_date_valid_startday = GETPOST('search_date_valid_startday', 'int');
-$search_date_valid_startmonth = GETPOST('search_date_valid_startmonth', 'int');
-$search_date_valid_startyear = GETPOST('search_date_valid_startyear', 'int');
-$search_date_valid_endday = GETPOST('search_date_valid_endday', 'int');
-$search_date_valid_endmonth = GETPOST('search_date_valid_endmonth', 'int');
-$search_date_valid_endyear = GETPOST('search_date_valid_endyear', 'int');
+$search_date_valid_startday = GETPOSTINT('search_date_valid_startday');
+$search_date_valid_startmonth = GETPOSTINT('search_date_valid_startmonth');
+$search_date_valid_startyear = GETPOSTINT('search_date_valid_startyear');
+$search_date_valid_endday = GETPOSTINT('search_date_valid_endday');
+$search_date_valid_endmonth = GETPOSTINT('search_date_valid_endmonth');
+$search_date_valid_endyear = GETPOSTINT('search_date_valid_endyear');
 $search_date_valid_start = dol_mktime(0, 0, 0, $search_date_valid_startmonth, $search_date_valid_startday, $search_date_valid_startyear);	// Use tzserver
 $search_date_valid_end = dol_mktime(23, 59, 59, $search_date_valid_endmonth, $search_date_valid_endday, $search_date_valid_endyear);
 
-$search_date_approve_startday = GETPOST('search_date_approve_startday', 'int');
-$search_date_approve_startmonth = GETPOST('search_date_approve_startmonth', 'int');
-$search_date_approve_startyear = GETPOST('search_date_approve_startyear', 'int');
-$search_date_approve_endday = GETPOST('search_date_approve_endday', 'int');
-$search_date_approve_endmonth = GETPOST('search_date_approve_endmonth', 'int');
-$search_date_approve_endyear = GETPOST('search_date_approve_endyear', 'int');
+$search_date_approve_startday = GETPOSTINT('search_date_approve_startday');
+$search_date_approve_startmonth = GETPOSTINT('search_date_approve_startmonth');
+$search_date_approve_startyear = GETPOSTINT('search_date_approve_startyear');
+$search_date_approve_endday = GETPOSTINT('search_date_approve_endday');
+$search_date_approve_endmonth = GETPOSTINT('search_date_approve_endmonth');
+$search_date_approve_endyear = GETPOSTINT('search_date_approve_endyear');
 $search_date_approve_start = dol_mktime(0, 0, 0, $search_date_approve_startmonth, $search_date_approve_startday, $search_date_approve_startyear);	// Use tzserver
 $search_date_approve_end = dol_mktime(23, 59, 59, $search_date_approve_endmonth, $search_date_approve_endday, $search_date_approve_endyear);
 
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
-$search_product_category = GETPOST('search_product_category', 'int');
+$search_product_category = GETPOSTINT('search_product_category');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_refsupp = GETPOST('search_refsupp', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
@@ -105,15 +105,13 @@ $search_company_alias = GETPOST('search_company_alias', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state", 'alpha');
-$search_country = GETPOST("search_country", 'int');
-$search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
-$search_user = GETPOST('search_user', 'int');
+$search_country = GETPOSTINT("search_country");
+$search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
+$search_user = GETPOSTINT('search_user');
 $search_request_author = GETPOST('search_request_author', 'alpha');
-$search_ht = GETPOST('search_ht', 'alpha');
-$search_ttc = GETPOST('search_ttc', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
-$socid = GETPOST('socid', 'int');
-$search_sale = GETPOST('search_sale', 'int');
+$socid = GETPOSTINT('socid');
+$search_sale = GETPOSTINT('search_sale');
 $search_total_ht = GETPOST('search_total_ht', 'alpha');
 $search_total_tva = GETPOST('search_total_tva', 'alpha');
 $search_total_ttc = GETPOST('search_total_ttc', 'alpha');
@@ -123,23 +121,23 @@ $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'a
 $search_multicurrency_montant_tva = GETPOST('search_multicurrency_montant_tva', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
-$search_billed = GETPOST('search_billed', 'int');
+$search_billed = GETPOST('search_billed', 'intcomma');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
 if (GETPOSTISARRAY('search_status')) {
-	$search_status = join(',', GETPOST('search_status', 'array:intcomma'));
+	$search_status = implode(',', GETPOST('search_status', 'array:intcomma'));
 } else {
 	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
 }
 
 $diroutputmassaction = $conf->fournisseur->commande->dir_output.'/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -221,7 +219,7 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 }
 
 // Security check
-$orderid = GETPOST('orderid', 'int');
+$orderid = GETPOSTINT('orderid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -369,8 +367,8 @@ if (empty($reshook)) {
 	// Mass action to generate vendor bills
 	if ($massaction == 'confirm_createsupplierbills') {
 		$orders = GETPOST('toselect', 'array');
-		$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
-		$validate_invoices = GETPOST('validate_invoices', 'int');
+		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
+		$validate_invoices = GETPOSTINT('validate_invoices');
 
 		$TFact = array();
 		/** @var FactureFournisseur[] $TFactThird */
@@ -409,7 +407,7 @@ if (empty($reshook)) {
 				$objecttmp->ref_supplier = !empty($cmd->ref_supplier) ? $cmd->ref_supplier : $default_ref_supplier;
 				$default_ref_supplier+=1;
 
-				$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+				$datefacture = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 				if (empty($datefacture)) {
 					$datefacture = dol_now();
 				}
@@ -441,7 +439,7 @@ if (empty($reshook)) {
 				$sql .= ")";
 
 				if (!$db->query($sql)) {
-					$erorr++;
+					$error++;
 				}
 
 				if (!$error) {
@@ -519,7 +517,7 @@ if (empty($reshook)) {
 								$lines[$i]->info_bits,
 								'HT',
 								$product_type,
-								// we dont use the rank from orderline because we may have lines from several orders
+								// we don't use the rank from orderline because we may have lines from several orders
 								-1,
 								false,
 								$lines[$i]->array_options,
@@ -787,7 +785,7 @@ $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as delivery_date, cf.date_valid, cf.date_approve,";
 $sql .= ' cf.localtax1 as total_localtax1, cf.localtax2 as total_localtax2,';
 $sql .= ' cf.fk_multicurrency, cf.multicurrency_code, cf.multicurrency_tx, cf.multicurrency_total_ht, cf.multicurrency_total_tva, cf.multicurrency_total_ttc,';
-$sql .= ' cf.date_creation as date_creation, cf.tms as date_update,';
+$sql .= ' cf.date_creation as date_creation, cf.tms as date_modification,';
 $sql .= ' cf.note_public, cf.note_private,';
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_title,";
 $sql .= " u.firstname, u.lastname, u.photo, u.login, u.email as user_email, u.statut as user_status";
@@ -1020,7 +1018,7 @@ if ($resql) {
 		exit;
 	}
 
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplier-order page-list');
 
 	$param = '';
 	if (!empty($mode)) {
@@ -1287,7 +1285,7 @@ if ($resql) {
 		foreach ($fieldstosearchall as $key => $val) {
 			$fieldstosearchall[$key] = $langs->trans($val);
 		}
-		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).implode(', ', $fieldstosearchall).'</div>';
 	}
 
 	$moreforfilter = '';
@@ -1308,7 +1306,7 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
-	if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
+	if (isModEnabled('category') && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -1334,7 +1332,7 @@ if ($resql) {
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
-	if (GETPOST('autoselectall', 'int')) {
+	if (GETPOSTINT('autoselectall')) {
 		$selectedfields .= '<script>';
 		$selectedfields .= '   $(document).ready(function() {';
 		$selectedfields .= '        console.log("Autoclick on checkforselects");';
@@ -2005,7 +2003,7 @@ if ($resql) {
 			// Date modification
 			if (!empty($arrayfields['cf.tms']['checked'])) {
 				print '<td class="center nowraponall">';
-				print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+				print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

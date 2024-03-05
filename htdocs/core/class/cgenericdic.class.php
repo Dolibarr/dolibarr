@@ -3,6 +3,7 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2016       Florian Henry       <florian.henry@atm-consulting.fr>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +60,7 @@ class CGenericDic extends CommonDict
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -71,12 +72,11 @@ class CGenericDic extends CommonDict
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int Return integer <0 if KO, Id of created object if OK
+	 * @param  User $user      	User that creates
+	 * @param  int 	$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int 				Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -98,7 +98,7 @@ class CGenericDic extends CommonDict
 			$this->label = trim($this->label);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Insert request
@@ -294,12 +294,11 @@ class CGenericDic extends CommonDict
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int Return integer <0 if KO, >0 if OK
+	 * @param  User $user      	User that modifies
+	 * @param  int 	$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int 				Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -323,7 +322,7 @@ class CGenericDic extends CommonDict
 			$this->label = trim($this->label);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Check parameters
@@ -370,12 +369,11 @@ class CGenericDic extends CommonDict
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user      User that deletes
-	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int Return integer <0 if KO, >0 if OK
+	 * @param User 	$user      	User that deletes
+	 * @param int 	$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int 				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -474,7 +472,7 @@ class CGenericDic extends CommonDict
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -483,5 +481,7 @@ class CGenericDic extends CommonDict
 		$this->code = 'CODE';
 		$this->label = 'Label';
 		$this->active = 1;
+
+		return 1;
 	}
 }

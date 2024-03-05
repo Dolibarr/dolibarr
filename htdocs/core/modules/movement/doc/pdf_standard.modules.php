@@ -155,15 +155,15 @@ class pdf_standard extends ModelePDFMovement
 		 * TODO: get from object
 		 */
 
-		$id = GETPOST('id', 'int');
+		$id = GETPOSTINT('id');
 		$ref = GETPOST('ref', 'alpha');
-		$msid = GETPOST('msid', 'int');
+		$msid = GETPOSTINT('msid');
 		$product_id = GETPOST("product_id");
 		$action = GETPOST('action', 'aZ09');
 		$cancel = GETPOST('cancel', 'alpha');
 		$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'movementlist';
 
-		$idproduct = GETPOST('idproduct', 'int');
+		$idproduct = GETPOSTINT('idproduct');
 		$year = GETPOST("year");
 		$month = GETPOST("month");
 		$search_ref = GETPOST('search_ref', 'alpha');
@@ -175,10 +175,10 @@ class pdf_standard extends ModelePDFMovement
 		$search_user = trim(GETPOST("search_user"));
 		$search_batch = trim(GETPOST("search_batch"));
 		$search_qty = trim(GETPOST("search_qty"));
-		$search_type_mouvement = GETPOST('search_type_mouvement', 'int');
+		$search_type_mouvement = GETPOSTINT('search_type_mouvement');
 
-		$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-		$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+		$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+		$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 		$sortfield = GETPOST('sortfield', 'aZ09comma');
 		$sortorder = GETPOST('sortorder', 'aZ09comma');
 		if (empty($page) || $page == -1) {
@@ -192,7 +192,7 @@ class pdf_standard extends ModelePDFMovement
 			$sortorder = "DESC";
 		}
 
-		$pdluoid = GETPOST('pdluoid', 'int');
+		$pdluoid = GETPOSTINT('pdluoid');
 
 		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 		$hookmanager->initHooks(array('movementlist'));
@@ -530,7 +530,7 @@ class pdf_standard extends ModelePDFMovement
 							$curY = $tab_top_newpage;
 						}
 
-						$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+						$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 						// $objp = $this->db->fetch_object($resql);
 
@@ -579,7 +579,7 @@ class pdf_standard extends ModelePDFMovement
 						$pdf->SetXY($this->posxlabel + 0.8, $curY);
 						$pdf->MultiCell($this->posxqty - $this->posxlabel - 0.8, 6, $productstatic->label, 0, 'L');
 
-						// Lot/serie
+						// Lot/series
 						$pdf->SetXY($this->posxqty, $curY);
 						$pdf->MultiCell($this->posxup - $this->posxqty - 0.8, 3, $productlot->batch, 0, 'R');
 
@@ -587,7 +587,7 @@ class pdf_standard extends ModelePDFMovement
 						$pdf->SetXY($this->posxup, $curY);
 						$pdf->MultiCell($this->posxunit - $this->posxup - 0.8, 3, $objp->inventorycode, 0, 'R');
 
-						// Label mouvement
+						// Label movement
 						$pdf->SetXY($this->posxunit, $curY);
 						$pdf->MultiCell($this->posxdiscount - $this->posxunit - 0.8, 3, $objp->label, 0, 'R');
 						$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
@@ -856,7 +856,7 @@ class pdf_standard extends ModelePDFMovement
 			$pdf->MultiCell($this->posxqty - $this->posxlabel, 2, $outputlangs->transnoentities("Label"), '', 'C');
 		}
 
-		//Lot/serie Product
+		//Lot/series Product
 		//$pdf->line($this->posxqty - 1, $tab_top, $this->posxqty - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxqty, $tab_top + 1);
@@ -870,11 +870,11 @@ class pdf_standard extends ModelePDFMovement
 			$pdf->MultiCell($this->posxunit - $this->posxup, 2, $outputlangs->transnoentities("Inventory Code"), '', 'C');
 		}
 
-		//Label mouvement
+		//Label movement
 		//$pdf->line($this->posxunit, $tab_top, $this->posxunit, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxunit, $tab_top + 1);
-			$pdf->MultiCell($this->posxdiscount - $this->posxunit, 2, $outputlangs->transnoentities("Label Mouvement"), '', 'C');
+			$pdf->MultiCell($this->posxdiscount - $this->posxunit, 2, $outputlangs->transnoentities("Label Movement"), '', 'C');
 		}
 
 		//Origin
@@ -906,11 +906,11 @@ class pdf_standard extends ModelePDFMovement
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param	string		$titlekey		Translation key to show as title of document
-	 *  @return	int                         Return topshift value
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
 	{
-		global $conf, $langs, $db, $hookmanager;
+		global $conf, $langs;
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "propal", "companies", "bills", "orders", "stocks"));
@@ -1116,6 +1116,7 @@ class pdf_standard extends ModelePDFMovement
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
 		return $top_shift;
 	}
 

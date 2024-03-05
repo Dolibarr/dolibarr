@@ -50,6 +50,9 @@ build/yarn-error.log
 build/node_modules/
 node_modules/
 
+vendor/
+tmp/
+
 #yarn
 yarn.lock
 
@@ -63,6 +66,10 @@ doc/install.lock
 /composer.json
 /composer.lock
 
+# to execute pre-commit
+local.sh
+
+# ignore cache builds
 /build/phpstan/phpstan
 /build/phpstan/bootstrap_custom.php
 phpstan_custom.neon

@@ -60,22 +60,22 @@ if (empty($reshook)) {
 	$error = false;
 
 	$action = GETPOST('action', 'aZ09');
-	$id = GETPOST('id', 'int');
+	$id = GETPOSTINT('id');
 
 	$apply_to = GETPOST('apply_to');
-	$fk_user = GETPOST('fk_user', 'int');
-	$fk_usergroup = GETPOST('fk_usergroup', 'int');
-	$restrictive = GETPOST('restrictive', 'int');
-	$fk_c_type_fees = GETPOST('fk_c_type_fees', 'int');
+	$fk_user = GETPOSTINT('fk_user');
+	$fk_usergroup = GETPOSTINT('fk_usergroup');
+	$restrictive = GETPOSTINT('restrictive');
+	$fk_c_type_fees = GETPOSTINT('fk_c_type_fees');
 	$code_expense_rules_type = GETPOST('code_expense_rules_type');
 	$dates = dol_mktime(12, 0, 0, GETPOST('startmonth'), GETPOST('startday'), GETPOST('startyear'));
 	$datee = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
-	$amount = price2num(GETPOST('amount'), 'MT', 2);
+	$amount = (float) price2num(GETPOST('amount'), 'MT', 2);
 
 	if (!empty($id)) {
 		$result = $object->fetch($id);
 		if ($result < 0) {
-			dol_print_error('', $object->error, $object->errors);
+			dol_print_error(null, $object->error, $object->errors);
 		}
 	}
 

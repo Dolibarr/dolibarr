@@ -208,7 +208,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	}
 
 	/**
-	 *	get available output_modes for tcpdf class wth its translated description
+	 *	get available output_modes for tcpdf class with its translated description
 	 *
 	 * @param	string $dolEncodingType dolibarr barcode encoding type
 	 * @return	string tcpdf encoding type

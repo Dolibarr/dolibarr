@@ -47,18 +47,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 // par de nombreux modules (banque, facture, commande a facturer, etc...) independamment
 // de l'utilisation de la compta ou non. C'est au sein de cet espace que chaque sous fonction
 // est protegee par le droit qui va bien du module concerne.
-//if (!$user->rights->compta->general->lire)
-//  accessforbidden();
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	$langs->load("orders");
 }
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
-$bid = GETPOST('bid', 'int');
+$bid = GETPOSTINT('bid');
 
 // Security check
 $socid = '';
@@ -105,7 +103,7 @@ print load_fiche_titre($langs->trans("InvoicesArea"), '', 'bill');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	print getNumberInvoicesPieChart('customers');
 	print '<br>';
 }
@@ -115,7 +113,7 @@ if (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) {
 	print '<br>';
 }
 
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	print getCustomerInvoiceDraftTable($max, $socid);
 	print '<br>';
 }
@@ -129,7 +127,7 @@ print '</div><div class="fichetwothirdright">';
 
 
 // Latest modified customer invoices
-if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
+if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 	$langs->load("boxes");
 	$tmpinvoice = new Facture($db);
 
@@ -139,28 +137,23 @@ if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 	$sql .= ", s.rowid as socid";
 	$sql .= ", s.code_client, s.code_compta, s.email";
 	$sql .= ", cc.rowid as country_id, cc.code as country_code";
-	$sql .= ", sum(pf.amount) as am";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays, ".MAIN_DB_PREFIX."facture as f";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	}
-	$sql .= " WHERE s.rowid = f.fk_soc";
-	$sql .= " AND f.entity IN (".getEntity('invoice').")";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-	}
-	if ($socid) {
+	$sql .= ", (SELECT SUM(pf.amount) FROM llx_paiement_facture as pf WHERE pf.fk_facture = f.rowid) as am";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
+	$sql .= " WHERE f.entity IN (".getEntity('invoice').")";
+	if ($socid > 0) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
+	}
+	// Filter on sale representative
+	if (!$user->hasRight('societe', 'client', 'voir')) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 	}
 	// Add where from hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhereCustomerLastModified', $parameters);
 	$sql .= $hookmanager->resPrint;
 
-	$sql .= " GROUP BY f.rowid, f.ref, f.fk_statut, f.type, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
-	$sql .= " s.nom, s.rowid, s.code_client, s.code_compta, s.email,";
-	$sql .= " cc.rowid, cc.code";
 	$sql .= " ORDER BY f.tms DESC";
 	$sql .= $db->plimit($max, 0);
 
@@ -199,6 +192,7 @@ if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 				$tmpinvoice->total_tva = $obj->total_tva;
 				$tmpinvoice->total_ttc = $obj->total_ttc;
 				$tmpinvoice->statut = $obj->status;
+				$tmpinvoice->status = $obj->status;
 				$tmpinvoice->paye = $obj->paye;
 				$tmpinvoice->date_lim_reglement = $db->jdate($obj->datelimite);
 				$tmpinvoice->type = $obj->type;
@@ -212,7 +206,7 @@ if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 				$thirdpartystatic->client = 1;
 				$thirdpartystatic->code_client = $obj->code_client;
 				//$thirdpartystatic->code_fournisseur = $obj->code_fournisseur;
-				$thirdpartystatic->code_compta = $obj->code_compta;
+				$thirdpartystatic->code_compta_client = $obj->code_compta;
 				//$thirdpartystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 				print '<tr class="oddeven">';
@@ -289,28 +283,23 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 	$sql .= ", s.nom as name";
 	$sql .= ", s.rowid as socid";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.email";
-	$sql .= ", SUM(pf.amount) as am";
+	$sql .= ", (SELECT SUM(pf.amount) FROM llx_paiementfourn_facturefourn as pf WHERE pf.fk_facturefourn = ff.rowid) as am";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf on ff.rowid=pf.fk_facturefourn";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	}
 	$sql .= " WHERE s.rowid = ff.fk_soc";
-	$sql .= " AND ff.entity = ".$conf->entity;
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-	}
-	if ($socid) {
+	$sql .= " AND ff.entity IN (".getEntity('facture_fourn').")";
+	if ($socid > 0) {
 		$sql .= " AND ff.fk_soc = ".((int) $socid);
+	}
+	// Filter on sale representative
+	if (!$user->hasRight('societe', 'client', 'voir')) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = ff.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 	}
 	// Add where from hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhereSupplierLastModified', $parameters);
 	$sql .= $hookmanager->resPrint;
 
-	$sql .= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.type, ff.libelle, ff.total_ht, ff.tva, ff.total_tva, ff.total_ttc, ff.tms, ff.paye, ff.ref_supplier,";
-	$sql .= " s.nom, s.rowid, s.code_fournisseur, s.code_compta_fournisseur, s.email";
-	$sql .= " ORDER BY ff.tms DESC ";
+	$sql .= " ORDER BY ff.tms DESC";
 	$sql .= $db->plimit($max, 0);
 
 	$resql = $db->query($sql);
@@ -591,7 +580,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 /*
  * Customers orders to be billed
  */
-if (isModEnabled('facture') && isModEnabled('commande') && $user->hasRight("commande", "lire") && !getDolGlobalString('WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER')) {
+if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("commande", "lire") && !getDolGlobalString('WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER')) {
 	$commandestatic = new Commande($db);
 	$langs->load("orders");
 
@@ -602,22 +591,21 @@ if (isModEnabled('facture') && isModEnabled('commande') && $user->hasRight("comm
 	$sql .= ", c.rowid, c.ref, c.facture, c.fk_statut as status, c.total_ht, c.total_tva, c.total_ttc,";
 	$sql .= " cc.rowid as country_id, cc.code as country_code";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	}
 	$sql .= ", ".MAIN_DB_PREFIX."commande as c";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_source = c.rowid AND el.sourcetype = 'commande'";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON el.fk_target = f.rowid AND el.targettype = 'facture'";
 	$sql .= " WHERE c.fk_soc = s.rowid";
-	$sql .= " AND c.entity = ".$conf->entity;
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-	}
+	$sql .= " AND c.entity IN (".getEntity('commande').")";
 	if ($socid) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
-	$sql .= " AND c.fk_statut = ".Commande::STATUS_CLOSED;
+	$sql .= " AND c.fk_statut = ".((int) Commande::STATUS_CLOSED);
 	$sql .= " AND c.facture = 0";
+	// Filter on sale representative
+	if (!$user->hasRight('societe', 'client', 'voir')) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
+	}
+
 	// Add where from hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhereCustomerOrderToBill', $parameters);

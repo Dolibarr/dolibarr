@@ -35,7 +35,7 @@ global $conf, $db, $langs;
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'companies', 'other'));
 
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('account'));
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -51,10 +51,10 @@ if ($user->socid) {
 }
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }
@@ -119,7 +119,7 @@ if (GETPOST("rel") == 'prev') {
 	$found = true;
 }
 
-$permissiontoadd = $user->rights->banque->modifier;	// Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('banque', 'modifier');	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -184,8 +184,8 @@ if ($id > 0 || !empty($ref)) {
 
 
 		$modulepart = 'bank';
-		$permissiontoadd = $user->rights->banque->modifier;
-		$permtoedit = $user->rights->banque->modifier;
+		$permissiontoadd = $user->hasRight('banque', 'modifier');
+		$permtoedit = $user->hasRight('banque', 'modifier');
 		$param = '&id='.$object->id.'&num='.urlencode($numref);
 		$moreparam = '&num='.urlencode($numref);
 		$relativepathwithnofile = $id."/statement/".dol_sanitizeFileName($numref)."/";

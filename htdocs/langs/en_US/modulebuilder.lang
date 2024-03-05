@@ -27,8 +27,7 @@ ModuleBuilderDeschooks=This tab is dedicated to hooks.
 ModuleBuilderDescwidgets=This tab is dedicated to manage/build widgets.
 ModuleBuilderDescbuildpackage=You can generate here a "ready to distribute" package file (a normalized .zip file) of your module and a "ready to distribute" documentation file. Just click on button to build the package or documentation file.
 EnterNameOfModuleToDeleteDesc=You can delete your module. WARNING: All coding files of module (generated or created manually) AND structured data and documentation will be deleted!
-EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to object will be deleted!
-EnterNameOfObjectToDeleteDesc=You can delete your dictionary. WARNING: All coding files of module (generated or created manually) AND structured data and documentation will be deleted!
+EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
 DangerZone=Danger zone
 BuildPackage=Build package
 BuildPackageDesc=You can generate a zip package of your application so your are ready to distribute it on any Dolibarr. You can also distribute it or sell it on marketplace like <a href="https://www.dolistore.com">DoliStore.com</a>.
@@ -183,3 +182,7 @@ DictionaryDeleted=Dictionary <b>%s</b> removed successfully
 PropertyModuleUpdated=Property <b>%s</b> has been update successfully
 InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Page for module setup 
+EmailingSelectors=Emails selectors
+EmailingSelectorDesc=You can generate and edit here the class files to provide new email target selectors for the mass emailing module
+EmailingSelectorFile=Emails selector file
+NoEmailingSelector=No emails selector file

@@ -240,7 +240,7 @@ if ($action == 'set') {
 	}
 }
 
-// To enable a constant whithout javascript
+// To enable a constant without javascript
 if (preg_match('/set_(.+)/', $action, $reg)) {
 	$keyforvar = $reg[1];
 	if ($keyforvar) {
@@ -249,7 +249,7 @@ if (preg_match('/set_(.+)/', $action, $reg)) {
 	}
 }
 
-// To disable a constant whithout javascript
+// To disable a constant without javascript
 if (preg_match('/del_(.+)/', $action, $reg)) {
 	$keyforvar = $reg[1];
 	if ($keyforvar) {
@@ -460,7 +460,7 @@ foreach ($dirmodels as $reldir) {
 									print "</td>";
 								}
 
-								// Defaut
+								// Default
 								print '<td class="center">';
 								if (getDolGlobalString('PRODUCT_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
@@ -690,7 +690,7 @@ print $form->selectarray(
 print '</td>';
 print '</tr>';
 
-// Visualiser description produit dans les formulaires activation/desactivation
+// Visualiser description produit dans les formulaires activation/deactivation
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td class="right">';

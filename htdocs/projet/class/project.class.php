@@ -8,6 +8,7 @@
  * Copyright (C) 2019      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -276,7 +277,7 @@ class Project extends CommonObject
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
@@ -351,6 +352,7 @@ class Project extends CommonObject
 	 * Closed status
 	 */
 	const STATUS_CLOSED = 2;
+
 
 	/**
 	 *  Constructor
@@ -493,7 +495,7 @@ class Project extends CommonObject
 		$sql .= ", ".($this->email_msgid ? "'".$this->db->escape($this->email_msgid)."'" : 'null');
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : 'null');
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null');
-		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".setEntity($this);
 		$sql .= ", ".(!isset($this->ip) ? 'NULL' : "'".$this->db->escape($this->ip)."'");
 		$sql .= ")";
 
@@ -601,8 +603,8 @@ class Project extends CommonObject
 			$sql .= ", usage_organize_event = ".($this->usage_organize_event ? 1 : 0);
 			$sql .= ", accept_conference_suggestions = ".($this->accept_conference_suggestions ? 1 : 0);
 			$sql .= ", accept_booth_suggestions = ".($this->accept_booth_suggestions ? 1 : 0);
-			$sql .= ", price_registration = ".(strcmp($this->price_registration, '') ? price2num($this->price_registration) : "null");
-			$sql .= ", price_booth = ".(strcmp($this->price_booth, '') ? price2num($this->price_booth) : "null");
+			$sql .= ", price_registration = ".(isset($this->price_registration) && strcmp($this->price_registration, '') ? price2num($this->price_registration) : "null");
+			$sql .= ", price_booth = ".(isset($this->price_booth) && strcmp($this->price_booth, '') ? price2num($this->price_booth) : "null");
 			$sql .= ", max_attendees = ".(strcmp($this->max_attendees, '') ? price2num($this->max_attendees) : "null");
 			$sql .= ", date_start_event = ".($this->date_start_event != '' ? "'".$this->db->idate($this->date_start_event)."'" : 'null');
 			$sql .= ", date_end_event = ".($this->date_end_event != '' ? "'".$this->db->idate($this->date_end_event)."'" : 'null');
@@ -819,7 +821,7 @@ class Project extends CommonObject
 	 *	@param		string		$projectkey		Equivalent key  to fk_projet for actual type
 	 * 	@return		mixed						Array list of object ids linked to project, < 0 or string if error
 	 */
-	public function get_element_list($type, $tablename, $datefieldname = '', $date_start = '', $date_end = '', $projectkey = 'fk_projet')
+	public function get_element_list($type, $tablename, $datefieldname = '', $date_start = null, $date_end = null, $projectkey = 'fk_projet')
 	{
 		// phpcs:enable
 
@@ -849,9 +851,9 @@ class Project extends CommonObject
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." IN (".$this->db->sanitize($ids).") AND entity IN (".getEntity($type).")";
 		}
 
-		if ($date_start > 0 && $type == 'loan') {
+		if (isDolTms($date_start) && $type == 'loan') {
 			$sql .= " AND (dateend > '".$this->db->idate($date_start)."' OR dateend IS NULL)";
-		} elseif ($date_start > 0 && ($type != 'project_task')) {	// For table project_taks, we want the filter on date apply on project_time_spent table
+		} elseif (isDolTms($date_start) && ($type != 'project_task')) {	// For table project_taks, we want the filter on date apply on project_time_spent table
 			if (empty($datefieldname) && !empty($this->table_element_date)) {
 				$datefieldname = $this->table_element_date;
 			}
@@ -861,9 +863,9 @@ class Project extends CommonObject
 			$sql .= " AND (".$datefieldname." >= '".$this->db->idate($date_start)."' OR ".$datefieldname." IS NULL)";
 		}
 
-		if ($date_end > 0 && $type == 'loan') {
+		if (isDolTms($date_end) && $type == 'loan') {
 			$sql .= " AND (datestart < '".$this->db->idate($date_end)."' OR datestart IS NULL)";
-		} elseif ($date_end > 0 && ($type != 'project_task')) {	// For table project_taks, we want the filter on date apply on project_time_spent table
+		} elseif (isDolTms($date_end) && ($type != 'project_task')) {	// For table project_taks, we want the filter on date apply on project_time_spent table
 			if (empty($datefieldname) && !empty($this->table_element_date)) {
 				$datefieldname = $this->table_element_date;
 			}
@@ -916,6 +918,7 @@ class Project extends CommonObject
 		} else {
 			dol_print_error($this->db);
 		}
+		return -1;
 	}
 
 	/**
@@ -1168,7 +1171,7 @@ class Project extends CommonObject
 
 		// Protection
 		if ($this->status == self::STATUS_VALIDATED) {
-			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
+			dol_syslog(get_class($this)."::validate action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
 
@@ -1203,7 +1206,7 @@ class Project extends CommonObject
 				return 1;
 			} else {
 				$this->db->rollback();
-				$this->error = join(',', $this->errors);
+				$this->error = implode(',', $this->errors);
 				dol_syslog(get_class($this)."::setValid ".$this->error, LOG_ERR);
 				return -1;
 			}
@@ -1222,8 +1225,6 @@ class Project extends CommonObject
 	 */
 	public function setClose($user)
 	{
-		global $langs, $conf;
-
 		$now = dol_now();
 
 		$error = 0;
@@ -1256,7 +1257,7 @@ class Project extends CommonObject
 					return 1;
 				} else {
 					$this->db->rollback();
-					$this->error = join(',', $this->errors);
+					$this->error = implode(',', $this->errors);
 					dol_syslog(get_class($this)."::setClose ".$this->error, LOG_ERR);
 					return -1;
 				}
@@ -1380,7 +1381,7 @@ class Project extends CommonObject
 
 		$result = '';
 		if (getDolGlobalString('PROJECT_OPEN_ALWAYS_ON_TAB')) {
-			$option = $conf->global->PROJECT_OPEN_ALWAYS_ON_TAB;
+			$option = getDolGlobalString('PROJECT_OPEN_ALWAYS_ON_TAB');
 		}
 		$params = [
 			'id' => $this->id,
@@ -1476,7 +1477,7 @@ class Project extends CommonObject
 	 *  Used to build previews or test instances.
 	 * 	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1495,7 +1496,8 @@ class Project extends CommonObject
 		$this->date_start = $now;
 		$this->date_end = $now + (3600 * 24 * 365);
 		$this->note_public = 'SPECIMEN';
-		$this->fk_element = 20000;
+		$this->note_private = 'Private Note';
+		$this->fk_project = 0;
 		$this->opp_amount = 20000;
 		$this->budget_amount = 10000;
 
@@ -1518,6 +1520,8 @@ class Project extends CommonObject
 		 $xnbp++;
 		 }
 		 */
+
+		return 1;
 	}
 
 	/**
@@ -1586,7 +1590,7 @@ class Project extends CommonObject
 	 * @param 	int		$mode			0=All project I have permission on (assigned to me or public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
 	 * @param 	int		$list			0=Return array, 1=Return string list
 	 * @param	int		$socid			0=No filter on third party, id of third party
-	 * @param	string	$filter			additionnal filter on project (statut, ref, ...)
+	 * @param	string	$filter			additional filter on project (statut, ref, ...)
 	 * @return 	array|string			Array of projects id, or string with projects id separated with "," if list is 1
 	 */
 	public function getProjectsAuthorizedForUser($user, $mode = 0, $list = 0, $socid = 0, $filter = '')
@@ -1629,13 +1633,13 @@ class Project extends CommonObject
 
 		if ($mode == 0) {
 			$sql .= " AND ( p.public = 1";
-			$sql .= " OR ( ec.fk_c_type_contact IN (".$this->db->sanitize(join(',', array_keys($listofprojectcontacttype))).")";
+			$sql .= " OR ( ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', array_keys($listofprojectcontacttype))).")";
 			$sql .= " AND ec.fk_socpeople = ".((int) $user->id).")";
 			$sql .= " )";
 		} elseif ($mode == 1) {
 			$sql .= " AND ec.element_id = p.rowid";
 			$sql .= " AND (";
-			$sql .= "  ( ec.fk_c_type_contact IN (".$this->db->sanitize(join(',', array_keys($listofprojectcontacttype))).")";
+			$sql .= "  ( ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', array_keys($listofprojectcontacttype))).")";
 			$sql .= " AND ec.fk_socpeople = ".((int) $user->id).")";
 			$sql .= " )";
 		} elseif ($mode == 2) {
@@ -1944,12 +1948,12 @@ class Project extends CommonObject
 			}
 			//print "$this->date_start + $tasktoshiftdate->date_start - $old_project_dt_start";exit;
 
-			//Calcultate new task start date with difference between old proj start date and origin task start date
+			//Calculate new task start date with difference between old proj start date and origin task start date
 			if (!empty($tasktoshiftdate->date_start)) {
 				$task->date_start = $this->date_start + ($tasktoshiftdate->date_start - $old_project_dt_start);
 			}
 
-			//Calcultate new task end date with difference between origin proj end date and origin task end date
+			//Calculate new task end date with difference between origin proj end date and origin task end date
 			if (!empty($tasktoshiftdate->date_end)) {
 				$task->date_end = $this->date_start + ($tasktoshiftdate->date_end - $old_project_dt_start);
 			}
@@ -2040,7 +2044,7 @@ class Project extends CommonObject
 	 *  Create an intervention document on disk using template defined into PROJECT_ADDON_PDF
 	 *
 	 *  @param	string		$modele			Force template to use ('' by default)
-	 *  @param	Translate	$outputlangs	Objet lang to use for translation
+	 *  @param	Translate	$outputlangs	Object lang to use for translation
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref
@@ -2058,7 +2062,7 @@ class Project extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('PROJECT_ADDON_PDF')) {
-				$modele = $conf->global->PROJECT_ADDON_PDF;
+				$modele = getDolGlobalString('PROJECT_ADDON_PDF');
 			}
 		}
 
@@ -2085,7 +2089,7 @@ class Project extends CommonObject
 		$this->weekWorkLoadPerTask = array();
 
 		if (empty($datestart)) {
-			dol_print_error('', 'Error datestart parameter is empty');
+			dol_print_error(null, 'Error datestart parameter is empty');
 		}
 
 		$sql = "SELECT ptt.rowid as taskid, ptt.element_duration, ptt.element_date, ptt.element_datehour, ptt.fk_element";
@@ -2149,7 +2153,7 @@ class Project extends CommonObject
 		$this->monthWorkLoadPerTask = array();
 
 		if (empty($datestart)) {
-			dol_print_error('', 'Error datestart parameter is empty');
+			dol_print_error(null, 'Error datestart parameter is empty');
 		}
 
 		$sql = "SELECT ptt.rowid as taskid, ptt.element_duration, ptt.element_date, ptt.element_datehour, ptt.fk_element";
@@ -2203,7 +2207,7 @@ class Project extends CommonObject
 	/**
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 * @param	User	$user   Objet user
+	 * @param	User	$user   Object user
 	 * @return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user)
@@ -2211,7 +2215,7 @@ class Project extends CommonObject
 		// phpcs:enable
 		global $conf, $langs;
 
-		// For external user, no check is done on company because readability is managed by public status of project and assignement.
+		// For external user, no check is done on company because readability is managed by public status of project and assignment.
 		//$socid=$user->socid;
 
 		$response = new WorkboardResponse();
@@ -2227,7 +2231,7 @@ class Project extends CommonObject
 		$sql .= " FROM (".MAIN_DB_PREFIX."projet as p";
 		$sql .= ")";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-		// For external user, no check is done on company permission because readability is managed by public status of project and assignement.
+		// For external user, no check is done on company permission because readability is managed by public status of project and assignment.
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 		$sql .= " WHERE p.fk_statut = 1";
 		$sql .= " AND p.entity IN (".getEntity('project').')';
@@ -2246,7 +2250,7 @@ class Project extends CommonObject
 
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
-		// For external user, no check is done on company permission because readability is managed by public status of project and assignement.
+		// For external user, no check is done on company permission because readability is managed by public status of project and assignment.
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id).") OR (s.rowid IS NULL))";
 
 		//print $sql;
@@ -2293,15 +2297,13 @@ class Project extends CommonObject
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Charge indicateurs this->nb pour le tableau de bord
+	 * Load indicators this->nb for the state board
 	 *
 	 * @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $user;
 
 		$this->nb = array();
@@ -2353,7 +2355,7 @@ class Project extends CommonObject
 
 
 	/**
-	 *	Charge les informations d'ordre info dans l'objet commande
+	 *	Charge les information d'ordre info dans l'objet commande
 	 *
 	 *	@param  int		$id       Id of order
 	 *	@return	void
@@ -2431,7 +2433,7 @@ class Project extends CommonObject
 	 *  @param 	string	$addr_bcc           Email bcc
 	 *  @param 	int		$deliveryreceipt	Ask a delivery receipt
 	 *  @param	int		$msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
-	 *  @param	string	$errors_to			erros to
+	 *  @param	string	$errors_to			errors to
 	 *  @param	string	$moreinheader		Add more html headers
 	 *  @since V18
 	 *  @return	int							Return integer <0 if KO, >0 if OK
@@ -2550,5 +2552,177 @@ class Project extends CommonObject
 		}
 
 		return $children;
+	}
+
+	/**
+	 * Method for calculating weekly hours worked and generating a report
+	 * @return int   0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function createWeeklyReport()
+	{
+		global $mysoc, $user;
+
+		$now = dol_now();
+		$nowDate = dol_getdate($now, true);
+
+		$firstDayOfWeekTS = dol_get_first_day_week($nowDate['mday'], $nowDate['mon'], $nowDate['year']);
+
+		$firstDayOfWeekDate = dol_mktime(0, 0, 0, $nowDate['mon'], $firstDayOfWeekTS['first_day'], $nowDate['year']);
+
+		$lastWeekStartTS = dol_time_plus_duree($firstDayOfWeekDate, -7, 'd');
+
+		$lastWeekEndTS = dol_time_plus_duree($lastWeekStartTS, 6, 'd');
+
+		$startDate = dol_print_date($lastWeekStartTS, '%Y-%m-%d 00:00:00');
+		$endDate = dol_print_date($lastWeekEndTS, '%Y-%m-%d 23:59:59');
+
+		$sql = "SELECT
+		u.rowid AS user_id,
+		CONCAT(u.firstname, ' ', u.lastname) AS name,
+		u.email,u.weeklyhours,
+		SUM(et.element_duration) AS total_seconds
+		FROM
+			llx_element_time AS et
+		JOIN
+			llx_user AS u ON et.fk_user = u.rowid
+		WHERE
+			et.element_date BETWEEN '".$this->db->escape($startDate)."' AND '".$this->db->escape($endDate)."'
+			AND et.elementtype = 'task'
+		GROUP BY
+			et.fk_user";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			dol_print_error($this->db);
+			return -1;
+		} else {
+			$reportContent = "<span>Weekly time report from $startDate to $endDate </span><br><br>";
+			$reportContent .= '<table border="1" style="border-collapse: collapse;">';
+			$reportContent .= '<tr><th>Nom d\'utilisateur</th><th>Temps saisi (heures)</th><th>Temps travaillé par semaine (heures)</th></tr>';
+
+			$weekendEnabled = 0;
+			$to = '';
+			$nbMailSend = 0;
+			$error = 0;
+			$errors_to = 0;
+			while ($obj = $this->db->fetch_object($resql)) {
+				$to = $obj->email;
+				$numHolidays = num_public_holiday($lastWeekStartTS, $lastWeekEndTS, $mysoc->country_code, 1);
+				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY') && getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY')) {
+					$numHolidays = $numHolidays - 2;
+					$weekendEnabled = 2;
+				}
+
+				$dailyHours = $obj->weeklyhours / (7 - $weekendEnabled);
+
+				// Adjust total on seconde
+				$adjustedSeconds = $obj->total_seconds + ($numHolidays * $dailyHours * 3600);
+
+				$totalHours = round($adjustedSeconds / 3600, 2);
+
+				$reportContent .= "<tr><td>{$obj->name}</td><td>{$totalHours}</td><td>".round($obj->weeklyhours, 2)."</td></tr>";
+
+				$reportContent .= '</table>';
+
+				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+
+				// PREPARE EMAIL
+				$errormesg = '';
+
+				$subject = 'Rapport hebdomadaire des temps travaillés';
+
+				$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+				if (empty($from)) {
+					$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
+					$error++;
+				}
+
+				$mail = new CMailFile($subject, $to, $from, $reportContent, array(), array(), array(), '', '', 0, -1, '', '', 0, 'text/html');
+
+				if ($mail->sendfile()) {
+					$nbMailSend++;
+
+					// Add a line into event table
+					require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+					// Insert record of emails sent
+					$actioncomm = new ActionComm($this->db);
+
+					$actioncomm->type_code = 'AC_OTH_AUTO'; // Event insert into agenda automatically
+					$actioncomm->socid = $this->thirdparty->id; // To link to a company
+					$actioncomm->contact_id = 0;
+
+					$actioncomm->code = 'AC_EMAIL';
+					$actioncomm->label = 'createWeeklyReportOK()';
+					$actioncomm->fk_project = $this->id;
+					$actioncomm->datep = dol_now();
+					$actioncomm->datef = $actioncomm->datep;
+					$actioncomm->percentage = -1; // Not applicable
+					$actioncomm->authorid = $user->id; // User saving action
+					$actioncomm->userownerid = $user->id; // Owner of action
+					// Fields when action is an email (content should be added into note)
+					$actioncomm->email_msgid = $mail->msgid;
+					$actioncomm->email_subject = $subject;
+					$actioncomm->email_from = $from;
+					$actioncomm->email_sender = '';
+					$actioncomm->email_to = $to;
+
+					$actioncomm->errors_to = $errors_to;
+
+					$actioncomm->elementtype = 'project_task';
+					$actioncomm->fk_element = $this->element;
+
+					$actioncomm->create($user);
+				} else {
+					$errormesg = $mail->error.' : '.$to;
+					$error++;
+
+					// Add a line into event table
+					require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+					// Insert record of emails sent
+					$actioncomm = new ActionComm($this->db);
+
+					$actioncomm->type_code = 'AC_OTH_AUTO'; // Event insert into agenda automatically
+					$actioncomm->socid = $this->thirdparty->id; // To link to a company
+					$actioncomm->contact_id = 0;
+
+					$actioncomm->code = 'AC_EMAIL';
+					$actioncomm->label = 'createWeeklyReportKO()';
+					$actioncomm->note_private = $errormesg;
+					$actioncomm->fk_project = $this->id;
+					$actioncomm->datep = dol_now();
+					$actioncomm->datef = $actioncomm->datep;
+					$actioncomm->authorid = $user->id; // User saving action
+					$actioncomm->userownerid = $user->id; // Owner of action
+					// Fields when action is an email (content should be added into note)
+					$actioncomm->email_msgid = $mail->msgid;
+					$actioncomm->email_from = $from;
+					$actioncomm->email_sender = '';
+					$actioncomm->email_to = $to;
+
+					$actioncomm->errors_to = $errors_to;
+
+					$actioncomm->elementtype = 'project_task';
+					$actioncomm->fk_element = $this->element;
+
+					$actioncomm->create($user);
+				}
+				$this->db->commit();
+			}
+		}
+		if ($errormesg) {
+			$errorsMsg[] = $errormesg;
+		}
+
+		if (!$error) {
+			$this->output .= 'Nb of emails sent : '.$nbMailSend;
+			dol_syslog(__METHOD__." end - ".$this->output, LOG_INFO);
+			return 0;
+		} else {
+			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? implode(', ', $errorsMsg) : $error;
+			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
+			return $error;
+		}
 	}
 }

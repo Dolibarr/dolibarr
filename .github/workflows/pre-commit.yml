@@ -7,7 +7,6 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     env:
-      LOG_TO_CS: .github/logToCs.py
       RAW_LOG: pre-commit.log
       CS_XML: pre-commit.xml
     steps:
@@ -16,6 +15,7 @@ jobs:
         if: false
 
       # The next uses the git API because there is no clone yet.
+      # It sets the variable steps.changed-php.outputs.all_changed_files for other steps
       # This is faster for a big repo.
       - name: Get all changed php files (if PR)
         id: changed-php
@@ -37,7 +37,7 @@ jobs:
         with:
           cache: pip
           python-version: "3.11"
-      - run: python -m pip install pre-commit regex
+      - run: python -m pip install pre-commit
       # Restore previous cache of precommit
       - uses: actions/cache/restore@v4
         with:
@@ -48,7 +48,7 @@ jobs:
       - name: Run pre-commit hooks
         env:
           # SKIP is used by pre-commit to not execute certain hooks
-          SKIP: no-commit-to-branch,php-cs,php-cbf,trailing-whitespace,end-of-file-fixer,check-json,check-executables-have-shebangs,check-shebang-scripts-are-executable,beautysh,yamllint,shellcheck
+          SKIP: no-commit-to-branch,php-cs,php-cbf,trailing-whitespace,end-of-file-fixer
         run: |
           set -o pipefail
           pre-commit gc
@@ -102,19 +102,12 @@ jobs:
           pre-commit run --hook-stage manual -a php-cs-with-cache | tee -a ${RAW_LOG}
           ls -l ~/.cache/pre-commit/
 
-      # If error, we convert log in the checkstyle format
-      - name: Convert Raw Log to CheckStyle format
-        if: ${{ failure() }}
-        run: |
-          python ${LOG_TO_CS} ${RAW_LOG} ${CS_XML}
-      # Annotate the git sources with the log messages
-      - name: Annotate Source Code with Messages
-        uses: staabm/annotate-pull-request-from-checkstyle-action@v1
+      - name: Convert Raw Log to Annotations
+        uses: mdeweerd/logToCheckStyle@v2024.2.9
         if: ${{ failure() }}
         with:
-          files: ${{ env.CS_XML }}
-          notices-as-warnings: true # optional
-          prepend-filename: true # optional
+          in: ${{ env.RAW_LOG }}
+
       # Save the precommit cache
       - uses: actions/cache/save@v4
         if: ${{ ! cancelled() }}

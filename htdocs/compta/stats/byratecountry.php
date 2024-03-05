@@ -43,8 +43,8 @@ $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "produ
 $modecompta = (GETPOST('modecompta', 'alpha') ? GETPOST('modecompta', 'alpha') : $conf->global->ACCOUNTING_MODE);
 
 // Date range
-$year = GETPOST("year", 'int');
-$month = GETPOST("month", 'int');
+$year = GETPOSTINT("year");
+$month = GETPOSTINT("month");
 if (empty($year)) {
 	$year_current = dol_print_date(dol_now(), '%Y');
 	$month_current = dol_print_date(dol_now(), '%m');
@@ -60,7 +60,7 @@ $date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endda
 // Quarter
 $q = '';
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOST("q", "int");
+	$q = GETPOSTINT("q");
 	if (empty($q)) {
 		// We define date_start and date_end
 		$month_start = GETPOST("month") ? GETPOST("month") : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
@@ -120,14 +120,14 @@ if (empty($min)) {
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
 $modetax = !getDolGlobalString('TAX_MODE') ? 0 : $conf->global->TAX_MODE;
 if (GETPOSTISSET("modetax")) {
-	$modetax = GETPOST("modetax", 'int');
+	$modetax = GETPOSTINT("modetax");
 }
 if (empty($modetax)) {
 	$modetax = 0;
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -265,7 +265,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$builddate = dol_now();
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("TurnoverCollected").', '.$langs->trans("ByVatRate");
-	$calcmode = $langs->trans("CalcModeEngagement");
+	$calcmode = $langs->trans("CalcModePayment");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 
 	$description .= $langs->trans("RulesCAIn");

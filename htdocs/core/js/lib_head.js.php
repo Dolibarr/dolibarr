@@ -194,8 +194,7 @@ var select2arrayoflanguage = {
 	noResults: function () { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2NotFound")); ?>"; },
 	inputTooShort: function (input) {
 		var n = input.minimum;
-		/*console.log(input);
-		console.log(input.minimum);*/
+		/*console.log(input); console.log(input.minimum);*/
 		if (n > 1) return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters")); ?>";
 			else return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter")); ?>"
 		},
@@ -269,12 +268,12 @@ function formatDate(date,format)
 {
 	// alert('formatDate date='+date+' format='+format);
 
-	// Force parametres en chaine
+	// Force parameters en chaine
 	format=format+"";
 
 	var result="";
 
-	var year=date.getYear()+""; if (year.length < 4) { year=""+(year-0+1900); }
+	var year=date.getYear()+""; if (year.length < 4) { year=""+(year-0+2000); } /* #28334 */
 	var month=date.getMonth()+1;
 	var day=date.getDate();
 	var hour=date.getHours();
@@ -337,14 +336,14 @@ function getDateFromFormat(val,format)
 {
 	// alert('getDateFromFormat val='+val+' format='+format);
 
-	// Force parametres en chaine
+	// Force parameters en chaine
 	val=val+"";
 	format=format+"";
 
 	if (val == '') return 0;
 
 	var now=new Date();
-	var year=now.getYear(); if (year.length < 4) { year=""+(year-0+1900); }
+	var year=now.getYear(); if (year.length < 4) { year=""+(year-0+2000); } /*  #28334 */
 	var month=now.getMonth()+1;
 	var day=now.getDate();
 	var hour=now.getHours();
@@ -369,7 +368,7 @@ function getDateFromFormat(val,format)
 
 		// alert('substr='+substr);
 		if (substr == "yyyy") year=getIntegerInString(val,d,4,4);
-		if (substr == "yy")   year=""+(getIntegerInString(val,d,2,2)-0+1900);
+		if (substr == "yy")   year=""+(getIntegerInString(val,d,2,2)-0+2000); /*  #28334 */
 		if (substr == "MM" ||substr == "M")
 		{
 			month=getIntegerInString(val,d,1,2);
@@ -561,14 +560,14 @@ function hideMessage(fieldId,message) {
  *
  * @param	string	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
  * @param	string	code		Code
- * @param	string	intput		Array of complementary actions to do if success
+ * @param	string	input		Array of complementary actions to do if success
  * @param	int		entity		Entity
  * @param	int		strict		Strict
  * @param   int     forcereload Force reload
  * @param   int     userid      User id
  * @param	int		value       Value to set
  * @param   string  token       Token
- * @retun   boolean
+ * @return   boolean
  */
 function setConstant(url, code, input, entity, strict, forcereload, userid, token, value) {
 	var saved_url = url; /* avoid undefined url */
@@ -668,7 +667,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
  *
  * @param	{string}	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
  * @param	{string}	code		Code
- * @param	{string}	intput		Array of complementary actions to do if success
+ * @param	{string}	input		Array of complementary actions to do if success
  * @param	{int}		entity		Entity
  * @param	{int}		strict		Strict
  * @param   {int}     forcereload Force reload
@@ -765,7 +764,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
  * @param	string	action		Action
  * @param	string	url			Url
  * @param	string	code		Code
- * @param	string	intput		Array of complementary actions to do if success
+ * @param	string	input		Array of complementary actions to do if success
  * @param	string	box			Box
  * @param	int		entity		Entity
  * @param	int		yesButton	yesButton
@@ -884,7 +883,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 								}
 							});
 							if ( !valid ) {
-								// remove invalid value, as it didnt match anything
+								// remove invalid value, as it didn't match anything
 								$( this ).val( "" );
 								select.val( "" );
 								input.data("ui-autocomplete").term = "";
@@ -1265,7 +1264,7 @@ function price2numjs(amount) {
 	amount = amount.replace(thousand, '');        // Replace of thousand before replace of dec to avoid pb if thousand is .
 	amount = amount.replace(dec, '.');
 
-	//console.log("amount before="+amount+" rouding="+rounding)
+	//console.log("amount before="+amount+" rounding="+rounding)
 	var res = Math.round10(amount, - rounding);
 	// Other solution is
 	// var res = dolroundjs(amount, rounding)

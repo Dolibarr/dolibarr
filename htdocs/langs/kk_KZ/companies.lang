@@ -333,7 +333,7 @@ CustomerRelativeDiscountShort=Салыстырмалы жеңілдік
 CustomerAbsoluteDiscountShort=Абсолютті жеңілдік
 CompanyHasRelativeDiscount=Бұл тұтынушыда <b> %s%% </b> әдепкі бойынша жеңілдік бар.
 CompanyHasNoRelativeDiscount=Бұл тұтынушыда әдепкі бойынша салыстырмалы жеңілдік жоқ
-HasRelativeDiscountFromSupplier=Сізде <b>%s%%<span class=' әдепкі жеңілдік бар. notranslate'></b></span> осы жеткізушімен
+HasRelativeDiscountFromSupplier=You have a default discount of <b>%s%%</b> with this vendor
 HasNoRelativeDiscountFromSupplier=Бұл жеткізушіде әдепкі салыстырмалы жеңілдік жоқ
 CompanyHasAbsoluteDiscount=Бұл тұтынушыда <b> %s </b> %s үшін жеңілдіктер бар (несиелік жазбалар немесе бастапқы жарналар).
 CompanyHasDownPaymentOrCommercialDiscount=Бұл тұтынушыда <b> %s </b> %s үшін жеңілдіктер бар (коммерциялық, бастапқы жарналар).

@@ -122,7 +122,6 @@ AssetDepreciationOptionDepreciationTypeLinear=tuyến tính
 AssetDepreciationOptionDepreciationTypeDegressive=thoái hóa
 AssetDepreciationOptionDepreciationTypeExceptional=Đặc biệt
 AssetDepreciationOptionDegressiveRate=Tỷ lệ giảm dần
-AssetDepreciationOptionAcceleratedDepreciation=Khấu hao nhanh (thuế)
 AssetDepreciationOptionDuration=Thời hạn
 AssetDepreciationOptionDurationType=Loại thời lượng
 AssetDepreciationOptionDurationTypeAnnual=Hàng năm

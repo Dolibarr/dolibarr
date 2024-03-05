@@ -41,6 +41,9 @@ if (empty($object) || !is_object($object)) {
 	exit;
 }
 
+'@phan-var-force CommonObject $this
+ @phan-var-force CommonObject $object';
+
 $usemargins = 0;
 if (isModEnabled('margin') && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
 	$usemargins = 1;
@@ -295,7 +298,7 @@ if ($nolinesbefore) {
 				} else {
 					$ajaxoptions = array(
 						// Disabled: This is useless because setting discount and price_ht after a selection is already managed
-						// by ths page itself with a .change on the combolist '#idprodfournprice'
+						// by this page itself with a .change on the combolist '#idprodfournprice'
 						//'update' => array('remise_percent' => 'discount', 'price_ht' => 'price_ht')			// html id tags that will be edited with each ajax json response key
 					);
 					$alsoproductwithnosupplierprice = 1;
@@ -319,7 +322,7 @@ if ($nolinesbefore) {
 				}
 			}
 
-			$parentId = GETPOST('parentId', 'int');
+			$parentId = GETPOSTINT('parentId');
 
 			$addproducton = (isModEnabled('product') && $user->hasRight('produit', 'creer'));
 			$addserviceon = (isModEnabled('service') && $user->hasRight('service', 'creer'));
@@ -379,7 +382,7 @@ if ($nolinesbefore) {
 		}
 
 		if (is_object($hookmanager) && empty($senderissupplier)) {
-			$parameters = array('fk_parent_line'=>GETPOST('fk_parent_line', 'int'));
+			$parameters = array('fk_parent_line'=>GETPOSTINT('fk_parent_line'));
 			$reshook = $hookmanager->executeHooks('formCreateProductOptions', $parameters, $object, $action);
 			if (!empty($hookmanager->resPrint)) {
 				print $hookmanager->resPrint;
@@ -403,7 +406,7 @@ if ($nolinesbefore) {
 		$nbrows = ROWS_2;
 		$enabled = (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS') ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
 		if (getDolGlobalString('MAIN_INPUT_DESC_HEIGHT')) {
-			$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
+			$nbrows = getDolGlobalString('MAIN_INPUT_DESC_HEIGHT');
 		}
 		$toolbarname = 'dolibarr_details';
 		if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS_FULL')) {
@@ -442,10 +445,15 @@ if ($nolinesbefore) {
 		}
 		print '<td class="nobottom linecolvat right">';
 		$coldisplay++;
+		if ($object->element == 'propal' || $object->element == 'commande' || $object->element == 'facture' || $object->element == 'facturerec') {
+			$type_tva = 1;
+		} elseif ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {
+			$type_tva = 2;
+		}
 		if ($seller->tva_assuj == "0") {
 			echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">'.vatrate(0, true);
 		} else {
-			echo $form->load_tva('tva_tx', (GETPOSTISSET("tva_tx") ? GETPOST("tva_tx", 'alpha', 2) : -1), $seller, $buyer, 0, 0, '', false, 1);
+			echo $form->load_tva('tva_tx', (GETPOSTISSET("tva_tx") ? GETPOST("tva_tx", 'alpha', 2) : -1), $seller, $buyer, 0, 0, '', false, 1, $type_tva);
 		}
 		?>
 	</td>
@@ -493,7 +501,7 @@ if ($nolinesbefore) {
 	<?php
 	if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 		$coldisplay++;
-		print '<td class="nobottom nowrap right"><input class="falt right" type="text" size="1" value="" name="progress"><span class="opacitymedium hideonsmartphone">%</span></td>';
+		print '<td class="nobottom nowrap right"><input class="flat right" type="text" size="1" value="" name="progress"><span class="opacitymedium hideonsmartphone">%</span></td>';
 		$coldisplay++;
 		print '<td></td>';
 	}
@@ -671,7 +679,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
 		}
 
-		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
+		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
 
 		return true;
 	}
@@ -792,7 +800,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 				console.log("objectline_create.tpl We are in a price per qty context, we do not call ajax/product, init of fields is done few lines later");
 			} else {
 				<?php if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) { ?>
-					if (isNaN(pbq)) { console.log("We use experimental option PRODUIT_CUSTOMER_PRICES_BY_QTY or PRODUIT_CUSTOMER_PRICES_BY_QTY but we could not get the id of pbq from product combo list, so load of price may be 0 if product has differet prices"); }
+					if (isNaN(pbq)) { console.log("We use experimental option PRODUIT_CUSTOMER_PRICES_BY_QTY or PRODUIT_CUSTOMER_PRICES_BY_QTY but we could not get the id of pbq from product combo list, so load of price may be 0 if product has different prices"); }
 				<?php } ?>
 				// Get the price for the product and display it
 				console.log("Load unit price and set it into #price_ht or #price_ttc for product id="+$(this).val()+" socid=<?php print $object->socid; ?>");
@@ -811,7 +819,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 						$('#date_start').attr('mandatoryperiod', data.mandatory_period);
 						$('#date_end').attr('mandatoryperiod', data.mandatory_period);
 
-						// service and we setted mandatory_period to true
+						// service and we set mandatory_period to true
 						if (data.mandatory_period == 1 && data.type == 1) {
 							jQuery('#date_start').addClass('inputmandatory');
 							jQuery('#date_end').addClass('inputmandatory');
@@ -826,6 +834,17 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 						} else {
 							console.log("objectline_create.tpl set content of price_ht");
 							jQuery("#price_ht").val(data.price_ht);
+						}
+
+						// Set values for any fields in the form options_SOMETHING
+						for (var key in data.array_options) {
+							if (data.array_options.hasOwnProperty(key)) {
+								var field = jQuery("#" + key);
+								if(field.length > 0){
+									console.log("objectline_create.tpl set content of options_" + key);
+									field.val(data.array_options[key]);
+								}
+							}
 						}
 
 						var tva_tx = data.tva_tx;
@@ -880,7 +899,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 						var proddesc = data.desc;
 								<?php
 							} ?>
-						console.log("objectline_create.tpl Load desciption into text area : "+proddesc);
+						console.log("objectline_create.tpl Load description into text area : "+proddesc);
 							<?php
 							if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS')) { ?>
 						if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
@@ -952,13 +971,13 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 						{
 							i++;
 							this.price = parseFloat(this.price); // to fix when this.price >0
-							// If margin is calculated on best supplier price, we set it by defaut (but only if value is not 0)
+							// If margin is calculated on best supplier price, we set it by default (but only if value is not 0)
 							//console.log("id="+this.id+"-price="+this.price+"-"+(this.price > 0));
 							if (bestpricefound == 0 && this.price > 0) { defaultkey = this.id; defaultprice = this.price; bestpriceid = this.id; bestpricevalue = this.price; bestpricefound=1; }	// bestpricefound is used to take the first price > 0
 						}
 						if (this.id == 'pmpprice')
 						{
-							// If margin is calculated on PMP, we set it by defaut (but only if value is not 0)
+							// If margin is calculated on PMP, we set it by default (but only if value is not 0)
 							console.log("id="+this.id+"-price="+this.price);
 							if ('pmp' == defaultbuyprice || 'costprice' == defaultbuyprice)
 							{
@@ -970,7 +989,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 						}
 						if (this.id == 'costprice')
 						{
-							// If margin is calculated on Cost price, we set it by defaut (but only if value is not 0)
+							// If margin is calculated on Cost price, we set it by default (but only if value is not 0)
 							console.log("id="+this.id+"-price="+this.price+"-pmppricevalue="+pmppricevalue);
 							if ('costprice' == defaultbuyprice)
 							{
@@ -1088,12 +1107,36 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			var supplier_ref = $('option:selected', this).attr('data-supplier-ref');											// When select is done from HTML select
 			if (typeof supplier_ref === 'undefined') { supplier_ref = jQuery('#idprodfournprice').attr('data-supplier-ref');}	// When select is done from HTML input with ajax autocomplete
 
-			console.log("objectline_create.tpl We find supplier price : up = "+up+", up_locale = "+up_locale+", supplier_ref = "+supplier_ref+" qty = "+qty+", tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", stringforvatrateselection="+stringforvatrateselection+", discount = "+discount+" for product supplier ref id = "+jQuery('#idprodfournprice').val());
+			var has_multicurrency_up = false;
+			<?php
+			if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
+				?>
+				var object_multicurrency_code = '<?php print dol_escape_js($object->multicurrency_code); ?>';
 
-			if (typeof up_locale === 'undefined') {
-				jQuery("#price_ht").val(up);
-			} else {
-				jQuery("#price_ht").val(up_locale);
+				var multicurrency_code = $('option:selected', this).attr('data-multicurrency-code');                                			// When select is done from HTML select
+				if (multicurrency_code == undefined) { multicurrency_code = jQuery('#idprodfournprice').attr('data-multicurrency-code'); }  	// When select is done from HTML input with ajax autocomplete
+
+				var multicurrency_up = parseFloat($('option:selected', this).attr('data-multicurrency-unitprice'));                                	// When select is done from HTML select
+				if (isNaN(multicurrency_up)) { multicurrency_up = parseFloat(jQuery('#idprodfournprice').attr('data-multicurrency-unitprice')); }   // When select is done from HTML input with ajax autocomplete
+
+				if (multicurrency_code == object_multicurrency_code) {
+					has_multicurrency_up = true;
+					jQuery("#multicurrency_price_ht").val(multicurrency_up);
+				}
+
+				console.log("objectline_create.tpl Multicurrency values : object_multicurrency_code = "+object_multicurrency_code+", multicurrency_code = "+multicurrency_code+", multicurrency_up = "+multicurrency_up);
+				<?php
+			}
+			?>
+
+			console.log("objectline_create.tpl We find supplier price : up = "+up+", up_locale = "+up_locale+", has_multicurrency_up = "+has_multicurrency_up+", supplier_ref = "+supplier_ref+" qty = "+qty+", tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", stringforvatrateselection="+stringforvatrateselection+", discount = "+discount+" for product supplier ref id = "+jQuery('#idprodfournprice').val());
+
+			if (has_multicurrency_up === false) {
+				if (typeof up_locale === 'undefined') {
+					jQuery("#price_ht").val(up);
+				} else {
+					jQuery("#price_ht").val(up_locale);
+				}
 			}
 
 			// Set supplier_ref
@@ -1119,7 +1162,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			var description = $('option:selected', this).attr('data-description');
 			if (typeof description == 'undefined') { description = jQuery('#idprodfournprice').attr('data-description');	}
 
-			console.log("Load desciption into text area : "+description);
+			console.log("Load description into text area : "+description);
 				<?php
 				if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS')) {
 					?>

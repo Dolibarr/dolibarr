@@ -55,7 +55,7 @@ $search_price 	= GETPOST('search_price');
 $search_price_ttc = GETPOST('search_price_ttc');
 
 // Security check
-$socid = GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int');
+$socid = GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -86,7 +86,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'add_customer_price_confirm' && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
-		if (!(GETPOST('prodid', 'int') > 0)) {
+		if (!(GETPOSTINT('prodid') > 0)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Product")), null, 'errors');
 			$action = 'add_customer_price';
@@ -98,7 +98,7 @@ if (empty($reshook)) {
 			// add price by customer
 			$prodcustprice->fk_soc = $socid;
 			$prodcustprice->ref_customer = GETPOST('ref_customer', 'alpha');
-			$prodcustprice->fk_product = GETPOST('prodid', 'int');
+			$prodcustprice->fk_product = GETPOSTINT('prodid');
 			$prodcustprice->price = price2num(GETPOST("price"), 'MU');
 			$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
 			$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
@@ -157,7 +157,7 @@ if (empty($reshook)) {
 
 	if ($action == 'delete_customer_price' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		// Delete price by customer
-		$prodcustprice->id = GETPOST('lineid', 'int');
+		$prodcustprice->id = GETPOSTINT('lineid');
 		$result = $prodcustprice->delete($user);
 
 		if ($result < 0) {
@@ -169,7 +169,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
-		$prodcustprice->fetch(GETPOST('lineid', 'int'));
+		$prodcustprice->fetch(GETPOSTINT('lineid'));
 
 		$update_child_soc = GETPOST('updatechildprice');
 
@@ -204,9 +204,6 @@ $object = new Societe($db);
 $result = $object->fetch($socid);
 llxHeader("", $langs->trans("ThirdParty").'-'.$langs->trans('PriceByCustomer'));
 
-if (isModEnabled('notification')) {
-	$langs->load("mails");
-}
 $head = societe_prepare_head($object);
 
 print dol_get_fiche_head($head, 'price', $langs->trans("ThirdParty"), -1, 'company');
@@ -264,8 +261,8 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 
 	$sortfield = GETPOST('sortfield', 'aZ09comma');
 	$sortorder = GETPOST('sortorder', 'aZ09comma');
-	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+	$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 	if (empty($page) || $page == -1) {
 		$page = 0;
 	}     // If $page is not defined, or '' or -1
@@ -343,16 +340,16 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		// Price
 		print '<tr><td width="20%">';
 		$text = $langs->trans('SellingPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 		print '</td><td>';
-		print '<input name="price" size="10" value="'.GETPOST('price', 'int').'">';
+		print '<input name="price" size="10" value="'.GETPOSTINT('price').'">';
 		print '</td></tr>';
 
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
-		print '<td><input name="price_min" size="10" value="'.GETPOST('price_min', 'int').'">';
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
+		print '<td><input name="price_min" size="10" value="'.GETPOSTINT('price_min').'">';
 		print '</td></tr>';
 
 		// Update all child soc
@@ -374,7 +371,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 
 		print load_fiche_titre($langs->trans('PriceByCustomer'));
 
-		$result = $prodcustprice->fetch(GETPOST('lineid', 'int'));
+		$result = $prodcustprice->fetch(GETPOSTINT('lineid'));
 
 		if ($result <= 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
@@ -412,7 +409,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 			// Price
 			print '<tr><td>';
 			$text = $langs->trans('SellingPrice');
-			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 			print '</td><td>';
 			if ($prodcustprice->price_base_type == 'TTC') {
 				print '<input name="price" size="10" value="'.price($prodcustprice->price_ttc).'">';
@@ -424,7 +421,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 			// Price minimum
 			print '<tr><td>';
 			$text = $langs->trans('MinPrice');
-			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 			print '</td><td>';
 			if ($prodcustprice->price_base_type == 'TTC') {
 				print '<input name="price_min" size="10" value="'.price($prodcustprice->price_min_ttc).'">';
@@ -453,7 +450,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		print '<!-- showlog_customer_price -->'."\n";
 
 		$filter = array(
-			't.fk_product' => GETPOST('prodid', 'int'),
+			't.fk_product' => GETPOSTINT('prodid'),
 			't.fk_soc' => $socid
 		);
 
@@ -468,7 +465,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 			}
 		}
 
-		$option = '&socid='.GETPOST('socid', 'int').'&prodid='.GETPOST('prodid', 'int');
+		$option = '&socid='.GETPOSTINT('socid').'&prodid='.GETPOSTINT('prodid');
 
 		print_barre_liste($langs->trans('PriceByCustomerLog'), $page, $_SERVER ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords);
 

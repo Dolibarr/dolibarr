@@ -40,16 +40,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'holiday', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -104,7 +104,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'holiday', $object->id, 'holiday');
 
-$permissiontoadd = $user->rights->holiday->write; // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->hasRight('holiday', 'write'); // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -286,8 +286,8 @@ if ($object->id) {
 
 	print dol_get_fiche_end();
 
-	$permissiontoadd = $user->rights->holiday->write;
-	$permtoedit = $user->rights->holiday->write;
+	$permissiontoadd = $user->hasRight('holiday', 'write');
+	$permtoedit = $user->hasRight('holiday', 'write');
 	$param = '&id='.$object->id;
 	$relativepathwithnofile = dol_sanitizeFileName($object->ref).'/';
 	$savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';

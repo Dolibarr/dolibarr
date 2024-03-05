@@ -36,8 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp.lib.php';
 $langs->loadLangs(array('mrp', 'other'));
 
 // Get parameters
-$id      = GETPOST('id', 'int');
-$lineid  = GETPOST('lineid', 'int');
+$id      = GETPOSTINT('id');
+$lineid  = GETPOSTINT('lineid');
 $ref     = GETPOST('ref', 'alpha');
 $action  = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -47,9 +47,9 @@ $backtopage  = GETPOST('backtopage', 'alpha');
 
 
 // PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
+$hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
+$hidedesc = (GETPOSTINT('hidedesc') ? GETPOSTINT('hidedesc') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
+$hideref = (GETPOSTINT('hideref') ? GETPOSTINT('hideref') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
 // Initialize technical objects
 $object = new BOM($db);
@@ -61,7 +61,7 @@ $hookmanager->initHooks(array('bomcard', 'globalcard')); // Note that conf->hook
 $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -155,7 +155,7 @@ if (empty($reshook)) {
 		$predef = '';
 
 		// Set if we used free entry or predefined product
-		$bom_child_id = (int) GETPOST('bom_id', 'int');
+		$bom_child_id = GETPOSTINT('bom_id');
 		if ($bom_child_id > 0) {
 			$bom_child = new BOM($db);
 			$res = $bom_child->fetch($bom_child_id);
@@ -163,12 +163,12 @@ if (empty($reshook)) {
 				$idprod = $bom_child->fk_product;
 			}
 		} else {
-			$idprod = (!empty(GETPOST('idprodservice', 'int')) ? GETPOST('idprodservice', 'int') : (int) GETPOST('idprod', 'int'));
+			$idprod = (!empty(GETPOSTINT('idprodservice')) ? GETPOSTINT('idprodservice') : GETPOSTINT('idprod'));
 		}
 
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
-		$disable_stock_change = GETPOST('disable_stock_change', 'int');
+		$disable_stock_change = GETPOSTINT('disable_stock_change');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
 		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
 
@@ -247,7 +247,7 @@ if (empty($reshook)) {
 		// Set if we used free entry or predefined product
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
-		$disable_stock_change = GETPOST('disable_stock_change', 'int');
+		$disable_stock_change = GETPOSTINT('disable_stock_change');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
 		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
 
@@ -513,8 +513,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref = '<div class="refidno">';
 	/*
 	 // Ref bis
-	 $morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->bom->creer, 'string', '', 0, 1);
-	 $morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->bom->creer, 'string', '', null, null, '', 1);
+	 $morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->hasRight('bom', 'creer'), 'string', '', 0, 1);
+	 $morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->hasRight('bom', 'creer'), 'string', '', null, null, '', 1);
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	 // Project
@@ -608,7 +608,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		if (!empty($object->lines)) {
-			$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1, '/bom/tpl');
+			$object->printObjectLines($action, $mysoc, null, GETPOSTINT('lineid'), 1, '/bom/tpl');
 		}
 
 		// Form to add new line
@@ -660,7 +660,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		if (!empty($object->lines)) {
-			$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1, '/bom/tpl');
+			$object->printObjectLines($action, $mysoc, null, GETPOSTINT('lineid'), 1, '/bom/tpl');
 		}
 
 		// Form to add new line
@@ -759,18 +759,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			/*
-			  if ($user->rights->bom->write)
-			  {
-			  if ($object->status == 1)
-			  {
-			  print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable&token='.newToken().'">'.$langs->trans("Disable").'</a>'."\n";
+			  if ($user->hasRight('bom', 'write')) {
+				  if ($object->status == 1) {
+					  print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable&token='.newToken().'">'.$langs->trans("Disable").'</a>'."\n";
+				  } else {
+					  print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Enable").'</a>'."\n";
+				  }
 			  }
-			  else
-			  {
-			  print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Enable").'</a>'."\n";
-			  }
-			  }
-			  */
+			*/
 
 			// Delete
 			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);

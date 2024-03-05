@@ -228,7 +228,7 @@ class printing_printipp extends PrintingDriver
 			//$html.= '<td>'.$printer_det->device_uri->_value0.'</td>';
 			$html .= '<td>'.$printer_det->media_default->_value0.'</td>';
 			$html .= '<td>'.$langs->trans('MEDIA_IPP_'.$printer_det->media_type_supported->_value1).'</td>';
-			// Defaut
+			// Default
 			$html .= '<td class="center">';
 			if ($conf->global->PRINTIPP_URI_DEFAULT == $value) {
 				$html .= img_picto($langs->trans("Default"), 'on');

@@ -118,7 +118,7 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		} else {
 			return -1;
 		}
-	} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {	// This is a really not reliable cache ! Use Memcached instead.
+	} elseif (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using shmop
 		$result = dol_setshmop($memoryid, $data, $expire);
 	} else {
@@ -194,7 +194,7 @@ function dol_getcache($memoryid)
 		} else {
 			return null; // There is no way to make a difference between NOTFOUND and error when using Memcache. So do not use it, use Memcached instead.
 		}
-	} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {	// This is a really not reliable cache ! Use Memcached instead.
+	} elseif (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using shmop
 		$data = dol_getshmop($memoryid);
 		return $data;
@@ -219,7 +219,7 @@ function dol_getcache($memoryid)
 function dol_getshmopaddress($memoryid)
 {
 	global $shmkeys, $shmoffset;
-	if (empty($shmkeys[$memoryid])) {	// No room reserved for thid memoryid, no way to use cache
+	if (empty($shmkeys[$memoryid])) {	// No room reserved for this memoryid, no way to use cache
 		return 0;
 	}
 	return $shmkeys[$memoryid] + $shmoffset;
@@ -275,6 +275,7 @@ function dol_setshmop($memoryid, $data, $expire)
 		if ($shm_bytes_written1 + $shm_bytes_written2 != 6 + dol_strlen($newdata)) {
 			print "Couldn't write the entire length of data\n";
 		}
+		// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 		shmop_close($handle);
 		return ($shm_bytes_written1 + $shm_bytes_written2);
 	} else {
@@ -287,7 +288,7 @@ function dol_setshmop($memoryid, $data, $expire)
  * 	Read a memory area shared by all users, all sessions on server
  *
  *  @param	string	$memoryid		Memory id of shared area ('main', 'agenda', ...)
- * 	@return	int						Return integer <0 if KO, data if OK, Null if no cache enabled or not found
+ * 	@return	int|null				Return integer <0 if KO, data if OK, null if no cache enabled or not found
  */
 function dol_getshmop($memoryid)
 {
@@ -312,6 +313,7 @@ function dol_getshmop($memoryid)
 		} else {
 			return -1;
 		}
+		// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 		shmop_close($handle);
 	} else {
 		return null; // Can't open existing block, so we suppose it was not created, so nothing were cached yet for the memoryid

@@ -47,7 +47,7 @@ class PartnershipUtils
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -82,7 +82,7 @@ class PartnershipUtils
 		$this->error = '';
 		$partnershipsprocessed = array();
 
-		$gracedelay = $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL;
+		$gracedelay = getDolGlobalString('PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL');
 		if ($gracedelay < 1) {
 			$this->error = 'BadValueForDelayBeforeCancelCheckSetup';
 			return -1;
@@ -321,7 +321,7 @@ class PartnershipUtils
 		}
 		$sql .= " WHERE p.".$fk_partner." > 0";
 		$sql .= " AND p.status = ".((int) $partnership::STATUS_APPROVED); // Only accepted and not yet canceled
-		$sql .= " AND (p.last_check_backlink IS NULL OR p.last_check_backlink <= '".$this->db->idate($now - 24 * 3600)."')"; // Never more than 1 check every day to check that website contains a referal link.
+		$sql .= " AND (p.last_check_backlink IS NULL OR p.last_check_backlink <= '".$this->db->idate($now - 24 * 3600)."')"; // Never more than 1 check every day to check that website contains a referral link.
 		$sql .= $this->db->order('p.rowid', 'ASC');
 		// Limit is managed into loop later
 

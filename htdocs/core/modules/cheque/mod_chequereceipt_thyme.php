@@ -111,7 +111,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	 *
 	 *  @param	Societe			$objsoc     Object thirdparty
 	 *  @param  RemiseCheque	$object		Object we need next value for
-	 *  @return string      				Value if KO, <0 if KO
+	 *  @return string|0      				Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -120,7 +120,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = $conf->global->CHEQUERECEIPTS_THYME_MASK;
+		$mask = getDolGlobalString('CHEQUERECEIPTS_THYME_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

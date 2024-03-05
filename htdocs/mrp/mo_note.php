@@ -33,7 +33,7 @@ dol_include_once('/mrp/lib/mrp_mo.lib.php');
 $langs->loadLangs(array("mrp", "companies"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
@@ -60,7 +60,7 @@ if ($id > 0 || !empty($ref)) {
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'mrp', $object->id, 'mrp_mo', '', 'fk_soc', 'rowid', $isdraft);
 
-$permissionnote = $user->rights->mrp->write; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('mrp', 'write'); // Used by the include of actions_setnotes.inc.php
 
 
 

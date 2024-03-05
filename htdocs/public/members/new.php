@@ -81,7 +81,7 @@ $error = 0;
 $langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
 
 // Security check
-if (!isModEnabled('adherent')) {
+if (!isModEnabled('member')) {
 	httponly_accessforbidden('Module Membership not enabled');
 }
 
@@ -246,7 +246,7 @@ if (empty($reshook) && $action == 'add') {
 		$error++;
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
-	$birthday = dol_mktime(GETPOST("birthhour", 'int'), GETPOST("birthmin", 'int'), GETPOST("birthsec", 'int'), GETPOST("birthmonth", 'int'), GETPOST("birthday", 'int'), GETPOST("birthyear", 'int'));
+	$birthday = dol_mktime(GETPOSTINT("birthhour"), GETPOSTINT("birthmin"), GETPOSTINT("birthsec"), GETPOSTINT("birthmonth"), GETPOSTINT("birthday"), GETPOSTINT("birthyear"));
 	if (GETPOST("birthmonth") && empty($birthday)) {
 		$error++;
 		$langs->load("errors");
@@ -291,9 +291,9 @@ if (empty($reshook) && $action == 'add') {
 			$adh->pass        = GETPOST('pass1');
 		}
 		$adh->photo       = GETPOST('photo');
-		$adh->country_id  = getDolGlobalString("MEMBER_NEWFORM_FORCECOUNTRYCODE", GETPOST('country_id', 'int'));
-		$adh->state_id    = GETPOST('state_id', 'int');
-		$adh->typeid      = getDolGlobalString("MEMBER_NEWFORM_FORCETYPE", GETPOST('typeid', 'int'));
+		$adh->country_id  = getDolGlobalInt("MEMBER_NEWFORM_FORCECOUNTRYCODE", GETPOSTINT('country_id'));
+		$adh->state_id    = GETPOSTINT('state_id');
+		$adh->typeid      = getDolGlobalInt("MEMBER_NEWFORM_FORCETYPE", GETPOSTINT('typeid'));
 		$adh->note_private = GETPOST('note_private');
 		$adh->morphy      = getDolGlobalString("MEMBER_NEWFORM_FORCEMORPHY", GETPOST('morphy'));
 		$adh->birth       = $birthday;
@@ -360,7 +360,7 @@ if (empty($reshook) && $action == 'add') {
 					$outputlangs->loadLangs(array("main", "members"));
 					// Get email content from template
 					$arraydefaultmessage = null;
-					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER;
+					$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER');
 
 					if (!empty($labeltouse)) {
 						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
@@ -393,7 +393,7 @@ if (empty($reshook) && $action == 'add') {
 					// Define link to login card
 					$appli = constant('DOL_APPLICATION_TITLE');
 					if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-						$appli = $conf->global->MAIN_APPLICATION_TITLE;
+						$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
 						if (preg_match('/\d\.\d/', $appli)) {
 							if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
 								$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
@@ -432,14 +432,14 @@ if (empty($reshook) && $action == 'add') {
 					$result = $company->create_from_member($adh);
 					if ($result < 0) {
 						$error++;
-						$errmsg .= join('<br>', $company->errors);
+						$errmsg .= implode('<br>', $company->errors);
 					}
 				}
 
 				if (!empty($backtopage)) {
 					$urlback = $backtopage;
 				} elseif (getDolGlobalString('MEMBER_URL_REDIRECT_SUBSCRIPTION')) {
-					$urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
+					$urlback = getDolGlobalString('MEMBER_URL_REDIRECT_SUBSCRIPTION');
 					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
 					$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
@@ -447,7 +447,7 @@ if (empty($reshook) && $action == 'add') {
 
 				if (getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') && getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') != '-1') {
 					if (empty($adht->caneditamount)) {			// If edition of amount not allowed
-						// TODO Check amount is same than the amount required for the type of member or if not defined as the defeault amount into $conf->global->MEMBER_NEWFORM_AMOUNT
+						// TODO Check amount is same than the amount required for the type of member or if not defined as the default amount into $conf->global->MEMBER_NEWFORM_AMOUNT
 						// It is not so important because a test is done on return of payment validation.
 					}
 
@@ -457,7 +457,7 @@ if (empty($reshook) && $action == 'add') {
 						$urlback .= '&email='.urlencode(GETPOST('email'));
 					}
 					if (getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') != '-1' && getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') != 'all') {
-						$urlback .= '&paymentmethod='.urlencode($conf->global->MEMBER_NEWFORM_PAYONLINE);
+						$urlback .= '&paymentmethod='.urlencode(getDolGlobalString('MEMBER_NEWFORM_PAYONLINE'));
 					}
 				} else {
 					if (!empty($entity)) {
@@ -466,7 +466,7 @@ if (empty($reshook) && $action == 'add') {
 				}
 			} else {
 				$error++;
-				$errmsg .= join('<br>', $adh->errors);
+				$errmsg .= implode('<br>', $adh->errors);
 			}
 		}
 	}
@@ -474,7 +474,7 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		$db->commit();
 
-		Header("Location: ".$urlback);
+		header("Location: ".$urlback);
 		exit;
 	} else {
 		$db->rollback();
@@ -522,7 +522,7 @@ print '<div id="divsubscribe">';
 
 print '<div class="center subscriptionformhelptext opacitymedium justify">';
 if (getDolGlobalString('MEMBER_NEWFORM_TEXT')) {
-	print $langs->trans($conf->global->MEMBER_NEWFORM_TEXT)."<br>\n";
+	print $langs->trans(getDolGlobalString('MEMBER_NEWFORM_TEXT'))."<br>\n";
 } else {
 	print $langs->trans("NewSubscriptionDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
 }
@@ -593,7 +593,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		print $form->selectarray("typeid", $adht->liste_array(1), GETPOST('typeid') ? GETPOST('typeid') : $defaulttype, $isempty);
 		print '</td></tr>'."\n";
 	} else {
-		$adht->fetch($conf->global->MEMBER_NEWFORM_FORCETYPE);
+		$adht->fetch(getDolGlobalString('MEMBER_NEWFORM_FORCETYPE'));
 		print '<input type="hidden" id="typeid" name="typeid" value="' . getDolGlobalString('MEMBER_NEWFORM_FORCETYPE').'">';
 	}
 
@@ -659,7 +659,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	// Country
 	print '<tr><td>'.$langs->trans('Country').'</td><td>';
 	print img_picto('', 'country', 'class="pictofixedwidth paddingright"');
-	$country_id = GETPOST('country_id', 'int');
+	$country_id = GETPOSTINT('country_id');
 	if (!$country_id && getDolGlobalString('MEMBER_NEWFORM_FORCECOUNTRYCODE')) {
 		$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
 	}
@@ -758,7 +758,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	}
 
 	if (getDolGlobalString('MEMBER_NEWFORM_PAYONLINE')) {
-		$typeid = $conf->global->MEMBER_NEWFORM_FORCETYPE ? $conf->global->MEMBER_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
+		$typeid = $conf->global->MEMBER_NEWFORM_FORCETYPE ? $conf->global->MEMBER_NEWFORM_FORCETYPE : GETPOSTINT('typeid');
 		$adht = new AdherentType($db);
 		$adht->fetch($typeid);
 		$caneditamount = $adht->caneditamount;
@@ -769,9 +769,9 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		$amount = empty($amountbytype[$typeid]) ? (isset($amount) ? $amount : 0) : $amountbytype[$typeid];
 		// - If not found, take the default amount only of the user is authorized to edit it
 		if ($caneditamount && empty($amount) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
-			$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
+			$amount = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
 		}
-		// - If not set, we accept ot have amount defined as parameter (for backward compatibility).
+		// - If not set, we accept to have amount defined as parameter (for backward compatibility).
 		if (empty($amount)) {
 			$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
 		}
@@ -787,7 +787,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		print '</td><td class="nowrap">';
 
 		if (empty($amount) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
-			$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
+			$amount = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
 		}
 
 		if ($caneditamount) {

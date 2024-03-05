@@ -43,7 +43,7 @@ $hookmanager->initHooks(array('thirdpartiesindex'));
 
 
 
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -63,8 +63,8 @@ $resultboxes = FormOther::getBoxesArea($user, "3");
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'int');
-	$userid = GETPOST('userid', 'int');
+	$zone = GETPOSTINT('areacode');
+	$userid = GETPOSTINT('userid');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
 	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
@@ -100,11 +100,11 @@ $total = 0;
 
 $sql = "SELECT s.rowid, s.client, s.fournisseur";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if (!$user->hasRight('fournisseur', 'lire')) {
@@ -203,7 +203,7 @@ $thirdpartygraph .= '</table>';
 $thirdpartygraph .= '</div>';
 
 $thirdpartycateggraph = '';
-if (isModEnabled('categorie') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRDPARTIES')) {
+if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRDPARTIES')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$elementtype = 'societe';
 
@@ -215,7 +215,7 @@ if (isModEnabled('categorie') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIR
 	$sql .= " FROM ".MAIN_DB_PREFIX."categorie_societe as cs";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
 	$sql .= " WHERE c.type = 2";
-	if (!is_numeric($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)) {
+	if (!is_numeric(getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRDPARTIES'))) {
 		$sql .= " AND c.label like '".$db->escape($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)."'";
 	}
 	$sql .= " AND c.entity IN (".getEntity('category').")";
@@ -294,11 +294,11 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if (!$user->hasRight('fournisseur', 'lire')) {

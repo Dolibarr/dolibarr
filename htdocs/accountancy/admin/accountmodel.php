@@ -53,18 +53,20 @@ $id = 31;
 $rowid = GETPOST('rowid', 'alpha');
 $code = GETPOST('code', 'alpha');
 
+$acts = array();
+$actl = array();
 $acts[0] = "activate";
 $acts[1] = "disable";
 $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"');
 $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
 $listoffset = GETPOST('listoffset', 'alpha');
-$listlimit = GETPOST('listlimit', 'int') > 0 ? GETPOST('listlimit', 'int') : 1000;
+$listlimit = GETPOSTINT('listlimit') > 0 ? GETPOSTINT('listlimit') : 1000;
 $active = 1;
 
 $sortfield = GETPOST("sortfield", 'aZ09comma');
 $sortorder = GETPOST("sortorder", 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -72,7 +74,7 @@ $offset = $listlimit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$search_country_id = GETPOST('search_country_id', 'int');
+$search_country_id = GETPOSTINT('search_country_id');
 
 
 // Security check
@@ -192,7 +194,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		if ($tabrowid[$id]) {
 			// Get free id for insert
 			$newid = 0;
-			$sql = "SELECT MAX(".$tabrowid[$id].") newid from ".$tabname[$id];
+			$sql = "SELECT MAX(".$db->sanitize($tabrowid[$id]).") newid FROM ".$db->sanitize($tabname[$id]);
 			$result = $db->query($sql);
 			if ($result) {
 				$obj = $db->fetch_object($result);
@@ -203,12 +205,12 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 
 		// Add new entry
-		$sql = "INSERT INTO ".$tabname[$id]." (";
+		$sql = "INSERT INTO ".$db->sanitize($tabname[$id])." (";
 		// List of fields
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
-			$sql .= $tabrowid[$id].",";
+			$sql .= $db->sanitize($tabrowid[$id]).",";
 		}
-		$sql .= $tabfieldinsert[$id];
+		$sql .= $db->sanitize($tabfieldinsert[$id]);
 		$sql .= ",active)";
 		$sql .= " VALUES(";
 
@@ -258,10 +260,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 
 		// Modify entry
-		$sql = "UPDATE ".$tabname[$id]." SET ";
+		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET ";
 		// Modifie valeur des champs
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
-			$sql .= $tabrowid[$id]."=";
+			$sql .= $db->sanitize($tabrowid[$id])." = ";
 			$sql .= "'".$db->escape($rowid)."', ";
 		}
 		$i = 0;
@@ -300,7 +302,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 		$rowidcol = "rowid";
 	}
 
-	$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol." = ".((int) $rowid);
+	$sql = "DELETE from ".$db->sanitize($tabname[$id])." WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
 
 	dol_syslog("delete", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -314,19 +316,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 }
 
 // activate
-if ($action == $acts[0]) {
-	if ($tabrowid[$id]) {
-		$rowidcol = $tabrowid[$id];
-	} else {
-		$rowidcol = "rowid";
-	}
-
-	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol." = ".((int) $rowid);
-	} elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$db->escape($code)."'";
-	}
-
+if ($action == 'activate') {
+	$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 1 WHERE rowid = ".((int) $rowid);
 	$result = $db->query($sql);
 	if (!$result) {
 		dol_print_error($db);
@@ -335,58 +326,7 @@ if ($action == $acts[0]) {
 
 // disable
 if ($action == $acts[1]) {
-	if ($tabrowid[$id]) {
-		$rowidcol = $tabrowid[$id];
-	} else {
-		$rowidcol = "rowid";
-	}
-
-	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol." = ".((int) $rowid);
-	} elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$db->escape($code)."'";
-	}
-
-	$result = $db->query($sql);
-	if (!$result) {
-		dol_print_error($db);
-	}
-}
-
-// favorite
-if ($action == 'activate_favorite') {
-	if ($tabrowid[$id]) {
-		$rowidcol = $tabrowid[$id];
-	} else {
-		$rowidcol = "rowid";
-	}
-
-	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol." = ".((int) $rowid);
-	} elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".$db->escape($code)."'";
-	}
-
-	$result = $db->query($sql);
-	if (!$result) {
-		dol_print_error($db);
-	}
-}
-
-// disable favorite
-if ($action == 'disable_favorite') {
-	if ($tabrowid[$id]) {
-		$rowidcol = $tabrowid[$id];
-	} else {
-		$rowidcol = "rowid";
-	}
-
-	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol." = ".((int) $rowid);
-	} elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".$db->escape($code)."'";
-	}
-
+	$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 0 WHERE rowid = ".((int) $rowid);
 	$result = $db->query($sql);
 	if (!$result) {
 		dol_print_error($db);
@@ -459,7 +399,7 @@ if ($id) {
 		foreach ($fieldlist as $field => $value) {
 			// Determine le nom du champ par rapport aux noms possibles
 			// dans les dictionnaires de donnees
-			$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
+			$valuetoshow = ucfirst($fieldlist[$field]); // By default
 			$valuetoshow = $langs->trans($valuetoshow); // try to translate
 			$class = "left";
 			if ($fieldlist[$field] == 'code') {
@@ -568,7 +508,7 @@ if ($id) {
 		// Title line with search boxes
 		print '<tr class="liste_titre liste_titre_add">';
 		foreach ($fieldlist as $field => $value) {
-			$showfield = 1; // By defaut
+			$showfield = 1; // By default
 
 			if ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
 				$showfield = 0;
@@ -739,7 +679,7 @@ $db->close();
  * 	@param		array	$fieldlist		Array of fields
  * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
  *  @param		string	$tabname		Name of SQL table
- *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
+ *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		void
  */
 function fieldListAccountModel($fieldlist, $obj = null, $tabname = '', $context = '')

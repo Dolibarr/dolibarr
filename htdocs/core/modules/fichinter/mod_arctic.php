@@ -22,13 +22,13 @@
 
 /**
  *	\file       htdocs/core/modules/fichinter/mod_arctic.php
- *	\ingroup    fiche intervention
+ *	\ingroup    Intervention card
  *	\brief      File with Arctic numbering module for interventions
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 
 /**
- *	Class to manage numbering of intervention cards with rule Artic.
+ *	Class to manage numbering of intervention cards with rule Arctic.
  */
 class mod_arctic extends ModeleNumRefFicheinter
 {
@@ -122,7 +122,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 	 *
 	 *  @param	Societe		$objsoc     Object thirdparty
 	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @return string|0      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc = 0, $object = '')
 	{
@@ -149,7 +149,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 *  @param	Object		$objforref	Object for number to search
-	 *  @return string      			Next free value
+	 *  @return string|0      			Next free value, 0 if KO
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{

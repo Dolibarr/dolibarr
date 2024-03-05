@@ -40,7 +40,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	        head array with tabs
  */
@@ -62,7 +62,7 @@ function pdf_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'pdf_admin');
 
-	if (isModEnabled("propal") || isModEnabled('facture') || isModEnabled('reception')) {
+	if (isModEnabled("propal") || isModEnabled('invoice') || isModEnabled('reception')) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_other.php';
 		$head[$h][1] = $langs->trans("Others");
 		$head[$h][2] = 'other';
@@ -97,7 +97,7 @@ function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$pdfformat = dol_getDefaultFormat($outputlangs);
 	} else {
-		$pdfformat = $conf->global->MAIN_PDF_FORMAT;
+		$pdfformat = getDolGlobalString('MAIN_PDF_FORMAT');
 	}
 
 	$sql = "SELECT code, label, width, height, unit FROM ".MAIN_DB_PREFIX."c_paper_format";
@@ -181,10 +181,10 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 
 	$pdfa = false; // PDF-1.3
 	if (getDolGlobalString('PDF_USE_A')) {
-		$pdfa = $conf->global->PDF_USE_A; 	// PDF/A-1 ou PDF/A-3
+		$pdfa = getDolGlobalString('PDF_USE_A'); 	// PDF/A-1 ou PDF/A-3
 	}
 
-	if (class_exists('TCPDI')) {
+	if (!getDolGlobalString('MAIN_DISABLE_TCPDI') && class_exists('TCPDI')) {
 		$pdf = new TCPDI($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
 	} else {
 		$pdf = new TCPDF($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
@@ -297,7 +297,7 @@ function pdf_getPDFFontSize($outputlangs)
 		}
 	}
 	if (getDolGlobalString('MAIN_PDF_FORCE_FONT_SIZE')) {
-		$size = $conf->global->MAIN_PDF_FORCE_FONT_SIZE;
+		$size = getDolGlobalString('MAIN_PDF_FORCE_FONT_SIZE');
 	}
 
 	return $size;
@@ -332,7 +332,7 @@ function pdf_getHeightForLogo($logo, $url = false)
  * Function to try to calculate height of a HTML Content
  *
  * @param 	TCPDF     $pdf				PDF initialized object
- * @param 	string    $htmlcontent		HTML Contect
+ * @param 	string    $htmlcontent		HTML Content
  * @return 	int							Height
  * @see getStringHeight()
  */
@@ -421,7 +421,7 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 
 
 /**
- *   	Return a string with full address formated for output on documents
+ *   	Return a string with full address formatted for output on documents
  *
  * 		@param	Translate	          $outputlangs		    Output langs object
  *   	@param  Societe		          $sourcecompany		Source company object
@@ -430,7 +430,7 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
  * 		@param	int			          $usecontact		    Use contact instead of company
  * 		@param	string  	          $mode				    Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
  *      @param  Object                $object               Object we want to build document for
- * 		@return	string					    		        String with full address
+ * 		@return	string|int				    		        String with full address or -1 if KO
  */
 function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null)
 {
@@ -491,7 +491,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($sourcecompany->tva_intra);
 				}
 			}
-			// Professionnal Ids
+			// Professional Ids
 			$reg = array();
 			if (getDolGlobalString('MAIN_PROFID1_IN_SOURCE_ADDRESS') && !empty($sourcecompany->idprof1)) {
 				$tmp = $outputlangs->transcountrynoentities("ProfId1", $sourcecompany->country_code);
@@ -655,7 +655,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				}
 			}
 
-			// Professionnal Ids
+			// Professional Ids
 			if (getDolGlobalString('MAIN_PROFID1_IN_ADDRESS') && !empty($targetcompany->idprof1)) {
 				$tmp = $outputlangs->transcountrynoentities("ProfId1", $targetcompany->country_code);
 				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
@@ -781,8 +781,6 @@ function pdf_getSubstitutionArray($outputlangs, $exclude = null, $object = null,
  */
 function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 {
-	global $langs, $mysoc, $user;
-
 	// Print Draft Watermark
 	if ($unit == 'pt') {
 		$k = 1;
@@ -810,6 +808,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 	$watermark_y = $h / 3;
 	$pdf->SetFont('', 'B', 40);
 	$pdf->SetTextColor(255, 192, 203);
+
 	//rotate
 	$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm', cos($watermark_angle), sin($watermark_angle), -sin($watermark_angle), cos($watermark_angle), $watermark_x * $k, ($h - $watermark_y) * $k, -$watermark_x * $k, -($h - $watermark_y) * $k));
 	//print watermark
@@ -823,14 +822,14 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 
 
 /**
- *  Show bank informations for PDF generation
+ *  Show bank information for PDF generation
  *
  *  @param	TCPDF			$pdf            		Object PDF
  *  @param  Translate	$outputlangs     		Object lang
  *  @param  int			$curx            		X
  *  @param  int			$cury            		Y
  *  @param  Account		$account         		Bank account object
- *  @param  int			$onlynumber      		Output only number (bank+desk+key+number according to country, but without name of bank and domiciliation)
+ *  @param  int			$onlynumber      		Output only number (bank+desk+key+number according to country, but without name of bank and address)
  *  @param	int			$default_font_size		Default font size
  *  @return	float                               The Y PDF position
  */
@@ -872,7 +871,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 			$cury += 3;
 		}
 
-		if (!getDolGlobalString('PDF_BANK_HIDE_NUMBER_SHOW_ONLY_BICIBAN')) {    // Note that some countries still need bank number, BIC/IBAN not enougth for them
+		if (!getDolGlobalString('PDF_BANK_HIDE_NUMBER_SHOW_ONLY_BICIBAN')) {    // Note that some countries still need bank number, BIC/IBAN not enough for them
 			// Note:
 			// bank = code_banque (FR), sort code (GB, IR. Example: 12-34-56)
 			// desk = code guichet (FR), used only when $usedetailedbban = 1
@@ -943,9 +942,9 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 
 	$pdf->SetFont('', '', $default_font_size - $diffsizecontent);
 
-	if (empty($onlynumber) && !empty($account->domiciliation)) {
+	if (empty($onlynumber) && (!empty($account->domiciliation) || !empty($account->address))) {
 		$pdf->SetXY($curx, $cury);
-		$val = $outputlangs->transnoentities("Residence").': '.$outputlangs->convToOutputCharset($account->domiciliation);
+		$val = $outputlangs->transnoentities("Residence").': '.$outputlangs->convToOutputCharset(empty($account->address) ? $account->domiciliation : $account->address);
 		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
 		//$nboflines=dol_nboflines_bis($val,120);
 		//$cury+=($nboflines*3)+2;
@@ -1005,15 +1004,15 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
  * 	@param	int			$marge_gauche	Margin left (no more used)
  * 	@param	int			$page_hauteur	Page height
  * 	@param	Object		$object			Object shown in PDF
- * 	@param	int			$showdetails	Show company adress details into footer (0=Nothing, 1=Show address, 2=Show managers, 3=Both)
+ * 	@param	int			$showdetails	Show company address details into footer (0=Nothing, 1=Show address, 2=Show managers, 3=Both)
  *  @param	int			$hidefreetext	1=Hide free text, 0=Show free text
  *  @param	int			$page_largeur	Page width
- *  @param	int			$watermark		Watermark text to print on page
+ *  @param	string		$watermark		Watermark text to print on page
  * 	@return	int							Return height of bottom margin including footer text
  */
 function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_basse, $marge_gauche, $page_hauteur, $object, $showdetails = 0, $hidefreetext = 0, $page_largeur = 0, $watermark = '')
 {
-	global $conf, $user, $mysoc, $hookmanager;
+	global $conf, $hookmanager;
 
 	$outputlangs->load("dict");
 	$line = '';
@@ -1419,9 +1418,10 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
  *  @param  int				$hideref       		Hide reference
  *  @param  int				$hidedesc           Hide description
  * 	@param	int				$issupplierline		Is it a line for a supplier object ?
+ *  @param	string			$align				text alignment ('L', 'C', 'R', 'J' (default))
  * 	@return	string
  */
-function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $posy, $hideref = 0, $hidedesc = 0, $issupplierline = 0)
+function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $posy, $hideref = 0, $hidedesc = 0, $issupplierline = 0, $align = 'J')
 {
 	global $db, $conf, $langs, $hookmanager;
 
@@ -1454,7 +1454,7 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 		//var_dump($labelproductservice);exit;
 
 		// Description
-		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, 'J', true);
+		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, $align, true);
 		$result .= $labelproductservice;
 	}
 	return $result;
@@ -1542,7 +1542,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		// Description short of product line
 		$libelleproduitservice = $label;
 		if (!empty($libelleproduitservice) && getDolGlobalString('PDF_BOLD_PRODUCT_LABEL')) {
-			// Adding <b> may convert the original string into a HTML string. Sowe have to first
+			// Adding <b> may convert the original string into a HTML string. So we have to first
 			// convert \n into <br> we text is not already HTML.
 			if (!dol_textishtml($libelleproduitservice)) {
 				$libelleproduitservice = str_replace("\n", '<br>', $libelleproduitservice);
@@ -1710,7 +1710,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	$libelleproduitservice = $prefix_prodserv.$ref_prodserv.$libelleproduitservice;
 
 	// Add an additional description for the category products
-	if (getDolGlobalString('CATEGORY_ADD_DESC_INTO_DOC') && $idprod && isModEnabled('categorie')) {
+	if (getDolGlobalString('CATEGORY_ADD_DESC_INTO_DOC') && $idprod && isModEnabled('category')) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$categstatic = new Categorie($db);
 		// recovering the list of all the categories linked to product
@@ -2215,12 +2215,11 @@ function pdf_getlineqty_keeptoship($object, $i, $outputlangs, $hidedetails = 0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- *  @param	HookManager	$hookmanager		Hook manager instance
  *  @return	string							Value for unit cell
  */
-function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0, $hookmanager = false)
+function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0)
 {
-	global $langs;
+	global $hookmanager, $langs;
 
 	$reshook = 0;
 	$result = '';
@@ -2476,7 +2475,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 
 	foreach ($object->linkedObjects as $objecttype => $objects) {
 		if ($objecttype == 'facture') {
-			// For invoice, we don't want to have a reference line on document. Image we are using recuring invoice, we will have a line longer than document width.
+			// For invoice, we don't want to have a reference line on document. Image we are using recurring invoice, we will have a line longer than document width.
 		} elseif ($objecttype == 'propal' || $objecttype == 'supplier_proposal') {
 			$outputlangs->load('propal');
 

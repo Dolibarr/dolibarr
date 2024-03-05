@@ -37,9 +37,9 @@ $langs->loadLangs(array('accountancy', 'bills', 'compta'));
 
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$rowid = GETPOST('rowid', 'int');
+$rowid = GETPOSTINT('rowid');
 $cancel = GETPOST('cancel', 'alpha');
 
 $account_number = GETPOST('account_number', 'alphanohtml');
@@ -91,17 +91,17 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 				$account_number = clean_account($account_number);
 			}
 
-			if (GETPOST('account_parent', 'int') <= 0) {
+			if (GETPOSTINT('account_parent') <= 0) {
 				$account_parent = 0;
 			} else {
-				$account_parent = GETPOST('account_parent', 'int');
+				$account_parent = GETPOSTINT('account_parent');
 			}
 
 			$object->fk_pcg_version = $obj->pcg_version;
 			$object->pcg_type = GETPOST('pcg_type', 'alpha');
 			$object->account_number = $account_number;
 			$object->account_parent = $account_parent;
-			$object->account_category = GETPOST('account_category', 'alpha');
+			$object->account_category = GETPOSTINT('account_category');
 			$object->label = $label;
 			$object->labelshort = GETPOST('labelshort', 'alpha');
 			$object->active = 1;
@@ -154,17 +154,17 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 				$account_number = clean_account($account_number);
 			}
 
-			if (GETPOST('account_parent', 'int') <= 0) {
+			if (GETPOSTINT('account_parent') <= 0) {
 				$account_parent = 0;
 			} else {
-				$account_parent = GETPOST('account_parent', 'int');
+				$account_parent = GETPOSTINT('account_parent');
 			}
 
 			$object->fk_pcg_version = $obj->pcg_version;
 			$object->pcg_type = GETPOST('pcg_type', 'alpha');
 			$object->account_number = $account_number;
 			$object->account_parent = $account_parent;
-			$object->account_category = GETPOST('account_category', 'alpha');
+			$object->account_category = GETPOSTINT('account_category');
 			$object->label = $label;
 			$object->labelshort = GETPOST('labelshort', 'alpha');
 
@@ -217,7 +217,7 @@ $title = $langs->trans('AccountAccounting')." - ".$langs->trans('Card');
 
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxheader('', $title, $help_url);
+llxHeader('', $title, $help_url);
 
 
 // Create mode
@@ -329,7 +329,7 @@ if ($action == 'create') {
 			// Account parent
 			print '<tr><td>'.$langs->trans("Accountparent").'</td>';
 			print '<td>';
-			// Note: We accept disabled account as parent account so we can build a hierarchy and use only childs
+			// Note: We accept disabled account as parent account so we can build a hierarchy and use only children
 			print $formaccounting->select_account($object->account_parent, 'account_parent', 1, array(), 0, 0, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1, '');
 			print '</td></tr>';
 

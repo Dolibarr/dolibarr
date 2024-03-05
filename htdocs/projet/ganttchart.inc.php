@@ -235,7 +235,7 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $proje
 	<dt>pClass</dt><dd>(required) the css class for this task</dd>
 	<dt>pLink</dt><dd>(optional) any http link to be displayed in tool tip as the "More information" link.</dd>
 	<dt>pMile</dt><dd>(optional) indicates whether this is a milestone task - Numeric; 1 = milestone, 0 = not milestone</dd>
-	<dt>pRes</dt><dd>(optional) resource name</dd>
+	<dt>press</dt><dd>(optional) resource name</dd>
 	<dt>pComp</dt><dd>(required) completion percent, numeric</dd>
 	<dt>pGroup</dt><dd>(optional) indicates whether this is a group task (parent) - Numeric; 0 = normal task, 1 = standard group task, 2 = combined group task<a href='#combinedtasks' class="footnote">*</a></dd>
 	<dt>pParent</dt><dd>(required) identifies a parent pID, this causes this task to be a child of identified task. Numeric, top level tasks should have pParent set to 0</dd>

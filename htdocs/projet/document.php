@@ -37,7 +37,7 @@ $hookmanager->initHooks(array('projectcarddocument'));
 
 $action		= GETPOST('action', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
-$id			= GETPOST('id', 'int');
+$id			= GETPOSTINT('id');
 $ref		= GETPOST('ref', 'alpha');
 $mine 		= (GETPOST('mode', 'alpha') == 'mine' ? 1 : 0);
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
@@ -54,10 +54,10 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Get parameters
-$limit 		= GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit 		= GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield	= GETPOST('sortfield', 'aZ09comma');
 $sortorder	= GETPOST('sortorder', 'aZ09comma');
-$page		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -66,10 +66,10 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 if (getDolGlobalString('MAIN_DOC_SORT_FIELD')) {
-	$sortfield = $conf->global->MAIN_DOC_SORT_FIELD;
+	$sortfield = getDolGlobalString('MAIN_DOC_SORT_FIELD');
 }
 if (getDolGlobalString('MAIN_DOC_SORT_ORDER')) {
-	$sortorder = $conf->global->MAIN_DOC_SORT_ORDER;
+	$sortorder = getDolGlobalString('MAIN_DOC_SORT_ORDER');
 }
 
 if (!$sortorder) {
@@ -81,7 +81,7 @@ if (!$sortfield) {
 
 // Security check
 $socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 $permissiontoadd = $user->hasRight('projet', 'creer');
@@ -151,7 +151,7 @@ if ($object->id > 0) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -178,7 +178,7 @@ if ($object->id > 0) {
 	$permtoedit = ($userWrite > 0);
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
-	dol_print_error('', 'NoRecordFound');
+	dol_print_error(null, 'NoRecordFound');
 }
 
 // End of page

@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/projet/ganttview.php
  *	\ingroup    projet
- *	\brief      Gantt diagramm of a project
+ *	\brief      Gantt diagram of a project
  */
 
 require "../main.inc.php";
@@ -49,7 +49,7 @@ if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($obj
 
 // Security check
 $socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 // Load translation files required by the page
@@ -130,7 +130,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -222,7 +222,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	print '</td></tr>';
 
 	// Categories
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
@@ -362,7 +362,7 @@ if (count($tasksarray) > 0) {
 		$taskcursor++;
 	}
 
-	// Search parent to set task_parent_alternate_id (requird by ganttchart)
+	// Search parent to set task_parent_alternate_id (required by ganttchart)
 	foreach ($tasks as $tmpkey => $tmptask) {
 		foreach ($tasks as $tmptask2) {
 			if ($tmptask2['task_id'] == $tmptask['task_parent']) {
@@ -380,9 +380,9 @@ if (count($tasksarray) > 0) {
 	if (!empty($conf->use_javascript_ajax)) {
 		//var_dump($_SESSION);
 
-		// How the date for data are formated (format used bu jsgantt)
+		// How the date for data are formatted (format used bu jsgantt)
 		$dateformatinput = 'yyyy-mm-dd';
-		// How the date for data are formated (format used by dol_print_date)
+		// How the date for data are formatted (format used by dol_print_date)
 		$dateformatinput2 = 'standard';
 		//var_dump($dateformatinput);
 		//var_dump($dateformatinput2);

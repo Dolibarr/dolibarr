@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
@@ -41,13 +41,13 @@ $object = new Subscription($db);
 $errmsg = '';
 
 $action = GETPOST("action", 'alpha');
-$rowid = GETPOST("rowid", "int") ? GETPOST("rowid", "int") : GETPOST("id", "int");
-$typeid = GETPOST("typeid", "int");
+$rowid = GETPOSTINT("rowid") ? GETPOSTINT("rowid") : GETPOSTINT("id");
+$typeid = GETPOSTINT("typeid");
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm');
 $note = GETPOST('note', 'alpha');
-$typeid = (int) GETPOST('typeid', 'int');
-$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
+$typeid = GETPOSTINT('typeid');
+$amount = (float) price2num(GETPOST('amount', 'alpha'), 'MT');
 
 if (!$user->hasRight('adherent', 'cotisation', 'lire')) {
 	accessforbidden();
@@ -86,8 +86,8 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'update' &&
 
 		$errmsg = '';
 
-		$newdatestart = dol_mktime(GETPOST('datesubhour', 'int'), GETPOST('datesubmin', 'int'), 0, GETPOST('datesubmonth', 'int'), GETPOST('datesubday', 'int'), GETPOST('datesubyear', 'int'));
-		$newdateend = dol_mktime(GETPOST('datesubendhour', 'int'), GETPOST('datesubendmin', 'int'), 0, GETPOST('datesubendmonth', 'int'), GETPOST('datesubendday', 'int'), GETPOST('datesubendyear', 'int'));
+		$newdatestart = dol_mktime(GETPOSTINT('datesubhour'), GETPOSTINT('datesubmin'), 0, GETPOSTINT('datesubmonth'), GETPOSTINT('datesubday'), GETPOSTINT('datesubyear'));
+		$newdateend = dol_mktime(GETPOSTINT('datesubendhour'), GETPOSTINT('datesubendmin'), 0, GETPOSTINT('datesubendmonth'), GETPOSTINT('datesubendday'), GETPOSTINT('datesubendyear'));
 
 		if ($object->fk_bank > 0) {
 			$accountline = new AccountLine($db);
@@ -241,7 +241,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'edit') {
 	print '<input type="text" class="flat" name="note" value="'.$object->note_private.'"></td></tr>';
 
 	// Bank line
-	if (isModEnabled("banque") && (getDolGlobalString('ADHERENT_BANK_USE') || $object->fk_bank)) {
+	if (isModEnabled("bank") && (getDolGlobalString('ADHERENT_BANK_USE') || $object->fk_bank)) {
 		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur">';
 		if ($object->fk_bank) {
 			$bankline = new AccountLine($db);
@@ -282,7 +282,7 @@ if ($rowid && $action != 'edit') {
 		$formquestion=array();
 		//$formquestion['text']='<b>'.$langs->trans("ThisWillAlsoDeleteBankRecord").'</b>';
 		$text = $langs->trans("ConfirmDeleteSubscription");
-		if (isModEnabled("banque") && getDolGlobalString('ADHERENT_BANK_USE')) {
+		if (isModEnabled("bank") && getDolGlobalString('ADHERENT_BANK_USE')) {
 			$text .= '<br>'.img_warning().' '.$langs->trans("ThisWillAlsoDeleteBankRecord");
 		}
 		print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id, $langs->trans("DeleteSubscription"), $text, "confirm_delete", $formquestion, 0, 1);
@@ -337,7 +337,7 @@ if ($rowid && $action != 'edit') {
 	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private)).'</td></tr>';
 
 	// Bank line
-	if (isModEnabled("banque") && (getDolGlobalString('ADHERENT_BANK_USE') || $object->fk_bank)) {
+	if (isModEnabled("bank") && (getDolGlobalString('ADHERENT_BANK_USE') || $object->fk_bank)) {
 		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur">';
 		if ($object->fk_bank > 0) {
 			$bankline = new AccountLine($db);

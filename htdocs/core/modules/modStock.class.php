@@ -102,7 +102,7 @@ class modStock extends DolibarrModules
 		$r++;
 		$this->const[$r][0] = "MOUVEMENT_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/stocks/mouvements";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/stocks/movements";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 
@@ -135,14 +135,14 @@ class modStock extends DolibarrModules
 		$this->rights[2][5] = '';
 
 		$this->rights[3][0] = 1004;
-		$this->rights[3][1] = 'Lire mouvements de stocks';
+		$this->rights[3][1] = 'Lire movements de stocks';
 		$this->rights[3][2] = 'r';
 		$this->rights[3][3] = 0;
 		$this->rights[3][4] = 'mouvement';
 		$this->rights[3][5] = 'lire';
 
 		$this->rights[4][0] = 1005;
-		$this->rights[4][1] = 'Creer/modifier mouvements de stocks';
+		$this->rights[4][1] = 'Creer/modifier movements de stocks';
 		$this->rights[4][2] = 'w';
 		$this->rights[4][3] = 0;
 		$this->rights[4][4] = 'mouvement';

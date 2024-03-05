@@ -187,7 +187,7 @@ class MenuManager
 					print $val['titre'];
 					print '</a>'."\n";
 
-					// Search submenu fot this mainmenu entry
+					// Search submenu for this mainmenu entry
 					$tmpmainmenu = $val['mainmenu'];
 					$tmpleftmenu = 'all';
 					$submenu = new Menu();
@@ -477,10 +477,8 @@ class MenuManager
  */
 function print_start_menu_array_empty()
 {
-	global $conf;
-
 	print '<div class="tmenudiv">';
-	print '<ul role="navigation" class="tmenu"'.(!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '' : ' title="Top menu"').'>';
+	print '<ul role="navigation" class="tmenu"'.(getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? ' title="Top menu"' : '').'>';
 }
 
 /**

@@ -52,11 +52,11 @@ if (isModEnabled('productbatch')) {
 }
 
 	// Security check
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 $ref = GETPOST('ref');
-$lineid = GETPOST('lineid', 'int');
+$lineid = GETPOSTINT('lineid');
 $action = GETPOST('action', 'aZ09');
-$fk_default_warehouse = GETPOST('fk_default_warehouse', 'int');
+$fk_default_warehouse = GETPOSTINT('fk_default_warehouse');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
@@ -72,7 +72,7 @@ $hookmanager->initHooks(array('expeditiondispatch'));
 // Recuperation de l'id de projet
 $projectid = 0;
 if (GETPOSTISSET("projectid")) {
-	$projectid = GETPOST("projectid", 'int');
+	$projectid = GETPOSTINT("projectid");
 }
 
 $object = new Expedition($db);
@@ -156,11 +156,11 @@ if ($action == 'updatelines' && $usercancreate) {
 			$dDLC = '';
 			if ($modebatch == "batch") { //TODO: Make impossible to input non existing batch code
 				$lot = GETPOST('lot_number_'.$reg[1].'_'.$reg[2]);
-				$dDLUO = dol_mktime(12, 0, 0, GETPOST('dluo_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dluo_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dluo_'.$reg[1].'_'.$reg[2].'year', 'int'));
-				$dDLC = dol_mktime(12, 0, 0, GETPOST('dlc_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'year', 'int'));
+				$dDLUO = dol_mktime(12, 0, 0, GETPOSTINT('dluo_'.$reg[1].'_'.$reg[2].'month'), GETPOSTINT('dluo_'.$reg[1].'_'.$reg[2].'day'), GETPOSTINT('dluo_'.$reg[1].'_'.$reg[2].'year'));
+				$dDLC = dol_mktime(12, 0, 0, GETPOSTINT('dlc_'.$reg[1].'_'.$reg[2].'month'), GETPOSTINT('dlc_'.$reg[1].'_'.$reg[2].'day'), GETPOSTINT('dlc_'.$reg[1].'_'.$reg[2].'year'));
 			}
 
-			$newqty = price2num(GETPOST($qty, 'alpha'), 'MS');
+			$newqty = GETPOSTFLOAT($qty, 'MS');
 			//var_dump("modebatch=".$modebatch." newqty=".$newqty." ent=".$ent." idline=".$idline);
 
 			// We ask to move a qty
@@ -214,7 +214,7 @@ if ($action == 'updatelines' && $usercancreate) {
 						} else {
 							$qtystart = $expeditiondispatch->qty;
 							$expeditiondispatch->qty = $newqty;
-							$expeditiondispatch->entrepot_id = GETPOST($ent, 'int');
+							$expeditiondispatch->entrepot_id = GETPOSTINT($ent);
 
 							if ($newqty > 0) {
 								$result = $expeditiondispatch->update($user);
@@ -271,8 +271,8 @@ if ($action == 'updatelines' && $usercancreate) {
 						}
 					} else {
 						$expeditiondispatch->fk_expedition = $object->id;
-						$expeditiondispatch->entrepot_id = GETPOST($ent, 'int');
-						$expeditiondispatch->fk_origin_line = GETPOST($fk_commandedet, 'int');
+						$expeditiondispatch->entrepot_id = GETPOSTINT($ent);
+						$expeditiondispatch->fk_origin_line = GETPOSTINT($fk_commandedet);
 						$expeditiondispatch->qty = $newqty;
 
 						if ($newqty > 0) {
@@ -288,7 +288,7 @@ if ($action == 'updatelines' && $usercancreate) {
 								$expeditionlinebatch->batch = $lot;
 								$expeditionlinebatch->qty = $newqty;
 								$expeditionlinebatch->fk_origin_stock = 0;
-								$expeditionlinebatch->fk_warehouse = GETPOST($ent, 'int');
+								$expeditionlinebatch->fk_warehouse = GETPOSTINT($ent);
 
 								$result = $expeditionlinebatch->create($idline);
 								if ($result < 0) {
@@ -299,7 +299,7 @@ if ($action == 'updatelines' && $usercancreate) {
 						}
 					}
 
-					// If module stock is enabled and the stock decrease is done on edtion of this page
+					// If module stock is enabled and the stock decrease is done on edition of this page
 					/*
 					if (!$error && GETPOST($ent, 'int') > 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_DISPATCH_ORDER)) {
 						$mouv = new MouvementStock($db);
@@ -353,7 +353,7 @@ if ($action == 'updatelines' && $usercancreate) {
 		exit;
 	}
 } elseif ($action == 'setdate_livraison' && $usercancreate) {
-	$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
+	$datedelivery = dol_mktime(GETPOSTINT('liv_hour'), GETPOSTINT('liv_min'), 0, GETPOSTINT('liv_month'), GETPOSTINT('liv_day'), GETPOSTINT('liv_year'));
 
 	$object->fetch($id);
 	$result = $object->setDeliveryDate($user, $datedelivery);
@@ -423,7 +423,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 	// Print form confirm
 	print $formconfirm;
 
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
+	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('order')) {
 		$objectsrc = new Commande($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
@@ -474,7 +474,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
+	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('order')) {
 		print '<tr><td>';
 		print $langs->trans("RefOrder").'</td>';
 		print '<td colspan="3">';
@@ -888,7 +888,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 								// Qty to dispatch
 								print '<td class="right nowraponall">';
 								print '<a href="" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
-								$suggestedvalue = (GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : $objd->qty);
+								$suggestedvalue = (GETPOSTISSET('qty'.$suffix) ? GETPOSTINT('qty'.$suffix) : $objd->qty);
 								//var_dump($suggestedvalue);exit;
 								print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-type="'.$type.'" data-index="'.$i.'" class="width50 right qtydispatchinput" value="'.$suggestedvalue.'" data-expected="'.$objd->qty.'">';
 								print '</td>';
@@ -1034,11 +1034,11 @@ if ($object->id > 0 || !empty($object->ref)) {
 							// Qty to dispatch
 							print '<td class="right">';
 							print '<a href="" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
-							$amounttosuggest = (GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (!getDolGlobalString('SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO') ? $remaintodispatch : 0));
+							$amounttosuggest = (GETPOSTISSET('qty'.$suffix) ? GETPOSTINT('qty'.$suffix) : (!getDolGlobalString('SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO') ? $remaintodispatch : 0));
 							if (count($products_dispatched)) {
 								// There is already existing lines into llx_expeditiondet, this means a plan for the shipment has already been started.
 								// In such a case, we do not suggest new values, we suggest the value known.
-								$amounttosuggest = (GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (isset($products_dispatched[$objp->rowid]) ? $products_dispatched[$objp->rowid] : ''));
+								$amounttosuggest = (GETPOSTISSET('qty'.$suffix) ? GETPOSTINT('qty'.$suffix) : (isset($products_dispatched[$objp->rowid]) ? $products_dispatched[$objp->rowid] : ''));
 							}
 							print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-index="'.$i.'" data-type="text" class="width50 right qtydispatchinput" value="'.$amounttosuggest.'" data-expected="'.$amounttosuggest.'">';
 							print '</td>';

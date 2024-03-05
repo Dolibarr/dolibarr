@@ -20,7 +20,7 @@
  */
 
 /*
- * Code to ouput content when action is presend
+ * Code to output content when action is presend
  *
  * $trackid must be defined
  * $modelmail
@@ -137,27 +137,27 @@ if ($action == 'presend') {
 		$formmail->fromid = $user->id;
 	}
 	if ($object->element == 'salary' && getDolGlobalString('INVOICE_EMAIL_SENDER')) {
-		$formmail->frommail = $conf->global->SINVOICE_EMAIL_SENDER;
+		$formmail->frommail = getDolGlobalString('SINVOICE_EMAIL_SENDER');
 		$formmail->fromname = getDolGlobalString('INVOICE_EMAIL_SENDER_NAME', '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'facture' && getDolGlobalString('INVOICE_EMAIL_SENDER')) {
-		$formmail->frommail = $conf->global->INVOICE_EMAIL_SENDER;
+		$formmail->frommail = getDolGlobalString('INVOICE_EMAIL_SENDER');
 		$formmail->fromname = getDolGlobalString('INVOICE_EMAIL_SENDER_NAME', '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'shipping' && getDolGlobalString('SHIPPING_EMAIL_SENDER')) {
-		$formmail->frommail = $conf->global->SHIPPING_EMAIL_SENDER;
+		$formmail->frommail = getDolGlobalString('SHIPPING_EMAIL_SENDER');
 		$formmail->fromname = getDolGlobalString('SHIPPING_EMAIL_SENDER_NAME', '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'commande' && getDolGlobalString('COMMANDE_EMAIL_SENDER')) {
-		$formmail->frommail = $conf->global->COMMANDE_EMAIL_SENDER;
+		$formmail->frommail = getDolGlobalString('COMMANDE_EMAIL_SENDER');
 		$formmail->fromname = getDolGlobalString('COMMANDE_EMAIL_SENDER_NAME', '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'order_supplier' && getDolGlobalString('ORDER_SUPPLIER_EMAIL_SENDER')) {
-		$formmail->frommail = $conf->global->ORDER_SUPPLIER_EMAIL_SENDER;
+		$formmail->frommail = getDolGlobalString('ORDER_SUPPLIER_EMAIL_SENDER');
 		$formmail->fromname = getDolGlobalString('ORDER_SUPPLIER_EMAIL_SENDER_NAME', '');
 		$formmail->fromtype = 'special';
 	}
@@ -210,7 +210,7 @@ if ($action == 'presend') {
 		$fuser->fetch($object->fk_user);
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
 	} else {
-		// For exemple if element is project
+		// For example if element is project
 		if (!empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
 			$object->fetch_thirdparty();
 		}
@@ -220,11 +220,11 @@ if ($action == 'presend') {
 			}
 		}
 	}
+
 	if (getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
 		$listeuser = array();
 		$fuserdest = new User($db);
-
-		$result = $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>"t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email <> ''"), 'AND', true);
+		$result = $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, "(t.statut:=:1) AND (t.employee:=:1) AND (t.email:isnot:NULL) AND (t.email:!=:'')", 'AND', true);
 		if ($result > 0 && is_array($fuserdest->users) && count($fuserdest->users) > 0) {
 			foreach ($fuserdest->users as $uuserdest) {
 				$listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id, 'email');
@@ -383,11 +383,10 @@ if ($action == 'presend') {
 	// Array of other parameters
 	$formmail->param['action'] = 'send';
 	$formmail->param['models'] = $modelmail;
-	$formmail->param['models_id'] = GETPOST('modelmailselected', 'int');
+	$formmail->param['models_id'] = GETPOSTINT('modelmailselected');
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"].'?id='.$object->id;
 	$formmail->param['fileinit'] = array($file);
-
 	// Show form
 	print $formmail->get_form();
 

@@ -31,14 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 $langs->loadLangs(array("resource", "companies", "other"));
 
 // Get parameters
-$id             = GETPOST('id', 'int');
+$id             = GETPOSTINT('id');
 $action         = GETPOST('action', 'alpha');
 $massaction     = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 
-$lineid         = GETPOST('lineid', 'int');
+$lineid         = GETPOSTINT('lineid');
 $element        = GETPOST('element', 'alpha');
-$element_id     = GETPOST('element_id', 'int');
-$resource_id    = GETPOST('resource_id', 'int');
+$element_id     = GETPOSTINT('element_id');
+$resource_id    = GETPOSTINT('resource_id');
 
 $sortorder      = GETPOST('sortorder', 'aZ09comma');
 $sortfield      = GETPOST('sortfield', 'aZ09comma');
@@ -61,7 +61,7 @@ $search_ref = GETPOST("search_ref", 'alpha');
 $search_type = GETPOST("search_type", 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 
 $filter = array();
 
@@ -77,8 +77,8 @@ if (empty($arch)) {
 	$arch = 0;
 }
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -279,6 +279,8 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print "</tr>\n";
 
+
+$totalarray = array();
 
 if ($ret) {
 	foreach ($object->lines as $resource) {

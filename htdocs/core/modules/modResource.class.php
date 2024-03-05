@@ -92,7 +92,7 @@ class modResource extends DolibarrModules
 		// List of modules id that must be enabled if this module is enabled
 		$this->depends = array();
 		// List of modules id to disable if this one is disabled
-		$this->requiredby = array('modPlace');
+		$this->requiredby = array('');
 		// Minimum version of PHP required by module
 		$this->phpmin = array(7, 0);
 
@@ -123,7 +123,7 @@ class modResource extends DolibarrModules
 		// 'product'			to add a tab in product view
 		// 'stock'				to add a tab in stock view
 		// 'propal'				to add a tab in propal view
-		// 'member'				to add a tab in fundation member view
+		// 'member'				to add a tab in foundation member view
 		// 'contract'			to add a tab in contract view
 		// 'user'				to add a tab in user view
 		// 'group'				to add a tab in group view

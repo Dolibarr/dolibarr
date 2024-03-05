@@ -43,7 +43,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "ticket";
 		$this->description = "Triggers of the module ticket to send notifications to internal users and to third-parties";
-		$this->version = self::VERSION_DOLIBARR; // 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'ticket';
 	}
 
@@ -58,7 +58,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 *      @param  conf      $conf   Object conf
 	 *      @return int                     Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		global $mysoc;
 
@@ -110,7 +110,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 								$message = dol_nl2br($message);
 
 								if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
-									$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+									$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 									$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 								}
 								include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -193,9 +193,9 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				if (!getDolGlobalString('TICKET_DISABLE_CUSTOMER_MAILS') && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
 					$sendto = '';
 
-					//if contact selected send to email's contact else send to email's thirdparty
+					// if contact selected send to email's contact else send to email's thirdparty
 
-					$contactid = GETPOST('contactid', 'alpha');
+					$contactid = empty($object->context['contactid']) ? 0 : $object->context['contactid'];
 					$res = 0;
 
 					if (!empty($contactid)) {
@@ -253,7 +253,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						$linked_contacts[]['email'] = $object->thirdparty->email;
 					}
 
-					$contactid = GETPOST('contactid', 'int');
+					$contactid = empty($object->context['contactid']) ? 0 : $object->context['contactid'];
 					$res = 0;
 
 					if ($contactid > 0) {
@@ -350,7 +350,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$trackid = 'tic'.$object->id;
 
 		if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
-			$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+			$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 			$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';

@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/intracommreport/class/intracommreport.class.php
 $langs->loadLangs(array("intracommreport"));
 
 // Get Parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action');
 $year = GETPOSTINT('year');
 $month = GETPOSTINT('month');
@@ -78,9 +78,9 @@ $hookmanager->initHooks(array('intracommcard', 'globalcard'));
 $error = 0;
 
 // Permissions
-$permissiontoread = $user->rights->intracommreport->read;
-$permissiontoadd = $user->rights->intracommreport->write;
-$permissiontodelete = $user->rights->intracommreport->delete;
+$permissiontoread = $user->hasRight('intracommreport', 'read');
+$permissiontoadd = $user->hasRight('intracommreport', 'write');
+$permissiontodelete = $user->hasRight('intracommreport', 'delete');
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();

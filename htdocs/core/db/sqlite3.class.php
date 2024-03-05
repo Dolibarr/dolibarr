@@ -51,12 +51,12 @@ class DoliDBSqlite3 extends DoliDB
 
 	/**
 	 *  Constructor.
-	 *  This create an opened connexion to a database server and eventually to a database
+	 *  This create an opened connection to a database server and eventually to a database
 	 *
 	 *  @param      string	$type		Type of database (mysql, pgsql...). Not used.
 	 *  @param	    string	$host		Address of database server
 	 *  @param	    string	$user		Nom de l'utilisateur autorise
-	 *  @param	    string	$pass		Mot de passe
+	 *  @param	    string	$pass		Password
 	 *  @param	    string	$name		Nom de la database
 	 *  @param	    int		$port		Port of database server
 	 */
@@ -98,8 +98,8 @@ class DoliDBSqlite3 extends DoliDB
 			return;
 		}*/
 
-		// Essai connexion serveur
-		// We do not try to connect to database, only to server. Connect to database is done later in constrcutor
+		// Essai connection serveur
+		// We do not try to connect to database, only to server. Connect to database is done later in constructor
 		$this->db = $this->connect($host, $user, $pass, $name, $port);
 
 		if ($this->db) {
@@ -307,7 +307,7 @@ class DoliDBSqlite3 extends DoliDB
 
 
 	/**
-	 *	Connexion to server
+	 *	Connection to server
 	 *
 	 *	@param	    string	$host		database server host
 	 *	@param	    string	$login		login
@@ -368,9 +368,9 @@ class DoliDBSqlite3 extends DoliDB
 
 
 	/**
-	 *  Close database connexion
+	 *  Close database connection
 	 *
-	 *  @return     bool     True if disconnect successfull, false otherwise
+	 *  @return     bool     True if disconnect successful, false otherwise
 	 *  @see        connect()
 	 */
 	public function close()
@@ -411,8 +411,8 @@ class DoliDBSqlite3 extends DoliDB
 		$reg = array();
 		if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+CONSTRAINT\s+(.*)\s*FOREIGN\s+KEY\s*\(([\w,\s]+)\)\s*REFERENCES\s+(\w+)\s*\(([\w,\s]+)\)/i', $query, $reg)) {
 			// Ajout d'une clef étrangère à la table
-			// procédure de remplacement de la table pour ajouter la contrainte
-			// Exemple : ALTER TABLE llx_adherent ADD CONSTRAINT adherent_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid)
+			// procédure de replacement de la table pour ajouter la contrainte
+			// Example : ALTER TABLE llx_adherent ADD CONSTRAINT adherent_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid)
 			// -> CREATE TABLE ( ... ,CONSTRAINT adherent_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid))
 			$foreignFields = $reg[5];
 			$foreignTable = $reg[4];
@@ -467,7 +467,7 @@ class DoliDBSqlite3 extends DoliDB
 			}
 		}
 
-		// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
+		// Ordre SQL ne necessitant pas de connection a une base (example: CREATE DATABASE)
 		try {
 			//$ret = $this->db->exec($query);
 			$ret = $this->db->query($query); // $ret is a Sqlite3Result
@@ -515,7 +515,7 @@ class DoliDBSqlite3 extends DoliDB
 	public function fetch_object($resultset)
 	{
 		// phpcs:enable
-		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connection
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -538,7 +538,7 @@ class DoliDBSqlite3 extends DoliDB
 	public function fetch_array($resultset)
 	{
 		// phpcs:enable
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -557,14 +557,14 @@ class DoliDBSqlite3 extends DoliDB
 	public function fetch_row($resultset)
 	{
 		// phpcs:enable
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_bool($resultset)) {
 			if (!is_object($resultset)) {
 				$resultset = $this->_results;
 			}
 			return $resultset->fetchArray(SQLITE3_NUM);
 		} else {
-			// si le curseur est un booleen on retourne la valeur 0
+			// si le curseur est un boolean on retourne la valeur 0
 			return false;
 		}
 	}
@@ -582,7 +582,7 @@ class DoliDBSqlite3 extends DoliDB
 		// phpcs:enable
 		// FIXME: SQLite3Result does not have a queryString member
 
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -605,7 +605,7 @@ class DoliDBSqlite3 extends DoliDB
 		// phpcs:enable
 		// FIXME: SQLite3Result does not have a queryString member
 
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -626,7 +626,7 @@ class DoliDBSqlite3 extends DoliDB
 	 */
 	public function free($resultset = null)
 	{
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -661,12 +661,12 @@ class DoliDBSqlite3 extends DoliDB
 	/**
 	 *	Renvoie le code erreur generique de l'operation precedente.
 	 *
-	 *	@return	string		Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
+	 *	@return	string		Error code (Examples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
 	 */
 	public function errno()
 	{
 		if (!$this->connected) {
-			// Si il y a eu echec de connexion, $this->db n'est pas valide.
+			// Si il y a eu echec de connection, $this->db n'est pas valide.
 			return 'DB_ERROR_FAILED_TO_CONNECT';
 		} else {
 			// Constants to convert error code to a generic Dolibarr error code
@@ -735,7 +735,7 @@ class DoliDBSqlite3 extends DoliDB
 	public function error()
 	{
 		if (!$this->connected) {
-			// Si il y a eu echec de connexion, $this->db n'est pas valide pour sqlite_error.
+			// Si il y a eu echec de connection, $this->db n'est pas valide pour sqlite_error.
 			return 'Not connected. Check setup parameters in conf/conf.php file and your sqlite version';
 		} else {
 			return $this->error;
@@ -819,9 +819,9 @@ class DoliDBSqlite3 extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return connexion ID
+	 * Return connection ID
 	 *
-	 * @return	        string      Id connexion
+	 * @return	        string      Id connection
 	 */
 	public function DDLGetConnectId()
 	{
@@ -931,7 +931,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *  List information of columns into a table.
 	 *
 	 *	@param	string	$table		Name of table
-	 *	@return	array				Tableau des informations des champs de la table
+	 *	@return	array				Tableau des information des champs de la table
 	 *	TODO modify for sqlite
 	 */
 	public function DDLInfoTable($table)
@@ -1075,10 +1075,10 @@ class DoliDBSqlite3 extends DoliDB
 	/**
 	 *	Create a new field into table
 	 *
-	 *	@param	string	$table 				Name of table
-	 *	@param	string	$field_name 		Name of field to add
-	 *	@param	string	$field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
-	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
+	 *	@param	string	$table 				Table name
+	 *	@param	string	$field_name 		Field name to add
+	 *	@param	string	$field_desc 		Associative table with description of field to insert [parameter name][parameter value]
+	 *	@param	string	$field_position 	Optional e.g.: "after some_field"
 	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "")
@@ -1171,7 +1171,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *
 	 *	@param	string	$dolibarr_main_db_host 		Ip serveur
 	 *	@param	string	$dolibarr_main_db_user 		Nom user a creer
-	 *	@param	string	$dolibarr_main_db_pass 		Mot de passe user a creer
+	 *	@param	string	$dolibarr_main_db_pass 		Password user a creer
 	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
 	 *	@return	int									Return integer <0 if KO, >=0 if OK
 	 */
@@ -1366,12 +1366,14 @@ class DoliDBSqlite3 extends DoliDB
 	}
 
 	/**
-	 * Permet le chargement d'une fonction personnalisee dans le moteur de base de donnees.
-	 * Note: le nom de la fonction personnalisee est prefixee par 'db'. La fonction doit être
-	 * statique et publique. Le nombre de parametres est determine automatiquement.
+	 * Add a custom function in the database engine (STORED PROCEDURE)
+	 * Notes:
+	 *   - The custom function is prefixed with 'db'
+	 *   - The function must be static and public.
+	 *   - The number of arguments is automatically determined when arg_count is < 0
 	 *
-	 * @param 	string 	$name 			Le nom de la fonction a definir dans Sqlite
-	 * @param	int		$arg_count		Arg count
+	 * @param 	string 	$name 			Function name to define in Sqlite
+	 * @param	int		$arg_count		Arguments count
 	 * @return	void
 	 */
 	private function addCustomFunction($name, $arg_count = -1)

@@ -25,14 +25,14 @@ if (!defined('NOREQUIREAJAX')) {
 
 require '../../main.inc.php'; // Load $user and permissions
 
-$warehouse_id = GETPOST('warehouse_id', 'int');
+$warehouse_id = GETPOSTINT('warehouse_id');
 $batch = GETPOST('batch', 'alphanohtml');
-$fk_product = GETPOST('product_id', 'int');
+$fk_product = GETPOSTINT('product_id');
 $action = GETPOST('action', 'alphanohtml');
 
 $result = restrictedArea($user, 'mrp');
 
-$permissiontoproduce = $user->rights->mrp->write;
+$permissiontoproduce = $user->hasRight('mrp', 'write');
 
 
 

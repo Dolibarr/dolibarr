@@ -432,7 +432,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
  * Create a thirdparty
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Societe		$thirdparty		    Thirdparty
+ * @param	array		$thirdparty		    Thirdparty
  * @return	array							Array result
  */
 function createThirdParty($authentication, $thirdparty)
@@ -564,7 +564,7 @@ function createThirdParty($authentication, $thirdparty)
  * Update a thirdparty
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Societe		$thirdparty		    Thirdparty
+ * @param	array		$thirdparty		    Thirdparty
  * @return	array							Array result
  */
 function updateThirdParty($authentication, $thirdparty)
@@ -772,7 +772,7 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 				$arraythirdparties[] = array('id'=>$obj->socRowid,
 					'ref'=>$obj->ref,
 					'ref_ext'=>$obj->ref_ext,
-					'adress'=>$obj->adress,
+					'address'=>$obj->address,
 					'zip'=>$obj->zip,
 					'town'=>$obj->town,
 					'country'=>$obj->country,
@@ -861,7 +861,7 @@ function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 					$error++;
 					$errorcode = 'KO';
 					$errorlabel = $thirdparty->error;
-					dol_syslog("Function: deleteThirdParty cant delete");
+					dol_syslog("Function: deleteThirdParty can't delete");
 				}
 			} else {
 				$error++;

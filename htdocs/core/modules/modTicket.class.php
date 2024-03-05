@@ -184,44 +184,44 @@ class modTicket extends DolibarrModules
 		$r = 0;
 		$this->rights[$r][0] = 56001; // id de la permission
 		$this->rights[$r][1] = "Read ticket"; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'read';
 
 		$r++;
 		$this->rights[$r][0] = 56002; // id de la permission
 		$this->rights[$r][1] = "Create les tickets"; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'write';
 
 		$r++;
 		$this->rights[$r][0] = 56003; // id de la permission
 		$this->rights[$r][1] = "Delete les tickets"; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'delete';
 
 		$r++;
 		$this->rights[$r][0] = 56004; // id de la permission
 		$this->rights[$r][1] = "Manage tickets"; // libelle de la permission
-		//$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		//$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'manage';
 
 		$r++;
 		$this->rights[$r][0] = 56006; // id de la permission
 		$this->rights[$r][1] = "Export ticket"; // libelle de la permission
-		//$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		//$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'export';
 
 		/* Seems not used and in conflict with societe->client->voir (see all thirdparties)
 		$r++;
 		$this->rights[$r][0] = 56005; // id de la permission
 		$this->rights[$r][1] = 'See all tickets, even if not assigned to (not effective for external users, always restricted to the thirdpardy they depends on)'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'view';
 		$this->rights[$r][5] = 'all';
 		*/
@@ -376,7 +376,7 @@ class modTicket extends DolibarrModules
 		//ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/tickets/template_ticket.odt';
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/tickets';
-		$dest = $dirodt.'/template_order.odt';
+		$dest = $dirodt.'/template_ticket.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -394,8 +394,10 @@ class modTicket extends DolibarrModules
 			array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110121, 'ticket',  'internal', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
 			array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110122, 'ticket',  'external', 'SUPPORTCLI', 'Contact client suivi incident', 1);", "ignoreerror" => 1),
 			array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110123, 'ticket',  'external', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
+			// remove old settings
 			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'TICKET_ADDON_PDF_ODT_PATH' AND type = 'ticket' AND entity = ".((int) $conf->entity),
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('TICKET_ADDON_PDF_ODT_PATH','ticket',".((int) $conf->entity).")"
+			// activate default odt templates
+			array("sql" =>"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, libelle, entity, description) VALUES('generic_ticket_odt','ticket','ODT templates',".((int) $conf->entity).",'TICKET_ADDON_PDF_ODT_PATH');", "ignoreerror" =>1),
 		);
 
 		return $this->_init($sql, $options);

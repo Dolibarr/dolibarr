@@ -50,9 +50,9 @@ if (isModEnabled('salaries')) {
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alphanohtml');
-$bankid = GETPOST('bankid', 'int');
+$bankid = GETPOSTINT('bankid');
 $action = GETPOST("action", 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
@@ -85,11 +85,11 @@ if (empty($account->userid)) {
 // Define value to know what current user can do on users
 $canadduser = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write);
 $canreaduser = (!empty($user->admin) || $user->rights->user->user->lire || $user->rights->hrm->read_personal_information->read);
-$permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || $user->hasRight('user', 'creer'));
+$permissiontoaddbankaccount = ($user->hasRight('salaries', 'write') || $user->hasRight('hrm', 'employee', 'write') || $user->hasRight('user', 'creer'));
 $permissiontoreadhr = $user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write');
 $permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'write');
 
-// Ok if user->rights->salaries->read or user->rights->hrm->read
+// Ok if user->hasRight('salaries', 'read') or user->hasRight('hrm', 'read')
 //$result = restrictedArea($user, 'salaries|hrm', $object->id, 'user&user', $feature2);
 $ok = false;
 if ($user->id == $id) {
@@ -118,20 +118,21 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
-	$account->courant         = GETPOST('courant', 'alpha');
+	$account->courant         = GETPOSTINT('courant');
 	$account->code_banque     = GETPOST('code_banque', 'alpha');
 	$account->code_guichet    = GETPOST('code_guichet', 'alpha');
 	$account->number          = GETPOST('number', 'alpha');
 	$account->cle_rib         = GETPOST('cle_rib', 'alpha');
 	$account->bic             = GETPOST('bic', 'alpha');
 	$account->iban            = GETPOST('iban', 'alpha');
-	$account->domiciliation   = GETPOST('domiciliation', 'alpha');
+	$account->domiciliation   = GETPOST('address', 'alpha');
+	$account->address         = GETPOST('address', 'alpha');
 	$account->proprio         = GETPOST('proprio', 'alpha');
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
 	$account->currency_code = trim(GETPOST("account_currency_code"));
-	$account->state_id = GETPOST("account_state_id", 'int');
-	$account->country_id = GETPOST("account_country_id", 'int');
+	$account->state_id = GETPOSTINT("account_state_id");
+	$account->country_id = GETPOSTINT("account_country_id");
 
 	$result = $account->create($user);
 
@@ -149,20 +150,21 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
-	$account->courant         = GETPOST('courant', 'alpha');
+	$account->courant         = GETPOSTINT('courant');
 	$account->code_banque     = GETPOST('code_banque', 'alpha');
 	$account->code_guichet    = GETPOST('code_guichet', 'alpha');
 	$account->number          = GETPOST('number', 'alpha');
 	$account->cle_rib         = GETPOST('cle_rib', 'alpha');
 	$account->bic             = GETPOST('bic', 'alpha');
 	$account->iban            = GETPOST('iban', 'alpha');
-	$account->domiciliation   = GETPOST('domiciliation', 'alpha');
+	$account->domiciliation   = GETPOST('address', 'alpha');
+	$account->address         = GETPOST('address', 'alpha');
 	$account->proprio         = GETPOST('proprio', 'alpha');
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
 	$account->currency_code = trim(GETPOST("account_currency_code"));
-	$account->state_id = GETPOST("account_state_id", 'int');
-	$account->country_id = GETPOST("account_country_id", 'int');
+	$account->state_id = GETPOSTINT("account_state_id");
+	$account->country_id = GETPOSTINT("account_country_id");
 
 	$result = $account->update($user);
 
@@ -189,7 +191,7 @@ if ($action == 'delete_confirmed' && !$cancel && $permissiontoaddbankaccount) {
 
 // update birth
 if ($action == 'setbirth' && $canadduser && !$cancel) {
-	$object->birth = dol_mktime(0, 0, 0, GETPOST('birthmonth', 'int'), GETPOST('birthday', 'int'), GETPOST('birthyear', 'int'));
+	$object->birth = dol_mktime(0, 0, 0, GETPOSTINT('birthmonth'), GETPOSTINT('birthday'), GETPOSTINT('birthyear'));
 	$result = $object->update($user);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -244,7 +246,7 @@ if ($action == 'setnational_registration_number' && $canadduser && !$cancel) {
 if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 	// update default_c_exp_tax_cat
 	if ($action == 'setdefault_c_exp_tax_cat' && $canadduser) {
-		$object->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat', 'int');
+		$object->default_c_exp_tax_cat = GETPOSTINT('default_c_exp_tax_cat');
 		$result = $object->update($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -253,7 +255,7 @@ if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 
 	// update default range
 	if ($action == 'setdefault_range' && $canadduser) {
-		$object->default_range = GETPOST('default_range', 'int');
+		$object->default_range = GETPOSTINT('default_range');
 		$result = $object->update($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -296,7 +298,7 @@ if ($id && $bankid && $action == 'edit' && ($user->hasRight('user', 'user', 'cre
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" name="formbank" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">';
+	print '<input type="hidden" name="id" value="'.GETPOSTINT("id").'">';
 	print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
 if ($id && $action == 'create' && $user->hasRight('user', 'user', 'creer')) {
@@ -596,7 +598,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	print '</div><div class="fichehalfright">';
 
 	// Max number of elements in small lists
-	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+	$MAXLIST = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
 
 	// Latest payments of salaries
 	if (isModEnabled('salaries') &&
@@ -617,7 +619,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		if ($resql) {
 			$num = $db->num_rows($resql);
 
-			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
@@ -678,7 +680,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		if ($resql) {
 			$num = $db->num_rows($resql);
 
-			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
@@ -736,7 +738,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		if ($resql) {
 			$num = $db->num_rows($resql);
 
-			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
@@ -793,7 +795,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank_account');
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="liste centpercent">';
 
 	print '<tr class="liste_titre">';
@@ -1004,8 +1006,8 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->hasRight('user',
 	}
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
-	print '<textarea name="domiciliation" rows="4" class="quatrevingtpercent">';
-	print dol_escape_htmltag($account->domiciliation);
+	print '<textarea name="address" rows="4" class="quatrevingtpercent">';
+	print dol_escape_htmltag($account->address);
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';

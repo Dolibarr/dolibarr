@@ -47,7 +47,7 @@ $action = GETPOST('action', 'alpha');
 if (!getDolGlobalString('AGENDA_EXT_NB')) {
 	$conf->global->AGENDA_EXT_NB = 5;
 }
-$MAXAGENDA = $conf->global->AGENDA_EXT_NB;
+$MAXAGENDA = getDolGlobalString('AGENDA_EXT_NB');
 
 // List of available colors
 $colorlist = array('BECEDD', 'DDBECE', 'BFDDBE', 'F598B4', 'F68654', 'CBF654', 'A4A4A5');
@@ -154,14 +154,14 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 
 	// Save nb of agenda
 	if (!$error) {
-		$res = dolibarr_set_const($db, 'AGENDA_EXT_NB', trim(GETPOST('AGENDA_EXT_NB', 'int')), 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, 'AGENDA_EXT_NB', trim(GETPOSTINT('AGENDA_EXT_NB')), 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
 		if (!getDolGlobalString('AGENDA_EXT_NB')) {
 			$conf->global->AGENDA_EXT_NB = 5;
 		}
-		$MAXAGENDA = !getDolGlobalString('AGENDA_EXT_NB') ? 5 : $conf->global->AGENDA_EXT_NB;
+		$MAXAGENDA = getDolGlobalInt('AGENDA_EXT_NB', 5);
 	}
 
 	if (!$error) {

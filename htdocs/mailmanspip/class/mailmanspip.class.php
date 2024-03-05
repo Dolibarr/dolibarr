@@ -156,7 +156,7 @@ class MailmanSpip
 	 *  Fonction qui donne les droits redacteurs dans spip
 	 *
 	 *	@param	Adherent	$object		Object with data (->firstname, ->lastname, ->email and ->login)
-	 *  @return	int					=0 if KO, >0 if OK
+	 *  @return	int						=0 if KO, >0 if OK
 	 */
 	public function add_to_spip($object)
 	{
@@ -171,7 +171,10 @@ class MailmanSpip
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 					$mdpass = dol_hash($object->pass);
 					$htpass = crypt($object->pass, makesalt());
-					$query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".dolGetFirstLastname($object->firstname, $object->lastname)."\",\"".$object->email."\",\"".$object->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
+
+					$query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut)";
+					$query .= " VALUES('".$mydb->escape(dolGetFirstLastname($object->firstname, $object->lastname))."', '".$mydb->escape($object->email)."',";
+					$query .= " '".$mydb->escape($object->login)."', '".$mydb->escape($mdpass)."', '".$mydb->escape($htpass)."', FLOOR(32000*RAND()), '1comite')";
 
 					$result = $mydb->query($query);
 
@@ -238,7 +241,7 @@ class MailmanSpip
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Fonction qui dit si cet utilisateur est un redacteur existant dans spip
+	 *  Indicate if the user is an existing editor in spip
 	 *
 	 *	@param	object	$object		Object with data (->login)
 	 *  @return int     			1=exists, 0=does not exists, -1=error
@@ -257,11 +260,11 @@ class MailmanSpip
 
 					if ($result) {
 						if ($mydb->num_rows($result)) {
-							// nous avons au moins une reponse
+							// At least one result for the login query
 							$mydb->close();
 							return 1;
 						} else {
-							// nous n'avons pas de reponse => n'existe pas
+							// No result for the login query
 							$mydb->close();
 							return 0;
 						}
@@ -306,7 +309,7 @@ class MailmanSpip
 			return -1;
 		}
 
-		if (isModEnabled('adherent')) {	// Synchro for members
+		if (isModEnabled('member')) {	// Synchro for members
 			if (getDolGlobalString('ADHERENT_MAILMAN_URL')) {
 				if ($listes == '' && getDolGlobalString('ADHERENT_MAILMAN_LISTS')) {
 					$lists = explode(',', getDolGlobalString('ADHERENT_MAILMAN_LISTS'));
@@ -376,7 +379,7 @@ class MailmanSpip
 			return -1;
 		}
 
-		if (isModEnabled('adherent')) {	// Synchro for members
+		if (isModEnabled('member')) {	// Synchro for members
 			if (getDolGlobalString('ADHERENT_MAILMAN_UNSUB_URL')) {
 				if ($listes == '' && getDolGlobalString('ADHERENT_MAILMAN_LISTS')) {
 					$lists = explode(',', getDolGlobalString('ADHERENT_MAILMAN_LISTS'));

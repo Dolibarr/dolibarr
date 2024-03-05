@@ -48,7 +48,7 @@ $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place is id of table for Bar or Restaurant
 
-$invoiceid = GETPOST('invoiceid', 'int');
+$invoiceid = GETPOSTINT('invoiceid');
 
 $hookmanager->initHooks(array('takepospay'));
 
@@ -124,7 +124,7 @@ function fetchConnectionToken() {
 		<?php
 		$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&token='.newToken().'&servicestatus='.urlencode($servicestatus);
 		if (getDolGlobalString('STRIPE_LOCATION')) {
-			$urlconnexiontoken .= '&location='.urlencode($conf->global->STRIPE_LOCATION);
+			$urlconnexiontoken .= '&location='.urlencode(getDolGlobalString('STRIPE_LOCATION'));
 		}
 		if (!empty($stripeacc)) {
 			$urlconnexiontoken .= '&stripeacc='.urlencode($stripeacc);
@@ -246,7 +246,7 @@ if ($resql) {
 			$arrayOfValidBankAccount[getDolGlobalInt($accountname)] = getDolGlobalInt($accountname);
 			$arrayOfValidPaymentModes[] = $obj;
 		}
-		if (!isModEnabled('banque')) {
+		if (!isModEnabled('bank')) {
 			if ($paycode == 'CASH' || $paycode == 'CB') {
 				$arrayOfValidPaymentModes[] = $obj;
 			}
@@ -448,7 +448,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 				console.log("error when capturing paymentIntent", result.error);
 			  } else {
 				document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentValidated'); ?></div>';
-				console.log("Capture paymentIntent successfull "+paymentIntentId);
+				console.log("Capture paymentIntent successful "+paymentIntentId);
 				  parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo newToken(); ?>&pay=CB&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
 			if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
 				console.log("Close popup");
@@ -596,7 +596,7 @@ $action_buttons = array(
 		"class" => "poscolordelete"
 	),
 );
-$numpad = $conf->global->TAKEPOS_NUMPAD;
+$numpad = getDolGlobalString('TAKEPOS_NUMPAD');
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 	print '<span id="card-present-alert">';
 	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), '', 'warning', 1);

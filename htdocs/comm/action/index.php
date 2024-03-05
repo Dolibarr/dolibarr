@@ -8,6 +8,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
  * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,16 +49,17 @@ if (!isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) {
 if (!getDolGlobalString('AGENDA_EXT_NB')) {
 	$conf->global->AGENDA_EXT_NB = 5;
 }
-$MAXAGENDA = $conf->global->AGENDA_EXT_NB;
+$MAXAGENDA = getDolGlobalString('AGENDA_EXT_NB');
 $DELAYFORCACHE = 300;	// 300 seconds
 
-$disabledefaultvalues = GETPOST('disabledefaultvalues', 'int');
+$disabledefaultvalues = GETPOSTINT('disabledefaultvalues');
 
-$check_holiday = GETPOST('check_holiday', 'int');
+$check_holiday = GETPOSTINT('check_holiday');
 $filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
-$filtert = GETPOST("search_filtert", "int", 3) ? GETPOST("search_filtert", "int", 3) : GETPOST("filtert", "int", 3);
-$usergroup = GETPOST("search_usergroup", "int", 3) ? GETPOST("search_usergroup", "int", 3) : GETPOST("usergroup", "int", 3);
-$showbirthday = empty($conf->use_javascript_ajax) ? GETPOST("showbirthday", "int") : 1;
+$filtert = GETPOSTINT("search_filtert", 3) ? GETPOSTINT("search_filtert", 3) : GETPOSTINT("filtert", 3);
+$usergroup = GETPOSTINT("search_usergroup", 3) ? GETPOSTINT("search_usergroup", 3) : GETPOSTINT("usergroup", 3);
+$showbirthday = empty($conf->use_javascript_ajax) ? GETPOSTINT("showbirthday") : 1;
+$search_categ_cus = GETPOSTINT("search_categ_cus", 3) ? GETPOSTINT("search_categ_cus", 3) : 0;
 
 // If not choice done on calendar owner (like on left menu link "Agenda"), we filter on user.
 if (empty($filtert) && !getDolGlobalString('AGENDA_ALL_CALENDARS')) {
@@ -68,11 +70,11 @@ $newparam = '';
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $offset = $limit * $page;
 if (!$sortorder) {
 	$sortorder = "ASC";
@@ -82,7 +84,7 @@ if (!$sortfield) {
 }
 
 // Security check
-$socid = GETPOST("search_socid", "int") ? GETPOST("search_socid", "int") : GETPOST("socid", "int");
+$socid = GETPOSTINT("search_socid") ? GETPOSTINT("search_socid") : GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -107,22 +109,22 @@ $mode = GETPOST('mode', 'aZ09');
 if (empty($mode) && preg_match('/show_/', $action)) {
 	$mode = $action;	// For backward compatibility
 }
-$resourceid = GETPOST("search_resourceid", "int");
-$year = GETPOST("year", "int") ? GETPOST("year", "int") : date("Y");
-$month = GETPOST("month", "int") ? GETPOST("month", "int") : date("m");
-$week = GETPOST("week", "int") ? GETPOST("week", "int") : date("W");
-$day = GETPOST("day", "int") ? GETPOST("day", "int") : date("d");
-$pid = GETPOST("search_projectid", "int", 3) ? GETPOST("search_projectid", "int", 3) : GETPOST("projectid", "int", 3);
+$resourceid = GETPOSTINT("search_resourceid");
+$year = GETPOSTINT("year") ? GETPOSTINT("year") : date("Y");
+$month = GETPOSTINT("month") ? GETPOSTINT("month") : date("m");
+$week = GETPOSTINT("week") ? GETPOSTINT("week") : date("W");
+$day = GETPOSTINT("day") ? GETPOSTINT("day") : date("d");
+$pid = GETPOSTINT("search_projectid", 3) ? GETPOSTINT("search_projectid", 3) : GETPOSTINT("projectid", 3);
 $status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo', 'na' or -1
 $type = GETPOSTISSET("search_type") ? GETPOST("search_type", 'aZ09') : GETPOST("type", 'aZ09');
-$maxprint = GETPOSTISSET("maxprint") ? GETPOST("maxprint", 'int') : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW;
+$maxprint = GETPOSTISSET("maxprint") ? GETPOSTINT("maxprint") : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW;
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-$dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'));
+$dateselect = dol_mktime(0, 0, 0, GETPOSTINT('dateselectmonth'), GETPOSTINT('dateselectday'), GETPOSTINT('dateselectyear'));
 if ($dateselect > 0) {
-	$day = GETPOST('dateselectday', 'int');
-	$month = GETPOST('dateselectmonth', 'int');
-	$year = GETPOST('dateselectyear', 'int');
+	$day = GETPOSTINT('dateselectday');
+	$month = GETPOSTINT('dateselectmonth');
+	$year = GETPOSTINT('dateselectyear');
 }
 
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
@@ -147,16 +149,16 @@ if (empty($mode) && !GETPOSTISSET('mode')) {
 if ($mode == 'default') {	// When action is default, we want a calendar view and not the list
 	$mode = (($defaultview != 'show_list') ? $defaultview : 'show_month');
 }
-if (GETPOST('viewcal', 'int') && GETPOST('mode', 'alpha') != 'show_day' && GETPOST('mode', 'alpha') != 'show_week') {
+if (GETPOSTINT('viewcal') && GETPOSTINT('mode') != 'show_day' && GETPOSTINT('mode') != 'show_week') {
 	$mode = 'show_month';
 	$day = '';
 } // View by month
-if (GETPOST('viewweek', 'int') || GETPOST('mode', 'alpha') == 'show_week') {
+if (GETPOSTINT('viewweek') || GETPOSTINT('mode') == 'show_week') {
 	$mode = 'show_week';
 	$week = ($week ? $week : date("W"));
 	$day = ($day ? $day : date("d"));
 } // View by week
-if (GETPOST('viewday', 'int') || GETPOST('mode', 'alpha') == 'show_day') {
+if (GETPOSTINT('viewday') || GETPOSTINT('mode') == 'show_day') {
 	$mode = 'show_day';
 	$day = ($day ? $day : date("d"));
 } // View by day
@@ -318,7 +320,7 @@ if (empty($mode) || $mode == 'show_month') {
 	$max_day_in_prev_month = date("t", dol_mktime(12, 0, 0, $prev_month, 1, $prev_year, 'gmt')); // Nb of days in previous month
 	$max_day_in_month = date("t", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')); // Nb of days in next month
 	// tmpday is a negative or null cursor to know how many days before the 1st to show on month view (if tmpday=0, 1st is monday)
-	$tmpday = -date("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // date('w') is 0 fo sunday
+	$tmpday = -date("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // date('w') is 0 for sunday
 	$tmpday += ((isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1) - 1);
 	if ($tmpday >= 1) {
 		$tmpday -= 7; // If tmpday is 0 we start with sunday, if -6, we start with monday of previous week.
@@ -418,6 +420,9 @@ if ($type) {
 $param .= "&maxprint=".urlencode($maxprint);
 if ($mode == 'show_day' || $mode == 'show_week' || $mode == 'show_month') {
 	$param .= '&mode='.urlencode($mode);
+}
+if ($search_categ_cus != 0) {
+	$param .= '&search_categ_cus='.urlencode($search_categ_cus);
 }
 
 // Show navigation bar
@@ -519,7 +524,8 @@ $viewmode .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', '
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewPerUser").'</span></a>';
 
 // Add more views from hooks
-$parameters = array(); $object = null;
+$parameters = array();
+$object = null;
 $reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
 if (empty($reshook)) {
 	$viewmode .= $hookmanager->resPrint;
@@ -546,7 +552,8 @@ if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda'
 }
 
 // Define the legend/list of calendard to show
-$s = ''; $link = '';
+$s = '';
+$link = '';
 
 $showextcals = $listofextcals;
 $bookcalcalendars = array();
@@ -643,7 +650,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 		foreach ($showextcals as $val) {
 			$htmlname = md5($val['name']);	// not used for security purpose, only to get a string with no special char
 
-			if (!empty($val['default']) || GETPOST('check_ext'.$htmlname, 'int')) {
+			if (!empty($val['default']) || GETPOSTINT('check_ext'.$htmlname)) {
 				$default = "checked";
 			} else {
 				$default = '';
@@ -711,15 +718,17 @@ $sql .= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 $sql .= ' a.fk_soc, a.fk_contact, a.fk_project, a.fk_bookcal_calendar,';
 $sql .= ' a.fk_element, a.elementtype,';
 $sql .= ' ca.code as type_code, ca.libelle as type_label, ca.color as type_color, ca.type as type_type, ca.picto as type_picto';
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
-}
 // We must filter on resource table
 if ($resourceid > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
 }
-// We must filter on assignement table
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 }
@@ -763,13 +772,24 @@ if ($resourceid > 0) {
 if ($pid) {
 	$sql .= " AND a.fk_project=".((int) $pid);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
+// If the internal user must only see his customers, force searching by him
+$search_sale = 0;
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
 }
-if ($socid > 0) {
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
+// Search on socid
+if ($socid) {
 	$sql .= " AND a.fk_soc = ".((int) $socid);
 }
-// We must filter on assignement table
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
 }
@@ -819,7 +839,7 @@ if ($status == 'done' || $status == '100') {
 if ($status == 'todo') {
 	$sql .= " AND (a.percent >= 0 AND a.percent < 100)";
 }
-// We must filter on assignement table
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " AND (";
 	if ($filtert > 0) {
@@ -830,10 +850,19 @@ if ($filtert > 0 || $usergroup > 0) {
 	}
 	$sql .= ")";
 }
+
+// Search in categories, -1 is all and -2 is no categories
+if ($search_categ_cus != -1) {
+	if ($search_categ_cus == -2) {
+		$sql .= " AND NOT EXISTS (SELECT ca.fk_actioncomm FROM ".MAIN_DB_PREFIX."categorie_actioncomm as ca WHERE ca.fk_actioncomm = a.id)";
+	} elseif ($search_categ_cus > 0) {
+		$sql .= " AND EXISTS (SELECT ca.fk_actioncomm FROM ".MAIN_DB_PREFIX."categorie_actioncomm as ca WHERE ca.fk_actioncomm = a.id AND ca.fk_categorie IN (".$db->sanitize($search_categ_cus)."))";
+	}
+}
+
 // Sort on date
 $sql .= ' ORDER BY datep';
 //print $sql;
-
 
 dol_syslog("comm/action/index.php", LOG_DEBUG);
 $resql = $db->query($sql);
@@ -968,6 +997,14 @@ if ($resql) {
 			//print 'Event '.$i.' id='.$event->id.' (start='.dol_print_date($event->datep).'-end='.dol_print_date($event->datef);
 			//print ' startincalendar='.dol_print_date($event->date_start_in_calendar).'-endincalendar='.dol_print_date($event->date_end_in_calendar).') was added in '.$j.' different index key of array<br>';
 		}
+
+		$parameters['obj'] = $obj;
+		$reshook = $hookmanager->executeHooks('hookEventElements', $parameters, $event, $action); // Note that $action and $object may have been modified by some hooks
+		$event = $hookmanager->resPrint;
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
+
 		$i++;
 	}
 } else {
@@ -1008,7 +1045,7 @@ if ($showbirthday) {
 			$datebirth = dol_stringtotime($obj->birthday, 1);
 			//print 'ee'.$obj->birthday.'-'.$datebirth;
 			$datearray = dol_getdate($datebirth, true);
-			$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $year, true); // For full day events, date are also GMT but they wont but converted during output
+			$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $year, true); // For full day events, date are also GMT but they won't but converted during output
 			$event->datef = $event->datep;
 
 			$event->type_code = 'BIRTHDAY';
@@ -1192,7 +1229,7 @@ if (count($listofextcals)) {
 						// datecurstart and datecurend are now GMT date
 						//var_dump($datecurstart); var_dump($datecurend); exit;
 					} else {
-						// Not a recongized record
+						// Not a recognized record
 						dol_syslog("Found a not recognized repeatable record with unknown date start", LOG_ERR);
 						continue;
 					}
@@ -1222,7 +1259,7 @@ if (count($listofextcals)) {
 							}
 							$moreicalevents[] = $newevent;
 						}
-						// Jump on next occurence
+						// Jump on next occurrence
 						$numofevent++;
 						$savdatecurstart = $datecurstart;
 						if ($icalevent['RRULE']['FREQ'] == 'DAILY') {
@@ -1264,7 +1301,7 @@ if (count($listofextcals)) {
 				$event = new ActionComm($db);
 				$addevent = false;
 				if (isset($icalevent['DTSTART;VALUE=DATE'])) { // fullday event
-					// For full day events, date are also GMT but they wont but converted using tz during output
+					// For full day events, date are also GMT but they won't but converted using tz during output
 					$datestart = dol_stringtotime($icalevent['DTSTART;VALUE=DATE'], 1);
 					if (empty($icalevent['DTEND;VALUE=DATE'])) {
 						$dateend = $datestart + 86400 - 1;
@@ -1328,7 +1365,7 @@ if (count($listofextcals)) {
 
 					$event->icalname = $namecal;
 					$event->icalcolor = $colorcal;
-					$usertime = 0; // We dont modify date because we want to have date into memory datep and datef stored as GMT date. Compensation will be done during output.
+					$usertime = 0; // We don't modify date because we want to have date into memory datep and datef stored as GMT date. Compensation will be done during output.
 					$event->datep = $datestart + $usertime;
 					$event->datef = $dateend + $usertime;
 
@@ -1420,9 +1457,9 @@ if (count($listofextcals)) {
 }
 
 
-
 // Complete $eventarray with events coming from external module
-$parameters = array(); $object = null;
+$parameters = array();
+$object = null;
 $reshook = $hookmanager->executeHooks('getCalendarEvents', $parameters, $object, $action);
 if (!empty($hookmanager->resArray['eventarray'])) {
 	foreach ($hookmanager->resArray['eventarray'] as $keyDate => $events) {
@@ -1453,7 +1490,7 @@ if (!is_array($theme_datacolor)) {
 	$theme_datacolor = array(array(120, 130, 150), array(200, 160, 180), array(190, 190, 220));
 }
 
-$massactionbutton ='';
+$massactionbutton = '';
 
 print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
 
@@ -1474,7 +1511,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$newparam .= '&viewcal=1';
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
@@ -1487,7 +1524,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		print '  <td class="center bold uppercase tdfordaytitle'.($i == 0 ? ' borderleft' : '').'">';
 		$numdayinweek = (($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7);
 		if (!empty($conf->dol_optimize_smallscreen)) {
-			$labelshort = array(0=>'SundayMin', 1=>'MondayMin', 2=>'TuesdayMin', 3=>'WednesdayMin', 4=>'ThursdayMin', 5=>'FridayMin', 6=>'SaturdayMin');
+			$labelshort = array(0 => 'SundayMin', 1 => 'MondayMin', 2 => 'TuesdayMin', 3 => 'WednesdayMin', 4 => 'ThursdayMin', 5 => 'FridayMin', 6 => 'SaturdayMin');
 			print $langs->trans($labelshort[$numdayinweek]);
 		} else {
 			print $langs->trans("Day".$numdayinweek);
@@ -1674,7 +1711,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	/* WIP View per hour */
 	$useviewhour = 0;
 	if ($useviewhour) {
-		print '<div class="div-table-responsive-no-min borderbottom">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min borderbottom">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 
 		$maxheightwin = (isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 500) ? ($_SESSION["dol_screenheight"] - 200) : 660; // Also into index.php file
 
@@ -1713,7 +1750,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 
 		print '</div>';
 	} else {
-		print '<div class="div-table-responsive-no-min borderbottom">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min borderbottom">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 
 		show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars);
 
@@ -1753,6 +1790,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	global $action, $mode, $filter, $filtert, $status, $actioncode, $usergroup; // Filters used into search form
 	global $theme_datacolor;
 	global $cachethirdparties, $cachecontacts, $cacheusers, $colorindexused;
+	global $hookmanager;
 
 	if ($conf->use_javascript_ajax) {	// Enable the "Show more button..."
 		$conf->global->MAIN_JS_SWITCH_AGENDA = 1;
@@ -1787,7 +1825,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 		print '</a>';
 		print '</div><div class="nowrap floatright inline-block marginrightonly">';
 		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
-			print '<a class="cursoradd" href="'.$urltocreate.'">'; // Explicit link, usefull for nojs interfaces
+			print '<a class="cursoradd" href="'.$urltocreate.'">'; // Explicit link, useful for nojs interfaces
 			print img_picto($langs->trans("NewAction"), 'edit_add.png');
 			print '</a>';
 		}
@@ -1826,6 +1864,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 		$jour =  dol_print_date($daykey, '%d', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
 
 		//print 'event daykey='.$daykey.' dol_print_date(daykey)='.dol_print_date($daykey, 'dayhour', 'gmt').' jour='.$jour.' mois='.$mois.' annee='.$annee."<br>\n";
+		//print 'event daykey='.$daykey.' dol_print_date(daykey)='.dol_print_date($daykey, 'dayhour', 'gmt').' day='.$day.' month='.$month.' year='.$year."<br>\n";
 
 		if ($day == $jour && $month == $mois && $year == $annee) {
 			foreach ($eventarray[$daykey] as $index => $event) {
@@ -1962,15 +2001,17 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					if ($event->type == 'holiday' && !GETPOST('check_holiday')) {
 						$morecss = 'hidden';
 					}
+					/* I comment this because it hides event recorded from bookcal online page
 					if ($event->type == 'bookcal_calendar' && !GETPOST('check_bookcal_calendar_'.$bookcalcalendarsarray["availabilitieslink"][$event->fk_bookcal_calendar])) {
 						$morecss = 'hidden';
-					}
+					} */
 					if ($morecss != 'hidden') {
 						$itoshow++;
 					}
 					if ($morecss != 'showifmore' && $morecss != 'hidden') {
 						$ireallyshown++;
 					}
+
 					//var_dump($event->type.' - '.$morecss.' - '.$cssclass.' - '.$i.' - '.$ireallyshown.' - '.$itoshow);
 					if (isModEnabled("bookcal") && $event->type == 'bookcal_calendar') {
 						print '<div id="event_'.$ymd.'_'.$i.'" class="event family_'.$event->type.'_'.$bookcalcalendarsarray["availabilitieslink"][$event->fk_bookcal_calendar].' '.$cssclass.($morecss ? ' '.$morecss : '').'"';
@@ -2025,7 +2066,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							$newcontact->fetch($tmpid);
 							$cachecontact[$tmpid] = $newcontact;
 						}
-						print $cachecontact[$tmpid]->getNomUrl(1);
+						print $cachecontact[$tmpid]->getNomUrl(1, '', 0, '', -1, 0, 'valignmiddle inline-block');
 
 						//$event->picto = 'birthday-cake';
 						//print $event->getNomUrl(1, $maxnbofchar, 'cal_event', 'birthday', 'contact');
@@ -2037,7 +2078,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						// It's holiday calendar
 						$tmpholiday->fetch($event->id);
 
-						print $tmpholiday->getNomUrl(1);
+						print $tmpholiday->getNomUrl(1, -1, 0, 'valignmiddle inline-block');
 
 						$tmpid = $tmpholiday->fk_user;
 						if (empty($cacheusers[$tmpid])) {
@@ -2047,132 +2088,142 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						}
 
 						$listofusertoshow = '';
-						$listofusertoshow .= '<br>'.$cacheusers[$tmpid]->getNomUrl(-1, '', 0, 0, 0, 0, '', 'paddingright valignmiddle');
+						$listofusertoshow .= '<br>'.$cacheusers[$tmpid]->getNomUrl(-1, '', 0, 0, 0, 0, '', 'paddingright valignmiddle inline-block');
 						print $listofusertoshow;
+					}
+
+					$parameters = array();
+					$reshook = $hookmanager->executeHooks('eventOptions', $parameters, $event, $action); // Note that $action and $object may have been modified by some hooks
+					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					} else {
-						// Other calendar
-						if (empty($event->fulldayevent)) {
-							//print $event->getNomUrl(2).' ';
-						}
+						if (empty($reshook)) {
+							// Other calendar
+							if (empty($event->fulldayevent)) {
+								//print $event->getNomUrl(2).' ';
+							}
 
-						// Date
-						if (empty($event->fulldayevent)) {
-							// Show hours (start ... end)
-							$tmpyearstart  = dol_print_date($event->date_start_in_calendar, '%Y', 'tzuserrel');
-							$tmpmonthstart = dol_print_date($event->date_start_in_calendar, '%m', 'tzuserrel');
-							$tmpdaystart   = dol_print_date($event->date_start_in_calendar, '%d', 'tzuserrel');
-							$tmpyearend    = dol_print_date($event->date_end_in_calendar, '%Y', 'tzuserrel');
-							$tmpmonthend   = dol_print_date($event->date_end_in_calendar, '%m', 'tzuserrel');
-							$tmpdayend     = dol_print_date($event->date_end_in_calendar, '%d', 'tzuserrel');
+							// Date
+							if (empty($event->fulldayevent)) {
+								// Show hours (start ... end)
+								$tmpyearstart  = dol_print_date($event->date_start_in_calendar, '%Y', 'tzuserrel');
+								$tmpmonthstart = dol_print_date($event->date_start_in_calendar, '%m', 'tzuserrel');
+								$tmpdaystart   = dol_print_date($event->date_start_in_calendar, '%d', 'tzuserrel');
+								$tmpyearend    = dol_print_date($event->date_end_in_calendar, '%Y', 'tzuserrel');
+								$tmpmonthend   = dol_print_date($event->date_end_in_calendar, '%m', 'tzuserrel');
+								$tmpdayend     = dol_print_date($event->date_end_in_calendar, '%d', 'tzuserrel');
 
-							// Hour start
-							if ($tmpyearstart == $annee && $tmpmonthstart == $mois && $tmpdaystart == $jour) {
-								$daterange .= dol_print_date($event->date_start_in_calendar, 'hour', 'tzuserrel');
-								if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar) {
-									if ($tmpyearstart == $tmpyearend && $tmpmonthstart == $tmpmonthend && $tmpdaystart == $tmpdayend) {
-										$daterange .= '-';
+								// Hour start
+								if ($tmpyearstart == $annee && $tmpmonthstart == $mois && $tmpdaystart == $jour) {
+									$daterange .= dol_print_date($event->date_start_in_calendar, 'hour', 'tzuserrel');
+									if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar) {
+										if ($tmpyearstart == $tmpyearend && $tmpmonthstart == $tmpmonthend && $tmpdaystart == $tmpdayend) {
+											$daterange .= '-';
+										}
+										//else
+										//print '...';
 									}
-									//else
-									//print '...';
 								}
-							}
-							if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar) {
-								if ($tmpyearstart != $tmpyearend || $tmpmonthstart != $tmpmonthend || $tmpdaystart != $tmpdayend) {
-									$daterange .= '...';
+								if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar) {
+									if ($tmpyearstart != $tmpyearend || $tmpmonthstart != $tmpmonthend || $tmpdaystart != $tmpdayend) {
+										$daterange .= '...';
+									}
 								}
-							}
-							// Hour end
-							if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar) {
-								if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour) {
-									$daterange .= dol_print_date($event->date_end_in_calendar, 'hour', 'tzuserrel');
+								// Hour end
+								if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar) {
+									if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour) {
+										$daterange .= dol_print_date($event->date_end_in_calendar, 'hour', 'tzuserrel');
+									}
 								}
-							}
-						} else {
-							if ($showinfo) {
-								print $langs->trans("EventOnFullDay")."<br>\n";
-							}
-						}
-
-						// Show title
-						$titletoshow = $daterange;
-						$titletoshow .= ($titletoshow ? ' ' : '').dol_escape_htmltag($event->label ? $event->label : $event->libelle);
-
-						if ($event->type_code != 'ICALEVENT') {
-							$savlabel = $event->label ? $event->label : $event->libelle;
-							$event->label = $titletoshow;
-							$event->libelle = $titletoshow;		// deprecatd
-							// Note: List of users are inside $event->userassigned. Link may be clickable depending on permissions of user.
-							$titletoshow = (($event->type_picto || $event->type_code) ? $event->getTypePicto() : '');
-							$titletoshow .= $event->getNomUrl(0, $maxnbofchar, 'cal_event cal_event_title', '', 0, 0);
-							$event->label = $savlabel;
-							$event->libelle = $savlabel;
-						}
-
-						// Loop on each assigned user
-						$listofusertoshow = '';
-						$posuserassigned = 0;
-						foreach ($event->userassigned as $tmpid => $tmpdata) {
-							if (!$posuserassigned && $titletoshow) {
-								$listofusertoshow .= '<br>';
-							}
-							$posuserassigned++;
-							if (empty($cacheusers[$tmpid])) {
-								$newuser = new User($db);
-								$newuser->fetch($tmpid);
-								$cacheusers[$tmpid] = $newuser;
-							}
-
-							$listofusertoshow .= $cacheusers[$tmpid]->getNomUrl(-3, '', 0, 0, 0, 0, '', 'valignmiddle');
-						}
-
-						print $titletoshow;
-						print $listofusertoshow;
-
-						if ($event->type_code == 'ICALEVENT') {
-							print '<br>('.dol_trunc($event->icalname, $maxnbofchar).')';
-						}
-
-						$thirdparty_id = ($event->socid > 0 ? $event->socid : ((is_object($event->societe) && $event->societe->id > 0) ? $event->societe->id : 0));
-						$contact_id = ($event->contact_id > 0 ? $event->contact_id : ((is_object($event->contact) && $event->contact->id > 0) ? $event->contact->id : 0));
-
-						// If action related to company / contact
-						$linerelatedto = '';
-						if ($thirdparty_id > 0) {
-							if (!isset($cachethirdparties[$thirdparty_id]) || !is_object($cachethirdparties[$thirdparty_id])) {
-								$thirdparty = new Societe($db);
-								$thirdparty->fetch($thirdparty_id);
-								$cachethirdparties[$thirdparty_id] = $thirdparty;
 							} else {
-								$thirdparty = $cachethirdparties[$thirdparty_id];
+								if ($showinfo) {
+									print $langs->trans("EventOnFullDay")."<br>\n";
+								}
 							}
-							if (!empty($thirdparty->id)) {
-								$linerelatedto .= $thirdparty->getNomUrl(1, '', 0);
+
+							// Show title
+							$titletoshow = $daterange;
+							$titletoshow .= ($titletoshow ? ' ' : '').dol_escape_htmltag($event->label ? $event->label : $event->libelle);
+
+							if ($event->type_code != 'ICALEVENT') {
+								$savlabel = $event->label ? $event->label : $event->libelle;
+								$event->label = $titletoshow;
+								$event->libelle = $titletoshow;		// deprecatd
+								// Note: List of users are inside $event->userassigned. Link may be clickable depending on permissions of user.
+								$titletoshow = (($event->type_picto || $event->type_code) ? $event->getTypePicto() : '');
+								$titletoshow .= $event->getNomUrl(0, $maxnbofchar, 'cal_event cal_event_title valignmiddle inline-block', '', 0, 0);
+								$event->label = $savlabel;
+								$event->libelle = $savlabel;
 							}
-						}
-						if (!empty($contact_id) && $contact_id > 0) {
-							if (empty($cachecontacts[$contact_id]) || !is_object($cachecontacts[$contact_id])) {
-								$contact = new Contact($db);
-								$contact->fetch($contact_id);
-								$cachecontacts[$contact_id] = $contact;
-							} else {
-								$contact = $cachecontacts[$contact_id];
+
+							// Loop on each assigned user
+							$listofusertoshow = '';
+							$posuserassigned = 0;
+							foreach ($event->userassigned as $tmpid => $tmpdata) {
+								if (!$posuserassigned && $titletoshow) {
+									$listofusertoshow .= '<br>';
+								}
+								$posuserassigned++;
+								if (empty($cacheusers[$tmpid])) {
+									$newuser = new User($db);
+									$newuser->fetch($tmpid);
+									$cacheusers[$tmpid] = $newuser;
+								}
+
+								$listofusertoshow .= $cacheusers[$tmpid]->getNomUrl(-3, '', 0, 0, 0, 0, '', 'valignmiddle inline-block');
+							}
+
+							print $titletoshow;
+							print $listofusertoshow.' &nbsp;';
+
+							if ($event->type_code == 'ICALEVENT') {
+								print '<br>('.dol_trunc($event->icalname, $maxnbofchar).')';
+							}
+
+							$thirdparty_id = ($event->socid > 0 ? $event->socid : ((is_object($event->societe) && $event->societe->id > 0) ? $event->societe->id : 0));
+							$contact_id = ($event->contact_id > 0 ? $event->contact_id : ((is_object($event->contact) && $event->contact->id > 0) ? $event->contact->id : 0));
+
+							// If action related to company / contact
+							$linerelatedto = '';
+							if ($thirdparty_id > 0) {
+								if (!isset($cachethirdparties[$thirdparty_id]) || !is_object($cachethirdparties[$thirdparty_id])) {
+									$thirdparty = new Societe($db);
+									$thirdparty->fetch($thirdparty_id);
+									$cachethirdparties[$thirdparty_id] = $thirdparty;
+								} else {
+									$thirdparty = $cachethirdparties[$thirdparty_id];
+								}
+								if (!empty($thirdparty->id)) {
+									$linerelatedto .= $thirdparty->getNomUrl(1, '', 0, 0, -1, 0, '', 'valignmiddle inline-block');
+								}
+							}
+							if (!empty($contact_id) && $contact_id > 0) {
+								if (empty($cachecontacts[$contact_id]) || !is_object($cachecontacts[$contact_id])) {
+									$contact = new Contact($db);
+									$contact->fetch($contact_id);
+									$cachecontacts[$contact_id] = $contact;
+								} else {
+									$contact = $cachecontacts[$contact_id];
+								}
+								if ($linerelatedto) {
+									$linerelatedto .= '&nbsp;';
+								}
+								if (!empty($contact->id)) {
+									$linerelatedto .= $contact->getNomUrl(1, '', 0, '', -1, 0, 'valignmiddle inline-block');
+								}
+							}
+							if (!empty($event->fk_element) && $event->fk_element > 0 && !empty($event->elementtype) && getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT')) {
+								include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+								if ($linerelatedto) {
+									$linerelatedto .= '<br>';
+								}
+								$linerelatedto .= dolGetElementUrl($event->fk_element, $event->elementtype, 1);
 							}
 							if ($linerelatedto) {
-								$linerelatedto .= '&nbsp;';
+								print ' '.$linerelatedto;
 							}
-							if (!empty($contact->id)) {
-								$linerelatedto .= $contact->getNomUrl(1, '', 0);
-							}
-						}
-						if (!empty($event->fk_element) && $event->fk_element > 0 && !empty($event->elementtype) && getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT')) {
-							include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-							if ($linerelatedto) {
-								$linerelatedto .= '<br>';
-							}
-							$linerelatedto .= dolGetElementUrl($event->fk_element, $event->elementtype, 1);
-						}
-						if ($linerelatedto) {
-							print ' '.$linerelatedto;
+						} elseif (!empty($reshook)) {
+							print $hookmanager->resPrint;
 						}
 					}
 
@@ -2322,7 +2373,7 @@ function sort_events_by_date($a, $b)
 function sort_events_by_percentage($a, $b)
 {
 	// Sort events with no percentage before each other
-	// (usefull to sort holidays, sick days or similar on the top)
+	// (useful to sort holidays, sick days or similar on the top)
 
 	if ($a->percentage < 0) {
 		return -1;

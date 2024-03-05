@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
@@ -36,7 +36,7 @@ if (isModEnabled("banque")) {
 $langs->loadLangs(array("bills", "banks", "companies", "donations"));
 
 // Security check
-$id = GETPOST('rowid') ? GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$id = GETPOST('rowid') ? GETPOSTINT('rowid') : GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 if ($user->socid) {
@@ -78,8 +78,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('don', '
 /*
  * View
  */
-
-llxHeader();
+$title = $langs->trans("Payment");
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-donation page-payment_card');
 
 $don = new Don($db);
 $form = new Form($db);
@@ -125,7 +125,7 @@ print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $
 print '<tr><td>'.$langs->trans('Note').'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlcleanlastbr($object->note_public)).'</td></tr>';
 
 // Bank account
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	if ($object->bank_account) {
 		$bankline = new AccountLine($db);
 		$bankline->fetch($object->bank_line);

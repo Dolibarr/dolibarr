@@ -49,10 +49,10 @@ $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$fuserid = (GETPOST('fuserid', 'int') ? GETPOST('fuserid', 'int') : $user->id);
-$socid = GETPOST('socid', 'int');
+$fuserid = (GETPOSTINT('fuserid') ? GETPOSTINT('fuserid') : $user->id);
+$socid = GETPOSTINT('socid');
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "holiday", "mails", "trips"));
@@ -183,7 +183,7 @@ if (empty($reshook)) {
 				$halfday = 1;
 			}
 
-			$approverid = GETPOST('valideur', 'int');
+			$approverid = GETPOSTINT('valideur');
 			$description = trim(GETPOST('description', 'restricthtml'));
 
 			// Check that leave is for a user inside the hierarchy or advanced permission for all is set
@@ -306,7 +306,7 @@ if (empty($reshook)) {
 
 		$object->oldcopy = dol_clone($object, 2);
 
-		$object->fk_validator = GETPOST('valideur', 'int');
+		$object->fk_validator = GETPOSTINT('valideur');
 
 		if ($object->fk_validator != $object->oldcopy->fk_validator) {
 			$verif = $object->update($user);
@@ -358,9 +358,9 @@ if (empty($reshook)) {
 
 		// If under validation
 		if ($object->statut == Holiday::STATUS_DRAFT) {
-			// If this is the requestor or has read/write rights
+			// If this is the requester or has read/write rights
 			if ($cancreate) {
-				$approverid = GETPOST('valideur', 'int');
+				$approverid = GETPOSTINT('valideur');
 				// TODO Check this approver user id has the permission for approval
 
 				$description = trim(GETPOST('description', 'restricthtml'));
@@ -486,12 +486,12 @@ if (empty($reshook)) {
 				$expediteur = new User($db);
 				$expediteur->fetch($object->fk_user);
 				//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-				$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+				$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
 				// Subject
-				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+					$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 				}
 
 				$subject = $societeName." - ".$langs->transnoentitiesnoconv("HolidaysToValidate");
@@ -616,7 +616,7 @@ if (empty($reshook)) {
 
 			// If no SQL error, we redirect to the request form
 			if (!$error) {
-				// Calculcate number of days consumed
+				// Calculate number of days consumed
 				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel - $nbopenedday);
@@ -650,12 +650,12 @@ if (empty($reshook)) {
 					$expediteur = new User($db);
 					$expediteur->fetch($object->fk_validator);
 					//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-					$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+					$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
 					// Subject
-					$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+					$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 					if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-						$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+						$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 					}
 
 					$subject = '['.$societeName."] ".$langs->transnoentitiesnoconv("HolidaysValidated");
@@ -732,12 +732,12 @@ if (empty($reshook)) {
 						$expediteur = new User($db);
 						$expediteur->fetch($object->fk_validator);
 						//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-						$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+						$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
 						// Subject
-						$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+						$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 						if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-							$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+							$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 						}
 
 						$subject = $societeName." - ".$langs->transnoentitiesnoconv("HolidaysRefused");
@@ -840,7 +840,7 @@ if (empty($reshook)) {
 					$error++;
 				}
 
-				// Calculcate number of days consumed
+				// Calculate number of days consumed
 				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
@@ -880,12 +880,12 @@ if (empty($reshook)) {
 				$expediteur = new User($db);
 				$expediteur->fetch($object->fk_user_cancel);
 				//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-				$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+				$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
 				// Subject
-				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+					$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 				}
 
 				$subject = $societeName." - ".$langs->transnoentitiesnoconv("HolidaysCanceled");
@@ -1087,9 +1087,9 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				});';
 				print '</script>';
 			}
-		} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE)) {
+		} elseif (!is_numeric(getDolGlobalString('HOLIDAY_HIDE_BALANCE'))) {
 			print '<div class="leaveuserbalance paddingtop">';
-			print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE);
+			print $langs->trans(getDolGlobalString('HOLIDAY_HIDE_BALANCE'));
 			print '</div>';
 		}
 
@@ -1123,7 +1123,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		if (!GETPOST('date_debut_')) {	// If visitor does not come from agenda
 			print $form->selectDate(-1, 'date_debut_', 0, 0, 0, '', 1, 1);
 		} else {
-			$tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month', 'int'), GETPOST('date_debut_day', 'int'), GETPOST('date_debut_year', 'int'));
+			$tmpdate = dol_mktime(0, 0, 0, GETPOSTINT('date_debut_month'), GETPOSTINT('date_debut_day'), GETPOSTINT('date_debut_year'));
 			print $form->selectDate($tmpdate, 'date_debut_', 0, 0, 0, '', 1, 1);
 		}
 		print ' &nbsp; &nbsp; ';
@@ -1140,7 +1140,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		if (!GETPOST('date_fin_')) {
 			print $form->selectDate(-1, 'date_fin_', 0, 0, 0, '', 1, 1);
 		} else {
-			$tmpdate = dol_mktime(0, 0, 0, GETPOST('date_fin_month', 'int'), GETPOST('date_fin_day', 'int'), GETPOST('date_fin_year', 'int'));
+			$tmpdate = dol_mktime(0, 0, 0, GETPOSTINT('date_fin_month'), GETPOSTINT('date_fin_day'), GETPOSTINT('date_fin_year'));
 			print $form->selectDate($tmpdate, 'date_fin_', 0, 0, 0, '', 1, 1);
 		}
 		print ' &nbsp; &nbsp; ';
@@ -1162,10 +1162,10 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			// Note: This use will be set only if the deinfed approvr has permission to approve so is inside include_users
 			$defaultselectuser = (empty($user->fk_user_holiday_validator) ? $user->fk_user : $user->fk_user_holiday_validator);
 			if (getDolGlobalString('HOLIDAY_DEFAULT_VALIDATOR')) {
-				$defaultselectuser = $conf->global->HOLIDAY_DEFAULT_VALIDATOR; // Can force default approver
+				$defaultselectuser = getDolGlobalString('HOLIDAY_DEFAULT_VALIDATOR'); // Can force default approver
 			}
-			if (GETPOST('valideur', 'int') > 0) {
-				$defaultselectuser = GETPOST('valideur', 'int');
+			if (GETPOSTINT('valideur') > 0) {
+				$defaultselectuser = GETPOSTINT('valideur');
 			}
 			$s = $form->select_dolusers($defaultselectuser, "valideur", 1, '', 0, $include_users, '', '0,'.$conf->entity, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
 			print img_picto('', 'user', 'class="pictofixedwidth"').$form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
@@ -1314,7 +1314,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print $form->textwithpicto($langs->trans('DateDebCP'), $langs->trans("FirstDayOfHoliday"));
 					print '</td>';
 					print '<td>';
-					$tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month', 'int'), GETPOST('date_debut_day', 'int'), GETPOST('date_debut_year', 'int'));
+					$tmpdate = dol_mktime(0, 0, 0, GETPOSTINT('date_debut_month'), GETPOSTINT('date_debut_day'), GETPOSTINT('date_debut_year'));
 					print $form->selectDate($tmpdate ? $tmpdate : $object->date_debut, 'date_debut_');
 					print ' &nbsp; &nbsp; ';
 					print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday') ? GETPOST('starthalfday') : $starthalfday));
@@ -1349,8 +1349,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				print '<tr>';
 				print '<td>';
 				$htmlhelp = $langs->trans('NbUseDaysCPHelp');
-				$includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
-				$includesunday   = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
+				$includesaturday = getDolGlobalInt('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY', 1);
+				$includesunday   = getDolGlobalInt('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY', 1);
 				if ($includesaturday) {
 					$htmlhelp .= '<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Saturday"));
 				}
@@ -1623,8 +1623,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				$relativepath = $objref.'/'.$objref.'.pdf';
 				$filedir = $conf->holiday->dir_output.'/'.$object->element.'/'.$objref;
 				$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-				$genallowed = ($user->rights->holiday->read && $object->fk_user == $user->id) || !empty($user->rights->holiday->readall); // If you can read, you can build the PDF to read content
-				$delallowed = ($user->rights->holiday->write && $object->fk_user == $user->id) || !empty($user->rights->holiday->writeall_advance); // If you can create/edit, you can remove a file on card
+				$genallowed = ($user->hasRight('holiday', 'read') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'readall'); // If you can read, you can build the PDF to read content
+				$delallowed = ($user->hasRight('holiday', 'write') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'writeall_advance'); // If you can create/edit, you can remove a file on card
 				print $formfile->showdocuments('holiday:Holiday', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 			}
 

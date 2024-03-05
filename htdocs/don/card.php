@@ -47,17 +47,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->loadLangs(array('bills', 'companies', 'donations', 'users'));
 
-$id = GETPOST('rowid') ? GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$id = GETPOST('rowid') ? GETPOSTINT('rowid') : GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT');
 $donation_date = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-$projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
-$public_donation = (int) GETPOST("public", 'int');
+$projectid = (GETPOST('projectid') ? GETPOSTINT('projectid') : 0);
+$public_donation = GETPOSTINT("public");
 
 $object = new Don($db);
 if ($id > 0 || $ref) {
@@ -86,7 +86,7 @@ $upload_dir = $conf->don->dir_output;
 // Security check
 $result = restrictedArea($user, 'don', $object->id);
 
-$permissiontoadd = $user->rights->don->creer;
+$permissiontoadd = $user->hasRight('don', 'creer');
 
 
 /*
@@ -185,19 +185,19 @@ if (empty($reshook)) {
 		if (!$error) {
 			$object->fetch($id);
 
-			$object->firstname = (string) GETPOST("firstname", 'alpha');
-			$object->lastname = (string) GETPOST("lastname", 'alpha');
-			$object->societe = (string) GETPOST("societe", 'alpha');
-			$object->address = (string) GETPOST("address", 'alpha');
-			$object->amount = price2num(GETPOST("amount", 'alpha'), '', 2);
-			$object->town = (string) GETPOST("town", 'alpha');
-			$object->zip = (string) GETPOST("zipcode", 'alpha');
-			$object->country_id = (int) GETPOST('country_id', 'int');
-			$object->email = (string) GETPOST("email", 'alpha');
+			$object->firstname = GETPOST("firstname", 'alpha');
+			$object->lastname = GETPOST("lastname", 'alpha');
+			$object->societe = GETPOST("societe", 'alpha');
+			$object->address = GETPOST("address", 'alpha');
+			$object->amount = GETPOSTFLOAT("amount");
+			$object->town = GETPOST("town", 'alpha');
+			$object->zip = GETPOST("zipcode", 'alpha');
+			$object->country_id = GETPOSTINT('country_id');
+			$object->email = GETPOST("email", 'alpha');
 			$object->date = $donation_date;
 			$object->public = $public_donation;
-			$object->fk_project = (int) GETPOST("fk_project", 'int');
-			$object->modepaymentid = (int) GETPOST('modepayment', 'int');
+			$object->fk_project = GETPOSTINT("fk_project");
+			$object->modepaymentid = GETPOSTINT('modepayment');
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -225,7 +225,7 @@ if (empty($reshook)) {
 
 		$error = 0;
 
-		if (isModEnabled("societe") && getDolGlobalString('DONATION_USE_THIRDPARTIES') && !(GETPOST("socid", 'int') > 0)) {
+		if (isModEnabled("societe") && getDolGlobalString('DONATION_USE_THIRDPARTIES') && !(GETPOSTINT("socid") > 0)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
 			$action = "create";
 			$error++;
@@ -243,7 +243,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$object->socid = (int) GETPOST("socid", 'int');
+			$object->socid = GETPOSTINT("socid");
 			$object->firstname = (string) GETPOST("firstname", 'alpha');
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
 			$object->societe = (string) GETPOST("societe", 'alpha');
@@ -251,14 +251,14 @@ if (empty($reshook)) {
 			$object->amount = price2num(GETPOST("amount", 'alpha'), '', 2);
 			$object->zip = (string) GETPOST("zipcode", 'alpha');
 			$object->town = (string) GETPOST("town", 'alpha');
-			$object->country_id = (int) GETPOST('country_id', 'int');
+			$object->country_id = GETPOSTINT('country_id');
 			$object->email = (string) GETPOST('email', 'alpha');
 			$object->date = $donation_date;
 			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 			$object->public = $public_donation;
-			$object->fk_project = (int) GETPOST("fk_project", 'int');
-			$object->modepaymentid = (int) GETPOST('modepayment', 'int');
+			$object->fk_project = GETPOSTINT("fk_project");
+			$object->modepaymentid = GETPOSTINT('modepayment');
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -415,7 +415,7 @@ $title = $langs->trans("Donation");
 
 $help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-donation page-card');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -466,7 +466,7 @@ if ($action == 'create') {
 			print '<td>';
 			$filter = '((s.client:IN:1,2,3) AND (status:=:1))';
 			print $form->select_company($soc->id, 'socid', $filter, 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
-			// Option to reload page to retrieve customer informations. Note, this clear other input
+			// Option to reload page to retrieve customer information. Note, this clear other input
 			if (getDolGlobalString('RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED')) {
 				print '<script type="text/javascript">
 				$(document).ready(function() {
@@ -527,7 +527,7 @@ if ($action == 'create') {
 
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
-	$selected = GETPOST('modepayment', 'int');
+	$selected = GETPOSTINT('modepayment');
 	print img_picto('', 'payment', 'class="pictofixedwidth"');
 	print $form->select_types_paiements($selected, 'modepayment', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print "</td></tr>\n";
@@ -962,8 +962,8 @@ if (!empty($id) && $action != 'edit') {
 	$filename = dol_sanitizeFileName($object->id);
 	$filedir = $conf->don->dir_output."/".dol_sanitizeFileName($object->id);
 	$urlsource = $_SERVER['PHP_SELF'].'?rowid='.$object->id;
-	$genallowed	= (($object->paid == 0 || $user->admin) && $user->rights->don->lire);
-	$delallowed	= $user->rights->don->creer;
+	$genallowed	= (($object->paid == 0 || $user->admin) && $user->hasRight('don', 'lire'));
+	$delallowed	= $user->hasRight('don', 'creer');
 
 	print $formfile->showdocuments('donation', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
@@ -973,6 +973,14 @@ if (!empty($id) && $action != 'edit') {
 
 	// Show online payment link
 	$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
+
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook > 0) {
+		if (isset($hookmanager->resArray['showonlinepaymenturl'])) {
+			$useonlinepayment += $hookmanager->resArray['showonlinepaymenturl'];
+		}
+	}
 
 	if ($useonlinepayment) { //$object->statut != Facture::STATUS_DRAFT &&
 		print '<br><!-- Link to pay -->'."\n";

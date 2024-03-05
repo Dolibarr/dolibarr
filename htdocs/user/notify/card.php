@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Noti
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'mails', 'admin', 'other', 'errors'));
 
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 $ref = GETPOST('ref', 'alpha');
 
 if (!isset($id) || empty($id)) {
@@ -43,12 +43,12 @@ if (!isset($id) || empty($id)) {
 }
 
 $action = GETPOST('action', 'aZ09');
-$actionid = GETPOST('actionid', 'int');
+$actionid = GETPOSTINT('actionid');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
@@ -71,7 +71,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->getrights();
 }
 
-$permissiontoadd = (($object->id == $user->id) || (!empty($user->rights->user->user->lire)));
+$permissiontoadd = (($object->id == $user->id) || ($user->hasRight('user', 'user', 'lire')));
 
 // Security check
 if ($user->socid) {
@@ -126,7 +126,7 @@ if ($action == 'add') {
 
 // Remove a notification
 if ($action == 'delete') {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".GETPOST("actid", "int");
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".GETPOSTINT("actid");
 	$db->query($sql);
 }
 
@@ -539,7 +539,7 @@ if ($result > 0) {
 
 	print '</form>';
 } else {
-	dol_print_error('', 'RecordNotFound');
+	dol_print_error(null, 'RecordNotFound');
 }
 
 // End of page

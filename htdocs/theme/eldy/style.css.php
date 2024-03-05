@@ -92,7 +92,7 @@ if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL
 }
 if (GETPOSTISSET('THEME_DARKMODEENABLED')) {
-	$conf->global->THEME_DARKMODEENABLED = GETPOST('THEME_DARKMODEENABLED', 'int'); // If darkmode was forced on URL
+	$conf->global->THEME_DARKMODEENABLED = GETPOSTINT('THEME_DARKMODEENABLED'); // If darkmode was forced on URL
 }
 
 $langs->load("main", 0, 1);
@@ -103,7 +103,7 @@ $path = ''; // This value may be used in future for external module to overwrite
 $theme = 'eldy'; // Value of theme
 if (getDolGlobalString('MAIN_OVERWRITE_THEME_RES')) {
 	$path = '/' . getDolGlobalString('MAIN_OVERWRITE_THEME_RES');
-	$theme = $conf->global->MAIN_OVERWRITE_THEME_RES;
+	$theme = getDolGlobalString('MAIN_OVERWRITE_THEME_RES');
 }
 
 // Define image path files and other constants
@@ -200,7 +200,7 @@ if (!empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)) {
 
 
 // Set text color to black or white
-$colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
+$colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbackhmenu1);
 $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) {
@@ -209,7 +209,7 @@ if ($tmpval <= 460) {
 	$colortextbackhmenu = '000000';
 }
 
-$colorbackvmenu1 = join(',', colorStringToArray($colorbackvmenu1)); // Normalize value to 'x,y,z'
+$colorbackvmenu1 = implode(',', colorStringToArray($colorbackvmenu1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbackvmenu1);
 $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) {
@@ -218,9 +218,9 @@ if ($tmpval <= 460) {
 	$colortextbackvmenu = '000000';
 }
 
-$colortopbordertitle1 = join(',', colorStringToArray($colortopbordertitle1)); // Normalize value to 'x,y,z'
+$colortopbordertitle1 = implode(',', colorStringToArray($colortopbordertitle1)); // Normalize value to 'x,y,z'
 
-$colorbacktitle1 = join(',', colorStringToArray($colorbacktitle1)); // Normalize value to 'x,y,z'
+$colorbacktitle1 = implode(',', colorStringToArray($colorbacktitle1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbacktitle1);
 if ($colortexttitle == '') {
 	$tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
@@ -235,7 +235,7 @@ if ($colortexttitle == '') {
 	$colorshadowtitle = '888888';
 }
 
-$colorbacktabcard1 = join(',', colorStringToArray($colorbacktabcard1)); // Normalize value to 'x,y,z'
+$colorbacktabcard1 = implode(',', colorStringToArray($colorbacktabcard1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbacktabcard1);
 $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) {
@@ -246,26 +246,26 @@ if ($tmpval <= 460) {
 
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
-$colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1));
-$colorbackvmenu1 = join(',', colorStringToArray($colorbackvmenu1));
-$colorbacktitle1 = join(',', colorStringToArray($colorbacktitle1));
-$colorbacktabcard1 = join(',', colorStringToArray($colorbacktabcard1));
-$colorbacktabactive = join(',', colorStringToArray($colorbacktabactive));
-$colorbacklineimpair1 = join(',', colorStringToArray($colorbacklineimpair1));
-$colorbacklineimpair2 = join(',', colorStringToArray($colorbacklineimpair2));
-$colorbacklinepair1 = join(',', colorStringToArray($colorbacklinepair1));
-$colorbacklinepair2 = join(',', colorStringToArray($colorbacklinepair2));
+$colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1));
+$colorbackvmenu1 = implode(',', colorStringToArray($colorbackvmenu1));
+$colorbacktitle1 = implode(',', colorStringToArray($colorbacktitle1));
+$colorbacktabcard1 = implode(',', colorStringToArray($colorbacktabcard1));
+$colorbacktabactive = implode(',', colorStringToArray($colorbacktabactive));
+$colorbacklineimpair1 = implode(',', colorStringToArray($colorbacklineimpair1));
+$colorbacklineimpair2 = implode(',', colorStringToArray($colorbacklineimpair2));
+$colorbacklinepair1 = implode(',', colorStringToArray($colorbacklinepair1));
+$colorbacklinepair2 = implode(',', colorStringToArray($colorbacklinepair2));
 if ($colorbacklinepairhover != '') {
-	$colorbacklinepairhover = join(',', colorStringToArray($colorbacklinepairhover));
+	$colorbacklinepairhover = implode(',', colorStringToArray($colorbacklinepairhover));
 }
 if ($colorbacklinepairchecked != '') {
-	$colorbacklinepairchecked = join(',', colorStringToArray($colorbacklinepairchecked));
+	$colorbacklinepairchecked = implode(',', colorStringToArray($colorbacklinepairchecked));
 }
-$colorbackbody = join(',', colorStringToArray($colorbackbody));
-$colortexttitlenotab = join(',', colorStringToArray($colortexttitlenotab));
-$colortexttitle = join(',', colorStringToArray($colortexttitle));
-$colortext = join(',', colorStringToArray($colortext));
-$colortextlink = join(',', colorStringToArray($colortextlink));
+$colorbackbody = implode(',', colorStringToArray($colorbackbody));
+$colortexttitlenotab = implode(',', colorStringToArray($colortexttitlenotab));
+$colortexttitle = implode(',', colorStringToArray($colortexttitle));
+$colortext = implode(',', colorStringToArray($colortext));
+$colortextlink = implode(',', colorStringToArray($colortextlink));
 
 $nbtopmenuentries = $menumanager->showmenu('topnb');
 $nbtopmenuentriesreal = $nbtopmenuentries;
@@ -278,7 +278,7 @@ $heightmenu = 50; /* height of top menu, part with image */
 $heightmenu2 = 49; /* height of top menu, part with login  */
 $disableimages = 0;
 $maxwidthloginblock = 180;
-if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1) {
+if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 || !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	$disableimages = 1;
 	$maxwidthloginblock = $maxwidthloginblock + 50;
 	$minwidthtmenu = 0;
@@ -330,7 +330,6 @@ print '*/'."\n";
 
 // Include the global.inc.php that include the badges, btn, info-box, dropdown, progress...
 require __DIR__.'/global.inc.php';
-
 
 if (is_object($db)) {
 	$db->close();

@@ -4,6 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,7 +147,7 @@ class WebsitePage extends CommonObject
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
@@ -197,7 +198,7 @@ class WebsitePage extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -208,10 +209,10 @@ class WebsitePage extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		$this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
 		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
@@ -236,10 +237,9 @@ class WebsitePage extends CommonObject
 	 *                                  - If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
 	 *                                  - If value is < 0, we must exclude this ID.
 	 * @param string    $website_id     Web site id (page name must also be filled if this parameter is used)
-	 * @param string    $page           Page name (website id must also be filled if this parameter is used). Exemple 'myaliaspage' or 'fr/myaliaspage'
+	 * @param string    $page           Page name (website id must also be filled if this parameter is used). Example 'myaliaspage' or 'fr/myaliaspage'
 	 * @param string    $aliasalt       Alternative alias to search page (slow)
-	 *
-	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @return int 						Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $website_id = null, $page = null, $aliasalt = null)
 	{
@@ -347,7 +347,7 @@ class WebsitePage extends CommonObject
 			}
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -356,16 +356,17 @@ class WebsitePage extends CommonObject
 	/**
 	 * Return array of all web site pages.
 	 *
-	 * @param  string      $websiteid    Web site
-	 * @param  string      $sortorder    Sort Order
-	 * @param  string      $sortfield    Sort field
-	 * @param  int         $limit        limit
-	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array
-	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @param  string      	$websiteid   	Web site
+	 * @param  string      	$sortorder   	Sort Order
+	 * @param  string      	$sortfield    	Sort field
+	 * @param  int         	$limit        	limit
+	 * @param  int         	$offset       	Offset
+	 * @param  string|array	$filter       	Filter as an Universal Search string.
+	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string      	$filtermode   	No more used
+	 * @return array|int                 	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($websiteid, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($websiteid, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -398,36 +399,50 @@ class WebsitePage extends CommonObject
 		$sql .= " t.fk_object";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.fk_website = '.((int) $websiteid);
-		// Manage filter (same than into countAll)
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid' || $key == 'rowid' || $key == 't.fk_website' || $key == 'fk_website' || $key == 'status' || $key == 't.status') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif ($key == 'type_container' || $key == 't.type_container') {
-					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
-				} elseif ($key == 'lang' || $key == 't.lang') {
-					$listoflang = array();
-					$foundnull = 0;
-					foreach (explode(',', $value) as $tmpvalue) {
-						if ($tmpvalue == 'null') {
-							$foundnull++;
-							continue;
+
+		// Deprecated. If we receive an array, we use it. Prefer using the USF syntax.
+		if (is_array($filter)) {
+			$sqlwhere = array();
+
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.rowid' || $key == 'rowid' || $key == 't.fk_website' || $key == 'fk_website' || $key == 'status' || $key == 't.status') {
+						$sqlwhere[] = $key." = ".((int) $value);
+					} elseif ($key == 'type_container' || $key == 't.type_container') {
+						$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
+					} elseif ($key == 'lang' || $key == 't.lang') {
+						$listoflang = array();
+						$foundnull = 0;
+						foreach (explode(',', $value) as $tmpvalue) {
+							if ($tmpvalue == 'null') {
+								$foundnull++;
+								continue;
+							}
+							$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 						}
-						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
+						$stringtouse = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
+						if ($foundnull) {
+							$stringtouse = "(".$stringtouse." OR ".$this->db->sanitize($key)." IS NULL)";
+						}
+						$sqlwhere[] = $stringtouse;
+					} else {
+						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
 					}
-					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang), 1).")";
-					if ($foundnull) {
-						$stringtouse = "(".$stringtouse." OR ".$key." IS NULL)";
-					}
-					$sqlwhere[] = $stringtouse;
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
+			if (count($sqlwhere) > 0) {
+				$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+			}
+
+			$filter = '';
 		}
-		if (count($sqlwhere) > 0) {
-			$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {
@@ -477,7 +492,7 @@ class WebsitePage extends CommonObject
 		} else {
 			$this->error = 'Error '.$this->db->lasterror();
 			$this->errors[] = $this->error;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -518,7 +533,7 @@ class WebsitePage extends CommonObject
 						}
 						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 					}
-					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang), 1).")";
+					$stringtouse = $key." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
 					if ($foundnull) {
 						$stringtouse = "(".$stringtouse." OR ".$key." IS NULL)";
 					}
@@ -545,7 +560,7 @@ class WebsitePage extends CommonObject
 		} else {
 			$this->error = 'Error '.$this->db->lasterror();
 			$this->errors[] = $this->error;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -555,10 +570,10 @@ class WebsitePage extends CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		$this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
 		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
@@ -592,11 +607,11 @@ class WebsitePage extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param User 	$user       User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		global $conf;
 
@@ -722,7 +737,7 @@ class WebsitePage extends CommonObject
 			$error++;
 			$this->error = $object->error;
 			$this->errors = $object->errors;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		unset($object->context['createfromclone']);
@@ -740,7 +755,7 @@ class WebsitePage extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the user card (with optionaly the picto)
+	 *  Return a link to the user card (with optionally the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -858,7 +873,7 @@ class WebsitePage extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -885,5 +900,7 @@ class WebsitePage extends CommonObject
 		$this->date_modification = $now - (24 * 7 * 3600);
 		$this->fk_user_creat = $user->id;
 		$this->author_alias = 'mypublicpseudo';
+
+		return 1;
 	}
 }

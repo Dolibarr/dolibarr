@@ -2,7 +2,8 @@
 /* Copyright (C) 2014-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2015-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2020  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@
 
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
@@ -61,7 +63,7 @@ class BookKeeping extends CommonObject
 	public $id;
 
 	/**
-	 * @var string Date of source document, in db date NOT NULL
+	 * @var int	Date of source document, in db date NOT NULL
 	 */
 	public $doc_date;
 
@@ -206,7 +208,7 @@ class BookKeeping extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -217,10 +219,10 @@ class BookKeeping extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User	$user		User that creates
-	 * @param  bool	$notrigger	false=launch triggers after, true=disable triggers
+	 * @param  int	$notrigger	false=launch triggers after, true=disable triggers
 	 * @return int				Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -284,7 +286,7 @@ class BookKeeping extends CommonObject
 			$this->journal_label = trim($this->journal_label);
 		}
 		if (isset($this->piece_num)) {
-			$this->piece_num = trim($this->piece_num);
+			$this->piece_num = (int) $this->piece_num;
 		}
 		if (empty($this->debit)) {
 			$this->debit = 0.0;
@@ -445,13 +447,13 @@ class BookKeeping extends CommonObject
 						$result = -2;
 						$error++;
 						$this->errors[] = 'Error Create Error '.$result.' lecture ID';
-						dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+						dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 					}
 				} else {
 					$result = -1;
 					$error++;
 					$this->errors[] = 'Error '.$this->db->lasterror();
-					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 				}
 			} else {	// Already exists
 				$result = -3;
@@ -463,7 +465,7 @@ class BookKeeping extends CommonObject
 			$result = -5;
 			$error++;
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		// Uncomment this and change MYOBJECT to your own tag if you
@@ -554,7 +556,7 @@ class BookKeeping extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -567,12 +569,12 @@ class BookKeeping extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User	$user	   User that creates
-	 * @param  bool	$notrigger  false=launch triggers after, true=disable triggers
-	 * @param  string  $mode 	   Mode
-	 * @return int				 Return integer <0 if KO, Id of created object if OK
+	 * @param  User		$user	   	User that creates
+	 * @param  int		$notrigger  false=launch triggers after, true=disable triggers
+	 * @param  string  	$mode 	   	Mode
+	 * @return int				 	Return integer <0 if KO, Id of created object if OK
 	 */
-	public function createStd(User $user, $notrigger = false, $mode = '')
+	public function createStd(User $user, $notrigger = 0, $mode = '')
 	{
 		global $conf, $langs;
 
@@ -613,18 +615,6 @@ class BookKeeping extends CommonObject
 		if (isset($this->label_operation)) {
 			$this->label_operation = trim($this->label_operation);
 		}
-		if (isset($this->debit)) {
-			$this->debit = trim($this->debit);
-		}
-		if (isset($this->credit)) {
-			$this->credit = trim($this->credit);
-		}
-		if (isset($this->montant)) {
-			$this->montant = trim($this->montant);
-		}
-		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
-		}
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
 		}
@@ -638,7 +628,7 @@ class BookKeeping extends CommonObject
 			$this->journal_label = trim($this->journal_label);
 		}
 		if (isset($this->piece_num)) {
-			$this->piece_num = trim($this->piece_num);
+			$this->piece_num = (int) $this->piece_num;
 		}
 		if (empty($this->debit)) {
 			$this->debit = 0;
@@ -662,9 +652,9 @@ class BookKeeping extends CommonObject
 			return -1;
 		}
 
-		$this->debit = price2num($this->debit, 'MT');
-		$this->credit = price2num($this->credit, 'MT');
-		$this->montant = price2num($this->montant, 'MT');
+		$this->debit = (float) price2num($this->debit, 'MT');
+		$this->credit = (float) price2num($this->credit, 'MT');
+		$this->montant = (float) price2num($this->montant, 'MT');
 
 		$now = dol_now();
 
@@ -726,7 +716,7 @@ class BookKeeping extends CommonObject
 		if (!$resql) {
 			$error++;
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error) {
@@ -851,7 +841,7 @@ class BookKeeping extends CommonObject
 			}
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -863,7 +853,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param 	string 	$sortorder 		Sort Order
 	 * @param 	string 	$sortfield 		Sort field
-	 * @param 	int 	$limit 			offset limit
+	 * @param 	int 	$limit 			limit
 	 * @param 	int 	$offset 		offset limit
 	 * @param 	array 	$filter 		filter array
 	 * @param 	string 	$filtermode 	filter mode (AND or OR)
@@ -925,7 +915,7 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.subledger_account>=' || $key == 't.subledger_account<=') {
 					$sqlwhere[] = $key.'\''.$this->db->escape($value).'\'';
 				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
-					$sqlwhere[] = $key.'='.$value;
+					$sqlwhere[] = $key.' = '.((int) $value);
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
 					$sqlwhere[] = $key.' LIKE \''.$this->db->escape($this->db->escapeforlike($value)).'%\'';
 				} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
@@ -940,7 +930,7 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = 't.lettering_code IS NULL';
 				} elseif ($key == 't.code_journal' && !empty($value)) {
 					if (is_array($value)) {
-						$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+						$sqlwhere[] = natural_search("t.code_journal", implode(',', $value), 3, 1);
 					} else {
 						$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 					}
@@ -954,7 +944,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if (count($sqlwhere) > 0) {
-			$sql .= " AND ".implode(" ".$filtermode." ", $sqlwhere);
+			$sql .= " AND ".implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere);
 		}
 		// Filter by ledger account or subledger account
 		if (!empty($option)) {
@@ -986,7 +976,7 @@ class BookKeeping extends CommonObject
 
 				$i = 0;
 				while (($obj = $this->db->fetch_object($resql)) && (empty($limit) || $i < min($limit, $num))) {
-					$line = new BookKeepingLine();
+					$line = new BookKeepingLine($this->db);
 
 					$line->id = $obj->rowid;
 
@@ -1030,7 +1020,7 @@ class BookKeeping extends CommonObject
 			return $num;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -1110,7 +1100,7 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
 				} elseif ($key == 't.code_journal' && !empty($value)) {
 					if (is_array($value)) {
-						$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+						$sqlwhere[] = natural_search("t.code_journal", implode(',', $value), 3, 1);
 					} else {
 						$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 					}
@@ -1124,7 +1114,7 @@ class BookKeeping extends CommonObject
 			$sql .= " AND t.date_export IS NULL";
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND '.implode(" ".$filtermode." ", $sqlwhere);
+			$sql .= ' AND '.implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere);
 		}
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
@@ -1140,7 +1130,7 @@ class BookKeeping extends CommonObject
 
 			$i = 0;
 			while (($obj = $this->db->fetch_object($resql)) && (empty($limit) || $i < min($limit, $num))) {
-				$line = new BookKeepingLine();
+				$line = new BookKeepingLine($this->db);
 
 				$line->id = $obj->rowid;
 
@@ -1182,7 +1172,7 @@ class BookKeeping extends CommonObject
 			return $num;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			return -1;
 		}
 	}
@@ -1234,20 +1224,20 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key." LIKE '".$this->db->escape($value)."%'";
 				} elseif ($key == 't.code_journal' && !empty($value)) {
 					if (is_array($value)) {
-						$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+						$sqlwhere[] = natural_search("t.code_journal", implode(',', $value), 3, 1);
 					} else {
 						$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 					}
 				} elseif ($key == 't.reconciled_option') {
 					$sqlwhere[] = 't.lettering_code IS NULL';
 				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+					$sqlwhere[] = $key." LIKE '%".$this->escape($this->db->escapeforlike($value))."%'";
 				}
 			}
 		}
 		$sql .= ' WHERE entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if (count($sqlwhere) > 0) {
-			$sql .= " AND ".implode(" ".$filtermode." ", $sqlwhere);
+			$sql .= " AND ".implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere);
 		}
 
 		if (!empty($option)) {
@@ -1275,7 +1265,7 @@ class BookKeeping extends CommonObject
 
 			$i = 0;
 			while (($obj = $this->db->fetch_object($resql)) && (empty($limit) || $i < min($limit, $num))) {
-				$line = new BookKeepingLine();
+				$line = new BookKeepingLine($this->db);
 
 				$line->numero_compte = $obj->numero_compte;
 				//$line->label_compte = $obj->label_compte;
@@ -1295,7 +1285,7 @@ class BookKeeping extends CommonObject
 			return $num;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -1304,12 +1294,12 @@ class BookKeeping extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User    $user       User that modifies
-	 * @param  bool    $notrigger  false=launch triggers after, true=disable triggers
-	 * @param  string  $mode       Mode ('' or _tmp')
-	 * @return int                 Return integer <0 if KO, >0 if OK
+	 * @param  User    	$user       User that modifies
+	 * @param  int		$notrigger  false=launch triggers after, true=disable triggers
+	 * @param  string  	$mode       Mode ('' or _tmp')
+	 * @return int                 	Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false, $mode = '')
+	public function update(User $user, $notrigger = 0, $mode = '')
 	{
 		global $langs;
 		$error = 0;
@@ -1347,15 +1337,6 @@ class BookKeeping extends CommonObject
 		if (isset($this->label_operation)) {
 			$this->label_operation = trim($this->label_operation);
 		}
-		if (isset($this->debit)) {
-			$this->debit = trim($this->debit);
-		}
-		if (isset($this->credit)) {
-			$this->credit = trim($this->credit);
-		}
-		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
-		}
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
 		}
@@ -1369,7 +1350,7 @@ class BookKeeping extends CommonObject
 			$this->journal_label = trim($this->journal_label);
 		}
 		if (isset($this->piece_num)) {
-			$this->piece_num = trim($this->piece_num);
+			$this->piece_num = (int) $this->piece_num;
 		}
 
 		$result = $this->canModifyBookkeeping($this->id);
@@ -1384,8 +1365,9 @@ class BookKeeping extends CommonObject
 			return -1;
 		}
 
-		$this->debit = price2num($this->debit, 'MT');
-		$this->credit = price2num($this->credit, 'MT');
+		$this->debit = (float) price2num($this->debit, 'MT');
+		$this->credit = (float) price2num($this->credit, 'MT');
+		$this->montant = (float) price2num($this->montant, 'MT');
 
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -1420,7 +1402,7 @@ class BookKeeping extends CommonObject
 		if (!$resql) {
 			$error++;
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		// Uncomment this and change MYOBJECT to your own tag if you
@@ -1466,7 +1448,7 @@ class BookKeeping extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element.$mode;
-		$sql .= " SET ".$field." = ".(is_numeric($value) ? ((float) $value) : "'".$this->db->escape($value)."'");
+		$sql .= " SET ".$this->db->sanitize($field)." = ".(is_numeric($value) ? ((float) $value) : "'".$this->db->escape($value)."'");
 		$sql .= " WHERE piece_num = ".((int) $piece_num);
 		$sql .= $sql_filter;
 
@@ -1475,7 +1457,7 @@ class BookKeeping extends CommonObject
 		if (!$resql) {
 			$error++;
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 		if ($error) {
 			$this->db->rollback();
@@ -1491,12 +1473,12 @@ class BookKeeping extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user User that deletes
-	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 * @param string $mode Mode
-	 * @return int Return integer <0 if KO, >0 if OK
+	 * @param User 		$user 		User that deletes
+	 * @param int 		$notrigger 	false=launch triggers after, true=disable triggers
+	 * @param string 	$mode 		Mode
+	 * @return int 					Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false, $mode = '')
+	public function delete(User $user, $notrigger = 0, $mode = '')
 	{
 		global $langs;
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -1535,7 +1517,7 @@ class BookKeeping extends CommonObject
 			if (!$resql) {
 				$error++;
 				$this->errors[] = 'Error '.$this->db->lasterror();
-				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			}
 		}
 
@@ -1720,7 +1702,7 @@ class BookKeeping extends CommonObject
 		if ($result < 0) {
 			$error++;
 			$this->errors = $object->errors;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		unset($object->context['createfromclone']);
@@ -1741,7 +1723,7 @@ class BookKeeping extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1771,6 +1753,8 @@ class BookKeeping extends CommonObject
 		$this->journal_label = 'Journal de vente';
 		$this->piece_num = 1234;
 		$this->date_creation = $now;
+
+		return 1;
 	}
 
 	/**
@@ -1784,7 +1768,7 @@ class BookKeeping extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT piece_num, doc_date,code_journal, journal_label, doc_ref, doc_type,";
+		$sql = "SELECT piece_num, doc_date, code_journal, journal_label, doc_ref, doc_type,";
 		$sql .= " date_creation, tms as date_modification, date_validated as date_validation";
 		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
 		if ($mode != "_tmp") {
@@ -1821,10 +1805,10 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Return next number movement
+	 * Return next movement number
 	 *
-	 * @param	string	$mode	Mode
-	 * @return	string			Next numero to use
+	 * @param	string	$mode		Mode
+	 * @return	int<1, max>|-1		Return next movement number or -1 if error
 	 */
 	public function getNextNumMvt($mode = '')
 	{
@@ -1854,10 +1838,10 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Load all informations of accountancy document
+	 * Load all accounting lines related to a given transaction ID $piecenum
 	 *
 	 * @param  int     $piecenum   Id of line to get
-	 * @param  string  $mode       Mode
+	 * @param  string  $mode       Mode ('' or '_tmp')
 	 * @return int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAllPerMvt($piecenum, $mode = '')
@@ -1881,7 +1865,7 @@ class BookKeeping extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			while ($obj = $this->db->fetch_object($result)) {
-				$line = new BookKeepingLine();
+				$line = new BookKeepingLine($this->db);
 
 				$line->id = $obj->rowid;
 
@@ -1951,7 +1935,7 @@ class BookKeeping extends CommonObject
 
 			$num = $this->db->num_rows($resql);
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new BookKeepingLine();
+				$line = new BookKeepingLine($this->db);
 
 				$line->id = $obj->rowid;
 
@@ -1990,7 +1974,7 @@ class BookKeeping extends CommonObject
 	/**
 	 * Transform transaction
 	 *
-	 * @param  number   $direction      If 0: tmp => real, if 1: real => tmp
+	 * @param  int      $direction      If 0: tmp => real, if 1: real => tmp
 	 * @param  string   $piece_num      Piece num = Transaction ref
 	 * @return int                      int Return integer <0 if KO, >0 if OK
 	 */
@@ -2022,7 +2006,7 @@ class BookKeeping extends CommonObject
 				if (!$resql) {
 					$error++;
 					$this->errors[] = 'Error '.$this->db->lasterror();
-					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 				}
 			}
 
@@ -2041,7 +2025,7 @@ class BookKeeping extends CommonObject
 				if (!$resql) {
 					$error++;
 					$this->errors[] = 'Error '.$this->db->lasterror();
-					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 				}
 			}
 
@@ -2051,7 +2035,7 @@ class BookKeeping extends CommonObject
 				if (!$resql) {
 					$error++;
 					$this->errors[] = 'Error '.$this->db->lasterror();
-					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 				}
 			}
 		} elseif ($direction == 1) {
@@ -2061,7 +2045,7 @@ class BookKeeping extends CommonObject
 				if (!$resql) {
 					$error++;
 					$this->errors[] = 'Error '.$this->db->lasterror();
-					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 				}
 			}
 
@@ -2080,7 +2064,7 @@ class BookKeeping extends CommonObject
 				if (!$resql) {
 					$error++;
 					$this->errors[] = 'Error '.$this->db->lasterror();
-					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 				}
 			}
 
@@ -2091,7 +2075,7 @@ class BookKeeping extends CommonObject
 				if (!$resql) {
 					$error++;
 					$this->errors[] = 'Error '.$this->db->lasterror();
-					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+					dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 				}
 			}
 		}
@@ -2125,7 +2109,7 @@ class BookKeeping extends CommonObject
 	 * @param int		$select_in	Value is a aa.rowid (0 default) or aa.account_number (1)
 	 * @param int		$select_out	Set value returned by select 0=rowid (default), 1=account_number
 	 * @param string	$aabase		Set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by this number
-	 * @return string	String with HTML select
+	 * @return string|int	String with HTML select or -1 if KO
 	 */
 	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '')
 	{
@@ -2151,7 +2135,7 @@ class BookKeeping extends CommonObject
 		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(get_class($this)."::select_account ".$this->error, LOG_ERR);
-			return -1;
+			return "-1";
 		}
 
 		$out = ajax_combobox($htmlname, $event);
@@ -2216,7 +2200,7 @@ class BookKeeping extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 			}
 
-			$result = array('id'=>$obj->rowid, 'account_number'=>$obj->account_number, 'label'=>$obj->label);
+			$result = array('id' => $obj->rowid, 'account_number' => $obj->account_number, 'label' => $obj->label);
 			return $result;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
@@ -2231,7 +2215,7 @@ class BookKeeping extends CommonObject
 	 * Description of accounting account
 	 *
 	 * @param	string	$account	Accounting account
-	 * @return	string				Account desc
+	 * @return	string|int				Account desc or -1 if KO
 	 */
 	public function get_compte_desc($account = null)
 	{
@@ -2263,7 +2247,7 @@ class BookKeeping extends CommonObject
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(__METHOD__." ".$this->error, LOG_ERR);
-			return -1;
+			return "-1";
 		}
 	}
 
@@ -2272,7 +2256,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param 	string		$alias		Bookkeeping alias table
 	 * @param 	bool		$force		Force reload
-	 * @return 	string					SQL filter
+	 * @return 	string|null				SQL filter or null if error
 	 */
 	public function getCanModifyBookkeepingSQL($alias = '', $force = false)
 	{
@@ -2293,7 +2277,7 @@ class BookKeeping extends CommonObject
 					$sql_list[] = "('" . $this->db->idate($fiscal_period['date_start']) . "' <= {$alias}doc_date AND {$alias}doc_date <= '" . $this->db->idate($fiscal_period['date_end']) . "')";
 				}
 			}
-			self::$can_modify_bookkeeping_sql_cached[$alias] = !empty($sql_list) ? ' AND (' . implode(' OR ', $sql_list) . ')' : '';
+			self::$can_modify_bookkeeping_sql_cached[$alias] = !empty($sql_list) ? ' AND (' . $this->db->sanitize(implode(' OR ', $sql_list), 1, 1, 1) . ')' : '';
 		}
 
 		return self::$can_modify_bookkeeping_sql_cached[$alias];
@@ -2475,7 +2459,7 @@ class BookKeeping extends CommonObject
 		$sql .= " FROM " . $this->db->prefix() . "accounting_fiscalyear";
 		$sql .= " WHERE entity = " . ((int) $conf->entity);
 		if (!empty($filter)) {
-			$sql .= " AND (" . $filter . ')';
+			$sql .= " AND (" . $this->db->sanitize($filter, 1, 1, 1) . ')';
 		}
 		$sql .= $this->db->order('date_start', 'ASC');
 
@@ -2512,7 +2496,7 @@ class BookKeeping extends CommonObject
 
 		$sql = "SELECT YEAR(b.doc_date) as year";
 		for ($i = 1; $i <= 12; $i++) {
-			$sql .= ", SUM(" . $this->db->ifsql("MONTH(b.doc_date)=" . $i, "1", "0") . ") AS month" . $i;
+			$sql .= ", SUM(".$this->db->ifsql("MONTH(b.doc_date) = ".((int) $i), "1", "0") . ") AS month".((int) $i);
 		}
 		$sql .= ", COUNT(b.rowid) as total";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as b";
@@ -2591,6 +2575,56 @@ class BookKeeping extends CommonObject
 		}
 
 		return 1;
+	}
+
+	/**
+	 *  Define accounting result
+	 *
+	 * @param	int		$date_start		Date start
+	 * @param	int		$date_end		Date end
+	 * @return	string					Accounting result
+	 */
+	public function accountingResult($date_start, $date_end)
+	{
+		global $conf;
+
+		$this->db->begin();
+
+		$income_statement_amount = 0;
+
+		if (getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT')) {
+			$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');
+
+			foreach ($accounting_groups_used_for_income_statement as $item) {
+				$pcg_type_filter[] = "'" . $this->db->escape($item) . "'";
+			}
+
+			$sql = 'SELECT';
+			$sql .= " t.numero_compte,";
+			$sql .= " aa.pcg_type,";
+			$sql .= " (SUM(t.credit) - SUM(t.debit)) as accounting_result";
+			$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+			$sql .= ' LEFT JOIN  ' . MAIN_DB_PREFIX . 'accounting_account as aa ON aa.account_number = t.numero_compte';
+			$sql .= ' WHERE t.entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
+			$sql .= " AND aa.entity = " . ((int) $conf->entity);
+			$sql .= ' AND aa.fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid = ' . ((int) getDolGlobalInt('CHARTOFACCOUNTS')) . ')';
+			$sql .= ' AND aa.pcg_type IN (' . $this->db->sanitize(implode(',', $pcg_type_filter), 1) . ')';
+			$sql .= " AND DATE(t.doc_date) >= '" . $this->db->idate($date_start) . "'";
+			$sql .= " AND DATE(t.doc_date) <= '" . $this->db->idate($date_end) . "'";
+			$sql .= ' GROUP BY t.numero_compte, aa.pcg_type';
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->errors[] = 'Error ' . $this->db->lasterror();
+				dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+			} else {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$income_statement_amount += $obj->accounting_result;
+				}
+			}
+		}
+
+		return (string) $income_statement_amount;
 	}
 
 	/**
@@ -2715,7 +2749,7 @@ class BookKeeping extends CommonObject
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$this->errors[] = 'Error ' . $this->db->lasterror();
-					dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+					dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 
 					$error++;
 				} else {
@@ -2730,7 +2764,7 @@ class BookKeeping extends CommonObject
 
 							$bookkeeping = new BookKeeping($this->db);
 							$bookkeeping->doc_date = $new_fiscal_period->date_start;
-							$bookkeeping->date_lim_reglement = '';
+							$bookkeeping->date_lim_reglement = 0;
 							$bookkeeping->doc_ref = $new_fiscal_period->label;
 							$bookkeeping->date_creation = $now;
 							$bookkeeping->doc_type = 'closure';
@@ -2777,7 +2811,7 @@ class BookKeeping extends CommonObject
 
 						$bookkeeping = new BookKeeping($this->db);
 						$bookkeeping->doc_date = $new_fiscal_period->date_start;
-						$bookkeeping->date_lim_reglement = '';
+						$bookkeeping->date_lim_reglement = 0;
 						$bookkeeping->doc_ref = $new_fiscal_period->label;
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'closure';
@@ -2915,7 +2949,7 @@ class BookKeeping extends CommonObject
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 
 			$error++;
 		} else {
@@ -2976,14 +3010,14 @@ class BookKeeping extends CommonObject
 /**
  * Class BookKeepingLine
  */
-class BookKeepingLine
+class BookKeepingLine extends CommonObjectLine
 {
 	/**
 	 * @var int ID
 	 */
 	public $id;
 
-	public $doc_date = '';
+	public $doc_date = null;
 	public $doc_type;
 	public $doc_ref;
 
@@ -3023,7 +3057,7 @@ class BookKeepingLine
 	public $multicurrency_amount;
 
 	/**
-	 * @var float 	Multicurrency code
+	 * @var string 	Multicurrency code
 	 */
 	public $multicurrency_code;
 

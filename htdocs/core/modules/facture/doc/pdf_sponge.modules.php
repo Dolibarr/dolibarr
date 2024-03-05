@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 class pdf_sponge extends ModelePDFFactures
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -164,7 +164,7 @@ class pdf_sponge extends ModelePDFFactures
 		}
 
 		// Define position of columns
-		$this->posxdesc = $this->marge_gauche + 1; // used for notes ans other stuff
+		$this->posxdesc = $this->marge_gauche + 1; // used for notes and other stuff
 
 
 		$this->tabTitleHeight = 5; // default height
@@ -221,14 +221,14 @@ class pdf_sponge extends ModelePDFFactures
 
 		// Show Draft Watermark
 		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('FACTURE_DRAFT_WATERMARK'))) {
-			$this->watermark = $conf->global->FACTURE_DRAFT_WATERMARK;
+			$this->watermark = getDolGlobalString('FACTURE_DRAFT_WATERMARK');
 		}
 
 		$nblines = count($object->lines);
 
 		$hidetop = 0;
 		if (getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE')) {
-			$hidetop = $conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE;
+			$hidetop = getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE');
 		}
 
 		// Loop on each lines to detect if there is at least one image to show
@@ -447,7 +447,7 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				// $pdf->GetY() here can't be used. It is bottom of the second addresse box but first one may be higher
+				// $pdf->GetY() here can't be used. It is bottom of the second address box but first one may be higher
 
 				// $this->tab_top is y where we must continue content (90 = 42 + 48: 42 is height of logo and ref, 48 is address blocks)
 				$this->tab_top = 90 + $top_shift + $shipp_shift;		// top_shift is an addition for linked objects or addons (0 in most cases)
@@ -493,7 +493,7 @@ class pdf_sponge extends ModelePDFFactures
 				$this->tab_top_newpage += 0;
 
 
-				// Define heigth of table for lines (for first page)
+				// Define height of table for lines (for first page)
 				$tab_height = $this->page_hauteur - $this->tab_top - $this->heightforfooter - $this->heightforfreetext - $this->getHeightForQRInvoice(1, $object, $langs);
 
 				$nexY = $this->tab_top - 1;
@@ -807,7 +807,7 @@ class pdf_sponge extends ModelePDFFactures
 
 					// Unit
 					if ($this->getColumnStatus('unit')) {
-						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
+						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'unit', $unit);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
@@ -929,7 +929,7 @@ class pdf_sponge extends ModelePDFFactures
 					if (!isset($this->tva[$vatrate])) {
 						$this->tva[$vatrate] = 0;
 					}
-					$this->tva[$vatrate] += $tvaligne;	// ->tva is abandonned, we use now ->tva_array that is more complete
+					$this->tva[$vatrate] += $tvaligne;	// ->tva is abandoned, we use now ->tva_array that is more complete
 					$vatcode = $object->lines[$i]->vat_src_code;
 					if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
 						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
@@ -1204,7 +1204,7 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	protected function drawInfoTable(&$pdf, $object, $posy, $outputlangs, $outputlangsbis)
 	{
-		global $conf, $mysoc;
+		global $conf, $mysoc, $hookmanager;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -1333,6 +1333,14 @@ class pdf_sponge extends ModelePDFFactures
 					if (isModEnabled('paybox')) {
 						$useonlinepayment++;
 					}
+					$parameters = array();
+					$action = '';
+					$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+					if ($reshook > 0) {
+						if (isset($hookmanager->resArray['showonlinepaymenturl'])) {
+							$useonlinepayment += $hookmanager->resArray['showonlinepaymenturl'];
+						}
+					}
 				}
 
 
@@ -1421,7 +1429,7 @@ class pdf_sponge extends ModelePDFFactures
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	int			$posy			Position depart
-	 *	@param	Translate	$outputlangs	Objet langs
+	 *	@param	Translate	$outputlangs	Object langs
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
 	 *	@return int							Position pour suite
 	 */
@@ -1713,7 +1721,7 @@ class pdf_sponge extends ModelePDFFactures
 				}
 				//}
 
-				// Situations totals migth be wrong on huge amounts with old mode 1
+				// Situations totals might be wrong on huge amounts with old mode 1
 				if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1 && $object->situation_cycle_ref && $object->situation_counter > 1) {
 					$sum_pdf_tva = 0;
 					foreach ($this->tva as $tvakey => $tvaval) {
@@ -1911,20 +1919,17 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount, 0, $outputlangs), 0, 'R', 0);
 			}
 
-			/*
-			 if ($object->close_code == Facture::CLOSECODE_DISCOUNTVAT)
-			 {
-			 $index++;
-			 $pdf->SetFillColor(255, 255, 255);
+			if ($object->close_code == Facture::CLOSECODE_DISCOUNTVAT) {
+				$index++;
+				$pdf->SetFillColor(255, 255, 255);
 
-			 $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-			 $pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOfferedShort").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("EscompteOfferedShort") : ''), $useborder, 'L', 1);
-			 $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-			 $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 0, $outputlangs), $useborder, 'R', 1);
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOfferedShort").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("EscompteOfferedShort") : ''), $useborder, 'L', 1);
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($largcol2, $tab2_hl, price(price2num($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT'), 0, $outputlangs), $useborder, 'R', 1);
 
-			 $resteapayer = 0;
-			 }
-			 */
+				$resteapayer = 0;
+			}
 
 			$index++;
 			$pdf->SetTextColor(0, 0, 60);
@@ -1936,6 +1941,14 @@ class pdf_sponge extends ModelePDFFactures
 
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetTextColor(0, 0, 0);
+		}
+
+		$parameters = array('pdf' => &$pdf, 'object' => &$object, 'outputlangs' => $outputlangs, 'index' => &$index);
+
+		$reshook = $hookmanager->executeHooks('afterPDFTotalTable', $parameters, $this); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) {
+			$this->error = $hookmanager->error;
+			$this->errors = $hookmanager->errors;
 		}
 
 		$index++;
@@ -2026,14 +2039,14 @@ class pdf_sponge extends ModelePDFFactures
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *  Show top header of page. This include the logo, ref and address blocs
+	 *  Show top header of page. This include the logo, ref and address blocks
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  Facture		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes (usually set to 1 for first page, and 0 for next pages)
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	array							top shift of linked object lines
+	 *  @return	array						top shift of linked object lines
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
@@ -2411,6 +2424,7 @@ class pdf_sponge extends ModelePDFFactures
 		$pdf->SetTextColor(0, 0, 0);
 
 		$pagehead = array('top_shift' => $top_shift, 'shipp_shift' => $shipp_shift);
+
 		return $pagehead;
 	}
 
@@ -2458,18 +2472,18 @@ class pdf_sponge extends ModelePDFFactures
 		);
 
 		/*
-		 * For exemple
+		 * For example
 		 $this->cols['theColKey'] = array(
 		 'rank' => $rank, // int : use for ordering columns
 		 'width' => 20, // the column width in mm
 		 'title' => array(
 		 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 		 'label' => ' ', // the final label : used fore final generated text
-		 'align' => 'L', // text alignement :  R,C,L
+		 'align' => 'L', // text alignment :  R,C,L
 		 'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 		 ),
 		 'content' => array(
-		 'align' => 'L', // text alignement :  R,C,L
+		 'align' => 'L', // text alignment :  R,C,L
 		 'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 		 ),
 		 );
@@ -2481,7 +2495,7 @@ class pdf_sponge extends ModelePDFFactures
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is usefull in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in somme case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label

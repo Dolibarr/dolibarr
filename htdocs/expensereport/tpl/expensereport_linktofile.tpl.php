@@ -62,7 +62,7 @@ if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 					$pdfexists = file_exists($filepdf);
 
 					if ($pdfexists) {
-						// Conversion du PDF en image png si fichier png non existant
+						// Conversion du PDF en image png si fichier png non existent
 						if (!file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf))) {
 							if (!getDolGlobalString('MAIN_DISABLE_PDF_THUMBS')) {		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
 								include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

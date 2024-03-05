@@ -73,8 +73,6 @@ class AntiVir
 		// phpcs:enable
 		global $conf;
 
-		$return = 0;
-
 		if (preg_match('/\.virus$/i', $file)) {
 			$this->errors[] = 'File has an extension saying file is a virus';
 			return -97;
@@ -130,16 +128,14 @@ class AntiVir
 	 */
 	public function getCliCommand($file)
 	{
-		global $conf;
-
 		$maxreclevel = 5; // maximal recursion level
 		$maxfiles = 1000; // maximal number of files to be scanned within archive
 		$maxratio = 200; // maximal compression ratio
 		$bz2archivememlim = 0; // limit memory usage for bzip2 (0/1)
 		$maxfilesize = 10485760; // archived files larger than this value (in bytes) will not be scanned
 
-		$command = $conf->global->MAIN_ANTIVIRUS_COMMAND;
-		$param = $conf->global->MAIN_ANTIVIRUS_PARAM;
+		$command = getDolGlobalString('MAIN_ANTIVIRUS_COMMAND');
+		$param = getDolGlobalString('MAIN_ANTIVIRUS_PARAM');
 
 		$param = preg_replace('/%maxreclevel/', $maxreclevel, $param);
 		$param = preg_replace('/%maxfiles/', $maxfiles, $param);
@@ -148,7 +144,7 @@ class AntiVir
 		$param = preg_replace('/%maxfilesize/', $maxfilesize, $param);
 		$param = preg_replace('/%file/', trim($file), $param);
 
-		if (!preg_match('/%file/', $conf->global->MAIN_ANTIVIRUS_PARAM)) {
+		if (!preg_match('/%file/', getDolGlobalString('MAIN_ANTIVIRUS_PARAM'))) {
 			$param = $param." ".escapeshellarg(trim($file));
 		}
 

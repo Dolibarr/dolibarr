@@ -40,14 +40,14 @@ $massaction  = GETPOST('massaction', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ');
 $optioncss   = GETPOST('optioncss', 'aZ');
 $socid = 0;
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $search_ref         = GETPOST('search_ref', 'alphanohtml');
-$search_employee    = GETPOST('search_employee', 'int');
-$search_type        = GETPOST('search_type', 'int');
+$search_employee    = GETPOSTINT('search_employee');
+$search_type        = GETPOSTINT('search_type');
 $search_description = GETPOST('search_description', 'alphanohtml');
 
-$limit       = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit       = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield   = GETPOST('sortfield', 'aZ09comma');
 $sortorder   = GETPOST('sortorder', 'aZ09comma');
 
@@ -58,7 +58,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }
@@ -146,8 +146,8 @@ $title = $langs->trans('CPTitreMenu');
 
 llxHeader('', $title);
 
-$search_month = GETPOST("remonth", 'int') ? GETPOST("remonth", 'int') : date("m", time());
-$search_year = GETPOST("reyear", 'int') ? GETPOST("reyear", 'int') : date("Y", time());
+$search_month = GETPOSTINT("remonth") ? GETPOSTINT("remonth") : date("m", time());
+$search_year = GETPOSTINT("reyear") ? GETPOSTINT("reyear") : date("Y", time());
 $year_month = sprintf("%04d", $search_year).'-'.sprintf("%02d", $search_month);
 
 $sql = "SELECT cp.rowid, cp.ref, cp.fk_user, cp.date_debut, cp.date_fin, cp.fk_type, cp.description, cp.halfday, cp.statut as status";

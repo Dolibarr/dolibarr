@@ -3,6 +3,8 @@
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2014	   Cedric GROSS	        <c.gross@kreiz-it.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +72,6 @@ class MouvementStock extends CommonObject
 	 */
 	public $type;
 
-	public $tms = '';
 	public $datem = '';
 	public $price;
 
@@ -123,25 +124,25 @@ class MouvementStock extends CommonObject
 
 
 	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10, 'showoncombobox'=>1),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
-		'datem' =>array('type'=>'datetime', 'label'=>'Datem', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
-		'fk_product' =>array('type'=>'integer:Product:product/class/product.class.php:1', 'label'=>'Product', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
-		'fk_entrepot' =>array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Warehouse', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>30),
-		'value' =>array('type'=>'double', 'label'=>'Value', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
-		'price' =>array('type'=>'double(24,8)', 'label'=>'Price', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
-		'type_mouvement' =>array('type'=>'smallint(6)', 'label'=>'Type mouvement', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
-		'label' =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
-		'fk_origin' =>array('type'=>'integer', 'label'=>'Fk origin', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
-		'origintype' =>array('type'=>'varchar(32)', 'label'=>'Origintype', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
-		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>70),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>75),
-		'inventorycode' =>array('type'=>'varchar(128)', 'label'=>'InventoryCode', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
-		'batch' =>array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
-		'eatby' =>array('type'=>'date', 'label'=>'Eatby', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
-		'sellby' =>array('type'=>'date', 'label'=>'Sellby', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
-		'fk_project' =>array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Fk project', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10, 'showoncombobox' => 1),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 15),
+		'datem' => array('type' => 'datetime', 'label' => 'Datem', 'enabled' => 1, 'visible' => -1, 'position' => 20),
+		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php:1', 'label' => 'Product', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 25),
+		'fk_entrepot' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Warehouse', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 30),
+		'value' => array('type' => 'double', 'label' => 'Value', 'enabled' => 1, 'visible' => -1, 'position' => 35),
+		'price' => array('type' => 'double(24,8)', 'label' => 'Price', 'enabled' => 1, 'visible' => -1, 'position' => 40),
+		'type_mouvement' => array('type' => 'smallint(6)', 'label' => 'Type mouvement', 'enabled' => 1, 'visible' => -1, 'position' => 45),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user author', 'enabled' => 1, 'visible' => -1, 'position' => 50),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => -1, 'position' => 55),
+		'fk_origin' => array('type' => 'integer', 'label' => 'Fk origin', 'enabled' => 1, 'visible' => -1, 'position' => 60),
+		'origintype' => array('type' => 'varchar(32)', 'label' => 'Origintype', 'enabled' => 1, 'visible' => -1, 'position' => 65),
+		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 70),
+		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => '$conf->project->enabled', 'visible' => -1, 'notnull' => 1, 'position' => 75),
+		'inventorycode' => array('type' => 'varchar(128)', 'label' => 'InventoryCode', 'enabled' => 1, 'visible' => -1, 'position' => 80),
+		'batch' => array('type' => 'varchar(30)', 'label' => 'Batch', 'enabled' => 1, 'visible' => -1, 'position' => 85),
+		'eatby' => array('type' => 'date', 'label' => 'Eatby', 'enabled' => 1, 'visible' => -1, 'position' => 90),
+		'sellby' => array('type' => 'date', 'label' => 'Sellby', 'enabled' => 1, 'visible' => -1, 'position' => 95),
+		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Fk project', 'enabled' => 1, 'visible' => -1, 'position' => 100),
 	);
 
 
@@ -179,7 +180,7 @@ class MouvementStock extends CommonObject
 	 *	@param		string			$batch				batch number
 	 *	@param		boolean			$skip_batch			If set to true, stock movement is done without impacting batch record
 	 * 	@param		int				$id_product_batch	Id product_batch (when skip_batch is false and we already know which record of product_batch to use)
-	 *  @param		int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
+	 *  @param		int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (useful only if product is a subproduct)
 	 *  @param		int				$donotcleanemptylines				Do not clean lines in stock table with qty=0 (because we want to have this done by the caller)
 	 * 	@param		boolean			$force_update_batch	Allows to add batch stock movement even if $product doesn't use batch anymore
 	 *	@return		int									Return integer <0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK
@@ -221,7 +222,7 @@ class MouvementStock extends CommonObject
 
 			if ($reshook < 0) {
 				if (!empty($hookmanager->resPrint)) {
-					dol_print_error('', $hookmanager->resPrint);
+					dol_print_error(null, $hookmanager->resPrint);
 				}
 				return $reshook;
 			} elseif ($reshook > 0) {
@@ -276,7 +277,7 @@ class MouvementStock extends CommonObject
 		if ($result < 0) {
 			$this->error = $product->error;
 			$this->errors = $product->errors;
-			dol_print_error('', "Failed to fetch product");
+			dol_print_error(null, "Failed to fetch product");
 			return -1;
 		}
 		if ($product->id <= 0) {	// Can happen if database is corrupted (a product id exist in stock with product that has been removed)
@@ -284,7 +285,7 @@ class MouvementStock extends CommonObject
 		}
 
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
-		// Only record into stock tables wil be disabled by this (the rest like writing into lot table or movement of subproucts are done)
+		// Only record into stock tables will be disabled by this (the rest like writing into lot table or movement of subproucts are done)
 		$movestock = 0;
 		if ($product->type != Product::TYPE_SERVICE || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 			$movestock = 1;
@@ -546,11 +547,11 @@ class MouvementStock extends CommonObject
 					} else {
 						$newpmp = $oldpmp;
 					}
-				} elseif ($type == 1 || $type == 2) {
-					// After a stock decrease, we don't change value of the AWP/PMP of a product.
-					$newpmp = $oldpmp;
 				} else {
-					// Type of movement unknown
+					// ($type == 1 || $type == 2)
+					//   -> After a stock decrease, we don't change value of the AWP/PMP of a product.
+					// else
+					//   Type of movement unknown
 					$newpmp = $oldpmp;
 				}
 			}
@@ -580,11 +581,11 @@ class MouvementStock extends CommonObject
 				if ($id_product_batch > 0) {
 					$result = $this->createBatch($id_product_batch, $qty);
 					if ($result == -2 && $fk_product_stock > 0) {	// The entry for this product batch does not exists anymore, bu we already have a llx_product_stock, so we recreate the batch entry in product_batch
-						$param_batch = array('fk_product_stock' =>$fk_product_stock, 'batchnumber'=>$batch);
+						$param_batch = array('fk_product_stock' => $fk_product_stock, 'batchnumber' => $batch);
 						$result = $this->createBatch($param_batch, $qty);
 					}
 				} else {
-					$param_batch = array('fk_product_stock' =>$fk_product_stock, 'batchnumber'=>$batch);
+					$param_batch = array('fk_product_stock' => $fk_product_stock, 'batchnumber' => $batch);
 					$result = $this->createBatch($param_batch, $qty);
 				}
 				if ($result < 0) {
@@ -633,7 +634,7 @@ class MouvementStock extends CommonObject
 			}
 			// End call triggers
 
-			// Check unicity for serial numbered equipments once all movement were done.
+			// Check unicity for serial numbered equipment once all movement were done.
 			if (!$error && isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				if ($product->status_batch == 2 && $qty > 0) {	// We check only if we increased qty
 					if ($this->getBatchCount($fk_product, $batch) > 1) {
@@ -1066,16 +1067,16 @@ class MouvementStock extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf, $mysoc;
-
 		// Initialize parameters
 		$this->id = 0;
 
 		// There is no specific properties. All data into insert are provided as method parameter.
+
+		return 1;
 	}
 
 	/**
@@ -1120,7 +1121,7 @@ class MouvementStock extends CommonObject
 	}
 
 	/**
-	 *  Return a link (with optionaly the picto)
+	 *  Return a link (with optionally the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -1136,10 +1137,12 @@ class MouvementStock extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', 'stock', 'class="pictofixedwidth"').'<u>'.$langs->trans("Movement").' '.$this->id.'</u>';
+		$label = img_picto('', 'stock', 'class="pictofixedwidth"').'<u>'.$langs->trans("StockMovement").'</u>';
 		$label .= '<div width="100%">';
-		$label .= '<b>'.$langs->trans('Label').':</b> '.$this->label;
-		$label .= '<br><b>'.$langs->trans('Qty').':</b> '.($this->qty > 0 ? '+' : '').$this->qty;
+		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->id;
+		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
+		$qtylabel = (($this->qty > 0) ? '<span class="stockmovemententry">+' : '<span class="stockmovementexit">') . $this->qty . '</span>';
+		$label .= '<br><b>'.$langs->trans('Qty').':</b> ' . $qtylabel;
 		if ($this->batch) {
 			$label .= '<br><b>'.$langs->trans('Batch').':</b> '.$this->batch;
 		}
@@ -1231,7 +1234,7 @@ class MouvementStock extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('MOUVEMENT_ADDON_PDF')) {
-				$modele = $conf->global->MOUVEMENT_ADDON_PDF;
+				$modele = getDolGlobalString('MOUVEMENT_ADDON_PDF');
 			}
 		}
 
@@ -1243,22 +1246,22 @@ class MouvementStock extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param User 	$user       User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
 	/**
-	 * Retrieve number of equipments for a product lot/serial
+	 * Retrieve number of equipment for a product lot/serial
 	 *
 	 * @param 	int 		$fk_product 	Product id
 	 * @param 	string 		$batch  		batch number
-	 * @return 	int            				Return integer <0 if KO, number of equipments found if OK
+	 * @return 	int            				Return integer <0 if KO, number of equipment found if OK
 	 */
 	private function getBatchCount($fk_product, $batch)
 	{
@@ -1287,13 +1290,13 @@ class MouvementStock extends CommonObject
 	}
 
 	/**
-	 * reverse mouvement for object by updating infos
+	 * reverse movement for object by updating infos
 	 * @return int    1 if OK,-1 if KO
 	 */
 	public function reverseMouvement()
 	{
 		$formattedDate = "REVERTMV" .dol_print_date($this->datem, '%Y%m%d%His');
-		if ($this->label == 'Annulation mouvement ID'.$this->id) {
+		if ($this->label == 'Annulation movement ID'.$this->id) {
 			return -1;
 		}
 		if ($this->inventorycode == $formattedDate) {
@@ -1301,7 +1304,7 @@ class MouvementStock extends CommonObject
 		}
 
 		$sql = "UPDATE ".$this->db->prefix()."stock_mouvement SET";
-		$sql .= " label = 'Annulation mouvement ID ".((int) $this->id)."',";
+		$sql .= " label = 'Annulation movement ID ".((int) $this->id)."',";
 		$sql .= "inventorycode = '".($formattedDate)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 

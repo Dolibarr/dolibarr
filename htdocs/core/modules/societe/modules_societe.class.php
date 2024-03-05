@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,21 +61,11 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 {
 	/**
-	 * @var int Automatic numbering
+	 * Constructor
+	 *
+	 *  @param DoliDB       $db     Database object
 	 */
-	public $code_auto;
-
-	/**
-	 * @var string Editable code
-	 */
-	public $code_modifiable;
-
-	public $code_modifiable_invalide; // Modified code if it is invalid
-
-	/**
-	 * @var int Code facultatif
-	 */
-	public $code_null;
+	abstract public function __construct($db);
 
 
 	/**
@@ -89,6 +80,7 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 		global $langs;
 		return $langs->trans("Function_getNextValue_InModuleNotWorking");
 	}
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -118,6 +110,7 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 		}
 		return $list;
 	}
+
 
 	/**
 	 *  Return description of module parameters

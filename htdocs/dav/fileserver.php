@@ -49,7 +49,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/dav/dav.class.php';
 require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
+
 require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
+//require_once DOL_DOCUMENT_ROOT.'/includes/autoload.php';
 
 
 $user = new User($db);
@@ -74,13 +76,12 @@ if (getDolGlobalString('DAV_RESTRICT_ON_IP')) {
 		dol_syslog('Remote ip is '.$ipremote.', not into list ' . getDolGlobalString('DAV_RESTRICT_ON_IP'));
 		print 'DAV not allowed from the IP '.$ipremote;
 		header('HTTP/1.1 503 DAV not allowed from your IP '.$ipremote);
-		//print $conf->global->DAV_RESTRICT_ON_IP;
 		exit(0);
 	}
 }
 
 
-$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
+$entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : (!empty($conf->entity) ? $conf->entity : 1));
 
 // settings
 $publicDir = $conf->dav->multidir_output[$entity].'/public';
@@ -125,7 +126,7 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $p
 	}
 
 	$authmode = explode(',', $dolibarr_main_authentication);
-	$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
+	$entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : (!empty($conf->entity) ? $conf->entity : 1));
 
 	if (checkLoginPassEntity($username, $password, $entity, $authmode, 'dav') != $username) {
 		return false;
@@ -148,7 +149,7 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $p
 	// Check date validity
 	if ($user->isNotIntoValidityDateRange()) {
 		// User validity dates are no more valid
-		dol_syslog("The user login has a validity between [".$user->datestartvalidity." and ".$user->dateendvalidity."], curren date is ".dol_now());
+		dol_syslog("The user login has a validity between [".$user->datestartvalidity." and ".$user->dateendvalidity."], current date is ".dol_now());
 		return false;
 	}
 

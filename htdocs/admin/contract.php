@@ -135,8 +135,8 @@ if ($action == 'updateMask') {
 } elseif ($action == 'unsetdoc') {
 	dolibarr_del_const($db, "CONTRACT_ADDON_PDF", $conf->entity);
 } elseif ($action == 'setmod') {
-	// TODO Verifier si module numerotation choisi peut etre active
-	// par appel methode canBeActivated
+	// TODO Verify si the chosen numbering module can be activated by
+	// the method call canBeActivated
 
 	dolibarr_set_const($db, "CONTRACT_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'set_other') {
@@ -243,7 +243,7 @@ foreach ($dirmodels as $reldir) {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
-
+					/** @var ModelNumRefContracts $module */
 					$module = new $file($db);
 
 					// Show modules according to features level
@@ -255,7 +255,7 @@ foreach ($dirmodels as $reldir) {
 					}
 
 					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -376,6 +376,7 @@ foreach ($dirmodels as $reldir) {
 							$classname = substr($file, 0, dol_strlen($file) - 12);
 
 							require_once $dir.'/'.$file;
+							/** @var ModelePDFContract $module */
 							$module = new $classname($db);
 
 							$modulequalified = 1;
@@ -410,7 +411,7 @@ foreach ($dirmodels as $reldir) {
 									print "</td>";
 								}
 
-								// Defaut
+								// Default
 								print '<td class="center">';
 								if (getDolGlobalString('CONTRACT_ADDON_PDF') == $name) {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&type=order_supplier" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -512,7 +513,7 @@ print '</td></tr>'."\n";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("HideClosedServiceByDefault").'</td>';
 print '<td class="right">';
-print $form->selectyesno("activate_hideClosedServiceByDefault", (getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT') ? $conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT : 0), 1);
+print $form->selectyesno("activate_hideClosedServiceByDefault", getDolGlobalInt('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT', 0), 1);
 print '</td>';
 print '</tr>';
 
@@ -522,7 +523,7 @@ print '<td>'.$langs->trans("AllowOnlineSign").'</td>';
 print '<td class="right">';
 if (getDolGlobalString('CONTRACT_ALLOW_ONLINESIGN')) {
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowonlinesign&token='.newToken().'&value=0">';
-	print img_picto($langs->trans("Activited"), 'switch_on');
+	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a>';
 } else {
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowonlinesign&token='.newToken().'&value=1">';

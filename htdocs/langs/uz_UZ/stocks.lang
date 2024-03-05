@@ -282,7 +282,7 @@ ModuleStockTransferName=Kengaytirilgan aktsiyalarni uzatish
 ModuleStockTransferDesc=O'tkazma varaqlarini yaratish bilan birja transferini ilg'or boshqarish
 StockTransferNew=Yangi aktsiyalarni o'tkazish
 StockTransferList=Birja o'tkazmalari ro'yxati
-ConfirmValidateStockTransfer=Haqiqatan ham, bu aktsiyalarning transferini <b>%s<span class='notranslate'></b> bilan tasdiqlamoqchimisiz span>?
+ConfirmValidateStockTransfer=Are you sure you want to validate this stocks transfer with the reference <b>%s</b> ?
 ConfirmDestock=%s transferi bilan aksiyalar kamayishi
 ConfirmDestockCancel=%s transferi bilan aksiyalar kamayishini bekor qilish
 DestockAllProduct=Aksiyalarning kamayishi

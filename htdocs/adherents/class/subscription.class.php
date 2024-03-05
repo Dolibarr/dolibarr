@@ -43,7 +43,9 @@ class Subscription extends CommonObject
 	public $table_element = 'subscription';
 
 	/**
-	 * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
+	 * Does this object supports the multicompany module ?
+	 *
+	 * @var int|string 		0 if no test on entity, 1 if test with field entity, 2 if test with link by fk_soc, 'field@table' if test with link by field@table
 	 */
 	public $ismultientitymanaged = 'fk_adherent@adherent';
 
@@ -134,10 +136,10 @@ class Subscription extends CommonObject
 	 *	Function who permitted creation of the subscription
 	 *
 	 *	@param	User	$user			User that create
-	 *	@param  bool 	$notrigger 		false=launch triggers after, true=disable triggers
+	 *	@param  int 	$notrigger 		0=launch triggers after, 1=disable triggers
 	 *	@return	int						Return integer <0 if KO, Id subscription created if OK
 	 */
-	public function create($user, $notrigger = false)
+	public function create($user, $notrigger = 0)
 	{
 		global $langs;
 
@@ -277,7 +279,7 @@ class Subscription extends CommonObject
 		$sql .= " fk_type = ".((int) $this->fk_type).",";
 		$sql .= " fk_adherent = ".((int) $this->fk_adherent).",";
 		$sql .= " note = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null').",";
-		$sql .= " subscription = ".price2num($this->amount).",";
+		$sql .= " subscription = ".(float) price2num($this->amount).",";
 		$sql .= " dateadh = '".$this->db->idate($this->dateh)."',";
 		$sql .= " datef = '".$this->db->idate($this->datef)."',";
 		$sql .= " datec = '".$this->db->idate($this->datec)."',";
@@ -320,10 +322,10 @@ class Subscription extends CommonObject
 	 *	Delete a subscription
 	 *
 	 *	@param	User	$user		User that delete
-	 *	@param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 *	@param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
 	 *	@return	int					Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function delete($user, $notrigger = false)
+	public function delete($user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -475,7 +477,6 @@ class Subscription extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
 
 		//$langs->load("members");
 

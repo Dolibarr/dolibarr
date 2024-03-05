@@ -3,6 +3,7 @@
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +70,9 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public $date;
 
+	/**
+	 * @var int Deadline for payment
+	 */
 	public $date_lim_reglement;
 
 	public $cond_reglement_id; // Id in llx_c_paiement
@@ -144,8 +148,8 @@ abstract class CommonInvoice extends CommonObject
 
 
 	/**
-	 * ! Populate by Payment module like stripe
-	 * @var string message return by Online Payment module
+	 * ! Populated by payment modules like Stripe
+	 * @var string[] 	Messages returned by an online payment module
 	 */
 	public $postactionmessages;
 
@@ -196,7 +200,7 @@ abstract class CommonInvoice extends CommonObject
 	 * If paid partially, $this->close_code can be:
 	 * - CLOSECODE_DISCOUNTVAT
 	 * - CLOSECODE_BADDEBT
-	 * If paid completelly, this->close_code will be null
+	 * If paid completely, this->close_code will be null
 	 */
 	const STATUS_CLOSED = 2;
 
@@ -765,7 +769,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  Return label of object status
 	 *
 	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param      integer	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @param      integer	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 *  @return     string			        Label of status
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
@@ -780,7 +784,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param    	int  	$paye          	Status field paye
 	 *	@param      int		$status        	Id status
 	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
-	 *	@param		integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, -1 otherwise)
+	 *	@param		integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, -1 otherwise)
 	 *	@param		int		$type			Type invoice. If -1, we use $this->type
 	 *	@return     string        			Label of status
 	 */
@@ -861,8 +865,8 @@ abstract class CommonInvoice extends CommonObject
 	 *  Returns an invoice payment deadline based on the invoice settlement
 	 *  conditions and billing date.
 	 *
-	 *	@param      integer	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
-	 *  @return     integer    			       	Date limit of payment if OK, <0 if KO
+	 *	@param      int			$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
+	 *  @return     int|string    			       	Date limit of payment if OK, <0 or string if KO
 	 */
 	public function calculate_date_lim_reglement($cond_reglement = 0)
 	{
@@ -905,7 +909,7 @@ abstract class CommonInvoice extends CommonObject
 		}
 		$this->db->free($resqltemp);
 
-		/* Definition de la date limite */
+		/* Definition de la date limit */
 
 		// 0 : adding the number of days
 		if ($cdr_type == 0) {
@@ -1230,7 +1234,7 @@ abstract class CommonInvoice extends CommonObject
 								$result = $this->db->query($sql);
 								if ($result < 0) {
 									$error++;
-									$this->errors[] = "Error on updateing fk_prelevement_bons to ".$bon->id;
+									$this->errors[] = "Error on updating fk_prelevement_bons to ".$bon->id;
 								}
 							}
 							*/
@@ -1333,7 +1337,7 @@ abstract class CommonInvoice extends CommonObject
 										$stripecard = null;
 										if ($companypaymentmode->type == 'ban') {
 											// Check into societe_rib if a payment mode for Stripe and ban payment exists
-											// To make a Stripe SEPA payment request, we must have the payment mode source already saved into societe_rib and retreived with ->sepaStripe
+											// To make a Stripe SEPA payment request, we must have the payment mode source already saved into societe_rib and retrieved with ->sepaStripe
 											// The payment mode source is created when we create the bank account on Stripe with paymentmodes.php?action=create
 											$stripecard = $stripe->sepaStripe($customer, $companypaymentmode, $stripeacc, $servicestatus, 0);
 										} else {
@@ -1436,7 +1440,7 @@ abstract class CommonInvoice extends CommonObject
 
 												$postactionmessages[] = 'Success to request '.$type.' (' . $charge->id . ' with ' . $stripearrayofkeys['publishable_key'] . ')';
 
-												// Save a stripe payment was done in realy life so later we will be able to force a commit on recorded payments
+												// Save a stripe payment was done in real life so later we will be able to force a commit on recorded payments
 												// even if in batch mode (method doTakePaymentStripe), we will always make all action in one transaction with a forced commit.
 												$this->stripechargedone++;
 
@@ -1515,7 +1519,7 @@ abstract class CommonInvoice extends CommonObject
 									$actioncomm->type_code = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 									$actioncomm->code = 'AC_' . $actioncode;
 									$actioncomm->label = $description;
-									$actioncomm->note_private = join(",\n", $postactionmessages);
+									$actioncomm->note_private = implode(",\n", $postactionmessages);
 									$actioncomm->fk_project = $this->fk_project;
 									$actioncomm->datep = $now;
 									$actioncomm->datef = $now;
@@ -1758,7 +1762,7 @@ abstract class CommonInvoice extends CommonObject
 			$s .= "\n";
 		}
 		if ($bankaccount->id > 0 && getDolGlobalString('PDF_SWISS_QRCODE_USE_OWNER_OF_ACCOUNT_AS_CREDITOR')) {
-			// If a bank account is prodived and we ask to use it as creditor, we use the bank address
+			// If a bank account is provided and we ask to use it as creditor, we use the bank address
 			// TODO In a future, we may always use this address, and if name/address/zip/town/country differs from $mysoc, we can use the address of $mysoc into the final seller field ?
 			$s .= "S\n";
 			$s .= dol_trunc($bankaccount->proprio, 70, 'right', 'UTF-8', 1)."\n";
@@ -1919,13 +1923,15 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 
 	/**
 	 * Local tax 1 type
-	 * @var string
+	 * @var int<0,6>		From 1 to 6, or 0 if not found
+	 * @see getLocalTaxesFromRate()
 	 */
 	public $localtax1_type;
 
 	/**
 	 * Local tax 2 type
-	 * @var string
+	 * @var int<0,6>		From 1 to 6, or 0 if not found
+	 * @see getLocalTaxesFromRate()
 	 */
 	public $localtax2_type;
 
@@ -1992,7 +1998,13 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 
 	public $special_code = 0;
 
+	/**
+	 * @deprecated	Use user_creation_id
+	 */
 	public $fk_user_author;
+	/**
+	 * @deprecated	Use user_modification_id
+	 */
 	public $fk_user_modif;
 
 	public $fk_accounting_account;

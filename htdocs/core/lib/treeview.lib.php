@@ -106,7 +106,7 @@ function tree_showpad(&$fulltree, $key, $silent = 0)
  *  @param  array   $pere   					Array with parent ids ('rowid'=>,'mainmenu'=>,'leftmenu'=>,'fk_mainmenu=>,'fk_leftmenu=>)
  *  @param  int	    $rang   					Level of element
  *  @param	string	$iddivjstree				Id to use for parent ul element
- *  @param  int     $donoresetalreadyloaded     Do not reset global array $donoresetalreadyloaded used to avoid to go down on an aleady processed record
+ *  @param  int     $donoresetalreadyloaded     Do not reset global array $donoresetalreadyloaded used to avoid to go down on an already processed record
  *  @param  int     $showfk         			1=show fk_links to parent into label  (used by menu editor only)
  *  @param	string	$moreparam					Add more param on url of elements
  *  @return	void

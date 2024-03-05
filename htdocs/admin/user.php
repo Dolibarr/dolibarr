@@ -280,7 +280,7 @@ foreach ($dirmodels as $reldir) {
 									print "</td>";
 								}
 
-								// Defaut
+								// Default
 								print '<td class="center">';
 								if (getDolGlobalString('USER_ADDON_PDF_ODT') == $name) {
 									//print img_picto($langs->trans("Default"), 'on');

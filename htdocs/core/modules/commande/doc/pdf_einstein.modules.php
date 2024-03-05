@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 class pdf_einstein extends ModelePDFCommandes
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -63,7 +63,7 @@ class pdf_einstein extends ModelePDFCommandes
 	public $description;
 
 	/**
-	 * @var string 	Save the name of generated file as the main doc when generating a doc with this template
+	 * @var int 	Save the name of generated file as the main doc when generating a doc with this template, 1 for yes, 0 if not
 	 */
 	public $update_main_doc_field;
 
@@ -217,7 +217,7 @@ class pdf_einstein extends ModelePDFCommandes
 				// Possibility to use suffix for proforma
 				$suffix = '';
 				if (getDolGlobalString('PROFORMA_PDF_WITH_SUFFIX')) {
-					$suffix = (GETPOST('model', 2)=='proforma') ? $conf->global->PROFORMA_PDF_WITH_SUFFIX : '';
+					$suffix = (GETPOST('model') == 'proforma') ? $conf->global->PROFORMA_PDF_WITH_SUFFIX : '';
 					$suffix = dol_sanitizeFileName($suffix);
 				}
 
@@ -287,6 +287,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// Set $this->atleastonediscount if you have at least one discount
@@ -469,7 +470,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 					// Unit
 					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
+						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails);
 						$pdf->SetXY($this->posxunit, $curY);
 						$pdf->MultiCell($this->posxdiscount - $this->posxunit - 0.8, 4, $unit, 0, 'L');
 					}
@@ -756,7 +757,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$posy=$pdf->GetY()+1;
 		}*/
 
-		// Show planed date of delivery
+		// Show planned date of delivery
 		if (!empty($object->delivery_date)) {
 			$outputlangs->load("sendings");
 			$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
@@ -808,7 +809,7 @@ class pdf_einstein extends ModelePDFCommandes
 			if (getDolGlobalString('FACTURE_CHQ_NUMBER')) {
 				if (getDolGlobalInt('FACTURE_CHQ_NUMBER') > 0) {
 					$account = new Account($this->db);
-					$account->fetch($conf->global->FACTURE_CHQ_NUMBER);
+					$account->fetch(getDolGlobalString('FACTURE_CHQ_NUMBER'));
 
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
@@ -869,7 +870,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *	@param  Commande	$object         Object invoice
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
-	 *	@param	Translate	$outputlangs	Objet langs
+	 *	@param	Translate	$outputlangs	Object langs
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
 	 *	@return int							Position pour suite
 	 */
@@ -1243,7 +1244,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
 	 *  @param	string		$titlekey		Translation key to show as title of document
-	 *  @return	int                         Return topshift value
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null, $titlekey = "PdfOrderTitle")
 	{
@@ -1489,10 +1490,12 @@ class pdf_einstein extends ModelePDFCommandes
 			// Show recipient information
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetXY($posx + 2, $posy);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, $ltrdirection);
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
 		return $top_shift;
 	}
 

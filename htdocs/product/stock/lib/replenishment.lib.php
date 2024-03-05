@@ -79,7 +79,7 @@ function dolDispatchToDo($order_id)
 /**
  * dispatchedOrders
  *
- * @return string		Array of id of orders wit all dispathing already done or not required
+ * @return string		Array of id of orders with all dispatching already done or not required
  */
 function dispatchedOrders()
 {

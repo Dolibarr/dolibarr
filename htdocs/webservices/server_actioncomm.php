@@ -429,12 +429,12 @@ function getListActionCommType($authentication)
  * Create ActionComm
  *
  * @param	array		$authentication		Array of authentication information
- * @param	ActionComm	$actioncomm		    $actioncomm
+ * @param	array		$actioncomm		    $actioncomm
  * @return	array							Array result
  */
 function createActionComm($authentication, $actioncomm)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -460,6 +460,7 @@ function createActionComm($authentication, $actioncomm)
 		$newobject->socid = $actioncomm['socid'];
 		$newobject->fk_project = $actioncomm['projectid'];
 		$newobject->note = $actioncomm['note'];
+		$newobject->note_private = $actioncomm['note'];
 		$newobject->contact_id = $actioncomm['contactid'];
 		$newobject->userownerid = $actioncomm['userownerid'];
 		$newobject->label = $actioncomm['label'];
@@ -512,12 +513,12 @@ function createActionComm($authentication, $actioncomm)
  * Create ActionComm
  *
  * @param	array		$authentication		Array of authentication information
- * @param	ActionComm	$actioncomm		    $actioncomm
+ * @param	array		$actioncomm		    $actioncomm
  * @return	array							Array result
  */
 function updateActionComm($authentication, $actioncomm)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 

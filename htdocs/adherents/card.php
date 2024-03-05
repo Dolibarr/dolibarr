@@ -56,11 +56,11 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$rowid = GETPOST('rowid', 'int');
-$id = GETPOST('id') ? GETPOST('id', 'int') : $rowid;
-$typeid = GETPOST('typeid', 'int');
-$userid = GETPOST('userid', 'int');
-$socid = GETPOST('socid', 'int');
+$rowid = GETPOSTINT('rowid');
+$id = GETPOST('id') ? GETPOSTINT('id') : $rowid;
+$typeid = GETPOSTINT('typeid');
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
 $ref = GETPOST('ref', 'alpha');
 
 if (isModEnabled('mailmanspip')) {
@@ -256,8 +256,8 @@ if (empty($reshook)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$birthdate = '';
-		if (GETPOST("birthday", 'int') && GETPOST("birthmonth", 'int') && GETPOST("birthyear", 'int')) {
-			$birthdate = dol_mktime(12, 0, 0, GETPOST("birthmonth", 'int'), GETPOST("birthday", 'int'), GETPOST("birthyear", 'int'));
+		if (GETPOSTINT("birthday") && GETPOSTINT("birthmonth") && GETPOSTINT("birthyear")) {
+			$birthdate = dol_mktime(12, 0, 0, GETPOSTINT("birthmonth"), GETPOSTINT("birthday"), GETPOSTINT("birthyear"));
 		}
 		$lastname = GETPOST("lastname", 'alphanohtml');
 		$firstname = GETPOST("firstname", 'alphanohtml');
@@ -307,8 +307,8 @@ if (empty($reshook)) {
 			$object->address     = trim(GETPOST("address", 'alphanohtml'));
 			$object->zip         = trim(GETPOST("zipcode", 'alphanohtml'));
 			$object->town        = trim(GETPOST("town", 'alphanohtml'));
-			$object->state_id    = GETPOST("state_id", 'int');
-			$object->country_id  = GETPOST("country_id", 'int');
+			$object->state_id    = GETPOSTINT("state_id");
+			$object->country_id  = GETPOSTINT("country_id");
 
 			$object->phone       = trim(GETPOST("phone", 'alpha'));
 			$object->phone_perso = trim(GETPOST("phone_perso", 'alpha'));
@@ -323,7 +323,7 @@ if (empty($reshook)) {
 			}
 			$object->birth = $birthdate;
 			$object->default_lang = GETPOST('default_lang', 'alpha');
-			$object->typeid = GETPOST("typeid", 'int');
+			$object->typeid = GETPOSTINT("typeid");
 			//$object->note = trim(GETPOST("comment", "restricthtml"));
 			$object->morphy = GETPOST("morphy", 'alpha');
 
@@ -334,9 +334,9 @@ if (empty($reshook)) {
 			}
 
 			// Get status and public property
-			$object->statut = GETPOST("statut", 'alpha');
-			$object->status = GETPOST("statut", 'alpha');
-			$object->public = GETPOST("public", 'alpha');
+			$object->statut = GETPOSTINT("statut");
+			$object->status = GETPOSTINT("statut");
+			$object->public = GETPOSTINT("public");
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -441,14 +441,14 @@ if (empty($reshook)) {
 		}
 		$birthdate = '';
 		if (GETPOSTISSET("birthday") && GETPOST("birthday") && GETPOSTISSET("birthmonth") && GETPOST("birthmonth") && GETPOSTISSET("birthyear") && GETPOST("birthyear")) {
-			$birthdate = dol_mktime(12, 0, 0, GETPOST("birthmonth", 'int'), GETPOST("birthday", 'int'), GETPOST("birthyear", 'int'));
+			$birthdate = dol_mktime(12, 0, 0, GETPOSTINT("birthmonth"), GETPOSTINT("birthday"), GETPOSTINT("birthyear"));
 		}
 		$datesubscription = '';
 		if (GETPOSTISSET("reday") && GETPOSTISSET("remonth") && GETPOSTISSET("reyear")) {
-			$datesubscription = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", "int"), GETPOST("reyear", "int"));
+			$datesubscription = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 		}
 
-		$typeid = GETPOST("typeid", 'int');
+		$typeid = GETPOSTINT("typeid");
 		$civility_id = GETPOST("civility_id", 'alphanohtml');
 		$lastname = GETPOST("lastname", 'alphanohtml');
 		$firstname = GETPOST("firstname", 'alphanohtml');
@@ -457,8 +457,8 @@ if (empty($reshook)) {
 		$address = GETPOST("address", 'alphanohtml');
 		$zip = GETPOST("zipcode", 'alphanohtml');
 		$town = GETPOST("town", 'alphanohtml');
-		$state_id = GETPOST("state_id", 'int');
-		$country_id = GETPOST("country_id", 'int');
+		$state_id = GETPOSTINT("state_id");
+		$country_id = GETPOSTINT("country_id");
 
 		$phone = GETPOST("phone", 'alpha');
 		$phone_perso = GETPOST("phone_perso", 'alpha');
@@ -471,8 +471,8 @@ if (empty($reshook)) {
 		$morphy = GETPOST("morphy", 'alphanohtml');
 		$public = GETPOST("public", 'alphanohtml');
 
-		$userid = GETPOST("userid", 'int');
-		$socid = GETPOST("socid", 'int');
+		$userid = GETPOSTINT("userid");
+		$socid = GETPOSTINT("socid");
 		$default_lang = GETPOST('default_lang', 'alpha');
 
 		$object->civility_id = $civility_id;
@@ -563,7 +563,7 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		}
-		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEMail($email)) {
+		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEmail($email)) {
 			$error++;
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadEMail", $email), null, 'errors');
@@ -913,7 +913,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object = new Adherent($db);
 		$result = $object->fetch($id);
 		if ($result <= 0) {
-			dol_print_error('', $object->error);
+			dol_print_error(null, $object->error);
 		}
 	}
 	$objcanvas->assign_values($action, $object->id, $object->ref); // Set value for templates
@@ -926,10 +926,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// Create mode
 	if ($action == 'create') {
 		$object->canvas = $canvas;
-		$object->state_id = GETPOST('state_id', 'int');
+		$object->state_id = GETPOSTINT('state_id');
 
 		// We set country_id, country_code and country for the selected country
-		$object->country_id = GETPOST('country_id', 'int') ? GETPOST('country_id', 'int') : $mysoc->country_id;
+		$object->country_id = GETPOSTINT('country_id') ? GETPOSTINT('country_id') : $mysoc->country_id;
 		if ($object->country_id) {
 			$tmparray = getCountry($object->country_id, 'all');
 			$object->country_code = $tmparray['code'];
@@ -1012,7 +1012,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$listetype = $adht->liste_array(1);
 		print img_picto('', $adht->picto, 'class="pictofixedwidth"');
 		if (count($listetype)) {
-			print $form->selectarray("typeid", $listetype, (GETPOST('typeid', 'int') ? GETPOST('typeid', 'int') : $typeid), (count($listetype) > 1 ? 1 : 0), 0, 0, '', 0, 0, 0, '', '', 1);
+			print $form->selectarray("typeid", $listetype, (GETPOSTINT('typeid') ? GETPOSTINT('typeid') : $typeid), (count($listetype) > 1 ? 1 : 0), 0, 0, '', 0, 0, 0, '', '', 1);
 		} else {
 			print '<span class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</span>';
 		}
@@ -1030,7 +1030,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
-		print $formcompany->select_civility(GETPOST('civility_id', 'int') ? GETPOST('civility_id', 'int') : $object->civility_id, 'civility_id', 'maxwidth150', 1).'</td>';
+		print $formcompany->select_civility(GETPOSTINT('civility_id') ? GETPOSTINT('civility_id') : $object->civility_id, 'civility_id', 'maxwidth150', 1).'</td>';
 		print '</tr>';
 
 		// Lastname
@@ -1087,7 +1087,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>'.$langs->trans('State').'</td><td>';
 			if ($soc->country_id) {
 				print img_picto('', 'state', 'class="pictofixedwidth"');
-				print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOST('state_id', 'int') : $soc->state_id, $soc->country_code);
+				print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOSTINT('state_id') : $soc->state_id, $soc->country_code);
 			} else {
 				print $countrynotdefined;
 			}
@@ -1118,7 +1118,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Birth Date
 		print "<tr><td>".$langs->trans("DateOfBirth")."</td><td>\n";
-		print $form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
+		print img_picto('', 'object_calendar', 'class="pictofixedwidth"').$form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
 		print "</td></tr>\n";
 
 		// Public profil
@@ -1130,7 +1130,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</td></tr>\n";
 
 		// Categories
-		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+		if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 			print '<tr><td>'.$form->editfieldkey("Categories", 'memcats', '', $object, 0).'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, 'parent', null, null, 1);
 			print img_picto('', 'category').$form->multiselectarray('memcats', $cate_arbo, GETPOST('memcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
@@ -1167,9 +1167,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$adht->fetch($object->typeid);
 
 		// We set country_id, and country_code, country of the chosen country
-		$country = GETPOST('country', 'int');
+		$country = GETPOSTINT('country');
 		if (!empty($country) || $object->country_id) {
-			$sql = "SELECT rowid, code, label from ".MAIN_DB_PREFIX."c_country where rowid = ".(!empty($country) ? $country : $object->country_id);
+			$sql = "SELECT rowid, code, label from ".MAIN_DB_PREFIX."c_country";
+			$sql .= " WHERE rowid = ".(int) (!empty($country) ? $country : $object->country_id);
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -1240,7 +1241,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
 		if ($user->hasRight('adherent', 'creer')) {
-			print $form->selectarray("typeid", $adht->liste_array(), (GETPOSTISSET("typeid") ? GETPOST("typeid", 'int') : $object->typeid), 0, 0, 0, '', 0, 0, 0, '', '', 1);
+			print $form->selectarray("typeid", $adht->liste_array(), (GETPOSTISSET("typeid") ? GETPOSTINT("typeid") : $object->typeid), 0, 0, 0, '', 0, 0, 0, '', '', 1);
 		} else {
 			print $adht->getNomUrl(1);
 			print '<input type="hidden" name="typeid" value="'.$object->typeid.'">';
@@ -1364,13 +1365,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Birth Date
 		print "<tr><td>".$langs->trans("DateOfBirth")."</td><td>\n";
-		print $form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
+		print img_picto('', 'object_calendar', 'class="pictofixedwidth"').$form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
 		print "</td></tr>\n";
 
 		// Default language
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3">'."\n";
-			print img_picto('', 'language').$formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1);
+			print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1);
 			print '</td>';
 			print '</tr>';
 		}
@@ -1384,7 +1385,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</td></tr>\n";
 
 		// Categories
-		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+		if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 			print '<tr><td>'.$form->editfieldkey("Categories", 'memcats', '', $object, 0).'</td>';
 			print '<td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, null, null, null, 1);
@@ -1813,7 +1814,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border tableforfield centpercent">';
 
 		// Tags / Categories
-		if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+		if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td>';
 			print '<td colspan="2">';
 			print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
@@ -2068,6 +2069,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Show online payment link
 			$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
+
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			} else {
+				$useonlinepayment = $reshook;
+			}
 
 			if ($useonlinepayment) {
 				print '<br>';

@@ -4,6 +4,7 @@
  * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2022      Faustin Boitel <fboitel@enseirb-matmeca.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,11 +50,6 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	 * @var string
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto;
 
 	public $searchcode; // Search string
 
@@ -185,7 +181,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // to be able to call function barcode_gen_ean_sum($ean)
 
 		if (empty($type)) {
-			$type = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
+			$type = getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY');
 		} //get barcode type configuration for companies if $type not set
 
 		// TODO
@@ -193,7 +189,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		// Get Mask value
 		$mask = '';
 		if (getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK')) {
-			$mask = $conf->global->BARCODE_STANDARD_THIRDPARTY_MASK;
+			$mask = getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK');
 		}
 
 		if (empty($mask)) {
@@ -285,9 +281,9 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	/**
 	 *	Return if a code is used (by other element)
 	 *
-	 *	@param	DoliDB		$db			Handler acces base
+	 *	@param	DoliDB		$db			Handler access base
 	 *	@param	string		$code		Code to check
-	 *	@param	Societe		$thirdparty	Objet third-party
+	 *	@param	Societe		$thirdparty	Object third-party
 	 *	@return	int						0 if available, <0 if KO
 	 */
 	public function verif_dispo($db, $code, $thirdparty)

@@ -5,7 +5,7 @@
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2021-2023	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2023	Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ $langs->loadLangs(array("members", "companies", "categories"));
 // Get parameters
 $action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm 	= GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
 $toselect 	= GETPOST('toselect', 'array');
@@ -71,15 +71,19 @@ $search_phone_perso = GETPOST("search_phone_perso", 'alpha');
 $search_phone_mobile = GETPOST("search_phone_mobile", 'alpha');
 $search_type 		= GETPOST("search_type", 'alpha');
 $search_email 		= GETPOST("search_email", 'alpha');
-$search_categ 		= GETPOST("search_categ", 'int');
+$search_categ 		= GETPOSTINT("search_categ");
 $search_morphy 		= GETPOST("search_morphy", 'alpha');
 $search_import_key  = trim(GETPOST("search_import_key", 'alpha'));
 
-$catid 		= GETPOST("catid", 'int');
-$socid 		= GETPOST('socid', 'int');
+$catid 		= GETPOSTINT("catid");
+$socid 		= GETPOSTINT('socid');
 
 $search_filter 		= GETPOST("search_filter", 'alpha');
 $search_status 		= GETPOST("search_status", 'intcomma');  // status
+$search_datec_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datec_start_month'), GETPOSTINT('search_datec_start_day'), GETPOSTINT('search_datec_start_year'));
+$search_datec_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datec_end_month'), GETPOSTINT('search_datec_end_day'), GETPOSTINT('search_datec_end_year'));
+$search_datem_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datem_start_month'), GETPOSTINT('search_datem_start_day'), GETPOSTINT('search_datem_start_year'));
+$search_datem_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datem_end_month'), GETPOSTINT('search_datem_end_day'), GETPOSTINT('search_datem_end_year'));
 
 $filter = GETPOST("filter", 'alpha');
 if ($filter) {
@@ -98,10 +102,10 @@ if ($search_status < -2) {
 }
 
 // Pagination parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -258,6 +262,10 @@ if (empty($reshook)) {
 		$catid = "";
 		$search_all = "";
 		$toselect = array();
+		$search_datec_start = '';
+		$search_datec_end = '';
+		$search_datem_start = '';
+		$search_datem_end = '';
 		$search_array_options = array();
 	}
 
@@ -327,6 +335,38 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Create external user
+	if ($action == 'createsubscription_confirm' && $confirm == "yes" && $user->hasRight('adherent', 'creer')) {
+		$tmpmember = new Adherent($db);
+		$adht = new AdherentType($db);
+		$error = 0;
+		$nbcreated = 0;
+		$now = dol_now();
+		$amount = price2num(GETPOST('amount', 'alpha'));
+		$db->begin();
+		foreach ($toselect as $id) {
+			$res = $tmpmember->fetch($id);
+			if ($res > 0) {
+				$result = $tmpmember->subscription($now, $amount);
+				if ($result < 0) {
+					$error++;
+				} else {
+					$nbcreated++;
+				}
+			} else {
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			setEventMessages($langs->trans("XSubsriptionCreated", $nbcreated), null, 'mesgs');
+			$db->commit();
+		} else {
+			setEventMessages($langs->trans("XSubsriptionError", $error), null, 'mesgs');
+			$db->rollback();
+		}
+	}
+
 	// Mass actions
 	$objectclass = 'Adherent';
 	$objectlabel = 'Members';
@@ -366,7 +406,7 @@ if ((!empty($search_categ) && $search_categ > 0) || !empty($catid)) {
 $sql .= " d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc,";
 $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
 $sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.birth, d.public, d.photo,";
-$sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut as status, d.datec as date_creation, d.tms as date_update,";
+$sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut as status, d.datec as date_creation, d.tms as date_modification,";
 $sql .= " d.note_private, d.note_public, d.import_key,";
 $sql .= " s.nom,";
 $sql .= " ".$db->ifsql("d.societe IS NULL", "s.nom", "d.societe")." as companyname,";
@@ -388,8 +428,8 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
-// SQL Aliase adherent
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";  // maybe better to use ad (adh) instead od d
+// SQL Alias adherent
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";  // maybe better to use ad (adh) instead of d
 if (!empty($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
 }
@@ -397,7 +437,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = d
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = d.state_id)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on (s.rowid = d.fk_soc)";
 
-// SQL Aliase adherent_type
+// SQL Alias adherent_type
 $sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid";
 
@@ -456,7 +496,7 @@ if ($search_filter == 'outofdate') {
 	$sql .= " AND (datefin < '".$db->idate($now)."')";
 }
 if ($search_status != '') {
-	// Peut valoir un nombre ou liste de nombre separes par virgules
+	// Peut valoir un nombre ou liste de nombre separates par virgules
 	$sql .= " AND d.statut in (".$db->sanitize($db->escape($search_status)).")";
 }
 if ($search_morphy != '' && $search_morphy != '-1') {
@@ -512,6 +552,18 @@ if ($search_country) {
 }
 if ($search_import_key) {
 	$sql .= natural_search("d.import_key", $search_import_key);
+}
+if ($search_datec_start) {
+	$sql .= " AND d.datec >= '".$db->idate($search_datec_start)."'";
+}
+if ($search_datec_end) {
+	$sql .= " AND d.datec <= '".$db->idate($search_datec_end)."'";
+}
+if ($search_datem_start) {
+	$sql .= " AND d.tms >= '".$db->idate($search_datem_start)."'";
+}
+if ($search_datem_end) {
+	$sql .= " AND d.tms <= '".$db->idate($search_datem_end)."'";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -659,6 +711,12 @@ if ($search_import_key != '') {
 if ($search_type > 0) {
 	$param .= "&search_type=".urlencode($search_type);
 }
+if ($search_datec_start) {
+	$param .= '&search_datec_start_day='.dol_print_date($search_datec_start, '%d').'&search_datec_start_month='.dol_print_date($search_datec_start, '%m').'&search_datec_start_year='.dol_print_date($search_datec_start, '%Y');
+}
+if ($search_datem_end) {
+	$param .= '&search_datem_end_day='.dol_print_date($search_datem_end, '%d').'&search_datem_end_month='.dol_print_date($search_datem_end, '%m').'&search_datem_end_year='.dol_print_date($search_datem_end, '%Y');
+}
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -680,7 +738,10 @@ if (isModEnabled('category') && $user->hasRight('adherent', 'creer')) {
 if ($user->hasRight('adherent', 'creer') && $user->hasRight('user', 'user', 'creer')) {
 	$arrayofmassactions['createexternaluser'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("CreateExternalUser");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
+if ($user->hasRight('adherent', 'creer')) {
+	$arrayofmassactions['createsubscription'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("CreateSubscription");
+}
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -714,6 +775,34 @@ $topicmail = "Information";
 $modelmail = "member";
 $objecttmp = new Adherent($db);
 $trackid = 'mem'.$object->id;
+if ($massaction == 'createsubscription') {
+	$tmpmember = new Adherent($db);
+	$adht = new AdherentType($db);
+	$amount = 0;
+	foreach ($toselect as $id) {
+		$now = dol_now();
+		$tmpmember->fetch($id);
+		$res = $adht->fetch($tmpmember->typeid);
+		if ($res > 0) {
+			$amounttmp = $adht->amount;
+			if (!empty($tmpmember->last_subscription_amount) && !GETPOSTISSET('newamount') && is_numeric($amounttmp)) {
+				$amounttmp = max($tmpmember->last_subscription_amount, $amount);
+			}
+			$amount = max(0, $amounttmp, $amount);
+		} else {
+			$error++;
+		}
+	}
+
+	$date = dol_print_date(dol_now(), "%d/%m/%Y");
+	$formquestion = array(
+		array('label' => $langs->trans("DateSubscription"), 'type' => 'other', 'value' => $date),
+		array('label' => $langs->trans("Amount"), 'type' => 'text', 'value' => price($amount, 0, '', 0), 'name' => 'amount'),
+		array('type' => 'separator'),
+		array('label' => $langs->trans("MoreActions"), 'type' => 'other', 'value' => $langs->trans("None").' '.img_warning($langs->trans("WarningNoComplementaryActionDone"))),
+	);
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassSubsriptionCreation"), $langs->trans("ConfirmMassSubsriptionCreationQuestion", count($toselect)), "createsubscription_confirm", $formquestion, '', 0, 200, 500, 1);
+}
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all) {
@@ -723,18 +812,24 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if MYOBJECT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
+
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 $moreforfilter = '';
 // Filter on categories
-if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedlength"').$formother->select_categories(Categorie::TYPE_MEMBER, $search_categ, 'search_categ', 1, $langs->trans("MembersCategoriesShort"));
+	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"').$formother->select_categories(Categorie::TYPE_MEMBER, $search_categ, 'search_categ', 1, $langs->trans("MembersCategoriesShort"));
 	$moreforfilter .= '</div>';
 }
-$parameters = array();
+$parameters = array(
+	'arrayfields' => &$arrayfields,
+);
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
@@ -749,10 +844,6 @@ if (!empty($moreforfilter)) {
 	print $hookmanager->resPrint;
 	print '</div>';
 }
-
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
-$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -914,6 +1005,12 @@ print $hookmanager->resPrint;
 // Date creation
 if (!empty($arrayfields['d.datec']['checked'])) {
 	print '<td class="liste_titre">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datec_start ? $search_datec_start : -1, 'search_datec_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datec_end ? $search_datec_end : -1, 'search_datec_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 
@@ -926,6 +1023,12 @@ if (!empty($arrayfields['d.birth']['checked'])) {
 // Date modification
 if (!empty($arrayfields['d.tms']['checked'])) {
 	print '<td class="liste_titre">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datem_start ? $search_datem_start : -1, 'search_datem_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_datem_end ? $search_datem_end : -1, 'search_datem_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 
@@ -1127,6 +1230,8 @@ while ($i < $imaxinloop) {
 		$companynametoshow = $obj->company;
 	}
 	$memberstatic->company = $companyname;
+
+	$object = $memberstatic;
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
@@ -1384,7 +1489,7 @@ while ($i < $imaxinloop) {
 		// Date modification
 		if (!empty($arrayfields['d.tms']['checked'])) {
 			print '<td class="nowrap center">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

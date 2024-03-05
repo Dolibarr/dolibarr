@@ -730,7 +730,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 										print "</td>";
 									}
 
-									// Defaut
+									// Default
 									print '<td class="center">';
 									if ($conf->global->PROJECT_TASK_ADDON_PDF == "$name") {
 										print img_picto($langs->trans("Default"), 'on');

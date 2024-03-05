@@ -53,10 +53,10 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$urlsource = GETPOST("urlsource", 'alpha');
 	$search_doc_ref = GETPOST('search_doc_ref', 'alpha');
 
-	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 	$sortfield = GETPOST("sortfield", 'aZ09comma');
 	$sortorder = GETPOST("sortorder", 'aZ09comma');
-	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+	$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 	if (empty($page) || $page == -1) {
 		$page = 0;
 	}     // If $page is not defined, or '' or -1
@@ -293,7 +293,7 @@ if ($type == 'directory') {
 		$filter = preg_quote($search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
 
-		$perm = $user->rights->ecm->upload;
+		$perm = $user->hasRight('ecm', 'upload');
 
 		$formfile->list_of_autoecmfiles($upload_dir, $filearray, $module, $param, 1, '', $perm, 1, $textifempty, $maxlengthname, $url, 1);
 	} else {
@@ -321,7 +321,7 @@ if ($type == 'directory') {
 					$param .= '&website='.urlencode(GETPOST('website', 'alpha'));
 				}
 				if (!preg_match('/pageid=/', $param)) {
-					$param .= '&pageid='.urlencode(GETPOST('pageid', 'int'));
+					$param .= '&pageid='.urlencode(GETPOSTINT('pageid'));
 				}
 				//if (!preg_match('/backtopage=/',$param)) $param.='&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid);
 			}
