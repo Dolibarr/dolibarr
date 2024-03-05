@@ -279,7 +279,7 @@ class Subscription extends CommonObject
 		$sql .= " fk_type = ".((int) $this->fk_type).",";
 		$sql .= " fk_adherent = ".((int) $this->fk_adherent).",";
 		$sql .= " note = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null').",";
-		$sql .= " subscription = ".price2num($this->amount).",";
+		$sql .= " subscription = ".(float) price2num($this->amount).",";
 		$sql .= " dateadh = '".$this->db->idate($this->dateh)."',";
 		$sql .= " datef = '".$this->db->idate($this->datef)."',";
 		$sql .= " datec = '".$this->db->idate($this->datec)."',";

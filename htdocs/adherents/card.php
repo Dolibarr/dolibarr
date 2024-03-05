@@ -1169,7 +1169,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// We set country_id, and country_code, country of the chosen country
 		$country = GETPOSTINT('country');
 		if (!empty($country) || $object->country_id) {
-			$sql = "SELECT rowid, code, label from ".MAIN_DB_PREFIX."c_country where rowid = ".(!empty($country) ? $country : $object->country_id);
+			$sql = "SELECT rowid, code, label from ".MAIN_DB_PREFIX."c_country";
+			$sql .= " WHERE rowid = ".(int) (!empty($country) ? $country : $object->country_id);
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);

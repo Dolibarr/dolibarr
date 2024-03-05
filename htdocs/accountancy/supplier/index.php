@@ -340,7 +340,7 @@ for ($i = 1; $i <= 12; $i++) {
 		$param .= '&search_date_endday='.$tmp['mday'].'&search_date_endmonth='.$tmp['mon'].'&search_date_endyear='.$tmp['year'];
 		print '<a href="'.DOL_URL_ROOT.'/accountancy/supplier/list.php?'.$param.'">';
 	}
-	print $langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT));
+	print $langs->trans('MonthShort'.str_pad((int) $j, 2, '0', STR_PAD_LEFT));
 	if (!empty($tmp['mday'])) {
 		print '</a>';
 	}
@@ -355,7 +355,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql("MONTH(ff.datef)=".$j, "ffd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(ff.datef) = ".((int) $j), "ffd.total_ht", "0").") AS month".str_pad((int) $j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(ffd.total_ht) as total";
 $sql .= " FROM ".$db->prefix()."facture_fourn_det as ffd";
@@ -487,7 +487,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql("MONTH(ff.datef)=".$j, "ffd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(ff.datef) = ".((int) $j), "ffd.total_ht", "0").") AS month".str_pad((int) $j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(ffd.total_ht) as total";
 $sql .= " FROM ".$db->prefix()."facture_fourn_det as ffd";
@@ -571,7 +571,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 		if ($j > 12) {
 			$j -= 12;
 		}
-		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
+		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad((int) $j, 2, '0', STR_PAD_LEFT)).'</td>';
 	}
 	print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
@@ -581,7 +581,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 		if ($j > 12) {
 			$j -= 12;
 		}
-		$sql .= "  SUM(".$db->ifsql("MONTH(ff.datef)=".$j, "ffd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
+		$sql .= "  SUM(".$db->ifsql("MONTH(ff.datef) = ".((int) $j), "ffd.total_ht", "0").") AS month".str_pad((int) $j, 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql .= "  SUM(ffd.total_ht) as total";
 	$sql .= " FROM ".$db->prefix()."facture_fourn_det as ffd";

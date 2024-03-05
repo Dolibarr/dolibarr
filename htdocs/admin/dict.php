@@ -1014,9 +1014,9 @@ if (empty($reshook)) {
 				$i++;
 			}
 			if (in_array($rowidcol, array('code', 'code_iso'))) {
-				$sql .= " WHERE ".$rowidcol." = '".$db->escape($rowid)."'";
+				$sql .= " WHERE ".$db->sanitize($rowidcol)." = '".$db->escape($rowid)."'";
 			} else {
-				$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
+				$sql .= " WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
 			}
 			if (in_array('entity', $listfieldmodify)) {
 				$sql .= " AND entity = ".((int) getEntity($tablename, 0));
@@ -1284,9 +1284,9 @@ if ($id > 0) {
 		$sql .= natural_search($tablecode, $search_code);
 	}
 	if ($search_active == 'yes') {
-		$sql .= " AND ".$tableprefix."active = 1";
+		$sql .= " AND ".$db->sanitize($tableprefix)."active = 1";
 	} elseif ($search_active == 'no') {
-		$sql .= " AND ".$tableprefix."active = 0";
+		$sql .= " AND ".$db->sanitize($tableprefix)."active = 0";
 	}
 	//var_dump($sql);
 
