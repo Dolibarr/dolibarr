@@ -2987,6 +2987,9 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$format = 'daytextshort';
 	}
 
+	// Make sure the format strings are loaded/updated (#20209)
+	$outputlangs->load("main");
+
 	// Do we have to reduce the length of date (year on 2 chars) to save space.
 	// Note: dayinputnoreduce is same than day but no reduction of year length will be done
 	$reduceformat = (!empty($conf->dol_optimize_smallscreen) && in_array($format, array('day', 'dayhour', 'dayhoursec'))) ? 1 : 0;	// Test on original $format param.
