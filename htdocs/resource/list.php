@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2014  Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,18 +32,21 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 $langs->loadLangs(array("resource", "companies", "other"));
 
 // Get parameters
-$id             = GETPOSTINT('id');
-$action         = GETPOST('action', 'alpha');
-$massaction     = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
+$id				= GETPOSTINT('id');
+$action			= GETPOST('action', 'alpha');
+$massaction		= GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
+$confirm		= GETPOST('confirm', 'alpha');
+$toselect		= GETPOST('toselect', 'array');
+$contextpage	= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'interventionlist';
 
-$lineid         = GETPOSTINT('lineid');
-$element        = GETPOST('element', 'alpha');
-$element_id     = GETPOSTINT('element_id');
-$resource_id    = GETPOSTINT('resource_id');
+$lineid			= GETPOSTINT('lineid');
+$element		= GETPOST('element', 'alpha');
+$element_id		= GETPOSTINT('element_id');
+$resource_id	= GETPOSTINT('resource_id');
 
-$sortorder      = GETPOST('sortorder', 'aZ09comma');
-$sortfield      = GETPOST('sortfield', 'aZ09comma');
-$optioncss = GETPOST('optioncss', 'alpha');
+$sortorder		= GETPOST('sortorder', 'aZ09comma');
+$sortfield		= GETPOST('sortfield', 'aZ09comma');
+$optioncss		= GETPOST('optioncss', 'alpha');
 
 // Initialize context for list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'resourcelist';
@@ -109,14 +113,22 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$search_ref = "";
 	$search_type = "";
+	$toselect = array();
 	$search_array_options = array();
-	$filter = array();
 }
 
-if (!$user->hasRight('resource', 'read')) {
+$permissiontoread = $user->hasRight('resource', 'read');
+$permissiontoadd = $user->hasRight('resource', 'write');
+$permissiontodelete = $user->hasRight('resource', 'delete');
+if (!$permissiontoread) {
 	accessforbidden();
 }
 
+// Mass actions
+$objectclass = 'Dolresource';
+$objectlabel = 'Resources';
+$uploaddir = $conf->resource->dir_output;
+include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 /*
  * Actions
@@ -178,7 +190,8 @@ $sql .= " t.max_users,";
 $sql .= " t.url,";
 $sql .= " t.fk_code_type_resource,";
 $sql .= " t.tms as date_modification,";
-$sql .= " t.datec as date_creation";
+$sql .= " t.datec as date_creation, ";
+$sql .= " ty.label as type_label ";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -266,6 +279,8 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && !$
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
+$arrayofselected = is_array($toselect) ? $toselect : array();
+
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
@@ -280,23 +295,19 @@ if ($search_type != '') {
 	$param .= '&search_type='.urlencode($search_type);
 }
 
-// Including the previous script generate the correct SQL filter for all the extrafields
-// we are playing with the behaviour of the Dolresource::fetchAll() by generating a fake
-// extrafields filter key to make it works
-$filter['ef.resource'] = $sql;
-
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-	$param .= '&contextpage='.urlencode($contextpage);
-}
-
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-
-// Confirmation suppression resource line
-if ($action == 'delete_resource') {
-	print $form->formconfirm($_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id."&lineid=".$lineid, $langs->trans("DeleteResource"), $langs->trans("ConfirmDeleteResourceElement"), "confirm_delete_resource", '', '', 1);
+// List of mass actions available
+$arrayofmassactions = array();
+if (!empty($permissiontodelete)) {
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
+	$arrayofmassactions = array();
+}
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));
@@ -311,65 +322,65 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
-	//$ret = $object->fetchAll('', '', 0, 0, $filter);
-	if ($ret == -1) {
-		dol_print_error($db, $object->error);
-		exit;
-	} else {
-		$nbtotalofrecords = $ret;
-	}
-}
+$newcardbutton = '';
+$url = DOL_URL_ROOT.'/resource/card.php?action=create';
 
-// Load object list
-//$ret = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
-if ($ret == -1) {
-	dol_print_error($db, $object->error);
-	exit;
-} else {
-	$newcardbutton = '';
-	if ($user->hasRight('resource', 'write')) {
-		$newcardbutton .= dolGetButtonTitle($langs->trans('MenuResourceAdd'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/resource/card.php?action=create');
-	}
+$newcardbutton = dolGetButtonTitle($langs->trans('NewResource'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret + 1, $nbtotalofrecords, 'object_resource', 0, $newcardbutton, '', $limit, 0, 0, 1);
-}
+print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+
+$objecttmp = new Dolresource($db);
+$trackid = 'int'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $moreforfilter = '';
+
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = ($form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'))); // This also change content of $arrayfields
+$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
+// Fields title search
+
 print '<tr class="liste_titre_filter">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre maxwidthsearch">';
-	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print '<td class="liste_titre center maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
 }
 if (!empty($arrayfields['t.ref']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="6">';
+	print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="8">';
 	print '</td>';
 }
 if (!empty($arrayfields['ty.label']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_type" value="'.$search_type.'" size="6">';
+	print '<input type="text" class="flat" name="search_type" value="'.$search_type.'" size="8">';
 	print '</td>';
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre maxwidthsearch">';
-	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print '<td class="liste_titre center maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
 }
-print "</tr>\n";
+print '</tr>'."\n";
+
+$totalarray = array();
+$totalarray['nbfield'] = 0;
+
+// Fields title label
 
 print '<tr class="liste_titre">';
 // Action column
@@ -390,28 +401,20 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print "</tr>\n";
 
+// Loop on record
+
 $i = 0;
+$savnbfield = $totalarray['nbfield'];
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	$objectstatic->id = $obj->rowid;
 	$objectstatic->ref = $obj->ref;
-	$objectstatic->type_label= $obj->label;
-	print '<tr class="oddeven">';
+	$objectstatic->type_label = $obj->type_label;
 
-	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td class="center">';
-		print '<a class="editfielda" href="./card.php?action=edit&token='.newToken().'&id='.$resource->id.'">';
-		print img_edit();
-		print '</a>';
-		print '&nbsp;';
-		print '<a href="./card.php?action=delete&token='.newToken().'&id='.$resource->id.'">';
-		print img_delete('', 'class="marginleftonly"');
-		print '</a>';
-		print '</td>';
-	}
+	print '<tr class="oddeven">';
 
 	if (!empty($arrayfields['t.ref']['checked'])) {
 		print '<td>';
@@ -431,39 +434,27 @@ while ($i < $imaxinloop) {
 		}
 	}
 	// Extra fields
-	//$obj = (object) $resource->array_options;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td class="center">';
-		print '<a class="editfielda" href="./card.php?action=edit&token='.newToken().'&id='.$resource->id.'">';
-		print img_edit();
-		print '</a>';
-		print '&nbsp;';
-		print '<a href="./card.php?action=delete&token='.newToken().'&id='.$resource->id.'">';
-		print img_delete('', 'class="marginleftonly"');
-		print '</a>';
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		print '</td>';
-	}
-	if (!$i) {
-		$totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	print '</tr>';
 	$i++;
 }
-/*if ($ret) {
-
-} else {
-	$colspan = 1;
-	foreach ($arrayfields as $key => $val) {
-		if (!empty($val['checked'])) {
-			$colspan++;
-		}
-	}
-	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
-}*/
 
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
@@ -485,8 +476,9 @@ $parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
-print '</table>';
-print "</form>\n";
+print '</table>'."\n";
+print '</div>'."\n";
+print '</form>'."\n";
 
 // End of page
 llxFooter();
