@@ -3563,7 +3563,7 @@ class Product extends CommonObject
 		}
 		if (!$serviceStockIsEnabled) {
 			$sql .= "AND EXISTS (SELECT p.rowid FROM ".$this->db->prefix()."product AS p WHERE p.rowid = ".((int) $this->id)." AND p.fk_product_type IN (0))";
-    }
+		}
 		if (!empty($warehouseid)) {
 			$sql.= " AND m.fk_warehouse = ".((int) $warehouseid);
 		}

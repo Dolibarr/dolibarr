@@ -267,18 +267,18 @@ $form = new FormAccounting($db);
 // so we need to get those the rowid of those default value first
 $accounting = new AccountingAccount($db);
 // TODO: we should need to check if result is already exists accountaccount rowid.....
-$aarowid_servbuy            = $accounting->fetch('', getDolGlobalString('ACCOUNTING_SERVICE_BUY_ACCOUNT'), 1);
-$aarowid_servbuy_intra      = $accounting->fetch('', getDolGlobalString('ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT'), 1);
-$aarowid_servbuy_export     = $accounting->fetch('', getDolGlobalString('ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT'), 1);
-$aarowid_prodbuy            = $accounting->fetch('', getDolGlobalString('ACCOUNTING_PRODUCT_BUY_ACCOUNT'), 1);
-$aarowid_prodbuy_intra      = $accounting->fetch('', getDolGlobalString('ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT'), 1);
-$aarowid_prodbuy_export     = $accounting->fetch('', getDolGlobalString('ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT'), 1);
-$aarowid_servsell           = $accounting->fetch('', getDolGlobalString('ACCOUNTING_SERVICE_SOLD_ACCOUNT'), 1);
-$aarowid_servsell_intra     = $accounting->fetch('', getDolGlobalString('ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT'), 1);
-$aarowid_servsell_export    = $accounting->fetch('', getDolGlobalString('ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT'), 1);
-$aarowid_prodsell           = $accounting->fetch('', getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_ACCOUNT'), 1);
-$aarowid_prodsell_intra     = $accounting->fetch('', getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT'), 1);
-$aarowid_prodsell_export    = $accounting->fetch('', getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT'), 1);
+$aarowid_servbuy            = $accounting->fetch(0, getDolGlobalString('ACCOUNTING_SERVICE_BUY_ACCOUNT'), 1);
+$aarowid_servbuy_intra      = $accounting->fetch(0, getDolGlobalString('ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT'), 1);
+$aarowid_servbuy_export     = $accounting->fetch(0, getDolGlobalString('ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT'), 1);
+$aarowid_prodbuy            = $accounting->fetch(0, getDolGlobalString('ACCOUNTING_PRODUCT_BUY_ACCOUNT'), 1);
+$aarowid_prodbuy_intra      = $accounting->fetch(0, getDolGlobalString('ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT'), 1);
+$aarowid_prodbuy_export     = $accounting->fetch(0, getDolGlobalString('ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT'), 1);
+$aarowid_servsell           = $accounting->fetch(0, getDolGlobalString('ACCOUNTING_SERVICE_SOLD_ACCOUNT'), 1);
+$aarowid_servsell_intra     = $accounting->fetch(0, getDolGlobalString('ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT'), 1);
+$aarowid_servsell_export    = $accounting->fetch(0, getDolGlobalString('ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT'), 1);
+$aarowid_prodsell           = $accounting->fetch(0, getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_ACCOUNT'), 1);
+$aarowid_prodsell_intra     = $accounting->fetch(0, getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT'), 1);
+$aarowid_prodsell_export    = $accounting->fetch(0, getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT'), 1);
 
 $aacompta_servbuy           = getDolGlobalString('ACCOUNTING_SERVICE_BUY_ACCOUNT', $langs->trans("CodeNotDef"));
 $aacompta_servbuy_intra     = getDolGlobalString('ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT', $langs->trans("CodeNotDef"));
