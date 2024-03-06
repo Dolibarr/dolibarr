@@ -17,7 +17,7 @@
  */
 
 /**
- * \file    bookcal/lib/bookcal.lib.php
+ * \file    htdocs/bookcal/lib/bookcal.lib.php
  * \ingroup bookcal
  * \brief   Library files with common functions for BookCal
  */
