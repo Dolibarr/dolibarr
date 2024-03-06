@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2013-2020  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ $hookmanager->initHooks(array($context_default));
 
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
-
+$sql = '';
 if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('search_date_startday') && !GETPOSTISSET('search_date_startmonth') && !GETPOSTISSET('search_date_starthour')) {
 	$sql = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 	$sql .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
@@ -435,7 +435,9 @@ if (empty($reshook)) {
 			foreach ($toselect as $toselectid) {
 				$result = $object->fetch($toselectid);
 				if ($result > 0 && (!isset($object->date_validation) || $object->date_validation === '')) {
-					$result = $object->deleteMvtNum($object->piece_num);
+					// this function deletes many lines at the same time
+					// $result = $object->deleteMvtNum($object->piece_num);
+					$result = $object->delete($user);
 					if ($result > 0) {
 						$nbok++;
 					} else {
