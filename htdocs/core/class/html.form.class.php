@@ -8050,22 +8050,22 @@ class Form
 	 * Can use autocomplete with ajax after x key pressed or a full combo, depending on setup.
 	 * This is the generic method that will replace all specific existing methods.
 	 *
-	 * @param 	string 	$objectdesc 			'ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'. For hard coded custom needs. Try to prefer method using $objectfield instead of $objectdesc.
-	 * @param 	string 	$htmlname 				Name of HTML select component
-	 * @param 	int 	$preselectedvalue 		Preselected value (ID of element)
-	 * @param 	string 	$showempty 				''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
-	 * @param 	string 	$searchkey 				Search criteria
-	 * @param 	string 	$placeholder 			Place holder
-	 * @param 	string 	$morecss 				More CSS
-	 * @param 	string 	$moreparams 			More params provided to ajax call
-	 * @param 	int 	$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
-	 * @param 	int 	$disabled 				1=Html component is disabled
-	 * @param 	string 	$selected_input_value 	Value of preselected input text (for use with ajax)
-	 * @param	string	$objectfield			Object:Field that contains the definition (in table $fields or $extrafields). Example: 'Object:xxx' or 'Module_Object:xxx' or 'Object:options_xxx' or 'Module_Object:options_xxx'
+	 * @param 	string $objectdesc           'ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'. For hard coded custom needs. Try to prefer method using $objectfield instead of $objectdesc.
+	 * @param 	string $htmlname             Name of HTML select component
+	 * @param 	int    $preSelectedValue     Preselected value (ID of element)
+	 * @param 	string $showempty            ''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
+	 * @param 	string $searchkey            Search criteria
+	 * @param 	string $placeholder          Place holder
+	 * @param 	string $morecss              More CSS
+	 * @param 	string $moreparams           More params provided to ajax call
+	 * @param 	int    $forcecombo           Force to load all values and output a standard combobox (with no beautification)
+	 * @param 	int    $disabled             1=Html component is disabled
+	 * @param 	string $selected_input_value Value of preselected input text (for use with ajax)
+	 * @param	string $objectfield          Object:Field that contains the definition (in table $fields or $extrafields). Example: 'Object:xxx' or 'Module_Object:xxx' or 'Object:options_xxx' or 'Module_Object:options_xxx'
 	 * @return  string	                      	Return HTML string
 	 * @see selectForFormsList(), select_thirdparty_list()
 	 */
-	public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '', $objectfield = '')
+	public function selectForForms($objectdesc, $htmlname, $preSelectedValue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '', $objectfield = '')
 	{
 		global $conf, $extrafields, $user;
 
@@ -8164,10 +8164,23 @@ class Form
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString($confkeyforautocompletemode) && !$forcecombo) {
 			// No immediate load of all database
 			$placeholder = '';
-			if ($preselectedvalue && empty($selected_input_value)) {
-				$objecttmp->fetch($preselectedvalue);
+
+			if ($preSelectedValue && empty($selected_input_value)) {
+				$objecttmp->fetch($preSelectedValue);
 				$selected_input_value = ($prefixforautocompletemode == 'company' ? $objecttmp->name : $objecttmp->ref);
-				//unset($objecttmp);
+
+				$oldValueForShowOnCombobox = 0;
+				foreach ($objecttmp->fields as $fieldK => $fielV) {
+					if (!$fielV['showoncombobox'] || empty($objecttmp->$fieldK)) continue;
+
+					if (!$oldValueForShowOnCombobox) {
+						$selected_input_value = '';
+					}
+
+					$selected_input_value .= $oldValueForShowOnCombobox ? ' - ' : '';
+					$selected_input_value .= $objecttmp->$fieldK;
+					$oldValueForShowOnCombobox = empty($fielV['showoncombobox']) ? 0 : $fielV['showoncombobox'];
+				}
 			}
 
 			// Set url and param to call to get json of the search results
@@ -8175,12 +8188,12 @@ class Form
 			$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1&objectdesc=' . urlencode($objectdescorig) . '&objectfield='.urlencode($objectfield) . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
 
 			// Activate the auto complete using ajax call.
-			$out .= ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, getDolGlobalString($confkeyforautocompletemode), 0, array());
+			$out .= ajax_autocompleter($preSelectedValue, $htmlname, $urlforajaxcall, $urloption, getDolGlobalString($confkeyforautocompletemode), 0);
 			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
 			$out .= '<input type="text" class="' . $morecss . '"' . ($disabled ? ' disabled="disabled"' : '') . ' name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '') . ' />';
 		} else {
 			// Immediate load of table record.
-			$out .= $this->selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, 0, $disabled, $sortfield, $filter);
+			$out .= $this->selectForFormsList($objecttmp, $htmlname, $preSelectedValue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, 0, $disabled, $sortfield, $filter);
 		}
 
 		return $out;
