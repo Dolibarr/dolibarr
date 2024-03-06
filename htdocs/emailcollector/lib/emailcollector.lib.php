@@ -38,13 +38,12 @@ function emailcollectorPrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/admin/emailcollector_card.php", 1).'?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/admin/emailcollector_card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("EmailCollector");
 	$head[$h][2] = 'card';
 	$h++;
 
-	/*if (isset($object->fields['note_public']) || isset($object->fields['note_private']))
-	{
+	/*if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
 		$nbNote = 0;
 		if (!empty($object->note_private)) $nbNote++;
 		if (!empty($object->note_public)) $nbNote++;

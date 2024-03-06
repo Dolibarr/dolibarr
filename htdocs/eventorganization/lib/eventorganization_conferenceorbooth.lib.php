@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,7 +88,7 @@ function conferenceorboothPrepareHead($object, $with_project = 0)
 	$upload_dir = $conf->eventorganization->dir_output."/conferenceorbooth/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
-	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorbooth_document.php", 1).'?id='.$object->id.$withProjectUrl;
+	$head[$h][0] = DOL_URL_ROOT . '/eventorganization/conferenceorbooth_document.php?id='.$object->id.$withProjectUrl;
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
@@ -125,7 +126,7 @@ function conferenceorboothProjectPrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorbooth_list.php", 1).'?projectid='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'eventorganization/conferenceorbooth_list.php?projectid='.$object->id;
 	$head[$h][1] = $langs->trans("ConferenceOrBooth");
 	$head[$h][2] = 'conferenceorbooth';
 	// Enable caching of conf or booth count attendees
