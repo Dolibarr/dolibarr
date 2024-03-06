@@ -118,7 +118,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>(abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -128,7 +128,7 @@ foreach ($object->fields as $key => $val) {
 $arrayfields['wug.fk_usergroup'] = array(
 	'label'=>$langs->trans('UserGroups'),
 	'checked'=>(($visible < 0) ? 0 : 1),
-	'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+	'enabled'=>(abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
 	'position'=>1000,
 	'help' => empty($val['help']) ? '' : $val['help'],
 	'csslist' => 'minwidth100'
@@ -138,7 +138,7 @@ $arrayfields['wug.fk_usergroup'] = array(
 $arrayfields['wr.fk_resource'] = array(
 	'label'=>$langs->trans('Resources'),
 	'checked'=>(($visible < 0) ? 0 : 1),
-	'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
+	'enabled'=>(abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
 	'position'=>1001,
 	'help' => empty($val['help']) ? '' : $val['help']
 );
