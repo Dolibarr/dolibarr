@@ -38,11 +38,6 @@ if (empty($action)) {
 	$action = 'edit';
 }
 
-$value = GETPOST('value', 'alpha');
-$label = GETPOST('label', 'alpha');
-$scandir = GETPOST('scan_dir', 'alpha');
-$type = 'myobject';
-
 $error = 0;
 $setupnotempty = 0;
 
@@ -71,8 +66,12 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 // List of AI features
 $arrayofaifeatures = array(
-	'emailing' => 'Emailing',
-	'imagegeneration' => 'ImageGeneration'
+	'textgeneration' => array('label' => 'TextGeneration', 'picto'=>'', 'status'=>'development'),
+	'imagegeneration' => array('label' => 'ImageGeneration', 'picto'=>'', 'status'=>'notused'),
+	'videogeneration' => array('label' => 'VideoGeneration', 'picto'=>'', 'status'=>'notused'),
+	'transcription' => array('label' => 'Transcription', 'picto'=>'', 'status'=>'notused'),
+	'translation' => array('label' => 'Translation', 'picto'=>'', 'status'=>'notused'),
+	'audiotext' => array('label' => 'AudioText', 'picto'=>'', 'status'=>'notused')
 );
 
 
@@ -80,12 +79,12 @@ $arrayofaifeatures = array(
  * Actions
  */
 
-$modulename = GETPOST('module_name');
+$functioncode = GETPOST('functioncode', 'alpha');
 $pre_prompt = GETPOST('prePrompt', 'alpha');
 $post_prompt = GETPOST('postPrompt', 'alpha');
 // get all configs in const AI
 
-$currentConfigurationsJson = dolibarr_get_const($db, 'AI_CONFIGURATIONS_PROMPT', $conf->entity);
+$currentConfigurationsJson = getDolGlobalString('AI_CONFIGURATIONS_PROMPT');
 $currentConfigurations = json_decode($currentConfigurationsJson, true);
 
 if ($action == 'update' && GETPOST('cancel')) {
@@ -93,7 +92,7 @@ if ($action == 'update' && GETPOST('cancel')) {
 }
 if ($action == 'update' && !GETPOST('cancel')) {
 	$error = 0;
-	if (empty($modulename)) {
+	if (empty($functioncode)) {
 		$error++;
 		setEventMessages($langs->trans('ErrorInputRequired'), null, 'errors');
 	}
@@ -101,12 +100,12 @@ if ($action == 'update' && !GETPOST('cancel')) {
 		$currentConfigurations = [];
 	}
 
-	if (empty($modulename) || (empty($pre_prompt) && empty($post_prompt))) {
-		if (isset($currentConfigurations[$modulename])) {
-			unset($currentConfigurations[$modulename]);
+	if (empty($functioncode) || (empty($pre_prompt) && empty($post_prompt))) {
+		if (isset($currentConfigurations[$functioncode])) {
+			unset($currentConfigurations[$functioncode]);
 		}
 	} else {
-		$currentConfigurations[$modulename] = [
+		$currentConfigurations[$functioncode] = [
 			'prePrompt' => $pre_prompt,
 			'postPrompt' => $post_prompt,
 		];
@@ -172,10 +171,12 @@ if ($action == 'edit') {
 	$out .= '</td>';
 	$out .= '<td>';
 	// Combo list of AI features
-	$out .= '<select name="module_name" id="module_select" class="flat minwidth500">';
+	$out .= '<select name="functioncode" id="functioncode" class="flat minwidth500">';
 	$out .= '<option>&nbsp;</option>';
 	foreach ($arrayofaifeatures as $key => $val) {
-		$out .= '<option value="'.$val.'">'.$langs->trans($arrayofaifeatures[$key]).'</option>';
+		$labelhtml = $langs->trans($arrayofaifeatures[$key]['label']).($arrayofaifeatures[$key]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotUsed").')</span>' : "");
+		$labeltext = $langs->trans($arrayofaifeatures[$key]['label']);
+		$out .= '<option value="'.$key.'" data-html="'.dol_escape_htmltag($labelhtml).'">'.dol_escape_htmltag($labeltext).'</option>';
 	}
 	/*
 	$sql = "SELECT name FROM llx_const WHERE name LIKE 'MAIN_MODULE_%' AND value = '1'";
@@ -191,7 +192,7 @@ if ($action == 'edit') {
 	}
 	*/
 	$out .= '</select>';
-	$out .= ajax_combobox("module_select");
+	$out .= ajax_combobox("functioncode");
 
 	$out .= '</td>';
 	$out .= '</tr>';
@@ -223,37 +224,42 @@ if ($action == 'edit') {
 
 
 if ($action == 'edit' || $action == 'create') {
-	$out = '<table class="noborder centpercent">';
-	foreach ($currentConfigurations as $key => $config) {
-		if (!preg_match('/^[a-z]+$/i', $key)) {	// Ignore empty saved setup
-			continue;
+	$out = '';
+
+	if (!empty($currentConfigurations)) {
+		$out = '<table class="noborder centpercent">';
+		foreach ($currentConfigurations as $key => $config) {
+			if (!empty($key) && !preg_match('/^[a-z]+$/i', $key)) {	// Ignore empty saved setup
+				continue;
+			}
+
+			$out .= '<thead>';
+			$out .= '<tr class="liste_titre">';
+			$out .= '<td>'.$arrayofaifeatures[$key]['picto'].' '.$langs->trans($arrayofaifeatures[$key]['label']).'</td>';
+			$out .= '<td></td>';
+			$out .= '</tr>';
+			$out .= '</thead>';
+			$out .= '<tbody>';
+			$out .= '<tr class="oddeven">';
+			$out .= '<td class="col-setup-title">';
+			$out .= '<span id="prePrompt" class="spanforparamtooltip">pre-Prompt</span>';
+			$out .= '</td>';
+			$out .= '<td>';
+			$out .= '<input name="prePrompt" id="prePromptInput" class="flat minwidth500" value="'.$config['prePrompt'].'">';
+			$out .= '</td>';
+			$out .= '</tr>';
+			$out .= '<tr class="oddeven">';
+			$out .= '<td class="col-setup-title">';
+			$out .= '<span id="postPrompt" class="spanforparamtooltip">Post-prompt</span>';
+			$out .= '</td>';
+			$out .= '<td>';
+			$out .= '<input name="postPrompt" id="postPromptInput" class="flat minwidth500" value="'.$config['postPrompt'].'">';
+			$out .= '</td>';
+			$out .= '</tr>';
 		}
-		$out .= '<thead>';
-		$out .= '<tr class="liste_titre">';
-		$out .= '<td>'.$langs->trans($arrayofaifeatures[$key]).'</td>';
-		$out .= '<td></td>';
-		$out .= '</tr>';
-		$out .= '</thead>';
-		$out .= '<tbody>';
-		$out .= '<tr class="oddeven">';
-		$out .= '<td class="col-setup-title">';
-		$out .= '<span id="prePrompt" class="spanforparamtooltip">pre-Prompt</span>';
-		$out .= '</td>';
-		$out .= '<td>';
-		$out .= '<input name="prePrompt" id="prePromptInput" class="flat minwidth500" value="'.$config['prePrompt'].'">';
-		$out .= '</td>';
-		$out .= '</tr>';
-		$out .= '<tr class="oddeven">';
-		$out .= '<td class="col-setup-title">';
-		$out .= '<span id="postPrompt" class="spanforparamtooltip">Post-prompt</span>';
-		$out .= '</td>';
-		$out .= '<td>';
-		$out .= '<input name="postPrompt" id="postPromptInput" class="flat minwidth500" value="'.$config['postPrompt'].'">';
-		$out .= '</td>';
-		$out .= '</tr>';
+		$out .= '</tbody>';
+		$out .= '</table>';
 	}
-	$out .= '</tbody>';
-	$out .= '</table>';
 
 	$out .= '</form>';
 
