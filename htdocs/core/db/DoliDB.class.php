@@ -385,6 +385,7 @@ abstract class DoliDB implements Database
 		if ($res) {
 			$obj = $this->fetch_object($res);
 			if ($obj) {
+				$this->free($res);
 				return $obj;
 			} else {
 				return 0;
@@ -399,12 +400,17 @@ abstract class DoliDB implements Database
 	 * Note : This method executes a given SQL query and retrieves all row of results as an array of objects. It should only be used with SELECT queries
 	 * be careful with this method use it only with some limit of results to avoid performances loss.
 	 *
-	 * @param 	string 		$sql 		The sql query string
-	 * @return 	bool|array				Result
-	 * @deprecated
+	 * @param string $sql The sql query string
+	 * @param bool   $noLimitCheck set it to true to disable sql query check of limit
+	 * @return    bool|array                Result
 	 */
-	public function getRows($sql)
+	public function getRows($sql, $noLimitCheck = false)
 	{
+
+		if (!$noLimitCheck && strpos($sql, 'LIMIT') === false) {
+			return false;
+		}
+
 		$res = $this->query($sql);
 		if ($res) {
 			$results = array();
@@ -413,6 +419,7 @@ abstract class DoliDB implements Database
 					$results[] = $obj;
 				}
 			}
+			$this->free($res);
 			return $results;
 		}
 
