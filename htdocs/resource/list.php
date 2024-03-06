@@ -49,23 +49,20 @@ $sortfield		= GETPOST('sortfield', 'aZ09comma');
 $optioncss		= GETPOST('optioncss', 'alpha');
 
 // Initialize context for list
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'resourcelist';
+$contextpage 	= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'resourcelist';
 
 // Initialize technical objects
 $object = new Dolresource($db);
 $extrafields = new ExtraFields($db);
 
-// fetch optionals attributes and labels
+// Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 if (!is_array($search_array_options)) {
 	$search_array_options = array();
 }
-$search_ref = GETPOST("search_ref", 'alpha');
-$search_type = GETPOST("search_type", 'alpha');
-
-// Load variable for pagination
-$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$search_ref 	= GETPOST("search_ref", 'alpha');
+$search_type 	= GETPOST("search_type", 'alpha');
 
 $filter = array();
 
@@ -77,12 +74,11 @@ if (empty($sortorder)) {
 if (empty($sortfield)) {
 	$sortfield = "t.ref";
 }
-if (empty($arch)) {
-	$arch = 0;
-}
 
-$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+// Load variable for pagination
+$limit	= GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+
+$page	= GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -105,7 +101,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
@@ -148,7 +143,6 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-
 /*
  * View
  */
@@ -156,23 +150,13 @@ if ($reshook < 0) {
 $form = new Form($db);
 $objectstatic = new Dolresource($db);
 
-//$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
 $help_url = '';
 $title = $langs->trans('Resources');
 $morejs = array();
 $morecss = array();
 
-
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
-
-$atleastonefieldinlines = 0;
-foreach ($arrayfields as $tmpkey => $tmpval) {
-	if (preg_match('/^fd\./', $tmpkey) && !empty($arrayfields[$tmpkey]['checked'])) {
-		$atleastonefieldinlines++;
-		break;
-	}
-}
 
 $sql = "SELECT";
 $sql .= " t.rowid,";
@@ -266,7 +250,6 @@ if (!$resql) {
 
 $num = $db->num_rows($resql);
 
-
 // Direct jump if only one record found
 if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && !$page) {
 	$obj = $db->fetch_object($resql);
@@ -308,10 +291,8 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));
-
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') {
@@ -336,25 +317,16 @@ $objecttmp = new Dolresource($db);
 $trackid = 'int'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-$moreforfilter = '';
-
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = ($form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'))); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<table class="tagtable liste">'."\n";
 
 // Fields title search
 
 print '<tr class="liste_titre_filter">';
-// Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre center maxwidthsearch">';
-	$searchpicto = $form->showFilterButtons('left');
-	print $searchpicto;
-	print '</td>';
-}
 if (!empty($arrayfields['t.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="8">';
@@ -383,10 +355,6 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 
 print '<tr class="liste_titre">';
-// Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
-}
 if (!empty($arrayfields['t.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
 }
