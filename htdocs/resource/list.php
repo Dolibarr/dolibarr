@@ -142,15 +142,129 @@ if ($reshook < 0) {
  */
 
 $form = new Form($db);
+$objectstatic = new Dolresource($db);
 
 //$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
 $help_url = '';
 $title = $langs->trans('Resources');
-llxHeader('', $title, $help_url);
+$morejs = array();
+$morecss = array();
 
 
-$sql = '';
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
+$atleastonefieldinlines = 0;
+foreach ($arrayfields as $tmpkey => $tmpval) {
+	if (preg_match('/^fd\./', $tmpkey) && !empty($arrayfields[$tmpkey]['checked'])) {
+		$atleastonefieldinlines++;
+		break;
+	}
+}
+
+$sql = "SELECT";
+$sql .= " t.rowid,";
+$sql .= " t.entity,";
+$sql .= " t.ref,";
+$sql .= " t.address,";
+$sql .= " t.zip,";
+$sql .= " t.town,";
+$sql .= " t.fk_country,";
+$sql .= " t.fk_state,";
+$sql .= " t.description,";
+$sql .= " t.phone,";
+$sql .= " t.email,";
+$sql .= " t.max_users,";
+$sql .= " t.url,";
+$sql .= " t.fk_code_type_resource,";
+$sql .= " t.tms as date_modification,";
+$sql .= " t.datec as date_creation";
+// Add fields from extrafields
+if (!empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+	}
+}
+// Add fields from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
+$sql .= " FROM ".MAIN_DB_PREFIX."resource as t";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
+if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
+}
+
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
+$sql .= " WHERE t.entity IN (".getEntity('resource').")";
+if ($search_ref) {
+	$sql .= natural_search('t.ref', $search_ref);
+}
+if ($search_type) {
+	$sql .= natural_search('ty.label', $search_type);
+}
+
+// Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+// Add where from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
+// Count total nb of records
+$nbtotalofrecords = '';
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+		$page = 0;
+		$offset = 0;
+	}
+	$db->free($resql);
+}
+
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
+
+$resql = $db->query($sql);
+if (!$resql) {
+	dol_print_error($db);
+	exit;
+}
+
+$num = $db->num_rows($resql);
+
+
+// Direct jump if only one record found
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && !$page) {
+	$obj = $db->fetch_object($resql);
+	$id = $obj->rowid;
+	header("Location: ".dol_buildpath('/resource/card.php', 1).'?id='.$id);
+	exit;
+}
+
+// Output page
+
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -159,14 +273,11 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
-
 if ($search_ref != '') {
 	$param .= '&search_ref='.urlencode($search_ref);
-	$filter['t.ref'] = $search_ref;
 }
 if ($search_type != '') {
 	$param .= '&search_type='.urlencode($search_type);
-	$filter['ty.label'] = $search_type;
 }
 
 // Including the previous script generate the correct SQL filter for all the extrafields
@@ -203,7 +314,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
-	$ret = $object->fetchAll('', '', 0, 0, $filter);
+	//$ret = $object->fetchAll('', '', 0, 0, $filter);
 	if ($ret == -1) {
 		dol_print_error($db, $object->error);
 		exit;
@@ -213,7 +324,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 }
 
 // Load object list
-$ret = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
+//$ret = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
 if ($ret == -1) {
 	dol_print_error($db, $object->error);
 	exit;
@@ -279,65 +390,71 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print "</tr>\n";
 
-
+$i = 0;
 $totalarray = array();
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
+	$obj = $db->fetch_object($resql);
+	$objectstatic->id = $obj->rowid;
+	$objectstatic->ref = $obj->ref;
+	$objectstatic->type_label= $obj->label;
+	print '<tr class="oddeven">';
 
-if ($ret) {
-	foreach ($object->lines as $resource) {
-		print '<tr class="oddeven">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="center">';
+		print '<a class="editfielda" href="./card.php?action=edit&token='.newToken().'&id='.$resource->id.'">';
+		print img_edit();
+		print '</a>';
+		print '&nbsp;';
+		print '<a href="./card.php?action=delete&token='.newToken().'&id='.$resource->id.'">';
+		print img_delete('', 'class="marginleftonly"');
+		print '</a>';
+		print '</td>';
+	}
 
-		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print '<td class="center">';
-			print '<a class="editfielda" href="./card.php?action=edit&token='.newToken().'&id='.$resource->id.'">';
-			print img_edit();
-			print '</a>';
-			print '&nbsp;';
-			print '<a href="./card.php?action=delete&token='.newToken().'&id='.$resource->id.'">';
-			print img_delete('', 'class="marginleftonly"');
-			print '</a>';
-			print '</td>';
-		}
-
-		if (!empty($arrayfields['t.ref']['checked'])) {
-			print '<td>';
-			print $resource->getNomUrl(5);
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-
-		if (!empty($arrayfields['ty.label']['checked'])) {
-			print '<td>';
-			print $resource->type_label;
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-		// Extra fields
-		$obj = (object) $resource->array_options;
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-
-		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print '<td class="center">';
-			print '<a class="editfielda" href="./card.php?action=edit&token='.newToken().'&id='.$resource->id.'">';
-			print img_edit();
-			print '</a>';
-			print '&nbsp;';
-			print '<a href="./card.php?action=delete&token='.newToken().'&id='.$resource->id.'">';
-			print img_delete('', 'class="marginleftonly"');
-			print '</a>';
-			print '</td>';
-		}
+	if (!empty($arrayfields['t.ref']['checked'])) {
+		print '<td>';
+		print $objectstatic->getNomUrl(5);
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
-
-		print '</tr>';
 	}
+
+	if (!empty($arrayfields['ty.label']['checked'])) {
+		print '<td>';
+		print $objectstatic->type_label;
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+	// Extra fields
+	//$obj = (object) $resource->array_options;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="center">';
+		print '<a class="editfielda" href="./card.php?action=edit&token='.newToken().'&id='.$resource->id.'">';
+		print img_edit();
+		print '</a>';
+		print '&nbsp;';
+		print '<a href="./card.php?action=delete&token='.newToken().'&id='.$resource->id.'">';
+		print img_delete('', 'class="marginleftonly"');
+		print '</a>';
+		print '</td>';
+	}
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+
+	print '</tr>';
+	$i++;
+}
+/*if ($ret) {
+
 } else {
 	$colspan = 1;
 	foreach ($arrayfields as $key => $val) {
@@ -346,7 +463,27 @@ if ($ret) {
 		}
 	}
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+}*/
+
+// Show total line
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
+// If no record found
+if ($num == 0) {
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) {
+		if (!empty($val['checked'])) {
+			$colspan++;
+		}
+	}
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
+
+$db->free($resql);
+
+$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
 
 print '</table>';
 print "</form>\n";
