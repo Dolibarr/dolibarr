@@ -8,7 +8,7 @@
  * Copyright (C) 2014-2022  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2015-2016  Abbes Bahfir            <bafbes@gmail.com>
  * Copyright (C) 2018-2022 	Philippe Grand       	<philippe.grand@atoo-net.com>
- * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Benjamin Grembi         <benjamin@oarces.fr>
  * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
  *
@@ -338,7 +338,7 @@ if (empty($reshook)) {
 
 								if ($product_type == Product::TYPE_SERVICE || getDolGlobalString('FICHINTER_PRINT_PRODUCTS')) { //only services except if config includes products
 									$duration = 3600; // Default to one hour
-
+									$desc = '';
 									// Predefined products & services
 									if ($lines[$i]->fk_product > 0) {
 										$prod = new Product($db);
