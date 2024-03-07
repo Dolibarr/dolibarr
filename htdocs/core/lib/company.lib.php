@@ -525,7 +525,7 @@ function societe_admin_prepare_head()
  *    @param	DoliDB		$dbtouse       	Database handler (using in global way may fail because of conflicts with some autoload features)
  *    @param	Translate	$outputlangs	Langs object for output translation
  *    @param	int			$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
- *    @param	int			$searchlabel    Label of country to search (warning: searching on label is not reliable)
+ *    @param	string		$searchlabel    Label of country to search (warning: searching on label is not reliable)
  *    @return	mixed       				Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
  */
 function getCountry($searchkey, $withcode = '', $dbtouse = null, $outputlangs = null, $entconv = 1, $searchlabel = '')
