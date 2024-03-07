@@ -4046,16 +4046,17 @@ abstract class CommonObject
 	}
 
 	/**
-	 * return element type string formated like element_element target_type and source_type
+	 * Return element type string formatted like element_element target_type and source_type
+  	 *
 	 * @return string
 	 */
 	public function getElementType()
 	{
-		// Elements of the core modules having a `$module` property but for which we may not not want to prefix the element name with the module name for finding the linked object in llx_element_element.
+		// Elements of the core modules having a `$module` property but for which we may not want to prefix the element name with the module name for finding the linked object in llx_element_element.
 		// It's because existing llx_element_element entries inserted prior to this modification (version <=14.2) may already use the element name alone in fk_source or fk_target (without the module name prefix).
 		$coreModule = array('knowledgemanagement', 'partnership', 'workstation', 'ticket', 'recruitment', 'eventorganization', 'asset');
 		// Add module part to target type if object has $module property and isn't in core modules.
-		return ((!empty($this->module) && ! in_array($this->module, $coreModule)) ? $this->module.'_' : '').$this->element;
+		return ((!empty($this->module) && !in_array($this->module, $coreModule)) ? $this->module.'_' : '').$this->element;
 	}
 
 
