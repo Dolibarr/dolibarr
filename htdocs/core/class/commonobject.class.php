@@ -477,13 +477,13 @@ abstract class CommonObject
 	public $fk_multicurrency;
 
 	/**
-	 * @var string|array<int,string>    Multicurrency code
+	 * @var string|string[]             Multicurrency code
 	 *                                  Or, just for the Paiement object, an array: invoice ID => currency code for that invoice.
 	 */
 	public $multicurrency_code;
 
 	/**
-	 * @var float|array<int,float>      Multicurrency rate ("tx" = "taux" in French)
+	 * @var float|float[]               Multicurrency rate ("tx" = "taux" in French)
 	 *                                  Or, just for the Paiement object, an array: invoice ID => currency rate for that invoice.
 	 */
 	public $multicurrency_tx;
