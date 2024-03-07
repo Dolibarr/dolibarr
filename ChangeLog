@@ -26,6 +26,7 @@ The following changes may create regressions for some external modules, but were
 * All CLI tools (into /scripts) return a positive value to the shell if error (0 remains success) for a better
   cross platform compatibility. On linux the exit(-1) was caught as 255, it may be now exit(1) so will be caught as 1.
 * the parameter $filter of method fetchAll does not accept array of SQL but must be a string of an Universal Search Filter syntax.
+* Use of dol_eval with parameter $returnvalue=0 is deprecated.
 
 
 ***** ChangeLog for 19.0.1 compared to 19.0.0 *****
