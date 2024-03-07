@@ -3533,7 +3533,7 @@ class Product extends CommonObject
 	public function load_stats_inproduction($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null, $warehouseid = 0)
 	{
 		// phpcs:enable
-		global $conf, $user, $hookmanager, $action;
+		global $user, $hookmanager, $action;
 
 		$serviceStockIsEnabled = isModEnabled("service") && getDolGlobalString('STOCK_SUPPORTS_SERVICES');
 
@@ -3563,7 +3563,7 @@ class Product extends CommonObject
 		}
 		if (!$serviceStockIsEnabled) {
 			$sql .= "AND EXISTS (SELECT p.rowid FROM ".$this->db->prefix()."product AS p WHERE p.rowid = ".((int) $this->id)." AND p.fk_product_type IN (0))";
-    }
+		}
 		if (!empty($warehouseid)) {
 			$sql.= " AND m.fk_warehouse = ".((int) $warehouseid);
 		}

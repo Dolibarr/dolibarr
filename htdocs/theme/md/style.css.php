@@ -8001,11 +8001,11 @@ table.jPicker {
 <?php
 if (getDolUserString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	// Set a max height on multiselect when using multiselect
-?>
+	?>
 	select[multiple] {
-	    height: 42px;
+		height: 42px;
 	}
-<?php
+	<?php
 }
 
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);

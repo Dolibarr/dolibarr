@@ -61,14 +61,19 @@ if (!class_exists('FormSetup')) {
 
 $formSetup = new FormSetup($db);
 
+// List all available IA
 $arrayofia = array('chatgpt');
 
 foreach ($arrayofia as $ia) {
 	// Setup conf AI_PUBLIC_INTERFACE_TOPIC
-	$item = $formSetup->newItem('AI_KEY_API_'.strtoupper($ia));
+	/*$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_ENDPOINT');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->defaultFieldValue = '';
-}
+	$item->cssClass = 'minwidth500';*/
 
+	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_KEY');	// Name of constant must end with _KEY so it is encrypted when saved into database.
+	$item->defaultFieldValue = '';
+	$item->cssClass = 'minwidth500';
+}
 
 $setupnotempty =+ count($formSetup->items);
 
