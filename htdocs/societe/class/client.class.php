@@ -2,6 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +31,14 @@ include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
  */
 class Client extends Societe
 {
-	public $next_prev_filter = "te.client in (1,2,3)"; // Used to add a filter in Form::showrefnav method
+	/**
+	 * @var string Used to add a filter in Form::showrefnav method
+	 */
+	public $next_prev_filter = "te.client in (1,2,3)";
 
+	/**
+	 * @var array
+	 */
 	public $cacheprospectstatus = array();
 
 

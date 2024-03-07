@@ -71,6 +71,11 @@ class Product extends CommonObject
 	public $fk_element = 'fk_product';
 
 	/**
+	 * @var Product
+	 */
+	public $oldcopy;
+
+	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
@@ -290,7 +295,7 @@ class Product extends CommonObject
 	public $duration;
 
 	/**
-	 * Service Workstation
+	 * @var int Service Workstation
 	 */
 	public $fk_default_workstation;
 
@@ -487,6 +492,10 @@ class Product extends CommonObject
 	public $fourn_qty;
 	public $fourn_pu;
 	public $fourn_price_base_type;
+
+	/**
+	 * @var int ID
+	 */
 	public $fourn_socid;
 
 	/**
@@ -529,7 +538,7 @@ class Product extends CommonObject
 	public $sousprods;
 
 	/**
-	 * Path of subproducts. Build from ->sousprods with get_arbo_each_prod()
+	 * @var array Path of subproducts. Build from ->sousprods with get_arbo_each_prod()
 	 */
 	public $res;
 
