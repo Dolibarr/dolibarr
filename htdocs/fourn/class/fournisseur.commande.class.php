@@ -4158,6 +4158,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	/**
 	 * 	Delete line in database
 	 *
+	 *  @param		User	$user		User making the change
 	 *	@param      int     $notrigger  1=Disable call to triggers
 	 *	@return     int                 Return integer <0 if KO, >0 if OK
 	 */

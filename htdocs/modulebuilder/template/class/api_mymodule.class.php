@@ -64,7 +64,7 @@ class MyModuleApi extends DolibarrApi
 	 * @param	int		$id				ID of myobject
 	 * @return  Object					Object with cleaned properties
 	 *
-	 * @url	GET myobjects/{id}
+	 * @url	GET mymodule/myobjects/{id}
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
@@ -103,7 +103,7 @@ class MyModuleApi extends DolibarrApi
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 503 System error
 	 *
-	 * @url	GET /myobjects/
+	 * @url	GET /mymodule/myobjects/
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
@@ -191,7 +191,7 @@ class MyModuleApi extends DolibarrApi
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 500 System error
 	 *
-	 * @url	POST myobjects/
+	 * @url	POST mymodule/myobjects/
 	 */
 	public function post($request_data = null)
 	{
@@ -232,7 +232,7 @@ class MyModuleApi extends DolibarrApi
 	 * @throws RestException 404 Not found
 	 * @throws RestException 500 System error
 	 *
-	 * @url	PUT myobjects/{id}
+	 * @url	PUT mymodule/myobjects/{id}
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -282,7 +282,7 @@ class MyModuleApi extends DolibarrApi
 	 * @throws RestException 409 Nothing to do
 	 * @throws RestException 500 System error
 	 *
-	 * @url	DELETE myobjects/{id}
+	 * @url	DELETE mymodule/myobjects/{id}
 	 */
 	public function delete($id)
 	{

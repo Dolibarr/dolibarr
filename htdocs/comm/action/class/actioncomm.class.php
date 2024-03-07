@@ -1022,15 +1022,13 @@ class ActionComm extends CommonObject
 
 	/**
 	 *    Delete event from database
-	 *    @TODO Add User $user as first param
 	 *
+	 *    @param	User	$user			User making the delete
 	 *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
 	 *    @return   int 					Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
-		global $user;
-
 		$error = 0;
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
