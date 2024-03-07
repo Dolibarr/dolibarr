@@ -2357,7 +2357,7 @@ class EmailCollector extends CommonObject
 										if ($operation['type'] == 'loadthirdparty') {
 											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found");
 
-											//TODO search into contacts of thirdparty
+											//search into contacts of thirdparty
 											$resultContact = $contactstatic->fetch('', '', '', $emailtouseforthirdparty);
 											if ($resultContact > 0) {
 												$idtouseforthirdparty = $contactstatic->socid;
