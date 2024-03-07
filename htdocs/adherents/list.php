@@ -79,7 +79,7 @@ $catid 		= GETPOST("catid", 'int');
 $socid 		= GETPOST('socid', 'int');
 
 $search_filter 		= GETPOST("search_filter", 'alpha');
-$search_status 		= GETPOST("search_status", 'intcomma');  // statut
+$search_status 		= GETPOST("search_status", 'intcomma');  // status
 
 $filter = GETPOST("filter", 'alpha');
 if ($filter) {
@@ -366,7 +366,7 @@ if ((!empty($search_categ) && $search_categ > 0) || !empty($catid)) {
 $sql .= " d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc,";
 $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
 $sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.birth, d.public, d.photo,";
-$sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut, d.datec as date_creation, d.tms as date_update,";
+$sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut as status, d.datec as date_creation, d.tms as date_update,";
 $sql .= " d.note_private, d.note_public, d.import_key,";
 $sql .= " s.nom,";
 $sql .= " ".$db->ifsql("d.societe IS NULL", "s.nom", "d.societe")." as companyname,";
@@ -929,9 +929,16 @@ if (!empty($arrayfields['d.tms']['checked'])) {
 	print '</td>';
 }
 
+// Import Key
+if (!empty($arrayfields['d.import_key']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_import_key" value="'.dol_escape_htmltag($search_import_key).'">';
+	print '</td>';
+}
+
 // Status
 if (!empty($arrayfields['d.statut']['checked'])) {
-	print '<td class="liste_titre right parentonrightofpage">';
+	print '<td class="liste_titre center parentonrightofpage">';
 	$liststatus = array(
 		Adherent::STATUS_DRAFT => $langs->trans("Draft"),
 		Adherent::STATUS_VALIDATED => $langs->trans("Validated"),
@@ -939,13 +946,6 @@ if (!empty($arrayfields['d.statut']['checked'])) {
 		Adherent::STATUS_EXCLUDED =>$langs->trans("MemberStatusExcludedShort")
 	);
 	print $form->selectarray('search_status', $liststatus, $search_status, -3, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
-	print '</td>';
-}
-
-// Import Key
-if (!empty($arrayfields['d.import_key']['checked'])) {
-	print '<td class="liste_titre center">';
-	print '<input class="flat searchstring maxwidth50" type="text" name="search_import_key" value="'.dol_escape_htmltag($search_import_key).'">';
 	print '</td>';
 }
 
@@ -970,7 +970,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
-	print_liste_field_titre("ID", $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("ID", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.ref']['checked'])) {
@@ -1058,27 +1058,27 @@ $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // No
 print $hookmanager->resPrint;
 
 if (!empty($arrayfields['d.datec']['checked'])) {
-	print_liste_field_titre($arrayfields['d.datec']['label'], $_SERVER["PHP_SELF"], "d.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['d.datec']['label'], $_SERVER["PHP_SELF"], "d.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.birth']['checked'])) {
-	print_liste_field_titre($arrayfields['d.birth']['label'], $_SERVER["PHP_SELF"], "d.birth", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['d.birth']['label'], $_SERVER["PHP_SELF"], "d.birth", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.tms']['checked'])) {
-	print_liste_field_titre($arrayfields['d.tms']['label'], $_SERVER["PHP_SELF"], "d.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['d.statut']['checked'])) {
-	print_liste_field_titre($arrayfields['d.statut']['label'], $_SERVER["PHP_SELF"], "d.statut,t.subscription,d.datefin", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['d.tms']['label'], $_SERVER["PHP_SELF"], "d.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['d.import_key']['label'], $_SERVER["PHP_SELF"], "d.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['d.statut']['checked'])) {
+	print_liste_field_titre($arrayfields['d.statut']['label'], $_SERVER["PHP_SELF"], "d.statut,t.subscription,d.datefin", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	$totalarray['nbfield']++;
 }
 print "</tr>\n";
@@ -1105,7 +1105,8 @@ while ($i < $imaxinloop) {
 	$memberstatic->lastname = $obj->lastname;
 	$memberstatic->firstname = $obj->firstname;
 	$memberstatic->gender = $obj->gender;
-	$memberstatic->statut = $obj->statut;
+	$memberstatic->statut = $obj->status;
+	$memberstatic->status = $obj->status;
 	$memberstatic->datefin = $datefin;
 	$memberstatic->socid = $obj->fk_soc;
 	$memberstatic->photo = $obj->photo;
@@ -1334,7 +1335,7 @@ while ($i < $imaxinloop) {
 		// End of subscription date
 		$datefin = $db->jdate($obj->datefin);
 		if (!empty($arrayfields['d.datefin']['checked'])) {
-			print '<td class="nowrap center">';
+			print '<td class="nowraponall center">';
 			if ($datefin) {
 				print dol_print_date($datefin, 'day');
 				if ($memberstatic->hasDelay()) {
@@ -1344,7 +1345,7 @@ while ($i < $imaxinloop) {
 			} else {
 				if (!empty($obj->subscription)) {
 					print '<span class="opacitymedium">'.$langs->trans("SubscriptionNotReceived").'</span>';
-					if ($obj->statut > 0) {
+					if ($obj->status > 0) {
 						print " ".img_warning();
 					}
 				} else {
@@ -1389,19 +1390,20 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Status
-		if (!empty($arrayfields['d.statut']['checked'])) {
-			print '<td class="nowrap right">';
-			print $memberstatic->LibStatut($obj->statut, $obj->subscription, $datefin, 5);
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
+		// Import key
 		if (!empty($arrayfields['d.import_key']['checked'])) {
 			print '<td class="tdoverflowmax100 center" title="'.dol_escape_htmltag($obj->import_key).'">';
 			print dol_escape_htmltag($obj->import_key);
 			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Status
+		if (!empty($arrayfields['d.statut']['checked'])) {
+			print '<td class="nowrap center">';
+			print $memberstatic->LibStatut($obj->status, $obj->subscription, $datefin, 5);
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

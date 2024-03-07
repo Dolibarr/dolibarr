@@ -937,7 +937,7 @@ class FormTicket
 			$arraycodenotparent[] = "";
 
 			$stringtoprint = '<span class="supportemailfield bold">'.$langs->trans("GroupOfTicket").'</span> ';
-			$stringtoprint .= '<select id ="'.$htmlname.'" class="minwidth500" child_id="0">';
+			$stringtoprint .= '<select id="'.$htmlname.'" class="minwidth500" child_id="0">';
 			$stringtoprint .= '<option value="">&nbsp;</option>';
 
 			$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctc.public, ";
@@ -997,7 +997,7 @@ class FormTicket
 			$levelid = 1;	// The first combobox
 			while ($levelid <= $use_multilevel) {	// Loop to take the child of the combo
 				$tabscript = array();
-				$stringtoprint .= '<select id ="'.$htmlname.'_child_'.$levelid.'" class="maxwidth500 minwidth400 groupticketchild" child_id="'.$levelid.'">';
+				$stringtoprint .= '<select id="'.$htmlname.'_child_'.$levelid.'" class="maxwidth500 minwidth400 groupticketchild" child_id="'.$levelid.'">';
 				$stringtoprint .= '<option value="">&nbsp;</option>';
 
 				$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctc.public, ctcjoin.code as codefather";

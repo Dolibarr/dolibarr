@@ -407,11 +407,11 @@ if ($projectid > 0) {
 
 	// Date start - end of event
 	print '<tr><td>'.$langs->trans("Dates").' ('.$langs->trans("Event").')</td><td>';
-	$start = dol_print_date($project->date_start_event, 'day');
-	print($start ? $start : '?');
-	$end = dol_print_date($project->date_end_event, 'day');
+	$start = dol_print_date($project->date_start_event, 'day', 'tzuserrel');
+	print ($start ? '<span title="'.dol_print_date($project->date_start_event, 'dayhour', 'tzuserrel').'">'.$start.'</span>' : '?');
+	$end = dol_print_date($project->date_end_event, 'day', 'tzuserrel');
 	print ' - ';
-	print($end ? $end : '?');
+	print ($end ? '<span title="'.dol_print_date($project->date_end_event, 'dayhour', 'tzuserrel').'">'.$end.'</span>' : '?');
 	if ($object->hasDelay()) {
 		print img_warning("Late");
 	}

@@ -3469,6 +3469,8 @@ class Product extends CommonObject
 		// phpcs:enable
 		global $conf, $user, $hookmanager, $action;
 
+		$serviceStockIsEnabled = isModEnabled("service") && getDolGlobalString('STOCK_SUPPORTS_SERVICES');
+
 		$sql = "SELECT COUNT(DISTINCT m.fk_soc) as nb_customers, COUNT(DISTINCT m.rowid) as nb,";
 		$sql .= " COUNT(mp.rowid) as nb_rows, SUM(mp.qty) as qty, role";
 		$sql .= " FROM ".$this->db->prefix()."mrp_production as mp";
@@ -3480,6 +3482,7 @@ class Product extends CommonObject
 		$sql .= " WHERE m.rowid = mp.fk_mo";
 		$sql .= " AND m.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'mrp').")";
 		$sql .= " AND mp.fk_product = ".((int) $this->id);
+		$sql .= " AND mp.disable_stock_change IN (0)";
 		if (!$user->hasRight('societe', 'client', 'voir') && !$socid && !$forVirtualStock) {
 			$sql .= " AND m.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -3491,6 +3494,9 @@ class Product extends CommonObject
 		}
 		if (!empty($dateofvirtualstock)) {
 			$sql .= " AND m.date_valid <= '".$this->db->idate($dateofvirtualstock)."'"; // better date to code ? end of production ?
+		}
+		if (!$serviceStockIsEnabled) {
+			$sql .= "AND EXISTS (SELECT p.rowid FROM ".$this->db->prefix()."product AS p WHERE p.rowid = ".((int) $this->id)." AND p.fk_product_type IN (0))";
 		}
 		$sql .= " GROUP BY role";
 
@@ -4832,8 +4838,8 @@ class Product extends CommonObject
 
 		// les prix de fournisseurs.
 		$sql = "INSERT ".$this->db->prefix()."product_fournisseur_price (";
-		$sql .= " datec, fk_product, fk_soc, price, quantity, fk_user)";
-		$sql .= " SELECT '".$this->db->idate($now)."', ".((int) $toId).", fk_soc, price, quantity, fk_user";
+		$sql .= " datec, fk_product, fk_soc, price, quantity, fk_user, tva_tx)";
+		$sql .= " SELECT '".$this->db->idate($now)."', ".((int) $toId).", fk_soc, price, quantity, fk_user, tva_tx";
 		$sql .= " FROM ".$this->db->prefix()."product_fournisseur_price";
 		$sql .= " WHERE fk_product = ".((int) $fromId);
 
@@ -5852,7 +5858,6 @@ class Product extends CommonObject
 			$this->stock_theorique += ($stock_commande_fournisseur - $stock_reception_fournisseur);
 		}
 
-		$hookmanager->initHooks(array('productdao'));
 		$parameters = array('id'=>$this->id, 'includedraftpoforvirtual' => $includedraftpoforvirtual);
 		// Note that $action and $object may have been modified by some hooks
 		$reshook = $hookmanager->executeHooks('loadvirtualstock', $parameters, $this, $action);

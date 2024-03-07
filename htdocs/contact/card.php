@@ -102,7 +102,7 @@ $permissiontoadd = $user->hasRight('societe', 'contact', 'creer');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-if ($object->priv && $object->user_creation->id != $user->id) {
+if ($object->priv && $object->user_creation_id != $user->id) {
 	accessforbidden();
 }
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
@@ -206,7 +206,7 @@ if (empty($reshook)) {
 		}
 
 		$object->entity = (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : $conf->entity);
-		$object->socid = GETPOST("socid", 'int');
+		$object->socid = $socid;
 		$object->lastname = (string) GETPOST("lastname", 'alpha');
 		$object->firstname = (string) GETPOST("firstname", 'alpha');
 		$object->civility_code = (string) GETPOST("civility_code", 'alpha');
@@ -404,7 +404,7 @@ if (empty($reshook)) {
 
 			$object->oldcopy = clone $object;
 
-			$object->socid = GETPOST("socid", 'int');
+			$object->socid = $socid;
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
 			$object->firstname = (string) GETPOST("firstname", 'alpha');
 			$object->civility_code = (string) GETPOST("civility_code", 'alpha');

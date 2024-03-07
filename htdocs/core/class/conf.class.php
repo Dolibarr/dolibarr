@@ -534,6 +534,9 @@ class Conf extends stdClass
 			}
 
 			// For mycompany storage
+			$this->mycompany->multidir_output = array($this->entity => $rootfordata."/mycompany");
+			$this->mycompany->multidir_temp = array($this->entity => $rootfortemp."/mycompany/temp");
+			// For backward compatibility
 			$this->mycompany->dir_output = $rootfordata."/mycompany";
 			$this->mycompany->dir_temp = $rootfortemp."/mycompany/temp";
 
@@ -729,7 +732,7 @@ class Conf extends stdClass
 			}
 
 			if (!isset($this->global->MAIN_ENABLE_AJAX_TOOLTIP)) {
-				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 1;
+				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 0;	// Not enabled by default (still trouble of persistent tooltip)
 			}
 
 			// By default, suppliers objects can be linked to all projects

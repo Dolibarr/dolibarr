@@ -290,7 +290,7 @@ if (isModEnabled('accounting')) {
 	print $boxlist;
 
 	print '</div>';
-} elseif (isModEnabled('compta')) {
+} elseif (isModEnabled('comptabilite')) {
 	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 
 	print '<span class="opacitymedium">'.$langs->trans("Module10Desc")."</span>\n";

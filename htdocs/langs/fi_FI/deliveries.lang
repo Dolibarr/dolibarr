@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Toimitus
 DeliveryRef=Toimitusviite
-DeliveryCard=Stock receipt
+DeliveryCard=Varastokuitti
 DeliveryOrder=Lähetyslista
 DeliveryDate=Toimituspäivä
 CreateDeliveryOrder=Lähetyslistan luonti
@@ -30,4 +30,4 @@ NonShippable=Ei toimitettavissa
 ShowShippableStatus=Näytä kuljetuksien tila
 ShowReceiving=Näytä lähetyslista
 NonExistentOrder=Tilausta ei ole järjestelmässä
-StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Varastomäärät on jo kohdistettu edellisille riveille

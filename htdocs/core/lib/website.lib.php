@@ -544,7 +544,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 			unset($tmpwebsitepage);
 		}
 		if ($result > 0) {
-			$currenturi = $_SERVER["REQUEST_URI"];
+			$currenturi = $_SERVER["REQUEST_URI"];	// Example: /public/website/index.php?website=mywebsite.com&pageref=mywebsite-home&nocache=1708177483
 			$regtmp = array();
 			if (preg_match('/&pageref=([^&]+)/', $currenturi, $regtmp)) {
 				if ($regtmp[0] == $containerref) {
@@ -559,13 +559,14 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		}
 	} else { // When page called from virtual host server
 		$newurl = '/'.$containerref.'.php';
+		$newurl = $newurl.(empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
 	}
 
 	if ($newurl) {
 		if ($permanent) {
 			header("Status: 301 Moved Permanently", false, 301);
 		}
-		header("Location: ".$newurl.(empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]));
+		header("Location: ".$newurl);
 		exit;
 	} else {
 		print "Error, page contains a redirect to the alias page '".$containerref."' that does not exists in web site (".$website->id." / ".$website->ref.")";
@@ -675,13 +676,13 @@ function getStructuredData($type, $data = array())
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "Organization",
-			"name": "'.dol_escape_json($data['name'] ? $data['name'] : $companyname).'",
-			"url": "'.dol_escape_json($data['url'] ? $data['url'] : $url).'",
+			"name": "'.dol_escape_json(!empty($data['name']) ? $data['name'] : $companyname).'",
+			"url": "'.dol_escape_json(!empty($data['url']) ? $data['url'] : $url).'",
 			"logo": "'.($data['logo'] ? dol_escape_json($data['logo']) : '/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo)).'",
 			"contactPoint": {
 				"@type": "ContactPoint",
 				"contactType": "Contact",
-				"email": "'.dol_escape_json($data['email'] ? $data['email'] : $mysoc->email).'"
+				"email": "'.dol_escape_json(!empty($data['email']) ? $data['email'] : $mysoc->email).'"
 			}'."\n";
 		if (is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
 			$ret .= ",\n";

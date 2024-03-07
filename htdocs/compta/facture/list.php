@@ -65,9 +65,9 @@ $langs->loadLangs(array('bills', 'companies', 'products', 'categories'));
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id = (GETPOST('id', 'int') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
@@ -82,7 +82,6 @@ if ($contextpage == 'poslist') {
 	$optioncss = 'print';
 }
 
-$lineid = GETPOST('lineid', 'int');
 $userid = GETPOST('userid', 'int');
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refcustomer = GETPOST('search_refcustomer', 'alpha');
@@ -580,9 +579,19 @@ $facturestatic = new Facture($db);
 $formcompany = new FormCompany($db);
 $companystatic = new Societe($db);
 $companyparent = new Societe($db);
+
 $company_url_list = array();
 $subtypearray = $object->getArrayOfInvoiceSubtypes(0);
-$title = $langs->trans('BillsCustomers').' '.($socid > 0 ? ' '.$soc->name : '');
+
+if ($socid > 0) {
+	$soc = new Societe($db);
+	$soc->fetch($socid);
+	if (empty($search_company)) {
+		$search_company = $soc->name;
+	}
+}
+
+$title = $langs->trans('BillsCustomers').' '.($socid > 0 ? ' - '.$soc->name : '');
 $help_url = 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
@@ -969,14 +978,6 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // --------------------------------------------------------------------
 
 llxHeader('', $title, $help_url);
-
-if ($socid > 0) {
-	$soc = new Societe($db);
-	$soc->fetch($socid);
-	if (empty($search_company)) {
-		$search_company = $soc->name;
-	}
-}
 
 $param = '&socid='.urlencode($socid);
 if (!empty($mode)) {
@@ -1905,7 +1906,8 @@ if ($num > 0) {
 
 		$facturestatic->id = $obj->id;
 		$facturestatic->ref = $obj->ref;
-		$facturestatic->ref_client = $obj->ref_client;
+		$facturestatic->ref_client = $obj->ref_client;		// deprecated
+		$facturestatic->ref_customer = $obj->ref_client;
 		$facturestatic->type = $obj->type;
 		$facturestatic->subtype = $obj->subtype;
 		$facturestatic->total_ht = $obj->total_ht;

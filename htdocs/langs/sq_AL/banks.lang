@@ -67,7 +67,6 @@ AccountsArea=Zona e llogarive
 AccountCard=Karta e llogarisë
 DeleteAccount=Fshij llogarine
 ConfirmDeleteAccount=Jeni i sigurt që dëshironi ta fshini këtë llogari?
-Account=Llogaria
 BankTransactionByCategories=Regjistrimet bankare sipas kategorive
 BankTransactionForCategory=Regjistrimet bankare për kategorinë <b>%s</b>
 RemoveFromRubrique=Hiq lidhjen me kategorinë

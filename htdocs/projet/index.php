@@ -277,11 +277,11 @@ if ($resql) {
 
 			// Label
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->title).'">';
-			print $projectstatic->title;
+			print dol_escape_htmltag($projectstatic->title);
 			print '</td>';
 
 			// Thirdparty
-			print '<td class="nowrap">';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name).'">';
 			if ($companystatic->id > 0) {
 				print $companystatic->getNomUrl(1, 'company', 16);
 			}
@@ -344,7 +344,7 @@ if ($resql) {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("OpenedProjectsByThirdparties", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder);
-		print_liste_field_titre("NbOfProjects", $_SERVER["PHP_SELF"], "nb", "", "", '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre("Number", $_SERVER["PHP_SELF"], "nb", "", "", '', $sortfield, $sortorder, 'right ');
 		print "</tr>\n";
 	}
 

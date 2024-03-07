@@ -487,16 +487,16 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-print '<div class="floatright right'.($conf->dol_optimize_smallscreen ? ' centpercent' : '').'">'.$nav.'</div>'; // We move this before the assign to components so, the default submit button is not the assign to.
+print '<div class="'.($conf->dol_optimize_smallscreen ? 'center centpercent' : 'floatright right').'">'.$nav.'</div>'; // We move this before the assign to components so, the default submit button is not the assign to.
 
-print '<div class="colorbacktimesheet float valignmiddle">';
+print '<div class="colorbacktimesheet valignmiddle'.($conf->dol_optimize_smallscreen ? ' center' : ' float').'">';
 $titleassigntask = $langs->transnoentities("AssignTaskToMe");
 if ($usertoprocess->id != $user->id) {
 	$titleassigntask = $langs->transnoentities("AssignTaskToUser", $usertoprocess->getFullName($langs));
 }
 print '<div class="taskiddiv inline-block">';
 print img_picto('', 'projecttask', 'class="pictofixedwidth"');
-$formproject->selectTasks($socid ? $socid : -1, $taskid, 'taskid', 32, 0, '-- '.$langs->trans("ChooseANotYetAssignedTask").' --', 1, 0, 0, '', '', 'all', $usertoprocess);
+$formproject->selectTasks($socid ? $socid : -1, $taskid, 'taskid', 32, 0, '-- '.$langs->trans("ChooseANotYetAssignedTask").' --', 1, 0, 0, 'widthcentpercentminusx', '', 'all', $usertoprocess);
 print '</div>';
 print ' ';
 print $formcompany->selectTypeContact($object, '', 'type', 'internal', 'position', 0, 'maxwidth150onsmartphone');
@@ -659,14 +659,14 @@ if (!empty($arrayfields['t.progress']['checked'])) {
 	print '<th class="right minwidth75 maxwidth100" title="'.dol_escape_htmltag($langs->trans("ProgressDeclared")).'">'.$langs->trans("ProgressDeclared").'</th>';
 }
 if (!empty($arrayfields['timeconsumed']['checked'])) {
-	print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").'<br>';
+	print '<th class="right maxwidth100">'.$langs->trans("TimeSpentSmall").'<br>';
 	print '<span class="nowraponall">';
 	print '<span class="opacitymedium nopadding userimg"><img alt="Photo" class="photouserphoto userphoto" src="'.DOL_URL_ROOT.'/theme/common/everybody.png"></span>';
 	//print '<span class="nopadding userimg"><div class="valignmiddle userphoto inline-block center marginrightonlyshort">'.img_object('', 'user', 'class=""', 0, 0, $notooltip ? 0 : 1).'</div></span>';
 	print '<span class="opacitymedium paddingleft">'.$langs->trans("EverybodySmall").'</span>';
 	print '</span>';
 	print '</th>';
-	print '<th class="right maxwidth75 maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</th>';
+	print '<th class="right maxwidth75 maxwidth100">'.$langs->trans("TimeSpentSmall").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</th>';
 }
 for ($idw = 0; $idw < 7; $idw++) {
 	$dayinloopfromfirstdaytoshow = dol_time_plus_duree($firstdaytoshow, $idw, 'd'); // $firstdaytoshow is a date with hours = 0

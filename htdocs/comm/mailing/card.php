@@ -96,7 +96,6 @@ if (empty($action) && empty($object->id)) {
 $upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
 
-
 /*
  * Actions
  */
@@ -998,9 +997,9 @@ if ($action == 'create') {
 			$nbemail = ($object->nbemail ? $object->nbemail : 0);
 			if (is_numeric($nbemail)) {
 				$text = '';
-				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))) {
+				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))) {
 					if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
-						$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
+						$text .= $langs->trans('LimitSendingEmailing', getDolGlobalInt('MAILING_LIMIT_SENDBYWEB'));
 					} else {
 						$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 					}
@@ -1029,7 +1028,9 @@ if ($action == 'create') {
 			print $text;
 			if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
 				if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
-					print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING').')</span>';
+					print ' <span class="opacitymedium">(';
+					print getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING', getDolGlobalString('MAIN_MAIL_SMTP_SERVER'));
+					print ')</span>';
 				}
 			} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
 				print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER').')</span>';
@@ -1147,7 +1148,7 @@ if ($action == 'create') {
 				$formmail->withfrom = 0;
 				$formmail->withto = $user->email ? $user->email : 1;
 				$formmail->withtocc = 0;
-				$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
+				$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');
 				$formmail->withtopic = 0;
 				$formmail->withtopicreadonly = 1;
 				$formmail->withfile = 0;

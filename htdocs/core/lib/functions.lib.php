@@ -2224,7 +2224,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 			$tabsname = str_replace("@", "", $picto);
 		}
 		$out .= '<div id="moretabs'.$tabsname.'" class="inline-block tabsElem valignmiddle">';
-		$out .= '<div class="tab"><a href="#" class="tab moretab inline-block tabunactive"><span class="hideonsmartphone">'.$langs->trans("More").'</span>... ('.$nbintab.')</a></div>'; // Do not use "reposition" class in the "More".
+		$out .= '<div class="tab valignmiddle"><a href="#" class="tab moretab inline-block tabunactive valignmiddle"><span class="hideonsmartphone">'.$langs->trans("More").'</span>... ('.$nbintab.')</a></div>'; // Do not use "reposition" class in the "More".
 		$out .= '<div id="moretabsList'.$tabsname.'" style="width: '.$widthofpopup.'px; position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px; z-index:10;">';
 		$out .= $outmore;
 		$out .= '</div>';
@@ -2579,7 +2579,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 	// Show address and email
 	if (method_exists($object, 'getBannerAddress') && !in_array($object->element, array('product', 'bookmark', 'ecm_directories', 'ecm_files'))) {
-		$moreaddress = $object->getBannerAddress('refaddress', $object);
+		$moreaddress = $object->getBannerAddress('refaddress', $object);	// address, email, url, social networks
 		if ($moreaddress) {
 			$morehtmlref .= '<div class="refidno refaddress">';
 			$morehtmlref .= $moreaddress;
@@ -3281,9 +3281,9 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
 	$linkend = '</a>';
 
 	if ($morecss == 'float') {	// deprecated
-		return '<div class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ? img_picto($langs->trans("Url"), 'globe').' ' : '').$link.'</div>';
+		return '<div class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ? img_picto($langs->trans("Url"), 'globe', 'class="paddingrightonly"') : '').$link.'</div>';
 	} else {
-		return $linkstart.'<span class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ? img_picto('', 'globe').' ' : '').$link.'</span>'.$linkend;
+		return $linkstart.'<span class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ? img_picto('', 'globe', 'class="paddingrightonly"') : '').$link.'</span>'.$linkend;
 	}
 }
 
@@ -3301,7 +3301,10 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
  */
 function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, $showinvalid = 1, $withpicto = 0)
 {
-	global $conf, $user, $langs, $hookmanager;
+	global $user, $langs, $hookmanager;
+
+	//global $conf; $conf->global->AGENDA_ADDACTIONFOREMAIL = 1;
+	//$showinvalid = 1; $email = 'rrrrr';
 
 	$newemail = dol_escape_htmltag($email);
 
@@ -3314,30 +3317,35 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 	}
 
 	if (!empty($addlink)) {
-		$newemail = '<a style="text-overflow: ellipsis;" href="';
+		$newemail = '<a class="paddingrightonly" style="text-overflow: ellipsis;" href="';
 		if (!preg_match('/^mailto:/i', $email)) {
 			$newemail .= 'mailto:';
 		}
 		$newemail .= $email;
 		$newemail .= '">';
+
+		$newemail .= ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '');
+
 		$newemail .= dol_trunc($email, $max);
 		$newemail .= '</a>';
 		if ($showinvalid && !isValidEmail($email)) {
 			$langs->load("errors");
-			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email));
+			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email), '', 'paddingrightonly');
 		}
 
 		if (($cid || $socid) && isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
 			$type = 'AC_EMAIL';
-			$link = '';
+			$linktoaddaction = '';
 			if (getDolGlobalString('AGENDA_ADDACTIONFOREMAIL')) {
-				$link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$type.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
+				$linktoaddaction = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.urlencode($type).'&amp;contactid='.((int) $cid).'&amp;socid='.((int) $socid).'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
 			}
-			if ($link) {
-				$newemail = '<div>'.$newemail.' '.$link.'</div>';
+			if ($linktoaddaction) {
+				$newemail = '<div>'.$newemail.' '.$linktoaddaction.'</div>';
 			}
 		}
 	} else {
+		$newemail = ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '').$newemail;
+
 		if ($showinvalid && !isValidEmail($email)) {
 			$langs->load("errors");
 			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email));
@@ -3345,8 +3353,10 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 	}
 
 	//$rep = '<div class="nospan" style="margin-right: 10px">';
-	$rep = ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto)).' ' : '').$newemail;
+	//$rep = ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '').$newemail;
 	//$rep .= '</div>';
+	$rep = $newemail;
+
 	if ($hookmanager) {
 		$parameters = array('cid' => $cid, 'socid' => $socid, 'addlink' => $addlink, 'picto' => $withpicto);
 
@@ -3441,7 +3451,15 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 				$htmllink .= ($link ? ' '.$link : '');
 			}
 		} else {
-			if (!empty($dictsocialnetworks[$type]['url'])) {
+			$networkconstname = 'MAIN_INFO_SOCIETE_'.strtoupper($type).'_URL';
+			if (getDolGlobalString($networkconstname)) {
+				$link = str_replace('{socialid}', $value, getDolGlobalString($networkconstname));
+				if (preg_match('/^https?:\/\//i', $link)) {
+					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 0).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				} else {
+					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 1).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				}
+			} elseif (!empty($dictsocialnetworks[$type]['url'])) {
 				$tmpvirginurl = preg_replace('/\/?{socialid}/', '', $dictsocialnetworks[$type]['url']);
 				if ($tmpvirginurl) {
 					$value = preg_replace('/^www\.'.preg_quote($tmpvirginurl, '/').'\/?/', '', $value);
@@ -4018,6 +4036,9 @@ function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $char
 			if ($element == 'member' && isModEnabled('google') && getDolGlobalString('GOOGLE_ENABLE_GMAPS_MEMBERS')) {
 				$showgmap = 1;
 			}
+			if ($element == 'user' && isModEnabled('google') && getDolGlobalString('GOOGLE_ENABLE_GMAPS_USERS')) {
+				$showgmap = 1;
+			}
 			if (($element == 'thirdparty' || $element == 'societe') && isModEnabled('openstreetmap') && getDolGlobalString('OPENSTREETMAP_ENABLE_MAPS')) {
 				$showomap = 1;
 			}
@@ -4025,6 +4046,9 @@ function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $char
 				$showomap = 1;
 			}
 			if ($element == 'member' && isModEnabled('openstreetmap') && getDolGlobalString('OPENSTREETMAP_ENABLE_MAPS_MEMBERS')) {
+				$showomap = 1;
+			}
+			if ($element == 'user' && isModEnabled('openstreetmap') && getDolGlobalString('OPENSTREETMAP_ENABLE_MAPS_USERS')) {
 				$showomap = 1;
 			}
 			if ($showgmap) {
@@ -5812,11 +5836,11 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 			if ($cpt >= 1) {
 				if (empty($pagenavastextinput)) {
-					$pagelist .= '<li class="pagination"><a href="'.$file.'?page=0'.$options.'">1</a></li>';
+					$pagelist .= '<li class="pagination"><a class="reposition" href="'.$file.'?page=0'.$options.'">1</a></li>';
 					if ($cpt > 2) {
 						$pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
 					} elseif ($cpt == 2) {
-						$pagelist .= '<li class="pagination"><a href="'.$file.'?page=1'.$options.'">2</a></li>';
+						$pagelist .= '<li class="pagination"><a class="reposition" href="'.$file.'?page=1'.$options.'">2</a></li>';
 					}
 				}
 			}
@@ -5831,7 +5855,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 					if ($cpt == $page) {
 						$pagelist .= '<li class="pagination"><span class="active">'.($page + 1).'</span></li>';
 					} else {
-						$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.$cpt.$options.'">'.($cpt + 1).'</a></li>';
+						$pagelist .= '<li class="pagination"><a class="reposition" href="'.$file.'?page='.$cpt.$options.'">'.($cpt + 1).'</a></li>';
 					}
 				}
 				$cpt++;
@@ -5842,13 +5866,13 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 					if ($cpt < $nbpages - 2) {
 						$pagelist .= '<li class="pagination"><span class="inactive">...</span></li>';
 					} elseif ($cpt == $nbpages - 2) {
-						$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.($nbpages - 2).$options.'">'.($nbpages - 1).'</a></li>';
+						$pagelist .= '<li class="pagination"><a class="reposition" href="'.$file.'?page='.($nbpages - 2).$options.'">'.($nbpages - 1).'</a></li>';
 					}
-					$pagelist .= '<li class="pagination"><a href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
+					$pagelist .= '<li class="pagination"><a class="reposition" href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
 				}
 			} else {
 				//var_dump($page.' '.$cpt.' '.$nbpages);
-				$pagelist .= '<li class="pagination paginationlastpage"><a href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
+				$pagelist .= '<li class="pagination paginationlastpage"><a class="reposition" href="'.$file.'?page='.($nbpages - 1).$options.'">'.$nbpages.'</a></li>';
 			}
 		} else {
 			$pagelist .= '<li class="pagination"><span class="active">'.($page + 1)."</li>";
@@ -5954,7 +5978,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 			print '</li>';
 		}
 		if ($page > 0) {
-			print '<li class="pagination paginationpage paginationpageleft"><a class="paginationprevious" href="'.$file.'?page='.($page - 1).$options.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
+			print '<li class="pagination paginationpage paginationpageleft"><a class="paginationprevious reposition" href="'.$file.'?page='.($page - 1).$options.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
 		}
 		if ($betweenarrows) {
 			print '<!--<div class="betweenarrows nowraponall inline-block">-->';
@@ -5962,7 +5986,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 			print '<!--</div>-->';
 		}
 		if ($nextpage > 0) {
-			print '<li class="pagination paginationpage paginationpageright"><a class="paginationnext" href="'.$file.'?page='.($page + 1).$options.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
+			print '<li class="pagination paginationpage paginationpageright"><a class="paginationnext reposition" href="'.$file.'?page='.($page + 1).$options.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
 		}
 		if ($afterarrows) {
 			print '<li class="paginationafterarrows">';
@@ -6703,7 +6727,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 				$found = 1;
 			}
 		} else {
-			// TODO Read default product vat according to product and another countrycode.
+			// TODO Read default product vat according to product and an other countrycode.
 			// Vat for couple anothercountrycode/product is data that is not managed and store yet, so we will fallback on next rule.
 		}
 	}
@@ -7624,8 +7648,12 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
 					// like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
 
-					$out = '<?xml encoding="UTF-8"><div class="tricktoremove">'.$out.'</div>';
-					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD|LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
+					if (dol_textishtml($out)) {
+						$out = '<?xml encoding="UTF-8"><div class="tricktoremove">'.$out.'</div>';
+					} else {
+						$out = '<?xml encoding="UTF-8"><div class="tricktoremove">'.dol_nl2br($out).'</div>';
+					}
+					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NOXMLDECL);
 					$out = trim($dom->saveHTML());
 
 					// Remove the trick added to solve pb with text without parent tag
@@ -8635,7 +8663,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$daytext = $outputlangs->trans('Day'.$tmp['wday']);
 
 		$substitutionarray = array_merge($substitutionarray, array(
-			'__NOW_TMS__' => (int) $now,
+			'__NOW_TMS__' => (string) $now,		// Must be the string that represent the int
 			'__NOW_TMS_YMD__' => dol_print_date($now, 'day', 'auto', $outputlangs),
 			'__DAY__' => (string) $tmp['mday'],
 			'__DAY_TEXT__' => $daytext, // Monday
@@ -9601,7 +9629,11 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 		if ($onlysimplestring == '1') {
 			// We must accept: '1 && getDolGlobalInt("doesnotexist1") && getDolGlobalString("MAIN_FEATURES_LEVEL")'
 			// We must accept: '$user->hasRight("cabinetmed", "read") && !$object->canvas=="patient@cabinetmed"'
-			if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@', '/').']/i', $s)) {
+			$specialcharsallowed = '^$_+-.*>&|=!?():"\',/@';
+			if (getDolGlobalString('MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL')) {
+				$specialcharsallowed .= getDolGlobalString('MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL');
+			}
+			if (preg_match('/[^a-z0-9\s'.preg_quote($specialcharsallowed, '/').']/i', $s)) {
 				if ($returnvalue) {
 					return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
 				} else {
@@ -9609,18 +9641,23 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 					return '';
 				}
 			}
-			$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $s);	// accept parenthesis in '...->method(...'
-			$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
-			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
-			$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
+			$savescheck = '';
+			$scheck = $s;
+			while ($scheck && $savescheck != $scheck) {
+				$savescheck = $scheck;
+				$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $scheck);	// accept parenthesis in '...->method(...'
+				$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+				$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+				$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
+				$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
+				$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
+			}
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
 			if (strpos($scheck, '(') !== false) {
 				if ($returnvalue) {
-					return 'Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s;
+					return 'Bad string syntax to evaluate (mode 1, found call of a function or method without using the direct name of the function): '.$s;
 				} else {
-					dol_syslog('Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s);
+					dol_syslog('Bad string syntax to evaluate (mode 1, found call of a function or method without using the direct name of the function): '.$s);
 					return '';
 				}
 			}
@@ -9628,7 +9665,11 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			// We can exclude $ char that are not: $db, $langs, $leftmenu, $topmenu, $user, $langs, $objectoffield, $object...,
 		} elseif ($onlysimplestring == '2') {
 			// We must accept: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
-			if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@[]', '/').']/i', $s)) {
+			$specialcharsallowed = '^$_+-.*>&|=!?():"\',/@[]';
+			if (getDolGlobalString('MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL')) {
+				$specialcharsallowed .= getDolGlobalString('MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL');
+			}
+			if (preg_match('/[^a-z0-9\s'.preg_quote($specialcharsallowed, '/').']/i', $s)) {
 				if ($returnvalue) {
 					return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
 				} else {
@@ -9636,18 +9677,23 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 					return '';
 				}
 			}
-			$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $s);	// accept parenthesis in '...->method(...'
-			$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-			$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
-			$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '$1__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
-			$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);		// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
+			$savescheck = '';
+			$scheck = $s;
+			while ($scheck && $savescheck != $scheck) {
+				$savescheck = $scheck;
+				$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $scheck);	// accept parenthesis in '...->method(...'
+				$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+				$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+				$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
+				$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
+				$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);		// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
+			}
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
 			if (strpos($scheck, '(') !== false) {
 				if ($returnvalue) {
-					return 'Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s;
+					return 'Bad string syntax to evaluate (mode 2, found call of a function or method without using the direct name of the function): '.$s;
 				} else {
-					dol_syslog('Bad string syntax to evaluate (found call of a function or method without using direct name): '.$s);
+					dol_syslog('Bad string syntax to evaluate (mode 2, found call of a function or method without using the direct name of the function): '.$s);
 					return '';
 				}
 			}
@@ -9684,22 +9730,28 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 
 		// We block use of php exec or php file functions
 		$forbiddenphpstrings = array('$$');
-		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));
+		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST', 'ReflectionFunction'));
 
 		$forbiddenphpfunctions = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen");
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "executeCLI", "verifCond"));	// native dolibarr functions
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64_decode", "rawurldecode", "urldecode")); // decode string functions
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64_decode", "rawurldecode", "urldecode", "str_rot13", "hex2bin")); // decode string functions used to obfuscated function name
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "require", "include", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func"));
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
 
+		$forbiddenphpmethods = array('invoke', 'invokeArgs');	// Method of ReflectionFunction to execute a function
+
 		$forbiddenphpregex = 'global\s+\$|\b('.implode('|', $forbiddenphpfunctions).')\b';
+
+		$forbiddenphpmethodsregex = '->('.implode('|', $forbiddenphpmethods).')';
 
 		do {
 			$oldstringtoclean = $s;
 			$s = str_ireplace($forbiddenphpstrings, '__forbiddenstring__', $s);
 			$s = preg_replace('/'.$forbiddenphpregex.'/i', '__forbiddenstring__', $s);
+			$s = preg_replace('/'.$forbiddenphpmethodsregex.'/i', '__forbiddenstring__', $s);
 			//$s = preg_replace('/\$[a-zA-Z0-9_\->\$]+\(/i', '', $s);	// Remove $function( call and $mycall->mymethod(
 		} while ($oldstringtoclean != $s);
 
@@ -10869,229 +10921,229 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 	if (preg_match('/\.txt$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.rtx$/i', $tmpfile)) {
 		$mime = 'text/richtext';
 		$imgmime = 'text.png';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.csv$/i', $tmpfile)) {
 		$mime = 'text/csv';
 		$imgmime = 'text.png';
-		$famime = 'file-text-o';
+		$famime = 'file-csv';
 	} elseif (preg_match('/\.tsv$/i', $tmpfile)) {
 		$mime = 'text/tab-separated-values';
 		$imgmime = 'text.png';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.(cf|conf|log)$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.ini$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'ini';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.md$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'md';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.css$/i', $tmpfile)) {
 		$mime = 'text/css';
 		$imgmime = 'css.png';
 		$srclang = 'css';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.lang$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'lang';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.(crt|cer|key|pub)$/i', $tmpfile)) {	// Certificate files
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.(html|htm|shtml)$/i', $tmpfile)) {		// XML based (HTML/XML/XAML)
 		$mime = 'text/html';
 		$imgmime = 'html.png';
 		$srclang = 'html';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.(xml|xhtml)$/i', $tmpfile)) {
 		$mime = 'text/xml';
 		$imgmime = 'other.png';
 		$srclang = 'xml';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.xaml$/i', $tmpfile)) {
 		$mime = 'text/xml';
 		$imgmime = 'other.png';
 		$srclang = 'xaml';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.bas$/i', $tmpfile)) {					// Languages
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'bas';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.(c)$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'c';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.(cpp)$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'cpp';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.cs$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'cs';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.(h)$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'h';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.(java|jsp)$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'java';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.php([0-9]{1})?$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'php.png';
 		$srclang = 'php';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.phtml$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'php.png';
 		$srclang = 'php';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.(pl|pm)$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'pl.png';
 		$srclang = 'perl';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.sql$/i', $tmpfile)) {
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'sql';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.js$/i', $tmpfile)) {
 		$mime = 'text/x-javascript';
 		$imgmime = 'jscript.png';
 		$srclang = 'js';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.odp$/i', $tmpfile)) {					// Open office
 		$mime = 'application/vnd.oasis.opendocument.presentation';
 		$imgmime = 'ooffice.png';
-		$famime = 'file-powerpoint-o';
+		$famime = 'file-powerpoint';
 	} elseif (preg_match('/\.ods$/i', $tmpfile)) {
 		$mime = 'application/vnd.oasis.opendocument.spreadsheet';
 		$imgmime = 'ooffice.png';
-		$famime = 'file-excel-o';
+		$famime = 'file-excel';
 	} elseif (preg_match('/\.odt$/i', $tmpfile)) {
 		$mime = 'application/vnd.oasis.opendocument.text';
 		$imgmime = 'ooffice.png';
-		$famime = 'file-word-o';
+		$famime = 'file-word';
 	} elseif (preg_match('/\.mdb$/i', $tmpfile)) {					// MS Office
 		$mime = 'application/msaccess';
 		$imgmime = 'mdb.png';
-		$famime = 'file-o';
+		$famime = 'file';
 	} elseif (preg_match('/\.doc[xm]?$/i', $tmpfile)) {
 		$mime = 'application/msword';
 		$imgmime = 'doc.png';
-		$famime = 'file-word-o';
+		$famime = 'file-word';
 	} elseif (preg_match('/\.dot[xm]?$/i', $tmpfile)) {
 		$mime = 'application/msword';
 		$imgmime = 'doc.png';
-		$famime = 'file-word-o';
+		$famime = 'file-word';
 	} elseif (preg_match('/\.xlt(x)?$/i', $tmpfile)) {
 		$mime = 'application/vnd.ms-excel';
 		$imgmime = 'xls.png';
-		$famime = 'file-excel-o';
+		$famime = 'file-excel';
 	} elseif (preg_match('/\.xla(m)?$/i', $tmpfile)) {
 		$mime = 'application/vnd.ms-excel';
 		$imgmime = 'xls.png';
-		$famime = 'file-excel-o';
+		$famime = 'file-excel';
 	} elseif (preg_match('/\.xls$/i', $tmpfile)) {
 		$mime = 'application/vnd.ms-excel';
 		$imgmime = 'xls.png';
-		$famime = 'file-excel-o';
+		$famime = 'file-excel';
 	} elseif (preg_match('/\.xls[bmx]$/i', $tmpfile)) {
 		$mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 		$imgmime = 'xls.png';
-		$famime = 'file-excel-o';
+		$famime = 'file-excel';
 	} elseif (preg_match('/\.pps[mx]?$/i', $tmpfile)) {
 		$mime = 'application/vnd.ms-powerpoint';
 		$imgmime = 'ppt.png';
-		$famime = 'file-powerpoint-o';
+		$famime = 'file-powerpoint';
 	} elseif (preg_match('/\.ppt[mx]?$/i', $tmpfile)) {
 		$mime = 'application/x-mspowerpoint';
 		$imgmime = 'ppt.png';
-		$famime = 'file-powerpoint-o';
+		$famime = 'file-powerpoint';
 	} elseif (preg_match('/\.pdf$/i', $tmpfile)) {					// Other
 		$mime = 'application/pdf';
 		$imgmime = 'pdf.png';
-		$famime = 'file-pdf-o';
+		$famime = 'file-pdf';
 	} elseif (preg_match('/\.bat$/i', $tmpfile)) {					// Scripts
 		$mime = 'text/x-bat';
 		$imgmime = 'script.png';
 		$srclang = 'dos';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.sh$/i', $tmpfile)) {
 		$mime = 'text/x-sh';
 		$imgmime = 'script.png';
 		$srclang = 'bash';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.ksh$/i', $tmpfile)) {
 		$mime = 'text/x-ksh';
 		$imgmime = 'script.png';
 		$srclang = 'bash';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.bash$/i', $tmpfile)) {
 		$mime = 'text/x-bash';
 		$imgmime = 'script.png';
 		$srclang = 'bash';
-		$famime = 'file-code-o';
+		$famime = 'file-code';
 	} elseif (preg_match('/\.ico$/i', $tmpfile)) {					// Images
 		$mime = 'image/x-icon';
 		$imgmime = 'image.png';
-		$famime = 'file-image-o';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.(jpg|jpeg)$/i', $tmpfile)) {
 		$mime = 'image/jpeg';
 		$imgmime = 'image.png';
-		$famime = 'file-image-o';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.png$/i', $tmpfile)) {
 		$mime = 'image/png';
 		$imgmime = 'image.png';
-		$famime = 'file-image-o';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.gif$/i', $tmpfile)) {
 		$mime = 'image/gif';
 		$imgmime = 'image.png';
-		$famime = 'file-image-o';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.bmp$/i', $tmpfile)) {
 		$mime = 'image/bmp';
 		$imgmime = 'image.png';
-		$famime = 'file-image-o';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.(tif|tiff)$/i', $tmpfile)) {
 		$mime = 'image/tiff';
 		$imgmime = 'image.png';
-		$famime = 'file-image-o';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.svg$/i', $tmpfile)) {
 		$mime = 'image/svg+xml';
 		$imgmime = 'image.png';
-		$famime = 'file-image-o';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.webp$/i', $tmpfile)) {
 		$mime = 'image/webp';
 		$imgmime = 'image.png';
-		$famime = 'file-image-o';
+		$famime = 'file-image';
 	} elseif (preg_match('/\.vcs$/i', $tmpfile)) {					// Calendar
 		$mime = 'text/calendar';
 		$imgmime = 'other.png';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.ics$/i', $tmpfile)) {
 		$mime = 'text/calendar';
 		$imgmime = 'other.png';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	} elseif (preg_match('/\.torrent$/i', $tmpfile)) {				// Other
 		$mime = 'application/x-bittorrent';
 		$imgmime = 'other.png';
@@ -11099,40 +11151,40 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 	} elseif (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i', $tmpfile)) {	// Audio
 		$mime = 'audio';
 		$imgmime = 'audio.png';
-		$famime = 'file-audio-o';
+		$famime = 'file-audio';
 	} elseif (preg_match('/\.mp4$/i', $tmpfile)) {					// Video
 		$mime = 'video/mp4';
 		$imgmime = 'video.png';
-		$famime = 'file-video-o';
+		$famime = 'file-video';
 	} elseif (preg_match('/\.ogv$/i', $tmpfile)) {
 		$mime = 'video/ogg';
 		$imgmime = 'video.png';
-		$famime = 'file-video-o';
+		$famime = 'file-video';
 	} elseif (preg_match('/\.webm$/i', $tmpfile)) {
 		$mime = 'video/webm';
 		$imgmime = 'video.png';
-		$famime = 'file-video-o';
+		$famime = 'file-video';
 	} elseif (preg_match('/\.avi$/i', $tmpfile)) {
 		$mime = 'video/x-msvideo';
 		$imgmime = 'video.png';
-		$famime = 'file-video-o';
+		$famime = 'file-video';
 	} elseif (preg_match('/\.divx$/i', $tmpfile)) {
 		$mime = 'video/divx';
 		$imgmime = 'video.png';
-		$famime = 'file-video-o';
+		$famime = 'file-video';
 	} elseif (preg_match('/\.xvid$/i', $tmpfile)) {
 		$mime = 'video/xvid';
 		$imgmime = 'video.png';
-		$famime = 'file-video-o';
+		$famime = 'file-video';
 	} elseif (preg_match('/\.(wmv|mpg|mpeg)$/i', $tmpfile)) {
 		$mime = 'video';
 		$imgmime = 'video.png';
-		$famime = 'file-video-o';
+		$famime = 'file-video';
 	} elseif (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z|tar|lzh|zst)$/i', $tmpfile)) {	// Archive
 		// application/xxx where zzz is zip, ...
 		$mime = 'archive';
 		$imgmime = 'archive.png';
-		$famime = 'file-archive-o';
+		$famime = 'file-archive';
 	} elseif (preg_match('/\.(exe|com)$/i', $tmpfile)) {					// Exe
 		$mime = 'application/octet-stream';
 		$imgmime = 'other.png';
@@ -11144,7 +11196,7 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 	} elseif (preg_match('/\.err$/i', $tmpfile)) {							 // phpcs:ignore
 		$mime = 'error';
 		$imgmime = 'error.png';
-		$famime = 'file-text-o';
+		$famime = 'file-alt';
 	}
 
 	// Return mimetype string
@@ -11856,6 +11908,9 @@ function getElementProperties($element_type)
 		$module = 'societe';
 		$subelement = 'contact';
 		$table_element = 'socpeople';
+	} elseif ($element_type == 'inventory') {
+		$module = 'product';
+		$classpath = 'product/inventory/class';
 	} elseif ($element_type == 'stock') {
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
@@ -12562,7 +12617,7 @@ function dolForgeCriteriaCallback($matches)
 		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 			$tmpescaped = $regbis[1];
 		}
-		//$tmpescaped = "'".$db->escapeforlike($db->escape($regbis[1]))."'";
+		//$tmpescaped = "'".$db->escape($db->escapeforlike($regbis[1]))."'";
 		$tmpescaped = "'".$db->escape($tmpescaped)."'";	// We do not escape the _ and % so the like will works
 	} elseif (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 		$tmpescaped = "'".$db->escape($regbis[1])."'";

@@ -397,7 +397,7 @@ class Position extends CommonObject
 					$sqlwhere[] = $key . '=' . $value;
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+				} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key . ' = \'' . $this->db->idate($value) . '\'';
 				} elseif (strpos($value, '%') === false) {
 					$sqlwhere[] = $key . ' IN (' . $this->db->sanitize($this->db->escape($value)) . ')';

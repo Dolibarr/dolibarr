@@ -34,7 +34,6 @@ PaymentEvent=Zahlung für eine Veranstaltung
 NewRegistration=Anmeldung
 EventOrganizationSetup=Einstellungen für die Veranstaltungsorganisation
 EventOrganization=Veranstaltungsorganisation
-Settings=Einstellungen
 EventOrganizationSetupPage = Einstellungsseite für die Veranstaltungsorganisation
 EVENTORGANIZATION_TASK_LABEL = Bezeichnung der Aufgaben, die automatisch erstellt werden sollen, wenn das Projekt freigegeben wird
 EVENTORGANIZATION_TASK_LABELTooltip = Wenn Sie eine zu organisierende Veranstaltung freigeben, können einige Aufgaben automatisch im Beispiel-Projekt erstellt werden:<br> <br>Zum Beispiel:<br>Aufruf für Konferenzbeiträge senden<br> Aufruf für Standbuchungen senden<br>Vorschläge für Konferenzbeiträge freigeben<br>Anfragen für Standbuchungen bestätigen<br>Veranstaltungsbuchung für Teilnehmer freigeben<br> Senden Sie eine Veranstaltungserinnerung an die Referenten <br> Senden Sie eine Veranstaltungserinnerung an Standinhaber senden<br> Senden Sie eine Veranstaltungserinnerung an die Teilnehmer
@@ -98,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = Seed, um den Schlüssel für die öffentliche Regi
 SERVICE_BOOTH_LOCATION = Leistung, die für die Rechnungsposition über einen Stand verwendet wird
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Leistung, die für die Rechnungsposition über eine Teilnahmebuchung einer Veranstaltung verwendet wird
 NbVotes=Anzahl der Stimmen
+
 #
 # Status
 #
@@ -106,9 +106,10 @@ EvntOrgSuggested = Empfohlen
 EvntOrgConfirmed = Bestätigt
 EvntOrgNotQualified = Nicht qualifiziert
 EvntOrgDone = Erledigt
-EvntOrgCancelled = Abgesagt
+EvntOrgCancelled = Storniert
+
 #
-# Public page
+# Other
 #
 SuggestForm = Vorschlagsseite
 SuggestOrVoteForConfOrBooth = Seite für Vorschlag oder Abstimmung
@@ -144,13 +145,8 @@ OrganizationEventBulkMailToAttendees=Dies ist eine Erinnerung, dass Sie Teilnehm
 OrganizationEventBulkMailToSpeakers=Dies ist eine Erinnerung, dass Sie an der Veranstaltung als Referent teilnehmen
 OrganizationEventLinkToThirdParty=Verknüpfung mit Geschäftspartner (Kunde, Lieferant oder Partner)
 OrganizationEvenLabelName=Öffentlicher Name des Konferenzbeitrags oder des Standes
-
 NewSuggestionOfBooth=Bewerbung für einen Stand
 NewSuggestionOfConference=Bewerbung für einen Konferenzbeitrag
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = Willkommen auf der Vorschlagseite für Konferenzbeiträge und Stände.
 EvntOrgRegistrationConfWelcomeMessage = Willkommen auf der Vorschlagsseite für Konferenzbeiträge.
 EvntOrgRegistrationBoothWelcomeMessage = Willkommen auf der Vorschlagsseite für Stände.
@@ -158,8 +154,8 @@ EvntOrgVoteHelpMessage = Hier können Sie die vorgeschlagenen Veranstaltungen f�
 VoteOk = Ihre Stimme wurde angenommen.
 AlreadyVoted = Sie haben bereits für diese Veranstaltung abgestimmt.
 VoteError = Bei der Abstimmung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.
-
 SubscriptionOk=Ihre Anmeldung wurde erfasst
+AmountOfRegistrationPaid=Bezahlte Registrierungsgebühr
 ConfAttendeeSubscriptionConfirmation = Bestätigung Ihrer Anmeldung zu einer Veranstaltung
 Attendee = Teilnehmer
 PaymentConferenceAttendee = Zahlung für Konferenzteilnehmer
@@ -170,7 +166,7 @@ EmailAttendee=Teilnehmer-E-Mail
 EmailCompany=Firmen-E-Mail
 EmailCompanyForInvoice=Firmen-E-Mail (für Rechnung, falls abweichend von der Teilnehmer-E-Mail)
 ErrorSeveralCompaniesWithEmailContactUs=Es wurden mehrere Unternehmen mit dieser E-Mail-Adresse gefunden, sodass wir Ihre Registrierung nicht automatisch freigeben können. Bitte kontaktieren Sie uns unter %s für eine manuelle Freigabe
-ErrorSeveralCompaniesWithNameContactUs=Es wurden mehrere Unternehmen mit diesem Namen gefunden, so dass wir Ihre Registrierung nicht automatisch freigeben können. Bitte kontaktieren Sie uns unter %s für eine manuelle Freigabe
+ErrorSeveralCompaniesWithNameContactUs=Es wurden mehrere Unternehmen mit diesem Namen gefunden, so dass wir Ihre Registrierung nicht automatisch freigeben können. Bitte kontaktieren Sie uns unter %s für eine manuelle Überprüfung.
 NoPublicActionsAllowedForThisEvent=Für diese Veranstaltung sind keine Aktionen für die Öffentlichkeit zugänglich
 MaxNbOfAttendees=Maximale Teilnehmerzahl
 DateStartEvent=Startdatum der Veranstaltung

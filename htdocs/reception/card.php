@@ -733,6 +733,7 @@ if (empty($reshook)) {
 	$triggersendname = 'RECEPTION_SENTBYMAIL';
 	$paramname = 'id';
 	$mode = 'emailfromreception';
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_RECEPTION_TO';
 	$trackid = 'rec'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
@@ -2106,9 +2107,9 @@ if ($action == 'create') {
 			$line->fetch_optionals();
 
 			if ($action == 'editline' && $lines[$i]->id == $line_id) {
-				print $line->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), $indiceAsked);
+				print $line->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), '');
 			} else {
-				print $line->showOptionals($extrafields, 'view', array('colspan'=>$colspan), $indiceAsked);
+				print $line->showOptionals($extrafields, 'view', array('colspan'=>$colspan), '');
 			}
 		}
 	}

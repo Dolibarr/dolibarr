@@ -1212,7 +1212,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<tr><td>'.$langs->trans($value['label']).'</td>';
 				print '<td>';
 				if (!empty($value['icon'])) {
-					print '<span class="fa '.$value['icon'].' pictofixedwidth"></span>';
+					print '<span class="fab '.$value['icon'].' pictofixedwidth"></span>';
 				}
 				if (!empty($ldap_social[$key])) {
 					print '<input type="hidden" name="'.$key.'" value="'.$ldap_social[$key].'">';
@@ -1955,17 +1955,19 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
+				$params = array(
+					'attr' => array(
+						'title' => '',
+						'class' => 'classfortooltip'
+					)
+				);
+
 				if (empty($user->socid)) {
 					$canSendMail = false;
-					$params = array(
-						'attr' => array(
-							'title' => '',
-							'class' => 'classfortooltip'
-						)
-					);
 					if (!empty($object->email)) {
 						$langs->load("mails");
 						$canSendMail = true;
+						unset($params['attr']['title']);
 					} else {
 						$langs->load("mails");
 						$params['attr']['title'] = $langs->trans('NoEMail');
@@ -1974,26 +1976,16 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 
 				if ($caneditfield && (!isModEnabled('multicompany') || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
-					$params = array(
-						'attr' => array(
-							'title' => '',
-							'class' => 'classfortooltip'
-						)
-					);
 					if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
 						$params['attr']['title'] = $langs->trans('DisabledInMonoUserMode');
 						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'#', '', false, $params);
 					} else {
+						unset($params['attr']['title']);
 						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit&token='.newToken(), '', true, $params);
 					}
 				} elseif ($caneditpasswordandsee && !$object->ldap_sid &&
 				(!isModEnabled('multicompany') || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
-					$params = array(
-						'attr' => array(
-							'title' => '',
-							'class' => 'classfortooltip'
-						)
-					);
+					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit', '', true, $params);
 				}
 
@@ -2010,6 +2002,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						print dolGetButtonAction($langs->trans('ReinitPassword'), '', 'default', $_SERVER['PHP_SELF'].'#', '', false, $params);
 					} elseif (($user->id != $id && $caneditpasswordandsee) && $object->login && !$object->ldap_sid &&
 					((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
+						unset($params['attr']['title']);
 						print dolGetButtonAction($langs->trans('ReinitPassword'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=password&token='.newToken(), '', true, $params);
 					}
 
@@ -2019,6 +2012,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					} elseif (($user->id != $id && $caneditpasswordandsend) && $object->login && !$object->ldap_sid &&
 					((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
 						if ($object->email) {
+							unset($params['attr']['title']);
 							print dolGetButtonAction($langs->trans('SendNewPassword'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=passwordsend&token='.newToken(), '', true, $params);
 						} else {
 							$params['attr']['title'] = $langs->trans('NoEMail');
@@ -2027,20 +2021,15 @@ if ($action == 'create' || $action == 'adduserldap') {
 					}
 				}
 
-				// Enable user
-				$params = array(
-					'attr' => array(
-						'title' => '',
-						'class' => 'classfortooltip'
-					)
-				);
 				if ($user->id != $id && $candisableuser && $object->statut == 0 &&
 				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
+					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('Reactivate'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=enable&token='.newToken(), '', true, $params);
 				}
 				// Disable user
 				if ($user->id != $id && $candisableuser && $object->statut == 1 &&
 				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
+					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('DisableUser'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=disable&token='.newToken(), '', true, $params);
 				} else {
 					if ($user->id == $id) {
@@ -2052,6 +2041,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if ($user->id != $id && $candisableuser &&
 				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
 					if ($user->admin || !$object->admin) { // If user edited is admin, delete is possible on for an admin
+						unset($params['attr']['title']);
 						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', $_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id, '', true, $params);
 					} else {
 						$params['attr']['title'] = $langs->trans('MustBeAdminToDeleteOtherAdmin');
@@ -2521,7 +2511,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if ($caneditfield) {
 				print '<textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 			}
-			print $object->address;
+			print dol_escape_htmltag(GETPOSTISSET('address') ? GETPOST('address') : $object->address, 0, 1);
 			if ($caneditfield) {
 				print '</textarea>';
 			}
@@ -2530,7 +2520,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Zip
 			print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
 			if ($caneditfield) {
-				print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+				print $formcompany->select_ziptown((GETPOSTISSET('zipcode') ? GETPOST('zipcode') : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
 			} else {
 				print $object->zip;
 			}
@@ -2539,7 +2529,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Town
 			print '<tr><td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
 			if ($caneditfield) {
-				print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+				print $formcompany->select_ziptown((GETPOSTISSET('town') ? GETPOST('town') : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 			} else {
 				print $object->town;
 			}
@@ -2564,7 +2554,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<tr><td class="tdoverflow">'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td>';
 				if ($caneditfield) {
 					print img_picto('', 'state', 'class="pictofixedwidth"');
-					print $formcompany->select_state($object->state_id, $object->country_code, 'state_id');
+					print $formcompany->select_state_ajax('country_id', $object->state_id, $object->country_id, 'state_id');
 				} else {
 					print $object->state;
 				}
@@ -2625,7 +2615,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						print '<tr><td>'.$langs->trans($value['label']).'</td>';
 						print '<td>';
 						if (!empty($value['icon'])) {
-							print '<span class="fa '.$value['icon'].' pictofixedwidth"></span>';
+							print '<span class="fab '.$value['icon'].' pictofixedwidth"></span>';
 						}
 						if ($caneditfield && empty($object->ldap_sid)) {
 							print '<input type="text" name="'.$key.'" class="flat maxwidth200" value="'.(isset($object->socialnetworks[$key]) ? $object->socialnetworks[$key] : '').'">';

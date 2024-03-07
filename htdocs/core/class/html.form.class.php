@@ -2439,29 +2439,29 @@ class Form
 	/**
 	 *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_list
 	 *
-	 * @param int 			$selected 				Preselected products
-	 * @param string 		$htmlname 				Name of HTML select field (must be unique in page).
-	 * @param int|string 	$filtertype 			Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param int 			$limit 					Limit on number of returned lines
-	 * @param int 			$price_level 			Level of price to show
-	 * @param int 			$status 				Sell status -1=Return all products, 0=Products not on sell, 1=Products on sell
-	 * @param int 			$finished 				2=all, 1=finished, 0=raw material
-	 * @param string 		$selected_input_value 	Value of preselected input text (for use with ajax)
-	 * @param int 			$hidelabel 				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
-	 * @param array 		$ajaxoptions 			Options for ajax_autocompleter
-	 * @param int 			$socid 					Thirdparty Id (to get also price dedicated to this customer)
-	 * @param string 		$showempty 				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param int 			$forcecombo 			Force to use combo box
-	 * @param string 		$morecss 				Add more css on select
-	 * @param int 			$hidepriceinlabel 		1=Hide prices in label
-	 * @param string 		$warehouseStatus 		Warehouse status filter to count the quantity in stock. Following comma separated filter options can be used
-	 *                                				'warehouseopen' = count products from open warehouses,
-	 *                                				'warehouseclosed' = count products from closed warehouses,
-	 *                               				'warehouseinternal' = count products from warehouses for internal correct/transfer only
-	 * @param array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
-	 * @param int	 		$nooutput 				No print, return the output into a string
-	 * @param int 			$status_purchase 		Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
-	 * @return        void|string
+	 *  @param		int			$selected				Preselected products
+	 *  @param		string		$htmlname				Name of HTML select field (must be unique in page).
+	 *  @param		int|string	$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
+	 *  @param		int			$limit					Limit on number of returned lines
+	 *  @param		int			$price_level			Level of price to show
+	 *  @param		int			$status					Sell status: -1=No filter on sell status, 0=Products not on sell, 1=Products on sell
+	 *  @param		int			$finished				2=all, 1=finished, 0=raw material
+	 *  @param		string		$selected_input_value	Value of preselected input text (for use with ajax)
+	 *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 *  @param		array		$ajaxoptions			Options for ajax_autocompleter
+	 *  @param      int			$socid					Thirdparty Id (to get also price dedicated to this customer)
+	 *  @param		string		$showempty				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * 	@param		int			$forcecombo				Force to use combo box
+	 *  @param      string      $morecss                Add more css on select
+	 *  @param      int         $hidepriceinlabel       1=Hide prices in label
+	 *  @param      string      $warehouseStatus        Warehouse status filter to count the quantity in stock. Following comma separated filter options can be used
+	 *										            'warehouseopen' = count products from open warehouses,
+	 *										            'warehouseclosed' = count products from closed warehouses,
+	 *										            'warehouseinternal' = count products from warehouses for internal correct/transfer only
+	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
+	 *  @param		string		$nooutput				No print, return the output into a string
+	 *  @param		int			$status_purchase		Purchase status: -1=No filter on purchase status, 0=Products not on purchase, 1=Products on purchase
+	 *  @return		void|string
 	 */
 	public function select_produits($selected = 0, $htmlname = 'productid', $filtertype = '', $limit = 0, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = null, $nooutput = 0, $status_purchase = -1)
 	{
@@ -2858,12 +2858,10 @@ class Form
 		if ($finished == 0) {
 			$sql .= " AND p.finished = " . ((int) $finished);
 		} elseif ($finished == 1) {
-			$sql .= " AND p.finished = " . ((int) $finished);
-			if ($status >= 0) {
-				$sql .= " AND p.tosell = " . ((int) $status);
-			}
-		} elseif ($status >= 0) {
-			$sql .= " AND p.tosell = " . ((int) $status);
+			$sql .= " AND p.finished = ".((int) $finished);
+		}
+		if ($status >= 0) {
+			$sql .= " AND p.tosell = ".((int) $status);
 		}
 		if ($status_purchase >= 0) {
 			$sql .= " AND p.tobuy = " . ((int) $status_purchase);
@@ -6021,9 +6019,9 @@ class Form
 			print '</form>';
 		} else {
 			if (!empty($rate)) {
-				print price($rate, 1, $langs, 1, 0);
+				print price($rate, 1, $langs, 0, 0);
 				if ($currency && $rate != 1) {
-					print ' &nbsp; (' . price($rate, 1, $langs, 1, 0) . ' ' . $currency . ' = 1 ' . $conf->currency . ')';
+					print ' &nbsp; (' . price($rate, 1, $langs, 0, 0) . ' ' . $currency . ' = 1 ' . $conf->currency . ')';
 				}
 			} else {
 				print 1;
@@ -6460,8 +6458,8 @@ class Form
 	 *                         Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
 	 *                         Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
 	 *                         Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
-	 *                         Si vendeur et acheteur dans Communauté européenne et acheteur= particulier alors TVA par défaut=TVA du produit vendu. Fin de règle.
-	 *                         Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TVA par défaut=0. Fin de règle.
+	 *                         Si vendeur et acheteur dans Communauté européenne et acheteur=particulier alors TVA par défaut=TVA du produit vendu. Fin de règle.
+	 *                         Si vendeur et acheteur dans Communauté européenne et acheteur=entreprise alors TVA par défaut=0. Fin de règle.
 	 *                         Sinon la TVA proposee par defaut=0. Fin de regle.
 	 * @param bool $options_only Return HTML options lines only (for ajax treatment)
 	 * @param int $mode 0=Use vat rate as key in combo list, 1=Add VAT code after vat rate into key, -1=Use id of vat line as key
@@ -6511,14 +6509,31 @@ class Form
 		}
 		if (getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC')) {    // If option to have vat for end customer for services is on
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-			if (!isInEEC($societe_vendeuse) && (!is_object($societe_acheteuse) || (isInEEC($societe_acheteuse) && !$societe_acheteuse->isACompany()))) {
+			// If SERVICE_ARE_ECOMMERCE_200238EC=1 combo list vat rate of purchaser and seller countries
+			// If SERVICE_ARE_ECOMMERCE_200238EC=2 combo list only the vat rate of the purchaser country
+			$selectVatComboMode = getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC');
+			if (isInEEC($societe_vendeuse) && isInEEC($societe_acheteuse) && !$societe_acheteuse->isACompany()) {
 				// We also add the buyer country code
 				if (is_numeric($type)) {
 					if ($type == 1) { // We know product is a service
-						$code_country .= ",'" . $societe_acheteuse->country_code . "'";
+						switch ($selectVatComboMode) {
+							case '1':
+								$code_country .= ",'" . $societe_acheteuse->country_code . "'";
+								break;
+							case '2':
+								$code_country = "'" . $societe_acheteuse->country_code . "'";
+								break;
+						}
 					}
 				} elseif (!$idprod) {  // We don't know type of product
-					$code_country .= ",'" . $societe_acheteuse->country_code . "'";
+					switch ($selectVatComboMode) {
+						case '1':
+							$code_country .= ",'" . $societe_acheteuse->country_code . "'";
+							break;
+						case '2':
+							$code_country = "'" . $societe_acheteuse->country_code . "'";
+							break;
+					}
 				} else {
 					$prodstatic = new Product($this->db);
 					$prodstatic->fetch($idprod);
@@ -6530,7 +6545,7 @@ class Form
 		}
 
 		// Now we get list
-		$num = $this->load_cache_vatrates($code_country); // If no vat defined, return -1 with message into this->error
+		$num = $this->load_cache_vatrates($code_country); // If no vat at all defined for this country, return -1 with message into this->error
 
 		if ($num > 0) {
 			// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
@@ -7156,8 +7171,8 @@ class Form
 				$arrayofdateof = $adddateof;
 			}
 			foreach ($arrayofdateof as $valuedateof) {
-				$tmpadddateof = $valuedateof['adddateof'] != '' ? $valuedateof['adddateof'] : 0;
-				$tmplabeladddateof = $valuedateof['labeladddateof'];
+				$tmpadddateof = empty($valuedateof['adddateof']) ? 0 : $valuedateof['adddateof'];
+				$tmplabeladddateof = empty($valuedateof['labeladddateof']) ? '' : $valuedateof['labeladddateof'];
 				$tmparray = dol_getdate($tmpadddateof);
 				if (empty($tmplabeladddateof)) {
 					$tmplabeladddateof = $langs->trans("DateInvoice");
@@ -7999,22 +8014,22 @@ class Form
 	 * Can use autocomplete with ajax after x key pressed or a full combo, depending on setup.
 	 * This is the generic method that will replace all specific existing methods.
 	 *
-	 * @param 	string 	$objectdesc 			'ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'. For hard coded custom needs. Try to prefer method using $objectfield instead of $objectdesc.
-	 * @param 	string 	$htmlname 				Name of HTML select component
-	 * @param 	int 	$preselectedvalue 		Preselected value (ID of element)
-	 * @param 	string 	$showempty 				''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
-	 * @param 	string 	$searchkey 				Search criteria
-	 * @param 	string 	$placeholder 			Place holder
-	 * @param 	string 	$morecss 				More CSS
-	 * @param 	string 	$moreparams 			More params provided to ajax call
-	 * @param 	int 	$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
-	 * @param 	int 	$disabled 				1=Html component is disabled
-	 * @param 	string 	$selected_input_value 	Value of preselected input text (for use with ajax)
-	 * @param	string	$objectfield			Object:Field that contains the definition (in table $fields or $extrafields). Example: 'Object:xxx' or 'Module_Object:xxx' or 'Object:options_xxx' or 'Module_Object:options_xxx'
+	 * @param 	string $objectdesc           'ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'. For hard coded custom needs. Try to prefer method using $objectfield instead of $objectdesc.
+	 * @param 	string $htmlname             Name of HTML select component
+	 * @param 	int    $preSelectedValue     Preselected value (ID of element)
+	 * @param 	string $showempty            ''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
+	 * @param 	string $searchkey            Search criteria
+	 * @param 	string $placeholder          Place holder
+	 * @param 	string $morecss              More CSS
+	 * @param 	string $moreparams           More params provided to ajax call
+	 * @param 	int    $forcecombo           Force to load all values and output a standard combobox (with no beautification)
+	 * @param 	int    $disabled             1=Html component is disabled
+	 * @param 	string $selected_input_value Value of preselected input text (for use with ajax)
+	 * @param	string $objectfield          Object:Field that contains the definition (in table $fields or $extrafields). Example: 'Object:xxx' or 'Module_Object:xxx' or 'Object:options_xxx' or 'Module_Object:options_xxx'
 	 * @return  string	                      	Return HTML string
 	 * @see selectForFormsList(), select_thirdparty_list()
 	 */
-	public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '', $objectfield = '')
+	public function selectForForms($objectdesc, $htmlname, $preSelectedValue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '', $objectfield = '')
 	{
 		global $conf, $extrafields, $user;
 
@@ -8113,10 +8128,23 @@ class Form
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString($confkeyforautocompletemode) && !$forcecombo) {
 			// No immediate load of all database
 			$placeholder = '';
-			if ($preselectedvalue && empty($selected_input_value)) {
-				$objecttmp->fetch($preselectedvalue);
+
+			if ($preSelectedValue && empty($selected_input_value)) {
+				$objecttmp->fetch($preSelectedValue);
 				$selected_input_value = ($prefixforautocompletemode == 'company' ? $objecttmp->name : $objecttmp->ref);
-				//unset($objecttmp);
+
+				$oldValueForShowOnCombobox = 0;
+				foreach ($objecttmp->fields as $fieldK => $fielV) {
+					if (!$fielV['showoncombobox'] || empty($objecttmp->$fieldK)) continue;
+
+					if (!$oldValueForShowOnCombobox) {
+						$selected_input_value = '';
+					}
+
+					$selected_input_value .= $oldValueForShowOnCombobox ? ' - ' : '';
+					$selected_input_value .= $objecttmp->$fieldK;
+					$oldValueForShowOnCombobox = empty($fielV['showoncombobox']) ? 0 : $fielV['showoncombobox'];
+				}
 			}
 
 			// Set url and param to call to get json of the search results
@@ -8124,12 +8152,12 @@ class Form
 			$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1&objectdesc=' . urlencode($objectdescorig) . '&objectfield='.urlencode($objectfield) . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
 
 			// Activate the auto complete using ajax call.
-			$out .= ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, getDolGlobalString($confkeyforautocompletemode), 0, array());
+			$out .= ajax_autocompleter($preSelectedValue, $htmlname, $urlforajaxcall, $urloption, getDolGlobalString($confkeyforautocompletemode), 0);
 			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
 			$out .= '<input type="text" class="' . $morecss . '"' . ($disabled ? ' disabled="disabled"' : '') . ' name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '') . ' />';
 		} else {
 			// Immediate load of table record.
-			$out .= $this->selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, 0, $disabled, $sortfield, $filter);
+			$out .= $this->selectForFormsList($objecttmp, $htmlname, $preSelectedValue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, 0, $disabled, $sortfield, $filter);
 		}
 
 		return $out;
@@ -8488,10 +8516,6 @@ class Form
 			$out .= ajax_combobox($idname, array(), 0, 0, 'resolve', (((int) $show_empty) < 0 ? (string) $show_empty : '-1'), $morecss);
 		}
 
-
-
-
-
 		return $out;
 	}
 
@@ -8754,10 +8778,16 @@ class Form
 		}
 
 		$useenhancedmultiselect = 0;
-		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') || defined('REQUIRE_JQUERY_MULTISELECT')) {
-			$useenhancedmultiselect = 1;
+		if (!empty($conf->use_javascript_ajax) && (getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') || defined('REQUIRE_JQUERY_MULTISELECT'))) {
+			if ($addjscombo) {
+				$useenhancedmultiselect = 1;	// Use the js multiselect in one line. Possible only if $addjscombo not 0.
+			}
 		}
 
+		// We need a hidden field because when using the multiselect, if we unselect all, there is no
+		// variable submitted at all, so no way to make a difference between variable not submited and variable
+		// submited to nothing.
+		$out .= '<input type="hidden" name="'.$htmlname.'_multiselect" value="1">';
 		// Output select component
 		$out .= '<select id="' . $htmlname . '" class="multiselect' . ($useenhancedmultiselect ? ' multiselectononeline' : '') . ($morecss ? ' ' . $morecss : '') . '" multiple name="' . $htmlname . '[]"' . ($moreattrib ? ' ' . $moreattrib : '') . ($width ? ' style="width: ' . (preg_match('/%/', $width) ? $width : $width . 'px') . '"' : '') . '>' . "\n";
 		if (is_array($array) && !empty($array)) {
@@ -9030,11 +9060,11 @@ class Form
 	/**
 	 *  Show linked object block.
 	 *
-	 * @param CommonObject $object Object we want to show links to
-	 * @param string $morehtmlright More html to show on right of title
-	 * @param array $compatibleImportElementsList Array of compatibles elements object for "import from" action
-	 * @param string $title Title
-	 * @return    int                                                Return integer <0 if KO, >=0 if OK
+	 * @param 	CommonObject 	$object 						Object we want to show links to
+	 * @param 	string 			$morehtmlright 					More html to show on right of title
+	 * @param 	array 			$compatibleImportElementsList 	Array of compatibles elements object for "import from" action
+	 * @param 	string 			$title 							Title
+	 * @return  int                                             Return integer <0 if KO, >=0 if OK
 	 */
 	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = array(), $title = 'RelatedObjects')
 	{
@@ -10329,7 +10359,8 @@ class Form
 		global $langs;
 
 		$out = '';
-		$sql = "SELECT id, code, label FROM " . $this->db->prefix() . "c_type_fees";
+		$sql = "SELECT id, code, label";
+		$sql .= " FROM ".$this->db->prefix()."c_type_fees";
 		$sql .= " WHERE active = 1";
 
 		$resql = $this->db->query($sql);
@@ -10352,6 +10383,8 @@ class Form
 				$out .= '<option ' . ($selected == $obj->{$field} ? 'selected="selected"' : '') . ' value="' . $obj->{$field} . '">' . ($key != $obj->code ? $key : $obj->label) . '</option>';
 			}
 			$out .= '</select>';
+
+			$out .= ajax_combobox('select_'.$htmlname);
 		} else {
 			dol_print_error($this->db);
 		}

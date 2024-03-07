@@ -874,6 +874,7 @@ if (empty($reshook)) {
 	}
 	$triggersendname = 'SHIPPING_SENTBYMAIL';
 	$paramname = 'id';
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_SHIPMENT_TO';
 	$mode = 'emailfromshipment';
 	$trackid = 'shi'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
@@ -2695,7 +2696,7 @@ if ($action == 'create') {
 					if (!$object->billed && getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0') {
 						print dolGetButtonAction('', $langs->trans('ClassifyBilled'), 'default', $_SERVER["PHP_SELF"].'?action=classifybilled&token='.newToken().'&id='.$object->id, '');
 					}
-					print dolGetButtonAction('', $langs->trans("Close"), 'default', $_SERVER["PHP_SELF"].'?action=close&token='.newToken().'&id='.$object->id, '');
+					print dolGetButtonAction('', $langs->trans("Close"), 'default', $_SERVER["PHP_SELF"].'?action=classifyclosed&token='.newToken().'&id='.$object->id, '');
 				}
 			}
 

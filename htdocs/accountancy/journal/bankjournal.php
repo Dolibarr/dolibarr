@@ -246,7 +246,7 @@ if ($result) {
 				$lineisasale = 1;
 			}
 		}
-		//var_dump($obj->type_payment); var_dump($obj->type_payment_supplier);
+		//var_dump($obj->type_payment); //var_dump($obj->type_payment_supplier);
 		//var_dump($lineisapurchase); //var_dump($lineisasale);
 
 		// Set accountancy code for bank

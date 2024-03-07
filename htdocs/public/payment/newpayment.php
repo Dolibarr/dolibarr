@@ -265,16 +265,16 @@ if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypa
 		$PAYPAL_API_KO = $urlko;
 	}
 	if (empty($PAYPAL_API_USER)) {
-		dol_print_error('', "Paypal setup param PAYPAL_API_USER not defined");
-		return -1;
+		print 'Paypal parameter PAYPAL_API_USER is not defined. Please <a href="'.DOL_URL_ROOT.'/paypal/admin/paypal.php">complete the setup of module PayPal first</a>.';
+		exit;
 	}
 	if (empty($PAYPAL_API_PASSWORD)) {
-		dol_print_error('', "Paypal setup param PAYPAL_API_PASSWORD not defined");
-		return -1;
+		print 'Paypal parameter PAYPAL_API_PASSWORD is not defined. Please <a href="'.DOL_URL_ROOT.'/paypal/admin/paypal.php">complete the setup of module PayPal first</a>.';
+		exit;
 	}
 	if (empty($PAYPAL_API_SIGNATURE)) {
-		dol_print_error('', "Paypal setup param PAYPAL_API_SIGNATURE not defined");
-		return -1;
+		print 'Paypal parameter PAYPAL_API_SIGNATURE is not defined. Please <a href="'.DOL_URL_ROOT.'/paypal/admin/paypal.php">complete the setup of module PayPal first</a>.';
+		exit;
 	}
 }
 if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {

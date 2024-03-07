@@ -136,7 +136,7 @@ class EmailCollector extends CommonObject
 		'login'         => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>-1, 'enabled'=>1, 'position'=>102, 'notnull'=>-1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myaccount@gmail.com'),
 		'password'      => array('type'=>'password', 'label'=>'Password', 'visible'=>-1, 'enabled'=>"1", 'position'=>103, 'notnull'=>-1, 'comment'=>"IMAP password", 'help'=>'WithGMailYouCanCreateADedicatedPassword'),
 		'oauth_service' => array('type'=>'varchar(128)', 'label'=>'oauthService', 'visible'=>-1, 'enabled'=>"getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position'=>104, 'notnull'=>0, 'index'=>1, 'comment'=>"IMAP login oauthService", 'arrayofkeyval'=>array(), 'help'=>'TokenMustHaveBeenCreated'),
-		'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>104, 'notnull'=>1, 'default' => 'Inbox', 'help'=>'Example: INBOX, [Gmail]/Spam, [Gmail]/Draft, [Gmail]/Brouillons, [Gmail]/Sent Mail, [Gmail]/Messages envoyés, ...'),
+		'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>109, 'notnull'=>1, 'default' => 'Inbox', 'help'=>'Example: INBOX, [Gmail]/Spam, [Gmail]/Draft, [Gmail]/Brouillons, [Gmail]/Sent Mail, [Gmail]/Messages envoyés, ...'),
 		'target_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxTargetDirectory', 'visible'=>1, 'enabled'=>1, 'position'=>110, 'notnull'=>0, 'help'=>"EmailCollectorTargetDir"),
 		'maxemailpercollect' => array('type'=>'integer', 'label'=>'MaxEmailCollectPerCollect', 'visible'=>-1, 'enabled'=>1, 'position'=>111, 'default'=>50),
 		'datelastresult' => array('type'=>'datetime', 'label'=>'DateLastCollectResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>121, 'notnull'=>-1, 'csslist'=>'nowraponall'),
@@ -152,7 +152,7 @@ class EmailCollector extends CommonObject
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'visible'=>-2, 'enabled'=>1, 'position'=>511, 'notnull'=>-1,),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'visible'=>-2, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1,),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Inactive', '1'=>'Active'))
+		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Inactive', '1'=>'Active'))
 	);
 
 

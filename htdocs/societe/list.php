@@ -1694,7 +1694,7 @@ while ($i < $imaxinloop) {
 		$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 		$companystatic->fk_prospectlevel = $obj->fk_prospectlevel;
-		$companystatic->fk_parent = $obj->fk_parent;
+		$companystatic->parent = $obj->fk_parent;
 		$companystatic->entity = $obj->entity;
 	}
 
@@ -1986,7 +1986,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Type
+		// Nature
 		if (!empty($arrayfields['customerorsupplier']['checked'])) {
 			print '<td class="center">';
 			print $companystatic->getTypeUrl(1);
@@ -1995,9 +1995,8 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-
+		// Prospect level
 		if (!empty($arrayfields['s.fk_prospectlevel']['checked'])) {
-			// Prospect level
 			print '<td class="center nowraponall">';
 			print $companystatic->getLibProspLevel();
 			print "</td>";
@@ -2005,9 +2004,8 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-
+		// Prospect status
 		if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
-			// Prospect status
 			print '<td class="center nowraponall">';
 
 			$prospectid = $obj->rowid;
@@ -2023,8 +2021,8 @@ while ($i < $imaxinloop) {
 		// Parent company
 		if (!empty($arrayfields['s2.nom']['checked'])) {
 			print '<td class="center tdoverflowmax100">';
-			if ($companystatic->fk_parent > 0) {
-				$companyparent->fetch($companystatic->fk_parent);
+			if ($companystatic->parent > 0) {
+				$companyparent->fetch($companystatic->parent);
 				print $companyparent->getNomUrl(1);
 			}
 			print "</td>";

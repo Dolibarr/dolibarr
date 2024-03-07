@@ -602,6 +602,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						$total = 0;
 						$total_ttc = 0;
 						$totalrecu = 0;
+						$totalrecucreditnote = 0;	// PHP Warning:  Undefined variable $totalrecucreditnote
+						$totalrecudeposits = 0;		// PHP Warning:  Undefined variable $totalrecudeposits
 						while ($i < $num) {
 							$objp = $db->fetch_object($resql);
 
@@ -832,7 +834,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					$text .= '<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
 					print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
 				}
-				print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type, $langs->trans('PayedSuppliersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice);
+				print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id.'&socid='.$object->socid.'&type='.$object->type, $langs->trans('PayedSuppliersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice);
 			}
 
 			print '</form>';

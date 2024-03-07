@@ -67,7 +67,6 @@ AccountsArea=Hisoblar maydoni
 AccountCard=Hisob kartasi
 DeleteAccount=Hisobni o'chirish
 ConfirmDeleteAccount=Ushbu hisobni o'chirishni xohlaysizmi?
-Account=Account
 BankTransactionByCategories=Toifalar bo'yicha bank yozuvlari
 BankTransactionForCategory=<b> %s </b> toifasi uchun bank yozuvlari
 RemoveFromRubrique=Kategoriya bilan havolani olib tashlang

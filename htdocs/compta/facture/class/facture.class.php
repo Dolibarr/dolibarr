@@ -2341,14 +2341,13 @@ class Facture extends CommonInvoice
 				$line->fk_product       = $objp->fk_product;
 				$line->date_start       = $this->db->jdate($objp->date_start);
 				$line->date_end         = $this->db->jdate($objp->date_end);
-				$line->date_start       = $this->db->jdate($objp->date_start);
-				$line->date_end         = $this->db->jdate($objp->date_end);
 				$line->info_bits        = $objp->info_bits;
 				$line->total_ht         = $objp->total_ht;
 				$line->total_tva        = $objp->total_tva;
 				$line->total_localtax1  = $objp->total_localtax1;
 				$line->total_localtax2  = $objp->total_localtax2;
 				$line->total_ttc        = $objp->total_ttc;
+
 				$line->code_ventilation = $objp->fk_code_ventilation;
 				$line->fk_fournprice = $objp->fk_fournprice;
 				$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
@@ -4168,8 +4167,8 @@ class Facture extends CommonInvoice
 			$price = $pu;
 			$remise = 0;
 			if ($remise_percent > 0) {
-				$remise = round(($pu * $remise_percent / 100), 2);
-				$price = ($pu - $remise);
+				$remise = round(((float) $pu * (float) $remise_percent / 100), 2);
+				$price = ((float) $pu - $remise);
 			}
 			$price = price2num($price);
 

@@ -146,13 +146,14 @@ if (getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object)) {
 if (getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object)) {
 	$object->user_mobile = '';
 }
-if (getDolUserInt('USER_PUBLIC_HIDE_BIRTH', 0, $object)) {
-	$object->birth = '';
-}
 if (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object)) {
 	$object->socialnetworks = '';
 }
-if (getDolUserInt('USER_PUBLIC_HIDE_ADDRESS', 0, $object)) {
+// By default, personal address not visible
+if (!getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object)) {
+	$object->birth = null;
+}
+if (!getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object)) {
 	$object->address = '';
 	$object->town = '';
 	$object->zip = '';
@@ -315,6 +316,18 @@ if ($object->user_mobile && !getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $o
 	$usersection .= '<div class="flexitemsmall">';
 	$usersection .= img_picto('', 'phone', 'class="pictofixedwidth"');
 	$usersection .= dol_print_phone($object->user_mobile, $object->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
+	$usersection .= '</div>';
+}
+if (getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object) && !is_null($object->birth)) {
+	$usersection .= '<div class="flexitemsmall">';
+	$usersection .= img_picto('', 'calendar', 'class="pictofixedwidth"');
+	$usersection .= dol_print_date($object->birth);
+	$usersection .= '</div>';
+}
+if (getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object) && $object->address) {
+	$usersection .= '<div class="flexitemsmall">';
+	$usersection .= img_picto('', 'state', 'class="pictofixedwidth"');
+	$usersection .= dol_print_address(dol_format_address($object, 0, "\n", $langs), 'map', 'user', $object->id, 1);
 	$usersection .= '</div>';
 }
 

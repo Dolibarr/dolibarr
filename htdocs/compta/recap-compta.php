@@ -247,6 +247,9 @@ if ($id > 0) {
 			$balance = 0;
 			foreach ($TData as &$data1) {
 				$balance += $data1['amount'];
+				if (!isset($data1['balance'])) {
+					$data1['balance'] = 0;
+				}
 				$data1['balance'] += $balance;
 			}
 

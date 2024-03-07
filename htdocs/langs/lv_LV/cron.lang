@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Lasīt Plānotos darbus
 Permission23102 = Izveidot / atjaunāt plānoto darbu
 Permission23103 = Dzēst plānoto darbu
@@ -13,8 +12,8 @@ KeyForCronAccess=Drošības atslēga URL uzsākt cron darbavietas
 FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
 CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
 CronExplainHowToRunWin=Microsoft (tm) Windows vidē jūs varat izmantot Scheduled Task rīkus, lai palaistu komandrindu ik pēc 5 minūtēm
-CronMethodDoesNotExists=Class %s does not contain any method %s
-CronMethodNotAllowed=%s klases %s metode ir aizliegto metožu melnajā sarakstā
+CronMethodDoesNotExists=Klase %s nesatur metodi %s
+CronMethodNotAllowed=Klases %s metode %s ir aizliegto metožu bloķēšanas sarakstā.
 CronJobDefDesc=Cron darba profili ir definēti moduļa deskriptora failā. Kad modulis ir aktivizēts, tie ir ielādēti un pieejami, lai jūs varētu administrēt darbus no admin instrumentu izvēlnes %s.
 CronJobProfiles=Iepriekš noteiktu cron darba profilu saraksts
 # Menu
@@ -67,7 +66,7 @@ CronModuleHelp=Dolibarr moduļu direktorijas nosaukums (arī darbojas ar ārēju
 CronClassFileHelp=Relatīvais ceļš un faila nosaukums ielādei (ceļš ir salīdzinājumā ar tīmekļa servera saknes direktoriju). <BR> Piemēram, lai izsauktu Dolibarr produkta objekta htdocs / product / class / <u> product.class.php </ u> iegūšanas metodi, klases faila nosaukuma vērtība ir <br> <i> produkts / klase / product.class.php </ i>
 CronObjectHelp=Objekta nosaukums ielādei. <BR> Piemēram, lai izsauktu Dolibarr Produkta objekta /htdocs/product/class/product.class.php ielādes metodi, klases faila nosaukuma vērtība ir <br> <i> Produkts </ i>
 CronMethodHelp=Objekta metode, lai palaistu. <BR> Piemēram, lai izsauktu Dolibarr Produkta objekta /htdocs/product/class/product.class.php iegūšanas metodi, metodes vērtība ir <br> <i> atnest </ i>
-CronArgsHelp=Metodes argumenti. <BR> Piemēram, lai izsauktu Dolibarr produkta objekta /htdocs/product/class/product.class.php ielādes metodi, paramērķu vērtība var būt <br> <i> 0, ProductRef </ i>
+CronArgsHelp=Metodes argumenti. <BR> Piemēram, lai izsauktu Dolibarr produkta objekta /htdocs/product/class/product.class.php ieneses metodi, parametru vērtība var būt<br><i>0, ProductRef</i>
 CronCommandHelp=Sistēma komandrindā izpildīt.
 CronCreateJob=Izveidot jaunu plānoto darbu
 CronFrom=No
@@ -91,6 +90,7 @@ WarningCronDelayed=Attention, for performance purpose, whatever is next date of 
 DATAPOLICYJob=Datu tīrītājs un anonimizators
 JobXMustBeEnabled=Darbam %s jābūt iespējotam
 EmailIfError=E-pasts brīdinājumam par kļūdu
+JobNotFound=Darbs %s nav atrasts darbu sarakstā (mēģiniet atspējot/iespējot moduli)
 ErrorInBatch=Kļūda, palaižot darbu %s
 
 # Cron Boxes

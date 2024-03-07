@@ -8,7 +8,7 @@ ErrorBadEMail=عنوان البريد الإلكتروني %s غير صحيح
 ErrorBadMXDomain=يبدو البريد الإلكتروني %s غير صحيح (المجال لا يحتوي على سجل MX صالح)
 ErrorBadUrl=عنوان Url %s غير صحيح
 ErrorBadValueForParamNotAString=Bad value for your parameter. It appends generally when translation is missing.
-ErrorRefAlreadyExists=المرجع <b> %s </b> موجود بالفعل.
+ErrorRefAlreadyExists=Reference <b>%s</b> used for creation already exists.
 ErrorTitleAlreadyExists=العنوان <b> %s </b> موجود بالفعل.
 ErrorLoginAlreadyExists=ادخل ٪ ق موجود بالفعل.
 ErrorGroupAlreadyExists=المجموعة ٪ ق موجود بالفعل.
@@ -87,7 +87,6 @@ ErrorExportDuplicateProfil=هذا الاسم الشخصي موجود مسبقا 
 ErrorLDAPSetupNotComplete=Dolibarr - LDAP المطابقة وليس كاملا.
 ErrorLDAPMakeManualTest=ألف. ldif الملف قد ولدت في الدليل ٪ s. انها محاولة لتحميل يدويا من سطر في الحصول على مزيد من المعلومات عن الأخطاء.
 ErrorCantSaveADoneUserWithZeroPercentage=لا يمكن حفظ إجراء مع "الحالة لم تبدأ" إذا تم ملء الحقل "تم بواسطة" أيضًا.
-ErrorRefAlreadyExists=المرجع <b> %s </b> موجود بالفعل.
 ErrorPleaseTypeBankTransactionReportName=الرجاء إدخال اسم كشف الحساب المصرفي حيث يجب الإبلاغ عن الإدخال (التنسيق YYYYMM أو YYYYMMDD)
 ErrorRecordHasChildren=فشل حذف السجل لأنه يحتوي على بعض السجلات التابعة.
 ErrorRecordHasAtLeastOneChildOfType=يحتوي الكائن %s على عنصر فرعي واحد على الأقل من النوع %s
@@ -102,6 +101,7 @@ ErrorFieldRefNotIn=الحقل <b> %s </b>: '<b> %s </b>' ليس a0aee833658377fz
 ErrorMultipleRecordFoundFromRef=تم العثور على عدة سجلات عند البحث من المرجع <b>%s</b>. لا توجد طريقة لمعرفة المعرف الذي يجب استخدامه.
 ErrorsOnXLines=تم العثور على أخطاء %s
 ErrorFileIsInfectedWithAVirus=وكان برنامج مكافحة الفيروسات غير قادرة على التحقق من صحة الملف (ملف قد يكون مصابا بواسطة فيروس)
+ErrorFileIsAnInfectedPDFWithJSInside=The file is a PDF infected by some Javascript inside
 ErrorNumRefModel=إشارة إلى وجود قاعدة بيانات (%s) ، وغير متوافق مع هذه القاعدة الترقيم. سجل إزالة أو إعادة تسميته اشارة الى تفعيل هذه الوحدة.
 ErrorQtyTooLowForThisSupplier=الكمية منخفضة جدًا لهذا البائع أو لم يتم تحديد سعر لهذا المنتج لهذا البائع
 ErrorOrdersNotCreatedQtyTooLow=لم يتم إنشاء بعض الطلبات بسبب الكميات المنخفضة للغاية
@@ -153,6 +153,7 @@ ErrorToConnectToMysqlCheckInstance=فشل الاتصال بقاعدة البيا
 ErrorFailedToAddContact=فشل في إضافة جهة اتصال
 ErrorDateMustBeBeforeToday=يجب أن يكون التاريخ أقل من اليوم
 ErrorDateMustBeInFuture=يجب أن يكون التاريخ أكبر من اليوم
+ErrorStartDateGreaterEnd=تاريخ البدء أكبر من تاريخ الانتهاء
 ErrorPaymentModeDefinedToWithoutSetup=وتم تشكيل لطريقة الدفع لكتابة٪ الصورة ولكن لم يكتمل الإعداد من وحدة الفاتورة لتحديد المعلومات لاظهار هذه طريقة الدفع.
 ErrorPHPNeedModule=خطأ، يجب PHP الخاص بتثبيت <b>وحدة٪ s إلى</b> استخدام هذه الميزة.
 ErrorOpenIDSetupNotComplete=يمكنك إعداد Dolibarr ملف التكوين للسماح بالمصادقة رض، ولكن لم يتم تعريف URL الخدمة رض إلى المستمر٪ الصورة
@@ -324,6 +325,7 @@ ErrorSVGFilesNotAllowedAsLinksWithout=لا يُسمح بملفات SVG كروا�
 ErrorTypeMenu=من المستحيل إضافة قائمة أخرى لنفس نموذج على شريط التنقل، ولم يتم التعامل معها بعد
 ErrorObjectNotFound = لم يتم العثور على الكائن <b>%s</b>، يرجى التحقق من عنوان URL الخاص بك
 ErrorCountryCodeMustBe2Char=يجب أن يكون رمز البلد عبارة عن سلسلة مكونة من حرفين
+ErrorABatchShouldNotContainsSpaces=A lot or serial number should not contains spaces
 
 ErrorTableExist=الجدول <b>%s</b> موجود بالفعل
 ErrorDictionaryNotFound=لم يتم العثور على القاموس <b>%s</b>
@@ -402,3 +404,10 @@ BadSetupOfFieldClassNotFoundForValidation = خطأ في إعداد الحقل غ
 BadSetupOfFieldFileNotFound = خطأ في إعداد الحقل غير صحيح: الملف غير موجود للتضمين
 BadSetupOfFieldFetchNotCallable = خطأ في إعداد الحقل غير صحيح: الجلب غير قابل للاستدعاء في الفصل الدراسي
 ErrorTooManyAttempts= محاولات كثيرة. الرجاء معاودة المحاولة في وقت لاحق
+
+TotalAmountEmpty=Total Amount Empty
+FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
+ThisIdNotDefined=Id not defined
+OperNotDefined=Payment method not defined
+ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
+ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.

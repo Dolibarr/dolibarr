@@ -41,6 +41,7 @@ if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
 
+
 // Get parameters
 $id = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
@@ -603,9 +604,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$linkback = '<a href="'.dol_buildpath('/product/stock/stocktransfer/stocktransfer_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
-
 	// Thirdparty
-	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
+	$morehtmlref .= empty($object->thirdparty) ? '' : $object->thirdparty->getNomUrl(1, 'customer');
 	if (!getDolGlobalInt('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
 		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 	}
@@ -1018,12 +1018,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print dolGetButtonAction($langs->trans("ErrorAddAtLeastOneLineFirst"), $langs->trans("Validate"), 'default', '#', '', 0);
 				}
 			} elseif ($object->status == $object::STATUS_VALIDATED && $permissiontoadd) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=destock">'.$langs->trans("StockTransferDecrementation").'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=destock&token='.newToken().'">'.$langs->trans("StockTransferDecrementation").'</a>';
 			} elseif ($object->status == $object::STATUS_TRANSFERED && $permissiontoadd) {
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=destockcancel">'.$langs->trans("StockTransferDecrementationCancel").'</a>';
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=addstock">'.$langs->trans("StockTransferIncrementation").'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=destockcancel&token='.newToken().'">'.$langs->trans("StockTransferDecrementationCancel").'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=addstock&token='.newToken().'">'.$langs->trans("StockTransferIncrementation").'</a>';
 			} elseif ($object->status == $object::STATUS_CLOSED && $permissiontoadd) {
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=addstockcancel">'.$langs->trans("StockTransferIncrementationCancel").'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=addstockcancel&token='.newToken().'">'.$langs->trans("StockTransferIncrementationCancel").'</a>';
 			}
 
 			// Clone

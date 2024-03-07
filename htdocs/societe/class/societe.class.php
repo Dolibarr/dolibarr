@@ -533,7 +533,7 @@ class Societe extends CommonObject
 	public $transport_mode_supplier_id;
 
 	/**
-	 * @var int ID
+	 * @var string	Prospect level. ie: 'PL_LOW', 'PL...'
 	 */
 	public $fk_prospectlevel;
 
@@ -3120,6 +3120,7 @@ class Societe extends CommonObject
 		$sql = "SELECT rowid, email, statut as status, phone_mobile, lastname, poste, firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople";
 		$sql .= " WHERE fk_soc = ".((int) $this->id);
+		$sql .= " AND entity IN (".getEntity($this->element).")";
 		$sql .= " ORDER BY lastname, firstname";
 
 		$resql = $this->db->query($sql);
@@ -4712,20 +4713,21 @@ class Societe extends CommonObject
 	/**
 	 *  Return label of prospect level
 	 *
-	 *  @param	int		$fk_prospectlevel   	Prospect level
+	 *  @param	string	$fk_prospectlevel   	Prospect level
 	 *  @return string        					label of level
 	 */
 	public function LibProspLevel($fk_prospectlevel)
 	{
 		// phpcs:enable
 		global $langs;
-
-		$lib = $langs->trans("ProspectLevel".$fk_prospectlevel);
-		// If lib not found in language file, we get label from cache/databse
-		if ($lib == $langs->trans("ProspectLevel".$fk_prospectlevel)) {
-			$lib = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
+		if ($fk_prospectlevel != '') {
+			$lib = $langs->trans("ProspectLevel".$fk_prospectlevel);
+			// If lib not found in language file, we get label from cache/database
+			if ($lib == "ProspectLevel".$fk_prospectlevel) {
+				$lib = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
+			}
 		}
-		return $lib;
+		return $lib ?? '';
 	}
 
 	/**
@@ -5211,10 +5213,11 @@ class Societe extends CommonObject
 		}
 
 		/**
-		 * llx_societe_extrafields table must not be here because we don't care about the old thirdparty data
-		 * Do not include llx_societe because it will be replaced later
+		 * llx_societe_extrafields table must not be here because we don't care about the old thirdparty extrafields that are managed directly into mergeCompany.
+		 * Do not include llx_societe because it will be replaced later.
 		 */
 		$tables = array(
+			'societe_account',
 			'societe_commerciaux',
 			'societe_prices',
 			'societe_remise',
@@ -5429,6 +5432,8 @@ class Societe extends CommonObject
 
 		$error = 0;
 		$soc_origin = new Societe($this->db);		// The thirdparty that we will delete
+
+		dol_syslog("mergeCompany merge thirdparty id=".$soc_origin_id." (will be deleted) into the thirdparty id=".$this->id);
 
 		if (!$error && $soc_origin->fetch($soc_origin_id) < 1) {
 			$this->error = $langs->trans('ErrorRecordNotFound');

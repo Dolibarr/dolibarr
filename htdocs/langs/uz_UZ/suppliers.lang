@@ -8,7 +8,6 @@ NewSupplierInvoice = Sotuvchining yangi hisob-fakturasi
 History=Tarix
 ListOfSuppliers=Sotuvchilar ro'yxati
 ShowSupplier=Sotuvchini ko'rsatish
-OrderDate=Buyurtma sanasi
 BuyingPriceMin=Eng yaxshi sotib olish narxi
 BuyingPriceMinShort=Eng yaxshi sotib olish narxi
 TotalBuyingPriceMinShort=Sotib olinadigan subproductlarning umumiy narxi

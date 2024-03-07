@@ -62,9 +62,9 @@ class modWebhook extends DolibarrModules
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 
 		// Module description, used if translation string 'ModuleWebhookDesc' not found (Webhook is name of module).
-		$this->description = "WebhookDescription";
+		$this->description = "WebHook";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "WebhookDescription";
+		$this->descriptionlong = "Interface to catch dolibarr triggers and send data of the event to an external URL";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = 'dolibarr';

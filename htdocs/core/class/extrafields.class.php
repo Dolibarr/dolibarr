@@ -116,7 +116,7 @@ class ExtraFields
 	 *
 	 *  @param	string			$attrname           Code of attribute
 	 *  @param  string			$label              label of attribute
-	 *  @param  string			$type               Type of attribute ('boolean','int','varchar','text','html','date','datehour','price', 'pricecy', 'phone','mail','password','url','select','checkbox','separate',...)
+	 *  @param  string			$type               Type of attribute ('boolean','int','varchar','text','html','date','datetime','price', 'pricecy', 'phone','mail','password','url','select','checkbox','separate',...)
 	 *  @param  int				$pos                Position of attribute
 	 *  @param  string			$size               Size/length definition of attribute ('5', '24,8', ...). For float, it contains 2 numeric separated with a comma.
 	 *  @param  string			$elementtype        Element type. Same value than object->table_element (Example 'member', 'product', 'thirdparty', ...)
@@ -185,7 +185,7 @@ class ExtraFields
 	 *  This is a private method. For public method, use addExtraField.
 	 *
 	 *	@param	string	$attrname			code of attribute
-	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datehour','price','pricecy','phone','mail','password','url','select','checkbox', ...)
+	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime', 'price', 'pricecy', 'phone', 'mail', 'password', 'url', 'select', 'checkbox', ...)
 	 *  @param	string	$length				Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
@@ -281,7 +281,7 @@ class ExtraFields
 	 *
 	 *	@param	string			$attrname		code of attribute
 	 *	@param	string			$label			label of attribute
-	 *  @param	string				$type			Type of attribute ('int', 'varchar', 'text', 'html', 'date', 'datehour', 'float')
+	 *  @param	string			$type			Type of attribute ('int', 'varchar', 'text', 'html', 'date', 'datehour', 'float')
 	 *  @param	int				$pos			Position of attribute
 	 *  @param	string			$size			Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string			$elementtype	Element type ('member', 'product', 'thirdparty', ...)
@@ -529,7 +529,7 @@ class ExtraFields
 	 *
 	 *  @param	string	$attrname			Name of attribute
 	 *  @param	string	$label				Label of attribute
-	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
+	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime','price','phone','mail','password','url','select','checkbox', ...)
 	 *  @param	int		$length				Length of attribute
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
@@ -1120,10 +1120,12 @@ class ExtraFields
 				} else {
 					$checked = ' value="1" ';
 				}
+
 				$out = '<input type="checkbox" class="flat valignmiddle'.($morecss ? ' '.$morecss : '').' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam ? $moreparam : '').'>';
 			} else {
-				$out .= $form->selectyesno($keyprefix.$key.$keysuffix, $value, 1, false, 1);
+				$out = $form->selectyesno($keyprefix.$key.$keysuffix, $value, 1, false, 1);
 			}
+			$out .= '<input type="hidden" name="'.$keyprefix.$key.$keysuffix.'_boolean" value="1">';	// A hidden field ending with "_boolean" that is always set to 1.
 		} elseif ($type == 'price') {
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value = price($value);
@@ -1595,7 +1597,7 @@ class ExtraFields
 			$element = $extrafieldsobjectkey;		// $extrafieldsobjectkey comes from $object->table_element but we need $object->element
 			if ($element == 'socpeople') {
 				$element = 'contact';
-			} else if ( $element == 'projet' ) {
+			} elseif ( $element == 'projet' ) {
 				$element = 'project';
 			}
 
@@ -2352,7 +2354,9 @@ class ExtraFields
 						$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
 					}
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
-					if (!GETPOST($keysuffix."options_".$key.$keyprefix)) {
+					// We test on a hidden field named "..._multiselect" that is always set to 1 if param is in form so
+					// when nothing is provided we can make a difference between noparam in the form and param was set to nothing.
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix.'_multiselect')) {
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
@@ -2360,7 +2364,7 @@ class ExtraFields
 					$value_arr = (array) $value_arr;
 					$value_key = implode(',', $value_arr);
 				} elseif (in_array($key_type, array('price', 'double', 'int'))) {
-					if (!GETPOST($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
@@ -2370,14 +2374,16 @@ class ExtraFields
 						$value_key = $value_arr;
 					}
 				} elseif (in_array($key_type, array('boolean'))) {
-					if (!GETPOST($keysuffix."options_".$key.$keyprefix)) {
+					// We test on a hidden field named "..._boolean" that is always set to 1 if param is in form so
+					// when nothing is provided we can make a difference between noparam in the form and param was set to nothing.
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix."_boolean")) {
 						$value_key = '';
 					} else {
 						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 						$value_key = $value_arr;
 					}
 				} elseif (in_array($key_type, array('html'))) {
-					if (!GETPOST($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_key = dol_htmlcleanlastbr(GETPOST($keysuffix."options_".$key.$keyprefix, 'restricthtml'));

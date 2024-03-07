@@ -5603,6 +5603,7 @@ abstract class CommonObject
 
 		// If selected model is a filename template (then $modele="modelname" or "modelname:filename")
 		$tmp = explode(':', $modele, 2);
+		$saved_model = $modele;
 		if (!empty($tmp[1])) {
 			$modele = $tmp[0];
 			$srctemplatepath = $tmp[1];
@@ -5710,7 +5711,7 @@ abstract class CommonObject
 		$sav_charset_output = empty($outputlangs->charset_output) ? '' : $outputlangs->charset_output;
 
 		// update model_pdf in object
-		$this->model_pdf = $modele;
+		$this->model_pdf = $saved_model;
 
 		if (in_array(get_class($this), array('Adherent'))) {
 			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
@@ -6863,6 +6864,7 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					}
 					break;
+				case 'price':
 				case 'double':
 					$value = price2num($value);
 					if (!is_numeric($value) && $value != '') {
@@ -6885,11 +6887,6 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					 }
 					 break;*/
-				case 'price':
-					$new_array_options["options_".$key] = price2num($this->array_options["options_".$key]);
-
-					$this->array_options["options_".$key] = $new_array_options["options_".$key];
-					break;
 				case 'password':
 					$algo = '';
 					if ($this->array_options["options_".$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
@@ -7082,7 +7079,7 @@ abstract class CommonObject
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int                 		-1=error, O=did nothing, 1=OK
-	 *  @see updateExtraFields(), insertExtraLanguages()
+	 *  @see updateExtraField(), insertExtraLanguages()
 	 */
 	public function updateExtraLanguages($key, $trigger = null, $userused = null)
 	{
@@ -7329,7 +7326,9 @@ abstract class CommonObject
 				}
 				$out .= '<option value="'.$keyb.'"';
 				$out .= (((string) $value == (string) $keyb) ? ' selected' : '');
-				if (!empty($parent)) $isDependList =1;
+				if (!empty($parent)) {
+					$isDependList = 1;
+				}
 				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
 				$out .= '>'.$langs->trans($valb).'</option>';
 			}
@@ -7779,7 +7778,7 @@ abstract class CommonObject
 			$out = '<input type="hidden" value="'.$value.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"/>';
 		}
 
-		if ($isDependList==1) {
+		if ($isDependList == 1) {
 			$out .= $this->getJSListDependancies('_common');
 		}
 		/* Add comments
@@ -8705,7 +8704,7 @@ abstract class CommonObject
 						}
 
 						// HTML, text, select, integer and varchar: take into account default value in database if in create mode
-						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'varchar', 'select', 'int', 'boolean'))) {
+						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'varchar', 'select', 'radio', 'int', 'boolean'))) {
 							if ($action == 'create' || $mode == 'create') {
 								$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? $value : $extrafields->attributes[$this->table_element]['default'][$key];
 							}
@@ -9424,9 +9423,9 @@ abstract class CommonObject
 
 
 	/**
-	 * Function to prepare a part of the query for insert by returning an array with all properties of object.
+	 * Function to return the array of data key-value from the ->fields and all the ->properties of an object.
 	 *
-	 * Note $this->${field} are set by the page that make the createCommon() or the updateCommon().
+	 * Note: $this->${field} are set by the page that make the createCommon() or the updateCommon().
 	 * $this->${field} should be a clean and string value (so date are formated for SQL insert).
 	 *
 	 * @return array		Array with all values of each properties to update
@@ -9464,7 +9463,7 @@ abstract class CommonObject
 					$queryarray[$field] = ((int) $conf->entity);
 				} else {
 					// $this->{$field} may be null, '', 0, '0', 123, '123'
-					if ((isset($this->{$field}) && $this->{$field} != '') || !empty($info['notnull'])) {
+					if ((isset($this->{$field}) && ((string) $this->{$field}) != '') || !empty($info['notnull'])) {
 						if (!isset($this->{$field})) {
 							$queryarray[$field] = 0;
 						} elseif ($this->isInt($info)) {
@@ -9505,7 +9504,7 @@ abstract class CommonObject
 
 		foreach ($this->fields as $field => $info) {
 			if ($this->isDate($info)) {
-				if (is_null($obj->$field) || $obj->$field === '' || $obj->$field === '0000-00-00 00:00:00' || $obj->$field === '1000-01-01 00:00:00') {
+				if (!isset($obj->$field) || is_null($obj->$field) || $obj->$field === '' || $obj->$field === '0000-00-00 00:00:00' || $obj->$field === '1000-01-01 00:00:00') {
 					$this->$field = '';
 				} else {
 					$this->$field = $db->jdate($obj->$field);
@@ -9521,7 +9520,7 @@ abstract class CommonObject
 							$this->$field = (float) $obj->$field;
 						}
 					} else {
-						if (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+						if (isset($obj->$field) && (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1))) {
 							$this->$field = (int) $obj->$field;
 						} else {
 							$this->$field = null;
@@ -9536,7 +9535,7 @@ abstract class CommonObject
 						$this->$field = (float) $obj->$field;
 					}
 				} else {
-					if (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+					if (isset($obj->$field) && (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1))) {
 						$this->$field = (float) $obj->$field;
 					} else {
 						$this->$field = null;

@@ -63,8 +63,6 @@ if (GETPOST('action', 'alpha') == 'set') {
 		$db->rollback();
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif (GETPOST('action', 'alpha') == 'setmethod') {
-	dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 
 

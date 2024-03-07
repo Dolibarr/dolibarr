@@ -2157,6 +2157,7 @@ if ($action == 'create') {
 
 				if ($object->status == $object::STATUS_DRAFT && $nbofservices) {
 					if ($user->hasRight('contrat', 'creer')) {
+						unset($params['attr']['title']);
 						print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid&token='.newToken(), '', true, $params);
 					} else {
 						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
@@ -2165,6 +2166,7 @@ if ($action == 'create') {
 				}
 				if ($object->status == $object::STATUS_VALIDATED) {
 					if ($user->hasRight('contrat', 'creer')) {
+						unset($params['attr']['title']);
 						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken(), '', true, $params);
 					} else {
 						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
@@ -2199,20 +2201,25 @@ if ($action == 'create') {
 					);
 				}
 				if (count($arrayofcreatebutton)) {
+					unset($params['attr']['title']);
 					print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayofcreatebutton, '', true, $params);
 				}
 
 				if ($object->nbofservicesclosed > 0 || $object->nbofserviceswait > 0) {
 					if ($user->hasRight('contrat', 'activer')) {
+						unset($params['attr']['title']);
 						print dolGetButtonAction($langs->trans('ActivateAllContracts'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=activate&token='.newToken(), '', true, $params);
 					} else {
+						unset($params['attr']['title']);
 						print dolGetButtonAction($langs->trans('ActivateAllContracts'), '', 'default', '#', '', false, $params);
 					}
 				}
 				if ($object->nbofservicesclosed < $nbofservices) {
 					if ($user->hasRight('contrat', 'desactiver')) {
+						unset($params['attr']['title']);
 						print dolGetButtonAction($langs->trans('CloseAllContracts'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken(), '', true, $params);
 					} else {
+						unset($params['attr']['title']);
 						print dolGetButtonAction($langs->trans('CloseAllContracts'), '', 'default', '#', '', false, $params);
 					}
 
@@ -2235,10 +2242,12 @@ if ($action == 'create') {
 
 				// Clone
 				if ($user->hasRight('contrat', 'creer')) {
+					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken(), '', true, $params);
 				}
 
 				// Delete
+				unset($params['attr']['title']);
 				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete, $params);
 			}
 

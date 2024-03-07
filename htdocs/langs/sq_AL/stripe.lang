@@ -75,5 +75,6 @@ CreationOfPaymentModeMustBeDoneFromStripeInterface=Për shkak të rregullave të
 STRIPE_CARD_PRESENT=Dhuratë karte për terminalet me shirita
 TERMINAL_LOCATION=Vendndodhja (adresa) për Terminalet Stripe
 RequestDirectDebitWithStripe=Kërko Debitim Direkt me Stripe
+RequesCreditTransferWithStripe=Kërko Transfer Kredie me Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Aktivizo pagesat e Debitimit Direkt përmes Stripe
 StripeConnect_Mode=Modaliteti i lidhjes me shirita

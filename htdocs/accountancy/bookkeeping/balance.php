@@ -525,6 +525,9 @@ if ($action != 'export_csv') {
 				if ($displayed_account != "") {
 					print '<tr class="liste_total">';
 					print '<td class="right">'.$langs->trans("SubTotal").':</td>';
+					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						print '<td></td>';
+					}
 					if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 						print '<td class="right nowraponall amount">'.price($sous_total_opening_balance).'</td>';
 					}
@@ -535,13 +538,15 @@ if ($action != 'export_csv') {
 					} else {
 						print '<td class="right nowraponall amount">'.price(price2num($sous_total_debit - $sous_total_credit)).'</td>';
 					}
-					print "<td></td>\n";
+					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						print "<td></td>\n";
+					}
 					print '</tr>';
 				}
 
 				// Show first line of a break
 				print '<tr class="trforbreak">';
-				print '<td colspan="'.($colspan+1).'" style="font-weight:bold; border-bottom: 1pt solid black;">'.$line->numero_compte.($root_account_description ? ' - '.$root_account_description : '').'</td>';
+				print '<td colspan="'.($colspan+1).'" class="tdforbreak">'.$root_account_number.($root_account_description ? ' - '.$root_account_description : '').'</td>';
 				print '</tr>';
 
 				$displayed_account = $root_account_number;

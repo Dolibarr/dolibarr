@@ -47,7 +47,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
-$mode = GETPOST('mode', 'alopha');
+$mode = GETPOST('mode', 'alpha');
 
 $sall = GETPOST("sall", "alpha");
 $filter = GETPOST("filter", 'alpha');

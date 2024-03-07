@@ -175,8 +175,8 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 			$sanit_features[$explode[0]] = $explode[1];
 
 			$tmp = new ProductCombination2ValuePair($db);
-			$tmp->fk_prod_attr = $explode[0];
-			$tmp->fk_prod_attr_val = $explode[1];
+			$tmp->fk_prod_attr = (int) $explode[0];
+			$tmp->fk_prod_attr_val = (int) $explode[1];
 
 			$productCombination2ValuePairs1[] = $tmp;
 		}

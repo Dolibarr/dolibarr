@@ -62,7 +62,6 @@ ChooseFileToImport=قم بتحميل الملف ثم انقر فوق أيقون�
 SourceFileFormat=مصدر تنسيق ملف
 FieldsInSourceFile=الحقول في ملف المصدر
 FieldsInTargetDatabase=الحقول المستهدفة في قاعدة بيانات Dolibarr (جريئة = إلزامي)
-Field=حقل
 NoFields=لا الحقول
 MoveField=تحرك %s حقل رقم العمود
 ExampleOfImportFile=Example_of_import_file
@@ -145,3 +144,4 @@ SelectImportFieldsSource = اختر حقول الملف المصدر التي ت
 MandatoryTargetFieldsNotMapped=لم يتم تعيين بعض الحقول الهدف الإلزامية
 AllTargetMandatoryFieldsAreMapped=يتم تعيين كافة الحقول المستهدفة التي تحتاج إلى قيمة إلزامية
 ResultOfSimulationNoError=نتيجة المحاكاة: لا خطأ
+NumberOfLinesLimited=عدد الخطوط محدود

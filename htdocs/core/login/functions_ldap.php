@@ -162,26 +162,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-				// Note: Test on validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
-				/*
-				$tmpuser = new User($db);
-				$tmpuser->fetch('', $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1));
-
-				$now = dol_now();
-				if ($tmpuser->datestartvalidity && $db->jdate($tmpuser->datestartvalidity) >= $now) {
-					$ldap->unbind();
-					// Load translation files required by the page
-					$langs->loadLangs(array('main', 'errors'));
-					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
-					return '--bad-login-validity--';
-				}
-				if ($tmpuser->dateendvalidity && $db->jdate($tmpuser->dateendvalidity) <= dol_get_first_hour($now)) {
-					$ldap->unbind();
-					// Load translation files required by the page
-					$langs->loadLangs(array('main', 'errors'));
-					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
-					return '--bad-login-validity--';
-				}*/
+				// Note: Test on date validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
 
 				// ldap2dolibarr synchronisation
 				if ($login && !empty($conf->ldap->enabled) && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') == Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {	// ldap2dolibarr synchronization

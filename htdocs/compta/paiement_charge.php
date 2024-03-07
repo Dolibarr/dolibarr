@@ -160,7 +160,8 @@ if ($action == 'create') {
 
 		//Add js for AutoFill
 		print ' $(document).ready(function () {';
-		print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){
+		print ' 	$(".AutoFillAmount").on(\'click touchstart\', function() {
+						console.log("Click on .AutoFillAmount");
                         var amount = $(this).data("value");
 						document.getElementById($(this).data(\'rowid\')).value = amount ;
 					});';

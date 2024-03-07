@@ -90,13 +90,13 @@ AccountancyAreaDescProd=HAPI %s: Përcaktoni llogaritë e kontabilitetit në Pro
 
 AccountancyAreaDescBind=HAPI %s: Kontrolloni lidhjen midis linjave ekzistuese %s dhe llogarisë së kontabilitetit është kryer, kështu që aplikacioni do të jetë në gjendje të regjistrojë transaksionet në Ledger në një klikim. Plotësoni lidhjet që mungojnë. Për këtë, përdorni hyrjen e menysë %s.
 AccountancyAreaDescWriteRecords=HAPI %s: Shkruani transaksionet në Libër. Për këtë, shkoni në menunë <strong>%s</strong> dhe klikoni në butonin, <strong>%s</strong>.
-AccountancyAreaDescAnalyze=HAPI %s: Shtoni ose modifikoni transaksionet ekzistuese dhe gjeneroni raporte dhe eksporte.
-
-AccountancyAreaDescClosePeriod=HAPI %s: Mbyllni periudhën që të mos mund të bëjmë modifikime në të ardhmen.
+AccountancyAreaDescAnalyze=HAPI %s: Lexoni raportet ose krijoni skedarë eksporti për kontabilistë të tjerë.
+AccountancyAreaDescClosePeriod=HAPI %s: Mbyllni periudhën që të mos mund të transferojmë më të dhëna në të njëjtën periudhë në të ardhmen.
 
 TheFiscalPeriodIsNotDefined=Një hap i detyrueshëm në konfigurim nuk është përfunduar (periudha fiskale nuk është përcaktuar)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Një hap i detyrueshëm në konfigurim nuk është përfunduar (ditari i kodit të kontabilitetit nuk është përcaktuar për të gjitha llogaritë bankare)
 Selectchartofaccounts=Zgjidhni grafikun aktiv të llogarive
+CurrentChartOfAccount=Grafiku aktual aktiv i llogarisë
 ChangeAndLoad=Ndryshoni dhe ngarkoni
 Addanaccount=Add an accounting account
 AccountAccounting=Accounting account
@@ -343,7 +343,7 @@ AccountingJournalType3=Blerjet
 AccountingJournalType4=Banka
 AccountingJournalType5=Raportet e shpenzimeve
 AccountingJournalType8=Inventari
-AccountingJournalType9=Ka-te re
+AccountingJournalType9=Fitimet e mbajtura
 GenerationOfAccountingEntries=Gjenerimi i regjistrimeve të kontabilitetit
 ErrorAccountingJournalIsAlreadyUse=Ky ditar tashmë po përdoret
 AccountingAccountForSalesTaxAreDefinedInto=Shënim: Llogaria e kontabilitetit për tatimin mbi shitjet përcaktohet në menynë <b>%sb09a4b739f17>b09a4b739f17> - <span class='notranslate'><b>%s</b>
@@ -450,12 +450,12 @@ AccountancyClosureStep1=Hapi 1: Vërtetoni dhe bllokoni lëvizjet
 AccountancyClosureStep2=Hapi 2: Mbyllni periudhën fiskale
 AccountancyClosureStep3=Hapi 3: Ekstrakt shënimet (Opsionale)
 AccountancyClosureClose=Mbyll periudhën fiskale
-AccountancyClosureAccountingReversal=Ekstrakt shënimet
+AccountancyClosureAccountingReversal=Ekstraktoni dhe regjistroni hyrjet "Fitimet e pashpërndara".
 AccountancyClosureStep3NewFiscalPeriod=Periudha e ardhshme fiskale
-AccountancyClosureGenerateClosureBookkeepingRecords=Gjeneroni hyrje "ka-re" në periudhën e ardhshme fiskale
-AccountancyClosureSeparateAuxiliaryAccounts=Kur gjeneroni hyrjen "ka-të re", detajoni llogaritë nën-libër
+AccountancyClosureGenerateClosureBookkeepingRecords=Gjeneroni hyrjet "Fitimet e pashpërndara" në periudhën e ardhshme fiskale
+AccountancyClosureSeparateAuxiliaryAccounts=Kur gjeneroni shënimet "Fitimet e pashpërndara", detajoni llogaritë e nënlibrit
 AccountancyClosureCloseSuccessfully=Periudha fiskale është mbyllur me sukses
-AccountancyClosureInsertAccountingReversalSuccessfully=Regjistrimet e kontabilitetit janë futur me sukses
+AccountancyClosureInsertAccountingReversalSuccessfully=Regjistrimet e kontabilitetit për "Fitimet e pashpërndara" janë futur me sukses
 
 ## Confirm box
 ConfirmMassUnletteringAuto=Konfirmim masiv i mospajtimit automatik
@@ -464,7 +464,7 @@ ConfirmMassUnletteringQuestion=Jeni i sigurt që dëshironi të anuloni %s rekor
 ConfirmMassDeleteBookkeepingWriting=Konfirmimi i fshirjes në masë
 ConfirmMassDeleteBookkeepingWritingQuestion=Kjo do të fshijë transaksionin nga kontabiliteti (të gjitha shënimet e linjës që lidhen me të njëjtin transaksion do të fshihen). Jeni i sigurt që dëshironi të fshini %s hyrjet e zgjedhura?
 AccountancyClosureConfirmClose=Jeni i sigurt që dëshironi të mbyllni periudhën aktuale fiskale? <span class="warning">Ju e kuptoni se mbyllja e periudhës fiskale është një veprim i pakthyeshëm dhe do të bllokojë përgjithmonë çdo modifikim ose fshirje të hyrjeve gjatë kësaj periudhe</span> .
-AccountancyClosureConfirmAccountingReversal=Jeni i sigurt që dëshironi të ktheni kontabilitetin?
+AccountancyClosureConfirmAccountingReversal=Jeni i sigurt që dëshironi të regjistroni hyrjet për "Fitimet e mbajtura" ?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Disa hapa të detyrueshëm të konfigurimit nuk u kryen, ju lutemi plotësoni ato

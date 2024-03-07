@@ -355,7 +355,7 @@ if (count($listinsetup) > 0) {
 		if ($supported) {
 			$redirect_uri = $urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$keyforsupportedoauth2array]['callbackfile'].'_oauthcallback.php';
 			print '<tr class="oddeven value">';
-			print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
+			print '<td>'.$form->textwithpicto($langs->trans("RedirectURL"), $langs->trans("UseTheFollowingUrlAsRedirectURI")).'</td>';
 			print '<td><input style="width: 80%" type="text" name="uri'.$keyforsupportedoauth2array.'" id="uri'.$keyforsupportedoauth2array.$keyforprovider.'" value="'.$redirect_uri.'" disabled>';
 			print ajax_autoselect('uri'.$keyforsupportedoauth2array.$keyforprovider);
 			print '</td>';

@@ -2560,13 +2560,13 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices to get documents).
  * TODO Replace code that set $accessallowed by a call to restrictedArea()
  *
- * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Exemple: 'medias', 'invoice', 'logs', 'tax-vat', ...
- * @param	string	$original_file		Relative path with filename, relative to modulepart.
- * @param	string	$entity				Restrict onto entity (0=no restriction)
- * @param  	User	$fuser				User object (forced)
- * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided) or for hierarchy
- * @param   string  $mode               Check permission for 'read' or 'write'
- * @return	mixed						Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
+ * @param	string		$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Example: 'medias', 'invoice', 'logs', 'tax-vat', ...
+ * @param	string		$original_file		Relative path with filename, relative to modulepart.
+ * @param	string		$entity				Restrict onto entity (0=no restriction)
+ * @param  	User|null	$fuser				User object (forced)
+ * @param	string		$refname			Ref of object to check permission for external users (autodetect if not provided by taking the dirname of $original_file) or for hierarchy
+ * @param   string  	$mode               Check permission for 'read' or 'write'
+ * @return	mixed							Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
  * @see restrictedArea()
  */
 function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser = '', $refname = '', $mode = 'read')
@@ -2612,7 +2612,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Find the subdirectory name as the reference. For example original_file='10/myfile.pdf' -> refname='10'
 	if (empty($refname)) {
 		$refname = basename(dirname($original_file)."/");
-		if ($refname == 'thumbs') {
+		if ($refname == 'thumbs' || $refname == 'temp') {
 			// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
 			$refname = basename(dirname(dirname($original_file))."/");
 		}

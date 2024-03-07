@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Administrer og følg rekrutteringskampagner til nye stil
 # Admin page
 #
 RecruitmentSetup = Rekrutteringsopsætning
-Settings = Indstillinger
 RecruitmentSetupPage = Indtast her opsætningen af de vigtigste muligheder for rekrutteringsmodulet
 RecruitmentArea=Rekrutteringsområde
 PublicInterfaceRecruitmentDesc=Offentlige sider med job er offentlige webadresser, der skal vises og besvares ved åbne job. Der er et andet link til hvert åbent job, der findes på hver jobjournal.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Aktivér offentlige sider med åbne job
 #
 # About page
 #
-About = Om
 RecruitmentAbout = Om rekruttering
 RecruitmentAboutPage = Rekruttering om side
 NbOfEmployeesExpected=Forventet nb af medarbejdere
@@ -77,3 +75,6 @@ ExtrafieldsApplication=Supplerende attributter (jobansøgninger)
 MakeOffer=Giv et tilbud
 WeAreRecruiting=Vi rekrutterer. Dette er en liste over ledige stillinger, der skal besættes...
 NoPositionOpen=Ingen ledige stillinger i øjeblikket
+ConfirmClose=Bekræft annullering
+ConfirmCloseAsk=Er du sikker på, at du vil annullere denne rekrutteringskandidatur
+recruitment=Rekruttering

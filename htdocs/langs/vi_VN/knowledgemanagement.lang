@@ -26,14 +26,12 @@ ModuleKnowledgeManagementDesc=Quản lý cơ sở Quản lý kiến thức (KM) 
 # Admin page
 #
 KnowledgeManagementSetup = Thiết lập hệ thống quản lý tri thức
-Settings = Cài đặt
 KnowledgeManagementSetupPage = Trang thiết lập Hệ thống quản lý kiến thức
 
 
 #
 # About page
 #
-About = Về
 KnowledgeManagementAbout = Giới thiệu về Quản lý tri thức
 KnowledgeManagementAboutPage = Quản lý kiến thức về trang
 

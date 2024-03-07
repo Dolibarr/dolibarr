@@ -1,5 +1,4 @@
 BlockedLog=Niezmienione dzienniki
-Field=Pole
 BlockedLogDesc=Ten moduł śledzi niektóre zdarzenia w niezmiennym dzienniku (którego nie można zmodyfikować po zarejestrowaniu) w łańcuch bloków w czasie rzeczywistym. Moduł ten zapewnia zgodność z wymogami praw niektórych krajów (np. We Francji z ustawą Finance 2016 - Norme NF525).
 Fingerprints=Zarchiwizowane wydarzenia i odciski palców
 FingerprintsDesc=To jest narzędzie do przeglądania lub wyodrębniania niezmienionych dzienników. Niezmienione dzienniki są generowane i archiwizowane lokalnie w dedykowanej tabeli, w czasie rzeczywistym, podczas rejestrowania zdarzenia biznesowego. Możesz użyć tego narzędzia, aby wyeksportować to archiwum i zapisać je na zewnętrznym nośniku (niektóre kraje, takie jak Francja, proszą o robienie tego co roku). Zwróć uwagę, że nie ma funkcji czyszczenia tego dziennika, a każda zmiana, którą próbowano wprowadzić bezpośrednio w tym dzienniku (na przykład przez hakera), zostanie zgłoszona z nieprawidłowym odciskiem palca. Jeśli naprawdę potrzebujesz wyczyścić tę tabelę, ponieważ używałeś aplikacji do celów demonstracyjnych / testowych i chcesz wyczyścić dane, aby rozpocząć produkcję, możesz poprosić sprzedawcę lub integratora o zresetowanie bazy danych (wszystkie dane zostaną usunięte).
@@ -13,16 +12,13 @@ OkCheckFingerprintValidity=Zarchiwizowany rekord dziennika jest prawidłowy. Dan
 OkCheckFingerprintValidityButChainIsKo=Zarchiwizowany dziennik wydaje się prawidłowy w porównaniu z poprzednim, ale łańcuch był wcześniej uszkodzony.
 AddedByAuthority=Przechowywane w zdalnym urzędzie
 NotAddedByAuthorityYet=Nie jest jeszcze przechowywany w zdalnym urzędzie
-ShowDetails=Pokaż zapisane szczegóły
 BlockedLogBillDownload=Pobieranie faktury dla klienta
 BlockedLogBillPreview=Przegląd faktur klienta
 BlockedlogInfoDialog=Szczegóły logu
 ListOfTrackedEvents=Lista śledzonych zdarzeń
 Fingerprint=Odcisk palca
 DownloadLogCSV=Eksportuj zarchiwizowane logi (CSV)
-logDOC_PREVIEW=Podgląd zweryfikowanego dokumentu w w kolejności do wydrukowania lub pobrania
-logDOC_DOWNLOAD=Pobieranie zweryfikowanego dokumentu w kolejności do wydrukowania lub wysłania
-DataOfArchivedEvent=Full data of archived event
+DataOfArchivedEvent=Pełne dane zarchiwizowanego wydarzenia
 ImpossibleToReloadObject=Oryginalny obiekt (typ %s, id %s) nie jest połączony (zobacz kolumnę „Pełne dane”, aby uzyskać niezmienione zapisane dane)
 BlockedLogAreRequiredByYourCountryLegislation=Moduł niezmiennych logów może być wymagany przez ustawodawstwo twojego kraju. Wyłączenie tego modułu może spowodować, że wszelkie przyszłe transakcje będą nieważne z punktu widzenia prawa i korzystania z legalnego oprogramowania, ponieważ nie mogą one zostać zweryfikowane przez kontrolę podatkową.
 BlockedLogActivatedBecauseRequiredByYourCountryLegislation=Moduł Unalterable Logs został aktywowany ze względu na ustawodawstwo Twojego kraju. Wyłączenie tego modułu może spowodować, że wszelkie przyszłe transakcje będą nieważne z punktu widzenia prawa i korzystania z legalnego oprogramowania, ponieważ nie mogą one zostać zweryfikowane przez kontrolę podatkową.
@@ -31,9 +27,9 @@ OnlyNonValid=Nieważne
 TooManyRecordToScanRestrictFilters=Za dużo rekordów do zeskanowania / przeanalizowania. Ogranicz listę za pomocą bardziej restrykcyjnych filtrów.
 RestrictYearToExport=Ogranicz miesiąc / rok do eksportu
 BlockedLogEnabled=Włączono system śledzenia zdarzeń w niezmiennych dziennikach
-BlockedLogDisabled=System to track events into unalterable logs has been disabled after some recording were done. We saved a special Fingerprint to track the chain as broken
+BlockedLogDisabled=System śledzenia zdarzeń w niemodyfikowalnych dziennikach został wyłączony po wykonaniu niektórych nagrań. Zapisaliśmy specjalny odcisk palca, aby śledzić, czy łańcuch jest uszkodzony
 BlockedLogDisabledBis=System śledzenia zdarzeń w niezmiennych dziennikach został wyłączony. Jest to możliwe, ponieważ nie dokonano jeszcze żadnego zapisu.
-LinkHasBeenDisabledForPerformancePurpose=For performance purpose, direct link to the document is not shown after the 100th line.
+LinkHasBeenDisabledForPerformancePurpose=Ze względów wydajnościowych bezpośredni link do dokumentu nie jest pokazywany po setnym wierszu.
 
 ## logTypes
 logBILL_DELETE=Faktura klienta została logicznie usunięta

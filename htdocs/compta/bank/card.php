@@ -139,10 +139,10 @@ if (empty($reshook)) {
 		$object->cle_rib = trim(GETPOST("cle_rib"));
 		$object->bic = trim(GETPOST("bic"));
 		$object->iban = trim(GETPOST("iban"));
-		$object->domiciliation = trim(GETPOST("domiciliation", "alphanohtml"));
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
 		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
+		$object->domiciliation = trim(GETPOST("domiciliation", "alphanohtml"));
 		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
 		$object->owner_zip = trim(GETPOST("owner_zip", 'alphanohtml'));
 		$object->owner_town = trim(GETPOST("owner_town", 'alphanohtml'));
@@ -252,7 +252,6 @@ if (empty($reshook)) {
 		$object->cle_rib = trim(GETPOST("cle_rib"));
 		$object->bic = trim(GETPOST("bic"));
 		$object->iban = trim(GETPOST("iban"));
-		$object->domiciliation = trim(GETPOST("domiciliation", "alphanohtml"));
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
 		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
@@ -279,8 +278,9 @@ if (empty($reshook)) {
 
 		$object->currency_code = trim(GETPOST("account_currency_code"));
 
-		$object->state_id = GETPOST("account_state_id", 'int');
-		$object->country_id = GETPOST("account_country_id", 'int');
+		$object->address = trim(GETPOST("account_address", "alphanohtml"));
+		$object->state_id = GETPOSTINT("account_state_id");
+		$object->country_id = GETPOSTINT("account_country_id");
 
 		$object->min_allowed = GETPOST("account_min_allowed", 'int');
 		$object->min_desired = GETPOST("account_min_desired", 'int');
@@ -462,8 +462,8 @@ if ($action == 'create') {
 	$type = (GETPOSTISSET("type") ? GETPOST('type', 'int') : Account::TYPE_CURRENT); // add default value
 	if ($type == Account::TYPE_SAVINGS || $type == Account::TYPE_CURRENT) {
 		print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
-		print '<textarea class="flat quatrevingtpercent" name="domiciliation" rows="'.ROWS_2.'">';
-		print(GETPOSTISSET('domiciliation') ? GETPOST('domiciliation') : $object->domiciliation);
+		print '<textarea class="flat quatrevingtpercent" name="account_address" rows="'.ROWS_2.'">';
+		print(GETPOSTISSET('account_address') ? GETPOST('account_address') : $object->address);
 		print "</textarea></td></tr>";
 	}
 
@@ -681,7 +681,6 @@ if ($action == 'create') {
 		$morehtmlref = '';
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
@@ -835,7 +834,7 @@ if ($action == 'create') {
 			}
 
 			if (isModEnabled('paymentbybanktransfer')) {
-				if (getDolGlobalString("SEPA_USE_IDS")) {	// ICS is not used with bank transfer !
+				if (getDolGlobalString("SEPA_USE_IDS")) {	// Use another ICS for bank transfer
 					print '<tr><td>'.$form->textwithpicto($langs->trans("IDS"), $langs->trans("IDS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("BankTransfer")).')').'</td>';
 					print '<td>'.$object->ics_transfer.'</td>';
 					print '</tr>';
@@ -848,7 +847,7 @@ if ($action == 'create') {
 			}
 
 			print '<tr><td>'.$langs->trans("BankAccountOwner").'</td><td>';
-			print $object->proprio;
+			print dol_escape_htmltag($object->proprio);
 			print "</td></tr>\n";
 
 			print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
@@ -856,11 +855,11 @@ if ($action == 'create') {
 			print "</td></tr>\n";
 
 			print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerZip").'</td>';
-			print '<td>'.$object->owner_zip;
+			print '<td>'.dol_escape_htmltag($object->owner_zip);
 			print '</td></tr>';
 
 			print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerTown").'</td>';
-			print '<td>'.$object->owner_town;
+			print '<td>'.dol_escape_htmltag($object->owner_town);
 			print '</td></tr>';
 
 			print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerCountry").'</td>';
@@ -1003,8 +1002,8 @@ if ($action == 'create') {
 		$type = (GETPOSTISSET('type') ? GETPOST('type', 'int') : $object->type); // add default current value
 		if ($type == Account::TYPE_SAVINGS || $type == Account::TYPE_CURRENT) {
 			print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
-			print '<textarea class="flat quatrevingtpercent" name="domiciliation" rows="'.ROWS_2.'">';
-			print $object->domiciliation;
+			print '<textarea class="flat quatrevingtpercent" name="account_address" rows="'.ROWS_2.'">';
+			print $object->address;
 			print "</textarea></td></tr>";
 		}
 
@@ -1183,16 +1182,17 @@ if ($action == 'create') {
 				}
 			}
 
-			print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-			print '<td><input class="maxwidth200onsmartphone" type="text" class="flat" name="proprio" value="'.$object->proprio.'"></td>';
-			print '</tr>';
-
 			print '</table>';
+
 			print '<hr>';
 
 			print '<table class="border centpercent">';
 
-			print '<tr><td class="titlefieldcreate">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
+			print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
+			print '<td><input class="maxwidth200onsmartphone" type="text" class="flat" name="proprio" value="'.$object->proprio.'"></td>';
+			print '</tr>';
+
+			print '<tr><td class="titlefieldcreate tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 			print '<textarea class="flat quatrevingtpercent" name="owner_address" rows="'.ROWS_2.'">';
 			print $object->owner_address;
 			print "</textarea></td></tr>";

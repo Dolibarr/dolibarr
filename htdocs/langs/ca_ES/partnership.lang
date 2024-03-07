@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Associació dedicada a aquest membre
 DatePartnershipStart=Data inicial
 DatePartnershipEnd=Data final
 ReasonDecline=Rebutjar la raó
-ReasonDeclineOrCancel=Rebutjar la raó
+ReasonDeclineOrCancel=Motiu de denegació o cancel·lació
 PartnershipAlreadyExist=L’associació ja existeix
 ManagePartnership=Gestioneu l'associació
 BacklinkNotFoundOnPartnerWebsite=Enllaç de retrocés no trobat al lloc web associat
@@ -89,7 +89,6 @@ YourPartnershipCanceledContent=Ens agradaria informar-vos que la nostra associac
 
 CountLastUrlCheckError=Nombre d'errors de l'última comprovació de l'URL
 LastCheckBacklink=Data de l'última comprovació de l'URL
-ReasonDeclineOrCancel=Rebutjar la raó
 
 NewPartnershipRequest=Nova sol·licitud de col·laboració
 NewPartnershipRequestDesc=Aquest formulari us permet sol·licitar formar part d'un dels nostres programes d'associació. Si necessiteu ajuda per a omplir aquest formulari, poseu-vos en contacte amb el correu electrònic <b>%s</b>.

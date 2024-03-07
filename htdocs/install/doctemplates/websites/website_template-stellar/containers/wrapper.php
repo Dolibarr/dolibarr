@@ -1,8 +1,12 @@
 <?php
 // BEGIN PHP File wrapper.php - DO NOT MODIFY - It is just a copy of file website/samples/wrapper.php
 $websitekey = basename(__DIR__);
-if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) die("Sample file for website module. Can be called directly.");
-if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded
+if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) {
+	die("Sample file for website module. Can't be called directly.");
+}
+if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
+	require_once './master.inc.php';
+} // Load master if not already loaded
 include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 $encoding = '';
@@ -186,17 +190,16 @@ if ($rss) {
 		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
 	}
-}
-// Get logos
-elseif ($modulepart == "mycompany" && preg_match('/^\/?logos\//', $original_file)) {
+} elseif ($modulepart == "mycompany" && preg_match('/^\/?logos\//', $original_file)) {
+	// Get logos
 	readfile(dol_osencode($conf->mycompany->dir_output."/".$original_file));
 } else {
 	// Find the subdirectory name as the reference
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
-	$accessallowed              = $check_access['accessallowed'];
-	$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
-	$fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
+	$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, null, $refname);
+	$accessallowed              = empty($check_access['accessallowed']) ? '' : $check_access['accessallowed'];
+	$sqlprotectagainstexternals = empty($check_access['sqlprotectagainstexternals']) ? '' : $check_access['sqlprotectagainstexternals'];
+	$fullpath_original_file     = empty($check_access['original_file']) ? '' : $check_access['original_file']; // $fullpath_original_file is now a full path name
 	if ($hashp) {
 		$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 		$sqlprotectagainstexternals = '';
@@ -219,7 +222,7 @@ elseif ($modulepart == "mycompany" && preg_match('/^\/?logos\//', $original_file
 
 	// This test if file exists should be useless. We keep it to find bug more easily
 	if (!file_exists($fullpath_original_file_osencoded)) {
-		print "ErrorFileDoesNotExists: ".$original_file;
+		print "ErrorFileDoesNotExists: ".dol_escape_htmltag($original_file);
 		exit;
 	}
 

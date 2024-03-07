@@ -319,7 +319,7 @@ if (empty($reshook)) {
 			}
 			$object->entity					= (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : $conf->entity);
 			$object->name_alias				= GETPOST('name_alias', 'alphanohtml');
-			$object->parent					= GETPOST('parent_company_id', 'int');
+			$object->parent					= GETPOSTISSET('parent_company_id') ? GETPOST('parent_company_id', 'int') : $object->parent;
 			$object->address				= GETPOST('address', 'alphanohtml');
 			$object->zip					= GETPOST('zipcode', 'alphanohtml');
 			$object->town					= GETPOST('town', 'alphanohtml');
@@ -1154,7 +1154,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			print '<script type="text/javascript">';
 			print '$(document).ready(function () {
-					var canHaveCategoryIfNotCustomerProspectSupplier = ' . (!getDolGlobalString('THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT') ? '0' : '1') . ';
+					var canHaveCustomerCategoryIfNotCustomerProspectSupplier = ' . (!getDolGlobalString('THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT') ? '0' : '1') . ';
 
 					init_customer_categ();
 			  		$("#customerprospect").change(function() {
@@ -1162,7 +1162,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					});
 					function init_customer_categ() {
 						console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-						if (jQuery("#customerprospect").val() == 0 && !canHaveCategoryIfNotCustomerProspectSupplier) {
+						if (jQuery("#customerprospect").val() == 0 && !canHaveCustomerCategoryIfNotCustomerProspectSupplier) {
 							jQuery(".visibleifcustomer").hide();
 						} else {
 							jQuery(".visibleifcustomer").show();
@@ -1226,7 +1226,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</td><td'.(!getDolGlobalString('SOCIETE_USEPREFIX') ? ' colspan="3"' : '').'>';
 
 			print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
-			print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');	// For some countries that need the company name in 2 languages
+			print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alphanohtml', 'minwidth300');	// For some countries that need the company name in 2 languages
 			// This implementation of the feature to search already existing company has been disabled. It must be implemented by keeping the "input text" and we must call the search ajax societe/ajax/ajaxcompanies.php
 			// on a keydown of the input. We should show data about a duplicate found if we found less than 5 answers into a div under the input.
 			/*
@@ -1979,7 +1979,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
     				}
     			});
 
-				var canHaveCategoryIfNotCustomerProspectSupplier = ' . (!getDolGlobalString('THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT') ? '0' : '1') . ';
+				var canHaveCustomerCategoryIfNotCustomerProspect = ' . (getDolGlobalInt('THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT') ? '1' : '0') . ';
 
 				init_customer_categ();
 	  			$("#customerprospect").change(function() {
@@ -1987,7 +1987,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				});
        			function init_customer_categ() {
 					console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-					if (jQuery("#customerprospect").val() == 0 && !canHaveCategoryIfNotCustomerProspectSupplier)
+					if (jQuery("#customerprospect").val() == 0 && !canHaveCustomerCategoryIfNotCustomerProspect)
 					{
 						jQuery(".visibleifcustomer").hide();
 					}
@@ -2052,7 +2052,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Name
 				print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0, 'string', '', 1).'</td>';
 				print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
-				print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');
+				print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alphanohtml', 'minwidth300');
 				print '</td></tr>';
 
 				// Alias names (commercial, trademark or alias names)

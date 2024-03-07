@@ -38,7 +38,6 @@ Notify_BILL_SENTBYMAIL=Factura del cliente enviada por correo
 Notify_BILL_SUPPLIER_VALIDATE=Factura de proveedor validada
 Notify_BILL_SUPPLIER_PAYED=Factura del proveedor pagada
 Notify_BILL_SUPPLIER_SENTBYMAIL=Factura de proveedor enviada por correo
-Notify_BILL_SUPPLIER_CANCELED=Factura de proveedor cancelada
 Notify_CONTRACT_VALIDATE=Contrato validado
 Notify_FICHINTER_VALIDATE=Intervención validada
 Notify_FICHINTER_ADD_CONTACT=Contacto añadido a la intervención

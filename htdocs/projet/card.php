@@ -67,10 +67,10 @@ $objcanvas = GETPOST("objcanvas", "alphanohtml");
 $comefromclone = GETPOST("comefromclone", "alphanohtml");
 $date_start = dol_mktime(0, 0, 0, GETPOST('projectstartmonth', 'int'), GETPOST('projectstartday', 'int'), GETPOST('projectstartyear', 'int'));
 $date_end = dol_mktime(0, 0, 0, GETPOST('projectendmonth', 'int'), GETPOST('projectendday', 'int'), GETPOST('projectendyear', 'int'));
-$date_start_event = dol_mktime(GETPOST('date_start_eventhour', 'int'), GETPOST('date_start_eventmin', 'int'), GETPOST('date_start_eventsec', 'int'), GETPOST('date_start_eventmonth', 'int'), GETPOST('date_start_eventday', 'int'), GETPOST('date_start_eventyear', 'int'));
-$date_end_event = dol_mktime(GETPOST('date_end_eventhour', 'int'), GETPOST('date_end_eventmin', 'int'), GETPOST('date_end_eventsec', 'int'), GETPOST('date_end_eventmonth', 'int'), GETPOST('date_end_eventday', 'int'), GETPOST('date_end_eventyear', 'int'));
+$date_start_event = dol_mktime(GETPOSTINT('date_start_eventhour'), GETPOSTINT('date_start_eventmin'), GETPOSTINT('date_start_eventsec'), GETPOSTINT('date_start_eventmonth'), GETPOSTINT('date_start_eventday'), GETPOSTINT('date_start_eventyear'), 'tzuserrel');
+$date_end_event = dol_mktime(GETPOSTINT('date_end_eventhour'), GETPOSTINT('date_end_eventmin'), GETPOSTINT('date_end_eventsec'), GETPOSTINT('date_end_eventmonth'), GETPOSTINT('date_end_eventday'), GETPOSTINT('date_end_eventyear'), 'tzuserrel');
 $location = GETPOST('location', 'alphanohtml');
-$fk_project = GETPOST('fk_project', 'int');
+$fk_project = GETPOSTINT('fk_project');
 
 
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
@@ -504,8 +504,11 @@ if (empty($reshook)) {
 			$newobject->fetch_optionals();
 			$newobject->fetch_thirdparty(); // Load new object
 			$object = $newobject;
-			$action = 'edit';
+			$action = 'view';
 			$comefromclone = true;
+
+			setEventMessages($langs->trans("ProjectCreatedInDolibarr", $newobject->ref), "", 'mesgs');
+			//var_dump($newobject); exit;
 		}
 	}
 

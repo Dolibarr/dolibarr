@@ -39,7 +39,7 @@ if ($user->socid > 0) {
 }
 
 $backtopage = GETPOST('backtopage', 'alpha');
-$cancel = GETPOST('cancel', 'aplha');
+$cancel = GETPOST('cancel', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Security check

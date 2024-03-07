@@ -138,32 +138,32 @@ if ($action == 'presend') {
 	}
 	if ($object->element == 'salary' && getDolGlobalString('INVOICE_EMAIL_SENDER')) {
 		$formmail->frommail = $conf->global->SINVOICE_EMAIL_SENDER;
-		$formmail->fromname = (getDolGlobalString('INVOICE_EMAIL_SENDER_NAME') ? $conf->global->INVOICE_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = getDolGlobalString('INVOICE_EMAIL_SENDER_NAME', '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'facture' && getDolGlobalString('INVOICE_EMAIL_SENDER')) {
 		$formmail->frommail = $conf->global->INVOICE_EMAIL_SENDER;
-		$formmail->fromname = (getDolGlobalString('INVOICE_EMAIL_SENDER_NAME') ? $conf->global->INVOICE_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = getDolGlobalString('INVOICE_EMAIL_SENDER_NAME', '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'shipping' && getDolGlobalString('SHIPPING_EMAIL_SENDER')) {
 		$formmail->frommail = $conf->global->SHIPPING_EMAIL_SENDER;
-		$formmail->fromname = (getDolGlobalString('SHIPPING_EMAIL_SENDER_NAME') ? $conf->global->SHIPPING_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = getDolGlobalString('SHIPPING_EMAIL_SENDER_NAME', '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'commande' && getDolGlobalString('COMMANDE_EMAIL_SENDER')) {
 		$formmail->frommail = $conf->global->COMMANDE_EMAIL_SENDER;
-		$formmail->fromname = (getDolGlobalString('COMMANDE_EMAIL_SENDER_NAME') ? $conf->global->COMMANDE_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = getDolGlobalString('COMMANDE_EMAIL_SENDER_NAME', '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'order_supplier' && getDolGlobalString('ORDER_SUPPLIER_EMAIL_SENDER')) {
 		$formmail->frommail = $conf->global->ORDER_SUPPLIER_EMAIL_SENDER;
-		$formmail->fromname = (getDolGlobalString('ORDER_SUPPLIER_EMAIL_SENDER_NAME') ? $conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = getDolGlobalString('ORDER_SUPPLIER_EMAIL_SENDER_NAME', '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'recruitmentcandidature') {
-		$formmail->frommail = (getDolGlobalString('RECRUITMENT_EMAIL_SENDER') ? $conf->global->RECRUITMENT_EMAIL_SENDER : $recruitermail);
-		$formmail->fromname = (getDolGlobalString('RECRUITMENT_EMAIL_SENDER_NAME') ? $conf->global->RECRUITMENT_EMAIL_SENDER_NAME : (!empty($recruitername) ? $recruitername : ''));
+		$formmail->frommail = getDolGlobalString('RECRUITMENT_EMAIL_SENDER', (!empty($recruitermail) ? $recruitermail : ''));
+		$formmail->fromname = getDolGlobalString('RECRUITMENT_EMAIL_SENDER_NAME', (!empty($recruitername) ? $recruitername : ''));
 		$formmail->fromtype = 'special';
 	}
 

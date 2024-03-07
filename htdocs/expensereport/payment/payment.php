@@ -111,7 +111,7 @@ if ($action == 'add_payment') {
 			$payment->amounts		 = $amounts; // Tableau de montant
 			$payment->total          = $total;
 			$payment->fk_typepayment = GETPOST("fk_typepayment", 'int');
-			$payment->num_payment    = GETPOST("num_payment", 'alphanothtml');
+			$payment->num_payment    = GETPOST("num_payment", 'alphanohtml');
 			$payment->note_public    = GETPOST("note_public", 'restricthtml');
 			$payment->fk_bank        = $accountid;
 

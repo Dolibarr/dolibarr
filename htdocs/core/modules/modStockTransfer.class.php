@@ -63,7 +63,7 @@ class modStockTransfer extends DolibarrModules
 		// Used only if file README.md and README-LL.md not found.
 		$this->descriptionlong = "Advanced management of stock transfer orders with generation of stock transfer sheets";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'dolibarr';
+		$this->version = 'experimental';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -435,26 +435,26 @@ class modStockTransfer extends DolibarrModules
 
 		$sql = array();
 
-		// Rôles
-		$resql = $this->db->query('SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE code = "STDEST" AND element = "StockTransfer" AND source = "internal"');
+		// Roles
+		$resql = $this->db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."c_type_contact WHERE code = 'STDEST' AND element = 'stocktransfer' AND source = 'internal'");
 		$res = $this->db->fetch_object($resql);
 		$nextid=$this->getNextId();
 		if (empty($res)) {
-			$this->db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.((int) $nextid).', "StockTransfer", "internal", "STRESP", "Responsable du transfert de stocks", 1, NULL, 0)');
+			$this->db->query("INSERT INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES(".((int) $nextid).", 'stocktransfer', 'internal', 'STRESP', 'Responsible for stock transfers', 1, NULL, 0)");
 		}
 
-		$resql = $this->db->query('SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE code = "STFROM" AND element = "StockTransfer" AND source = "external"');
+		$resql = $this->db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."c_type_contact WHERE code = 'STFROM' AND element = 'stocktransfer' AND source = 'external'");
 		$res = $this->db->fetch_object($resql);
 		$nextid=$this->getNextId();
 		if (empty($res)) {
-			$this->db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.((int) $nextid).', "StockTransfer", "external", "STFROM", "Contact expéditeur transfert de stocks", 1, NULL, 0)');
+			$this->db->query("INSERT INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES(".((int) $nextid).", 'stocktransfer', 'external', 'STFROM', 'Contact sending the stock transfer', 1, NULL, 0)");
 		}
 
-		$resql = $this->db->query('SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE code = "STDEST" AND element = "StockTransfer" AND source = "external"');
+		$resql = $this->db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."c_type_contact WHERE code = 'STDEST' AND element = 'stocktransfer' AND source = 'external'");
 		$res = $this->db->fetch_object($resql);
 		$nextid=$this->getNextId();
 		if (empty($res)) {
-			$this->db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.((int) $nextid).', "StockTransfer", "external", "STDEST", "Contact destinataire transfert de stocks", 1, NULL, 0)');
+			$this->db->query("INSERT INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES(".((int) $nextid).", 'stocktransfer', 'external', 'STDEST', 'Contact receiving the stock transfer', 1, NULL, 0)");
 		}
 
 		return $this->_init($sql, $options);
@@ -468,7 +468,7 @@ class modStockTransfer extends DolibarrModules
 	{
 		// Get free id for insert
 		$newid = 0;
-		$sql = "SELECT max(rowid) newid from ".MAIN_DB_PREFIX."c_type_contact";
+		$sql = "SELECT MAX(rowid) newid from ".MAIN_DB_PREFIX."c_type_contact";
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);

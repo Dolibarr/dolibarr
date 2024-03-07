@@ -46,14 +46,13 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
 if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
@@ -2217,6 +2216,10 @@ if (empty($reshook)) {
 				if (!empty($price_ht) || $price_ht === '0') {
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+				} elseif (!empty($price_ht_devise) || $price_ht_devise === '0') {
+					$pu_ht_devise = price2num($price_ht_devise, 'MU');
+					$pu_ht = '';
+					$pu_ttc = '';
 				} elseif (!empty($price_ttc) || $price_ttc === '0') {
 					$pu_ttc = price2num($price_ttc, 'MU');
 					$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
@@ -2308,8 +2311,10 @@ if (empty($reshook)) {
 				$type = $prod->type;
 				$fk_unit = $prod->fk_unit;
 			} else {
-				$pu_ht = price2num($price_ht, 'MU');
-				$pu_ttc = price2num($price_ttc, 'MU');
+				if (!empty($price_ht)) $pu_ht = price2num($price_ht, 'MU');
+				else $pu_ht = '';
+				if (!empty($price_ttc)) $pu_ttc = price2num($price_ttc, 'MU');
+				else $pu_ttc = '';
 				$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
 				$tva_tx = str_replace('*', '', $tva_tx);
 				if (empty($tva_tx)) {
@@ -2335,8 +2340,8 @@ if (empty($reshook)) {
 			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $mysoc, $tva_npr);
 			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
 
-			$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
-			$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
+			$pu_ht_devise = price2num($price_ht_devise, '', 2);
+			$pu_ttc_devise = price2num($price_ttc_devise, '', 2);
 
 			// Prepare a price equivalent for minimum price check
 			$pu_equivalent = $pu_ht;
@@ -4472,7 +4477,7 @@ if ($action == 'create') {
 		$file = GETPOST('file', 'alpha');
 
 		$formconfirm = $form->formconfirm(
-			$_SERVER["PHP_SELF"].'?facid='.$object->id.'&file='.$file,
+			$_SERVER["PHP_SELF"].'?facid='.$object->id.'&file='.urlencode($file),
 			$langs->trans('DeleteFileHeader'),
 			$langs->trans('DeleteFileText')."<br><br>".$file,
 			'remove_file',
@@ -5649,7 +5654,7 @@ if ($action == 'create') {
 					if (getDolGlobalString('INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE') || ($resteapayer == price2num($object->total_ttc, 'MT', 1) && empty($object->paye))) {
 						if (!$objectidnext && $object->is_last_in_cycle()) {
 							if ($usercanunvalidate) {
-								$params['attr']['title'] = '';
+								unset($params['attr']['title']);
 								print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=modif&token='.newToken(), '', true, $params);
 							} else {
 								$params['attr']['title'] = $langs->trans('NotEnoughPermissions');
@@ -5680,7 +5685,7 @@ if ($action == 'create') {
 				&& ($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED || ($object->statut == 1 && $object->paye == 1))   // Condition ($object->statut == 1 && $object->paye == 1) should not happened but can be found due to corrupted data
 				&& ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || $usercanreopen)) {				// A paid invoice (partially or completely)
 				if ($object->close_code != 'replaced' || (!$objectidnext)) { 				// Not replaced by another invoice or replaced but the replacement invoice has been deleted
-					$params['attr']['title'] = '';
+					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('ReOpen'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=reopen&token='.newToken(), '', true, $params);
 				} else {
 					$params['attr']['title'] = $langs->trans("DisabledBecauseReplacedInvoice");
@@ -5702,7 +5707,7 @@ if ($action == 'create') {
 			// Validate
 			if ($object->statut == Facture::STATUS_DRAFT && count($object->lines) > 0 && ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION) && (getDolGlobalString('FACTURE_ENABLE_NEGATIVE') || $object->total_ttc >= 0)) || ($object->type == Facture::TYPE_CREDIT_NOTE && $object->total_ttc <= 0))) {
 				if ($usercanvalidate) {
-					$params['attr']['title'] = '';
+					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=valid&token='.newToken(), '', true, $params);
 				}
 			}
@@ -5714,10 +5719,10 @@ if ($action == 'create') {
 						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendMail').'</span>';
 					} else {
 						if ($usercansend) {
-							$params['attr']['title'] = '';
+							unset($params['attr']['title']);
 							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', '', true, $params);
 						} else {
-							$params['attr']['title'] = '';
+							unset($params['attr']['title']);
 							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', '#', '', false, $params);
 						}
 					}
@@ -5760,8 +5765,8 @@ if ($action == 'create') {
 					} else {
 						// Sometimes we can receive more, so we accept to enter more and will offer a button to convert into discount (but it is not a credit note, just a prepayment done)
 						//print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/paiement.php?facid='.$object->id.'&amp;action=create&amp;accountid='.$object->fk_account.'">'.$langs->trans('DoPayment').'</a>';
-						$params['attr']['title'] = '';
-						print dolGetButtonAction($langs->trans('DoPayment'), '', 'default', DOL_URL_ROOT.'/compta/paiement.php?facid='.$object->id.'&amp;action=create&amp;accountid='.$object->fk_account, '', true, $params);
+						unset($params['attr']['title']);
+						print dolGetButtonAction($langs->trans('DoPayment'), '', 'default', DOL_URL_ROOT.'/compta/paiement.php?facid='.$object->id.'&amp;action=create'.($object->fk_account > 0 ? '&amp;accountid='.$object->fk_account : ''), '', true, $params);
 					}
 				}
 			}
@@ -5788,7 +5793,7 @@ if ($action == 'create') {
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercancreate
 					&& (getDolGlobalString('INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED') || $sumofpayment == 0) && $object->total_ht < 0
 					) {
-					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
+					print '<a class="butAction classfortooltip'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
 				}
 				// For down payment invoice (deposit)
 				if ($object->type == Facture::TYPE_DEPOSIT && $usercancreate && $object->statut > Facture::STATUS_DRAFT && empty($discount->id)) {
@@ -5796,7 +5801,7 @@ if ($action == 'create') {
 					if (price2num($object->total_ttc, 'MT') == price2num($sumofpaymentall, 'MT') || getDolGlobalInt('DEPOSIT_AS_CREDIT_AVAILABLE_EVEN_UNPAID') || ($object->type == Facture::STATUS_ABANDONED && in_array($object->close_code, array('bankcharge', 'discount_vat', 'other')))) {
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a>';
 					} else {
-						print '<span class="butActionRefused" title="'.$langs->trans("AmountPaidMustMatchAmountOfDownPayment").'">'.$langs->trans('ConvertToReduc').'</span>';
+						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("AmountPaidMustMatchAmountOfDownPayment").'">'.$langs->trans('ConvertToReduc').'</span>';
 					}
 				}
 			}
@@ -5813,7 +5818,7 @@ if ($action == 'create') {
 					$params['attr']['title'] = $langs->trans('AmountPaidMustMatchAmountOfDownPayment');
 					print dolGetButtonAction($langs->trans('ClassifyPaid'), '', 'default', '#', '', false, $params);
 				} else {
-					$params['attr']['title'] = '';
+					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('ClassifyPaid'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid', '', true, $params);
 				}
 			}
@@ -5859,14 +5864,14 @@ if ($action == 'create') {
 
 			// Clone
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $usercancreate) {
-				$params['attr']['title'] = '';
+				unset($params['attr']['title']);
 				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=clone&amp;object=invoice', '', true, $params);
 			}
 
 			// Clone as predefined / Create template
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $object->statut == 0 && $usercancreate) {
 				if (!$objectidnext && count($object->lines) > 0) {
-					$params['attr']['title'] = '';
+					unset($params['attr']['title']);
 					print dolGetButtonAction($langs->trans('ChangeIntoRepeatableInvoice'), '', 'default', DOL_URL_ROOT.'/compta/facture/card-rec.php?facid='.$object->id.'&amp;action=create', '', true, $params);
 				}
 			}
@@ -5920,11 +5925,11 @@ if ($action == 'create') {
 					$deleteHref = $_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=delete&token='.newToken();
 					$enableDelete = true;
 				}
-				$params['attr']['title'] = '';
+				unset($params['attr']['title']);
 				print dolGetButtonAction($htmltooltip, $langs->trans('Delete'), 'delete', $deleteHref, '', $enableDelete, $params);
 			} else {
-				$params['attr']['title'] = '';
-				print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', '#', '', false);
+				unset($params['attr']['title']);
+				print dolGetButtonAction($htmltooltip, $langs->trans('Delete'), 'delete', '#', '', false);
 			}
 		}
 		print '</div>';

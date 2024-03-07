@@ -75,5 +75,6 @@ CreationOfPaymentModeMustBeDoneFromStripeInterface=Kuchli mijozlarni autentifika
 STRIPE_CARD_PRESENT=Stripe terminallari uchun karta sovg'asi
 TERMINAL_LOCATION=Stripe terminallari uchun joy (manzil).
 RequestDirectDebitWithStripe=Stripe bilan to'g'ridan-to'g'ri debetni talab qiling
+RequesCreditTransferWithStripe=Stripe bilan kredit o'tkazmasini talab qiling
 STRIPE_SEPA_DIRECT_DEBIT=Stripe orqali to'g'ridan-to'g'ri debet to'lovlarini yoqing
 StripeConnect_Mode=Stripe Connect rejimi

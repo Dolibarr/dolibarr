@@ -1500,7 +1500,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 			}
 
-			if ($type != 1 && isModEnabled('stock')) {
+			if (($type != 1 || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
 				// Default warehouse
 				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 				print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
@@ -1508,6 +1508,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?&action=create&type='.GETPOST('type', 'int')).'">';
 				print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span>';
 				print '</a>';
+
 				print '</td>';
 				print '</tr>';
 
@@ -1913,6 +1914,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$parameters = array();
 			// Note that $action and $object may be modified by hook
 			$reshook = $hookmanager->executeHooks('tabContentEditProduct', $parameters, $object, $action);
+
 			if (empty($reshook)) {
 				print '<table class="border allwidth">';
 
@@ -2111,7 +2113,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// Stock
-				if ($object->isProduct() && isModEnabled('stock')) {
+				if (($object->isProduct() || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
 					// Default warehouse
 					print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 					print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
@@ -2130,7 +2132,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					*/
 				}
 
-				if ($object->isService() && $conf->workstation->enabled) {
+				if ($object->isService() && isModEnabled('workstation')) {
 					// Default workstation
 					print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
 					print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
@@ -2620,7 +2622,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// Default warehouse
-				if ($object->isProduct() && isModEnabled('stock')) {
+				if (($object->isProduct() || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
 					$warehouse = new Entrepot($db);
 					$warehouse->fetch($object->fk_default_warehouse);
 

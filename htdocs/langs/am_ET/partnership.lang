@@ -16,77 +16,83 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+ModulePartnershipName=የአጋርነት አስተዳደር
+PartnershipDescription=ሞጁል አጋርነት አስተዳደር
+PartnershipDescriptionLong= ሞጁል አጋርነት አስተዳደር
+Partnership=አጋርነት
+Partnerships=ሽርክናዎች
+AddPartnership=ሽርክና ጨምር
+CancelPartnershipForExpiredMembers=ሽርክና፡ ጊዜው ያለፈባቸው የደንበኝነት ምዝገባዎች የአባላት ሽርክና ሰርዝ
+PartnershipCheckBacklink=ሽርክና፡ የጀርባ ማገናኛን አጣራ
 
 #
 # Menu
 #
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
+NewPartnership=አዲስ አጋርነት
+NewPartnershipbyWeb=የአጋርነት ጥያቄዎ በተሳካ ሁኔታ ታክሏል። በቅርቡ ልናገኝህ እንችላለን...
+ListOfPartnerships=የአጋርነት ዝርዝር
 
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PartnershipSetup=አጋርነት ማዋቀር
+PartnershipAbout=ስለ አጋርነት
+PartnershipAboutPage=ስለ ገጽ አጋርነት
+partnershipforthirdpartyormember=የአጋር ሁኔታ በ'ሶስተኛ ወገን' ወይም 'አባል' ላይ መቀናበር አለበት
+PARTNERSHIP_IS_MANAGED_FOR=አጋርነት የሚተዳደረው ለ
+PARTNERSHIP_BACKLINKS_TO_CHECK=ለመፈተሽ የኋላ አገናኞች
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=የደንበኝነት ምዝገባው ሲያልቅ የሽርክና ሁኔታን ከመሰረዝ ጥቂት ቀናት በፊት
+ReferingWebsiteCheck=የድር ጣቢያ ማመሳከሪያን ያረጋግጡ
+ReferingWebsiteCheckDesc=አጋሮችዎ በራሳቸው ድረ-ገጽ ላይ ወደ ድር ጣቢያዎ ጎራዎች የጀርባ ማገናኛ እንዳከሉ ለማረጋገጥ አንድ ባህሪን ማንቃት ይችላሉ።
+PublicFormRegistrationPartnerDesc=ዶሊባርር የውጪ ጎብኚዎች የአጋርነት ፕሮግራሙ አካል ለመሆን እንዲጠይቁ ለማድረግ ይፋዊ ዩአርኤል/ድረ-ገጽ ሊያቀርብልዎ ይችላል።
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
-DatePartnershipStart=Start date
-DatePartnershipEnd=End date
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
+DeletePartnership=ሽርክና ሰርዝ
+PartnershipDedicatedToThisThirdParty=ለዚህ ሶስተኛ ወገን የተሰጠ አጋርነት
+PartnershipDedicatedToThisMember=ለዚህ አባል የተሰጠ አጋርነት
+DatePartnershipStart=የመጀመሪያ ቀን
+DatePartnershipEnd=የመጨረሻ ቀን
+ReasonDecline=ምክንያት አትቀበል
+ReasonDeclineOrCancel=Reason for refusal or cancellation
+PartnershipAlreadyExist=አጋርነት አስቀድሞ አለ።
+ManagePartnership=ሽርክና አስተዳድር
+BacklinkNotFoundOnPartnerWebsite=የጀርባ ማገናኛ በአጋር ድር ጣቢያ ላይ አልተገኘም።
+ConfirmClosePartnershipAsk=እርግጠኛ ነዎት ይህን አጋርነት መሰረዝ ይፈልጋሉ?
+PartnershipType=የአጋርነት አይነት
+PartnershipRefApproved=ሽርክና %s ጸድቋል
+KeywordToCheckInWebsite=የተሰጠው ቁልፍ ቃል በእያንዳንዱ አጋር ድህረ ገጽ ላይ መኖሩን ማረጋገጥ ከፈለጉ ይህን ቁልፍ ቃል እዚህ ይግለጹ
+PartnershipDraft=ረቂቅ
+PartnershipAccepted=ተቀባይነት አግኝቷል
+PartnershipRefused=እምቢ አለ።
+PartnershipCanceled=ተሰርዟል።
+PartnershipManagedFor=አጋሮች ናቸው።
 
 #
 # Template Mail
 #
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
+SendingEmailOnPartnershipWillSoonBeCanceled=ሽርክና በቅርቡ ይሰረዛል
+SendingEmailOnPartnershipRefused=አጋርነት ውድቅ አደረገ
+SendingEmailOnPartnershipAccepted=አጋርነት ተቀባይነት አግኝቷል
+SendingEmailOnPartnershipCanceled=ሽርክና ተሰርዟል።
 
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
+YourPartnershipWillSoonBeCanceledTopic=ሽርክና በቅርቡ ይሰረዛል
+YourPartnershipRefusedTopic=አጋርነት ውድቅ አደረገ
+YourPartnershipAcceptedTopic=አጋርነት ተቀባይነት አግኝቷል
+YourPartnershipCanceledTopic=ሽርክና ተሰርዟል።
 
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
+YourPartnershipWillSoonBeCanceledContent=አጋርነታችን በቅርቡ እንደሚሰረዝ (እድሳት አላገኘንም ወይም ለትብብራችን ቅድመ ሁኔታ ያልተሟላ) መሆኑን ለማሳወቅ እንወዳለን። በስህተት ይህ ከተቀበሉ እባክዎ ያነጋግሩን።
+YourPartnershipRefusedContent=የአጋርነት ጥያቄዎ ውድቅ መደረጉን ለማሳወቅ እንወዳለን። ቅድመ-ሁኔታዎች አልተሟሉም። ተጨማሪ መረጃ ከፈለጉ እባክዎን ያነጋግሩን።
+YourPartnershipAcceptedContent=የአጋርነት ጥያቄዎ ተቀባይነት ማግኘቱን ለማሳወቅ እንወዳለን።
+YourPartnershipCanceledContent=አጋርነታችን መሰረዙን ለማሳወቅ እንወዳለን። ተጨማሪ መረጃ ከፈለጉ እባክዎን ያነጋግሩን።
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
+CountLastUrlCheckError=ለመጨረሻው የዩአርኤል ፍተሻ የስህተት ብዛት
+LastCheckBacklink=የመጨረሻው የዩአርኤል ፍተሻ ቀን
 
-#
-# Status
-#
-PartnershipDraft=Draft
-PartnershipAccepted=Accepted
-PartnershipRefused=Refused
-PartnershipCanceled=Canceled
-PartnershipManagedFor=Partners are
+NewPartnershipRequest=አዲስ የአጋርነት ጥያቄ
+NewPartnershipRequestDesc=ይህ ፎርም የአንዱ አጋርነት ፕሮግራማችን አካል ለመሆን እንዲጠይቁ ያስችልዎታል። ይህን ቅጽ ለመሙላት እርዳታ ከፈለጉ፣ እባክዎን በኢሜል ያነጋግሩ <b>%s<span class='notranslate'>b09a4b739f17f80 span>
+ThisUrlMustContainsAtLeastOneLinkToWebsite=ይህ ገጽ ከሚከተሉት ጎራዎች ወደ አንዱ ቢያንስ አንድ አገናኝ መያዝ አለበት፡ %s
+
+IPOfApplicant=የአመልካች አይፒ
+

@@ -272,7 +272,16 @@ foreach ($filesToProcess as $fileToProcess) {
 
 			// key is redundant
 			if (array_key_exists($key, $aPrimary)) {
-				print "Key $key is redundant in file $lPrimaryFile (line: $cnt) - Already found into ".$fileFirstFound[$key]." (line: ".$lineFirstFound[$key].").\n";
+				print "Key $key is redundant in file $lPrimaryFile (line: $cnt)";
+				if (!empty($fileFirstFound[$key])) {
+					print " - Already found into ".$fileFirstFound[$key];
+					print " (line: ".$lineFirstFound[$key].").\n";
+				} else {
+					$fileFirstFound[$key] = $fileToProcess;
+					$lineFirstFound[$key] = $cnt;
+
+					print " - Already found into main file.\n";
+				}
 				continue;
 			} else {
 				$fileFirstFound[$key] = $fileToProcess;

@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Asociación dedicada a este membro
 DatePartnershipStart=Data inicio
 DatePartnershipEnd=Data finalización
 ReasonDecline=Razón para declinar
-ReasonDeclineOrCancel=Razón para declinar
+ReasonDeclineOrCancel=Motivo de denegación ou cancelación
 PartnershipAlreadyExist=A asociación xa existe 
 ManagePartnership=Xestionar a asociación
 BacklinkNotFoundOnPartnerWebsite=Non se atopou a ligazón de atraso no sitio web do socio 
@@ -89,7 +89,6 @@ YourPartnershipCanceledContent=Queremos informarvos de que a nosa asociación fo
 
 CountLastUrlCheckError=Número de erros para as últimas URL revisadas
 LastCheckBacklink=Data da última URL revisada
-ReasonDeclineOrCancel=Razón para declinar
 
 NewPartnershipRequest=Nova solicitude de colaboración
 NewPartnershipRequestDesc=Este formulario permíte solicitar formar parte dun dos nosos programas de colaboración. Se precisa axuda para cubrir este formulario, póñase en contacto por correo electrónico <b> %s </b> .

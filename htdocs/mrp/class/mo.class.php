@@ -113,8 +113,8 @@ class Mo extends CommonObject
 		'date_valid' => array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>502,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax100'),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1, 'csslist'=>'tdoverflowmax100'),
-		'date_start_planned' => array('type'=>'datetime', 'label'=>'DateStartPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'notnull'=>-1, 'index'=>1, 'help'=>'KeepEmptyForAsap', 'alwayseditable'=>1),
-		'date_end_planned' => array('type'=>'datetime', 'label'=>'DateEndPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>56, 'notnull'=>-1, 'index'=>1, 'alwayseditable'=>1),
+		'date_start_planned' => array('type'=>'datetime', 'label'=>'DateStartPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'notnull'=>-1, 'index'=>1, 'help'=>'KeepEmptyForAsap', 'alwayseditable'=>1, 'csslist'=>'nowraponall'),
+		'date_end_planned' => array('type'=>'datetime', 'label'=>'DateEndPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>56, 'notnull'=>-1, 'index'=>1, 'alwayseditable'=>1, 'csslist'=>'nowraponall'),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'default'=>0, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '2'=>'InProgress', '3'=>'StatusMOProduced', '9'=>'Canceled')),
@@ -379,6 +379,13 @@ class Mo extends CommonObject
 		unset($object->id);
 		unset($object->fk_user_creat);
 		unset($object->import_key);
+
+		// Remove produced and consumed lines
+		foreach ($object->lines as $key => $line) {
+			if (in_array($line->role, array('consumed', 'produced'))) {
+				unset($object->lines[$key]);
+			}
+		}
 
 		// Clear fields
 		$object->ref = empty($this->fields['ref']['default']) ? "copy_of_".$object->ref : $this->fields['ref']['default'];
@@ -893,17 +900,21 @@ class Mo extends CommonObject
 		}
 		$productstatic = new Product($this->db);
 		$fk_movement = GETPOST('fk_movement', 'int');
-		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);
+		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);	// Get lines consumed under the one to delete
+
+		$result = 0;
+
+		$this->db->begin();
 
 		if (!empty($arrayoflines)) {
-			$this->db->begin();
-
+			// If there is child lines
 			$stockmove = new MouvementStock($this->db);
 			$stockmove->setOrigin($this->element, $this->id);
 
 			if (!empty($fk_movement)) {
+				// The fk_movement was not recorded so we try to guess the product and quantity to restore.
 				$moline = new MoLine($this->db);
-				$TArrayMoLine = $moline->fetchAll('', '', 1, 0, array('customsql' => 'fk_stock_movement ='.$fk_movement));
+				$TArrayMoLine = $moline->fetchAll('', '', 1, 0, array('customsql' => 'fk_stock_movement = '.(int) $fk_movement));
 				$moline = array_shift($TArrayMoLine);
 
 				$movement = new MouvementStock($this->db);
@@ -922,13 +933,12 @@ class Mo extends CommonObject
 				}
 				if ($idstockmove < 0) {
 					$this->error++;
-					$this->db->rollback();
 					setEventMessages($stockmove->error, $stockmove->errors, 'errors');
 				} else {
-					$this->db->commit();
+					$result = $moline->delete($user, $notrigger);
 				}
-				return $moline->delete($user, $notrigger);
 			} else {
+				// Loop on each child lines
 				foreach ($arrayoflines as $key => $arrayofline) {
 					$lineDetails = $arrayoflines[$key];
 					$productstatic->fetch($lineDetails['fk_product']);
@@ -938,6 +948,7 @@ class Mo extends CommonObject
 					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
 					$codemovementCancel = $langs->trans("StockIncrease");
 
+
 					if ($qtytoprocess >= 0) {
 						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
 					} else {
@@ -945,17 +956,35 @@ class Mo extends CommonObject
 					}
 					if ($idstockmove < 0) {
 						$this->error++;
-						$this->db->rollback();
 						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
 					} else {
-						$this->db->commit();
+						$moline = new MoLine($this->db);
+						$moline->fetch($lineDetails['rowid']);
+
+						$resdel = $moline->delete($user, $notrigger);
+						if ($resdel < 0) {
+							$this->error++;
+							setEventMessages($moline->error, $moline->errors, 'errors');
+						}
 					}
 				}
-				return $this->deleteLineCommon($user, $idline, $notrigger);
+
+				if (empty($this->error)) {
+					$result = $this->deleteLineCommon($user, $idline, $notrigger);
+				}
 			}
 		} else {
-			return $this->deleteLineCommon($user, $idline, $notrigger);
+			// No child lines
+			$result = $this->deleteLineCommon($user, $idline, $notrigger);
 		}
+
+		if (!empty($this->error) || $result <= 0) {
+			$this->db->rollback();
+		} else {
+			$this->db->commit();
+		}
+
+		return $result;
 	}
 
 
@@ -1624,8 +1653,8 @@ class Mo extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (getDolGlobalString('MO_ADDON_PDF')) {
-				$modele = $conf->global->MO_ADDON_PDF;
+			} elseif (getDolGlobalString('MRP_MO_ADDON_PDF')) {
+				$modele = getDolGlobalString('MRP_MO_ADDON_PDF');
 			}
 		}
 

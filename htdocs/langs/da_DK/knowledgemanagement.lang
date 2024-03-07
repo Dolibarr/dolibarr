@@ -25,20 +25,19 @@ ModuleKnowledgeManagementDesc=Administrer en Knowledge Management (KM) eller Hel
 #
 # Admin page
 #
-KnowledgeManagementSetup = Opsætning af Knowledge Management System
-Settings = Indstillinger
-KnowledgeManagementSetupPage = Knowledge Management System opsætningsside
+KnowledgeManagementSetup = Opsætning af Videnstyrings systemet
+KnowledgeManagementSetupPage = Opsætningsside for Videnstyrings systemet
 
 
 #
 # About page
 #
-About = Om
-KnowledgeManagementAbout = Om Knowledge Management
+KnowledgeManagementAbout = Om Videnstyrings systemet
 KnowledgeManagementAboutPage = Videnstyring infoside
 
 KnowledgeManagementArea = Videnshåndtering
 MenuKnowledgeRecord = Videnbase
+MenuKnowledgeRecordShort = Videnbase
 ListKnowledgeRecord = Liste over artikler
 NewKnowledgeRecord = Ny artikel
 ValidateReply = Valider løsning
@@ -47,8 +46,14 @@ KnowledgeRecord = Artikel
 KnowledgeRecordExtraFields = Ekstra felter til artikel
 GroupOfTicket=Gruppe af billetter
 YouCanLinkArticleToATicketCategory=Du kan linke artiklen til en billetgruppe (så artiklen vil blive fremhævet på alle billetter i denne gruppe)
-SuggestedForTicketsInGroup=Foreslås til opgave når gruppen er
+SuggestedForTicketsInGroup=Foreslået til oprettelse af billet
 
 SetObsolete=Angivet som forældet
 ConfirmCloseKM=Bekræfter du lukningen af denne artikel som forældet?
 ConfirmReopenKM=Vil du gendanne denne artikel til status "Valideret"?
+BoxLastKnowledgerecordDescription=Sidste %s artikler
+BoxLastKnowledgerecord=Sidste artikler
+BoxLastKnowledgerecordContent=Sidste artikler
+BoxLastKnowledgerecordModifiedContent=Sidst ændrede artikler
+BoxLastModifiedKnowledgerecordDescription=Sidste %s ændrede artikler
+BoxLastModifiedKnowledgerecord=Sidst ændrede artikler

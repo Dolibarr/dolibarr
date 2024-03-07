@@ -1201,6 +1201,7 @@ class FormMail extends Form
 	public function getHtmlForWithCcc()
 	{
 		global $conf, $langs, $form;
+
 		$out = '<tr><td>';
 		$out .= $form->textwithpicto($langs->trans("MailCCC"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
 		$out .= '</td><td>';
@@ -1239,25 +1240,31 @@ class FormMail extends Form
 
 		$showinfobcc = '';
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROPOSAL_TO') && !empty($this->param['models']) && $this->param['models'] == 'propal_send') {
-			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO;
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROPOSAL_TO');
 		}
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_ORDER_TO') && !empty($this->param['models']) && $this->param['models'] == 'order_send') {
-			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO;
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_ORDER_TO');
 		}
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_INVOICE_TO') && !empty($this->param['models']) && $this->param['models'] == 'facture_send') {
-			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO;
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_INVOICE_TO');
 		}
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO') && !empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') {
-			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO;
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO');
 		}
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO') && !empty($this->param['models']) && $this->param['models'] == 'order_supplier_send') {
-			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO;
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO');
 		}
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO') && !empty($this->param['models']) && $this->param['models'] == 'invoice_supplier_send') {
-			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO;
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO');
 		}
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO') && !empty($this->param['models']) && $this->param['models'] == 'project') {
-			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO;
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SHIPMENT_TO') && !empty($this->param['models']) && $this->param['models'] == 'shipping_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SHIPMENT_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_RECEPTION_TO') && !empty($this->param['models']) && $this->param['models'] == 'reception_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_RECEPTION_TO');
 		}
 		if ($showinfobcc) {
 			$out .= ' + '.$showinfobcc;
@@ -1709,6 +1716,9 @@ class FormMail extends Form
 			$tmparray['__OTHER3__'] = 'Other3';
 			$tmparray['__OTHER4__'] = 'Other4';
 			$tmparray['__OTHER5__'] = 'Other5';
+			$tmparray['__CHECK_READ__'] = $langs->trans('TagCheckMail');
+			$tmparray['__UNSUBSCRIBE__'] = $langs->trans('TagUnsubscribe');
+			$tmparray['__UNSUBSCRIBE_URL__'] = $langs->trans('TagUnsubscribe').' (URL)';
 
 			$onlinepaymentenabled = 0;
 			if (isModEnabled('paypal')) {
@@ -1766,7 +1776,7 @@ class FormMail extends Form
 				*/
 			}
 			if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
-				$substitutionarray['__PUBLICLINK_NEWMEMBERFORM__'] = 'BlankSubscriptionForm';
+				$tmparray['__PUBLICLINK_NEWMEMBERFORM__'] = 'BlankSubscriptionForm';
 			}
 		}
 

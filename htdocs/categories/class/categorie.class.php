@@ -416,12 +416,13 @@ class Categorie extends CommonObject
 	 *  Add category into database
 	 *
 	 *  @param	User	$user		Object user
+	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return	int 				-1 : SQL error
 	 *          					-2 : new ID unknown
 	 *          					-3 : Invalid category
 	 * 								-4 : category already exists
 	 */
-	public function create($user)
+	public function create($user, $notrigger = 0)
 	{
 		global $conf, $langs, $hookmanager;
 		$langs->load('categories');
@@ -505,7 +506,7 @@ class Categorie extends CommonObject
 					}
 				}
 
-				if (!$error) {
+				if (!$error && !$notrigger) {
 					// Call trigger
 					$result = $this->call_trigger('CATEGORY_CREATE', $user);
 					if ($result < 0) {
@@ -536,11 +537,12 @@ class Categorie extends CommonObject
 	 * 	Update category
 	 *
 	 *	@param	User	$user		Object user
+	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 * 	@return	int		 			1 : OK
 	 *          					-1 : SQL error
 	 *          					-2 : invalid category
 	 */
-	public function update(User $user)
+	public function update(User $user, $notrigger = 0)
 	{
 		global $langs;
 
@@ -586,7 +588,7 @@ class Categorie extends CommonObject
 				}
 			}
 
-			if (!$error) {
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('CATEGORY_MODIFY', $user);
 				if ($result < 0) {
@@ -1656,15 +1658,22 @@ class Categorie extends CommonObject
 	 *	Return name and link of category (with picto)
 	 *  Use ->id, ->ref, ->label, ->color
 	 *
-	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param		string	$option			Sur quoi pointe le lien ('', 'xyz')
-	 * 	@param		int		$maxlength		Max length of text
-	 *  @param		string	$moreparam		More param on URL link
+	 *	@param		int		$withpicto				0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param		string	$option					On what the link point to ('nolink', ...)
+	 * 	@param		int		$maxlength				Max length of text
+	 *  @param		string	$moreparam				More param on URL link
+	 *  @param  	int     $notooltip      		1=Disable tooltip
+	 *  @param  	string  $morecss                Add more css on link
+	 *  @param  	int     $save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return		string					Chaine avec URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $moreparam = '')
+	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $moreparam = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = '')
 	{
-		global $hookmanager;
+		global $conf, $hookmanager;
+
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 		$params = [
@@ -1682,6 +1691,19 @@ class Categorie extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
+		$url = DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam ? '?'.$moreparam : ''));
+
+		if ($option !== 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($url && $add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
+
 		// Check contrast with background and correct text color
 		$forced_color = 'categtextwhite';
 		if ($this->color) {
@@ -1689,24 +1711,43 @@ class Categorie extends CommonObject
 				$forced_color = 'categtextblack';
 			}
 		}
-		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam ? '?'.$moreparam : ''));
-		$link .= '"'.$dataparams;
-		$link .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
-		$link .= ' class="'.$classfortooltip.' '.$forced_color.'">';
-		$linkend = '</a>';
 
-		$picto = 'category';
+		$linkclose = '';
+		if (empty($notooltip)) {
+			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+				$label = $langs->trans("ShowMyObject");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.' '.$forced_color.($morecss ? ' '.$morecss : '').'"';
+		} else {
+			$linkclose = ($morecss ? ' class="'.$forced_color.($morecss ? ' '.$morecss : '').'"' : '');
+		}
 
+		if ($option == 'nolink' || empty($url)) {
+			$linkstart = '<span';
+		} else {
+			$linkstart = '<a href="'.$url.'"';
+		}
+		$linkstart .= $linkclose.'>';
+		if ($option == 'nolink' || empty($url)) {
+			$linkend = '</span>';
+		} else {
+			$linkend = '</a>';
+		}
+
+		$result .= $linkstart;
 
 		if ($withpicto) {
-			$result .= ($link.img_object($label, $picto, $dataparams.' class="'.$classfortooltip.'"').$linkend);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
-		if ($withpicto && $withpicto != 2) {
-			$result .= ' ';
-		}
+
 		if ($withpicto != 2) {
-			$result .= $link.dol_trunc(($this->ref ? $this->ref : $this->label), $maxlength).$linkend;
+			$result .= dol_trunc(($this->ref ? $this->ref : $this->label), $maxlength);
 		}
+
+		$result .= $linkend;
+
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
 		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
@@ -1874,10 +1915,11 @@ class Categorie extends CommonObject
 	 *	Update ou cree les traductions des infos produits
 	 *
 	 *	@param	User	$user		Object user
+	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *
 	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
-	public function setMultiLangs($user)
+	public function setMultiLangs(User $user, $notrigger = 0)
 	{
 		global $langs;
 
@@ -1932,10 +1974,12 @@ class Categorie extends CommonObject
 		}
 
 		// Call trigger
-		$result = $this->call_trigger('CATEGORY_SET_MULTILANGS', $user);
-		if ($result < 0) {
-			$this->error = $this->db->lasterror();
-			return -1;
+		if (!$notrigger) {
+			$result = $this->call_trigger('CATEGORY_SET_MULTILANGS', $user);
+			if ($result < 0) {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
 		}
 		// End call triggers
 

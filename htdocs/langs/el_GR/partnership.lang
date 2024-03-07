@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Συνεργασία που αφορά αυτό
 DatePartnershipStart=Ημερομηνία έναρξης
 DatePartnershipEnd=Ημερομηνία λήξης
 ReasonDecline=Λόγος απόρριψης
-ReasonDeclineOrCancel=Λόγος απόρριψης
+ReasonDeclineOrCancel=Αιτία απόρριψης ή ακύρωσης
 PartnershipAlreadyExist=Υπάρχει ήδη Συνεργασία 
 ManagePartnership=Διαχείριση της συνεργασίας
 BacklinkNotFoundOnPartnerWebsite=Ο σύνδεσμος Backlink δεν βρέθηκε στον ιστότοπο του συνεργάτη
@@ -89,7 +89,6 @@ YourPartnershipCanceledContent=Θα θέλαμε να σας ενημερώσο�
 
 CountLastUrlCheckError=Αριθμός σφαλμάτων για τον τελευταίο έλεγχο URL
 LastCheckBacklink=Ημερομηνία τελευταίου ελέγχου διεύθυνσης URL
-ReasonDeclineOrCancel=Λόγος απόρριψης
 
 NewPartnershipRequest=Νέο αίτημα συνεργασίας
 NewPartnershipRequestDesc=Αυτή η φόρμα σάς επιτρέπει να ζητήσετε να συμμετάσχετε σε ένα από τα προγράμματα συνεργασίας μας. Εάν χρειάζεστε βοήθεια για να συμπληρώσετε αυτήν τη φόρμα, επικοινωνήστε μέσω email <b> %s </b> .

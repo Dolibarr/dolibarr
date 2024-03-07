@@ -93,7 +93,7 @@ $search_date_when_end = dol_mktime(23, 59, 59, $search_date_when_endmonth, $sear
 $search_recurring = GETPOST('search_recurring', 'int');
 $search_frequency = GETPOST('search_frequency', 'alpha');
 $search_unit_frequency = GETPOST('search_unit_frequency', 'alpha');
-$search_nb_gen_done = GETPOST('search_nb_gen_done', 'aplha');
+$search_nb_gen_done = GETPOST('search_nb_gen_done', 'alpha');
 $search_status = GETPOST('search_status', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;

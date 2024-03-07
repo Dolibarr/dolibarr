@@ -2,7 +2,7 @@
 // BEGIN PHP File wrapper.php - DO NOT MODIFY - It is just a copy of file website/samples/wrapper.php
 $websitekey = basename(__DIR__);
 if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) {
-	die("Sample file for website module. Can be called directly.");
+	die("Sample file for website module. Can't be called directly.");
 }
 if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	require_once './master.inc.php';
@@ -225,7 +225,7 @@ if ($rss) {
 } else {
 	// Find the subdirectory name as the reference
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
+	$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, null, $refname);
 	$accessallowed              = empty($check_access['accessallowed']) ? '' : $check_access['accessallowed'];
 	$sqlprotectagainstexternals = empty($check_access['sqlprotectagainstexternals']) ? '' : $check_access['sqlprotectagainstexternals'];
 	$fullpath_original_file     = empty($check_access['original_file']) ? '' : $check_access['original_file']; // $fullpath_original_file is now a full path name
@@ -251,7 +251,7 @@ if ($rss) {
 
 	// This test if file exists should be useless. We keep it to find bug more easily
 	if (!file_exists($fullpath_original_file_osencoded)) {
-		print "ErrorFileDoesNotExists: ".$original_file;
+		print "ErrorFileDoesNotExists: ".dol_escape_htmltag($original_file);
 		exit;
 	}
 

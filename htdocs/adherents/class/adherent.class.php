@@ -2210,7 +2210,7 @@ class Adherent extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$langs->loadLangs(['members', 'companies']);
 		$nofetch = !empty($params['nofetch']);
@@ -3024,6 +3024,7 @@ class Adherent extends CommonObject
 
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'adherent';
 			$sql .= " WHERE entity = ".((int) $conf->entity); // Do not use getEntity('adherent').")" here, we want the batch to be on its entity only;
+			$sql .= " AND statut = 1";
 			$sql .= " AND datefin = '".$this->db->idate($datetosearchfor)."'";
 			//$sql .= " LIMIT 10000";
 

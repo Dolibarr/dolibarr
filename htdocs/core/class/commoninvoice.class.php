@@ -1146,7 +1146,7 @@ abstract class CommonInvoice extends CommonObject
 				$sql .= " AND fk_facture = ".((int) $this->id);				// Add a protection to not pay another invoice than current one
 			}
 			if ($type != 'direct-debit') {
-				if ($$sourcetype == 'salary') {
+				if ($sourcetype == 'salary') {
 					$sql .= " AND fk_salary = ".((int) $this->id);			// Add a protection to not pay another salary than current one
 				} else {
 					$sql .= " AND fk_facture_fourn = ".((int) $this->id);	// Add a protection to not pay another invoice than current one
@@ -1182,7 +1182,7 @@ abstract class CommonInvoice extends CommonObject
 
 					$this->fetch_thirdparty();
 
-					dol_syslog("--- Process payment request amount=".$amount." thirdparty_id=" . $this->thirdparty->id . ", thirdparty_name=" . $this->thirdparty->name . " ban id=" . $bac->id, LOG_DEBUG);
+					dol_syslog("makeStripeSepaRequest Process payment request amount=".$amount." thirdparty_id=" . $this->thirdparty->id . ", thirdparty_name=" . $this->thirdparty->name . " ban id=" . $bac->id, LOG_DEBUG);
 
 					//$alreadypayed = $this->getSommePaiement();
 					//$amount_credit_notes_included = $this->getSumCreditNotesUsed();
@@ -1201,7 +1201,7 @@ abstract class CommonInvoice extends CommonObject
 					if (!($fk_bank_account > 0)) {
 						$error++;
 						$errorforinvoice++;
-						dol_syslog("Error no bank account defined for Stripe payments", LOG_ERR);
+						dol_syslog("makeStripeSepaRequest Error no bank account defined for Stripe payments", LOG_ERR);
 						$this->errors[] = "Error bank account for Stripe payments not defined into Stripe module";
 					}
 
@@ -1217,7 +1217,7 @@ abstract class CommonInvoice extends CommonObject
 							if ($nbinvoices <= 0) {
 								$error++;
 								$errorforinvoice++;
-								dol_syslog("Error on BonPrelevement creation", LOG_ERR);
+								dol_syslog("makeStripeSepaRequest Error on BonPrelevement creation", LOG_ERR);
 								$this->errors[] = "Error on BonPrelevement creation";
 							}
 							/*
@@ -1237,7 +1237,7 @@ abstract class CommonInvoice extends CommonObject
 						} else {
 							$error++;
 							$errorforinvoice++;
-							dol_syslog("Error Line already part of a bank payment order", LOG_ERR);
+							dol_syslog("makeStripeSepaRequest Error Line already part of a bank payment order", LOG_ERR);
 							$this->errors[] = "The line is already included into a bank payment order. Delete the bank payment order first.";
 						}
 					}
@@ -1253,7 +1253,7 @@ abstract class CommonInvoice extends CommonObject
 								}
 
 								//var_dump($companypaymentmode);
-								dol_syslog("We will try to pay with companypaymentmodeid=" . $companypaymentmode->id . " stripe_card_ref=" . $companypaymentmode->stripe_card_ref . " mode=" . $companypaymentmode->status, LOG_DEBUG);
+								dol_syslog("makeStripeSepaRequest We will try to pay with companypaymentmodeid=" . $companypaymentmode->id . " stripe_card_ref=" . $companypaymentmode->stripe_card_ref . " mode=" . $companypaymentmode->status, LOG_DEBUG);
 
 								$thirdparty = new Societe($this->db);
 								$resultthirdparty = $thirdparty->fetch($this->socid);
@@ -1614,7 +1614,7 @@ abstract class CommonInvoice extends CommonObject
 			}
 		} else {
 			$this->error = "Status of invoice does not allow this";
-			dol_syslog(get_class($this)."::makeStripeSepaRequest ".$this->error." $this->statut, $this->paye, $this->mode_reglement_id");
+			dol_syslog(get_class($this)."::makeStripeSepaRequest ".$this->error." ".$this->status." ,".$this->paye.", ".$this->mode_reglement_id, LOG_WARNING);
 			return -3;
 		}
 	}

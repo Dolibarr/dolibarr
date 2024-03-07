@@ -16,7 +16,6 @@ CurrenciesUsed_help_to_add=Shtoni monedhat dhe tarifat e ndryshme që duhet të 
 rate=norma
 MulticurrencyReceived=Marrë, monedhë origjinale
 MulticurrencyRemainderToTake=Shuma e mbetur, monedha origjinale
-MulticurrencyPaymentAmount=Shuma e pagesës, monedha origjinale
 AmountToOthercurrency=Shuma për (në monedhën e llogarisë marrëse)
 CurrencyRateSyncSucceed=Sinkronizimi i kursit të monedhës u krye me sukses
 MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Përdorni monedhën e dokumentit për pagesa online

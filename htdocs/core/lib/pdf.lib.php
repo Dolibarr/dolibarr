@@ -997,7 +997,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 /**
  *  Show footer of page for PDF generation
  *
- *	@param	TCPDF			$pdf     		The PDF factory
+ *	@param	TCPDF		$pdf     		The PDF factory
  *  @param  Translate	$outputlangs	Object lang for output
  * 	@param	string		$paramfreetext	Constant name of free text
  * 	@param	Societe		$fromcompany	Object company
@@ -1246,7 +1246,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {   // by default
 					$pdf->MultiCell(0, 3, $line, 0, $align, 0);
 				} else {
-					$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
+					$pdf->writeHTMLCell($dims['wk'] - $dims['lm'] - $dims['rm'], $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
 				}
 				$posy -= $freetextheight;
 			}
@@ -1271,7 +1271,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			if (getDolGlobalInt('PDF_FOOTER_DISABLE_PAGEBREAK') === 1) {
 				$pdf->SetAutoPageBreak(0, 0);
 			} // Option for disable auto pagebreak
-			$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $mycustomfooterheight, $dims['lm'], $dims['hk'] - $posy, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
+			$pdf->writeHTMLCell($dims['wk'] - $dims['lm'] - $dims['rm'], $mycustomfooterheight, $dims['lm'], $dims['hk'] - $posy, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
 			if (getDolGlobalInt('PDF_FOOTER_DISABLE_PAGEBREAK') === 1) {
 				$pdf->SetAutoPageBreak(1, 0);
 			} // Restore pagebreak
@@ -1298,7 +1298,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {   // by default
 					$pdf->MultiCell(0, 3, $line, 0, $align, 0);
 				} else {
-					$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
+					$pdf->writeHTMLCell($dims['wk'] - $dims['lm'] - $dims['rm'], $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
 				}
 				$posy -= $freetextheight;
 			}

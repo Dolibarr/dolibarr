@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = نئی ملازمت کے عہدوں کے لیے بھرت
 # Admin page
 #
 RecruitmentSetup = بھرتی سیٹ اپ
-Settings = ترتیبات
 RecruitmentSetupPage = ریکروٹمنٹ ماڈیول کے لیے مین آپشنز کا سیٹ اپ یہاں درج کریں۔
 RecruitmentArea=بھرتی کا علاقہ
 PublicInterfaceRecruitmentDesc=نوکریوں کے عوامی صفحات عوامی یو آر ایل ہیں جو نوکریوں کو دکھانے اور جواب دینے کے لیے ہیں۔ ہر اوپن جاب کے لیے ایک مختلف لنک ہوتا ہے، جو ہر جاب ریکارڈ پر پایا جاتا ہے۔
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=کھلی ملازمتوں کے عوامی صفحا�
 #
 # About page
 #
-About = کے بارے میں
 RecruitmentAbout = بھرتی کے بارے میں
 RecruitmentAboutPage = صفحہ کے بارے میں بھرتی
 NbOfEmployeesExpected=ملازمین کی متوقع تعداد
@@ -57,16 +55,16 @@ EmailRecruiter=ای میل بھرتی کرنے والا
 ToUseAGenericEmail=ایک عام ای میل استعمال کرنے کے لیے۔ اگر وضاحت نہیں کی گئی ہے تو، بھرتی کے ذمہ دار کا ای میل استعمال کیا جائے گا۔
 NewCandidature=نئی درخواست
 ListOfCandidatures=درخواستوں کی فہرست
-Remuneration=Salary
-RequestedRemuneration=Requested salary
-ProposedRemuneration=Proposed salary
+Remuneration=تنخواہ
+RequestedRemuneration=تنخواہ مانگی۔
+ProposedRemuneration=مجوزہ تنخواہ
 ContractProposed=معاہدہ تجویز کیا گیا۔
 ContractSigned=معاہدے پر دستخط کیے گئے۔
 ContractRefused=معاہدہ کرنے سے انکار کر دیا۔
 RecruitmentCandidature=درخواست
 JobPositions=ملازمت کے عہدے
 RecruitmentCandidatures=ایپلی کیشنز
-InterviewToDo=Contacts to follow
+InterviewToDo=پیروی کرنے کے لیے رابطے
 AnswerCandidature=درخواست کا جواب
 YourCandidature=آپ کی درخواست
 YourCandidatureAnswerMessage=آپ کی درخواست کے لیے آپ کا شکریہ۔ <br>...
@@ -75,5 +73,8 @@ JobClosedTextCanceled=ملازمت کی پوزیشن بند ہے۔
 ExtrafieldsJobPosition=تکمیلی صفات (ملازمت کی پوزیشنیں)
 ExtrafieldsApplication=تکمیلی صفات (نوکری کی درخواستیں)
 MakeOffer=ایک پیشکش کریں۔
-WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
-NoPositionOpen=No positions open at the moment
+WeAreRecruiting=ہم بھرتی کر رہے ہیں۔ یہ پُر کیے جانے والے کھلے عہدوں کی فہرست ہے...
+NoPositionOpen=اس وقت کوئی عہدہ نہیں کھلا ہے۔
+ConfirmClose=منسوخی کی تصدیق کریں۔
+ConfirmCloseAsk=کیا آپ واقعی اس بھرتی کی امیدواری کو منسوخ کرنا چاہتے ہیں؟
+recruitment=Recruitment

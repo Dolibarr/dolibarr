@@ -299,7 +299,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			isModEnabled('salaries') ||
 			isModEnabled('supplier_invoice') ||
 			isModEnabled('loan') ||
-			isModEnabled('margins')
+			isModEnabled('margin')
 		) ? 1 : 0,
 		'perms'=>($user->hasRight('facture', 'lire') || $user->hasRight('don', 'contact', 'lire')
 			|| $user->hasRight('tax', 'charges', 'lire') || $user->hasRight('salaries', 'read')
@@ -2093,7 +2093,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			$newmenu->add("/product/card.php?leftmenu=service&amp;action=create&amp;type=1", $langs->trans("NewService"), 1, $user->hasRight('service', 'creer'));
 			$newmenu->add("/product/list.php?leftmenu=service&amp;type=1", $langs->trans("List"), 1, $user->hasRight('service', 'read'));
 
-			if (isModEnabled('Stock') && getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+			if (isModEnabled('stock') && getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 				$newmenu->add("/product/reassort.php?type=1", $langs->trans("MenuStocks"), 1, $user->hasRight('service', 'read') && $user->hasRight('stock', 'lire'));
 			}
 			if (isModEnabled('variants')) {

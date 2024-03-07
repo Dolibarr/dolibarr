@@ -111,19 +111,16 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 /* BEGIN MODULEBUILDER DRAFT MYOBJECT
 // Draft MyObject
-if (isModEnabled('mymodule') && $user->rights->mymodule->read)
-{
+if (isModEnabled('mymodule') && $user->hasRight('mymodule', 'read')) {
 	$langs->load("orders");
 
 	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql.= ", s.code_client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE c.fk_soc = s.rowid";
 	$sql.= " AND c.fk_statut = 0";
 	$sql.= " AND c.entity IN (".getEntity('commande').")";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	if ($socid)	$sql.= " AND c.fk_soc = ".((int) $socid);
 
 	$resql = $db->query($sql);
@@ -192,13 +189,10 @@ $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
 // Last modified myobject
-if (isModEnabled('mymodule') && $user->rights->mymodule->read)
-{
+if (isModEnabled('mymodule') && $user->hasRight('mymodule', 'read')) {
 	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms";
 	$sql.= " FROM ".MAIN_DB_PREFIX."mymodule_myobject as s";
-	//if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.entity IN (".getEntity($myobjectstatic->element).")";
-	//if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	//if ($socid)	$sql.= " AND s.rowid = $socid";
 	$sql .= " ORDER BY s.tms DESC";
 	$sql .= $db->plimit($max, 0);

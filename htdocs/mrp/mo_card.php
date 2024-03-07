@@ -172,7 +172,7 @@ if (empty($reshook)) {
 			$res = $object->add_object_linked('mo', $mo_parent->id);
 		}
 
-		header("Location: ".dol_buildpath('/mrp/mo_card.php?id='.((int) $moline->fk_mo), 1));
+		header("Location: ".dol_buildpath('/mrp/mo_card.php?id='.((int) $mo_parent->id), 1));
 		exit;
 	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && !empty($permissiontoadd)) {
 		$also_cancel_consumed_and_produced_lines = (GETPOST('alsoCancelConsumedAndProducedLines', 'alpha') ? 1 : 0);

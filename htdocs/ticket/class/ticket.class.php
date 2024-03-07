@@ -5,6 +5,7 @@
  * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2023      Charlene Benke 	   <charlene@patas-monkey.com>
  * Copyright (C) 2023	   Benjamin Falière	   <benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -334,7 +335,7 @@ class Ticket extends CommonObject
 		'fk_contract' => array('type'=>'integer:Contrat:contrat/class/contrat.class.php', 'label'=>'Contract', 'visible'=>-1, 'enabled'=>'$conf->contract->enabled', 'position'=>53, 'notnull'=>-1, 'index'=>1, 'help'=>"LinkToContract"),
 		//'timing' => array('type'=>'varchar(20)', 'label'=>'Timing', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'help'=>""),	// what is this ?
 		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>1, 'enabled'=>1, 'position'=>500, 'notnull'=>1, 'csslist'=>'nowraponall'),
-		'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>-1, 'enabled'=>1, 'position'=>501, 'notnull'=>1),
+		'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>-1, 'enabled'=>1, 'position'=>501, 'notnull'=>1, 'csslist'=>'nowraponall'),
 		'date_last_msg_sent' => array('type'=>'datetime', 'label'=>'TicketLastMessageDate', 'visible'=>0, 'enabled'=>1, 'position'=>502, 'notnull'=>-1),
 		'fk_user_assign' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'AssignedTo', 'visible'=>1, 'enabled'=>1, 'position'=>505, 'notnull'=>1, 'csslist'=>'tdoverflowmax100 maxwidth150onsmartphone'),
 		'date_close' => array('type'=>'datetime', 'label'=>'TicketCloseOn', 'visible'=>-1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
@@ -344,7 +345,7 @@ class Ticket extends CommonObject
 		'email_date' => array('type'=>'datetime', 'label'=>'EmailDate', 'visible'=>-2, 'enabled'=>1, 'position'=>541),
 		'progress' => array('type'=>'integer', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>"", 'isameasure'=>2, 'csslist'=>'width50'),
 		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>'getDolGlobalString("TICKET_ENABLE_RESOLUTION")', 'position'=>550, 'notnull'=>1),
-		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'SolvedClosed', 9 => 'Deleted')),
+		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 2 => 'Assigned', 3 => 'InProgress', 5 => 'NeedMoreInformation', 7 => 'OnHold', 8 => 'SolvedClosed', 9 => 'Deleted')),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
 	);
 	// END MODULEBUILDER PROPERTIES
@@ -1410,43 +1411,52 @@ class Ticket extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Return status label of object
+	 * Return status label of object
 	 *
-	 *    @param      string 	$status      Id status
-	 *    @param      int		$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *    @param	  int		$notooltip	 1=No tooltip
-	 *    @param	  int		$progress	 Progression (0 to 100)
-	 *    @return     string     			 Label
+	 * @param	string		$status			Id status
+	 * @param	int			$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @param	int			$notooltip		1=No tooltip
+	 * @param	int			$progress		Progression (0 to 100)
+	 * @return	string						Label
 	 */
 	public function LibStatut($status, $mode = 0, $notooltip = 0, $progress = 0)
 	{
 		// phpcs:enable
 		global $langs, $hookmanager;
 
-		$labelStatus = $this->labelStatus[$status];
-		$labelStatusShort = $this->labelStatusShort[$status];
+		$labelStatus = (isset($status) && !empty($this->labelStatus[$status])) ? $this->labelStatus[$status] : '';
+		$labelStatusShort = (isset($status) && !empty($this->labelStatusShort[$status]))? $this->labelStatusShort[$status] : '';
 
-		if ($status == self::STATUS_NOT_READ) {
-			$statusType = 'status0';
-		} elseif ($status == self::STATUS_READ) {
-			$statusType = 'status1';
-		} elseif ($status == self::STATUS_ASSIGNED) {
-			$statusType = 'status2';
-		} elseif ($status == self::STATUS_IN_PROGRESS) {
-			$statusType = 'status4';
-		} elseif ($status == self::STATUS_WAITING) {
-			$statusType = 'status7';
-		} elseif ($status == self::STATUS_NEED_MORE_INFO) {
-			$statusType = 'status3';
-		} elseif ($status == self::STATUS_CANCELED) {
-			$statusType = 'status9';
-		} elseif ($status == self::STATUS_CLOSED) {
-			$statusType = 'status6';
-		} else {
-			$labelStatus = 'Unknown';
-			$labelStatusShort = 'Unknown';
-			$statusType = 'status0';
-			$mode = 0;
+		switch ($status) {
+			case self::STATUS_NOT_READ:
+				$statusType = 'status0';
+				break;
+			case self::STATUS_READ:
+				$statusType = 'status1';
+				break;
+			case self::STATUS_ASSIGNED:
+				$statusType = 'status2';
+				break;
+			case self::STATUS_IN_PROGRESS:
+				$statusType = 'status4';
+				break;
+			case self::STATUS_WAITING:
+				$statusType = 'status7';
+				break;
+			case self::STATUS_NEED_MORE_INFO:
+				$statusType = 'status3';
+				break;
+			case self::STATUS_CANCELED:
+				$statusType = 'status9';
+				break;
+			case self::STATUS_CLOSED:
+				$statusType = 'status6';
+				break;
+			default:
+				$labelStatus = 'Unknown';
+				$labelStatusShort = 'Unknown';
+				$statusType = 'status0';
+				$mode = 0;
 		}
 
 		$parameters = array(

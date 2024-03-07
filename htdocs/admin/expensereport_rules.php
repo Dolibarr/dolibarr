@@ -166,7 +166,7 @@ if (empty($reshook)) {
 
 	$tab_apply = array(
 		'A' => $langs->trans('All'),
-		'G' => $langs->trans('Group'),
+		'G' => $langs->trans('UserGroup'),
 		'U' => $langs->trans('User')
 	);
 	$tab_rules_type = array(
@@ -176,22 +176,24 @@ if (empty($reshook)) {
 		'EX_EXP' => $langs->trans('OnExpense')
 	);
 }
-	/*
-	 * View
-	 */
 
-	llxHeader('', $langs->trans("ExpenseReportsSetup"));
 
-	$form = new Form($db);
+/*
+ * View
+ */
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
-	print load_fiche_titre($langs->trans("ExpenseReportsSetup"), $linkback, 'title_setup');
+llxHeader('', $langs->trans("ExpenseReportsSetup"));
 
-	$head = expensereport_admin_prepare_head();
-	print dol_get_fiche_head($head, 'expenserules', $langs->trans("ExpenseReportsRules"), -1, 'trip');
+$form = new Form($db);
 
-	echo '<span class="opacitymedium">' . $langs->trans('ExpenseReportRulesDesc') . '</span>';
-	print '<br><br>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
+print load_fiche_titre($langs->trans("ExpenseReportsSetup"), $linkback, 'title_setup');
+
+$head = expensereport_admin_prepare_head();
+print dol_get_fiche_head($head, 'expenserules', $langs->trans("ExpenseReportsRules"), -1, 'trip');
+
+echo '<span class="opacitymedium">' . $langs->trans('ExpenseReportRulesDesc') . '</span>';
+print '<br><br>';
 
 if ($action != 'edit') {
 	echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="post">';
@@ -232,26 +234,29 @@ if ($action != 'edit') {
 }
 
 
-	echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="post">';
-	echo '<input type="hidden" name="token" value="' . newToken() . '" />';
+echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="post">';
+echo '<input type="hidden" name="token" value="' . newToken() . '" />';
 
 if ($action == 'edit') {
 	echo '<input type="hidden" name="id" value="' . $object->id . '" />';
 	echo '<input type="hidden" name="action" value="save" />';
 }
 
-	echo '<table class="noborder centpercent">';
+print dol_get_fiche_end();
 
-	echo '<tr class="liste_titre expensereportrules">';
-	echo '<th class="linecolapplyto">' . $langs->trans('ExpenseReportApplyTo') . '</th>';
-	echo '<th class="linecoltype">' . $langs->trans('Type') . '</th>';
-	echo '<th class="linecollimiton">' . $langs->trans('ExpenseReportLimitOn') . '</th>';
-	echo '<th class="linecoldatestart">' . $langs->trans('ExpenseReportDateStart') . '</th>';
-	echo '<th class="linecoldateend">' . $langs->trans('ExpenseReportDateEnd') . '</th>';
-	echo '<th class="linecollimitamount">' . $langs->trans('ExpenseReportLimitAmount') . '</th>';
-	echo '<th class="linecolrestrictive">' . $langs->trans('ExpenseReportRestrictive') . '</th>';
-	echo '<th>&nbsp;</th>';
-	echo '</tr>';
+
+echo '<table class="noborder centpercent">';
+
+echo '<tr class="liste_titre expensereportrules">';
+echo '<th class="linecolapplyto">' . $langs->trans('ExpenseReportApplyTo') . '</th>';
+echo '<th class="linecoltype">' . $langs->trans('Type') . '</th>';
+echo '<th class="linecollimiton">' . $langs->trans('ExpenseReportLimitOn') . '</th>';
+echo '<th class="linecoldatestart">' . $langs->trans('ExpenseReportDateStart') . '</th>';
+echo '<th class="linecoldateend">' . $langs->trans('ExpenseReportDateEnd') . '</th>';
+echo '<th class="linecollimitamount">' . $langs->trans('ExpenseReportLimitAmount') . '</th>';
+echo '<th class="linecolrestrictive">' . $langs->trans('ExpenseReportRestrictive') . '</th>';
+echo '<th>&nbsp;</th>';
+echo '</tr>';
 
 foreach ($rules as $rule) {
 	echo '<tr class="oddeven linetrdata" id="'.$rule->id.'">';
@@ -272,7 +277,6 @@ foreach ($rules as $rule) {
 		}
 	}
 	echo '</td>';
-
 
 	echo '<td class="linecoltype">';
 	if ($action == 'edit' && $object->id == $rule->id) {
@@ -351,11 +355,14 @@ foreach ($rules as $rule) {
 	echo '</tr>';
 }
 
+if (count($rules) == 0) {
+	print '<tr class="none"><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+}
 
-	echo '</table>';
-	echo '</form>';
+echo '</table>';
+echo '</form>';
 
-	echo '<script type="text/javascript"> $(function() {
+echo '<script type="text/javascript"> $(function() {
 	$("#apply_to").change(function() {
 		var value = $(this).val();
 		if (value == "A") {

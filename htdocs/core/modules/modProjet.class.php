@@ -261,7 +261,7 @@ class modProjet extends DolibarrModules
 		$keyforaliasextra = 'extra2';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add extra fields
-		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('ptt.rowid'=>'IdTaskTime', 'ptt.element_date'=>'TaskTimeDate', 'ptt.element_duration'=>"TimesSpent", 'ptt.fk_user'=>"TaskTimeUser", 'ptt.note'=>"TaskTimeNote"));
+		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('ptt.rowid'=>'IdTaskTime', 'ptt.element_date'=>'TaskTimeDate', 'ptt.element_duration'=>"TimeSpent", 'ptt.fk_user'=>"TaskTimeUser", 'ptt.note'=>"TaskTimeNote"));
 		$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('ptt.rowid'=>'task_time', 'ptt.element_date'=>'task_time', 'ptt.element_duration'=>"task_time", 'ptt.fk_user'=>"task_time", 'ptt.note'=>"task_time"));
 		if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('f.ref'=>"Billed"));

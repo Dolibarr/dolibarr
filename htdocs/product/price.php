@@ -2191,7 +2191,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 
 				print '<tr class="oddeven">';
 
-				print "<td>".$staticsoc->getNomUrl(1)."</td>";
+				print '<td class="tdoverflowmax125">'.$staticsoc->getNomUrl(1)."</td>";
 				print '<td>'.$line->ref_customer.'</td>';
 				print "<td>".dol_print_date($line->datec, "dayhour", 'tzuserrel')."</td>";
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
@@ -2307,10 +2307,10 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 			$pu = $object->price_ttc;
 		}
 
-		// Local tax was not saved into table llx_product on old version. So we will use value linked to VAT code.
+		// Local tax was not saved into table llx_product on old versions. So we will use the value linked to the VAT code.
 		$localtaxarray = getLocalTaxesFromRate($object->tva_tx.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), 0, $mysoc, $mysoc);
 		// Define part of HT, VAT, TTC
-		$resultarray = calcul_price_total(1, $pu, 0, $object->tva_tx, 1, 1, 0, $object->price_base_type, $object->recuperableonly, $object->type, $mysoc, $localtaxarray);
+		$resultarray = calcul_price_total(1, $pu, 0, $object->tva_tx, 1, 1, 0, $object->price_base_type, 0, $object->type, $mysoc, $localtaxarray);
 		// Calcul du total ht sans remise
 		$total_ht = $resultarray[0];
 		$total_vat = $resultarray[1];
@@ -2398,7 +2398,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 
 				print '<tr class="oddeven">';
 
-				print "<td>".$staticsoc->getNomUrl(1)."</td>";
+				print '<td class="tdoverflowmax125">'.$staticsoc->getNomUrl(1)."</td>";
 				print '<td>'.dol_escape_htmltag($line->ref_customer).'</td>';
 				print "<td>".dol_print_date($line->datec, "dayhour", 'tzuserrel')."</td>";
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";

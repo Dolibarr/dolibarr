@@ -927,7 +927,7 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
 					$sqlwhere[] = $key.'='.$value;
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
-					$sqlwhere[] = $key.' LIKE \''.$this->db->escapeforlike($this->db->escape($value)).'%\'';
+					$sqlwhere[] = $key.' LIKE \''.$this->db->escape($this->db->escapeforlike($value)).'%\'';
 				} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
 					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.date_export>=' || $key == 't.date_export<=') {

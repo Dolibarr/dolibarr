@@ -32,4 +32,5 @@ DONATION_ART238=Amosar artigo 238 do CGI se está interesado
 DONATION_ART978=Mostra o artigo 978 de CGI se che preocupa
 DonationPayment=Pago de doación/subvención
 DonationValidated=Doación/Subvención %s validada
-DonationUseThirdparties=Use un terceiro existente como coordinador de doadores 
+DonationUseThirdparties=Usa o enderezo dun terceiro existente como enderezo do doador
+DonationsStatistics=Estatísticas de doazóns

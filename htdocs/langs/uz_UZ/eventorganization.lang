@@ -34,7 +34,6 @@ PaymentEvent=Tadbir uchun to'lov
 NewRegistration=Ro'yxatdan o'tish
 EventOrganizationSetup=Tadbirni tashkil qilishni sozlash
 EventOrganization=Tadbirni tashkil qilish
-Settings=Sozlamalar
 EventOrganizationSetupPage = Tadbirni tashkil etish sahifasi
 EVENTORGANIZATION_TASK_LABEL = Loyiha tasdiqlanganda avtomatik ravishda yaratiladigan vazifalar yorlig'i
 EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project <br>  <br> For example:  <br> Send Call for Conferences <br> Send Call for Booths <br> Validate suggestions of Conferences <br> Validate application for Booths <br> Open subscriptions to the event for attendees <br> Ma'ruzachilarga voqea haqida eslatma yuborish <br> Booth hostersga voqea haqida eslatma yuborish <br> Ishtirokchilarga voqea haqida eslatma yuborish

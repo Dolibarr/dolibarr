@@ -11,7 +11,7 @@ WEBSITE_ALIASALT=Majina / lakabu za ukurasa mbadala
 WEBSITE_ALIASALTDesc=Tumia hapa orodha ya majina/lahaka zingine ili ukurasa pia uweze kufikiwa kwa kutumia majina/lahaja hizi zingine (kwa mfano jina la zamani baada ya kubadilisha jina la pak ili kuweka kiunga cha nyuma kwenye kiunga cha zamani/jina kufanya kazi). Sintaksia ni: <br> mbadala1, jina mbadala2, ...
 WEBSITE_CSS_URL=URL ya faili ya CSS ya nje
 WEBSITE_CSS_INLINE=Maudhui ya faili ya CSS (ya kawaida kwa kurasa zote)
-WEBSITE_JS_INLINE=Yaliyomo kwenye faili ya Javascript (ya kawaida kwa kurasa zote)
+WEBSITE_JS_INLINE=JavaScript file content (common to all pages)
 WEBSITE_HTML_HEADER=Nyongeza chini ya Kichwa cha HTML (kinachojulikana kwa kurasa zote)
 WEBSITE_ROBOT=Faili ya roboti (robots.txt)
 WEBSITE_HTACCESS=Faili ya .htaccess ya tovuti
@@ -25,7 +25,7 @@ EditTheWebSiteForACommonHeader=Kumbuka: Ikiwa unataka kufafanua kichwa kilichobi
 MediaFiles=Maktaba ya media
 EditCss=Hariri sifa za tovuti
 EditMenu=Badilisha menyu
-EditMedias=Hariri medias
+EditMedias=Edit media
 EditPageMeta=Badilisha sifa za ukurasa/chombo
 EditInLine=Hariri ndani ya mstari
 AddWebsite=Ongeza tovuti
@@ -60,10 +60,11 @@ NoPageYet=Bado hakuna kurasa
 YouCanCreatePageOrImportTemplate=Unaweza kuunda ukurasa mpya au kuleta kiolezo kamili cha tovuti
 SyntaxHelp=Msaada juu ya vidokezo maalum vya sintaksia
 YouCanEditHtmlSourceckeditor=Unaweza kuhariri msimbo wa chanzo wa HTML kwa kutumia kitufe cha "Chanzo" kwenye kihariri.
-YouCanEditHtmlSource= <br>  <span class="fa fa-bug">  </span>  Unaweza kujumuisha msimbo wa PHP kwenye chanzo hiki kwa kutumia lebo <strong> &lt;?php ?&gt; </strong> . Vigezo vifuatavyo vya kimataifa vinapatikana: $conf, $db, $mysoc, $user, $tovuti, ukurasa wa tovuti wa $, $weblangs, $pagelangs. <br>  <br>  <span class="fa fa-bug">  </span>  Unaweza pia kujumuisha maudhui ya Ukurasa/Kontena lingine kwa sintaksia ifuatayo: <br>  <strong> &lt;?php ni pamoja na Kontena('pak_ya_chombo_cha_kujumuisha'); ?&gt; </strong>  <br>  <br>  <span class="fa fa-bug">  </span>  Unaweza kuelekeza upya kwa Ukurasa/Kontena lingine kwa sintaksia ifuatayo (Kumbuka: usitoe maudhui yoyote kabla ya kuelekezwa kwingine): <br>  <strong> &lt;?php redirectToContainer('pak_ya_chombo_kwa_kuelekeza_kwa'); ?&gt; </strong>  <br>  <br>  <span class="fa fa-link">  </span>  Ili kuongeza kiungo kwa ukurasa mwingine, tumia sintaksia: <br>  <strong> &lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt; </strong>  <br>  <br>  <span class="fa fa-download">  </span>  Ili kujumuisha <strong> kiungo cha kupakua </strong>  faili iliyohifadhiwa kwenye <strong> hati </strong>  saraka, tumia <strong> document.php </strong>  kanga: <br> Kwa mfano, kwa faili kuwa hati/ecm (inahitaji kurekodiwa), sintaksia ni: <br>  <strong> &lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt; </strong>  <br> Kwa faili kuwa hati/midia (saraka wazi kwa ufikiaji wa umma), sintaksia ni: <br>  <strong> &lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt; </strong>  <br> Kwa faili iliyoshirikiwa na kiungo cha kushiriki (ufikiaji wazi kwa kutumia ufunguo wa hashi wa kushiriki), syntax ni: <br>  <strong> &lt;a href="/document.php?hashp=publicsharekeyoffile"&gt; </strong>  <br>  <br>  <span class="fa fa-picture-o">  </span>  Ili kujumuisha <strong> picha </strong>  imehifadhiwa kwenye <strong> hati </strong>  saraka, tumia <strong> viewimage.php </strong>  kanga: <br> Mfano, kwa picha kuwa hati/midia (saraka wazi kwa ufikiaji wa umma), sintaksia ni: <br>  <strong> &lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt; </strong>  <br> 
-#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper.<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Kwa picha iliyoshirikiwa na kiungo cha kushiriki (ufikiaji wazi kwa kutumia ufunguo wa hashi wa kushiriki), syntax ni: <br>  <strong> &lt;img src="/viewimage.php?hashp=12345679012..."&gt; </strong>  <br> 
-YouCanEditHtmlSourceMore= <br> Mifano zaidi ya HTML au msimbo unaobadilika unapatikana kwenye <a href="%s" target="_blank" rel="noopener noreferrer external"> hati za wiki </a>  <br> .
+YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=Sambaza ukurasa/chombo
 CloneSite=Tovuti ya Clone
 SiteAdded=Tovuti imeongezwa
@@ -91,7 +92,7 @@ SorryWebsiteIsCurrentlyOffLine=Samahani, tovuti hii iko nje ya mtandao kwa sasa.
 WEBSITE_USE_WEBSITE_ACCOUNTS=Washa jedwali la akaunti ya tovuti
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Washa jedwali ili kuhifadhi akaunti za tovuti (kuingia/kupitisha) kwa kila tovuti/watu wengine
 YouMustDefineTheHomePage=Lazima kwanza ubainishe ukurasa wa Nyumbani chaguomsingi
-OnlyEditionOfSourceForGrabbedContentFuture=Onyo: Kuunda ukurasa wa wavuti kwa kuleta ukurasa wa wavuti wa nje umehifadhiwa kwa watumiaji wenye uzoefu. Kulingana na utata wa ukurasa chanzo, matokeo ya uagizaji yanaweza kutofautiana na asili. Pia ikiwa ukurasa wa chanzo unatumia mitindo ya kawaida ya CSS au javascript inayokinzana, inaweza kuvunja mwonekano au vipengele vya Kihariri cha Tovuti wakati wa kufanya kazi kwenye ukurasa huu. Njia hii ni njia ya haraka zaidi ya kuunda ukurasa lakini inashauriwa kuunda ukurasa wako mpya kutoka mwanzo au kutoka kwa kiolezo cha ukurasa kilichopendekezwa. <br> Kumbuka pia kuwa kihariri cha ndani kinaweza kisifanye kazi kwa usahihi kinapotumiwa kwenye ukurasa wa nje ulionyakuliwa.
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor may not works correctty when used on a grabbed external page.
 OnlyEditionOfSourceForGrabbedContent=Toleo pekee la chanzo cha HTML linawezekana wakati maudhui yaliporwa kutoka kwa tovuti ya nje
 GrabImagesInto=Kunyakua pia picha kupatikana katika css na ukurasa.
 ImagesShouldBeSavedInto=Picha zinapaswa kuhifadhiwa kwenye saraka
@@ -112,13 +113,13 @@ GoTo=Enda kwa
 DynamicPHPCodeContainsAForbiddenInstruction=Unaongeza msimbo thabiti wa PHP ambao una maagizo ya PHP ' <strong> %s </strong> ' ambayo imekatazwa kwa chaguo-msingi kama maudhui yanayobadilika (angalia chaguo zilizofichwa WEBSITE_PHP_ALLOW_xxx ili kuongeza orodha ya amri zinazoruhusiwa).
 NotAllowedToAddDynamicContent=Huna ruhusa ya kuongeza au kubadilisha maudhui ya PHP katika tovuti. Uliza ruhusa au uweke tu nambari kwenye lebo za php ambazo hazijabadilishwa.
 ReplaceWebsiteContent=Tafuta au Badilisha maudhui ya tovuti
-DeleteAlsoJs=Ungependa kufuta faili zote za javascript maalum kwa tovuti hii?
-DeleteAlsoMedias=Ungependa pia kufuta faili zote za medias maalum kwa tovuti hii?
+DeleteAlsoJs=Delete also all JavaScript files specific to this website?
+DeleteAlsoMedias=Delete also all media files specific to this website?
 MyWebsitePages=Kurasa za tovuti yangu
 SearchReplaceInto=Tafuta | Badilisha ndani
 ReplaceString=Kamba mpya
 CSSContentTooltipHelp=Ingiza hapa maudhui ya CSS. Ili kuepuka mgongano wowote na CSS ya programu, hakikisha kuwa umetayarisha tamko lote na darasa la tovuti ya .bodywebsite. Kwa mfano: <br>  <br> #mycssselector, input.myclass:hover { ... } <br> lazima iwe <br> .bodywebsite #mycssselector, .bodywebsite input.myclass:hover { ... } <br>  <br> Kumbuka: Ikiwa una faili kubwa isiyo na kiambishi awali hiki, unaweza kutumia 'lessc' kuibadilisha ili kuambatisha kiambishi awali cha .bodywebsite kila mahali.
-LinkAndScriptsHereAreNotLoadedInEditor=Onyo: Maudhui haya hutolewa tu wakati tovuti inafikiwa kutoka kwa seva. Haitumiki katika modi ya Hariri kwa hivyo ikiwa unahitaji kupakia faili za javascript pia katika hali ya kuhariri, ongeza tu lebo yako ya 'script src=...' kwenye ukurasa.
+LinkAndScriptsHereAreNotLoadedInEditor=Warning: This content is output only when site is accessed from a server. It is not used in Edit mode so if you need to load JavaScript files also in edit mode, just add your tag 'script src=...' into the page.
 Dynamiccontent=Sampuli ya ukurasa wenye maudhui yanayobadilika
 ImportSite=Ingiza kiolezo cha tovuti
 EditInLineOnOff=Hali ya 'Hariri inline' ni %s
@@ -160,3 +161,6 @@ PagesViewedTotal=Kurasa zilizotazamwa (jumla)
 Visibility=Visibility
 Everyone=Everyone
 AssignedContacts=Assigned contacts
+WebsiteTypeLabel=Type of Web site
+WebsiteTypeDolibarrWebsite=Web site (CMS Dolibarr)
+WebsiteTypeDolibarrPortal=Native Dolibarr portal

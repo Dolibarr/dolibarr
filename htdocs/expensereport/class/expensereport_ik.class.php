@@ -273,6 +273,8 @@ class ExpenseReportIk extends CommonObject
 				if ($obj->fk_expense_ik > 0) {
 					$ik->fetch($obj->fk_expense_ik);
 				}
+
+				// TODO Set a $tmparay = new stdObj(); and use it to fill $ranges array
 				$obj->ik = $ik;
 
 				if (!isset($ranges[$obj->fk_c_exp_tax_cat])) {
