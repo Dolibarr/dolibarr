@@ -77,9 +77,7 @@ $mode 		= GETPOST('mode', 'alpha');
 // Search Fields
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_user 	= GETPOSTINT('search_user');
-if ($search_user==-1) {
-	$search_user=0;
-}
+if ($search_user==-1) $search_user=0;
 $search_sale 	= GETPOSTINT('search_sale');
 $search_ref 	= GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refcustomer = GETPOST('search_refcustomer', 'alpha');
