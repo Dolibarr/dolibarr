@@ -1242,7 +1242,7 @@ class Expedition extends CommonObject
 
 					$mouvS = new MouvementStock($this->db);
 					// we do not log origin because it will be deleted
-					$mouvS->origin = null;
+					$mouvS->origin = '';
 					// get lot/serial
 					$lotArray = null;
 					if (isModEnabled('productbatch')) {
@@ -1440,7 +1440,7 @@ class Expedition extends CommonObject
 
 					$mouvS = new MouvementStock($this->db);
 					// we do not log origin because it will be deleted
-					$mouvS->origin = null;
+					$mouvS->origin = '';
 					// get lot/serial
 					$lotArray = $shipmentlinebatch->fetchAll($obj->expeditiondet_id);
 					if (!is_array($lotArray)) {
