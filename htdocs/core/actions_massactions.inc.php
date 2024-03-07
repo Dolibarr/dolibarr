@@ -1091,6 +1091,9 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 			} elseif ($objecttmp->element == 'action') {
 				/** @var ActionComm $objecttmp */
 				$result = $objecttmp->delete();	// TODO Add User $user as first param
+			} elseif ($objecttmp->element == 'dolresource') {
+				/** @var Dolresource $objecttmp */
+				$result = $objecttmp->delete($objecttmp->id, 0);
 			} else {
 				$result = $objecttmp->delete($user);
 			}

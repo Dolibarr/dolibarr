@@ -844,7 +844,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	 *   @param		SupplierProposal	$object			Object to show
 	 *   @param		int|float			$posy			Y
 	 *   @param		Translate			$outputlangs	Langs object
-	 *   @return	integer
+	 *   @return	int|float
 	 */
 	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
