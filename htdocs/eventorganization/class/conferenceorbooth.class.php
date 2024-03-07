@@ -359,13 +359,14 @@ class ConferenceOrBooth extends ActionComm
 	/**
 	 * Delete object in database
 	 *
-	 * @param 	int $notrigger  false=launch triggers after, true=disable triggers
-	 * @return 	int             Return integer <0 if KO, >0 if OK
+	 * @param	User	$user		User making the delete
+	 * @param 	int 	$notrigger  false=launch triggers after, true=disable triggers
+	 * @return 	int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		//TODO delete attendees and subscription
-		return parent::delete($notrigger);
+		return parent::delete($user, $notrigger);
 	}
 
 	/**

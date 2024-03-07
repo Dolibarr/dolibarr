@@ -327,7 +327,6 @@ class Establishment extends CommonObject
 	 *	Delete record
 	 *
 	 *  @param	User	$user	User making the change
-	 *	@param	int		$id		Id of record to delete
 	 *	@return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
