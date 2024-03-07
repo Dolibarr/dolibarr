@@ -181,6 +181,7 @@ if ($action == 'addlimitstockwarehouse' && $user->hasRight('produit', 'creer')) 
 
 	if ($maj_ok) {
 		$pse = new ProductStockEntrepot($db);
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		if ($pse->fetch(0, $id, GETPOSTINT('fk_entrepot')) > 0) {
 			// Update
 			$pse->seuil_stock_alerte = $seuil_stock_alerte;
