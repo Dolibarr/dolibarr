@@ -341,12 +341,13 @@ if (!getDolGlobalString('SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF')) {
 }
 
 print '<strong>$dolibarr_main_stream_to_disable</strong>: ';
+// $arrayofstreamtodisable is defined into filefunc.inc.php
 if (empty($dolibarr_main_stream_to_disable)) {
 	print '<span class="opacitymedium">'.$langs->trans("Undefined").' = '.join(', ', $arrayofstreamtodisable).'</span>';
 } else {
 	print join(', ', $dolibarr_main_stream_to_disable);
 }
-print '<span class="bold"> -> PHP streams allowed = </span>';
+print '<span class="bold"> -> Current PHP streams allowed = </span>';
 $arrayofstreams = stream_get_wrappers();
 if (!empty($arrayofstreams)) {
 	sort($arrayofstreams);
