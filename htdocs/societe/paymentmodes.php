@@ -806,7 +806,7 @@ if (empty($reshook)) {
 							$sql .= " WHERE sr.stripe_card_ref = '".$db->escape($source)."'";
 							$resql = $db->query($sql);
 						} else {
-							$card->delete();
+							$card->delete($user);
 						}
 					}
 				}
@@ -836,9 +836,10 @@ if (empty($reshook)) {
 							$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib as sr ";
 							$sql .= " SET stripe_card_ref = null";
 							$sql .= " WHERE sr.stripe_card_ref = '".$db->escape($source)."'";
+
 							$resql = $db->query($sql);
 						} else {
-							$card->delete();
+							$card->delete($user);
 						}
 					}
 				}

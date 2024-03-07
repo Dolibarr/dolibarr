@@ -506,7 +506,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expedition', 'supprimer')) {
 		$also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
-		$result = $object->delete(0, $also_update_stock);
+		$result = $object->delete($user, 0, $also_update_stock);
 		if ($result > 0) {
 			header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
 			exit;
@@ -2763,7 +2763,7 @@ if ($action == 'create') {
 
 	// Presend form
 	$modelmail = 'shipping_send';
-	$defaulttopic = $langs->trans('SendShippingRef');
+	$defaulttopic = 'SendShippingRef';
 	$diroutput = $conf->expedition->dir_output.'/sending';
 	$trackid = 'shi'.$object->id;
 
