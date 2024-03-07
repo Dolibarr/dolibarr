@@ -2762,7 +2762,7 @@ if ($action == 'create') {
 
 	// Presend form
 	$modelmail = 'shipping_send';
-	$defaulttopic = $langs->trans('SendShippingRef');
+	$defaulttopic = 'SendShippingRef';
 	$diroutput = $conf->expedition->dir_output.'/sending';
 	$trackid = 'shi'.$object->id;
 
