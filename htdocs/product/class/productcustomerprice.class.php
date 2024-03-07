@@ -421,15 +421,15 @@ class ProductCustomerPrice extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) {				// To allow $filter['YEAR(s.dated)']=>$year
-					$sql .= " AND ".$key." = '".$this->db->escape($value)."'";
+					$sql .= " AND ".$this->db->sanitize($key)." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'soc.nom') {
-					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
+					$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 				} elseif ($key == 'prod.ref' || $key == 'prod.label') {
-					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
+					$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 				} elseif ($key == 't.price' || $key == 't.price_ttc') {
-					$sql .= " AND ".$key." LIKE '%".price2num($value)."%'";
+					$sql .= " AND ".$this->db->sanitize($key)." = ".((float) price2num($value));
 				} else {
-					$sql .= " AND ".$key." = ".((int) $value);
+					$sql .= " AND ".$this->db->sanitize($key)." = ".((int) $value);
 				}
 			}
 		}

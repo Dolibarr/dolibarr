@@ -386,6 +386,7 @@ class Productbatch extends CommonObject
 	public function find($fk_product_stock = 0, $eatby = null, $sellby = null, $batch_number = '', $fk_warehouse = 0)
 	{
 		$where = array();
+
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.tms,";
@@ -414,7 +415,7 @@ class Productbatch extends CommonObject
 		}
 
 		if (!empty($where)) {
-			$sql .= " AND (".implode(" OR ", $where).")";
+			$sql .= " AND (".$this->db->sanitize(implode(" OR ", $where), 1, 1, 1).")";
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);

@@ -77,7 +77,7 @@ class AccountingJournal extends CommonObject
 	public $active;
 
 	/**
-	 * @var array array of lines
+	 * @var AccountingJournal[] array of lines
 	 */
 	public $lines;
 
@@ -161,14 +161,13 @@ class AccountingJournal extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int $limit offset limit
-	 * @param int $offset offset limit
-	 * @param array $filter filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int Return integer <0 if KO, >0 if OK
+	 * @param string 	$sortorder 	Sort Order
+	 * @param string 	$sortfield 	Sort field
+	 * @param int 		$limit 		limit
+	 * @param int 		$offset 	offset limit
+	 * @param array 	$filter 	filter array
+	 * @param string 	$filtermode filter mode (AND or OR)
+	 * @return int 					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
@@ -179,16 +178,16 @@ class AccountingJournal extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.code' || $key == 't.label' || $key == 't.nature') {
-					$sqlwhere[] = $key.'\''.$this->db->escape($value).'\'';
+					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 't.rowid' || $key == 't.active') {
-					$sqlwhere[] = $key.'='.$value;
+					$sqlwhere[] = $key.'='.((int) $value);
 				}
 			}
 		}
 		$sql .= ' WHERE 1 = 1';
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
 		if (count($sqlwhere) > 0) {
-			$sql .= " AND ".implode(" ".$filtermode." ", $sqlwhere);
+			$sql .= " AND ".implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere);
 		}
 
 		if (!empty($sortfield)) {

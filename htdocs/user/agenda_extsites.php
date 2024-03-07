@@ -82,7 +82,7 @@ $hookmanager->initHooks(array('usercard', 'useragenda', 'globalcard'));
  * Actions
  */
 
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -249,7 +249,7 @@ while ($i <= $MAXAGENDA) {
 	$color = 'AGENDA_EXT_COLOR_'.$id.'_'.$key;
 
 	print '<tr class="oddeven">';
-	// Nb
+	// Nb @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print '<td class="maxwidth50onsmartphone">'.$langs->trans("AgendaExtNb", $key)."</td>";
 	// Name
 	$name_value = (GETPOST('AGENDA_EXT_NAME_'.$id.'_'.$key) ? GETPOST('AGENDA_EXT_NAME_'.$id.'_'.$key) : (empty($object->conf->$name) ? '' : $object->conf->$name));

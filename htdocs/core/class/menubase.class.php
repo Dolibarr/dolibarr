@@ -434,7 +434,7 @@ class Menubase
 				$this->title = $obj->title;
 				$this->prefix = $obj->prefix;
 				$this->langs = $obj->langs;
-				$this->perms = $obj->perms;
+				$this->perms = str_replace("\"", "'", $obj->perms);
 				$this->enabled = str_replace("\"", "'", $obj->enabled);
 				$this->user = $obj->user;
 				$this->tms = $this->db->jdate($obj->tms);
@@ -665,7 +665,7 @@ class Menubase
 				if (isset($menu['perms'])) {
 					$tmpcond = $menu['perms'];
 					if ($leftmenu == 'all') {
-						$tmpcond = preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond); // Force part of condition to true
+						$tmpcond = preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond); // Force the part of condition on leftmenu to true
 					}
 					$perms = verifCond($tmpcond);
 					//print "verifCond rowid=".$menu['rowid']." ".$tmpcond.":".$perms."<br>\n";
@@ -676,7 +676,7 @@ class Menubase
 				if (isset($menu['enabled'])) {
 					$tmpcond = $menu['enabled'];
 					if ($leftmenu == 'all') {
-						$tmpcond = preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond); // Force part of condition to true
+						$tmpcond = preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond); // Force the part of condition on leftmenu to true
 					}
 					$enabled = verifCond($tmpcond);
 					//var_dump($menu['type'].' - '.$menu['titre'].' - '.$menu['enabled'].' => '.$enabled);

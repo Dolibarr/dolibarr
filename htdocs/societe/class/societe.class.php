@@ -2111,7 +2111,7 @@ class Societe extends CommonObject
 	 */
 	public function delete($id, User $fuser = null, $call_trigger = 1)
 	{
-		global $langs, $conf, $user;
+		global $conf, $user;
 
 		if (empty($fuser)) {
 			$fuser = $user;
@@ -2162,7 +2162,7 @@ class Societe extends CommonObject
 
 			if (!$error) {
 				foreach ($this->childtablesoncascade as $tabletodelete) {
-					$deleteFromObject = explode(':', $tabletodelete);
+					$deleteFromObject = explode(':', $tabletodelete, 4);
 					if (count($deleteFromObject) >= 2) {
 						$className = str_replace('@', '', $deleteFromObject[0]);
 						$filepath = $deleteFromObject[1];
@@ -3340,6 +3340,7 @@ class Societe extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 
 		$bac = new CompanyBankAccount($this->db);
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$bac->fetch(0, $this->id);
 
 		if ($bac->id > 0) {		// If a bank account has been found for company $this->id
@@ -4977,6 +4978,7 @@ class Societe extends CommonObject
 			if (!isset($this->bank_account)) {
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 				$bac = new CompanyBankAccount($this->db);
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$result = $bac->fetch(0, $this->id);
 				if ($result > 0) {
 					$this->bank_account = $bac;

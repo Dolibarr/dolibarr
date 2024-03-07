@@ -57,7 +57,7 @@ class FactureTest extends CommonClassTest
 	public static function setUpBeforeClass(): void
 	{
 		self::assertTrue(isModEnabled('facture'), " module customer invoice must be enabled");
-		self::assertFalse(isModEnabled('ecotaxdeee'), " module customer invoice must be enabled");
+		self::assertFalse(isModEnabled('ecotaxdeee'), " module ecotaxdeee must not be enabled");
 		parent::setUpBeforeClass();
 	}
 

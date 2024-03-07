@@ -168,7 +168,8 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 		$sql .= " FROM ".MAIN_DB_PREFIX."boxes as b";
 		$sql .= " WHERE b.entity = ".$conf->entity;
 		$sql .= " AND b.rowid = ".((int) $rowid);
-		dol_syslog(get_class($this)."::fetch rowid=".$rowid);
+
+		dol_syslog(get_class($this)."::fetch rowid=".((int) $rowid));
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -202,7 +203,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 		global $langs, $user, $conf;
 
 		if (!empty($this->hidden)) {
-			return '\n<!-- Box ".get_class($this)." hidden -->\n'; // Nothing done if hidden (for example when user has no permission)
+			return "\n<!-- Box ".get_class($this)." hidden -->\n"; // Nothing done if hidden (for example when user has no permission)
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

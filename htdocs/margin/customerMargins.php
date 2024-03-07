@@ -303,6 +303,7 @@ if ($result) {
 	$num = $db->num_rows($result);
 
 	print '<br>';
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
 
 	if (getDolGlobalString('MARGIN_TYPE') == "1") {

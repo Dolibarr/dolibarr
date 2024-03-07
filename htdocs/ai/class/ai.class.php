@@ -50,38 +50,72 @@ class Ai
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->apiEndpoint = dolibarr_get_const($this->db, 'AI_API_ENDPOINT');
-		$this->apiKey = dolibarr_get_const($this->db, 'AI_KEY_API_CHATGPT');
+
+		$this->apiKey = getDolGlobalString('AI_API_CHATGPT_KEY');
 	}
 
 	/**
 	 * Generate response of instructions
-	 * @param   string  $instructions   instruction for generate content
-	 * @param   string  $model          model name (chat,text,image...)
-	 * @param   string  $moduleName     Name of module
-	 * @return   mixed   $response
+	 *
+	 * @param   string  	$instructions   instruction for generate content
+	 * @param   string  	$model          model name ('gpt-3.5-turbo')
+	 * @param   string  	$function     	code of the feature we want to use ('emailing', 'transcription', 'audiotext', 'imagegeneration', 'translation')
+	 * @return  mixed   	$response
 	 */
-	public function generateContent($instructions, $model = 'gpt-3.5-turbo', $moduleName = 'MAILING')
+	public function generateContent($instructions, $model = 'auto', $function = 'textgeneration')
 	{
-		global $conf;
+		if (empty($this->apiEndpoint)) {
+			if ($function == 'textgeneration') {
+				$this->apiEndpoint = 'https://api.openai.com/v1/chat/completions';
+				if ($model == 'auto') {
+					$model = getDolGlobalString('AI_API_CHATGPT_MODEL_TEXT', 'gpt-3.5-turbo');
+				}
+			}
+			if ($function == 'imagegeneration') {
+				$this->apiEndpoint = 'https://api.openai.com/v1/images/generations';
+				if ($model == 'auto') {
+					$model = getDolGlobalString('AI_API_CHATGPT_MODEL_IMAGE', 'dall-e-3');
+				}
+			}
+			if ($function == 'audiotext') {
+				$this->apiEndpoint = 'https://api.openai.com/v1/audio/speech';
+				if ($model == 'auto') {
+					$model = getDolGlobalString('AI_API_CHATGPT_MODEL_AUDIO', 'tts-1');
+				}
+			}
+			if ($function == 'transcription') {
+				$this->apiEndpoint = 'https://api.openai.com/v1/audio/transcriptions';
+				if ($model == 'auto') {
+					$model = getDolGlobalString('AI_API_CHATGPT_MODEL_TRANSCRIPT', 'whisper-1');
+				}
+			}
+			if ($function == 'translation') {
+				$this->apiEndpoint = 'https://api.openai.com/v1/audio/translations';
+				if ($model == 'auto') {
+					$model = getDolGlobalString('AI_API_CHATGPT_MODEL_TRANSLATE', 'whisper-1');
+				}
+			}
+		}
+
 		try {
-			$configurationsJson = dolibarr_get_const($this->db, 'AI_CONFIGURATIONS_PROMPT', $conf->entity);
+			$configurationsJson = getDolGlobalString('AI_CONFIGURATIONS_PROMPT');
 			$configurations = json_decode($configurationsJson, true);
 
 			$prePrompt = '';
 			$postPrompt = '';
 
-			if (isset($configurations[$moduleName])) {
-				if (isset($configurations[$moduleName]['prePrompt'])) {
-					$prePrompt = $configurations[$moduleName]['prePrompt'];
+			if (isset($configurations[$function])) {
+				if (isset($configurations[$function]['prePrompt'])) {
+					$prePrompt = $configurations[$function]['prePrompt'];
 				}
 
-				if (isset($configurations[$moduleName]['postPrompt'])) {
-					$postPrompt = $configurations[$moduleName]['postPrompt'];
+				if (isset($configurations[$function]['postPrompt'])) {
+					$postPrompt = $configurations[$function]['postPrompt'];
 				}
 			}
 			$fullInstructions = $prePrompt.' '.$instructions.' .'.$postPrompt;
 
+			// TODO Replace this with a simple call of getDolURLContent();
 			$ch = curl_init($this->apiEndpoint);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([

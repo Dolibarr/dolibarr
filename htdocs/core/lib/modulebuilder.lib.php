@@ -450,7 +450,7 @@ function dolGetListOfObjectClasses($destdir)
 			$objects[$fileobj['fullname']] = $objectnameloop;
 		}
 	}
-	if (count($objects)>0) {
+	if (count($objects) > 0) {
 		return $objects;
 	}
 
@@ -559,12 +559,12 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 			}
 		}
 	} elseif ($action == -2 && !empty($objectname) && !empty($module)) {
-		$key= null;
+		$key = null;
 		$right = null;
 		$objectOfRights = array();
 		//check if object already declared in rights file
 		foreach ($permissions as $right) {
-			$objectOfRights[]= $right[4];
+			$objectOfRights[] = $right[4];
 		}
 		if (in_array(strtolower($objectname), $objectOfRights)) {
 			$error++;
@@ -591,7 +591,7 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 	if (!$error) {
 		// prepare permissions array
 		$count_perms = count($permissions);
-		for ($i = 0;$i<$count_perms;$i++) {
+		for ($i = 0;$i < $count_perms;$i++) {
 			$permissions[$i][0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1)";
 			$permissions[$i][1] = "\$this->rights[\$r][1] = '".$permissions[$i][1]."'";
 			$permissions[$i][4] = "\$this->rights[\$r][4] = '".$permissions[$i][4]."'";
@@ -611,7 +611,7 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 
 
 		// parcourir les objects
-		$o=0;
+		$o = 0;
 		foreach ($permissions as &$object) {
 			// récupérer la permission de l'objet
 			$p = 1;
@@ -735,7 +735,7 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	foreach ($attributesUnique as $attUnique) {
 		$table .= "|".$attUnique;
 	}
-	$table .="\n";
+	$table .= "\n";
 	$valuesModif = array();
 	foreach ($keys as $string) {
 		$string = trim($string, "'");
@@ -783,9 +783,9 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 	$table .= "|===\n";
 	$table .= "__ end table for object $objectname\n";
 
-	//write in file
+	//write in file @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$writeInFile = dolReplaceInFile($destfile, array('== DATA SPECIFICATIONS' => $table));
-	if ($writeInFile<0) {
+	if ($writeInFile < 0) {
 		return -1;
 	}
 	return 1;
@@ -897,7 +897,7 @@ function writePermsInAsciiDoc($file, $destfile)
 	foreach ($permissions as $key => $element) {
 		$element = str_replace(" '", '', $element);
 		$element = trim($element, "'");
-		$permsN[] = substr($element, strpos($element, "=")+1);
+		$permsN[] = substr($element, strpos($element, "=") + 1);
 	}
 	array_pop($permsN);
 
@@ -926,8 +926,9 @@ function writePermsInAsciiDoc($file, $destfile)
 	}
 	// end table
 	$string .= "\n|===\n";
-	$write = dolReplaceInFile($destfile, array('__DATA_PERMISSIONS__'=> $string));
-	if ($write<0) {
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+	$write = dolReplaceInFile($destfile, array('__DATA_PERMISSIONS__' => $string));
+	if ($write < 0) {
 		return -1;
 	}
 	return 1;
@@ -985,7 +986,7 @@ function addObjectsToApiFile($file, $objects, $modulename)
 	//add methods for each object
 	$allContent = getFromFile($file, '/*begin methods CRUD*/', '/*end methods CRUD*/');
 	foreach ($objects as $object) {
-		$contentReplaced =str_replace(["myobject","MyObject"], [strtolower($object),$object], $allContent);
+		$contentReplaced = str_replace(["myobject","MyObject"], [strtolower($object),$object], $allContent);
 		dolReplaceInFile($file, array('/*end methods CRUD*/' => '/*CRUD FOR '.strtoupper($object).'*/'."\n".$contentReplaced."\n\t".'/*END CRUD FOR '.strtoupper($object).'*/'."\n\t".'/*end methods CRUD*/'));
 	}
 	dolReplaceInFile($file, array($allContent => '','MyModule' => ucfirst($modulename)));
@@ -1049,7 +1050,7 @@ function removeObjectFromApiFile($file, $objectname, $modulename)
  */
 function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 {
-	$errors =0;
+	$errors = 0;
 	$counter = 0;
 	if (!file_exists($file)) {
 		return -1;
@@ -1062,7 +1063,7 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 		array_push($menus, $menuWantTo);
 	} elseif ($action == 2 && !empty($key) && !empty($menuWantTo)) {
 		// update right from permissions array
-		$urlCounter=0;
+		$urlCounter = 0;
 		// check if the values already exists
 		foreach ($menus as $index => $menu) {
 			if ($index !== $key) {
@@ -1111,20 +1112,20 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 				//var_dump(dol_escape_php($menu['perms'], 1)); exit;
 
 				$str_menu .= $start."\n";
-				$str_menu.= "\t\t\$this->menu[\$r++]=array(\n";
-				$str_menu.= "\t\t\t 'fk_menu' => '".dol_escape_php($menu['fk_menu'], 1)."',\n";
-				$str_menu.= "\t\t\t 'type' => '".dol_escape_php($menu['type'], 1)."',\n";
-				$str_menu.= "\t\t\t 'titre' => '".dol_escape_php($menu['titre'], 1)."',\n";
-				$str_menu.= "\t\t\t 'mainmenu' => '".dol_escape_php($menu['mainmenu'], 1)."',\n";
-				$str_menu.= "\t\t\t 'leftmenu' => '".dol_escape_php($menu['leftmenu'], 1)."',\n";
-				$str_menu.= "\t\t\t 'url' => '".dol_escape_php($menu['url'], 1)."',\n";
-				$str_menu.= "\t\t\t 'langs' => '".dol_escape_php($menu['langs'], 1)."',\n";
-				$str_menu.= "\t\t\t 'position' => ".((int) $menu['position']).",\n";
-				$str_menu.= "\t\t\t 'enabled' => '".dol_escape_php($menu['enabled'], 1)."',\n";
-				$str_menu.= "\t\t\t 'perms' => '".dol_escape_php($menu['perms'], 1)."',\n";
-				$str_menu.= "\t\t\t 'target' => '".dol_escape_php($menu['target'], 1)."',\n";
-				$str_menu.= "\t\t\t 'user' => ".((int) $menu['user']).",\n";
-				$str_menu.= "\t\t);\n";
+				$str_menu .= "\t\t\$this->menu[\$r++]=array(\n";
+				$str_menu .= "\t\t\t 'fk_menu' => '".dol_escape_php($menu['fk_menu'], 1)."',\n";
+				$str_menu .= "\t\t\t 'type' => '".dol_escape_php($menu['type'], 1)."',\n";
+				$str_menu .= "\t\t\t 'titre' => '".dol_escape_php($menu['titre'], 1)."',\n";
+				$str_menu .= "\t\t\t 'mainmenu' => '".dol_escape_php($menu['mainmenu'], 1)."',\n";
+				$str_menu .= "\t\t\t 'leftmenu' => '".dol_escape_php($menu['leftmenu'], 1)."',\n";
+				$str_menu .= "\t\t\t 'url' => '".dol_escape_php($menu['url'], 1)."',\n";
+				$str_menu .= "\t\t\t 'langs' => '".dol_escape_php($menu['langs'], 1)."',\n";
+				$str_menu .= "\t\t\t 'position' => ".((int) $menu['position']).",\n";
+				$str_menu .= "\t\t\t 'enabled' => '".dol_escape_php($menu['enabled'], 1)."',\n";
+				$str_menu .= "\t\t\t 'perms' => '".dol_escape_php($menu['perms'], 1)."',\n";
+				$str_menu .= "\t\t\t 'target' => '".dol_escape_php($menu['target'], 1)."',\n";
+				$str_menu .= "\t\t\t 'user' => ".((int) $menu['user']).",\n";
+				$str_menu .= "\t\t);\n";
 
 				if (is_null($next_val) || $val_actuel['leftmenu'] !== $next_val['leftmenu']) {
 					$str_menu .= $end."\n";
@@ -1266,7 +1267,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	$dictionnaires['tabfieldinsert'][] = (array_key_exists('code', $columns) && array_key_exists('label', $columns) ? 'code,label' : '');
 	$dictionnaires['tabrowid'][] = $primaryKey;
 	$dictionnaires['tabcond'][] = isModEnabled('$modulename');
-	$dictionnaires['tabhelp'][] = (array_key_exists('code', $columns) ? array('code'=>$langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip') : '');
+	$dictionnaires['tabhelp'][] = (array_key_exists('code', $columns) ? array('code' => $langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip') : '');
 
 	// Build the dictionary string
 	$writeInfile = updateDictionaryInFile($modulename, $file, $dictionnaires);

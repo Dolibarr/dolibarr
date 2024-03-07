@@ -358,6 +358,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR');
 			}
 
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
 			//var_dump($result);
 			if ($result < 0) {
@@ -469,7 +470,9 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 		if (count($objects) > 1) {
 			addObjectsToApiFile($destfile, $objects, $modulename);
 		} else {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			dolReplaceInFile($destfile, $arrayreplacement);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			dolReplaceInFile($destfile, array('/*begin methods CRUD*/' => '/*begin methods CRUD*/'."\n\t".'/*CRUD FOR '.strtoupper($objectname).'*/', '/*end methods CRUD*/' => '/*END CRUD FOR '.strtoupper($objectname).'*/'."\n\t".'/*end methods CRUD*/'));
 		}
 
@@ -477,6 +480,7 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 			// Now we update the object file to set $$varnametoupdate to 1
 			$srcfile = $dirins.'/'.strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php';
 			$arrayreplacement = array('/\$'.preg_quote($varnametoupdate, '/').' = 0;/' => '$'.$varnametoupdate.' = 1;');
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
 		}
 	} else {
@@ -569,6 +573,7 @@ if ($dirins && $action == 'inithook' && !empty($module)) {
 			'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
 		);
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		dolReplaceInFile($destfile, $arrayreplacement);
 	} else {
 		$langs->load("errors");
@@ -603,6 +608,7 @@ if ($dirins && $action == 'inittrigger' && !empty($module)) {
 			'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
 		);
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		dolReplaceInFile($destfile, $arrayreplacement);
 	} else {
 		$langs->load("errors");
@@ -637,6 +643,7 @@ if ($dirins && $action == 'initwidget' && !empty($module)) {
 			'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
 		);
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		dolReplaceInFile($destfile, $arrayreplacement);
 	} else {
 		$langs->load("errors");
@@ -671,6 +678,7 @@ if ($dirins && $action == 'initemailing' && !empty($module)) {
 			'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
 		);
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		dolReplaceInFile($destfile, $arrayreplacement);
 	} else {
 		$langs->load("errors");
@@ -705,6 +713,7 @@ if ($dirins && $action == 'initcss' && !empty($module)) {
 			'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : ''),
 		);
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		dolReplaceInFile($destfile, $arrayreplacement);
 
 		// Update descriptor file to uncomment file
@@ -744,6 +753,7 @@ if ($dirins && $action == 'initjs' && !empty($module)) {
 			'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
 		);
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		dolReplaceInFile($destfile, $arrayreplacement);
 
 		// Update descriptor file to uncomment file
@@ -788,6 +798,7 @@ if ($dirins && $action == 'initcli' && !empty($module)) {
 			'---Put here your own copyright and developer email---' => dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
 		);
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		dolReplaceInFile($destfile, $arrayreplacement);
 	} else {
 		$langs->load("errors");
@@ -828,6 +839,7 @@ if ($dirins && $action == 'initdoc' && !empty($module)) {
 			'---Put here your own copyright and developer email---' => dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
 		);
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		dolReplaceInFile($destfile, $arrayreplacement);
 
 		// add table of properties
@@ -866,6 +878,7 @@ if ($dirins && $action == 'initdoc' && !empty($module)) {
 				}
 			}
 			$stringLog = implode("\n", $strreplace);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			dolReplaceInFile($destfile, array('//include::ChangeLog.md[]' => '','__CHANGELOG__' => $stringLog));
 		}
 

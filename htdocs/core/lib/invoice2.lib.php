@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2009-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2013  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  * @param	string		$fileprefix				Prefix to add into filename of generated PDF
  * @return	int									Error code
  */
-function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, $usestdout, $regenerate = 0, $filesuffix = '', $paymentbankid = '', $thirdpartiesid = '', $fileprefix = 'mergedpdf')
+function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, $usestdout, $regenerate = 0, $filesuffix = '', $paymentbankid = '', $thirdpartiesid = [], $fileprefix = 'mergedpdf')
 {
 	$sql = "SELECT DISTINCT f.rowid, f.ref";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
