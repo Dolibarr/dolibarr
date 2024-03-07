@@ -2316,6 +2316,8 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function deleteLine($idline, $notrigger = 0)
 	{
+		global $user;
+
 		if ($this->statut == 0) {
 			$line = new CommandeFournisseurLigne($this->db);
 
@@ -2333,7 +2335,7 @@ class CommandeFournisseur extends CommonOrder
 				}
 			}
 
-			if ($line->delete($notrigger) > 0) {
+			if ($line->delete($user, $notrigger) > 0) {
 				$this->update_price(1);
 				return 1;
 			} else {
