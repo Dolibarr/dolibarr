@@ -4162,10 +4162,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 *	@param      int     $notrigger  1=Disable call to triggers
 	 *	@return     int                 Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
-		global $user;
-
 		$error = 0;
 
 		$this->db->begin();
