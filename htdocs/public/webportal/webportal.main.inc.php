@@ -229,6 +229,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 					if (!$error) {
 						// get partnership
 						$logged_partnership = new WebPortalPartnership($db);
+						// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 						$result = $logged_partnership->fetch(0, '', $logged_member->id, $websiteaccount->thirdparty->id);
 						if ($result < 0) {
 							$error++;

@@ -477,13 +477,13 @@ abstract class CommonObject
 	public $fk_multicurrency;
 
 	/**
-	 * @var string|array<int,string>    Multicurrency code
+	 * @var string|string[]             Multicurrency code
 	 *                                  Or, just for the Paiement object, an array: invoice ID => currency code for that invoice.
 	 */
 	public $multicurrency_code;
 
 	/**
-	 * @var float|array<int,float>      Multicurrency rate ("tx" = "taux" in French)
+	 * @var float|float[]               Multicurrency rate ("tx" = "taux" in French)
 	 *                                  Or, just for the Paiement object, an array: invoice ID => currency rate for that invoice.
 	 */
 	public $multicurrency_tx;
@@ -921,14 +921,14 @@ abstract class CommonObject
 				}
 				$enabled = 1;
 				if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
-					$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
+					$enabled = (int) dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
 				}
 				if ($enabled && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
-					$enabled = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
+					$enabled = (int) dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
 				}
 				$perms = 1;
 				if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key])) {
-					$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
+					$perms = (int) dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
 				}
 				if (empty($enabled)) {
 					continue; // 0 = Never visible field
@@ -3992,11 +3992,8 @@ abstract class CommonObject
 			$origin = 'order_supplier';
 		}
 
-		// Elements of the core modules which have `$module` property but may to which we don't want to prefix module part to the element name for finding the linked object in llx_element_element.
-		// It's because an entry for this element may be exist in llx_element_element before this modification (version <=14.2) and ave named only with their element name in fk_source or fk_target.
-		$coremodule = array('knowledgemanagement', 'partnership', 'workstation', 'ticket', 'recruitment', 'eventorganization', 'asset');
-		// Add module part to target type if object has $module property and isn't in core modules.
-		$targettype = ((!empty($this->module) && ! in_array($this->module, $coremodule)) ? $this->module.'_' : '').$this->element;
+		// Add module part to target type
+		$targettype = $this->getElementType();
 
 		$parameters = array('targettype' => $targettype);
 		// Hook for explicitly set the targettype if it must be differtent than $this->element
@@ -4047,6 +4044,21 @@ abstract class CommonObject
 			return 0;
 		}
 	}
+
+	/**
+	 * Return element type string formatted like element_element target_type and source_type
+  	 *
+	 * @return string
+	 */
+	public function getElementType()
+	{
+		// Elements of the core modules having a `$module` property but for which we may not want to prefix the element name with the module name for finding the linked object in llx_element_element.
+		// It's because existing llx_element_element entries inserted prior to this modification (version <=14.2) may already use the element name alone in fk_source or fk_target (without the module name prefix).
+		$coreModule = array('knowledgemanagement', 'partnership', 'workstation', 'ticket', 'recruitment', 'eventorganization', 'asset');
+		// Add module part to target type if object has $module property and isn't in core modules.
+		return ((!empty($this->module) && !in_array($this->module, $coreModule)) ? $this->module.'_' : '').$this->element;
+	}
+
 
 	/**
 	 *	Fetch array of objects linked to current object (object of enabled modules only). Links are loaded into
@@ -6180,12 +6192,12 @@ abstract class CommonObject
 
 			$enabled = 1;
 			if (isset($this->fields[$key]['enabled'])) {
-				$enabled = dol_eval($this->fields[$key]['enabled'], 1, 1, '1');
+				$enabled = (int) dol_eval($this->fields[$key]['enabled'], 1, 1, '1');
 			}
 			/*$perms = 1;
 			if (isset($this->fields[$key]['perms']))
 			{
-				$perms = dol_eval($this->fields[$key]['perms'], 1, 1, '1');
+				$perms = (int) dol_eval($this->fields[$key]['perms'], 1, 1, '1');
 			}*/
 			if (empty($enabled)) {
 				continue;
@@ -8596,7 +8608,7 @@ abstract class CommonObject
 					// Test on 'enabled' ('enabled' is different than 'list' = 'visibility')
 					$enabled = 1;
 					if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
-						$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
+						$enabled = (int) dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
 					}
 					if (empty($enabled)) {
 						continue;
@@ -8604,12 +8616,12 @@ abstract class CommonObject
 
 					$visibility = 1;
 					if ($visibility && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
-						$visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
+						$visibility = (int) dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
 					}
 
 					$perms = 1;
 					if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key])) {
-						$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
+						$perms = (int) dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
 					}
 
 					if (($mode == 'create') && abs($visibility) != 1 && abs($visibility) != 3) {

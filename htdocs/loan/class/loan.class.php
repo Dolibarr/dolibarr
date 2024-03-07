@@ -108,7 +108,7 @@ class Loan extends CommonObject
 	public $fk_project;
 
 	/**
-	 * @var int totalpaid
+	 * @var float totalpaid
 	 */
 	public $totalpaid;
 

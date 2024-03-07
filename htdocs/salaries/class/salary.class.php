@@ -855,6 +855,7 @@ class Salary extends CommonObject
 		if ($this->paye == 0) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$bac->fetch(0, $mysoc->id);
 
 			$sql = "SELECT count(rowid) as nb";

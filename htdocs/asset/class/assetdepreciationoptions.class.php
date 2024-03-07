@@ -268,7 +268,7 @@ class AssetDepreciationOptions extends CommonObject
 				if ($field_info['notnull'] > 0 && $field_value == '' && !is_null($field_info['default']) && $field_info['default'] == '(PROV)') {
 					$field_value = '(PROV)';
 				} elseif ((!empty($field_info['required']) || $field_info['notnull'] > 0) && $field_value == '' && !empty($field_info['default'])) {
-					$field_value = dol_eval($field_info['default'], 1);
+					$field_value = $field_info['default'];
 				}
 				if ($field_info['notnull'] > 0 && $field_value == '' && is_null($field_info['default'])) {
 					$error++;

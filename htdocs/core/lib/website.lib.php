@@ -519,6 +519,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 	if ($containeraliasalt) {
 		include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 		$tmpwebsitepage = new WebsitePage($db);
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$result = $tmpwebsitepage->fetch(0, $website->id, '', $containeraliasalt);
 		if ($result > 0) {
 			$containerref = $tmpwebsitepage->pageurl;
@@ -542,6 +543,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		if (!$containeraliasalt) {	// If containeraliasalt set, we already did the test
 			include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 			$tmpwebsitepage = new WebsitePage($db);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$result = $tmpwebsitepage->fetch(0, $website->id, $containerref);
 			unset($tmpwebsitepage);
 		}
@@ -1104,7 +1106,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 
 	$error = 0;
-	$arrayresult = array('code'=>'', 'list'=>array());
+	$arrayresult = array('code' => '', 'list' => array());
 
 	if (!is_object($weblangs)) {
 		$weblangs = $langs;
@@ -1212,22 +1214,22 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 
 		$filecontent = file_get_contents($filehtmlheader);
 		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent)) {
-			$arrayresult['list'][] = array('type'=>'website_htmlheadercontent');
+			$arrayresult['list'][] = array('type' => 'website_htmlheadercontent');
 		}
 
 		$filecontent = file_get_contents($filecss);
 		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent)) {
-			$arrayresult['list'][] = array('type'=>'website_csscontent');
+			$arrayresult['list'][] = array('type' => 'website_csscontent');
 		}
 
 		$filecontent = file_get_contents($filejs);
 		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent)) {
-			$arrayresult['list'][] = array('type'=>'website_jscontent');
+			$arrayresult['list'][] = array('type' => 'website_jscontent');
 		}
 
 		$filerobot = file_get_contents($filerobot);
 		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent)) {
-			$arrayresult['list'][] = array('type'=>'website_robotcontent');
+			$arrayresult['list'][] = array('type' => 'website_robotcontent');
 		}
 
 		$searchdone = 1;

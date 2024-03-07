@@ -1231,7 +1231,7 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.reconciled_option') {
 					$sqlwhere[] = 't.lettering_code IS NULL';
 				} else {
-					$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->escape($this->db->escapeforlike($value))."%'";
+					$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 				}
 			}
 		}
