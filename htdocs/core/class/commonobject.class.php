@@ -7331,7 +7331,7 @@ abstract class CommonObject
 				$out .= (((string) $value == (string) $keyb) ? ' selected' : '');
 				if (!empty($parent)) $isDependList =1;
 				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
-				$out .= '>'.$valb.'</option>';
+				$out .= '>'.$langs->trans($valb).'</option>';
 			}
 			$out .= '</select>';
 		} elseif ($type == 'sellist') {
@@ -7955,7 +7955,7 @@ abstract class CommonObject
 		} elseif ($type == 'select') {
 			$value = isset($param['options'][$value]) ? $param['options'][$value] : '';
 			if (strpos($value, "|") !== false) {
-				$value = explode('|', $value)[0];
+				$value = $langs->trans(explode('|', $value)[0]);
 			}
 		} elseif ($type == 'sellist') {
 			$param_list = array_keys($param['options']);
