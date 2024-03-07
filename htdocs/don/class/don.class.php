@@ -725,6 +725,7 @@ class Don extends CommonObject
 	 */
 	public function setValid($user, $notrigger = 0)
 	{
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		return $this->valid_promesse($this->id, $user->id, $notrigger);
 	}
 
@@ -957,7 +958,7 @@ class Don extends CommonObject
 		$result .= $linkend;
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

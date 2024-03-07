@@ -143,7 +143,7 @@ $error = 0;
  * Actions
  */
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -2403,7 +2403,7 @@ if ($action == 'create') {
 			// Deposit - Down payment
 			if (!getDolGlobalString('INVOICE_DISABLE_DEPOSIT')) {
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-				$tmp='<input type="radio" id="radio_deposit" name="type" value="3"' . (GETPOSTINT('type') == 3 ? ' checked' : '') . '> ';
+				$tmp = '<input type="radio" id="radio_deposit" name="type" value="3"' . (GETPOSTINT('type') == 3 ? ' checked' : '') . '> ';
 				print '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					jQuery("#typestandardinvoice, #valuestandardinvoice").click(function() {
@@ -2604,7 +2604,7 @@ if ($action == 'create') {
 				if (!getDolGlobalString('INVOICE_CREDIT_NOTE_STANDALONE')) {
 					$tmp = '<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
 				} else {
-					$tmp='<input type="radio" name="type" id="radio_creditnote" value="2"> ';
+					$tmp = '<input type="radio" name="type" id="radio_creditnote" value="2"> ';
 				}
 				$text = $tmp.$langs->trans("InvoiceAvoir").' ';
 				$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromSupplierThird").')</span> ';
@@ -3175,7 +3175,7 @@ if ($action == 'create') {
 		}
 
 		if (!$formconfirm) {
-			$parameters = array('formConfirm' => $formconfirm, 'lineid'=>$lineid);
+			$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
 				$formconfirm .= $hookmanager->resPrint;
@@ -3832,6 +3832,7 @@ if ($action == 'create') {
 						$text .= '<br><br><b>'.$langs->trans("Reason").'</b>:'.$object->close_note;
 					}
 					print '<span class="opacitymedium">';
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					print $form->textwithpicto($langs->trans("Abandoned"), $text, - 1);
 					print '</span>';
 					print '</td><td class="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid).'</td><td>&nbsp;</td></tr>';
@@ -3896,7 +3897,7 @@ if ($action == 'create') {
 					print '<tr><td colspan="'.$nbcols.'" class="right">';
 					print '<span class="opacitymedium">';
 					print $langs->trans('RemainderToPayBackMulticurrency');
-					if ($resteapayeraffiche> 0) {
+					if ($resteapayeraffiche > 0) {
 						print ' ('.$langs->trans('NegativeIfExcessRefunded').')';
 					}
 					print '</span>';
@@ -4081,7 +4082,7 @@ if ($action == 'create') {
 					// For credit note
 					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercancreate
 						&& (getDolGlobalString('SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED') || $object->getSommePaiement() == 0)
-						) {
+					) {
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReducSupplier2")).'">'.$langs->trans('ConvertToReduc').'</a>';
 					}
 					// For deposit invoice

@@ -142,6 +142,7 @@ if (isModEnabled('modulebuilder')) {
 	//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
 	$text .= '<span class="fa fa-bug atoplogin"></span>';
 	$text .= '</a>';
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$toprightmenu .= $form->textwithtooltip('', $langs->trans("ModuleBuilder"), 2, 1, $text, 'login_block_elem', 2);
 }
 
