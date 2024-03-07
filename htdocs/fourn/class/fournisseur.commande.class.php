@@ -2339,8 +2339,7 @@ class CommandeFournisseur extends CommonOrder
 				$this->update_price(1);
 				return 1;
 			} else {
-				$this->error = $line->error;
-				$this->errors = $line->errors;
+				$this->setErrorsFromObject($line);
 				return -1;
 			}
 		} else {
