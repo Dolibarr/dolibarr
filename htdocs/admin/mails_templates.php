@@ -44,13 +44,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 // Load translation files required by the page
-$langsArray=array("errors", "admin", "mails", "languages");
+$langsArray = array("errors", "admin", "mails", "languages");
 
 if (isModEnabled('member')) {
-	$langsArray[]='members';
+	$langsArray[] = 'members';
 }
 if (isModEnabled('eventorganization')) {
-	$langsArray[]='eventorganization';
+	$langsArray[] = 'eventorganization';
 }
 
 $langs->loadLangs($langsArray);
@@ -163,16 +163,16 @@ if (!getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 
 $tabhelp = array();
 $tabhelp[25] = array(
-	'label'=>$langs->trans('EnterAnyCode'),
-	'type_template'=>$langs->trans("TemplateForElement"),
-	'private'=>$langs->trans("TemplateIsVisibleByOwnerOnly"),
-	'position'=>$langs->trans("PositionIntoComboList"),
-	'topic'=>'<span class="small">'.$helpsubstit.'</span>',
-	'email_from'=>$langs->trans('ForceEmailFrom'),
-	'joinfiles'=>$langs->trans('AttachMainDocByDefault'),
-	'defaultfortype'=>$langs->trans("DefaultForTypeDesc"),
-	'content'=>'<span class="small">'.$helpsubstit.'</span>',
-	'content_lines'=>'<span class="small">'.$helpsubstitforlines.'</span>'
+	'label' => $langs->trans('EnterAnyCode'),
+	'type_template' => $langs->trans("TemplateForElement"),
+	'private' => $langs->trans("TemplateIsVisibleByOwnerOnly"),
+	'position' => $langs->trans("PositionIntoComboList"),
+	'topic' => '<span class="small">'.$helpsubstit.'</span>',
+	'email_from' => $langs->trans('ForceEmailFrom'),
+	'joinfiles' => $langs->trans('AttachMainDocByDefault'),
+	'defaultfortype' => $langs->trans("DefaultForTypeDesc"),
+	'content' => '<span class="small">'.$helpsubstit.'</span>',
+	'content_lines' => '<span class="small">'.$helpsubstitforlines.'</span>'
 );
 
 
@@ -241,7 +241,7 @@ if (isModEnabled('partnership') && $user->hasRight('partnership', 'read')) {
 	$elementList['partnership_send'] = img_picto('', 'partnership', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToPartnership'));
 }
 
-$parameters = array('elementList'=>$elementList);
+$parameters = array('elementList' => $elementList);
 $reshook = $hookmanager->executeHooks('emailElementlist', $parameters); // Note that $action and $object may have been modified by some hooks
 if ($reshook == 0) {
 	foreach ($hookmanager->resArray as $item => $value) {
@@ -418,7 +418,7 @@ if (empty($reshook)) {
 			$result = $db->query($sql);
 			if ($result) {	// Add is ok
 				setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
-				$_POST = array('id'=>$id); // Clean $_POST array, we keep only id
+				$_POST = array('id' => $id); // Clean $_POST array, we keep only id
 			} else {
 				if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 					setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
@@ -1040,7 +1040,7 @@ foreach ($fieldlist as $field => $value) {
 		}
 		$sortfieldtouse = ($sortable ? $fieldlist[$field] : '');
 		if ($sortfieldtouse == 'type_template') {
-			$sortfieldtouse.= 'type_template,lang,position,label';
+			$sortfieldtouse .= 'type_template,lang,position,label';
 		}
 		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], $sortfieldtouse, ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, $css.' ');
 	}
@@ -1065,7 +1065,7 @@ if ($num) {
 				print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
 
 				$tmpaction = 'edit';
-				$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+				$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
 				$reshook = $hookmanager->executeHooks('editEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 				$error = $hookmanager->error;
 				$errors = $hookmanager->errors;
@@ -1176,7 +1176,7 @@ if ($num) {
 					continue; // It means this is a type of template not into elementList (may be because enabled condition of this type is false because module is not enabled)
 				}
 				// Test on 'enabled'
-				if (!dol_eval($obj->enabled, 1, 1, '1')) {
+				if (! (int) dol_eval($obj->enabled, 1, 1, '1')) {
 					$i++;
 					continue; // Email template not qualified
 				}
@@ -1216,7 +1216,7 @@ if ($num) {
 				}
 
 				$tmpaction = 'view';
-				$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+				$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
 				$reshook = $hookmanager->executeHooks('viewEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
 				$error = $hookmanager->error;
@@ -1461,8 +1461,10 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			print '<td'.($classtd ? ' class="'.$classtd.'"' : '').'>';
 			if ($value == 'private' && $context != 'preview') {
 				if (empty($user->admin)) {
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					print $form->selectyesno($value, '1', 1);
 				} else {
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					print $form->selectyesno($value, (isset($obj->$value) ? $obj->$value : ''), 1);
 				}
 			} else {

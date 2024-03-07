@@ -41,17 +41,17 @@ function webportalAdminPrepareHead()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/webportal/admin/setup.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '"/webportal/admin/setup.php';
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/webportal/admin/setup_theme.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/webportal/admin/setup_theme.php';
 	$head[$h][1] = $langs->trans("SkinAndColors");
 	$head[$h][2] = 'themesettings';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/webportal/admin/configcss.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/webportal/admin/configcss.php';
 	$head[$h][1] = $langs->trans("CSSPage");
 	$head[$h][2] = 'css';
 	$h++;
