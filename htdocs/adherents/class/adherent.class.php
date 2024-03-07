@@ -1061,21 +1061,18 @@ class Adherent extends CommonObject
 	/**
 	 *  Fonction to delete a member and its data
 	 *
-	 *  @param	int		$rowid		Id of member to delete
 	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return	int					Return integer <0 if KO, 0=nothing to do, >0 if OK
 	 */
-	public function delete($rowid, $user, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		$result = 0;
 		$error = 0;
 		$errorflag = 0;
 
 		// Check parameters
-		if (empty($rowid)) {
-			$rowid = $this->id;
-		}
+		$rowid = $this->id;
 
 		$this->db->begin();
 

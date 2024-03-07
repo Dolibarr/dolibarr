@@ -326,16 +326,18 @@ class Establishment extends CommonObject
 	/**
 	 *	Delete record
 	 *
+	 *  @param	User	$user	User making the change
 	 *	@param	int		$id		Id of record to delete
 	 *	@return	int				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($id)
+	public function delete($user)
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."establishment WHERE rowid = ".((int) $id);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."establishment WHERE rowid = ".((int) $user->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->db->commit();

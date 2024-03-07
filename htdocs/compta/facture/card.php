@@ -1009,7 +1009,7 @@ if (empty($reshook)) {
 			$paiement = new Paiement($db);
 			$result = $paiement->fetch(GETPOSTINT('paiement_id'));
 			if ($result > 0) {
-				$result = $paiement->delete(); // If fetch ok and found
+				$result = $paiement->delete($user); // If fetch ok and found
 				if ($result >= 0) {
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 					exit;

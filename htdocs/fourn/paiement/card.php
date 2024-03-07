@@ -90,7 +90,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight("fournis
 	$db->begin();
 
 	$object->fetch($id);
-	$result = $object->delete();
+	$result = $object->delete($user);
 	if ($result > 0) {
 		$db->commit();
 		header('Location: '.DOL_URL_ROOT.'/fourn/paiement/list.php');

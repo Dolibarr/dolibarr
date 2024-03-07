@@ -747,7 +747,7 @@ if (empty($reshook)) {
 			$paiementfourn = new PaiementFourn($db);
 			$result = $paiementfourn->fetch(GETPOST('paiement_id'));
 			if ($result > 0) {
-				$result = $paiementfourn->delete();
+				$result = $paiementfourn->delete($user);
 				if ($result > 0) {
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 					exit;

@@ -1084,16 +1084,8 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 
 			if ($objecttmp->element == 'societe') {
 				/** @var Societe $objecttmp */
+				// TODO Change signature of delete for Societe
 				$result = $objecttmp->delete($objecttmp->id, $user, 1);
-			} elseif ($objecttmp->element == 'member') {
-				/** @var Adherent $objecttmp */
-				$result = $objecttmp->delete($objecttmp->id, $user, 0);
-			} elseif ($objecttmp->element == 'action') {
-				/** @var ActionComm $objecttmp */
-				$result = $objecttmp->delete();	// TODO Add User $user as first param
-			} elseif ($objecttmp->element == 'dolresource') {
-				/** @var Dolresource $objecttmp */
-				$result = $objecttmp->delete($objecttmp->id, 0);
 			} else {
 				$result = $objecttmp->delete($user);
 			}

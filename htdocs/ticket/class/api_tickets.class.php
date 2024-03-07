@@ -410,7 +410,7 @@ class Tickets extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->ticket->delete($id)) {
+		if (!$this->ticket->delete($user)) {
 			throw new RestException(500, 'Error when deleting ticket');
 		}
 
