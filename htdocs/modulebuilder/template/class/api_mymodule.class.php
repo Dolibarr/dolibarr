@@ -54,7 +54,7 @@ class MyModuleApi extends DolibarrApi
 		$this->myobject = new MyObject($this->db);
 	}
 
-	/*begin methods CRUD*/
+	/* BEGIN MODULEBUILDER API MYOBJECT */
 
 	/**
 	 * Get properties of a myobject object
@@ -336,7 +336,9 @@ class MyModuleApi extends DolibarrApi
 		return $myobject;
 	}
 
-	/*end methods CRUD*/
+	/* END MODULEBUILDER API MYOBJECT */
+
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
