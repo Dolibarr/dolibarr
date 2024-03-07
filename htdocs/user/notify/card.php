@@ -273,7 +273,7 @@ if ($result > 0) {
 
 	// List of active notifications
 	//print load_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')', '', '');
-	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $num, 'email', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	// Line with titles
@@ -472,7 +472,7 @@ if ($result > 0) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-	// List of notifications done
+	// List of notifications done  @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'email', 0, '', '', $limit);
 
 	// Line with titles
