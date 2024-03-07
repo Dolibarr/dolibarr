@@ -2093,7 +2093,7 @@ if (empty($reshook)) {
 
 		// Set if we used free entry or predefined product
 		$predef = '';
-		$product_desc =(GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
+		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
 
 		$price_ht = '';
 		$price_ht_devise = '';
@@ -2292,8 +2292,8 @@ if (empty($reshook)) {
 				}
 
 				//If text set in desc is the same as product descpription (as now it's preloaded) we add it only one time
-				if ($product_desc==$desc && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
-					$product_desc='';
+				if ($product_desc == $desc && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
+					$product_desc = '';
 				}
 
 				if (!empty($product_desc) && getDolGlobalString('MAIN_NO_CONCAT_DESCRIPTION')) {
@@ -2347,10 +2347,16 @@ if (empty($reshook)) {
 				$type = $prod->type;
 				$fk_unit = $prod->fk_unit;
 			} else {
-				if (!empty($price_ht)) $pu_ht = price2num($price_ht, 'MU');
-				else $pu_ht = '';
-				if (!empty($price_ttc)) $pu_ttc = price2num($price_ttc, 'MU');
-				else $pu_ttc = '';
+				if (!empty($price_ht)) {
+					$pu_ht = price2num($price_ht, 'MU');
+				} else {
+					$pu_ht = '';
+				}
+				if (!empty($price_ttc)) {
+					$pu_ttc = price2num($price_ttc, 'MU');
+				} else {
+					$pu_ttc = '';
+				}
 				$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
 				$tva_tx = str_replace('*', '', $tva_tx);
 				if (empty($tva_tx)) {
@@ -2822,7 +2828,7 @@ if (empty($reshook)) {
 			&& !$objectidnext
 			&& $object->is_last_in_cycle()
 			&& $usercanunvalidate
-			) {
+		) {
 			$outingError = 0;
 			$newCycle = $object->newCycle(); // we need to keep the "situation behavior" so we place it on a new situation cycle
 			if ($newCycle > 1) {
@@ -2836,7 +2842,7 @@ if (empty($reshook)) {
 						if ($next_invoice->type == Facture::TYPE_CREDIT_NOTE
 							&& $next_invoice->situation_counter == $object->situation_counter
 							&& $next_invoice->fk_facture_source == $object->id
-						  ) {
+						) {
 							$linkedCreditNotesList[] = $next_invoice->id;
 						}
 					}
@@ -3942,7 +3948,7 @@ if ($action == 'create') {
 		}
 
 		// Other attributes
-		$parameters = array('objectsrc' => !empty($objectsrc) ? $objectsrc : 0, 'colspan' => ' colspan="2"', 'cols' => '2', 'socid'=>$socid);
+		$parameters = array('objectsrc' => !empty($objectsrc) ? $objectsrc : 0, 'colspan' => ' colspan="2"', 'cols' => '2', 'socid' => $socid);
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {
@@ -4276,7 +4282,7 @@ if ($action == 'create') {
 			&& !$objectidnext
 			&& $object->is_last_in_cycle()
 			&& $usercanunvalidate
-			) {
+		) {
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id, $label, $text, 'confirm_situationout', $formquestion, "yes", 1);
 		}
 	}
@@ -5444,6 +5450,7 @@ if ($action == 'create') {
 					$text .= '<br><br><b>'.$langs->trans("Reason").'</b>:'.$object->close_note;
 				}
 				print '<span class="opacitymedium">';
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				print $form->textwithpicto($langs->trans("Abandoned"), $text, - 1);
 				print '</span>';
 				print '</td><td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid, 'MT')).'</span></td><td>&nbsp;</td></tr>';
@@ -5479,7 +5486,7 @@ if ($action == 'create') {
 				print '</td>';
 				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">';
 				//print (empty($object->multicurrency_code) ? $conf->currency : $object->multicurrency_code).' ';
-				print price(price2num($object->multicurrency_tx*$resteapayeraffiche, 'MT'), 1, $langs, 1, -1, -1, (empty($object->multicurrency_code) ? $conf->currency : $object->multicurrency_code)).'</td><td>&nbsp;</td></tr>';
+				print price(price2num($object->multicurrency_tx * $resteapayeraffiche, 'MT'), 1, $langs, 1, -1, -1, (empty($object->multicurrency_code) ? $conf->currency : $object->multicurrency_code)).'</td><td>&nbsp;</td></tr>';
 			}
 
 			// Retained warranty : usually use on construction industry
@@ -5827,7 +5834,7 @@ if ($action == 'create') {
 				// For credit note
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->status == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercancreate
 					&& (getDolGlobalString('INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED') || $sumofpayment == 0) && $object->total_ht < 0
-					) {
+				) {
 					print '<a class="butAction classfortooltip'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
 				}
 				// For down payment invoice (deposit)
@@ -5890,7 +5897,7 @@ if ($action == 'create') {
 				&& !$objectidnext
 				&& $object->is_last_in_cycle()
 				&& getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE')
-				) {
+			) {
 				if ($usercanunvalidate) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'&amp;fac_avoir='.$object->id.'&amp;invoiceAvoirWithLines=1&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').'">'.$langs->trans("CreateCreditNote").'</a>';
 				} else {
@@ -5920,7 +5927,7 @@ if ($action == 'create') {
 				&& $object->situation_counter > 1
 				&& $object->is_last_in_cycle()
 				&& $usercanunvalidate
-				) {
+			) {
 				if (($object->total_ttc - $totalcreditnotes) == 0) {
 					print '<a id="butSituationOut" class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=situationout">'.$langs->trans("RemoveSituationFromCycle").'</a>';
 				} else {
