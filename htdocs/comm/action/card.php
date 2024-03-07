@@ -1051,7 +1051,7 @@ if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes
 
 	if ($user->hasRight('agenda', 'myactions', 'delete')
 		|| $user->hasRight('agenda', 'allactions', 'delete')) {
-		$result = $object->delete();
+		$result = $object->delete($user);
 
 		if ($result >= 0) {
 			header("Location: index.php");

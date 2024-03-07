@@ -77,7 +77,7 @@ class AccountingJournal extends CommonObject
 	public $active;
 
 	/**
-	 * @var array array of lines
+	 * @var AccountingJournal[] array of lines
 	 */
 	public $lines;
 

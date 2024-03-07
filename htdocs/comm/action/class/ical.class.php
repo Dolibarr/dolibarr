@@ -143,7 +143,7 @@ class ICal
 		$this->cal = array(); // new empty array
 
 		$this->event_count = -1;
-		$this->file_text = null;
+		$this->file_text = '';
 
 		// Save file into a cache
 		if ($usecachefile) {
@@ -168,10 +168,10 @@ class ICal
 			}
 		}
 
-		$this->file_text = preg_split("[\n]", $this->file_text);
+		$file_text_array = preg_split("[\n]", $this->file_text);
 
 		// is this text vcalendar standard text ? on line 1 is BEGIN:VCALENDAR
-		if (!stristr($this->file_text[0], 'BEGIN:VCALENDAR')) {
+		if (!stristr($file_text_array[0], 'BEGIN:VCALENDAR')) {
 			return 'error not VCALENDAR';
 		}
 
@@ -179,7 +179,7 @@ class ICal
 		$tmpkey = '';
 		$tmpvalue = '';
 		$type = '';
-		foreach ($this->file_text as $text) {
+		foreach ($file_text_array as $text) {
 			$text = trim($text); // trim one line
 			if (!empty($text)) {
 				// get Key and Value VCALENDAR:Begin -> Key = VCALENDAR, Value = begin

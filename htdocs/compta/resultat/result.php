@@ -351,10 +351,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				} else {
 					//var_dump($result);
 					//$r = $AccCat->calculate($result);
-					$r = dol_eval($result, 1, 1, '1');
-					if (is_nan($r)) {
-						$r = 0;
-					}
+					$r = (float) dol_eval($result, 1, 1, '1');
 
 					print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
 				}
@@ -378,10 +375,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				$result = str_replace('--', '+', $result);
 
 				//$r = $AccCat->calculate($result);
-				$r = dol_eval($result, 1, 1, '1');
-				if (is_nan($r)) {
-					$r = 0;
-				}
+				$r = (float) dol_eval($result, 1, 1, '1');
 
 				print '<td class="liste_total right borderright"><span class="amount">'.price($r).'</span></td>';
 				if (empty($sommes[$code]['N'])) {
@@ -400,10 +394,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 						$result = str_replace('--', '+', $result);
 
 						//$r = $AccCat->calculate($result);
-						$r = dol_eval($result, 1, 1, '1');
-						if (is_nan($r)) {
-							$r = 0;
-						}
+						$r = (float) dol_eval($result, 1, 1, '1');
 
 						print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
 						if (empty($sommes[$code]['M'][$k])) {
@@ -423,10 +414,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 						$result = str_replace('--', '+', $result);
 
 						//$r = $AccCat->calculate($result);
-						$r = dol_eval($result, 1, 1, '1');
-						if (is_nan($r)) {
-							$r = 0;
-						}
+						$r = (float) dol_eval($result, 1, 1, '1');
 
 						print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
 						if (empty($sommes[$code]['M'][$k])) {
