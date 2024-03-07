@@ -530,6 +530,8 @@ class Dolresource extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+		$rowid = $this->id;
+
 		$error = 0;
 
 		$this->db->begin();
