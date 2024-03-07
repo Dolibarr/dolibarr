@@ -48,6 +48,7 @@ $search_labelshort = GETPOST('search_labelshort', 'alpha');
 $search_accountparent = GETPOST('search_accountparent', 'alpha');
 $search_pcgtype = GETPOST('search_pcgtype', 'alpha');
 $search_import_key = GETPOST('search_import_key', 'alpha');
+$search_categories = GETPOST('search_categories','alpha');
 $toselect = GETPOST('toselect', 'array');
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $confirm = GETPOST('confirm', 'alpha');
@@ -89,7 +90,7 @@ $arrayfields = array(
 	'aa.labelshort'=>array('label'=>"LabelToShow", 'checked'=>1),
 	'aa.account_parent'=>array('label'=>"Accountparent", 'checked'=>1),
 	'aa.pcg_type'=>array('label'=>"Pcgtype", 'checked'=>1, 'help'=>'PcgtypeDesc'),
-	'categories'=>array('label'=>"AccountingCategories", 'checked'=>-1, 'help'=>'AccountingCategoriesDesc'),
+	'categories'=>array('label'=>"AccountingCategories", 'checked'=>1, 'help'=>'AccountingCategoriesDesc'),
 	'aa.reconcilable'=>array('label'=>"Reconcilable", 'checked'=>1),
 	'aa.import_key'=>array('label'=>"ImportId", 'checked'=>-1, 'help'=>''),
 	'aa.active'=>array('label'=>"Activated", 'checked'=>1)
@@ -145,6 +146,7 @@ if (empty($reshook)) {
 		$search_accountparent = "";
 		$search_pcgtype = "";
 		$search_import_key = "";
+        $search_categories = "";
 		$search_array_options = array();
 	}
 	if ((GETPOST('valid_change_chart', 'alpha') && GETPOST('chartofaccounts', 'int') > 0)	// explicit click on button 'Change and load' with js on
@@ -237,9 +239,10 @@ if ($action == 'delete') {
 
 $pcgver = getDolGlobalInt('CHARTOFACCOUNTS');
 
-$sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.account_number, aa.account_parent, aa.label, aa.labelshort, aa.fk_accounting_category,";
+$sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.account_number, aa.account_parent, aa.label, aa.labelshort,";
 $sql .= " aa.reconcilable, aa.active, aa.import_key,";
-$sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
+$sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2,";
+$sql .= " ac.code as ac_code, ac.label as ac_label, ac.formula as ac_formula";
 
 // Add fields from hooks
 $parameters = array();
@@ -250,6 +253,7 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version AND aa.entity = ".((int) $conf->entity);
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = ".((int) $conf->entity);
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_accounting_category as ac ON aa.fk_accounting_category = ac.rowid AND ac.entity = ".((int) $conf->entity);
 
 // Add table from hooks
 $parameters = array();
@@ -257,6 +261,9 @@ $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object
 $sql .= $hookmanager->resPrint;
 
 $sql .= " WHERE asy.rowid = ".((int) $pcgver);
+
+//$sql .= " AND ac.formula like %ac.code%";
+
 
 if (strlen(trim($search_account))) {
 	$lengthpaddingaccount = 0;
@@ -306,6 +313,10 @@ if (strlen(trim($search_pcgtype))) {
 }
 if (strlen(trim($search_import_key))) {
 	$sql .= natural_search("aa.import_key", $search_import_key);
+}
+
+if(strlen(trim($search_categories))) {
+    $sql .= natural_search('ac.code', $search_categories);
 }
 
 // Add where from hooks
@@ -362,6 +373,9 @@ if ($resql) {
 	if ($search_import_key) {
 		$param .= '&search_import_key='.urlencode($search_import_key);
 	}
+    if($search_categories) {
+        $param .= '&search_categories='.urlencode($search_categories);
+    }
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
@@ -501,7 +515,7 @@ if ($resql) {
 	}
 	// Custom groups
 	if (!empty($arrayfields['categories']['checked'])) {
-		print '<td class="liste_titre"></td>';
+		print '<td class="liste_titre"><input type="text" class="flat width75" name="search_categories" value="'.$search_categories.'"></td>';
 	}
 
 	// Fields from hook
@@ -562,7 +576,7 @@ if ($resql) {
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['categories']['checked'])) {
-		print_liste_field_titre($arrayfields['categories']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '', $arrayfields['categories']['help'], 1);
+		print_liste_field_titre($arrayfields['categories']['label'], $_SERVER["PHP_SELF"], 'ac.code', '', $param, '', $sortfield, $sortorder, '', $arrayfields['categories']['help'], 1);
 		$totalarray['nbfield']++;
 	}
 
@@ -700,7 +714,9 @@ if ($resql) {
 		if (!empty($arrayfields['categories']['checked'])) {
 			print "<td>";
 			// TODO Get all custom groups labels the account is in
-			print dol_escape_htmltag($obj->fk_accounting_category);
+			print dol_escape_htmltag($obj->ac_code) . '&nbsp;';
+            //print dol_escape_htmltag($obj->ac_label) . '&nbsp';
+            print dol_escape_htmltag($obj->ac_formula);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
