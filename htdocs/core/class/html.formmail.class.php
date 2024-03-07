@@ -1521,7 +1521,7 @@ class FormMail extends Form
 			'basic' => 'basic',
 			'news'  => 'news',
 			'commerce' => 'commerce',
-			'text' => 'text'
+			//'text' => 'text'
 		);
 
 		foreach ($templates as $template => $templateFunction) {
