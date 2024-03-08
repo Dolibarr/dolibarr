@@ -129,7 +129,7 @@ class dolReceiptPrinter extends Printer
 	 */
 	public $db;
 
-	/*
+	/**
 	 * @var string[] array of tags
 	 */
 	public $tags;
@@ -800,7 +800,7 @@ class dolReceiptPrinter extends Printer
 						$this->printer->text($title.$spaces.str_pad(price($object->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 						break;
 					case 'DOL_PRINT_CURR_DATE':
-						if (strlen($vals[$tplline]['value'])<2) {
+						if (strlen($vals[$tplline]['value']) < 2) {
 							$this->printer->text(date('d/m/Y H:i:s')."\n");
 						} else {
 							$this->printer->text(date($vals[$tplline]['value'])."\n");
@@ -1056,7 +1056,8 @@ class dolReceiptPrinter extends Printer
 							$this->connector = new CupsPrintConnector($parameter);
 							break;
 						default:
-							$found = false;;
+							$found = false;
+							;
 							break;
 					}
 					if ($found) {
