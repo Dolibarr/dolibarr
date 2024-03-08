@@ -54,6 +54,7 @@ class MyModuleApi extends DolibarrApi
 		$this->myobject = new MyObject($this->db);
 	}
 
+
 	/* BEGIN MODULEBUILDER API MYOBJECT */
 
 	/**
@@ -64,7 +65,7 @@ class MyModuleApi extends DolibarrApi
 	 * @param	int		$id				ID of myobject
 	 * @return  Object					Object with cleaned properties
 	 *
-	 * @url	GET mymodule/myobjects/{id}
+	 * @url	GET myobjects/{id}
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
@@ -103,7 +104,7 @@ class MyModuleApi extends DolibarrApi
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 503 System error
 	 *
-	 * @url	GET /mymodule/myobjects/
+	 * @url	GET /myobjects/
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
@@ -191,7 +192,7 @@ class MyModuleApi extends DolibarrApi
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 500 System error
 	 *
-	 * @url	POST mymodule/myobjects/
+	 * @url	POST myobjects/
 	 */
 	public function post($request_data = null)
 	{
@@ -200,7 +201,7 @@ class MyModuleApi extends DolibarrApi
 		}
 
 		// Check mandatory fields
-		$result = $this->_validate($request_data);
+		$result = $this->_validateMyObject($request_data);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -232,7 +233,7 @@ class MyModuleApi extends DolibarrApi
 	 * @throws RestException 404 Not found
 	 * @throws RestException 500 System error
 	 *
-	 * @url	PUT mymodule/myobjects/{id}
+	 * @url	PUT myobjects/{id}
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -282,7 +283,7 @@ class MyModuleApi extends DolibarrApi
 	 * @throws RestException 409 Nothing to do
 	 * @throws RestException 500 System error
 	 *
-	 * @url	DELETE mymodule/myobjects/{id}
+	 * @url	DELETE myobjects/{id}
 	 */
 	public function delete($id)
 	{
@@ -321,7 +322,7 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * @throws	RestException
 	 */
-	private function _validate($data)
+	private function _validateMyObject($data)
 	{
 		$myobject = array();
 		foreach ($this->myobject->fields as $field => $propfield) {
