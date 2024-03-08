@@ -715,8 +715,6 @@ if ($resql) {
 			print "<td>";
 			// TODO Get all custom groups labels the account is in
 			print dol_escape_htmltag($obj->ac_code) . '&nbsp;';
-            //print dol_escape_htmltag($obj->ac_label) . '&nbsp';
-            print dol_escape_htmltag($obj->ac_formula);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
