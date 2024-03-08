@@ -1632,7 +1632,7 @@ class BookKeeping extends CommonObject
 	 * Delete bookkeeping by piece number
 	 *
 	 * @param 	int 	$piecenum 	Piecenum to delete
-	 * @param string $mode Mode
+	 * @param 	string 	$mode 		Mode ('' or '_tmp')
 	 * @return 	int 				Result
 	 */
 	public function deleteMvtNum($piecenum, $mode = '')
