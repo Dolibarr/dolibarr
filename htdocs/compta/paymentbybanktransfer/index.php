@@ -113,7 +113,7 @@ if (isModEnabled('salaries')) {
 
 print '<tr class="oddeven"><td>'.$langs->trans("Total").'</td>';
 print '<td class="right"><span class="amount nowraponall">';
-print price($totaltoshow, '', '', 1, -1, -1, 'auto');
+print price($totaltoshow, 0, '', 1, -1, -1, 'auto');
 print '</span></td></tr></table></div><br>';
 
 
@@ -226,7 +226,7 @@ if (isModEnabled('salaries')) {
 		print '<th colspan="5">'.$langs->trans("SalaryInvoiceWaitingWithdraw").' <span class="opacitymedium">('.$numRow.')</span></th></tr>';
 
 		if ($numRow) {
-			while ($j < $numRow && $j<10) {
+			while ($j < $numRow && $j < 10) {
 				$objSalary = $db->fetch_object($resql2);
 
 				$user->fetch($objSalary->fk_user);
