@@ -422,7 +422,7 @@ if ($resql) {
 		$param .= '&limit='.((int) $limit);
 	}
 	if ($searchCategoryProductOperator == 1) {
-		$param .= "&search_category_product_operator=".urlencode($searchCategoryProductOperator);
+		$param .= "&search_category_product_operator=".urlencode((string) ($searchCategoryProductOperator));
 	}
 	foreach ($searchCategoryProductList as $searchCategoryProduct) {
 		$param .= "&search_category_product_list[]=".urlencode($searchCategoryProduct);
