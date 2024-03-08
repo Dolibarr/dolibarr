@@ -1057,7 +1057,6 @@ class dolReceiptPrinter extends Printer
 							break;
 						default:
 							$found = false;
-							;
 							break;
 					}
 					if ($found) {
