@@ -753,7 +753,7 @@ if (empty($reshook)) {
 
 
 				// Update linked member
-				if (!$error && $object->fk_soc > 0) {
+				if (!$error && isset($object->fk_soc) && $object->fk_soc > 0) {
 					$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
 					$sql .= " SET fk_soc = NULL WHERE fk_soc = ".((int) $socid);
 					if (!$object->db->query($sql)) {
