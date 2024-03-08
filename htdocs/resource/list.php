@@ -102,7 +102,7 @@ $arrayfields = array(
 		'position' => 1
 	),
 	'ty.label' => array(
-		'label' => $langs->trans("ResourceType"),
+		'label' => $langs->trans("Type"),
 		'checked' => 1,
 		'position' => 2
 	),
@@ -142,7 +142,7 @@ $arrayfields = array(
 		'position' => 9
 	),
 	't.max_users' => array(
-		'label' => $langs->trans("Max_users"),
+		'label' => $langs->trans("MaxUsersLabel"),
 		'checked' => 1,
 		'position' => 10
 	),
