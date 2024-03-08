@@ -1,6 +1,8 @@
 <?php
 
-require_once __DIR__.'/plugins/DeprecatedModuleNameFixer.php';
+//require_once __DIR__.'/plugins/DeprecatedModuleNameFixer.php';
+//require_once __DIR__.'/plugins/PriceFormFixer.php';
+require_once __DIR__.'/plugins/UrlEncodeStringifyFixer.php';
 
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  */
