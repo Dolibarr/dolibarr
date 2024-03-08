@@ -420,7 +420,7 @@ class FormMail extends Form
 					$model_id = $this->param["models_id"];
 				}
 
-				$arraydefaultmessage = $this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id, 1, '', ($model_id > 0 ? -1 : 1)); // If $model_id is empty, preselect the first one
+				$arraydefaultmessage = $this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id, 1, '', ($model_id > 0 ? 1 : -1)); // If $model_id is empty, preselect the first one
 			}
 
 			// Define list of attached files
