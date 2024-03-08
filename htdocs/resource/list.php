@@ -288,8 +288,8 @@ if ($search_town) {
 if ($search_state) {
 	$sql .= natural_search('st.nom', $search_state);
 }
-if ($search_country) {
-	$sql .= natural_search('co.label', $search_country);
+if ($search_country && $search_country != '-1') {
+	$sql .= " AND t.fk_country IN (".$db->sanitize($search_country).')';
 }
 if ($search_phone) {
 	$sql .= natural_search('t.phone', $search_phone);
@@ -482,7 +482,8 @@ if (!empty($arrayfields['st.nom']['checked'])) {
 }
 if (!empty($arrayfields['co.label']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_country" value="'.$search_country.'" size="8">';
+	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
+	//print '<input type="text" class="flat" name="search_country" value="'.$search_country.'" size="8">';
 	print '</td>';
 }
 if (!empty($arrayfields['t.phone']['checked'])) {
