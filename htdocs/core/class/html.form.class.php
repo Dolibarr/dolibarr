@@ -199,13 +199,13 @@ class Form
 	 * @param string 	$text 			Text of label (not used in this function)
 	 * @param string 	$htmlname 		Name of select field
 	 * @param string 	$value 			Value to show/edit
-	 * @param object 	$object 		Object (that we want to show)
+	 * @param CommonObject 	$object 		Object (that we want to show)
 	 * @param boolean 	$perm 			Permission to allow button to edit parameter
 	 * @param string 	$typeofdata 	Type of data ('string' by default, 'checkbox', 'email', 'phone', 'amount:99', 'numeric:99',
 	 *                                  'text' or 'textarea:rows:cols%', 'safehtmlstring', 'restricthtml',
 	 *                                  'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select;xkey:xval,ykey:yval,...')
 	 * @param string 	$editvalue 		When in edit mode, use this value as $value instead of value (for example, you can provide here a formatted price instead of numeric value, or a select combo). Use '' to use same than $value
-	 * @param object 	$extObject 		External object ???
+	 * @param ?CommonObject	$extObject 	External object ???
 	 * @param mixed 	$custommsg 		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
 	 * @param string 	$moreparam 		More param to add on the form on action href URL parameter
 	 * @param int 		$notabletag 	Do no output table tags
@@ -478,13 +478,13 @@ class Form
 	/**
 	 * Output edit in place form
 	 *
-	 * @param 	object 	$object 	Object
+	 * @param 	CommonObject	$object 	Object
 	 * @param 	string 	$value 		Value to show/edit
 	 * @param 	string 	$htmlname 	DIV ID (field name)
 	 * @param 	int 	$condition 	Condition to edit
 	 * @param 	string 	$inputType 	Type of input ('string', 'numeric', 'datepicker' ('day' do not work, don't know why), 'textarea:rows:cols', 'ckeditor:dolibarr_zzz:width:height:?:1:rows:cols', 'select:loadmethod:savemethod:buttononly')
 	 * @param 	string 	$editvalue 	When in edit mode, use this value as $value instead of value
-	 * @param 	object 	$extObject 	External object
+	 * @param 	?CommonObject	$extObject 	External object
 	 * @param 	mixed 	$custommsg 	String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
 	 * @return  string              HTML edit in place
 	 */
