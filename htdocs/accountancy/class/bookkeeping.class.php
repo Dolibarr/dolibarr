@@ -1231,7 +1231,7 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.reconciled_option') {
 					$sqlwhere[] = 't.lettering_code IS NULL';
 				} else {
-					$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->escape($this->db->escapeforlike($value))."%'";
+					$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 				}
 			}
 		}
@@ -1632,7 +1632,7 @@ class BookKeeping extends CommonObject
 	 * Delete bookkeeping by piece number
 	 *
 	 * @param 	int 	$piecenum 	Piecenum to delete
-	 * @param string $mode Mode
+	 * @param 	string 	$mode 		Mode ('' or '_tmp')
 	 * @return 	int 				Result
 	 */
 	public function deleteMvtNum($piecenum, $mode = '')

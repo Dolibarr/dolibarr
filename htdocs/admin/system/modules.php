@@ -58,11 +58,11 @@ $object = new stdClass();
 
 // Definition of fields for lists
 $arrayfields = array(
-	'name'=>array('label'=>$langs->trans("Modules"), 'checked'=>1, 'position'=>10),
-	'version'=>array('label'=>$langs->trans("Version"), 'checked'=>1, 'position'=>20),
-	'id'=>array('label'=>$langs->trans("IdModule"), 'checked'=>1, 'position'=>30),
-	'module_position'=>array('label'=>$langs->trans("Position"), 'checked'=>1, 'position'=>35),
-	'permission'=>array('label'=>$langs->trans("IdPermissions"), 'checked'=>1, 'position'=>40)
+	'name' => array('label' => $langs->trans("Modules"), 'checked' => 1, 'position' => 10),
+	'version' => array('label' => $langs->trans("Version"), 'checked' => 1, 'position' => 20),
+	'id' => array('label' => $langs->trans("IdModule"), 'checked' => 1, 'position' => 30),
+	'module_position' => array('label' => $langs->trans("Position"), 'checked' => 1, 'position' => 35),
+	'permission' => array('label' => $langs->trans("IdPermissions"), 'checked' => 1, 'position' => 40)
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -143,6 +143,7 @@ foreach ($modules as $key => $module) {
 
 	if (!empty($module->picto)) {
 		if (preg_match('/^\//', $module->picto)) {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$newModule->picto = img_picto($alt, $module->picto, 'width="14px"', 1);
 		} else {
 			$newModule->picto = img_object($alt, $module->picto, 'width="14px"');
@@ -157,7 +158,7 @@ foreach ($modules as $key => $module) {
 			if (empty($rights[0])) {
 				continue;
 			}
-			$arrayofpermissions[$rights[0]] = array('label'=> 'user->hasRight(\''.$module->rights_class.'\', \''.$rights[4].'\''.(empty($rights[5]) ? '' : ', \''.$rights[5].'\'').')');
+			$arrayofpermissions[$rights[0]] = array('label' => 'user->hasRight(\''.$module->rights_class.'\', \''.$rights[4].'\''.(empty($rights[5]) ? '' : ', \''.$rights[5].'\'').')');
 			$permission[] = $rights[0];
 
 			array_push($rights_ids, $rights[0]);
@@ -296,7 +297,7 @@ if ($arrayfields['module_position']['checked']) {
 }
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
@@ -408,13 +409,13 @@ llxFooter();
 $db->close();
 
 
- /**
-  * Compare two modules by their ID for a ascending order
-  *
-  * @param	stdClass 	$a		First module
-  * @param	stdClass 	$b		Second module
-  * @return	int					Compare result (-1, 0, 1)
-  */
+/**
+ * Compare two modules by their ID for a ascending order
+ *
+ * @param	stdClass 	$a		First module
+ * @param	stdClass 	$b		Second module
+ * @return	int					Compare result (-1, 0, 1)
+ */
 function compareIdAsc(stdClass $a, stdClass $b)
 {
 	if ((int) $a->id == (int) $b->id) {
@@ -424,13 +425,13 @@ function compareIdAsc(stdClass $a, stdClass $b)
 	return ((int) $a->id < (int) $b->id) ? -1 : 1;
 }
 
- /**
-  * Compare two modules by their ID for a descending order
-  *
-  * @param	stdClass 	$a		First module
-  * @param	stdClass 	$b		Second module
-  * @return	int					Compare result (-1, 0, 1)
-  */
+/**
+ * Compare two modules by their ID for a descending order
+ *
+ * @param	stdClass 	$a		First module
+ * @param	stdClass 	$b		Second module
+ * @return	int					Compare result (-1, 0, 1)
+ */
 function compareIdDesc(stdClass $a, stdClass $b)
 {
 	if ((int) $a->id == (int) $b->id) {
@@ -440,13 +441,13 @@ function compareIdDesc(stdClass $a, stdClass $b)
 	return ((int) $b->id < (int) $a->id) ? -1 : 1;
 }
 
- /**
-  * Compare two modules by their ID for a ascending order
-  *
-  * @param	stdClass 	$a		First module
-  * @param	stdClass 	$b		Second module
-  * @return	int					Compare result (-1, 0, 1)
-  */
+/**
+ * Compare two modules by their ID for a ascending order
+ *
+ * @param	stdClass 	$a		First module
+ * @param	stdClass 	$b		Second module
+ * @return	int					Compare result (-1, 0, 1)
+ */
 function comparePermissionIdsAsc(stdClass $a, stdClass $b)
 {
 	if (empty($a->permission) && empty($b->permission)) {
@@ -467,13 +468,13 @@ function comparePermissionIdsAsc(stdClass $a, stdClass $b)
 	return $a->permission[0] < $b->permission[0] ? -1 : 1;
 }
 
- /**
-  * Compare two modules by their permissions for a descending order
-  *
-  * @param	stdClass 	$a		First module
-  * @param	stdClass 	$b		Second module
-  * @return	int					Compare result (-1, 0, 1)
-  */
+/**
+ * Compare two modules by their permissions for a descending order
+ *
+ * @param	stdClass 	$a		First module
+ * @param	stdClass 	$b		Second module
+ * @return	int					Compare result (-1, 0, 1)
+ */
 function comparePermissionIdsDesc(stdClass $a, stdClass $b)
 {
 	if (empty($a->permission) && empty($b->permission)) {

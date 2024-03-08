@@ -428,13 +428,15 @@ class PaiementFourn extends Paiement
 	 *	Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
 	 *	Si le paiement porte sur au moins une facture a "payee", on refuse
 	 *	@TODO Add User $user as first param
-	 *
+	 *  @param		User	$user			User making the deletion
 	 *	@param		int		$notrigger		No trigger
-	 *	@return     int     Return integer <0 si ko, >0 si ok
+	 *	@return     int     				Return integer <0 si ko, >0 si ok
 	 */
-	public function delete($notrigger = 0)
+	public function delete($user = null, $notrigger = 0)
 	{
-		global $user;
+		if (empty($user)) {
+			global $user;
+		}
 
 		$bank_line_id = $this->bank_line;
 

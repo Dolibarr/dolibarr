@@ -2253,6 +2253,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
 			$text .= '<span class="fa fa-bug atoplogin valignmiddle"></span>';
 			$text .= '</a>';
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$toprightmenu .= $form->textwithtooltip('', $langs->trans("ModuleBuilder"), 2, 1, $text, 'login_block_elem', 2);
 		}
 
@@ -2284,6 +2285,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			//$text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
 			$text .= '<span class="fa fa-print atoplogin valignmiddle"></span>';
 			$text .= '</a>';
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$toprightmenu .= $form->textwithtooltip('', $langs->trans("PrintContentArea"), 2, 1, $text, 'login_block_elem', 2);
 		}
 
@@ -2330,6 +2332,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				$text .= '<span class="fa fa-question-circle atoplogin valignmiddle'.($helppresent ? ' '.$helppresent : '').'"></span>';
 				$text .= '<span class="fa fa-long-arrow-alt-up helppresentcircle'.($helppresent ? '' : ' unvisible').'"></span>';
 				$text .= '</a>';
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$toprightmenu .= $form->textwithtooltip('', $title, 2, 1, $text, 'login_block_elem', 2);
 			}
 
@@ -2342,6 +2345,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			$text = '<span class="aversion"><span class="hideonsmartphone small">'.DOL_VERSION.'</span></span>';
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$toprightmenu .= $form->textwithtooltip('', $appli, 2, 1, $text, 'login_block_elem', 2);
 		}
 

@@ -501,11 +501,7 @@ class DataPolicyCron
 						}
 
 						if ($action == 'delete') {									// If object to clean is not used
-							if ($object->element == 'adherent') {
-								$result = $object->delete($obj->rowid, $user);
-							} else {
-								$result = $object->delete($user);
-							}
+							$result = $object->delete($user);
 							if ($result < 0) {
 								$errormsg = $object->error;
 								$error++;

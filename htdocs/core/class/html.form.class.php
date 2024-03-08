@@ -796,12 +796,15 @@ class Form
 		} elseif ($type == 'helpclickable') {
 			$img = img_help(($tooltiptrigger != '' ? 2 : 1), $alt);
 		} elseif ($type == 'superadmin') {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$img = img_picto($alt, 'redstar');
 		} elseif ($type == 'admin') {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$img = img_picto($alt, 'star');
 		} elseif ($type == 'warning') {
 			$img = img_warning($alt);
 		} elseif ($type != 'none') {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$img = img_picto($alt, $type); // $type can be an image path
 		}
 
@@ -2222,11 +2225,11 @@ class Form
 
 					$outarray[$userstatic->id] = $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength) . $moreinfo;
 					$outarray2[$userstatic->id] = array(
-						'id'=>$userstatic->id,
-						'label'=>$labeltoshow,
-						'labelhtml'=>$labeltoshowhtml,
-						'color'=>'',
-						'picto'=>''
+						'id' => $userstatic->id,
+						'label' => $labeltoshow,
+						'labelhtml' => $labeltoshowhtml,
+						'color' => '',
+						'picto' => ''
 					);
 
 					$i++;
@@ -3370,7 +3373,7 @@ class Form
 			}
 		}
 
-		$parameters = array('objp'=>$objp);
+		$parameters = array('objp' => $objp);
 		$reshook = $hookmanager->executeHooks('constructProductListOption', $parameters); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			$opt .= $hookmanager->resPrint;
@@ -5375,11 +5378,11 @@ class Form
 						}
 						$more .= $this->selectDate($input['value'], $input['name'], $h, $m, 0, '', 1, $addnowlink);
 						$more .= '</div></div>'."\n";
-						$formquestion[] = array('name'=>$input['name'].'day');
-						$formquestion[] = array('name'=>$input['name'].'month');
-						$formquestion[] = array('name'=>$input['name'].'year');
-						$formquestion[] = array('name'=>$input['name'].'hour');
-						$formquestion[] = array('name'=>$input['name'].'min');
+						$formquestion[] = array('name' => $input['name'].'day');
+						$formquestion[] = array('name' => $input['name'].'month');
+						$formquestion[] = array('name' => $input['name'].'year');
+						$formquestion[] = array('name' => $input['name'].'hour');
+						$formquestion[] = array('name' => $input['name'].'min');
 					} elseif ($input['type'] == 'other') { // can be 1 column or 2 depending if label is set or not
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">';
 						if (!empty($input['label'])) {
@@ -7202,7 +7205,7 @@ class Form
 		// Add a link to set data
 		if ($conf->use_javascript_ajax && !empty($adddateof)) {
 			if (!is_array($adddateof)) {
-				$arrayofdateof = array(array('adddateof'=>$adddateof, 'labeladddateof'=>$labeladddateof));
+				$arrayofdateof = array(array('adddateof' => $adddateof, 'labeladddateof' => $labeladddateof));
 			} else {
 				$arrayofdateof = $adddateof;
 			}
@@ -8171,7 +8174,9 @@ class Form
 
 				$oldValueForShowOnCombobox = 0;
 				foreach ($objecttmp->fields as $fieldK => $fielV) {
-					if (!$fielV['showoncombobox'] || empty($objecttmp->$fieldK)) continue;
+					if (!$fielV['showoncombobox'] || empty($objecttmp->$fieldK)) {
+						continue;
+					}
 
 					if (!$oldValueForShowOnCombobox) {
 						$selected_input_value = '';
@@ -10723,8 +10728,8 @@ class Form
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 				$searchtags = removeGlobalParenthesis($searchtags);
 
-				$ret .= '<span class="marginleftonlyshort valignmiddle tagsearch" data-ufilterid="'.($tmpkey+1).'" data-ufilter="'.dol_escape_htmltag($tmpval).'">';
-				$ret .= '<span class="tagsearchdelete select2-selection__choice__remove" data-ufilterid="'.($tmpkey+1).'">x</span> ';
+				$ret .= '<span class="marginleftonlyshort valignmiddle tagsearch" data-ufilterid="'.($tmpkey + 1).'" data-ufilter="'.dol_escape_htmltag($tmpval).'">';
+				$ret .= '<span class="tagsearchdelete select2-selection__choice__remove" data-ufilterid="'.($tmpkey + 1).'">x</span> ';
 				$ret .= dol_escape_htmltag($searchtags);
 				$ret .= '</span>';
 			}

@@ -276,6 +276,7 @@ if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 				'name' => dol_string_nohtmltag(getDolGlobalString($name)),
 				'offsettz' => (int) getDolGlobalInt($offsettz, 0),
 				'color' => dol_string_nohtmltag(getDolGlobalString($color)),
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				'default' => dol_string_nohtmltag(getDolGlobalString($default)),
 				'buggedfile' => dol_string_nohtmltag(getDolGlobalString('buggedfile', ''))
 			);
@@ -301,6 +302,7 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 				'src' => getDolUserString($source),
 				'name' => dol_string_nohtmltag(getDolUserString($name)),
 				'offsettz' => (int) (empty($user->conf->$offsettz) ? 0 : $user->conf->$offsettz),
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				'color' => dol_string_nohtmltag(getDolUserString($color)),
 				'default' => dol_string_nohtmltag(getDolUserString($default)),
 				'buggedfile' => dol_string_nohtmltag(isset($user->conf->buggedfile) ? $user->conf->buggedfile : '')
@@ -1562,6 +1564,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 					$style .= ' cal_other_month_right';
 				}
 				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				show_day_events($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
 				echo "  </td>\n";
 			} elseif ($tmpday <= $max_day_in_month) {
@@ -1583,6 +1586,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 				}
 				//var_dump($todayarray['mday']."==".$tmpday." && ".$todayarray['mon']."==".$month." && ".$todayarray['year']."==".$year.' -> '.$style);
 				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam, 0, 60, 0, $bookcalcalendars);
 				echo "</td>\n";
 			} else {
@@ -1592,6 +1596,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 					$style .= ' cal_other_month_right';
 				}
 				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
 				echo "</td>\n";
 			}
@@ -1656,6 +1661,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		}
 
 		echo '  <td class="'.$style.'" width="14%" valign="top">';
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		show_day_events($db, $tmpday, $tmpmonth, $tmpyear, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars);
 		echo "  </td>\n";
 	}
@@ -1746,12 +1752,14 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 
 		echo '</div></div>';
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 1, $bookcalcalendars);
 
 		print '</div>';
 	} else {
 		print '<div class="div-table-responsive-no-min borderbottom">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars);
 
 		print '</div>';

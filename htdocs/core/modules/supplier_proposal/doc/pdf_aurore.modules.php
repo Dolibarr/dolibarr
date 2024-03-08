@@ -714,7 +714,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 *   @param		Object		$object			Object to show
 	 *   @param		int|float	$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
-	 *   @return	int
+	 *   @return	int|float
 	 */
 	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
