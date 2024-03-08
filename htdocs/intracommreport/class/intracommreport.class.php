@@ -134,12 +134,11 @@ class IntracommReport extends CommonObject
 	/**
 	 * Function delete
 	 *
-	 * @param 	int 	$id 		object ID
 	 * @param 	User 	$user 		User
 	 * @param 	int 	$notrigger 	notrigger
 	 * @return 	int
 	 */
-	public function delete($id, $user, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		return 1;
 	}

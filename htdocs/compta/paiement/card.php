@@ -120,7 +120,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('facture', 'paiement')) {
 		$db->begin();
 
-		$result = $object->delete();
+		$result = $object->delete($user);
 		if ($result > 0) {
 			$db->commit();
 

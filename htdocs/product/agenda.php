@@ -97,7 +97,7 @@ if ($object->id > 0) {
  *	Actions
  */
 
-$parameters = array('id'=>$id);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -214,6 +214,7 @@ if ($id > 0 || $ref) {
 			$param .= '&limit='.$limit;
 		}
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		print_barre_liste($langs->trans("ActionsOnProduct"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
 
 		// List of all actions

@@ -273,6 +273,7 @@ if ($result > 0) {
 
 	// List of active notifications
 	//print load_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')', '', '');
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $num, 'email', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	// Line with titles
@@ -311,7 +312,7 @@ if ($result > 0) {
 			print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$form->selectarray("actionid", $actions, '', 1);
 			print '</td>';
 			print '<td>';
-			$type = array('email'=>$langs->trans("EMail"));
+			$type = array('email' => $langs->trans("EMail"));
 			print $form->selectarray("typeid", $type);
 			print '</td>';
 			print '<td class="nowraponall">';

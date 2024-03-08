@@ -74,6 +74,7 @@ if ($id > 0 || !empty($ref)) {
 
 $account = new UserBankAccount($db);
 if (!$bankid) {
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$account->fetch(0, '', $id);
 } else {
 	$account->fetch($bankid);
@@ -603,7 +604,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	// Latest payments of salaries
 	if (isModEnabled('salaries') &&
 		(($user->hasRight('salaries', 'read') && (in_array($object->id, $childids) || $object->id == $user->id)) || ($user->hasRight('salaries', 'readall')))
-		) {
+	) {
 		$payment_salary = new PaymentSalary($db);
 		$salary = new Salary($db);
 
@@ -725,7 +726,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	// Latest expense report
 	if (isModEnabled('expensereport') &&
 		($user->hasRight('expensereport', 'readall') || ($user->hasRight('expensereport', 'lire') && $object->id == $user->id))
-		) {
+	) {
 		$exp = new ExpenseReport($db);
 
 		$sql = "SELECT e.rowid, e.ref, e.fk_statut as status, e.date_debut, e.total_ttc";

@@ -613,6 +613,7 @@ if ($object->id > 0) {
 	print '<tr><td>'.$langs->trans($title).'</td><td colspan="3">';
 
 	$bac = new CompanyBankAccount($db);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$bac->fetch(0, $object->thirdparty->id);
 
 	print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;

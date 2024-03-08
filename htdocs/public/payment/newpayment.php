@@ -1721,6 +1721,7 @@ if ($source == 'donation') {
 	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 	$don = new Don($db);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$result = $don->fetch($ref);
 	if ($result <= 0) {
 		$mesg = $don->error;

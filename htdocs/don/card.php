@@ -293,6 +293,7 @@ if (empty($reshook)) {
 	// Action validation
 	if ($action == 'valid_promesse') {
 		$object->fetch($id);
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		if ($object->valid_promesse($id, $user->id) >= 0) {
 			setEventMessages($langs->trans("DonationValidated", $object->ref), null);
 			$action = '';

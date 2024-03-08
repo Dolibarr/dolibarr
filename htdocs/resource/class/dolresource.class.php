@@ -520,14 +520,17 @@ class Dolresource extends CommonObject
 	/**
 	 * Delete a resource object
 	 *
-	 * @param	int		$rowid			Id of resource line to delete
+	 * @param	User	$user			User making the change
 	 * @param	int		$notrigger		Disable all triggers
 	 * @return	int						if OK: >0 || if KO: <0
 	 */
-	public function delete(int $rowid, int $notrigger = 0)
+	public function delete(User $user, int $notrigger = 0)
 	{
-		global $user, $conf;
+		global $conf;
+
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+		$rowid = $this->id;
 
 		$error = 0;
 

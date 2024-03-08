@@ -229,7 +229,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['p.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => ($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
+			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);

@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright (C) 2013	    Marcos García	        <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Abbes Bahfir            <bafbes@gmail.com>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  *
@@ -235,7 +235,7 @@ function getHtmlOnlinePaymentLink($type, $ref, $label = '', $amount = 0)
  * @param	string		$ref		      Ref of object
  * @param	int|float	$amount		      Amount of money to request for
  * @param	string		$freetag	      Free tag (required and used for $type='free' only)
- * @param   string  	$localorexternal  0=Url for browser, 1=Url for external access
+ * @param   int     	$localorexternal  0=Url for browser, 1=Url for external access
  * @return	string					      Url string
  */
 function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'your_tag', $localorexternal = 1)

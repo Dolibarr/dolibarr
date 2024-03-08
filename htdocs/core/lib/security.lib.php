@@ -965,7 +965,12 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				$sql .= ", ".MAIN_DB_PREFIX."societe as s)";
 				$sql .= " WHERE sc.fk_soc IN (".$db->sanitize($objectid, 1).")";
-				$sql .= " AND sc.fk_user = ".((int) $user->id);
+				$sql .= " AND (sc.fk_user = ".((int) $user->id);
+				if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+					$userschilds = $user->getAllChildIds();
+					$sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
+				}
+				$sql .= ")";
 				$sql .= " AND sc.fk_soc = s.rowid";
 				$sql .= " AND s.entity IN (".getEntity($sharedelement, 1).")";
 			} elseif (isModEnabled('multicompany')) {
@@ -1070,7 +1075,14 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 					$sql .= " AND sc.fk_soc = dbt.".$dbt_keyfield;
-					$sql .= " AND sc.fk_user = ".((int) $user->id);
+					$sql .= " AND (sc.fk_user = ".((int) $user->id);
+					if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+						$userschilds = $user->getAllChildIds();
+						foreach ($userschilds as $key => $value) {
+							$sql .= ' OR sc.fk_user = '.((int) $value);
+						}
+					}
+					$sql .= ')';
 				} else {
 					// On ticket, the thirdparty is not mandatory, so we need a special test to accept record with no thirdparties.
 					$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";

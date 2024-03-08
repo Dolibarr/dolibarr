@@ -1133,7 +1133,6 @@ class Ticket extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$this->db->begin();

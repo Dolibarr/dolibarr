@@ -501,6 +501,7 @@ if ($step == 2 && $datatoimport) {
 		print '<tr class="oddeven">';
 		print '<td width="16">'.img_picto_common($key, $objmodelimport->getPictoForKey($key)).'</td>';
 		$text = $objmodelimport->getDriverDescForKey($key);
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key), $text).'</td>';
 		print '<td style="text-align:center">';
 		$filename = $langs->trans("ExampleOfImportFile").'_'.$datatoimport.'.'.$key;
@@ -593,6 +594,7 @@ if ($step == 3 && $datatoimport) {
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td class="nowraponall">';
 	$text = $objmodelimport->getDriverDescForKey($format);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
 	print '</td><td style="text-align:right" class="nowrap">';
 	$filename = $langs->trans("ExampleOfImportFile").'_'.$datatoimport.'.'.$format;
@@ -991,6 +993,7 @@ if ($step == 4 && $datatoimport) {
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
 	$text = $objmodelimport->getDriverDescForKey($format);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
 	print '</td></tr>';
 
@@ -1087,6 +1090,7 @@ if ($step == 4 && $datatoimport) {
 
 	$lefti = 1;
 	foreach ($fieldssource as $key => $val) {
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		show_elem($fieldssource, $key, $val); // key is field number in source file
 		$listofkeys[$key] = 1;
 		$fieldsplaced[$key] = 1;
@@ -1655,6 +1659,7 @@ if ($step == 5 && $datatoimport) {
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
 	$text = $objmodelimport->getDriverDescForKey($format);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
 	print '</td></tr>';
 
@@ -2140,6 +2145,7 @@ if ($step == 6 && $datatoimport) {
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
 	$text = $objmodelimport->getDriverDescForKey($format);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
 	print '</td></tr>';
 
