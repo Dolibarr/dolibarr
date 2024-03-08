@@ -4272,6 +4272,7 @@ function isValidEmail($address, $acceptsupervisorkey = 0, $acceptuserkey = 0)
  *	@param	    string		$domain	    			Domain name (Ex: "yahoo.com", "yhaoo.com", "dolibarr.fr")
  *	@return     int     							-1 if error (function not available), 0=Not valid, 1=Valid
  *  @see isValidEmail()
+ *  @suppress PhanDeprecatedFunctionInternal Error in Phan plugins incorrectly tags some functions here
  */
 function isValidMXRecord($domain)
 {

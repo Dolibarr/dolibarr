@@ -772,7 +772,7 @@ if ($id > 0 || !empty($ref)) {
 
 					// Qty remains to ship
 					print '<td class="center">';
-					if ($type == 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')|| getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+					if ($type == 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
 						$toBeShipped[$objp->fk_product] = $objp->qty - $qtyAlreadyShipped;
 						$toBeShippedTotal += $toBeShipped[$objp->fk_product];
 						print $toBeShipped[$objp->fk_product];

@@ -97,7 +97,7 @@ $error = 0;
 /*
  * Actions
  */
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -563,7 +563,7 @@ if ($resql) {
 			// Status
 			print '<td class="right">'.$invoice->getLibStatut(5, $alreadypayed).'</td>';
 
-			$parameters = array('fk_paiement'=> (int) $object->id);
+			$parameters = array('fk_paiement' => (int) $object->id);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objp, $action); // Note that $action and $object may have been modified by hook
 
 			print "</tr>\n";

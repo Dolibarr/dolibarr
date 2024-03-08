@@ -289,7 +289,7 @@ class Lettering extends BookKeeping
 	{
 		$error = 0;
 
-		// Generate a string with n char A where n is ACCOUNTING_LETTERING_NBLETTERS (So 'AA', 'AAA', ...)
+		// Generate a string with n char A where n is ACCOUNTING_LETTERING_NBLETTERS (So 'AA', 'AAA', ...) @phan-suppress-next-line PhanParamSuspiciousOrder
 		$lettre = str_pad("", getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3), "A");
 
 		$sql = "SELECT DISTINCT ab2.lettering_code";

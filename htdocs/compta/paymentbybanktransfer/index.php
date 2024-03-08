@@ -226,7 +226,7 @@ if (isModEnabled('salaries')) {
 		print '<th colspan="5">'.$langs->trans("SalaryInvoiceWaitingWithdraw").' <span class="opacitymedium">('.$numRow.')</span></th></tr>';
 
 		if ($numRow) {
-			while ($j < $numRow && $j<10) {
+			while ($j < $numRow && $j < 10) {
 				$objSalary = $db->fetch_object($resql2);
 
 				$user->fetch($objSalary->fk_user);

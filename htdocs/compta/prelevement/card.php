@@ -460,7 +460,7 @@ if ($id > 0 || $ref) {
 	if ($salaryBonPl) {
 		$sql = "SELECT pl.rowid, pl.statut, pl.amount, pl.fk_user,";
 		$sql .= " u.rowid as socid, u.login as name";
-		$sql .=" FROM llx_prelevement_lignes as pl";
+		$sql .= " FROM llx_prelevement_lignes as pl";
 		$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
 		$sql .= ", ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $id);
@@ -527,6 +527,7 @@ if ($id > 0 || $ref) {
 		if (!empty($sortorder)) {
 			print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 		}
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($langs->trans("Lines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table

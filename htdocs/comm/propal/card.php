@@ -834,7 +834,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'import_lines_from_object'
 		&& $user->hasRight('propal', 'creer')
 		&& $object->statut == Propal::STATUS_DRAFT
-		) {
+	) {
 		// add lines from objectlinked
 		$fromElement = GETPOST('fromelement');
 		$fromElementid = GETPOST('fromelementid');
@@ -964,7 +964,7 @@ if (empty($reshook)) {
 		// Define margin
 		$margin_rate = (GETPOST('marginforalllines') ? GETPOST('marginforalllines') : 0);
 		foreach ($object->lines as &$line) {
-			$subprice = price2num($line->pa_ht * (1 + $margin_rate/100), 'MU');
+			$subprice = price2num($line->pa_ht * (1 + $margin_rate / 100), 'MU');
 			$prod = new Product($db);
 			$prod->fetch($line->fk_product);
 			if ($prod->price_min > $subprice) {
@@ -1083,7 +1083,7 @@ if (empty($reshook)) {
 			$pu_ttc_devise = 0;
 			$price_min = 0;
 			$price_min_ttc = 0;
-			$tva_npr=0;
+			$tva_npr = 0;
 			$price_base_type = (GETPOST('price_base_type', 'alpha') ? GETPOST('price_base_type', 'alpha') : 'HT');
 
 			$db->begin();
@@ -1245,8 +1245,8 @@ if (empty($reshook)) {
 				}
 
 				//If text set in desc is the same as product description (as now it's preloaded) we add it only one time
-				if ($product_desc==$desc && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
-					$product_desc='';
+				if ($product_desc == $desc && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
+					$product_desc = '';
 				}
 
 				if (!empty($product_desc) && getDolGlobalString('MAIN_NO_CONCAT_DESCRIPTION')) {

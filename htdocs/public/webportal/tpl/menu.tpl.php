@@ -112,10 +112,13 @@ $parameters = array(
 );
 
 $reshook = $hookmanager->executeHooks('PrintTopMenu', $parameters, $context, $context->action);    // Note that $action and $object may have been modified by hook
-if ($reshook < 0) $context->setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	$context->setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (empty($reshook)) {
 	if (!empty($hookmanager->resArray)) {
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrderInternal
 		$navMenu = array_replace($navMenu, $hookmanager->resArray);
 	}
 
