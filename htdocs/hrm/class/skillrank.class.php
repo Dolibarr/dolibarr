@@ -105,16 +105,16 @@ class SkillRank extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'fk_skill' => array('type'=>'integer:Skill:hrm/class/skill.class.php:1', 'label'=>'Skill', 'enabled'=>'1', 'position'=>3, 'notnull'=>1, 'visible'=>1, 'index'=>1,),
-		'rankorder' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>'1', 'position'=>4, 'notnull'=>1, 'visible'=>1, 'default' => 0),
-		'fk_object' => array('type'=>'integer', 'label'=>'object', 'enabled'=>'1', 'position'=>5, 'notnull'=>1, 'visible'=>0,),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
-		'objecttype' => array('type'=>'varchar(128)', 'label'=>'objecttype', 'enabled'=>'1', 'position'=>6, 'notnull'=>1, 'visible'=>0,),
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => '1', 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => '1', 'index' => 1, 'css' => 'left', 'comment' => "Id"),
+		'fk_skill' => array('type' => 'integer:Skill:hrm/class/skill.class.php:1', 'label' => 'Skill', 'enabled' => '1', 'position' => 3, 'notnull' => 1, 'visible' => 1, 'index' => 1,),
+		'rankorder' => array('type' => 'integer', 'label' => 'Rank', 'enabled' => '1', 'position' => 4, 'notnull' => 1, 'visible' => 1, 'default' => 0),
+		'fk_object' => array('type' => 'integer', 'label' => 'object', 'enabled' => '1', 'position' => 5, 'notnull' => 1, 'visible' => 0,),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => '1', 'position' => 500, 'notnull' => 1, 'visible' => -2,),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => '1', 'position' => 501, 'notnull' => 0, 'visible' => -2,),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => '1', 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => '1', 'position' => 511, 'notnull' => -1, 'visible' => -2,),
+		'objecttype' => array('type' => 'varchar(128)', 'label' => 'objecttype', 'enabled' => '1', 'position' => 6, 'notnull' => 1, 'visible' => 0,),
 	);
 	public $rowid;
 	public $fk_skill;
@@ -425,7 +425,7 @@ class SkillRank extends CommonObject
 		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
 		if ($errormessage) {
 			$this->errors[] = $errormessage;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			return -1;
 		}
 
@@ -814,7 +814,7 @@ class SkillRank extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('skillrankdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

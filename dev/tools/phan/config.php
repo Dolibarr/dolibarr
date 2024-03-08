@@ -277,7 +277,7 @@ return [
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
 		// checks if a function, closure or method unconditionally returns.
 		// can also be written as 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php'
-		//'DeprecateAliasPlugin',
+		'DeprecateAliasPlugin',
 		//'EmptyMethodAndFunctionPlugin',
 		'InvalidVariableIssetPlugin',
 		//'MoreSpecificElementTypePlugin',

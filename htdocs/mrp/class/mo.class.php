@@ -96,30 +96,30 @@ class Mo extends CommonObject
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
-		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>'1', 'noteditable'=>1),
-		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:(t.status:=:1)', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>'$conf->bom->enabled', 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM", 'css'=>'minwidth100 maxwidth500', 'csslist'=>'tdoverflowmax150', 'picto'=>'bom'),
-		'mrptype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'position'=>34, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing', 1=>'Disassemble'), 'css'=>'minwidth150', 'csslist'=>'minwidth150 center'),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:0', 'label'=>'Product', 'enabled'=>'isModEnabled("product")', 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce", 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax100', 'picto'=>'product'),
-		'qty' => array('type'=>'real', 'label'=>'QtyToProduce', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>1, 'comment'=>"Qty to produce", 'css'=>'width75', 'default'=>1, 'isameasure'=>1),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'showoncombobox'=>'2', 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax200', 'alwayseditable'=>1),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax150'),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label'=>'Project', 'picto'=>'project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>51, 'notnull'=>-1, 'index'=>1, 'css'=>'minwidth200 maxwidth400', 'csslist'=>'tdoverflowmax100'),
-		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'picto'=>'stock', 'enabled'=>'isModEnabled("stock")', 'visible'=>1, 'position'=>52, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax200'),
-		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61, 'notnull'=>-1,),
-		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>62, 'notnull'=>-1,),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>500, 'notnull'=>1,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'position'=>501, 'notnull'=>1,),
-		'date_valid' => array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>502,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax100'),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1, 'csslist'=>'tdoverflowmax100'),
-		'date_start_planned' => array('type'=>'datetime', 'label'=>'DateStartPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'notnull'=>-1, 'index'=>1, 'help'=>'KeepEmptyForAsap', 'alwayseditable'=>1, 'csslist'=>'nowraponall'),
-		'date_end_planned' => array('type'=>'datetime', 'label'=>'DateEndPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>56, 'notnull'=>-1, 'index'=>1, 'alwayseditable'=>1, 'csslist'=>'nowraponall'),
-		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
-		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'default'=>0, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '2'=>'InProgress', '3'=>'StatusMOProduced', '9'=>'Canceled')),
-		'fk_parent_line' => array('type'=>'integer:MoLine:mrp/class/mo.class.php', 'label'=>'ParentMo', 'enabled'=>1, 'visible'=>0, 'position'=>1020, 'default'=>0, 'notnull'=>0, 'index'=>1,'showoncombobox'=>0),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'position' => 5, 'notnull' => 1, 'default' => '1', 'index' => 1),
+		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 4, 'position' => 10, 'notnull' => 1, 'default' => '(PROV)', 'index' => 1, 'searchall' => 1, 'comment' => "Reference of object", 'showoncombobox' => '1', 'noteditable' => 1),
+		'fk_bom' => array('type' => 'integer:Bom:bom/class/bom.class.php:0:(t.status:=:1)', 'filter' => 'active=1', 'label' => 'BOM', 'enabled' => '$conf->bom->enabled', 'visible' => 1, 'position' => 33, 'notnull' => -1, 'index' => 1, 'comment' => "Original BOM", 'css' => 'minwidth100 maxwidth500', 'csslist' => 'tdoverflowmax150', 'picto' => 'bom'),
+		'mrptype' => array('type' => 'integer', 'label' => 'Type', 'enabled' => 1, 'visible' => 1, 'position' => 34, 'notnull' => 1, 'default' => '0', 'arrayofkeyval' => array(0 => 'Manufacturing', 1 => 'Disassemble'), 'css' => 'minwidth150', 'csslist' => 'minwidth150 center'),
+		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php:0', 'label' => 'Product', 'enabled' => 'isModEnabled("product")', 'visible' => 1, 'position' => 35, 'notnull' => 1, 'index' => 1, 'comment' => "Product to produce", 'css' => 'maxwidth300', 'csslist' => 'tdoverflowmax100', 'picto' => 'product'),
+		'qty' => array('type' => 'real', 'label' => 'QtyToProduce', 'enabled' => 1, 'visible' => 1, 'position' => 40, 'notnull' => 1, 'comment' => "Qty to produce", 'css' => 'width75', 'default' => 1, 'isameasure' => 1),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'position' => 42, 'notnull' => -1, 'searchall' => 1, 'showoncombobox' => '2', 'css' => 'maxwidth300', 'csslist' => 'tdoverflowmax200', 'alwayseditable' => 1),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1', 'label' => 'ThirdParty', 'picto' => 'company', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'position' => 50, 'notnull' => -1, 'index' => 1, 'css' => 'maxwidth400', 'csslist' => 'tdoverflowmax150'),
+		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'picto' => 'project', 'enabled' => '$conf->project->enabled', 'visible' => -1, 'position' => 51, 'notnull' => -1, 'index' => 1, 'css' => 'minwidth200 maxwidth400', 'csslist' => 'tdoverflowmax100'),
+		'fk_warehouse' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label' => 'WarehouseForProduction', 'picto' => 'stock', 'enabled' => 'isModEnabled("stock")', 'visible' => 1, 'position' => 52, 'css' => 'maxwidth400', 'csslist' => 'tdoverflowmax200'),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 61, 'notnull' => -1,),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 62, 'notnull' => -1,),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'position' => 500, 'notnull' => 1,),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'position' => 501, 'notnull' => 1,),
+		'date_valid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -2, 'position' => 502,),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -2, 'position' => 510, 'notnull' => 1, 'foreignkey' => 'user.rowid', 'csslist' => 'tdoverflowmax100'),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'position' => 511, 'notnull' => -1, 'csslist' => 'tdoverflowmax100'),
+		'date_start_planned' => array('type' => 'datetime', 'label' => 'DateStartPlannedMo', 'enabled' => 1, 'visible' => 1, 'position' => 55, 'notnull' => -1, 'index' => 1, 'help' => 'KeepEmptyForAsap', 'alwayseditable' => 1, 'csslist' => 'nowraponall'),
+		'date_end_planned' => array('type' => 'datetime', 'label' => 'DateEndPlannedMo', 'enabled' => 1, 'visible' => 1, 'position' => 56, 'notnull' => -1, 'index' => 1, 'alwayseditable' => 1, 'csslist' => 'nowraponall'),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 1000, 'notnull' => -1,),
+		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 1010),
+		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'position' => 1000, 'default' => 0, 'notnull' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '2' => 'InProgress', '3' => 'StatusMOProduced', '9' => 'Canceled')),
+		'fk_parent_line' => array('type' => 'integer:MoLine:mrp/class/mo.class.php', 'label' => 'ParentMo', 'enabled' => 1, 'visible' => 0, 'position' => 1020, 'default' => 0, 'notnull' => 0, 'index' => 1,'showoncombobox' => 0),
 	);
 	public $rowid;
 	public $entity;
@@ -578,8 +578,8 @@ class Mo extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
 					$resarray[] = array(
-						'rowid'=> $obj->rowid,
-						'date'=> $this->db->jdate($obj->date_creation),
+						'rowid' => $obj->rowid,
+						'date' => $this->db->jdate($obj->date_creation),
 						'qty' => $obj->qty,
 						'role' => $obj->role,
 						'fk_product' => $obj->fk_product,
@@ -1487,7 +1487,7 @@ class Mo extends CommonObject
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
 		$hookmanager->initHooks(array('modao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1752,7 +1752,7 @@ class Mo extends CommonObject
 			foreach ($this->lines as $line) {
 				$reshook = 0;
 				if (is_object($hookmanager)) {
-					$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines);
+					$parameters = array('line' => $line, 'i' => $i, 'restrictlist' => $restrictlist, 'selectedLines' => $selectedLines);
 					if (!empty($line->fk_parent_line)) {
 						$parameters['fk_parent_line'] = $line->fk_parent_line;
 					}
@@ -1843,9 +1843,9 @@ class Mo extends CommonObject
 		$error = 0;
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."mrp_mo as mo_child";
-		$sql.= " WHERE fk_parent_line IN ";
-		$sql.= " (SELECT rowid FROM ".MAIN_DB_PREFIX."mrp_production as line_parent";
-		$sql.= " WHERE fk_mo=".((int) $this->id).")";
+		$sql .= " WHERE fk_parent_line IN ";
+		$sql .= " (SELECT rowid FROM ".MAIN_DB_PREFIX."mrp_production as line_parent";
+		$sql .= " WHERE fk_mo=".((int) $this->id).")";
 
 		$resql = $this->db->query($sql);
 
@@ -1929,8 +1929,8 @@ class Mo extends CommonObject
 		$error = 0;
 
 		$sql = "SELECT lineparent.fk_mo as id_moparent FROM ".MAIN_DB_PREFIX."mrp_mo as mo";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."mrp_production lineparent ON mo.fk_parent_line = lineparent.rowid";
-		$sql.= " WHERE mo.rowid = ".((int) $this->id);
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."mrp_production lineparent ON mo.fk_parent_line = lineparent.rowid";
+		$sql .= " WHERE mo.rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 
@@ -2024,27 +2024,27 @@ class MoLine extends CommonObjectLine
 	public $isextrafieldmanaged = 1;
 
 	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'fk_mo' =>array('type'=>'integer', 'label'=>'Mo', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
-		'origin_id' =>array('type'=>'integer', 'label'=>'Origin', 'enabled'=>1, 'visible'=>-1, 'notnull'=>0, 'position'=>17),
-		'origin_type' =>array('type'=>'varchar(10)', 'label'=>'Origin type', 'enabled'=>1, 'visible'=>-1, 'notnull'=>0, 'position'=>18),
-		'position' =>array('type'=>'integer', 'label'=>'Position', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
-		'fk_product' =>array('type'=>'integer', 'label'=>'Product', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
-		'fk_warehouse' =>array('type'=>'integer', 'label'=>'Warehouse', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
-		'qty' =>array('type'=>'real', 'label'=>'Qty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
-		'qty_frozen' => array('type'=>'smallint', 'label'=>'QuantityFrozen', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>105, 'css'=>'maxwidth50imp', 'help'=>'QuantityConsumedInvariable'),
-		'disable_stock_change' => array('type'=>'smallint', 'label'=>'DisableStockChange', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>108, 'css'=>'maxwidth50imp', 'help'=>'DisableStockChangeHelp'),
-		'batch' =>array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
-		'role' =>array('type'=>'varchar(10)', 'label'=>'Role', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
-		'fk_mrp_production' =>array('type'=>'integer', 'label'=>'Fk mrp production', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
-		'fk_stock_movement' =>array('type'=>'integer', 'label'=>'StockMovement', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
-		'date_creation' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>160),
-		'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>165),
-		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>170),
-		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModification', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
-		'fk_default_workstation' =>array('type'=>'integer', 'label'=>'DefaultWorkstation', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'position'=>185),
-		'fk_unit' =>array('type'=>'int', 'label'=>'Unit', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'position'=>186)
+		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
+		'fk_mo' => array('type' => 'integer', 'label' => 'Mo', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 15),
+		'origin_id' => array('type' => 'integer', 'label' => 'Origin', 'enabled' => 1, 'visible' => -1, 'notnull' => 0, 'position' => 17),
+		'origin_type' => array('type' => 'varchar(10)', 'label' => 'Origin type', 'enabled' => 1, 'visible' => -1, 'notnull' => 0, 'position' => 18),
+		'position' => array('type' => 'integer', 'label' => 'Position', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 20),
+		'fk_product' => array('type' => 'integer', 'label' => 'Product', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 25),
+		'fk_warehouse' => array('type' => 'integer', 'label' => 'Warehouse', 'enabled' => 1, 'visible' => -1, 'position' => 30),
+		'qty' => array('type' => 'real', 'label' => 'Qty', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 35),
+		'qty_frozen' => array('type' => 'smallint', 'label' => 'QuantityFrozen', 'enabled' => 1, 'visible' => 1, 'default' => 0, 'position' => 105, 'css' => 'maxwidth50imp', 'help' => 'QuantityConsumedInvariable'),
+		'disable_stock_change' => array('type' => 'smallint', 'label' => 'DisableStockChange', 'enabled' => 1, 'visible' => 1, 'default' => 0, 'position' => 108, 'css' => 'maxwidth50imp', 'help' => 'DisableStockChangeHelp'),
+		'batch' => array('type' => 'varchar(30)', 'label' => 'Batch', 'enabled' => 1, 'visible' => -1, 'position' => 140),
+		'role' => array('type' => 'varchar(10)', 'label' => 'Role', 'enabled' => 1, 'visible' => -1, 'position' => 145),
+		'fk_mrp_production' => array('type' => 'integer', 'label' => 'Fk mrp production', 'enabled' => 1, 'visible' => -1, 'position' => 150),
+		'fk_stock_movement' => array('type' => 'integer', 'label' => 'StockMovement', 'enabled' => 1, 'visible' => -1, 'position' => 155),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 160),
+		'tms' => array('type' => 'timestamp', 'label' => 'Tms', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 165),
+		'fk_user_creat' => array('type' => 'integer', 'label' => 'UserCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 170),
+		'fk_user_modif' => array('type' => 'integer', 'label' => 'UserModification', 'enabled' => 1, 'visible' => -1, 'position' => 175),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'position' => 180),
+		'fk_default_workstation' => array('type' => 'integer', 'label' => 'DefaultWorkstation', 'enabled' => 1, 'visible' => 1, 'notnull' => 0, 'position' => 185),
+		'fk_unit' => array('type' => 'int', 'label' => 'Unit', 'enabled' => 1, 'visible' => 1, 'notnull' => 0, 'position' => 186)
 	);
 
 	public $rowid;
@@ -2193,7 +2193,7 @@ class MoLine extends CommonObjectLine
 		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
 		if ($errormessage) {
 			$this->errors[] = $errormessage;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			return -1;
 		}
 
