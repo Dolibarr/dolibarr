@@ -1705,10 +1705,10 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 			$backbutton = '<a class="justalink" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("Back").'</a>';
 
 			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
-				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
 				print_barre_liste($langs->trans("DefaultPriceLog"), 0, $_SERVER["PHP_SELF"], '', '', '', $backbutton, 0, $num, 'title_accountancy.png');
 			} else {
-				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
 				print_barre_liste($langs->trans("PriceByCustomerLog"), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, $num, 'title_accountancy.png');
 			}
 
@@ -2140,6 +2140,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 
 		$backbutton = '<a class="justalink" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("Back").'</a>';
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $option, $sortfield, $sortorder, $backbutton, count($prodcustprice->lines), $nbtotalofrecords, 'title_accountancy.png');
 
 		if (count($prodcustprice->lines) > 0) {
@@ -2259,6 +2260,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 
 		$option = '&search_soc='.$search_soc.'&id='.$object->id;
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($langs->trans('PriceByCustomer'), $page, $_SERVER ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, 'title_accountancy.png');
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
