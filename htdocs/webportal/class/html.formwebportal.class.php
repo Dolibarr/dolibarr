@@ -948,7 +948,7 @@ class FormWebPortal extends Form
 	 * @param CommonObject $object Common object
 	 * @param array $val Array of properties of field to show
 	 * @param string $key Key of attribute
-	 * @param string $value Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param string|string[] $value Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param string $moreparam To add more parameters on html input tag
 	 * @param string $keysuffix Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param string $keyprefix Suffix string to add into name and id of field (can be used to avoid duplicate names)
@@ -1026,6 +1026,9 @@ class FormWebPortal extends Form
 		}
 
 		// Format output value differently according to properties of field
+		//
+		// First the cases that do not use $value from the arguments:
+		//
 		if (in_array($key, array('rowid', 'ref'))) {
 			if (property_exists($object, 'ref')) {
 				$value = $object->ref;
@@ -1036,6 +1039,20 @@ class FormWebPortal extends Form
 			}
 		} elseif ($key == 'status' && method_exists($object, 'getLibStatut')) {
 			$value = $object->getLibStatut(3);
+			//
+			// Then the cases where $value is an array
+			//
+		} elseif (is_array($value)) {
+			// Handle array early to get type identification solve for static
+			// analysis
+			if ($type == 'array') {
+				$value = implode('<br>', $value);
+			} else {
+				dol_syslog(__METHOD__ . 'ERROR unexpected type=$type for array value='.((string) json_encode($value)), LOG_ERR);
+			}
+			//
+			// Then the cases where $value is not an array (hence string)
+			//
 		} elseif ($type == 'date') {
 			if (!empty($value)) {
 				$value = dol_print_date($value, 'day');    // We suppose dates without time are always gmt (storage of course + output)
@@ -1305,8 +1322,6 @@ class FormWebPortal extends Form
 			}
 		} elseif ($type == 'password') {
 			$value = preg_replace('/./i', '*', $value);
-		} elseif ($type == 'array') {
-			$value = implode('<br>', $value);
 		} else {    // text|html|varchar
 			$value = dol_htmlentitiesbr($value);
 		}
