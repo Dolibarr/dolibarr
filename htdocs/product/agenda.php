@@ -214,7 +214,7 @@ if ($id > 0 || $ref) {
 			$param .= '&limit='.$limit;
 		}
 
-		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
 		print_barre_liste($langs->trans("ActionsOnProduct"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
 
 		// List of all actions

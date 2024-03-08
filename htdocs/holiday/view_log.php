@@ -157,15 +157,15 @@ if (empty($reshook)) {
 
 // Definition of fields for lists
 $arrayfields = array(
-	'cpl.rowid'=>array('label'=>"ID", 'checked'=>1),
-	'cpl.date_action'=>array('label'=>"Date", 'checked'=>1),
-	'cpl.fk_user_action'=>array('label'=>"ActionByCP", 'checked'=>1),
-	'cpl.fk_user_update'=>array('label'=>"UserUpdateCP", 'checked'=>1),
-	'cpl.type_action'=>array('label'=>"Description", 'checked'=>1),
-	'cpl.fk_type'=>array('label'=>"Type", 'checked'=>1),
-	'cpl.prev_solde'=>array('label'=>"PrevSoldeCP", 'checked'=>1),
-	'variation'=>array('label'=>"Variation", 'checked'=>1),
-	'cpl.new_solde'=>array('label'=>"NewSoldeCP", 'checked'=>1),
+	'cpl.rowid' => array('label' => "ID", 'checked' => 1),
+	'cpl.date_action' => array('label' => "Date", 'checked' => 1),
+	'cpl.fk_user_action' => array('label' => "ActionByCP", 'checked' => 1),
+	'cpl.fk_user_update' => array('label' => "UserUpdateCP", 'checked' => 1),
+	'cpl.type_action' => array('label' => "Description", 'checked' => 1),
+	'cpl.fk_type' => array('label' => "Type", 'checked' => 1),
+	'cpl.prev_solde' => array('label' => "PrevSoldeCP", 'checked' => 1),
+	'variation' => array('label' => "Variation", 'checked' => 1),
+	'cpl.new_solde' => array('label' => "NewSoldeCP", 'checked' => 1),
 );
 
 
@@ -286,6 +286,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->rights->holiday->write);
+// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 print_barre_liste($langs->trans('LogCP'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_hrm', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': ';

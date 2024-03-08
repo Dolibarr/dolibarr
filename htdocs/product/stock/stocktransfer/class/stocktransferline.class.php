@@ -95,17 +95,17 @@ class StockTransferLine extends CommonObjectLine
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
-		'amount' => array('type'=>'price', 'label'=>'Amount', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1, 'default'=>'null', 'isameasure'=>'1', 'help'=>"Help text for amount",),
-		'qty' => array('type'=>'real', 'label'=>'Qty', 'enabled'=>'1', 'position'=>45, 'notnull'=>0, 'visible'=>1, 'default'=>'0', 'isameasure'=>'1', 'css'=>'maxwidth75imp', 'help'=>"Help text for quantity",),
-		'fk_warehouse_destination' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Entrepôt de destination', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>1,),
-		'fk_warehouse_source' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Entrepôt source', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>1,),
-		'fk_stocktransfer' => array('type'=>'integer:StockTransfer:stocktransfer/stock/class/stocktransfer.class.php', 'label'=>'StockTransfer', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>0,),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>1,),
-		'batch' => array('type'=>'varchar(128)', 'label'=>'Batch', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>1,),
-		'pmp' => array('type'=>'double'/*, 'help'=>'THMEstimatedHelp'*/, 'label'=>'PMP', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
-		'rang' => array('type'=>'integer', 'label'=>'Qty', 'enabled'=>'1', 'position'=>45, 'notnull'=>0, 'visible'=>0, 'default'=>'0', 'isameasure'=>'1', 'css'=>'maxwidth75imp', 'help'=>"Help text for quantity",),
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => '1', 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => '1', 'index' => 1, 'comment' => "Id"),
+		'amount' => array('type' => 'price', 'label' => 'Amount', 'enabled' => '1', 'position' => 40, 'notnull' => 0, 'visible' => 1, 'default' => 'null', 'isameasure' => '1', 'help' => "Help text for amount",),
+		'qty' => array('type' => 'real', 'label' => 'Qty', 'enabled' => '1', 'position' => 45, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => '1', 'css' => 'maxwidth75imp', 'help' => "Help text for quantity",),
+		'fk_warehouse_destination' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Entrepôt de destination', 'enabled' => '1', 'position' => 50, 'notnull' => 1, 'visible' => 1,),
+		'fk_warehouse_source' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Entrepôt source', 'enabled' => '1', 'position' => 50, 'notnull' => 1, 'visible' => 1,),
+		'fk_stocktransfer' => array('type' => 'integer:StockTransfer:stocktransfer/stock/class/stocktransfer.class.php', 'label' => 'StockTransfer', 'enabled' => '1', 'position' => 50, 'notnull' => 1, 'visible' => 0,),
+		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php', 'label' => 'Product', 'enabled' => '1', 'position' => 50, 'notnull' => 1, 'visible' => 1,),
+		'batch' => array('type' => 'varchar(128)', 'label' => 'Batch', 'enabled' => '1', 'position' => 1000, 'notnull' => -1, 'visible' => 1,),
+		'pmp' => array('type' => 'double'/*, 'help'=>'THMEstimatedHelp'*/, 'label' => 'PMP', 'enabled' => '1', 'position' => 50, 'notnull' => 0, 'visible' => 1,),
+		'rang' => array('type' => 'integer', 'label' => 'Qty', 'enabled' => '1', 'position' => 45, 'notnull' => 0, 'visible' => 0, 'default' => '0', 'isameasure' => '1', 'css' => 'maxwidth75imp', 'help' => "Help text for quantity",),
 	);
 	public $rowid;
 	public $amount;
@@ -328,7 +328,7 @@ class StockTransferLine extends CommonObjectLine
 		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
 		if ($errormessage) {
 			$this->errors[] = $errormessage;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			return -1;
 		}
 
@@ -817,7 +817,7 @@ class StockTransferLine extends CommonObjectLine
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('stocktransferlinedao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => $result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

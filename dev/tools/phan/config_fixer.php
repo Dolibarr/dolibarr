@@ -1,6 +1,10 @@
 <?php
 
-require_once __DIR__.'/plugins/DeprecatedModuleNameFixer.php';
+// Uncomment require_once to enable corresponding fixer
+
+//require_once __DIR__.'/plugins/DeprecatedModuleNameFixer.php';
+//require_once __DIR__.'/plugins/PriceFormFixer.php';
+//require_once __DIR__.'/plugins/UrlEncodeStringifyFixer.php';
 
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  */
@@ -116,7 +120,7 @@ return [
 	],
 	'plugins' => [
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
-		//'DeprecateAliasPlugin',
+		'DeprecateAliasPlugin',
 		// __DIR__.'/plugins/NoVarDumpPlugin.php',
 		//__DIR__.'/plugins/GetPostFixerPlugin.php',
 		//'PHPDocToRealTypesPlugin',

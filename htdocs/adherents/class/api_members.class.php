@@ -26,6 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
+
 /**
  * API class for members
  *
@@ -431,7 +432,12 @@ class Members extends DolibarrApi
 	private function _validate($data)
 	{
 		$member = array();
-		foreach (Members::$FIELDS as $field) {
+
+		$mandatoryfields = array(
+			'morphy',
+			'typeid'
+		);
+		foreach ($mandatoryfields as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
@@ -723,7 +729,7 @@ class Members extends DolibarrApi
 	 * @param array $request_data   Request data
 	 * @return int  ID of member type
 	 *
-	 * @url POST /types/{id}
+	 * @url POST /types/
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	500		Error when creating Member Type
@@ -856,7 +862,10 @@ class Members extends DolibarrApi
 	private function _validateType($data)
 	{
 		$membertype = array();
-		foreach (MembersTypes::$FIELDS as $field) {
+
+		$mandatoryfields = array('label');
+
+		foreach ($mandatoryfields as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
