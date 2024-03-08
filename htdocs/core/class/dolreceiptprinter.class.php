@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2021  Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2015-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Andreu Bisquerra    <jove@bisquerra.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -133,6 +133,10 @@ class dolReceiptPrinter extends Printer
 	 * @var string[] array of tags
 	 */
 	public $tags;
+
+	/**
+	 * @var \Mike42\Escpos\Printer
+	 */
 	public $printer;
 	public $template;
 
@@ -1033,6 +1037,7 @@ class dolReceiptPrinter extends Printer
 
 				try {
 					$type = $obj['fk_type'];
+					$found = true;
 					switch ($type) {
 						case 1:
 							$this->connector = new DummyPrintConnector();
@@ -1051,10 +1056,15 @@ class dolReceiptPrinter extends Printer
 							$this->connector = new CupsPrintConnector($parameter);
 							break;
 						default:
-							$this->connector = 'CONNECTOR_UNKNOWN';
+							$found = false;;
 							break;
 					}
-					$this->printer = new Printer($this->connector, $this->profile);
+					if ($found) {
+						$this->printer = new Printer($this->connector, $this->profile);
+					} else {
+						$error++;
+						$this->errors[] = 'CONNECTOR_UNKNOWN';
+					}
 				} catch (Exception $e) {
 					$this->errors[] = $e->getMessage();
 					$error++;

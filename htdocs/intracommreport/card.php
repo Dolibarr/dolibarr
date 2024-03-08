@@ -108,7 +108,7 @@ if ($reshook < 0) {
 }
 
 if ($permissiontodelete && $action == 'confirm_delete' && $confirm == 'yes') {
-	$result = $object->delete($id, $user);
+	$result = $object->delete($user);
 	if ($result > 0) {
 		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);

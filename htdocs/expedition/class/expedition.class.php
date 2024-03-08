@@ -1242,7 +1242,7 @@ class Expedition extends CommonObject
 
 					$mouvS = new MouvementStock($this->db);
 					// we do not log origin because it will be deleted
-					$mouvS->origin = null;
+					$mouvS->origin = '';
 					// get lot/serial
 					$lotArray = null;
 					if (isModEnabled('productbatch')) {
@@ -1376,13 +1376,18 @@ class Expedition extends CommonObject
 	 * 	Delete shipment.
 	 * 	Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
 	 *
-	 *  @param  int  $notrigger 			Disable triggers
-	 *  @param  bool $also_update_stock  	true if the stock should be increased back (false by default)
-	 * 	@return	int							>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
+	 *  @param	User	$user					User making the deletion
+	 *  @param  int  	$notrigger 				Disable triggers
+	 *  @param  bool 	$also_update_stock  	true if the stock should be increased back (false by default)
+	 * 	@return	int								>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
-	public function delete($notrigger = 0, $also_update_stock = false)
+	public function delete($user = null, $notrigger = 0, $also_update_stock = false)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs;
+
+		if (empty($user)) {
+			global $user;
+		}
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -1435,7 +1440,7 @@ class Expedition extends CommonObject
 
 					$mouvS = new MouvementStock($this->db);
 					// we do not log origin because it will be deleted
-					$mouvS->origin = null;
+					$mouvS->origin = '';
 					// get lot/serial
 					$lotArray = $shipmentlinebatch->fetchAll($obj->expeditiondet_id);
 					if (!is_array($lotArray)) {
