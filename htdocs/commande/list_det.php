@@ -716,7 +716,7 @@ if ($resql) {
 		$param .= '&sall='.urlencode($sall);
 	}
 	if ($socid > 0) {
-		$param .= '&socid='.urlencode($socid);
+		$param .= '&socid='.urlencode((string) ($socid));
 	}
 	if ($search_id) {
 		$param .= '&search_id='.urlencode($search_id);
@@ -762,7 +762,7 @@ if ($resql) {
 		$param .= '&search_ref_customer='.urlencode($search_ref_customer);
 	}
 	if ($search_user > 0) {
-		$param .= '&search_user='.urlencode($search_user);
+		$param .= '&search_user='.urlencode((string) ($search_user));
 	}
 	if ($search_sale > 0) {
 		$param .= '&search_sale='.urlencode($search_sale);
@@ -777,7 +777,7 @@ if ($resql) {
 		$param .= '&search_total_ttc='.urlencode($search_total_ttc);
 	}
 	if ($search_warehouse != '') {
-		$param .= '&search_warehouse='.urlencode($search_warehouse);
+		$param .= '&search_warehouse='.urlencode((string) ($search_warehouse));
 	}
 	if ($search_login) {
 		$param .= '&search_login='.urlencode($search_login);
@@ -810,10 +810,10 @@ if ($resql) {
 		$param .= '&search_state='.urlencode($search_state);
 	}
 	if ($search_country != '') {
-		$param .= '&search_country='.urlencode($search_country);
+		$param .= '&search_country='.urlencode((string) ($search_country));
 	}
 	if ($search_type_thirdparty && $search_type_thirdparty != '-1') {
-		$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
+		$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
 	}
 	if (!empty($search_product_category_array)) {
 		foreach ($search_product_category_array as $tmpval) {
@@ -821,10 +821,10 @@ if ($resql) {
 		}
 	}
 	if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
-		$param .= '&search_categ_cus='.urlencode($search_categ_cus);
+		$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
 	}
 	if ($show_files) {
-		$param .= '&show_files='.urlencode($show_files);
+		$param .= '&show_files='.urlencode((string) ($show_files));
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
@@ -833,16 +833,16 @@ if ($resql) {
 		$param .= '&search_billed='.urlencode($search_billed);
 	}
 	if ($search_fk_cond_reglement > 0) {
-		$param .= '&search_fk_cond_reglement='.urlencode($search_fk_cond_reglement);
+		$param .= '&search_fk_cond_reglement='.urlencode((string) ($search_fk_cond_reglement));
 	}
 	if ($search_fk_shipping_method > 0) {
-		$param .= '&search_fk_shipping_method='.urlencode($search_fk_shipping_method);
+		$param .= '&search_fk_shipping_method='.urlencode((string) ($search_fk_shipping_method));
 	}
 	if ($search_fk_mode_reglement > 0) {
-		$param .= '&search_fk_mode_reglement='.urlencode($search_fk_mode_reglement);
+		$param .= '&search_fk_mode_reglement='.urlencode((string) ($search_fk_mode_reglement));
 	}
 	if ($search_fk_input_reason > 0) {
-		$param .= '&search_fk_input_reason='.urlencode($search_fk_input_reason);
+		$param .= '&search_fk_input_reason='.urlencode((string) ($search_fk_input_reason));
 	}
 	if (!empty($productobuy)) {
 		$param .= '&productobuy='.urlencode($productobuy);
