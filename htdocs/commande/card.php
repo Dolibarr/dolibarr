@@ -1915,7 +1915,7 @@ if ($action == 'create' && $usercancreate) {
 		// Date
 		print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		print $form->selectDate('', 're', '', '', '', "crea_commande", 1, 1); // Always autofill date with current date
+		print $form->selectDate('', 're', 0, 0, 0, "crea_commande", 1, 1); // Always autofill date with current date
 		print '</td></tr>';
 
 		// Date delivery planned
@@ -2546,7 +2546,7 @@ if ($action == 'create' && $usercancreate) {
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="setdate">';
 				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-				print $form->selectDate($object->date, 'order_', '', '', '', "setdate");
+				print $form->selectDate($object->date, 'order_', 0, 0, 0, "setdate");
 				print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			} else {
@@ -2568,7 +2568,7 @@ if ($action == 'create' && $usercancreate) {
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="setdate_livraison">';
 				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-				print $form->selectDate($object->delivery_date ? $object->delivery_date : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
+				print $form->selectDate($object->delivery_date ? $object->delivery_date : -1, 'liv_', 1, 1, 0, "setdate_livraison", 1, 0);
 				print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			} else {
