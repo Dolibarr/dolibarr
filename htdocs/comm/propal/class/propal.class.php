@@ -409,8 +409,6 @@ class Propal extends CommonObject
 	 */
 	public function __construct($db, $socid = 0, $propalid = 0)
 	{
-		global $conf, $langs;
-
 		$this->db = $db;
 
 		$this->socid = $socid;
