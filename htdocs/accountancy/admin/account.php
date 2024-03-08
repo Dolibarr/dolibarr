@@ -526,8 +526,8 @@ if ($resql) {
             while($obj2 = $db->fetch_object($resql2)) {
                 $id     = $obj2->ac_rowid;
                 $code   = $obj2->ac_code;
-                $selectd = in_array($id, $search_categories);
-                print '<option '. (($selectd) ? ' selected ' : '')  .'value="'.$id.'" data-html="'.$code.'" data-select2-id="'.$id.'">'.$code.'</option>';
+                $selected2 = in_array($id, $search_categories);
+                print '<option '. (($selected2) ? ' selected ' : '')  .'value="'.$id.'" data-html="'.$code.'" data-select2-id="'.$id.'">'.$code.'</option>';
             }
             print '</select>';
             print '<span class="selection"><span class="dropdown-wrapper" aria-hidden="true"></span></span></td>';
