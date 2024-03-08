@@ -89,7 +89,7 @@ if (($object->id != $user->id) && !$user->hasRight('user', 'user', 'lire')) {
 	accessforbidden();
 }
 
-$parameters = array('id'=>$userId);
+$parameters = array('id' => $userId);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -185,7 +185,7 @@ if (isModEnabled('agenda')) {
 
 if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allaactions', 'read'))) {
 	print '<br>';
-	$param = '&id='.urlencode($id);
+	$param = '&id='.urlencode((string) ($id));
 
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.((int) $limit);
