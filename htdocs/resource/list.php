@@ -63,6 +63,9 @@ if (!is_array($search_array_options)) {
 }
 $search_ref 	= GETPOST("search_ref", 'alpha');
 $search_type 	= GETPOST("search_type", 'alpha');
+$search_address 	= GETPOST("search_address", 'alpha');
+$search_zip 	= GETPOST("search_zip", 'alpha');
+$search_town 	= GETPOST("search_town", 'alpha');
 
 $filter = array();
 
@@ -87,14 +90,26 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $arrayfields = array(
-		't.ref' => array(
-				'label' => $langs->trans("Ref"),
-				'checked' => 1
-		),
-		'ty.label' => array(
-				'label' => $langs->trans("ResourceType"),
-				'checked' => 1
-		),
+	't.ref' => array(
+		'label' => $langs->trans("Ref"),
+		'checked' => 1
+	),
+	'ty.label' => array(
+		'label' => $langs->trans("ResourceType"),
+		'checked' => 1
+	),
+	't.address' => array(
+		'label' => $langs->trans("Address"),
+		'checked' => 0
+	),
+	't.zip' => array(
+		'label' => $langs->trans("Zip"),
+		'checked' => 0
+	),
+	't.town' => array(
+		'label' => $langs->trans("Town"),
+		'checked' => 1
+	),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -108,6 +123,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$search_ref = "";
 	$search_type = "";
+	$search_address = "";
+	$search_zip = "";
+	$search_town = "";
 	$toselect = array();
 	$search_array_options = array();
 }
@@ -207,6 +225,15 @@ if ($search_ref) {
 if ($search_type) {
 	$sql .= natural_search('ty.label', $search_type);
 }
+if ($search_address) {
+	$sql .= natural_search('t.address', $search_address);
+}
+if ($search_zip) {
+	$sql .= natural_search('t.zip', $search_zip);
+}
+if ($search_town) {
+	$sql .= natural_search('t.town', $search_town);
+}
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -277,6 +304,15 @@ if ($search_ref != '') {
 if ($search_type != '') {
 	$param .= '&search_type='.urlencode($search_type);
 }
+if ($search_address != '') {
+	$param .= '&search_address='.urlencode($search_address);
+}
+if ($search_zip != '') {
+	$param .= '&search_zip='.urlencode($search_zip);
+}
+if ($search_town != '') {
+	$param .= '&search_town='.urlencode($search_town);
+}
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -337,6 +373,21 @@ if (!empty($arrayfields['ty.label']['checked'])) {
 	print '<input type="text" class="flat" name="search_type" value="'.$search_type.'" size="8">';
 	print '</td>';
 }
+if (!empty($arrayfields['t.address']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_address" value="'.$search_address.'" size="8">';
+	print '</td>';
+}
+if (!empty($arrayfields['t.zip']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_zip" value="'.$search_zip.'" size="8">';
+	print '</td>';
+}
+if (!empty($arrayfields['t.town']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_town" value="'.$search_town.'" size="8">';
+	print '</td>';
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -361,6 +412,15 @@ if (!empty($arrayfields['t.ref']['checked'])) {
 if (!empty($arrayfields['ty.label']['checked'])) {
 	print_liste_field_titre($arrayfields['ty.label']['label'], $_SERVER["PHP_SELF"], "ty.label", "", $param, "", $sortfield, $sortorder);
 }
+if (!empty($arrayfields['t.address']['checked'])) {
+	print_liste_field_titre($arrayfields['t.address']['label'], $_SERVER["PHP_SELF"], "t.address", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['t.zip']['checked'])) {
+	print_liste_field_titre($arrayfields['t.zip']['label'], $_SERVER["PHP_SELF"], "t.zip", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['t.town']['checked'])) {
+	print_liste_field_titre($arrayfields['t.town']['label'], $_SERVER["PHP_SELF"], "t.town", "", $param, "", $sortfield, $sortorder);
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Action column
@@ -381,6 +441,9 @@ while ($i < $imaxinloop) {
 	$objectstatic->id = $obj->rowid;
 	$objectstatic->ref = $obj->ref;
 	$objectstatic->type_label = $obj->type_label;
+	$objectstatic->address = $obj->address;
+	$objectstatic->zip = $obj->zip;
+	$objectstatic->town = $obj->town;
 
 	print '<tr class="oddeven">';
 
@@ -396,6 +459,33 @@ while ($i < $imaxinloop) {
 	if (!empty($arrayfields['ty.label']['checked'])) {
 		print '<td>';
 		print $objectstatic->type_label;
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['t.address']['checked'])) {
+		print '<td>';
+		print $objectstatic->address;
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['t.zip']['checked'])) {
+		print '<td>';
+		print $objectstatic->zip;
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['t.town']['checked'])) {
+		print '<td>';
+		print $objectstatic->town;
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
