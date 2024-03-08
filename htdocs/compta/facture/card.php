@@ -3832,7 +3832,7 @@ if ($action == 'create') {
 
 			$thirdparty = $soc;
 			$discount_type = 0;
-			$backtopage = $_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.urlencode(GETPOST('origin')).'&originid='.urlencode(GETPOSTINT('originid'));
+			$backtopage = $_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.urlencode((string) (GETPOST('origin'))).'&originid='.urlencode((string) (GETPOSTINT('originid')));
 			include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
 
 			print '</td></tr>';
