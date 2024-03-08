@@ -240,6 +240,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("Rejects"), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 
 	print"\n<!-- debut table -->\n";

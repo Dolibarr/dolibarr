@@ -39,3 +39,4 @@ ErrorResourcesAlreadyInUse=Some resources are in use
 ErrorResourceUseInEvent=%s used in %s event
 
 MaxUsers=Maximum users (places, seats, etc.)
+MaxUsersLabel=Maximum users
