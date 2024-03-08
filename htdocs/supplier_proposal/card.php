@@ -704,7 +704,7 @@ if (empty($reshook)) {
 
 					//If text set in desc is the same as product descpription (as now it's preloaded) we add it only one time
 					if (trim($product_desc) == trim($desc) && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
-						$product_desc='';
+						$product_desc = '';
 					}
 
 					if (!empty($product_desc) && getDolGlobalString('MAIN_NO_CONCAT_DESCRIPTION')) {
@@ -1345,9 +1345,9 @@ if ($action == 'create') {
 			$syear = date("Y", $tmpdte);
 			$smonth = date("m", $tmpdte);
 			$sday = date("d", $tmpdte);
-			print $form->selectDate($syear."-".$smonth."-".$sday, 'liv_', '', '', '', "addask");
+			print $form->selectDate($syear."-".$smonth."-".$sday, 'liv_', 0, 0, 0, "addask");
 		} else {
-			print $form->selectDate($datedelivery ? $datedelivery : -1, 'liv_', '', '', '', "addask", 1, 1);
+			print $form->selectDate($datedelivery ? $datedelivery : -1, 'liv_', 0, 0, 0, "addask", 1, 1);
 		}
 		print '</td></tr>';
 
@@ -1702,7 +1702,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-			print $form->selectDate($object->delivery_date, 'liv_', '', '', '', "editdate_livraison");
+			print $form->selectDate($object->delivery_date, 'liv_', 0, 0, 0, "editdate_livraison");
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
