@@ -515,7 +515,38 @@ if ($resql) {
 	}
 	// Custom groups
 	if (!empty($arrayfields['categories']['checked'])) {
-		print '<td class="liste_titre"><input type="text" class="flat width75" name="search_categories" value="'.$search_categories.'"></td>';
+        print '<td class="liste_titre">';
+        print '<select id="search_categories" class="multiselect multiselectononeline minwidth300 maxwidth500 widthcentpercentminusx maxwidth250 --success select2-hidden-accessible" multiple="" name="search_categories[]" style="width: 100%" data-select2-id="search_categories" tabindex="-1" aria-hidden="true">';
+        print '<option value="1" data-html="1" data-select2-id="1">1</option>';
+        print '<option value="3" data-html="3" data-select2-id="3">3</option>';
+        print '</select>';
+        print '<span class="selection"><span class="dropdown-wrapper" aria-hidden="true"></span></span></td>';
+        print <<<'EOD'
+<script>
+    function formatResult(record, container) {
+    if ($(record.element).attr("data-html") != undefined) { return htmlEntityDecodeJs($(record.element).attr("data-html")); }
+    return record.text;}
+    function formatSelection(record) { return record.text;}
+    $(document).ready(function () {
+    $('#search_categories').select2({		dir: "ltr",
+								containerCssClass: ":all:",					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag (ko with multiselect) */
+								dropdownCssClass: "minwidth300 maxwidth500 widthcentpercentminusx maxwidth250 --success",				/* Line to add class on the new <span class="select2-selection...> tag (ok with multiselect) */
+								// Specify format function for dropdown item
+								formatResult: formatResult,
+							 	templateResult: formatResult,		/* For 4.0 */
+								escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
+								// Specify format function for selected item
+								formatSelection: formatSelection,
+							 	templateSelection: formatSelection		/* For 4.0 */
+							});
+
+							/* Add also morecss to the css .select2 that is after the #htmlname, for component that are show dynamically after load, because select2 set
+								 the size only if component is not hidden by default on load */
+							$('#search_categories + .select2').addClass('minwidth300 maxwidth500 widthcentpercentminusx maxwidth250 --success');
+						});
+</script>
+EOD;
+
 	}
 
 	// Fields from hook
