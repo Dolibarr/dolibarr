@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
-$type = GETPOSTINT("type");
+$type = GETPOST("type", 'intcomma');
 if ($type == '' && !$user->hasRight('produit', 'lire') && $user->hasRight('service', 'lire')) {
 	$type = '1'; // Force global page on service page only
 }
@@ -69,15 +69,15 @@ if ($type == '0') {
 $transAreaType = $langs->trans("ProductsAndServicesArea");
 
 $helpurl = '';
-if (!isset($_GET["type"])) {
+if (!GETPOSTISSET("type")) {
 	$transAreaType = $langs->trans("ProductsAndServicesArea");
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-if ((isset($_GET["type"]) && $_GET["type"] == 0) || !isModEnabled("service")) {
+if ((GETPOSTISSET("type") && GETPOST("type") == '0') || !isModEnabled("service")) {
 	$transAreaType = $langs->trans("ProductsArea");
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-if ((isset($_GET["type"]) && $_GET["type"] == 1) || !isModEnabled("product")) {
+if ((GETPOSTISSET("type") && GETPOST("type") == '1') || !isModEnabled("product")) {
 	$transAreaType = $langs->trans("ServicesArea");
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
@@ -310,10 +310,10 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 
 		if ($num > 0) {
 			$transRecordedType = $langs->trans("LastModifiedProductsAndServices", $max);
-			if (isset($_GET["type"]) && $_GET["type"] == 0) {
+			if (GETPOSTISSET("type") && GETPOST("type") == '0') {
 				$transRecordedType = $langs->trans("LastRecordedProducts", $max);
 			}
-			if (isset($_GET["type"]) && $_GET["type"] == 1) {
+			if (GETPOSTISSET("type") && GETPOST("type") == '1') {
 				$transRecordedType = $langs->trans("LastRecordedServices", $max);
 			}
 

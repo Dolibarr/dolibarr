@@ -99,18 +99,18 @@ class CTicketCategory extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'position'=>15, 'index'=>1),
-		'code' =>array('type'=>'varchar(32)', 'label'=>'Code', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
-		'pos' =>array('type'=>'integer', 'label'=>'Pos', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
-		'label' =>array('type'=>'varchar(128)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>30, 'showoncombobox'=>1),
-		'active' =>array('type'=>'integer', 'label'=>'Active', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
-		'use_default' =>array('type'=>'integer', 'label'=>'Usedefault', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
-		'description' =>array('type'=>'varchar(255)', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'fk_parent' =>array('type'=>'integer', 'label'=>'Fkparent', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>50),
-		'force_severity' =>array('type'=>'varchar(32)', 'label'=>'Forceseverity', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
-		'public' =>array('type'=>'integer', 'label'=>'Public', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'position' => 15, 'index' => 1),
+		'code' => array('type' => 'varchar(32)', 'label' => 'Code', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 20),
+		'pos' => array('type' => 'integer', 'label' => 'Pos', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 25),
+		'label' => array('type' => 'varchar(128)', 'label' => 'Label', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 30, 'showoncombobox' => 1),
+		'active' => array('type' => 'integer', 'label' => 'Active', 'enabled' => 1, 'visible' => -1, 'position' => 35),
+		'use_default' => array('type' => 'integer', 'label' => 'Usedefault', 'enabled' => 1, 'visible' => -1, 'position' => 40),
+		'description' => array('type' => 'varchar(255)', 'label' => 'Description', 'enabled' => 1, 'visible' => -1, 'position' => 45),
+		'fk_parent' => array('type' => 'integer', 'label' => 'Fkparent', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 50),
+		'force_severity' => array('type' => 'varchar(32)', 'label' => 'Forceseverity', 'enabled' => 1, 'visible' => -1, 'position' => 55),
+		'public' => array('type' => 'integer', 'label' => 'Public', 'enabled' => 1, 'visible' => -1, 'position' => 60),
 	);
 
 	/**
@@ -389,7 +389,7 @@ class CTicketCategory extends CommonObject
 		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
 		if ($errormessage) {
 			$this->errors[] = $errormessage;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			return -1;
 		}
 
@@ -542,7 +542,7 @@ class CTicketCategory extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('cticketcategorydao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
