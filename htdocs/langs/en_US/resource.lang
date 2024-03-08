@@ -9,6 +9,7 @@ ActionsOnResource=Events about this resource
 ResourcePageIndex=Resources list
 ResourceSingular=Resource
 ResourceCard=Resource card
+NewResource=New resource
 AddResource=Create a resource
 ResourceFormLabel_ref=Resource name
 ResourceType=Resource type
