@@ -4200,98 +4200,20 @@ abstract class CommonObject
 			if (!empty($this->linkedObjectsIds)) {
 				$tmparray = $this->linkedObjectsIds;
 				foreach ($tmparray as $objecttype => $objectids) {       // $objecttype is a module name ('facture', 'mymodule', ...) or a module name with a suffix ('project_task', 'mymodule_myobj', ...)
-					// Parse element/subelement (ex: project_task, cabinetmed_consultation, ...)
-					$module = $element = $subelement = $objecttype;
-					$regs = array();
-					if ($objecttype != 'supplier_proposal' && $objecttype != 'order_supplier' && $objecttype != 'invoice_supplier'
-						&& preg_match('/^([^_]+)_([^_]+)/i', $objecttype, $regs)) {
-						$module = $element = $regs[1];
-						$subelement = $regs[2];
-					}
+					$element_properties = getElementProperties($objecttype);
+					$element = $element_properties['element'];
+					$classPath = $element_properties['classpath'];
+					$classFile = $element_properties['classfile'];
+					$className = $element_properties['classname'];
+					$module = $element_properties['module'];
 
-					$classpath = $element.'/class';
-					// To work with non standard classpath or module name
-					if ($objecttype == 'facture') {
-						$classpath = 'compta/facture/class';
-					} elseif ($objecttype == 'facturerec') {
-						$classpath = 'compta/facture/class';
-						$module = 'facture';
-					} elseif ($objecttype == 'propal') {
-						$classpath = 'comm/propal/class';
-					} elseif ($objecttype == 'supplier_proposal') {
-						$classpath = 'supplier_proposal/class';
-					} elseif ($objecttype == 'shipping') {
-						$classpath = 'expedition/class';
-						$subelement = 'expedition';
-						$module = 'expedition';
-					} elseif ($objecttype == 'delivery') {
-						$classpath = 'delivery/class';
-						$subelement = 'delivery';
-						$module = 'delivery_note';
-					} elseif ($objecttype == 'invoice_supplier' || $objecttype == 'order_supplier') {
-						$classpath = 'fourn/class';
-						$module = 'fournisseur';
-					} elseif ($objecttype == 'fichinter') {
-						$classpath = 'fichinter/class';
-						$subelement = 'fichinter';
-						$module = 'ficheinter';
-					} elseif ($objecttype == 'subscription') {
-						$classpath = 'adherents/class';
-						$module = 'adherent';
-					} elseif ($objecttype == 'contact') {
-						$module = 'societe';
-					}
-					// Set classfile
-					$classfile = strtolower($subelement);
-					$classname = ucfirst($subelement);
-
-					if ($objecttype == 'order') {
-						$classfile = 'commande';
-						$classname = 'Commande';
-					} elseif ($objecttype == 'invoice_supplier') {
-						$classfile = 'fournisseur.facture';
-						$classname = 'FactureFournisseur';
-					} elseif ($objecttype == 'order_supplier') {
-						$classfile = 'fournisseur.commande';
-						$classname = 'CommandeFournisseur';
-					} elseif ($objecttype == 'supplier_proposal') {
-						$classfile = 'supplier_proposal';
-						$classname = 'SupplierProposal';
-					} elseif ($objecttype == 'facturerec') {
-						$classfile = 'facture-rec';
-						$classname = 'FactureRec';
-					} elseif ($objecttype == 'subscription') {
-						$classfile = 'subscription';
-						$classname = 'Subscription';
-					} elseif ($objecttype == 'project' || $objecttype == 'projet') {
-						$classpath = 'projet/class';
-						$classfile = 'project';
-						$classname = 'Project';
-					} elseif ($objecttype == 'conferenceorboothattendee') {
-						$classpath = 'eventorganization/class';
-						$classfile = 'conferenceorboothattendee';
-						$classname = 'ConferenceOrBoothAttendee';
-						$module = 'eventorganization';
-					} elseif ($objecttype == 'conferenceorbooth') {
-						$classpath = 'eventorganization/class';
-						$classfile = 'conferenceorbooth';
-						$classname = 'ConferenceOrBooth';
-						$module = 'eventorganization';
-					} elseif ($objecttype == 'mo') {
-						$classpath = 'mrp/class';
-						$classfile = 'mo';
-						$classname = 'Mo';
-						$module = 'mrp';
-					}
-
-					// Here $module, $classfile and $classname are set, we can use them.
+					// Here $module, $classFile and $className are set, we can use them.
 					if (isModEnabled($module) && (($element != $this->element) || $alsosametype)) {
 						if ($loadalsoobjects && (is_numeric($loadalsoobjects) || ($loadalsoobjects === $objecttype))) {
-							dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
-							//print '/'.$classpath.'/'.$classfile.'.class.php '.class_exists($classname);
-							if (class_exists($classname)) {
+							dol_include_once('/'.$classPath.'/'.$classFile.'.class.php');
+							if (class_exists($className)) {
 								foreach ($objectids as $i => $objectid) {	// $i is rowid into llx_element_element
-									$object = new $classname($this->db);
+									$object = new $className($this->db);
 									$ret = $object->fetch($objectid);
 									if ($ret >= 0) {
 										$this->linkedObjects[$objecttype][$i] = $object;

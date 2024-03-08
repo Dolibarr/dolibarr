@@ -12140,6 +12140,10 @@ function getElementProperties($elementType)
 		$module = 'facture';
 		$subelement = 'facture';
 		$table_element = 'facture';
+	} elseif ($elementType == 'facturerec') {
+		$classpath = 'compta/facture/class';
+		$module = 'facture';
+		$classname = 'FactureRec';
 	} elseif ($elementType == 'commande' || $elementType == 'order') {
 		$classpath = 'commande/class';
 		$module = 'commande';
@@ -12160,13 +12164,14 @@ function getElementProperties($elementType)
 		$element = 'supplierproposal';
 		$classfile = 'supplier_proposal';
 		$subelement = 'supplierproposal';
-	} elseif ($elementType == 'shipping') {
-		$classpath = 'expedition/class';
-		$subelement = 'expedition';
-		$module = 'expedition_bon';
+		//  } elseif ($elementType == 'shipping') { // TODO atm-john @2024-03-08 : $elementType == 'shipping' already set. And what is expedition_bon module using class shipping ? This line make no sense ...
+		//      $classpath = 'expedition/class';
+		//      $subelement = 'expedition';
+		//      $module = 'expedition_bon';
 	} elseif ($elementType == 'delivery') {
 		$classpath = 'delivery/class';
 		$subelement = 'delivery';
+		// TODO atm-john @2024-03-08 :  Strange definition found on fetchObjectLinked of common object, before factoring, the value was $module = 'delivery_note'; Who's right?
 		$module = 'expedition';
 	} elseif ($elementType == 'contract') {
 		$classpath = 'contrat/class';
@@ -12280,6 +12285,16 @@ function getElementProperties($elementType)
 		$classname = 'EmailSenderProfile';
 		$table_element = 'c_email_senderprofile';
 		$subelement = '';
+	} elseif ($objectType == 'conferenceorboothattendee') {
+		$classpath = 'eventorganization/class';
+		$classfile = 'conferenceorboothattendee';
+		$classname = 'ConferenceOrBoothAttendee';
+		$module = 'eventorganization';
+	} elseif ($objectType == 'conferenceorbooth') {
+		$classpath = 'eventorganization/class';
+		$classfile = 'conferenceorbooth';
+		$classname = 'ConferenceOrBooth';
+		$module = 'eventorganization';
 	}
 
 	if (empty($classfile)) {
