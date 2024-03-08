@@ -326,9 +326,9 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 
 			$param = '';
 			$param .= ($mode ? '&mode='.urlencode($mode) : '');
-			$param .= ($projectid ? 'id='.urlencode($projectid) : '');
+			$param .= ($projectid ? 'id='.urlencode((string) ($projectid)) : '');
 			$param .= ($search_usertoprocessid ? '&search_usertoprocessid='.urlencode($search_usertoprocessid) : '');
-			$param .= ($day ? '&day='.urlencode($day) : '').($month ? '&month='.urlencode($month) : '').($year ? '&year='.urlencode($year) : '');
+			$param .= ($day ? '&day='.urlencode((string) ($day)) : '').($month ? '&month='.urlencode((string) ($month)) : '').($year ? '&year='.urlencode((string) ($year)) : '');
 			$param .= ($search_project_ref ? '&search_project_ref='.urlencode($search_project_ref) : '');
 			$param .= ($search_usertoprocessid > 0 ? '&search_usertoprocessid='.urlencode($search_usertoprocessid) : '');
 			$param .= ($search_thirdparty ? '&search_thirdparty='.urlencode($search_thirdparty) : '');
