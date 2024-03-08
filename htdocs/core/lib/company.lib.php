@@ -197,9 +197,6 @@ function societe_prepare_head(Societe $object)
 		$title = $langs->trans("PaymentModes");
 
 		if (isModEnabled('stripe')) {
-			//$langs->load("stripe");
-			//$title = $langs->trans("BankAccountsAndGateways");
-
 			$servicestatus = 0;
 			if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
 				$servicestatus = 1;
