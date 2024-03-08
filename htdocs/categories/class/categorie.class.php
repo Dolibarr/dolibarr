@@ -130,7 +130,7 @@ class Categorie extends CommonObject
 	public $MAP_CAT_TABLE = array(
 		'customer' => 'societe',
 		'supplier' => 'fournisseur',
-		'bank_account'=> 'account',
+		'bank_account' => 'account',
 	);
 
 	/**
@@ -148,7 +148,7 @@ class Categorie extends CommonObject
 		'account'  => 'Account', // old for bank account
 		'bank_account'  => 'Account',
 		'project'  => 'Project',
-		'warehouse'=> 'Entrepot',
+		'warehouse' => 'Entrepot',
 		'actioncomm' => 'ActionComm',
 		'website_page' => 'WebsitePage',
 		'ticket' => 'Ticket',
@@ -170,7 +170,7 @@ class Categorie extends CommonObject
 		'account' => 'AccountsCategoriesArea', // old for bank account
 		'bank_account' => 'AccountsCategoriesArea',
 		'project' => 'ProjectsCategoriesArea',
-		'warehouse'=> 'StocksCategoriesArea',
+		'warehouse' => 'StocksCategoriesArea',
 		'actioncomm' => 'ActioncommCategoriesArea',
 		'website_page' => 'WebsitePageCategoriesArea'
 	);
@@ -186,7 +186,7 @@ class Categorie extends CommonObject
 		'contact'  => 'socpeople',
 		'account'  => 'bank_account', // old for bank account
 		'project'  => 'projet',
-		'warehouse'=> 'entrepot',
+		'warehouse' => 'entrepot',
 		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord'
 	);
 
@@ -779,7 +779,7 @@ class Categorie extends CommonObject
 			}
 
 			// Call trigger
-			$this->context = array('linkto'=>$obj); // Save object we want to link category to into category instance to provide information to trigger
+			$this->context = array('linkto' => $obj); // Save object we want to link category to into category instance to provide information to trigger
 			$result = $this->call_trigger('CATEGORY_LINK', $user);
 			if ($result < 0) {
 				$error++;
@@ -839,7 +839,7 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this).'::del_type', LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			// Call trigger
-			$this->context = array('unlinkoff'=>$obj); // Save object we want to link category to into category instance to provide information to trigger
+			$this->context = array('unlinkoff' => $obj); // Save object we want to link category to into category instance to provide information to trigger
 			$result = $this->call_trigger('CATEGORY_UNLINK', $user);
 			if ($result < 0) {
 				$error++;
@@ -904,7 +904,7 @@ class Categorie extends CommonObject
 		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
 		if ($errormessage) {
 			$this->errors[] = $errormessage;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			return -1;
 		}
 
@@ -1788,7 +1788,7 @@ class Categorie extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
