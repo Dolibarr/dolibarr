@@ -515,13 +515,22 @@ if ($resql) {
 	}
 	// Custom groups
 	if (!empty($arrayfields['categories']['checked'])) {
-        print '<td class="liste_titre">';
-        print '<select id="search_categories" class="multiselect multiselectononeline minwidth300 maxwidth500 widthcentpercentminusx maxwidth250 --success select2-hidden-accessible" multiple="" name="search_categories[]" style="width: 100%" data-select2-id="search_categories" tabindex="-1" aria-hidden="true">';
-        print '<option value="1" data-html="1" data-select2-id="1">1</option>';
-        print '<option value="3" data-html="3" data-select2-id="3">3</option>';
-        print '</select>';
-        print '<span class="selection"><span class="dropdown-wrapper" aria-hidden="true"></span></span></td>';
-        print <<<'EOD'
+        // sql for custom groups
+        $sql  = 'SELECT ac.code AS ac_code, ac.rowid AS ac_rowid ';
+        $sql .= 'FROM '.$db->prefix().'c_accounting_category AS ac ';
+        $sql .= 'WHERE ac.active = 1 AND ac.entity = '.((int) $conf->entity);
+        $resql=$db->query($sql);
+        if($resql !== false) {
+            print '<td class="liste_titre">';
+            print '<select id="search_categories" class="multiselect multiselectononeline minwidth300 maxwidth500 widthcentpercentminusx maxwidth250 --success select2-hidden-accessible" multiple="" name="search_categories[]" style="width: 100%" data-select2-id="search_categories" tabindex="-1" aria-hidden="true">';
+            while($obj = $db->fetch_object($resql)) {
+                $id     = $obj->ac_rowid;
+                $code   = $obj->ac_code;
+                print '<option value="'.$id.'" data-html="'.$code.'" data-select2-id="'.$id.'">'.$code.'</option>';
+            }
+            print '</select>';
+            print '<span class="selection"><span class="dropdown-wrapper" aria-hidden="true"></span></span></td>';
+            print <<<'EOD'
 <script>
     function formatResult(record, container) {
     if ($(record.element).attr("data-html") != undefined) { return htmlEntityDecodeJs($(record.element).attr("data-html")); }
@@ -546,7 +555,7 @@ if ($resql) {
 						});
 </script>
 EOD;
-
+        }
 	}
 
 	// Fields from hook
