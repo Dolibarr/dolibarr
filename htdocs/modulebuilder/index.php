@@ -2918,7 +2918,7 @@ if ($dirins && $action == "update_menu" && GETPOSTINT('menukey') && GETPOST('tab
 				if ($result < 0) {
 					setEventMessages($langs->trans('ErrorMenuExistValue'), null, 'errors');
 					//var_dump($_SESSION);exit;
-					header("Location: ".$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode($key + 1).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.($key + 1));
+					header("Location: ".$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode((string) ($key + 1)).'&tab='.urlencode((string) ($tab)).'&module='.urlencode((string) ($module)).'&tabobj='.($key + 1));
 					exit;
 				}
 
@@ -4703,7 +4703,7 @@ if ($module == 'initmodule') {
 
 			if ($action == 'deletedict') {
 				$formconfirm = $form->formconfirm(
-					$_SERVER["PHP_SELF"].'?dictionnarykey='.urlencode(GETPOSTINT('dictionnarykey')).'&tab='.urlencode($tab).'&module='.urlencode($module),
+					$_SERVER["PHP_SELF"].'?dictionnarykey='.urlencode((string) (GETPOSTINT('dictionnarykey'))).'&tab='.urlencode((string) ($tab)).'&module='.urlencode((string) ($module)),
 					$langs->trans('Delete'),
 					$langs->trans('Confirm Delete Dictionnary', GETPOST('dictionnarykey', 'alpha')),
 					'confirm_deletedictionary',
@@ -4915,8 +4915,8 @@ if ($module == 'initmodule') {
 								print '</td>';
 
 								print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
-								print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editdict&token='.newToken().'&dictionnarykey='.urlencode($i + 1).'&tab='.urlencode($tab).'&module='.urlencode($module).'">'.img_edit().'</a>';
-								print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deletedict&token='.newToken().'&dictionnarykey='.urlencode($i + 1).'&tab='.urlencode($tab).'&module='.urlencode($module).'">'.img_delete().'</a>';
+								print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editdict&token='.newToken().'&dictionnarykey='.urlencode((string) ($i + 1)).'&tab='.urlencode((string) ($tab)).'&module='.urlencode((string) ($module)).'">'.img_edit().'</a>';
+								print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deletedict&token='.newToken().'&dictionnarykey='.urlencode((string) ($i + 1)).'&tab='.urlencode((string) ($tab)).'&module='.urlencode((string) ($module)).'">'.img_delete().'</a>';
 								print '</td>';
 
 								print '</tr>';
@@ -5071,7 +5071,7 @@ if ($module == 'initmodule') {
 
 			if ($action == 'deletemenu') {
 				$formconfirms = $form->formconfirm(
-					$_SERVER["PHP_SELF"].'?menukey='.urlencode(GETPOSTINT('menukey')).'&tab='.urlencode($tab).'&module='.urlencode($module),
+					$_SERVER["PHP_SELF"].'?menukey='.urlencode((string) (GETPOSTINT('menukey'))).'&tab='.urlencode((string) ($tab)).'&module='.urlencode((string) ($module)),
 					$langs->trans('Delete'),
 					($menus[GETPOST('menukey')]['fk_menu'] === 'fk_mainmenu='.strtolower($module) ? $langs->trans('Warning: you will delete all menus linked to this one.', GETPOSTINT('menukey')) : $langs->trans('Confirm Delete Menu', GETPOSTINT('menukey'))),
 					'confirm_deletemenu',
@@ -5387,8 +5387,8 @@ if ($module == 'initmodule') {
 							print '</td>';
 							print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
 							if ($menu['titre'] != 'Module'.$module.'Name') {
-								print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode($i).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
-								print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deletemenu&token='.newToken().'&menukey='.urlencode($i - 1).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
+								print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode((string) ($i)).'&tab='.urlencode((string) ($tab)).'&module='.urlencode((string) ($module)).'&tabobj='.urlencode((string) ($tabobj)).'">'.img_edit().'</a>';
+								print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deletemenu&token='.newToken().'&menukey='.urlencode((string) ($i - 1)).'&tab='.urlencode((string) ($tab)).'&module='.urlencode((string) ($module)).'&tabobj='.urlencode((string) ($tabobj)).'">'.img_delete().'</a>';
 							}
 							print '</td>';
 						}
@@ -5503,7 +5503,7 @@ if ($module == 'initmodule') {
 
 			if ($action == 'deleteright') {
 				$formconfirm = $form->formconfirm(
-					$_SERVER["PHP_SELF"].'?permskey='.urlencode(GETPOSTINT('permskey')).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj),
+					$_SERVER["PHP_SELF"].'?permskey='.urlencode((string) (GETPOSTINT('permskey'))).'&tab='.urlencode((string) ($tab)).'&module='.urlencode((string) ($module)).'&tabobj='.urlencode((string) ($tabobj)),
 					$langs->trans('Delete'),
 					$langs->trans('Confirm Delete Right', GETPOST('permskey', 'alpha')),
 					'confirm_deleteright',
@@ -5657,7 +5657,7 @@ if ($module == 'initmodule') {
 
 							print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
 							print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=edit_right&token='.newToken().'&permskey='.urlencode($perm[0]).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
-							print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deleteright&token='.newToken().'&permskey='.urlencode($i).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
+							print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deleteright&token='.newToken().'&permskey='.urlencode((string) ($i)).'&tab='.urlencode((string) ($tab)).'&module='.urlencode((string) ($module)).'&tabobj='.urlencode((string) ($tabobj)).'">'.img_delete().'</a>';
 
 							print '</td>';
 
