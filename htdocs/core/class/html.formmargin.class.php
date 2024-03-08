@@ -272,10 +272,10 @@ class FormMargin
 				print '<td class="right">' . price($marginInfo['pa_products']) . '</td>';
 				print '<td class="right">' . price($marginInfo['margin_on_products']) . '</td>';
 				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
-					print '<td class="right">' . (($marginInfo['margin_rate_products'] == '') ? '' : price($marginInfo['margin_rate_products'], null, null, null, null, 2) . '%') . '</td>';
+					print '<td class="right">' . (($marginInfo['margin_rate_products'] == '') ? '' : price($marginInfo['margin_rate_products'], 0, null, null, null, 2) . '%') . '</td>';
 				}
 				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-					print '<td class="right">' . (($marginInfo['mark_rate_products'] == '') ? '' : price($marginInfo['mark_rate_products'], null, null, null, null, 2) . '%') . '</td>';
+					print '<td class="right">' . (($marginInfo['mark_rate_products'] == '') ? '' : price($marginInfo['mark_rate_products'], 0, null, null, null, 2) . '%') . '</td>';
 				}
 				print '</tr>';
 			}
@@ -287,10 +287,10 @@ class FormMargin
 				print '<td class="right">' . price($marginInfo['pa_services']) . '</td>';
 				print '<td class="right">' . price($marginInfo['margin_on_services']) . '</td>';
 				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
-					print '<td class="right">' . (($marginInfo['margin_rate_services'] == '') ? '' : price($marginInfo['margin_rate_services'], null, null, null, null, 2) . '%') . '</td>';
+					print '<td class="right">' . (($marginInfo['margin_rate_services'] == '') ? '' : price($marginInfo['margin_rate_services'], 0, null, null, null, 2) . '%') . '</td>';
 				}
 				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-					print '<td class="right">' . (($marginInfo['mark_rate_services'] == '') ? '' : price($marginInfo['mark_rate_services'], null, null, null, null, 2) . '%') . '</td>';
+					print '<td class="right">' . (($marginInfo['mark_rate_services'] == '') ? '' : price($marginInfo['mark_rate_services'], 0, null, null, null, 2) . '%') . '</td>';
 				}
 				print '</tr>';
 			}
@@ -302,10 +302,10 @@ class FormMargin
 				print '<td class="right">' . price($marginInfo['pa_total']) . '</td>';
 				print '<td class="right">' . price($marginInfo['total_margin']) . '</td>';
 				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
-					print '<td class="right">' . (($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], null, null, null, null, 2) . '%') . '</td>';
+					print '<td class="right">' . (($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], 0, null, null, null, 2) . '%') . '</td>';
 				}
 				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-					print '<td class="right">' . (($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2) . '%') . '</td>';
+					print '<td class="right">' . (($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], 0, null, null, null, 2) . '%') . '</td>';
 				}
 				print '</tr>';
 			}
