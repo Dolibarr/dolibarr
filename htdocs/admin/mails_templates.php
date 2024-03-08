@@ -948,6 +948,7 @@ foreach ($fieldlist as $field => $value) {
 		print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
 	} elseif ($value == 'type_template') {
 		print '<td class="liste_titre center">';
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print $form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth125', 1, '', 0, 1);
 		print '</td>';
 	} elseif (!in_array($value, array('content', 'content_lines'))) {
