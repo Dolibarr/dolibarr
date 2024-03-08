@@ -122,7 +122,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>(abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -389,7 +389,7 @@ if ($projectid > 0) {
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 	if (strcmp($project->budget_amount, '')) {
-		print '<span class="amount">'.price($project->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
+		print '<span class="amount">'.price($project->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
 	}
 	print '</td></tr>';
 

@@ -480,7 +480,7 @@ if ($object->fetch($id) >= 0) {
 				$obj = new $classname($db);
 
 				// Check if qualified
-				$qualified = (is_null($obj->enabled) ? 1 : dol_eval($obj->enabled, 1));
+				$qualified = (is_null($obj->enabled) ? 1 : (int) dol_eval($obj->enabled, 1));
 
 				// Check dependencies
 				foreach ($obj->require_module as $key) {
@@ -677,6 +677,7 @@ if ($object->fetch($id) >= 0) {
 
 		$massactionbutton = '';
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 		print '</form>';

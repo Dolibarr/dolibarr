@@ -89,8 +89,8 @@ if (!count($listofvars) && !count($listofstatus)) {
 		$arraytest = array();
 		if (preg_match('/mysql/i', $db->type)) {
 			$arraytest = array(
-				'character_set_database'=>array('var'=>'dolibarr_main_db_character_set', 'valifempty'=>'utf8'),
-				'collation_database'=>array('var'=>'dolibarr_main_db_collation', 'valifempty'=>'utf8_unicode_ci')
+				'character_set_database' => array('var' => 'dolibarr_main_db_character_set', 'valifempty' => 'utf8'),
+				'collation_database' => array('var' => 'dolibarr_main_db_collation', 'valifempty' => 'utf8_unicode_ci')
 			);
 		}
 
@@ -123,9 +123,11 @@ if (!count($listofvars) && !count($listofstatus)) {
 				print $paramval;
 			}
 			if ($show == 1) {
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				print $form->textwithpicto($paramval, $text);
 			}
 			if ($show == 2) {
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				print $form->textwithpicto($paramval, $text, 1, 'warning');
 			}
 			print '</td>';

@@ -130,7 +130,7 @@ $linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModE
  * 	Actions
  */
 
-$parameters = array('id'=>$id, 'rowid'=>$id, 'objcanvas'=>$objcanvas, 'confirm'=>$confirm);
+$parameters = array('id' => $id, 'rowid' => $id, 'objcanvas' => $objcanvas, 'confirm' => $confirm);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -625,7 +625,7 @@ if (empty($reshook)) {
 	}
 
 	if ($user->hasRight('adherent', 'supprimer') && $action == 'confirm_delete' && $confirm == 'yes') {
-		$result = $object->delete($id, $user);
+		$result = $object->delete($user);
 		if ($result > 0) {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'errors');
 			if (!empty($backtopage) && !preg_match('/'.preg_quote($_SERVER["PHP_SELF"], '/').'/', $backtopage)) {
@@ -1044,7 +1044,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Gender
 		print '<tr><td>'.$langs->trans("Gender").'</td>';
 		print '<td>';
-		$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
+		$arraygender = array('man' => $langs->trans("Genderman"), 'woman' => $langs->trans("Genderwoman"), 'other' => $langs->trans("Genderother"));
 		print $form->selectarray('gender', $arraygender, GETPOST('gender', 'alphanohtml'), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 		print '</td></tr>';
 
@@ -1275,7 +1275,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Gender
 		print '<tr><td>'.$langs->trans("Gender").'</td>';
 		print '<td>';
-		$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
+		$arraygender = array('man' => $langs->trans("Genderman"), 'woman' => $langs->trans("Genderwoman"), 'other' => $langs->trans("Genderother"));
 		print $form->selectarray('gender', $arraygender, GETPOSTISSET('gender') ? GETPOST('gender', 'alphanohtml') : $object->gender, 1, 0, 0, '', 0, 0, 0, '', '', 1);
 		print '</td></tr>';
 
@@ -1480,7 +1480,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			);
 			if (isModEnabled('societe') && $object->socid > 0) {
 				$object->fetch_thirdparty();
-				$formquestion[] = array('label' => $langs->trans("UserWillBe"), 'type' => 'radio', 'name' => 'internalorexternal', 'default'=>'external', 'values' => array('external'=>$langs->trans("External").' - '.$langs->trans("LinkedToDolibarrThirdParty").' '.$object->thirdparty->getNomUrl(1, '', 0, 1), 'internal'=>$langs->trans("Internal")));
+				$formquestion[] = array('label' => $langs->trans("UserWillBe"), 'type' => 'radio', 'name' => 'internalorexternal', 'default' => 'external', 'values' => array('external' => $langs->trans("External").' - '.$langs->trans("LinkedToDolibarrThirdParty").' '.$object->thirdparty->getNomUrl(1, '', 0, 1), 'internal' => $langs->trans("Internal")));
 			}
 			$text = '';
 			if (isModEnabled('societe') && $object->socid <= 0) {
@@ -1563,6 +1563,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$helpcontent .= "<br>";
 			$helpcontent .= '<b>'.$langs->trans("Content").'</b>:<br>';
 			$helpcontent .= dol_htmlentitiesbr($texttosend)."\n";
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$label = $form->textwithpicto($tmp, $helpcontent, 1, 'help');
 
 			// Create form popup
@@ -1571,10 +1572,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$formquestion[] = array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (getDolGlobalString('ADHERENT_DEFAULT_SENDINFOBYMAIL') ? true : false));
 			}
 			if (isModEnabled('mailman') && getDolGlobalString('ADHERENT_USE_MAILMAN')) {
-				$formquestion[] = array('type'=>'other', 'label'=>$langs->transnoentitiesnoconv("SynchroMailManEnabled"), 'value'=>'');
+				$formquestion[] = array('type' => 'other', 'label' => $langs->transnoentitiesnoconv("SynchroMailManEnabled"), 'value' => '');
 			}
 			if (isModEnabled('mailman') && getDolGlobalString('ADHERENT_USE_SPIP')) {
-				$formquestion[] = array('type'=>'other', 'label'=>$langs->transnoentitiesnoconv("SynchroSpipEnabled"), 'value'=>'');
+				$formquestion[] = array('type' => 'other', 'label' => $langs->transnoentitiesnoconv("SynchroSpipEnabled"), 'value' => '');
 			}
 			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ValidateMember"), $langs->trans("ConfirmValidateMember"), "confirm_valid", $formquestion, 'yes', 1, 220);
 		}
@@ -1626,6 +1627,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$helpcontent .= "<br>";
 			$helpcontent .= '<b>'.$langs->trans("Content").'</b>:<br>';
 			$helpcontent .= dol_htmlentitiesbr($texttosend)."\n";
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$label = $form->textwithpicto($tmp, $helpcontent, 1, 'help');
 
 			// Create an array
@@ -1686,6 +1688,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$helpcontent .= "<br>";
 			$helpcontent .= '<b>'.$langs->trans("Content").'</b>:<br>';
 			$helpcontent .= dol_htmlentitiesbr($texttosend)."\n";
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$label = $form->textwithpicto($tmp, $helpcontent, 1, 'help');
 
 			// Create an array

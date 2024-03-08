@@ -14,14 +14,14 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * @deprecated      Old explorer. Not using Swagger. See instead explorer in htdocs/api/index.php.
  */
 
 /**
  * 	\defgroup   api     Module DolibarrApi
  *  \brief      API explorer using the swagger.json file
  *  \file       htdocs/api/admin/explorer_withredoc.php
+ *
+ * @deprecated      Old explorer. Not using Swagger. See instead explorer in htdocs/api/index.php.
  */
 
 require_once '../../main.inc.php';

@@ -74,6 +74,7 @@ foreach ($list as $key) {
 	print '<tr class="oddeven">';
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';
 	$text = $model->getDriverDescForKey($key);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print '<td>'.$form->textwithpicto($model->getDriverLabelForKey($key), $text).'</td>';
 	print '<td>'.$model->getLibLabelForKey($key).'</td>';
 	print '<td class="nowrap right">'.$model->getLibVersionForKey($key).'</td>';

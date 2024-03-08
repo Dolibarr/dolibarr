@@ -120,7 +120,7 @@ $search_country = GETPOST("search_country", 'intcomma');
 $search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
 $search_price_level = GETPOSTINT('search_price_level');
 $search_staff = GETPOSTINT("search_staff");
-$search_status = GETPOSTINT("search_status");
+$search_status = GETPOST("search_status", 'intcomma');
 $search_type = GETPOST('search_type', 'alpha');
 $search_level = GETPOST("search_level", "array:alpha");
 $search_stcomm = GETPOST('search_stcomm', "array:int");
@@ -215,23 +215,23 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	's.nom'=>"ThirdPartyName",
-	's.name_alias'=>"AliasNameShort",
-	's.code_client'=>"CustomerCode",
-	's.code_fournisseur'=>"SupplierCode",
-	's.code_compta'=>"CustomerAccountancyCodeShort",
-	's.code_compta_fournisseur'=>"SupplierAccountancyCodeShort",
-	's.zip'=>"Zip",
-	's.town'=>"Town",
-	's.email'=>"EMail",
-	's.url'=>"URL",
-	's.tva_intra'=>"VATIntra",
-	's.siren'=>"ProfId1",
-	's.siret'=>"ProfId2",
-	's.ape'=>"ProfId3",
-	's.phone'=>"Phone",
-	's.phone_mobile'=>"PhoneMobile",
-	's.fax'=>"Fax",
+	's.nom' => "ThirdPartyName",
+	's.name_alias' => "AliasNameShort",
+	's.code_client' => "CustomerCode",
+	's.code_fournisseur' => "SupplierCode",
+	's.code_compta' => "CustomerAccountancyCodeShort",
+	's.code_compta_fournisseur' => "SupplierAccountancyCodeShort",
+	's.zip' => "Zip",
+	's.town' => "Town",
+	's.email' => "EMail",
+	's.url' => "URL",
+	's.tva_intra' => "VATIntra",
+	's.siren' => "ProfId1",
+	's.siret' => "ProfId2",
+	's.ape' => "ProfId3",
+	's.phone' => "Phone",
+	's.phone_mobile' => "PhoneMobile",
+	's.fax' => "Fax",
 );
 if (($tmp = $langs->transnoentities("ProfId4".$mysoc->country_code)) && $tmp != "ProfId4".$mysoc->country_code && $tmp != '-') {
 	$fieldstosearchall['s.idprof4'] = 'ProfId4';
@@ -269,49 +269,49 @@ $checkedprofid6 = 0;
 $checkprospectlevel = (in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $checkstcomm = (in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $arrayfields = array(
-	's.rowid'=>array('label'=>"TechnicalID", 'position'=>1, 'checked'=>-1, 'enabled'=>1),
-	's.nom'=>array('label'=>"ThirdPartyName", 'position'=>2, 'checked'=>1),
-	's.name_alias'=>array('label'=>"AliasNameShort", 'position'=>3, 'checked'=>1),
-	's.barcode'=>array('label'=>"Gencod", 'position'=>5, 'checked'=>1, 'enabled'=>(isModEnabled('barcode'))),
-	's.code_client'=>array('label'=>"CustomerCodeShort", 'position'=>10, 'checked'=>$checkedcustomercode),
-	's.code_fournisseur'=>array('label'=>"SupplierCodeShort", 'position'=>11, 'checked'=>$checkedsuppliercode, 'enabled'=>(isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
-	's.code_compta'=>array('label'=>"CustomerAccountancyCodeShort", 'position'=>13, 'checked'=>$checkedcustomeraccountcode),
-	's.code_compta_fournisseur'=>array('label'=>"SupplierAccountancyCodeShort", 'position'=>14, 'checked'=>$checkedsupplieraccountcode, 'enabled'=>(isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
-	's.address'=>array('label'=>"Address", 'position'=>19, 'checked'=>0),
-	's.zip'=>array('label'=>"Zip", 'position'=>20, 'checked'=>1),
-	's.town'=>array('label'=>"Town", 'position'=>21, 'checked'=>0),
-	'state.nom'=>array('label'=>"State", 'position'=>22, 'checked'=>0),
-	'region.nom'=>array('label'=>"Region", 'position'=>23, 'checked'=>0),
-	'country.code_iso'=>array('label'=>"Country", 'position'=>24, 'checked'=>0),
-	's.email'=>array('label'=>"Email", 'position'=>25, 'checked'=>0),
-	's.url'=>array('label'=>"Url", 'position'=>26, 'checked'=>0),
-	's.phone'=>array('label'=>"Phone", 'position'=>27, 'checked'=>1),
-	's.fax'=>array('label'=>"Fax", 'position'=>28, 'checked'=>0),
-	'typent.code'=>array('label'=>"ThirdPartyType", 'position'=>29, 'checked'=>$checkedtypetiers),
-	'staff.code'=>array('label'=>"Workforce", 'position'=>31, 'checked'=>0),
-	's.phone_mobile'=>array('label'=>"PhoneMobile", 'position'=>32, 'checked'=>0),
-	's.siren'=>array('label'=>"ProfId1Short", 'position'=>40, 'checked'=>$checkedprofid1),
-	's.siret'=>array('label'=>"ProfId2Short", 'position'=>41, 'checked'=>$checkedprofid2),
-	's.ape'=>array('label'=>"ProfId3Short", 'position'=>42, 'checked'=>$checkedprofid3),
-	's.idprof4'=>array('label'=>"ProfId4Short", 'position'=>43, 'checked'=>$checkedprofid4),
-	's.idprof5'=>array('label'=>"ProfId5Short", 'position'=>44, 'checked'=>$checkedprofid5),
-	's.idprof6'=>array('label'=>"ProfId6Short", 'position'=>45, 'checked'=>$checkedprofid6),
-	's.tva_intra'=>array('label'=>"VATIntraShort", 'position'=>50, 'checked'=>0),
-	'customerorsupplier'=>array('label'=>'NatureOfThirdParty', 'position'=>61, 'checked'=>1),
-	's.fk_prospectlevel'=>array('label'=>"ProspectLevel", 'position'=>62, 'checked'=>$checkprospectlevel),
-	's.fk_stcomm'=>array('label'=>"StatusProsp", 'position'=>63, 'checked'=>$checkstcomm),
-	's2.nom'=>array('label'=>'ParentCompany', 'position'=>64, 'checked'=>0),
-	's.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	's.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
-	's.status'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
-	's.import_key'=>array('label'=>"ImportId", 'checked'=>0, 'position'=>1100),
+	's.rowid' => array('label' => "TechnicalID", 'position' => 1, 'checked' => -1, 'enabled' => 1),
+	's.nom' => array('label' => "ThirdPartyName", 'position' => 2, 'checked' => 1),
+	's.name_alias' => array('label' => "AliasNameShort", 'position' => 3, 'checked' => 1),
+	's.barcode' => array('label' => "Gencod", 'position' => 5, 'checked' => 1, 'enabled' => (isModEnabled('barcode'))),
+	's.code_client' => array('label' => "CustomerCodeShort", 'position' => 10, 'checked' => $checkedcustomercode),
+	's.code_fournisseur' => array('label' => "SupplierCodeShort", 'position' => 11, 'checked' => $checkedsuppliercode, 'enabled' => (isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
+	's.code_compta' => array('label' => "CustomerAccountancyCodeShort", 'position' => 13, 'checked' => $checkedcustomeraccountcode),
+	's.code_compta_fournisseur' => array('label' => "SupplierAccountancyCodeShort", 'position' => 14, 'checked' => $checkedsupplieraccountcode, 'enabled' => (isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
+	's.address' => array('label' => "Address", 'position' => 19, 'checked' => 0),
+	's.zip' => array('label' => "Zip", 'position' => 20, 'checked' => 1),
+	's.town' => array('label' => "Town", 'position' => 21, 'checked' => 0),
+	'state.nom' => array('label' => "State", 'position' => 22, 'checked' => 0),
+	'region.nom' => array('label' => "Region", 'position' => 23, 'checked' => 0),
+	'country.code_iso' => array('label' => "Country", 'position' => 24, 'checked' => 0),
+	's.email' => array('label' => "Email", 'position' => 25, 'checked' => 0),
+	's.url' => array('label' => "Url", 'position' => 26, 'checked' => 0),
+	's.phone' => array('label' => "Phone", 'position' => 27, 'checked' => 1),
+	's.fax' => array('label' => "Fax", 'position' => 28, 'checked' => 0),
+	'typent.code' => array('label' => "ThirdPartyType", 'position' => 29, 'checked' => $checkedtypetiers),
+	'staff.code' => array('label' => "Workforce", 'position' => 31, 'checked' => 0),
+	's.phone_mobile' => array('label' => "PhoneMobile", 'position' => 32, 'checked' => 0),
+	's.siren' => array('label' => "ProfId1Short", 'position' => 40, 'checked' => $checkedprofid1),
+	's.siret' => array('label' => "ProfId2Short", 'position' => 41, 'checked' => $checkedprofid2),
+	's.ape' => array('label' => "ProfId3Short", 'position' => 42, 'checked' => $checkedprofid3),
+	's.idprof4' => array('label' => "ProfId4Short", 'position' => 43, 'checked' => $checkedprofid4),
+	's.idprof5' => array('label' => "ProfId5Short", 'position' => 44, 'checked' => $checkedprofid5),
+	's.idprof6' => array('label' => "ProfId6Short", 'position' => 45, 'checked' => $checkedprofid6),
+	's.tva_intra' => array('label' => "VATIntraShort", 'position' => 50, 'checked' => 0),
+	'customerorsupplier' => array('label' => 'NatureOfThirdParty', 'position' => 61, 'checked' => 1),
+	's.fk_prospectlevel' => array('label' => "ProspectLevel", 'position' => 62, 'checked' => $checkprospectlevel),
+	's.fk_stcomm' => array('label' => "StatusProsp", 'position' => 63, 'checked' => $checkstcomm),
+	's2.nom' => array('label' => 'ParentCompany', 'position' => 64, 'checked' => 0),
+	's.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
+	's.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
+	's.status' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
+	's.import_key' => array('label' => "ImportId", 'checked' => 0, 'position' => 1100),
 );
 if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
-	$arrayfields['s.price_level'] = array('label'=>"PriceLevel", 'position'=>30, 'checked'=>0);
+	$arrayfields['s.price_level'] = array('label' => "PriceLevel", 'position' => 30, 'checked' => 0);
 }
 
 // Add non object fields to fields for list
-$arrayfields['sales.representative'] = array('label'=>$langs->trans("SalesRepresentatives"), 'checked'=>1, 'position'=>12);
+$arrayfields['sales.representative'] = array('label' => $langs->trans("SalesRepresentatives"), 'checked' => 1, 'position' => 12);
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -446,6 +446,8 @@ if (empty($reshook)) {
 		$search_level = '';
 		$search_parent_name = '';
 		$search_import_key = '';
+
+		$search_all = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -472,8 +474,8 @@ if (empty($reshook)) {
 	}
 }
 
-if ($search_status == '') {
-	$search_status = 1; // always display active thirdparty first
+if ($search_status == '' && empty($search_all)) {
+	$search_status = 1; // display active thirdparty only by default
 }
 
 
@@ -1087,7 +1089,7 @@ if (GETPOST('delsoc')) {
 
 // List of mass actions available
 $arrayofmassactions = array(
-	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
@@ -1139,8 +1141,8 @@ if ($contextpage != 'poslist') {
 		$url .= '&socid='.$socid;
 	}
 	$newcardbutton   = '';
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->hasRight('societe', 'creer'));
 } elseif ($user->hasRight('societe', 'creer')) {
 	$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.$place);
@@ -1182,6 +1184,7 @@ foreach (array(1, 2, 3, 4, 5, 6) as $key) {
 		if (preg_match('/\((.*)\)/i', $label, $reg)) {
 			$label = $reg[1];
 		}
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$textprofid[$key] = $langs->trans("ProfIdShortDesc", $key, $mysoc->country_code, $label);
 	}
 }
@@ -1238,7 +1241,7 @@ if ($user->hasRight("societe", "client", "voir") || $socid) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array('type'=>$type);
+	$parameters = array('type' => $type);
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '</div>';
@@ -1478,7 +1481,7 @@ if (!empty($arrayfields['s2.nom']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Creation date
@@ -1506,7 +1509,7 @@ if (!empty($arrayfields['s.tms']['checked'])) {
 // Status
 if (!empty($arrayfields['s.status']['checked'])) {
 	print '<td class="liste_titre center minwidth75imp parentonrightofpage">';
-	print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);
+	print $form->selectarray('search_status', array('0' => $langs->trans('ActivityCeased'), '1' => $langs->trans('InActivity')), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);
 	print '</td>';
 }
 if (!empty($arrayfields['s.import_key']['checked'])) {
@@ -1674,7 +1677,7 @@ if (!empty($arrayfields['s2.nom']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['s.datec']['checked'])) {
@@ -1933,7 +1936,7 @@ while ($i < $imaxinloop) {
 			if (!isset($typenArray) || !is_array($typenArray) || count($typenArray) == 0) {
 				$typenArray = $formcompany->typent_array(1);
 			}
-			$labeltypeofcompany= empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
+			$labeltypeofcompany = empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
 
 			print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($labeltypeofcompany).'">';
 			print dol_escape_htmltag($labeltypeofcompany);
@@ -2088,7 +2091,7 @@ while ($i < $imaxinloop) {
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
@@ -2162,7 +2165,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

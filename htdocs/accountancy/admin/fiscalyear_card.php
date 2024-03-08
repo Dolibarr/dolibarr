@@ -95,7 +95,7 @@ if ($reshook < 0) {
 }
 
 if ($action == 'confirm_delete' && $confirm == "yes") {
-	$result = $object->delete($id);
+	$result = $object->delete($user);
 	if ($result >= 0) {
 		header("Location: fiscalyear.php");
 		exit();

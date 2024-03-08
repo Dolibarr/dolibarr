@@ -101,7 +101,7 @@ $search_sale = GETPOSTINT('search_sale');
 $search_categ = GETPOSTINT("search_categ");
 $search_categ_thirdparty = GETPOSTINT("search_categ_thirdparty");
 $search_categ_supplier = GETPOSTINT("search_categ_supplier");
-$search_status = GETPOSTINT("search_status");
+$search_status = GETPOST("search_status", "intcomma");
 $search_type = GETPOST('search_type', 'alpha');
 $search_address = GETPOST('search_address', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
@@ -227,7 +227,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['p.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>(abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);

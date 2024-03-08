@@ -573,6 +573,7 @@ class FormSetup
 	}
 }
 
+
 /**
  * This class help to create item for class formSetup
  */
@@ -646,6 +647,9 @@ class FormSetupItem
 
 	public $enabled = 1;
 
+	/**
+	 * @var string	The css to use on the input field of item
+	 */
 	public $cssClass = '';
 
 	/**
