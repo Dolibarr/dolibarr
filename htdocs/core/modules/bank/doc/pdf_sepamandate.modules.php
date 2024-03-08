@@ -100,11 +100,11 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		// Define column position
 		$this->posxref = $this->marge_gauche;
 
-		$this->update_main_doc_field=1;
+		$this->update_main_doc_field = 1;
 
-		$this->heightforinfotot=50;
+		$this->heightforinfotot = 50;
 
-		$this->xPosSignArea=120;
+		$this->xPosSignArea = 120;
 
 		$this->heightforfreetext = (getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT') > 0 ? getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT') : 5);
 
@@ -175,7 +175,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -206,6 +206,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// New page
@@ -443,7 +444,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -453,7 +454,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {

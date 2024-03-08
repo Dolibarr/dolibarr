@@ -2434,6 +2434,7 @@ if ($action == 'create') {
 				</script>';
 
 				$tmp  = $tmp.'<label for="radio_deposit" >'.$langs->trans("InvoiceDeposit").'</label>';
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceDepositDesc"), 1, 'help', '', 0, 3);
 				print '<table class="nobordernopadding"><tr>';
 				print '<td>';

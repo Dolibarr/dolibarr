@@ -90,20 +90,20 @@ $search_all = trim(GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') :
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'p.ref'=>"RefPayment",
-	's.nom'=>"ThirdParty",
-	'p.num_paiement'=>"Numero",
-	'p.amount'=>"Amount",
+	'p.ref' => "RefPayment",
+	's.nom' => "ThirdParty",
+	'p.num_paiement' => "Numero",
+	'p.amount' => "Amount",
 );
 
 $arrayfields = array(
-	'p.ref'				=>array('label'=>"RefPayment", 'checked'=>1, 'position'=>10),
-	'p.datep'			=>array('label'=>"Date", 'checked'=>1, 'position'=>20),
-	's.nom'				=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>30),
-	'c.libelle'			=>array('label'=>"Type", 'checked'=>1, 'position'=>40),
-	'p.num_paiement'	=>array('label'=>"Numero", 'checked'=>1, 'position'=>50, 'tooltip'=>"ChequeOrTransferNumber"),
-	'ba.label'			=>array('label'=>"BankAccount", 'checked'=>1, 'position'=>60, 'enable'=>(isModEnabled("bank"))),
-	'p.amount'			=>array('label'=>"Amount", 'checked'=>1, 'position'=>70),
+	'p.ref'				=> array('label' => "RefPayment", 'checked' => 1, 'position' => 10),
+	'p.datep'			=> array('label' => "Date", 'checked' => 1, 'position' => 20),
+	's.nom'				=> array('label' => "ThirdParty", 'checked' => 1, 'position' => 30),
+	'c.libelle'			=> array('label' => "Type", 'checked' => 1, 'position' => 40),
+	'p.num_paiement'	=> array('label' => "Numero", 'checked' => 1, 'position' => 50, 'tooltip' => "ChequeOrTransferNumber"),
+	'ba.label'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 60, 'enable' => (isModEnabled("bank"))),
+	'p.amount'			=> array('label' => "Amount", 'checked' => 1, 'position' => 70),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -139,7 +139,7 @@ if ((!$user->hasRight("fournisseur", "facture", "lire") && !getDolGlobalString('
  * Actions
  */
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -214,7 +214,7 @@ if ($search_date_start) {
 	$sql .= " AND p.datep >= '" . $db->idate($search_date_start) . "'";
 }
 if ($search_date_end) {
-	$sql .=" AND p.datep <= '" . $db->idate($search_date_end) . "'";
+	$sql .= " AND p.datep <= '" . $db->idate($search_date_end) . "'";
 }
 
 if ($search_company) {
@@ -351,6 +351,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
+// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'supplier_invoice', 0, '', '', $limit, 0, 0, 1);
 
 if ($search_all) {
@@ -458,7 +459,7 @@ if (!empty($arrayfields['p.amount']['checked'])) {
 }
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -517,7 +518,7 @@ if (!empty($arrayfields['p.amount']['checked'])) {
 }
 
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
