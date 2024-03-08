@@ -432,7 +432,12 @@ class Members extends DolibarrApi
 	private function _validate($data)
 	{
 		$member = array();
-		foreach (Members::$FIELDS as $field) {
+
+		$mandatoryfields = array(
+			'morphy',
+			'typeid'
+		);
+		foreach ($mandatoryfields as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
@@ -857,7 +862,10 @@ class Members extends DolibarrApi
 	private function _validateType($data)
 	{
 		$membertype = array();
-		foreach (MembersTypes::$FIELDS as $field) {
+
+		$mandatoryfields = array('label');
+
+		foreach ($mandatoryfields as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
