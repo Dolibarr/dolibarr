@@ -5,6 +5,7 @@
 //require_once __DIR__.'/plugins/DeprecatedModuleNameFixer.php';
 //require_once __DIR__.'/plugins/PriceFormFixer.php';
 //require_once __DIR__.'/plugins/UrlEncodeStringifyFixer.php';
+require_once __DIR__.'/plugins/SelectDateFixer.php';
 
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  */
