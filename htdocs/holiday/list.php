@@ -111,26 +111,26 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'cp.ref'=>'Ref',
-	'cp.description'=>'Description',
-	'uu.lastname'=>'EmployeeLastname',
-	'uu.firstname'=>'EmployeeFirstname',
-	'uu.login'=>'Login'
+	'cp.ref' => 'Ref',
+	'cp.description' => 'Description',
+	'uu.lastname' => 'EmployeeLastname',
+	'uu.firstname' => 'EmployeeFirstname',
+	'uu.login' => 'Login'
 );
 
 $arrayfields = array(
-	'cp.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'cp.fk_user'=>array('label'=>$langs->trans("Employee"), 'checked'=>1, 'position'=>20),
-	'cp.fk_validator'=>array('label'=>$langs->trans("ValidatorCP"), 'checked'=>1, 'position'=>30),
-	'cp.fk_type'=>array('label'=>$langs->trans("Type"), 'checked'=>1, 'position'=>35),
-	'duration'=>array('label'=>$langs->trans("NbUseDaysCPShort"), 'checked'=>1, 'position'=>38),
-	'cp.date_debut'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>40),
-	'cp.date_fin'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1, 'position'=>42),
-	'cp.date_valid'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>1, 'position'=>60),
-	'cp.date_approval'=>array('label'=>$langs->trans("DateApprove"), 'checked'=>1, 'position'=>70),
-	'cp.date_create'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	'cp.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>501),
-	'cp.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+	'cp.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1),
+	'cp.fk_user' => array('label' => $langs->trans("Employee"), 'checked' => 1, 'position' => 20),
+	'cp.fk_validator' => array('label' => $langs->trans("ValidatorCP"), 'checked' => 1, 'position' => 30),
+	'cp.fk_type' => array('label' => $langs->trans("Type"), 'checked' => 1, 'position' => 35),
+	'duration' => array('label' => $langs->trans("NbUseDaysCPShort"), 'checked' => 1, 'position' => 38),
+	'cp.date_debut' => array('label' => $langs->trans("DateStart"), 'checked' => 1, 'position' => 40),
+	'cp.date_fin' => array('label' => $langs->trans("DateEnd"), 'checked' => 1, 'position' => 42),
+	'cp.date_valid' => array('label' => $langs->trans("DateValidation"), 'checked' => 1, 'position' => 60),
+	'cp.date_approval' => array('label' => $langs->trans("DateApprove"), 'checked' => 1, 'position' => 70),
+	'cp.date_create' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
+	'cp.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 501),
+	'cp.statut' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -183,7 +183,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -451,10 +451,10 @@ if ($search_employee > 0) {
 	$param .= '&search_employee='.urlencode($search_employee);
 }
 if ($search_valideur > 0) {
-	$param .= '&search_valideur='.urlencode($search_valideur);
+	$param .= '&search_valideur='.urlencode((string) ($search_valideur));
 }
 if ($search_type > 0) {
-	$param .= '&search_type='.urlencode($search_type);
+	$param .= '&search_type='.urlencode((string) ($search_type));
 }
 if ($search_status > 0) {
 	$param .= '&search_status='.urlencode($search_status);
@@ -538,8 +538,8 @@ if ($id > 0) {		// For user tab
 
 
 	$newcardbutton = '';
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->hasRight('holiday', 'write'));
 
@@ -575,7 +575,7 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array('type'=>$type);
+	$parameters = array('type' => $type);
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '</div>';
@@ -701,7 +701,7 @@ if (!empty($arrayfields['cp.date_approval']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -787,7 +787,7 @@ if (!empty($arrayfields['cp.date_approval']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray'=>&$totalarray);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['cp.date_create']['checked'])) {
@@ -809,7 +809,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print '</tr>'."\n";
 
-$listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
+$listhalfday = array('morning' => $langs->trans("Morning"), "afternoon" => $langs->trans("Afternoon"));
 
 
 // Loop on record
@@ -895,7 +895,7 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 					$labeltypeleavetoshow = ($langs->trans($typeleaves[$obj->fk_type]['code']) != $typeleaves[$obj->fk_type]['code'] ? $langs->trans($typeleaves[$obj->fk_type]['code']) : $typeleaves[$obj->fk_type]['label']);
 				}
 
-				$arraydata = array('user'=>$userstatic, 'labeltype'=>$labeltypeleavetoshow, 'selected'=>$selected, 'nbopenedday'=>$nbopenedday);
+				$arraydata = array('user' => $userstatic, 'labeltype' => $labeltypeleavetoshow, 'selected' => $selected, 'nbopenedday' => $nbopenedday);
 			}
 			print $holidaystatic->getKanbanView('', $arraydata);
 			if ($i == ($imaxinloop - 1)) {
@@ -1004,7 +1004,7 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 			// Extra fields
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 			// Fields from hook
-			$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+			$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
@@ -1086,7 +1086,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
