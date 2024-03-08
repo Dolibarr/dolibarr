@@ -123,7 +123,7 @@ $arrayfields = array(
 	),
 	'st.nom' => array(
 		'label' => $langs->trans("State"),
-		'checked' => 1,
+		'checked' => 0,
 		'position' => 6
 	),
 	'co.label' => array(
@@ -133,12 +133,12 @@ $arrayfields = array(
 	),
 	't.phone' => array(
 		'label' => $langs->trans("Phone"),
-		'checked' => 1,
+		'checked' => 0,
 		'position' => 8
 	),
 	't.email' => array(
 		'label' => $langs->trans("Email"),
-		'checked' => 1,
+		'checked' => 0,
 		'position' => 9
 	),
 	't.max_users' => array(
@@ -148,7 +148,7 @@ $arrayfields = array(
 	),
 	't.url' => array(
 		'label' => $langs->trans("URL"),
-		'checked' => 1,
+		'checked' => 0,
 		'position' => 11
 	),
 );
@@ -483,7 +483,6 @@ if (!empty($arrayfields['st.nom']['checked'])) {
 if (!empty($arrayfields['co.label']['checked'])) {
 	print '<td class="liste_titre">';
 	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
-	//print '<input type="text" class="flat" name="search_country" value="'.$search_country.'" size="8">';
 	print '</td>';
 }
 if (!empty($arrayfields['t.phone']['checked'])) {
