@@ -589,99 +589,77 @@ while ($i < $imaxinloop) {
 	print '<tr class="oddeven">';
 
 	if (!empty($arrayfields['t.ref']['checked'])) {
-		print '<td>';
-		print $objectstatic->getNomUrl(5);
-		print '</td>';
+		print '<td>'.$objectstatic->getNomUrl(5).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
 	if (!empty($arrayfields['ty.label']['checked'])) {
-		print '<td>';
-		print $objectstatic->type_label;
-		print '</td>';
+		print '<td>'.$objectstatic->type_label.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
 	if (!empty($arrayfields['t.address']['checked'])) {
-		print '<td>';
-		print $objectstatic->address;
-		print '</td>';
+		print '<td>'.$objectstatic->address.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
 	if (!empty($arrayfields['t.zip']['checked'])) {
-		print '<td>';
-		print $objectstatic->zip;
-		print '</td>';
+		print '<td>'.$objectstatic->zip.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
 	if (!empty($arrayfields['t.town']['checked'])) {
-		print '<td>';
-		print $objectstatic->town;
-		print '</td>';
+		print '<td>'.$objectstatic->town.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
 	if (!empty($arrayfields['st.nom']['checked'])) {
-		print '<td>';
-		print $objectstatic->state;
-		print '</td>';
+		print '<td>'.$objectstatic->state.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
 	if (!empty($arrayfields['co.label']['checked'])) {
-		print '<td>';
-		print $objectstatic->country;
-		print '</td>';
+		print '<td>'.$objectstatic->country.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
 	if (!empty($arrayfields['t.phone']['checked'])) {
-		print '<td>';
-		print $objectstatic->phone;
-		print '</td>';
+		print '<td>'.dol_print_phone($objectstatic->phone, '', 0, 0, 'AC_TEL', " ", 'phone').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
 	if (!empty($arrayfields['t.email']['checked'])) {
-		print '<td>';
-		print $objectstatic->email;
-		print '</td>';
+		print '<td>'.dol_print_email($objectstatic->email, 0, 0, 1, 0, 0, 1).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
 	if (!empty($arrayfields['t.max_users']['checked'])) {
-		print '<td>';
-		print $objectstatic->max_users;
-		print '</td>';
+		print '<td>'.$objectstatic->max_users.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
 	if (!empty($arrayfields['t.url']['checked'])) {
-		print '<td>';
-		print $objectstatic->url;
-		print '</td>';
+		print '<td>'.dol_print_url($objectstatic->url, '_blank', 32, 1).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
