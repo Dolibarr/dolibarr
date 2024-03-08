@@ -839,22 +839,22 @@ if ($search_date_end) {
 	$param .= buildParamDate('search_date_end', null, '', 'tzserver');
 }
 if ($search_datelimit_startday) {
-	$param .= '&search_datelimit_startday='.urlencode($search_datelimit_startday);
+	$param .= '&search_datelimit_startday='.urlencode((string) ($search_datelimit_startday));
 }
 if ($search_datelimit_startmonth) {
-	$param .= '&search_datelimit_startmonth='.urlencode($search_datelimit_startmonth);
+	$param .= '&search_datelimit_startmonth='.urlencode((string) ($search_datelimit_startmonth));
 }
 if ($search_datelimit_startyear) {
-	$param .= '&search_datelimit_startyear='.urlencode($search_datelimit_startyear);
+	$param .= '&search_datelimit_startyear='.urlencode((string) ($search_datelimit_startyear));
 }
 if ($search_datelimit_endday) {
-	$param .= '&search_datelimit_endday='.urlencode($search_datelimit_endday);
+	$param .= '&search_datelimit_endday='.urlencode((string) ($search_datelimit_endday));
 }
 if ($search_datelimit_endmonth) {
-	$param .= '&search_datelimit_endmonth='.urlencode($search_datelimit_endmonth);
+	$param .= '&search_datelimit_endmonth='.urlencode((string) ($search_datelimit_endmonth));
 }
 if ($search_datelimit_endyear) {
-	$param .= '&search_datelimit_endyear='.urlencode($search_datelimit_endyear);
+	$param .= '&search_datelimit_endyear='.urlencode((string) ($search_datelimit_endyear));
 }
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
@@ -920,13 +920,13 @@ if ($search_status >= 0) {
 	$param .= "&search_status=".urlencode($search_status);
 }
 if ($search_paymentmode) {
-	$param .= '&search_paymentmode='.urlencode($search_paymentmode);
+	$param .= '&search_paymentmode='.urlencode((string) ($search_paymentmode));
 }
 if ($search_paymentcond) {
-	$param .= '&search_paymentcond='.urlencode($search_paymentcond);
+	$param .= '&search_paymentcond='.urlencode((string) ($search_paymentcond));
 }
 if ($show_files) {
-	$param .= '&show_files='.urlencode($show_files);
+	$param .= '&show_files='.urlencode((string) ($show_files));
 }
 if ($option) {
 	$param .= "&search_option=".urlencode($option);
@@ -935,7 +935,7 @@ if ($search_categ_sup > 0) {
 	$param .= '&search_categ_sup='.urlencode($search_categ_sup);
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
-	$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
+	$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
 }
 
 // Add $param from extra fields
@@ -967,7 +967,7 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $url = DOL_URL_ROOT.'/fourn/facture/card.php?action=create';
 if (!empty($socid)) {
-	$url .= '&socid='.urlencode($socid);
+	$url .= '&socid='.urlencode((string) ($socid));
 }
 
 $i = 0;
