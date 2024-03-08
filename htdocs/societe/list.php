@@ -120,7 +120,7 @@ $search_country = GETPOST("search_country", 'intcomma');
 $search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
 $search_price_level = GETPOSTINT('search_price_level');
 $search_staff = GETPOSTINT("search_staff");
-$search_status = GETPOSTINT("search_status");
+$search_status = GETPOST("search_status", 'intcomma');
 $search_type = GETPOST('search_type', 'alpha');
 $search_level = GETPOST("search_level", "array:alpha");
 $search_stcomm = GETPOST('search_stcomm', "array:int");
@@ -472,8 +472,8 @@ if (empty($reshook)) {
 	}
 }
 
-if ($search_status == '') {
-	$search_status = 1; // always display active thirdparty first
+if ($search_status == '' && empty($search_all)) {
+	$search_status = 1; // display active thirdparty only by default
 }
 
 
