@@ -655,7 +655,7 @@ if (empty($reshook)) {
 				$param .= '&search_user='.urlencode((string) ($search_user));
 			}
 			if ($search_sale > 0) {
-				$param .= '&search_sale='.urlencode($search_sale);
+				$param .= '&search_sale='.urlencode((string) ($search_sale));
 			}
 			if ($search_total_ht != '') {
 				$param .= '&search_total_ht='.urlencode($search_total_ht);
@@ -1245,7 +1245,7 @@ if ($search_user > 0) {
 	$param .= '&search_user='.urlencode((string) ($search_user));
 }
 if ($search_sale > 0) {
-	$param .= '&search_sale='.urlencode($search_sale);
+	$param .= '&search_sale='.urlencode((string) ($search_sale));
 }
 if ($search_total_ht != '') {
 	$param .= '&search_total_ht='.urlencode($search_total_ht);
