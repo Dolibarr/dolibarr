@@ -66,6 +66,8 @@ $search_type 	= GETPOST("search_type", 'alpha');
 $search_address 	= GETPOST("search_address", 'alpha');
 $search_zip 	= GETPOST("search_zip", 'alpha');
 $search_town 	= GETPOST("search_town", 'alpha');
+$search_state 	= GETPOST("search_state", 'alpha');
+$search_country 	= GETPOST("search_country", 'alpha');
 
 $filter = array();
 
@@ -92,23 +94,38 @@ $pagenext = $page + 1;
 $arrayfields = array(
 	't.ref' => array(
 		'label' => $langs->trans("Ref"),
-		'checked' => 1
+		'checked' => 1,
+		'position' => 1
 	),
 	'ty.label' => array(
 		'label' => $langs->trans("ResourceType"),
-		'checked' => 1
+		'checked' => 1,
+		'position' => 2
 	),
 	't.address' => array(
 		'label' => $langs->trans("Address"),
-		'checked' => 0
+		'checked' => 0,
+		'position' => 3
 	),
 	't.zip' => array(
 		'label' => $langs->trans("Zip"),
-		'checked' => 0
+		'checked' => 0,
+		'position' => 4
 	),
 	't.town' => array(
 		'label' => $langs->trans("Town"),
-		'checked' => 1
+		'checked' => 1,
+		'position' => 5
+	),
+	'st.nom' => array(
+		'label' => $langs->trans("State"),
+		'checked' => 1,
+		'position' => 6
+	),
+	'co.label' => array(
+		'label' => $langs->trans("Country"),
+		'checked' => 1,
+		'position' => 7
 	),
 );
 // Extra fields
@@ -126,6 +143,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_address = "";
 	$search_zip = "";
 	$search_town = "";
+	$search_state = "";
+	$search_country = "";
 	$toselect = array();
 	$search_array_options = array();
 }
@@ -193,7 +212,9 @@ $sql .= " t.url,";
 $sql .= " t.fk_code_type_resource,";
 $sql .= " t.tms as date_modification,";
 $sql .= " t.datec as date_creation, ";
-$sql .= " ty.label as type_label ";
+$sql .= " ty.label as type_label, ";
+$sql .= " st.nom as state_label, ";
+$sql .= " co.label as country_label ";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -209,6 +230,8 @@ $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."resource as t";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as st ON st.rowid=t.fk_state";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid=t.fk_country";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
@@ -233,6 +256,12 @@ if ($search_zip) {
 }
 if ($search_town) {
 	$sql .= natural_search('t.town', $search_town);
+}
+if ($search_state) {
+	$sql .= natural_search('st.nom', $search_state);
+}
+if ($search_country) {
+	$sql .= natural_search('co.label', $search_country);
 }
 
 // Add where from extra fields
@@ -313,6 +342,12 @@ if ($search_zip != '') {
 if ($search_town != '') {
 	$param .= '&search_town='.urlencode($search_town);
 }
+if ($search_state != '') {
+	$param .= '&search_state='.urlencode($search_state);
+}
+if ($search_country != '') {
+	$param .= '&search_country='.urlencode($search_country);
+}
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -388,6 +423,16 @@ if (!empty($arrayfields['t.town']['checked'])) {
 	print '<input type="text" class="flat" name="search_town" value="'.$search_town.'" size="8">';
 	print '</td>';
 }
+if (!empty($arrayfields['st.nom']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_state" value="'.$search_state.'" size="8">';
+	print '</td>';
+}
+if (!empty($arrayfields['co.label']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_country" value="'.$search_country.'" size="8">';
+	print '</td>';
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -421,6 +466,12 @@ if (!empty($arrayfields['t.zip']['checked'])) {
 if (!empty($arrayfields['t.town']['checked'])) {
 	print_liste_field_titre($arrayfields['t.town']['label'], $_SERVER["PHP_SELF"], "t.town", "", $param, "", $sortfield, $sortorder);
 }
+if (!empty($arrayfields['st.nom']['checked'])) {
+	print_liste_field_titre($arrayfields['st.nom']['label'], $_SERVER["PHP_SELF"], "st.nom", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['co.label']['checked'])) {
+	print_liste_field_titre($arrayfields['co.label']['label'], $_SERVER["PHP_SELF"], "co.label", "", $param, "", $sortfield, $sortorder);
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Action column
@@ -444,6 +495,8 @@ while ($i < $imaxinloop) {
 	$objectstatic->address = $obj->address;
 	$objectstatic->zip = $obj->zip;
 	$objectstatic->town = $obj->town;
+	$objectstatic->state = $obj->state_label;
+	$objectstatic->country = $obj->country_label;
 
 	print '<tr class="oddeven">';
 
@@ -486,6 +539,24 @@ while ($i < $imaxinloop) {
 	if (!empty($arrayfields['t.town']['checked'])) {
 		print '<td>';
 		print $objectstatic->town;
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['st.nom']['checked'])) {
+		print '<td>';
+		print $objectstatic->state;
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['co.label']['checked'])) {
+		print '<td>';
+		print $objectstatic->country;
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
