@@ -249,22 +249,22 @@ if (!empty($search_id)) {
 	$param .= '&search_status='.urlencode($search_status);
 }
 if (!empty($search_month) && $search_month > 0) {
-	$param .= '&search_month='.urlencode($search_month);
+	$param .= '&search_month='.urlencode((string) ($search_month));
 }
 if (!empty($search_year) && $search_year > 0) {
-	$param .= '&search_year='.urlencode($search_year);
+	$param .= '&search_year='.urlencode((string) ($search_year));
 }
 if (!empty($search_validator) && $search_validator > 0) {
-	$param .= '&search_validator='.urlencode($search_validator);
+	$param .= '&search_validator='.urlencode((string) ($search_validator));
 }
 if (!empty($search_employee) && $search_employee > 0) {
-	$param .= '&search_employee='.urlencode($search_employee);
+	$param .= '&search_employee='.urlencode((string) ($search_employee));
 }
 if (!empty($search_description)) {
 	$param .= '&search_description='.urlencode($search_description);
 }
 if (!empty($search_type) && $search_type > 0) {
-	$param .= '&search_type='.urlencode($search_type);
+	$param .= '&search_type='.urlencode((string) ($search_type));
 }
 if (!empty($search_prev_solde)) {
 	$param .= '&search_prev_solde='.urlencode($search_prev_solde);
