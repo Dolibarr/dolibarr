@@ -446,6 +446,8 @@ if (empty($reshook)) {
 		$search_level = '';
 		$search_parent_name = '';
 		$search_import_key = '';
+
+		$search_all = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
