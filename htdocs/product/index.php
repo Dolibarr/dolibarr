@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
-$type = GETPOSTINT("type");
+$type = GETPOST("type", 'intcomma');
 if ($type == '' && !$user->hasRight('produit', 'lire') && $user->hasRight('service', 'lire')) {
 	$type = '1'; // Force global page on service page only
 }
