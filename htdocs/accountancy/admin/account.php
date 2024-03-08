@@ -373,9 +373,9 @@ if ($resql) {
 	if ($search_import_key) {
 		$param .= '&search_import_key='.urlencode($search_import_key);
 	}
-    /*if($search_categories) {
-        $param .= '&search_categories='.urlencode($search_categories);
-    }*/
+    if($search_categories) {
+        $param .= '&search_categories='.urlencode(implode(',',$search_categories));
+    }
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
