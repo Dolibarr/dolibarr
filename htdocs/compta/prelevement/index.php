@@ -93,7 +93,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("AmountToWithdraw").'</td>';
 print '<td class="right"><span class="amount">';
-print price($bprev->SommeAPrelever('direct-debit'), '', '', 1, -1, -1, 'auto');
+print price($bprev->SommeAPrelever('direct-debit'), 0, '', 1, -1, -1, 'auto');
 print '</span></td></tr></table></div><br>';
 
 

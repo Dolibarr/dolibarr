@@ -55,7 +55,7 @@ if (!getDolGlobalString('CONTRACT_ADDON')) {
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-$error=0;
+$error = 0;
 
 if ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconstcontract', 'aZ09');
@@ -363,6 +363,7 @@ foreach ($dirmodels as $reldir) {
 		if (is_dir($dir)) {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
+				$filelist = array();
 				while (($file = readdir($handle)) !== false) {
 					$filelist[] = $file;
 				}

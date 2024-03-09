@@ -409,7 +409,7 @@ if ($cats < 0) {
 
 	// Define data (format for treeview)
 	$data = array();
-	$data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+	$data[] = array('rowid' => 0, 'fk_menu' => -1, 'title' => "racine", 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
 	foreach ($fulltree as $key => $val) {
 		$categstatic->id = $val['id'];
 		$categstatic->ref = $val['label'];
@@ -539,6 +539,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 			$nbtotalofrecords = '';
 			$newcardbutton = dolGetButtonTitle($langs->trans("AddProduct"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&categories[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
 
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("ProductsAndServices"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'products', 0, $newcardbutton, '', $limit);
 
 
@@ -626,6 +627,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 			$nbtotalofrecords = '';
 			$newcardbutton = dolGetButtonTitle($langs->trans("AddThirdParty"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&client=3&custcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
 
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Customers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'companies', 0, $newcardbutton, '', $limit);
 
 			print '<table class="noborder centpercent">'."\n";
@@ -690,7 +692,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
 				print $langs->trans("AddSupplierIntoCategory").' &nbsp;';
-				$filter ='(s.fournisseur:=:1)';
+				$filter = '(s.fournisseur:=:1)';
 				print $form->select_company('', 'elemid', $filter);
 				print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';
@@ -711,6 +713,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 			$nbtotalofrecords = '';
 			$newcardbutton = dolGetButtonTitle($langs->trans("AddSupplier"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&fournisseur=1&suppcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
 
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Suppliers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'companies', 0, $newcardbutton, '', $limit);
 
 			print '<table class="noborder centpercent">'."\n";
@@ -798,6 +801,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 			$nbtotalofrecords = '';
 			$newcardbutton = dolGetButtonTitle($langs->trans("AddMember"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create&memcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->hasRight('adherent', 'creer'));
 
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Member"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
 
 			print '<table class="noborder centpecent">'."\n";
@@ -884,6 +888,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 			$nbtotalofrecords = '';
 			$newcardbutton = dolGetButtonTitle($langs->trans("AddContact"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create&contcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
 
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Contact"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contact', 0, $newcardbutton, '', $limit);
 
 			$objsoc = new Societe($db);
@@ -977,6 +982,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 			$nbtotalofrecords = '';
 			$newcardbutton = '';
 
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Account"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit);
 
 			print '<table class="noborder centpecent">'."\n";
@@ -1065,6 +1071,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 			$nbtotalofrecords = '';
 			$newcardbutton = '';
 
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Project"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit);
 
 			print '<table class="noborder centpecent">'."\n";
@@ -1152,6 +1159,7 @@ if ($type == Categorie::TYPE_USER) {
 			$nbtotalofrecords = '';
 			$newcardbutton = '';
 
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Users"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'user', 0, '', '', $limit);
 
 			print '<table class="noborder centpecent">'."\n";
@@ -1216,6 +1224,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 			$nbtotalofrecords = '';
 			$newcardbutton = '';
 
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Warehouses"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'stock', 0, $newcardbutton, '', $limit);
 
 			print '<table class="noborder centpecent">'."\n";
@@ -1302,6 +1311,7 @@ if ($type == Categorie::TYPE_TICKET) {
 			$nbtotalofrecords = '';
 			$newcardbutton = '';
 
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Ticket"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'ticket', 0, $newcardbutton, '', $limit);
 
 

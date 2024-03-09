@@ -277,7 +277,7 @@ return [
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
 		// checks if a function, closure or method unconditionally returns.
 		// can also be written as 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php'
-		//'DeprecateAliasPlugin',
+		'DeprecateAliasPlugin',
 		//'EmptyMethodAndFunctionPlugin',
 		'InvalidVariableIssetPlugin',
 		//'MoreSpecificElementTypePlugin',
@@ -331,6 +331,7 @@ return [
 		// Dolibarr uses a lot of internal deprecated stuff, not reporting
 		'PhanDeprecatedProperty',
 		'PhanDeprecatedFunction',
+		'PhanCompatibleNegativeStringOffset',
 		// Dolibarr has quite a few strange noop assignments like $abc=$abc;
 		'PhanPluginDuplicateExpressionAssignment',
 		// Nulls are likely mostly false positives

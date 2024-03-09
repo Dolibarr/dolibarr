@@ -263,6 +263,9 @@ if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 
 
 $name = array();
+$amount = array();
+$amount_ht = array();
+$qty = array();
 
 // SQL request
 $catotal = 0;

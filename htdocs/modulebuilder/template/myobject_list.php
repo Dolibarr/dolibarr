@@ -249,6 +249,7 @@ if (empty($reshook)) {
 				$search[$key.'_dtend'] = '';
 			}
 		}
+		$search_all = '';
 		$toselect = array();
 		$search_array_options = array();
 	}

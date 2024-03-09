@@ -4272,6 +4272,7 @@ function isValidEmail($address, $acceptsupervisorkey = 0, $acceptuserkey = 0)
  *	@param	    string		$domain	    			Domain name (Ex: "yahoo.com", "yhaoo.com", "dolibarr.fr")
  *	@return     int     							-1 if error (function not available), 0=Not valid, 1=Valid
  *  @see isValidEmail()
+ *  @suppress PhanDeprecatedFunctionInternal Error in Phan plugins incorrectly tags some functions here
  */
 function isValidMXRecord($domain)
 {
@@ -6227,7 +6228,7 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0,
  *		Function used into PDF and HTML pages
  *
  *		@param	float				$amount			Amount to format
- *		@param	integer				$form			Type of format, HTML or not (not by default)
+ *		@param	int<0,1>			$form			Type of formatting: 1=HTML, 0=no formatting (no by default)
  *		@param	Translate|string	$outlangs		Object langs for output. '' use default lang. 'none' use international separators.
  *		@param	int					$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accuracy) before being inserted into database or after a computation, so this parameter should be useless.
  *		@param	int					$rounding		MINIMUM number of decimal to show: 0=no change, -1=we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
@@ -9956,8 +9957,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 			if ($hideerrors) {
 				ob_start();	// An evaluation has no reason to output data
 				$tmps = @eval('return '.$s.';');
-				$tmpo = ob_get_contents();
-				ob_clean(); // End of interception of data
+				$tmpo = ob_get_clean();
 				if ($tmpo) {
 					print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: '.$s;
 				}
@@ -9965,8 +9965,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 			} else {
 				ob_start();	// An evaluation has no reason to output data
 				$tmps = eval('return '.$s.';');
-				$tmpo = ob_get_contents();
-				ob_clean(); // End of interception of data
+				$tmpo = ob_get_clean();
 				if ($tmpo) {
 					print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: '.$s;
 				}

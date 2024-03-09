@@ -98,7 +98,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 	$result = $object->fetch($id, $objectid, $batch);
 
-	$parameters = array('id'=>$id);
+	$parameters = array('id' => $id);
 	$reshook = $hookmanager->executeHooks('doActions', $parameters, $product, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -224,6 +224,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 			}
 
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("MOs"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
 			if (!empty($page)) {
@@ -261,7 +262,7 @@ if ($id > 0 || !empty($ref)) {
 
 			$motmp = new Mo($db);
 
-			$total_consumed=$total_produced=0;
+			$total_consumed = $total_produced = 0;
 
 			if ($num > 0) {
 				while ($i < min($num, $limit)) {
@@ -271,8 +272,8 @@ if ($id > 0 || !empty($ref)) {
 					$motmp->ref = $objp->ref;
 					$motmp->status = $objp->status;
 
-					$total_consumed+=$objp->nb_consumed;
-					$total_produced+=$objp->nb_produced;
+					$total_consumed += $objp->nb_consumed;
+					$total_produced += $objp->nb_produced;
 
 					print '<tr class="oddeven">';
 					print '<td>';

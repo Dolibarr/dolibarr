@@ -29,7 +29,7 @@ The following changes may create regressions for some external modules, but were
 * Use of dol_eval with parameter $returnvalue=0 is deprecated.
 * The signature for all ->delete() method has been modified to match the modulebuilder template (so first paramis now always $user), except
   the delete for thirdparty (still accept the id of thirdparty to delete as first parameter). Will probably be modified into another version.
-
+* Route for API /thirdparties/gateways has been renamed into /thirdparties/accounts
 
 
 ***** ChangeLog for 19.0.1 compared to 19.0.0 *****

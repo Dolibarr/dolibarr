@@ -232,12 +232,12 @@ class DoliDBMysqli extends DoliDB
 	/**
 	 * Connect to server
 	 *
-	 * @param   string  $host 	Database server host
-	 * @param   string  $login 	Login
-	 * @param   string  $passwd Password
-	 * @param   string  $name 	Name of database (not used for mysql, used for pgsql)
-	 * @param   integer $port 	Port of database server
-	 * @return  mysqli|null		Database access object
+	 * @param   string          $host           Database server host
+	 * @param   string          $login          Login
+	 * @param   string          $passwd         Password
+	 * @param   string          $name           Name of database (not used for mysql, used for pgsql)
+	 * @param   integer         $port           Port of database server
+	 * @return  mysqli|mysqliDoli|false         Database access object
 	 * @see close()
 	 */
 	public function connect($host, $login, $passwd, $name, $port = 0)

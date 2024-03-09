@@ -409,8 +409,6 @@ class Propal extends CommonObject
 	 */
 	public function __construct($db, $socid = 0, $propalid = 0)
 	{
-		global $conf, $langs;
-
 		$this->db = $db;
 
 		$this->socid = $socid;
@@ -2706,7 +2704,7 @@ class Propal extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// Status self::STATUS_REFUSED by default
-			$modelpdf = getDolGlobalString('PROPALE_ADDON_PDF_ODT_CLOSED') ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->model_pdf;
+			$modelpdf = getDolGlobalString('PROPALE_ADDON_PDF_ODT_CLOSED', $this->model_pdf);
 			$trigger_name = 'PROPAL_CLOSE_REFUSED';		// used later in call_trigger()
 
 			if ($status == self::STATUS_SIGNED) {	// Status self::STATUS_SIGNED
@@ -2816,7 +2814,7 @@ class Propal extends CommonObject
 		}
 
 		if (!$error) {
-			$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->model_pdf;
+			$modelpdf = getDolGlobalString('PROPALE_ADDON_PDF_ODT_CLOSED', $this->model_pdf);
 
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				// Define output language
