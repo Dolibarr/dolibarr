@@ -3084,6 +3084,7 @@ if ($action == 'create') {
 			$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("Other"), $close[$i]['label'], 1);
 			$i++;
 			// arrayreasons[code]=reason
+			$arrayreasons = array();
 			foreach ($close as $key => $val) {
 				$arrayreasons[$close[$key]['code']] = $close[$key]['reason'];
 			}

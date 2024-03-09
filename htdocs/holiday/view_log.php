@@ -370,6 +370,7 @@ if (!empty($arrayfields['cpl.type_action']['checked'])) {
 
 // Filter: Type
 if (!empty($arrayfields['cpl.fk_type']['checked'])) {
+	$arraytypeleaves = array();
 	foreach ($alltypeleaves as $key => $val) {
 		$labeltoshow = ($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']);
 		$arraytypeleaves[$val['rowid']] = $labeltoshow;

@@ -5687,7 +5687,7 @@ class Product extends CommonObject
 				}
 				$nbpiece = abs($nbpiece);
 			}
-
+			$op = array();
 			$op[0] = "+".trim($nbpiece);
 			$op[1] = "-".trim($nbpiece);
 
@@ -5751,6 +5751,7 @@ class Product extends CommonObject
 				$nbpiece = abs($nbpiece);
 			}
 
+			$op = array();
 			$op[0] = "+".trim($nbpiece);
 			$op[1] = "-".trim($nbpiece);
 

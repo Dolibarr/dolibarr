@@ -92,9 +92,13 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be useless due to the global search combo
+	if (!isset($listofsearchfields) || !is_array($listofsearchfields)) {
+		// Ensure $listofsearchfields is set and array
+		$listofsearchfields = array();
+	}
 	// Search contract
 	if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
-		$listofsearchfields['search_product'] = array('text'=>'ProductOrService');
+		$listofsearchfields['search_product'] = array('text' => 'ProductOrService');
 	}
 
 	if (count($listofsearchfields)) {

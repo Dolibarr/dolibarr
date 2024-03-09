@@ -324,14 +324,15 @@ class pdf_standard extends CommonStickerGenerator
 				$nb = 1; // Protection to avoid empty page
 			}
 
+			$arrayofmembers = array();
 			for ($j = 0; $j < $nb; $j++) {
 				$arrayofmembers[] = array(
-					'textleft'=>$textleft,
-					'textheader'=>$textheader,
-					'textfooter'=>$textfooter,
-					'textright'=>$textright,
-					'id'=>(isset($object->id) ? $object->id : ""),
-					'photo'=>(isset($object->photo) ? $object->photo : "")
+					'textleft' => $textleft,
+					'textheader' => $textheader,
+					'textfooter' => $textfooter,
+					'textright' => $textright,
+					'id' => (isset($object->id) ? $object->id : ""),
+					'photo' => (isset($object->photo) ? $object->photo : "")
 				);
 			}
 
@@ -456,7 +457,7 @@ class pdf_standard extends CommonStickerGenerator
 
 		dolChmod($file);
 
-		$this->result = array('fullpath'=>$file);
+		$this->result = array('fullpath' => $file);
 
 		// Output to http stream
 		if (empty($nooutput)) {
