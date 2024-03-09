@@ -87,10 +87,10 @@ if (!$user->hasRight('holiday', 'read')) {
 }
 
 $arrayfields = array(
-	'cp.rowid'=>array('label'=>$langs->trans("Employee"), 'checked'=>1, 'position'=>20),
-	'cp.fk_user'=>array('label'=>$langs->trans("Supervisor"), 'checked'=>1, 'position'=>30),
-	'cp.nbHoliday'=>array('label'=>$langs->trans("MenuConfCP"), 'checked'=>1, 'position'=>40),
-	'cp.note_public'=>array('label'=>$langs->trans("Note"), 'checked'=>1, 'position'=>50),
+	'cp.rowid' => array('label' => $langs->trans("Employee"), 'checked' => 1, 'position' => 20),
+	'cp.fk_user' => array('label' => $langs->trans("Supervisor"), 'checked' => 1, 'position' => 30),
+	'cp.nbHoliday' => array('label' => $langs->trans("MenuConfCP"), 'checked' => 1, 'position' => 40),
+	'cp.note_public' => array('label' => $langs->trans("Note"), 'checked' => 1, 'position' => 50),
 );
 
 
@@ -260,7 +260,7 @@ if ($massaction == 'preincreaseholiday') {
 	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 	$staticholiday = new Holiday($db);
 	$arraytypeholidays = $staticholiday->getTypes(1, 1);
-	$formquestion[] = array();
+	$formquestion = array();
 	$labeltypes = array();
 	foreach ($typeleaves as $key => $val) {
 		$labeltypes[$val['id']] = ($langs->trans($val['code']) != $val['code']) ? $langs->trans($val['code']) : $langs->trans($val['label']);

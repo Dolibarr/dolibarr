@@ -2,6 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -539,14 +540,14 @@ class FormListWebPortal
 		// Remain to pay
 		if (!empty($arrayfields['remain_to_pay']['checked'])) {
 			$html .= '<th scope="col">';
-			$html .= $langs->trans($arrayfields['remain_to_pay']['label']);;
+			$html .= $langs->trans($arrayfields['remain_to_pay']['label']);
 			$html .= '</th>';
 			$totalarray['nbfield']++;
 		}
 		// Download link
 		if (!empty($arrayfields['download_link']['checked'])) {
 			$html .= '<th scope="col">';
-			$html .= $langs->trans($arrayfields['download_link']['label']);;
+			$html .= $langs->trans($arrayfields['download_link']['label']);
 			$html .= '</th>';
 			$totalarray['nbfield']++;
 		}
@@ -580,12 +581,12 @@ class FormListWebPortal
 			if ($elementEn == 'invoice') {
 				// store company
 				$idCompany = (int) $obj->fk_soc;
-				if (!isset($companyStaticList[$obj->fk_soc])) {
+				if (!isset($this->companyStaticList[$obj->fk_soc])) {
 					$companyStatic = new Societe($this->db);
 					$companyStatic->fetch($idCompany);
-					$companyStaticList[$idCompany] = $companyStatic;
+					$this->companyStaticList[$idCompany] = $companyStatic;
 				}
-				$companyStatic = $companyStaticList[$obj->fk_soc];
+				$companyStatic = $this->companyStaticList[$obj->fk_soc];
 
 				// paid sum
 				$payment = $object->getSommePaiement();

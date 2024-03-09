@@ -289,11 +289,11 @@ class LoanSchedule extends CommonObject
 	/**
 	 *  Update database
 	 *
-	 *  @param	User	$user        	User that modify
-	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			Return integer <0 if KO, >0 if OK
+	 *  @param	User|null	$user        	User that modify
+	 *  @param  int			$notrigger	    0=launch triggers after, 1=disable triggers
+	 *  @return int         				Return integer <0 if KO, >0 if OK
 	 */
-	public function update($user = 0, $notrigger = 0)
+	public function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error = 0;
