@@ -331,7 +331,7 @@ return [
 		// Dolibarr uses a lot of internal deprecated stuff, not reporting
 		'PhanDeprecatedProperty',
 		'PhanDeprecatedFunction',
-		'PhanCompatibleNegativeStringOffset',
+		//'PhanCompatibleNegativeStringOffset',
 		// Dolibarr has quite a few strange noop assignments like $abc=$abc;
 		'PhanPluginDuplicateExpressionAssignment',
 		// Nulls are likely mostly false positives
@@ -379,7 +379,7 @@ return [
 		'PhanPluginUnknownClosureParamType',
 		'PhanPluginUnknownClosureReturnType',
 		// 'PhanPluginNoCommentOnProtectedMethod',
-		'PhanTypeArraySuspicious',
+		// 'PhanTypeArraySuspicious',
 		'PhanTypeMismatchPropertyProbablyReal',
 		// 'PhanPluginNoCommentOnPrivateMethod',
 		'PhanPluginUnknownArrayFunctionReturnType',
@@ -442,8 +442,8 @@ return [
 		// 'PhanParamSpecial1',
 		'PhanPluginInlineHTMLLeading',
 		'PhanPluginUseReturnValueInternalKnown',
-		'PhanRedefinedInheritedInterface',
-		'PhanTypeComparisonToArray',
+		//'PhanRedefinedInheritedInterface',
+		//'PhanTypeComparisonToArray',
 		'PhanTypeConversionFromArray',
 		// 'PhanTypeInvalidLeftOperandOfIntegerOp',
 		'PhanTypeMismatchArgumentInternalProbablyReal',
@@ -458,7 +458,7 @@ return [
 		// 'PhanTypeInvalidThrowsIsInterface',
 		'PhanPluginRedundantAssignmentInLoop',
 		// 'PhanInvalidCommentForDeclarationType',
-		'PhanParamSignatureMismatchInternal',
+		//'PhanParamSignatureMismatchInternal',
 		// 'PhanPluginEmptyStatementForeachLoop',
 		// 'PhanCompatibleDimAlternativeSyntax',
 		'PhanInvalidFQSENInClasslike',
