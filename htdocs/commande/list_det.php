@@ -1485,6 +1485,7 @@ if ($resql) {
 
 	$totalarray = array();
 	$totalarray['nbfield'] = 0;
+	$subtotalarray = array();
 	$subtotalarray['nbfield'] = 0;
 	$totalarray['val']['cdet.total_tva'] = 0;
 	$totalarray['val']['cdet.total_ttc'] = 0;

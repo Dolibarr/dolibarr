@@ -222,7 +222,7 @@ if ($action == 'edit') {
 
 $moduledir = 'workstation';
 $myTmpObjects = array();
-$myTmpObjects['workstation'] = array('includerefgeneration'=>1, 'includedocgeneration'=>0);
+$myTmpObjects['workstation'] = array('includerefgeneration' => 1, 'includedocgeneration' => 0);
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
@@ -385,6 +385,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 				if (is_dir($dir)) {
 					$handle = opendir($dir);
 					if (is_resource($handle)) {
+						$filelist = array();
 						while (($file = readdir($handle)) !== false) {
 							$filelist[] = $file;
 						}

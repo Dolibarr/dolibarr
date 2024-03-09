@@ -2595,6 +2595,7 @@ class BookKeeping extends CommonObject
 		if (getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT')) {
 			$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');
 
+			$pcg_type_filter = array();
 			foreach ($accounting_groups_used_for_income_statement as $item) {
 				$pcg_type_filter[] = "'" . $this->db->escape($item) . "'";
 			}
