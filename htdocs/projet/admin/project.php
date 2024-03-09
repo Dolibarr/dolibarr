@@ -533,6 +533,7 @@ print "</tr>\n";
 
 clearstatcache();
 
+$filelist = array();
 foreach ($dirmodels as $reldir) {
 	foreach (array('', '/doc') as $valdir) {
 		$dir = dol_buildpath($reldir."core/modules/project/".$valdir);
@@ -801,10 +802,10 @@ if (!$conf->use_javascript_ajax) {
 	print "</td>";
 } else {
 	print '<td width="60" class="right">';
-	$arrval = array('0'=>$langs->trans("No"),
-		'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-		'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-		'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+	$arrval = array('0' => $langs->trans("No"),
+		'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
+		'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+		'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
 	print $form->selectarray("activate_PROJECT_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString("PROJECT_USE_SEARCH_TO_SELECT"));
 	print '</td><td class="right">';
@@ -825,13 +826,13 @@ print '</tr>';
 
 $key = 'PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE';
 echo '<tr class="oddeven">',
-		'<td class="left">',
-			$form->textwithpicto($langs->transnoentities($key), $langs->transnoentities($key . '_help')),
-		'</td>',
-		'<td class="right" colspan="2">',
-			ajax_constantonoff($key),
-		'</td>',
-	'</tr>';
+'<td class="left">',
+$form->textwithpicto($langs->transnoentities($key), $langs->transnoentities($key . '_help')),
+'</td>',
+'<td class="right" colspan="2">',
+ajax_constantonoff($key),
+'</td>',
+'</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("TimesheetPreventAfterFollowingMonths").'</td>';

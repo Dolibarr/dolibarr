@@ -718,6 +718,7 @@ if (empty($reshook)) {
 			} else {
 				try {
 					$stripesup = \Stripe\Account::retrieve($newsup);
+					$tokenstring = array();
 					$tokenstring['stripe_user_id'] = $stripesup->id;
 					$tokenstring['type'] = $stripesup->type;
 					$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
@@ -971,6 +972,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		$obj = $db->fetch_object($resql);
 		$nbFactsClient = $obj->nb;
+		$thirdTypeArray = array();
+		$elementTypeArray = array();
 		$thirdTypeArray['customer'] = $langs->trans("customer");
 		if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 			$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');

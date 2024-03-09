@@ -663,6 +663,7 @@ print '<td class="center">'.$langs->trans("MustBeMandatory").'</td>';
 print '<td class="center">'.$langs->trans("MustBeInvoiceMandatory").'</td>';
 print "</tr>\n";
 
+$profid = array('IDPROF1' => array(), 'IDPROF2' => array(), 'IDPROF3' => array(), 'IDPROF4' => array(), 'IDPROF5' => array(),'IDPROF6' => array(), 'EMAIL' => array());
 $profid['IDPROF1'][0] = $langs->trans("ProfId1");
 $profid['IDPROF1'][1] = $langs->transcountry('ProfId1', $mysoc->country_code);
 $profid['IDPROF2'][0] = $langs->trans("ProfId2");
@@ -678,8 +679,10 @@ $profid['IDPROF6'][1] = $langs->transcountry('ProfId6', $mysoc->country_code);
 $profid['EMAIL'][0] = $langs->trans("EMail");
 $profid['EMAIL'][1] = $langs->trans('Email');
 if (isModEnabled('accounting')) {
+	$profid['ACCOUNTANCY_CODE_CUSTOMER'] = array();
 	$profid['ACCOUNTANCY_CODE_CUSTOMER'][0] = $langs->trans("CustomerAccountancyCodeShort");
 	$profid['ACCOUNTANCY_CODE_CUSTOMER'][1] = $langs->trans('CustomerAccountancyCodeShort');
+	$profid['ACCOUNTANCY_CODE_SUPPLIER'] = array();
 	$profid['ACCOUNTANCY_CODE_SUPPLIER'][0] = $langs->trans("SupplierAccountancyCodeShort");
 	$profid['ACCOUNTANCY_CODE_SUPPLIER'][1] = $langs->trans('SupplierAccountancyCodeShort');
 }
@@ -783,10 +786,10 @@ if (!$conf->use_javascript_ajax) {
 	print "</td>";
 } else {
 	print '<td width="60" class="right">';
-	$arrval = array('0'=>$langs->trans("No"),
-	'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-	'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-	'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+	$arrval = array('0' => $langs->trans("No"),
+	'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
+	'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+	'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
 	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td class="right">';
@@ -804,10 +807,10 @@ if (!$conf->use_javascript_ajax) {
 	print "</td>";
 } else {
 	print '<td width="60" class="right">';
-	$arrval = array('0'=>$langs->trans("No"),
-	'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-	'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-	'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+	$arrval = array('0' => $langs->trans("No"),
+	'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
+	'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+	'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
 	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td class="right">';

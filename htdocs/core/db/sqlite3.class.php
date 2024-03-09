@@ -259,7 +259,7 @@ class DoliDBSqlite3 extends DoliDB
 				}
 
 				//if (preg_match('/rowid\s+.*\s+PRIMARY\s+KEY,/i', $line)) {
-					//preg_replace('/(rowid\s+.*\s+PRIMARY\s+KEY\s*,)/i', '/* \\1 */', $line);
+				//preg_replace('/(rowid\s+.*\s+PRIMARY\s+KEY\s*,)/i', '/* \\1 */', $line);
 				//}
 			}
 
@@ -970,6 +970,10 @@ class DoliDBSqlite3 extends DoliDB
 	{
 		// phpcs:enable
 		// FIXME: $fulltext_keys parameter is unused
+
+		$sqlfields = array();
+		$sqlk = array();
+		$sqluq = array();
 
 		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');

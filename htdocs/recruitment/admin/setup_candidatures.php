@@ -235,7 +235,7 @@ if ($action == 'edit') {
 
 $moduledir = 'recruitment';
 $myTmpObjects = array();
-$myTmpObjects['RecruitmentCandidature'] = array('includerefgeneration'=>1, 'includedocgeneration'=>0);
+$myTmpObjects['RecruitmentCandidature'] = array('includerefgeneration' => 1, 'includedocgeneration' => 0);
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
@@ -386,6 +386,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		print "</tr>\n";
 
 		clearstatcache();
+		$filelist = array();
 
 		foreach ($dirmodels as $reldir) {
 			foreach (array('', '/doc') as $valdir) {
