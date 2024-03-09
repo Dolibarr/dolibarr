@@ -1020,6 +1020,7 @@ class ImportXlsx extends ModeleImports
 								$sqlend = " WHERE " . $keyfield . " = ".((int) $lastinsertid);
 
 								if ($is_table_category_link) {
+									'@phan-var-force string[] $where';
 									$sqlend = " WHERE " . implode(' AND ', $where);
 								}
 
