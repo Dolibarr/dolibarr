@@ -8620,7 +8620,7 @@ abstract class CommonObject
 					}
 
 					$visibility = 1;
-					if ($visibility && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
+					if (isset($extrafields->attributes[$this->table_element]['list'][$key])) {
 						$visibility = (int) dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
 					}
 
@@ -8629,9 +8629,9 @@ abstract class CommonObject
 						$perms = (int) dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
 					}
 
-					if (($mode == 'create') && abs($visibility) != 1 && abs($visibility) != 3) {
+					if (($mode == 'create') && !in_array(abs($visibility), array(1, 3))) {
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
-					} elseif (($mode == 'edit') && abs($visibility) != 1 && abs($visibility) != 3 && abs($visibility) != 4) {
+					} elseif (($mode == 'edit') && !in_array(abs($visibility), array(1, 3, 4))) {
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
 					} elseif ($mode == 'view' && empty($visibility)) {
 						continue;
