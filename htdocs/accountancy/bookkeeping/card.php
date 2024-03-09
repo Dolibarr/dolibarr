@@ -94,12 +94,12 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 /*
  * Actions
  */
-$parameters = array(); //***HOOK 
-$reshook_onBeforeActions = $hookmanager->executeHooks('onBeforeActions', $parameters, $object, $action); //***HOOK  Note that $action and $object may have been modified by some hooks
-if ($reshook_onBeforeActions < 0) { //***HOOK 
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors'); //***HOOK 
-} //***HOOK 
-if (empty($reshook_onBeforeActions)) { //***HOOK 
+$parameters = array();
+$reshook_onBeforeActions = $hookmanager->executeHooks('onBeforeActions', $parameters, $object, $action);
+if ($reshook_onBeforeActions < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook_onBeforeActions)) {
 	if ($cancel) {
 		header("Location: ".DOL_URL_ROOT.'/accountancy/bookkeeping/list.php');
 		exit;
@@ -267,7 +267,7 @@ if (empty($reshook_onBeforeActions)) { //***HOOK
 			$object->amount = 0;
 
 			$result = $object->createStd($user, 0, $mode);
-			$reshook = $hookmanager->executeHooks('onConfirmCreate_onAfterCreateEmptyLine', $parameters, $object, $action); //***HOOK  Note that $action and $object may have been modified by some hooks
+			$reshook = $hookmanager->executeHooks('onConfirmCreate_onAfterCreateEmptyLine', $parameters, $object, $action);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
@@ -330,18 +330,18 @@ if (empty($reshook_onBeforeActions)) { //***HOOK
 			exit;
 		}
 	}
-} //***HOOK
-$reshook_onAfterActions = $hookmanager->executeHooks('onAfterActions', $parameters, $object, $action); ///***HOOK Note that $action and $object may have been modified by some hooks
+}
+$reshook_onAfterActions = $hookmanager->executeHooks('onAfterActions', $parameters, $object, $action);
 
 
 /*
  * View
  */
-$reshook_onBeforeView = $hookmanager->executeHooks('onBeforeView', $parameters, $object, $action); //***HOOK  Note that $action and $object may have been modified by some hooks
-if ($reshook_onBeforeView < 0) { //***HOOK 
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors'); //***HOOK Error
-} //***HOOK 
-if (empty($reshook_onBeforeView)) { //***HOOK Return 0 so execute the standard prog.
+$reshook_onBeforeView = $hookmanager->executeHooks('onBeforeView', $parameters, $object, $action);
+if ($reshook_onBeforeView < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook_onBeforeView)) {
 	$form = new Form($db);
 	$formaccounting = new FormAccounting($db);
 
@@ -406,7 +406,7 @@ if (empty($reshook_onBeforeView)) { //***HOOK Return 0 so execute the standard p
 		print '<td><input type="text" class="minwidth200 name="doc_type" value=""/></td>';
 		print '</tr>';
 		*/
-		$reshook_onCreate_onAfterShowFields = $hookmanager->executeHooks('onCreate_onAfterShowFields', $parameters, $object, $action); //***HOOK  Note that $action and $object may have been modified by some hooks
+		$reshook_onCreate_onAfterShowFields = $hookmanager->executeHooks('onCreate_onAfterShowFields', $parameters, $object, $action);
 		
 		print '</table>';
 
@@ -816,8 +816,8 @@ if (empty($reshook_onBeforeView)) { //***HOOK Return 0 so execute the standard p
 			print load_fiche_titre($langs->trans("NoRecords"));
 		}
 	}
-} //***HOOK
-$reshook_onAfterView = $hookmanager->executeHooks('onAfterView', $parameters, $object, $action); //***HOOK  Note that $action and $object may have been modified by some hooks
+}
+$reshook_onAfterView = $hookmanager->executeHooks('onAfterView', $parameters, $object, $action);
 
 print dol_get_fiche_end();
 
