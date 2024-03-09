@@ -233,6 +233,7 @@ class pdf_standard extends ModelePDFProduct
 				$nexY = $pdf->GetY();
 
 				// Show photo
+				$pdir = array();
 				if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 					$pdir[0] = get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id."/photos/";
 					$pdir[1] = get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref).'/';
