@@ -1118,7 +1118,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Birth Date
 		print "<tr><td>".$langs->trans("DateOfBirth")."</td><td>\n";
-		print img_picto('', 'object_calendar', 'class="pictofixedwidth"').$form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
+		print img_picto('', 'object_calendar', 'class="pictofixedwidth"').$form->selectDate(($object->birth ? $object->birth : -1), 'birth', 0, 0, 1, 'formsoc');
 		print "</td></tr>\n";
 
 		// Public profil
@@ -1365,7 +1365,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Birth Date
 		print "<tr><td>".$langs->trans("DateOfBirth")."</td><td>\n";
-		print img_picto('', 'object_calendar', 'class="pictofixedwidth"').$form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
+		print img_picto('', 'object_calendar', 'class="pictofixedwidth"').$form->selectDate(($object->birth ? $object->birth : -1), 'birth', 0, 0, 1, 'formsoc');
 		print "</td></tr>\n";
 
 		// Default language

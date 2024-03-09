@@ -374,7 +374,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Docdate").'</td>';
 	print '<td>';
-	print $form->selectDate('', 'doc_date', '', '', '', "create_mvt", 1, 1);
+	print $form->selectDate('', 'doc_date', 0, 0, 0, "create_mvt", 1, 1);
 	print '</td>';
 	print '</tr>';
 
@@ -459,7 +459,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
-			print $form->selectDate($object->doc_date ? $object->doc_date : - 1, 'doc_date', '', '', '', "setdate");
+			print $form->selectDate($object->doc_date ? $object->doc_date : - 1, 'doc_date', 0, 0, 0, "setdate");
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {

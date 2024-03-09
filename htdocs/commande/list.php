@@ -1413,7 +1413,7 @@ if ($massaction == 'createbills') {
 	print $langs->trans('DateInvoice');
 	print '</td>';
 	print '<td>';
-	print $form->selectDate('', '', '', '', '', '', 1, 1);
+	print $form->selectDate('', '', 0, 0, 0, '', 1, 1);
 	print '</td>';
 	print '</tr>';
 	print '<tr>';

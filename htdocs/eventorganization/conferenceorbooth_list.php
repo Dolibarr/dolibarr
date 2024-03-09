@@ -120,11 +120,11 @@ foreach ($object->fields as $key => $val) {
 	if (!empty($val['visible'])) {
 		$visible = (int) dol_eval($val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
-			'label'=>$val['label'],
-			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
-			'position'=>$val['position'],
-			'help'=> isset($val['help']) ? $val['help'] : ''
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? 0 : 1),
+			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
@@ -159,15 +159,15 @@ if (!$permissiontoread) {
 
 if (preg_match('/^set/', $action) && ($projectid > 0 || $projectref) && $user->hasRight('eventorganization', 'write')) {
 	//If "set" fields keys is in projects fields
-	$project_attr=preg_replace('/^set/', '', $action);
+	$project_attr = preg_replace('/^set/', '', $action);
 	if (array_key_exists($project_attr, $project->fields)) {
 		$result = $project->fetch($projectid, $projectref);
 		if ($result < 0) {
 			setEventMessages(null, $project->errors, 'errors');
 		} else {
 			$projectid = $project->id;
-			$project->{$project_attr}=GETPOST($project_attr);
-			$result=$project->update($user);
+			$project->{$project_attr} = GETPOST($project_attr);
+			$result = $project->update($user);
 			if ($result < 0) {
 				setEventMessages(null, $project->errors, 'errors');
 			}
@@ -245,7 +245,7 @@ if (empty($reshook)) {
 				}
 			} else {
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-				$error ++;
+				$error++;
 				break;
 			}
 		}
@@ -408,10 +408,10 @@ if ($projectid > 0) {
 	// Date start - end of event
 	print '<tr><td>'.$langs->trans("Dates").' ('.$langs->trans("Event").')</td><td>';
 	$start = dol_print_date($project->date_start_event, 'day', 'tzuserrel');
-	print ($start ? '<span title="'.dol_print_date($project->date_start_event, 'dayhour', 'tzuserrel').'">'.$start.'</span>' : '?');
+	print($start ? '<span title="'.dol_print_date($project->date_start_event, 'dayhour', 'tzuserrel').'">'.$start.'</span>' : '?');
 	$end = dol_print_date($project->date_end_event, 'day', 'tzuserrel');
 	print ' - ';
-	print ($end ? '<span title="'.dol_print_date($project->date_end_event, 'dayhour', 'tzuserrel').'">'.$end.'</span>' : '?');
+	print($end ? '<span title="'.dol_print_date($project->date_end_event, 'dayhour', 'tzuserrel').'">'.$end.'</span>' : '?');
 	if ($object->hasDelay()) {
 		print img_warning("Late");
 	}
@@ -454,7 +454,7 @@ if ($projectid > 0) {
 	$htmltext = $langs->trans("AllowUnknownPeopleSuggestConfHelp");
 	print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', ($project->accept_conference_suggestions ? 1 : 0), $project, $permissiontoadd, $typeofdata, '', 0, 0, 'projectid', $htmltext);
 	print '</td><td class="valuefield">';
-	print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', ($project->accept_conference_suggestions ? 1 : 0), $project, $permissiontoadd, $typeofdata, '', 0, 0, '', 0, '', 'projectid');
+	print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', ($project->accept_conference_suggestions ? 1 : 0), $project, $permissiontoadd, $typeofdata, '', null, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td class="titlefield">';
@@ -462,25 +462,25 @@ if ($projectid > 0) {
 	$htmltext = $langs->trans("AllowUnknownPeopleSuggestBoothHelp");
 	print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', ($project->accept_booth_suggestions ? 1 : 0), $project, $permissiontoadd, $typeofdata, '', 0, 0, 'projectid', $htmltext);
 	print '</td><td class="valuefield">';
-	print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', ($project->accept_booth_suggestions ? 1 : 0), $project, $permissiontoadd, $typeofdata, '', 0, 0, '', 0, '', 'projectid');
+	print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', ($project->accept_booth_suggestions ? 1 : 0), $project, $permissiontoadd, $typeofdata, '', null, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td class="titlefield">';
 	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', '', $project, $permissiontoadd, 'amount', '', 0, 0, 'projectid');
 	print '</td><td class="valuefield">';
-	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $project->price_booth, $project, $permissiontoadd, 'amount', '', 0, 0, '', 0, '', 'projectid');
+	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $project->price_booth, $project, $permissiontoadd, 'amount', '', null, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td class="titlefield">';
 	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', '', $project, $permissiontoadd, 'amount', '', 0, 0, 'projectid');
 	print '</td><td class="valuefield">';
-	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $project->price_registration, $project, $permissiontoadd, 'amount', '', 0, 0, '', 0, '', 'projectid');
+	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $project->price_registration, $project, $permissiontoadd, 'amount', '', null, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td class="titlefield">';
 	print $form->editfieldkey($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', '', $project, $permissiontoadd, 'integer:3', '', 0, 0, 'projectid');
 	print '</td><td class="valuefield">';
-	print $form->editfieldval($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', $project->max_attendees, $project, $permissiontoadd, 'integer:3', '', 0, 0, '', 0, '', 'projectid');
+	print $form->editfieldval($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', $project->max_attendees, $project, $permissiontoadd, 'integer:3', '', null, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	// Link to ICS for the event
@@ -733,7 +733,7 @@ $arrayofmassactions = array(
 	//'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
 	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail").' ('.$langs->trans("ToSpeakers").')',
+	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail").' ('.$langs->trans("ToSpeakers").')',
 	//'presend_attendees'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail").' - '.$langs->trans("Attendees"),
 );
 if (!empty($permissiontodelete)) {
@@ -763,8 +763,8 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.(!empty($project->id) ? '&withproject=1&fk_project='.$project->id : '').(!empty($project->socid) ? '&fk_soc='.$project->socid : '').preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.(!empty($project->id) ? '&withproject=1&fk_project='.$project->id : '').(!empty($project->socid) ? '&fk_soc='.$project->socid : '').preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.(!empty($project->id) ? '&withproject=1&fk_project='.$project->id : '').(!empty($project->socid) ? '&fk_soc='.$project->socid : '').preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.(!empty($project->id) ? '&withproject=1&fk_project='.$project->id : '').(!empty($project->socid) ? '&fk_soc='.$project->socid : '').preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?action=create'.(!empty($project->id) ? '&withproject=1&fk_project='.$project->id : '').(!empty($project->socid) ? '&fk_soc='.$project->socid : '').'&backtopage='.urlencode($_SERVER['PHP_SELF']).(!empty($project->id) ? '?projectid='.$project->id : ''), '', $permissiontoadd);
 
@@ -884,7 +884,7 @@ foreach ($object->fields as $key => $val) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
@@ -927,7 +927,7 @@ foreach ($object->fields as $key => $val) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray'=>&$totalarray);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
@@ -1056,7 +1056,7 @@ while ($i < $imaxinloop) {
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Action column
@@ -1098,7 +1098,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

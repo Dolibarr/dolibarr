@@ -1971,7 +1971,7 @@ if ($action == 'create') {
 		// Date
 		print '<tr class="field_addprop"><td class="titlefieldcreate fieldrequired">'.$langs->trans('DatePropal').'</td><td class="valuefieldcreate">';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		print $form->selectDate('', '', '', '', '', "addprop", 1, 1);
+		print $form->selectDate('', '', 0, 0, 0, "addprop", 1, 1);
 		print '</td></tr>';
 
 		// Validaty duration
@@ -2042,9 +2042,9 @@ if ($action == 'create') {
 			$syear = date("Y", $tmpdte);
 			$smonth = date("m", $tmpdte);
 			$sday = date("d", $tmpdte);
-			print $form->selectDate($syear."-".$smonth."-".$sday, 'date_livraison', '', '', '', "addprop");
+			print $form->selectDate($syear."-".$smonth."-".$sday, 'date_livraison', 0, 0, 0, "addprop");
 		} else {
-			print $form->selectDate(-1, 'date_livraison', '', '', '', "addprop", 1, 1);
+			print $form->selectDate(-1, 'date_livraison', 0, 0, 0, "addprop", 1, 1);
 		}
 		print '</td></tr>';
 
@@ -2582,7 +2582,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-			print $form->selectDate($object->date, 're', '', '', 0, "editdate");
+			print $form->selectDate($object->date, 're', 0, 0, 0, "editdate");
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
@@ -2610,7 +2610,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setecheance">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-			print $form->selectDate($object->fin_validite, 'ech', '', '', '', "editecheance");
+			print $form->selectDate($object->fin_validite, 'ech', 0, 0, 0, "editecheance");
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
