@@ -1009,7 +1009,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Budget
 			print '<tr><td>' . $langs->trans("Budget") . '</td><td>';
 			if (!is_null($projectstatic->budget_amount) && strcmp($projectstatic->budget_amount, '')) {
-				print '<span class="amount">' . price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency) . '</span>';
+				print '<span class="amount">' . price($projectstatic->budget_amount, 0, $langs, 1, 0, 0, $conf->currency) . '</span>';
 			}
 			print '</td></tr>';
 
@@ -1418,7 +1418,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print $langs->trans('DateInvoice');
 				print '</td>';
 				print '<td>';
-				print $form->selectDate('', '', '', '', '', '', 1, 1);
+				print $form->selectDate('', '', 0, 0, 0, '', 1, 1);
 				print '</td>';
 				print '</tr>';
 

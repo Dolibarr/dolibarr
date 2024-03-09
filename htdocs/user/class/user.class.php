@@ -382,11 +382,11 @@ class User extends CommonObject
 	public $egroupware_id;
 
 	public $fields = array(
-		'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		'lastname'=>array('type'=>'varchar(50)', 'label'=>'Lastname', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1),
-		'firstname'=>array('type'=>'varchar(50)', 'label'=>'Firstname', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
-		'ref_employee'=>array('type'=>'varchar(50)', 'label'=>'RefEmployee', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>30, 'searchall'=>1),
-		'national_registration_number'=>array('type'=>'varchar(50)', 'label'=>'NationalRegistrationNumber', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>40, 'searchall'=>1)
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
+		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 20, 'searchall' => 1),
+		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1),
+		'ref_employee' => array('type' => 'varchar(50)', 'label' => 'RefEmployee', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 30, 'searchall' => 1),
+		'national_registration_number' => array('type' => 'varchar(50)', 'label' => 'NationalRegistrationNumber', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 40, 'searchall' => 1)
 	);
 
 
@@ -1016,7 +1016,7 @@ class User extends CommonObject
 
 		if (!$error && !$notrigger) {
 			$langs->load("other");
-			$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid ? ' (id='.$rid.')' : ''));
+			$this->context = array('audit' => $langs->trans("PermissionsAdd").($rid ? ' (id='.$rid.')' : ''));
 
 			// Call trigger
 			$result = $this->call_trigger('USER_MODIFY', $user);
@@ -1139,7 +1139,7 @@ class User extends CommonObject
 
 		if (!$error && !$notrigger) {
 			$langs->load("other");
-			$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid ? ' (id='.$rid.')' : ''));
+			$this->context = array('audit' => $langs->trans("PermissionsDelete").($rid ? ' (id='.$rid.')' : ''));
 
 			// Call trigger
 			$result = $this->call_trigger('USER_MODIFY', $user);
@@ -2703,7 +2703,7 @@ class User extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			if (!$error && !$notrigger) {
-				$this->context = array('audit'=>$langs->trans("UserSetInGroup"), 'newgroupid'=>$group);
+				$this->context = array('audit' => $langs->trans("UserSetInGroup"), 'newgroupid' => $group);
 
 				// Call trigger
 				$result = $this->call_trigger('USER_MODIFY', $user);
@@ -2758,7 +2758,7 @@ class User extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			if (!$error && !$notrigger) {
-				$this->context = array('audit'=>$langs->trans("UserRemovedFromGroup"), 'oldgroupid'=>$group);
+				$this->context = array('audit' => $langs->trans("UserRemovedFromGroup"), 'oldgroupid' => $group);
 
 				// Call trigger
 				$result = $this->call_trigger('USER_MODIFY', $user);
@@ -3056,7 +3056,7 @@ class User extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('userdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -3289,7 +3289,7 @@ class User extends CommonObject
 			'LDAP_FIELD_NAME'		=> 'lastname',
 			'LDAP_FIELD_FIRSTNAME'	=> 'firstname',
 			'LDAP_FIELD_LOGIN'		=> 'login',
-			'LDAP_FIELD_LOGIN_SAMBA'=> 'login',
+			'LDAP_FIELD_LOGIN_SAMBA' => 'login',
 			'LDAP_FIELD_PHONE'		=> 'office_phone',
 			'LDAP_FIELD_MOBILE'		=> 'user_mobile',
 			'LDAP_FIELD_FAX'		=> 'office_fax',
@@ -4072,7 +4072,7 @@ class User extends CommonObject
 		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
 		if ($errormessage) {
 			$this->errors[] = $errormessage;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			return -1;
 		}
 

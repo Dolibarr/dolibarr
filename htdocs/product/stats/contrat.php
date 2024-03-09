@@ -81,7 +81,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$object = $product;
 
-	$parameters = array('id'=>$id);
+	$parameters = array('id' => $id);
 	$reshook = $hookmanager->executeHooks('doActions', $parameters, $product, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -191,6 +191,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 			}
 
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Contrats"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
 			if (!empty($page)) {

@@ -61,8 +61,17 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 if (!is_array($search_array_options)) {
 	$search_array_options = array();
 }
-$search_ref 	= GETPOST("search_ref", 'alpha');
-$search_type 	= GETPOST("search_type", 'alpha');
+$search_ref			= GETPOST("search_ref", 'alpha');
+$search_type		= GETPOST("search_type", 'alpha');
+$search_address		= GETPOST("search_address", 'alpha');
+$search_zip			= GETPOST("search_zip", 'alpha');
+$search_town		= GETPOST("search_town", 'alpha');
+$search_state		= GETPOST("search_state", 'alpha');
+$search_country		= GETPOST("search_country", 'alpha');
+$search_phone		= GETPOST("search_phone", 'alpha');
+$search_email		= GETPOST("search_email", 'alpha');
+$search_max_users	= GETPOST("search_max_users", 'alpha');
+$search_url			= GETPOST("search_url", 'alpha');
 
 $filter = array();
 
@@ -87,14 +96,61 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $arrayfields = array(
-		't.ref' => array(
-				'label' => $langs->trans("Ref"),
-				'checked' => 1
-		),
-		'ty.label' => array(
-				'label' => $langs->trans("ResourceType"),
-				'checked' => 1
-		),
+	't.ref' => array(
+		'label' => $langs->trans("Ref"),
+		'checked' => 1,
+		'position' => 1
+	),
+	'ty.label' => array(
+		'label' => $langs->trans("Type"),
+		'checked' => 1,
+		'position' => 2
+	),
+	't.address' => array(
+		'label' => $langs->trans("Address"),
+		'checked' => 0,
+		'position' => 3
+	),
+	't.zip' => array(
+		'label' => $langs->trans("Zip"),
+		'checked' => 0,
+		'position' => 4
+	),
+	't.town' => array(
+		'label' => $langs->trans("Town"),
+		'checked' => 1,
+		'position' => 5
+	),
+	'st.nom' => array(
+		'label' => $langs->trans("State"),
+		'checked' => 0,
+		'position' => 6
+	),
+	'co.label' => array(
+		'label' => $langs->trans("Country"),
+		'checked' => 1,
+		'position' => 7
+	),
+	't.phone' => array(
+		'label' => $langs->trans("Phone"),
+		'checked' => 0,
+		'position' => 8
+	),
+	't.email' => array(
+		'label' => $langs->trans("Email"),
+		'checked' => 0,
+		'position' => 9
+	),
+	't.max_users' => array(
+		'label' => $langs->trans("MaxUsersLabel"),
+		'checked' => 1,
+		'position' => 10
+	),
+	't.url' => array(
+		'label' => $langs->trans("URL"),
+		'checked' => 0,
+		'position' => 11
+	),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -108,6 +164,15 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$search_ref = "";
 	$search_type = "";
+	$search_address = "";
+	$search_zip = "";
+	$search_town = "";
+	$search_state = "";
+	$search_country = "";
+	$search_phone = "";
+	$search_email = "";
+	$search_max_users = "";
+	$search_url = "";
 	$toselect = array();
 	$search_array_options = array();
 }
@@ -175,7 +240,9 @@ $sql .= " t.url,";
 $sql .= " t.fk_code_type_resource,";
 $sql .= " t.tms as date_modification,";
 $sql .= " t.datec as date_creation, ";
-$sql .= " ty.label as type_label ";
+$sql .= " ty.label as type_label, ";
+$sql .= " st.nom as state_label, ";
+$sql .= " co.label as country_label ";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -191,6 +258,8 @@ $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."resource as t";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as st ON st.rowid=t.fk_state";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid=t.fk_country";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
@@ -206,6 +275,33 @@ if ($search_ref) {
 }
 if ($search_type) {
 	$sql .= natural_search('ty.label', $search_type);
+}
+if ($search_address) {
+	$sql .= natural_search('t.address', $search_address);
+}
+if ($search_zip) {
+	$sql .= natural_search('t.zip', $search_zip);
+}
+if ($search_town) {
+	$sql .= natural_search('t.town', $search_town);
+}
+if ($search_state) {
+	$sql .= natural_search('st.nom', $search_state);
+}
+if ($search_country && $search_country != '-1') {
+	$sql .= " AND t.fk_country IN (".$db->sanitize($search_country).')';
+}
+if ($search_phone) {
+	$sql .= natural_search('t.phone', $search_phone);
+}
+if ($search_email) {
+	$sql .= natural_search('t.email', $search_email);
+}
+if ($search_max_users) {
+	$sql .= natural_search('t.max_users', $search_max_users, 1);
+}
+if ($search_url) {
+	$sql .= natural_search('t.url', $search_url);
 }
 
 // Add where from extra fields
@@ -277,6 +373,33 @@ if ($search_ref != '') {
 if ($search_type != '') {
 	$param .= '&search_type='.urlencode($search_type);
 }
+if ($search_address != '') {
+	$param .= '&search_address='.urlencode($search_address);
+}
+if ($search_zip != '') {
+	$param .= '&search_zip='.urlencode($search_zip);
+}
+if ($search_town != '') {
+	$param .= '&search_town='.urlencode($search_town);
+}
+if ($search_state != '') {
+	$param .= '&search_state='.urlencode($search_state);
+}
+if ($search_country != '') {
+	$param .= '&search_country='.urlencode($search_country);
+}
+if ($search_phone != '') {
+	$param .= '&search_phone='.urlencode($search_phone);
+}
+if ($search_email != '') {
+	$param .= '&search_email='.urlencode($search_email);
+}
+if ($search_max_users != '') {
+	$param .= '&search_max_users='.urlencode($search_max_users);
+}
+if ($search_url != '') {
+	$param .= '&search_url='.urlencode($search_url);
+}
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -337,6 +460,51 @@ if (!empty($arrayfields['ty.label']['checked'])) {
 	print '<input type="text" class="flat" name="search_type" value="'.$search_type.'" size="8">';
 	print '</td>';
 }
+if (!empty($arrayfields['t.address']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_address" value="'.$search_address.'" size="8">';
+	print '</td>';
+}
+if (!empty($arrayfields['t.zip']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_zip" value="'.$search_zip.'" size="8">';
+	print '</td>';
+}
+if (!empty($arrayfields['t.town']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_town" value="'.$search_town.'" size="8">';
+	print '</td>';
+}
+if (!empty($arrayfields['st.nom']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_state" value="'.$search_state.'" size="8">';
+	print '</td>';
+}
+if (!empty($arrayfields['co.label']['checked'])) {
+	print '<td class="liste_titre">';
+	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
+	print '</td>';
+}
+if (!empty($arrayfields['t.phone']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_phone" value="'.$search_phone.'" size="8">';
+	print '</td>';
+}
+if (!empty($arrayfields['t.email']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_email" value="'.$search_email.'" size="8">';
+	print '</td>';
+}
+if (!empty($arrayfields['t.max_users']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_max_users" value="'.$search_max_users.'" size="8">';
+	print '</td>';
+}
+if (!empty($arrayfields['t.url']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_url" value="'.$search_url.'" size="8">';
+	print '</td>';
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -361,6 +529,33 @@ if (!empty($arrayfields['t.ref']['checked'])) {
 if (!empty($arrayfields['ty.label']['checked'])) {
 	print_liste_field_titre($arrayfields['ty.label']['label'], $_SERVER["PHP_SELF"], "ty.label", "", $param, "", $sortfield, $sortorder);
 }
+if (!empty($arrayfields['t.address']['checked'])) {
+	print_liste_field_titre($arrayfields['t.address']['label'], $_SERVER["PHP_SELF"], "t.address", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['t.zip']['checked'])) {
+	print_liste_field_titre($arrayfields['t.zip']['label'], $_SERVER["PHP_SELF"], "t.zip", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['t.town']['checked'])) {
+	print_liste_field_titre($arrayfields['t.town']['label'], $_SERVER["PHP_SELF"], "t.town", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['st.nom']['checked'])) {
+	print_liste_field_titre($arrayfields['st.nom']['label'], $_SERVER["PHP_SELF"], "st.nom", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['co.label']['checked'])) {
+	print_liste_field_titre($arrayfields['co.label']['label'], $_SERVER["PHP_SELF"], "co.label", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['t.phone']['checked'])) {
+	print_liste_field_titre($arrayfields['t.phone']['label'], $_SERVER["PHP_SELF"], "t.phone", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['t.email']['checked'])) {
+	print_liste_field_titre($arrayfields['t.email']['label'], $_SERVER["PHP_SELF"], "t.email", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['t.max_users']['checked'])) {
+	print_liste_field_titre($arrayfields['t.max_users']['label'], $_SERVER["PHP_SELF"], "t.max_users", "", $param, "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['t.url']['checked'])) {
+	print_liste_field_titre($arrayfields['t.url']['label'], $_SERVER["PHP_SELF"], "t.url", "", $param, "", $sortfield, $sortorder);
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Action column
@@ -381,22 +576,90 @@ while ($i < $imaxinloop) {
 	$objectstatic->id = $obj->rowid;
 	$objectstatic->ref = $obj->ref;
 	$objectstatic->type_label = $obj->type_label;
+	$objectstatic->address = $obj->address;
+	$objectstatic->zip = $obj->zip;
+	$objectstatic->town = $obj->town;
+	$objectstatic->state = $obj->state_label;
+	$objectstatic->country = $obj->country_label;
+	$objectstatic->phone = $obj->phone;
+	$objectstatic->email = $obj->email;
+	$objectstatic->max_users = $obj->max_users;
+	$objectstatic->url = $obj->url;
 
 	print '<tr class="oddeven">';
 
 	if (!empty($arrayfields['t.ref']['checked'])) {
-		print '<td>';
-		print $objectstatic->getNomUrl(5);
-		print '</td>';
+		print '<td>'.$objectstatic->getNomUrl(5).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
 	if (!empty($arrayfields['ty.label']['checked'])) {
-		print '<td>';
-		print $objectstatic->type_label;
-		print '</td>';
+		print '<td>'.$objectstatic->type_label.'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['t.address']['checked'])) {
+		print '<td>'.$objectstatic->address.'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['t.zip']['checked'])) {
+		print '<td>'.$objectstatic->zip.'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['t.town']['checked'])) {
+		print '<td>'.$objectstatic->town.'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['st.nom']['checked'])) {
+		print '<td>'.$objectstatic->state.'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['co.label']['checked'])) {
+		print '<td>'.$objectstatic->country.'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['t.phone']['checked'])) {
+		print '<td>'.dol_print_phone($objectstatic->phone, '', 0, 0, 'AC_TEL', " ", 'phone').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['t.email']['checked'])) {
+		print '<td>'.dol_print_email($objectstatic->email, 0, 0, 1, 0, 0, 1).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['t.max_users']['checked'])) {
+		print '<td>'.$objectstatic->max_users.'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['t.url']['checked'])) {
+		print '<td>'.dol_print_url($objectstatic->url, '_blank', 32, 1).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

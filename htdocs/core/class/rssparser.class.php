@@ -503,13 +503,13 @@ class RssParser
 
 					// Add record to result array
 					$this->_rssarray[$i] = array(
-						'link'=>$itemLink,
-						'title'=>$itemTitle,
-						'description'=>$itemDescription,
-						'pubDate'=>$itemPubDate,
-						'category'=>$itemCategory,
-						'id'=>$itemId,
-						'author'=>$itemAuthor
+						'link' => $itemLink,
+						'title' => $itemTitle,
+						'description' => $itemDescription,
+						'pubDate' => $itemPubDate,
+						'category' => $itemCategory,
+						'id' => $itemId,
+						'author' => $itemAuthor
 					);
 					//var_dump($this->_rssarray);
 
@@ -812,7 +812,7 @@ class RssParser
 	}
 }
 
-
+// @phan-suppress PhanPluginPHPDocInWrongComment
 /*
  * A method for the xml_set_external_entity_ref_handler()
  *

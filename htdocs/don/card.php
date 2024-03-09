@@ -453,12 +453,12 @@ if ($action == 'create') {
 			$arrayoutstandingbills = $soc->getOutstandingBills();
 			$outstandingBills = $arrayoutstandingbills['opened'];
 			print ' ('.$langs->trans('CurrentOutstandingBill').': ';
-			print price($outstandingBills, '', $langs, 0, 0, -1, $conf->currency);
+			print price($outstandingBills, 0, $langs, 0, 0, -1, $conf->currency);
 			if ($soc->outstanding_limit != '') {
 				if ($outstandingBills > $soc->outstanding_limit) {
 					print img_warning($langs->trans("OutstandingBillReached"));
 				}
-				print ' / '.price($soc->outstanding_limit, '', $langs, 0, 0, -1, $conf->currency);
+				print ' / '.price($soc->outstanding_limit, 0, $langs, 0, 0, -1, $conf->currency);
 			}
 			print ')';
 			print '</td>';
@@ -490,7 +490,7 @@ if ($action == 'create') {
 
 	// Date
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Date").'</td><td>';
-	print $form->selectDate($donation_date ? $donation_date : -1, '', '', '', '', "add", 1, 1);
+	print $form->selectDate($donation_date ? $donation_date : -1, '', 0, 0, 0, "add", 1, 1);
 	print '</td>';
 
 	// Amount
@@ -623,7 +623,7 @@ if (!empty($id) && $action == 'edit') {
 
 	// Date
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Date").'</td><td>';
-	print $form->selectDate($object->date, '', '', '', '', "update");
+	print $form->selectDate($object->date, '', 0, 0, 0, "update");
 	print '</td>';
 
 	// Amount

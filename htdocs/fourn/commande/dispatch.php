@@ -794,7 +794,7 @@ if ($id > 0 || !empty($ref)) {
 
 			$nbfreeproduct = 0; // Nb of lins of free products/services
 			$nbproduct = 0; // Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
-									// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
+			// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
 
 			$conf->cache['product'] = array();
 
@@ -937,13 +937,13 @@ if ($id > 0 || !empty($ref)) {
 							if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 								print '<td class="nowraponall">';
 								$dlcdatesuffix = dol_mktime(0, 0, 0, GETPOST('dlc'.$suffix.'month'), GETPOST('dlc'.$suffix.'day'), GETPOST('dlc'.$suffix.'year'));
-								print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, '', '', 1, '');
+								print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, 0, 0, 1, '');
 								print '</td>';
 							}
 							if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 								print '<td class="nowraponall">';
 								$dluodatesuffix = dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
-								print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, '', '', 1, '');
+								print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, 0, 0, 1, '');
 								print '</td>';
 							}
 							print '<td colspan="3">&nbsp;</td>'; // Supplier ref + Qty ordered + qty already dispatched

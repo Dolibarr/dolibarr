@@ -430,7 +430,7 @@ if ($action == 'create') {
 				print '<form name="setdate_delivery" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="setdate_delivery">';
-				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_delivery", 1, 1);
+				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, 0, "setdate_delivery", 1, 1);
 				print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			} else {

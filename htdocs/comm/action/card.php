@@ -629,6 +629,7 @@ if (empty($reshook) && $action == 'add') {
 			$repeateventlimitdate = dol_mktime(23, 59, 59, GETPOSTISSET("limitmonth") ? GETPOSTINT("limitmonth") : 1, GETPOSTISSET("limitday") ? GETPOSTINT("limitday") : 1, GETPOSTISSET("limityear") && GETPOSTINT("limityear") < 2100 ? GETPOSTINT("limityear") : 2100, $tzforfullday ? $tzforfullday : 'tzuserrel');
 			// Set date of end of event
 			$deltatime = num_between_day($object->datep, $datep);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$datef = dol_time_plus_duree($datef, $deltatime, 'd');
 
 			while ($datep <= $repeateventlimitdate && !$error) {
