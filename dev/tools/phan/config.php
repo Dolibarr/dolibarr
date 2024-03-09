@@ -331,6 +331,7 @@ return [
 		// Dolibarr uses a lot of internal deprecated stuff, not reporting
 		'PhanDeprecatedProperty',
 		'PhanDeprecatedFunction',
+		'PhanCompatibleNegativeStringOffset',
 		// Dolibarr has quite a few strange noop assignments like $abc=$abc;
 		'PhanPluginDuplicateExpressionAssignment',
 		// Nulls are likely mostly false positives

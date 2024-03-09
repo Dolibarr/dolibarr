@@ -335,7 +335,7 @@ for ($i = 1 ; $i < $MAXLINES; $i++) {
 
 	// Date
 	print '<td class="nowraponall">';
-	print $form->selectDate((!empty($dateo[$i]) ? $dateo[$i] : ''), $i.'_', '', '', '', 'add');
+	print $form->selectDate((!empty($dateo[$i]) ? $dateo[$i] : ''), $i.'_', 0, 0, 0, 'add');
 	print "</td>\n";
 
 	// Description

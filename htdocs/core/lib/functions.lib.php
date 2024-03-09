@@ -9957,8 +9957,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 			if ($hideerrors) {
 				ob_start();	// An evaluation has no reason to output data
 				$tmps = @eval('return '.$s.';');
-				$tmpo = ob_get_contents();
-				ob_clean(); // End of interception of data
+				$tmpo = ob_get_clean();
 				if ($tmpo) {
 					print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: '.$s;
 				}
@@ -9966,8 +9965,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 			} else {
 				ob_start();	// An evaluation has no reason to output data
 				$tmps = eval('return '.$s.';');
-				$tmpo = ob_get_contents();
-				ob_clean(); // End of interception of data
+				$tmpo = ob_get_clean();
 				if ($tmpo) {
 					print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: '.$s;
 				}

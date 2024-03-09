@@ -267,6 +267,7 @@ function dol_json_decode($json, $assoc = false)
 		} else {
 			$out .= $json[$i];
 		}
+		// @phan-suppress-next-line PhanCompatibleNegativeStringOffset
 		if ($i >= 1 && $json[$i] == '"' && $json[$i - 1] != "\\") {
 			$comment = !$comment;
 		}

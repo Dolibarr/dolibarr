@@ -274,7 +274,7 @@ if (empty($reshook)) {
 			$stockLocation = "ent1".$i."_0";
 			$qty = "qtyl".$i;
 
-			$is_batch_or_serial=0;
+			$is_batch_or_serial = 0;
 			if (!empty($objectsrc->lines[$i]->fk_product)) {
 				$resultFetch = $product->fetch($objectsrc->lines[$i]->fk_product, '', '', '', 1, 1, 1);
 				if ($resultFetch < 0) {
@@ -300,9 +300,9 @@ if (empty($reshook)) {
 						//var_dump($sub_qty[$j]['id_batch']);
 
 						//var_dump($qty);var_dump($batch);var_dump($sub_qty[$j]['q']);var_dump($sub_qty[$j]['id_batch']);
-						if ($is_batch_or_serial==2 && $sub_qty[$j]['q']>1) {
+						if ($is_batch_or_serial == 2 && $sub_qty[$j]['q'] > 1) {
 							setEventMessages($langs->trans("TooManyQtyForSerialNumber", $product->ref, ''), null, 'errors');
-							$totalqty=0;
+							$totalqty = 0;
 							break 2;
 						}
 						$j++;
@@ -351,7 +351,7 @@ if (empty($reshook)) {
 
 			// check qty shipped not greater than ordered
 			if (getDolGlobalInt("MAIN_DONT_SHIP_MORE_THAN_ORDERED") && $subtotalqty > $objectsrc->lines[$i]->qty) {
-				setEventMessages($langs->trans("ErrorTooMuchShipped", $i+1), null, 'errors');
+				setEventMessages($langs->trans("ErrorTooMuchShipped", $i + 1), null, 'errors');
 				$error++;
 				continue;
 			}
@@ -679,7 +679,7 @@ if (empty($reshook)) {
 									setEventMessages($line->error, $line->errors, 'errors');
 									$error++;
 								} else {
-									$update_done=true;
+									$update_done = true;
 								}
 							} else {
 								setEventMessages($lotStock->error, $lotStock->errors, 'errors');
@@ -723,7 +723,7 @@ if (empty($reshook)) {
 										setEventMessages($line->error, $line->errors, 'errors');
 										$error++;
 									} else {
-										$update_done=true;
+										$update_done = true;
 									}
 								} else {
 									setEventMessages($line->error, $line->errors, 'errors');
@@ -742,7 +742,7 @@ if (empty($reshook)) {
 									setEventMessages($object->error, $object->errors, 'errors');
 									$error++;
 								} else {
-									$update_done=true;
+									$update_done = true;
 								}
 							}
 						} else {
@@ -794,7 +794,7 @@ if (empty($reshook)) {
 											setEventMessages($line->error, $line->errors, 'errors');
 											$error++;
 										} else {
-											$update_done=true;
+											$update_done = true;
 										}
 									}
 									unset($_POST[$stockLocation]);
@@ -810,7 +810,7 @@ if (empty($reshook)) {
 								setEventMessages($line->error, $line->errors, 'errors');
 								$error++;
 							} else {
-								$update_done=true;
+								$update_done = true;
 							}
 							unset($_POST[$qty]);
 						}
@@ -824,7 +824,7 @@ if (empty($reshook)) {
 							setEventMessages($line->error, $line->errors, 'errors');
 							$error++;
 						} else {
-							$update_done=true;
+							$update_done = true;
 						}
 						unset($_POST[$qty]);
 					}
@@ -1604,7 +1604,7 @@ if ($action == 'create') {
 							$nbofsuggested = 0;
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
 								if (($stock_warehouse->real > 0) && (count($stock_warehouse->detail_batch))) {
-									$nbofsuggested+=count($stock_warehouse->detail_batch);
+									$nbofsuggested += count($stock_warehouse->detail_batch);
 								}
 							}
 
@@ -1749,7 +1749,7 @@ if ($action == 'create') {
 
 						$expLine->array_options = array_merge($expLine->array_options, $srcLine->array_options);
 
-						print $expLine->showOptionals($extrafields, 'edit', array('style'=>'class="drag drop oddeven"', 'colspan'=>$colspan), $indiceAsked, '', 1);
+						print $expLine->showOptionals($extrafields, 'edit', array('style' => 'class="drag drop oddeven"', 'colspan' => $colspan), $indiceAsked, '', 1);
 					}
 				}
 
@@ -1957,7 +1957,7 @@ if ($action == 'create') {
 		print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate_livraison">';
-		print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
+		print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, 0, "setdate_livraison", 1, 0);
 		print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
@@ -2266,9 +2266,9 @@ if ($action == 'create') {
 				if ($obj) {
 					// $obj->rowid is rowid in $origin."det" table
 					$alreadysent[$obj->rowid][$obj->shipmentline_id] = array(
-						'shipment_ref'=>$obj->shipment_ref, 'shipment_id'=>$obj->shipment_id, 'warehouse'=>$obj->fk_entrepot, 'qty_shipped'=>$obj->qty_shipped,
-						'product_tosell'=>$obj->product_tosell, 'product_tobuy'=>$obj->product_tobuy, 'product_tobatch'=>$obj->product_tobatch,
-						'date_valid'=>$db->jdate($obj->date_valid), 'date_delivery'=>$db->jdate($obj->date_delivery));
+						'shipment_ref' => $obj->shipment_ref, 'shipment_id' => $obj->shipment_id, 'warehouse' => $obj->fk_entrepot, 'qty_shipped' => $obj->qty_shipped,
+						'product_tosell' => $obj->product_tosell, 'product_tobuy' => $obj->product_tobuy, 'product_tobatch' => $obj->product_tobatch,
+						'date_valid' => $db->jdate($obj->date_valid), 'date_delivery' => $db->jdate($obj->date_delivery));
 				}
 				$i++;
 			}
@@ -2608,9 +2608,9 @@ if ($action == 'create') {
 
 				// TODO Show all in same line by setting $display_type = 'line'
 				if ($action == 'editline' && $line->id == $line_id) {
-					print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), !empty($indiceAsked) ? $indiceAsked : '', '', 0, 'card');
+					print $lines[$i]->showOptionals($extrafields, 'edit', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', 0, 'card');
 				} else {
-					print $lines[$i]->showOptionals($extrafields, 'view', array('colspan'=>$colspan), !empty($indiceAsked) ? $indiceAsked : '', '', 0, 'card');
+					print $lines[$i]->showOptionals($extrafields, 'view', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', 0, 'card');
 				}
 			}
 		}

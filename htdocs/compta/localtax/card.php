@@ -164,12 +164,12 @@ if ($action == 'create') {
 	// Date of payment
 	print "<tr>";
 	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-	print $form->selectDate($datep, "datep", '', '', '', 'add', 1, 1);
+	print $form->selectDate($datep, "datep", 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// End date of period
 	print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
-	print $form->selectDate($datev, "datev", '', '', '', 'add', 1, 1);
+	print $form->selectDate($datev, "datev", 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// Label
