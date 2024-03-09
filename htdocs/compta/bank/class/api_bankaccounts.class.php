@@ -187,6 +187,7 @@ class BankAccounts extends DolibarrApi
 	 * @param string  $description			Description of the internal wire transfer								{@from body}{@required true}
 	 * @param float	  $amount				Amount to transfer from the source to the destination BankAccount		{@from body}{@required true}
 	 * @param float	  $amount_to			Amount to transfer to the destination BankAccount (only when accounts does not share the same currency)		{@from body}{@required false}
+	 * @param string $cheque_number         Cheque numero {@from body}
 	 *
 	 * @url POST    /transfer
 	 *
@@ -199,7 +200,7 @@ class BankAccounts extends DolibarrApi
 	 * @throws RestException 422 Unprocessable Entity: Refer to detailed exception message for the cause
 	 * @throws RestException 500 Internal Server Error: Error(s) returned by the RDBMS
 	 */
-	public function transfer($bankaccount_from_id = 0, $bankaccount_to_id = 0, $date = null, $description = "", $amount = 0.0, $amount_to = 0.0)
+	public function transfer($bankaccount_from_id = 0, $bankaccount_to_id = 0, $date = null, $description = "", $amount = 0.0, $amount_to = 0.0, $cheque_number = "" )
 	{
 		if (!DolibarrApiAccess::$user->hasRight('banque', 'configurer')) {
 			throw new RestException(403);
@@ -257,21 +258,21 @@ class BankAccounts extends DolibarrApi
 
 		// Clean data
 		$description = sanitizeVal($description, 'alphanohtml');
-
+		$cheque_number = sanitizeVal($cheque_number);
 
 		/**
 		 * Creating bank line records
 		 */
 
 		if (!$error) {
-			$bank_line_id_from = $accountfrom->addline($date, $typefrom, $description, -1 * price2num($amount), '', '', $user);
+			$bank_line_id_from = $accountfrom->addline($date, $typefrom, $description, -1 * price2num($amount), '', '', $user, $cheque_number);
 		}
 		if (!($bank_line_id_from > 0)) {
 			$error++;
 		}
 
 		if (!$error) {
-			$bank_line_id_to = $accountto->addline($date, $typeto, $description, price2num($amount_to), '', '', $user);
+			$bank_line_id_to = $accountto->addline($date, $typeto, $description, price2num($amount_to), '', '', $user, $cheque_number);
 		}
 		if (!($bank_line_id_to > 0)) {
 			$error++;
