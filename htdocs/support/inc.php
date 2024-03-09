@@ -174,8 +174,11 @@ if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang('auto');
 }
 
-$bc[false] = ' class="bg1"';
-$bc[true] = ' class="bg2"';
+// Note: boolean keys are converted to int, so using int keys to avoid phan notice
+$bc = array(
+	0 => ' class="bg1"',  // false
+	1 => ' class="bg2"',  // true
+);
 
 
 /**
