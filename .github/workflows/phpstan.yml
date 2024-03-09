@@ -9,9 +9,8 @@ concurrency:
     cancel-in-progress: true
 
 env:
-  CACHE_KEY_PART: >
-    ${{ ( github.event_name == 'pull_request' ) && github.base_ref
-     }}${{ ( github.event_name == 'pull_request' ) && '-' }}${{ github.head_ref }}
+  CACHE_KEY_PART: ${{ github.event_name == 'pull_request' && format('{0}-{1}', 
+github.base_ref, github.head_ref) || github.ref_name }}
   GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -58,7 +57,7 @@ jobs:
       # Run PHPStan
       - name: Run PHPStan
         id: phpstan
-        run: phpstan -vvv analyse --error-format=checkstyle --memory-limit 4G -a build/phpstan/bootstrap_action.php -c phpstan.neon | cs2pr --graceful-warnings
+        run: phpstan -vvv analyse --error-format=checkstyle --memory-limit 4G -a build/phpstan/bootstrap_action.php -c phpstan.neon | tee _stan.xml | cs2pr --graceful-warnings
         # continue-on-error: true
 
       # Save cache
@@ -68,3 +67,10 @@ jobs:
         with:
           path: ./.github/tmp
           key: phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-${{ github.run_id }}
+      - name: Provide phpstan log as artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: phpstan-srcrt
+          path: ${{ github.workspace }}/_stan.xml
+          retention-days: 2
