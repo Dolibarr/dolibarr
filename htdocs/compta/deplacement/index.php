@@ -83,6 +83,8 @@ $sql .= " GROUP BY d.type";
 $sql .= " ORDER BY d.type";
 
 $result = $db->query($sql);
+$somme = array();
+$nb = array();
 if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
@@ -113,6 +115,7 @@ print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
 print "</tr>\n";
 
 $listoftype = $tripandexpense_static->listOfTypes();
+$dataseries = array();
 foreach ($listoftype as $code => $label) {
 	$dataseries[] = array($label, (isset($nb[$code]) ? (int) $nb[$code] : 0));
 }

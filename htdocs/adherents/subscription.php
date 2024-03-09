@@ -996,7 +996,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 			$datefrom = dol_get_first_day(dol_print_date($datefrom, "%Y"));
 		}
 	}
-	print $form->selectDate($datefrom, '', '', '', '', "subscription", 1, 1);
+	print $form->selectDate($datefrom, '', 0, 0, 0, "subscription", 1, 1);
 	print "</td></tr>";
 
 	// Date end subscription
@@ -1013,7 +1013,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 		}
 	}
 	print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td>';
-	print $form->selectDate($dateto, 'end', '', '', '', "subscription", 1, 0);
+	print $form->selectDate($dateto, 'end', 0, 0, 0, "subscription", 1, 0);
 	print "</td></tr>";
 
 	if ($adht->subscription) {

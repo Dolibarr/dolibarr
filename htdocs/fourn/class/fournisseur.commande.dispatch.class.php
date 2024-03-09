@@ -236,7 +236,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 
 			if (!$notrigger) {
 				// Call triggers
-				$result=$this->call_trigger('LINERECEPTION_CREATE', $user);
+				$result = $this->call_trigger('LINERECEPTION_CREATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -703,7 +703,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
 		if ($errormessage) {
 			$this->errors[] = $errormessage;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			return -1;
 		}
 

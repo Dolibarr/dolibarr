@@ -1,8 +1,11 @@
 <?php
 
+// Uncomment require_once to enable corresponding fixer
+
 //require_once __DIR__.'/plugins/DeprecatedModuleNameFixer.php';
 //require_once __DIR__.'/plugins/PriceFormFixer.php';
-require_once __DIR__.'/plugins/UrlEncodeStringifyFixer.php';
+//require_once __DIR__.'/plugins/UrlEncodeStringifyFixer.php';
+require_once __DIR__.'/plugins/SelectDateFixer.php';
 
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  */
@@ -118,7 +121,7 @@ return [
 	],
 	'plugins' => [
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
-		//'DeprecateAliasPlugin',
+		'DeprecateAliasPlugin',
 		// __DIR__.'/plugins/NoVarDumpPlugin.php',
 		//__DIR__.'/plugins/GetPostFixerPlugin.php',
 		//'PHPDocToRealTypesPlugin',
@@ -174,6 +177,8 @@ return [
 	// Add any issue types (such as 'PhanUndeclaredMethod')
 	// here to inhibit them from being reported
 	'suppress_issue_types' => [
+		'PhanCompatibleNegativeStringOffset',	// return false positive
+
 		'PhanPluginWhitespaceTab',		// Dolibarr used tabs
 		'PhanPluginCanUsePHP71Void',	// Dolibarr is maintaining 7.0 compatibility
 		'PhanPluginShortArray',			// Dolibarr uses array()

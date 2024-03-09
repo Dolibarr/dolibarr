@@ -195,6 +195,7 @@ if ($result < 0) {
 		$xmonth = substr($textdate, 4, 2);
 
 		$i = 0;
+		$dataall = array();
 		while ($xmonth == $month) {
 			$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
 			if ($day > time()) {

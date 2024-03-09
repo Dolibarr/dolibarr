@@ -233,7 +233,7 @@ if ($id) {
 		//Date
 		print '<tr><td class="fieldrequired valid">'.$langs->trans("RefusedData").'</td>';
 		print '<td class="valid">';
-		print $form->selectDate('', '', '', '', '', "confirm_rejet");
+		print $form->selectDate('', '', 0, 0, 0, "confirm_rejet");
 		print '</td></tr>';
 
 		//Reason
