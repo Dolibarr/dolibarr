@@ -200,7 +200,7 @@ class BankAccounts extends DolibarrApi
 	 * @throws RestException 422 Unprocessable Entity: Refer to detailed exception message for the cause
 	 * @throws RestException 500 Internal Server Error: Error(s) returned by the RDBMS
 	 */
-	public function transfer($bankaccount_from_id = 0, $bankaccount_to_id = 0, $date = null, $description = "", $amount = 0.0, $amount_to = 0.0, $cheque_number = "" )
+	public function transfer($bankaccount_from_id = 0, $bankaccount_to_id = 0, $date = null, $description = "", $amount = 0.0, $amount_to = 0.0, $cheque_number = "")
 	{
 		if (!DolibarrApiAccess::$user->hasRight('banque', 'configurer')) {
 			throw new RestException(403);
