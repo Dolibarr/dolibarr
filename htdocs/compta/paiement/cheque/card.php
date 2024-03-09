@@ -333,6 +333,7 @@ if ($action == 'new') {
 	}
 
 	$h = 0;
+	$head = array();
 	$head[$h][0] = $_SERVER["PHP_SELF"].'?id='.$object->id;
 	$head[$h][1] = $langs->trans("CheckReceipt");
 	$hselected = $h;

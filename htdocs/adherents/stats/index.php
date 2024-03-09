@@ -33,10 +33,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid = GETPOSTINT('userid'); if ($userid < 0) {
+$userid = GETPOSTINT('userid');
+if ($userid < 0) {
 	$userid = 0;
 }
-$socid = GETPOSTINT('socid'); if ($socid < 0) {
+$socid = GETPOSTINT('socid');
+if ($socid < 0) {
 	$socid = 0;
 }
 
@@ -91,6 +93,7 @@ $mesg = $px1->isGraphKo();
 if (!$mesg) {
 	$px1->SetData($data);
 	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
