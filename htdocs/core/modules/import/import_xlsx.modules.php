@@ -910,6 +910,7 @@ class ImportXlsx extends ModeleImports
 								$data = array_combine($listfields, $listvalues);
 
 								$where = array();	// filters to forge SQL request
+								'@phan-var string[] $where';
 								$filters = array();	// filters to forge output error message
 								foreach ($updatekeys as $key) {
 									$col = $objimport->array_import_updatekeys[0][$key];
