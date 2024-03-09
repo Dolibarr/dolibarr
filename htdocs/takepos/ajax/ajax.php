@@ -93,9 +93,9 @@ if ($action == 'getProducts') {
 
 	$result = $object->fetch($category);
 	if ($result > 0) {
-		$filter = array();
+		$filter = '';
 		if ($tosell != '') {
-			$filter = array('customsql' => 'o.tosell = '.((int) $tosell));
+			$filter = '(o.tosell:=:'.((int) $tosell).')';
 		}
 		$prods = $object->getObjectsInCateg("product", 0, $limit, $offset, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD'), 'ASC', $filter);
 		// Removed properties we don't need
@@ -397,15 +397,18 @@ if ($action == 'getProducts') {
 	}
 } elseif ($action == "opendrawer" && $term != '') {
 	top_httphead('application/html');
-
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 	$printer = new dolReceiptPrinter($db);
 	// check printer for terminal
 	if (getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) {
 		$printer->initPrinter(getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term));
 		// open cashdrawer
-		$printer->pulse();
-		$printer->close();
+		if ($printer->getPrintConnector()) {
+			$printer->pulse();
+			$printer->close();
+		} else {
+			print 'Failed to init printer with ID='.getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term);
+		}
 	}
 } elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && $user->hasRight('facture', 'lire')) {
 	top_httphead('application/html');

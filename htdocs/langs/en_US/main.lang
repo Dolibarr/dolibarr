@@ -383,6 +383,7 @@ PriceUHT=U.P. (net)
 PriceUHTCurrency=U.P (net) (currency)
 PriceUTTC=U.P. (inc. tax)
 Amount=Amount
+Amounts=Amounts
 AmountInvoice=Invoice amount
 AmountInvoiced=Amount invoiced
 AmountInvoicedHT=Amount invoiced (excl. tax)

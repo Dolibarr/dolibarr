@@ -9,7 +9,7 @@
  * Copyright (C) 2015-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  * Copyright (C) 2019		JC Prieto				<jcprieto@virtual20.com><prietojc@gmail.com>
- * Copyright (C) 2022-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1851,7 +1851,7 @@ class Account extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return	int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1876,6 +1876,8 @@ class Account extends CommonObject
 		$this->owner_town      = 'Owner town';
 		$this->owner_country_id = 'Owner country_id';
 		$this->country_id      = 1;
+
+		return 1;
 	}
 
 	/**

@@ -629,6 +629,7 @@ if (empty($reshook) && $action == 'add') {
 			$repeateventlimitdate = dol_mktime(23, 59, 59, GETPOSTISSET("limitmonth") ? GETPOSTINT("limitmonth") : 1, GETPOSTISSET("limitday") ? GETPOSTINT("limitday") : 1, GETPOSTISSET("limityear") && GETPOSTINT("limityear") < 2100 ? GETPOSTINT("limityear") : 2100, $tzforfullday ? $tzforfullday : 'tzuserrel');
 			// Set date of end of event
 			$deltatime = num_between_day($object->datep, $datep);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$datef = dol_time_plus_duree($datef, $deltatime, 'd');
 
 			while ($datep <= $repeateventlimitdate && !$error) {
@@ -1051,7 +1052,7 @@ if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes
 
 	if ($user->hasRight('agenda', 'myactions', 'delete')
 		|| $user->hasRight('agenda', 'allactions', 'delete')) {
-		$result = $object->delete();
+		$result = $object->delete($user);
 
 		if ($result >= 0) {
 			header("Location: index.php");

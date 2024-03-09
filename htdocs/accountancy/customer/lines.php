@@ -140,7 +140,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0 && $user->hasRight('ac
 		$db->begin();
 
 		$sql1 = "UPDATE ".MAIN_DB_PREFIX."facturedet";
-		$sql1 .= " SET fk_code_ventilation=".(GETPOSTINT('account_parent') > 0 ? GETPOSTINT('account_parent') : '0');
+		$sql1 .= " SET fk_code_ventilation = ".(GETPOSTINT('account_parent') > 0 ? GETPOSTINT('account_parent') : 0);
 		$sql1 .= ' WHERE rowid IN ('.$db->sanitize(implode(',', $changeaccount)).')';
 
 		dol_syslog('accountancy/customer/lines.php::changeaccount sql= '.$sql1);
@@ -175,7 +175,7 @@ if (GETPOST('sortfield') == 'f.datef, f.ref, fd.rowid') {
 $form = new Form($db);
 $formother = new FormOther($db);
 
-$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
+$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
 llxHeader('', $langs->trans("CustomersVentilation").' - '.$langs->trans("Dispatched"), $help_url);
 
@@ -386,6 +386,7 @@ if ($result) {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 	print '<span class="opacitymedium">'.$langs->trans("DescVentilDoneCustomer").'</span><br>';
 

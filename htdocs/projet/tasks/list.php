@@ -49,16 +49,7 @@ $id = GETPOSTINT('id');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_categ = GETPOSTINT("search_categ");
-
-$search_projectstatus = GETPOST('search_projectstatus');
-if (!isset($search_projectstatus) || $search_projectstatus === '') {
-	if ($search_all != '') {
-		$search_projectstatus = -1;
-	} else {
-		$search_projectstatus = 1;
-	}
-}
-
+$search_projectstatus = GETPOST('search_projectstatus', 'intcomma');
 $search_project_ref = GETPOST('search_project_ref');
 $search_project_title = GETPOST('search_project_title');
 $search_task_ref = GETPOST('search_task_ref');
@@ -79,6 +70,14 @@ if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
 $searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
+
+if (!isset($search_projectstatus) || $search_projectstatus === '') {
+	if ($search_all != '') {
+		$search_projectstatus = -1;
+	} else {
+		$search_projectstatus = 1;
+	}
+}
 
 $mine = GETPOST('mode', 'alpha') == 'mine' ? 1 : 0;
 if ($mine) {

@@ -74,7 +74,7 @@ $error = 0;
  * Actions
  */
 
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -204,9 +204,6 @@ $object = new Societe($db);
 $result = $object->fetch($socid);
 llxHeader("", $langs->trans("ThirdParty").'-'.$langs->trans('PriceByCustomer'));
 
-if (isModEnabled('notification')) {
-	$langs->load("mails");
-}
 $head = societe_prepare_head($object);
 
 print dol_get_fiche_head($head, 'price', $langs->trans("ThirdParty"), -1, 'company');
@@ -470,6 +467,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 
 		$option = '&socid='.GETPOSTINT('socid').'&prodid='.GETPOSTINT('prodid');
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($langs->trans('PriceByCustomerLog'), $page, $_SERVER ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords);
 
 		if (count($prodcustprice->lines) > 0) {
@@ -547,11 +545,11 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 			if (!empty($val['visible'])) {
 				$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 				$arrayfields['t.'.$key] = array(
-					'label'=>$val['label'],
-					'checked'=>(($visible < 0) ? 0 : 1),
-					'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
-					'position'=>$val['position'],
-					'help'=> isset($val['help']) ? $val['help'] : ''
+					'label' => $val['label'],
+					'checked' => (($visible < 0) ? 0 : 1),
+					'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
+					'position' => $val['position'],
+					'help' => isset($val['help']) ? $val['help'] : ''
 				);
 			}
 		}
@@ -572,6 +570,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 
 		print '<!-- view specific price for each product -->'."\n";
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVER['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, '');
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';

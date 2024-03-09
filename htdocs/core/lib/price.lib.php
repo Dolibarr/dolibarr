@@ -5,6 +5,7 @@
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,7 @@
  *		@param	string	$price_base_type 			'HT'=Unit price parameter $pu is HT, 'TTC'=Unit price parameter $pu is TTC (HT+VAT but not Localtax. TODO Add also mode 'INCT' when pu is price HT+VAT+LT1+LT2)
  *		@param	int		$info_bits					Miscellaneous information on line
  *		@param	int		$type						0/1=Product/service
- *		@param  Societe	$seller						Thirdparty seller (we need $seller->country_id property). Provided only if seller is the supplier, otherwise $seller will be $mysoc.
+ *		@param  Societe|string $seller				Thirdparty seller (we need $seller->country_id property). Provided only if seller is the supplier, otherwise $seller will be $mysoc.
  *		@param  array	$localtaxes_array			Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
  *		@param  integer	$progress                   Situation invoices progress (value from 0 to 100, 100 by default)
  *		@param  double	$multicurrency_tx           Currency rate (1 by default)
@@ -83,7 +84,7 @@
  * 						25=multicurrency_total_tax1 for total_ht
  *                      26=multicurrency_total_tax2 for total_ht
  */
-function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '', $localtaxes_array = '', $progress = 100, $multicurrency_tx = 1, $pu_devise = 0, $multicurrency_code = '')
+function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '', $localtaxes_array = [], $progress = 100, $multicurrency_tx = 1, $pu_devise = 0, $multicurrency_code = '')
 {
 	global $conf, $mysoc, $db;
 
@@ -114,7 +115,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		dol_syslog("Price.lib::calcul_price_total Warning: function was called with a bad value for vat rate (should be often < 100, always < 1000). There is surely a bug.", LOG_ERR);
 	}
 	// Too verbose. Enable for debug only
-	//dol_syslog("Price.lib::calcul_price_total qty=".$qty." pu=".$pu." remiserpercent_ligne=".$remise_percent_ligne." txtva=".$txtva." uselocaltax1_rate=".$uselocaltax1_rate." uselocaltax2_rate=".$uselocaltax2_rate.' remise_percent_global='.$remise_percent_global.' price_base_type='.$ice_base_type.' type='.$type.' progress='.$progress);
+	// dol_syslog("Price.lib::calcul_price_total qty=".$qty." pu=".$pu." remiserpercent_ligne=".$remise_percent_ligne." txtva=".$txtva." uselocaltax1_rate=".$uselocaltax1_rate." uselocaltax2_rate=".$uselocaltax2_rate.' remise_percent_global='.$remise_percent_global.' price_base_type='.$ice_base_type.' type='.$type.' progress='.$progress);
 
 	$countryid = $seller->country_id;
 
@@ -439,12 +440,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$result[25] = $result[9];
 		$result[26] = $result[10];
 	}
-
-	//var_dump($result);
-	// initialize result array
-	//for ($i=0; $i <= 18; $i++) $result[$i] = (float) $result[$i];
-
-	dol_syslog('Price.lib::calcul_price_total MAIN_ROUNDING_RULE_TOT='.(!getDolGlobalString('MAIN_ROUNDING_RULE_TOT') ? '' : $conf->global->MAIN_ROUNDING_RULE_TOT).' pu='.$pu.' qty='.$qty.' price_base_type='.$price_base_type.' total_ht='.$result[0].'-total_vat='.$result[1].'-total_ttc='.$result[2]);
+	dol_syslog('Price.lib::calcul_price_total MAIN_ROUNDING_RULE_TOT='.getDolGlobalString('MAIN_ROUNDING_RULE_TOT').' pu='.$pu.' qty='.$qty.' price_base_type='.$price_base_type.' total_ht='.$result[0].'-total_vat='.$result[1].'-total_ttc='.$result[2]);
 
 	return $result;
 }

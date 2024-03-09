@@ -4,6 +4,7 @@
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2017		Rui Strecht			<rui.strecht@aliartalentos.com>
  * Copyright (C) 2020       Open-Dsi         	<support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -635,7 +636,7 @@ class FormCompany extends Form
 	 *
 	 *  @param  object		$object         Object we try to find contacts
 	 *  @param  string		$var_id         Name of id field
-	 *  @param  string		$selected       Pre-selected third party
+	 *  @param  int 		$selected       Pre-selected third party
 	 *  @param  string		$htmlname       Name of HTML form
 	 * 	@param	array		$limitto		Disable answers that are not id in this array list
 	 *  @param	int			$forceid		This is to force another object id than object->id
@@ -643,7 +644,7 @@ class FormCompany extends Form
 	 *  @param	string		$morecss		More CSS on select component
 	 * 	@return int 						The selected third party ID
 	 */
-	public function selectCompaniesForNewContact($object, $var_id, $selected = 0, $htmlname = 'newcompany', $limitto = '', $forceid = 0, $moreparam = '', $morecss = '')
+	public function selectCompaniesForNewContact($object, $var_id, $selected = 0, $htmlname = 'newcompany', $limitto = [], $forceid = 0, $moreparam = '', $morecss = '')
 	{
 		global $conf, $hookmanager;
 

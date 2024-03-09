@@ -3,6 +3,7 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2016       Florian Henry       <florian.henry@atm-consulting.fr>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -471,7 +472,7 @@ class CGenericDic extends CommonDict
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -480,5 +481,7 @@ class CGenericDic extends CommonDict
 		$this->code = 'CODE';
 		$this->label = 'Label';
 		$this->active = 1;
+
+		return 1;
 	}
 }

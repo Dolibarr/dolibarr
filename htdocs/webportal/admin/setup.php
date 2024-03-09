@@ -439,6 +439,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		print "</tr>\n";
 
 		clearstatcache();
+		$filelist = array();
 
 		foreach ($dirmodels as $reldir) {
 			foreach (array('', '/doc') as $valdir) {
@@ -473,7 +474,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 									if ($modulequalified) {
 										print '<tr class="oddeven"><td width="100">';
-										print (empty($module->name) ? $name : $module->name);
+										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
 											print $module->info($langs);

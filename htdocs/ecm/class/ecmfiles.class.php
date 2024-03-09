@@ -4,7 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Francis Appels      <francis.appels@yahoo.com>
- * Copyright (C) 2019-2024  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -530,14 +530,13 @@ class EcmFiles extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int    $limit     offset limit
-	 * @param int    $offset    offset limit
-	 * @param array  $filter    filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int Return integer <0 if KO, >0 if OK
+	 * @param 	string $sortorder 	Sort Order
+	 * @param 	string $sortfield 	Sort field
+	 * @param 	int    $limit     	limit
+	 * @param 	int    $offset    	offset limit
+	 * @param 	array  $filter    	filter array
+	 * @param 	string $filtermode 	filter mode (AND or OR)
+	 * @return 	int 				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
@@ -573,10 +572,11 @@ class EcmFiles extends CommonObject
 				if ($key == 't.src_object_id') {
 					$sqlwhere[] = $key." = ".((int) $value);
 				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 				}
 			}
 		}
+
 		$sql .= ' WHERE 1 = 1';
 		/* Fetching this table depends on filepath+filename, it must not depends on entity
 		 if (isModEnabled('multicompany')) {
@@ -957,7 +957,7 @@ class EcmFiles extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -983,6 +983,8 @@ class EcmFiles extends CommonObject
 		$this->acl = '';
 		$this->src_object_type = 'product';
 		$this->src_object_id = 1;
+
+		return 1;
 	}
 }
 

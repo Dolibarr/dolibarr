@@ -44,19 +44,19 @@ function dol_basename($pathfile)
  * Scan a directory and return a list of files/directories.
  * Content for string is UTF8 and dir separator is "/".
  *
- * @param	string		$utf8_path     	Starting path from which to search. This is a full path.
- * @param	string		$types        	Can be "directories", "files", or "all"
- * @param	int			$recursive		Determines whether subdirectories are searched
- * @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
- *                                      but must not contains the start and end '/'. Filter is checked into basename only.
- * @param	string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
- * @param	string		$sortcriteria	Sort criteria ('','fullname','relativename','name','date','size')
- * @param	int 		$sortorder		Sort order (SORT_ASC, SORT_DESC)
- * @param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only, 4=Force load of perm
- * @param	int			$nohook			Disable all hooks
- * @param	string		$relativename	For recursive purpose only. Must be "" at first call.
- * @param	int 		$donotfollowsymlinks	Do not follow symbolic links
- * @param	int 		$nbsecondsold	Only files older than $nbsecondsold
+ * @param	string			$utf8_path     	Starting path from which to search. This is a full path.
+ * @param	string			$types        	Can be "directories", "files", or "all"
+ * @param	int				$recursive		Determines whether subdirectories are searched
+ * @param	string			$filter        	Regex filter to restrict list. This regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
+ *                  	                    but must not contains the start and end '/'. Filter is checked into basename only.
+ * @param	string|string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
+ * @param	string			$sortcriteria	Sort criteria ('','fullname','relativename','name','date','size')
+ * @param	int 			$sortorder		Sort order (SORT_ASC, SORT_DESC)
+ * @param	int				$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only, 4=Force load of perm
+ * @param	int				$nohook			Disable all hooks
+ * @param	string			$relativename	For recursive purpose only. Must be "" at first call.
+ * @param	int 			$donotfollowsymlinks	Do not follow symbolic links
+ * @param	int 			$nbsecondsold	Only files older than $nbsecondsold
  * @return	array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  * @see dol_dir_list_in_database()
  */
@@ -70,7 +70,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 		$filters_ok = true;
 		$error_info = "";
 		// Ensure we have an array for the exclusions
-		$exclude_array = $excludefilter === null ? array() : (is_array($excludefilter) ? $excludefilter : array($excludefilter));
+		$exclude_array = ($excludefilter === null || $excludefilter === '') ? array() : (is_array($excludefilter) ? $excludefilter : array($excludefilter));
 		foreach ((array($filter) + $exclude_array) as $f) {
 			// Check that all '/' are escaped.
 			if ((int) preg_match('/(?:^|[^\\\\])\//', $f) > 0) {
@@ -87,8 +87,9 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 		}
 	} else {
 		// Already computed before
-		$exclude_array = $excludefilter;
+		$exclude_array = ($excludefilter === null || $excludefilter === '') ? array() : (is_array($excludefilter) ? $excludefilter : array($excludefilter));
 	}
+
 	// Define excludefilterarray (before while, for speed)
 	$excludefilterarray = array_merge(array('^\.'), $exclude_array);
 
@@ -2620,7 +2621,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
  * @param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
  * @return	array						Array with properties (full path, date, ...) of to most recent file
  */
-function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(\.meta|_preview.*\.png)$', '^\.'), $nohook = 0, $mode = '')
+function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(\.meta|_preview.*\.png)$', '^\.'), $nohook = 0, $mode = 0)
 {
 	$tmparray = dol_dir_list($dir, 'files', 0, $regexfilter, $excludefilter, 'date', SORT_DESC, $mode, $nohook);
 	return isset($tmparray[0]) ? $tmparray[0] : null;

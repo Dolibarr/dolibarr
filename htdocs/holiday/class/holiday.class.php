@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1280,7 +1280,7 @@ class Holiday extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 
 					// Note: $obj->halfday is  0:Full days, 2:Start afternoon end morning, -1:Start afternoon, 1:End morning
-					$arrayofrecord[$obj->rowid] = array('date_start'=>$this->db->jdate($obj->date_start), 'date_end'=>$this->db->jdate($obj->date_end), 'halfday'=>$obj->halfday, 'status'=>$obj->status);
+					$arrayofrecord[$obj->rowid] = array('date_start' => $this->db->jdate($obj->date_start), 'date_end' => $this->db->jdate($obj->date_end), 'halfday' => $obj->halfday, 'status' => $obj->status);
 					$i++;
 				}
 
@@ -1312,7 +1312,7 @@ class Holiday extends CommonObject
 			dol_print_error($this->db);
 		}
 
-		$result = array('morning'=>$isavailablemorning, 'afternoon'=>$isavailableafternoon);
+		$result = array('morning' => $isavailablemorning, 'afternoon' => $isavailableafternoon);
 		if (!$isavailablemorning) {
 			$result['morning_reason'] = 'leave_request';
 		}
@@ -1438,7 +1438,7 @@ class Holiday extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1493,7 +1493,7 @@ class Holiday extends CommonObject
 		$statusType = 'status6';
 		if (!empty($startdate) && $startdate >= dol_now()) {		// If not yet passed, we use a green "in live" color
 			$statusType = 'status4';
-			$params = array('tooltip'=>$this->labelStatus[$status].' - '.$langs->trans("Forthcoming"));
+			$params = array('tooltip' => $this->labelStatus[$status].' - '.$langs->trans("Forthcoming"));
 		}
 		if ($status == self::STATUS_DRAFT) {
 			$statusType = 'status0';
@@ -1543,7 +1543,7 @@ class Holiday extends CommonObject
 
 		$out .= '</select>'."\n";
 
-		$showempty= 0;
+		$showempty = 0;
 		$out .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($showempty < 0 ? (string) $showempty : '-1'), $morecss);
 
 		return $out;
@@ -2270,8 +2270,9 @@ class Holiday extends CommonObject
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			if ($num) {
+				$types = array();
 				while ($obj = $this->db->fetch_object($result)) {
-					$types[$obj->rowid] = array('id'=> $obj->rowid, 'rowid'=> $obj->rowid, 'code'=> $obj->code, 'label'=>$obj->label, 'affect'=>$obj->affect, 'delay'=>$obj->delay, 'newbymonth'=>$obj->newbymonth);
+					$types[$obj->rowid] = array('id' => $obj->rowid, 'rowid' => $obj->rowid, 'code' => $obj->code, 'label' => $obj->label, 'affect' => $obj->affect, 'delay' => $obj->delay, 'newbymonth' => $obj->newbymonth);
 				}
 
 				return $types;
@@ -2344,7 +2345,7 @@ class Holiday extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -2364,6 +2365,8 @@ class Holiday extends CommonObject
 		$this->fk_type = 1;
 		$this->statut = Holiday::STATUS_VALIDATED;
 		$this->status = Holiday::STATUS_VALIDATED;
+
+		return 1;
 	}
 
 	/**

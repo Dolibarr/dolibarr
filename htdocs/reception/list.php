@@ -886,6 +886,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
+// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 print_barre_liste($langs->trans('ListOfReceptions'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'dollyrevert', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 if ($massaction == 'createbills') {
@@ -898,7 +899,7 @@ if ($massaction == 'createbills') {
 	print $langs->trans('DateInvoice');
 	print '</td>';
 	print '<td>';
-	print $form->selectDate('', '', '', '', '', '', 1, 1);
+	print $form->selectDate('', '', 0, 0, 0, '', 1, 1);
 	print '</td>';
 	print '</tr>';
 	print '<tr>';

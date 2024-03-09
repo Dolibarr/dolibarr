@@ -132,49 +132,49 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'd.ref'=>'Ref',
-	'd.login'=>'Login',
-	'd.lastname'=>'Lastname',
-	'd.firstname'=>'Firstname',
-	'd.societe'=>"Company",
-	'd.email'=>'EMail',
-	'd.address'=>'Address',
-	'd.zip'=>'Zip',
-	'd.town'=>'Town',
-	'd.phone'=>"Phone",
-	'd.phone_perso'=>"PhonePerso",
-	'd.phone_mobile'=>"PhoneMobile",
-	'd.note_public'=>'NotePublic',
-	'd.note_private'=>'NotePrivate',
+	'd.ref' => 'Ref',
+	'd.login' => 'Login',
+	'd.lastname' => 'Lastname',
+	'd.firstname' => 'Firstname',
+	'd.societe' => "Company",
+	'd.email' => 'EMail',
+	'd.address' => 'Address',
+	'd.zip' => 'Zip',
+	'd.town' => 'Town',
+	'd.phone' => "Phone",
+	'd.phone_perso' => "PhonePerso",
+	'd.phone_mobile' => "PhoneMobile",
+	'd.note_public' => 'NotePublic',
+	'd.note_private' => 'NotePrivate',
 );
 
 $arrayfields = array(
-	'd.ref'=>array('label'=>"Ref", 'checked'=>1),
-	'd.civility'=>array('label'=>"Civility", 'checked'=>0),
-	'd.lastname'=>array('label'=>"Lastname", 'checked'=>1),
-	'd.firstname'=>array('label'=>"Firstname", 'checked'=>1),
-	'd.gender'=>array('label'=>"Gender", 'checked'=>0),
-	'd.company'=>array('label'=>"Company", 'checked'=>1, 'position'=>70),
-	'd.login'=>array('label'=>"Login", 'checked'=>1),
-	'd.morphy'=>array('label'=>"MemberNature", 'checked'=>1),
-	't.libelle'=>array('label'=>"Type", 'checked'=>1, 'position'=>55),
-	'd.address'=>array('label'=>"Address", 'checked'=>0),
-	'd.zip'=>array('label'=>"Zip", 'checked'=>0),
-	'd.town'=>array('label'=>"Town", 'checked'=>0),
-	'd.phone'=>array('label'=>"Phone", 'checked'=>0),
-	'd.phone_perso'=>array('label'=>"PhonePerso", 'checked'=>0),
-	'd.phone_mobile'=>array('label'=>"PhoneMobile", 'checked'=>0),
-	'd.email'=>array('label'=>"Email", 'checked'=>1),
-	'state.nom'=>array('label'=>"State", 'checked'=>0, 'position'=>90),
-	'country.code_iso'=>array('label'=>"Country", 'checked'=>0, 'position'=>95),
+	'd.ref' => array('label' => "Ref", 'checked' => 1),
+	'd.civility' => array('label' => "Civility", 'checked' => 0),
+	'd.lastname' => array('label' => "Lastname", 'checked' => 1),
+	'd.firstname' => array('label' => "Firstname", 'checked' => 1),
+	'd.gender' => array('label' => "Gender", 'checked' => 0),
+	'd.company' => array('label' => "Company", 'checked' => 1, 'position' => 70),
+	'd.login' => array('label' => "Login", 'checked' => 1),
+	'd.morphy' => array('label' => "MemberNature", 'checked' => 1),
+	't.libelle' => array('label' => "Type", 'checked' => 1, 'position' => 55),
+	'd.address' => array('label' => "Address", 'checked' => 0),
+	'd.zip' => array('label' => "Zip", 'checked' => 0),
+	'd.town' => array('label' => "Town", 'checked' => 0),
+	'd.phone' => array('label' => "Phone", 'checked' => 0),
+	'd.phone_perso' => array('label' => "PhonePerso", 'checked' => 0),
+	'd.phone_mobile' => array('label' => "PhoneMobile", 'checked' => 0),
+	'd.email' => array('label' => "Email", 'checked' => 1),
+	'state.nom' => array('label' => "State", 'checked' => 0, 'position' => 90),
+	'country.code_iso' => array('label' => "Country", 'checked' => 0, 'position' => 95),
 	/*'d.note_public'=>array('label'=>"NotePublic", 'checked'=>0),
 	'd.note_private'=>array('label'=>"NotePrivate", 'checked'=>0),*/
-	'd.datefin'=>array('label'=>"EndSubscription"),
-	'd.datec'=>array('label'=>"DateCreation"),
-	'd.birth'=>array('label'=>"Birthday"),
-	'd.tms'=>array('label'=>"DateModificationShort"),
-	'd.statut'=>array('label'=>"Status"),
-	'd.import_key'=>array('label'=>"ImportId"),
+	'd.datefin' => array('label' => "EndSubscription"),
+	'd.datec' => array('label' => "DateCreation"),
+	'd.birth' => array('label' => "Birthday"),
+	'd.tms' => array('label' => "DateModificationShort"),
+	'd.statut' => array('label' => "Status"),
+	'd.import_key' => array('label' => "ImportId"),
 );
 
 // Extra fields
@@ -194,11 +194,11 @@ foreach ($object->fields as $key => $val) {
 	if (!empty($val['visible'])) {
 		$visible = (int) dol_eval($val['visible'], 1);
 		$arrayfields[$tableprefix.'.'.$key] = array(
-			'label'=>$val['label'],
-			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>dol_eval($val['enabled'], 1),
-			'position'=>$val['position'],
-			'help'=> isset($val['help']) ? $val['help'] : ''
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? 0 : 1),
+			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
@@ -221,7 +221,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid'=>isset($socid) ? $socid : null);
+$parameters = array('socid' => isset($socid) ? $socid : null);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -762,8 +762,8 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 if ($user->hasRight('adherent', 'creer')) {
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create');
@@ -893,7 +893,7 @@ if (!empty($arrayfields['d.lastname']['checked'])) {
 // Gender
 if (!empty($arrayfields['d.gender']['checked'])) {
 	print '<td class="liste_titre">';
-	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
+	$arraygender = array('man' => $langs->trans("Genderman"), 'woman' => $langs->trans("Genderwoman"), 'other' => $langs->trans("Genderother"));
 	print $form->selectarray('search_gender', $arraygender, $search_gender, 1);
 	print '</td>';
 }
@@ -913,7 +913,7 @@ if (!empty($arrayfields['d.login']['checked'])) {
 // Nature
 if (!empty($arrayfields['d.morphy']['checked'])) {
 	print '<td class="liste_titre center">';
-	$arraymorphy = array('mor'=>$langs->trans("Moral"), 'phy'=>$langs->trans("Physical"));
+	$arraymorphy = array('mor' => $langs->trans("Moral"), 'phy' => $langs->trans("Physical"));
 	print $form->selectarray('search_morphy', $arraymorphy, $search_morphy, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 	print '</td>';
 }
@@ -925,6 +925,7 @@ if (!empty($arrayfields['t.libelle']['checked'])) {
 if (!empty($arrayfields['t.libelle']['checked'])) {
 	print '<td class="liste_titre">';
 	$listetype = $membertypestatic->liste_array();
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print $form->selectarray("search_type", $listetype, $search_type, 1, 0, 0, '', 0, 32);
 	print '</td>';
 }
@@ -989,7 +990,7 @@ if (!empty($arrayfields['d.email']['checked'])) {
 if (!empty($arrayfields['d.datefin']['checked'])) {
 	print '<td class="liste_titre center">';
 	//$selectarray = array('-1'=>'', 'withoutsubscription'=>$langs->trans("WithoutSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
-	$selectarray = array('-1'=>'', 'waitingsubscription'=>$langs->trans("WaitingSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
+	$selectarray = array('-1' => '', 'waitingsubscription' => $langs->trans("WaitingSubscription"), 'uptodate' => $langs->trans("UpToDate"), 'outofdate' => $langs->trans("OutOfDate"));
 	print $form->selectarray('search_filter', $selectarray, $search_filter);
 	print '</td>';
 }
@@ -998,7 +999,7 @@ if (!empty($arrayfields['d.datefin']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -1046,8 +1047,9 @@ if (!empty($arrayfields['d.statut']['checked'])) {
 		Adherent::STATUS_DRAFT => $langs->trans("Draft"),
 		Adherent::STATUS_VALIDATED => $langs->trans("Validated"),
 		Adherent::STATUS_RESILIATED => $langs->trans("MemberStatusResiliatedShort"),
-		Adherent::STATUS_EXCLUDED =>$langs->trans("MemberStatusExcludedShort")
+		Adherent::STATUS_EXCLUDED => $langs->trans("MemberStatusExcludedShort")
 	);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print $form->selectarray('search_status', $liststatus, $search_status, -3, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
@@ -1156,7 +1158,7 @@ if (!empty($arrayfields['d.datefin']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'totalarray'=>&$totalarray, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'totalarray' => &$totalarray, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -1465,7 +1467,7 @@ while ($i < $imaxinloop) {
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
@@ -1551,7 +1553,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql' => $sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

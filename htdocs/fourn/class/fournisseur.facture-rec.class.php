@@ -6,7 +6,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2017-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1249,7 +1249,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * Format string to output with by striking the string if max number of generation was reached
 	 *
 	 * @param	string		$ret	Default value to output
-	 * @return	boolean				False by default, True if maximum number of generation is reached
+	 * @return	string				False by default, True if maximum number of generation is reached
 	 */
 	public function strikeIfMaxNbGenReached($ret)
 	{
@@ -1651,7 +1651,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *	id must be 0 if object instance is a specimen.
 	 *
 	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen($option = '')
 	{
@@ -1771,6 +1771,8 @@ class FactureFournisseurRec extends CommonInvoice
 		}
 
 		$this->usenewprice = 0;
+
+		return 1;
 	}
 
 	/**

@@ -90,7 +90,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight("fournis
 	$db->begin();
 
 	$object->fetch($id);
-	$result = $object->delete();
+	$result = $object->delete($user);
 	if ($result > 0) {
 		$db->commit();
 		header('Location: '.DOL_URL_ROOT.'/fourn/paiement/list.php');
@@ -221,7 +221,7 @@ if ($result > 0) {
 
 	// Amount
 	print '<tr><td>'.$langs->trans('Amount').'</td>';
-	print '<td><span class="amount">'.price($object->amount, '', $langs, 0, 0, -1, $conf->currency).'</span></td></tr>';
+	print '<td><span class="amount">'.price($object->amount, 0, $langs, 0, 0, -1, $conf->currency).'</span></td></tr>';
 
 	// Status of validation of payment
 	if (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION')) {

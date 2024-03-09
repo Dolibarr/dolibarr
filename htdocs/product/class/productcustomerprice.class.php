@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Florian Henry   <florian.henry@open-concept.pro>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -420,15 +421,15 @@ class ProductCustomerPrice extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) {				// To allow $filter['YEAR(s.dated)']=>$year
-					$sql .= " AND ".$key." = '".$this->db->escape($value)."'";
+					$sql .= " AND ".$this->db->sanitize($key)." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'soc.nom') {
-					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
+					$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 				} elseif ($key == 'prod.ref' || $key == 'prod.label') {
-					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
+					$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 				} elseif ($key == 't.price' || $key == 't.price_ttc') {
-					$sql .= " AND ".$key." LIKE '%".price2num($value)."%'";
+					$sql .= " AND ".$this->db->sanitize($key)." = ".((float) price2num($value));
 				} else {
-					$sql .= " AND ".$key." = ".((int) $value);
+					$sql .= " AND ".$this->db->sanitize($key)." = ".((int) $value);
 				}
 			}
 		}
@@ -1000,7 +1001,7 @@ class ProductCustomerPrice extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1024,6 +1025,8 @@ class ProductCustomerPrice extends CommonObject
 		$this->localtax2_tx = '';
 		$this->fk_user = 0;
 		$this->import_key = '';
+
+		return 1;
 	}
 }
 

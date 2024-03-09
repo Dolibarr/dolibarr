@@ -3,7 +3,7 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -230,16 +230,15 @@ class ProductStockEntrepot extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int	 $fk_product Product from which we want to get limit and desired stock by warehouse
-	 * @param int	 $fk_entrepot Warehouse in which we want to get products limit and desired stock
-	 * @param string $sortorder  Sort Order
-	 * @param string $sortfield  Sort field
-	 * @param int    $limit      offset limit
-	 * @param int    $offset     offset limit
-	 * @param array  $filter     filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int|array Return integer <0 if KO, array if OK
+	 * @param int	 $fk_product 	Product from which we want to get limit and desired stock by warehouse
+	 * @param int	 $fk_entrepot 	Warehouse in which we want to get products limit and desired stock
+	 * @param string $sortorder  	Sort Order
+	 * @param string $sortfield  	Sort field
+	 * @param int    $limit      	limit
+	 * @param int    $offset     	offset limit
+	 * @param array  $filter     	filter array
+	 * @param string $filtermode 	filter mode (AND or OR)
+	 * @return int|array 			Return integer <0 if KO, array if OK
 	 */
 	public function fetchAll($fk_product = 0, $fk_entrepot = 0, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
@@ -247,24 +246,20 @@ class ProductStockEntrepot extends CommonObject
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-
 		$sql .= " t.tms,";
 		$sql .= " t.fk_product,";
 		$sql .= " t.fk_entrepot,";
 		$sql .= " t.seuil_stock_alerte,";
 		$sql .= " t.desiredstock,";
 		$sql .= " t.import_key";
-
-
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
-
 		$sql .= " WHERE 1=1";
 
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				$sqlwhere [] = $key." LIKE '%".$this->db->escape($value)."%'";
+				$sqlwhere[] = $key." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 			}
 		}
 		if (count($sqlwhere) > 0) {
@@ -596,7 +591,7 @@ class ProductStockEntrepot extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -608,5 +603,7 @@ class ProductStockEntrepot extends CommonObject
 		$this->seuil_stock_alerte = '';
 		$this->desiredstock = '';
 		$this->import_key = '';
+
+		return 1;
 	}
 }

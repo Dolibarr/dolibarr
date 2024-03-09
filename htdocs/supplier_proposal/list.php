@@ -94,7 +94,7 @@ $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
-$search_status = GETPOSTINT('search_status');
+$search_status = GETPOST('search_status', 'intcomma');
 $search_product_category = GETPOSTINT('search_product_category');
 
 $object_statut = $db->escape(GETPOST('supplier_proposal_statut'));

@@ -143,7 +143,7 @@ $error = 0;
  * Actions
  */
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -747,7 +747,7 @@ if (empty($reshook)) {
 			$paiementfourn = new PaiementFourn($db);
 			$result = $paiementfourn->fetch(GETPOST('paiement_id'));
 			if ($result > 0) {
-				$result = $paiementfourn->delete();
+				$result = $paiementfourn->delete($user);
 				if ($result > 0) {
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 					exit;
@@ -1224,7 +1224,7 @@ if (empty($reshook)) {
 								$descline = '(DEPOSIT)';
 								//$descline.= ' - '.$langs->trans($arraylist[$typeamount]);
 								if ($typeamount == 'amount') {
-									$descline .= ' ('.price($valuedeposit, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).')';
+									$descline .= ' ('.price($valuedeposit, 0, $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).')';
 								} elseif ($typeamount == 'variable') {
 									$descline .= ' ('.$valuedeposit.'%)';
 								}
@@ -2403,7 +2403,7 @@ if ($action == 'create') {
 			// Deposit - Down payment
 			if (!getDolGlobalString('INVOICE_DISABLE_DEPOSIT')) {
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-				$tmp='<input type="radio" id="radio_deposit" name="type" value="3"' . (GETPOSTINT('type') == 3 ? ' checked' : '') . '> ';
+				$tmp = '<input type="radio" id="radio_deposit" name="type" value="3"' . (GETPOSTINT('type') == 3 ? ' checked' : '') . '> ';
 				print '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					jQuery("#typestandardinvoice, #valuestandardinvoice").click(function() {
@@ -2434,6 +2434,7 @@ if ($action == 'create') {
 				</script>';
 
 				$tmp  = $tmp.'<label for="radio_deposit" >'.$langs->trans("InvoiceDeposit").'</label>';
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceDepositDesc"), 1, 'help', '', 0, 3);
 				print '<table class="nobordernopadding"><tr>';
 				print '<td>';
@@ -2604,7 +2605,7 @@ if ($action == 'create') {
 				if (!getDolGlobalString('INVOICE_CREDIT_NOTE_STANDALONE')) {
 					$tmp = '<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
 				} else {
-					$tmp='<input type="radio" name="type" id="radio_creditnote" value="2"> ';
+					$tmp = '<input type="radio" name="type" id="radio_creditnote" value="2"> ';
 				}
 				$text = $tmp.$langs->trans("InvoiceAvoir").' ';
 				$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromSupplierThird").')</span> ';
@@ -2644,7 +2645,7 @@ if ($action == 'create') {
 		// Date invoice
 		print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td>';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		print $form->selectDate($dateinvoice, '', '', '', '', "add", 1, 1);
+		print $form->selectDate($dateinvoice, '', 0, 0, 0, "add", 1, 1);
 		print '</td></tr>';
 
 		// Payment term
@@ -2657,7 +2658,7 @@ if ($action == 'create') {
 		// Due date
 		print '<tr><td>'.$langs->trans('DateMaxPayment').'</td><td>';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		print $form->selectDate($datedue, 'ech', '', '', '', "add", 1, 1);
+		print $form->selectDate($datedue, 'ech', 0, 0, 0, "add", 1, 1);
 		print '</td></tr>';
 
 		// Payment mode
@@ -3083,6 +3084,7 @@ if ($action == 'create') {
 			$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("Other"), $close[$i]['label'], 1);
 			$i++;
 			// arrayreasons[code]=reason
+			$arrayreasons = array();
 			foreach ($close as $key => $val) {
 				$arrayreasons[$close[$key]['code']] = $close[$key]['reason'];
 			}
@@ -3175,7 +3177,7 @@ if ($action == 'create') {
 		}
 
 		if (!$formconfirm) {
-			$parameters = array('formConfirm' => $formconfirm, 'lineid'=>$lineid);
+			$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
 				$formconfirm .= $hookmanager->resPrint;
@@ -3534,9 +3536,9 @@ if ($action == 'create') {
 
 			print '<tr>';
 			print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
-			print '<td class="nowrap amountcard right">' . price($object->total_ht, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+			print '<td class="nowrap amountcard right">' . price($object->total_ht, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
 			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-				print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ht, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+				print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ht, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 			}
 			print '</tr>';
 
@@ -3567,7 +3569,7 @@ if ($action == 'create') {
 			print price($object->total_tva, 1, $langs, 0, -1, -1, $conf->currency);
 			print '</td>';
 			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-				print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_tva, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+				print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_tva, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 			}
 			print '</tr>';
 
@@ -3586,9 +3588,9 @@ if ($action == 'create') {
 
 			print '<tr>';
 			print '<td>' . $langs->trans('AmountTTC') . '</td>';
-			print '<td class="nowrap amountcard right">' . price($object->total_ttc, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+			print '<td class="nowrap amountcard right">' . price($object->total_ttc, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
 			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-				print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ttc, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+				print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ttc, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 			}
 			print '</tr>';
 
@@ -3832,6 +3834,7 @@ if ($action == 'create') {
 						$text .= '<br><br><b>'.$langs->trans("Reason").'</b>:'.$object->close_note;
 					}
 					print '<span class="opacitymedium">';
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					print $form->textwithpicto($langs->trans("Abandoned"), $text, - 1);
 					print '</span>';
 					print '</td><td class="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid).'</td><td>&nbsp;</td></tr>';
@@ -3896,7 +3899,7 @@ if ($action == 'create') {
 					print '<tr><td colspan="'.$nbcols.'" class="right">';
 					print '<span class="opacitymedium">';
 					print $langs->trans('RemainderToPayBackMulticurrency');
-					if ($resteapayeraffiche> 0) {
+					if ($resteapayeraffiche > 0) {
 						print ' ('.$langs->trans('NegativeIfExcessRefunded').')';
 					}
 					print '</span>';
@@ -4081,7 +4084,7 @@ if ($action == 'create') {
 					// For credit note
 					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercancreate
 						&& (getDolGlobalString('SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED') || $object->getSommePaiement() == 0)
-						) {
+					) {
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReducSupplier2")).'">'.$langs->trans('ConvertToReduc').'</a>';
 					}
 					// For deposit invoice

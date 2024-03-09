@@ -685,6 +685,9 @@ if (count($output_phan_json) != 0) {
 	foreach ($phan_notices as $notice) {
 		if (!empty($notice['location'])) {
 			$path = $notice['location']['path'];
+			if ($path == 'internal') {
+				continue;
+			}
 			$line_start = $notice['location']['lines']['begin'];
 			$line_end = $notice['location']['lines']['end'];
 			if ($line_start == $line_end) {

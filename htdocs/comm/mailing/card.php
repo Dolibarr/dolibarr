@@ -880,7 +880,7 @@ if ($action == 'create') {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ResetMailing"), $langs->trans("ConfirmResetMailing", $object->ref), "confirm_reset", '', '', 2);
 		} elseif ($action == 'delete') {
 			// Confirm delete
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.(!empty($urlfrom) ? '&urlfrom='.urlencode($urlfrom) : ''), $langs->trans("DeleteAMailing"), $langs->trans("ConfirmDeleteMailing"), "confirm_delete", '', '', 1);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.(!empty($urlfrom) ? '&urlfrom='.urlencode($urlfrom) : ''), $langs->trans("DeleteMailing"), $langs->trans("ConfirmDeleteMailing"), "confirm_delete", '', '', 1);
 		}
 
 		if ($action != 'edit' && $action != 'edittxt' &&$action != 'edithtml') {

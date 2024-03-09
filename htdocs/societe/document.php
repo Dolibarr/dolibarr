@@ -118,9 +118,6 @@ $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
 // Show tabs
-if (isModEnabled('notification')) {
-	$langs->load("mails");
-}
 $head = societe_prepare_head($object);
 
 print dol_get_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company');

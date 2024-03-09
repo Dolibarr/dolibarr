@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -400,12 +401,10 @@ class KnowledgeRecord extends CommonObject
 					$sqlwhere[] = $key." = ".((int) $value);
 				} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
-				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;
 				} elseif (strpos($value, '%') === false) {
 					$sqlwhere[] = $key.' IN ('.$this->db->sanitize($this->db->escape($value)).')';
 				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 				}
 			}
 		}
@@ -958,12 +957,13 @@ class KnowledgeRecord extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->question = "ABCD";
-		$this->initAsSpecimenCommon();
+
+		return $this->initAsSpecimenCommon();
 	}
 
 	/**
@@ -976,7 +976,7 @@ class KnowledgeRecord extends CommonObject
 		$this->lines = array();
 
 		$objectline = new KnowledgeRecordLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_knowledgerecord = '.((int) $this->id)));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_knowledgerecord:=:'.((int) $this->id).')');
 
 		if (is_numeric($result)) {
 			$this->error = $objectline->error;

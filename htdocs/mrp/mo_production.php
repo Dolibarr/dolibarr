@@ -2,6 +2,7 @@
 /* Copyright (C) 2019-2020 	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 		Christian Humpel     <christian.humpel@gmail.com>
  * Copyright (C) 2023 		Vincent de Grandpré  <vincent@de-grandpre.quebec>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +97,7 @@ $result = restrictedArea($user, 'mrp', $object->id, 'mrp_mo', '', 'fk_soc', 'row
 $permissionnote = $user->hasRight('mrp', 'write'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('mrp', 'write'); // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->hasRight('mrp', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontodelete = $user->hasRight('mrp', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 
 $permissiontoproduce = $permissiontoadd;
 $permissiontoupdatecost = $user->hasRight('bom', 'read'); // User who can define cost must have knowledge of pricing
@@ -1278,7 +1279,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						// Action Edit line
 						if ($object->status == Mo::STATUS_DRAFT) {
-							$href = $_SERVER["PHP_SELF"] . '?id=' . ((int) $object->id) . '&action=editline&token=' . newToken() . '&lineid=' . ((int) $line->id);
+							$href = $_SERVER["PHP_SELF"] . '?id=' . ((int) $object->id) . '&action=editline&token=' . newToken() . '&lineid=' . ((int) $line2['rowid']);
 							print '<td class="center">';
 							print '<a class="reposition" href="' . $href . '">';
 							print img_picto($langs->trans('TooltipEditAndRevertStockMovement'), 'edit');
@@ -1288,7 +1289,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						// Action delete line
 						if ($permissiontodelete) {
-							$href = $_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=deleteline&token='.newToken().'&lineid='.((int) $line->id).'&fk_movement='.((int) $line2['fk_stock_movement']);
+							$href = $_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=deleteline&token='.newToken().'&lineid='.((int) $line2['rowid']).'&fk_movement='.((int) $line2['fk_stock_movement']);
 							print '<td class="center">';
 							print '<a class="reposition" href="'.$href.'">';
 							print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), 'delete');

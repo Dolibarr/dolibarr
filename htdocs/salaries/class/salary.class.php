@@ -2,6 +2,7 @@
 /* Copyright (C) 2011-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2021       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -305,7 +306,7 @@ class Salary extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -323,6 +324,8 @@ class Salary extends CommonObject
 		$this->fk_bank = 0;
 		$this->fk_user_author = 0;
 		$this->fk_user_modif = 0;
+
+		return 1;
 	}
 
 	/**
@@ -852,6 +855,7 @@ class Salary extends CommonObject
 		if ($this->paye == 0) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$bac->fetch(0, $mysoc->id);
 
 			$sql = "SELECT count(rowid) as nb";

@@ -129,9 +129,6 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', 
 $help_url = '';
 llxHeader('', $title, $help_url);
 
-if (isModEnabled('notification')) {
-	$langs->load("mails");
-}
 $head = societe_prepare_head($object);
 
 

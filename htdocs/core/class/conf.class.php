@@ -566,8 +566,8 @@ class Conf extends stdClass
 
 			// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
 
-			// Module fournisseur
-			if (!empty($this->fournisseur)) {
+			// Module supplier is on
+			if (isModEnabled('fournisseur')) {
 				$this->fournisseur->commande = new stdClass();
 				$this->fournisseur->commande->multidir_output = array($this->entity => $rootfordata."/fournisseur/commande");
 				$this->fournisseur->commande->multidir_temp = array($this->entity => $rootfortemp."/fournisseur/commande/temp");
@@ -592,8 +592,8 @@ class Conf extends stdClass
 				$this->fournisseur->payment->dir_output = $rootfordata."/fournisseur/payment"; // For backward compatibility
 				$this->fournisseur->payment->dir_temp = $rootfortemp."/fournisseur/payment/temp"; // For backward compatibility
 
-				// To prepare split of module fournisseur into module 'fournisseur' + supplier_order + supplier_invoice
-				if (!empty($this->fournisseur->enabled) && empty($this->global->MAIN_USE_NEW_SUPPLIERMOD)) {  // By default, if module supplier is on, and we don't use yet the new modules, we set artificially the module properties
+				// To prepare split of module supplier into module 'supplier' + 'supplier_order' + 'supplier_invoice'
+				if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {  // By default, if module supplier is on, and we don't use yet the new modules, we set artificially the module properties
 					$this->supplier_order = new stdClass();
 					$this->supplier_order->enabled = 1;
 					$this->supplier_order->multidir_output = array($this->entity => $rootfordata."/fournisseur/commande");

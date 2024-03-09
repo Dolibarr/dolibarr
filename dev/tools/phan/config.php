@@ -275,10 +275,9 @@ return [
 	'plugins' => [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
-		__DIR__.'/plugins/GetPostFixerPlugin.php',   // Only detects without --automatic-fix
 		// checks if a function, closure or method unconditionally returns.
 		// can also be written as 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php'
-		//'DeprecateAliasPlugin',
+		'DeprecateAliasPlugin',
 		//'EmptyMethodAndFunctionPlugin',
 		'InvalidVariableIssetPlugin',
 		//'MoreSpecificElementTypePlugin',
@@ -332,6 +331,7 @@ return [
 		// Dolibarr uses a lot of internal deprecated stuff, not reporting
 		'PhanDeprecatedProperty',
 		'PhanDeprecatedFunction',
+		//'PhanCompatibleNegativeStringOffset',
 		// Dolibarr has quite a few strange noop assignments like $abc=$abc;
 		'PhanPluginDuplicateExpressionAssignment',
 		// Nulls are likely mostly false positives
@@ -379,7 +379,7 @@ return [
 		'PhanPluginUnknownClosureParamType',
 		'PhanPluginUnknownClosureReturnType',
 		// 'PhanPluginNoCommentOnProtectedMethod',
-		'PhanTypeArraySuspicious',
+		// 'PhanTypeArraySuspicious',
 		'PhanTypeMismatchPropertyProbablyReal',
 		// 'PhanPluginNoCommentOnPrivateMethod',
 		'PhanPluginUnknownArrayFunctionReturnType',
@@ -401,7 +401,7 @@ return [
 		'PhanTypeMismatchDeclaredParamNullable',
 		'PhanTypeInvalidRightOperandOfAdd',
 		// 'PhanPluginDescriptionlessCommentOnPrivateProperty',
-		'PhanUndeclaredVariableDim',  // Array initialisation on undeclared var: $abc['x']='ab'
+		// 'PhanUndeclaredVariableDim',  // Array initialisation on undeclared var: $abc['x']='ab'
 		'PhanTypeInvalidPropertyName',
 		'PhanPluginDuplicateCatchStatementBody',
 		'PhanPluginUndeclaredVariableIsset',
@@ -439,11 +439,11 @@ return [
 		'PhanPluginBothLiteralsBinaryOp',
 		// 'PhanTypeMismatchDeclaredParam',
 		// 'PhanCommentDuplicateMagicMethod',
-		'PhanParamSpecial1',
+		// 'PhanParamSpecial1',
 		'PhanPluginInlineHTMLLeading',
 		'PhanPluginUseReturnValueInternalKnown',
-		'PhanRedefinedInheritedInterface',
-		'PhanTypeComparisonToArray',
+		//'PhanRedefinedInheritedInterface',
+		//'PhanTypeComparisonToArray',
 		'PhanTypeConversionFromArray',
 		// 'PhanTypeInvalidLeftOperandOfIntegerOp',
 		'PhanTypeMismatchArgumentInternalProbablyReal',
@@ -458,7 +458,7 @@ return [
 		// 'PhanTypeInvalidThrowsIsInterface',
 		'PhanPluginRedundantAssignmentInLoop',
 		// 'PhanInvalidCommentForDeclarationType',
-		'PhanParamSignatureMismatchInternal',
+		//'PhanParamSignatureMismatchInternal',
 		// 'PhanPluginEmptyStatementForeachLoop',
 		// 'PhanCompatibleDimAlternativeSyntax',
 		'PhanInvalidFQSENInClasslike',

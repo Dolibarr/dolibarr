@@ -6,7 +6,7 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
- * Copyright (C) 2019-2020 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021      Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -234,7 +234,7 @@ class Don extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -283,7 +283,9 @@ class Don extends CommonObject
 		$this->email = 'email@email.com';
 		$this->phone = '0123456789';
 		$this->phone_mobile = '0606060606';
-		$this->statut = 1;
+		$this->status = 1;
+
+		return 1;
 	}
 
 
@@ -723,6 +725,7 @@ class Don extends CommonObject
 	 */
 	public function setValid($user, $notrigger = 0)
 	{
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		return $this->valid_promesse($this->id, $user->id, $notrigger);
 	}
 
@@ -955,7 +958,7 @@ class Don extends CommonObject
 		$result .= $linkend;
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

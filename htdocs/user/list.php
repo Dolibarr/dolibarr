@@ -166,7 +166,7 @@ $search_phonepro = GETPOST('search_phonepro', 'alpha');
 $search_phonemobile = GETPOST('search_phonemobile', 'alpha');
 $search_email = GETPOST('search_email', 'alpha');
 $search_api_key = GETPOST('search_api_key', 'alphanohtml');
-$search_statut = GETPOST('search_statut', 'intcomma');
+$search_status = GETPOST('search_status', 'intcomma');
 $search_thirdparty = GETPOST('search_thirdparty', 'alpha');
 $search_job = GETPOST('search_job', 'alpha');
 $search_warehouse = GETPOST('search_warehouse', 'alpha');
@@ -189,8 +189,8 @@ if (!empty($catid) && empty($search_categ)) {
 }
 
 // Default search
-if ($search_statut == '') {
-	$search_statut = '1';
+if ($search_status == '') {
+	$search_status = '1';
 }
 if ($contextpage == 'employeelist' && !GETPOSTISSET('search_employee')) {
 	$search_employee = 1;
@@ -259,7 +259,7 @@ if (empty($reshook)) {
 		$search_phonepro = "";
 		$search_phonemobile = "";
 		$search_email = "";
-		$search_statut = "";
+		$search_status = "";
 		$search_thirdparty = "";
 		$search_job = "";
 		$search_warehouse = "";
@@ -449,8 +449,8 @@ if ($search_api_key != '') {
 if ($search_job != '') {
 	$sql .= natural_search(array('u.job'), $search_job);
 }
-if ($search_statut != '' && $search_statut >= 0) {
-	$sql .= " AND u.statut IN (".$db->sanitize($search_statut).")";
+if ($search_status != '' && $search_status >= 0) {
+	$sql .= " AND u.statut IN (".$db->sanitize($search_status).")";
 }
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
@@ -599,8 +599,8 @@ if ($search_api_key != '') {
 if ($search_supervisor > 0) {
 	$param .= "&amp;search_supervisor=".urlencode($search_supervisor);
 }
-if ($search_statut != '') {
-	$param .= "&amp;search_statut=".urlencode($search_statut);
+if ($search_status != '') {
+	$param .= "&amp;search_status=".urlencode($search_status);
 }
 if ($optioncss != '') {
 	$param .= '&amp;optioncss='.urlencode($optioncss);
@@ -661,9 +661,9 @@ $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
 /*$moreparam = array('morecss'=>'btnTitleSelected');
-$morehtmlright = dolGetButtonTitle($langs->trans("List"), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''), '', 1, $moreparam);
+$morehtmlright = dolGetButtonTitle($langs->trans("List"), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php'.(($search_status != '' && $search_status >= 0) ? '?search_status='.$search_status : ''), '', 1, $moreparam);
 $moreparam = array('morecss'=>'marginleftonly');
-$morehtmlright .= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''), '', 1, $moreparam);
+$morehtmlright .= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php'.(($search_status != '' && $search_status >= 0) ? '?search_status='.$search_status : ''), '', 1, $moreparam);
 */
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'user', 0, $morehtmlright.' '.$newcardbutton, '', $limit, 0, 0, 1);
 
@@ -832,7 +832,7 @@ if (!empty($arrayfields['u.tms']['checked'])) {
 if (!empty($arrayfields['u.statut']['checked'])) {
 	// Status
 	print '<td class="liste_titre center parentonrightofpage">';
-	print $form->selectarray('search_statut', array('-1' => '', '0' => $langs->trans('Disabled'), '1' => $langs->trans('Enabled')), $search_statut, 0, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
+	print $form->selectarray('search_status', array('-1' => '', '0' => $langs->trans('Disabled'), '1' => $langs->trans('Enabled')), $search_status, 0, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Action column

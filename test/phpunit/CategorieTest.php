@@ -214,7 +214,7 @@ class CategorieTest extends CommonClassTest
 		$this->assertLessThan($result, 0);
 		*/
 
-		$retarray = $localobject->liste_photos('/');
+		$retarray = $localobject->liste_photos(DOL_DATA_ROOT."/categorie");
 		print __METHOD__." retarray size=".count($retarray)."\n";
 		$this->assertTrue(is_array($retarray));
 

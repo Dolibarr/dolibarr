@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2016   Jean-François Ferry     <hello@librethic.io>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -382,11 +383,11 @@ class Tickets extends DolibarrApi
 			$this->ticket->$field = $value;
 		}
 
-		if ($this->ticket->update(DolibarrApiAccess::$user)) {
+		if ($this->ticket->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->ticket->error);
 		}
-
-		return false;
 	}
 
 	/**
@@ -410,7 +411,7 @@ class Tickets extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->ticket->delete($id)) {
+		if (!$this->ticket->delete(DolibarrApiAccess::$user)) {
 			throw new RestException(500, 'Error when deleting ticket');
 		}
 

@@ -7,7 +7,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2020 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2013      Alexandre Spangaro          <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2021 Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2020      Open-Dsi         		   <support@open-dsi.fr>
  * Copyright (C) 2022      Anthony Berton     			<anthony.berton@bb2a.fr>
@@ -36,6 +36,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -219,7 +220,7 @@ if (empty($reshook)) {
 	if ($action == 'setassujtva' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
 		$object->tva_assuj = GETPOSTINT('assujtva_value');
-		$result = $object->update($object->id);
+		$result = $object->update($object->id, $user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}

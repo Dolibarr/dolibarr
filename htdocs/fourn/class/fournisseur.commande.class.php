@@ -9,7 +9,7 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018-2022  Ferran Marcet         	<fmarcet@2byte.es>
  * Copyright (C) 2021       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
@@ -2316,6 +2316,8 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function deleteLine($idline, $notrigger = 0)
 	{
+		global $user;
+
 		if ($this->statut == 0) {
 			$line = new CommandeFournisseurLigne($this->db);
 
@@ -2333,12 +2335,11 @@ class CommandeFournisseur extends CommonOrder
 				}
 			}
 
-			if ($line->delete($notrigger) > 0) {
+			if ($line->delete($user, $notrigger) > 0) {
 				$this->update_price(1);
 				return 1;
 			} else {
-				$this->error = $line->error;
-				$this->errors = $line->errors;
+				$this->setErrorsFromObject($line);
 				return -1;
 			}
 		} else {
@@ -3079,7 +3080,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -3156,6 +3157,8 @@ class CommandeFournisseur extends CommonOrder
 
 			$xnbp++;
 		}
+
+		return 1;
 	}
 
 	/**
@@ -3526,6 +3529,7 @@ class CommandeFournisseur extends CommonOrder
 			$qtywished = array();
 
 			$supplierorderdispatch = new CommandeFournisseurDispatch($this->db);
+
 			$filter = array('t.fk_commande' => $this->id);
 			if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS')) {
 				$filter['t.status'] = 1; // Restrict to lines with status validated
@@ -4155,12 +4159,15 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	/**
 	 * 	Delete line in database
 	 *
+	 *  @param		User	$user		User making the change
 	 *	@param      int     $notrigger  1=Disable call to triggers
 	 *	@return     int                 Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
-		global $user;
+		if (empty($user)) {
+			global $user;
+		}
 
 		$error = 0;
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -326,16 +326,17 @@ class Establishment extends CommonObject
 	/**
 	 *	Delete record
 	 *
-	 *	@param	int		$id		Id of record to delete
+	 *  @param	User	$user	User making the change
 	 *	@return	int				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($id)
+	public function delete($user)
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."establishment WHERE rowid = ".((int) $id);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."establishment WHERE rowid = ".((int) $user->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->db->commit();
@@ -541,12 +542,14 @@ class Establishment extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 		$this->ref = '0';
 		$this->label = 'Department AAA';
+
+		return 1;
 	}
 }

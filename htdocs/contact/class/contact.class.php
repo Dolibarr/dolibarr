@@ -11,6 +11,7 @@
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2019      Nicolas ZABOURI 	           <info@inovea-conseil.com>
  * Copyright (C) 2020      Open-Dsi  	               <support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1683,6 +1684,7 @@ class Contact extends CommonObject
 
 		$this->socid = $socid;
 		$this->statut = 1;
+
 		return 1;
 	}
 

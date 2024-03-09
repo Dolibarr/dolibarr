@@ -138,7 +138,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>(abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -488,10 +488,6 @@ if ($managedfor == "member") {
 		$adhstat = new Adherent($db);
 		$adht = new AdherentType($db);
 		$result = $adhstat->fetch($memberid);
-
-		if (isModEnabled('notification')) {
-			$langs->load("mails");
-		}
 
 		$adht->fetch($adhstat->typeid);
 

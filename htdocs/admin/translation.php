@@ -290,6 +290,7 @@ foreach ($modulesdir as $keydir => $tmpsearchdir) {
 	$dir_lang_osencoded = dol_osencode($dir_lang);
 
 	$filearray = dol_dir_list($dir_lang_osencoded, 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
+
 	foreach ($filearray as $file) {
 		$tmpfile = preg_replace('/.lang/i', '', basename($file['name']));
 		$moduledirname = (basename(dirname(dirname($dir_lang))));
@@ -616,6 +617,7 @@ if ($mode == 'searchkey') {
 			print '<a class="marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&mode='.urlencode($mode).'&action=delete&token='.newToken().'&mode='.urlencode($mode).'">'.img_delete().'</a>';
 			print '&nbsp;&nbsp;';
 
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$htmltext = $langs->trans("TransKeyWithoutOriginalValue", $key);
 			print $form->textwithpicto('', $htmltext, 1, 'warning');
 		}

@@ -123,10 +123,10 @@ if ($date_end !== '') {
 // Add prefix session
 $arrayfields = array(
 	'e.prefix_session' => array(
-		'label'=>'UserAgent',
-		'checked'=>(!getDolGlobalString('AUDIT_ENABLE_PREFIX_SESSION') ? 0 : 1),
-		'enabled'=>(!getDolGlobalString('AUDIT_ENABLE_PREFIX_SESSION') ? 0 : 1),
-		'position'=>110
+		'label' => 'UserAgent',
+		'checked' => (!getDolGlobalString('AUDIT_ENABLE_PREFIX_SESSION') ? 0 : 1),
+		'enabled' => (!getDolGlobalString('AUDIT_ENABLE_PREFIX_SESSION') ? 0 : 1),
+		'position' => 110
 	)
 );
 
@@ -325,6 +325,7 @@ if ($result) {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $nbtotalofrecords, 'setup', 0, '', '', $limit);
 
 	if ($action == 'purge') {

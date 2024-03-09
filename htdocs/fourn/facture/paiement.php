@@ -140,7 +140,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_array_options = array();
 }
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -155,6 +155,7 @@ if (empty($reshook)) {
 		$totalpayment = 0;
 		$atleastonepaymentnotnull = 0;
 		$multicurrency_totalpayment = 0;
+		$formquestion = array();
 
 		// Generate payment array and check if there is payment higher than invoice and payment date before invoice date
 		$tmpinvoice = new FactureFournisseur($db);
@@ -311,7 +312,13 @@ if (empty($reshook)) {
 			// Creation of payment line
 			$paiement = new PaiementFourn($db);
 			$paiement->datepaye     = $datepaye;
-			$paiement->amounts      = $amounts; // Array of amounts
+
+			$correctedAmounts = [];
+			foreach ($amounts as $key => $value) {
+				$correctedAmounts[$key] = (float) $value;
+			}
+
+			$paiement->amounts      = $correctedAmounts; // Array of amounts
 			$paiement->multicurrency_amounts = $multicurrency_amounts;
 			$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
 			$paiement->multicurrency_tx = $multicurrency_tx; // Array with all currency tx of payments dispatching
@@ -507,9 +514,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 			print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
 			// $object is default vendor invoice
-			$adddateof = array(array('adddateof'=>$object->date));
-			$adddateof[] = array('adddateof'=>$object->date_echeance, 'labeladddateof'=>$langs->transnoentities('DateDue'));
-			print $form->selectDate($dateinvoice, '', '', '', 0, "addpaiement", 1, 1, 0, '', '', $adddateof);
+			$adddateof = array(array('adddateof' => $object->date));
+			$adddateof[] = array('adddateof' => $object->date_echeance, 'labeladddateof' => $langs->transnoentities('DateDue'));
+			print $form->selectDate($dateinvoice, '', 0, 0, 0, "addpaiement", 1, 1, 0, '', '', $adddateof);
 			print '</td></tr>';
 			print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
 			$form->select_types_paiements(!GETPOST('paiementid') ? $obj->fk_mode_reglement : GETPOST('paiementid'), 'paiementid');
@@ -530,7 +537,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			print dol_get_fiche_end();
 
 
-			$parameters = array('facid'=>$facid, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
+			$parameters = array('facid' => $facid, 'ref' => $ref, 'objcanvas' => $objcanvas);
 			$reshook = $hookmanager->executeHooks('paymentsupplierinvoices', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 			$error = $hookmanager->error;
 			$errors = $hookmanager->errors;
@@ -834,7 +841,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					$text .= '<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
 					print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
 				}
-				print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type, $langs->trans('PayedSuppliersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice);
+				print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id.'&socid='.$object->socid.'&type='.$object->type, $langs->trans('PayedSuppliersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice);
 			}
 
 			print '</form>';

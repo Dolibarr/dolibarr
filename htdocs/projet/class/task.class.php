@@ -451,7 +451,7 @@ class Task extends CommonObjectLine
 
 		// Clean parameters
 		if (isset($this->fk_project)) {
-			$this->fk_project = trim($this->fk_project);
+			$this->fk_project = (int) $this->fk_project;
 		}
 		if (isset($this->ref)) {
 			$this->ref = trim($this->ref);
@@ -472,7 +472,7 @@ class Task extends CommonObjectLine
 			$this->planned_workload = trim($this->planned_workload);
 		}
 		if (isset($this->budget_amount)) {
-			$this->budget_amount = trim($this->budget_amount);
+			$this->budget_amount = (float) $this->budget_amount;
 		}
 
 		if (!empty($this->date_start) && !empty($this->date_end) && $this->date_start > $this->date_end) {
@@ -897,7 +897,7 @@ class Task extends CommonObjectLine
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -912,6 +912,8 @@ class Task extends CommonObjectLine
 		$this->progress = '25';
 		$this->status = 0;
 		$this->note = 'This is a specimen task not';
+
+		return 1;
 	}
 
 	/**
@@ -1188,7 +1190,7 @@ class Task extends CommonObjectLine
 	 *
 	 * @param	User|null	$userp			      Return roles on project for this internal user. If set, usert and taskid must not be defined.
 	 * @param	User|null	$usert			      Return roles on task for this internal user. If set userp must NOT be defined. -1 means no filter.
-	 * @param 	int			$projectid		      Project id list separated with , to filter on project
+	 * @param 	string		$projectid		      Project id list separated with , to filter on project
 	 * @param 	int			$taskid			      Task id to filter on a task
 	 * @param	integer		$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
 	 * @return 	array|int					      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
@@ -1593,7 +1595,7 @@ class Task extends CommonObjectLine
 	/**
 	 *  Calculate quantity and value of time consumed using the thm (hourly amount value of work for user entering time)
 	 *
-	 *	@param		User		$fuser		Filter on a dedicated user
+	 *	@param		User|string	$fuser		Filter on a dedicated user
 	 *  @param		string		$dates		Start date (ex 00:00:00)
 	 *  @param		string		$datee		End date (ex 23:59:59)
 	 *  @return 	array	        		Array of info for task array('amount','nbseconds','nblinesnull')

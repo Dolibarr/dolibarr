@@ -94,7 +94,7 @@ $search_recurring = GETPOSTINT('search_recurring');
 $search_frequency = GETPOST('search_frequency', 'alpha');
 $search_unit_frequency = GETPOST('search_unit_frequency', 'alpha');
 $search_nb_gen_done = GETPOST('search_nb_gen_done', 'alpha');
-$search_status = GETPOSTINT('search_status');
+$search_status = GETPOST('search_status', 'intcomma');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -135,24 +135,24 @@ if (!$sortfield) {
 	$sortfield = 'f.titre';
 }
 $arrayfields = array(
-	'f.titre'=>array('label'=>'Ref', 'checked'=>1),
-	's.nom'=>array('label'=>'ThirdParty', 'checked'=>1),
-	'f.total_ht'=>array('label'=>'AmountHT', 'checked'=>1),
-	'f.total_tva'=>array('label'=>'AmountVAT', 'checked'=>1),
-	'f.total_ttc'=>array('label'=>'AmountTTC', 'checked'=>1),
-	'f.fk_mode_reglement'=>array('label'=>'PaymentMode', 'checked'=>0),
-	'f.fk_cond_reglement'=>array('label'=>'PaymentTerm', 'checked'=>0),
-	'recurring'=>array('label'=>'RecurringInvoice', 'checked'=>1),
-	'f.frequency'=>array('label'=>'Frequency', 'checked'=>1),
-	'f.unit_frequency'=>array('label'=>'FrequencyUnit', 'checked'=>1),
-	'f.nb_gen_done'=>array('label'=>'NbOfGenerationDoneShort', 'checked'=>1),
-	'f.date_last_gen'=>array('label'=>'DateLastGenerationShort', 'checked'=>1),
-	'f.date_when'=>array('label'=>'NextDateToExecutionShort', 'checked'=>1),
-	'f.fk_user_author'=>array('label'=>'UserCreation', 'checked'=>0, 'position'=>500),
-	'f.fk_user_modif'=>array('label'=>'UserModification', 'checked'=>0, 'position'=>505),
-	'f.datec'=>array('label'=>'DateCreation', 'checked'=>0, 'position'=>520),
-	'f.tms'=>array('label'=>'DateModificationShort', 'checked'=>0, 'position'=>525),
-	'status'=>array('label'=>'Status', 'checked'=>1, 'position'=>1000),
+	'f.titre' => array('label' => 'Ref', 'checked' => 1),
+	's.nom' => array('label' => 'ThirdParty', 'checked' => 1),
+	'f.total_ht' => array('label' => 'AmountHT', 'checked' => 1),
+	'f.total_tva' => array('label' => 'AmountVAT', 'checked' => 1),
+	'f.total_ttc' => array('label' => 'AmountTTC', 'checked' => 1),
+	'f.fk_mode_reglement' => array('label' => 'PaymentMode', 'checked' => 0),
+	'f.fk_cond_reglement' => array('label' => 'PaymentTerm', 'checked' => 0),
+	'recurring' => array('label' => 'RecurringInvoice', 'checked' => 1),
+	'f.frequency' => array('label' => 'Frequency', 'checked' => 1),
+	'f.unit_frequency' => array('label' => 'FrequencyUnit', 'checked' => 1),
+	'f.nb_gen_done' => array('label' => 'NbOfGenerationDoneShort', 'checked' => 1),
+	'f.date_last_gen' => array('label' => 'DateLastGenerationShort', 'checked' => 1),
+	'f.date_when' => array('label' => 'NextDateToExecutionShort', 'checked' => 1),
+	'f.fk_user_author' => array('label' => 'UserCreation', 'checked' => 0, 'position' => 500),
+	'f.fk_user_modif' => array('label' => 'UserModification', 'checked' => 0, 'position' => 505),
+	'f.datec' => array('label' => 'DateCreation', 'checked' => 0, 'position' => 520),
+	'f.tms' => array('label' => 'DateModificationShort', 'checked' => 0, 'position' => 525),
+	'status' => array('label' => 'Status', 'checked' => 1, 'position' => 1000),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -524,7 +524,7 @@ $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
-$massactionbutton = $form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
+$massactionbutton = $form->selectMassAction('', $massaction == 'presend' ? array() : array('presend' => $langs->trans("SendByMail"), 'builddoc' => $langs->trans("PDFMerge")));
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
@@ -675,7 +675,7 @@ if (!empty($arrayfields['f.date_when']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // User creation
@@ -702,10 +702,11 @@ if (!empty($arrayfields['f.tms']['checked'])) {
 if (!empty($arrayfields['status']['checked'])) {
 	print '<td class="liste_titre center minwidth75imp parentonrightofpage">';
 	$liststatus = array(
-		0=>$langs->trans("Draft"),
-		1=>$langs->trans("Active"),
-		-1=>$langs->trans("Disabled"),
+		0 => $langs->trans("Draft"),
+		1 => $langs->trans("Active"),
+		-1 => $langs->trans("Disabled"),
 	);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print $form->selectarray('search_status', $liststatus, $search_status, -2, 0, 0, '', 0, 0, 0, '', 'width100 onrightofpage');
 	print '</td>';
 }
@@ -942,9 +943,9 @@ while ($i < $imaxinloop) {
 	if (!empty($arrayfields['f.unit_frequency']['checked'])) {
 		print '<td class="center">';
 		if ($objp->frequency > 1) {
-			$dur = array("i"=>$langs->trans("Minutes"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
+			$dur = array("i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
 		} else {
-			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
+			$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
 		}
 		print($objp->frequency > 0 ? $dur[$objp->unit_frequency] : '');
 		print '</td>';
@@ -1030,7 +1031,7 @@ while ($i < $imaxinloop) {
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+	$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Status
@@ -1085,7 +1086,7 @@ if ($num == 0) {
 $db->free($resql);
 
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

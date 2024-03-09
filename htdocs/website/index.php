@@ -430,36 +430,36 @@ if ($action == 'renamefile') {	// Must be after include DOL_DOCUMENT_ROOT.'/core
 if ($action == 'setwebsiteonline' && $usercanedit) {
 	$website->setStatut($website::STATUS_VALIDATED, null, '', 'WEBSITE_MODIFY', 'status');
 
-	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOSTINT('website').'&pageid='.GETPOSTINT('websitepage'));
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode(GETPOST('website')).'&pageid='.GETPOSTINT('websitepage'));
 	exit;
 }
 if ($action == 'setwebsiteoffline' && $usercanedit) {
 	$result = $website->setStatut($website::STATUS_DRAFT, null, '', 'WEBSITE_MODIFY', 'status');
 
-	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOSTINT('website').'&pageid='.GETPOSTINT('websitepage'));
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode(GETPOST('website')).'&pageid='.GETPOSTINT('websitepage'));
 	exit;
 }
 if ($action == 'seteditinline') {	// No need of write permission
 	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 1);
 	setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'warnings');
 	//dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 0); // Force disable of 'Include dynamic content'
-	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOSTINT('website').'&pageid='.GETPOSTINT('pageid'));
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode(GETPOST('website')).'&pageid='.GETPOSTINT('pageid'));
 	exit;
 }
 if ($action == 'unseteditinline') {	// No need of write permission
 	dolibarr_del_const($db, 'WEBSITE_EDITINLINE');
-	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOSTINT('website').'&pageid='.GETPOSTINT('pageid'));
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode(GETPOST('website')).'&pageid='.GETPOSTINT('pageid'));
 	exit;
 }
 if ($action == 'setshowsubcontainers') {	// No need of write permission
 	dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 1);
 	//dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 0); // Force disable of edit inline
-	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOSTINT('website').'&pageid='.GETPOSTINT('pageid'));
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode(GETPOST('website')).'&pageid='.GETPOSTINT('pageid'));
 	exit;
 }
 if ($action == 'unsetshowsubcontainers') {	// No need of write permission
 	dolibarr_del_const($db, 'WEBSITE_SUBCONTAINERSINLINE');
-	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOSTINT('website').'&pageid='.GETPOSTINT('pageid'));
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode(GETPOST('website')).'&pageid='.GETPOSTINT('pageid'));
 	exit;
 }
 

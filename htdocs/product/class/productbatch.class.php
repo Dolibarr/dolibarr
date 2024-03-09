@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -335,7 +336,7 @@ class Productbatch extends CommonObject
 	 *	Initialise object with example values
 	 *	Id must be 0 if object instance is a specimen
 	 *
-	 *	@return	void
+	 *	@return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -347,6 +348,8 @@ class Productbatch extends CommonObject
 		$this->eatby = '';
 		$this->batch = '';
 		$this->import_key = '';
+
+		return 1;
 	}
 
 	/**
@@ -383,6 +386,7 @@ class Productbatch extends CommonObject
 	public function find($fk_product_stock = 0, $eatby = null, $sellby = null, $batch_number = '', $fk_warehouse = 0)
 	{
 		$where = array();
+
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.tms,";
@@ -411,7 +415,7 @@ class Productbatch extends CommonObject
 		}
 
 		if (!empty($where)) {
-			$sql .= " AND (".implode(" OR ", $where).")";
+			$sql .= " AND (".$this->db->sanitize(implode(" OR ", $where), 1, 1, 1).")";
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);

@@ -61,7 +61,7 @@ if (!$sortorder) {
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'aZ09');
 //Search criteria
-$search_status = (GETPOSTISSET('search_status') ? GETPOSTINT('search_status') : GETPOSTINT('status'));
+$search_status = GETPOST('search_status', 'intcomma');
 $search_label = GETPOST("search_label", 'alpha');
 $search_module_name = GETPOST("search_module_name", 'alpha');
 $search_lastresult = GETPOST("search_lastresult", "alphawithlgt");

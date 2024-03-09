@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       ATM Consulting          <support@atm-consulting.fr>
  * Copyright (C) 2019-2020  Open-DSI                <support@open-dsi.fr>
- * Copyright (C) 2020-2024  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,8 +55,10 @@ class IntracommReport extends CommonObject
 
 	public $picto = 'intracommreport';
 
-
-	public $label; 		// ref ???
+	/**
+	 * @var string ref ???
+	 */
+	public $label;
 
 	public $period;
 
@@ -67,7 +69,14 @@ class IntracommReport extends CommonObject
 	 */
 	public $declaration_number;
 
+	/**
+	 * @var string
+	 */
 	public $exporttype;			// deb or des
+
+	/**
+	 * @var string
+	 */
 	public $type_declaration;	// 'introduction' or 'expedition'
 	public $numero_declaration;
 
@@ -125,12 +134,11 @@ class IntracommReport extends CommonObject
 	/**
 	 * Function delete
 	 *
-	 * @param 	int 	$id 		object ID
 	 * @param 	User 	$user 		User
 	 * @param 	int 	$notrigger 	notrigger
 	 * @return 	int
 	 */
-	public function delete($id, $user, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		return 1;
 	}

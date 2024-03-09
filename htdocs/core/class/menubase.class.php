@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -434,7 +434,7 @@ class Menubase
 				$this->title = $obj->title;
 				$this->prefix = $obj->prefix;
 				$this->langs = $obj->langs;
-				$this->perms = $obj->perms;
+				$this->perms = str_replace("\"", "'", $obj->perms);
 				$this->enabled = str_replace("\"", "'", $obj->enabled);
 				$this->user = $obj->user;
 				$this->tms = $this->db->jdate($obj->tms);
@@ -478,7 +478,7 @@ class Menubase
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -499,6 +499,8 @@ class Menubase
 		$this->enabled = '';
 		$this->user = 0;
 		$this->tms = dol_now();
+
+		return 1;
 	}
 
 
@@ -663,7 +665,7 @@ class Menubase
 				if (isset($menu['perms'])) {
 					$tmpcond = $menu['perms'];
 					if ($leftmenu == 'all') {
-						$tmpcond = preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond); // Force part of condition to true
+						$tmpcond = preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond); // Force the part of condition on leftmenu to true
 					}
 					$perms = verifCond($tmpcond);
 					//print "verifCond rowid=".$menu['rowid']." ".$tmpcond.":".$perms."<br>\n";
@@ -674,7 +676,7 @@ class Menubase
 				if (isset($menu['enabled'])) {
 					$tmpcond = $menu['enabled'];
 					if ($leftmenu == 'all') {
-						$tmpcond = preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond); // Force part of condition to true
+						$tmpcond = preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond); // Force the part of condition on leftmenu to true
 					}
 					$enabled = verifCond($tmpcond);
 					//var_dump($menu['type'].' - '.$menu['titre'].' - '.$menu['enabled'].' => '.$enabled);

@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
- * Copyright (C) 2022-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -922,7 +922,7 @@ class Reception extends CommonObject
 			$this->ref = trim($this->ref);
 		}
 		if (isset($this->entity)) {
-			$this->entity = trim($this->entity);
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->ref_supplier)) {
 			$this->ref_supplier = trim($this->ref_supplier);
@@ -931,10 +931,10 @@ class Reception extends CommonObject
 			$this->socid = trim($this->socid);
 		}
 		if (isset($this->fk_user_author)) {
-			$this->fk_user_author = trim($this->fk_user_author);
+			$this->fk_user_author = (int) $this->fk_user_author;
 		}
 		if (isset($this->fk_user_valid)) {
-			$this->fk_user_valid = trim($this->fk_user_valid);
+			$this->fk_user_valid = (int) $this->fk_user_valid;
 		}
 		if (isset($this->shipping_method_id)) {
 			$this->shipping_method_id = (int) $this->shipping_method_id;
@@ -1414,7 +1414,7 @@ class Reception extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1465,6 +1465,8 @@ class Reception extends CommonObject
 			$this->lines[] = $line;
 			$xnbp++;
 		}
+
+		return 1;
 	}
 
 	/**

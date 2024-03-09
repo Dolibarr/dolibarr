@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018       Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -486,7 +486,7 @@ class DataPolicyCron
 							if ($object->isObjectUsed($obj->rowid) == 0) {			// If object to clean is used
 								foreach ($params['fields_anonym'] as $field => $val) {
 									if ($val == 'MAKEANONYMOUS') {
-										$object->$field = $field.'-anonymous-'.$obj->rowid;
+										$object->$field = $field.'-anonymous-'.$obj->rowid; // @phpstan-ignore-line
 									} else {
 										$object->$field = $val;
 									}
@@ -501,11 +501,7 @@ class DataPolicyCron
 						}
 
 						if ($action == 'delete') {									// If object to clean is not used
-							if ($object->element == 'adherent') {
-								$result = $object->delete($obj->rowid, $user);
-							} else {
-								$result = $object->delete($user);
-							}
+							$result = $object->delete($user);
 							if ($result < 0) {
 								$errormsg = $object->error;
 								$error++;

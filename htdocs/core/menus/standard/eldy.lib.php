@@ -1547,6 +1547,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 				$newmenu->add("/don/card.php?leftmenu=donations&amp;action=create", $langs->trans("NewDonation"), 1, $user->hasRight('don', 'creer'));
 				$newmenu->add("/don/list.php?leftmenu=donations", $langs->trans("List"), 1, $user->hasRight('don', 'lire'));
 				$newmenu->add("/don/paiement/list.php?leftmenu=donations", $langs->trans("Payments"), 1, $user->hasRight('don', 'lire'));
+				$newmenu->add("/don/stats/index.php", $langs->trans("Statistics"), 1, $user->hasRight('don', 'lire'));
 			}
 			// if ($leftmenu=="donations") $newmenu->add("/don/stats/index.php",$langs->trans("Statistics"), 1, $user->hasRight('don',  'lire'));
 		}

@@ -169,7 +169,7 @@ if (getDolGlobalString('OPENSURVEY_IMAGE_PUBLIC_INTERFACE')) {
 }
 
 
-$results = $object->fetchAll($sortfield, $sortorder, 0, 0, array('status' => 1));
+$results = $object->fetchAll($sortfield, $sortorder, 0, 0, '(status:=:1)');
 $now = dol_now();
 
 if (is_array($results)) {

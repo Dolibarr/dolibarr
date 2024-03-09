@@ -393,6 +393,7 @@ class ImportCsv extends ModeleImports
 
 						// Is it a required field ?
 						if (preg_match('/\*/', $objimport->array_import_fields[0][$val]) && ((string) $newval == '')) {
+							// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 							$this->errors[$error]['lib'] = $langs->trans('ErrorMissingMandatoryValue', $key);
 							$this->errors[$error]['type'] = 'NOTNULL';
 							$errorforthistable++;
@@ -405,7 +406,7 @@ class ImportCsv extends ModeleImports
 								if ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeid'
 									|| $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromref'
 									|| $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeorlabel'
-									) {
+								) {
 									// New val can be an id or ref. If it start with id: it is forced to id, if it start with ref: it is forced to ref. It not, we try to guess.
 									$isidorref = 'id';
 									if (!is_numeric($newval) && $newval != '' && !preg_match('/^id:/i', $newval)) {
@@ -854,7 +855,7 @@ class ImportCsv extends ModeleImports
 						$fname = 'rowid';
 						if (strpos($tablename, '_categorie_') !== false) {
 							$is_table_category_link = true;
-							$fname='*';
+							$fname = '*';
 						}
 
 						if (!empty($updatekeys)) {
@@ -965,7 +966,7 @@ class ImportCsv extends ModeleImports
 								foreach ($data as $key => $val) {
 									$set[] = $key." = ".$val;
 								}
-								$sqlstart .= " SET ".implode(', ', $set);
+								$sqlstart .= " SET ".implode(', ', $set).", import_key = '".$this->db->escape($importid)."'";
 
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
@@ -973,6 +974,7 @@ class ImportCsv extends ModeleImports
 								$sqlend = " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								if ($is_table_category_link) {
+									'@phan-var-force string[] $where';
 									$sqlend = " WHERE " . implode(' AND ', $where);
 								}
 

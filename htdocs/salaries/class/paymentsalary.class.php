@@ -2,6 +2,7 @@
 /* Copyright (C) 2011-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2021       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +62,7 @@ class PaymentSalary extends CommonObject
 	public $fk_salary;
 
 	/**
-	 * @var int				Payment creation date
+	 * @var int|string				Payment creation date
 	 */
 	public $datec = '';
 
@@ -555,7 +556,7 @@ class PaymentSalary extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -572,6 +573,8 @@ class PaymentSalary extends CommonObject
 		$this->fk_bank = 0;
 		$this->fk_user_author = 0;
 		$this->fk_user_modif = 0;
+
+		return 1;
 	}
 
 
@@ -983,11 +986,16 @@ class PaymentSalary extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'fk_bank')) {
-			$return .= ' |  <span class="info-box-label">'.$this->fk_bank.'</span>';
+		if (property_exists($this, 'fk_bank') && is_numeric($this->fk_bank)) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$account = new AccountLine($this->db);
+			$account->fetch($this->fk_bank);
+			$return .= ' |  <span class="info-box-label">'.$account->getNomUrl(1).'</span>';
 		}
-		if (property_exists($this, 'fk_user_author')) {
-			$return .= '<br><span class="info-box-status">'.$this->fk_user_author.'</span>';
+		if (property_exists($this, 'fk_user_author') && is_numeric($this->fk_user_author)) {
+			$userstatic = new User($this->db);
+			$userstatic->fetch($this->fk_user_author);
+			$return .= '<br><span class="info-box-status">'.$userstatic->getNomUrl(1).'</span>';
 		}
 
 		if (property_exists($this, 'fk_typepayment')) {

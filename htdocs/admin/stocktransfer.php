@@ -50,8 +50,8 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 
 $arrayofparameters = array(
-	'STOCKTRANSFER_MYPARAM1'=>array('css'=>'minwidth200', 'enabled'=>1),
-	'STOCKTRANSFER_MYPARAM2'=>array('css'=>'minwidth500', 'enabled'=>1)
+	'STOCKTRANSFER_MYPARAM1' => array('css' => 'minwidth200', 'enabled' => 1),
+	'STOCKTRANSFER_MYPARAM2' => array('css' => 'minwidth500', 'enabled' => 1)
 );
 
 $error = 0;
@@ -233,7 +233,7 @@ print '<span class="opacitymedium">'.$langs->trans("StockTransferSetupPage").'</
 
 $moduledir = 'stocktransfer';
 $myTmpObjects = array();
-$myTmpObjects[$moduledir]=array('includerefgeneration'=>1, 'includedocgeneration'=>1, 'class'=>'StockTransfer');
+$myTmpObjects[$moduledir] = array('includerefgeneration' => 1, 'includedocgeneration' => 1, 'class' => 'StockTransfer');
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	if ($myTmpObjectKey == 'MyObject') {
@@ -396,6 +396,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 				if (is_dir($dir)) {
 					$handle = opendir($dir);
 					if (is_resource($handle)) {
+						$filelist = array();
 						while (($file = readdir($handle)) !== false) {
 							$filelist[] = $file;
 						}

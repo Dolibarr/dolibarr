@@ -516,6 +516,7 @@ class ImportXlsx extends ModeleImports
 												$newval = $classinstance->id;
 											} elseif (! $error) {
 												if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
+													// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
 												} elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) {
 													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldRefNotIn', $key, $newval, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
@@ -558,6 +559,7 @@ class ImportXlsx extends ModeleImports
 												$newval = $classinstance->id;
 											} else {
 												if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
+													// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
 												} else {
 													$this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
@@ -595,6 +597,7 @@ class ImportXlsx extends ModeleImports
 											$newval = $scaleorid ? $scaleorid : 0;
 										} else {
 											if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
+												// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 												$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
 											} else {
 												$this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
@@ -753,6 +756,7 @@ class ImportXlsx extends ModeleImports
 										if (!empty($filter)) {
 											$tableforerror .= ':' . $filter;
 										}
+										// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 										$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorFieldValueNotIn', $key, $newval, $field, $tableforerror);
 										$this->errors[$error]['type'] = 'FOREIGNKEY';
 										$errorforthistable++;
@@ -761,6 +765,7 @@ class ImportXlsx extends ModeleImports
 								} elseif (!preg_match('/' . $objimport->array_import_regex[0][$val] . '/i', $newval)) {
 									// If test is just a static regex
 									//if ($key == 19) print "xxx".$newval."zzz".$objimport->array_import_regex[0][$val]."<br>";
+									// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 									$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorWrongValueForField', $key, $newval, $objimport->array_import_regex[0][$val]);
 									$this->errors[$error]['type'] = 'REGEX';
 									$errorforthistable++;
@@ -771,6 +776,7 @@ class ImportXlsx extends ModeleImports
 							// Check HTML injection
 							$inj = testSqlAndScriptInject($newval, 0);
 							if ($inj) {
+								// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 								$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorHtmlInjectionForField', $key, dol_trunc($newval, 100));
 								$this->errors[$error]['type'] = 'HTMLINJECTION';
 								$errorforthistable++;
@@ -892,7 +898,7 @@ class ImportXlsx extends ModeleImports
 						$fname = 'rowid';
 						if (strpos($tablename, '_categorie_') !== false) {
 							$is_table_category_link = true;
-							$fname='*';
+							$fname = '*';
 						}
 
 						if (!empty($updatekeys)) {
@@ -904,6 +910,7 @@ class ImportXlsx extends ModeleImports
 								$data = array_combine($listfields, $listvalues);
 
 								$where = array();	// filters to forge SQL request
+								'@phan-var string[] $where';
 								$filters = array();	// filters to forge output error message
 								foreach ($updatekeys as $key) {
 									$col = $objimport->array_import_updatekeys[0][$key];
@@ -1006,7 +1013,7 @@ class ImportXlsx extends ModeleImports
 								foreach ($data as $key => $val) {
 									$set[] = $key." = ".$val;
 								}
-								$sqlstart .= " SET " . implode(', ', $set);
+								$sqlstart .= " SET " . implode(', ', $set) . ", import_key = '" . $this->db->escape($importid) . "'";
 
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
@@ -1014,6 +1021,7 @@ class ImportXlsx extends ModeleImports
 								$sqlend = " WHERE " . $keyfield . " = ".((int) $lastinsertid);
 
 								if ($is_table_category_link) {
+									'@phan-var-force string[] $where';
 									$sqlend = " WHERE " . implode(' AND ', $where);
 								}
 

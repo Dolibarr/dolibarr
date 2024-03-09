@@ -129,6 +129,7 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 		}
 
 		//print '-name='.$name.'-color='.$color;
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$res = dolibarr_set_const($db, 'AGENDA_EXT_NAME'.$i, $name, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
@@ -205,10 +206,10 @@ print "<br>\n";
 
 
 $selectedvalue = getDolGlobalInt('AGENDA_DISABLE_EXT');
-if ($selectedvalue==1) {
-	$selectedvalue=0;
+if ($selectedvalue == 1) {
+	$selectedvalue = 0;
 } else {
-	$selectedvalue=1;
+	$selectedvalue = 1;
 }
 
 print "<table class=\"noborder\" width=\"100%\">";
@@ -224,7 +225,7 @@ print '<tr class="oddeven">';
 print "<td>".$langs->trans("ExtSitesEnableThisTool")."</td>";
 print '<td class="center">';
 if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('AGENDA_DISABLE_EXT', array('enabled'=>array(0=>'.hideifnotset')), null, 1);
+	print ajax_constantonoff('AGENDA_DISABLE_EXT', array('enabled' => array(0 => '.hideifnotset')), null, 1);
 } else {
 	if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?save=1&AGENDA_DISABLE_EXT=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -269,7 +270,7 @@ while ($i <= $MAXAGENDA) {
 	$default = 'AGENDA_EXT_ACTIVEBYDEFAULT' . $key;
 
 	print '<tr class="oddeven">';
-	// Nb
+	// Nb  @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print '<td width="180" class="nowrap">' . $langs->trans("AgendaExtNb", $key) . "</td>";
 	// Name
 	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_NAME' . $key . '" value="' . (GETPOST('AGENDA_EXT_NAME' . $key) ? GETPOST('AGENDA_EXT_NAME' . $key, 'alpha') : getDolGlobalString($name)) . '" size="28"></td>';
@@ -286,6 +287,7 @@ while ($i <= $MAXAGENDA) {
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('AGENDA_EXT_ACTIVEBYDEFAULT' . $key);
 	} else {
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		if (getDolGlobalString($default)) {
 			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
 		} else {

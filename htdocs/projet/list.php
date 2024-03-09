@@ -102,16 +102,16 @@ $search_opp_status = GETPOST("search_opp_status", 'alpha');
 $search_opp_percent = GETPOST("search_opp_percent", 'alpha');
 $search_opp_amount = GETPOST("search_opp_amount", 'alpha');
 $search_budget_amount = GETPOST("search_budget_amount", 'alpha');
-$search_public = GETPOSTINT("search_public");
+$search_public = GETPOST("search_public", 'intcomma');
 $search_project_user = GETPOSTINT('search_project_user');
 $search_project_contact = GETPOSTINT('search_project_contact');
 $search_sale = GETPOSTINT('search_sale');
-$search_usage_opportunity = GETPOSTINT('search_usage_opportunity');
-$search_usage_task = GETPOSTINT('search_usage_task');
-$search_usage_bill_time = GETPOSTINT('search_usage_bill_time');
-$search_usage_event_organization = GETPOSTINT('search_usage_event_organization');
-$search_accept_conference_suggestions = GETPOSTINT('search_accept_conference_suggestions');
-$search_accept_booth_suggestions = GETPOSTINT('search_accept_booth_suggestions');
+$search_usage_opportunity = GETPOST('search_usage_opportunity', 'intcomma');
+$search_usage_task = GETPOST('search_usage_task', 'intcomma');
+$search_usage_bill_time = GETPOST('search_usage_bill_time', 'intcomma');
+$search_usage_event_organization = GETPOST('search_usage_event_organization', 'intcomma');
+$search_accept_conference_suggestions = GETPOST('search_accept_conference_suggestions', 'intcomma');
+$search_accept_booth_suggestions = GETPOST('search_accept_booth_suggestions', 'intcomma');
 $search_price_registration = GETPOST("search_price_registration", 'alpha');
 $search_price_booth = GETPOST("search_price_booth", 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
@@ -229,7 +229,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['p.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => ($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
+			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -2041,7 +2041,6 @@ while ($i < $imaxinloop) {
 
 		print '</tr>'."\n";
 	}
-	//}
 
 	$i++;
 }

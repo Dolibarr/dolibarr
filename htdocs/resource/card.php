@@ -195,7 +195,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
 		$res = $object->fetch($id);
 		if ($res > 0) {
-			$result = $object->delete($id);
+			$result = $object->delete($user);
 
 			if ($result >= 0) {
 				setEventMessages($langs->trans('RessourceSuccessfullyDeleted'), null);

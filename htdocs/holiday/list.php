@@ -85,18 +85,18 @@ if (!$sortfield) {
 
 $sall                = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref          = GETPOST('search_ref', 'alphanohtml');
-$search_day_create   = GETPOSTINT('search_day_create');
-$search_month_create = GETPOSTINT('search_month_create');
-$search_year_create  = GETPOSTINT('search_year_create');
-$search_day_start    = GETPOSTINT('search_day_start');
-$search_month_start  = GETPOSTINT('search_month_start');
-$search_year_start   = GETPOSTINT('search_year_start');
-$search_day_end      = GETPOSTINT('search_day_end');
-$search_month_end    = GETPOSTINT('search_month_end');
-$search_year_end     = GETPOSTINT('search_year_end');
+$search_day_create   = GETPOST('search_day_create', 'int');
+$search_month_create = GETPOST('search_month_create', 'int');
+$search_year_create  = GETPOST('search_year_create', 'int');
+$search_day_start    = GETPOST('search_day_start', 'int');
+$search_month_start  = GETPOST('search_month_start', 'int');
+$search_year_start   = GETPOST('search_year_start', 'int');
+$search_day_end      = GETPOST('search_day_end', 'int');
+$search_month_end    = GETPOST('search_month_end', 'int');
+$search_year_end     = GETPOST('search_year_end', 'int');
 $search_employee     = GETPOSTINT('search_employee');
 $search_valideur     = GETPOSTINT('search_valideur');
-$search_status       = GETPOSTISSET('search_status') ? GETPOSTINT('search_status') : GETPOSTINT('search_statut');
+$search_status       = GETPOST('search_status', 'intcomma');
 $search_type         = GETPOSTINT('search_type');
 
 // Initialize technical objects

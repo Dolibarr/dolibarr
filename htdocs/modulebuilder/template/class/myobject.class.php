@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2023  Frédéric France          <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024  Frédéric France          <frederic.france@free.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -442,7 +442,7 @@ class MyObject extends CommonObject
 	 * @param  int         	$offset       	Offset
 	 * @param  string		$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
-	 * @param  string      	$filtermode   	Filter mode (AND or OR)
+	 * @param  string      	$filtermode   	No more used
 	 * @return array|int                 	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 1000, $offset = 0, string $filter = '', $filtermode = 'AND')
@@ -462,63 +462,15 @@ class MyObject extends CommonObject
 		} else {
 			$sql .= " WHERE 1 = 1";
 		}
-		// Manage filter
-		/* We keep this part of code that is still used by a lot of old class. The 'else" shows how to switch to Universal Search filters
-		$sqlwhere = array();
-		if (is_array($filter) && count($filter) > 0) {
-			dol_syslog("Warning: Use of an array  as filter is now forbidden and deprecated. Use an universal SQL filter string instead", LOG_WARNING);
-			foreach ($filter as $key => $value) {
-				$columnName = preg_replace('/^t\./', '', $key);
-				if ($key === 'customsql') {
-					// Never use 'customsql' with a value from a user input since it is injected as is. The value must be hard coded.
-					$sqlwhere[] = $value;
-					continue;
-				} elseif (isset($this->fields[$columnName])) {
-					$type = $this->fields[$columnName]['type'];
-					if (preg_match('/^integer/', $type)) {
-						if (is_int($value)) {
-							// single value
-							$sqlwhere[] = $key . " = " . intval($value);
-						} elseif (is_array($value)) {
-							if (empty($value)) {
-								continue;
-							}
-							$sqlwhere[] = $key . ' IN (' . $this->db->sanitize(implode(',', array_map('intval', $value))) . ')';
-						}
-						continue;
-					} elseif (in_array($type, array('date', 'datetime', 'timestamp'))) {
-						$sqlwhere[] = $key . " = '" . $this->db->idate($value) . "'";
-						continue;
-					}
-				}
 
-				// when the $key doesn't fall into the previously handled categories, we do as if the column were a varchar/text
-				if (is_array($value) && count($value)) {
-					$value = implode(',', array_map(function ($v) {
-						return "'" . $this->db->sanitize($this->db->escape($v)) . "'";
-					}, $value));
-					$sqlwhere[] = $key . ' IN (' . $this->db->sanitize($value, true) . ')';
-				} elseif (is_scalar($value)) {
-					if (strpos($value, '%') === false) {
-						$sqlwhere[] = $key . " = '" . $this->db->sanitize($this->db->escape($value)) . "'";
-					} else {
-						$sqlwhere[] = $key . " LIKE '%" . $this->db->escape($this->db->escapeforlike($value)) . "%'";
-					}
-				}
-			}
-		} else { */
+		// Manage filter
 		$errormessage = '';
 		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
 		if ($errormessage) {
 			$this->errors[] = $errormessage;
 			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
-
 			return -1;
 		}
-		/*}
-		if (count($sqlwhere) > 0) {
-			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
-		}*/
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
@@ -1118,7 +1070,7 @@ class MyObject extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1126,7 +1078,7 @@ class MyObject extends CommonObject
 		// $this->property1 = ...
 		// $this->property2 = ...
 
-		$this->initAsSpecimenCommon();
+		return $this->initAsSpecimenCommon();
 	}
 
 	/**
@@ -1139,7 +1091,7 @@ class MyObject extends CommonObject
 		$this->lines = array();
 
 		$objectline = new MyObjectLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_myobject = '.((int) $this->id)));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_myobject:=:'.((int) $this->id).')');
 
 		if (is_numeric($result)) {
 			$this->setErrorsFromObject($objectline);

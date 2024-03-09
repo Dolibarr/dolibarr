@@ -52,7 +52,7 @@ $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hier
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref = GETPOST("sref", "alpha") ? GETPOST("sref", "alpha") : GETPOST("search_ref", "alpha");
 $search_label = GETPOST("snom", "alpha") ? GETPOST("snom", "alpha") : GETPOST("search_label", "alpha");
-$search_status = GETPOSTINT("search_status");
+$search_status = GETPOST("search_status", "intcomma");
 
 $search_category_list = array();
 if (isModEnabled('category')) {
@@ -124,7 +124,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && dol_eval($val['enabled'], 1)),
+			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);

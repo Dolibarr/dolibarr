@@ -3,6 +3,7 @@
  * Copyright (C) 2015-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,8 +85,8 @@ if (!$sortorder) {
 	$sortorder = "DESC,DESC";
 }
 
-$search_ref = GETPOSTINT('search_ref');
-$search_ref_salary = GETPOSTINT('search_ref_salary');
+$search_ref = GETPOST('search_ref', 'alpha');
+$search_ref_salary = GETPOST('search_ref_salary', 'alpha');
 $search_user = GETPOST('search_user', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_date_start = dol_mktime(0, 0, 0, GETPOSTINT('search_date_startmonth'), GETPOSTINT('search_date_startday'), GETPOSTINT('search_date_startyear'));
@@ -141,7 +142,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
+			'enabled'=>(abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -613,8 +614,8 @@ while ($i < $imaxinloop) {
 
 	$accountlinestatic->id = $obj->fk_bank;
 	$accountlinestatic->ref = $obj->fk_bank;
-	$paymentsalstatic->fk_bank = $accountlinestatic->getNomUrl(1);
-	$paymentsalstatic->fk_user_author = $userstatic->getNomUrl(1);
+	$paymentsalstatic->fk_bank = $accountlinestatic->id;
+	$paymentsalstatic->fk_user_author = $userstatic->id;
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {

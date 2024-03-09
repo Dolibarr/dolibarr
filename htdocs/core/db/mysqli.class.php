@@ -232,12 +232,12 @@ class DoliDBMysqli extends DoliDB
 	/**
 	 * Connect to server
 	 *
-	 * @param   string  $host 	Database server host
-	 * @param   string  $login 	Login
-	 * @param   string  $passwd Password
-	 * @param   string  $name 	Name of database (not used for mysql, used for pgsql)
-	 * @param   integer $port 	Port of database server
-	 * @return  mysqli|null		Database access object
+	 * @param   string          $host           Database server host
+	 * @param   string          $login          Login
+	 * @param   string          $passwd         Password
+	 * @param   string          $name           Name of database (not used for mysql, used for pgsql)
+	 * @param   integer         $port           Port of database server
+	 * @return  mysqli|mysqliDoli|false         Database access object
 	 * @see close()
 	 */
 	public function connect($host, $login, $passwd, $name, $port = 0)
@@ -358,7 +358,7 @@ class DoliDBMysqli extends DoliDB
 				if (getDolGlobalInt('SYSLOG_LEVEL') < LOG_DEBUG) {
 					dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR); // Log of request was not yet done previously
 				}
-				dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterrno." ".$this->lasterror, LOG_ERR);
+				dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterrno." ".$this->lasterror.self::getCallerInfoString(), LOG_ERR);
 				//var_dump(debug_print_backtrace());
 			}
 			$this->lastquery = $query;
@@ -366,6 +366,24 @@ class DoliDBMysqli extends DoliDB
 		}
 
 		return $ret;
+	}
+
+	/**
+	 * Get caller info
+	 *
+	 * @return string
+	 */
+	final protected static function getCallerInfoString()
+	{
+		$backtrace = debug_backtrace();
+		$msg = "";
+		if (count($backtrace) >= 1) {
+			$trace = $backtrace[1];
+			if (isset($trace['file'], $trace['line'])) {
+				$msg = " From {$trace['file']}:{$trace['line']}.";
+			}
+		}
+		return $msg;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

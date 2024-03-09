@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018 Jean-François Ferry <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2019-2023 Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2023      Charlene Benke 	   <charlene@patas-monkey.com>
  * Copyright (C) 2023	   Benjamin Falière	   <benjamin.faliere@altairis.fr>
@@ -848,19 +848,19 @@ class Ticket extends CommonObject
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) { // To allow $filter['YEAR(s.dated)']=>$year
-					$sql .= " AND ".$key." = '".$this->db->escape($value)."'";
+					$sql .= " AND ".$this->db->sanitize($key)." = '".$this->db->escape($value)."'";
 				} elseif (($key == 't.fk_user_assign') || ($key == 't.type_code') || ($key == 't.category_code') || ($key == 't.severity_code') || ($key == 't.fk_soc')) {
-					$sql .= " AND ".$key." = '".$this->db->escape($value)."'";
+					$sql .= " AND ".$this->db->sanitize($key)." = '".$this->db->escape($value)."'";
 				} elseif ($key == 't.fk_statut') {
 					if (is_array($value) && count($value) > 0) {
-						$sql .= " AND ".$key." IN (".$this->db->sanitize(implode(',', $value)).")";
+						$sql .= " AND ".$this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $value)).")";
 					} else {
-						$sql .= " AND ".$key.' = '.((int) $value);
+						$sql .= " AND ".$this->db->sanitize($key).' = '.((int) $value);
 					}
 				} elseif ($key == 't.fk_contract') {
-					$sql .= " AND ".$key.' = '.((int) $value);
+					$sql .= " AND ".$this->db->sanitize($key).' = '.((int) $value);
 				} else {
-					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
+					$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 				}
 			}
 		}
@@ -1133,7 +1133,6 @@ class Ticket extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$this->db->begin();
@@ -1291,6 +1290,7 @@ class Ticket extends CommonObject
 		$this->date_last_msg_sent = dol_now();
 		$this->date_close = dol_now();
 		$this->tms = dol_now();
+
 		return 1;
 	}
 

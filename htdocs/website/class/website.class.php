@@ -3,7 +3,7 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -909,7 +909,7 @@ class Website extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -923,12 +923,14 @@ class Website extends CommonObject
 		$this->lang = 'en';
 		$this->otherlang = 'fr,es';
 		$this->status = 1;
-		$this->fk_default_home = null;
+		$this->fk_default_home = 0;
 		$this->virtualhost = 'http://myvirtualhost';
 		$this->fk_user_creat = $user->id;
 		$this->fk_user_modif = $user->id;
 		$this->date_creation = dol_now();
 		$this->tms = dol_now();
+
+		return 1;
 	}
 
 

@@ -18,8 +18,6 @@ use Microsoft\PhpParser\Node\DelimitedList\ArgumentExpressionList;
 use Microsoft\PhpParser\Node\StringLiteral;
 
 /**
- * Implements --automatic-fix for GetPostFixerPlugin
- *
  * This is a prototype, there are various features it does not implement.
  */
 
