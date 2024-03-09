@@ -407,7 +407,7 @@ if (empty($reshook_onBeforeView)) {
 		print '</tr>';
 		*/
 		$reshook_onCreate_onAfterShowFields = $hookmanager->executeHooks('onCreate_onAfterShowFields', $parameters, $object, $action);
-		
+
 		print '</table>';
 
 		print dol_get_fiche_end();
