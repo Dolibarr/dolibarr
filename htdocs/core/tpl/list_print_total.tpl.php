@@ -1,5 +1,7 @@
 <?php
 
+'@phan-var-force array{nbfield:int,type?:array<int,string>,pos?:array<int,int>,val?:array<int,float>} $totalarray';
+
 // Move fields of totalizable into the common array pos and val
 if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) {
 	foreach ($totalarray['totalizable'] as $keytotalizable => $valtotalizable) {
