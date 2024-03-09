@@ -47,7 +47,7 @@ $langs->loadLangs(array("errors", "admin", "modulebuilder"));
 // if we set another view list mode, we keep it (till we change one more time)
 if (GETPOSTISSET('mode')) {
 	$mode = GETPOST('mode', 'alpha');
-	if ($mode =='common' || $mode =='commonkanban') {
+	if ($mode == 'common' || $mode == 'commonkanban') {
 		dolibarr_set_const($db, "MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT", $mode, 'chaine', 0, '', $conf->entity);
 	}
 } else {
@@ -78,18 +78,18 @@ if (!$user->admin) {
 }
 
 $familyinfo = array(
-	'hr'=>array('position'=>'001', 'label'=>$langs->trans("ModuleFamilyHr")),
-	'crm'=>array('position'=>'006', 'label'=>$langs->trans("ModuleFamilyCrm")),
-	'srm'=>array('position'=>'007', 'label'=>$langs->trans("ModuleFamilySrm")),
-	'financial'=>array('position'=>'009', 'label'=>$langs->trans("ModuleFamilyFinancial")),
-	'products'=>array('position'=>'012', 'label'=>$langs->trans("ModuleFamilyProducts")),
-	'projects'=>array('position'=>'015', 'label'=>$langs->trans("ModuleFamilyProjects")),
-	'ecm'=>array('position'=>'018', 'label'=>$langs->trans("ModuleFamilyECM")),
-	'technic'=>array('position'=>'021', 'label'=>$langs->trans("ModuleFamilyTechnic")),
-	'portal'=>array('position'=>'040', 'label'=>$langs->trans("ModuleFamilyPortal")),
-	'interface'=>array('position'=>'050', 'label'=>$langs->trans("ModuleFamilyInterface")),
-	'base'=>array('position'=>'060', 'label'=>$langs->trans("ModuleFamilyBase")),
-	'other'=>array('position'=>'100', 'label'=>$langs->trans("ModuleFamilyOther")),
+	'hr' => array('position' => '001', 'label' => $langs->trans("ModuleFamilyHr")),
+	'crm' => array('position' => '006', 'label' => $langs->trans("ModuleFamilyCrm")),
+	'srm' => array('position' => '007', 'label' => $langs->trans("ModuleFamilySrm")),
+	'financial' => array('position' => '009', 'label' => $langs->trans("ModuleFamilyFinancial")),
+	'products' => array('position' => '012', 'label' => $langs->trans("ModuleFamilyProducts")),
+	'projects' => array('position' => '015', 'label' => $langs->trans("ModuleFamilyProjects")),
+	'ecm' => array('position' => '018', 'label' => $langs->trans("ModuleFamilyECM")),
+	'technic' => array('position' => '021', 'label' => $langs->trans("ModuleFamilyTechnic")),
+	'portal' => array('position' => '040', 'label' => $langs->trans("ModuleFamilyPortal")),
+	'interface' => array('position' => '050', 'label' => $langs->trans("ModuleFamilyInterface")),
+	'base' => array('position' => '060', 'label' => $langs->trans("ModuleFamilyBase")),
+	'other' => array('position' => '100', 'label' => $langs->trans("ModuleFamilyOther")),
 );
 
 $param = '';
@@ -360,7 +360,7 @@ llxHeader('', $langs->trans("Setup"), $help_url, '', '', '', $morejs, $morecss, 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs();
 
-$arrayofnatures = array('core'=>$langs->transnoentitiesnoconv("NativeModules"), 'external'=>$langs->transnoentitiesnoconv("External").' - ['.$langs->trans("AllPublishers").']');
+$arrayofnatures = array('core' => $langs->transnoentitiesnoconv("NativeModules"), 'external' => $langs->transnoentitiesnoconv("External").' - ['.$langs->trans("AllPublishers").']');
 $arrayofwarnings = array(); // Array of warning each module want to show when activated
 $arrayofwarningsext = array(); // Array of warning each module want to show when we activate an external module
 $filename = array();
@@ -395,6 +395,7 @@ foreach ($modulesdir as $dir) {
 						$res = include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
 						if (class_exists($modName)) {
 							$objMod = new $modName($db);
+							'@phan-var-force DolibarrModules $objMod';
 							$modNameLoaded[$modName] = $dir;
 							if (!$objMod->numero > 0 && $modName != 'modUser') {
 								dol_syslog('The module descriptor '.$modName.' must have a numero property', LOG_ERR);
@@ -443,6 +444,7 @@ foreach ($modulesdir as $dir) {
 								} else {
 									$familykey = $objMod->family;
 								}
+								'@phan-var-force string $familykey';  // if not, phan considers $familykey may be null
 
 								$moduleposition = ($objMod->module_position ? $objMod->module_position : '50');
 								if ($objMod->isCoreOrExternalModule() == 'external' && $moduleposition < 100000) {
@@ -603,10 +605,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter = '<div class="valignmiddle">';
 
 	$moreforfilter .= '<div class="floatright right pagination paddingtop --module-list"><ul><li>';
-	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdate').'<br>'.$langs->trans('CheckForModuleUpdateHelp'), 'fa fa-sync', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss'=>'reposition'));
+	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdate').'<br>'.$langs->trans('CheckForModuleUpdateHelp'), 'fa fa-sync', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss' => 'reposition'));
 	$moreforfilter .= dolGetButtonTitleSeparator();
-	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', ($mode == 'common' ? 2 : 1), array('morecss'=>'reposition'));
-	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', ($mode == 'commonkanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', ($mode == 'common' ? 2 : 1), array('morecss' => 'reposition'));
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', ($mode == 'commonkanban' ? 2 : 1), array('morecss' => 'reposition'));
 	$moreforfilter .= '</li></ul></div>';
 
 	$moreforfilter .= '<div class="divfilteralone colorbacktimesheet float valignmiddle">';
@@ -618,7 +620,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= '</div>';
 
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
-		$array_version = array('stable'=>$langs->transnoentitiesnoconv("Stable"));
+		$array_version = array('stable' => $langs->transnoentitiesnoconv("Stable"));
 		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 0) {
 			$array_version['deprecated'] = $langs->trans("Deprecated");
 		}
@@ -632,7 +634,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		$moreforfilter .= $form->selectarray('search_version', $array_version, $search_version, $langs->transnoentitiesnoconv('Version'), 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
 		$moreforfilter .= '</div>';
 	}
-	$array_status = array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled"));
+	$array_status = array('active' => $langs->transnoentitiesnoconv("Enabled"), 'disabled' => $langs->transnoentitiesnoconv("Disabled"));
 	$moreforfilter .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
 	$moreforfilter .= $form->selectarray('search_status', $array_status, $search_status, $langs->transnoentitiesnoconv('Status'), 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
 	$moreforfilter .= '</div>';
@@ -717,7 +719,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				|| ($moduledesc && preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduledesc))
 				|| ($moduledesclong && preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduledesclong))
 				|| ($moduleauthor && preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduleauthor))
-				) {
+			) {
 				$qualified = 1;
 			}
 			if (!$qualified) {
