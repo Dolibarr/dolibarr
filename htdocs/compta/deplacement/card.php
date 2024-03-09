@@ -221,7 +221,7 @@ if ($action == 'create') {
 
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	print $form->selectDate($datec ? $datec : -1, '', '', '', '', 'add', 1, 1);
+	print $form->selectDate($datec ? $datec : -1, '', 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// Km
@@ -451,7 +451,7 @@ if ($action == 'create') {
 			print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
 			// Other attributes
-			$parameters = array('socid'=>$object->id);
+			$parameters = array('socid' => $object->id);
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 			print "</table><br>";

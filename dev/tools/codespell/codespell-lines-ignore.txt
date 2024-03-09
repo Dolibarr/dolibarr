@@ -178,6 +178,7 @@
 		if (empty($this->datea)) {
 		if (in_array('01', $TWeek) && in_array('52', $TWeek) && $weekNb == '01') {
 		print $form->selectDate(strtotime(date('Y-m-d', $object->datee)), 'end', '', '', 0, '', 1, 0);
+		print $form->selectDate(strtotime(date('Y-m-d', $object->datee)), 'end', 0, 0, 0, '', 1, 0);
 		print $object->datee ? dol_print_date($object->datee, 'daytext') : '&nbsp;';
 		print '<input type="hidden" name="action" value="addin">';
 		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
