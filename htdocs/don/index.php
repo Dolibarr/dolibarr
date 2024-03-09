@@ -90,9 +90,13 @@ print load_fiche_titre($langs->trans("DonationsArea"), '', 'object_donation');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
+if (!isset($listofsearchfields) || !is_array($listofsearchfields)) {
+	// Ensure $listofsearchfields is an array
+	$listofsearchfields = array();
+}
 if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // TODO Add a search into global search combo so we can remove this
 	if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
-		$listofsearchfields['search_donation'] = array('text'=>'Donation');
+		$listofsearchfields['search_donation'] = array('text' => 'Donation');
 	}
 
 	if (count($listofsearchfields)) {
@@ -230,7 +234,7 @@ if ($resql) {
 
 			print '<td class="nobordernopadding">';
 			print $obj->societe;
-			print ($obj->societe && ($obj->lastname || $obj->firstname) ? ' / ' : '');
+			print($obj->societe && ($obj->lastname || $obj->firstname) ? ' / ' : '');
 			print dolGetFirstLastname($obj->firstname, $obj->lastname);
 			print '</td>';
 

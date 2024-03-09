@@ -206,6 +206,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 					continue;
 				}
 
+				$pdir = array();
+
 				$objphoto->fetch($object->lines[$i]->fk_product);
 				//var_dump($objphoto->ref);exit;
 				if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {

@@ -35,6 +35,7 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
+$fileparams = array();
 
 if ($action == 'presend') {
 	$langs->load("mails");
@@ -273,10 +274,10 @@ if ($action == 'presend') {
 
 	$substitutionarray['__CHECK_READ__'] = "";
 	if (is_object($object) && is_object($object->thirdparty)) {
-		$checkRead= '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php';
-		$checkRead.='?tag='.(!empty($object->thirdparty->tag) ? urlencode($object->thirdparty->tag) : "");
-		$checkRead.='&securitykey='.(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY') ? urlencode(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')) : "");
-		$checkRead.='" width="1" height="1" style="width:1px;height:1px" border="0"/>';
+		$checkRead = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php';
+		$checkRead .= '?tag='.(!empty($object->thirdparty->tag) ? urlencode($object->thirdparty->tag) : "");
+		$checkRead .= '&securitykey='.(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY') ? urlencode(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')) : "");
+		$checkRead .= '" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 		$substitutionarray['__CHECK_READ__'] = $checkRead;
 	}
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
