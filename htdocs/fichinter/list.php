@@ -807,6 +807,7 @@ while ($i < $imaxinloop) {
 		}
 
 		$objectstatic->duration = $obj->duree;
+		$arraydata = array();
 		$arraydata['thirdparty'] = $companystatic;
 		print $objectstatic->getKanbanView('', $arraydata);
 		if ($i == ($imaxinloop - 1)) {
