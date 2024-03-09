@@ -327,6 +327,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 			if (is_dir($dir)) {
 				$handle = opendir($dir);
 				if (is_resource($handle)) {
+					$filelist = array();
 					while (($file = readdir($handle)) !== false) {
 						$filelist[] = $file;
 					}
