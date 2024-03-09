@@ -680,7 +680,7 @@ if ($id) {
 		if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
 			print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->subledger_account, 'subledger_account', 1, 1, '', 1);
 		} else {
-			print $form->editfieldval('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $permissiontoadd), 'string', '', 0, null, '', 1, 'lengthAccounta');
+			print $form->editfieldval('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $permissiontoadd), 'string', '', null, null, '', 1, 'lengthAccounta');
 		}
 	} else {
 		print length_accounta($object->subledger_account);
