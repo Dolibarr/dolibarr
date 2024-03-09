@@ -391,6 +391,7 @@ class ProductFournisseur extends Product
 			}
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
 			$sql .= " SET fk_user = ".((int) $user->id)." ,";
+			$sql .= " datec = '".$this->db->idate($now)."' ,";
 			$sql .= " ref_fourn = '".$this->db->escape($ref_fourn)."',";
 			$sql .= " desc_fourn = '".$this->db->escape($desc_fourn)."',";
 			$sql .= " price = ".((float) $buyprice).",";
