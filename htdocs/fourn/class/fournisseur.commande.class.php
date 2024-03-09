@@ -2210,8 +2210,8 @@ class CommandeFournisseur extends CommonOrder
 	 * @param 	int			$entrepot				Id of warehouse to add product
 	 * @param 	double		$price					Unit Price for PMP value calculation (Unit price without Tax and taking into account discount)
 	 * @param	string		$comment				Comment for stock movement
-	 * @param	integer		$eatby					eat-by date
-	 * @param	integer		$sellby					sell-by date
+	 * @param	int|string	$eatby					eat-by date
+	 * @param	int|string	$sellby					sell-by date
 	 * @param	string		$batch					Lot number
 	 * @param	int			$fk_commandefourndet	Id of supplier order line
 	 * @param	int			$notrigger          	1 = notrigger
