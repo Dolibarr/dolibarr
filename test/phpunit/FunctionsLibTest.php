@@ -1227,33 +1227,43 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals(getServerTimeZoneInt('now') * 3600, ($nowtzserver - $now));
 	}
 
+
+
+	/**
+	 * Data provider for testVerifCond
+	 *
+	 * @return array<string,array{0:string,1:bool}>
+	 */
+	public function verifCondDataProvider(): array
+	{
+		return [
+			'Test a true comparison' => ['1==1', true,],
+			'Test a false comparison' => ['1==2', false,],
+			'Test that the conf property of a module reports true when enabled' => ['isModEnabled("facture")', true,],
+			'Test that the conf property of a module reports false when disabled' => ['isModEnabled("moduledummy")', false,],
+			'Test that verifConf(0) returns false' => [0, false,],
+			'Test that verifConf("0") returns false' => ["0", false,],
+			'Test that verifConf("") returns false (special case)' => ['', true,],
+		];
+	}
+
 	/**
 	 * testVerifCond
 	 *
+	 * @dataProvider verifCondDataProvider
+	 *
+	 * @param string $cond     Condition to test using verifCond
+	 * @param string $expected Expected outcome of verifCond
+	 *
 	 * @return	void
 	 */
-	public function testVerifCond()
+	public function testVerifCond($cond, $expected)
 	{
-		$verifcond = verifCond('1==1');
-		$this->assertTrue($verifcond, 'Test a true comparison');
-
-		$verifcond = verifCond('1==2');
-		$this->assertFalse($verifcond, 'Test a false comparison');
-
-		$verifcond = verifCond('isModEnabled("facture")');
-		$this->assertTrue($verifcond, 'Test that the conf property of a module reports true when enabled');
-
-		$verifcond = verifCond('isModEnabled("moduledummy")');
-		$this->assertFalse($verifcond, 'Test that the conf property of a module reports false when disabled');
-
-		$verifcond = verifCond(0);
-		$this->assertFalse($verifcond, 'Test that verifConf(0) return False');
-
-		$verifcond = verifCond("0");
-		$this->assertFalse($verifcond, 'Test that verifConf("0") return False');
-
-		$verifcond = verifCond('');
-		$this->assertTrue($verifcond, 'Test that verifConf("") return False (special case)');
+		if ($expected) {
+			$this->assertTrue(verifCond($cond));
+		} else {
+			$this->assertFalse(verifCond($cond));
+		}
 	}
 
 	/**
