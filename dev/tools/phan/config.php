@@ -456,7 +456,7 @@ return [
 		'PhanPluginPHPDocInWrongComment',
 		'PhanRedefineClassInternal',
 		// 'PhanTypeInvalidThrowsIsInterface',
-		'PhanPluginRedundantAssignmentInLoop',
+		// 'PhanPluginRedundantAssignmentInLoop',
 		// 'PhanInvalidCommentForDeclarationType',
 		//'PhanParamSignatureMismatchInternal',
 		// 'PhanPluginEmptyStatementForeachLoop',
