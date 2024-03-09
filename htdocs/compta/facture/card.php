@@ -2447,6 +2447,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
+				'@phan-var-force array<string,mixed> $lines';
 				// Add batchinfo if the detail_batch array is defined
 				if (isModEnabled('productbatch') && !empty($lines[$i]->detail_batch) && is_array($lines[$i]->detail_batch) && getDolGlobalString('INVOICE_INCUDE_DETAILS_OF_LOTS_SERIALS')) {
 					$langs->load('productbatch');
@@ -4452,6 +4453,7 @@ if ($action == 'create') {
 		$close[$i]['reason'] = $form->textwithpicto($langs->transnoentities("Other"), $close[$i]['label'], 1);
 		$i++;
 		// arrayreasons[code]=reason
+		$arrayreasons = [];
 		foreach ($close as $key => $val) {
 			$arrayreasons[$close[$key]['code']] = $close[$key]['reason'];
 		}
@@ -4484,6 +4486,7 @@ if ($action == 'create') {
 			$close[1]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer", $object->ref), $close[1]['label'], 1);
 			$close[2]['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyAbandonReasonOther"), $close[2]['label'], 1);
 			// arrayreasons
+			$arrayreasons = [];
 			$arrayreasons[$close[1]['code']] = $close[1]['reason'];
 			$arrayreasons[$close[2]['code']] = $close[2]['reason'];
 
