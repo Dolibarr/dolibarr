@@ -2069,12 +2069,13 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						//print img_picto($langs->trans("Birthday"), 'birthday-cake').' ';
 
 						$tmpid = $event->id;
+
 						if (empty($cachecontacts[$tmpid])) {
 							$newcontact = new Contact($db);
 							$newcontact->fetch($tmpid);
-							$cachecontact[$tmpid] = $newcontact;
+							$cachecontacts[$tmpid] = $newcontact;
 						}
-						print $cachecontact[$tmpid]->getNomUrl(1, '', 0, '', -1, 0, 'valignmiddle inline-block');
+						print $cachecontacts[$tmpid]->getNomUrl(1, '', 0, '', -1, 0, 'valignmiddle inline-block');
 
 						//$event->picto = 'birthday-cake';
 						//print $event->getNomUrl(1, $maxnbofchar, 'cal_event', 'birthday', 'contact');

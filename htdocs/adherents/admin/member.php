@@ -339,6 +339,7 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 // Start date of new membership
+$startpoint = array();
 $startpoint[0] = $langs->trans("SubscriptionPayment");
 $startpoint["m"] = $langs->trans("Month");
 $startpoint["Y"] = $langs->trans("Year");
@@ -393,7 +394,7 @@ print "</td></tr>\n";
 
 // Insert subscription into bank account
 print '<tr class="oddeven"><td>'.$langs->trans("MoreActionsOnSubscription").'</td>';
-$arraychoices = array('0'=>$langs->trans("None"));
+$arraychoices = array('0' => $langs->trans("None"));
 if (isModEnabled("bank")) {
 	$arraychoices['bankdirect'] = $langs->trans("MoreActionBankDirect");
 }
@@ -416,7 +417,7 @@ if (isModEnabled('invoice')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
 	if (isModEnabled("bank")) {
 		print '<td>';
-		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0'=>$langs->trans("NoVatOnSubscription"), 'defaultforfoundationcountry'=>$langs->trans("Default")), getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS', '0'), 0);
+		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0' => $langs->trans("NoVatOnSubscription"), 'defaultforfoundationcountry' => $langs->trans("Default")), getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS', '0'), 0);
 		print '</td>';
 	} else {
 		print '<td class="right">';
@@ -494,6 +495,7 @@ foreach ($dirmodels as $reldir) {
 		if (is_dir($dir)) {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
+				$filelist = array();
 				while (($file = readdir($handle)) !== false) {
 					$filelist[] = $file;
 				}

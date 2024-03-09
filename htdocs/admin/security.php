@@ -198,6 +198,7 @@ $dir = "../core/modules/security/generate";
 clearstatcache();
 $handle = opendir($dir);
 $i = 1;
+$arrayhandler = array();
 if (is_resource($handle)) {
 	while (($file = readdir($handle)) !== false) {
 		if (preg_match('/(modGeneratePass[a-z]+)\.class\.php$/i', $file, $reg)) {
