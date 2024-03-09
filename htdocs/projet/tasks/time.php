@@ -1418,7 +1418,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print $langs->trans('DateInvoice');
 				print '</td>';
 				print '<td>';
-				print $form->selectDate('', '', '', '', '', '', 1, 1);
+				print $form->selectDate('', '', 0, 0, 0, '', 1, 1);
 				print '</td>';
 				print '</tr>';
 

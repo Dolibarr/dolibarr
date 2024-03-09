@@ -289,7 +289,7 @@ if ($action == 'create') {
 	} else {
 		$datepayment = $datepaid;
 	}
-	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
+	print $form->selectDate($datepayment, '', 0, 0, 0, "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 

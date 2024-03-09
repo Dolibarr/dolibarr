@@ -236,7 +236,7 @@ if ($id > 0 || $ref) {
 			print '<form name="setdate_trans" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_trans">';
-			print $form->selectDate($object->date_trans ? $object->date_trans : -1, 'date_trans', 0, '', "setdate_trans");
+			print $form->selectDate($object->date_trans ? $object->date_trans : -1, 'date_trans', 0, 0, "setdate_trans");
 			print '<input type="submit" class="button button-edit smallpaddingimp valign middle" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
@@ -383,7 +383,7 @@ if ($id > 0 || $ref) {
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyTransmision").'</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans("TransData").'</td><td>';
-		print $form->selectDate('', '', '', '', '', "userfile", 1, 1);
+		print $form->selectDate('', '', 0, 0, 0, "userfile", 1, 1);
 		print '</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $form->selectarray("methode", $object->methodes_trans);
@@ -403,7 +403,7 @@ if ($id > 0 || $ref) {
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyCredit").'</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans('CreditDate').'</td><td>';
-		print $form->selectDate(-1, '', '', '', '', "infocredit", 1, 1);
+		print $form->selectDate(-1, '', 0, 0, 0, "infocredit", 1, 1);
 		print '</td></tr>';
 		print '</table>';
 		print '<br><div class="center"><span class="opacitymedium">'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice").'</span></div>';

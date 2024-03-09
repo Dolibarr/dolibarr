@@ -140,7 +140,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_array_options = array();
 }
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -513,9 +513,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 			print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
 			// $object is default vendor invoice
-			$adddateof = array(array('adddateof'=>$object->date));
-			$adddateof[] = array('adddateof'=>$object->date_echeance, 'labeladddateof'=>$langs->transnoentities('DateDue'));
-			print $form->selectDate($dateinvoice, '', '', '', 0, "addpaiement", 1, 1, 0, '', '', $adddateof);
+			$adddateof = array(array('adddateof' => $object->date));
+			$adddateof[] = array('adddateof' => $object->date_echeance, 'labeladddateof' => $langs->transnoentities('DateDue'));
+			print $form->selectDate($dateinvoice, '', 0, 0, 0, "addpaiement", 1, 1, 0, '', '', $adddateof);
 			print '</td></tr>';
 			print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
 			$form->select_types_paiements(!GETPOST('paiementid') ? $obj->fk_mode_reglement : GETPOST('paiementid'), 'paiementid');
@@ -536,7 +536,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			print dol_get_fiche_end();
 
 
-			$parameters = array('facid'=>$facid, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
+			$parameters = array('facid' => $facid, 'ref' => $ref, 'objcanvas' => $objcanvas);
 			$reshook = $hookmanager->executeHooks('paymentsupplierinvoices', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 			$error = $hookmanager->error;
 			$errors = $hookmanager->errors;

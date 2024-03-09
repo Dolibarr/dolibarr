@@ -223,7 +223,7 @@ if (empty($reshook)) {
 				$paiement = new PaymentVAT($db);
 				$paiement->chid         = $object->id;
 				$paiement->datepaye     = $datep;
-				$paiement->amounts      = array($object->id=>$amount); // Tableau de montant
+				$paiement->amounts      = array($object->id => $amount); // Tableau de montant
 				$paiement->paiementtype = GETPOST("type_payment", 'alphanohtml');
 				$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
 				$paiement->note = GETPOST("note", 'restricthtml');
@@ -460,7 +460,7 @@ if ($action == 'create') {
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input class="minwidth300" name="label" id="label" value="'.(GETPOSTISSET("label") ? GETPOST("label", '', 2) : $label).'" autofocus></td></tr>';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
-	print $form->selectDate((GETPOSTINT("datevmonth") ? $datev : -1), "datev", '', '', '', 'add', 1, 1);
+	print $form->selectDate((GETPOSTINT("datevmonth") ? $datev : -1), "datev", 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// Amount
@@ -474,7 +474,7 @@ if ($action == 'create') {
 
 	print '<tr class="hide_if_no_auto_create_payment">';
 	print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-	print $form->selectDate($datep, "datep", '', '', '', 'add', 1, 1);
+	print $form->selectDate($datep, "datep", 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// Type payment

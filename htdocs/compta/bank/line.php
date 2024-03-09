@@ -546,7 +546,7 @@ if ($result) {
 		print '<tr><td>'.$langs->trans("DateOperation").'</td>';
 		if ($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) {
 			print '<td>';
-			print $form->selectDate($db->jdate($objp->do), 'dateo', '', '', '', 'update', 1, 0, $objp->rappro);
+			print $form->selectDate($db->jdate($objp->do), 'dateo', 0, 0, 0, 'update', 1, 0, $objp->rappro);
 			if (!$objp->rappro) {
 				print ' &nbsp; ';
 				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=doprev&id='.$objp->fk_account.'&rowid='.$objp->rowid.'&token='.newToken().'">';
@@ -566,7 +566,7 @@ if ($result) {
 		print "<tr><td>".$langs->trans("DateValue")."</td>";
 		if ($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) {
 			print '<td>';
-			print $form->selectDate($db->jdate($objp->dv), 'datev', '', '', '', 'update', 1, 0, $objp->rappro);
+			print $form->selectDate($db->jdate($objp->dv), 'datev', 0, 0, 0, 'update', 1, 0, $objp->rappro);
 			if (!$objp->rappro) {
 				print ' &nbsp; ';
 				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&id='.$objp->fk_account.'&rowid='.$objp->rowid.'&token='.newToken().'">';

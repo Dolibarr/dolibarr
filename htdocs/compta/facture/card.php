@@ -1820,7 +1820,7 @@ if (empty($reshook)) {
 											$date_end,
 											0,
 											$lines[$i]->info_bits,
-											$lines[$i]->fk_remise_except,
+											isset($lines[$i]->fk_remise_except) ? $lines[$i]->fk_remise_except : null,
 											'HT',
 											0,
 											$product_type,
@@ -1829,7 +1829,7 @@ if (empty($reshook)) {
 											$object->origin,
 											$lines[$i]->rowid,
 											$fk_parent_line,
-											$lines[$i]->fk_fournprice,
+											isset($lines[$i]->fk_fournprice) ? $lines[$i]->fk_fournprice : null,
 											$lines[$i]->pa_ht,
 											$label,
 											$array_options,
@@ -3843,14 +3843,14 @@ if ($action == 'create') {
 		// Date invoice
 		print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td colspan="2">';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		print $form->selectDate($newdateinvoice ? $newdateinvoice : $dateinvoice, '', '', '', '', "add", 1, 1);
+		print $form->selectDate($newdateinvoice ? $newdateinvoice : $dateinvoice, '', 0, 0, 0, "add", 1, 1);
 		print '</td></tr>';
 
 		// Date point of tax
 		if (getDolGlobalString('INVOICE_POINTOFTAX_DATE')) {
 			print '<tr><td class="fieldrequired">'.$langs->trans('DatePointOfTax').'</td><td colspan="2">';
 			print img_picto('', 'action', 'class="pictofixedwidth"');
-			print $form->selectDate($date_pointoftax ? $date_pointoftax : -1, 'date_pointoftax', '', '', '', "add", 1, 1);
+			print $form->selectDate($date_pointoftax ? $date_pointoftax : -1, 'date_pointoftax', 0, 0, 0, "add", 1, 1);
 			print '</td></tr>';
 		}
 

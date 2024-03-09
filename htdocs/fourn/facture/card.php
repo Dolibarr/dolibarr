@@ -2645,7 +2645,7 @@ if ($action == 'create') {
 		// Date invoice
 		print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td>';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		print $form->selectDate($dateinvoice, '', '', '', '', "add", 1, 1);
+		print $form->selectDate($dateinvoice, '', 0, 0, 0, "add", 1, 1);
 		print '</td></tr>';
 
 		// Payment term
@@ -2658,7 +2658,7 @@ if ($action == 'create') {
 		// Due date
 		print '<tr><td>'.$langs->trans('DateMaxPayment').'</td><td>';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		print $form->selectDate($datedue, 'ech', '', '', '', "add", 1, 1);
+		print $form->selectDate($datedue, 'ech', 0, 0, 0, "add", 1, 1);
 		print '</td></tr>';
 
 		// Payment mode

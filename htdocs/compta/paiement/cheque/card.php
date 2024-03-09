@@ -628,7 +628,7 @@ if ($action == 'new') {
 		print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate">';
-		print $form->selectDate($object->date_bordereau, 'datecreate_', '', '', '', "setdate");
+		print $form->selectDate($object->date_bordereau, 'datecreate_', 0, 0, 0, "setdate");
 		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {

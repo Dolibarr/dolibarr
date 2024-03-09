@@ -380,7 +380,7 @@ if (empty($reshook)) {
 									$lines[$i]->pa_ht,
 									$array_options,
 									$lines[$i]->fk_unit,
-									$num+1
+									$num + 1
 								);
 
 								if ($result < 0) {
@@ -1245,7 +1245,7 @@ if ($action == 'create') {
 
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td>';
 	print img_picto('', 'action', 'class="pictofixedwidth"');
-	print $form->selectDate($datecontrat, '', 0, 0, '', "contrat");
+	print $form->selectDate($datecontrat, '', 0, 0, 0, "contrat");
 	print "</td></tr>";
 
 	// Project
@@ -1352,7 +1352,7 @@ if ($action == 'create') {
 			$formquestion = array(
 				array('type' => 'date', 'name' => 'd_start', 'label' => $langs->trans("DateServiceActivate"), 'value' => dol_now()),
 				array('type' => 'date', 'name' => 'd_end', 'label' => $langs->trans("DateEndPlanned"), /*'value' => $form->selectDate('', "end", $usehm, $usehm, '', "active", 1, 0),*/ '', ''),
-				array('type' => 'text', 'name' => 'comment', 'label' => $langs->trans("Comment"), 'value' => '', '', '', 'class' => 'minwidth300', 'moreattr'=>'autofocus')
+				array('type' => 'text', 'name' => 'comment', 'label' => $langs->trans("Comment"), 'value' => '', '', '', 'class' => 'minwidth300', 'moreattr' => 'autofocus')
 			);
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ActivateAllOnContract"), $langs->trans("ConfirmActivateAllOnContract"), "confirm_activate", $formquestion, 'yes', 1, 280);
 		} elseif ($action == 'clone') {
@@ -1730,7 +1730,7 @@ if ($action == 'create') {
 						$line = new ContratLigne($db);
 						$line->id = $objp->rowid;
 						$line->fetch_optionals();
-						print $line->showOptionals($extrafields, 'view', array('class'=>'oddeven', 'style'=>$moreparam, 'colspan'=>$colspan), '', '', 1);
+						print $line->showOptionals($extrafields, 'view', array('class' => 'oddeven', 'style' => $moreparam, 'colspan' => $colspan), '', '', 1);
 					}
 				} else {
 					// Line in mode update
@@ -1834,7 +1834,7 @@ if ($action == 'create') {
 						$line = new ContratLigne($db);
 						$line->id = $objp->rowid;
 						$line->fetch_optionals();
-						print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', 1);
+						print $line->showOptionals($extrafields, 'edit', array('style' => 'class="oddeven"', 'colspan' => $colspan), '', '', 1);
 					}
 				}
 
@@ -1992,10 +1992,10 @@ if ($action == 'create') {
 
 				print '<tr class="oddeven">';
 				print '<td class="nohover">'.$langs->trans("DateServiceActivate").'</td><td class="nohover">';
-				print $form->selectDate($dateactstart, 'start', $usehm, $usehm, '', "active", 1, 0);
+				print $form->selectDate($dateactstart, 'start', $usehm, $usehm, 0, "active", 1, 0);
 				print '</td>';
 				print '<td class="nohover">'.$langs->trans("DateEndPlanned").'</td><td class="nohover">';
-				print $form->selectDate($dateactend, "end", $usehm, $usehm, '', "active", 1, 0);
+				print $form->selectDate($dateactend, "end", $usehm, $usehm, 0, "active", 1, 0);
 				print '</td>';
 				print '<td class="center nohover">';
 				print '</td>';
