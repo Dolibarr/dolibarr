@@ -215,6 +215,7 @@ if ($action == 'create') {
 // View mode
 if ($id) {
 	$h = 0;
+	$head = array();
 	$head[$h][0] = DOL_URL_ROOT.'/compta/localtax/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Card');
 	$head[$h][2] = 'card';

@@ -1190,7 +1190,7 @@ class Task extends CommonObjectLine
 	 *
 	 * @param	User|null	$userp			      Return roles on project for this internal user. If set, usert and taskid must not be defined.
 	 * @param	User|null	$usert			      Return roles on task for this internal user. If set userp must NOT be defined. -1 means no filter.
-	 * @param 	int			$projectid		      Project id list separated with , to filter on project
+	 * @param 	string		$projectid		      Project id list separated with , to filter on project
 	 * @param 	int			$taskid			      Task id to filter on a task
 	 * @param	integer		$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
 	 * @return 	array|int					      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
@@ -1595,7 +1595,7 @@ class Task extends CommonObjectLine
 	/**
 	 *  Calculate quantity and value of time consumed using the thm (hourly amount value of work for user entering time)
 	 *
-	 *	@param		User		$fuser		Filter on a dedicated user
+	 *	@param		User|string	$fuser		Filter on a dedicated user
 	 *  @param		string		$dates		Start date (ex 00:00:00)
 	 *  @param		string		$datee		End date (ex 23:59:59)
 	 *  @return 	array	        		Array of info for task array('amount','nbseconds','nblinesnull')
