@@ -111,7 +111,7 @@ class Form
 	 */
 	public function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata = 'string', $moreparam = '', $fieldrequired = 0, $notabletag = 0, $paramid = 'id', $help = '')
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$ret = '';
 
@@ -490,8 +490,6 @@ class Form
 	 */
 	protected function editInPlace($object, $value, $htmlname, $condition, $inputType = 'textarea', $editvalue = null, $extObject = null, $custommsg = null)
 	{
-		global $conf;
-
 		$out = '';
 
 		// Check parameters
