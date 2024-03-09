@@ -781,6 +781,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($massaction == 'presetstatus') {
 	$formquestion = array();
+	$statuslist = array();
 	$statuslist[$objecttmp::STATUS_DRAFT] = $objecttmp->LibStatutEvent($objecttmp::STATUS_DRAFT);
 	$statuslist[$objecttmp::STATUS_SUGGESTED] = $objecttmp->LibStatutEvent($objecttmp::STATUS_SUGGESTED);
 	$statuslist[$objecttmp::STATUS_CONFIRMED] = $objecttmp->LibStatutEvent($objecttmp::STATUS_CONFIRMED);

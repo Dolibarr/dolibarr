@@ -910,6 +910,7 @@ class ImportXlsx extends ModeleImports
 								$data = array_combine($listfields, $listvalues);
 
 								$where = array();	// filters to forge SQL request
+								'@phan-var string[] $where';
 								$filters = array();	// filters to forge output error message
 								foreach ($updatekeys as $key) {
 									$col = $objimport->array_import_updatekeys[0][$key];
@@ -1020,6 +1021,7 @@ class ImportXlsx extends ModeleImports
 								$sqlend = " WHERE " . $keyfield . " = ".((int) $lastinsertid);
 
 								if ($is_table_category_link) {
+									'@phan-var-force string[] $where';
 									$sqlend = " WHERE " . implode(' AND ', $where);
 								}
 

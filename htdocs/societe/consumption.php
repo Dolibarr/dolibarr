@@ -99,7 +99,7 @@ $hookmanager->initHooks(array('consumptionthirdparty', 'globalcard'));
  * Actions
  */
 
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -168,6 +168,7 @@ if ($object->client) {
 
 	$obj = $db->fetch_object($resql);
 	$nbFactsClient = $obj->nb;
+	$thirdTypeArray = array();
 	$thirdTypeArray['customer'] = $langs->trans("customer");
 	if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 		$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');

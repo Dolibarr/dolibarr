@@ -1280,7 +1280,7 @@ class Holiday extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 
 					// Note: $obj->halfday is  0:Full days, 2:Start afternoon end morning, -1:Start afternoon, 1:End morning
-					$arrayofrecord[$obj->rowid] = array('date_start'=>$this->db->jdate($obj->date_start), 'date_end'=>$this->db->jdate($obj->date_end), 'halfday'=>$obj->halfday, 'status'=>$obj->status);
+					$arrayofrecord[$obj->rowid] = array('date_start' => $this->db->jdate($obj->date_start), 'date_end' => $this->db->jdate($obj->date_end), 'halfday' => $obj->halfday, 'status' => $obj->status);
 					$i++;
 				}
 
@@ -1312,7 +1312,7 @@ class Holiday extends CommonObject
 			dol_print_error($this->db);
 		}
 
-		$result = array('morning'=>$isavailablemorning, 'afternoon'=>$isavailableafternoon);
+		$result = array('morning' => $isavailablemorning, 'afternoon' => $isavailableafternoon);
 		if (!$isavailablemorning) {
 			$result['morning_reason'] = 'leave_request';
 		}
@@ -1438,7 +1438,7 @@ class Holiday extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1493,7 +1493,7 @@ class Holiday extends CommonObject
 		$statusType = 'status6';
 		if (!empty($startdate) && $startdate >= dol_now()) {		// If not yet passed, we use a green "in live" color
 			$statusType = 'status4';
-			$params = array('tooltip'=>$this->labelStatus[$status].' - '.$langs->trans("Forthcoming"));
+			$params = array('tooltip' => $this->labelStatus[$status].' - '.$langs->trans("Forthcoming"));
 		}
 		if ($status == self::STATUS_DRAFT) {
 			$statusType = 'status0';
@@ -1543,7 +1543,7 @@ class Holiday extends CommonObject
 
 		$out .= '</select>'."\n";
 
-		$showempty= 0;
+		$showempty = 0;
 		$out .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($showempty < 0 ? (string) $showempty : '-1'), $morecss);
 
 		return $out;
@@ -2270,8 +2270,9 @@ class Holiday extends CommonObject
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			if ($num) {
+				$types = array();
 				while ($obj = $this->db->fetch_object($result)) {
-					$types[$obj->rowid] = array('id'=> $obj->rowid, 'rowid'=> $obj->rowid, 'code'=> $obj->code, 'label'=>$obj->label, 'affect'=>$obj->affect, 'delay'=>$obj->delay, 'newbymonth'=>$obj->newbymonth);
+					$types[$obj->rowid] = array('id' => $obj->rowid, 'rowid' => $obj->rowid, 'code' => $obj->code, 'label' => $obj->label, 'affect' => $obj->affect, 'delay' => $obj->delay, 'newbymonth' => $obj->newbymonth);
 				}
 
 				return $types;

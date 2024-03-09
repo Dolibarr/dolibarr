@@ -4683,6 +4683,7 @@ class Product extends CommonObject
 		$quantity = price2num($quantity, 'MS');
 
 		if ($ref_fourn) {
+			// Check if ref is not already used
 			$sql = "SELECT rowid, fk_product";
 			$sql .= " FROM ".$this->db->prefix()."product_fournisseur_price";
 			$sql .= " WHERE fk_soc = ".((int) $id_fourn);
@@ -4731,12 +4732,12 @@ class Product extends CommonObject
 				$sql .= ", tva_tx";
 				$sql .= ") VALUES (";
 				$sql .= "'".$this->db->idate($now)."'";
-				$sql .= ", ".$conf->entity;
-				$sql .= ", ".$this->id;
-				$sql .= ", ".$id_fourn;
+				$sql .= ", ".((int) $conf->entity);
+				$sql .= ", ".((int) $this->id);
+				$sql .= ", ".((int) $id_fourn);
 				$sql .= ", '".$this->db->escape($ref_fourn)."'";
-				$sql .= ", ".$quantity;
-				$sql .= ", ".$user->id;
+				$sql .= ", ".((float) $quantity);
+				$sql .= ", ".((int) $user->id);
 				$sql .= ", 0";
 				$sql .= ")";
 
@@ -5686,7 +5687,7 @@ class Product extends CommonObject
 				}
 				$nbpiece = abs($nbpiece);
 			}
-
+			$op = array();
 			$op[0] = "+".trim($nbpiece);
 			$op[1] = "-".trim($nbpiece);
 
@@ -5750,6 +5751,7 @@ class Product extends CommonObject
 				$nbpiece = abs($nbpiece);
 			}
 
+			$op = array();
 			$op[0] = "+".trim($nbpiece);
 			$op[1] = "-".trim($nbpiece);
 

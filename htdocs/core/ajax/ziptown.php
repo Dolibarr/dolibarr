@@ -111,6 +111,7 @@ if (GETPOST('zipcode') || GETPOST('town')) {
 	//var_dump($db);
 	if ($resql) {
 		while ($row = $db->fetch_array($resql)) {
+			$row_array = [];
 			$country = $row['country_id'] ? ($langs->transnoentitiesnoconv('Country'.$row['country_code']) != 'Country'.$row['country_code'] ? $langs->transnoentitiesnoconv('Country'.$row['country_code']) : $row['country_label']) : '';
 			$county = $row['state_id'] ? ($langs->transnoentitiesnoconv($row['state_code']) != $row['state_code'] ? $langs->transnoentitiesnoconv($row['state_code']) : ($row['state_label'] != '-' ? $row['state_label'] : '')) : '';
 

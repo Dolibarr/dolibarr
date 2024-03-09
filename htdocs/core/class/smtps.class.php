@@ -1214,11 +1214,12 @@ class SMTPs
 	 * - $_aryEmail[user] = "userName"
 	 *
 	 *	@param		string		$_strAddr		Email address
-	 * 	@return 	array	 					An array of the various parts of an email address
+	 * 	@return 	array{org:string,real?:string,addr:string,user:string,host:string}	An array of the various parts of an email address
 	 */
 	private function _strip_email($_strAddr)
 	{
 		// phpcs:enable
+		$_aryEmail = array();
 		// Keep the original
 		$_aryEmail['org'] = $_strAddr;
 
