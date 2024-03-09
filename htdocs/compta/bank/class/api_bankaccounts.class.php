@@ -187,7 +187,7 @@ class BankAccounts extends DolibarrApi
 	 * @param string  $description			Description of the internal wire transfer								{@from body}{@required true}
 	 * @param float	  $amount				Amount to transfer from the source to the destination BankAccount		{@from body}{@required true}
 	 * @param float	  $amount_to			Amount to transfer to the destination BankAccount (only when accounts does not share the same currency)		{@from body}{@required false}
-	 * @param string $cheque_number         Cheque numero {@from body}
+	 * @param string  $cheque_number        Cheque numero                                                           {@from body}{@required false}
 	 *
 	 * @url POST    /transfer
 	 *
