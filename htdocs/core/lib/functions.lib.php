@@ -10654,7 +10654,7 @@ function printCommonFooter($zone = 'private')
 		}
 
 		// Add DebugBar data
-		if ($user->hasRight('debugbar', 'read') && is_object($debugbar)) {
+		if ($user->hasRight('debugbar', 'read') && $debugbar instanceof DebugBar\DebugBar) {
 			$debugbar['time']->stopMeasure('pageaftermaster');
 			print '<!-- Output debugbar data -->'."\n";
 			$renderer = $debugbar->getRenderer();

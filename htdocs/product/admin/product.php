@@ -55,9 +55,9 @@ $type = 'product';
 
 // Pricing Rules
 $select_pricing_rules = array(
-	'PRODUCT_PRICE_UNIQ'=>$langs->trans('PriceCatalogue'), // Unique price
-	'PRODUIT_MULTIPRICES'=>$langs->trans('MultiPricesAbility'), // Several prices according to a customer level
-	'PRODUIT_CUSTOMER_PRICES'=>$langs->trans('PriceByCustomer'), // Different price for each customer
+	'PRODUCT_PRICE_UNIQ' => $langs->trans('PriceCatalogue'), // Unique price
+	'PRODUIT_MULTIPRICES' => $langs->trans('MultiPricesAbility'), // Several prices according to a customer level
+	'PRODUIT_CUSTOMER_PRICES' => $langs->trans('PriceByCustomer'), // Different price for each customer
 );
 $keyforparam = 'PRODUIT_CUSTOMER_PRICES_BY_QTY';
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || !empty($conf->global->$keyforparam)) {
@@ -407,6 +407,7 @@ print "</tr>\n";
 
 clearstatcache();
 
+$filelist = array();
 foreach ($dirmodels as $reldir) {
 	foreach (array('', '/doc') as $valdir) {
 		$dir = dol_buildpath($reldir."core/modules/product".$valdir);
@@ -650,10 +651,10 @@ if (empty($conf->use_javascript_ajax)) {
 } else {
 	print '<td class="right">';
 	$arrval = array(
-		'0'=>$langs->trans("No"),
-		'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-		'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-		'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+		'0' => $langs->trans("No"),
+		'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
+		'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+		'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
 	print $form->selectarray("activate_usesearchtoselectproduct", $arrval, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
 	print '</td>';
@@ -674,7 +675,7 @@ print '<td class="right">';
 print '<!-- PRODUIT_AUTOFILL_DESC -->';
 print $form->selectarray(
 	"activate_FillProductDescAuto",
-	array(0=>'DoNotAutofillButAutoConcat', 1=>'AutoFillFormFieldBeforeSubmit', 2=>'DoNotUseDescriptionOfProdut'),
+	array(0 => 'DoNotAutofillButAutoConcat', 1 => 'AutoFillFormFieldBeforeSubmit', 2 => 'DoNotUseDescriptionOfProdut'),
 	!getDolGlobalString('PRODUIT_AUTOFILL_DESC') ? 0 : $conf->global->PRODUIT_AUTOFILL_DESC,
 	0,
 	0,
