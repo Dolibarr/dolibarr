@@ -104,7 +104,7 @@ if (empty($reshook_onBeforeActions)) {
 		header("Location: ".DOL_URL_ROOT.'/accountancy/bookkeeping/list.php');
 		exit;
 	}
-		
+
 	if ($action == "confirm_update") {
 		$error = 0;
 
