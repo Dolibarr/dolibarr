@@ -401,7 +401,7 @@ return [
 		'PhanTypeMismatchDeclaredParamNullable',
 		'PhanTypeInvalidRightOperandOfAdd',
 		// 'PhanPluginDescriptionlessCommentOnPrivateProperty',
-		'PhanUndeclaredVariableDim',  // Array initialisation on undeclared var: $abc['x']='ab'
+		// 'PhanUndeclaredVariableDim',  // Array initialisation on undeclared var: $abc['x']='ab'
 		'PhanTypeInvalidPropertyName',
 		'PhanPluginDuplicateCatchStatementBody',
 		'PhanPluginUndeclaredVariableIsset',
