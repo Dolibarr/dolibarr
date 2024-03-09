@@ -439,7 +439,7 @@ return [
 		'PhanPluginBothLiteralsBinaryOp',
 		// 'PhanTypeMismatchDeclaredParam',
 		// 'PhanCommentDuplicateMagicMethod',
-		'PhanParamSpecial1',
+		// 'PhanParamSpecial1',
 		'PhanPluginInlineHTMLLeading',
 		'PhanPluginUseReturnValueInternalKnown',
 		'PhanRedefinedInheritedInterface',
