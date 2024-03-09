@@ -139,7 +139,7 @@ $hookmanager->initHooks(array('invoicecard', 'globalcard'));
 $usercanread = $user->hasRight("facture", "lire");
 $usercancreate = $user->hasRight("facture", "creer");
 $usercanissuepayment = $user->hasRight("facture", "paiement");
-$usercandelete = $user->hasRight("facture", "supprimer");
+$usercandelete = $user->hasRight("facture", "supprimer") || ($usercancreate && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $usercancreatecontract = $user->hasRight("contrat", "creer");
 
 // Advanced Permissions
