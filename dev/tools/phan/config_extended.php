@@ -274,6 +274,7 @@ return [
 		.'|htdocs/includes/restler/.*'  // @phpstan-ignore-line
 		// Included as stub (did not seem properly analysed by phan without it)
 		.'|htdocs/includes/stripe/.*'  // @phpstan-ignore-line
+		.'|htdocs/conf/conf.php'  // @phpstan-ignore-line
 		.')@',  // @phpstan-ignore-line
 
 	// A list of plugin files to execute.
