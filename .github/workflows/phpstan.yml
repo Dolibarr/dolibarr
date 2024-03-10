@@ -57,8 +57,7 @@ jobs:
       - name: Run PHPStan
         id: phpstan
         run: |
-          php -i | grep max_execution_time
-          phpstan --debug -vvv analyse --error-format=checkstyle --memory-limit 7G -a build/phpstan/bootstrap_action.php -c phpstan.neon.dist | tee _stan.xml | cs2pr --graceful-warnings
+          phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a build/phpstan/bootstrap_action.php | tee _stan.xml | cs2pr --graceful-warnings
         # continue-on-error: true
 
       # Save cache
