@@ -2210,8 +2210,8 @@ class CommandeFournisseur extends CommonOrder
 	 * @param 	int			$entrepot				Id of warehouse to add product
 	 * @param 	double		$price					Unit Price for PMP value calculation (Unit price without Tax and taking into account discount)
 	 * @param	string		$comment				Comment for stock movement
-	 * @param	integer		$eatby					eat-by date
-	 * @param	integer		$sellby					sell-by date
+	 * @param	int|string	$eatby					eat-by date
+	 * @param	int|string	$sellby					sell-by date
 	 * @param	string		$batch					Lot number
 	 * @param	int			$fk_commandefourndet	Id of supplier order line
 	 * @param	int			$notrigger          	1 = notrigger
@@ -2894,7 +2894,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param		string		$ref_supplier		Supplier ref
 	 *	@return    	int         	    			Return integer < 0 if error, > 0 if ok
 	 */
-	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $notrigger = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
+	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $notrigger = 0, $date_start = '', $date_end = '', $array_options = [], $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
 	{
 		global $mysoc, $conf, $langs;
 		dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type, $fk_unit");
