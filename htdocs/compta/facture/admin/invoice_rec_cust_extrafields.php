@@ -4,7 +4,7 @@
 * Copyright (C) 2004-2011 Laurent Destailleur <eldy@users.sourceforge.net>
 * Copyright (C) 2012 Regis Houssin <regis.houssin@inodbox.com>
 * Copyright (C) 2013 Jean-Francois FERRY <jfefe@aternatik.fr>
-* Copyright (C) 2013 Florian Henry	<florian.henry@open-concept.pro>
+* Copyright (C) 2017 John BOTELLA <contact@atm-consulting.fr>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 */
 
 /**
-* \file htdocs/compta/facture/admin/facture_cust_extrafields.php
+* \file htdocs/compta/facture/admin/invoice_cust_extrafields.php
 * \ingroup invoice
 * \brief Page to setup extra fields of customer invoice
 */
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadlangs(array('companies', 'admin', 'bills'));
+$langs->loadLangs(array('companies', 'admin', 'bills'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -46,7 +46,7 @@ foreach ($tmptype2label as $key => $val) {
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
-$elementtype = 'facturedet_rec'; //Must be the $table_element of the class that manage extrafield
+$elementtype = 'facture_rec'; //Must be the $table_element of the class that manage extrafield
 
 if (!$user->admin) {
 	accessforbidden();
@@ -75,12 +75,11 @@ print load_fiche_titre($langs->trans("BillsSetup"), $linkback, 'title_setup');
 
 $head = invoice_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'attributeslinesrec', $langs->trans("Invoices"), -1, 'invoice');
+print dol_get_fiche_head($head, 'attributesrec', $langs->trans("Invoices"), -1, 'invoice');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 print dol_get_fiche_end();
-
 
 /*
  * Creation of an optional field
@@ -97,6 +96,8 @@ if ($action == 'create') {
  * Edition of an optional field
  */
 if ($action == 'edit' && !empty($attrname)) {
+	$langs->load("members");
+
 	print "<br>";
 	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 

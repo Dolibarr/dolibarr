@@ -23,7 +23,7 @@
  */
 
 /**
- *      \file       htdocs/admin/facture.php
+ *      \file       htdocs/admin/invoice.php
  *		\ingroup    facture
  *		\brief      Page to setup invoice module
  */
