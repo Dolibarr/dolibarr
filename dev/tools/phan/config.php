@@ -183,8 +183,39 @@ $VALID_MODULE_MAPPING = array(
 	'zapier' => 'Zapier',
 );
 
+// From ExtraFields class
+$EXTRAFIELDS_TYPE2LABEL = array(
+		'varchar' => 'String1Line',
+		'text' => 'TextLongNLines',
+		'html' => 'HtmlText',
+		'int' => 'Int',
+		'double' => 'Float',
+		'date' => 'Date',
+		'datetime' => 'DateAndTime',
+		//'datetimegmt'=>'DateAndTimeUTC',
+		'boolean' => 'Boolean', // Remove as test
+		'price' => 'ExtrafieldPrice',
+		'pricecy' => 'ExtrafieldPriceWithCurrency',
+		'phone' => 'ExtrafieldPhone',
+		'mail' => 'ExtrafieldMail',
+		'url' => 'ExtrafieldUrl',
+		'ip' => 'ExtrafieldIP',
+		'icon' => 'Icon',
+		'password' => 'ExtrafieldPassword',
+		'select' => 'ExtrafieldSelect',
+		'sellist' => 'ExtrafieldSelectList',
+		'radio' => 'ExtrafieldRadio',
+		'checkbox' => 'ExtrafieldCheckBox',
+		'chkbxlst' => 'ExtrafieldCheckBoxFromList',
+		'link' => 'ExtrafieldLink',
+		'separate' => 'ExtrafieldSeparator',
+	);
+
+
 $moduleNameRegex = '/^(?:'.implode('|', array_merge(array_keys($DEPRECATED_MODULE_MAPPING), array_keys($VALID_MODULE_MAPPING), array('\$modulename'))).')$/';
 $deprecatedModuleNameRegex = '/^(?!(?:'.implode('|', array_keys($DEPRECATED_MODULE_MAPPING)).')$).*/';
+
+$extraFieldTypeRegex = '/^(?:'.implode('|', array_keys($EXTRAFIELDS_TYPE2LABEL)).')$/';
 
 /**
  * This configuration will be read and overlaid on top of the
@@ -270,7 +301,8 @@ return [
 		'/^isModEnabled$/' => [0, $moduleNameRegex, 'UnknownModuleName'],
 		// Note: trick to have different key for same regex:
 		'/^isModEnable[d]$/' => [0, $deprecatedModuleNameRegex, "DeprecatedModuleName"],
-		'/^sanitizeVal$/' => [1, $sanitizeRegex],
+		'/^sanitizeVal$/' => [1, $sanitizeRegex,"UnknownSanitizeType"],
+		'/^\\\\ExtraFields::addExtraField$/' => [2, $extraFieldTypeRegex,"UnknownExtrafieldTypeBack"],
 	],
 	'plugins' => [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
@@ -442,11 +474,11 @@ return [
 		// 'PhanParamSpecial1',
 		'PhanPluginInlineHTMLLeading',
 		'PhanPluginUseReturnValueInternalKnown',
-		//'PhanRedefinedInheritedInterface',
-		//'PhanTypeComparisonToArray',
+		// 'PhanRedefinedInheritedInterface',
+		// 'PhanTypeComparisonToArray',
 		'PhanTypeConversionFromArray',
 		// 'PhanTypeInvalidLeftOperandOfIntegerOp',
-		'PhanTypeMismatchArgumentInternalProbablyReal',
+		// 'PhanTypeMismatchArgumentInternalProbablyReal',
 		'PhanTypeMismatchBitwiseBinaryOperands',
 		'PhanTypeMismatchDimEmpty',
 		'PhanTypeSuspiciousEcho',
@@ -456,7 +488,7 @@ return [
 		'PhanPluginPHPDocInWrongComment',
 		'PhanRedefineClassInternal',
 		// 'PhanTypeInvalidThrowsIsInterface',
-		'PhanPluginRedundantAssignmentInLoop',
+		// 'PhanPluginRedundantAssignmentInLoop',
 		// 'PhanInvalidCommentForDeclarationType',
 		//'PhanParamSignatureMismatchInternal',
 		// 'PhanPluginEmptyStatementForeachLoop',
@@ -516,9 +548,9 @@ return [
 		'PhanTypeMismatchReturnProbablyReal',
 		'PhanPossiblyUndeclaredVariable',
 		'PhanTypeMismatchArgument',
-		//'PhanPluginUnreachableCode',
-		//'PhanTypeMismatchArgumentInternal',
-		//'PhanPluginAlwaysReturnMethod',
+		// 'PhanPluginUnreachableCode',
+		// 'PhanTypeMismatchArgumentInternal',
+		// 'PhanPluginAlwaysReturnMethod',
 		'PhanUndeclaredClassMethod',
 		'PhanUndeclaredMethod',
 		'PhanTypeMismatchArgumentProbablyReal',
@@ -534,7 +566,7 @@ return [
 		// 'PhanUndeclaredClassAttribute',
 		'PhanNonClassMethodCall',
 		// 'PhanPluginNoAssert',
-		'PhanTypeMismatchReturnSuperType',
+		// 'PhanTypeMismatchReturnSuperType',
 		'PhanTypeMismatchArgumentSuperType',
 		'PhanPluginDuplicateConditionalTernaryDuplication',
 	],

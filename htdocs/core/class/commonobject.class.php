@@ -138,8 +138,9 @@ abstract class CommonObject
 	 */
 	public $array_options = array();
 
+
 	/**
-	 * @var array  		Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -775,7 +776,7 @@ abstract class CommonObject
 	public $extraparams = array();
 
 	/**
-	 * @var array		List of child tables. To test if we can delete object.
+	 * @var array<string,string[]|array{parent:string,parentkey:string}>	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array();
 
@@ -8620,7 +8621,7 @@ abstract class CommonObject
 					}
 
 					$visibility = 1;
-					if ($visibility && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
+					if (isset($extrafields->attributes[$this->table_element]['list'][$key])) {
 						$visibility = (int) dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '2');
 					}
 
@@ -8629,9 +8630,9 @@ abstract class CommonObject
 						$perms = (int) dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
 					}
 
-					if (($mode == 'create') && abs($visibility) != 1 && abs($visibility) != 3) {
+					if (($mode == 'create') && !in_array(abs($visibility), array(1, 3))) {
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
-					} elseif (($mode == 'edit') && abs($visibility) != 1 && abs($visibility) != 3 && abs($visibility) != 4) {
+					} elseif (($mode == 'edit') && !in_array(abs($visibility), array(1, 3, 4))) {
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
 					} elseif ($mode == 'view' && empty($visibility)) {
 						continue;

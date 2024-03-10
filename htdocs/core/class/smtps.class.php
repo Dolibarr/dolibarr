@@ -100,7 +100,7 @@ class SMTPs
 	/**
 	 * Message Content
 	 *
-	 * @var	array	$_msgContent	Array of messages
+	 * @var array{html?:array{mimeType:string,data:string,dataText:string,md5?:string},plain?:array{mimeType:string,data:string,dataText:string,md5?:string},image:array<string,array{imageName:string,cid:string,md5?:string,data:string}>,attachment:array<string,array{filename:string,cid?:string,md5?:string,data:string}>}	$msgContent	Array of messages
 	 */
 	private $_msgContent = array();
 

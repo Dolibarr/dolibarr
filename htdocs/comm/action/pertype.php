@@ -1211,7 +1211,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 			if (count($cases1[$h]) > 1) {
 				$title1 .= count($cases1[$h]).' '.(count($cases1[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
 			}
-			$string1 = '&nbsp;';
+
 			if (!getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
 				$style1 = 'peruser_notbusy';
 			} else {
@@ -1228,7 +1228,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 			if (count($cases2[$h]) > 1) {
 				$title2 .= count($cases2[$h]).' '.(count($cases2[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
 			}
-			$string2 = '&nbsp;';
+
 			if (!getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
 				$style2 = 'peruser_notbusy';
 			} else {

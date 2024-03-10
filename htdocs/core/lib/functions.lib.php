@@ -682,7 +682,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 {
 	global $mysoc, $user, $conf;
 
-	if (empty($paramname)) {
+	if (empty($paramname)) {   // Explicit test for null for phan.
 		return 'BadFirstParameterForGETPOST';
 	}
 	if (empty($check)) {
@@ -874,6 +874,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value, when using variable parameters __XXX__ in the GET URL)
 	// Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOMPANY_COUNTRY_ID__, __USER_ID__, ...
 	// We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
+	'@phan-var-force string $paramname';
 	if (!is_array($out) && empty($_POST[$paramname]) && empty($noreplace)) {
 		$reg = array();
 		$maxloop = 20;
@@ -951,7 +952,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			$out = preg_replace('/([<>])([-+]?\d)/', '\1 \2', $out);
 		}
 
-		// @phan-suppress-next-line ParamMatchRegexError
+		// @phan-suppress-next-line UnknownSanitizeType
 		$out = sanitizeVal($out, $check, $filter, $options);
 	}
 
@@ -2789,7 +2790,7 @@ function fieldLabel($langkey, $fieldkey, $fieldrequired = 0)
 /**
  * Return string to add class property on html element with pair/impair.
  *
- * @param	string	$var			0 or 1
+ * @param	boolean	$var			false or true
  * @param	string	$moreclass		More class to add
  * @return	string					String to add class onto HTML element
  */
