@@ -1272,8 +1272,10 @@ class BookKeeping extends CommonObject
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
-		print $sql;
+
+		//print $sql;
 		$resql = $this->db->query($sql);
+
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
