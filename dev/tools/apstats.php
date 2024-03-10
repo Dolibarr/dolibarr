@@ -801,7 +801,7 @@ if ($nblines != 0) {
 
 // Technical debt Phan
 
-if ($phan_nblines != 0) {
+if ($dir_phan != 'disabled') {
 	$datatable_script .= '
  if (typeof(DataTable)==="function") {jQuery(".sourcephan").toggle(true);}
  let phantable = new DataTable("#technicaldebtphan table", {
