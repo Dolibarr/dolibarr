@@ -67,7 +67,7 @@ $search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
 $search_all = (GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search_status = GETPOST('search_status', 'alpha');
 $socid = GETPOSTINT('socid');
-$search_user = GETPOSTINT('search_user');
+$search_user = GETPOST('search_user', 'intcomma');
 $search_sale = GETPOSTINT('search_sale');
 $search_product_category = GETPOSTINT('search_product_category');
 $search_dfmonth = GETPOSTINT('search_dfmonth');
@@ -128,7 +128,7 @@ if (!$sortorder) {
 
 // Security check
 $id = GETPOSTINT('id');
-if ($user->socid) {
+if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'contrat', $id);
