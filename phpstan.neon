@@ -13,13 +13,13 @@ parameters:
 	paths:
 		- htdocs
 		- scripts
-	stubFiles:
+	# stubFiles:
 		# - dev/tools/phan/stubs/GeoIP2.php
 		# - dev/tools/phan/stubs/geoip_inc.php
 		# - dev/tools/phan/stubs/module_numberwords.php
 		# - dev/tools/phan/stubs/restler.php
-		- dev/tools/phan/stubs/stripe.php
-		- dev/tools/phan/stubs/swiss-qr-bill.php
+		# - dev/tools/phan/stubs/stripe.php
+		# - dev/tools/phan/stubs/swiss-qr-bill.php
 	excludePaths:
 		analyseAndScan:
 		- htdocs/custom/*
