@@ -1206,16 +1206,29 @@ class BookKeeping extends CommonObject
 		$sql .= " SUM(t.debit) as debit,";
 		$sql .= " SUM(t.credit) as credit";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.doc_date') {
 					$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
-				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=' || $key == 't.doc_date>' || $key == 't.doc_date<') {
-					$sqlwhere[] = $this->db->sanitize($key)."'".$this->db->idate($value)."'";
-				} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.subledger_account>=' || $key == 't.subledger_account<=') {
-					$sqlwhere[] = $this->db->sanitize($key)."'".$this->db->escape($value)."'";
+				} elseif ($key == 't.doc_date>=') {
+					$sqlwhere[] = "t.doc_date >= '".$this->db->idate($value)."'";
+				} elseif ($key == 't.doc_date<=') {
+					$sqlwhere[] = "t.doc_date <= '".$this->db->idate($value)."'";
+				} elseif ($key == 't.doc_date>') {
+					$sqlwhere[] = "t.doc_date > '".$this->db->idate($value)."'";
+				} elseif ($key == 't.doc_date<') {
+					$sqlwhere[] = "t.doc_date < '".$this->db->idate($value)."'";
+				} elseif ($key == 't.numero_compte>=') {
+					$sqlwhere[] = "t.numero_compte >= '".$this->db->escape($value)."'";
+				} elseif ($key == 't.numero_compte<=') {
+					$sqlwhere[] = "t.numero_compte <= '".$this->db->escape($value)."'";
+				} elseif ($key == 't.subledger_account>=') {
+					$sqlwhere[] = "t.subledger_account >= '".$this->db->escape($value)."'";
+				} elseif ($key == 't.subledger_account<=') {
+					$sqlwhere[] = "t.subledger_account <= '".$this->db->escape($value)."'";
 				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
 					$sqlwhere[] = $this->db->sanitize($key)." = ".((int) $value);
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
@@ -1236,6 +1249,7 @@ class BookKeeping extends CommonObject
 			}
 		}
 		$sql .= ' WHERE entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
+
 		if (count($sqlwhere) > 0) {
 			$sql .= " AND ".implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere);
 		}
@@ -1258,7 +1272,7 @@ class BookKeeping extends CommonObject
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
-
+		print $sql;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
