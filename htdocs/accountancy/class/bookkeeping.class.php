@@ -2464,7 +2464,7 @@ class BookKeeping extends CommonObject
 	 * Get list of fiscal period
 	 *
 	 * @param 	string	$filter		Filter
-	 * @return 	array|int			Return integer <0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
+	 * @return 	array<array{id:int,data_start:string,date_end:string,label:string}>|int			Return integer <0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
 	 */
 	public function getFiscalPeriods($filter = '')
 	{
