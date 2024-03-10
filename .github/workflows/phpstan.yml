@@ -9,8 +9,7 @@ concurrency:
     cancel-in-progress: true
 
 env:
-  CACHE_KEY_PART: ${{ github.event_name == 'pull_request' && format('{0}-{1}', 
-github.base_ref, github.head_ref) || github.ref_name }}
+  CACHE_KEY_PART: ${{ github.event_name == 'pull_request' && format('{0}-{1}', github.base_ref, github.head_ref) || github.ref_name }}
   GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
