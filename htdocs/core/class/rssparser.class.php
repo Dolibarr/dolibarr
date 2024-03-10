@@ -272,6 +272,7 @@ class RssParser
 				}
 
 				try {
+					// @phan-suppress-next-line PhanTypeMismatchArgumentInternalProbablyReal
 					$xmlparser = xml_parser_create(null);
 
 					xml_parser_set_option($xmlparser, XML_OPTION_CASE_FOLDING, 0);
