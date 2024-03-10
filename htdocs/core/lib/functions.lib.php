@@ -239,6 +239,31 @@ define(
 		'actioncomm' => 'agenda',  // NO module directory (public dir agenda)
 		'product_price' => 'productprice', // NO directory
 		'product_fournisseur_price' => 'productsupplierprice', // NO directory
+/* Above is the change made in develop which conflicts with
+ * the change made here.
+ * The idea is to map to the internal names which are the names
+ * in $module->name .
+ */
+/*
+		'actioncomm' => 'agenda',
+		'adherent_type' => 'member_type',
+		'entrepot' => 'stock',
+		'product_fournisseur_price' => 'productsupplierprice',
+		'product_price' => 'productprice',
+		'contact' => 'socpeople',
+		// Map future names to current internal names
+		'bank' => 'banque',
+		'category' => 'categorie',
+		'contract' => 'contrat',
+		'intervention' => 'ficherinter',
+		'invoice' => 'member',
+		'member' => 'adherent',
+		'order' => 'commande',
+		'project'  => 'projet',
+		'propal' => 'propale',
+		'shipping' => 'expedition',
+		'supplier_proposal' => 'supplierproposal',
+*/
 	)
 );
 

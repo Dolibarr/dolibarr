@@ -13,23 +13,29 @@ define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
 define('DOL_DOCUMENT_ROOT', DOL_PROJECT_ROOT.'/htdocs');
 define('PHAN_DIR', __DIR__);
 
+global $DEPRECATED_MODULE_MAPPING;
 $DEPRECATED_MODULE_MAPPING = array(
-	'actioncomm' => 'agenda',
-	'adherent' => 'member',
-	'adherent_type' => 'member_type',
-	'banque' => 'bank',
-	'categorie' => 'category',
-	'commande' => 'order',
-	'contrat' => 'contract',
-	'entrepot' => 'stock',
-	'expedition' => 'delivery_note',
-	'facture' => 'invoice',
-	'ficheinter' => 'intervention',
-	'product_fournisseur_price' => 'productsupplierprice',
-	'product_price' => 'productprice',
-	'projet'  => 'project',
-	'propale' => 'propal',
-	'socpeople' => 'contact',
+
+	'member_type' => 'adherent_type',   // No directory, but file called adherent_type
+	'entrepot' => 'stock',   // Has new name
+
+	'actioncomm' => 'agenda',  // NO module directory (public dir agenda)
+	'product_price' => 'productprice', // NO directory
+	'product_fournisseur_price' => 'productsupplierprice', // NO directory
+	'socpeople' => 'contact', // Has old directory
+
+	'bank' => 'banque',
+	'category' => 'categorie',
+	'contract' => 'contrat',
+	'intervention' => 'ficherinter',
+	'invoice' => 'member',
+	'member' => 'adherent',
+	'order' => 'commande',
+	'order' => 'commande',
+	'project'  => 'projet',
+	'propal' => 'propale',
+	'shipping' => 'expedition',
+	'supplier_proposal' => 'supplierproposal',
 );
 
 $deprecatedModuleNameRegex = '/^(?!(?:'.implode('|', array_keys($DEPRECATED_MODULE_MAPPING)).')$).*/';

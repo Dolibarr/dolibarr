@@ -233,31 +233,23 @@ abstract class CommonClassTest extends TestCase
 	 */
 	const DEPRECATED_MODULE_MAPPING = array(
 		'actioncomm' => 'agenda',
-		'adherent' => 'member',
 		'adherent_type' => 'member_type',
-		'banque' => 'bank',
-		'categorie' => 'category',
-		'commande' => 'order',
-		'contrat' => 'contract',
 		'entrepot' => 'stock',
-		'expedition' => 'delivery_note',
-		'facture' => 'invoice',
-		'fichinter' => 'intervention',
 		'product_fournisseur_price' => 'productsupplierprice',
 		'product_price' => 'productprice',
-		'projet'  => 'project',
-		'propale' => 'propal',
 		'socpeople' => 'contact',
-	);
-
-	const EFFECTIVE_DEPRECATED_MODULE_MAPPING = array(
-		'adherent' => 'member',
-		'adherent_type' => 'member_type',
-		'banque' => 'bank',
-		'contrat' => 'contract',
-		'entrepot' => 'stock',
-		'ficheinter' => 'fichinter',
-		'projet'  => 'project',
+		// Prefer internal names over new names
+		'bank' => 'banque',
+		'category' => 'categorie',
+		'contract' => 'contrat',
+		'intervention' => 'ficherinter',
+		'invoice' => 'member',
+		'member' => 'adherent',
+		'order' => 'commande',
+		'project'  => 'projet',
+		'propal' => 'propale',
+		'shipping' => 'expedition',
+		'supplier_proposal' => 'supplierproposal',
 	);
 
 	/**
@@ -272,24 +264,24 @@ abstract class CommonClassTest extends TestCase
 		'anothermodule' => null,  // Not used in code, used in translations.lang
 		'api' => 'Api',
 		'asset' => 'Asset',
-		'bank' => 'Banque',
+		'banque' => 'Banque',
 		'barcode' => 'Barcode',
 		'blockedlog' => 'BlockedLog',
 		'bom' => 'Bom',
 		'bookcal' => 'BookCal',
 		'bookmark' => 'Bookmark',
 		'cashdesk' => null,
-		'category' => 'Categorie',
+		'categorie' => 'Categorie',
 		'clicktodial' => 'ClickToDial',
 		'collab' => 'Collab',  // TODO: fill in proper name
 		'comptabilite' => 'Comptabilite',
-		'contact' => null,  // TODO: fill in proper class
-		'contract' => 'Contrat',
+		'contact' => null,  // TODO: Not a module ?
+		'contrat' => 'Contrat',
 		'cron' => 'Cron',
 		'datapolicy' => 'DataPolicy',
 		'dav' => 'Dav',
 		'debugbar' => 'DebugBar',
-		'delivery_note' => 'Expedition',
+		'expedition' => 'Expedition',
 		'deplacement' => 'Deplacement',
 		"documentgeneration" => 'DocumentGeneration',  // TODO: fill in proper name
 		'don' => 'Don',
@@ -312,9 +304,9 @@ abstract class CommonClassTest extends TestCase
 		'hrm' => 'HRM',
 		'import' => 'Import',
 		'incoterm' => 'Incoterm',
-		'intervention' => 'Ficheinter',
+		'ficheinter' => 'Ficheinter',
 		'intracommreport' => 'Intracommreport',
-		'invoice' => 'Facture',
+		'facture' => 'Facture',
 		'knowledgemanagement' => 'KnowledgeManagement',
 		'label' => 'Label',
 		'ldap' => 'Ldap',
@@ -323,7 +315,7 @@ abstract class CommonClassTest extends TestCase
 		'mailman' => null,  // Same module as mailmanspip -> MailmanSpip ??
 		'mailmanspip' => 'MailmanSpip',
 		'margin' => 'Margin',
-		'member' => 'Adherent',
+		'adherent' => 'Adherent',
 		'memcached' => null, // TODO: External module?
 		'modulebuilder' => 'ModuleBuilder',
 		'mrp' => 'Mrp',
@@ -335,7 +327,7 @@ abstract class CommonClassTest extends TestCase
 		'oauth' => 'Oauth',
 		'openstreetmap' => null,  // External module?
 		'opensurvey' => 'OpenSurvey',
-		'order' => 'Commande',
+		'commande' => 'Commande',
 		'partnership' => 'Partnership',
 		'paybox' => 'Paybox',
 		'paymentbybanktransfer' => 'PaymentByBankTransfer',
@@ -347,8 +339,8 @@ abstract class CommonClassTest extends TestCase
 		'productbatch' => 'ProductBatch',
 		'productprice' => null,
 		'productsupplierprice' => null,
-		'project' => 'Projet',
-		'propal' => 'Propale',
+		'projet' => 'Projet',
+		'propale' => 'Propale',
 		'receiptprinter' => 'ReceiptPrinter',
 		'reception' => 'Reception',
 		'recruitment' => 'Recruitment',
@@ -362,7 +354,7 @@ abstract class CommonClassTest extends TestCase
 		'stripe' => 'Stripe',
 		'supplier_invoice' => null,  // Special case, uses invoice
 		'supplier_order' => null,  // Special case, uses invoice
-		'supplier_proposal' => 'SupplierProposal',
+		'supplierproposal' => 'SupplierProposal',
 		'syslog' => 'Syslog',
 		'takepos' => 'TakePos',
 		'tax' => 'Tax',
