@@ -2789,7 +2789,7 @@ function fieldLabel($langkey, $fieldkey, $fieldrequired = 0)
 /**
  * Return string to add class property on html element with pair/impair.
  *
- * @param	string	$var			0 or 1
+ * @param	boolean	$var			false or true
  * @param	string	$moreclass		More class to add
  * @return	string					String to add class onto HTML element
  */
