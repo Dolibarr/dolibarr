@@ -53,10 +53,11 @@ if (! defined("NOSESSION")) {
 	define("NOSESSION", '1');
 }
 
-require_once dirname(__FILE__).'/../../htdocs/main.inc.php';
+// Implements workaround for PHP_SELF & includes common files:
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
+
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -988,7 +989,7 @@ class SecurityTest extends CommonClassTest
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
-		$result=dol_eval('1==1', 1, 0);
+		$result = dol_eval('1==1', 1, 0);
 		print "result1 = ".$result."\n";
 		$this->assertTrue($result);
 
