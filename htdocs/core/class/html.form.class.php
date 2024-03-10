@@ -23,6 +23,7 @@
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3753,13 +3754,8 @@ class Form
 						$outvallabel .= " - " . $reputations[$objp->supplier_reputation];
 					}
 				} else {
-					if (empty($alsoproductwithnosupplierprice)) {     // No supplier price defined for couple product/supplier
-						$optlabel .= " - <span class='opacitymedium'>" . $langs->trans("NoPriceDefinedForThisSupplier") . '</span>';
-						$outvallabel .= ' - ' . $langs->transnoentities("NoPriceDefinedForThisSupplier");
-					} else { // No supplier price defined for product, even on other suppliers
-						$optlabel .= " - <span class='opacitymedium'>" . $langs->trans("NoPriceDefinedForThisSupplier") . '</span>';
-						$outvallabel .= ' - ' . $langs->transnoentities("NoPriceDefinedForThisSupplier");
-					}
+					$optlabel .= " - <span class='opacitymedium'>" . $langs->trans("NoPriceDefinedForThisSupplier") . '</span>';
+					$outvallabel .= ' - ' . $langs->transnoentities("NoPriceDefinedForThisSupplier");
 				}
 
 				if (isModEnabled('stock') && $showstockinlist && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
@@ -10183,13 +10179,8 @@ class Form
 	public function showFilterButtons($pos = '')
 	{
 		$out = '<div class="nowraponall">';
-		if ($pos == 'left') {
-			$out .= '<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x"><span class="fas fa-search"></span></button>';
-			$out .= '<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x"><span class="fas fa-times"></span></button>';
-		} else {
-			$out .= '<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x"><span class="fas fa-search"></span></button>';
-			$out .= '<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x"><span class="fas fa-times"></span></button>';
-		}
+		$out .= '<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x"><span class="fas fa-search"></span></button>';
+		$out .= '<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x"><span class="fas fa-times"></span></button>';
 		$out .= '</div>';
 
 		return $out;

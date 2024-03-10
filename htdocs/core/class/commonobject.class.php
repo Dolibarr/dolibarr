@@ -1667,11 +1667,7 @@ abstract class CommonObject
 						$tmpelement = $obj->element;
 						$transkey = "TypeContact_".$tmpelement."_".$source."_".$obj->code;
 						$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
-						if (empty($option)) {
-							$tab[$obj->rowid] = $libelle_element.' - '.$libelle_type;
-						} else {
-							$tab[$obj->rowid] = $libelle_element.' - '.$libelle_type;
-						}
+						$tab[$obj->rowid] = $libelle_element.' - '.$libelle_type;
 					}
 				}
 			}
@@ -8846,13 +8842,7 @@ abstract class CommonObject
 						}
 
 						$out .= ($display_type == 'card' ? '</td>' : '</div>');
-
-						if (getDolGlobalString('MAIN_EXTRAFIELDS_USE_TWO_COLUMS') && (($e % 2) == 1)) {
-							$out .= ($display_type == 'card' ? '</tr>' : '</div>');
-						} else {
-							$out .= ($display_type == 'card' ? '</tr>' : '</div>');
-						}
-
+						$out .= ($display_type == 'card' ? '</tr>' : '</div>');
 						$e++;
 					}
 				}

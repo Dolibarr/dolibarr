@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,8 +75,6 @@ $tmpproduct = new Product($db);
 $helpurl = '';
 if ($type == '0') {
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-} elseif ($type == '1') {
-	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 } else {
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
@@ -171,7 +170,7 @@ if (!empty($mode) && $mode != '-1') {
 		while ($i < $num) {
 			$objp = $db->fetch_object($resql);
 
-			$infoprod[$objp->rowid] = array('type'=>$objp->type, 'ref'=>$objp->ref, 'label'=>$objp->label, 'tobuy'=>$objp->tobuy, 'tosell'=>$objp->tobuy, 'tobatch'=>$objp->tobatch, 'barcode'=>$objp->barcode);
+			$infoprod[$objp->rowid] = array('type' => $objp->type, 'ref' => $objp->ref, 'label' => $objp->label, 'tobuy' => $objp->tobuy, 'tosell' => $objp->tobuy, 'tobatch' => $objp->tobatch, 'barcode' => $objp->barcode);
 			$infoprod[$objp->rowid]['nbline'] = $objp->c;
 
 			$i++;
