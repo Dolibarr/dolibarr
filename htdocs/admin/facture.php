@@ -50,6 +50,8 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'invoice';
 
+$error = 0;
+
 
 /*
  * Actions

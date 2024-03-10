@@ -1777,6 +1777,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 		//      var_dump($result);exit;
 		if ($result >= 0) {
 			$TFile = $_FILES[$varfiles];
+			// Convert value of $TFile
 			if (!is_array($TFile['name'])) {
 				foreach ($TFile as $key => &$val) {
 					$val = array($val);
@@ -1791,13 +1792,13 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 				}
 
 				// Define $destfull (path to file including filename) and $destfile (only filename)
-				$destfull = $upload_dir."/".$TFile['name'][$i];
-				$destfile = $TFile['name'][$i];
+				$destfile = trim($TFile['name'][$i]);
+				$destfull = $upload_dir."/".$destfile;
 				$destfilewithoutext = preg_replace('/\.[^\.]+$/', '', $destfile);
 
 				if ($savingdocmask && strpos($savingdocmask, $destfilewithoutext) !== 0) {
-					$destfull = $upload_dir."/".preg_replace('/__file__/', $TFile['name'][$i], $savingdocmask);
-					$destfile = preg_replace('/__file__/', $TFile['name'][$i], $savingdocmask);
+					$destfile = trim(preg_replace('/__file__/', $TFile['name'][$i], $savingdocmask));
+					$destfull = $upload_dir."/".$destfile;
 				}
 
 				$filenameto = basename($destfile);
@@ -1806,7 +1807,6 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 					setEventMessages($langs->trans("ErrorFilenameCantStartWithDot", $filenameto), null, 'errors');
 					break;
 				}
-
 				// dol_sanitizeFileName the file name and lowercase extension
 				$info = pathinfo($destfull);
 				$destfull = $info['dirname'].'/'.dol_sanitizeFileName($info['filename'].($info['extension'] != '' ? ('.'.strtolower($info['extension'])) : ''));
