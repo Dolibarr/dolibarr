@@ -18,7 +18,6 @@ env:
   PHP_INI_SCAN_DIR: C:\myphpini
   CKEY: win-ci-2
   GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
-  RUNNER_DEBUG: 1  # This enables debug information, e.g. in cache steps
 jobs:
   win-test:
     strategy:
@@ -55,6 +54,8 @@ jobs:
       - name: Restore cache
         id: cache
         uses: actions/cache/restore@v4
+        env:
+          RUNNER_DEBUG: '1'  # This enables debug information, e.g. in cache steps
         with:
           # See https://github.com/actions/cache/issues/1275#issuecomment-1925217178
           enableCrossOsArchive: true 
@@ -168,6 +169,8 @@ jobs:
       - name: Save cache
         uses: actions/cache/save@v4
         if: ${{ ! cancelled() }}
+        env:
+          RUNNER_DEBUG: '1'  # This enables debug information, e.g. in cache steps
         with:
           # See https://github.com/actions/cache/issues/1275#issuecomment-1925217178
           enableCrossOsArchive: true 
