@@ -21,7 +21,7 @@
 */
 
 /**
-* \file htdocs/compta/facture/admin/facture_cust_extrafields.php
+* \file htdocs/compta/facture/admin/invoice_cust_extrafields.php
 * \ingroup invoice
 * \brief Page to setup extra fields of customer invoice
 */
