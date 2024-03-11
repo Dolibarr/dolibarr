@@ -375,7 +375,6 @@ div.paymentbordline
 	margin: 0 auto;
 	width: 100%;
 	height: 55%;
-	overflow: hidden;
 }
 
 .div1{
