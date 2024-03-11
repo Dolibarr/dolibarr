@@ -35,6 +35,9 @@ class MenuManager
 	public $atarget = ""; // To store default target to use onto links
 	public $name = "empty";
 
+	/**
+	 * @var Menu
+	 */
 	public $menu;
 	public $menu_array_after;
 

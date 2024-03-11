@@ -167,7 +167,7 @@ foreach ($modulesdir as $dir) {
 										$familyinfo = array_merge($familyinfo, $objMod->familyinfo);
 										$familykey = key($objMod->familyinfo);
 									} else {
-										$familykey = $objMod->family;
+										$familykey = empty($objMod->family) ? 'other' : $objMod->family;
 									}
 
 									$moduleposition = ($objMod->module_position ? $objMod->module_position : '50');

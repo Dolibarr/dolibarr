@@ -10395,6 +10395,8 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						$newtab[1] = $label;
 						$newtab[2] = str_replace('+', '', $values[1]);
 						$h++;
+					} else {
+						continue;
 					}
 				} elseif (count($values) == 5) {       // case deprecated
 					dol_syslog('Passing 5 values in tabs module_parts is deprecated. Please update to 6 with permissions.', LOG_WARNING);
