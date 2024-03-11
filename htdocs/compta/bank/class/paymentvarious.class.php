@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,7 +198,7 @@ class PaymentVarious extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array fields definition
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		// TODO: fill this array
@@ -744,7 +745,7 @@ class PaymentVarious extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('variouspayment'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
