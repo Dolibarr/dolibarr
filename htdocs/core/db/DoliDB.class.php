@@ -381,11 +381,11 @@ abstract class DoliDB implements Database
 	{
 		$sql .= ' LIMIT 1';
 
-		$res = $this->query($sql);
-		if ($res) {
-			$obj = $this->fetch_object($res);
+		$resql = $this->query($sql);
+		if ($resql) {
+			$obj = $this->fetch_object($resql);
 			if ($obj) {
-				$this->free($res);
+				$this->free($resql);
 				return $obj;
 			} else {
 				return 0;
@@ -409,15 +409,15 @@ abstract class DoliDB implements Database
 			return false;
 		}
 
-		$res = $this->query($sql);
-		if ($res) {
+		$resql = $this->query($sql);
+		if ($resql) {
 			$results = array();
-			if ($this->num_rows($res) > 0) {
-				while ($obj = $this->fetch_object($res)) {
+			if ($this->num_rows($resql) > 0) {
+				while ($obj = $this->fetch_object($resql)) {
 					$results[] = $obj;
 				}
 			}
-			$this->free($res);
+			$this->free($resql);
 			return $results;
 		}
 
