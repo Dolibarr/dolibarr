@@ -397,8 +397,8 @@ abstract class DoliDB implements Database
 
 	/**
 	 * Return all results from query as an array of objects. Using this is a bad practice and is discouraged.
-	 * Note : It should only be used with SELECT queries and with a limit. If you are not able to defined/know what can be the limit, it 
-     * just means this function is not what you need. Do not use it.
+	 * Note : It should only be used with SELECT queries and with a limit. If you are not able to defined/know what can be the limit, it
+	 * just means this function is not what you need. Do not use it.
 	 *
 	 * @param 	string 			$sql 	The sql query string. Must end with "... LIMIT x"
 	 * @return  bool|array              Result
