@@ -918,7 +918,7 @@ if ($rowid > 0) {
 			}
 
 			if ($i == 0) {
-				print '<tr><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+				print '<tr><td colspan="9"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 
 			print "</table>\n";
