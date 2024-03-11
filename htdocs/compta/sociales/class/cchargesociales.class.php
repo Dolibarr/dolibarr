@@ -389,7 +389,7 @@ class Cchargesociales
 		if ($result < 0) {
 			$error++;
 			$this->errors = $object->errors;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		unset($this->context['createfromclone']);
