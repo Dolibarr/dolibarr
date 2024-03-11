@@ -117,10 +117,7 @@ class Ai
 			}
 			$fullInstructions = $prePrompt.' '.$instructions.' .'.$postPrompt;
 
-			// TODO Replace this with a simple call of getDolURLContent();
-			// $ch = curl_init($this->apiEndpoint);
-			// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			//curl_setopt($ch, CURLOPT_HTTPHEADER, [
+
 			$payload = json_encode([
 				'messages' => [
 					['role' => 'user', 'content' => $fullInstructions]
