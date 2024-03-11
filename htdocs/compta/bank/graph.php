@@ -266,7 +266,7 @@ if ($result < 0) {
 		$px1 = null;
 		$graph_datas = null;
 		$datas = null;
-		$datamin = null;
+		$datamin = array();
 		$dataall = null;
 		$labels = null;
 		$amounts = null;

@@ -96,7 +96,7 @@ $result = restrictedArea($user, 'contact', $object->id, 'socpeople&societe');
  * Actions
  */
 
-$parameters = array('id'=>$id);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -152,6 +152,9 @@ print '<table class="border centpercent tableforfield">';
 print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
 print $object->getCivilityLabel();
 print '</td></tr>';
+
+$thirdTypeArray = array();
+$elementTypeArray = array();
 
 if (!empty($object->thirdparty->client)) {
 	$thirdTypeArray['customer'] = $langs->trans("customer");
@@ -370,7 +373,7 @@ if (!empty($socid)) {
 $param .= "&type_element=".urlencode($type_element);
 
 $total_qty = 0;
-$num=0;
+$num = 0;
 if ($sql_select) {
 	$resql = $db->query($sql);
 	if (!$resql) {

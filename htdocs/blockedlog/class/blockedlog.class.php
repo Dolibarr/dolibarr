@@ -2,6 +2,7 @@
 /* Copyright (C) 2017       ATM Consulting      <contact@atm-consulting.fr>
  * Copyright (C) 2017-2020  Laurent Destailleur <eldy@destailleur.fr>
  * Copyright (C) 2022 		charlene benke		<charlene@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1014,7 +1015,7 @@ class BlockedLog
 				unset($keyforsignature);
 				return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash);
 			} else {	// Consume much memory ($keyforsignature is a large var)
-				return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash, 'keyforsignature'=>$keyforsignature);
+				return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash, 'keyforsignature' => $keyforsignature);
 			}
 		} else {
 			unset($keyforsignature);
@@ -1227,7 +1228,7 @@ class BlockedLog
 			dol_print_error($this->db);
 		}
 
-		dol_syslog("Module Blockedlog alreadyUsed with ignoresystem=".$ignoresystem." is ".$result);
+		dol_syslog("Module Blockedlog alreadyUsed with ignoresystem=".$ignoresystem." is ".json_encode($result));
 
 		return $result;
 	}

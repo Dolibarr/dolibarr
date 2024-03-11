@@ -242,7 +242,6 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 {
 	global $conf, $dolibarr_main_url_root;
 
-	$ref = str_replace(' ', '', $ref);
 	$out = '';
 
 	// Define $urlwithroot

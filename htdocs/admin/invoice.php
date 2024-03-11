@@ -23,7 +23,7 @@
  */
 
 /**
- *      \file       htdocs/admin/facture.php
+ *      \file       htdocs/admin/invoice.php
  *		\ingroup    facture
  *		\brief      Page to setup invoice module
  */
@@ -49,6 +49,8 @@ $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'invoice';
+
+$error = 0;
 
 
 /*
@@ -148,8 +150,7 @@ if ($action == 'updateMask') {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 } elseif ($action == 'setmod') {
-	// TODO Verifier si module numerotation choisi peut etre active
-	// par appel method canBeActivated
+	// TODO Check if numbering module chosen can ba activated by calling method canBeActivated()
 
 	dolibarr_set_const($db, "FACTURE_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'setribchq') {
@@ -627,10 +628,10 @@ if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) { // Hidden conf
 	print "</tr>\n";
 
 	$listtype = array(
-		Facture::TYPE_STANDARD => $langs->trans("InvoiceStandard"),
-		Facture::TYPE_REPLACEMENT => $langs->trans("InvoiceReplacement"),
-		Facture::TYPE_CREDIT_NOTE => $langs->trans("InvoiceAvoir"),
-		Facture::TYPE_DEPOSIT => $langs->trans("InvoiceDeposit"),
+		Facture::TYPE_STANDARD=>$langs->trans("InvoiceStandard"),
+		Facture::TYPE_REPLACEMENT=>$langs->trans("InvoiceReplacement"),
+		Facture::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
+		Facture::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
 	);
 	if (getDolGlobalInt('INVOICE_USE_SITUATION')) {
 		$listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");

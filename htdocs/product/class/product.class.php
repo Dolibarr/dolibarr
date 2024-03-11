@@ -4683,6 +4683,7 @@ class Product extends CommonObject
 		$quantity = price2num($quantity, 'MS');
 
 		if ($ref_fourn) {
+			// Check if ref is not already used
 			$sql = "SELECT rowid, fk_product";
 			$sql .= " FROM ".$this->db->prefix()."product_fournisseur_price";
 			$sql .= " WHERE fk_soc = ".((int) $id_fourn);
@@ -4731,12 +4732,12 @@ class Product extends CommonObject
 				$sql .= ", tva_tx";
 				$sql .= ") VALUES (";
 				$sql .= "'".$this->db->idate($now)."'";
-				$sql .= ", ".$conf->entity;
-				$sql .= ", ".$this->id;
-				$sql .= ", ".$id_fourn;
+				$sql .= ", ".((int) $conf->entity);
+				$sql .= ", ".((int) $this->id);
+				$sql .= ", ".((int) $id_fourn);
 				$sql .= ", '".$this->db->escape($ref_fourn)."'";
-				$sql .= ", ".$quantity;
-				$sql .= ", ".$user->id;
+				$sql .= ", ".((float) $quantity);
+				$sql .= ", ".((int) $user->id);
 				$sql .= ", 0";
 				$sql .= ")";
 
@@ -5686,7 +5687,7 @@ class Product extends CommonObject
 				}
 				$nbpiece = abs($nbpiece);
 			}
-
+			$op = array();
 			$op[0] = "+".trim($nbpiece);
 			$op[1] = "-".trim($nbpiece);
 
@@ -5718,21 +5719,21 @@ class Product extends CommonObject
 	/**
 	 *  Adjust stock in a warehouse for product with batch number
 	 *
-	 * @param  User     $user           user asking change
-	 * @param  int      $id_entrepot    id of warehouse
-	 * @param  double   $nbpiece        nb of units (should be always positive, use $movement to decide if we add or remove)
-	 * @param  int      $movement       0 = add, 1 = remove
-	 * @param  string   $label          Label of stock movement
-	 * @param  double   $price          Price to use for stock eval
-	 * @param  integer  $dlc            eat-by date
-	 * @param  integer  $dluo           sell-by date
-	 * @param  string   $lot            Lot number
-	 * @param  string   $inventorycode  Inventory code
-	 * @param  string   $origin_element Origin element type
-	 * @param  int      $origin_id      Origin id of element
-	 * @param  int	    $disablestockchangeforsubproduct	Disable stock change for sub-products of kit (useful only if product is a subproduct)
-	 * @param  Extrafields $extrafields	Array of extrafields
-	 * @param  boolean  $force_update_batch   Force update batch
+	 * @param  User         $user           user asking change
+	 * @param  int          $id_entrepot    id of warehouse
+	 * @param  double       $nbpiece        nb of units (should be always positive, use $movement to decide if we add or remove)
+	 * @param  int          $movement       0 = add, 1 = remove
+	 * @param  string       $label          Label of stock movement
+	 * @param  double       $price          Price to use for stock eval
+	 * @param  int|string   $dlc            eat-by date
+	 * @param  int|string   $dluo           sell-by date
+	 * @param  string       $lot            Lot number
+	 * @param  string       $inventorycode  Inventory code
+	 * @param  string       $origin_element Origin element type
+	 * @param  int          $origin_id      Origin id of element
+	 * @param  int	        $disablestockchangeforsubproduct	Disable stock change for sub-products of kit (useful only if product is a subproduct)
+	 * @param  Extrafields  $extrafields	Array of extrafields
+	 * @param  boolean      $force_update_batch   Force update batch
 	 * @return int                      Return integer <0 if KO, >0 if OK
 	 */
 	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0, $extrafields = null, $force_update_batch = false)
@@ -5750,6 +5751,7 @@ class Product extends CommonObject
 				$nbpiece = abs($nbpiece);
 			}
 
+			$op = array();
 			$op[0] = "+".trim($nbpiece);
 			$op[1] = "-".trim($nbpiece);
 

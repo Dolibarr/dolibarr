@@ -1117,6 +1117,10 @@ if ($massaction == 'prereverse') {
 
 if ($search_all) {
 	$setupstring = '';
+	if (!isset($fieldstosearchall) || !is_array($fieldstosearchall)) {
+		// Ensure $fieldstosearchall is array
+		$fieldstosearchall = array();
+	}
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 		$setupstring .= $key."=".$val.";";

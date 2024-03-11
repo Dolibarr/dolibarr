@@ -497,7 +497,7 @@ class Expedition extends CommonObject
 	 * @param	array	$array_options		extrafields array
 	 * @return	int							Return integer <0 if KO, line_id if OK
 	 */
-	public function create_line($entrepot_id, $origin_line_id, $qty, $rang = 0, $array_options = null)
+	public function create_line($entrepot_id, $origin_line_id, $qty, $rang = 0, $array_options = [])
 	{
 		//phpcs:enable
 		global $user;
@@ -525,7 +525,7 @@ class Expedition extends CommonObject
 	 * @param	array		$array_options		extrafields array
 	 * @return	int								Return integer <0 if KO, >0 if OK
 	 */
-	public function create_line_batch($line_ext, $array_options = 0)
+	public function create_line_batch($line_ext, $array_options = [])
 	{
 		// phpcs:enable
 		$error = 0;
@@ -898,7 +898,7 @@ class Expedition extends CommonObject
 	 * @param	array	$array_options		extrafields array
 	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
-	public function addline($entrepot_id, $id, $qty, $array_options = 0)
+	public function addline($entrepot_id, $id, $qty, $array_options = [])
 	{
 		global $conf, $langs;
 
@@ -981,7 +981,7 @@ class Expedition extends CommonObject
 	 * @param	array		$array_options		extrafields array
 	 * @return	int						Return integer <0 if KO, >0 if OK
 	 */
-	public function addline_batch($dbatch, $array_options = 0)
+	public function addline_batch($dbatch, $array_options = [])
 	{
 		// phpcs:enable
 		global $conf, $langs;

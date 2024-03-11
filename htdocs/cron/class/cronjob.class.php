@@ -3,6 +3,7 @@
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -513,16 +514,16 @@ class Cronjob extends CommonObject
 	/**
 	 * Load list of cron jobs in a memory array from the database
 	 *
-	 * @param	string		$sortorder		sort order
-	 * @param	string		$sortfield		sort field
-	 * @param	int			$limit			limit page
-	 * @param	int			$offset			page
-	 * @param	int			$status			display active or not
-	 * @param	array		$filter			filter output
-	 * @param	int			$processing		Processing or not
-	 * @return	int							if KO: <0 || if OK: >0
+	 * @param	string			$sortorder		Sort order
+	 * @param	string			$sortfield		Sort field
+	 * @param	int				$limit			Limit page
+	 * @param	int				$offset			Offset ppage
+	 * @param	int				$status			Display active or not
+	 * @param	string|array	$filter			Filter USF.
+	 * @param	int				$processing		Processing or not
+	 * @return	int								if KO: <0 || if OK: >0
 	 */
-	public function fetchAll(string $sortorder = 'DESC', string $sortfield = 't.rowid', int $limit = 0, int $offset = 0, int $status = 1, array $filter = [], int $processing = -1)
+	public function fetchAll(string $sortorder = 'DESC', string $sortfield = 't.rowid', int $limit = 0, int $offset = 0, int $status = 1, $filter = '', int $processing = -1)
 	{
 		$this->lines = array();
 
@@ -573,14 +574,27 @@ class Cronjob extends CommonObject
 		}
 
 		// Manage filter
-		if (is_array($filter) && count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-					$sql .= " AND ".$this->db->sanitize($key)." = ".((int) $value);
-				} else {
-					$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+		if (is_array($filter)) {
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.rowid') {
+						$sql .= " AND ".$this->db->sanitize($key)." = ".((int) $value);
+					} else {
+						$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+					}
 				}
 			}
+
+			$filter = '';
+		}
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);

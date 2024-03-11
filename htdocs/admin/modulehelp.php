@@ -77,7 +77,7 @@ print '<!-- Force style container -->'."\n".'<style>
 }
 </style>';
 
-$arrayofnatures = array('core'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External").' - '.$langs->trans("AllPublishers"));
+$arrayofnatures = array('core' => $langs->transnoentitiesnoconv("Core"), 'external' => $langs->transnoentitiesnoconv("External").' - '.$langs->trans("AllPublishers"));
 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs();
@@ -116,6 +116,7 @@ foreach ($modulesdir as $dir) {
 						if (class_exists($modName)) {
 							try {
 								$objMod = new $modName($db);
+								'@phan-var-force DolibarrModules $objMod';
 								$modNameLoaded[$modName] = $dir;
 
 								if (!$objMod->numero > 0 && $modName != 'modUser') {
@@ -166,7 +167,7 @@ foreach ($modulesdir as $dir) {
 										$familyinfo = array_merge($familyinfo, $objMod->familyinfo);
 										$familykey = key($objMod->familyinfo);
 									} else {
-										$familykey = $objMod->family;
+										$familykey = empty($objMod->family) ? 'other' : $objMod->family;
 									}
 
 									$moduleposition = ($objMod->module_position ? $objMod->module_position : '50');
@@ -235,7 +236,10 @@ foreach ($orders as $tmpkey => $tmpvalue) {
 }
 $value = $orders[$key];
 $tab = explode('_', $value);
-$familyposition = $tab[0]; $familykey = $tab[1]; $module_position = $tab[2]; $numero = $tab[3];
+$familyposition = $tab[0];
+$familykey = $tab[1];
+$module_position = $tab[2];
+$numero = $tab[3];
 
 
 
