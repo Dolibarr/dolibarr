@@ -2307,7 +2307,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 				// Zip archive will be created only after closing object
 				$zip->close();
 
-				dol_syslog("dol_compress_file success - ".count($zip->numFiles)." files");
+				dol_syslog("dol_compress_file success - ".$zip->numFiles." files");
 				return 1;
 			}
 

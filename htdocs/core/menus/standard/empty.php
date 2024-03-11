@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,9 @@ class MenuManager
 	public $atarget = ""; // To store default target to use onto links
 	public $name = "empty";
 
+	/**
+	 * @var Menu
+	 */
 	public $menu;
 	public $menu_array_after;
 
@@ -309,13 +313,7 @@ class MenuManager
 							}
 							print $val2['titre'];
 							if ($relurl2) {
-								if ($val2['enabled']) {
-									// Allowed
-									print '</a>';
-								} else {
-									// Not allowed
-									print '</a>';
-								}
+								print '</a>';
 							}
 							print '</li>'."\n";
 						}

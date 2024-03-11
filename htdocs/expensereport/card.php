@@ -5,6 +5,7 @@
  * Copyright (C) 2015-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1693,7 +1694,7 @@ if ($action == 'create') {
 			}
 
 			if ($action == 'cancel') {
-				$array_input = array('text'=>$langs->trans("ConfirmCancelTrip"), array('type'=>"text", 'label'=>'<strong>'.$langs->trans("Comment").'</strong>', 'name'=>"detail_cancel", 'value'=>""));
+				$array_input = array('text' => $langs->trans("ConfirmCancelTrip"), array('type' => "text", 'label' => '<strong>'.$langs->trans("Comment").'</strong>', 'name' => "detail_cancel", 'value' => ""));
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("Cancel"), "", "confirm_cancel", $array_input, "", 1);
 			}
 
@@ -1702,7 +1703,7 @@ if ($action == 'create') {
 			}
 
 			if ($action == 'refuse') {		// Deny
-				$array_input = array('text'=>$langs->trans("ConfirmRefuseTrip"), array('type'=>"text", 'label'=>$langs->trans("Comment"), 'name'=>"detail_refuse", 'value'=>""));
+				$array_input = array('text' => $langs->trans("ConfirmRefuseTrip"), array('type' => "text", 'label' => $langs->trans("Comment"), 'name' => "detail_refuse", 'value' => ""));
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("Deny"), '', "confirm_refuse", $array_input, "yes", 1);
 			}
 
@@ -1882,8 +1883,6 @@ if ($action == 'create') {
 			$rowspan = 5;
 			if ($object->status <= ExpenseReport::STATUS_VALIDATED) {
 				$rowspan++;
-			} elseif ($object->status == ExpenseReport::STATUS_CANCELED) {
-				$rowspan += 2;
 			} else {
 				$rowspan += 2;
 			}

@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -192,12 +193,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$codetouse = $prefix.strtoupper($codetouse);
 
 		$is_dispo = $this->verif($db, $codetouse, $societe, $type);
-		if (!$is_dispo) {
-			$this->code = $codetouse;
-		} else {
-			// Pour retour
-			$this->code = $codetouse;
-		}
+		$this->code = $codetouse;
 		dol_syslog("mod_codecompta_aquarium::get_code found code=".$this->code);
 		return $is_dispo;
 	}
