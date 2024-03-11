@@ -731,7 +731,7 @@ class CMailFile
 	/**
 	 * Send mail that was prepared by constructor.
 	 *
-	 * @return    negative-int|bool|string	True if mail sent, false otherwise.  Negative int if error in hook.  String if incorrect send mode.
+	 * @return    int|bool|string	True if mail sent, false otherwise.  Negative int if error in hook.  String if incorrect send mode.
 	 */
 	public function sendfile()
 	{
