@@ -368,15 +368,15 @@ class ProductCustomerPrice extends CommonObject
 	/**
 	 * Load all customer prices in memory from database
 	 *
-	 * @param 	string 	$sortorder 	order
-	 * @param 	string 	$sortfield 	field
-	 * @param 	int 	$limit 		page
-	 * @param 	int 	$offset 	offset
-	 * @param 	array 	$filter 	Filter for select
-	 * @return 	int 				Return integer <0 if KO, >0 if OK
+	 * @param 	string 			$sortorder 	Sort order
+	 * @param 	string 			$sortfield 	Sort field
+	 * @param 	int 			$limit 		Limit page
+	 * @param 	int 			$offset 	offset
+	 * @param 	string|array 	$filter 	Filter USF.
+	 * @return 	int 						Return integer <0 if KO, >0 if OK
 	 * @since dolibarr v17
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '')
 	{
 		if (empty($sortfield)) {
 			$sortfield = "t.rowid";
@@ -418,21 +418,35 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " AND t.entity IN (".getEntity('productprice').")";
 
 		// Manage filter
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if (strpos($key, 'date')) {				// To allow $filter['YEAR(s.dated)']=>$year
-					$sql .= " AND ".$this->db->sanitize($key)." = '".$this->db->escape($value)."'";
-				} elseif ($key == 'soc.nom') {
-					$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
-				} elseif ($key == 'prod.ref' || $key == 'prod.label') {
-					$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
-				} elseif ($key == 't.price' || $key == 't.price_ttc') {
-					$sql .= " AND ".$this->db->sanitize($key)." = ".((float) price2num($value));
-				} else {
-					$sql .= " AND ".$this->db->sanitize($key)." = ".((int) $value);
+		if (is_array($filter)) {
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if (strpos($key, 'date')) {				// To allow $filter['YEAR(s.dated)']=>$year
+						$sql .= " AND ".$this->db->sanitize($key)." = '".$this->db->escape($value)."'";
+					} elseif ($key == 'soc.nom') {
+						$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+					} elseif ($key == 'prod.ref' || $key == 'prod.label') {
+						$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+					} elseif ($key == 't.price' || $key == 't.price_ttc') {
+						$sql .= " AND ".$this->db->sanitize($key)." = ".((float) price2num($value));
+					} else {
+						$sql .= " AND ".$this->db->sanitize($key)." = ".((int) $value);
+					}
 				}
 			}
+
+			$filter = '';
 		}
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			return -1;
+		}
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit + 1, $offset);
