@@ -512,8 +512,8 @@ class Menubase
 	 * 	@param	string	$myleftmenu		Value for leftmenu to filter menu to load (always '')
 	 * 	@param	int		$type_user		0=Menu for backoffice, 1=Menu for front office
 	 * 	@param	string	$menu_handler	Filter on name of menu_handler used (auguria, eldy...)
-	 * 	@param  array	$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
-	 * 	@return	array					Return array with menu entries for top menu
+	 * 	@param  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}>	$tabMenu	If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+	 * 	@return  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}>	Return array with menu entries for top menu
 	 */
 	public function menuTopCharger($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
 	{
@@ -574,7 +574,6 @@ class Menubase
 			if ($val['fk_menu'] == -1 && $val['fk_mainmenu'] == $mainmenu) {    // We found a menu entry not linked to parent with good mainmenu
 				//print 'Try to add menu (current is mainmenu='.$mainmenu.' leftmenu='.$leftmenu.') for '.join(',',$val).' fk_mainmenu='.$val['fk_mainmenu'].' fk_leftmenu='.$val['fk_leftmenu'].'<br>';
 				//var_dump($this->newmenu->liste);exit;
-
 				if (empty($val['fk_leftmenu'])) {
 					$this->newmenu->add($val['url'], $val['titre'], 0, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position'], '', '', '', $val['prefix']);
 					//var_dump($this->newmenu->liste);
@@ -625,7 +624,7 @@ class Menubase
 	 *  @param	string	$myleftmenu     Value for left that defined leftmenu
 	 *  @param  int		$type_user      Looks for menu entry for 0=Internal users, 1=External users
 	 *  @param  string	$menu_handler   Name of menu_handler used ('auguria', 'eldy'...)
-	 *  @param  array	$tabMenu        Array to store new entries found (in most cases, it's empty, but may be already filled)
+	 * 	@param  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}>	$tabMenu	Array to store new entries found (in most cases, it's empty, but may be already filled)
 	 *  @return int     		        >0 if OK, <0 if KO
 	 */
 	public function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
@@ -758,7 +757,7 @@ class Menubase
 	/**
 	 *  Complete this->newmenu with menu entry found in $tab
 	 *
-	 *  @param  array	$tab			Tab array with all menu entries
+	 * 	@param  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}>	$tab	Tab array with all menu entries
 	 *  @param  int		$pere			Id of parent
 	 *  @param  int		$level			Level
 	 *  @return	void
