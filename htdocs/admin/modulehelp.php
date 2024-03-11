@@ -169,7 +169,7 @@ foreach ($modulesdir as $dir) {
 										$familykey = key($objMod->familyinfo);
 									} else {
 										$familykey = $objMod->family;
-										if (empty($familykey)) {
+										if (empty($familykey) || $familykey === null) {
 											$familykey = 'other';
 										}
 									}
