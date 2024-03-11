@@ -83,7 +83,7 @@ class Societe extends CommonObject
 	public $fieldsforcombobox = 'nom,name_alias';
 
 	/**
-	 * @var array	List of child tables. To test if we can delete object.
+	 * @var array<string, array<string>>	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
 		'supplier_proposal' => array('name' => 'SupplierProposal'),
@@ -101,7 +101,7 @@ class Societe extends CommonObject
 	);
 
 	/**
-	 * @var array    List of child tables. To know object to delete on cascade.
+	 * @var string[]	List of child tables. To know object to delete on cascade.
 	 *               if name like with @ClassName:FilePathClass:ParentFkFieldName' it will call method deleteByParentField (with parentId as parameters) and FieldName to fetch and delete child object
 	 */
 	protected $childtablesoncascade = array(
