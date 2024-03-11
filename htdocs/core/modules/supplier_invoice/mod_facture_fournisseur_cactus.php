@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +92,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	/**
 	 * 	Tests if the numbers already in the database do not cause conflicts that would prevent this numbering.
 	 *
-	 *	@param	Object		$object		Object we need next value for
+	 *	@param	FactureFournisseur		$object		Object we need next value for
 	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
 	public function canBeActivated($object)
@@ -173,10 +174,10 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	/**
 	 * Return next value
 	 *
-	 * @param	Societe		$objsoc     Object third party
-	 * @param  	Object		$object		Object invoice
-	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return 	string|-1      			Value if OK, -1 if KO
+	 * @param	Societe				$objsoc     Object third party
+	 * @param  	FactureFournisseur	$object		Object invoice
+	 * @param   string				$mode       'next' for next value or 'last' for last value
+	 * @return 	string|-1      					Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object, $mode = 'next')
 	{
@@ -256,10 +257,10 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	/**
 	 * Return next free value
 	 *
-	 * @param	Societe		$objsoc     	Object third party
-	 * @param	string		$objforref		Object for number to search
-	 * @param   string		$mode       	'next' for next value or 'last' for last value
-	 * @return  string      				Next free value
+	 * @param	Societe				$objsoc     	Object third party
+	 * @param	FactureFournisseur	$objforref		Object for number to search
+	 * @param   string				$mode      		'next' for next value or 'last' for last value
+	 * @return  string      						Next free value
 	 */
 	public function getNumRef($objsoc, $objforref, $mode = 'next')
 	{
