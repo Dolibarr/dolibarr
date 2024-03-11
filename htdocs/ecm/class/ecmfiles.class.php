@@ -530,15 +530,15 @@ class EcmFiles extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param 	string $sortorder 	Sort Order
-	 * @param 	string $sortfield 	Sort field
-	 * @param 	int    $limit     	limit
-	 * @param 	int    $offset    	offset limit
-	 * @param 	array  $filter    	filter array
-	 * @param 	string $filtermode 	filter mode (AND or OR)
-	 * @return 	int 				Return integer <0 if KO, >0 if OK
+	 * @param 	string 			$sortorder 		Sort Order
+	 * @param 	string 			$sortfield 		Sort field
+	 * @param 	int    			$limit     		Limit
+	 * @param 	int    			$offset    		Offset limit
+	 * @param 	string|array  	$filter    		filter array
+	 * @param 	string 			$filtermode 	filter mode (AND or OR)
+	 * @return 	int 							Return integer <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -564,27 +564,40 @@ class EcmFiles extends CommonObject
 		$sql .= " t.src_object_type,";
 		$sql .= " t.src_object_id";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= ' WHERE 1 = 1';
 
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.src_object_id') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+		if (is_array($filter)) {
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.src_object_id') {
+						$sqlwhere[] = $this->db->sanitize($key)." = ".((int) $value);
+					} else {
+						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+					}
 				}
 			}
+			if (count($sqlwhere) > 0) {
+				$sql .= ' AND '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+			}
+
+			$filter = '';
 		}
 
-		$sql .= ' WHERE 1 = 1';
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
+		}
+
 		/* Fetching this table depends on filepath+filename, it must not depends on entity
 		 if (isModEnabled('multicompany')) {
 		 $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
 		 }*/
-		if (count($sqlwhere) > 0) {
-			$sql .= ' AND '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
-		}
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}

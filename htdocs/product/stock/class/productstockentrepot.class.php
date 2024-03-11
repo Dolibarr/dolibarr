@@ -232,15 +232,15 @@ class ProductStockEntrepot extends CommonObject
 	 *
 	 * @param int	 $fk_product 	Product from which we want to get limit and desired stock by warehouse
 	 * @param int	 $fk_entrepot 	Warehouse in which we want to get products limit and desired stock
-	 * @param string $sortorder  	Sort Order
-	 * @param string $sortfield  	Sort field
-	 * @param int    $limit      	limit
-	 * @param int    $offset     	offset limit
-	 * @param array  $filter     	filter array
-	 * @param string $filtermode 	filter mode (AND or OR)
-	 * @return int|array 			Return integer <0 if KO, array if OK
+	 * @param string 		$sortorder  	Sort Order
+	 * @param string 		$sortfield  	Sort field
+	 * @param int    		$limit      	Limit
+	 * @param int    		$offset     	Offset limit
+	 * @param string|array  $filter     	Filter USF.
+	 * @param string 		$filtermode 	Filter mode (AND or OR)
+	 * @return int|array 					Return integer <0 if KO, array if OK
 	 */
-	public function fetchAll($fk_product = 0, $fk_entrepot = 0, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($fk_product = 0, $fk_entrepot = 0, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -256,14 +256,27 @@ class ProductStockEntrepot extends CommonObject
 		$sql .= " WHERE 1=1";
 
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				$sqlwhere[] = $key." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+		if (is_array($filter)) {
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+				}
 			}
+			if (count($sqlwhere) > 0) {
+				$sql .= " AND ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+			}
+
+			$filter = '';
 		}
-		if (count($sqlwhere) > 0) {
-			$sql .= " AND ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($fk_product) && $fk_product > 0) {

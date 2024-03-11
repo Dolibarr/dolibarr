@@ -782,16 +782,16 @@ class Ticket extends CommonObject
 	/**
 	 * Load all objects in memory from database
 	 *
-	 * @param  User   $user      	User for action
-	 * @param  string $sortorder 	Sort order
-	 * @param  string $sortfield 	Sort field
-	 * @param  int    $limit     	page number
-	 * @param  int    $offset    	Offset for query
-	 * @param  int    $arch      	archive or not (not used)
-	 * @param  array  $filter    	Filter for query
-	 * @return int 					Return integer <0 if KO, >0 if OK
+	 * @param  User   		$user      	User for action
+	 * @param  string 		$sortorder 	Sort order
+	 * @param  string 		$sortfield 	Sort field
+	 * @param  int    		$limit     	Limit
+	 * @param  int    		$offset    	Offset page
+	 * @param  int    		$arch      	Archive or not (not used)
+	 * @param  string|array $filter    	Filter for query
+	 * @return int 						Return integer <0 if KO, >0 if OK
 	 */
-	public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = 0, $offset = 0, $arch = 0, $filter = [])
+	public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = 0, $offset = 0, $arch = 0, $filter = '')
 	{
 		global $langs, $extrafields;
 
@@ -845,7 +845,7 @@ class Ticket extends CommonObject
 		$sql .= " WHERE t.entity IN (".getEntity('ticket').")";
 
 		// Manage filter
-		if (!empty($filter)) {
+		if (is_array($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) { // To allow $filter['YEAR(s.dated)']=>$year
 					$sql .= " AND ".$this->db->sanitize($key)." = '".$this->db->escape($value)."'";
@@ -863,6 +863,17 @@ class Ticket extends CommonObject
 					$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 				}
 			}
+
+			$filter = '';
+		}
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		// Case of external user

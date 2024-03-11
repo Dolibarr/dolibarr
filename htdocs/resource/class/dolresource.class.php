@@ -599,14 +599,14 @@ class Dolresource extends CommonObject
 	/**
 	 * Load resource objects into $this->lines
 	 *
-	 * @param	string		$sortorder		sort order
-	 * @param	string		$sortfield		sort field
-	 * @param	int			$limit			limit page
-	 * @param	int			$offset			page
-	 * @param	array		$filter			filter output
-	 * @return	int							if KO: <0 || if OK number of lines loaded
+	 * @param	string			$sortorder		Sort order
+	 * @param	string			$sortfield		Sort field
+	 * @param	int				$limit			Limit page
+	 * @param	int				$offset			Offset page
+	 * @param	string|array	$filter			Filter USF.
+	 * @return	int								If KO: <0 || if OK number of lines loaded
 	 */
-	public function fetchAll(string $sortorder, string $sortfield, int $limit, int $offset, array $filter = [])
+	public function fetchAll(string $sortorder, string $sortfield, int $limit, int $offset, $filter = '')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
@@ -641,16 +641,27 @@ class Dolresource extends CommonObject
 		$sql .= " WHERE t.entity IN (".getEntity('resource').")";
 
 		// Manage filter
-		if (!empty($filter)) {
+		if (is_array($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) {
 					$sql .= " AND ".$this->db->sanitize($key)." = '".$this->db->idate($value)."'";
 				} elseif (strpos($key, 'ef.') !== false) {
-					$sql .= ((float) $value);
+					$sql .= " AND ".$this->db->sanitize($key)." = ".((float) $value);
 				} else {
 					$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 				}
 			}
+
+			$filter = '';
+		}
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
