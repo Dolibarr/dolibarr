@@ -3281,7 +3281,7 @@ abstract class CommonObject
 				while ($row = $this->db->fetch_row($resql)) {
 					$rows[] = $row[0];
 					if ($includealltree) {
-						$rows = array_merge($rows, $this->getChildrenOfLine($row[0]));
+						$rows = array_merge($rows, $this->getChildrenOfLine($row[0], $includealltree));
 					}
 				}
 			}
