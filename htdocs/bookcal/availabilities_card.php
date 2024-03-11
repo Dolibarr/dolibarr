@@ -136,14 +136,24 @@ if (empty($reshook)) {
 
 	$triggermodname = 'BOOKCAL_AVAILABILITIES_MODIFY'; // Name of trigger action code to execute when we modify record
 
-	$dateStartTimestamp = dol_stringtotime(GETPOST('start'));
-	$dateEndTimestamp = dol_stringtotime(GETPOST('end'));
 
-	$startHour = intval(GETPOST('startHour'));
-	$endHour = intval(GETPOST('endHour'));
+	$startday = GETPOST('startday', 'int');
+	$startmonth = GETPOST('startmonth', 'int');
+	$startyear = GETPOST('startyear', 'int');
+	$starthour = GETPOST('startHour', 'int');
+
+	$dateStartTimestamp = dol_mktime($starthour, 0, 0, $startmonth, $startday, $startyear);
+
+	$endday = GETPOST('endday', 'int');
+	$endmonth = GETPOST('endmonth', 'int');
+	$endyear = GETPOST('endyear', 'int');
+	$endhour = GETPOST('endHour', 'int');
+
+
+	$dateEndTimestamp = dol_mktime($endhour, 0, 0, $endmonth, $endday, $endyear);
 
 	// check hours
-	if ($startHour > $endHour) {
+	if ($starthour > $endhour) {
 		if ($dateStartTimestamp === $dateEndTimestamp) {
 			$error++;
 			setEventMessages($langs->trans("ErrorEndTimeMustBeGreaterThanStartTime"), null, 'errors');
