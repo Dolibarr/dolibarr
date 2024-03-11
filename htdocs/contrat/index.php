@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -179,7 +180,7 @@ $listofstatus = array(0, 4, 4, 5);
 $bool = false;
 foreach ($listofstatus as $status) {
 	$bool_str = (string) $bool;
-	$dataseries[] = array($staticcontratligne->LibStatut($status, 1, ($bool ? 1 : 0)), (isset($nb[$status.$bool_str_str]) ? (int) $nb[$status.$bool_str_str] : 0));
+	$dataseries[] = array($staticcontratligne->LibStatut($status, 1, ($bool ? 1 : 0)), (isset($nb[$status.$bool_str]) ? (int) $nb[$status.$bool_str] : 0));
 	if ($status == ContratLigne::STATUS_INITIAL) {
 		$colorseries[$status.$bool_str] = '-'.$badgeStatus0;
 	}
