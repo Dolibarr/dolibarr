@@ -7392,7 +7392,7 @@ abstract class CommonObject
 					$isDependList = 1;
 				}
 				$tmpselect .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
-				$tmpselect .= '>'.$valb.'</option>';
+				$tmpselect .= '>'.$langs->trans($valb).'</option>';
 			}
 
 			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
@@ -8022,7 +8022,7 @@ abstract class CommonObject
 		} elseif ($type == 'select') {
 			$value = isset($param['options'][$value]) ? $param['options'][$value] : '';
 			if (strpos($value, "|") !== false) {
-				$value = explode('|', $value)[0];
+				$value = $langs->trans(explode('|', $value)[0]);
 			}
 		} elseif ($type == 'sellist') {
 			$param_list = array_keys($param['options']);
