@@ -67,7 +67,7 @@ $function = 'textgeneration';
 $generatedContent = $ai->generateContent($instructions, 'auto', $function);
 
 if (is_array($generatedContent) && $generatedContent['error']) {
-	print "Error : " . $generatedContent['message'];
+	print "Error returned by API call: " . $generatedContent['message'];
 } else {
 	print $generatedContent;
 }
