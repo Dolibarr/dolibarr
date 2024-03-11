@@ -169,9 +169,9 @@ foreach ($modulesdir as $dir) {
 										$familykey = key($objMod->familyinfo);
 									} else {
 										$familykey = $objMod->family;
-										if (empty($familykey) || $familykey === null) {
-											$familykey = 'other';
-										}
+									}
+									if (empty($familykey) || $familykey === null) {
+										$familykey = 'other';
 									}
 
 									$moduleposition = ($objMod->module_position ? $objMod->module_position : '50');
