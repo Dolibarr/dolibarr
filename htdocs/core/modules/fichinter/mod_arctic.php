@@ -151,6 +151,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 	 *  @param	Societe		$objsoc     Object third party
 	 *  @param	Fichinter	$objforref	Object for number to search
 	 *  @return string|0      			Next free value, 0 if KO
+	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{

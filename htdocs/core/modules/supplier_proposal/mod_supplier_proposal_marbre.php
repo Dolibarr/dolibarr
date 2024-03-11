@@ -170,6 +170,7 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	 *  @param	Societe				$objsoc     Object third party
 	 * 	@param	SupplierProposal	$objforref	Object for number to search
 	 *  @return string      					Next free value
+	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{

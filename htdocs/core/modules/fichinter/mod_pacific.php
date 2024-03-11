@@ -165,6 +165,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 *  @param	Societe		$objsoc     Object third party
 	 * 	@param	Fichinter	$objforref	Object for number to search
 	 *  @return string      			Next free value
+	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{

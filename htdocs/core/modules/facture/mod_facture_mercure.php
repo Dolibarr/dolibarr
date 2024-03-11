@@ -182,6 +182,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 	 * @param	Facture		$objforref		Object for number to search
 	 * @param   string		$mode       	'next' for next value or 'last' for last value
 	 * @return  string|0      				Next free value, 0 if KO
+	 * @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref, $mode = 'next')
 	{

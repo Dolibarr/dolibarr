@@ -154,6 +154,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	 * @param   Societe     $objsoc         Object third party
 	 * @param   Facture     $objforref      Object for number to search
 	 * @return  string      Next free value
+	 * @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{

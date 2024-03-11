@@ -170,6 +170,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	 *  @param	Societe		$objsoc      	Object third party
 	 * 	@param	Propal		$objforref		Object for number to search
 	 *  @return string|-1      				Next free value, -1 if KO
+	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{

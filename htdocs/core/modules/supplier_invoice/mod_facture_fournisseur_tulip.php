@@ -190,6 +190,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 	 *  @param  FactureFournisseur  $objforref      Object for number to search
 	 *  @param  string      		$mode           'next' for next value or 'last' for last value
 	 *  @return string                      		Next free value
+	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref, $mode = 'next')
 	{

@@ -287,6 +287,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 *  @param  Facture      $objforref      Object for number to search
 	 *  @param   string     $mode           'next' for next value or 'last' for last value
 	 *  @return  string|int<-1,0>           Next free value, -1 or 0 if error
+	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref, $mode = 'next')
 	{
