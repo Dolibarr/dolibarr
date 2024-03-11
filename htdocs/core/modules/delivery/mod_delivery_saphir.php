@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,7 +122,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 *  Return next value
 	 *
 	 *  @param	Societe		$objsoc     	Object third party
-	 *  @param  Object		$object			Object delivery
+	 *  @param  Delivery	$object			Object delivery
 	 *  @return string|0      				Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
@@ -148,26 +149,11 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 *  Return next free value
 	 *
 	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	string		$objforref	Object for number to search
+	 * 	@param	Delivery	$objforref	Object for number to search
 	 *  @return string|0      			Next free value, 0 if KO
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{
 		return $this->getNextValue($objsoc, $objforref);
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next free ref
-	 *
-	 *  @param	Societe		$objsoc      	Object thirdparty
-	 *  @param  Object		$object			Object livraison
-	 *  @return string|0      				Value if OK, 0 if KO
-	 */
-	public function delivery_get_num($objsoc = 0, $object = '')
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $object);
 	}
 }

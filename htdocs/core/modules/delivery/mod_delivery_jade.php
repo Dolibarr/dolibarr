@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +87,7 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @param  Object		$object		Object we need next value for
+	 *  @param  Delivery	$object		Object we need next value for
 	 *  @return boolean     			false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
@@ -126,7 +127,7 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 	 * 	Return next free value
 	 *
 	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
+	 *  @param  Delivery	$object		Object we need next value for
 	 *  @return string|-1      			Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
@@ -167,20 +168,5 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 
 		dol_syslog("mod_delivery_jade::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next free ref
-	 *
-	 *  @param  Societe     $objsoc         Object thirdparty
-	 *  @param  Object      $object         Object livraison
-	 *  @return string|-1                   Value if OK, -1 if KO
-	 */
-	public function delivery_get_num($objsoc = 0, $object = '')
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $object);
 	}
 }

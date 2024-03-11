@@ -76,7 +76,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	/**
 	 *	Test if existing numbers make problems with numbering
 	 *
-	 *  @param  Object		$object		Object we need next value for
+	 *  @param  Contrat		$object		Object we need next value for
 	 *  @return boolean     			false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
@@ -113,7 +113,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	 *	Return next value
 	 *
 	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$contract	contract object
+	 *	@param	Contrat		$contract	contract object
 	 *	@return string|-1      			Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $contract)
@@ -150,20 +150,5 @@ class mod_contract_serpis extends ModelNumRefContracts
 
 		dol_syslog("mod_contract_serpis::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Return next value
-	 *
-	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$objforref  contract object
-	 *	@return string|-1      			Value if OK, -1 if KO
-	 */
-	public function contract_get_num($objsoc, $objforref)
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $objforref);
 	}
 }

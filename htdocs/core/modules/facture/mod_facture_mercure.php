@@ -5,6 +5,7 @@
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2013		uanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -178,7 +179,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 	 * Return next free value
 	 *
 	 * @param	Societe		$objsoc     	Object third party
-	 * @param	string		$objforref		Object for number to search
+	 * @param	Facture		$objforref		Object for number to search
 	 * @param   string		$mode       	'next' for next value or 'last' for last value
 	 * @return  string|0      				Next free value, 0 if KO
 	 */

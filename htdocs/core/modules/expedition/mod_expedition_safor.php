@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +82,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	/**
 	 *	Test if existing numbers make problems with numbering
 	 *
-	 *  @param  Object		$object		Object we need next value for
+	 *  @param  Expedition	$object		Object we need next value for
 	 *  @return boolean     			false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
@@ -118,7 +119,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *	Return next value
 	 *
 	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$shipment	Shipment object
+	 *	@param	Expedition	$shipment	Shipment object
 	 *	@return string|-1      			Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $shipment)
@@ -155,19 +156,5 @@ class mod_expedition_safor extends ModelNumRefExpedition
 
 		dol_syslog("mod_expedition_safor::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next free value
-	 *
-	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$objforref	Shipment object
-	 *	@return string|-1      			Next free value, -1 if KO
-	 */
-	public function expedition_get_num($objsoc, $objforref)
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $objforref);
 	}
 }
