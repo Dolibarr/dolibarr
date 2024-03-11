@@ -9839,6 +9839,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 	global $object;
 	global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
 
+	$isObBufferActive = false;  // When true, the ObBuffer must be cleaned in the exception handler
 	if (!in_array($onlysimplestring, array('0', '1', '2'))) {
 		return "Bad call of dol_eval. Parameter onlysimplestring must be '0' (deprecated), '1' or '2'";
 	}
@@ -9957,16 +9958,20 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 		if ($returnvalue) {
 			if ($hideerrors) {
 				ob_start();	// An evaluation has no reason to output data
+				$isObBufferActive = true;
 				$tmps = @eval('return '.$s.';');
 				$tmpo = ob_get_clean();
+				$isObBufferActive = false;
 				if ($tmpo) {
 					print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: '.$s;
 				}
 				return $tmps;
 			} else {
 				ob_start();	// An evaluation has no reason to output data
+				$isObBufferActive = true;
 				$tmps = eval('return '.$s.';');
 				$tmpo = ob_get_clean();
+				$isObBufferActive = false;
 				if ($tmpo) {
 					print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: '.$s;
 				}
@@ -9981,6 +9986,11 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 			}
 		}
 	} catch (Error $e) {
+		if ($isObBufferActive) {
+			// Clean up buffer which was left behind due to exception.
+			$tmpo = ob_get_clean();
+			$isObBufferActive = false;
+		}
 		$error = 'dol_eval try/catch error : ';
 		$error .= $e->getMessage();
 		dol_syslog($error, LOG_WARNING);
