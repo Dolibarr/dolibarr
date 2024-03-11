@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Florian Henry   <florian.henry@open-concept.pro>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,17 +34,17 @@ class ProductCustomerPrice extends CommonObject
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>'1', 'noteditable'=>1),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:0', 'label'=>'Product', 'enabled'=>'$conf->product->enabled', 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce", 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax100', 'picto'=>'product'),
-		'ref_customer' => array('type'=>'varchar(128)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1,),
-		'datec' => array('type'=>'datetime', 'label'=>'AppliedPricesFrom', 'enabled'=>1, 'visible'=>1, 'position'=>500, 'notnull'=>1,),
+		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 4, 'position' => 10, 'notnull' => 1, 'default' => '(PROV)', 'index' => 1, 'searchall' => 1, 'comment' => "Reference of object", 'showoncombobox' => '1', 'noteditable' => 1),
+		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php:0', 'label' => 'Product', 'enabled' => '$conf->product->enabled', 'visible' => 1, 'position' => 35, 'notnull' => 1, 'index' => 1, 'comment' => "Product to produce", 'css' => 'maxwidth300', 'csslist' => 'tdoverflowmax100', 'picto' => 'product'),
+		'ref_customer' => array('type' => 'varchar(128)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => 4, 'position' => 10, 'notnull' => 1,),
+		'datec' => array('type' => 'datetime', 'label' => 'AppliedPricesFrom', 'enabled' => 1, 'visible' => 1, 'position' => 500, 'notnull' => 1,),
 		'price_base_type' => array('type' => 'varchar(255)', 'label' => 'PriceBase', 'enabled' => 1, 'visible' => 1, 'position' => 11, 'notnull' => -1, 'comment' => 'Price Base Type'),
 		'tva_tx' => array('type' => 'decimal(20,6)', 'label' => 'VAT', 'enabled' => 1, 'visible' => 1, 'position' => 12, 'notnull' => -1, 'comment' => 'TVA Tax Rate'),
 		'price' => array('type' => 'decimal(20,6)', 'label' => 'HT', 'enabled' => 1, 'visible' => 1, 'position' => 8, 'notnull' => -1, 'comment' => 'Price HT'),
 		'price_ttc' => array('type' => 'decimal(20,6)', 'label' => 'TTC', 'enabled' => 1, 'visible' => 1, 'position' => 8, 'notnull' => -1, 'comment' => 'Price TTC'),
 		'price_min' => array('type' => 'decimal(20,6)', 'label' => 'MinPriceHT', 'enabled' => 1, 'visible' => 1, 'position' => 9, 'notnull' => -1, 'comment' => 'Minimum Price'),
 		'price_min_ttc' => array('type' => 'decimal(20,6)', 'label' => 'MinPriceTTC', 'enabled' => 1, 'visible' => 1, 'position' => 10, 'notnull' => -1, 'comment' => 'Minimum Price TTC'),
-		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>1, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax100'),
+		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => 1, 'position' => 510, 'notnull' => 1, 'foreignkey' => 'user.rowid', 'csslist' => 'tdoverflowmax100'),
 	);
 
 	/**
@@ -368,15 +369,15 @@ class ProductCustomerPrice extends CommonObject
 	/**
 	 * Load all customer prices in memory from database
 	 *
-	 * @param 	string 	$sortorder 	order
-	 * @param 	string 	$sortfield 	field
-	 * @param 	int 	$limit 		page
-	 * @param 	int 	$offset 	offset
-	 * @param 	array 	$filter 	Filter for select
-	 * @return 	int 				Return integer <0 if KO, >0 if OK
+	 * @param 	string 			$sortorder 	Sort order
+	 * @param 	string 			$sortfield 	Sort field
+	 * @param 	int 			$limit 		Limit page
+	 * @param 	int 			$offset 	offset
+	 * @param 	string|array 	$filter 	Filter USF.
+	 * @return 	int 						Return integer <0 if KO, >0 if OK
 	 * @since dolibarr v17
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '')
 	{
 		if (empty($sortfield)) {
 			$sortfield = "t.rowid";
@@ -418,21 +419,35 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " AND t.entity IN (".getEntity('productprice').")";
 
 		// Manage filter
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if (strpos($key, 'date')) {				// To allow $filter['YEAR(s.dated)']=>$year
-					$sql .= " AND ".$this->db->sanitize($key)." = '".$this->db->escape($value)."'";
-				} elseif ($key == 'soc.nom') {
-					$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
-				} elseif ($key == 'prod.ref' || $key == 'prod.label') {
-					$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
-				} elseif ($key == 't.price' || $key == 't.price_ttc') {
-					$sql .= " AND ".$this->db->sanitize($key)." = ".((float) price2num($value));
-				} else {
-					$sql .= " AND ".$this->db->sanitize($key)." = ".((int) $value);
+		if (is_array($filter)) {
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if (strpos($key, 'date')) {				// To allow $filter['YEAR(s.dated)']=>$year
+						$sql .= " AND ".$this->db->sanitize($key)." = '".$this->db->escape($value)."'";
+					} elseif ($key == 'soc.nom') {
+						$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+					} elseif ($key == 'prod.ref' || $key == 'prod.label') {
+						$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+					} elseif ($key == 't.price' || $key == 't.price_ttc') {
+						$sql .= " AND ".$this->db->sanitize($key)." = ".((float) price2num($value));
+					} else {
+						$sql .= " AND ".$this->db->sanitize($key)." = ".((int) $value);
+					}
 				}
 			}
+
+			$filter = '';
 		}
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
+		}
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit + 1, $offset);

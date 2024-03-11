@@ -367,7 +367,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $object = new Holiday($db);
 
-$listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
+$listhalfday = array('morning' => $langs->trans("Morning"), "afternoon" => $langs->trans("Afternoon"));
 
 $title = $langs->trans('Leave');
 $help_url = 'EN:Module_Holiday';
@@ -498,7 +498,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<td>';
 		print img_picto($langs->trans("groups"), 'group', 'class="pictofixedwidth"');
 
-		$sql =' SELECT rowid, nom from '.MAIN_DB_PREFIX.'usergroup WHERE entity IN ('.getEntity('usergroup').')';
+		$sql = ' SELECT rowid, nom from '.MAIN_DB_PREFIX.'usergroup WHERE entity IN ('.getEntity('usergroup').')';
 		$resql = $db->query($sql);
 		$Tgroup = array();
 		while ($obj = $db->fetch_object($resql)) {
@@ -519,6 +519,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		$sql = ' SELECT u.rowid, u.lastname, u.firstname from '.MAIN_DB_PREFIX.'user as  u';
 		$sql .= ' WHERE 1=1';
 		$sql .= !empty($morefilter) ? $morefilter : '';
+
+		$userlist = array();
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -703,7 +705,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 					$objStd->error++;
 					$objStd->msg = $langs->trans('ErrorMailRecipientIsEmpty');
 					$objStd->status = 'error';
-					$objStd->style="warnings";
+					$objStd->style = "warnings";
 					return $objStd;
 				}
 
@@ -784,7 +786,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 				if (!$result) {
 					$objStd->error++;
 					$objStd->msg = $langs->trans('ErrorMailNotSend');
-					$objStd->style="warnings";
+					$objStd->style = "warnings";
 					$objStd->status = 'error';
 				} else {
 					$objStd->msg = $langs->trans('MailSent');
@@ -795,7 +797,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 				$objStd->error++;
 				$objStd->msg = $langs->trans('ErrorVerif');
 				$objStd->status = 'error';
-				$objStd->style="errors";
+				$objStd->style = "errors";
 				return $objStd;
 			}
 		}
@@ -803,7 +805,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 		$objStd->error++;
 		$objStd->msg = $langs->trans('ErrorloadUserOnSendingMail');
 		$objStd->status = 'error';
-		$objStd->style="warnings";
+		$objStd->style = "warnings";
 		return $objStd;
 	}
 

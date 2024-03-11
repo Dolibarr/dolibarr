@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1101,7 +1102,7 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
  * @param	int			$status				0 or 1, or -1 for both
  * @return  array							Array with results of search
  */
-function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = 'null', $status = 1)
+function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = [], $status = 1)
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 
@@ -1261,7 +1262,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
  * @param 	string		$urltograb		URL to grab (example: http://www.nltechno.com/ or http://www.nltechno.com/dir1/ or http://www.nltechno.com/dir1/mapage1)
  * @param 	string		$tmp			Content to parse
  * @param 	string		$action			Var $action
- * @param	string		$modifylinks	0=Do not modify content, 1=Replace links with a link to viewimage
+ * @param	int 		$modifylinks	0=Do not modify content, 1=Replace links with a link to viewimage
  * @param	int			$grabimages		0=Do not grab images, 1=Grab images
  * @param	string		$grabimagesinto	'root' or 'subpage'
  * @return	void
@@ -1315,10 +1316,6 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 		// Clean the aa/bb/../cc into aa/cc
 		$filetosave = preg_replace('/\/[^\/]+\/\.\./', '', $filetosave);
 		$filename = preg_replace('/\/[^\/]+\/\.\./', '', $filename);
-
-		//var_dump($filetosave);
-		//var_dump($filename);
-		//exit;
 
 		if (empty($alreadygrabbed[$urltograbbis])) {
 			if ($grabimages) {
@@ -1384,10 +1381,6 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 		// Clean the aa/bb/../cc into aa/cc
 		$filetosave = preg_replace('/\/[^\/]+\/\.\./', '', $filetosave);
 		$filename = preg_replace('/\/[^\/]+\/\.\./', '', $filename);
-
-		//var_dump($filetosave);
-		//var_dump($filename);
-		//exit;
 
 		if (empty($alreadygrabbed[$urltograbbis])) {
 			if ($grabimages) {

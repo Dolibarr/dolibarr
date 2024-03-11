@@ -6,6 +6,7 @@
  * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
  * Copyright (C) 2018	    Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -230,7 +231,7 @@ class ActionComm extends CommonObject
 	public $priority;
 
 	/**
-	 * @var int[] 	Array of user ids
+	 * @var array<int,array{id:int,transparency:int}> 	Array of users
 	 */
 	public $userassigned = array();
 
@@ -488,7 +489,7 @@ class ActionComm extends CommonObject
 		if (!is_array($this->userassigned) && !empty($this->userassigned)) {	// For backward compatibility when userassigned was an int instead of an array
 			$tmpid = (int) $this->userassigned;
 			$this->userassigned = array();
-			$this->userassigned[$tmpid] = array('id'=>$tmpid, 'transparency'=>$this->transparency);
+			$this->userassigned[$tmpid] = array('id' => $tmpid, 'transparency' => $this->transparency);
 		}
 
 		$userownerid = $this->userownerid;
@@ -496,7 +497,7 @@ class ActionComm extends CommonObject
 
 		// Be sure assigned user is defined as an array of array('id'=>,'mandatory'=>,...).
 		if (empty($this->userassigned) || count($this->userassigned) == 0 || !is_array($this->userassigned)) {
-			$this->userassigned = array($userownerid=>array('id'=>$userownerid, 'transparency'=>$this->transparency));
+			$this->userassigned = array($userownerid => array('id' => $userownerid, 'transparency' => $this->transparency));
 		}
 
 		if (!$this->type_id || !$this->type_code) {
@@ -630,7 +631,7 @@ class ActionComm extends CommonObject
 				foreach ($this->userassigned as $key => $val) {
 					// Common value with new behavior is to have $val = array('id'=>iduser, 'transparency'=>0|1) and $this->userassigned is an array of iduser => $val.
 					if (!is_array($val)) {	// For backward compatibility when $val='id'.
-						$val = array('id'=>$val);
+						$val = array('id' => $val);
 					}
 
 					if ($val['id'] > 0) {
@@ -749,7 +750,7 @@ class ActionComm extends CommonObject
 		if (!$error) {
 			// Hook of thirdparty module
 			if (is_object($hookmanager)) {
-				$parameters = array('objFrom'=>$objFrom);
+				$parameters = array('objFrom' => $objFrom);
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -904,14 +905,14 @@ class ActionComm extends CommonObject
 				$this->status = $obj->status;
 
 				//email information
-				$this->email_msgid=$obj->email_msgid;
-				$this->email_from=$obj->email_from;
-				$this->email_sender=$obj->email_sender;
-				$this->email_to=$obj->email_to;
-				$this->email_tocc=$obj->email_tocc;
-				$this->email_tobcc=$obj->email_tobcc;
-				$this->email_subject=$obj->email_subject;
-				$this->errors_to=$obj->errors_to;
+				$this->email_msgid = $obj->email_msgid;
+				$this->email_from = $obj->email_from;
+				$this->email_sender = $obj->email_sender;
+				$this->email_to = $obj->email_to;
+				$this->email_tocc = $obj->email_tocc;
+				$this->email_tobcc = $obj->email_tobcc;
+				$this->email_subject = $obj->email_subject;
+				$this->errors_to = $obj->errors_to;
 
 				$this->fetch_optionals();
 
@@ -947,20 +948,20 @@ class ActionComm extends CommonObject
 		if ($resql) {
 			// If owner is known, we must but id first into list
 			if ($this->userownerid > 0) {
-				$this->userassigned[$this->userownerid] = array('id'=>$this->userownerid); // Set first so will be first into list.
+				$this->userassigned[$this->userownerid] = array('id' => $this->userownerid); // Set first so will be first into list.
 			}
 
 			while ($obj = $this->db->fetch_object($resql)) {
 				if ($obj->fk_element > 0) {
 					switch ($obj->element_type) {
 						case 'user':
-							$this->userassigned[$obj->fk_element] = array('id'=>$obj->fk_element, 'mandatory'=>$obj->mandatory, 'answer_status'=>$obj->answer_status, 'transparency'=>$obj->transparency);
+							$this->userassigned[$obj->fk_element] = array('id' => $obj->fk_element, 'mandatory' => $obj->mandatory, 'answer_status' => $obj->answer_status, 'transparency' => $obj->transparency);
 							if (empty($this->userownerid)) {
 								$this->userownerid = $obj->fk_element; // If not defined (should not happened, we fix this)
 							}
 							break;
 						case 'socpeople':
-							$this->socpeopleassigned[$obj->fk_element] = array('id'=>$obj->fk_element, 'mandatory'=>$obj->mandatory, 'answer_status'=>$obj->answer_status, 'transparency'=>$obj->transparency);
+							$this->socpeopleassigned[$obj->fk_element] = array('id' => $obj->fk_element, 'mandatory' => $obj->mandatory, 'answer_status' => $obj->answer_status, 'transparency' => $obj->transparency);
 							break;
 					}
 				}
@@ -994,15 +995,15 @@ class ActionComm extends CommonObject
 			// If owner is known, we must but id first into list
 			if ($this->userownerid > 0) {
 				// Set first so will be first into list.
-				$this->userassigned[$this->userownerid] = array('id'=>$this->userownerid);
+				$this->userassigned[$this->userownerid] = array('id' => $this->userownerid);
 			}
 
 			while ($obj = $this->db->fetch_object($resql2)) {
 				if ($obj->fk_element > 0) {
-					$this->userassigned[$obj->fk_element] = array('id'=>$obj->fk_element,
-																  'mandatory'=>$obj->mandatory,
-																  'answer_status'=>$obj->answer_status,
-																  'transparency'=>$obj->transparency);
+					$this->userassigned[$obj->fk_element] = array('id' => $obj->fk_element,
+																  'mandatory' => $obj->mandatory,
+																  'answer_status' => $obj->answer_status,
+																  'transparency' => $obj->transparency);
 				}
 
 				if ($override === true) {
@@ -1245,7 +1246,7 @@ class ActionComm extends CommonObject
 				$already_inserted = array();
 				foreach ($this->userassigned as $key => $val) {
 					if (!is_array($val)) {	// For backward compatibility when val=id
-						$val = array('id'=>$val);
+						$val = array('id' => $val);
 					}
 					if (!empty($already_inserted[$val['id']])) {
 						continue;
@@ -1273,7 +1274,7 @@ class ActionComm extends CommonObject
 					$already_inserted = array();
 					foreach (array_keys($this->socpeopleassigned) as $key => $val) {
 						if (!is_array($val)) {	// For backward compatibility when val=id
-							$val = array('id'=>$val);
+							$val = array('id' => $val);
 						}
 						if (!empty($already_inserted[$val['id']])) {
 							continue;
@@ -1351,7 +1352,7 @@ class ActionComm extends CommonObject
 		$parameters = array('sql' => &$sql, 'socid' => $socid, 'fk_element' => $fk_element, 'elementtype' => $elementtype);
 		$reshook = $hookmanager->executeHooks('getActionsListFrom', $parameters);    // Note that $action and $object may have been modified by hook
 		if (!empty($hookmanager->resPrint)) {
-			$sql.= $hookmanager->resPrint;
+			$sql .= $hookmanager->resPrint;
 		}
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 		if (!empty($socid)) {
@@ -1375,7 +1376,7 @@ class ActionComm extends CommonObject
 		$parameters = array('sql' => &$sql, 'socid' => $socid, 'fk_element' => $fk_element, 'elementtype' => $elementtype);
 		$reshook = $hookmanager->executeHooks('getActionsListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 		if (!empty($hookmanager->resPrint)) {
-			$sql.= $hookmanager->resPrint;
+			$sql .= $hookmanager->resPrint;
 		}
 		if ($sortorder && $sortfield) {
 			$sql .= $this->db->order($sortfield, $sortorder);
@@ -1847,7 +1848,7 @@ class ActionComm extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('actiondao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -2442,7 +2443,7 @@ class ActionComm extends CommonObject
 		$this->note_private = "This is a 'private' note.";
 
 		$this->userownerid = $user->id;
-		$this->userassigned[$user->id] = array('id'=>$user->id, 'transparency'=> 1);
+		$this->userassigned[$user->id] = array('id' => $user->id, 'transparency' => 1);
 		return 1;
 	}
 
@@ -2728,7 +2729,7 @@ class ActionComm extends CommonObject
 			return 0;
 		} else {
 			$this->db->commit(); // We commit also on error, to have the error message recorded.
-			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? implode(', ', $errorsMsg) : $error;
+			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg) ? implode(', ', $errorsMsg) : $error);
 
 			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
 

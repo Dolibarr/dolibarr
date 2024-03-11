@@ -427,6 +427,7 @@ class StockTransferLine extends CommonObjectLine
 		$p = new Product($this->db);
 		$p->fetch($this->fk_product);
 
+		$op = array();
 		$op[0] = "+".trim($this->qty);
 		$op[1] = "-".trim($this->qty);
 		$movementstock = new MouvementStock($this->db);
