@@ -2,6 +2,7 @@
 /* Copyright (C) 2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2022	Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -167,7 +168,10 @@ foreach ($modulesdir as $dir) {
 										$familyinfo = array_merge($familyinfo, $objMod->familyinfo);
 										$familykey = key($objMod->familyinfo);
 									} else {
-										$familykey = empty($objMod->family) ? 'other' : $objMod->family;
+										$familykey = $objMod->family;
+										if (empty($familykey)) {
+											$familykey = 'other';
+										}
 									}
 
 									$moduleposition = ($objMod->module_position ? $objMod->module_position : '50');
