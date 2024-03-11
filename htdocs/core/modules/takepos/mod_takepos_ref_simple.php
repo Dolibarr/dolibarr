@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2020      Open-DSI	            <support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +86,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	 *  Test if the numbers already in the database do not cause any conflicts that will prevent this
 	 *  of conflicts that will prevent this numbering from working.
 	 *
-	 *	@param	Object		$object		Object we need next value for
+	 *	@param	Facture		$object		Object we need next value for
 	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
 	public function canBeActivated($object)
@@ -208,7 +209,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	 *  Return next free value
 	 *
 	 * @param       Societe     $objsoc         Object third party
-	 * @param       Object      $objforref      Object for number to search
+	 * @param       Facture     $objforref      Object for number to search
 	 * @return      string      Next free value
 	 */
 	public function getNumRef($objsoc, $objforref)

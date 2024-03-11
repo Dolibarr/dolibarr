@@ -5,6 +5,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2013      Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2020      Open-DSI	                    <support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,7 +152,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	 * Return next free value
 	 *
 	 * @param   Societe     $objsoc         Object third party
-	 * @param   Object      $objforref      Object for number to search
+	 * @param   Facture     $objforref      Object for number to search
 	 * @return  string      Next free value
 	 */
 	public function getNumRef($objsoc, $objforref)
