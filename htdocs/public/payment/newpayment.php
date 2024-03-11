@@ -1258,7 +1258,7 @@ if ($source == 'invoice') {
 	// Tag
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow2"><b style="word-break: break-all;">'.$fulltag.'</b>';
-	print '<input type="hidden" name="tag" value="'.$tag.'">';
+	print '<input type="hidden" name="tag" value="'.(empty($tag) ? '' : $tag).'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
