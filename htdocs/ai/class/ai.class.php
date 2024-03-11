@@ -131,7 +131,7 @@ class Ai
 
 			$response = curl_exec($ch);
 			if (curl_errno($ch)) {
-				throw new Exception('cURL error: ' . curl_error($ch));
+				throw new Exception('Wrong configuration !' . curl_error($ch));
 			}
 
 			$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -146,7 +146,7 @@ class Ai
 
 			return $generatedEmailContent;
 		} catch (Exception $e) {
-			return array('error' => true, 'message' => $e->getMessage());
+			return array('error' => true, 'message' => $e->getMessage(), 'code' => $statusCode);
 		} finally {
 			curl_close($ch);
 		}

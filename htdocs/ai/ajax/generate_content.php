@@ -67,7 +67,13 @@ $function = 'textgeneration';
 $generatedContent = $ai->generateContent($instructions, 'auto', $function);
 
 if (is_array($generatedContent) && $generatedContent['error']) {
-	print "Error : " . $generatedContent['message'];
+	// client errors
+	if ($generatedContent['code'] >= 400) {
+		print "Error : " . $generatedContent['message'];
+		print '<br><a href="'.DOL_MAIN_URL_ROOT.'/ai/admin/setup.php">'.$langs->trans('Check Config of Module').'</a>';
+	} else {
+		print "Error : " . $generatedContent['message'];
+	}
 } else {
 	print $generatedContent;
 }
