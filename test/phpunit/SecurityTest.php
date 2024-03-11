@@ -53,9 +53,7 @@ if (! defined("NOSESSION")) {
 	define("NOSESSION", '1');
 }
 
-// Implements workaround for PHP_SELF & includes common files:
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
-
+require_once dirname(__FILE__).'/../../htdocs/main.inc.php';	// We force include of main.inc.php instead of master.inc.php even if we are in CLI mode because it contains a lot of security components we want to test.
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
 
