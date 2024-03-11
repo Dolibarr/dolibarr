@@ -537,7 +537,7 @@ return [
 		// 'PhanPluginRedundantAssignmentInLoop',
 		// 'PhanInvalidCommentForDeclarationType',
 		// 'PhanParamSignatureMismatchInternal',
-		'PhanParamSignatureMismatch',
+		// 'PhanParamSignatureMismatch',
 		// 'PhanPluginEmptyStatementForeachLoop',
 		// 'PhanCompatibleDimAlternativeSyntax',
 		'PhanInvalidFQSENInClasslike',
