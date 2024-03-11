@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +62,7 @@ class mod_reception_beryl extends ModelNumRefReception
 	/**
 	 *	Test if existing numbers make problems with numbering
 	 *
-	 *	@param	Object		$object		Object we need next value for
+	 *	@param	Reception	$object		Object we need next value for
 	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
 	public function canBeActivated($object)
@@ -98,7 +99,7 @@ class mod_reception_beryl extends ModelNumRefReception
 	 *	Return next value
 	 *
 	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$reception	Reception object
+	 *	@param	Reception	$reception	Reception object
 	 *	@return string|-1      			Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $reception)
@@ -135,19 +136,5 @@ class mod_reception_beryl extends ModelNumRefReception
 
 		dol_syslog("mod_reception_beryl::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next free value
-	 *
-	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$objforref	Shipment object
-	 *	@return string|-1      			Next free value, -1 if KO
-	 */
-	public function reception_get_num($objsoc, $objforref)
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $objforref);
 	}
 }
