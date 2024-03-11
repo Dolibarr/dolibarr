@@ -2716,7 +2716,11 @@ if ($action == 'create') {
 			print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 			print '<td class="maxwidthonsmartphone">';
 			print img_picto('', 'currency', 'class="pictofixedwidth"');
-			print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $currency_code), 'multicurrency_code');
+			$used_currency_code = $currency_code;
+			if (!GETPOST('changecompany')) {
+				$used_currency_code = GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $currency_code;
+			}
+			print $form->selectMultiCurrency($used_currency_code, 'multicurrency_code');
 			print '</td></tr>';
 		}
 
