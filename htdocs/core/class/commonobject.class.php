@@ -1667,11 +1667,7 @@ abstract class CommonObject
 						$tmpelement = $obj->element;
 						$transkey = "TypeContact_".$tmpelement."_".$source."_".$obj->code;
 						$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
-						if (empty($option)) {
-							$tab[$obj->rowid] = $libelle_element.' - '.$libelle_type;
-						} else {
-							$tab[$obj->rowid] = $libelle_element.' - '.$libelle_type;
-						}
+						$tab[$obj->rowid] = $libelle_element.' - '.$libelle_type;
 					}
 				}
 			}
@@ -7396,7 +7392,7 @@ abstract class CommonObject
 					$isDependList = 1;
 				}
 				$tmpselect .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
-				$tmpselect .= '>'.$valb.'</option>';
+				$tmpselect .= '>'.$langs->trans($valb).'</option>';
 			}
 
 			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
@@ -8026,7 +8022,7 @@ abstract class CommonObject
 		} elseif ($type == 'select') {
 			$value = isset($param['options'][$value]) ? $param['options'][$value] : '';
 			if (strpos($value, "|") !== false) {
-				$value = explode('|', $value)[0];
+				$value = $langs->trans(explode('|', $value)[0]);
 			}
 		} elseif ($type == 'sellist') {
 			$param_list = array_keys($param['options']);
@@ -8846,13 +8842,7 @@ abstract class CommonObject
 						}
 
 						$out .= ($display_type == 'card' ? '</td>' : '</div>');
-
-						if (getDolGlobalString('MAIN_EXTRAFIELDS_USE_TWO_COLUMS') && (($e % 2) == 1)) {
-							$out .= ($display_type == 'card' ? '</tr>' : '</div>');
-						} else {
-							$out .= ($display_type == 'card' ? '</tr>' : '</div>');
-						}
-
+						$out .= ($display_type == 'card' ? '</tr>' : '</div>');
 						$e++;
 					}
 				}

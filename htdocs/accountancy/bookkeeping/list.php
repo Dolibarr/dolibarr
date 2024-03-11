@@ -620,25 +620,45 @@ $sqlwhere = array();
 if (count($filter) > 0) {
 	foreach ($filter as $key => $value) {
 		if ($key == 't.doc_date') {
-			$sqlwhere[] = $key."='".$db->idate($value)."'";
-		} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
-			$sqlwhere[] = $key."'".$db->idate($value)."'";
-		} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.subledger_account>=' || $key == 't.subledger_account<=') {
-			$sqlwhere[] = $key."'".$db->escape($value)."'";
+			$sqlwhere[] = $db->sanitize($key).' = \''.$db->idate($value).'\'';
+		} elseif ($key == 't.doc_date>=') {
+			$sqlwhere[] = "t.doc_date >= '".$db->idate($value)."'";
+		} elseif ($key == 't.doc_date<=') {
+			$sqlwhere[] = "t.doc_date <= '".$db->idate($value)."'";
+		} elseif ($key == 't.doc_date>') {
+			$sqlwhere[] = "t.doc_date > '".$db->idate($value)."'";
+		} elseif ($key == 't.doc_date<') {
+			$sqlwhere[] = "t.doc_date < '".$db->idate($value)."'";
+		} elseif ($key == 't.numero_compte>=') {
+			$sqlwhere[] = "t.numero_compte >= '".$db->escape($value)."'";
+		} elseif ($key == 't.numero_compte<=') {
+			$sqlwhere[] = "t.numero_compte <= '".$db->escape($value)."'";
+		} elseif ($key == 't.subledger_account>=') {
+			$sqlwhere[] = "t.subledger_account >= '".$db->escape($value)."'";
+		} elseif ($key == 't.subledger_account<=') {
+			$sqlwhere[] = "t.subledger_account <= '".$db->escape($value)."'";
 		} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
-			$sqlwhere[] = $key.'='.((int) $value);
+			$sqlwhere[] = $db->sanitize($key).' = '.((int) $value);
 		} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
-			$sqlwhere[] = $key." LIKE '".$db->escape($value)."%'";
+			$sqlwhere[] = $db->sanitize($key)." LIKE '".$db->escape($db->escapeforlike($value))."%'";
 		} elseif ($key == 't.subledger_account') {
 			$sqlwhere[] = natural_search($key, $value, 0, 1);
-		} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
-			$sqlwhere[] = $key."'".$db->idate($value)."'";
-		} elseif ($key == 't.tms>=' || $key == 't.tms<=') {
-			$sqlwhere[] = $key."'".$db->idate($value)."'";
-		} elseif ($key == 't.date_export>=' || $key == 't.date_export<=') {
-			$sqlwhere[] = $key."'".$db->idate($value)."'";
-		} elseif ($key == 't.date_validated>=' || $key == 't.date_validated<=') {
-			$sqlwhere[] = $key."'".$db->idate($value)."'";
+		} elseif ($key == 't.tms>=') {
+			$sqlwhere[] = "t.tms >= '".$db->idate($value)."'";
+		} elseif ($key == 't.tms<=') {
+			$sqlwhere[] = "t.tms <= '".$db->idate($value)."'";
+		} elseif ($key == 't.date_creation>=') {
+			$sqlwhere[] = 't.date_creation >= \''.$db->idate($value).'\'';
+		} elseif ($key == 't.date_creation<=') {
+			$sqlwhere[] = 't.date_creation <= \''.$db->idate($value).'\'';
+		} elseif ($key == 't.date_export>=') {
+			$sqlwhere[] = 't.date_export >= \''.$db->idate($value).'\'';
+		} elseif ($key == 't.date_export<=') {
+			$sqlwhere[] = 't.date_export <= \''.$db->idate($value).'\'';
+		} elseif ($key == 't.date_validated>=') {
+			$sqlwhere[] = 't;date_validate >= \''.$db->idate($value).'\'';
+		} elseif ($key == 't.date_validated<=') {
+			$sqlwhere[] = 't;date_validate <= \''.$db->idate($value).'\'';
 		} elseif ($key == 't.credit' || $key == 't.debit') {
 			$sqlwhere[] = natural_search($key, $value, 1, 1);
 		} elseif ($key == 't.reconciled_option') {
