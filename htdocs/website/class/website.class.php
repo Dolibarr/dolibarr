@@ -403,15 +403,15 @@ class Website extends CommonObject
 	/**
 	 * Load all object in memory ($this->records) from the database
 	 *
-	 * @param 	string 		$sortorder 		Sort Order
-	 * @param 	string 		$sortfield 		Sort field
-	 * @param 	int    		$limit     		offset limit
-	 * @param 	int    		$offset    		offset limit
-	 * @param 	array  		$filter    		filter array
-	 * @param 	string 		$filtermode 	filter mode (AND or OR)
-	 * @return 	array|int                 	int <0 if KO, array of pages if OK
+	 * @param 	string 			$sortorder 		Sort Order
+	 * @param 	string 			$sortfield 		Sort field
+	 * @param 	int    			$limit     		limit
+	 * @param 	int    			$offset    		offset limit
+	 * @param 	string|array	$filter    		filter array
+	 * @param 	string 			$filtermode 	filter mode (AND or OR)
+	 * @return 	array|int       	          	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -433,15 +433,29 @@ class Website extends CommonObject
 		$sql .= " t.tms as date_modification";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		$sql .= " WHERE t.entity IN (".getEntity('website').")";
+
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+		if (is_array($filter)) {
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+				}
 			}
+			if (count($sqlwhere) > 0) {
+				$sql .= ' AND '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+			}
+
+			$filter = '';
 		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' AND '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {

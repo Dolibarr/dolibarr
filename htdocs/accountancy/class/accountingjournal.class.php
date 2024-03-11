@@ -161,33 +161,47 @@ class AccountingJournal extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param string 	$sortorder 	Sort Order
-	 * @param string 	$sortfield 	Sort field
-	 * @param int 		$limit 		limit
-	 * @param int 		$offset 	offset limit
-	 * @param array 	$filter 	filter array
-	 * @param string 	$filtermode filter mode (AND or OR)
-	 * @return int 					Return integer <0 if KO, >0 if OK
+	 * @param string 		$sortorder 	Sort Order
+	 * @param string 		$sortfield 	Sort field
+	 * @param int 			$limit 		limit
+	 * @param int 			$offset 	offset limit
+	 * @param string|array 	$filter 	filter array
+	 * @param string 		$filtermode filter mode (AND or OR)
+	 * @return int 						Return integer <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		$sql = "SELECT rowid, code, label, nature, active";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.code' || $key == 't.label' || $key == 't.nature') {
-					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
-				} elseif ($key == 't.rowid' || $key == 't.active') {
-					$sqlwhere[] = $key.'='.((int) $value);
-				}
-			}
-		}
 		$sql .= ' WHERE 1 = 1';
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
-		if (count($sqlwhere) > 0) {
-			$sql .= " AND ".implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere);
+
+		// Manage filter
+		if (is_array($filter)) {
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.code' || $key == 't.label' || $key == 't.nature') {
+						$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
+					} elseif ($key == 't.rowid' || $key == 't.active') {
+						$sqlwhere[] = $key.'='.((int) $value);
+					}
+				}
+			}
+			if (count($sqlwhere) > 0) {
+				$sql .= " AND ".implode(" ".$this->db->sanitize($filtermode)." ", $sqlwhere);
+			}
+
+			$filter = '';
+		}
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {
