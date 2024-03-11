@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -541,7 +542,7 @@ class Menubase
 	 * 	@param	string	$myleftmenu		Value for leftmenu to filter menu to load (always '')
 	 * 	@param	int		$type_user		0=Menu for backoffice, 1=Menu for front office
 	 * 	@param	string	$menu_handler	Filter on name of menu_handler used (auguria, eldy...)
-	 * 	@param  array	$tabMenu       Array with menu entries already loaded
+	 * 	@param  array<array{rowid:string,fk_menu:string,module:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}>	$tabMenu	Array with menu entries already loaded
 	 * 	@return Menu    		       	Menu array for particular mainmenu value or full tabArray
 	 */
 	public function menuLeftCharger($newmenu, $mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
