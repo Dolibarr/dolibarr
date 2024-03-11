@@ -1123,20 +1123,19 @@ class Thirdparties extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				$notification = new CompanyNotification($this->db);
+				$notification = new Notify($this->db);
 				if ($notification->fetch($obj->rowid)) {
 					$notifications[] = $notification;
 				}
 				$i++;
 			}
 		} else {
-			throw new RestException(404, 'Account not found');
+			throw new RestException(404, 'No notifications found');
 		}
 
+		$fields = array('socid', 'fk_action', 'fk_contact', 'fk_user', 'datec', 'datem', 'email', 'threshold', 'context', 'type');
 
-		$fields = array('socid', 'default_rib', 'frstrecur', '1000110000001', 'datec', 'datem', 'label', 'bank', 'bic', 'iban', 'id', 'rum');
-
-		$returnAccounts = array();
+		$returnNotifications = array();
 
 		foreach ($notifications as $notification) {
 			$object = array();
@@ -1145,10 +1144,10 @@ class Thirdparties extends DolibarrApi
 					$object[$key] = $value;
 				}
 			}
-			$returnAccounts[] = $object;
+			$returnNotifications[] = $object;
 		}
 
-		return $returnAccounts;
+		return $returnNotifications;
 	}
 
 	/**
