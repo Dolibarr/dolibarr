@@ -183,8 +183,39 @@ $VALID_MODULE_MAPPING = array(
 	'zapier' => 'Zapier',
 );
 
+// From ExtraFields class
+$EXTRAFIELDS_TYPE2LABEL = array(
+		'varchar' => 'String1Line',
+		'text' => 'TextLongNLines',
+		'html' => 'HtmlText',
+		'int' => 'Int',
+		'double' => 'Float',
+		'date' => 'Date',
+		'datetime' => 'DateAndTime',
+		//'datetimegmt'=>'DateAndTimeUTC',
+		'boolean' => 'Boolean', // Remove as test
+		'price' => 'ExtrafieldPrice',
+		'pricecy' => 'ExtrafieldPriceWithCurrency',
+		'phone' => 'ExtrafieldPhone',
+		'mail' => 'ExtrafieldMail',
+		'url' => 'ExtrafieldUrl',
+		'ip' => 'ExtrafieldIP',
+		'icon' => 'Icon',
+		'password' => 'ExtrafieldPassword',
+		'select' => 'ExtrafieldSelect',
+		'sellist' => 'ExtrafieldSelectList',
+		'radio' => 'ExtrafieldRadio',
+		'checkbox' => 'ExtrafieldCheckBox',
+		'chkbxlst' => 'ExtrafieldCheckBoxFromList',
+		'link' => 'ExtrafieldLink',
+		'separate' => 'ExtrafieldSeparator',
+	);
+
+
 $moduleNameRegex = '/^(?:'.implode('|', array_merge(array_keys($DEPRECATED_MODULE_MAPPING), array_keys($VALID_MODULE_MAPPING), array('\$modulename'))).')$/';
 $deprecatedModuleNameRegex = '/^(?!(?:'.implode('|', array_keys($DEPRECATED_MODULE_MAPPING)).')$).*/';
+
+$extraFieldTypeRegex = '/^(?:'.implode('|', array_keys($EXTRAFIELDS_TYPE2LABEL)).')$/';
 
 /**
  * This configuration will be read and overlaid on top of the
@@ -197,14 +228,58 @@ return [
 	'simplify_ast' => true,
 	'analyzed_file_extensions' => ['php','inc'],
 	'globals_type_map' => [
+		'action' => 'string',
+		'actioncode' => 'string',
+		'badgeStatus0' => 'string',
+		'badgeStatus1' => 'string',
+		'badgeStatus11' => 'string',
+		'badgeStatus3' => 'string',
+		'badgeStatus4' => 'string',
+		'badgeStatus6' => 'string',
+		'badgeStatus8' => 'string',
+		'badgeStatus9' => 'string',
+		'classname' => 'string',
 		'conf' => '\Conf',
+		'conffile' => 'string',
+		'conffiletoshow' => 'string',
+		'conffiletoshowshort' => 'string',
+		'dateSelector' => 'int<0,1>',
 		'db' => '\DoliDB',
+		'disableedit' => 'int<0,1>',
+		'disablemove' => 'int<0,1>',
+		'disableremove' => 'int<0,1>',
+		'dolibarr_main_authentication' => 'string',
+		'dolibarr_main_data_root' => 'string',
+		'dolibarr_main_data_root' => 'string',
+		'dolibarr_main_db_encrypted_pass' => 'string',
+		'dolibarr_main_db_host' => 'string',
+		'dolibarr_main_db_pass' => 'string',
+		'dolibarr_main_demo' => 'string',
+		'dolibarr_main_document_root' => 'string',
+		'dolibarr_main_url_root' => 'string',
+		'errormsg' => 'string',
 		'extrafields' => '\ExtraFields',
+		'filter' => 'string',
+		'filtert' => 'int',
+		'forceall' => 'int<0,1>',
+		'form' => '\Form',
 		'hookmanager' => '\HookManager',
+		'inputalsopricewithtax' => 'int<0,1>',
 		'langs' => '\Translate',
+		'leftmenu' => 'string',
+		'mainmenu' => 'string',
+		'menumanager' => 'string',
 		'mysoc' => '\Societe',
 		'nblines' => '\int',
+		'obj' => '\CommonObject',     // Deprecated
+		'object_rights' => 'int|stdClass',
+		'objectoffield' => '\CommonObject',
+		'senderissupplier' => 'int<0,1,2>',
 		'user' => '\User',
+		'website' => '\WebSite',
+		'websitepage' => '\WebSitePage',
+		'websitepagefile' => 'string',
+		// 'object' => '\CommonObject',  // Deprecated, not enabled because conflicts with $object assignments
 	],
 
 	// Supported values: `'5.6'`, `'7.0'`, `'7.1'`, `'7.2'`, `'7.3'`, `'7.4'`, `null`.
@@ -253,6 +328,7 @@ return [
 		.'|htdocs/includes/restler/.*'  // @phpstan-ignore-line
 		// Included as stub (did not seem properly analysed by phan without it)
 		.'|htdocs/includes/stripe/.*'  // @phpstan-ignore-line
+		.'|htdocs/conf/conf.php'  // @phpstan-ignore-line
 		// .'|htdocs/[^h].*/.*'  // For testing @phpstan-ignore-line
 		.')@',  // @phpstan-ignore-line
 
@@ -266,18 +342,19 @@ return [
 	// Alternately, you can pass in the full path to a PHP file
 	// with the plugin's implementation (e.g. 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php')
 	'ParamMatchRegexPlugin' => [
-		'/^GETPOST$/' => [1, $sanitizeRegex],
+		'/^GETPOST$/' => [1, $sanitizeRegex, 'GetPostUnknownSanitizeType'],
 		'/^isModEnabled$/' => [0, $moduleNameRegex, 'UnknownModuleName'],
 		// Note: trick to have different key for same regex:
 		'/^isModEnable[d]$/' => [0, $deprecatedModuleNameRegex, "DeprecatedModuleName"],
-		'/^sanitizeVal$/' => [1, $sanitizeRegex],
+		'/^sanitizeVal$/' => [1, $sanitizeRegex,"UnknownSanitizeType"],
+		'/^\\\\ExtraFields::addExtraField$/' => [2, $extraFieldTypeRegex,"UnknownExtrafieldTypeBack"],
 	],
 	'plugins' => [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
 		// checks if a function, closure or method unconditionally returns.
 		// can also be written as 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php'
-		//'DeprecateAliasPlugin',
+		'DeprecateAliasPlugin',
 		//'EmptyMethodAndFunctionPlugin',
 		'InvalidVariableIssetPlugin',
 		//'MoreSpecificElementTypePlugin',
@@ -331,6 +408,7 @@ return [
 		// Dolibarr uses a lot of internal deprecated stuff, not reporting
 		'PhanDeprecatedProperty',
 		'PhanDeprecatedFunction',
+		//'PhanCompatibleNegativeStringOffset',
 		// Dolibarr has quite a few strange noop assignments like $abc=$abc;
 		'PhanPluginDuplicateExpressionAssignment',
 		// Nulls are likely mostly false positives
@@ -378,7 +456,7 @@ return [
 		'PhanPluginUnknownClosureParamType',
 		'PhanPluginUnknownClosureReturnType',
 		// 'PhanPluginNoCommentOnProtectedMethod',
-		'PhanTypeArraySuspicious',
+		// 'PhanTypeArraySuspicious',
 		'PhanTypeMismatchPropertyProbablyReal',
 		// 'PhanPluginNoCommentOnPrivateMethod',
 		'PhanPluginUnknownArrayFunctionReturnType',
@@ -400,7 +478,7 @@ return [
 		'PhanTypeMismatchDeclaredParamNullable',
 		'PhanTypeInvalidRightOperandOfAdd',
 		// 'PhanPluginDescriptionlessCommentOnPrivateProperty',
-		'PhanUndeclaredVariableDim',  // Array initialisation on undeclared var: $abc['x']='ab'
+		// 'PhanUndeclaredVariableDim',  // Array initialisation on undeclared var: $abc['x']='ab'
 		'PhanTypeInvalidPropertyName',
 		'PhanPluginDuplicateCatchStatementBody',
 		'PhanPluginUndeclaredVariableIsset',
@@ -438,14 +516,14 @@ return [
 		'PhanPluginBothLiteralsBinaryOp',
 		// 'PhanTypeMismatchDeclaredParam',
 		// 'PhanCommentDuplicateMagicMethod',
-		'PhanParamSpecial1',
+		// 'PhanParamSpecial1',
 		'PhanPluginInlineHTMLLeading',
 		'PhanPluginUseReturnValueInternalKnown',
-		'PhanRedefinedInheritedInterface',
-		'PhanTypeComparisonToArray',
+		// 'PhanRedefinedInheritedInterface',
+		// 'PhanTypeComparisonToArray',
 		'PhanTypeConversionFromArray',
 		// 'PhanTypeInvalidLeftOperandOfIntegerOp',
-		'PhanTypeMismatchArgumentInternalProbablyReal',
+		// 'PhanTypeMismatchArgumentInternalProbablyReal',
 		'PhanTypeMismatchBitwiseBinaryOperands',
 		'PhanTypeMismatchDimEmpty',
 		'PhanTypeSuspiciousEcho',
@@ -455,9 +533,9 @@ return [
 		'PhanPluginPHPDocInWrongComment',
 		'PhanRedefineClassInternal',
 		// 'PhanTypeInvalidThrowsIsInterface',
-		'PhanPluginRedundantAssignmentInLoop',
+		// 'PhanPluginRedundantAssignmentInLoop',
 		// 'PhanInvalidCommentForDeclarationType',
-		'PhanParamSignatureMismatchInternal',
+		//'PhanParamSignatureMismatchInternal',
 		// 'PhanPluginEmptyStatementForeachLoop',
 		// 'PhanCompatibleDimAlternativeSyntax',
 		'PhanInvalidFQSENInClasslike',
@@ -515,9 +593,9 @@ return [
 		'PhanTypeMismatchReturnProbablyReal',
 		'PhanPossiblyUndeclaredVariable',
 		'PhanTypeMismatchArgument',
-		//'PhanPluginUnreachableCode',
-		//'PhanTypeMismatchArgumentInternal',
-		//'PhanPluginAlwaysReturnMethod',
+		// 'PhanPluginUnreachableCode',
+		// 'PhanTypeMismatchArgumentInternal',
+		// 'PhanPluginAlwaysReturnMethod',
 		'PhanUndeclaredClassMethod',
 		'PhanUndeclaredMethod',
 		'PhanTypeMismatchArgumentProbablyReal',
@@ -533,7 +611,7 @@ return [
 		// 'PhanUndeclaredClassAttribute',
 		'PhanNonClassMethodCall',
 		// 'PhanPluginNoAssert',
-		'PhanTypeMismatchReturnSuperType',
+		// 'PhanTypeMismatchReturnSuperType',
 		'PhanTypeMismatchArgumentSuperType',
 		'PhanPluginDuplicateConditionalTernaryDuplication',
 	],

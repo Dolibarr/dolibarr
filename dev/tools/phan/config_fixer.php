@@ -1,6 +1,11 @@
 <?php
 
-require_once __DIR__.'/plugins/DeprecatedModuleNameFixer.php';
+// Uncomment require_once to enable corresponding fixer
+
+//require_once __DIR__.'/plugins/DeprecatedModuleNameFixer.php';
+//require_once __DIR__.'/plugins/PriceFormFixer.php';
+//require_once __DIR__.'/plugins/UrlEncodeStringifyFixer.php';
+require_once __DIR__.'/plugins/SelectDateFixer.php';
 
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  */
@@ -98,6 +103,7 @@ return [
 		.'|htdocs/includes/restler/.*'  // @phpstan-ignore-line
 		// Included as stub (did not seem properly analysed by phan without it)
 		.'|htdocs/includes/stripe/.*'  // @phpstan-ignore-line
+		.'|htdocs/conf/conf.php'  // @phpstan-ignore-line
 		//.'|htdocs/[^c][^o][^r][^e][^/].*'  // For testing @phpstan-ignore-line
 		//.'|htdocs/[^h].*' // For testing on restricted set @phpstan-ignore-line
 		.')@',  // @phpstan-ignore-line
@@ -116,7 +122,7 @@ return [
 	],
 	'plugins' => [
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
-		//'DeprecateAliasPlugin',
+		'DeprecateAliasPlugin',
 		// __DIR__.'/plugins/NoVarDumpPlugin.php',
 		//__DIR__.'/plugins/GetPostFixerPlugin.php',
 		//'PHPDocToRealTypesPlugin',
@@ -172,6 +178,8 @@ return [
 	// Add any issue types (such as 'PhanUndeclaredMethod')
 	// here to inhibit them from being reported
 	'suppress_issue_types' => [
+		'PhanCompatibleNegativeStringOffset',	// return false positive
+
 		'PhanPluginWhitespaceTab',		// Dolibarr used tabs
 		'PhanPluginCanUsePHP71Void',	// Dolibarr is maintaining 7.0 compatibility
 		'PhanPluginShortArray',			// Dolibarr uses array()

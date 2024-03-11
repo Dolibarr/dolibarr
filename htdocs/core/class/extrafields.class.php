@@ -44,12 +44,12 @@ class ExtraFields
 	public $db;
 
 	/**
-	 * @var array New array to store extrafields definition
+	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,mixed[]>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>}> New array to store extrafields definition
 	 */
 	public $attributes;
 
 	/**
-	 * @var array	Array with boolean of status of groups
+	 * @var array<string,bool>	Array with boolean of status of groups
 	 */
 	public $expand_display;
 
@@ -69,25 +69,25 @@ class ExtraFields
 	public $errno;
 
 	/**
-	 * @var array 	Array of type to label
+	 * @var array<string,string> 	Array of type to label
 	 */
 	public static $type2label = array(
-		'varchar'=>'String1Line',
-		'text'=>'TextLongNLines',
-		'html'=>'HtmlText',
-		'int'=>'Int',
-		'double'=>'Float',
-		'date'=>'Date',
-		'datetime'=>'DateAndTime',
+		'varchar' => 'String1Line',
+		'text' => 'TextLongNLines',
+		'html' => 'HtmlText',
+		'int' => 'Int',
+		'double' => 'Float',
+		'date' => 'Date',
+		'datetime' => 'DateAndTime',
 		//'datetimegmt'=>'DateAndTimeUTC',
-		'boolean'=>'Boolean',
-		'price'=>'ExtrafieldPrice',
-		'pricecy'=>'ExtrafieldPriceWithCurrency',
-		'phone'=>'ExtrafieldPhone',
-		'mail'=>'ExtrafieldMail',
-		'url'=>'ExtrafieldUrl',
-		'ip'=>'ExtrafieldIP',
-		'icon'=>'Icon',
+		'boolean' => 'Boolean',
+		'price' => 'ExtrafieldPrice',
+		'pricecy' => 'ExtrafieldPriceWithCurrency',
+		'phone' => 'ExtrafieldPhone',
+		'mail' => 'ExtrafieldMail',
+		'url' => 'ExtrafieldUrl',
+		'ip' => 'ExtrafieldIP',
+		'icon' => 'Icon',
 		'password' => 'ExtrafieldPassword',
 		'select' => 'ExtrafieldSelect',
 		'sellist' => 'ExtrafieldSelectList',
@@ -253,9 +253,9 @@ class ExtraFields
 				}
 			}
 			$field_desc = array(
-				'type'=>$typedb,
-				'value'=>$lengthdb,
-				'null'=>($required ? 'NOT NULL' : 'NULL'),
+				'type' => $typedb,
+				'value' => $lengthdb,
+				'null' => ($required ? 'NOT NULL' : 'NULL'),
 				'default' => $default_value
 			);
 
@@ -602,11 +602,11 @@ class ExtraFields
 				$typedb = $type;
 				$lengthdb = $length;
 			}
-			$field_desc = array('type'=>$typedb, 'value'=>$lengthdb, 'null'=>($required ? 'NOT NULL' : 'NULL'), 'default'=>$default);
+			$field_desc = array('type' => $typedb, 'value' => $lengthdb, 'null' => ($required ? 'NOT NULL' : 'NULL'), 'default' => $default);
 
 			if (is_object($hookmanager)) {
 				$hookmanager->initHooks(array('extrafieldsdao'));
-				$parameters = array('field_desc'=>&$field_desc, 'table'=>$table, 'attr_name'=>$attrname, 'label'=>$label, 'type'=>$type, 'length'=>$length, 'unique'=>$unique, 'required'=>$required, 'pos'=>$pos, 'param'=>$param, 'alwayseditable'=>$alwayseditable, 'perms'=>$perms, 'list'=>$list, 'help'=>$help, 'default'=>$default, 'computed'=>$computed, 'entity'=>$entity, 'langfile'=>$langfile, 'enabled'=>$enabled, 'totalizable'=>$totalizable, 'printable'=>$printable);
+				$parameters = array('field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length, 'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity, 'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable);
 				$reshook = $hookmanager->executeHooks('updateExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				if ($reshook < 0) {
@@ -1078,24 +1078,24 @@ class ExtraFields
 			$out ='<link rel="stylesheet" href="'.dol_buildpath('/myfield/css/fontawesome-iconpicker.min.css', 1).'">';
 			$out.='<script src="'.dol_buildpath('/myfield/js/fontawesome-iconpicker.min.js', 1).'"></script>';
 			*/
-			$out.= '<input type="text" class="form-control icp icp-auto iconpicker-element iconpicker-input flat '.$morecss.' maxwidthonsmartphone"';
-			$out.= ' name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
+			$out .= '<input type="text" class="form-control icp icp-auto iconpicker-element iconpicker-input flat '.$morecss.' maxwidthonsmartphone"';
+			$out .= ' name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			if (getDolGlobalInt('MAIN_ADD_ICONPICKER_JS')) {
-				$out.='<script>';
-				$options="{ title: '<b>".$langs->trans("IconFieldSelector")."</b>', placement: 'right', showFooter: false, templates: {";
-				$options.="iconpicker: '<div class=\"iconpicker\"><div style=\"background-color:#EFEFEF;\" class=\"iconpicker-items\"></div></div>',";
-				$options.="iconpickerItem: '<a role=\"button\" href=\"#\" class=\"iconpicker-item\" style=\"background-color:#DDDDDD;\"><i></i></a>',";
+				$out .= '<script>';
+				$options = "{ title: '<b>".$langs->trans("IconFieldSelector")."</b>', placement: 'right', showFooter: false, templates: {";
+				$options .= "iconpicker: '<div class=\"iconpicker\"><div style=\"background-color:#EFEFEF;\" class=\"iconpicker-items\"></div></div>',";
+				$options .= "iconpickerItem: '<a role=\"button\" href=\"#\" class=\"iconpicker-item\" style=\"background-color:#DDDDDD;\"><i></i></a>',";
 				// $options.="buttons: '<button style=\"background-color:#FFFFFF;\" class=\"iconpicker-btn iconpicker-btn-cancel btn btn-default btn-sm\">".$langs->trans("Cancel")."</button>";
 				// $options.="<button style=\"background-color:#FFFFFF;\" class=\"iconpicker-btn iconpicker-btn-accept btn btn-primary btn-sm\">".$langs->trans("Save")."</button>',";
-				$options.="footer: '<div class=\"popover-footer\" style=\"background-color:#EFEFEF;\"></div>',";
-				$options.="search: '<input type=\"search\" class\"form-control iconpicker-search\" placeholder=\"".$langs->trans("TypeToFilter")."\" />',";
-				$options.="popover: '<div class=\"iconpicker-popover popover\">";
-				$options.="   <div class=\"arrow\" ></div>";
-				$options.="   <div class=\"popover-title\" style=\"text-align:center;background-color:#EFEFEF;\"></div>";
-				$options.="   <div class=\"popover-content \" ></div>";
-				$options.="</div>'}}";
-				$out.="$('#".$keyprefix.$key.$keysuffix."').iconpicker(".$options.");";
-				$out.='</script>';
+				$options .= "footer: '<div class=\"popover-footer\" style=\"background-color:#EFEFEF;\"></div>',";
+				$options .= "search: '<input type=\"search\" class\"form-control iconpicker-search\" placeholder=\"".$langs->trans("TypeToFilter")."\" />',";
+				$options .= "popover: '<div class=\"iconpicker-popover popover\">";
+				$options .= "   <div class=\"arrow\" ></div>";
+				$options .= "   <div class=\"popover-title\" style=\"text-align:center;background-color:#EFEFEF;\"></div>";
+				$options .= "   <div class=\"popover-content \" ></div>";
+				$options .= "</div>'}}";
+				$out .= "$('#".$keyprefix.$key.$keysuffix."').iconpicker(".$options.");";
+				$out .= '</script>';
 			}
 		} elseif ($type == 'text') {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
@@ -1598,7 +1598,7 @@ class ExtraFields
 			$element = $extrafieldsobjectkey;		// $extrafieldsobjectkey comes from $object->table_element but we need $object->element
 			if ($element == 'socpeople') {
 				$element = 'contact';
-			} elseif ( $element == 'projet' ) {
+			} elseif ($element == 'projet') {
 				$element = 'project';
 			}
 
@@ -2029,13 +2029,13 @@ class ExtraFields
 	{
 		global $conf, $langs;
 
-		$tagtype='tr';
-		$tagtype_dyn='td';
+		$tagtype = 'tr';
+		$tagtype_dyn = 'td';
 
-		if ($display_type=='line') {
-			$tagtype='div';
-			$tagtype_dyn='span';
-			$colspan=0;
+		if ($display_type == 'line') {
+			$tagtype = 'div';
+			$tagtype_dyn = 'span';
+			$colspan = 0;
 		}
 
 		$extrafield_param = $this->attributes[$object->table_element]['param'][$key];

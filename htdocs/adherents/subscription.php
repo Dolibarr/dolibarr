@@ -996,7 +996,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 			$datefrom = dol_get_first_day(dol_print_date($datefrom, "%Y"));
 		}
 	}
-	print $form->selectDate($datefrom, '', '', '', '', "subscription", 1, 1);
+	print $form->selectDate($datefrom, '', 0, 0, 0, "subscription", 1, 1);
 	print "</td></tr>";
 
 	// Date end subscription
@@ -1013,7 +1013,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 		}
 	}
 	print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td>';
-	print $form->selectDate($dateto, 'end', '', '', '', "subscription", 1, 0);
+	print $form->selectDate($dateto, 'end', 0, 0, 0, "subscription", 1, 0);
 	print "</td></tr>";
 
 	if ($adht->subscription) {
@@ -1097,7 +1097,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 				if (!getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') || getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') != 'defaultforfoundationcountry') {
 					print '. <span class="opacitymedium">'.$langs->trans("NoVatOnSubscription", 0).'</span>';
 				}
-				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled('product')|| isModEnabled('service'))) {
+				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled('product') || isModEnabled('service'))) {
 					$prodtmp = new Product($db);
 					$result = $prodtmp->fetch(getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS'));
 					if ($result < 0) {
@@ -1201,6 +1201,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 			$langs->load("errors");
 			$helpcontent .= '<span class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Module310Name")).'</span>'."\n";
 		}
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print $form->textwithpicto($tmp, $helpcontent, 1, 'help', '', 0, 2, 'helpemailtosend');
 	}
 	print '</td></tr>';

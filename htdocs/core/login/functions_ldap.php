@@ -106,6 +106,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		if (empty($dolibarr_main_auth_ldap_filter)) {
 			$userSearchFilter = "(".$ldapuserattr."=".$usertotest.")";
 		} else {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrderInternal
 			$userSearchFilter = str_replace('%1%', $usertotest, $dolibarr_main_auth_ldap_filter);
 		}
 

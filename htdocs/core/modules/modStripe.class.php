@@ -102,7 +102,7 @@ class modStripe extends DolibarrModules
 			'langs'=>'stripe',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>500,
 			'enabled'=>'$conf->stripe->enabled && isModEnabled("banque") && $conf->global->MAIN_FEATURES_LEVEL >= 2',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->banque->modifier',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->rights->banque->modifier',	// Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2
 		);				                // 0=Menu for internal users, 1=external users, 2=both

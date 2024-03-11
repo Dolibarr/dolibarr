@@ -197,9 +197,6 @@ function societe_prepare_head(Societe $object)
 		$title = $langs->trans("PaymentModes");
 
 		if (isModEnabled('stripe')) {
-			//$langs->load("stripe");
-			//$title = $langs->trans("BankAccountsAndGateways");
-
 			$servicestatus = 0;
 			if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
 				$servicestatus = 1;
@@ -1001,7 +998,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$sortorder = GETPOST('sortorder', 'aZ09comma');
 	$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 
-	$search_status = GETPOSTINT("search_status");
+	$search_status = GETPOST("search_status", "intcomma");
 	if ($search_status == '') {
 		$search_status = 1; // always display active customer first
 	}

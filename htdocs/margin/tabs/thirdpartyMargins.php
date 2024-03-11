@@ -199,7 +199,7 @@ if ($socid > 0) {
 	if ($result) {
 		$num = $db->num_rows($result);
 
-		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
 		print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "&amp;socid=".$object->id, $sortfield, $sortorder, '', $num, $num, '');
 
 		$i = 0;

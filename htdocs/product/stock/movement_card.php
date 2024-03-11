@@ -103,21 +103,21 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 $arrayfields = array(
-	'm.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'm.datem'=>array('label'=>$langs->trans("Date"), 'checked'=>1),
-	'p.ref'=>array('label'=>$langs->trans("ProductRef"), 'checked'=>1, 'css'=>'maxwidth100'),
-	'p.label'=>array('label'=>$langs->trans("ProductLabel"), 'checked'=>1),
-	'm.batch'=>array('label'=>$langs->trans("BatchNumberShort"), 'checked'=>1, 'enabled'=>(isModEnabled('productbatch'))),
-	'pl.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(isModEnabled('productbatch'))),
-	'pl.sellby'=>array('label'=>$langs->trans("SellByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(isModEnabled('productbatch'))),
-	'e.ref'=>array('label'=>$langs->trans("Warehouse"), 'checked'=>1, 'enabled'=>(!($id > 0))), // If we are on specific warehouse, we hide it
-	'm.fk_user_author'=>array('label'=>$langs->trans("Author"), 'checked'=>0),
-	'm.inventorycode'=>array('label'=>$langs->trans("InventoryCodeShort"), 'checked'=>1),
-	'm.label'=>array('label'=>$langs->trans("MovementLabel"), 'checked'=>1),
-	'm.type_mouvement'=>array('label'=>$langs->trans("TypeMovement"), 'checked'=>1),
-	'origin'=>array('label'=>$langs->trans("Origin"), 'checked'=>1),
-	'm.value'=>array('label'=>$langs->trans("Qty"), 'checked'=>1),
-	'm.price'=>array('label'=>$langs->trans("UnitPurchaseValue"), 'checked'=>0),
+	'm.rowid' => array('label' => $langs->trans("Ref"), 'checked' => 1),
+	'm.datem' => array('label' => $langs->trans("Date"), 'checked' => 1),
+	'p.ref' => array('label' => $langs->trans("ProductRef"), 'checked' => 1, 'css' => 'maxwidth100'),
+	'p.label' => array('label' => $langs->trans("ProductLabel"), 'checked' => 1),
+	'm.batch' => array('label' => $langs->trans("BatchNumberShort"), 'checked' => 1, 'enabled' => (isModEnabled('productbatch'))),
+	'pl.eatby' => array('label' => $langs->trans("EatByDate"), 'checked' => 0, 'position' => 10, 'enabled' => (isModEnabled('productbatch'))),
+	'pl.sellby' => array('label' => $langs->trans("SellByDate"), 'checked' => 0, 'position' => 10, 'enabled' => (isModEnabled('productbatch'))),
+	'e.ref' => array('label' => $langs->trans("Warehouse"), 'checked' => 1, 'enabled' => (!($id > 0))), // If we are on specific warehouse, we hide it
+	'm.fk_user_author' => array('label' => $langs->trans("Author"), 'checked' => 0),
+	'm.inventorycode' => array('label' => $langs->trans("InventoryCodeShort"), 'checked' => 1),
+	'm.label' => array('label' => $langs->trans("MovementLabel"), 'checked' => 1),
+	'm.type_mouvement' => array('label' => $langs->trans("TypeMovement"), 'checked' => 1),
+	'origin' => array('label' => $langs->trans("Origin"), 'checked' => 1),
+	'm.value' => array('label' => $langs->trans("Qty"), 'checked' => 1),
+	'm.price' => array('label' => $langs->trans("UnitPurchaseValue"), 'checked' => 0),
 	//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	//'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
 );
@@ -754,6 +754,10 @@ if ($resql) {
 	}
 
 	if ($sall) {
+		if (!isset($fieldstosearchall) || !is_array($fieldstosearchall)) {
+			// Ensure $fieldstosearchall is array
+			$fieldstosearchall = array();
+		}
 		foreach ($fieldstosearchall as $key => $val) {
 			$fieldstosearchall[$key] = $langs->trans($val);
 		}
@@ -891,7 +895,7 @@ if ($resql) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields);
+	$parameters = array('arrayfields' => $arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
@@ -963,7 +967,7 @@ if ($resql) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
 	// Hook fields
-	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (!empty($arrayfields['m.datec']['checked'])) {

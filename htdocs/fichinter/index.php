@@ -94,10 +94,11 @@ if ($resql) {
 	$total = 0;
 	$totalinprocess = 0;
 	$dataseries = array();
+	$colorseries = array();
 	$vals = array();
 	$bool = false;
 	// -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
-	if ($num>0) {
+	if ($num > 0) {
 		while ($row = $db->fetch_row($resql)) {
 			if (!isset($vals[$row[1]])) {
 				$vals[$row[1]] = 0;

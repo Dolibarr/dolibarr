@@ -143,14 +143,14 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	 *  @param  int  		$type       Type of barcode (EAN, ISBN, ...) as rowid
 	 *  @return string
 	 */
-	public function literalBarcodeType($db, $type = '')
+	public function literalBarcodeType($db, $type = 0)
 	{
 		global $conf;
 		$out = '';
 
 		$sql = "SELECT rowid, code, libelle as label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
-		$sql .= " WHERE rowid = '".$db->escape($type)."'";
+		$sql .= " WHERE rowid = ". (int) $type;
 		$sql .= " AND entity = ".((int) $conf->entity);
 		$result = $db->query($sql);
 		if ($result) {
