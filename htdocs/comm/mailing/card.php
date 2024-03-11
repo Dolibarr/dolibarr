@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +71,7 @@ $signature = ((!empty($user->signature) && !getDolGlobalString('MAIN_MAIL_DO_NOT
 
 $targetobject = null; // Not defined with mass emailing
 
-$parameters = array('mode'=>'emailing');
+$parameters = array('mode' => 'emailing');
 $substitutionarray = FormMail::getAvailableSubstitKey('emailing', $targetobject);
 
 $object->substitutionarrayfortest = $substitutionarray;
@@ -237,7 +238,7 @@ if (empty($reshook)) {
 
 						$signature = ((!empty($user->signature) && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $user->signature : '');
 
-						$parameters = array('mode'=>'emailing');
+						$parameters = array('mode' => 'emailing');
 						$substitutionarray = getCommonSubstitutionArray($langs, 0, array('object', 'objectamount'), $targetobject); // Note: On mass emailing, this is null because be don't know object
 
 						// Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
@@ -488,7 +489,7 @@ if (empty($reshook)) {
 
 			$signature = ((!empty($user->signature) && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $user->signature : '');
 
-			$parameters = array('mode'=>'emailing');
+			$parameters = array('mode' => 'emailing');
 			$substitutionarray = getCommonSubstitutionArray($langs, 0, array('object', 'objectamount'), $targetobject); // Note: On mass emailing, this is null because be don't know object
 
 			// other are set at begin of page
@@ -536,7 +537,7 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans("MailSuccessfulySent", $mailfile->getValidAddress($object->email_from, 2), $mailfile->getValidAddress($object->sendto, 2)), null, 'mesgs');
 				$action = '';
 			} else {
-				setEventMessages($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result, null, 'errors');
+				setEventMessages($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.json_encode($result), null, 'errors');
 				$action = 'test';
 			}
 		}
@@ -883,7 +884,7 @@ if ($action == 'create') {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.(!empty($urlfrom) ? '&urlfrom='.urlencode($urlfrom) : ''), $langs->trans("DeleteMailing"), $langs->trans("ConfirmDeleteMailing"), "confirm_delete", '', '', 1);
 		}
 
-		if ($action != 'edit' && $action != 'edittxt' &&$action != 'edithtml') {
+		if ($action != 'edit' && $action != 'edittxt' && $action != 'edithtml') {
 			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
 
 			/*
@@ -1190,7 +1191,7 @@ if ($action == 'create') {
 				$formmail = new FormMail($db);
 				$formmail->fromname = $object->email_from;
 				$formmail->frommail = $object->email_from;
-				$formmail->withsubstit =0;
+				$formmail->withsubstit = 0;
 				$formmail->withfrom = 0;
 				$formmail->withto = $user->email ? $user->email : 1;
 				$formmail->withtocc = 0;
