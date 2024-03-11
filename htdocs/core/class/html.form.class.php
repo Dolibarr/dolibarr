@@ -10706,7 +10706,7 @@ class Form
 		$ret .= '<div class="divadvancedsearchfieldcompinput inline-block minwidth500 maxwidth300onsmartphone">';
 
 		// Show select fields as tags.
-		$ret .= '<div name="divsearch_component_params" class="noborderbottom search_component_params inline-block valignmiddle">';
+		$ret .= '<div id="divsearch_component_params" name="divsearch_component_params" class="noborderbottom search_component_params inline-block valignmiddle">';
 
 		if ($search_component_params_hidden) {
 			// Split the criteria on each AND
@@ -10804,6 +10804,27 @@ class Form
 			// We repost the form
 			$(this).closest(\'form\').submit();
 		});
+
+		jQuery("#search_component_params_input").keydown(function(e) {
+			console.log("We press a key on the filter field that is "+jQuery("#search_component_params_input").val());
+			console.log(e.which);
+			if (jQuery("#search_component_params_input").val() == "" && e.which == 8) {
+				/* We click on back when the input field is already empty */
+			   	event.preventDefault();
+				jQuery("#divsearch_component_params .tagsearch").last().remove();
+				/* Regenerate content of search_component_params_hidden from remaining .tagsearch */
+				var s = "";
+				jQuery("#divsearch_component_params .tagsearch").each(function( index ) {
+					if (s != "") {
+						s = s + " AND ";
+					}
+					s = s + $(this).attr("data-ufilter");
+				});
+				console.log("New value for search_component_params_hidden = "+s);
+				jQuery("#search_component_params_hidden").val(s);
+			}
+		});
+
 		</script>
 		';
 
