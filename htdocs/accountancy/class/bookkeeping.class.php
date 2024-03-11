@@ -938,8 +938,6 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = 't.date_export <= \''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.date_validated>=') {
 					$sqlwhere[] = 't;date_validate >= \''.$this->db->idate($value).'\'';
-				} elseif ($key == 't.date_validated>=') {
-					$sqlwhere[] = 't;date_validate <= \''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.credit' || $key == 't.debit') {
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
 				} elseif ($key == 't.reconciled_option') {
