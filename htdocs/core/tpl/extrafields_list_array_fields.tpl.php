@@ -3,6 +3,11 @@
 // This tpl file is included into the init part of pages, so before action.
 // So no output must be done.
 
+// TODO: Note, supposing $arrayfields is already set
+'
+ @phan-var-force array $arrayfields;
+';
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";

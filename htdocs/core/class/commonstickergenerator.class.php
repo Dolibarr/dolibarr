@@ -296,7 +296,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	 * protected Set format
 	 *
 	 * @param    TCPDF     $pdf     PDF reference
-	 * @param    string    $format  Format
+	 * @param    array{metric:string,name:string,code:string,marginLeft:float,marginTip:float,SpaceX:float,SpaceY:float,NX:int,NY:int,width:float,height:float,font-size:float}	$format  Format
 	 * @return   void
 	 */
 	protected function _Set_Format(&$pdf, $format)

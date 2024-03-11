@@ -742,6 +742,7 @@ if (empty($reshook)) {
 					$ldap_mobile = $attribute[getDolGlobalString('LDAP_FIELD_MOBILE')];
 					$ldap_mail = $attribute[getDolGlobalString('LDAP_FIELD_MAIL')];
 					$ldap_sid = $attribute[getDolGlobalString('LDAP_FIELD_SID')];
+					$ldap_social = array();
 
 					if (isModEnabled('socialnetworks')) {
 						$arrayofsocialnetworks = array('skype', 'twitter', 'facebook', 'linkedin');

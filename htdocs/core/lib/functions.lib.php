@@ -682,7 +682,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 {
 	global $mysoc, $user, $conf;
 
-	if (empty($paramname)) {
+	if (empty($paramname)) {   // Explicit test for null for phan.
 		return 'BadFirstParameterForGETPOST';
 	}
 	if (empty($check)) {
@@ -874,6 +874,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value, when using variable parameters __XXX__ in the GET URL)
 	// Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOMPANY_COUNTRY_ID__, __USER_ID__, ...
 	// We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
+	'@phan-var-force string $paramname';
 	if (!is_array($out) && empty($_POST[$paramname]) && empty($noreplace)) {
 		$reg = array();
 		$maxloop = 20;
@@ -951,7 +952,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			$out = preg_replace('/([<>])([-+]?\d)/', '\1 \2', $out);
 		}
 
-		// @phan-suppress-next-line ParamMatchRegexError
+		// @phan-suppress-next-line UnknownSanitizeType
 		$out = sanitizeVal($out, $check, $filter, $options);
 	}
 
@@ -2789,7 +2790,7 @@ function fieldLabel($langkey, $fieldkey, $fieldrequired = 0)
 /**
  * Return string to add class property on html element with pair/impair.
  *
- * @param	string	$var			0 or 1
+ * @param	boolean	$var			false or true
  * @param	string	$moreclass		More class to add
  * @return	string					String to add class onto HTML element
  */
@@ -4368,7 +4369,7 @@ function dol_substr($string, $start, $length = null, $stringencoding = '', $trun
 	global $langs;
 
 	if (empty($stringencoding)) {
-		$stringencoding = $langs->charset_output;
+		$stringencoding = (empty($langs) ? 'UTF-8' : $langs->charset_output);
 	}
 
 	$ret = '';
@@ -10394,6 +10395,8 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						$newtab[1] = $label;
 						$newtab[2] = str_replace('+', '', $values[1]);
 						$h++;
+					} else {
+						continue;
 					}
 				} elseif (count($values) == 5) {       // case deprecated
 					dol_syslog('Passing 5 values in tabs module_parts is deprecated. Please update to 6 with permissions.', LOG_WARNING);
@@ -10654,7 +10657,7 @@ function printCommonFooter($zone = 'private')
 		}
 
 		// Add DebugBar data
-		if ($user->hasRight('debugbar', 'read') && is_object($debugbar)) {
+		if ($user->hasRight('debugbar', 'read') && $debugbar instanceof DebugBar\DebugBar) {
 			$debugbar['time']->stopMeasure('pageaftermaster');
 			print '<!-- Output debugbar data -->'."\n";
 			$renderer = $debugbar->getRenderer();

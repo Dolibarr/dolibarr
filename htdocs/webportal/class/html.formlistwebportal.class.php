@@ -581,12 +581,12 @@ class FormListWebPortal
 			if ($elementEn == 'invoice') {
 				// store company
 				$idCompany = (int) $obj->fk_soc;
-				if (!isset($companyStaticList[$obj->fk_soc])) {
+				if (!isset($this->companyStaticList[$obj->fk_soc])) {
 					$companyStatic = new Societe($this->db);
 					$companyStatic->fetch($idCompany);
-					$companyStaticList[$idCompany] = $companyStatic;
+					$this->companyStaticList[$idCompany] = $companyStatic;
 				}
-				$companyStatic = $companyStaticList[$obj->fk_soc];
+				$companyStatic = $this->companyStaticList[$obj->fk_soc];
 
 				// paid sum
 				$payment = $object->getSommePaiement();

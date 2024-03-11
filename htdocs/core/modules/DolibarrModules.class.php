@@ -69,7 +69,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $family;
 
 	/**
-	 * @var array Custom family information
+	 * @var array<string,array{position:string,label:string}> Custom family information
 	 * @see $family
 	 *
 	 * e.g.:
@@ -140,7 +140,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $menu = array();
 
 	/**
-	 * @var array Module parts
+	 * @var array{triggers:int,login:int,substitutions:int,menus:int,theme:int,tpl:int,barcode:int,models:int,css:string,js:string,hooks:string[]} Module parts
 	 *  array(
 	 *      // Set this to 1 if module has its own trigger directory (/mymodule/core/triggers)
 	 *      'triggers' => 0,
@@ -247,7 +247,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $export_code;
 
 	/**
-	 * @var string Module export label
+	 * @var string[] Module export label
 	 */
 	public $export_label;
 
@@ -279,7 +279,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $import_code;
 
 	/**
-	 * @var string Module import label
+	 * @var string[] Module import label
 	 */
 	public $import_label;
 
@@ -691,7 +691,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-		$content='';
+		$content = '';
 		$pathoffile = $this->getDescLongReadmeFound();
 
 		if ($pathoffile) {     // Mostly for external modules
@@ -801,7 +801,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			if ((float) DOL_VERSION >= 6.0) {
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
 
-				$content = dolMd2Html($content, 'parsedown', array('doc/'=>dol_buildpath(strtolower($this->name).'/doc/', 1)));
+				$content = dolMd2Html($content, 'parsedown', array('doc/' => dol_buildpath(strtolower($this->name).'/doc/', 1)));
 			} else {
 				$content = nl2br($content);
 			}
@@ -2493,7 +2493,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if ($this->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
 			$versionTitle =  $langs->trans("Version").' '.$this->getVersion(1);
 			if ($this->needUpdate) {
-				$versionTitle.= '<br>'.$langs->trans('ModuleUpdateAvailable').' : '.$this->lastVersion;
+				$versionTitle .= '<br>'.$langs->trans('ModuleUpdateAvailable').' : '.$this->lastVersion;
 			}
 
 			$return .=  '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').' classfortooltip" title="'.dol_escape_js($versionTitle).'" >';

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,9 @@ class MenuManager
 	public $atarget = ""; // To store default target to use onto links
 	public $name = "empty";
 
+	/**
+	 * @var Menu
+	 */
 	public $menu;
 	public $menu_array_after;
 
@@ -309,13 +313,7 @@ class MenuManager
 							}
 							print $val2['titre'];
 							if ($relurl2) {
-								if ($val2['enabled']) {
-									// Allowed
-									print '</a>';
-								} else {
-									// Not allowed
-									print '</a>';
-								}
+								print '</a>';
 							}
 							print '</li>'."\n";
 						}
@@ -521,7 +519,13 @@ function print_text_menu_entry_empty($text, $showmode, $url, $id, $idsel, $class
 	if ($showmode == 1) {
 		print '<a '.$classnameimg.' tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
 		print '<div class="'.$id.' '.$idsel.' topmenuimage">';
-		print '<span class="'.$id.' tmenuimageforpng" id="mainmenuspan_'.$idsel.'"></span>';
+		if (!empty($menuval['prefix']) && strpos($menuval['prefix'], '<span') === 0) {
+			print $menuval['prefix'];
+		} elseif (!empty($menuval['prefix']) && strpos($menuval['prefix'], 'fa-') === 0) {
+			print '<span class="'.$id.' '.$menuval['prefix'].'" id="mainmenuspan_'.$idsel.'"></span>';
+		} else {
+			print '<span class="'.$id.' tmenuimageforpng" id="mainmenuspan_'.$idsel.'"></span>';
+		}
 		print '</div>';
 		print '</a>';
 		if (!getDolGlobalString('THEME_TOPMENU_DISABLE_TEXT')) {

@@ -184,7 +184,7 @@ class SimpleOpenID
 	{
 		// phpcs:enable
 		$e = $this->error;
-		return array('code'=>$e[0], 'description'=>$e[1]);
+		return array('code' => $e[0], 'description' => $e[1]);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -198,6 +198,7 @@ class SimpleOpenID
 	public function ErrorStore($code, $desc = null)
 	{
 		// phpcs:enable
+		$errs = array();
 		$errs['OPENID_NOSERVERSFOUND'] = 'Cannot find OpenID Server TAG on Identity page.';
 		if ($desc == null) {
 			$desc = $errs[$code];

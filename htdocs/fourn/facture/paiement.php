@@ -155,6 +155,7 @@ if (empty($reshook)) {
 		$totalpayment = 0;
 		$atleastonepaymentnotnull = 0;
 		$multicurrency_totalpayment = 0;
+		$formquestion = array();
 
 		// Generate payment array and check if there is payment higher than invoice and payment date before invoice date
 		$tmpinvoice = new FactureFournisseur($db);

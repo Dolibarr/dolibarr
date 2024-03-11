@@ -129,6 +129,7 @@ print '<th colspan="4">'.$langs->trans("Statistics").'</th>';
 print "</tr>\n";
 
 $listoftype = $tripandexpense_static->listOfTypes();
+$dataseries = array();
 foreach ($listoftype as $code => $label) {
 	$dataseries[] = array($label, (isset($somme[$code]) ? (int) $somme[$code] : 0));
 }
