@@ -1748,7 +1748,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<td colspan="3" class="maxwidthonsmartphone">';
 			$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'AND u.statut = 1', 0, '', '', 0, 2);
 			// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
-			$selected = (count(GETPOSTINT('commercial')) > 0 ? GETPOSTINT('commercial') : (GETPOSTINT('commercial') > 0 ? array(GETPOSTINT('commercial')) : (!$user->hasRight('societe', 'client', 'voir') ? array($user->id) : array())));
+			$selected = (GETPOSTINT('commercial') > 0 ? GETPOSTINT('commercial') : (GETPOSTINT('commercial') > 0 ? array(GETPOSTINT('commercial')) : (!$user->hasRight('societe', 'client', 'voir') ? array($user->id) : array())));
 			print img_picto('', 'user').$form->multiselectarray('commercial', $userlist, $selected, null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print '</td></tr>';
 
