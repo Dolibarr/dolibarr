@@ -62,11 +62,11 @@ abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 	/**
 	 *  Return next value available
 	 *
-	 *	@param	Product		$objproduct	Object Product
-	 *	@param	string		$type		Type of barcode (EAN, ISBN, ...)
-	 *  @return string      			Value
+	 *	@param	CommonObject	$objcommon	CommonObject
+	 *	@param	string			$type		Type of barcode (EAN, ISBN, ...)
+	 *  @return string      				Value
 	 */
-	public function getNextValue($objproduct, $type = '')
+	public function getNextValue($objcommon, $type = '')
 	{
 		global $langs;
 		return $langs->trans("Function_getNextValue_InModuleNotWorking");
