@@ -12061,16 +12061,16 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 /**
  * Get an array with properties of an element.
  *
- * @param   string 	$element_type 	Element type (Value of $object->element). Example:
- * 									'action', 'facture', 'project', 'project_task' or
- * 									'myobject@mymodule' or
- * 									'myobject_mysubobject' (where mymodule = myobject, like 'project_task')
+ * @param   string $elementType       Element type (Value of $object->element). Example:
+ *                                    'action', 'facture', 'project', 'project_task' or
+ *                                    'myobject@mymodule' or
+ *                                    'myobject_mysubobject' (where mymodule = myobject, like 'project_task')
  * @return  array					array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>)
  * @see fetchObjectByElement(), getMultiDirOutput()
  */
-function getElementProperties($element_type)
+function getElementProperties($elementType)
 {
-	global $conf;
+	global $conf, $db, $hookmanager;
 
 	$regs = array();
 
@@ -12079,13 +12079,13 @@ function getElementProperties($element_type)
 	$classfile = $classname = $classpath = $subdir = $dir_output = '';
 
 	// Parse element/subelement
-	$module = $element_type;
-	$element = $element_type;
-	$subelement = $element_type;
-	$table_element = $element_type;
+	$module = $elementType;
+	$element = $elementType;
+	$subelement = $elementType;
+	$table_element = $elementType;
 
 	// If we ask a resource form external module (instead of default path)
-	if (preg_match('/^([^@]+)@([^@]+)$/i', $element_type, $regs)) {	// 'myobject@mymodule'
+	if (preg_match('/^([^@]+)@([^@]+)$/i', $elementType, $regs)) {	// 'myobject@mymodule'
 		$element = $subelement = $regs[1];
 		$module = $regs[2];
 	}
@@ -12098,138 +12098,138 @@ function getElementProperties($element_type)
 	}
 
 	// For compatibility and to work with non standard path
-	if ($element_type == "action") {
+	if ($elementType == "action") {
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
 		$module = 'agenda';
 		$table_element = 'actioncomm';
-	} elseif ($element_type == 'cronjob') {
+	} elseif ($elementType == 'cronjob') {
 		$classpath = 'cron/class';
 		$module = 'cron';
 		$table_element = 'cron';
-	} elseif ($element_type == 'adherent_type') {
+	} elseif ($elementType == 'adherent_type') {
 		$classpath = 'adherents/class';
 		$classfile = 'adherent_type';
 		$module = 'adherent';
 		$subelement = 'adherent_type';
 		$classname = 'AdherentType';
 		$table_element = 'adherent_type';
-	} elseif ($element_type == 'bank_account') {
+	} elseif ($elementType == 'bank_account') {
 		$classpath = 'compta/bank/class';
 		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
 		$classfile = 'account';
 		$classname = 'Account';
-	} elseif ($element_type == 'category') {
+	} elseif ($elementType == 'category') {
 		$classpath = 'categories/class';
 		$module = 'categorie';
 		$subelement = 'categorie';
 		$table_element = 'categorie';
-	} elseif ($element_type == 'contact') {
+	} elseif ($elementType == 'contact') {
 		$classpath = 'contact/class';
 		$classfile = 'contact';
 		$module = 'societe';
 		$subelement = 'contact';
 		$table_element = 'socpeople';
-	} elseif ($element_type == 'inventory') {
+	} elseif ($elementType == 'inventory') {
 		$module = 'product';
 		$classpath = 'product/inventory/class';
-	} elseif ($element_type == 'stock') {
+	} elseif ($elementType == 'stock') {
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
 		$classname = 'Entrepot';
 		$table_element = 'entrepot';
-	} elseif ($element_type == 'project') {
+	} elseif ($elementType == 'project') {
 		$classpath = 'projet/class';
 		$module = 'projet';
 		$table_element = 'projet';
-	} elseif ($element_type == 'project_task') {
+	} elseif ($elementType == 'project_task') {
 		$classpath = 'projet/class';
 		$module = 'projet';
 		$subelement = 'task';
 		$table_element = 'projet_task';
-	} elseif ($element_type == 'facture' || $element_type == 'invoice') {
+	} elseif ($elementType == 'facture' || $elementType == 'invoice') {
 		$classpath = 'compta/facture/class';
 		$module = 'facture';
 		$subelement = 'facture';
 		$table_element = 'facture';
-	} elseif ($element_type == 'commande' || $element_type == 'order') {
+	} elseif ($elementType == 'commande' || $elementType == 'order') {
 		$classpath = 'commande/class';
 		$module = 'commande';
 		$subelement = 'commande';
 		$table_element = 'commande';
-	} elseif ($element_type == 'propal') {
+	} elseif ($elementType == 'propal') {
 		$classpath = 'comm/propal/class';
 		$table_element = 'propal';
-	} elseif ($element_type == 'shipping') {
+	} elseif ($elementType == 'shipping') {
 		$classpath = 'expedition/class';
 		$classfile = 'expedition';
 		$classname = 'Expedition';
 		$module = 'expedition';
 		$table_element = 'expedition';
-	} elseif ($element_type == 'supplier_proposal') {
+	} elseif ($elementType == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
 		$element = 'supplierproposal';
 		$classfile = 'supplier_proposal';
 		$subelement = 'supplierproposal';
-	} elseif ($element_type == 'shipping') {
+	} elseif ($elementType == 'shipping') {
 		$classpath = 'expedition/class';
 		$subelement = 'expedition';
 		$module = 'expedition_bon';
-	} elseif ($element_type == 'delivery') {
+	} elseif ($elementType == 'delivery') {
 		$classpath = 'delivery/class';
 		$subelement = 'delivery';
 		$module = 'expedition';
-	} elseif ($element_type == 'contract') {
+	} elseif ($elementType == 'contract') {
 		$classpath = 'contrat/class';
 		$module = 'contrat';
 		$subelement = 'contrat';
 		$table_element = 'contract';
-	} elseif ($element_type == 'mailing') {
+	} elseif ($elementType == 'mailing') {
 		$classpath = 'comm/mailing/class';
 		$module = 'mailing';
 		$classfile = 'mailing';
 		$classname = 'Mailing';
 		$subelement = '';
-	} elseif ($element_type == 'member') {
+	} elseif ($elementType == 'member') {
 		$classpath = 'adherents/class';
 		$module = 'adherent';
 		$subelement = 'adherent';
 		$table_element = 'adherent';
-	} elseif ($element_type == 'usergroup') {
+	} elseif ($elementType == 'usergroup') {
 		$classpath = 'user/class';
 		$module = 'user';
-	} elseif ($element_type == 'mo') {
+	} elseif ($elementType == 'mo') {
 		$classpath = 'mrp/class';
 		$classfile = 'mo';
 		$classname = 'Mo';
 		$module = 'mrp';
 		$subelement = '';
 		$table_element = 'mrp_mo';
-	} elseif ($element_type == 'cabinetmed_cons') {
+	} elseif ($elementType == 'cabinetmed_cons') {
 		$classpath = 'cabinetmed/class';
 		$module = 'cabinetmed';
 		$subelement = 'cabinetmedcons';
 		$table_element = 'cabinetmedcons';
-	} elseif ($element_type == 'fichinter') {
+	} elseif ($elementType == 'fichinter') {
 		$classpath = 'fichinter/class';
 		$module = 'ficheinter';
 		$subelement = 'fichinter';
 		$table_element = 'fichinter';
-	} elseif ($element_type == 'dolresource' || $element_type == 'resource') {
+	} elseif ($elementType == 'dolresource' || $elementType == 'resource') {
 		$classpath = 'resource/class';
 		$module = 'resource';
 		$subelement = 'dolresource';
 		$table_element = 'resource';
-	} elseif ($element_type == 'propaldet') {
+	} elseif ($elementType == 'propaldet') {
 		$classpath = 'comm/propal/class';
 		$module = 'propal';
 		$subelement = 'propaleligne';
-	} elseif ($element_type == 'opensurvey_sondage') {
+	} elseif ($elementType == 'opensurvey_sondage') {
 		$classpath = 'opensurvey/class';
 		$module = 'opensurvey';
 		$subelement = 'opensurveysondage';
-	} elseif ($element_type == 'order_supplier') {
+	} elseif ($elementType == 'order_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.commande';
@@ -12237,7 +12237,7 @@ function getElementProperties($element_type)
 		$subelement = '';
 		$classname = 'CommandeFournisseur';
 		$table_element = 'commande_fournisseur';
-	} elseif ($element_type == 'invoice_supplier') {
+	} elseif ($elementType == 'invoice_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.facture';
@@ -12245,19 +12245,19 @@ function getElementProperties($element_type)
 		$subelement = '';
 		$classname = 'FactureFournisseur';
 		$table_element = 'facture_fourn';
-	} elseif ($element_type == "service") {
+	} elseif ($elementType == "service") {
 		$classpath = 'product/class';
 		$subelement = 'product';
 		$table_element = 'product';
-	} elseif ($element_type == 'salary') {
+	} elseif ($elementType == 'salary') {
 		$classpath = 'salaries/class';
 		$module = 'salaries';
-	} elseif ($element_type == 'payment_salary') {
+	} elseif ($elementType == 'payment_salary') {
 		$classpath = 'salaries/class';
 		$classfile = 'paymentsalary';
 		$classname = 'PaymentSalary';
 		$module = 'salaries';
-	} elseif ($element_type == 'productlot') {
+	} elseif ($elementType == 'productlot') {
 		$module = 'productbatch';
 		$classpath = 'product/stock/class';
 		$classfile = 'productlot';
@@ -12265,27 +12265,27 @@ function getElementProperties($element_type)
 		$element = 'productlot';
 		$subelement = '';
 		$table_element = 'product_lot';
-	} elseif ($element_type == 'websitepage') {
+	} elseif ($elementType == 'websitepage') {
 		$classpath = 'website/class';
 		$classfile = 'websitepage';
 		$classname = 'Websitepage';
 		$module = 'website';
 		$subelement = 'websitepage';
 		$table_element = 'website_page';
-	} elseif ($element_type == 'fiscalyear') {
+	} elseif ($elementType == 'fiscalyear') {
 		$classpath = 'core/class';
 		$module = 'accounting';
 		$subelement = 'fiscalyear';
-	} elseif ($element_type == 'chargesociales') {
+	} elseif ($elementType == 'chargesociales') {
 		$classpath = 'compta/sociales/class';
 		$module = 'tax';
 		$table_element = 'chargesociales';
-	} elseif ($element_type == 'tva') {
+	} elseif ($elementType == 'tva') {
 		$classpath = 'compta/tva/class';
 		$module = 'tax';
 		$subdir = '/vat';
 		$table_element = 'tva';
-	} elseif ($element_type == 'emailsenderprofile') {
+	} elseif ($elementType == 'emailsenderprofile') {
 		$module = '';
 		$classpath = 'core/class';
 		$classfile = 'emailsenderprofile';
@@ -12325,7 +12325,7 @@ function getElementProperties($element_type)
 	}
 	$dir_output .= $subdir;
 
-	$element_properties = array(
+	$elementProperties = array(
 		'module' => $module,
 		'element' => $element,
 		'table_element' => $table_element,
@@ -12336,8 +12336,35 @@ function getElementProperties($element_type)
 		'dir_output' => $dir_output
 	);
 
-	//var_dump($element_properties);
-	return $element_properties;
+
+	// Add  hook
+	if (!is_object($hookmanager)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($db);
+	}
+	$hookmanager->initHooks(array('elementproperties'));
+
+
+	// Hook params
+	$parameters = array(
+		'elementType' => $elementType,
+		'elementProperties' => $elementProperties
+	);
+
+	$reshook = $hookmanager->executeHooks('getElementProperties', $parameters);
+
+	if ($reshook) {
+		$elementProperties = $hookmanager->resArray;
+	} elseif (!empty($hookmanager->resArray) && is_array($hookmanager->resArray)) { // resArray is always an array but for sécurity against misconfigured external modules
+		$elementProperties = array_replace($elementProperties, $hookmanager->resArray);
+	}
+
+	// context of elementproperties doesn't need to exist out of this function so delete it to avoid elementproperties context is equal to all
+	if (($key = array_search('elementproperties', $hookmanager->contextarray)) !== false) {
+		unset($hookmanager->contextarray[$key]);
+	}
+
+	return $elementProperties;
 }
 
 /**
