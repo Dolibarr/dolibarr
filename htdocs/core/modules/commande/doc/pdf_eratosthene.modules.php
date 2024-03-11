@@ -1658,7 +1658,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			}
 
 			// Show recipient frame
-			if (!getDolGlobalString('MAIN_PDF_NO_RECIPENT_FRAME')) {
+			if (!getDolGlobalString('MAIN_PDF_NO_RECIPIENT_FRAME')) {
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx + 2, $posy - 5);
