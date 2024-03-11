@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017-2022  OpenDSI     <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -314,7 +315,7 @@ class AccountingJournal extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('accountingjournaldao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -420,12 +421,12 @@ class AccountingJournal extends CommonObject
 				case 1: // Various Journal
 					$data = $this->getAssetData($user, $type, $date_start, $date_end, $in_bookkeeping);
 					break;
-				//              case 2: // Sells Journal
-				//              case 3: // Purchases Journal
-				//              case 4: // Bank Journal
-				//              case 5: // Expense reports Journal
-				//              case 8: // Inventory Journal
-				//              case 9: // hasnew Journal
+					//              case 2: // Sells Journal
+					//              case 3: // Purchases Journal
+					//              case 4: // Bank Journal
+					//              case 5: // Expense reports Journal
+					//              case 8: // Inventory Journal
+					//              case 9: // hasnew Journal
 			}
 		}
 

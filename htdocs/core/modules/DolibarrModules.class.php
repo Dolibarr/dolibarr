@@ -247,7 +247,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $export_code;
 
 	/**
-	 * @var string Module export label
+	 * @var string[] Module export label
 	 */
 	public $export_label;
 
@@ -279,7 +279,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $import_code;
 
 	/**
-	 * @var string Module import label
+	 * @var string[] Module import label
 	 */
 	public $import_label;
 

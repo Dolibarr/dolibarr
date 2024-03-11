@@ -695,20 +695,11 @@ if ($resql) {
 
 		// Defined date_start_in_calendar and date_end_in_calendar property
 		// They are date start and end of action but modified to not be outside calendar view.
-		if ($event->percentage <= 0) {
-			$event->date_start_in_calendar = $datep;
-			if ($datep2 != '' && $datep2 >= $datep) {
-				$event->date_end_in_calendar = $datep2;
-			} else {
-				$event->date_end_in_calendar = $datep;
-			}
+		$event->date_start_in_calendar = $datep;
+		if ($datep2 != '' && $datep2 >= $datep) {
+			$event->date_end_in_calendar = $datep2;
 		} else {
-			$event->date_start_in_calendar = $datep;
-			if ($datep2 != '' && $datep2 >= $datep) {
-				$event->date_end_in_calendar = $datep2;
-			} else {
-				$event->date_end_in_calendar = $datep;
-			}
+			$event->date_end_in_calendar = $datep;
 		}
 
 		// Check values
