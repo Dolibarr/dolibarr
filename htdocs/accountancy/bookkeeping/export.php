@@ -528,7 +528,7 @@ $sqlwhere = array();
 if (count($filter) > 0) {
 	foreach ($filter as $key => $value) {
 		if ($key == 't.doc_date') {
-			$sqlwhere[] = $db->sanitize($key).' = \''.$db->idate($value).'\'';
+			$sqlwhere[] = $db->sanitize($key)." = '".$db->idate($value)."'";
 		} elseif ($key == 't.doc_date>=') {
 			$sqlwhere[] = "t.doc_date >= '".$db->idate($value)."'";
 		} elseif ($key == 't.doc_date<=') {
