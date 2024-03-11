@@ -4369,7 +4369,7 @@ function dol_substr($string, $start, $length = null, $stringencoding = '', $trun
 	global $langs;
 
 	if (empty($stringencoding)) {
-		$stringencoding = $langs->charset_output;
+		$stringencoding = (empty($langs) ? 'UTF-8' : $langs->charset_output);
 	}
 
 	$ret = '';

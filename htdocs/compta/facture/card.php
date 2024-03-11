@@ -5954,23 +5954,24 @@ if ($action == 'create') {
 
 			// Delete
 			$isErasable = $object->is_erasable();
+			$htmltooltip = '';
+			if ($isErasable == -4) {
+				$htmltooltip = $langs->trans('DisabledBecausePayments');
+			} elseif ($isErasable == -3) {
+				$htmltooltip = $langs->trans('DisabledBecauseNotLastSituationInvoice');
+			} elseif ($isErasable == -2) {
+				$htmltooltip = $langs->trans('DisabledBecauseNotLastInvoice');
+			} elseif ($isErasable == -1) {
+				$htmltooltip = $langs->trans('DisabledBecauseDispatchedInBookkeeping');
+			} elseif ($isErasable <= 0) {	// Any other cases
+				$htmltooltip = $langs->trans('DisabledBecauseNotErasable');
+			} elseif ($objectidnext) {
+				$htmltooltip = $langs->trans('DisabledBecauseReplacedInvoice');
+			}
 			if ($usercandelete || ($usercancreate && $isErasable == 1)) {	// isErasable = 1 means draft with temporary ref (draft can always be deleted with no need of permissions)
 				$enableDelete = false;
 				$deleteHref = '#';
-				$htmltooltip = '';
-				if ($isErasable == -4) {
-					$htmltooltip = $langs->trans('DisabledBecausePayments');
-				} elseif ($isErasable == -3) {
-					$htmltooltip = $langs->trans('DisabledBecauseNotLastSituationInvoice');
-				} elseif ($isErasable == -2) {
-					$htmltooltip = $langs->trans('DisabledBecauseNotLastInvoice');
-				} elseif ($isErasable == -1) {
-					$htmltooltip = $langs->trans('DisabledBecauseDispatchedInBookkeeping');
-				} elseif ($isErasable <= 0) {	// Any other cases
-					$htmltooltip = $langs->trans('DisabledBecauseNotErasable');
-				} elseif ($objectidnext) {
-					$htmltooltip = $langs->trans('DisabledBecauseReplacedInvoice');
-				} else {
+				if ($isErasable > 0 && ! $objectidnext) {
 					$deleteHref = $_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=delete&token='.newToken();
 					$enableDelete = true;
 				}

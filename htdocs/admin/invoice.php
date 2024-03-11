@@ -23,7 +23,7 @@
  */
 
 /**
- *      \file       htdocs/admin/facture.php
+ *      \file       htdocs/admin/invoice.php
  *		\ingroup    facture
  *		\brief      Page to setup invoice module
  */
@@ -49,6 +49,8 @@ $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'invoice';
+
+$error = 0;
 
 
 /*

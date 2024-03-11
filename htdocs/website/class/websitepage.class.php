@@ -515,6 +515,7 @@ class WebsitePage extends CommonObject
 		$sql = 'SELECT COUNT(t.rowid) as nb';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.fk_website = '.((int) $websiteid);
+
 		// Manage filter (same than into fetchAll)
 		$sqlwhere = array();
 		if (count($filter) > 0) {
