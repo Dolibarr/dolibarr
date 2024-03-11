@@ -98,7 +98,7 @@ class mod_reception_moonstone extends ModelNumRefReception
 	 *	Return next value
 	 *
 	 *	@param	Societe			$objsoc     Third party object
-	 *	@param	Receptiont|null	$reception	Reception object
+	 *	@param	Reception|null	$reception	Reception object
 	 *	@return string|0      				Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $reception)
