@@ -4,6 +4,7 @@
  * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
  * Copyright (C) 2020-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux  <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Jon Bendtsen        <jon.bendtsen@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +56,7 @@ class Thirdparties extends DolibarrApi
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 
 		$this->company = new Societe($this->db);
 
@@ -1073,6 +1075,209 @@ class Thirdparties extends DolibarrApi
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Get CompanyNotification objects for thirdparty
+	 *
+	 * @param int $id ID of thirdparty
+	 *
+	 * @return array
+	 *
+	 * @url GET {id}/notifications
+	 */
+	public function getCompanyNotification($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
+			throw new RestException(403);
+		}
+		if (empty($id)) {
+			throw new RestException(400, 'Thirdparty ID is mandatory');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		/**
+		 * We select all the records that match the socid
+		 */
+
+		$sql = "SELECT rowid, fk_action, fk_soc, fk_contact, fk_user, email, threshold, context, type, datec, tms as datem";
+		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
+		if ($id) {
+			$sql .= " WHERE fk_soc  = ".((int) $id);
+		}
+
+		$result = $this->db->query($sql);
+
+		if ($this->db->num_rows($result) == 0) {
+			throw new RestException(404, 'Notification not found');
+		}
+
+		$i = 0;
+
+		$notifications = array();
+
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($result);
+				$notification = new CompanyNotification($this->db);
+				if ($notification->fetch($obj->rowid)) {
+					$notifications[] = $notification;
+				}
+				$i++;
+			}
+		} else {
+			throw new RestException(404, 'Account not found');
+		}
+
+
+		$fields = array('socid', 'default_rib', 'frstrecur', '1000110000001', 'datec', 'datem', 'label', 'bank', 'bic', 'iban', 'id', 'rum');
+
+		$returnAccounts = array();
+
+		foreach ($notifications as $notification) {
+			$object = array();
+			foreach ($notification as $key => $value) {
+				if (in_array($key, $fields)) {
+					$object[$key] = $value;
+				}
+			}
+			$returnAccounts[] = $object;
+		}
+
+		return $returnAccounts;
+	}
+
+	/**
+	 * Create CompanyNotification object for thirdparty
+	 * @param int  $id ID of thirdparty
+	 * @param array $request_data Request data
+	 *
+	 * @return array|mixed  Notification of thirdparty
+	 *
+	 * @url POST {id}/notifications
+	 */
+	public function createCompanyNotification($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
+			throw new RestException(403);
+		}
+		if ($this->company->fetch($id) <= 0) {
+			throw new RestException(404, 'Error creating Company notification, Company doesn\'t exists');
+		}
+		$notification = new CompanyNotification($this->db);
+
+		$notification->socid = $id;
+
+		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->company->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
+			$notification->$field = $value;
+		}
+
+		if ($notification->create(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, 'Error creating Company notification');
+		}
+
+		if (empty($notification->rum)) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+			$prelevement = new BonPrelevement($this->db);
+			$notification->rum = $prelevement->buildRumNumber($this->company->code_client, $notification->datec, $notification->id);
+			$notification->date_rum = dol_now();
+		}
+
+		if ($notification->update(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, 'Error updating values');
+		}
+
+		return $this->_cleanObjectDatas($notification);
+	}
+
+	/**
+	 * Update CompanyNotification object for thirdparty
+	 *
+	 * @param int $id ID of thirdparty
+	 * @param int  $notification_id ID of CompanyNotification
+	 * @param array $request_data Request data
+	 *
+	 * @return array|mixed  Notification of thirdparty
+	 *
+	 * @url PUT {id}/notifications/{notification_id}
+	 */
+	public function updateCompanyNotification($id, $notification_id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
+			throw new RestException(403);
+		}
+		if ($this->company->fetch($id) <= 0) {
+			throw new RestException(404, 'Error creating Company Bank notification, Company doesn\'t exists');
+		}
+		$notification = new CompanyNotification($this->db);
+
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+		$notification->fetch($notification_id, $id, -1, '');
+
+		if ($notification->socid != $id) {
+			throw new RestException(403);
+		}
+
+
+		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$notification->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
+			$notification->$field = $value;
+		}
+
+		if (empty($notification->rum)) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+			$prelevement = new BonPrelevement($this->db);
+			$notification->rum = $prelevement->buildRumNumber($this->company->code_client, $notification->datec, $notification->id);
+			$notification->date_rum = dol_now();
+		}
+
+		if ($notification->update(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, 'Error updating values');
+		}
+
+		return $this->_cleanObjectDatas($notification);
+	}
+
+	/**
+	 * Delete a CompanyNotification attached to a thirdparty
+	 *
+	 * @param int $id ID of thirdparty
+	 * @param int $notification_id ID of CompanyNotification
+	 *
+	 * @return int -1 if error 1 if correct deletion
+	 *
+	 * @url DELETE {id}/notifications/{notification_id}
+	 */
+	public function deleteCompanyNotification($id, $notification_id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$notification = new CompanyNotification($this->db);
+
+		$notification->fetch($notification_id);
+
+		if (!$notification->socid == $id) {
+			throw new RestException(403);
+		}
+
+		return $notification->delete(DolibarrApiAccess::$user);
 	}
 
 	/**
