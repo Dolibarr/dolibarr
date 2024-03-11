@@ -60,7 +60,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $editor_url;
 
 	/**
-	 * @var string Family
+	 * @var string 	Family
 	 * @see $familyinfo
 	 *
 	 * Native values: 'crm', 'financial', 'hr', 'projects', 'products', 'ecm', 'technic', 'other'.
