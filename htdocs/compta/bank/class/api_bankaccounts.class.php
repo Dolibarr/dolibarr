@@ -258,7 +258,7 @@ class BankAccounts extends DolibarrApi
 
 		// Clean data
 		$description = sanitizeVal($description, 'alphanohtml');
-		$cheque_number = sanitizeVal($cheque_number);
+		$cheque_number = sanitizeVal($cheque_number, 'alphanohtml');
 
 		/**
 		 * Creating bank line records
