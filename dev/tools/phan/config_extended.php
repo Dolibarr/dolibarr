@@ -206,6 +206,26 @@ return [
 		'mysoc' => '\Societe',
 		'nblines' => '\int',
 		'user' => '\User',
+		'dolibarr_main_data_root' => 'string',
+		'dolibarr_main_authentication' => 'string',
+		'dolibarr_main_demo' => 'string',
+		'menumanager' => 'string',
+		'errormsg' => 'string',
+		'form' => '\Form',
+		'object_rights' => 'int|stdClass',
+		'disableedit' => 'int<0,1>',
+		'disablemove' => 'int<0,1>',
+		'disableremove' => 'int<0,1>',
+		// Found in dol_eval
+		'website' => '\WebSite',
+		'websitepage' => '\WebSitePage',
+		'websitepagefile' => 'string',
+		'action' => 'string',
+		'mainmenu' => 'string',
+		'leftmenu' => 'string',
+		'objectoffield' => '\CommonObject',
+		// 'object' => '\CommonObject',  // Deprecated, not enabled because conflicts with $object assignments
+		'obj' => '\CommonObject',     // Deprecated
 	],
 
 	// Supported values: `'5.6'`, `'7.0'`, `'7.1'`, `'7.2'`, `'7.3'`, `'7.4'`, `null`.
@@ -254,6 +274,7 @@ return [
 		.'|htdocs/includes/restler/.*'  // @phpstan-ignore-line
 		// Included as stub (did not seem properly analysed by phan without it)
 		.'|htdocs/includes/stripe/.*'  // @phpstan-ignore-line
+		.'|htdocs/conf/conf.php'  // @phpstan-ignore-line
 		.')@',  // @phpstan-ignore-line
 
 	// A list of plugin files to execute.
@@ -266,11 +287,11 @@ return [
 	// Alternately, you can pass in the full path to a PHP file
 	// with the plugin's implementation (e.g. 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php')
 	'ParamMatchRegexPlugin' => [
-		'/^GETPOST$/' => [1, $sanitizeRegex],
+		'/^GETPOST$/' => [1, $sanitizeRegex, 'GetPostUnknownSanitizeType'],
 		'/^isModEnabled$/' => [0, $moduleNameRegex, 'UnknownModuleName'],
 		// Note: trick to have different key for same regex:
 		'/^isModEnable[d]$/' => [0, $deprecatedModuleNameRegex, "DeprecatedModuleName"],
-		'/^sanitizeVal$/' => [1, $sanitizeRegex],
+		'/^sanitizeVal$/' => [1, $sanitizeRegex,"UnknownSanitizeType"],
 	],
 	'plugins' => [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',

@@ -5374,7 +5374,7 @@ class Form
 							$h = isset($input['hours']) ? $input['hours'] : 1;
 							$m = isset($input['minutes']) ? $input['minutes'] : 1;
 						}
-						$more .= $this->selectDate($input['value'], $input['name'], $h, $m, 0, '', 1, $addnowlink);
+						$more .= $this->selectDate(isset($input['value']) ? $input['value'] : -1, $input['name'], $h, $m, 0, '', 1, $addnowlink);
 						$more .= '</div></div>'."\n";
 						$formquestion[] = array('name' => $input['name'].'day');
 						$formquestion[] = array('name' => $input['name'].'month');
