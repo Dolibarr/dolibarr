@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015		Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2023-2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -225,14 +226,14 @@ class Dolresource extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 			$result = $this->insertExtraFields();
 			if ($result < 0) {
-				$error=-1;
+				$error = -1;
 			}
 		}
 
 		if (!$error && !$no_trigger) {
 			$result = $this->call_trigger('RESOURCE_CREATE', $user);
 			if ($result < 0) {
-				$error=-1;
+				$error = -1;
 			}
 		}
 
@@ -660,7 +661,7 @@ class Dolresource extends CommonObject
 		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
 		if ($errormessage) {
 			$this->errors[] = $errormessage;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			return -1;
 		}
 
@@ -820,9 +821,9 @@ class Dolresource extends CommonObject
 				$resources[$i] = array(
 					'rowid' => $obj->rowid,
 					'resource_id' => $obj->resource_id,
-					'resource_type'=>$obj->resource_type,
-					'busy'=>$obj->busy,
-					'mandatory'=>$obj->mandatory
+					'resource_type' => $obj->resource_type,
+					'busy' => $obj->busy,
+					'mandatory' => $obj->mandatory
 				);
 				$i++;
 			}
@@ -984,7 +985,7 @@ class Dolresource extends CommonObject
 		$result .= $linkend;
 
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

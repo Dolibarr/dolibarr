@@ -4,6 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,13 +138,13 @@ class ProductStockEntrepot extends CommonObject
 			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 
 			//if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action to call a trigger.
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action to call a trigger.
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) $error++;
-				//// End call triggers
+			//// Call triggers
+			//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
+			//if ($result < 0) $error++;
+			//// End call triggers
 			//}
 		}
 
@@ -275,7 +276,7 @@ class ProductStockEntrepot extends CommonObject
 		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
 		if ($errormessage) {
 			$this->errors[] = $errormessage;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			return -1;
 		}
 
@@ -299,11 +300,11 @@ class ProductStockEntrepot extends CommonObject
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				$lines[$obj->rowid] = array(
-										'id'=>$obj->rowid
-										,'fk_product'=>$obj->fk_product
-										,'fk_entrepot'=>$obj->fk_entrepot
-										,'seuil_stock_alerte'=>$obj->seuil_stock_alerte
-										,'desiredstock'=>$obj->desiredstock
+										'id' => $obj->rowid
+										,'fk_product' => $obj->fk_product
+										,'fk_entrepot' => $obj->fk_entrepot
+										,'seuil_stock_alerte' => $obj->seuil_stock_alerte
+										,'desiredstock' => $obj->desiredstock
 									);
 			}
 			$this->db->free($resql);
