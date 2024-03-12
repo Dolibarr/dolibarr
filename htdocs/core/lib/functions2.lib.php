@@ -7,6 +7,7 @@
  * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -892,7 +893,7 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
  * @param   string		$table			Table containing field with counter
  * @param   string		$field			Field containing already used values of counter
  * @param   string		$where			To add a filter on selection (for example to filter on invoice types)
- * @param   Societe		$objsoc			The company that own the object we need a counter for
+ * @param   Societe|string $objsoc		The company that own the object we need a counter for
  * @param   string		$date			Date to use for the {y},{m},{d} tags.
  * @param   string		$mode			'next' for next value or 'last' for last value
  * @param   bool		$bentityon		Activate the entity filter. Default is true (for modules not compatible with multicompany)
@@ -2511,16 +2512,16 @@ function colorLighten($hex, $percent)
 
 
 /**
- * @param string 	$hex 			color in hex
- * @param float 	$alpha 			0 to 1 to add alpha channel
- * @param bool 		$returnArray	true=return an array instead, false=return string
- * @return string|array				String or array
+ * @param string 		$hex 			color in hex
+ * @param float|false	$alpha 			0 to 1 to add alpha channel
+ * @param bool 			$returnArray	true=return an array instead, false=return string
+ * @return string|array					String or array
  */
 function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 {
 	$string = '';
-	$hex      = str_replace('#', '', $hex);
-	$length   = strlen($hex);
+	$hex = str_replace('#', '', $hex);
+	$length = strlen($hex);
 	$rgb = array();
 	$rgb['r'] = hexdec($length == 6 ? substr($hex, 0, 2) : ($length == 3 ? str_repeat(substr($hex, 0, 1), 2) : 0));
 	$rgb['g'] = hexdec($length == 6 ? substr($hex, 2, 2) : ($length == 3 ? str_repeat(substr($hex, 1, 1), 2) : 0));

@@ -5,6 +5,7 @@
  * Copyright (C) 2016		Juanjo Menent   	<jmenent@2byte.es>
  * Copyright (C) 2019	   Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -228,8 +229,8 @@ function account_statement_prepare_head($object, $num)
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @param   CommonObject	$object		Object related to tabs
+ * @return  array						Array of tabs to shoc
  */
 function various_payment_prepare_head($object)
 {
@@ -275,8 +276,8 @@ function various_payment_prepare_head($object)
 /**
  *      Check SWIFT information for a bank account
  *
- *      @param  Account     $account    A bank account (used to get BIC/SWIFT)
- *      @param	string		$swift		Swift value (used to get BIC/SWIFT, param $account non used if provided)
+ *      @param  ?Account	$account    A bank account (used to get BIC/SWIFT)
+ *      @param	?string		$swift		Swift value (used to get BIC/SWIFT, param $account non used if provided)
  *      @return boolean                 True if information are valid, false otherwise
  */
 function checkSwiftForAccount(Account $account = null, $swift = null)
@@ -296,8 +297,8 @@ function checkSwiftForAccount(Account $account = null, $swift = null)
 /**
  *      Check IBAN number information for a bank account.
  *
- *      @param  Account     $account    	A bank account
- *      @param	string		$ibantocheck	Bank account number (used to get BAN, $account not used if provided)
+ *      @param  ?Account	$account    	A bank account
+ *      @param	?string		$ibantocheck	Bank account number (used to get BAN, $account not used if provided)
  *      @return boolean                 	True if information are valid, false otherwise
  */
 function checkIbanForAccount(Account $account = null, $ibantocheck = null)

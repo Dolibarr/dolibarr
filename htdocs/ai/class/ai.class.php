@@ -16,6 +16,8 @@
  * or see https://www.gnu.org/
  */
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
 
 /**
  * Class for AI
@@ -117,31 +119,25 @@ class Ai
 			}
 			$fullInstructions = $prePrompt.' '.$instructions.' .'.$postPrompt;
 
-			// TODO Replace this with a simple call of getDolURLContent();
-			$ch = curl_init($this->apiEndpoint);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+
+			$payload = json_encode([
 				'messages' => [
 					['role' => 'user', 'content' => $fullInstructions]
 				],
 				'model' => $model
-			]));
-			curl_setopt($ch, CURLOPT_HTTPHEADER, [
+			]);
+
+			$headers = ([
 				'Authorization: Bearer ' . $this->apiKey,
 				'Content-Type: application/json'
 			]);
+			$response = getURLContent($this->apiEndpoint, 'POST', $payload, $headers);
 
-			$response = curl_exec($ch);
-			if (curl_errno($ch)) {
-				throw new Exception('cURL error: ' . curl_error($ch));
-			}
-
-			$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-			if ($statusCode != 200) {
-				throw new Exception('API request failed with status code ' . $statusCode);
+			if ($response['http_code']  != 200) {
+				throw new Exception('API request failed with status code ' . $response['http_code']);
 			}
 			// Decode JSON response
-			$decodedResponse = json_decode($response, true);
+			$decodedResponse = json_decode($response['content'], true);
 
 			// Extraction content
 			$generatedEmailContent = $decodedResponse['choices'][0]['message']['content'];
@@ -154,8 +150,6 @@ class Ai
 			return $generatedEmailContent;
 		} catch (Exception $e) {
 			return array('error' => true, 'message' => $e->getMessage());
-		} finally {
-			curl_close($ch);
 		}
 	}
 }
