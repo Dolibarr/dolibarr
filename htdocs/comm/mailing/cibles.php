@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -364,6 +365,7 @@ if ($object->fetch($id) >= 0) {
 			$nbemail .= ' '.img_warning($langs->trans('ToAddRecipientsChooseHere'));//.' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
 		}
 		if ($text) {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			print $form->textwithpicto($nbemail, $text, 1, 'warning');
 		} else {
 			print $nbemail;
