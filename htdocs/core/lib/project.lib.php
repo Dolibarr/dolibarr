@@ -167,7 +167,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled('intervention')) {
 				$nbElements += $project->getElementCount('intervention', 'fichinter');
 			}
-			if (isModEnabled("delivery_note")) {
+			if (isModEnabled("shipping")) {
 				$nbElements += $project->getElementCount('shipping', 'expedition');
 			}
 			if (isModEnabled('mrp')) {

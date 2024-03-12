@@ -501,7 +501,7 @@ class AccountingAccount extends CommonObject
 			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/list.php?search_accountancy_code_start=' . urlencode($this->account_number) . '&search_accountancy_code_end=' . urlencode($this->account_number);
 			$labelurl = $langs->trans("ShowAccountingAccountInJournals");
 		} elseif ($option == 'accountcard') {
-			$url = DOL_URL_ROOT . '/accountancy/admin/card.php?id=' . urlencode($this->id);
+			$url = DOL_URL_ROOT . '/accountancy/admin/card.php?id=' . urlencode((string) ($this->id));
 			$labelurl = $langs->trans("ShowAccountingAccount");
 		}
 
@@ -570,7 +570,7 @@ class AccountingAccount extends CommonObject
 		}
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -745,7 +745,7 @@ class AccountingAccount extends CommonObject
 		$hookmanager->initHooks(array('accountancyBindingCalculation'));
 
 		// Execute hook accountancyBindingCalculation
-		$parameters = array('buyer' => $buyer, 'seller' => $seller, 'product' => $product, 'facture' => $facture, 'factureDet' => $factureDet ,'accountingAccount'=>$accountingAccount, $type);
+		$parameters = array('buyer' => $buyer, 'seller' => $seller, 'product' => $product, 'facture' => $facture, 'factureDet' => $factureDet ,'accountingAccount' => $accountingAccount, $type);
 		$reshook = $hookmanager->executeHooks('accountancyBindingCalculation', $parameters); // Note that $action and $object may have been modified by some hooks
 
 		if (empty($reshook)) {

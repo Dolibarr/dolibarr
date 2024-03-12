@@ -151,7 +151,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Products-Services
 	$tmpentry = array(
-		'enabled'=> (isModEnabled('product') || isModEnabled('service') || isModEnabled('delivery_note')),
+		'enabled'=> (isModEnabled('product') || isModEnabled('service') || isModEnabled('shipping')),
 		'perms'=> ($user->hasRight('product', 'read') || $user->hasRight('service', 'read') || $user->hasRight('expedition', 'lire')),
 		'module'=>'product|service'
 	);
@@ -590,7 +590,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	}
 
 	$showmode = 1;
-	if (empty($noout)) {
+	if (empty($noout) && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 		print_start_menu_entry('', 'class="tmenuend"', $showmode);
 		print_end_menu_entry($showmode);
 		print_end_menu_array();
@@ -1371,7 +1371,7 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "orders") {
 				$newmenu->add("/commande/list.php?leftmenu=orders&search_status=0", $langs->trans("StatusOrderDraftShort"), 2, $user->hasRight('commande', 'lire'));
 				$newmenu->add("/commande/list.php?leftmenu=orders&search_status=1", $langs->trans("StatusOrderValidated"), 2, $user->hasRight('commande', 'lire'));
-				if (isModEnabled('delivery_note')) {
+				if (isModEnabled('shipping')) {
 					$newmenu->add("/commande/list.php?leftmenu=orders&search_status=2", $langs->trans("StatusOrderSentShort"), 2, $user->hasRight('commande', 'lire'));
 				}
 				$newmenu->add("/commande/list.php?leftmenu=orders&search_status=3", $langs->trans("StatusOrderDelivered"), 2, $user->hasRight('commande', 'lire'));
@@ -2157,7 +2157,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		}
 
 		// Shipments
-		if (isModEnabled('delivery_note')) {
+		if (isModEnabled('shipping')) {
 			$langs->load("sendings");
 			$newmenu->add("/expedition/index.php?leftmenu=sendings", $langs->trans("Shipments"), 0, $user->hasRight('expedition', 'lire'), '', $mainmenu, 'sendings', 0, '', '', '', img_picto('', 'shipment', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/expedition/card.php?action=create2&amp;leftmenu=sendings", $langs->trans("NewSending"), 1, $user->hasRight('expedition', 'creer'));

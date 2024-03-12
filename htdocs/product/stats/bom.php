@@ -82,7 +82,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$object = $product;
 
-	$parameters = array('id'=>$id);
+	$parameters = array('id' => $id);
 	$reshook = $hookmanager->executeHooks('doActions', $parameters, $product, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -130,7 +130,7 @@ if ($id > 0 || !empty($ref)) {
 		//Calcul total qty and amount for global if full scan list
 		$total_qty_toconsume = 0;
 		$total_qty_toproduce = 0;
-		$product_cache=array();
+		$product_cache = array();
 		$bom_data_result = array();
 
 		//Qauntity  to produce
@@ -283,7 +283,7 @@ if ($id > 0 || !empty($ref)) {
 		print_barre_liste($langs->trans("BOMs"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', count($bom_data_result), count($bom_data_result), '', 0, '', '', $limit, 0, 0, 1);
 
 		if (!empty($page)) {
-			$option .= '&page='.urlencode($page);
+			$option .= '&page='.urlencode((string) ($page));
 		}
 
 		print '<div class="div-table-responsive">';

@@ -78,7 +78,7 @@ class MenuManager
 	 *
 	 *	@param	string	$mode			'top', 'left', 'jmobile'
 	 *  @param	array	$moredata		An array with more data to output
-	 *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
+	 *  @return int|string				0 or nb of top menu entries if $mode = 'topnb', string inc ase of bad parameter
 	 */
 	public function showmenu($mode, $moredata = null)
 	{
@@ -139,7 +139,7 @@ class MenuManager
 			}
 
 			$showmode = 1;
-			if (empty($noout)) {
+			if (empty($noout) && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				print_start_menu_entry_empty('', 'class="tmenuend"', $showmode);
 			}
 			if (empty($noout)) {

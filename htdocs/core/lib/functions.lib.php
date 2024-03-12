@@ -2116,9 +2116,10 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 	if (!empty($conf->use_javascript_ajax)) {
 		// Add code to open url using the popup. Add also hidden field to retrieve the returned variables
 		$out .= '<!-- code to open popup and variables to retrieve returned variables -->';
-		$out .= '<div id="idfordialog'.$name.'" class="hidden">div for dialog</div>';
-		$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">div for returned id</div>';
-		$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">div for returned label</div>';
+		$out .= '<div id="idfordialog'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for dialog' : '').'</div>';
+		$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for returned id' : '').'</div>';
+		$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for returned label' : '').'</div>';
+
 		$out .= '<!-- Add js code to open dialog popup on dialog -->';
 		$out .= '<script nonce="'.getNonce().'" type="text/javascript">
 					jQuery(document).ready(function () {
@@ -2334,7 +2335,9 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 			$tabsname = str_replace("@", "", $picto);
 		}
 		$out .= '<div id="moretabs'.$tabsname.'" class="inline-block tabsElem valignmiddle">';
-		$out .= '<div class="tab valignmiddle"><a href="#" class="tab moretab inline-block tabunactive valignmiddle"><span class="hideonsmartphone">'.$langs->trans("More").'</span>... ('.$nbintab.')</a></div>'; // Do not use "reposition" class in the "More".
+		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
+			$out .= '<div class="tab valignmiddle"><a href="#" class="tab moretab inline-block tabunactive valignmiddle"><span class="hideonsmartphone">'.$langs->trans("More").'</span>... ('.$nbintab.')</a></div>'; // Do not use "reposition" class in the "More".
+		}
 		$out .= '<div id="moretabsList'.$tabsname.'" style="width: '.$widthofpopup.'px; position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px; z-index:10;">';
 		$out .= $outmore;
 		$out .= '</div>';
@@ -8452,7 +8455,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = 'Direct download url of a contract';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = 'Direct download url of a supplier proposal';
 
-			if (isModEnabled("delivery_note") && (!is_object($object) || $object->element == 'shipping')) {
+			if (isModEnabled("shipping") && (!is_object($object) || $object->element == 'shipping')) {
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = 'Shipping tracking number';
 				$substitutionarray['__SHIPPINGTRACKNUMURL__'] = 'Shipping tracking url';
 				$substitutionarray['__SHIPPINGMETHOD__'] = 'Shipping method';

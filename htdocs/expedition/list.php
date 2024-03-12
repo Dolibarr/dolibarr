@@ -528,10 +528,10 @@ if ($search_ref_customer) {
 	$param .= "&search_ref_customer=".urlencode($search_ref_customer);
 }
 if ($search_user > 0) {
-	$param .= '&search_user='.urlencode($search_user);
+	$param .= '&search_user='.urlencode((string) ($search_user));
 }
 if ($search_sale > 0) {
-	$param .= '&search_sale='.urlencode($search_sale);
+	$param .= '&search_sale='.urlencode((string) ($search_sale));
 }
 if ($search_company) {
 	$param .= "&search_company=".urlencode($search_company);
@@ -551,7 +551,7 @@ if ($search_zip) {
 	$param .= '&search_zip='.urlencode($search_zip);
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
-	$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
+	$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
 }
 if ($search_datedelivery_start) {
 	$param .= '&search_datedelivery_startday='.urlencode(dol_print_date($search_datedelivery_start, '%d')).'&search_datedelivery_startmonth='.urlencode(dol_print_date($search_datedelivery_start, '%m')).'&search_datedelivery_startyear='.urlencode(dol_print_date($search_datedelivery_start, '%Y'));
@@ -566,10 +566,10 @@ if ($search_datereceipt_end) {
 	$param .= '&search_datereceipt_endday='.urlencode(dol_print_date($search_datereceipt_end, '%d')).'&search_datereceipt_endmonth='.urlencode(dol_print_date($search_datereceipt_end, '%m')).'&search_datereceipt_endyear='.urlencode(dol_print_date($search_datereceipt_end, '%Y'));
 }
 if ($search_product_category != '') {
-	$param .= '&search_product_category='.urlencode($search_product_category);
+	$param .= '&search_product_category='.urlencode((string) ($search_product_category));
 }
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
-	$param .= '&search_categ_cus='.urlencode($search_categ_cus);
+	$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
 }
 if ($search_status != '') {
 	$param .= '&search_status='.urlencode($search_status);

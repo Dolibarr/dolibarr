@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2019      Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 // Security check
 $socid = GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
+/** @var User $user */
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
@@ -55,7 +56,7 @@ if ($user->socid > 0) {
 }
 $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
 
-$permissiontocreate = ($user->rights->societe->creer || $user->rights->facture->creer);
+$permissiontocreate = ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer'));
 
 
 

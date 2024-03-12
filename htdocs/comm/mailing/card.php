@@ -847,7 +847,7 @@ if ($action == 'create') {
 
 	$formmail = new FormMail($db);
 	$formmail->withfckeditor = 1;
-	$formmail->withaiprompt = 1;
+	$formmail->withaiprompt = 'html';
 	$formmail->withlayout = 1;
 
 	print '<tr class="fieldsforemail"><td></td><td>';
@@ -1252,7 +1252,7 @@ if ($action == 'create') {
 				$formmail->withtopicreadonly = 1;
 				$formmail->withfile = 0;
 				$formmail->withlayout = 0;
-				$formmail->withaiprompt = 0;
+				$formmail->withaiprompt = '';
 				$formmail->withbody = 0;
 				$formmail->withbodyreadonly = 1;
 				$formmail->withcancel = 1;

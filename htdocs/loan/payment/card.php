@@ -67,7 +67,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('loan', 
 	$result = $payment->delete($user);
 	if ($result > 0) {
 		$db->commit();
-		header("Location: ".DOL_URL_ROOT."/loan/card.php?id=".urlencode($fk_loan));
+		header("Location: ".DOL_URL_ROOT."/loan/card.php?id=".urlencode((string) ($fk_loan)));
 		exit;
 	} else {
 		setEventMessages($payment->error, $payment->errors, 'errors');
