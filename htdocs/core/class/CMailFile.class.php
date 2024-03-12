@@ -1284,6 +1284,7 @@ class CMailFile
 				// --------------------------------------
 
 				$this->error = 'Bad value for sendmode';
+				return false;
 			}
 
 			// Now we delete image files that were created dynamically to manage data inline files
