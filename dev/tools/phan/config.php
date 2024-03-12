@@ -494,7 +494,7 @@ return [
 		'PhanRedefineClass',
 		'PhanRedefineFunction',
 		'PhanTypeInvalidLeftOperandOfBitwiseOp',
-		'PhanTypeMismatchDimAssignment',
+		// 'PhanTypeMismatchDimAssignment',
 		// 'PhanPluginDescriptionlessCommentOnProtectedMethod',
 		'PhanPluginPrintfIncompatibleArgumentTypeWeak',
 		'PhanUndeclaredVariableAssignOp',
