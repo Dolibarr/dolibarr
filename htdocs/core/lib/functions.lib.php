@@ -1051,12 +1051,12 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			break;
 		case 'int':    // Check param is a numeric value (integer but also float or hexadecimal)
 			if (!is_numeric($out)) {
-				$out = '';
+				$out = 0;
 			}
 			break;
 		case 'intcomma':
 			if (preg_match('/[^0-9,-]+/i', $out)) {
-				$out = '';
+				$out = 0;
 			}
 			break;
 		case 'san_alpha':
