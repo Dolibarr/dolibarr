@@ -62,7 +62,7 @@ class mod_reception_beryl extends ModelNumRefReception
 	/**
 	 *	Test if existing numbers make problems with numbering
 	 *
-	 *	@param	Reception	$object		Object we need next value for
+	 *	@param	CommonObject	$object	Object we need next value for
 	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
 	public function canBeActivated($object)
