@@ -764,7 +764,7 @@ if (empty($reshook)) {
 			$fk_unit = GETPOST('unit', 'alpha');
 
 			// update price_ht with discount
-			// TODO Use object->updateline instead objedtline->update
+			// TODO Use object->updateline instead objectline->update
 
 			$price_ht =  price2num(GETPOST('elprice'), 'MU');
 			$remise_percent = price2num(GETPOST('elremise_percent'), '', 2);
@@ -789,7 +789,7 @@ if (empty($reshook)) {
 			$objectline->user_closing_id = $user->id;
 			//$objectline->fk_fournprice = $fk_fournprice;
 			$objectline->pa_ht = $pa_ht;
-			$objectline->rang = $objectline->rang;
+			// $objectline->rang = $objectline->rang;
 
 			if ($fk_unit > 0) {
 				$objectline->fk_unit = GETPOST('unit');
