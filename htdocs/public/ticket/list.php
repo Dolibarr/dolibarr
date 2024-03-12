@@ -347,7 +347,7 @@ if ($action == "view_ticketlist") {
 		$sql .= " t.message,";
 		$sql .= " t.fk_statut,";
 		$sql .= " t.resolution,";
-		if (!empty(getDolGlobalString('TICKET_SHOW_PROGRESSION')))
+		if (getDolGlobalString('TICKET_SHOW_PROGRESSION'))
 			$sql .= " t.progress,";
 		$sql .= " t.timing,";
 		$sql .= " t.type_code,";
@@ -479,7 +479,7 @@ if ($action == "view_ticketlist") {
 					print '</td>';
 				}
 
-				if ((!empty(getDolGlobalString('TICKET_SHOW_PROGRESSION'))) && !empty($arrayfields['t.progress']['checked'])) {
+				if (getDolGlobalString('TICKET_SHOW_PROGRESSION') && !empty($arrayfields['t.progress']['checked'])) {
 					print '<td class="liste_titre"></td>';
 				}
 
@@ -544,7 +544,7 @@ if ($action == "view_ticketlist") {
 				if (!empty($arrayfields['severity.code']['checked'])) {
 					print_liste_field_titre($arrayfields['severity.code']['label'], $url_page_current, 'severity.code', '', $param, '', $sortfield, $sortorder);
 				}
-				if ((!empty(getDolGlobalString('TICKET_SHOW_PROGRESSION'))) && !empty($arrayfields['t.progress']['checked'])) {
+				if (getDolGlobalString('TICKET_SHOW_PROGRESSION') && !empty($arrayfields['t.progress']['checked'])) {
 					print_liste_field_titre($arrayfields['t.progress']['label'], $url_page_current, 't.progress', '', $param, '', $sortfield, $sortorder);
 				}
 				if (!empty($arrayfields['t.fk_user_create']['checked'])) {
@@ -636,7 +636,7 @@ if ($action == "view_ticketlist") {
 					}
 
 					// Progression
-					if ((!empty(getDolGlobalString('TICKET_SHOW_PROGRESSION'))) && !empty($arrayfields['t.progress']['checked'])) {
+					if (getDolGlobalString('TICKET_SHOW_PROGRESSION') && !empty($arrayfields['t.progress']['checked'])) {
 						print '<td>';
 						print $obj->progress;
 						print '</td>';
