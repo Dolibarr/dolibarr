@@ -86,8 +86,8 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@param	SupplierProposal	$object		Object we need next value for
-	 *  @return boolean     					false if KO (there is a conflict), true if OK
+	 *	@param	CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if KO (there is a conflict), true if OK
 	 */
 	public function canBeActivated($object)
 	{
