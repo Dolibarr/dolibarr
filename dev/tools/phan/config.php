@@ -476,7 +476,7 @@ return [
 		// 'PhanPluginUnknownFunctionReturnType',
 		// 'PhanPluginDescriptionlessCommentOnProtectedProperty',
 		'PhanPluginRedundantAssignmentInGlobalScope',
-		'PhanTypeMismatchDeclaredParamNullable',
+		// 'PhanTypeMismatchDeclaredParamNullable',
 		'PhanTypeInvalidRightOperandOfAdd',
 		// 'PhanPluginDescriptionlessCommentOnPrivateProperty',
 		// 'PhanUndeclaredVariableDim',  // Array initialisation on undeclared var: $abc['x']='ab'
