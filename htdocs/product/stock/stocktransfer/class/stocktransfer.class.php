@@ -60,7 +60,7 @@ class StockTransfer extends CommonObject
 
 
 	/**
-	 * @var array    List of child tables. To know object to delete on cascade.
+	 * @var string[] List of child tables. To know object to delete on cascade.
 	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	 */
