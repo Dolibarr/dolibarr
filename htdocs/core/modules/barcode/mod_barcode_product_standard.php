@@ -109,10 +109,10 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 * Return an example of result returned by getNextValue
 	 *
 	 * @param	Translate	$langs			Object langs
-	 * @param	Product		$objproduct		Object product
+	 * @param	?Product	$objproduct		Object product
 	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objproduct = 0)
+	public function getExample($langs, $objproduct = null)
 	{
 		$examplebarcode = $this->getNextValue($objproduct, '');
 		if (!$examplebarcode) {
@@ -155,18 +155,19 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		return $out;
 	}
+
 	/**
 	 * Return next value
 	 *
-	 * @param	  CommonObject	$objproduct   Object product
-	 * @param	  string			  $type       	Type of barcode (EAN, ISBN, ...)
-	 * @return 	string      					      Value if OK, '' if module not configured, <0 if KO
+	 * @param	?CommonObject	$objproduct 	Object product (not used)
+	 * @param	string			$type    		Type of barcode (EAN, ISBN, ...)
+	 * @return 	string      					Value if OK, '' if module not configured, <0 if KO
 	 */
-	public function getNextValue($objproduct, $type = '')
+	public function getNextValue($objproduct = null, $type = '')
 	{
-		global $db, $conf;
+		global $db;
 
-		if (!$objproduct instanceof Product) {
+		if (is_object($objproduct) && !$objproduct instanceof Product) {
 			dol_syslog(get_class($this)."::getNextValue used on incompatible".get_class($objproduct), LOG_ERR);
 			return -1;
 		}
@@ -178,13 +179,8 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 			$type = getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE');
 		} //get barcode type configuration for products if $type not set
 
-		// TODO
-
 		// Get Mask value
-		$mask = '';
-		if (getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK')) {
-			$mask = getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK');
-		}
+		$mask = getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK');
 
 		if (empty($mask)) {
 			$this->error = 'NotConfigured';
@@ -216,7 +212,8 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 			}
 		}
 		//End barcode with key
-		return  $numFinal;
+
+		return $numFinal;
 	}
 
 

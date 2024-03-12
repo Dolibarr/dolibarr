@@ -126,6 +126,25 @@ if ($action == 'update' && !GETPOST('cancel')) {
 	$action = 'edit';
 }
 
+if ($action == 'confirm_deleteproperty') {
+	$key = GETPOST('key', 'alpha');
+
+	//var_dump($currentConfigurations[$key]);exit;
+	if (isset($currentConfigurations[$key])) {
+		unset($currentConfigurations[$key]);
+
+		$newConfigurationsJson = json_encode($currentConfigurations, JSON_UNESCAPED_UNICODE);
+		$res = dolibarr_set_const($db, 'AI_CONFIGURATIONS_PROMPT', $newConfigurationsJson, 'chaine', 0, '', $conf->entity);
+		if ($res) {
+			header("Location: ".$_SERVER['PHP_SELF']);
+			setEventMessages($langs->trans("SetupDeleted"), null, 'mesgs');
+			exit;
+		} else {
+			setEventMessages($langs->trans("ErrorDeleting"), null, 'errors');
+		}
+	}
+}
+
 
 /*
  * View
@@ -152,10 +171,24 @@ $newbutton = '';
 
 print load_fiche_titre($langs->trans("AIPromptForFeatures"), $newbutton, '');
 
+if ($action == 'deleteproperty') {
+	$formconfirm = $form->formconfirm(
+		$_SERVER["PHP_SELF"].'?key='.urlencode(GETPOST('key', 'alpha')),
+		$langs->trans('Delete'),
+		$langs->trans('ConfirmDeleteSetup', GETPOST('key', 'alpha')),
+		'confirm_deleteproperty',
+		'',
+		0,
+		1
+	);
+	print $formconfirm;
+}
+
 if ($action == 'edit') {
 	$out .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 	$out .= '<input type="hidden" name="action" value="update">';
+
 
 	$out .= '<table class="noborder centpercent">';
 	$out .= '<thead>';
@@ -235,7 +268,10 @@ if ($action == 'edit' || $action == 'create') {
 
 			$out .= '<thead>';
 			$out .= '<tr class="liste_titre">';
-			$out .= '<td>'.$arrayofaifeatures[$key]['picto'].' '.$langs->trans($arrayofaifeatures[$key]['label']).'</td>';
+			$out .= '<td>'.$arrayofaifeatures[$key]['picto'].' '.$langs->trans($arrayofaifeatures[$key]['label']);
+			$out .= '<a class="editfielda reposition marginleftonly marginrighttonly " href="'.$_SERVER["PHP_SELF"].'?action=editproperty&token='.newToken().'&key='.urlencode($key).'">'.img_edit().'</a>';
+			$out .= '<a class="deletefielda  marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&key='.urlencode($key).'">'.img_delete().'</a>';
+			$out .= '</td>';
 			$out .= '<td></td>';
 			$out .= '</tr>';
 			$out .= '</thead>';

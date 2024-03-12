@@ -72,10 +72,11 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	}
 
 
-	/**		Return description of module
+	/**
+	 * Return description of module
 	 *
-	 * 		@param	Translate 		$langs		Object langs
-	 * 		@return string      			Description of module
+	 * @param	Translate 	$langs		Object langs
+	 * @return  string      			Description of module
 	 */
 	public function info($langs)
 	{
@@ -120,10 +121,10 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	 * Return an example of result returned by getNextValue
 	 *
 	 * @param	Translate	$langs			Object langs
-	 * @param	Societe		$objthirdparty	Object third-party
+	 * @param	?Societe	$objthirdparty	Object third-party
 	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objthirdparty = 0)
+	public function getExample($langs, $objthirdparty = null)
 	{
 		$examplebarcode = $this->getNextValue($objthirdparty, '');
 		if (!$examplebarcode) {
@@ -169,13 +170,13 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	/**
 	 * Return next value
 	 *
-	 * @param	CommonObject	$objthirdparty  Object third-party
+	 * @param	?CommonObject	$objthirdparty  Object third-party
 	 * @param	string			$type       	Type of barcode (EAN, ISBN, ...)
 	 * @return 	string      					Value if OK, '' if module not configured, <0 if KO
 	 */
-	public function getNextValue($objthirdparty, $type = '')
+	public function getNextValue($objthirdparty = null, $type = '')
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // to be able to call function barcode_gen_ean_sum($ean)
@@ -184,13 +185,8 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 			$type = getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY');
 		} //get barcode type configuration for companies if $type not set
 
-		// TODO
-
 		// Get Mask value
-		$mask = '';
-		if (getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK')) {
-			$mask = getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK');
-		}
+		$mask = getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK');
 
 		if (empty($mask)) {
 			$this->error = 'NotConfigured';
@@ -222,6 +218,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 			}
 		}
 		//End barcode with key
+
 		return  $numFinal;
 	}
 
@@ -242,10 +239,6 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	 */
 	public function verif($db, &$code, $thirdparty, $thirdparty_type, $type)
 	{
-		global $conf;
-
-		//var_dump($code.' '.$thirdparty->ref.' '.$thirdparty_type);exit;
-
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$result = 0;
@@ -273,6 +266,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		}
 
 		dol_syslog(get_class($this)."::verif type=".$thirdparty_type." result=".$result);
+
 		return $result;
 	}
 
