@@ -21,3 +21,4 @@ LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for yo
 PossibleLanguages=Supported languages
 SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
 SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+ConfirmDeleteProperty=Are you sure you want to delete this property ?
