@@ -4224,7 +4224,7 @@ abstract class CommonObject
 					} elseif ($objecttype == 'delivery') {
 						$classpath = 'delivery/class';
 						$subelement = 'delivery';
-						$module = 'delivery_note';
+						$module = 'shipping';
 					} elseif ($objecttype == 'invoice_supplier' || $objecttype == 'order_supplier') {
 						$classpath = 'fourn/class';
 						$module = 'fournisseur';

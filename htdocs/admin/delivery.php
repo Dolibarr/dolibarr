@@ -58,7 +58,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 
 // Shipment note
-if (isModEnabled('delivery_note') && !getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')) {
+if (isModEnabled('shipping') && !getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')) {
 	// This option should always be set to on when module is on.
 	dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1", 'chaine', 0, '', $conf->entity);
 }
