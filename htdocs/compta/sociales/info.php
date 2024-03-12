@@ -111,8 +111,8 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?restore_lastsear
 
 $object->totalpaid = $alreadypayed; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-$morehtmlright = '';
-dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+$morehtmlstatus = '';
+dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
