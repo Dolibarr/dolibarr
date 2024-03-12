@@ -139,7 +139,7 @@ class MenuManager
 			}
 
 			$showmode = 1;
-			if (empty($noout)) {
+			if (empty($noout) && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				print_start_menu_entry_empty('', 'class="tmenuend"', $showmode);
 			}
 			if (empty($noout)) {

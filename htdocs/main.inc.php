@@ -467,7 +467,7 @@ if (GETPOST('theme', 'aZ09')) {
 
 // Set global MAIN_OPTIMIZEFORTEXTBROWSER (must be before login part)
 if (GETPOSTINT('textbrowser') || (!empty($conf->browser->name) && $conf->browser->name == 'lynxlinks')) {   // If we must enable text browser
-	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 1;
+	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 2;
 }
 
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or 'https dolibarr root url')
@@ -2677,6 +2677,11 @@ function top_menu_quickadd()
 {
 	global $conf, $langs;
 
+	// Button disabled on text browser
+	if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		return '';
+	}
+
 	$html = '';
 
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
@@ -2738,7 +2743,7 @@ function top_menu_quickadd()
  */
 function printDropdownQuickadd()
 {
-	global $conf, $user, $langs, $hookmanager;
+	global $user, $langs, $hookmanager;
 
 	$items = array(
 		'items' => array(
