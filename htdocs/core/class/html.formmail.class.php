@@ -142,12 +142,12 @@ class FormMail extends Form
 	public $withfile;
 
 	/**
-	 * @var int	1=Add a button "Fill with layout"
+	 * @var int		1=Add a button "Fill with layout"
 	 */
 	public $withlayout;
 
 	/**
-	 * @var int	1=Add a button "Fill with AI generation"
+	 * @var string	'text' or 'html' to add a button "Fill with AI generation"
 	 */
 	public $withaiprompt;
 
@@ -1051,7 +1051,7 @@ class FormMail extends Form
 					$out .= $this->getModelEmailTemplate();
 				}
 				if ($this->withaiprompt && isModEnabled('ai')) {
-					$out .= $this->getSectionForAIPrompt();
+					$out .= $this->getSectionForAIPrompt($this->withaiprompt);
 				}
 				$out .= '</td>';
 				$out .= '</tr>';
@@ -1399,7 +1399,7 @@ class FormMail extends Form
 	}
 
 	/**
-	 * get Html For Topic of message
+	 * Return Html section for the Topic of message
 	 *
 	 * @param	array	$arraydefaultmessage		Array with message template content
 	 * @param	string	$helpforsubstitution		Help string for substitution
@@ -1437,11 +1437,12 @@ class FormMail extends Form
 	}
 
 	/**
-	 * Return Html code for AI instruction of message
+	 * Return Html code for AI instruction of message and autofill result
 	 *
-	 * @return 	string      Text for instructions
+	 * @param	string		$format			Format for output ('', 'html', ...)
+	 * @return 	string      				HTML code to ask AI instruction and autofill result
 	 */
-	public function getSectionForAIPrompt()
+	public function getSectionForAIPrompt($format = '')
 	{
 		global $langs;
 
@@ -1455,7 +1456,6 @@ class FormMail extends Form
 		$out .= '<input id="generate_button" type="button" class="button smallpaddingimp"  value="'.$langs->trans('Generate').'"/>';
 		$out .= "</td></tr>\n";
 
-
 		$out .= "<script type='text/javascript'>
 			$(document).ready(function() {
 				// for keydown
@@ -1468,16 +1468,18 @@ class FormMail extends Form
 
 				$('#generate_button').click(function() {
 					var instructions = $('#ai_instructions').val();
+
 					//editor on readonly
         			if (CKEDITOR.instances.message) {
 						CKEDITOR.instances.message.setReadOnly(1);
 					}
 
 					$.ajax({
-						url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".newToken()."',
+						url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".currentToken()."',
 						type: 'POST',
 						contentType: 'application/json',
 						data: JSON.stringify({
+							'format': '".dol_escape_js($format)."',
 							'instructions': instructions,
 						}),
 						success: function(response) {
@@ -1810,7 +1812,7 @@ class FormMail extends Form
 	 */
 	public function setSubstitFromObject($object, $outputlangs)
 	{
-		global $conf, $user, $extrafields;
+		global $extrafields;
 
 		$parameters = array();
 		$tmparray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
@@ -1867,7 +1869,7 @@ class FormMail extends Form
 	 */
 	public static function getAvailableSubstitKey($mode = 'formemail', $object = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$tmparray = array();
 		if ($mode == 'formemail' || $mode == 'formemailwithlines' || $mode == 'formemailforlines') {
