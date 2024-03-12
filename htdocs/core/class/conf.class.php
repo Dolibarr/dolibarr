@@ -1,6 +1,4 @@
 <?php
-use Stripe\OAuthErrorObject;
-
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>

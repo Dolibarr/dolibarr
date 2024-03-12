@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  */
 define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
 define('DOL_DOCUMENT_ROOT', DOL_PROJECT_ROOT.'/htdocs');
@@ -535,7 +536,8 @@ return [
 		// 'PhanTypeInvalidThrowsIsInterface',
 		// 'PhanPluginRedundantAssignmentInLoop',
 		// 'PhanInvalidCommentForDeclarationType',
-		//'PhanParamSignatureMismatchInternal',
+		// 'PhanParamSignatureMismatchInternal',
+		// 'PhanParamSignatureMismatch',
 		// 'PhanPluginEmptyStatementForeachLoop',
 		// 'PhanCompatibleDimAlternativeSyntax',
 		'PhanInvalidFQSENInClasslike',
@@ -656,5 +658,4 @@ return [
 		'sockets'  => PHAN_DIR . '/stubs/sockets.phan_php',
 		'zip'  => PHAN_DIR . '/stubs/zip.phan_php',
 	],
-
 ];
