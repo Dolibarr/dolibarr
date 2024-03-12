@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,8 +86,8 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@param	Object		$object		Object we need next value for
-	 *  @return boolean     			false if KO (there is a conflict), true if OK
+	 *	@param	CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if KO (there is a conflict), true if OK
 	 */
 	public function canBeActivated($object)
 	{
@@ -166,9 +167,10 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	/**
 	 *  Return next free value
 	 *
-	 *  @param	Societe		$objsoc      	Object third party
-	 * 	@param	Object		$objforref		Object for number to search
-	 *  @return string      				Next free value
+	 *  @param	Societe				$objsoc     Object third party
+	 * 	@param	SupplierProposal	$objforref	Object for number to search
+	 *  @return string      					Next free value
+	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{

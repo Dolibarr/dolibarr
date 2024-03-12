@@ -41,9 +41,14 @@ class Conf extends stdClass
 	 */
 	public $db;
 
-	//! To store properties found into database
+	/**
+	 * @var Object To store global setup found into database
+	 */
 	public $global;
-	//! To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
+
+	/**
+	 * @var Object To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
+	 */
 	public $browser;
 
 	//! To store some setup of generic modules

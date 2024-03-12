@@ -178,7 +178,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 	}
 
 	$showmode = 1;
-	if (empty($noout)) {
+	if (empty($noout) && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 		print_start_menu_entry_auguria('', 'class="tmenuend"', $showmode);
 		print_end_menu_entry_auguria($showmode);
 		print_end_menu_array_auguria();

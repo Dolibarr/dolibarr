@@ -845,6 +845,63 @@ if ($action == 'create') {
 	print $htmlother->selectColor(GETPOST('bgcolor'), 'bgcolor', '', 0);
 	print '</td></tr>';
 
+	$formmail = new FormMail($db);
+	$formmail->withfckeditor = 1;
+	$formmail->withaiprompt = 'html';
+	$formmail->withlayout = 1;
+
+	print '<tr class="fieldsforemail"><td></td><td>';
+	$out = '';
+	// Add link to add layout
+	if ($formmail->withlayout && $formmail->withfckeditor) {
+		$out .= '<a href="#" id="linkforlayouttemplates" class="reposition notasortlink inline-block alink marginrightonly">';
+		$out .= img_picto($langs->trans("FillMessageWithALayout"), 'layout', 'class="paddingrightonly"');
+		$out .= $langs->trans("FillMessageWithALayout").'...';
+		$out .= '</a> &nbsp; &nbsp; ';
+
+		$out .= '<script>
+			$(document).ready(function() {
+				  $("#linkforlayouttemplates").click(function() {
+					console.log("We click on linkforlayouttemplates");
+					event.preventDefault();
+					jQuery("#template-selector").toggle();
+					//jQuery("#template-selector").attr("style", "aaa");
+					jQuery("#ai_input").hide();
+				});
+			});
+		</script>
+		';
+	}
+
+	// Add link to add AI content
+	if ($formmail->withaiprompt && isModEnabled('ai')) {
+		$out .= '<a href="#" id="linkforaiprompt" class="reposition notasortlink inline-block alink marginrightonly">';
+		$out .= img_picto($langs->trans("FillMessageWithAIContent"), 'ai', 'class="paddingrightonly"');
+		$out .= $langs->trans("FillMessageWithAIContent").'...';
+		$out .= '</a>';
+		$out .= '<script>
+					$(document).ready(function() {
+						$("#linkforaiprompt").click(function() {
+							console.log("We click on linkforaiprompt");
+							event.preventDefault();
+							jQuery("#ai_input").toggle();
+							jQuery("#template-selector").hide();
+							if (!jQuery("ai_input").is(":hidden")) {
+								console.log("Set focus on input field");
+								jQuery("#ai_instructions").focus();
+							}
+						});
+					});
+				</script>';
+	}
+	if ($formmail->withfckeditor) {
+		$out .= $formmail->getModelEmailTemplate();
+	}
+	if ($formmail->withaiprompt && isModEnabled('ai')) {
+		$out .= $formmail->getSectionForAIPrompt();
+	}
+	print $out;
+	print '</td></tr>';
 	print '</table>';
 
 	print '<div style="padding-top: 10px">';
@@ -1195,7 +1252,7 @@ if ($action == 'create') {
 				$formmail->withtopicreadonly = 1;
 				$formmail->withfile = 0;
 				$formmail->withlayout = 0;
-				$formmail->withaiprompt = 0;
+				$formmail->withaiprompt = '';
 				$formmail->withbody = 0;
 				$formmail->withbodyreadonly = 1;
 				$formmail->withcancel = 1;

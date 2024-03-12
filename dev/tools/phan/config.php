@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  */
 define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
 define('DOL_DOCUMENT_ROOT', DOL_PROJECT_ROOT.'/htdocs');
@@ -475,7 +476,7 @@ return [
 		// 'PhanPluginUnknownFunctionReturnType',
 		// 'PhanPluginDescriptionlessCommentOnProtectedProperty',
 		'PhanPluginRedundantAssignmentInGlobalScope',
-		'PhanTypeMismatchDeclaredParamNullable',
+		// 'PhanTypeMismatchDeclaredParamNullable',
 		'PhanTypeInvalidRightOperandOfAdd',
 		// 'PhanPluginDescriptionlessCommentOnPrivateProperty',
 		// 'PhanUndeclaredVariableDim',  // Array initialisation on undeclared var: $abc['x']='ab'
@@ -493,7 +494,7 @@ return [
 		'PhanRedefineClass',
 		'PhanRedefineFunction',
 		'PhanTypeInvalidLeftOperandOfBitwiseOp',
-		'PhanTypeMismatchDimAssignment',
+		// 'PhanTypeMismatchDimAssignment',
 		// 'PhanPluginDescriptionlessCommentOnProtectedMethod',
 		'PhanPluginPrintfIncompatibleArgumentTypeWeak',
 		'PhanUndeclaredVariableAssignOp',
@@ -535,7 +536,8 @@ return [
 		// 'PhanTypeInvalidThrowsIsInterface',
 		// 'PhanPluginRedundantAssignmentInLoop',
 		// 'PhanInvalidCommentForDeclarationType',
-		//'PhanParamSignatureMismatchInternal',
+		// 'PhanParamSignatureMismatchInternal',
+		// 'PhanParamSignatureMismatch',
 		// 'PhanPluginEmptyStatementForeachLoop',
 		// 'PhanCompatibleDimAlternativeSyntax',
 		'PhanInvalidFQSENInClasslike',
@@ -656,5 +658,4 @@ return [
 		'sockets'  => PHAN_DIR . '/stubs/sockets.phan_php',
 		'zip'  => PHAN_DIR . '/stubs/zip.phan_php',
 	],
-
 ];
