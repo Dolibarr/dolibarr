@@ -1117,7 +1117,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['l.ref']['checked']) || !empty($arrayfields['l.date_delivery']['checked'])) {
 			$shipment->fetchObjectLinked($shipment->id, $shipment->element);
 			$receiving = '';
-			if (is_array($shipment->linkedObjects['delivery']) && count($shipment->linkedObjects['delivery']) > 0) {
+			if (array_key_exists('delivery', $shipment->linkedObjects) && count($shipment->linkedObjects['delivery']) > 0) {
 				$receiving = reset($shipment->linkedObjects['delivery']);
 			}
 
