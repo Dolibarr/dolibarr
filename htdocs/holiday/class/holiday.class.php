@@ -1464,10 +1464,10 @@ class Holiday extends CommonObject
 	/**
 	 *	Returns the label of a status
 	 *
-	 *	@param      int		$status     Id status
-	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *  @param		integer	$startdate	Date holiday should start
-	 *	@return     string      		Label
+	 *	@param      int			$status     Id status
+	 *	@param      int			$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *  @param		int|string	$startdate	Date holiday should start
+	 *	@return     string      			Label
 	 */
 	public function LibStatut($status, $mode = 0, $startdate = '')
 	{
@@ -1520,7 +1520,7 @@ class Holiday extends CommonObject
 	 *   @param		string	$morecss		More CSS on select component
 	 *   @return    string					Show select of status
 	 */
-	public function selectStatutCP($selected = '', $htmlname = 'select_statut', $morecss = 'minwidth125')
+	public function selectStatutCP($selected = 0, $htmlname = 'select_statut', $morecss = 'minwidth125')
 	{
 		global $langs;
 
@@ -1541,7 +1541,7 @@ class Holiday extends CommonObject
 			}
 		}
 
-		$out .= '</select>'."\n";
+		$out .= "</select>\n";
 
 		$showempty = 0;
 		$out .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($showempty < 0 ? (string) $showempty : '-1'), $morecss);
@@ -1623,7 +1623,7 @@ class Holiday extends CommonObject
 	 *  @param		int		$fk_type	Type of vacation
 	 *  @return     int					0=Nothing done, 1=OK, -1=KO
 	 */
-	public function updateSoldeCP($userID = '', $nbHoliday = '', $fk_type = '')
+	public function updateSoldeCP($userID = 0, $nbHoliday = 0, $fk_type = 0)
 	{
 		global $user, $langs;
 
@@ -1741,7 +1741,7 @@ class Holiday extends CommonObject
 	 *  @param	int			$userid		Id user
 	 *  @return void
 	 */
-	public function createCPusers($single = false, $userid = '')
+	public function createCPusers($single = false, $userid = 0)
 	{
 		// do we have to add balance for all users ?
 		if (!$single) {
