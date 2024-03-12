@@ -756,7 +756,7 @@ class CMailFile
 				$this->error = "Error in hook maildao sendMail ".$reshook;
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 
-				return $reshook;
+				return false;
 			}
 			if ($reshook == 1) {	// Hook replace standard code
 				return true;
@@ -1284,7 +1284,8 @@ class CMailFile
 				// Send mail method not correctly defined
 				// --------------------------------------
 
-				return 'Bad value for sendmode';
+				$this->error = 'Bad value for sendmode';
+				return false;
 			}
 
 			// Now we delete image files that were created dynamically to manage data inline files
@@ -1301,7 +1302,7 @@ class CMailFile
 				$this->error = "Error in hook maildao sendMailAfter ".$reshook;
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 
-				return $reshook;
+				return false;
 			}
 		} else {
 			$this->error = 'No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
