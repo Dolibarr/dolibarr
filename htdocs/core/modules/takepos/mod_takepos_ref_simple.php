@@ -86,8 +86,8 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	 *  Test if the numbers already in the database do not cause any conflicts that will prevent this
 	 *  of conflicts that will prevent this numbering from working.
 	 *
-	 *	@param	Facture		$object		Object we need next value for
-	 *  @return boolean     			false if KO (there is a conflict), true if OK
+	 *	@param	CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if KO (there is a conflict), true if OK
 	 */
 	public function canBeActivated($object)
 	{

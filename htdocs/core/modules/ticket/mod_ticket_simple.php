@@ -82,8 +82,8 @@ class mod_ticket_simple extends ModeleNumRefTicket
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@param	Ticket		$object		Object we need next value for
-	 *  @return boolean     			false if conflict, true if ok
+	 *	@param	CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
 	{
