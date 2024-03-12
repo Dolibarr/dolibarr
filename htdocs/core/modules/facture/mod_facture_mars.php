@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,8 +97,8 @@ class mod_facture_mars extends ModeleNumRefFactures
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return boolean     			false if conflict, true if ok
+	 *  @param  CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
 	{
@@ -243,9 +244,10 @@ class mod_facture_mars extends ModeleNumRefFactures
 	 *  Return next free value
 	 *
 	 *  @param  Societe     $objsoc         Object third party
-	 *  @param  string      $objforref      Object for number to search
+	 *  @param  Facture     $objforref      Object for number to search
 	 *  @param  string      $mode           'next' for next value or 'last' for last value
 	 *  @return string                      Next free value
+	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref, $mode = 'next')
 	{

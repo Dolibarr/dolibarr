@@ -2972,7 +2972,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$obj = new $classname();
 		$numref = "";
-		$numref = $obj->getNumRef($soc, $this, $mode);
+		$numref = $obj->getNextValue($soc, $this, $mode);
 
 		if ($numref != "") {
 			return $numref;
