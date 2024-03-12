@@ -461,7 +461,7 @@ $fieldlist = explode(',', $tabfield[$id]);
 
 $param = '&id='.$id;
 if ($search_country_id > 0) {
-	$param .= '&search_country_id='.urlencode($search_country_id);
+	$param .= '&search_country_id='.urlencode((string) ($search_country_id));
 }
 $paramwithsearch = $param;
 if ($sortorder) {
@@ -474,7 +474,7 @@ if (GETPOST('from', 'alpha')) {
 	$paramwithsearch .= '&from='.urlencode(GETPOST('from', 'alpha'));
 }
 if ($listlimit) {
-	$paramwithsearch .= '&listlimit='.urlencode(GETPOSTINT('listlimit'));
+	$paramwithsearch .= '&listlimit='.urlencode((string) (GETPOSTINT('listlimit')));
 }
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';

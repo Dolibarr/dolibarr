@@ -119,16 +119,16 @@ if (empty($reshook)) {
 }
 
 $arrayfields = array(
-	'cp.ref'=>array('label' => 'Ref', 'checked'=>1, 'position'=>5),
-	'cp.fk_type'=>array('label' => 'Type', 'checked'=>1, 'position'=>10),
-	'cp.fk_user'=>array('label' => 'Employee', 'checked'=>1, 'position'=>20),
-	'cp.date_debut'=>array('label' => 'DateDebCP', 'checked'=>-1, 'position'=>30),
-	'cp.date_fin'=>array('label' => 'DateFinCP', 'checked'=>-1, 'position'=>32),
-	'used_days'=>array('label' => 'NbUseDaysCPShort', 'checked'=>-1, 'position'=>34),
-	'date_start_month'=>array('label' => 'DateStartInMonth', 'checked'=>1, 'position'=>50),
-	'date_end_month'=>array('label' => 'DateEndInMonth', 'checked'=>1, 'position'=>52),
-	'used_days_month'=>array('label' => 'NbUseDaysCPShortInMonth', 'checked'=>1, 'position'=>54),
-	'cp.description'=>array('label' => 'DescCP', 'checked'=>-1, 'position'=>800),
+	'cp.ref' => array('label' => 'Ref', 'checked' => 1, 'position' => 5),
+	'cp.fk_type' => array('label' => 'Type', 'checked' => 1, 'position' => 10),
+	'cp.fk_user' => array('label' => 'Employee', 'checked' => 1, 'position' => 20),
+	'cp.date_debut' => array('label' => 'DateDebCP', 'checked' => -1, 'position' => 30),
+	'cp.date_fin' => array('label' => 'DateFinCP', 'checked' => -1, 'position' => 32),
+	'used_days' => array('label' => 'NbUseDaysCPShort', 'checked' => -1, 'position' => 34),
+	'date_start_month' => array('label' => 'DateStartInMonth', 'checked' => 1, 'position' => 50),
+	'date_end_month' => array('label' => 'DateEndInMonth', 'checked' => 1, 'position' => 52),
+	'used_days_month' => array('label' => 'NbUseDaysCPShortInMonth', 'checked' => 1, 'position' => 54),
+	'cp.description' => array('label' => 'DescCP', 'checked' => -1, 'position' => 800),
 );
 
 
@@ -140,7 +140,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $holidaystatic = new Holiday($db);
 
-$listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
+$listhalfday = array('morning' => $langs->trans("Morning"), "afternoon" => $langs->trans("Afternoon"));
 
 $title = $langs->trans('CPTitreMenu');
 
@@ -194,7 +194,7 @@ if (!empty($search_ref)) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
 if (!empty($search_employee)) {
-	$param .= '&search_employee='.urlencode($search_employee);
+	$param .= '&search_employee='.urlencode((string) ($search_employee));
 }
 if (!empty($search_type)) {
 	$param .= '&search_type='.urlencode($search_type);
