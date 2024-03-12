@@ -1953,7 +1953,7 @@ if ($action == 'create' && $usercancreate) {
 		}
 
 		// Shipping Method
-		if (isModEnabled('delivery_note')) {
+		if (isModEnabled('shipping')) {
 			print '<tr><td>'.$langs->trans('SendingMethod').'</td><td>';
 			print img_picto('', 'object_dolly', 'class="pictofixedwidth"');
 			$form->selectShippingMethod(((GETPOSTISSET('shipping_method_id') && GETPOSTINT('shipping_method_id') != 0) ? GETPOST('shipping_method_id') : $shipping_method_id), 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
@@ -2593,7 +2593,7 @@ if ($action == 'create' && $usercancreate) {
 			print '</td></tr>';
 
 			// Shipping Method
-			if (isModEnabled('delivery_note')) {
+			if (isModEnabled('shipping')) {
 				print '<tr><td>';
 				$editenable = $usercancreate;
 				print $form->editfieldkey("SendingMethod", 'shippingmethod', '', $object, $editenable);
@@ -2995,7 +2995,7 @@ if ($action == 'create' && $usercancreate) {
 				}*/
 
 				$numshipping = 0;
-				if (isModEnabled('delivery_note')) {
+				if (isModEnabled('shipping')) {
 					$numshipping = $object->countNbOfShipments();
 				}
 

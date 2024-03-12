@@ -69,7 +69,7 @@ if (isModEnabled('deplacement')) {
 if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 }
-if (isModEnabled('delivery_note')) {
+if (isModEnabled('shipping')) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
 
@@ -992,7 +992,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'class' => 'Expedition',
 						'table' => 'expedition',
 						'disableamount' => 1,
-						'test' => isModEnabled('delivery_note') && $user->hasRight('expedition', 'lire')
+						'test' => isModEnabled('shipping') && $user->hasRight('expedition', 'lire')
 					),
 					'trip' => array(
 						'title' => "ListTripAssociatedProject",

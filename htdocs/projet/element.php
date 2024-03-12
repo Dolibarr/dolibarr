@@ -59,7 +59,7 @@ if (isModEnabled('deplacement')) {
 if (isModEnabled('don')) {
 	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 }
-if (isModEnabled('delivery_note')) {
+if (isModEnabled('shipping')) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
 if (isModEnabled('expensereport')) {
@@ -515,7 +515,7 @@ $listofreferent = array(
 		'lang'=>'sendings',
 		'buttonnew'=>'CreateShipment',
 		'testnew'=>0,
-		'test'=>isModEnabled('delivery_note') && $user->hasRight('expedition', 'lire')
+		'test'=>isModEnabled('shipping') && $user->hasRight('expedition', 'lire')
 	),
 	'mrp'=>array(
 		'name'=>"MO",

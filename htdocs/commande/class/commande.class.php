@@ -3825,7 +3825,7 @@ class Commande extends CommonOrder
 
 		$result = '';
 
-		if (isModEnabled("delivery_note") && ($option == '1' || $option == '2')) {
+		if (isModEnabled("shipping") && ($option == '1' || $option == '2')) {
 			$url = DOL_URL_ROOT.'/expedition/shipment.php?id='.$this->id;
 		} else {
 			$url = DOL_URL_ROOT.'/commande/card.php?id='.$this->id;

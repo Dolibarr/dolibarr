@@ -59,7 +59,7 @@ if (isModEnabled('category')) {
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'deliveries', 'categories'));
-if (isModEnabled("delivery_note")) {
+if (isModEnabled("shipping")) {
 	$langs->loadLangs(array('sendings'));
 }
 
@@ -225,7 +225,7 @@ $arrayfields = array(
 	'p.date_livraison' => array('label' => "DeliveryDate", 'checked' => 0),
 	'p.date_signature' => array('label' => "DateSigning", 'checked' => 0),
 	'ava.rowid' => array('label' => "AvailabilityPeriod", 'checked' => 0),
-	'p.fk_shipping_method' => array('label' => "SendingMethod", 'checked' => 0, 'enabled' => isModEnabled("delivery_note")),
+	'p.fk_shipping_method' => array('label' => "SendingMethod", 'checked' => 0, 'enabled' => isModEnabled("shipping")),
 	'p.fk_input_reason' => array('label' => "Origin", 'checked' => 0, 'enabled' => 1),
 	'p.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => 0),
 	'p.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => 0),

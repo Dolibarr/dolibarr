@@ -5890,7 +5890,7 @@ class Product extends CommonObject
 			}
 			$stock_commande_client = $this->stats_commande['qty'];
 		}
-		if (isModEnabled("delivery_note")) {
+		if (isModEnabled("shipping")) {
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 			$filterShipmentStatus = '';
 			if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
