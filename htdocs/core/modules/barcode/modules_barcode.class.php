@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +55,6 @@ abstract class ModeleBarCode
  */
 abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 {
-
 	// variables inherited from CommonNumRefGenerator
 	public $code_null;
 
@@ -62,9 +62,9 @@ abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 	/**
 	 *  Return next value available
 	 *
-	 *	@param	CommonObject	$objcommon	CommonObject
-	 *	@param	string			$type		Type of barcode (EAN, ISBN, ...)
-	 *  @return string      				Value
+	 *	@param	CommonObject	$objcommon	Object Product, Thirdparty
+	 *	@param	string			  $type		    Type of barcode (EAN, ISBN, ...)
+	 *  @return string						        Value
 	 */
 	public function getNextValue($objcommon, $type = '')
 	{

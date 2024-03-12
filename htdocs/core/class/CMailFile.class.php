@@ -7,6 +7,7 @@
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -274,7 +275,7 @@ class CMailFile
 				// This converts an embed file with src="/viewimage.php?modulepart... into a cid link
 				// TODO Exclude viewimage used for the read tracker ?
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
-				if ($findimg<0) {
+				if ($findimg < 0) {
 					dol_syslog("CMailFile::CMailfile: Error on findHtmlImages");
 					$this->error = 'ErrorInAddAttachementsImageBaseOnMedia';
 					return;
@@ -285,7 +286,7 @@ class CMailFile
 				// Search into the body for <img src="data:image/ext;base64,..." to replace them with an embedded file
 				// This convert an embedded file with src="data:image... into a cid link + attached file
 				$resultImageData = $this->findHtmlImagesIsSrcData($upload_dir_tmp);
-				if ($resultImageData<0) {
+				if ($resultImageData < 0) {
 					dol_syslog("CMailFile::CMailfile: Error on findHtmlImagesInSrcData");
 					$this->error = 'ErrorInAddAttachementsImageBaseOnMedia';
 					return;
@@ -388,7 +389,7 @@ class CMailFile
 			$addr_cc = implode(',', $tabcc);
 
 			//Verify for $addr_bcc
-			$replacebcc= false;
+			$replacebcc = false;
 			$tabbcc = explode(',', $addr_bcc);
 			foreach ($tabbcc as $key => $bcc) {
 				if (in_array($bcc, $tabbcc)) {
@@ -730,7 +731,7 @@ class CMailFile
 	/**
 	 * Send mail that was prepared by constructor.
 	 *
-	 * @return    boolean     True if mail sent, false otherwise
+	 * @return    int|bool|string	True if mail sent, false otherwise.  Negative int if error in hook.  String if incorrect send mode.
 	 */
 	public function sendfile()
 	{
