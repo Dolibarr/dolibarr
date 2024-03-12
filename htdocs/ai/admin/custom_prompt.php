@@ -175,7 +175,7 @@ if ($action == 'deleteproperty') {
 	$formconfirm = $form->formconfirm(
 		$_SERVER["PHP_SELF"].'?key='.urlencode(GETPOST('key', 'alpha')),
 		$langs->trans('Delete'),
-		$langs->trans('ConfirmDeleteProperty', GETPOST('key', 'alpha')),
+		$langs->trans('ConfirmDeleteSetup', GETPOST('key', 'alpha')),
 		'confirm_deleteproperty',
 		'',
 		0,
