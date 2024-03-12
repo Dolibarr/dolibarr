@@ -181,7 +181,7 @@ $user_assign = new User($db);
 $user_create = new User($db);
 $formTicket = new FormTicket($db);
 
-if (empty(getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE'))) {
+if (getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print '<div class="error">'.$langs->trans('TicketPublicInterfaceForbidden').'</div>';
 	$db->close();
 	exit();
