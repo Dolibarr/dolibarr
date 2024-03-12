@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2011       François Legastelois    <flegastelois@teclib.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -399,7 +399,7 @@ if ($num == 0) {
 		// Leave request
 		$holidaystatic->id = $obj->rowid;
 		$holidaystatic->ref = $obj->ref;
-		$holidaystatic->statut = $obj->status;
+		$holidaystatic->status = $obj->status;
 		$holidaystatic->status = $obj->status;
 		$holidaystatic->fk_user = $obj->fk_user;
 		$holidaystatic->fk_type = $obj->fk_type;
