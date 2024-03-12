@@ -78,7 +78,7 @@ class mod_evaluation_standard extends ModeleNumRefEvaluation
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @param  Evaluation	$object		Object we need next value for
+	 *  @param  CommonObject	$object	Object we need next value for
 	 *  @return boolean     			false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
