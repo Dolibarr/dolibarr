@@ -12296,12 +12296,12 @@ function getElementProperties($elementType)
 		$classname = 'EmailSenderProfile';
 		$table_element = 'c_email_senderprofile';
 		$subelement = '';
-	} elseif ($objectType == 'conferenceorboothattendee') {
+	} elseif ($elementType == 'conferenceorboothattendee') {
 		$classpath = 'eventorganization/class';
 		$classfile = 'conferenceorboothattendee';
 		$classname = 'ConferenceOrBoothAttendee';
 		$module = 'eventorganization';
-	} elseif ($objectType == 'conferenceorbooth') {
+	} elseif ($elementType == 'conferenceorbooth') {
 		$classpath = 'eventorganization/class';
 		$classfile = 'conferenceorbooth';
 		$classname = 'ConferenceOrBooth';
