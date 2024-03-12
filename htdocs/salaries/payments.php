@@ -140,11 +140,11 @@ foreach ($object->fields as $key => $val) {
 	if (!empty($val['visible'])) {
 		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
-			'label'=>$val['label'],
-			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
-			'position'=>$val['position'],
-			'help'=> isset($val['help']) ? $val['help'] : ''
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? 0 : 1),
+			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
@@ -362,25 +362,25 @@ if ($search_label) {
 	$param .= '&search_label='.urlencode($search_label);
 }
 if ($search_fk_bank) {
-	$param .= '&search_fk_bank='.urlencode($search_fk_bank);
+	$param .= '&search_fk_bank='.urlencode((string) ($search_fk_bank));
 }
 if ($search_chq_number) {
-	$param .= '&search_chq_number='.urlencode($search_chq_number);
+	$param .= '&search_chq_number='.urlencode((string) ($search_chq_number));
 }
 if ($search_account) {
-	$param .= '&search_account='.urlencode($search_account);
+	$param .= '&search_account='.urlencode((string) ($search_account));
 }
 if ($search_date_start) {
-	$param .= '&search_date_startday='.urlencode(GETPOSTINT('search_date_startday')).'&search_date_startmonth='.urlencode(GETPOSTINT('search_date_startmonth')).'&search_date_startyear='.urlencode(GETPOSTINT('search_date_startyear'));
+	$param .= '&search_date_startday='.urlencode((string) (GETPOSTINT('search_date_startday'))).'&search_date_startmonth='.urlencode((string) (GETPOSTINT('search_date_startmonth'))).'&search_date_startyear='.urlencode((string) (GETPOSTINT('search_date_startyear')));
 }
 if ($search_dateep_start) {
-	$param .= '&search_dateep_startday='.urlencode(GETPOSTINT('search_dateep_startday')).'&search_dateep_startmonth='.urlencode(GETPOSTINT('search_dateep_startmonth')).'&search_dateep_startyear='.urlencode(GETPOSTINT('search_dateep_startyear'));
+	$param .= '&search_dateep_startday='.urlencode((string) (GETPOSTINT('search_dateep_startday'))).'&search_dateep_startmonth='.urlencode((string) (GETPOSTINT('search_dateep_startmonth'))).'&search_dateep_startyear='.urlencode((string) (GETPOSTINT('search_dateep_startyear')));
 }
 if ($search_date_end) {
-	$param .= '&search_date_endday='.urlencode(GETPOSTINT('search_date_endday')).'&search_date_endmonth='.urlencode(GETPOSTINT('search_date_endmonth')).'&search_date_endyear='.urlencode(GETPOSTINT('search_date_endyear'));
+	$param .= '&search_date_endday='.urlencode((string) (GETPOSTINT('search_date_endday'))).'&search_date_endmonth='.urlencode((string) (GETPOSTINT('search_date_endmonth'))).'&search_date_endyear='.urlencode((string) (GETPOSTINT('search_date_endyear')));
 }
 if ($search_dateep_end) {
-	$param .= '&search_dateep_endday='.urlencode(GETPOSTINT('search_dateep_endday')).'&search_dateep_endmonth='.urlencode(GETPOSTINT('search_dateep_endmonth')).'&search_dateep_endyear='.urlencode(GETPOSTINT('search_dateep_endyear'));
+	$param .= '&search_dateep_endday='.urlencode((string) (GETPOSTINT('search_dateep_endday'))).'&search_dateep_endmonth='.urlencode((string) (GETPOSTINT('search_dateep_endmonth'))).'&search_dateep_endyear='.urlencode((string) (GETPOSTINT('search_dateep_endyear')));
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -414,8 +414,8 @@ if (!empty($socid)) {
 	$url .= '&socid='.$socid;
 }
 $newcardbutton  = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton = dolGetButtonTitle($langs->trans('NewSalaryPayment'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('salaries', 'write'));
 
@@ -454,19 +454,19 @@ print '<td class="liste_titre"><input type="text" class="flat width150" name="se
 // Date end period
 print '<td class="liste_titre center">';
 print '<div class="nowrapfordate">';
- print $form->selectDate($search_dateep_start ? $search_dateep_start : -1, 'search_dateep_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+print $form->selectDate($search_dateep_start ? $search_dateep_start : -1, 'search_dateep_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 print '</div>';
 print '<div class="nowrapfordate">';
- print $form->selectDate($search_dateep_end ? $search_dateep_end : -1, 'search_dateep_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+print $form->selectDate($search_dateep_end ? $search_dateep_end : -1, 'search_dateep_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 print '</div>';
 print '</td>';
 // Date payment
 print '<td class="liste_titre center">';
 print '<div class="nowrapfordate">';
- print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 print '</div>';
 print '<div class="nowrapfordate">';
- print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 print '</div>';
 print '</td>';
 // Date value
@@ -501,7 +501,7 @@ print '<td class="liste_titre right"><input name="search_amount" class="flat" ty
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
@@ -551,7 +551,7 @@ $totalarray['nbfield']++;
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
@@ -763,7 +763,7 @@ while ($i < $imaxinloop) {
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
@@ -807,7 +807,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

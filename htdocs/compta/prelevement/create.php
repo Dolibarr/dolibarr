@@ -185,7 +185,7 @@ if (empty($reshook)) {
 					setEventMessages($texttoshow, null);
 				}
 
-				header("Location: ".DOL_URL_ROOT.'/compta/prelevement/card.php?id='.urlencode($bprev->id).'&type='.urlencode($type));
+				header("Location: ".DOL_URL_ROOT.'/compta/prelevement/card.php?id='.urlencode((string) ($bprev->id)).'&type='.urlencode((string) ($type)));
 				exit;
 			}
 		}
@@ -462,7 +462,7 @@ if ($resql) {
 		$param .= '&limit='.((int) $limit);
 	}
 	if ($socid) {
-		$param .= '&socid='.urlencode($socid);
+		$param .= '&socid='.urlencode((string) ($socid));
 	}
 	if ($option) {
 		$param .= "&option=".urlencode($option);

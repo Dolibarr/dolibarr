@@ -228,11 +228,11 @@ if ($result > 0) {
 	// Add notification form
 	//  print load_fiche_titre($langs->trans("AddNewNotification"), '', '');
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.urlencode($id).'" method="POST">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.urlencode((string) ($id)).'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	$param = "&id=".urlencode($id);
+	$param = "&id=".urlencode((string) ($id));
 
 	// Line with titles
 	/*  print '<table width="100%" class="noborder">';

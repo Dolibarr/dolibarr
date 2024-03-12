@@ -367,7 +367,7 @@ if ($action == 'create') {
 			 * Confirm delete trip
 			 */
 			if ($action == 'delete') {
-				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".urlencode($id), $langs->trans("DeleteTrip"), $langs->trans("ConfirmDeleteTrip"), "confirm_delete");
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".urlencode((string) ($id)), $langs->trans("DeleteTrip"), $langs->trans("ConfirmDeleteTrip"), "confirm_delete");
 			}
 
 			$soc = new Societe($db);

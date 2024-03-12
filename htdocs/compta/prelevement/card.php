@@ -506,7 +506,7 @@ if ($id > 0 || $ref) {
 		$num = $db->num_rows($result);
 		$i = 0;
 
-		$urladd = "&id=".urlencode($id);
+		$urladd = "&id=".urlencode((string) ($id));
 		if ($limit > 0 && $limit != $conf->liste_limit) {
 			$urladd .= '&limit='.((int) $limit);
 		}
