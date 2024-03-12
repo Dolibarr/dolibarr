@@ -36,7 +36,7 @@ call_user_func(static function (): void {
 		'commande' => 'order',
 		'contrat' => 'contract',
 		'entrepot' => 'stock',
-		'expedition' => 'delivery_note',
+		'expedition' => 'shipping',
 		'facture' => 'invoice',
 		'ficheinter' => 'intervention',
 		'product_fournisseur_price' => 'productsupplierprice',
