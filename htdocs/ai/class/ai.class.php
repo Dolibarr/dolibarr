@@ -64,6 +64,10 @@ class Ai
 	 */
 	public function generateContent($instructions, $model = 'auto', $function = 'textgeneration')
 	{
+		if (empty($this->apiKey)) {
+			return array('error' => true, 'message' => 'API key is no defined');
+		}
+
 		if (empty($this->apiEndpoint)) {
 			if ($function == 'textgeneration') {
 				$this->apiEndpoint = 'https://api.openai.com/v1/chat/completions';
@@ -96,6 +100,8 @@ class Ai
 				}
 			}
 		}
+
+		dol_syslog("Call API for apiEndpoint=".$this->apiEndpoint." apiKey=".substr($this->apiKey, 0, 3).'***********, model='.$model);
 
 		try {
 			$configurationsJson = getDolGlobalString('AI_CONFIGURATIONS_PROMPT');
