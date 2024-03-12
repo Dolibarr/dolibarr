@@ -272,7 +272,7 @@ if ($massaction == 'presend') {
 		} else {    // Do an automatic definition of $formmail->withmaindocfile
 			$formmail->withmaindocfile = 1;
 			if ($objecttmp->element != 'societe') {
-				$formmail->withfile = '<span class="hideonsmartphone opacitymedium">' . $langs->trans("OnlyPDFattachmentSupported") . '</span>';
+				// $formmail->withfile = '<span class="hideonsmartphone opacitymedium">' . $langs->trans("OnlyPDFattachmentSupported") . '</span>';
 				$formmail->withmaindocfile = -1; // Add a checkbox "Attach also main document" but not checked by default
 			}
 		}
