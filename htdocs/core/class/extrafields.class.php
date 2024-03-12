@@ -11,6 +11,7 @@
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1310,7 +1311,6 @@ class ExtraFields
 							} else {
 								$labeltoshow = $obj->{$InfoFieldList[1]};
 							}
-							$labeltoshow = $labeltoshow;
 
 							if ($value == $obj->rowid) {
 								if (!$notrans) {
