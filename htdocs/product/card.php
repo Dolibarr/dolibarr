@@ -974,6 +974,7 @@ if (empty($reshook)) {
 						} else {
 							if (count($clone->errors)) {
 								setEventMessages($clone->error, $clone->errors, 'errors');
+								// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 								dol_print_error($db, $clone->errors);
 							} else {
 								setEventMessages($langs->trans($clone->error), null, 'errors');
