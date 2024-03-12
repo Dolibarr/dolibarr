@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015 Claudio Aschieri				<c.aschieri@19.coop>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +43,6 @@ function expedition_prepare_head(Expedition $object)
 
 	$h = 0;
 	$head = array();
-	$h = 0;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/confexped.php";
 	$head[$h][1] = $langs->trans("Setup");
