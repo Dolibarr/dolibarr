@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2021	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,7 @@ if ($action == 'delete') {
 $title = '<span class="opacitymedium">'.$langs->trans("DefineHereComplementaryAttributes", empty($textobject) ? '' : $textobject).'</span><br>'."\n";
 //if ($action != 'create' && $action != 'edit') {
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewAttribute'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', (($action != 'create' && $action != 'edit') ? 1 : 1));
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewAttribute'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', 1);
 /*} else {
 	$newcardbutton = '';
 }*/
