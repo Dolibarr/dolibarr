@@ -82,8 +82,8 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	/**
 	 *	Test if existing numbers make problems with numbering
 	 *
-	 *  @param  Expedition	$object		Object we need next value for
-	 *  @return boolean     			false if conflict, true if ok
+	 *  @param  CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
 	{
