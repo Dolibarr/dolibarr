@@ -261,6 +261,16 @@ function isModEnabled($module)
 		$arrayconv['supplier_order'] = 'fournisseur';
 		$arrayconv['supplier_invoice'] = 'fournisseur';
 	}
+	// Special case.
+	// @TODO Replace isModEnabled('delivery_note') with
+	// isModEnabled('shipping') && getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')
+	if ($module == 'delivery_note') {
+		if (!getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')) {
+			return false;
+		} else {
+			$module = 'shipping';
+		}
+	}
 
 	$module_alt = $module;
 	if (!empty($arrayconv[$module])) {
