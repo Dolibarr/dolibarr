@@ -1290,8 +1290,12 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				print '<td>'.$langs->trans("Type").'</td>';
 				print '<td>';
 				$typeleaves = $object->getTypes(1, -1);
-				$labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code']) != $typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
-				print empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $labeltoshow;
+				if (empty($typeleaves[$object->fk_type])) {
+					$labeltoshow = $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type);
+				} else {
+					$labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code']) != $typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
+				}
+				print $labeltoshow;
 				print '</td>';
 				print '</tr>';
 
