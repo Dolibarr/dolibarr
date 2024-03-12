@@ -5,6 +5,7 @@
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Christophe Battarel			<christophe@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,7 +152,7 @@ class mod_sn_advanced extends ModeleNumRefBatch
 			$res = $product->fetch($object->fk_product);
 			if ($res > 0 && !empty($product->batch_mask)) {
 				$mask = $product->batch_mask;
-				$filter = '';
+				$filter = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 			}
 		}
 
