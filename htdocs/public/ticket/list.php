@@ -259,7 +259,7 @@ if ($action == "view_ticketlist") {
 			//'t.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 		);
 
-		if (empty(getDolGlobalString('TICKET_SHOW_PROGRESSION')))
+		if (!getDolGlobalString('TICKET_SHOW_PROGRESSION'))
 			unset($arrayfields['t.progress']);
 
 		// Extra fields
