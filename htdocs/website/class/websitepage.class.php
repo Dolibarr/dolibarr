@@ -58,7 +58,7 @@ class WebsitePage extends CommonObject
 	public $fk_element = 'fk_website_page';
 
 	/**
-	 * @var array	List of child tables. To know object to delete on cascade.
+	 * @var string[]	List of child tables. To know object to delete on cascade.
 	 */
 	protected $childtablesoncascade = array('categorie_website_page');
 
