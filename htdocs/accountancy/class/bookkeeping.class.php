@@ -2528,7 +2528,7 @@ class BookKeeping extends CommonObject
 	 * Get list of fiscal period
 	 *
 	 * @param 	string	$filter		Filter
-	 * @return 	array<array{id:int,date_start:string,date_end:string,label:string}>|int			Return integer <0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
+	 * @return 	array<array{id:int,label:string,date_start:string,date_end:string,status:int}>|int			Return integer <0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
 	 */
 	public function getFiscalPeriods($filter = '')
 	{
@@ -2551,11 +2551,11 @@ class BookKeeping extends CommonObject
 
 		while ($obj = $this->db->fetch_object($resql)) {
 			$list[$obj->rowid] = array(
-				'id' => $obj->rowid,
+				'id' => (int) $obj->rowid,
 				'label' => $obj->label,
 				'date_start' => $this->db->jdate($obj->date_start),
 				'date_end' => $this->db->jdate($obj->date_end),
-				'status' => $obj->statut,
+				'status' => (int) $obj->statut,
 			);
 		}
 
