@@ -6,6 +6,7 @@
  * Copyright (c) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,8 +73,14 @@ class ExpenseReport extends CommonObject
 	 */
 	public $line;
 
+	/**
+	 * @var int|string
+	 */
 	public $date_debut;
 
+	/**
+	 * @var int|string
+	 */
 	public $date_fin;
 
 	/**
@@ -86,6 +93,9 @@ class ExpenseReport extends CommonObject
 	 */
 	public $fk_user;
 
+	/**
+	 * @var int ID
+	 */
 	public $user_approve_id;
 
 	/**
@@ -107,6 +117,8 @@ class ExpenseReport extends CommonObject
 	public $modepaymentid;
 
 	public $paid;
+	// Paiement
+	public $user_paid_infos;
 
 	public $user_author_infos;
 	public $user_validator_infos;
@@ -116,6 +128,9 @@ class ExpenseReport extends CommonObject
 	// ACTIONS
 
 	// Create
+	/**
+	 * @var int|string
+	 */
 	public $date_create;
 
 	/**
@@ -129,16 +144,41 @@ class ExpenseReport extends CommonObject
 	public $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
 
 	// Update
+	/**
+	 * @var int|string
+	 */
 	public $date_modif;
+
+	/**
+	 * @var int ID
+	 */
 	public $fk_user_modif;
 
 	// Refus
+	/**
+	 * @var int|string
+	 */
 	public $date_refuse;
+
+	/**
+	 * @var string
+	 */
 	public $detail_refuse;
+
+	/**
+	 * @var int ID
+	 */
 	public $fk_user_refuse;
 
 	// Annulation
+	/**
+	 * @var int|string
+	 */
 	public $date_cancel;
+
+	/**
+	 * @var string
+	 */
 	public $detail_cancel;
 
 	/**
@@ -169,36 +209,35 @@ class ExpenseReport extends CommonObject
 	 * @var int ID of User making validation
 	 */
 	public $fk_user_valid;
+
+	/**
+	 * @var int ID
+	 */
 	public $user_valid_infos;
 
 	// Approve
+	/**
+	 * @var int|string
+	 */
 	public $date_approve;
-	public $fk_user_approve; // User that has approved
 
-	// Paiement
-	public $user_paid_infos;
+	/**
+	 * @var int ID User that has approved
+	 */
+	public $fk_user_approve;
 
 	public $localtax1;	// for backward compatibility (real field should be total_localtax1 defined into CommonObject)
 	public $localtax2;	// for backward compatibility (real field should be total_localtax2 defined into CommonObject)
 
+	/**
+	 * @var array
+	 */
 	public $labelStatus = array();
+
+	/**
+	 * @var array
+	 */
 	public $labelStatusShort = array();
-
-	// Multicurrency
-	/**
-	 * @var int Currency ID
-	 */
-	public $fk_multicurrency;
-
-	/**
-	 * @var string multicurrency code
-	 */
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
-
 
 	/**
 	 * Draft status
