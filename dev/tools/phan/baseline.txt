@@ -15,7 +15,6 @@ return [
     // PhanPluginDuplicateExpressionBinaryOp : 10+ occurrences
     // PhanTypeArraySuspiciousNull : 10+ occurrences
     // PhanTypeInvalidUnaryOperandNumeric : 8 occurrences
-    // PhanPluginDuplicateIfCondition : 6 occurrences
     // PhanRedefineFunctionInternal : 6 occurrences
     // PhanPluginUnsafeEval : 5 occurrences
     // PhanParamSuspiciousOrder : 4 occurrences
@@ -51,7 +50,6 @@ return [
         'htdocs/compta/cashcontrol/cashcontrol_card.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/compta/facture/agenda-rec.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/compta/facture/card-rec.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/compta/facture/list.php' => ['PhanPluginDuplicateIfCondition'],
         'htdocs/compta/prelevement/class/bonprelevement.class.php' => ['PhanParamTooMany'],
         'htdocs/compta/prelevement/create.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/compta/sociales/class/paymentsocialcontribution.class.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
@@ -62,7 +60,7 @@ return [
         'htdocs/compta/tva/document.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/core/actions_massactions.inc.php' => ['PhanPluginSuspiciousParamOrder'],
         'htdocs/core/class/commondocgenerator.class.php' => ['PhanTypeArraySuspiciousNull'],
-        'htdocs/core/class/commonobject.class.php' => ['PhanPluginDuplicateIfCondition', 'PhanPluginSuspiciousParamPosition'],
+        'htdocs/core/class/commonobject.class.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/core/class/evalmath.class.php' => ['PhanPluginUnsafeEval'],
         'htdocs/core/class/html.form.class.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/core/class/html.formmail.class.php' => ['PhanNoopArray'],
@@ -72,8 +70,8 @@ return [
         'htdocs/core/db/sqlite3.class.php' => ['PhanParamSignatureMismatch'],
         'htdocs/core/filemanagerdol/connectors/php/connector.lib.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/core/get_info.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/core/lib/files.lib.php' => ['PhanPluginDuplicateExpressionBinaryOp', 'PhanPluginDuplicateIfCondition'],
-        'htdocs/core/lib/functions.lib.php' => ['PhanParamTooMany', 'PhanPluginAlwaysReturnFunction', 'PhanPluginDuplicateIfCondition', 'PhanPluginUnsafeEval', 'PhanRedefineFunctionInternal'],
+        'htdocs/core/lib/files.lib.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
+        'htdocs/core/lib/functions.lib.php' => ['PhanParamTooMany', 'PhanPluginAlwaysReturnFunction', 'PhanPluginUnsafeEval', 'PhanRedefineFunctionInternal'],
         'htdocs/core/lib/price.lib.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/core/lib/usergroups.lib.php' => ['PhanNoopArrayAccess'],
         'htdocs/core/menus/standard/auguria_menu.php' => ['PhanParamSuspiciousOrder'],
@@ -84,7 +82,6 @@ return [
         'htdocs/core/modules/member/doc/pdf_standard.class.php' => ['PhanParamSignatureMismatch'],
         'htdocs/core/modules/movement/doc/pdf_standard.modules.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/core/modules/mrp/doc/pdf_vinci.modules.php' => ['PhanTypeArraySuspiciousNull'],
-        'htdocs/core/modules/societe/modules_societe.class.php' => ['PhanPluginDuplicateIfCondition'],
         'htdocs/core/modules/syslog/mod_syslog_file.php' => ['PhanParamSignatureMismatch', 'PhanParamSuspiciousOrder'],
         'htdocs/core/modules/syslog/mod_syslog_syslog.php' => ['PhanParamSignatureMismatch'],
         'htdocs/don/class/don.class.php' => ['PhanParamTooMany'],
