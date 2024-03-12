@@ -570,7 +570,7 @@ return [
 		// 'PhanTypeMismatchDeclaredReturnNullable',
 
 		// 'PhanUndeclaredThis',
-		'PhanPluginMixedKeyNoKey',
+		// 'PhanPluginMixedKeyNoKey',
 		'PhanPluginDuplicateConditionalNullCoalescing', // Suggests to optimize to ??
 		//'PhanUnreferencedClosure',  // False positives seen with closures in arrays, TODO: move closure checks closer to what is done by unused variable plugin
 		//'PhanPluginNoCommentOnProtectedMethod',
