@@ -5,6 +5,7 @@
  * Copyright (C) 2014       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015       Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2018       Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -745,7 +746,7 @@ class AccountingAccount extends CommonObject
 		$hookmanager->initHooks(array('accountancyBindingCalculation'));
 
 		// Execute hook accountancyBindingCalculation
-		$parameters = array('buyer' => $buyer, 'seller' => $seller, 'product' => $product, 'facture' => $facture, 'factureDet' => $factureDet ,'accountingAccount' => $accountingAccount, $type);
+		$parameters = array('buyer' => $buyer, 'seller' => $seller, 'product' => $product, 'facture' => $facture, 'factureDet' => $factureDet ,'accountingAccount' => $accountingAccount, 0 => $type);
 		$reshook = $hookmanager->executeHooks('accountancyBindingCalculation', $parameters); // Note that $action and $object may have been modified by some hooks
 
 		if (empty($reshook)) {
