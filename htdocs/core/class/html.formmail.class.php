@@ -137,7 +137,7 @@ class FormMail extends Form
 	public $witherrorsto;
 
 	/**
-	 * @var int 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+	 * @var int|string 		0=No attaches files, 1=Show attached files, 2=Can add new attached files, 'text'=Show attached files and the text
 	 */
 	public $withfile;
 

@@ -1659,8 +1659,6 @@ abstract class CommonObject
 						$modulename = 'agenda';
 					} elseif (strpos($obj->element, 'supplier') !== false && $obj->element != 'supplier_proposal') {
 						$modulename = 'fournisseur';
-					} elseif (strpos($obj->element, 'supplier') !== false && $obj->element != 'supplier_proposal') {
-						$modulename = 'fournisseur';
 					}
 					if (!empty($conf->{$modulename}->enabled)) {
 						$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
@@ -5705,7 +5703,7 @@ abstract class CommonObject
 			}
 		}
 
-		if (!$filefound) {
+		if ($filefound === '' || $classname === '') {
 			$this->error = $langs->trans("Error").' Failed to load doc generator with modelpaths='.$modelspath.' - modele='.$modele;
 			$this->errors[] = $this->error;
 			dol_syslog($this->error, LOG_ERR);

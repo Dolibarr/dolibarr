@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011-2013      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2011-2018      Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,18 +83,16 @@ if ($action == 'updateMask') {
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/contract/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);

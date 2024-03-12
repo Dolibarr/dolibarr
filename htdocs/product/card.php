@@ -20,6 +20,7 @@
  * Copyright (C) 2019-2020  Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2020  		Pierre Ardoin     	 <mapiolca@me.com>
  * Copyright (C) 2022  		Vincent de Grandpré  <vincent@de-grandpre.quebec>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2884,9 +2885,9 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 	// Define confirmation messages
 	$formquestionclone = array(
 		'text' => $langs->trans("ConfirmClone"),
-		array('type' => 'text', 'name' => 'clone_ref', 'label' => $langs->trans("NewRefForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->ref : $tmpcode, 'morecss' => 'width150'),
-		array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneContentProduct"), 'value' => 1),
-		array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 1),
+		0 => array('type' => 'text', 'name' => 'clone_ref', 'label' => $langs->trans("NewRefForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->ref : $tmpcode, 'morecss' => 'width150'),
+		1 => array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneContentProduct"), 'value' => 1),
+		2 => array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 1),
 	);
 	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("CustomerPrices").')', 'value' => 0);

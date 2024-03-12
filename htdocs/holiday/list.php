@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2020 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016 Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2018      Charlene Benke	<charlie@patas-monkey.com>
- * Copyright (C) 2019-2023 Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -842,7 +842,7 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 		// Leave request
 		$holidaystatic->id = $obj->rowid;
 		$holidaystatic->ref = ($obj->ref ? $obj->ref : $obj->rowid);
-		$holidaystatic->statut = $obj->status;
+		$holidaystatic->status = $obj->status;
 		$holidaystatic->date_debut = $db->jdate($obj->date_debut);
 		$holidaystatic->date_fin = $db->jdate($obj->date_fin);
 
@@ -853,7 +853,7 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 		$userstatic->admin = $obj->user_admin;
 		$userstatic->email = $obj->user_email;
 		$userstatic->login = $obj->user_login;
-		$userstatic->statut = $obj->user_status;
+		$userstatic->status = $obj->user_status;
 		$userstatic->photo = $obj->user_photo;
 
 		// Validator
@@ -863,7 +863,7 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 		$approbatorstatic->admin = $obj->validator_admin;
 		$approbatorstatic->email = $obj->validator_email;
 		$approbatorstatic->login = $obj->validator_login;
-		$approbatorstatic->statut = $obj->validator_status;
+		$approbatorstatic->status = $obj->validator_status;
 		$approbatorstatic->photo = $obj->validator_photo;
 
 		$date = $obj->date_create;

@@ -16,6 +16,7 @@
  * Copyright (C) 2019-2021 Alexandre Spangaro    <aspangaro@open-dsi.fr>
  * Copyright (C) 2023	   Nick Fragoulis
  * Copyright (C) 2023	   Joachim Kueter		 <git-jk@bloxera.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -271,8 +272,6 @@ foreach ($object->fields as $key => $val) {
 		$newkey = '';
 		if (array_key_exists($key, $arrayfields)) {
 			$newkey = $key;
-		} elseif (array_key_exists('f.'.$key, $arrayfields)) {
-			$newkey = 'f.'.$key;
 		} elseif (array_key_exists('f.'.$key, $arrayfields)) {
 			$newkey = 'f.'.$key;
 		} elseif (array_key_exists('s.'.$key, $arrayfields)) {

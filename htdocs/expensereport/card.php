@@ -1667,7 +1667,7 @@ if ($action == 'create') {
 				}
 				$formquestion = array(
 					'text' => '',
-					array('type' => 'other', 'name' => 'fk_user_author', 'label' => $langs->trans("SelectTargetUser"), 'value' => $form->select_dolusers((GETPOSTINT('fk_user_author') > 0 ? GETPOSTINT('fk_user_author') : $user->id), 'fk_user_author', 0, null, 0, $criteriaforfilter, '', '0', 0, 0, '', 0, '', 'maxwidth150'))
+					0 => array('type' => 'other', 'name' => 'fk_user_author', 'label' => $langs->trans("SelectTargetUser"), 'value' => $form->select_dolusers((GETPOSTINT('fk_user_author') > 0 ? GETPOSTINT('fk_user_author') : $user->id), 'fk_user_author', 0, null, 0, $criteriaforfilter, '', '0', 0, 0, '', 0, '', 'maxwidth150'))
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneExpenseReport', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
@@ -1694,7 +1694,7 @@ if ($action == 'create') {
 			}
 
 			if ($action == 'cancel') {
-				$array_input = array('text' => $langs->trans("ConfirmCancelTrip"), array('type' => "text", 'label' => '<strong>'.$langs->trans("Comment").'</strong>', 'name' => "detail_cancel", 'value' => ""));
+				$array_input = array('text' => $langs->trans("ConfirmCancelTrip"), 0 => array('type' => "text", 'label' => '<strong>'.$langs->trans("Comment").'</strong>', 'name' => "detail_cancel", 'value' => ""));
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("Cancel"), "", "confirm_cancel", $array_input, "", 1);
 			}
 
@@ -1703,7 +1703,7 @@ if ($action == 'create') {
 			}
 
 			if ($action == 'refuse') {		// Deny
-				$array_input = array('text' => $langs->trans("ConfirmRefuseTrip"), array('type' => "text", 'label' => $langs->trans("Comment"), 'name' => "detail_refuse", 'value' => ""));
+				$array_input = array('text' => $langs->trans("ConfirmRefuseTrip"), 0 => array('type' => "text", 'label' => $langs->trans("Comment"), 'name' => "detail_refuse", 'value' => ""));
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("Deny"), '', "confirm_refuse", $array_input, "yes", 1);
 			}
 

@@ -261,6 +261,16 @@ function isModEnabled($module)
 		$arrayconv['supplier_order'] = 'fournisseur';
 		$arrayconv['supplier_invoice'] = 'fournisseur';
 	}
+	// Special case.
+	// @TODO Replace isModEnabled('delivery_note') with
+	// isModEnabled('shipping') && getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')
+	if ($module == 'delivery_note') {
+		if (!getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')) {
+			return false;
+		} else {
+			$module = 'shipping';
+		}
+	}
 
 	$module_alt = $module;
 	if (!empty($arrayconv[$module])) {
@@ -12169,20 +12179,20 @@ function getElementProperties($elementType)
 		$classname = 'Expedition';
 		$module = 'expedition';
 		$table_element = 'expedition';
+	} elseif ($elementType == 'delivery_note') {
+		$classpath = 'delivery/class';
+		$subelement = 'delivery';
+		$module = 'expedition';
+	} elseif ($elementType == 'delivery') {
+		$classpath = 'delivery/class';
+		$subelement = 'delivery';
+		$module = 'expedition';
 	} elseif ($elementType == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
 		$element = 'supplierproposal';
 		$classfile = 'supplier_proposal';
 		$subelement = 'supplierproposal';
-	} elseif ($elementType == 'shipping') {
-		$classpath = 'expedition/class';
-		$subelement = 'expedition';
-		$module = 'expedition_bon';
-	} elseif ($elementType == 'delivery') {
-		$classpath = 'delivery/class';
-		$subelement = 'delivery';
-		$module = 'expedition';
 	} elseif ($elementType == 'contract') {
 		$classpath = 'contrat/class';
 		$module = 'contrat';
