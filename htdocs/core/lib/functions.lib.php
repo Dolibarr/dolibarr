@@ -12169,16 +12169,16 @@ function getElementProperties($elementType)
 		$classname = 'Expedition';
 		$module = 'expedition';
 		$table_element = 'expedition';
+	} elseif ($elementType == 'delivery_note') {
+		$classpath = 'expedition/class';
+		$subelement = 'expedition';
+		$module = 'expedition_bon';
 	} elseif ($elementType == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
 		$element = 'supplierproposal';
 		$classfile = 'supplier_proposal';
 		$subelement = 'supplierproposal';
-	} elseif ($elementType == 'shipping') {
-		$classpath = 'expedition/class';
-		$subelement = 'expedition';
-		$module = 'expedition_bon';
 	} elseif ($elementType == 'delivery') {
 		$classpath = 'delivery/class';
 		$subelement = 'delivery';
