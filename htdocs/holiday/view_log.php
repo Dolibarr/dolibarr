@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Dimitri Mouillard    <dmouillard@teclib.com>
  * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -464,12 +465,12 @@ while ($i < min($num, $limit)) {
 
 	$holidaylogstatic->id = $obj['rowid'];
 	$holidaylogstatic->date = $obj['date_action'];
-	$holidaylogstatic->validator		= $obj['fk_user_action'];
-	$holidaylogstatic->employee			= $obj['fk_user_update'];
-	$holidaylogstatic->description		= $obj['type_action'];
+	$holidaylogstatic->validator = $obj['fk_user_action'];
+	$holidaylogstatic->employee = $obj['fk_user_update'];
+	$holidaylogstatic->description = $obj['type_action'];
 	$holidaylogstatic->type = $obj['fk_type'];
 	$holidaylogstatic->balance_previous = $obj['prev_solde'];
-	$holidaylogstatic->balance_new		= $obj['new_solde'];
+	$holidaylogstatic->balance_new = $obj['new_solde'];
 
 	print '<tr class="oddeven">';
 

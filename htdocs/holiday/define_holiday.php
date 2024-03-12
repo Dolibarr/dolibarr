@@ -3,6 +3,7 @@
  * Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -431,7 +432,7 @@ if (count($typeleaves) == 0) {
 		$userstatic->firstname = $users['firstname'];
 		$userstatic->gender = $users['gender'];
 		$userstatic->photo = $users['photo'];
-		$userstatic->statut = $users['status'];
+		$userstatic->status = $users['status'];
 		$userstatic->employee = $users['employee'];
 		$userstatic->fk_user = $users['fk_user'];
 
