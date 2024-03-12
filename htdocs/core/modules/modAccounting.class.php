@@ -147,7 +147,18 @@ class modAccounting extends DolibarrModules
 		$this->tabs = array();
 
 		// Css
-		$this->module_parts = array();
+		$this->module_parts = array(
+			'trigger' => 1,
+			'login' => 0,
+			'substitutions' => 0,
+			'menus' => 0,
+			'theme' => 0,
+			'tpl' => 0,
+			'barcode' => 0,
+			'models' => 1,
+			'css' => '',
+			'js' => '',
+		);
 
 		// Boxes
 		$this->boxes = array(
