@@ -71,17 +71,36 @@ class Holiday extends CommonObject
 	 */
 	public $description;
 
-	public $date_debut = ''; // Date start in PHP server TZ
-	public $date_fin = ''; // Date end in PHP server TZ
-	public $date_debut_gmt = ''; // Date start in GMT
-	public $date_fin_gmt = ''; // Date end in GMT
-	public $halfday = ''; // 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
+	/**
+	 * @var int|string Date start in PHP server TZ
+	 */
+	public $date_debut = '';
 
 	/**
-	 * @var int
+	 * @var int|string Date end in PHP server TZ
+	 */
+	public $date_fin = '';
+
+	/**
+	 * @var int|string Date start in GMT
+	 */
+	public $date_debut_gmt = '';
+
+	/**
+	 * @var int|string Date end in GMT
+	 */
+	public $date_fin_gmt = '';
+
+	/**
+	 * @var int|string 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
+	 */
+	public $halfday = '';
+
+	/**
+	 * @var int Status 1=draft, 2=validated, 3=approved, 4 canceled, 5 refused
 	 * @deprecated
 	 */
-	public $statut = 0; // 1=draft, 2=validated, 3=approved
+	public $statut = 0;
 
 	/**
 	 * @var int 	ID of user that must approve. Real user for approval is fk_user_valid (old version) or fk_user_approve (new versions)
@@ -133,7 +152,9 @@ class Holiday extends CommonObject
 	 */
 	public $fk_user_create;
 
-
+	/**
+	 * @var string Detail of refuse
+	 */
 	public $detail_refuse = '';
 
 	/**
@@ -760,8 +781,8 @@ class Holiday extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
 		$sql .= " fk_user_valid = ".((int) $user->id).",";
 		$sql .= " date_valid = '".$this->db->idate(dol_now())."',";
-		if (!empty($this->statut) && is_numeric($this->statut)) {
-			$sql .= " statut = ".((int) $this->statut).",";
+		if (!empty($this->status) && is_numeric($this->status)) {
+			$sql .= " statut = ".((int) $this->status).",";
 		} else {
 			$this->error = 'Property status must be a numeric value';
 			$error++;
@@ -888,8 +909,8 @@ class Holiday extends CommonObject
 			$error++;
 		}
 		$sql .= " halfday = ".((int) $this->halfday).",";
-		if (!empty($this->statut) && is_numeric($this->statut)) {
-			$sql .= " statut = ".((int) $this->statut).",";
+		if (!empty($this->status) && is_numeric($this->status)) {
+			$sql .= " statut = ".((int) $this->status).",";
 		} else {
 			$error++;
 		}
@@ -993,7 +1014,7 @@ class Holiday extends CommonObject
 
 		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type);
 
-		if ($checkBalance > 0 && $this->statut != self::STATUS_DRAFT) {
+		if ($checkBalance > 0 && $this->status != self::STATUS_DRAFT) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
 
 			if ($balance < 0) {
@@ -1018,8 +1039,8 @@ class Holiday extends CommonObject
 			$error++;
 		}
 		$sql .= " halfday = ".$this->halfday.",";
-		if (!empty($this->statut) && is_numeric($this->statut)) {
-			$sql .= " statut = ".$this->statut.",";
+		if (!empty($this->status) && is_numeric($this->status)) {
+			$sql .= " statut = ".$this->status.",";
 		} else {
 			$error++;
 		}
@@ -1338,7 +1359,7 @@ class Holiday extends CommonObject
 
 		$datas = array();
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Holiday").'</u>';
-		if (isset($this->statut)) {
+		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
@@ -1457,7 +1478,7 @@ class Holiday extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode, $this->date_debut);
+		return $this->LibStatut($this->status, $mode, $this->date_debut);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2363,7 +2384,6 @@ class Holiday extends CommonObject
 		$this->fk_validator = $user->id;
 		$this->halfday = 0;
 		$this->fk_type = 1;
-		$this->statut = Holiday::STATUS_VALIDATED;
 		$this->status = Holiday::STATUS_VALIDATED;
 
 		return 1;
