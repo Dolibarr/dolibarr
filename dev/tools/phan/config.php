@@ -410,8 +410,7 @@ return [
 		'PhanDeprecatedProperty',
 		'PhanDeprecatedFunction',
 		//'PhanCompatibleNegativeStringOffset',
-		// Dolibarr has quite a few strange noop assignments like $abc=$abc;
-		'PhanPluginDuplicateExpressionAssignment',
+		// 'PhanPluginDuplicateExpressionAssignment',
 		// Nulls are likely mostly false positives
 		'PhanPluginConstantVariableNull',
 		'PhanTypeObjectUnsetDeclaredProperty',
@@ -601,7 +600,7 @@ return [
 		'PhanUndeclaredClassMethod',
 		'PhanUndeclaredMethod',
 		'PhanTypeMismatchArgumentProbablyReal',
-		'PhanPluginDuplicateExpressionAssignmentOperation',
+		'PhanPluginDuplicateExpressionAssignmentOperation',  // Suggestions for optimisation
 		'PhanTypeMismatchPropertyDefault',
 		// 'PhanPluginAlwaysReturnMethod',
 		// 'PhanPluginMissingReturnMethod',
