@@ -2345,7 +2345,7 @@ class Holiday extends CommonObject
 				$this->date_approval = $this->db->jdate($obj->datea);
 
 				$this->user_creation_id = $obj->fk_user_creation;
-				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_validation_id = $obj->fk_user_validation;
 				$this->user_modification_id = $obj->fk_user_modification;
 
 				if ($obj->status == Holiday::STATUS_APPROVED || $obj->status == Holiday::STATUS_CANCELED) {
