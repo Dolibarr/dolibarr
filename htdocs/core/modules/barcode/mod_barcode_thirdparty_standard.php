@@ -139,7 +139,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	/**
 	 *  Return literal barcode type code from numerical rowid type of barcode
 	 *
-	 *	@param	Database    $db         Database
+	 *	@param	DoliDB    	$db         Database
 	 *  @param  int  		$type       Type of barcode (EAN, ISBN, ...) as rowid
 	 *  @return string
 	 */
@@ -169,9 +169,9 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	/**
 	 * Return next value
 	 *
-	 * @param	Societe		$objthirdparty     Object third-party
-	 * @param	string		$type       	Type of barcode (EAN, ISBN, ...)
-	 * @return 	string      				Value if OK, '' if module not configured, <0 if KO
+	 * @param	CommonObject	$objthirdparty  Object third-party
+	 * @param	string			$type       	Type of barcode (EAN, ISBN, ...)
+	 * @return 	string      					Value if OK, '' if module not configured, <0 if KO
 	 */
 	public function getNextValue($objthirdparty, $type = '')
 	{

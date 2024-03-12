@@ -1,9 +1,5 @@
 <?php
-/* Copyright (C) 2008-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2016  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
+/* Copyright (C) 2024  Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +22,6 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
  */
 class Ai
 {
-
 	/**
 	 * @var DoliDB $db Database object
 	 */
@@ -57,13 +52,18 @@ class Ai
 	/**
 	 * Generate response of instructions
 	 *
-	 * @param   string  	$instructions   instruction for generate content
-	 * @param   string  	$model          model name ('gpt-3.5-turbo')
-	 * @param   string  	$function     	code of the feature we want to use ('emailing', 'transcription', 'audiotext', 'imagegeneration', 'translation')
+	 * @param   string  	$instructions   Instruction to generate content
+	 * @param   string  	$model          Model name ('gpt-3.5-turbo', 'gpt-4-turbo', 'dall-e-3', ...)
+	 * @param   string  	$function     	Code of the feature we want to use ('textgeneration', 'transcription', 'audiotext', 'imagegeneration', 'translation')
+	 * @param	string		$format			Format for output ('', 'html', ...)
 	 * @return  mixed   	$response
 	 */
-	public function generateContent($instructions, $model = 'auto', $function = 'textgeneration')
+	public function generateContent($instructions, $model = 'auto', $function = 'textgeneration', $format = '')
 	{
+		if (empty($this->apiKey)) {
+			return array('error' => true, 'message' => 'API key is no defined');
+		}
+
 		if (empty($this->apiEndpoint)) {
 			if ($function == 'textgeneration') {
 				$this->apiEndpoint = 'https://api.openai.com/v1/chat/completions';
@@ -96,6 +96,8 @@ class Ai
 				}
 			}
 		}
+
+		dol_syslog("Call API for apiEndpoint=".$this->apiEndpoint." apiKey=".substr($this->apiKey, 0, 3).'***********, model='.$model);
 
 		try {
 			$configurationsJson = getDolGlobalString('AI_CONFIGURATIONS_PROMPT');
@@ -143,6 +145,11 @@ class Ai
 
 			// Extraction content
 			$generatedEmailContent = $decodedResponse['choices'][0]['message']['content'];
+
+			// If content is not HTML, we convert it into HTML
+			if (!dol_textishtml($generatedEmailContent)) {
+				$generatedEmailContent = dol_nl2br($generatedEmailContent);
+			}
 
 			return $generatedEmailContent;
 		} catch (Exception $e) {

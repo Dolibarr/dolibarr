@@ -128,8 +128,8 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	/**
 	 *  Return literal barcode type code from numerical rowid type of barcode
 	 *
-	 *	@param	Database    $db         Database
-	 *  @param  int  		$type       Type of barcode (EAN, ISBN, ...) as rowid
+	 *	@param	DoliDB	$db         Database
+	 *  @param  int  	$type       Type of barcode (EAN, ISBN, ...) as rowid
 	 *  @return string
 	 */
 	public function literalBarcodeType($db, $type = 0)
@@ -158,9 +158,9 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	/**
 	 * Return next value
 	 *
-	 * @param	CommonObject	$objproduct     Object product
-	 * @param	string			$type       	Type of barcode (EAN, ISBN, ...)
-	 * @return 	string      				Value if OK, '' if module not configured, <0 if KO
+	 * @param	  CommonObject	$objproduct   Object product
+	 * @param	  string			  $type       	Type of barcode (EAN, ISBN, ...)
+	 * @return 	string      					      Value if OK, '' if module not configured, <0 if KO
 	 */
 	public function getNextValue($objproduct, $type = '')
 	{

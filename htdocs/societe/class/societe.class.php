@@ -4951,7 +4951,7 @@ class Societe extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $user, $langs;
+		global $langs;
 
 		if (!empty($moreparams) && !empty($moreparams['use_companybankid'])) {
 			$modelpath = "core/modules/bank/doc/";
