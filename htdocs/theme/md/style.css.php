@@ -195,7 +195,7 @@ $textbutaction     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getD
 $fontsize            = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_FONT_SIZE1') ? $fontsize : $conf->global->THEME_ELDY_FONT_SIZE1) : (empty($user->conf->THEME_ELDY_FONT_SIZE1) ? $fontsize : $user->conf->THEME_ELDY_FONT_SIZE1);
 $fontsizesmaller     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_FONT_SIZE2') ? $fontsize : $conf->global->THEME_ELDY_FONT_SIZE2) : (empty($user->conf->THEME_ELDY_FONT_SIZE2) ? $fontsize : $user->conf->THEME_ELDY_FONT_SIZE2);
 $heightrow			 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_USECOMOACTROW') ? '155%' : '300%') : (!getDolGlobalString('THEME_ELDY_USECOMOACTROW') ? '155%' : '300%');
-
+// $heightrow			 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_USECOMOACTROW) ? '22px' : '50px') : (empty($conf->global->THEME_ELDY_USECOMOACTROW) ? '22px' : '50px');
 // Hover color
 $colorbacklinepairhover = ((!isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '255,255,255') ? '' : ($conf->global->THEME_ELDY_USE_HOVER === '1' ? 'edf4fb' : $conf->global->THEME_ELDY_USE_HOVER));
 $colorbacklinepairchecked = ((!isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '255,255,255') ? '' : ($conf->global->THEME_ELDY_USE_CHECKED === '1' ? 'edf4fb' : $conf->global->THEME_ELDY_USE_CHECKED));
@@ -1797,7 +1797,7 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
 	min-height: 0.01%;
 }
 .div-table-responsive {
-	line-height: var(--heightrow);
+	line-height: 155%;
 }
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
 div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
@@ -4121,7 +4121,7 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 4px 6px 4px 6px;			/* t r b l */
-	height: 22px;
+	height: var(--heightrow);
 }
 table.liste tr.trkanban td {
 	padding: 10px 14px 10px 14px;			/* t r b l */
