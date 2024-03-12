@@ -149,7 +149,7 @@ if (!function_exists('dol_loginfunction')) {
 
 		// Title
 		$appli = constant('DOL_APPLICATION_TITLE');
-		$title = $appli.' '.constant('DOL_VERSION');
+		$title = $appli.(getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '' : ' '.constant('DOL_VERSION'));
 		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 			$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
 		}

@@ -1582,8 +1582,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Employee
 			print '<tr><td>'.$langs->trans("Employee").'</td><td>';
-			print '<input type="checkbox" disabled name="employee" value="1"'.($object->employee ? ' checked="checked"' : '').'>';
-			//print yn($object->employee);
+			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
+				print '<input type="checkbox" disabled name="employee" value="1"'.($object->employee ? ' checked="checked"' : '').'>';
+			} else {
+				print yn($object->employee);
+			}
 			print '</td></tr>'."\n";
 
 			// TODO This is also available into the tab RH
