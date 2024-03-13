@@ -482,7 +482,7 @@ return [
 		'PhanTypeInvalidPropertyName',
 		'PhanPluginDuplicateCatchStatementBody',
 		'PhanPluginUndeclaredVariableIsset',
-		'PhanTypeInvalidUnaryOperandIncOrDec',
+		// 'PhanTypeInvalidUnaryOperandIncOrDec',
 		// 'PhanPluginDescriptionlessCommentOnClass',
 		'PhanPluginEmptyStatementIf',
 		'PhanPluginInlineHTMLTrailing',
