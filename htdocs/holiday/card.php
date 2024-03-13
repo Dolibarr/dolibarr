@@ -524,8 +524,11 @@ if (empty($reshook)) {
 				}
 
 				$typeleaves = $object->getTypes(1, -1);
-				$labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code']) != $typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
-
+				if (empty($typeleaves[$object->fk_type])) {
+					$labeltoshow = $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type);
+				} else {
+					$labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code']) != $typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
+				}
 				if ($object->halfday == 2) {
 					$starthalfdaykey = "Afternoon";
 					$endhalfdaykey = "Morning";

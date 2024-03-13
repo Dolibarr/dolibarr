@@ -1366,8 +1366,12 @@ class Holiday extends CommonObject
 		// show type for this record only in ajax to not overload lists
 		if (!$nofetch && !empty($this->fk_type)) {
 			$typeleaves = $this->getTypes(1, -1);
-			$labeltoshow = (($typeleaves[$this->fk_type]['code'] && $langs->trans($typeleaves[$this->fk_type]['code']) != $typeleaves[$this->fk_type]['code']) ? $langs->trans($typeleaves[$this->fk_type]['code']) : $typeleaves[$this->fk_type]['label']);
-			$datas['type'] = '<br><b>'.$langs->trans("Type") . ':</b> ' . (empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved", $this->fk_type) : $labeltoshow);
+			if (empty($typeleaves[$this->fk_type])) {
+				$labeltoshow = $langs->trans("TypeWasDisabledOrRemoved", $this->fk_type);
+			} else {
+				$labeltoshow = (($typeleaves[$this->fk_type]['code'] && $langs->trans($typeleaves[$this->fk_type]['code']) != $typeleaves[$this->fk_type]['code']) ? $langs->trans($typeleaves[$this->fk_type]['code']) : $typeleaves[$this->fk_type]['label']);
+			}
+			$datas['type'] = '<br><b>'.$langs->trans("Type") . ':</b> ' . $labeltoshow;
 		}
 		if (isset($this->halfday) && !empty($this->date_debut) && !empty($this->date_fin)) {
 			$listhalfday = array(
