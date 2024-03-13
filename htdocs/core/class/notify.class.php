@@ -181,6 +181,95 @@ class Notify
 	}
 
 	/**
+	 *  Delete a notification from database
+	 *
+	 *	@param		User|null	$user		User deleting
+	 *  @return		int		    	        Return integer <0 if KO, >0 if OK
+	 */
+	public function delete(User $user = null)
+	{
+		$error = 0;
+
+		dol_syslog(get_class($this)."::delete ".$this->id, LOG_DEBUG);
+
+		$this->db->begin();
+
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
+			$sql .= " WHERE rowid = ".((int) $this->id);
+
+			if (!$this->db->query($sql)) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			return -1 * $error;
+		}
+	}
+
+
+	/**
+	 * 	Load record from database
+	 *
+	 *	@param	int		$id			Id of record
+	 * 	@param	int		$socid		Id of company. If this is filled, function will return only records belonging to this thirdparty
+	 *  @param	string	$type		If id of company filled, we say if we want record of this type only
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
+	 */
+	public function fetch($id, $socid = 0, $type = 'email')
+	{
+		if (empty($id) && empty($socid)) {
+			return -1;
+		}
+
+		$sql = "SELECT rowid, fk_action as event, fk_soc as socid, fk_contact as target, fk_user, email, threshold, context, type, datec, tms as datem";
+		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
+
+		if ($id) {
+			$sql .= " WHERE rowid = ".((int) $id);
+		} elseif ($socid > 0) {
+			$sql .= " WHERE fk_soc  = ".((int) $socid);
+			if ($type) {
+				$sql .= " AND type = '".$this->db->escape($type)."'";
+			}
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);
+
+				$this->ref = $obj->socid.'-'.$obj->label; // Generate an artificial ref
+
+				$this->id = $obj->rowid;
+				$this->type = $obj->type;
+				$this->socid = $obj->socid;
+				$this->event = $obj->event;
+				$this->target = $obj->target;
+				$this->fk_user = $obj->fk_user;
+				$this->email = $obj->email;
+				$this->threshold = $obj->threshold;
+				$this->context  = $obj->context;
+				$this->datec = $obj->datec;
+				$this->datem = $obj->datem;
+			}
+			$this->db->free($resql);
+
+			return 1;
+		} else {
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+
+	/**
 	 * Return number of notifications activated for action code (and third party)
 	 *
 	 * @param	string	$notifcode		Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
