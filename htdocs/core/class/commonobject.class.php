@@ -226,13 +226,13 @@ abstract class CommonObject
 
 	/**
 	 * @var Project 		The related project object
-	 * @deprecated
-	 * @see project
+	 * @deprecated  Use $project instead
+	 * @see $project
 	 */
 	public $projet;
 
 	/**
-	 * @deprecated
+	 * @deprecated  Use $fk_project instead
 	 * @see $fk_project
 	 */
 	public $fk_projet;
@@ -322,7 +322,7 @@ abstract class CommonObject
 
 	/**
 	 * @var int 		The object's status. Use status instead.
-	 * @deprecated
+	 * @deprecated  Use $status instead
 	 * @see setStatut()
 	 */
 	public $statut;
@@ -369,7 +369,7 @@ abstract class CommonObject
 
 	/**
 	 * var	int			State ID
-	 * @deprecated	Use state_id. We can remove this property when the field 'fk_departement' have been renamed into 'state_id' in all tables
+	 * @deprecated	Use $state_id. We can remove this property when the field 'fk_departement' have been renamed into 'state_id' in all tables
 	 */
 	public $fk_departement;
 
@@ -447,7 +447,7 @@ abstract class CommonObject
 
 	/**
 	 * @var int 		Payment terms ID
-	 * @deprecated Kept for compatibility
+	 * @deprecated Use $cond_reglement_id instead - Kept for compatibility
 	 * @see cond_reglement_id;
 	 */
 	public $cond_reglement;
@@ -730,13 +730,13 @@ abstract class CommonObject
 	public $specimen = 0;
 
 	/**
-	 * @var	int			Id of contact to send object (used by the trigger of module Agenda)
+	 * @var	int[]		Id of contacts to send objects (mails, etc.)
 	 */
 	public $sendtoid;
 
 	/**
 	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
-	 * @deprecated		Duplicate of $totalpaid
+	 * @deprecated		Use $totalpaid instead
 	 */
 	public $alreadypaid;
 	/**
