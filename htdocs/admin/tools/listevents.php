@@ -278,7 +278,7 @@ if ($result) {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
 	if ($search_rowid) {
-		$param .= '&search_rowid='.urlencode($search_rowid);
+		$param .= '&search_rowid='.urlencode((string) ($search_rowid));
 	}
 	if ($search_code) {
 		$param .= '&search_code='.urlencode($search_code);

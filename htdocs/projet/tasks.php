@@ -36,9 +36,9 @@ if (isModEnabled('category')) {
 }
 
 // Load translation files required by the page
-$langsLoad=array('projects', 'users', 'companies');
+$langsLoad = array('projects', 'users', 'companies');
 if (isModEnabled('eventorganization')) {
-	$langsLoad[]='eventorganization';
+	$langsLoad[] = 'eventorganization';
 }
 
 $langs->loadLangs($langsLoad);
@@ -152,22 +152,22 @@ $planned_workload = $planned_workloadhour * 3600 + $planned_workloadmin * 60;
 
 // Definition of fields for list
 $arrayfields = array(
-	't.ref'=>array('label'=>"RefTask", 'checked'=>1, 'position'=>1),
-	't.label'=>array('label'=>"LabelTask", 'checked'=>1, 'position'=>2),
-	't.description'=>array('label'=>"Description", 'checked'=>0, 'position'=>3),
-	't.dateo'=>array('label'=>"DateStart", 'checked'=>1, 'position'=>4),
-	't.datee'=>array('label'=>"Deadline", 'checked'=>1, 'position'=>5),
-	't.planned_workload'=>array('label'=>"PlannedWorkload", 'checked'=>1, 'position'=>6),
-	't.duration_effective'=>array('label'=>"TimeSpent", 'checked'=>1, 'position'=>7),
-	't.progress_calculated'=>array('label'=>"ProgressCalculated", 'checked'=>1, 'position'=>8),
-	't.progress'=>array('label'=>"ProgressDeclared", 'checked'=>1, 'position'=>9),
-	't.progress_summary'=>array('label'=>"TaskProgressSummary", 'checked'=>1, 'position'=>10),
-	't.budget_amount'=>array('label'=>"Budget", 'checked'=>0, 'position'=>11),
-	'c.assigned'=>array('label'=>"TaskRessourceLinks", 'checked'=>1, 'position'=>12),
+	't.ref' => array('label' => "RefTask", 'checked' => 1, 'position' => 1),
+	't.label' => array('label' => "LabelTask", 'checked' => 1, 'position' => 2),
+	't.description' => array('label' => "Description", 'checked' => 0, 'position' => 3),
+	't.dateo' => array('label' => "DateStart", 'checked' => 1, 'position' => 4),
+	't.datee' => array('label' => "Deadline", 'checked' => 1, 'position' => 5),
+	't.planned_workload' => array('label' => "PlannedWorkload", 'checked' => 1, 'position' => 6),
+	't.duration_effective' => array('label' => "TimeSpent", 'checked' => 1, 'position' => 7),
+	't.progress_calculated' => array('label' => "ProgressCalculated", 'checked' => 1, 'position' => 8),
+	't.progress' => array('label' => "ProgressDeclared", 'checked' => 1, 'position' => 9),
+	't.progress_summary' => array('label' => "TaskProgressSummary", 'checked' => 1, 'position' => 10),
+	't.budget_amount' => array('label' => "Budget", 'checked' => 0, 'position' => 11),
+	'c.assigned' => array('label' => "TaskRessourceLinks", 'checked' => 1, 'position' => 12),
 );
 if ($object->usage_bill_time) {
-	$arrayfields['t.tobill'] = array('label'=>$langs->trans("TimeToBill"), 'checked'=>0, 'position'=>11);
-	$arrayfields['t.billed'] = array('label'=>$langs->trans("TimeBilled"), 'checked'=>0, 'position'=>12);
+	$arrayfields['t.tobill'] = array('label' => $langs->trans("TimeToBill"), 'checked' => 0, 'position' => 11);
+	$arrayfields['t.billed'] = array('label' => $langs->trans("TimeBilled"), 'checked' => 0, 'position' => 12);
 }
 
 // Extra fields
@@ -192,7 +192,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('id'=>$id);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -297,7 +297,7 @@ if (!empty($search_progresscalc)) {
 	//natural_search('round(100 * $line->duration_effective / $line->planned_workload,2)', $filterprogresscalc, 1, 1).' {return 1;} else {return 0;}';
 }
 if ($search_task_budget_amount) {
-	$morewherefilterarray[]= natural_search('t.budget_amount', $search_task_budget_amount, 1, 1);
+	$morewherefilterarray[] = natural_search('t.budget_amount', $search_task_budget_amount, 1, 1);
 }
 //var_dump($morewherefilterarray);
 
@@ -449,7 +449,7 @@ if ($id > 0 || !empty($ref)) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($search_user_id) {
-		$param .= '&search_user_id='.urlencode($search_user_id);
+		$param .= '&search_user_id='.urlencode((string) ($search_user_id));
 	}
 	if ($search_taskref) {
 		$param .= '&search_taskref='.urlencode($search_taskref);
@@ -479,49 +479,49 @@ if ($id > 0 || !empty($ref)) {
 		$param .= '&search_dtendyear='.urlencode($search_dtendyear);
 	}
 	if ($search_date_start_startmonth) {
-		$param .= '&search_date_start_startmonth='.urlencode($search_date_start_startmonth);
+		$param .= '&search_date_start_startmonth='.urlencode((string) ($search_date_start_startmonth));
 	}
 	if ($search_date_start_startyear) {
-		$param .= '&search_date_start_startyear='.urlencode($search_date_start_startyear);
+		$param .= '&search_date_start_startyear='.urlencode((string) ($search_date_start_startyear));
 	}
 	if ($search_date_start_startday) {
-		$param .= '&search_date_start_startday='.urlencode($search_date_start_startday);
+		$param .= '&search_date_start_startday='.urlencode((string) ($search_date_start_startday));
 	}
 	if ($search_date_start_start) {
 		$param .= '&search_date_start_start='.urlencode($search_date_start_start);
 	}
 	if ($search_date_start_endmonth) {
-		$param .= '&search_date_start_endmonth='.urlencode($search_date_start_endmonth);
+		$param .= '&search_date_start_endmonth='.urlencode((string) ($search_date_start_endmonth));
 	}
 	if ($search_date_start_endyear) {
-		$param .= '&search_date_start_endyear='.urlencode($search_date_start_endyear);
+		$param .= '&search_date_start_endyear='.urlencode((string) ($search_date_start_endyear));
 	}
 	if ($search_date_start_endday) {
-		$param .= '&search_date_start_endday='.urlencode($search_date_start_endday);
+		$param .= '&search_date_start_endday='.urlencode((string) ($search_date_start_endday));
 	}
 	if ($search_date_start_end) {
 		$param .= '&search_date_start_end='.urlencode($search_date_start_end);
 	}
 	if ($search_date_end_startmonth) {
-		$param .= '&search_date_end_startmonth='.urlencode($search_date_end_startmonth);
+		$param .= '&search_date_end_startmonth='.urlencode((string) ($search_date_end_startmonth));
 	}
 	if ($search_date_end_startyear) {
-		$param .= '&search_date_end_startyear='.urlencode($search_date_end_startyear);
+		$param .= '&search_date_end_startyear='.urlencode((string) ($search_date_end_startyear));
 	}
 	if ($search_date_end_startday) {
-		$param .= '&search_date_end_startday='.urlencode($search_date_end_startday);
+		$param .= '&search_date_end_startday='.urlencode((string) ($search_date_end_startday));
 	}
 	if ($search_date_end_start) {
 		$param .= '&search_date_end_start='.urlencode($search_date_end_start);
 	}
 	if ($search_date_end_endmonth) {
-		$param .= '&search_date_end_endmonth='.urlencode($search_date_end_endmonth);
+		$param .= '&search_date_end_endmonth='.urlencode((string) ($search_date_end_endmonth));
 	}
 	if ($search_date_end_endyear) {
-		$param .= '&search_date_end_endyear='.urlencode($search_date_end_endyear);
+		$param .= '&search_date_end_endyear='.urlencode((string) ($search_date_end_endyear));
 	}
 	if ($search_date_end_endday) {
-		$param .= '&search_date_end_endday='.urlencode($search_date_end_endday);
+		$param .= '&search_date_end_endday='.urlencode((string) ($search_date_end_endday));
 	}
 	if ($search_date_end_end) {
 		$param .= '&search_date_end_end=' . urlencode($search_date_end_end);
@@ -875,8 +875,8 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 	$title = $langs->trans("ListOfTasks");
-	$linktotasks = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss'=>'reposition btnTitleSelected'));
-	$linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss'=>'reposition marginleftonly'));
+	$linktotasks = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss' => 'reposition btnTitleSelected'));
+	$linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss' => 'reposition marginleftonly'));
 
 	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
 	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'projecttask', '', '', '', $massactionbutton);
@@ -918,7 +918,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	// Show the massaction checkboxes only when this page is not opend from the Extended POS
 	if ($massactionbutton && $contextpage != 'poslist') {
-		$selectedfields.= $form->showCheckAddButtons('checkforselect', 1);
+		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 	}
 
 	print '<div class="div-table-responsive">';
@@ -1115,7 +1115,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	$disablesortlink = 1;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
-	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '<td></td>';

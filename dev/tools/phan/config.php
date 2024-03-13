@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  */
 define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
 define('DOL_DOCUMENT_ROOT', DOL_PROJECT_ROOT.'/htdocs');
@@ -54,7 +55,7 @@ $DEPRECATED_MODULE_MAPPING = array(
 	'commande' => 'order',
 	'contrat' => 'contract',
 	'entrepot' => 'stock',
-	'expedition' => 'delivery_note',
+	'expedition' => 'shipping',
 	'facture' => 'invoice',
 	'ficheinter' => 'intervention',
 	'product_fournisseur_price' => 'productsupplierprice',
@@ -93,7 +94,7 @@ $VALID_MODULE_MAPPING = array(
 	'datapolicy' => 'DataPolicy',
 	'dav' => 'Dav',
 	'debugbar' => 'DebugBar',
-	'delivery_note' => 'Expedition',
+	'shipping' => 'Expedition',
 	'deplacement' => 'Deplacement',
 	"documentgeneration" => 'DocumentGeneration',
 	'don' => 'Don',
@@ -465,9 +466,9 @@ return [
 		// 'PhanPluginNoCommentOnFunction',
 		'PhanPluginUnknownArrayFunctionParamType',
 		// 'PhanPluginDescriptionlessCommentOnPublicProperty',
-		'PhanPluginUnknownFunctionParamType',
+		// 'PhanPluginUnknownFunctionParamType',  // Finds certain errors in PHPdoc typing
 		'PhanTypeSuspiciousStringExpression',
-		'PhanPluginRedundantAssignment',
+		// 'PhanPluginRedundantAssignment',
 
 		'PhanTypeExpectedObjectPropAccess',
 		'PhanTypeInvalidRightOperandOfNumericOp',
@@ -475,7 +476,7 @@ return [
 		// 'PhanPluginUnknownFunctionReturnType',
 		// 'PhanPluginDescriptionlessCommentOnProtectedProperty',
 		'PhanPluginRedundantAssignmentInGlobalScope',
-		'PhanTypeMismatchDeclaredParamNullable',
+		// 'PhanTypeMismatchDeclaredParamNullable',
 		'PhanTypeInvalidRightOperandOfAdd',
 		// 'PhanPluginDescriptionlessCommentOnPrivateProperty',
 		// 'PhanUndeclaredVariableDim',  // Array initialisation on undeclared var: $abc['x']='ab'
@@ -493,7 +494,7 @@ return [
 		'PhanRedefineClass',
 		'PhanRedefineFunction',
 		'PhanTypeInvalidLeftOperandOfBitwiseOp',
-		'PhanTypeMismatchDimAssignment',
+		// 'PhanTypeMismatchDimAssignment',
 		// 'PhanPluginDescriptionlessCommentOnProtectedMethod',
 		'PhanPluginPrintfIncompatibleArgumentTypeWeak',
 		'PhanUndeclaredVariableAssignOp',
@@ -535,7 +536,8 @@ return [
 		// 'PhanTypeInvalidThrowsIsInterface',
 		// 'PhanPluginRedundantAssignmentInLoop',
 		// 'PhanInvalidCommentForDeclarationType',
-		//'PhanParamSignatureMismatchInternal',
+		// 'PhanParamSignatureMismatchInternal',
+		// 'PhanParamSignatureMismatch',
 		// 'PhanPluginEmptyStatementForeachLoop',
 		// 'PhanCompatibleDimAlternativeSyntax',
 		'PhanInvalidFQSENInClasslike',
@@ -568,7 +570,7 @@ return [
 		// 'PhanTypeMismatchDeclaredReturnNullable',
 
 		// 'PhanUndeclaredThis',
-		'PhanPluginMixedKeyNoKey',
+		// 'PhanPluginMixedKeyNoKey',
 		'PhanPluginDuplicateConditionalNullCoalescing', // Suggests to optimize to ??
 		//'PhanUnreferencedClosure',  // False positives seen with closures in arrays, TODO: move closure checks closer to what is done by unused variable plugin
 		//'PhanPluginNoCommentOnProtectedMethod',
@@ -585,7 +587,7 @@ return [
 		'PhanTypePossiblyInvalidDimOffset', // Also checks optional array keys and requires that they are checked for existence.
 		'PhanUndeclaredGlobalVariable',
 		'PhanUndeclaredProperty',
-		'PhanPluginPrintfNotPercent',
+		// 'PhanPluginPrintfNotPercent',  // Detects fishy stuff with '%' format and suggests %%
 		'PhanPossiblyUndeclaredGlobalVariable',
 		// 'PhanPluginPossiblyStaticProtectedMethod',
 		'PhanTypeMismatchReturn',
@@ -656,5 +658,4 @@ return [
 		'sockets'  => PHAN_DIR . '/stubs/sockets.phan_php',
 		'zip'  => PHAN_DIR . '/stubs/zip.phan_php',
 	],
-
 ];

@@ -36,7 +36,8 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("bills");
 
-$total = 0; $ilink = 0;
+$total = 0;
+$ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
 
@@ -69,7 +70,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		} else {
 			echo $objectlink->getLibStatut(3);
 		} ?></td>
-		<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.urlencode($object->id).'&action=dellink&token='.newToken().'&dellinkid='.urlencode($key); ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+		<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.urlencode((string) ($object->id)).'&action=dellink&token='.newToken().'&dellinkid='.urlencode((string) ($key)); ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
 	</tr>
 	<?php
 }

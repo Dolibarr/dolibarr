@@ -606,7 +606,7 @@ if ($optioncss != '') {
 	$param .= '&amp;optioncss='.urlencode($optioncss);
 }
 if ($search_categ > 0) {
-	$param .= '&amp;search_categ='.urlencode($search_categ);
+	$param .= '&amp;search_categ='.urlencode((string) ($search_categ));
 }
 if ($search_warehouse > 0) {
 	$param .= '&amp;search_warehouse='.urlencode($search_warehouse);
@@ -650,7 +650,7 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $url = DOL_URL_ROOT.'/user/card.php?action=create'.($contextpage == 'employeelist' ? '&search_employee=1' : '').'&leftmenu=';
 if (!empty($socid)) {
-	$url .= '&socid='.urlencode($socid);
+	$url .= '&socid='.urlencode((string) ($socid));
 }
 
 $newcardbutton = '';

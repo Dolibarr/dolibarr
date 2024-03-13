@@ -380,7 +380,7 @@ if ($search_label) {
 	$param .= '&search_label='.urlencode($search_label);
 }
 if ($search_account) {
-	$param .= '&search_account='.urlencode($search_account);
+	$param .= '&search_account='.urlencode((string) ($search_account));
 }
 if ($search_status != '' && $search_status != '-1') {
 	$param .= '&search_status='.urlencode($search_status);

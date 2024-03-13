@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2009-2013  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -296,7 +297,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 			} else {
 				dol_syslog("No invoices found for criteria");
 			}
-			$result = 0;
+			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		}
 	} else {
 		dol_print_error($db);

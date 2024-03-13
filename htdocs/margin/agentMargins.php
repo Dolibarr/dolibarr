@@ -208,22 +208,22 @@ if (!empty($agentid)) {
 	$param .= "&amp;agentid=".urlencode($agentid);
 }
 if (!empty($startdateday)) {
-	$param .= "&amp;startdateday=".urlencode($startdateday);
+	$param .= "&amp;startdateday=".urlencode((string) ($startdateday));
 }
 if (!empty($startdatemonth)) {
-	$param .= "&amp;startdatemonth=".urlencode($startdatemonth);
+	$param .= "&amp;startdatemonth=".urlencode((string) ($startdatemonth));
 }
 if (!empty($startdateyear)) {
-	$param .= "&amp;startdateyear=".urlencode($startdateyear);
+	$param .= "&amp;startdateyear=".urlencode((string) ($startdateyear));
 }
 if (!empty($enddateday)) {
-	$param .= "&amp;enddateday=".urlencode($enddateday);
+	$param .= "&amp;enddateday=".urlencode((string) ($enddateday));
 }
 if (!empty($enddatemonth)) {
-	$param .= "&amp;enddatemonth=".urlencode($enddatemonth);
+	$param .= "&amp;enddatemonth=".urlencode((string) ($enddatemonth));
 }
 if (!empty($enddateyear)) {
-	$param .= "&amp;enddateyear=".urlencode($enddateyear);
+	$param .= "&amp;enddateyear=".urlencode((string) ($enddateyear));
 }
 
 

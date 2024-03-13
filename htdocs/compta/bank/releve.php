@@ -250,7 +250,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.$limit;
 }
 if ($id > 0) {
-	$param .= '&id='.urlencode($id);
+	$param .= '&id='.urlencode((string) ($id));
 }
 
 if (empty($numref)) {

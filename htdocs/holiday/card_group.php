@@ -5,7 +5,7 @@
  * Copyright (C) 2013		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2017  Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020-2021  Udo Tamm            <dev@dolibit.de>
  * Copyright (C) 2022		Anthony Berton      <anthony.berton@bb2a.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -50,10 +50,10 @@ $confirm 		= GETPOST('confirm', 'alpha');
 $id 			= GETPOSTINT('id');
 $ref 			= GETPOST('ref', 'alpha');
 $fuserid 		= (GETPOSTINT('fuserid') ? GETPOSTINT('fuserid') : $user->id);
-$users 			=  (GETPOST('users', 'array') ? GETPOST('users', 'array') : array($user->id));
+$users 			= (GETPOST('users', 'array') ? GETPOST('users', 'array') : array($user->id));
 $groups 		= GETPOST('groups', 'array');
 $socid 			= GETPOSTINT('socid');
-$autoValidation 	= GETPOSTINT('autoValidation');
+$autoValidation = GETPOSTINT('autoValidation');
 $AutoSendMail   = GETPOSTINT('AutoSendMail');
 // Load translation files required by the page
 $langs->loadLangs(array("other", "holiday", "mails", "trips"));
@@ -109,7 +109,7 @@ $candelete = 0;
 if ($user->hasRight('holiday', 'delete')) {
 	$candelete = 1;
 }
-if ($object->statut == Holiday::STATUS_DRAFT && $user->hasRight('holiday', 'write') && in_array($object->fk_user, $childids)) {
+if ($object->status == Holiday::STATUS_DRAFT && $user->hasRight('holiday', 'write') && in_array($object->fk_user, $childids)) {
 	$candelete = 1;
 }
 
@@ -117,7 +117,7 @@ if ($object->statut == Holiday::STATUS_DRAFT && $user->hasRight('holiday', 'writ
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'holiday', $object->id, 'holiday', '', '', 'rowid', $object->statut);
+$result = restrictedArea($user, 'holiday', $object->id, 'holiday', '', '', 'rowid', $object->status);
 
 
 /*
@@ -325,7 +325,7 @@ if (empty($reshook)) {
 								$htemp = new Holiday($db);
 								$htemp->fetch($result);
 
-								$htemp->statut = Holiday::STATUS_VALIDATED;
+								$htemp->status = Holiday::STATUS_VALIDATED;
 								$resultValidated = $htemp->update($approverid);
 
 								if ($resultValidated < 0) {
@@ -685,10 +685,10 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 
 	if ($result) {
 		// If draft and owner of leave
-		if ($object->statut == Holiday::STATUS_VALIDATED && $cancreate) {
+		if ($object->status == Holiday::STATUS_VALIDATED && $cancreate) {
 			$object->oldcopy = dol_clone($object, 2);
 
-			//if ($autoValidation) $object->statut = Holiday::STATUS_VALIDATED;
+			//if ($autoValidation) $object->status = Holiday::STATUS_VALIDATED;
 
 			$verif = $object->validate($user);
 

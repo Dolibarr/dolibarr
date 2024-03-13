@@ -17,6 +17,7 @@
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1662,7 +1663,7 @@ if (empty($reshook)) {
 									null,
 									0,
 									'',
-									(!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA)?0:1)
+									(!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA) ? 0 : 1)
 								);
 							}
 
@@ -3832,7 +3833,7 @@ if ($action == 'create') {
 
 			$thirdparty = $soc;
 			$discount_type = 0;
-			$backtopage = $_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.urlencode(GETPOST('origin')).'&originid='.urlencode(GETPOSTINT('originid'));
+			$backtopage = $_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.urlencode((string) (GETPOST('origin'))).'&originid='.urlencode((string) (GETPOSTINT('originid')));
 			include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
 
 			print '</td></tr>';
@@ -4459,7 +4460,7 @@ if ($action == 'create') {
 		}
 
 		// Create a form table
-		$formquestion = array('text' => $langs->trans("ConfirmClassifyPaidPartiallyQuestion"), array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"), 'values' => $arrayreasons), array('type' => 'text', 'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'morecss' => 'minwidth300'));
+		$formquestion = array('text' => $langs->trans("ConfirmClassifyPaidPartiallyQuestion"), 0 => array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"), 'values' => $arrayreasons), 1 => array('type' => 'text', 'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'morecss' => 'minwidth300'));
 		// Incomplete payment. We ask if reason = discount or other
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 1, 380, 600);
 	}
@@ -4491,7 +4492,7 @@ if ($action == 'create') {
 			$arrayreasons[$close[2]['code']] = $close[2]['reason'];
 
 			// Create a form table
-			$formquestion = array('text' => $langs->trans("ConfirmCancelBillQuestion"), array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"), 'values' => $arrayreasons), array('type' => 'text', 'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'morecss' => 'minwidth300'));
+			$formquestion = array('text' => $langs->trans("ConfirmCancelBillQuestion"), 0 => array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"), 'values' => $arrayreasons), 1 => array('type' => 'text', 'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'morecss' => 'minwidth300'));
 
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id, $langs->trans('CancelBill'), $langs->trans('ConfirmCancelBill', $object->ref), 'confirm_canceled', $formquestion, "yes", 1, 270);
 		}

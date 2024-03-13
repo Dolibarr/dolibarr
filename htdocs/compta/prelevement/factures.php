@@ -275,9 +275,9 @@ if ($resql) {
 	$i = 0;
 
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param.='&limit='.((int) $limit);
+		$param .= '&limit='.((int) $limit);
 	}
-	$param = "&id=".urlencode($id);
+	$param = "&id=".urlencode((string) ($id));
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -342,7 +342,7 @@ if ($resql) {
 		print '<tr class="oddeven">';
 
 		print '<td class="nowraponall">';
-		print ($salaryBonPl ? $salarytmp->getNomUrl(1) : $invoicetmp->getNomUrl(1));
+		print($salaryBonPl ? $salarytmp->getNomUrl(1) : $invoicetmp->getNomUrl(1));
 		print "</td>\n";
 
 		if ($object->type == 'bank-transfer' && !$salaryBonPl) {

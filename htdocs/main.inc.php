@@ -467,7 +467,7 @@ if (GETPOST('theme', 'aZ09')) {
 
 // Set global MAIN_OPTIMIZEFORTEXTBROWSER (must be before login part)
 if (GETPOSTINT('textbrowser') || (!empty($conf->browser->name) && $conf->browser->name == 'lynxlinks')) {   // If we must enable text browser
-	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 1;
+	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 2;
 }
 
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or 'https dolibarr root url')
@@ -2677,6 +2677,11 @@ function top_menu_quickadd()
 {
 	global $conf, $langs;
 
+	// Button disabled on text browser
+	if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		return '';
+	}
+
 	$html = '';
 
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
@@ -2738,7 +2743,7 @@ function top_menu_quickadd()
  */
 function printDropdownQuickadd()
 {
-	global $conf, $user, $langs, $hookmanager;
+	global $user, $langs, $hookmanager;
 
 	$items = array(
 		'items' => array(
@@ -3448,7 +3453,7 @@ function main_area($title = '')
 
 	// Permit to add user company information on each printed document by setting SHOW_SOCINFO_ON_PRINT
 	if (getDolGlobalString('SHOW_SOCINFO_ON_PRINT') && GETPOST('optioncss', 'aZ09') == 'print' && empty(GETPOST('disable_show_socinfo_on_print', 'aZ09'))) {
-		$parameters = array();
+		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$reshook = $hookmanager->executeHooks('showSocinfoOnPrint', $parameters);
 		if (empty($reshook)) {
 			print '<!-- Begin show mysoc info header -->'."\n";
@@ -3834,7 +3839,7 @@ if (!function_exists("llxFooter")) {
 			}
 		}
 
-		$parameters = array();
+		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$reshook = $hookmanager->executeHooks('beforeBodyClose', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			print $hookmanager->resPrint;

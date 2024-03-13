@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
-if (isModEnabled('delivery_note')) {
+if (isModEnabled('shipping')) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
 if (isModEnabled('stock')) {

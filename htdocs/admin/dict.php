@@ -507,7 +507,7 @@ $tabcond[14] = (isModEnabled("product") && (isModEnabled('ecotax') || getDolGlob
 $tabcond[15] = true;
 $tabcond[16] = (isModEnabled("societe") && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS'));
 $tabcond[17] = (isModEnabled('deplacement') || isModEnabled('expensereport'));
-$tabcond[18] = isModEnabled("delivery_note") || isModEnabled("reception");
+$tabcond[18] = isModEnabled("shipping") || isModEnabled("reception");
 $tabcond[19] = isModEnabled("societe");
 $tabcond[20] = isModEnabled("supplier_order");
 $tabcond[21] = isModEnabled("propal");
@@ -1227,9 +1227,9 @@ if ($id == 7 && GETPOST('from') == 'accountancy') {
 	$titlepicto = 'accountancy';
 }
 
-$param = '&id='.urlencode($id);
+$param = '&id='.urlencode((string) ($id));
 if ($search_country_id || GETPOSTISSET('page') || GETPOST('button_removefilter', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter_x', 'alpha')) {
-	$param .= '&search_country_id='.urlencode($search_country_id ? $search_country_id : -1);
+	$param .= '&search_country_id='.urlencode((string) ($search_country_id ? $search_country_id : -1));
 }
 if ($search_code != '') {
 	$param .= '&search_code='.urlencode($search_code);

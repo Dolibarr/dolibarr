@@ -53,7 +53,7 @@ if (! defined("NOSESSION")) {
 	define("NOSESSION", '1');
 }
 
-require_once dirname(__FILE__).'/../../htdocs/main.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/main.inc.php';	// We force include of main.inc.php instead of master.inc.php even if we are in CLI mode because it contains a lot of security components we want to test.
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
@@ -988,7 +988,7 @@ class SecurityTest extends CommonClassTest
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
-		$result=dol_eval('1==1', 1, 0);
+		$result = dol_eval('1==1', 1, 0);
 		print "result1 = ".$result."\n";
 		$this->assertTrue($result);
 

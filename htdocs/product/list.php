@@ -748,7 +748,7 @@ if ($sall) {
 	$param .= "&sall=".urlencode($sall);
 }
 if ($searchCategoryProductOperator == 1) {
-	$param .= "&search_category_product_operator=".urlencode($searchCategoryProductOperator);
+	$param .= "&search_category_product_operator=".urlencode((string) ($searchCategoryProductOperator));
 }
 foreach ($searchCategoryProductList as $searchCategoryProduct) {
 	$param .= "&search_category_product_list[]=".urlencode($searchCategoryProduct);
@@ -778,22 +778,22 @@ if ($search_tobatch) {
 	$param .= "&search_tobatch=".urlencode($search_tobatch);
 }
 if ($search_country != '') {
-	$param .= "&search_country=".urlencode($search_country);
+	$param .= "&search_country=".urlencode((string) ($search_country));
 }
 if ($search_state != '') {
-	$param .= "&search_state=".urlencode($search_state);
+	$param .= "&search_state=".urlencode((string) ($search_state));
 }
 if ($search_vatrate) {
 	$param .= "&search_vatrate=".urlencode($search_vatrate);
 }
 if ($fourn_id > 0) {
-	$param .= "&fourn_id=".urlencode($fourn_id);
+	$param .= "&fourn_id=".urlencode((string) ($fourn_id));
 }
 if ($show_childproducts) {
 	$param .= ($show_childproducts ? "&search_show_childproducts=".urlencode($show_childproducts) : "");
 }
 if ($type != '') {
-	$param .= '&type='.urlencode($type);
+	$param .= '&type='.urlencode((string) ($type));
 }
 if ($search_type != '') {
 	$param .= '&search_type='.urlencode($search_type);

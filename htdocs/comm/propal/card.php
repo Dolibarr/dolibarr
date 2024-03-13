@@ -1963,7 +1963,7 @@ if ($action == 'create') {
 
 			$thirdparty = $soc;
 			$discount_type = 0;
-			$backtopage = $_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.urlencode(GETPOST('origin')).'&originid='.urlencode(GETPOSTINT('originid'));
+			$backtopage = $_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.urlencode((string) (GETPOST('origin'))).'&originid='.urlencode((string) (GETPOSTINT('originid')));
 			include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
 			print '</td></tr>';
 		}
@@ -2004,7 +2004,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Shipping Method
-		if (isModEnabled("delivery_note")) {
+		if (isModEnabled("shipping")) {
 			if (getDolGlobalString('SOCIETE_ASK_FOR_SHIPPING_METHOD') && !empty($soc->shipping_method_id)) {
 				$shipping_method_id = $soc->shipping_method_id;
 			}
@@ -2695,7 +2695,7 @@ if ($action == 'create') {
 		print '</tr>';
 
 		// Shipping Method
-		if (isModEnabled("delivery_note")) {
+		if (isModEnabled("shipping")) {
 			print '<tr><td>';
 			print '<table class="nobordernopadding centpercent"><tr><td>';
 			print $langs->trans('SendingMethod');
