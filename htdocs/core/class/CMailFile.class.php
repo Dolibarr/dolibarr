@@ -1119,7 +1119,7 @@ class CMailFile
 					$result = $this->smtps->getErrors();	// applicative error code (not SMTP error code)
 					if (empty($this->error) && empty($result)) {
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
-						$res = true;
+						$res = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 					} else {
 						if (empty($this->error)) {
 							$this->error = $result;
