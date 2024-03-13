@@ -2592,7 +2592,7 @@ if ($action == 'create') {
 					print '<td class="linecolwarehousesource tdoverflowmax200">';
 					if ($lines[$i]->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
 						print '<span class="opacitymedium">('.$langs->trans("Service").')</span>';
-					} elseif ($lines[$i]->entrepot_id > 0 && $lines[$i]->product->stockable_product == Product::ENABLED_STOCK) {
+					} elseif ($lines[$i]->entrepot_id > 0 && $lines[$i]->stockable_product == Product::ENABLED_STOCK) {
 						$entrepot = new Entrepot($db);
 						$entrepot->fetch($lines[$i]->entrepot_id);
 						print $entrepot->getNomUrl(1);

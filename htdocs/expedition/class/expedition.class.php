@@ -1682,6 +1682,7 @@ class Expedition extends CommonObject
 
 				$line->fk_expedition    = $this->id; // id of parent
 
+				$line->stockable_product = $obj->stockable_product;
 				$line->product_type     = $obj->product_type;
 				$line->fk_product     	= $obj->fk_product;
 				$line->fk_product_type	= $obj->fk_product_type;
