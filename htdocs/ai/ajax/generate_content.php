@@ -72,6 +72,8 @@ if (is_array($generatedContent) && $generatedContent['error']) {
 	if ($generatedContent['code'] >= 400) {
 		print "Error : " . $generatedContent['message'];
 		print '<br><a href="'.DOL_MAIN_URL_ROOT.'/ai/admin/setup.php">'.$langs->trans('Check Config of Module').'</a>';
+	} elseif ($generatedContent['code'] == 429) {
+		print "Quota or allowed period exceeded. Retry Later !";
 	} else {
 		print "Error returned by API call: " . $generatedContent['message'];
 	}
