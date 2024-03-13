@@ -129,7 +129,6 @@ if ($action == 'update' && !GETPOST('cancel')) {
 if ($action == 'confirm_deleteproperty') {
 	$key = GETPOST('key', 'alpha');
 
-	//var_dump($currentConfigurations[$key]);exit;
 	if (isset($currentConfigurations[$key])) {
 		unset($currentConfigurations[$key]);
 
