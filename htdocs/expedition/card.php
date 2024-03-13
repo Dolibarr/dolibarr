@@ -2472,7 +2472,7 @@ if ($action == 'create') {
 				// Warehouse source
 				if (isModEnabled('stock')) {
 					print '<td class="linecolwarehousesource left">';
-					if ($lines[$i]->entrepot_id > 0 && $lines[$i]->product->stockable_product == Product::ENABLED_STOCK) {
+					if ($lines[$i]->entrepot_id > 0 && $lines[$i]->stockable_product == Product::ENABLED_STOCK) {
 						$entrepot = new Entrepot($db);
 						$entrepot->fetch($lines[$i]->entrepot_id);
 						print $entrepot->getNomUrl(1);
