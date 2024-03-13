@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -747,6 +748,8 @@ if ($action == 'addsite' && $usercanedit) {
 	}
 }
 
+'@phan-var-force int $error';
+
 // Add page/container
 if ($action == 'addcontainer' && $usercanedit) {
 	dol_mkdir($pathofwebsite);
@@ -761,6 +764,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 		$grabimagesinto = GETPOST('grabimagesinto', 'alpha');
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+		// The include seems to break typing on variables
 
 		if (empty($urltograb)) {
 			$error++;

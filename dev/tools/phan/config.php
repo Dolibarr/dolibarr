@@ -410,8 +410,7 @@ return [
 		'PhanDeprecatedProperty',
 		'PhanDeprecatedFunction',
 		//'PhanCompatibleNegativeStringOffset',
-		// Dolibarr has quite a few strange noop assignments like $abc=$abc;
-		'PhanPluginDuplicateExpressionAssignment',
+		// 'PhanPluginDuplicateExpressionAssignment',
 		// Nulls are likely mostly false positives
 		'PhanPluginConstantVariableNull',
 		'PhanTypeObjectUnsetDeclaredProperty',
@@ -466,7 +465,7 @@ return [
 		// 'PhanPluginNoCommentOnFunction',
 		'PhanPluginUnknownArrayFunctionParamType',
 		// 'PhanPluginDescriptionlessCommentOnPublicProperty',
-		'PhanPluginUnknownFunctionParamType',
+		// 'PhanPluginUnknownFunctionParamType',  // Finds certain errors in PHPdoc typing
 		'PhanTypeSuspiciousStringExpression',
 		// 'PhanPluginRedundantAssignment',
 
@@ -483,7 +482,7 @@ return [
 		'PhanTypeInvalidPropertyName',
 		'PhanPluginDuplicateCatchStatementBody',
 		'PhanPluginUndeclaredVariableIsset',
-		'PhanTypeInvalidUnaryOperandIncOrDec',
+		// 'PhanTypeInvalidUnaryOperandIncOrDec',
 		// 'PhanPluginDescriptionlessCommentOnClass',
 		'PhanPluginEmptyStatementIf',
 		'PhanPluginInlineHTMLTrailing',
@@ -601,7 +600,7 @@ return [
 		'PhanUndeclaredClassMethod',
 		'PhanUndeclaredMethod',
 		'PhanTypeMismatchArgumentProbablyReal',
-		'PhanPluginDuplicateExpressionAssignmentOperation',
+		'PhanPluginDuplicateExpressionAssignmentOperation',  // Suggestions for optimisation
 		'PhanTypeMismatchPropertyDefault',
 		// 'PhanPluginAlwaysReturnMethod',
 		// 'PhanPluginMissingReturnMethod',
