@@ -944,6 +944,28 @@ class modProduct extends DolibarrModules
 			$this->import_examplevalues_array[$r] = array('l.fk_product'=>'ref:PRODUCT_REF or id:123456', 'l.lang'=>'en_US', 'l.label'=>'Label in en_US', 'l.description'=>'Desc in en_US');
 			$this->import_updatekeys_array[$r] = array('l.fk_product'=>'ProductOrService', 'l.lang'=>'Language');
 		}
+
+		if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+			// Import products kit
+			$r++;
+			$this->import_code[$r] = $this->rights_class . '_' . $r;
+			$this->import_label[$r] = "AssociatedProducts"; // Translation key
+			$this->import_icon[$r] = $this->picto;
+			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r] = array('pa' => MAIN_DB_PREFIX . 'product_association');
+			$this->import_fields_array[$r] = array('pa.fk_product_pere' => 'ParentProducts', 'pa.fk_product_fils' => 'ComposedProduct', 'pa.qty' => 'Qty', 'pa.incdec' => 'ComposedProductIncDecStock', 'pa.rang' => 'rang');
+
+			$this->import_convertvalue_array[$r] = array(
+				'pa.fk_product_pere' => array('rule' => 'fetchidfromref', 'classfile' => '/product/class/product.class.php', 'class' => 'Product', 'method' => 'fetch', 'element' => 'Product'),
+				'pa.fk_product_fils' => array('rule' => 'fetchidfromref', 'classfile' => '/product/class/product.class.php', 'class' => 'Product', 'method' => 'fetch', 'element' => 'Product')
+			);
+			$this->import_examplevalues_array[$r] = array(
+				'pa.fk_product_pere' => "ref:PREF123456",
+				'pa.fk_product_fils' => "ref:PREF123456",
+				'pa.qty' => "100",
+				'pa.incdec' => "0",
+				'pa.rang' => "1");
+		}
 	}
 
 
