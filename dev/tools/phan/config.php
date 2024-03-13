@@ -468,7 +468,7 @@ return [
 		// 'PhanPluginDescriptionlessCommentOnPublicProperty',
 		'PhanPluginUnknownFunctionParamType',
 		'PhanTypeSuspiciousStringExpression',
-		'PhanPluginRedundantAssignment',
+		// 'PhanPluginRedundantAssignment',
 
 		'PhanTypeExpectedObjectPropAccess',
 		'PhanTypeInvalidRightOperandOfNumericOp',
@@ -587,7 +587,7 @@ return [
 		'PhanTypePossiblyInvalidDimOffset', // Also checks optional array keys and requires that they are checked for existence.
 		'PhanUndeclaredGlobalVariable',
 		'PhanUndeclaredProperty',
-		'PhanPluginPrintfNotPercent',
+		// 'PhanPluginPrintfNotPercent',  // Detects fishy stuff with '%' format and suggests %%
 		'PhanPossiblyUndeclaredGlobalVariable',
 		// 'PhanPluginPossiblyStaticProtectedMethod',
 		'PhanTypeMismatchReturn',

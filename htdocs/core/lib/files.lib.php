@@ -1104,7 +1104,7 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 				}
 
 				if ($resultecm > 0) {
-					$result = true;
+					$result = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 				} else {
 					$result = false;
 				}
@@ -1180,7 +1180,7 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 							}
 						}
 					}
-					$result = true;
+					$result = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 				}
 			}
 		}
@@ -2518,9 +2518,9 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 
 	try {
 		if ($mode == 'gz') {
-			$foundhandler = 0;
+			$foundhandler = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		} elseif ($mode == 'bz') {
-			$foundhandler = 0;
+			$foundhandler = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		} elseif ($mode == 'zip') {
 			/*if (defined('ODTPHP_PATHTOPCLZIP'))
 			 {
@@ -2736,7 +2736,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->mycompany->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'userphoto' && !empty($conf->user->dir_output)) {
 		// Wrapping for users photos (user photos are allowed to any connected users)
-		$accessallowed = 0;
+		$accessallowed = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		if (preg_match('/^\d+\/photos\//', $original_file)) {
 			$accessallowed = 1;
 		}
@@ -2772,7 +2772,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->mycompany->dir_output.'/logos/'.$original_file;
 	} elseif ($modulepart == 'memberphoto' && !empty($conf->adherent->dir_output)) {
 		// Wrapping for members photos
-		$accessallowed = 0;
+		$accessallowed = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		if (preg_match('/^\d+\/photos\//', $original_file)) {
 			$accessallowed = 1;
 		}

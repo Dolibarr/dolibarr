@@ -524,8 +524,8 @@ class Facture extends CommonInvoice
 
 			// Define some dates
 			$originaldatewhen = $_facrec->date_when;
-			$nextdatewhen = null;
-			$previousdaynextdatewhen = null;
+			$nextdatewhen = null;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$previousdaynextdatewhen = null;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 			if ($originaldatewhen) {
 				$nextdatewhen = dol_time_plus_duree($originaldatewhen, $_facrec->frequency, $_facrec->unit_frequency);
 				$previousdaynextdatewhen = dol_time_plus_duree($nextdatewhen, -1, 'd');

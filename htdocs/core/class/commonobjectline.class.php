@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,8 +167,6 @@ abstract class CommonObjectLine extends CommonObject
 		}
 
 		$langs->load('products');
-
-		$label_type = 'label';
 
 		$label_type = 'label';
 		if ($type == 'short') {

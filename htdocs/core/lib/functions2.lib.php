@@ -1431,23 +1431,28 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 }
 
 /**
- * Get string between
+ * Get string from "$start" up to "$end"
+ *
+ * If string is "STARTcontentEND" and $start is "START" and $end is "END",
+ * then this function returns "content"
  *
  * @param   string  $string     String to test
- * @param   int     $start      Value for start
- * @param   int     $end        Value for end
+ * @param   string  $start      String Value for start
+ * @param   string  $end        String Value for end
  * @return  string              Return part of string
  */
 function get_string_between($string, $start, $end)
 {
-	$string = " ".$string;
 	$ini = strpos($string, $start);
-	if ($ini == 0) {
-		return "";
+	if ($ini === false) {
+		return '';
 	}
 	$ini += strlen($start);
-	$len = strpos($string, $end, $ini) - $ini;
-	return substr($string, $ini, $len);
+	$endpos = strpos($string, $end, $ini);
+	if ($endpos === false) {
+		return '';
+	}
+	return substr($string, $ini, $endpos - $ini);
 }
 
 /**
