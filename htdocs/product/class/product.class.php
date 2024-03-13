@@ -310,7 +310,7 @@ class Product extends CommonObject
 	/**
 	 * Status indicates whether the product is on sale '1' or not '0'
 	 * @var int
-	 * @deprecated
+	 * @deprecated  Use $status instead
 	 * @see $status
 	 */
 	public $tosell;
@@ -325,7 +325,7 @@ class Product extends CommonObject
 	/**
 	 * Status indicate whether the product is available for purchase '1' or not '0'
 	 * @var int
-	 * @deprecated
+	 * @deprecated Use $status_buy instead
 	 * @see $status_buy
 	 */
 	public $tobuy;
@@ -333,7 +333,7 @@ class Product extends CommonObject
 	/**
 	 * Status indicates whether the product is a finished product '1' or a raw material '0'
 	 *
-	 * @var int
+	 * @var ?int
 	 */
 	public $finished;
 
