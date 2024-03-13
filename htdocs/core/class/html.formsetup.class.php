@@ -1035,7 +1035,7 @@ class FormSetupItem
 	/**
 	 * generate input field for a password
 	 *
-	 * @param   [type]  $type  'dolibarr' (dolibarr password rules apply) or 'generic'
+	 * @param   string  $type  'dolibarr' (dolibarr password rules apply) or 'generic'
 	 *
 	 * @return  string
 	 */
