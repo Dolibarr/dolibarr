@@ -889,7 +889,7 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
  * Return last or next value for a mask (according to area we should not reset)
  *
  * @param   DoliDB		$db				Database handler
- * @param   string		$mask			Mask to use
+ * @param   string		$mask			Mask to use. Must contains {0...0}. Can contains {t..}, {u...}, {user_extra_xxx}, .;.
  * @param   string		$table			Table containing field with counter
  * @param   string		$field			Field containing already used values of counter
  * @param   string		$where			To add a filter on selection (for example to filter on invoice types)
@@ -903,7 +903,7 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
  */
 function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $date = '', $mode = 'next', $bentityon = true, $objuser = null, $forceentity = null)
 {
-	global $conf, $user;
+	global $user;
 
 	if (!is_object($objsoc)) {
 		$valueforccc = $objsoc;
