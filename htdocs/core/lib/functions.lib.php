@@ -10319,8 +10319,8 @@ function getLanguageCodeFromCountryCode($countrycode)
  *  @param	Conf			$conf           Object conf
  *  @param  Translate		$langs          Object langs
  *  @param  object|null		$object         Object object
- *  @param  array			$head          	Object head
- *  @param  int				$h				New position to fill
+ *  @param  array<array<int,string>>	$head          	List of head tabs (updated by this function)
+ *  @param  int				$h				New position to fill (updated by this function)
  *  @param  string			$type           Value for object where objectvalue can be
  *                              			'thirdparty'       to add a tab in third party view
  *		                        	      	'intervention'     to add a tab in intervention view

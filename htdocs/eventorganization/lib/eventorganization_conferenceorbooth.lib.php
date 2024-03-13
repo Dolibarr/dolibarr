@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) ---Put here your own copyright and developer email---
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,7 +115,7 @@ function conferenceorboothPrepareHead($object, $with_project = 0)
 /**
  * Prepare array of tabs for ConferenceOrBooth Project tab
  *
- * @param $object Project Project
+ * @param Project $object Project
  * @return array
  */
 function conferenceorboothProjectPrepareHead($object)
@@ -190,7 +191,7 @@ function conferenceorboothProjectPrepareHead($object)
  * Prepare array of tabs for ConferenceOrBoothAttendees
  *
  * @param	ConferenceOrBoothAttendee	$object		ConferenceOrBoothAttendee
- * @return 	array					Array of tabs
+ * @return 	array<array<int,string>>				Array of tabs
  */
 function conferenceorboothAttendeePrepareHead($object)
 {
