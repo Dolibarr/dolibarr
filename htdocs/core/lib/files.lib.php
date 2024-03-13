@@ -644,19 +644,17 @@ function dol_fileperm($pathoffile)
 /**
  * Make replacement of strings into a file.
  *
- * @param	string	$srcfile			       Source file (can't be a directory)
+ * @param	string					$srcfile			       Source file (can't be a directory)
  * @param	array<string,string>	$arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
- * @param	string	$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
- * @param	string	$newmask			       Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
- * @param	int		$indexdatabase		       1=index new file into database.
- * @param   int     $arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/'
- * @return	int							       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
+ * @param	string					$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
+ * @param	string					$newmask			       Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @param	int						$indexdatabase		       1=index new file into database.
+ * @param   int     				$arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/'
+ * @return	int											       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
  * @see		dol_copy()
  */
 function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask = '0', $indexdatabase = 0, $arrayreplacementisregex = 0)
 {
-	global $conf;
-
 	dol_syslog("files.lib.php::dolReplaceInFile srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." indexdatabase=".$indexdatabase." arrayreplacementisregex=".$arrayreplacementisregex);
 
 	if (empty($srcfile)) {
