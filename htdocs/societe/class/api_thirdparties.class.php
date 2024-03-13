@@ -55,7 +55,7 @@ class Thirdparties extends DolibarrApi
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
-		require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 
 		$this->company = new Societe($this->db);
 
@@ -1261,7 +1261,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$notification = new CompanyNotification($this->db);
+		$notification = new Notify($this->db);
 
 		$notification->fetch($notification_id);
 
