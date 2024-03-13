@@ -210,7 +210,7 @@ if ($resql) {
 	$transactionspertype = array();
 	$amountpertype = array();
 
-	$totalarray = array('nbfield' => 0,'pos' => array());
+	$totalarray = array('nbfield' => 0, 'pos' => array());
 	while ($i < $num) {
 		$objp = $db->fetch_object($resql);
 
