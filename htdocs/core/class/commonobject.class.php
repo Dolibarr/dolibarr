@@ -140,7 +140,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -781,9 +781,9 @@ abstract class CommonObject
 	protected $childtables = array();
 
 	/**
-	 * @var array    List of child tables. To know object to delete on cascade.
-	 *               If name is like '@ClassName:FilePathClass:ParentFkFieldName', it will
-	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object.
+	 * @var string[]	List of child tables. To know object to delete on cascade.
+	 * 					If name is like '@ClassName:FilePathClass:ParentFkFieldName', it will
+	 *					call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object.
 	 */
 	protected $childtablesoncascade = array();
 
@@ -1657,8 +1657,6 @@ abstract class CommonObject
 						$element = 'contract';
 					} elseif ($obj->element == 'action') {
 						$modulename = 'agenda';
-					} elseif (strpos($obj->element, 'supplier') !== false && $obj->element != 'supplier_proposal') {
-						$modulename = 'fournisseur';
 					} elseif (strpos($obj->element, 'supplier') !== false && $obj->element != 'supplier_proposal') {
 						$modulename = 'fournisseur';
 					}
@@ -4224,7 +4222,7 @@ abstract class CommonObject
 					} elseif ($objecttype == 'delivery') {
 						$classpath = 'delivery/class';
 						$subelement = 'delivery';
-						$module = 'delivery_note';
+						$module = 'shipping';
 					} elseif ($objecttype == 'invoice_supplier' || $objecttype == 'order_supplier') {
 						$classpath = 'fourn/class';
 						$module = 'fournisseur';
@@ -5705,7 +5703,7 @@ abstract class CommonObject
 			}
 		}
 
-		if (!$filefound) {
+		if ($filefound === '' || $classname === '') {
 			$this->error = $langs->trans("Error").' Failed to load doc generator with modelpaths='.$modelspath.' - modele='.$modele;
 			$this->errors[] = $this->error;
 			dol_syslog($this->error, LOG_ERR);
@@ -8006,7 +8004,11 @@ abstract class CommonObject
 			if (!empty($value)) {
 				$checked = ' checked ';
 			}
-			$value = '<input type="checkbox" '.$checked.' '.($moreparam ? $moreparam : '').' readonly disabled>';
+			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
+				$value = '<input type="checkbox" '.$checked.' '.($moreparam ? $moreparam : '').' readonly disabled>';
+			} else {
+				$value = yn($value ? 1 : 0);
+			}
 		} elseif ($type == 'mail' || $type == 'email') {
 			$value = dol_print_email($value, 0, 0, 0, 64, 1, 1);
 		} elseif ($type == 'url') {

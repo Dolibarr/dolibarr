@@ -129,7 +129,7 @@ $tabrowid[31] = "";
 
 // List of help for fields
 $tabhelp = array();
-$tabhelp[31] = array('pcg_version'=>$langs->trans("EnterAnyCode"));
+$tabhelp[31] = array('pcg_version' => $langs->trans("EnterAnyCode"));
 
 
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
@@ -241,7 +241,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$result = $db->query($sql);
 		if ($result) {	// Add is ok
 			setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
-			$_POST = array('id'=>$id); // Clean $_POST array, we keep only
+			$_POST = array('id' => $id); // Clean $_POST array, we keep only
 		} else {
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
@@ -353,7 +353,7 @@ print load_fiche_titre($titre, $linkback, 'title_accountancy');
 
 // Confirmation de la suppression de la ligne
 if ($action == 'delete') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.urlencode($page).'&' : '').'sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder).'&rowid='.urlencode($rowid).'&code='.urlencode($code).'&id='.urlencode($id), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.urlencode((string) ($page)).'&' : '').'sortfield='.urlencode((string) ($sortfield)).'&sortorder='.urlencode((string) ($sortorder)).'&rowid='.urlencode((string) ($rowid)).'&code='.urlencode((string) ($code)).'&id='.urlencode((string) ($id)), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
 //var_dump($elementList);
 
@@ -458,7 +458,7 @@ if ($id) {
 		}
 
 		$tmpaction = 'create';
-		$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+		$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
 		$reshook = $hookmanager->executeHooks('createDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 		$error = $hookmanager->error;
 		$errors = $hookmanager->errors;
@@ -486,9 +486,9 @@ if ($id) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		$param = '&id='.urlencode($id);
+		$param = '&id='.urlencode((string) ($id));
 		if ($search_country_id > 0) {
-			$param .= '&search_country_id='.urlencode($search_country_id);
+			$param .= '&search_country_id='.urlencode((string) ($search_country_id));
 		}
 		$paramwithsearch = $param;
 		if ($sortorder) {
@@ -556,7 +556,7 @@ if ($id) {
 					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 
 					$tmpaction = 'edit';
-					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
 					$reshook = $hookmanager->executeHooks('editDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 					$error = $hookmanager->error;
 					$errors = $hookmanager->errors;
@@ -571,7 +571,7 @@ if ($id) {
 					print '</td>';
 				} else {
 					$tmpaction = 'view';
-					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
 					$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
 					$error = $hookmanager->error;
@@ -718,7 +718,7 @@ function fieldListAccountModel($fieldlist, $obj = null, $tabname = '', $context 
 				print '<td>';
 			}
 			if ($fieldlist[$field] == 'type_cdr') {
-				print $form->selectarray($fieldlist[$field], array(0=>$langs->trans('None'), 1=>$langs->trans('AtEndOfMonth'), 2=>$langs->trans('CurrentNext')), (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : ''));
+				print $form->selectarray($fieldlist[$field], array(0 => $langs->trans('None'), 1 => $langs->trans('AtEndOfMonth'), 2 => $langs->trans('CurrentNext')), (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : ''));
 			} else {
 				print $form->selectyesno($fieldlist[$field], (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : ''), 1);
 			}

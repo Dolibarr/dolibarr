@@ -402,9 +402,9 @@ if (!empty($_SESSION['dol_loginmesg'])) {
 	$message = $_SESSION['dol_loginmesg'];	// By default this is an error message
 	if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
 		$message = str_replace('<!-- warning -->', '', $message);
-		print '<div class="warning">';
+		print '<div class="warning" role="alert">';
 	} else {
-		print '<div class="error">';
+		print '<div class="error" role="alert">';
 	}
 	print dol_escape_htmltag($message);
 	print '</div>'; ?>

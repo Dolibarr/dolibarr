@@ -436,7 +436,7 @@ if ($search_all) {
 	$param .= "&search_all=".urlencode($search_all);
 }
 if ($socid) {
-	$param .= "&socid=".urlencode($socid);
+	$param .= "&socid=".urlencode((string) ($socid));
 }
 if ($search_ref) {
 	$param .= "&search_ref=".urlencode($search_ref);
@@ -454,25 +454,25 @@ if ($search_status != '' && $search_status > -1) {
 	$param .= "&search_status=".urlencode($search_status);
 }
 if ($search_date_startday > 0) {
-	$param .= '&search_date_startday='.urlencode($search_date_startday);
+	$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
 }
 if ($search_date_startmonth > 0) {
-	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+	$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
 }
 if ($search_date_startyear > 0) {
-	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+	$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
 }
 if ($search_date_endday > 0) {
-	$param .= '&search_date_endday='.urlencode($search_date_endday);
+	$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
 }
 if ($search_date_endmonth > 0) {
-	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
 }
 if ($search_date_endyear > 0) {
-	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
 }
 if ($show_files) {
-	$param .= '&show_files='.urlencode($show_files);
+	$param .= '&show_files='.urlencode((string) ($show_files));
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);

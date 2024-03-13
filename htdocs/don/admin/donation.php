@@ -5,6 +5,7 @@
  * Copyright (C) 2015-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Benoit Bruchard			<benoitb21@gmail.com>
  * Copyright (C) 2019       Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +63,7 @@ if ($action == 'specimen') {
 	// Search template files
 	$dir = DOL_DOCUMENT_ROOT."/core/modules/dons/";
 	$file = $modele.".modules.php";
-	if (file_exists($dir.$file)) {
+	if ($modele !== '' && file_exists($dir.$file)) {
 		$classname = $modele;
 		require_once $dir.$file;
 

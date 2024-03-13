@@ -4,6 +4,7 @@
  * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,10 +109,10 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 * Return an example of result returned by getNextValue
 	 *
 	 * @param	Translate	$langs			Object langs
-	 * @param	Product		$objproduct		Object product
+	 * @param	?Product	$objproduct		Object product
 	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objproduct = 0)
+	public function getExample($langs, $objproduct = null)
 	{
 		$examplebarcode = $this->getNextValue($objproduct, '');
 		if (!$examplebarcode) {
@@ -127,8 +128,8 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	/**
 	 *  Return literal barcode type code from numerical rowid type of barcode
 	 *
-	 *	@param	Database    $db         Database
-	 *  @param  int  		$type       Type of barcode (EAN, ISBN, ...) as rowid
+	 *	@param	DoliDB	$db         Database
+	 *  @param  int  	$type       Type of barcode (EAN, ISBN, ...) as rowid
 	 *  @return string
 	 */
 	public function literalBarcodeType($db, $type = 0)
@@ -154,16 +155,22 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		return $out;
 	}
+
 	/**
 	 * Return next value
 	 *
-	 * @param	Product		$objproduct     Object product
-	 * @param	string		$type       	Type of barcode (EAN, ISBN, ...)
-	 * @return 	string      				Value if OK, '' if module not configured, <0 if KO
+	 * @param	?CommonObject	$objproduct 	Object product (not used)
+	 * @param	string			$type    		Type of barcode (EAN, ISBN, ...)
+	 * @return 	string      					Value if OK, '' if module not configured, <0 if KO
 	 */
-	public function getNextValue($objproduct, $type = '')
+	public function getNextValue($objproduct = null, $type = '')
 	{
-		global $db, $conf;
+		global $db;
+
+		if (is_object($objproduct) && !$objproduct instanceof Product) {
+			dol_syslog(get_class($this)."::getNextValue used on incompatible".get_class($objproduct), LOG_ERR);
+			return -1;
+		}
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // to be able to call function barcode_gen_ean_sum($ean)
@@ -172,13 +179,8 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 			$type = getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE');
 		} //get barcode type configuration for products if $type not set
 
-		// TODO
-
 		// Get Mask value
-		$mask = '';
-		if (getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK')) {
-			$mask = getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK');
-		}
+		$mask = getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK');
 
 		if (empty($mask)) {
 			$this->error = 'NotConfigured';
@@ -192,25 +194,26 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		$numFinal = get_next_value($db, $mask, 'product', $field, $where, '', $now);
 		//Begin barcode with key: for barcode with key (EAN13...) calculate and substitute the last  character (* or ?) used in the mask by the key
-		if ((substr($numFinal, -1)=='*') or (substr($numFinal, -1)=='?')) { // if last mask character is * or ? a joker, probably we have to calculate a key as last character (EAN13...)
+		if ((substr($numFinal, -1) == '*') or (substr($numFinal, -1) == '?')) { // if last mask character is * or ? a joker, probably we have to calculate a key as last character (EAN13...)
 			$literaltype = '';
 			$literaltype = $this->literalBarcodeType($db, $type);//get literal_Barcode_Type
 			switch ($literaltype) {
 				case 'EAN13': //EAN13 rowid = 2
-					if (strlen($numFinal)==13) {// be sure that the mask length is correct for EAN13
+					if (strlen($numFinal) == 13) {// be sure that the mask length is correct for EAN13
 						$ean = substr($numFinal, 0, 12); //take first 12 digits
-							$eansum = barcode_gen_ean_sum($ean);
+						$eansum = barcode_gen_ean_sum($ean);
 						$ean .= $eansum; //substitute the las character by the key
 						$numFinal = $ean;
 					}
 					break;
-				// Other barcode cases with key could be written here
+					// Other barcode cases with key could be written here
 				default:
 					break;
 			}
 		}
 		//End barcode with key
-		return  $numFinal;
+
+		return $numFinal;
 	}
 
 

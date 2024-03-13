@@ -393,7 +393,7 @@ if ($actioncode || GETPOSTISSET('search_actioncode')) {
 	}
 }
 if ($resourceid > 0) {
-	$param .= "&search_resourceid=".urlencode($resourceid);
+	$param .= "&search_resourceid=".urlencode((string) ($resourceid));
 }
 if ($status || GETPOSTISSET('status') || GETPOSTISSET('search_status')) {
 	$param .= "&search_status=".urlencode($status);
@@ -405,26 +405,26 @@ if ($filtert) {
 	$param .= "&search_filtert=".urlencode($filtert);
 }
 if ($usergroup > 0) {
-	$param .= "&search_usergroup=".urlencode($usergroup);
+	$param .= "&search_usergroup=".urlencode((string) ($usergroup));
 }
 if ($socid > 0) {
-	$param .= "&search_socid=".urlencode($socid);
+	$param .= "&search_socid=".urlencode((string) ($socid));
 }
 if ($showbirthday) {
 	$param .= "&search_showbirthday=1";
 }
 if ($pid) {
-	$param .= "&search_projectid=".urlencode($pid);
+	$param .= "&search_projectid=".urlencode((string) ($pid));
 }
 if ($type) {
 	$param .= "&search_type=".urlencode($type);
 }
-$param .= "&maxprint=".urlencode($maxprint);
+$param .= "&maxprint=".urlencode((string) ($maxprint));
 if ($mode == 'show_day' || $mode == 'show_week' || $mode == 'show_month') {
 	$param .= '&mode='.urlencode($mode);
 }
 if ($search_categ_cus != 0) {
-	$param .= '&search_categ_cus='.urlencode($search_categ_cus);
+	$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
 }
 
 // Show navigation bar

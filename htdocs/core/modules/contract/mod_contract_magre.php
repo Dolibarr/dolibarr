@@ -105,7 +105,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	 *	Return next value
 	 *
 	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$contract	contract object
+	 *	@param	Contrat		$contract	contract object
 	 *	@return string|0      			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $contract)
@@ -124,19 +124,5 @@ class mod_contract_magre extends ModelNumRefContracts
 		$numFinal = get_next_value($db, $mask, 'contrat', 'ref', '', $objsoc, $contract->date_contrat);
 
 		return  $numFinal;
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next value
-	 *
-	 *  @param	Societe		$objsoc     third party object
-	 *  @param	Object		$objforref	contract object
-	 *  @return string|0      			Value if OK, 0 if KO
-	 */
-	public function contract_get_num($objsoc, $objforref)
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $objforref);
 	}
 }

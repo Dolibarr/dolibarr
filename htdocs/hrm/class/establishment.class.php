@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,24 +131,24 @@ class Establishment extends CommonObject
 
 
 	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15, 'index'=>1),
-		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>20),
-		'label' =>array('type'=>'varchar(128)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'showoncombobox'=>2, 'position'=>22),
-		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
-		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
-		'town' =>array('type'=>'varchar(50)', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
-		'fk_state' =>array('type'=>'integer', 'label'=>'Fkstate', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
-		'fk_country' =>array('type'=>'integer', 'label'=>'Fkcountry', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'profid1' =>array('type'=>'varchar(20)', 'label'=>'Profid1', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
-		'profid2' =>array('type'=>'varchar(20)', 'label'=>'Profid2', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
-		'profid3' =>array('type'=>'varchar(20)', 'label'=>'Profid3', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
-		'phone' =>array('type'=>'varchar(20)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
-		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fkuserauthor', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
-		'fk_user_mod' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fkusermod', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
-		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>80),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>85),
-		'status' =>array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
+		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 20),
+		'label' => array('type' => 'varchar(128)', 'label' => 'Label', 'enabled' => 1, 'visible' => -1, 'showoncombobox' => 2, 'position' => 22),
+		'address' => array('type' => 'varchar(255)', 'label' => 'Address', 'enabled' => 1, 'visible' => -1, 'position' => 25),
+		'zip' => array('type' => 'varchar(25)', 'label' => 'Zip', 'enabled' => 1, 'visible' => -1, 'position' => 30),
+		'town' => array('type' => 'varchar(50)', 'label' => 'Town', 'enabled' => 1, 'visible' => -1, 'position' => 35),
+		'fk_state' => array('type' => 'integer', 'label' => 'Fkstate', 'enabled' => 1, 'visible' => -1, 'position' => 40),
+		'fk_country' => array('type' => 'integer', 'label' => 'Fkcountry', 'enabled' => 1, 'visible' => -1, 'position' => 45),
+		'profid1' => array('type' => 'varchar(20)', 'label' => 'Profid1', 'enabled' => 1, 'visible' => -1, 'position' => 50),
+		'profid2' => array('type' => 'varchar(20)', 'label' => 'Profid2', 'enabled' => 1, 'visible' => -1, 'position' => 55),
+		'profid3' => array('type' => 'varchar(20)', 'label' => 'Profid3', 'enabled' => 1, 'visible' => -1, 'position' => 60),
+		'phone' => array('type' => 'varchar(20)', 'label' => 'Phone', 'enabled' => 1, 'visible' => -1, 'position' => 65),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkuserauthor', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 70),
+		'fk_user_mod' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkusermod', 'enabled' => 1, 'visible' => -1, 'position' => 75),
+		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 80),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 85),
+		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => -1, 'position' => 500),
 	);
 
 
@@ -505,7 +506,7 @@ class Establishment extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('establishmentdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

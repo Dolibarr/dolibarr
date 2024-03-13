@@ -1343,7 +1343,7 @@ class Form
 			}
 
 			// mode 1
-			$urloption = 'htmlname=' . urlencode(str_replace('.', '_', $htmlname)) . '&outjson=1&filter=' . urlencode($filter) . (empty($excludeids) ? '' : '&excludeids=' . implode(',', $excludeids)) . ($showtype ? '&showtype=' . urlencode($showtype) : '') . ($showcode ? '&showcode=' . urlencode($showcode) : '');
+			$urloption = 'htmlname=' . urlencode((string) (str_replace('.', '_', $htmlname))) . '&outjson=1&filter=' . urlencode((string) ($filter)) . (empty($excludeids) ? '' : '&excludeids=' . implode(',', $excludeids)) . ($showtype ? '&showtype=' . urlencode((string) ($showtype)) : '') . ($showcode ? '&showcode=' . urlencode((string) ($showcode)) : '');
 
 			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
 			if (empty($hidelabel)) {
@@ -9181,7 +9181,7 @@ class Form
 					}
 				} elseif ($objecttype == 'shipping' || $objecttype == 'shipment' || $objecttype == 'expedition') {
 					$tplpath = 'expedition';
-					if (!isModEnabled('delivery_note')) {
+					if (!isModEnabled('shipping')) {
 						continue; // Do not show if module disabled
 					}
 				} elseif ($objecttype == 'reception') {
@@ -9191,8 +9191,8 @@ class Form
 					}
 				} elseif ($objecttype == 'delivery') {
 					$tplpath = 'delivery';
-					if (!isModEnabled('delivery_note')) {
-						continue; // Do not show if module disabled
+					if (!getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
+						continue; // Do not show if sub module disabled
 					}
 				} elseif ($objecttype == 'ficheinter') {
 					$tplpath = 'fichinter';
@@ -9298,7 +9298,7 @@ class Form
 					'label' => 'LinkToProposal',
 					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('propal') . ')'),
 				'shipping' => array(
-					'enabled' => isModEnabled('delivery_note'),
+					'enabled' => isModEnabled('shipping'),
 					'perms' => 1,
 					'label' => 'LinkToExpedition',
 					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "expedition as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('shipping') . ')'),
@@ -9681,8 +9681,8 @@ class Form
 				$stringforfirstkey .= ' CTL +';
 			}
 
-			$previous_ref = $object->ref_previous ? '<a accesskey="p" title="' . $stringforfirstkey . ' p" class="classfortooltip" href="' . $navurl . '?' . $paramid . '=' . urlencode($object->ref_previous) . $moreparam . '"><i class="fa fa-chevron-left"></i></a>' : '<span class="inactive"><i class="fa fa-chevron-left opacitymedium"></i></span>';
-			$next_ref = $object->ref_next ? '<a accesskey="n" title="' . $stringforfirstkey . ' n" class="classfortooltip" href="' . $navurl . '?' . $paramid . '=' . urlencode($object->ref_next) . $moreparam . '"><i class="fa fa-chevron-right"></i></a>' : '<span class="inactive"><i class="fa fa-chevron-right opacitymedium"></i></span>';
+			$previous_ref = $object->ref_previous ? '<a accesskey="p" alt="'.dol_escape_htmltag($langs->trans("Previous")).'" title="' . $stringforfirstkey . ' p" class="classfortooltip" href="' . $navurl . '?' . $paramid . '=' . urlencode($object->ref_previous) . $moreparam . '"><i class="fa fa-chevron-left"></i></a>' : '<span class="inactive"><i class="fa fa-chevron-left opacitymedium"></i></span>';
+			$next_ref = $object->ref_next ? '<a accesskey="n" alt="'.dol_escape_htmltag($langs->trans("Next")).'" title="' . $stringforfirstkey . ' n" class="classfortooltip" href="' . $navurl . '?' . $paramid . '=' . urlencode($object->ref_next) . $moreparam . '"><i class="fa fa-chevron-right"></i></a>' : '<span class="inactive"><i class="fa fa-chevron-right opacitymedium"></i></span>';
 		}
 
 		//print "xx".$previous_ref."x".$next_ref;
@@ -9696,8 +9696,8 @@ class Form
 		if ($previous_ref || $next_ref || $morehtml) {
 			$ret .= '<div class="pagination paginationref"><ul class="right">';
 		}
-		if ($morehtml) {
-			$ret .= '<li class="noborder litext' . (($shownav && $previous_ref && $next_ref) ? ' clearbothonsmartphone' : '') . '">' . $morehtml . '</li>';
+		if ($morehtml && getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
+			$ret .= '<!-- morehtml --><li class="noborder litext' . (($shownav && $previous_ref && $next_ref) ? ' clearbothonsmartphone' : '') . '">' . $morehtml . '</li>';
 		}
 		if ($shownav && ($previous_ref || $next_ref)) {
 			$ret .= '<li class="pagination">' . $previous_ref . '</li>';

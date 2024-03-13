@@ -256,7 +256,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
  * @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
  * @param	int			$sortorder		Sort order (SORT_ASC, SORT_DESC)
  * @param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like description
- * @return	array<array{rowid:string,label:string,name:string,path:string,level1name:string,fullname:string,fullpath_orig:string,date_c:string,datem:string,type:string,keywords:string,cover:string,position:int,acl:string,share:string,description:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
+ * @return	array<array{rowid:string,label:string,name:string,path:string,level1name:string,fullname:string,fullpath_orig:string,date_c:string,date_m:string,type:string,keywords:string,cover:string,position:int,acl:string,share:string,description:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  * @see dol_dir_list()
  */
 function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0)
@@ -3167,12 +3167,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->expedition->dir_output."/".(strpos($original_file, 'receipt/') === 0 ? '' : 'receipt/').$original_file;
-	} elseif ($modulepart == 'actions' && !empty($conf->agenda->dir_output)) {
-		// Wrapping pour les actions
-		if ($fuser->hasRight('agenda', 'myactions', $read) || preg_match('/^specimen/i', $original_file)) {
-			$accessallowed = 1;
-		}
-		$original_file = $conf->agenda->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'actionsreport' && !empty($conf->agenda->dir_temp)) {
 		// Wrapping pour les actions
 		if ($fuser->hasRight('agenda', 'allactions', $read) || preg_match('/^specimen/i', $original_file)) {
@@ -3289,10 +3283,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->adherent->dir_output.'/'.$original_file;
-	} elseif ($modulepart == 'scanner_user_temp' && !empty($conf->scanner->dir_temp)) {
-		// Wrapping for Scanner
-		$accessallowed = 1;
-		$original_file = $conf->scanner->dir_temp.'/'.$fuser->id.'/'.$original_file;
 		// If modulepart=module_user_temp	Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp/iduser
 		// If modulepart=module_temp		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp
 		// If modulepart=module_user		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/iduser

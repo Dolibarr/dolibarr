@@ -1003,28 +1003,28 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
 if ($id > 0) {
-	$param .= '&id='.urlencode($id);
+	$param .= '&id='.urlencode((string) ($id));
 }
 if ($show_files) {
-	$param .= '&show_files='.urlencode($show_files);
+	$param .= '&show_files='.urlencode((string) ($show_files));
 }
 if ($search_date_startday) {
-	$param .= '&search_date_startday='.urlencode($search_date_startday);
+	$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
 }
 if ($search_date_startmonth) {
-	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+	$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
 }
 if ($search_date_startyear) {
-	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+	$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
 }
 if ($search_date_endday) {
-	$param .= '&search_date_endday='.urlencode($search_date_endday);
+	$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
 }
 if ($search_date_endmonth) {
-	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
 }
 if ($search_date_endyear) {
-	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
 }
 if ($search_movement) {
 	$param .= '&search_movement='.urlencode($search_movement);
@@ -1051,10 +1051,10 @@ if ($search_user) {
 	$param .= '&search_user='.urlencode($search_user);
 }
 if ($idproduct > 0) {
-	$param .= '&idproduct='.urlencode($idproduct);
+	$param .= '&idproduct='.urlencode((string) ($idproduct));
 }
 if ($search_fk_project != '' && $search_fk_project != '-1') {
-	$param .= '&search_fk_project='.urlencode($search_fk_project);
+	$param .= '&search_fk_project='.urlencode((string) ($search_fk_project));
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';

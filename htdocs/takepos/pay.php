@@ -69,7 +69,7 @@ $title = '';
 $disablejs = 0;
 $disablehead = 0;
 
-$head='<link rel="stylesheet" href="css/pos.css.php">';
+$head = '<link rel="stylesheet" href="css/pos.css.php">';
 if (getDolGlobalInt('TAKEPOS_COLOR_THEME') == 1) {
 	$head .= '<link rel="stylesheet" href="css/colorful.css">';
 }
@@ -122,7 +122,7 @@ function unexpectedDisconnect() {
 
 function fetchConnectionToken() {
 		<?php
-		$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&token='.newToken().'&servicestatus='.urlencode($servicestatus);
+		$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&token='.newToken().'&servicestatus='.urlencode((string) ($servicestatus));
 		if (getDolGlobalString('STRIPE_LOCATION')) {
 			$urlconnexiontoken .= '&location='.urlencode(getDolGlobalString('STRIPE_LOCATION'));
 		}
@@ -218,8 +218,8 @@ if ($usestripeterminals && $invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 </script>
 <?php
 
-// Define list of possible payments
-$arrayOfValidPaymentModes = array();
+	// Define list of possible payments
+	$arrayOfValidPaymentModes = array();
 $arrayOfValidBankAccount = array();
 
 $sql = "SELECT code, libelle as label FROM ".MAIN_DB_PREFIX."c_paiement";
@@ -386,7 +386,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 	function capturePaymentIntent(paymentIntentId) {
 	const bodyContent = JSON.stringify({"id": paymentIntentId})
   <?php
-	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=capturePaymentIntent&token='.newToken().'&servicestatus='.urlencode($servicestatus);
+	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=capturePaymentIntent&token='.newToken().'&servicestatus='.urlencode((string) ($servicestatus));
 	if (!empty($stripeacc)) {
 		$urlpaymentintent .= '&stripeacc='.urlencode($stripeacc);
 	}
@@ -508,11 +508,11 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 
 <?php
 if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
-		echo "var line1='".$langs->trans('TotalTTC')."'.substring(0,20);";
-		echo "line1=line1.padEnd(20);";
-		echo "var line2='".price($invoice->total_ttc, 1, '', 1, -1, -1)."'.substring(0,20);";
-		echo "line2=line2.padEnd(20);";
-		echo "$.ajax({
+	echo "var line1='".$langs->trans('TotalTTC')."'.substring(0,20);";
+	echo "line1=line1.padEnd(20);";
+	echo "var line2='".price($invoice->total_ttc, 1, '', 1, -1, -1)."'.substring(0,20);";
+	echo "line2=line2.padEnd(20);";
+	echo "$.ajax({
 		type: 'GET',
 		data: { text: line1+line2 },
 		url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER')."/display/index.php',
@@ -553,7 +553,7 @@ if (isModEnabled('multicurrency') && $_SESSION["takeposcustomercurrency"] != "" 
 	<?php } ?>
 	<div class="paymentbordline paymentbordlinereceived center">
 		<span class="takepospay colorwhite"><?php echo $langs->trans("Received"); ?>: <span class="change1 colorred"><?php
-			echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code);
+		echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code);
 		if ($showothercurrency) {
 			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price(0 * $multicurrency->rate->rate) . ' ' . $_SESSION["takeposcustomercurrency"] . ')</span>';
 		}
@@ -561,7 +561,7 @@ if (isModEnabled('multicurrency') && $_SESSION["takeposcustomercurrency"] != "" 
 	</div>
 	<div class="paymentbordline paymentbordlinechange center">
 		<span class="takepospay colorwhite"><?php echo $langs->trans("Change"); ?>: <span class="change2 colorwhite"><?php
-			echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code);
+		echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code);
 		if ($showothercurrency) {
 			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price(0 * $multicurrency->rate->rate) . ' ' . $_SESSION["takeposcustomercurrency"] . ')</span>';
 		}
@@ -583,18 +583,18 @@ if (isModEnabled('multicurrency') && $_SESSION["takeposcustomercurrency"] != "" 
 <div style="position:absolute; left:5%; height:52%; width:90%;">
 <?php
 $action_buttons = array(
-	array(
-		"function" =>"reset()",
-		"span" => "style='font-size: 150%;'",
-		"text" => "C",
-		"class" => "poscolorblue"
-	),
-	array(
-		"function" => "parent.$.colorbox.close();",
-		"span" => "id='printtext' style='font-weight: bold; font-size: 18pt;'",
-		"text" => "X",
-		"class" => "poscolordelete"
-	),
+array(
+	"function" => "reset()",
+	"span" => "style='font-size: 150%;'",
+	"text" => "C",
+	"class" => "poscolorblue"
+),
+array(
+	"function" => "parent.$.colorbox.close();",
+	"span" => "id='printtext' style='font-weight: bold; font-size: 18pt;'",
+	"text" => "X",
+	"class" => "poscolordelete"
+),
 );
 $numpad = getDolGlobalString('TAKEPOS_NUMPAD');
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {
@@ -748,7 +748,7 @@ if (getDolGlobalString('TAKEPOS_DELAYED_PAYMENT')) {
 
 <?php
 // Add code from hooks
-$parameters=array();
+$parameters = array();
 $hookmanager->executeHooks('completePayment', $parameters, $invoice);
 print $hookmanager->resPrint;
 ?>

@@ -321,7 +321,7 @@ if ($type == 'directory') {
 					$param .= '&website='.urlencode(GETPOST('website', 'alpha'));
 				}
 				if (!preg_match('/pageid=/', $param)) {
-					$param .= '&pageid='.urlencode(GETPOSTINT('pageid'));
+					$param .= '&pageid='.urlencode((string) (GETPOSTINT('pageid')));
 				}
 				//if (!preg_match('/backtopage=/',$param)) $param.='&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid);
 			}

@@ -16,6 +16,7 @@
  * Copyright (C) 2017		Gustavo Novaro
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +77,7 @@ class Product extends CommonObject
 	public $oldcopy;
 
 	/**
-	 * @var array	List of child tables. To test if we can delete object.
+	 * @var array<string, array<string>>	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
 		'supplier_proposaldet' => array('name' => 'SupplierProposal', 'parent' => 'supplier_proposal', 'parentkey' => 'fk_supplier_proposal'),
@@ -113,7 +114,7 @@ class Product extends CommonObject
 	public $regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm'; // See also into images.lib.php
 
 	/**
-	 * @deprecated
+	 * @deprecated  Use $label instead
 	 * @see $label
 	 */
 	public $libelle;
@@ -582,7 +583,7 @@ class Product extends CommonObject
 	 */
 
 	/**
-	 * @var array fields of object product
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -5890,7 +5891,7 @@ class Product extends CommonObject
 			}
 			$stock_commande_client = $this->stats_commande['qty'];
 		}
-		if (isModEnabled("delivery_note")) {
+		if (isModEnabled("shipping")) {
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 			$filterShipmentStatus = '';
 			if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
