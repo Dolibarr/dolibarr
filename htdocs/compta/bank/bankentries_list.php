@@ -288,16 +288,16 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 	if (!$error) {
 		$param = 'action=reconcile&contextpage=banktransactionlist&id='.((int) $object->id).'&search_account='.((int) $object->id);
 		if ($page) {
-			$param .= '&page='.urlencode($page);
+			$param .= '&page='.urlencode((string) ($page));
 		}
 		if ($offset) {
-			$param .= '&offset='.urlencode($offset);
+			$param .= '&offset='.urlencode((string) ($offset));
 		}
 		if ($limit) {
 			$param .= '&limit='.((int) $limit);
 		}
 		if ($search_conciliated != '' && $search_conciliated != '-1') {
-			$param .= '&search_conciliated='.urlencode($search_conciliated);
+			$param .= '&search_conciliated='.urlencode((string) ($search_conciliated));
 		}
 		if ($search_thirdparty_user) {
 			$param .= '&search_thirdparty='.urlencode($search_thirdparty_user);
@@ -449,7 +449,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
 if ($id > 0) {
-	$param .= '&id='.urlencode($id);
+	$param .= '&id='.urlencode((string) ($id));
 }
 if (!empty($ref)) {
 	$param .= '&ref='.urlencode($ref);
@@ -473,19 +473,19 @@ if (!empty($search_credit)) {
 	$param .= '&search_credit='.urlencode($search_credit);
 }
 if ($search_account > 0) {
-	$param .= '&search_account='.urlencode($search_account);
+	$param .= '&search_account='.urlencode((string) ($search_account));
 }
 if (!empty($search_num_releve)) {
 	$param .= '&search_num_releve='.urlencode($search_num_releve);
 }
 if ($search_conciliated != '' && $search_conciliated != '-1') {
-	$param .= '&search_conciliated='.urlencode($search_conciliated);
+	$param .= '&search_conciliated='.urlencode((string) ($search_conciliated));
 }
 if ($search_fk_bordereau > 0) {
-	$param .= '$&search_fk_bordereau='.urlencode($search_fk_bordereau);
+	$param .= '$&search_fk_bordereau='.urlencode((string) ($search_fk_bordereau));
 }
 if ($search_bid > 0) {
-	$param .= '&search_bid='.urlencode($search_bid);
+	$param .= '&search_bid='.urlencode((string) ($search_bid));
 }
 if (dol_strlen($search_dt_start) > 0) {
 	$param .= '&search_start_dtmonth='.GETPOSTINT('search_start_dtmonth').'&search_start_dtday='.GETPOSTINT('search_start_dtday').'&search_start_dtyear='.GETPOSTINT('search_start_dtyear');
@@ -503,7 +503,7 @@ if ($search_req_nb) {
 	$param .= '&req_nb='.urlencode($search_req_nb);
 }
 if (GETPOSTINT("search_thirdparty")) {
-	$param .= '&thirdparty='.urlencode(GETPOSTINT("search_thirdparty"));
+	$param .= '&thirdparty='.urlencode((string) (GETPOSTINT("search_thirdparty")));
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -1022,7 +1022,7 @@ if ($resql) {
 
 	// We can add page now to param
 	if ($page != '') {
-		$param .= '&page='.urlencode($page);
+		$param .= '&page='.urlencode((string) ($page));
 	}
 
 	$moreforfilter = '';

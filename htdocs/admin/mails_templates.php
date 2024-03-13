@@ -204,7 +204,7 @@ if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 	$elementList['facture_send'] = img_picto('', 'bill', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendInvoice'));
 }
-if (isModEnabled("delivery_note")) {
+if (isModEnabled("shipping")) {
 	$elementList['shipping_send'] = img_picto('', 'dolly', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendShipment'));
 }
 if (isModEnabled("reception")) {

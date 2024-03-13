@@ -2,6 +2,7 @@
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * == BEGIN LICENSE ==
  *
@@ -265,7 +266,7 @@ function CreateFolder($resourceType, $currentFolder)
 
 				switch ($sErrorMsg) {
 					case '':
-						$sErrorNumber = '0';
+						$sErrorNumber = '0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 						break;
 					case 'Invalid argument':
 					case 'No such file or directory':

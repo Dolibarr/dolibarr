@@ -2425,6 +2425,7 @@ LargeModern=Large - Modern
 SpecialCharActivation=Enable the button to open a virtual keyboard to enter special characters
 DeleteExtrafield=Delete extrafield
 ConfirmDeleteExtrafield=Do you confirm deletion of the field %s ? All data saved into this field will be definitely deleted
+ConfirmDeleteSetup=Are you sure you want to delete the setup for %s ?
 ExtraFieldsSupplierInvoicesRec=Complementary attributes (templates invoices)
 ExtraFieldsSupplierInvoicesLinesRec=Complementary attributes (template invoice lines)
 ParametersForTestEnvironment=Parameters for test environment

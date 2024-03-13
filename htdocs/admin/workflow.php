@@ -101,13 +101,13 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING'=>array(  // when shipping validated
 		'family'=>'classify_order',
 		'position'=>40,
-		'enabled'=>(isModEnabled("delivery_note") && isModEnabled('order')),
+		'enabled'=>(isModEnabled("shipping") && isModEnabled('order')),
 		'picto'=>'order'
 	),
 	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED'=>array( // when shipping closed
 		'family'=>'classify_order',
 		'position'=>41,
-		'enabled'=>(isModEnabled("delivery_note") && isModEnabled('order')),
+		'enabled'=>(isModEnabled("shipping") && isModEnabled('order')),
 		'picto'=>'order'
 	),
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array(
@@ -166,7 +166,7 @@ $workflowcodes = array(
 	'WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE' => array(
 		'family' => 'classify_shipping',
 		'position' => 91,
-		'enabled' => isModEnabled("delivery_note") && isModEnabled("invoice") && getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0',
+		'enabled' => isModEnabled("shipping") && isModEnabled("invoice") && getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0',
 		'picto' => 'shipment'
 	),
 

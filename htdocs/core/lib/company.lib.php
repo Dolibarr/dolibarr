@@ -11,6 +11,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht             <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +74,7 @@ function societe_prepare_head(Societe $object)
 				$sql .= " WHERE p.fk_soc = ".((int) $object->id);
 				$sql .= " AND p.entity IN (".getEntity($object->element).")";
 				// Add where from hooks
-				$parameters = array('contacttab' => true);
+				$parameters = array('contacttab' => true);  // @phan-suppress-current-line PhanPluginRedundantAssignment
 				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 				$sql .= $hookmanager->resPrint;
 				$resql = $db->query($sql);
@@ -229,7 +230,7 @@ function societe_prepare_head(Societe $object)
 
 		//if (isModEnabled('stripe') && $nbBankAccount > 0) $nbBankAccount = '...';	// No way to know exact number
 
-		$head[$h][0] = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.urlencode($object->id);
+		$head[$h][0] = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.urlencode((string) ($object->id));
 		$head[$h][1] = $title;
 		if ($foundonexternalonlinesystem) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
@@ -249,7 +250,7 @@ function societe_prepare_head(Societe $object)
 			$site_filter_list[] = 'dolibarr_portal';
 		}
 
-		$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.urlencode($object->id);
+		$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.urlencode((string) ($object->id));
 		$head[$h][1] = $langs->trans("WebSiteAccounts");
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
@@ -333,7 +334,7 @@ function societe_prepare_head(Societe $object)
 				dol_setcache($cachekey, $nbNotif, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 			}
 
-			$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.urlencode($object->id);
+			$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.urlencode((string) ($object->id));
 			$head[$h][1] = $langs->trans("Notifications");
 			if ($nbNotif > 0) {
 				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNotif.'</span>';
@@ -350,7 +351,7 @@ function societe_prepare_head(Societe $object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/societe/note.php?id='.urlencode($object->id);
+		$head[$h][0] = DOL_URL_ROOT.'/societe/note.php?id='.urlencode((string) ($object->id));
 		$head[$h][1] = $langs->trans("Notes");
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -1155,12 +1156,12 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print "\n".'<table class="tagtable liste">'."\n";
 
-	$param = "socid=".urlencode($object->id);
+	$param = "socid=".urlencode((string) ($object->id));
 	if ($search_rowid != '') {
-		$param .= '&search_rowid='.urlencode($search_rowid);
+		$param .= '&search_rowid='.urlencode((string) ($search_rowid));
 	}
 	if ($search_status != '') {
-		$param .= '&search_status='.urlencode($search_status);
+		$param .= '&search_status='.urlencode((string) ($search_status));
 	}
 	if (count($search_roles) > 0) {
 		$param .= implode('&search_roles[]=', $search_roles);
@@ -2229,7 +2230,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			}
 
 			$out .= "</tr>\n";
-			$i++;
 		}
 		if (empty($histo)) {
 			$colspan = 9;

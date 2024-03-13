@@ -105,7 +105,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 *	Return next value
 	 *
 	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$holiday	holiday object
+	 *	@param	Holiday		$holiday	holiday object
 	 *	@return string|0      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $holiday)
@@ -124,19 +124,5 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 		$numFinal = get_next_value($db, $mask, 'holiday', 'ref', '', $objsoc, $holiday->date_create);
 
 		return  $numFinal;
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next value
-	 *
-	 *  @param  User		$fuser     	User object
-	 *  @param  Object		$objforref	Holiday object
-	 *  @return string|0      			Value if OK, 0 if KO
-	 */
-	public function holiday_get_num($fuser, $objforref)
-	{
-		// phpcs:enable
-		return $this->getNextValue($fuser, $objforref);
 	}
 }

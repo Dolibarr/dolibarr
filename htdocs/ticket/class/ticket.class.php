@@ -3082,7 +3082,7 @@ class Ticket extends CommonObject
 			if ($mode == 'opened') {
 				$status = 'openall';
 				//$delay_warning = $conf->ticket->warning_delay;
-				$delay_warning = 0;
+				$delay_warning = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 				$label = $langs->trans("MenuListNonClosed");
 				$labelShort = $langs->trans("MenuListNonClosed");
 			}

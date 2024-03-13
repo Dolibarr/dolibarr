@@ -298,7 +298,7 @@ if (GETPOST('withtab', 'alpha')) {
 } else {
 	$title = $langs->trans("BrowseBlockedLog");
 }
-$help_url="EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
+$help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
 
 llxHeader('', $title, $help_url);
 
@@ -353,16 +353,16 @@ if ($search_startday > 0) {
 	$param .= '&search_startday='.urlencode($search_startday);
 }
 if ($search_endyear > 0) {
-	$param .= '&search_endyear='.urlencode($search_endyear);
+	$param .= '&search_endyear='.urlencode((string) ($search_endyear));
 }
 if ($search_endmonth > 0) {
-	$param .= '&search_endmonth='.urlencode($search_endmonth);
+	$param .= '&search_endmonth='.urlencode((string) ($search_endmonth));
 }
 if ($search_endday > 0) {
-	$param .= '&search_endday='.urlencode($search_endday);
+	$param .= '&search_endday='.urlencode((string) ($search_endday));
 }
 if ($search_showonlyerrors > 0) {
-	$param .= '&search_showonlyerrors='.urlencode($search_showonlyerrors);
+	$param .= '&search_showonlyerrors='.urlencode((string) ($search_showonlyerrors));
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);

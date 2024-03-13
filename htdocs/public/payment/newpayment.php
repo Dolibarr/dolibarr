@@ -238,8 +238,8 @@ if (!empty($SECUREKEY)) {
 	$urlko .= 'securekey='.urlencode($SECUREKEY).'&';
 }
 if (!empty($entity)) {
-	$urlok .= 'e='.urlencode($entity).'&';
-	$urlko .= 'e='.urlencode($entity).'&';
+	$urlok .= 'e='.urlencode((string) ($entity)).'&';
+	$urlko .= 'e='.urlencode((string) ($entity)).'&';
 }
 if (!empty($getpostlang)) {
 	$urlok .= 'lang='.urlencode($getpostlang).'&';
@@ -519,7 +519,7 @@ if ($action == 'charge' && isModEnabled('stripe')) {
 				'dol_entity'  => $conf->entity,
 				'dol_company' => $mysoc->name, // Useful when using multicompany
 				'dol_tax_num' => $vatnumber,
-				'ipaddress'=> getUserRemoteIP()
+				'ipaddress' => getUserRemoteIP()
 			);
 
 			if (!empty($thirdparty_id)) {
@@ -1421,9 +1421,9 @@ if ($source == 'contractline') {
 
 			// TODO Put this in a global method
 			if ($contractline->product->duration_value > 1) {
-				$dur = array("h"=>$langs->trans("Hours"), "d"=>$langs->trans("DurationDays"), "w"=>$langs->trans("DurationWeeks"), "m"=>$langs->trans("DurationMonths"), "y"=>$langs->trans("DurationYears"));
+				$dur = array("h" => $langs->trans("Hours"), "d" => $langs->trans("DurationDays"), "w" => $langs->trans("DurationWeeks"), "m" => $langs->trans("DurationMonths"), "y" => $langs->trans("DurationYears"));
 			} else {
-				$dur = array("h"=>$langs->trans("Hour"), "d"=>$langs->trans("DurationDay"), "w"=>$langs->trans("DurationWeek"), "m"=>$langs->trans("DurationMonth"), "y"=>$langs->trans("DurationYear"));
+				$dur = array("h" => $langs->trans("Hour"), "d" => $langs->trans("DurationDay"), "w" => $langs->trans("DurationWeek"), "m" => $langs->trans("DurationMonth"), "y" => $langs->trans("DurationYear"));
 			}
 			$duration = $contractline->product->duration_value.' '.$dur[$contractline->product->duration_unit];
 		}
@@ -1496,7 +1496,7 @@ if ($source == 'contractline') {
 if ($source == 'member' || $source == 'membersubscription') {
 	$newsource = 'member';
 
-	$tag="";
+	$tag = "";
 	$found = true;
 	$langs->load("members");
 
@@ -2362,7 +2362,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 				}
 
 				$ipaddress = getUserRemoteIP();
-				$metadata = array('dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress);
+				$metadata = array('dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress);
 				if (is_object($object)) {
 					$metadata['dol_type'] = $object->element;
 					$metadata['dol_id'] = $object->id;
@@ -2372,7 +2372,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 
 				try {
 					$arrayforpaymentintent = array(
-						'description'=>'Stripe payment: '.$FULLTAG.($ref ? ' ref='.$ref : ''),
+						'description' => 'Stripe payment: '.$FULLTAG.($ref ? ' ref='.$ref : ''),
 						"metadata" => $metadata
 					);
 					if ($TAG) {

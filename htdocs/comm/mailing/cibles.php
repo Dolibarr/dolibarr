@@ -752,7 +752,7 @@ if ($object->fetch($id) >= 0) {
 		print '</tr>';
 
 		if ($page) {
-			$param .= "&page=".urlencode($page);
+			$param .= "&page=".urlencode((string) ($page));
 		}
 
 		print '<tr class="liste_titre">';
