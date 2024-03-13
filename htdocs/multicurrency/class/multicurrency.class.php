@@ -4,6 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
+ * Copyright (C) 2024       Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -912,7 +913,8 @@ class CurrencyRate extends CommonObjectLine
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= "SET rate = ".((float) $this->rate);
+		$sql .= " SET rate = ".((float) $this->rate);
+		$sql .= ", rate_indirect = ".((float) $this->rate_indirect);
 		if (!empty($this->date_sync)) {
 			$sql .= ", date_sync = '".$this->db->idate($this->date_sync)."'";
 		}
