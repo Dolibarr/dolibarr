@@ -475,6 +475,16 @@ abstract class CommonObject
 	public $multicurrency_total_ttc;
 
 	/**
+	 * @var float Multicurrency total localta1
+	 */
+	public $multicurrency_total_localtax1;	// not in database
+
+	/**
+	 * @var float Multicurrency total localtax2
+	 */
+	public $multicurrency_total_localtax2;	// not in database
+
+	/**
 	 * @var string
 	 * @see SetDocModel()
 	 */

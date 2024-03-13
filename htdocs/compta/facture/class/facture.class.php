@@ -204,6 +204,7 @@ class Facture extends CommonInvoice
 
 	public $date_pointoftax;
 
+
 	/**
 	 * @var int Situation cycle reference number
 	 */

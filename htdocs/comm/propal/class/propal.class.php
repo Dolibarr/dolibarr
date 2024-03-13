@@ -279,18 +279,6 @@ class Propal extends CommonObject
 	public $labelStatus = array();
 	public $labelStatusShort = array();
 
-	// Multicurrency
-	/**
-	 * @var int ID
-	 */
-	public $fk_multicurrency;
-
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
-
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')

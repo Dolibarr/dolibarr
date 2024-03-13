@@ -255,20 +255,6 @@ class Commande extends CommonOrder
 	 */
 	public $lines = array();
 
-	// Multicurrency
-	/**
-	 * @var int Currency ID
-	 */
-	public $fk_multicurrency;
-
-	/**
-	 * @var string multicurrency code
-	 */
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 
 	//! key of module source when order generated from a dedicated module ('cashdesk', 'takepos', ...)
 	public $module_source;
