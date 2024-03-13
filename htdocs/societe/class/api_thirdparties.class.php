@@ -1115,6 +1115,8 @@ class Thirdparties extends DolibarrApi
 
 		$i = 0;
 
+		$notifications = array();
+
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			while ($i < $num) {
