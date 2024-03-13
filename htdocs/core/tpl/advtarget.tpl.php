@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  */
 /*
  *
@@ -274,7 +275,7 @@ if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 	$socstatic = new Societe($db);
 	$elementtype = $socstatic->table_element;
 	// fetch optionals attributes and labels
-	dol_include_once('/core/class/extrafields.class.php');
+	require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label($elementtype);
 	foreach ($extrafields->attributes[$elementtype]['label'] as $key => $val) {

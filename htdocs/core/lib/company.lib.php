@@ -1615,7 +1615,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$tms_start = '';
 		$tms_end = '';
 	}
-	dol_include_once('/comm/action/class/actioncomm.class.php');
+	require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 
 	// Check parameters
 	if (!is_object($filterobj) && !is_object($objcon)) {

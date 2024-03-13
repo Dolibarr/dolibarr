@@ -6009,7 +6009,7 @@ class Form
 			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
 			print '</form>';
 		} else {
-			dol_include_once('/core/lib/company.lib.php');
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 			print !empty($selected) ? currency_name($selected, 1) : '&nbsp;';
 		}
 	}

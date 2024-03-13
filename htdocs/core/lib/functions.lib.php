@@ -13129,7 +13129,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 	global $param, $massactionbutton;
 
-	dol_include_once('/comm/action/class/actioncomm.class.php');
+	require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 
 	// Check parameters
 	if (!is_object($filterobj) && !is_object($objcon)) {
