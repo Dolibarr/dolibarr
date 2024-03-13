@@ -6426,7 +6426,7 @@ function price2num($amount, $rounding = '', $option = 0)
 		// So if number was already a good number, it is converted into local Dolibarr setup.
 		if (is_numeric($amount)) {
 			// We put in temps value of decimal ("0.00001"). Works with 0 and 2.0E-5 and 9999.10
-			$temps = sprintf("%0.10F", $amount - intval($amount)); // temps=0.0000000000 or 0.0000200000 or 9999.1000000000
+			$temps = sprintf("%10.10F", $amount - intval($amount)); // temps=0.0000000000 or 0.0000200000 or 9999.1000000000
 			$temps = preg_replace('/([\.1-9])0+$/', '\\1', $temps); // temps=0. or 0.00002 or 9999.1
 			$nbofdec = max(0, dol_strlen($temps) - 2); // -2 to remove "0."
 			$amount = number_format($amount, $nbofdec, $dec, $thousand);
@@ -6475,7 +6475,7 @@ function price2num($amount, $rounding = '', $option = 0)
 		// to format defined by LC_NUMERIC after a calculation and we want source format to be defined by Dolibarr setup.
 		if (is_numeric($amount)) {
 			// We put in temps value of decimal ("0.00001"). Works with 0 and 2.0E-5 and 9999.10
-			$temps = sprintf("%0.10F", $amount - intval($amount)); // temps=0.0000000000 or 0.0000200000 or 9999.1000000000
+			$temps = sprintf("%10.10F", $amount - intval($amount)); // temps=0.0000000000 or 0.0000200000 or 9999.1000000000
 			$temps = preg_replace('/([\.1-9])0+$/', '\\1', $temps); // temps=0. or 0.00002 or 9999.1
 			$nbofdec = max(0, dol_strlen($temps) - 2); // -2 to remove "0."
 			$amount = number_format($amount, min($nbofdec, $nbofdectoround), $dec, $thousand); // Convert amount to format with dolibarr dec and thousand
