@@ -33,7 +33,7 @@ $langs->loadLangs(array('users', 'admin', 'companies', 'ldap'));
 
 $id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userldap'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?: 'userldap'; // To manage different context of search
 
 // Security check
 $socid = 0;
@@ -125,9 +125,7 @@ print '</tr>';
 if (getDolGlobalString('LDAP_SERVER_TYPE') == "activedirectory") {
 	$ldap = new Ldap();
 	$result = $ldap->connectBind();
-	if ($result > 0) {
-		$userSID = $ldap->getObjectSid($object->login);
-	}
+	($result > 0) ? ($userSID = $ldap->getObjectSid($object->login)) : $userSID = '';
 	print '<tr><td class="valigntop">'.$langs->trans("SID").'</td>';
 	print '<td>'.$userSID.'</td>';
 	print "</tr>\n";
@@ -204,6 +202,7 @@ if ($result > 0) {
 
 	$ldap->unbind();
 } else {
+	print '<tr class="oddeven"><td colspan="2"><span class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</span></td></tr>';
 	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }
 
