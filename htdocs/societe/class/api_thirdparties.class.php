@@ -4,7 +4,6 @@
  * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
  * Copyright (C) 2020-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux  <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Jon Bendtsen        <jon.bendtsen@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
