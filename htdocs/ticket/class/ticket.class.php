@@ -76,7 +76,7 @@ class Ticket extends CommonObject
 
 
 	/**
-	 * @var string Hash to identify ticket publicly
+	 * @var ?string Hash to identify ticket publicly
 	 */
 	public $track_id;
 
@@ -97,17 +97,17 @@ class Ticket extends CommonObject
 	public $fk_contract;
 
 	/**
-	 * @var string Person email who have create ticket
+	 * @var ?string Email of person who created the ticket
 	 */
 	public $origin_email;
 
 	/**
-	 * @var int User id who have create ticket
+	 * @var int User id who created the ticket
 	 */
 	public $fk_user_create;
 
 	/**
-	 * @var int User id who have ticket assigned
+	 * @var int User id who the ticket is assigned to
 	 */
 	public $fk_user_assign;
 
