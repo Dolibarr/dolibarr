@@ -5,6 +5,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1306,7 +1307,7 @@ class Holiday extends CommonObject
 				}
 
 				// We found a record, user is on holiday by default, so is not available is true.
-				$isavailablemorning = true;
+				$isavailablemorning = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 				foreach ($arrayofrecord as $record) {
 					if ($timestamp == $record['date_start'] && $record['halfday'] == 2) {
 						continue;
@@ -1317,7 +1318,7 @@ class Holiday extends CommonObject
 					$isavailablemorning = false;
 					break;
 				}
-				$isavailableafternoon = true;
+				$isavailableafternoon = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 				foreach ($arrayofrecord as $record) {
 					if ($timestamp == $record['date_end'] && $record['halfday'] == 2) {
 						continue;

@@ -352,6 +352,7 @@ class BlockedLog
 		global $langs, $cachedUser;
 
 		if (empty($cachedUser)) {
+			// @phan-suppress-next-line PhanPluginRedundantAssignment
 			$cachedUser = array();
 		}
 

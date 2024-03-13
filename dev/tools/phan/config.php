@@ -468,7 +468,7 @@ return [
 		// 'PhanPluginDescriptionlessCommentOnPublicProperty',
 		'PhanPluginUnknownFunctionParamType',
 		'PhanTypeSuspiciousStringExpression',
-		'PhanPluginRedundantAssignment',
+		// 'PhanPluginRedundantAssignment',
 
 		'PhanTypeExpectedObjectPropAccess',
 		'PhanTypeInvalidRightOperandOfNumericOp',

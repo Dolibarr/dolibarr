@@ -1170,7 +1170,7 @@ class Product extends CommonObject
 			$result = $this->verify(); // We don't check when update called during a create because verify was already done
 		} else {
 			// we can continue
-			$result = 0;
+			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		}
 
 		if ($result >= 0) {
@@ -2331,9 +2331,6 @@ class Product extends CommonObject
 		}
 		if (empty($newnpr)) {
 			$newnpr = 0;
-		}
-		if (empty($newminprice)) {
-			$newminprice = 0;
 		}
 		if (empty($newminprice)) {
 			$newminprice = 0;
