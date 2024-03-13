@@ -13804,8 +13804,6 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 			$out .= '</li>';
 			$out .= '<!-- END timeline item -->';
-
-			$i++;
 		}
 
 		$out .= "</ul>\n";
