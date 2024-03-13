@@ -309,8 +309,7 @@ class SkillRank extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
@@ -1033,51 +1032,4 @@ class SkillRank extends CommonObject
 
 		return $result;
 	}
-
-	/**
-	 * Action executed by scheduler
-	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
-	 * Use public function doScheduledJob($param1, $param2, ...) to get parameters
-	 *
-	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
-	 */
-	public function doScheduledJob()
-	{
-		global $conf, $langs;
-
-		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
-
-		$error = 0;
-		$this->output = '';
-		$this->error = '';
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$now = dol_now();
-
-		$this->db->begin();
-
-		// ...
-
-		$this->db->commit();
-
-		return $error;
-	}
-
-	/**
-	 * @param array $val
-	 * @param string $key
-	 * @param string $value
-	 * @param string $moreparam
-	 * @param string $keysuffix
-	 * @param string $keyprefix
-	 * @param string $morecss
-	 * @return string
-	 */
-	//  public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
-	//  {
-	//      if ($key == "rank") {
-	//          return displayRankInfos($this);
-	//      } else return parent::showOutputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
-	//  }
 }
