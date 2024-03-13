@@ -1040,6 +1040,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
+	$nbignored = 0;
 	$TMsg = array();
 
 	//$toselect could contain duplicate entries, cf https://github.com/Dolibarr/dolibarr/issues/26244
@@ -1200,6 +1201,7 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 }
 
 if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd) {
+	$nbok = 0;
 	$db->begin();
 
 	$affecttag_type = GETPOST('affecttag_type', 'alpha');
@@ -1221,7 +1223,6 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 		}
 
 		//For each valid categ type set common categ
-		$nbok = 0;
 		if (!empty($to_affecttag_type_array)) {
 			foreach ($to_affecttag_type_array as $categ_type) {
 				$contcats = GETPOST('contcats_' . $categ_type, 'array');
@@ -1256,6 +1257,7 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 }
 
 if (!$error && ($action == 'updateprice' && $confirm == 'yes') && $permissiontoadd) {
+	$nbok = 0;
 	$db->begin();
 	if (GETPOSTISSET('pricerate')) {
 		$pricepercentage = GETPOSTINT('pricerate');
@@ -1300,6 +1302,7 @@ if (!$error && ($action == 'updateprice' && $confirm == 'yes') && $permissiontoa
 }
 
 if (!$error && ($action == 'setsupervisor' && $confirm == 'yes') && $permissiontoadd) {
+	$nbok = 0;
 	$db->begin();
 	$supervisortoset = GETPOST('supervisortoset');
 	if (!empty($supervisortoset)) {
@@ -1335,6 +1338,7 @@ if (!$error && ($action == 'setsupervisor' && $confirm == 'yes') && $permissiont
 }
 
 if (!$error && ($action == 'affectuser' && $confirm == 'yes') && $permissiontoadd) {
+	$nbok = 0;
 	$db->begin();
 
 	$usertoaffect = GETPOST('usertoaffect');

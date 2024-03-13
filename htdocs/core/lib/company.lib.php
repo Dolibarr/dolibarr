@@ -2230,7 +2230,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			}
 
 			$out .= "</tr>\n";
-			$i++;
 		}
 		if (empty($histo)) {
 			$colspan = 9;

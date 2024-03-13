@@ -198,7 +198,7 @@ class CMailFile
 			}
 		}
 		if (empty($this->sendmode)) {
-			$this->sendmode = (getDolGlobalString('MAIN_MAIL_SENDMODE') ? $conf->global->MAIN_MAIL_SENDMODE : 'mail');
+			$this->sendmode = getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail');
 		}
 
 		// Add a Feedback-ID. Must be used for stats on spam report only.
