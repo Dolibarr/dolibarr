@@ -524,7 +524,7 @@ function societe_admin_prepare_head()
  *    @param	Translate	$outputlangs	Langs object for output translation
  *    @param	int			$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
  *    @param	string		$searchlabel    Label of country to search (warning: searching on label is not reliable)
- *    @return	mixed       				Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
+ *    @return	int|string|array{id:int,code:string,label:string}	Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
  */
 function getCountry($searchkey, $withcode = '', $dbtouse = null, $outputlangs = null, $entconv = 1, $searchlabel = '')
 {
