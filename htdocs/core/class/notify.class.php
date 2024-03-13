@@ -50,14 +50,22 @@ class Notify
 
 	/**
 	 * @var int		Thirdparty ID
-	 * @deprecated	Use socid
-	 */
-	public $fk_soc;
-
-	/**
-	 * @var int		Thirdparty ID
 	 */
 	public $socid;
+
+	/**
+	 * Date creation record (datec)
+	 *
+	 * @var integer
+	 */
+	public $datec;
+
+	/**
+	 * Date modified record (datem)
+	 *
+	 * @var integer
+	 */
+	public $datem;
 
 	/**
 	 * @var string Error code (or message)
@@ -244,7 +252,7 @@ class Notify
 			return -1;
 		}
 
-		$sql = "SELECT rowid, fk_action as event, fk_soc as socid, fk_contact as target, fk_user, email, threshold, context, type, datec, tms as datem";
+		$sql = "SELECT rowid, fk_action as event, fk_soc as socid, fk_contact as target, type, datec, tms as datem";
 		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
 
 		if ($id) {
