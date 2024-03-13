@@ -14,7 +14,6 @@ return [
     // PhanUndeclaredConstant : 15+ occurrences
     // PhanPluginDuplicateExpressionBinaryOp : 10+ occurrences
     // PhanTypeArraySuspiciousNull : 10+ occurrences
-    // PhanTypeInvalidUnaryOperandNumeric : 8 occurrences
     // PhanRedefineFunctionInternal : 6 occurrences
     // PhanPluginUnsafeEval : 5 occurrences
     // PhanParamSuspiciousOrder : 4 occurrences
@@ -39,11 +38,10 @@ return [
         'htdocs/categories/class/api_categories.class.php' => ['PhanAccessMethodProtected'],
         'htdocs/categories/viewcat.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/collab/index.php' => ['PhanParamTooMany'],
-        'htdocs/comm/action/index.php' => ['PhanPluginSuspiciousParamPosition', 'PhanTypeArraySuspiciousNull', 'PhanTypeInvalidUnaryOperandNumeric'],
+        'htdocs/comm/action/index.php' => ['PhanPluginSuspiciousParamPosition', 'PhanTypeArraySuspiciousNull'],
         'htdocs/comm/mailing/card.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/comm/mailing/cibles.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/comm/mailing/info.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/compta/accounting-files.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
         'htdocs/compta/bank/various_payment/card.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/compta/bank/various_payment/document.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/compta/bank/various_payment/info.php' => ['PhanPluginSuspiciousParamPosition'],
@@ -52,11 +50,9 @@ return [
         'htdocs/compta/facture/card-rec.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/compta/prelevement/class/bonprelevement.class.php' => ['PhanParamTooMany'],
         'htdocs/compta/prelevement/create.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/compta/sociales/class/paymentsocialcontribution.class.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
         'htdocs/compta/sociales/document.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/compta/sociales/info.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/compta/sociales/note.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/compta/tva/class/paymentvat.class.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
         'htdocs/compta/tva/document.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/core/actions_massactions.inc.php' => ['PhanPluginSuspiciousParamOrder'],
         'htdocs/core/class/commondocgenerator.class.php' => ['PhanTypeArraySuspiciousNull'],
@@ -85,12 +81,10 @@ return [
         'htdocs/core/modules/syslog/mod_syslog_file.php' => ['PhanParamSignatureMismatch', 'PhanParamSuspiciousOrder'],
         'htdocs/core/modules/syslog/mod_syslog_syslog.php' => ['PhanParamSignatureMismatch'],
         'htdocs/don/class/don.class.php' => ['PhanParamTooMany'],
-        'htdocs/expensereport/class/paymentexpensereport.class.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
         'htdocs/fourn/class/api_supplier_invoices.class.php' => ['PhanPluginSuspiciousParamOrder'],
         'htdocs/fourn/facture/card-rec.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/intracommreport/list.php' => ['PhanAccessPropertyStaticAsNonStatic'],
         'htdocs/loan/card.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/loan/class/paymentloan.class.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
         'htdocs/loan/document.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/loan/info.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/loan/note.php' => ['PhanPluginSuspiciousParamPosition'],
@@ -100,7 +94,6 @@ return [
         'htdocs/product/admin/product_tools.php' => ['PhanNoopStringLiteral'],
         'htdocs/product/card.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/projet/tasks/list.php' => ['PhanTypeArraySuspiciousNull'],
-        'htdocs/public/bookcal/index.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
         'htdocs/public/opensurvey/index.php' => ['PhanPluginSuspiciousParamOrder'],
         'htdocs/public/payment/paymentok.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/public/recruitment/index.php' => ['PhanPluginSuspiciousParamOrder'],
