@@ -4,6 +4,7 @@
  * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
  * Copyright (C) 2020-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux  <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1306,7 +1307,7 @@ class Thirdparties extends DolibarrApi
 		$this->company->setDocModel(DolibarrApiAccess::$user, $model);
 
 		$this->company->fk_bank = $this->company->fk_account;
-		$this->company->fk_account = $this->company->fk_account;
+		// $this->company->fk_account = $this->company->fk_account;
 
 		$outputlangs = $langs;
 		$newlang = '';

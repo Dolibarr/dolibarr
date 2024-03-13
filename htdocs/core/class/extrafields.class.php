@@ -1311,7 +1311,6 @@ class ExtraFields
 							} else {
 								$labeltoshow = $obj->{$InfoFieldList[1]};
 							}
-							$labeltoshow = $labeltoshow;
 
 							if ($value == $obj->rowid) {
 								if (!$notrans) {
