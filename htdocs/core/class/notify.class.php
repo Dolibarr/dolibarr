@@ -44,6 +44,22 @@ class Notify
 	public $db;
 
 	/**
+	 * @var string type
+	 */
+	public $type;
+
+	/**
+	 * @var int		Thirdparty ID
+	 * @deprecated	Use socid
+	 */
+	public $fk_soc;
+
+	/**
+	 * @var int		Thirdparty ID
+	 */
+	public $socid;
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
