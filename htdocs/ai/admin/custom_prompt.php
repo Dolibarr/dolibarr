@@ -165,9 +165,6 @@ if ($action == 'confirm_deleteproperty' && GETPOST('confirm') == 'yes') {
 		}
 	}
 }
-if ($action == 'confirm_deleteproperty') {
-	var_dump(GETPOST('confirm'));exit;
-}
 
 
 /*
@@ -344,7 +341,7 @@ if ($action == 'edit' || $action == 'create') {
                 $('#postPromptInput').val('');
             }
         });
-   
+
 		$('.showInputBtn').click(function() {
 			event.preventDefault();
 			var index = $(this).data('index');
@@ -357,7 +354,7 @@ if ($action == 'edit' || $action == 'create') {
 				$(this).html($(this).data('icon-cancel'));
 				$(this).data('state', 'cancel');
 
-			} else { 
+			} else {
 
 				$('#prePromptInput_'+index).attr('disabled', 'disabled');
 				$('#postPromptInput_'+index).attr('disabled', 'disabled');
@@ -367,8 +364,8 @@ if ($action == 'edit' || $action == 'create') {
 			}
 		});
 	});
-	
-	
+
+
     </script>";
 
 	print $out;
