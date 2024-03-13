@@ -274,13 +274,13 @@ abstract class CommonObject
 	public $origin_id;
 
 	/**
-	 * @var	Object		Origin object. This is set by fetch_origin() from this->origin and this->origin_id.
+	 * @var	?CommonObject	Origin object. This is set by fetch_origin() from this->origin and this->origin_id.
 	 */
 	public $origin_object;
 
 	/**
-	 * @var string|CommonObject		Sometime the type of the originating object ('commande', 'facture', ...), sometime the object (like onh MouvementStock)
-	 * @deprecated					Use now $origin_type and $origin_id;
+	 * @var CommonObject|string|null	Sometimes the type of the originating object ('commande', 'facture', ...), sometimes the object (as with MouvementStock)
+	 * @deprecated						Use now $origin_type and $origin_id;
 	 * @see fetch_origin()
 	 */
 	public $origin;
