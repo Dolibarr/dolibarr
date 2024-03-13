@@ -560,7 +560,7 @@ if (empty($reshook)) {
 
 			if ($nb_bills_created == 1) {
 				$texttoshow = $langs->trans('BillXCreated', '{s1}');
-				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?id='.urlencode($lastid).'">'.$lastref.'</a>', $texttoshow);
+				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?id='.urlencode((string) ($lastid)).'">'.$lastref.'</a>', $texttoshow);
 				setEventMessages($texttoshow, null, 'mesgs');
 			} else {
 				setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
@@ -765,7 +765,7 @@ if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
 if ($search_billed != '' && $search_billed >= 0) {
-	$param .= "&search_billed=".urlencode($search_billed);
+	$param .= "&search_billed=".urlencode((string) ($search_billed));
 }
 if ($search_town) {
 	$param .= "&search_town=".urlencode($search_town);
@@ -780,46 +780,46 @@ if ($search_status != '') {
 	$param .= "&search_status=".urlencode($search_status);
 }
 if ($search_country) {
-	$param .= "&search_country=".urlencode($search_country);
+	$param .= "&search_country=".urlencode((string) ($search_country));
 }
 if ($search_type_thirdparty) {
-	$param .= "&search_type_thirdparty=".urlencode($search_type_thirdparty);
+	$param .= "&search_type_thirdparty=".urlencode((string) ($search_type_thirdparty));
 }
 if ($search_date_delivery_startday) {
-	$param .= '&search_date_delivery_startday='.urlencode($search_date_delivery_startday);
+	$param .= '&search_date_delivery_startday='.urlencode((string) ($search_date_delivery_startday));
 }
 if ($search_date_delivery_startmonth) {
-	$param .= '&search_date_delivery_startmonth='.urlencode($search_date_delivery_startmonth);
+	$param .= '&search_date_delivery_startmonth='.urlencode((string) ($search_date_delivery_startmonth));
 }
 if ($search_date_delivery_startyear) {
-	$param .= '&search_date_delivery_startyear='.urlencode($search_date_delivery_startyear);
+	$param .= '&search_date_delivery_startyear='.urlencode((string) ($search_date_delivery_startyear));
 }
 if ($search_date_delivery_endday) {
-	$param .= '&search_date_delivery_endday='.urlencode($search_date_delivery_endday);
+	$param .= '&search_date_delivery_endday='.urlencode((string) ($search_date_delivery_endday));
 }
 if ($search_date_delivery_endmonth) {
-	$param .= '&search_date_delivery_endmonth='.urlencode($search_date_delivery_endmonth);
+	$param .= '&search_date_delivery_endmonth='.urlencode((string) ($search_date_delivery_endmonth));
 }
 if ($search_date_delivery_endyear) {
-	$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
+	$param .= '&search_date_delivery_endyear='.urlencode((string) ($search_date_delivery_endyear));
 }
 if ($search_date_create_startday) {
-	$param .= '&search_date_create_startday='.urlencode($search_date_create_startday);
+	$param .= '&search_date_create_startday='.urlencode((string) ($search_date_create_startday));
 }
 if ($search_date_create_startmonth) {
-	$param .= '&search_date_create_startmonth='.urlencode($search_date_create_startmonth);
+	$param .= '&search_date_create_startmonth='.urlencode((string) ($search_date_create_startmonth));
 }
 if ($search_date_create_startyear) {
-	$param .= '&search_date_create_startyear='.urlencode($search_date_create_startyear);
+	$param .= '&search_date_create_startyear='.urlencode((string) ($search_date_create_startyear));
 }
 if ($search_date_create_endday) {
-	$param .= '&search_date_create_endday='.urlencode($search_date_create_endday);
+	$param .= '&search_date_create_endday='.urlencode((string) ($search_date_create_endday));
 }
 if ($search_date_create_endmonth) {
-	$param .= '&search_date_create_endmonth='.urlencode($search_date_create_endmonth);
+	$param .= '&search_date_create_endmonth='.urlencode((string) ($search_date_create_endmonth));
 }
 if ($search_date_create_endyear) {
-	$param .= '&search_date_create_endyear='.urlencode($search_date_create_endyear);
+	$param .= '&search_date_create_endyear='.urlencode((string) ($search_date_create_endyear));
 }
 if ($search_ref_supplier) {
 	$param .= "&search_ref_supplier=".urlencode($search_ref_supplier);

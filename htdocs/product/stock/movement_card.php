@@ -689,7 +689,7 @@ if ($resql) {
 		$param .= '&limit='.((int) $limit);
 	}
 	if ($id > 0) {
-		$param .= '&id='.urlencode($id);
+		$param .= '&id='.urlencode((string) ($id));
 	}
 	if ($search_movement) {
 		$param .= '&search_movement='.urlencode($search_movement);
@@ -716,7 +716,7 @@ if ($resql) {
 		$param .= '&search_user='.urlencode($search_user);
 	}
 	if ($idproduct > 0) {
-		$param .= '&idproduct='.urlencode($idproduct);
+		$param .= '&idproduct='.urlencode((string) ($idproduct));
 	}
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';

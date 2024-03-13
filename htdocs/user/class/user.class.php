@@ -3092,7 +3092,7 @@ class User extends CommonObject
 
 		if ($option == 'xxx') {
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
-			$linkend = '</a>';
+			$linkend = '</a>';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		}
 
 		if ($option == 'nolink') {

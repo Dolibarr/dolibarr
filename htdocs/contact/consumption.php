@@ -368,7 +368,7 @@ $param .= "&month=".urlencode($month);
 $param .= "&year=".urlencode($year);
 $param .= "&sprod_fulldescr=".urlencode($sprod_fulldescr);
 if (!empty($socid)) {
-	$param .= "&socid=".urlencode($socid);
+	$param .= "&socid=".urlencode((string) ($socid));
 }
 $param .= "&type_element=".urlencode($type_element);
 
@@ -382,7 +382,7 @@ if ($sql_select) {
 
 	$num = $db->num_rows($resql);
 
-	$param = (!empty($socid) ? "&socid=".urlencode($socid) : "")."&type_element=".urlencode($type_element)."&id=".urlencode($id);
+	$param = (!empty($socid) ? "&socid=".urlencode((string) ($socid)) : "")."&type_element=".urlencode((string) ($type_element))."&id=".urlencode((string) ($id));
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
@@ -396,10 +396,10 @@ if ($sql_select) {
 		$param .= "&sref=".urlencode($sref);
 	}
 	if ($month) {
-		$param .= "&month=".urlencode($month);
+		$param .= "&month=".urlencode((string) ($month));
 	}
 	if ($year) {
-		$param .= "&year=".urlencode($year);
+		$param .= "&year=".urlencode((string) ($year));
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017		ATM Consulting			<support@atm-consulting.fr>
  * Copyright (C) 2017		Pierre-Henry Favre		<phf@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,14 +72,14 @@ class ExpenseReportIk extends CommonObject
 
 	/**
 	 * Attribute object linked with database
-	 * @var array
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid'=>array('type'=>'integer', 'index'=>true)
-		,'fk_c_exp_tax_cat'=>array('type'=>'integer', 'index'=>true)
-		,'fk_range'=>array('type'=>'integer', 'index'=>true)
-		,'coef'=>array('type'=>'double')
-		,'ikoffset'=>array('type'=>'double')
+		'rowid' => array('type' => 'integer', 'index' => true)
+		,'fk_c_exp_tax_cat' => array('type' => 'integer', 'index' => true)
+		,'fk_range' => array('type' => 'integer', 'index' => true)
+		,'coef' => array('type' => 'double')
+		,'ikoffset' => array('type' => 'double')
 	);
 
 

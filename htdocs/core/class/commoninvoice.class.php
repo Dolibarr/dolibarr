@@ -4,6 +4,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -269,7 +270,7 @@ abstract class CommonInvoice extends CommonObject
 				if ($multicurrency < 0) {
 					$this->sumpayed = $obj->amount;
 					$this->sumpayed_multicurrency = $obj->multicurrency_amount;
-					return array('alreadypaid'=>(float) $obj->amount, 'alreadypaid_multicurrency'=>(float) $obj->multicurrency_amount);
+					return array('alreadypaid' => (float) $obj->amount, 'alreadypaid_multicurrency' => (float) $obj->multicurrency_amount);
 				} elseif ($multicurrency) {
 					$this->sumpayed_multicurrency = $obj->multicurrency_amount;
 					return (float) $obj->multicurrency_amount;
@@ -477,7 +478,7 @@ abstract class CommonInvoice extends CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$tmp = array('amount'=>$obj->amount, 'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
+				$tmp = array('amount' => $obj->amount, 'type' => $obj->code, 'date' => $obj->datep, 'num' => $obj->num, 'ref' => $obj->ref);
 				if (!empty($field3)) {
 					$tmp['ref_ext'] = $obj->ref_ext;
 				}
@@ -511,9 +512,9 @@ abstract class CommonInvoice extends CommonObject
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 						if ($multicurrency) {
-							$retarray[] = array('amount'=>$obj->multicurrency_amount, 'type'=>$obj->type, 'date'=>$obj->date, 'num'=>'0', 'ref'=>$obj->ref);
+							$retarray[] = array('amount' => $obj->multicurrency_amount, 'type' => $obj->type, 'date' => $obj->date, 'num' => '0', 'ref' => $obj->ref);
 						} else {
-							$retarray[] = array('amount'=>$obj->amount, 'type'=>$obj->type, 'date'=>$obj->date, 'num'=>'', 'ref'=>$obj->ref);
+							$retarray[] = array('amount' => $obj->amount, 'type' => $obj->type, 'date' => $obj->date, 'num' => '', 'ref' => $obj->ref);
 						}
 						$i++;
 					}
@@ -1312,9 +1313,9 @@ abstract class CommonInvoice extends CommonObject
 
 								if ($foundalternativestripeaccount) {
 									if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-										$customer = \Stripe\Customer::retrieve(array('id'=>"$foundalternativestripeaccount", 'expand[]'=>'sources'));
+										$customer = \Stripe\Customer::retrieve(array('id' => "$foundalternativestripeaccount", 'expand[]' => 'sources'));
 									} else {
-										$customer = \Stripe\Customer::retrieve(array('id'=>"$foundalternativestripeaccount", 'expand[]'=>'sources'), array("stripe_account" => $stripeacc));
+										$customer = \Stripe\Customer::retrieve(array('id' => "$foundalternativestripeaccount", 'expand[]' => 'sources'), array("stripe_account" => $stripeacc));
 									}
 								} else {
 									$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 0);
@@ -1500,7 +1501,7 @@ abstract class CommonInvoice extends CommonObject
 									$description = 'Failed to find or use your payment mode (no payment mode for this customer id)';
 									$stripefailurecode = 'BADPAYMENTMODE';
 									$stripefailuremessage = 'Failed to find or use your payment mode (no payment mode for this customer id)';
-									$postactionmessages = [];
+									$postactionmessages = [];  // @phan-suppress-current-line PhanPluginRedundantAssignment
 
 									$object = $this;
 

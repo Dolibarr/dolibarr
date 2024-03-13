@@ -293,14 +293,14 @@ if ($action == "view_ticketlist") {
 			// -1 value = all so no filter
 			if ($search_fk_user_assign > 0) {
 				$filter['t.fk_user_assign'] = $search_fk_user_assign;
-				$param .= '&search_fk_user_assign='.urlencode($search_fk_user_assign);
+				$param .= '&search_fk_user_assign='.urlencode((string) ($search_fk_user_assign));
 			}
 		}
 		if (!empty($search_fk_user_create)) {
 			// -1 value = all so no filter
 			if ($search_fk_user_create > 0) {
 				$filter['t.fk_user_create'] = $search_fk_user_create;
-				$param .= '&search_fk_user_create='.urlencode($search_fk_user_create);
+				$param .= '&search_fk_user_create='.urlencode((string) ($search_fk_user_create));
 			}
 		}
 		if ((isset($search_fk_status) && $search_fk_status != '') && $search_fk_status != '-1' && $search_fk_status != 'non_closed') {
@@ -432,8 +432,8 @@ if ($action == "view_ticketlist") {
 				$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
 				// allow to display information before list
-				$parameters=array('arrayfields'=>$arrayfields);
-				$reshook=$hookmanager->executeHooks('printFieldListHeader', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+				$parameters = array('arrayfields' => $arrayfields);
+				$reshook = $hookmanager->executeHooks('printFieldListHeader', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 
 				print '<div class="div-table-responsive">';
@@ -501,7 +501,7 @@ if ($action == "view_ticketlist") {
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 				// Fields from hook
-				$parameters = array('arrayfields'=>$arrayfields);
+				$parameters = array('arrayfields' => $arrayfields);
 				$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 
@@ -563,7 +563,7 @@ if ($action == "view_ticketlist") {
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
 				// Hook fields
-				$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+				$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 				$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 

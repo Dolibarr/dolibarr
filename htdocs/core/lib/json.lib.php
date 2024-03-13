@@ -283,7 +283,7 @@ function dol_json_decode($json, $assoc = false)
 			// @phan-suppress-next-line PhanPluginUnsafeEval
 			eval('$array = '.$out.';');
 		} catch (Exception $e) {
-			$array = array();
+			$array = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		}
 	}
 

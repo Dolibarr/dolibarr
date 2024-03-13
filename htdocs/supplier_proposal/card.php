@@ -1328,7 +1328,7 @@ if ($action == 'create') {
 		}
 
 		// Shipping Method
-		if (isModEnabled("delivery_note")) {
+		if (isModEnabled("shipping")) {
 			print '<tr><td>'.$langs->trans('SendingMethod').'</td><td colspan="2">';
 			print img_picto('', 'dolly', 'class="pictofixedwidth"');
 			$form->selectShippingMethod(GETPOST('shipping_method_id') > 0 ? GETPOSTINT('shipping_method_id') : "", 'shipping_method_id', '', 1);

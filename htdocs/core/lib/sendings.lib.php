@@ -58,10 +58,10 @@ function shipping_prepare_head($object)
 		// delivery link
 		$object->fetchObjectLinked($object->id, $object->element);
 		if (isset($object->linkedObjectsIds['delivery']) && is_array($object->linkedObjectsIds['delivery']) && count($object->linkedObjectsIds['delivery']) > 0) {        // If there is a delivery
-			// Take first one element of array
+			// Take first element of array
 			$tmp = reset($object->linkedObjectsIds['delivery']);
 
-			$head[$h][0] = DOL_URL_ROOT."/delivery/card.php?id=".$tmp;
+			$head[$h][0] = DOL_URL_ROOT."/delivery/card.php?id=".((int) $tmp);
 			$head[$h][1] = $langs->trans("DeliveryCard");
 			$head[$h][2] = 'delivery';
 			$h++;
@@ -75,7 +75,7 @@ function shipping_prepare_head($object)
 			$objectsrc->fetch($object->origin_id);
 		}
 		$nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external'));
-		$head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$object->id;
+		$head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".((int) $object->id);
 		$head[$h][1] = $langs->trans("ContactsAddresses");
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
