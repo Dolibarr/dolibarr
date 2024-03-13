@@ -199,8 +199,8 @@ function user_prepare_head(User $object)
 			} else {
 				$sql = "SELECT COUNT(ac.id) as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as ac";
-				$sql .= " WHERE fk_user_action = ".((int) $object->id);
-				$sql .= " AND entity IN (".getEntity('agenda').")";
+				$sql .= " WHERE ac.fk_user_action = ".((int) $object->id);
+				$sql .= " AND ac.entity IN (".getEntity('agenda').")";
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
