@@ -884,7 +884,7 @@ class ProductCombination
 			if ($result < 0) {
 				//In case the error is not related with an already existing product
 				if ($newproduct->error != 'ErrorProductAlreadyExists') {
-					$this->error[] = $newproduct->error;
+					$this->error = $newproduct->error;
 					$this->errors = $newproduct->errors;
 					$this->db->rollback();
 					return -1;
