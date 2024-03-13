@@ -905,6 +905,10 @@ class FormSetupItem
 				$selected = (empty($this->fieldValue) ? '' : $this->fieldValue);
 				$out.= $this->form->select_comptes($selected, $this->confKey, 0, '', 0, '', 0, '', 1);
 			}
+		} elseif ($this->type == 'password') {
+			$out.= $this->generateInputFieldPassword('dolibarr');
+		} elseif ($this->type == 'genericpassword') {
+			$out.= $this->generateInputFieldPassword('generic');
 		} else {
 			$out.= $this->generateInputFieldText();
 		}
@@ -1026,6 +1030,37 @@ class FormSetupItem
 
 		return $out;
 	}
+
+
+	/**
+	 * generate input field for a password
+	 *
+	 * @param   [type]  $type  'dolibarr' (dolibarr password rules apply) or 'generic'
+	 *
+	 * @return  string
+	 */
+	public function generateInputFieldPassword($type = 'generic')
+	{
+		global $conf, $langs, $user;
+
+		$min = 8;
+		$max = 50;
+		if ($type == 'dolibarr') {
+			$gen = getDolGlobalString('USER_PASSWORD_GENERATED', 'standard');
+			if ($gen == 'none') {
+				$gen = 'standard';
+			}
+			$nomclass = "modGeneratePass".ucfirst($gen);
+			$nomfichier = $nomclass.".class.php";
+			require_once DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomfichier;
+			$genhandler = new $nomclass($this->db, $conf, $langs, $user);
+			$min = $genhandler->length;
+			$max = $genhandler->length2;
+		}
+		$out = '<input required="required" type="password" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'" minlength="' . $min . '" maxlength="' . $max . '">';
+		return $out;
+	}
+
 
 
 	/**
@@ -1209,6 +1244,8 @@ class FormSetupItem
 			} elseif ($resbank < 0) {
 				$this->setErrors($bankaccount->errors);
 			}
+		} elseif ($this->type == 'password' || $this->type == 'genericpassword') {
+			$out.= str_repeat('*', strlen($this->fieldValue));
 		} else {
 			$out.= $this->fieldValue;
 		}
@@ -1478,6 +1515,30 @@ class FormSetupItem
 	public function setAsSelectBankAccount()
 	{
 		$this->type = 'selectBankAccount';
+		return $this;
+	}
+
+	/**
+	 * Set type of input as a password with dolibarr password rules apply.
+	 * Hide entry on display.
+	 *
+	 * @return self
+	 */
+	public function setAsPassword()
+	{
+		$this->type = 'password';
+		return $this;
+	}
+
+	/**
+	 * Set type of input as a generic password without dolibarr password rules (for external passwords for example).
+	 * Hide entry on display.
+	 *
+	 * @return self
+	 */
+	public function setAsGenericPassword()
+	{
+		$this->type = 'genericpassword';
 		return $this;
 	}
 }
