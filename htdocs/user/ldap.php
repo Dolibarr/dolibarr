@@ -126,7 +126,10 @@ print '</tr>';
 if (getDolGlobalString('LDAP_SERVER_TYPE') == "activedirectory") {
 	$ldap = new Ldap();
 	$result = $ldap->connectBind();
-	($result > 0) ? ($userSID = $ldap->getObjectSid($object->login)) : $userSID = '';
+	$userSID = '';
+	if ($result > 0) {
+		$userSID = $ldap->getObjectSid($object->login);
+	}
 	print '<tr><td class="valigntop">'.$langs->trans("SID").'</td>';
 	print '<td>'.$userSID.'</td>';
 	print "</tr>\n";
