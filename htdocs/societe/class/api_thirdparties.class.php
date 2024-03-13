@@ -56,7 +56,6 @@ class Thirdparties extends DolibarrApi
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 
 		$this->company = new Societe($this->db);
 
@@ -1103,37 +1102,31 @@ class Thirdparties extends DolibarrApi
 		 * We select all the records that match the socid
 		 */
 
-		$sql = "SELECT rowid, fk_action, fk_soc, fk_contact, fk_user, email, threshold, context, type, datec, tms as datem";
+		$sql = "SELECT rowid, fk_action, fk_action as event, fk_soc, fk_soc as socid, fk_contact, fk_contact as target, fk_user, email, threshold, context, type, datec, tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
 		if ($id) {
 			$sql .= " WHERE fk_soc  = ".((int) $id);
 		}
 
 		$result = $this->db->query($sql);
-
 		if ($this->db->num_rows($result) == 0) {
 			throw new RestException(404, 'Notification not found');
 		}
 
 		$i = 0;
 
-		$notifications = array();
-
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				$notification = new Notify($this->db);
-				if ($notification->fetch($obj->rowid)) {
-					$notifications[] = $notification;
-				}
+				$notifications[] = $obj;
 				$i++;
 			}
 		} else {
 			throw new RestException(404, 'No notifications found');
 		}
 
-		$fields = array('socid', 'fk_action', 'fk_contact', 'fk_user', 'datec', 'datem', 'email', 'threshold', 'context', 'type');
+		$fields = array('socid', 'fk_soc', 'fk_action', 'event', 'fk_contact', 'target', 'fk_user', 'datec', 'tms', 'email', 'threshold', 'context', 'type');
 
 		$returnNotifications = array();
 
