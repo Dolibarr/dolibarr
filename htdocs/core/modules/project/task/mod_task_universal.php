@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,11 +120,11 @@ class mod_task_universal extends ModeleNumRefTask
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe		$objsoc		Object third party
-	 *  @param   Task		$object	    Object task
-	 *  @return  string|0				Value if OK, 0 if KO
+	 *  @param	Societe|string	$objsoc		Object third party
+	 *  @param	Task|string		$object	    Object task
+	 *  @return string|0					Value if OK, 0 if KO
 	 */
-	public function getNextValue($objsoc, $object)
+	public function getNextValue($objsoc = '', $object = '')
 	{
 		global $db, $conf;
 
@@ -140,20 +141,5 @@ class mod_task_universal extends ModeleNumRefTask
 		$numFinal = get_next_value($db, $mask, 'projet_task', 'ref', '', (is_object($objsoc) ? $objsoc->code_client : ''), $date);
 
 		return  $numFinal;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next reference not yet used as a reference
-	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param  Task		$object	    Object task
-	 *  @return string|0      			Next not used reference, 0 if KO
-	 */
-	public function project_get_num($objsoc = 0, $object = '')
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $object);
 	}
 }

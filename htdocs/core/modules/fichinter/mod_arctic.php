@@ -121,11 +121,11 @@ class mod_arctic extends ModeleNumRefFicheinter
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Fichinter	$object		Object we need next value for
-	 *  @return string|0      			Value if OK, 0 if KO
+	 *  @param	Societe|string		$objsoc     Object thirdparty
+	 *  @param  Fichinter|string	$object		Object we need next value for
+	 *  @return string|0      					Value if OK, 0 if KO
 	 */
-	public function getNextValue($objsoc = 0, $object = '')
+	public function getNextValue($objsoc = '', $object = '')
 	{
 		global $db, $conf;
 
@@ -138,8 +138,11 @@ class mod_arctic extends ModeleNumRefFicheinter
 			$this->error = 'NotConfigured';
 			return 0;
 		}
-
-		$numFinal = get_next_value($db, $mask, 'fichinter', 'ref', '', $objsoc, $object->datec);
+		$datec = '';
+		if (!empty($object->datec)) {
+			$datec = $object->datec;
+		}
+		$numFinal = get_next_value($db, $mask, 'fichinter', 'ref', '', $objsoc, $datec);
 
 		return  $numFinal;
 	}

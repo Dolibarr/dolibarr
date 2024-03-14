@@ -64,11 +64,11 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 	/**
 	 *  Return next value available
 	 *
-	 *	@param	Product		$objproduct		Object product
-	 *	@param	int			$type		Type
-	 *  @return string      			Value
+	 *	@param	Product|string	$objproduct	Object product
+	 *	@param	int				$type		Type
+	 *  @return string      				Value
 	 */
-	public function getNextValue($objproduct = 0, $type = -1)
+	public function getNextValue($objproduct = '', $type = -1)
 	{
 		global $langs;
 		return $langs->trans("Function_getNextValue_InModuleNotWorking");
