@@ -3759,9 +3759,6 @@ input.button[name="upload"] {
 input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
 	font-size: 0.8em;
 }
-.dispwaitmsg {
-	display : none;
-}
 input.buttonlink {
 	color: var(--colortextlink);
 	background-color: transparent;
