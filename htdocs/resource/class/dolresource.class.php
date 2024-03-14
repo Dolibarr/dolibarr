@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015		Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2023-2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -225,14 +226,14 @@ class Dolresource extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 			$result = $this->insertExtraFields();
 			if ($result < 0) {
-				$error=-1;
+				$error = -1;
 			}
 		}
 
 		if (!$error && !$no_trigger) {
 			$result = $this->call_trigger('RESOURCE_CREATE', $user);
 			if ($result < 0) {
-				$error=-1;
+				$error = -1;
 			}
 		}
 
@@ -599,14 +600,14 @@ class Dolresource extends CommonObject
 	/**
 	 * Load resource objects into $this->lines
 	 *
-	 * @param	string		$sortorder		sort order
-	 * @param	string		$sortfield		sort field
-	 * @param	int			$limit			limit page
-	 * @param	int			$offset			page
-	 * @param	array		$filter			filter output
-	 * @return	int							if KO: <0 || if OK number of lines loaded
+	 * @param	string			$sortorder		Sort order
+	 * @param	string			$sortfield		Sort field
+	 * @param	int				$limit			Limit page
+	 * @param	int				$offset			Offset page
+	 * @param	string|array	$filter			Filter USF.
+	 * @return	int								If KO: <0 || if OK number of lines loaded
 	 */
-	public function fetchAll(string $sortorder, string $sortfield, int $limit, int $offset, array $filter = [])
+	public function fetchAll(string $sortorder, string $sortfield, int $limit, int $offset, $filter = '')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
@@ -641,16 +642,27 @@ class Dolresource extends CommonObject
 		$sql .= " WHERE t.entity IN (".getEntity('resource').")";
 
 		// Manage filter
-		if (!empty($filter)) {
+		if (is_array($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) {
 					$sql .= " AND ".$this->db->sanitize($key)." = '".$this->db->idate($value)."'";
 				} elseif (strpos($key, 'ef.') !== false) {
-					$sql .= ((float) $value);
+					$sql .= " AND ".$this->db->sanitize($key)." = ".((float) $value);
 				} else {
 					$sql .= " AND ".$this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 				}
 			}
+
+			$filter = '';
+		}
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -809,9 +821,9 @@ class Dolresource extends CommonObject
 				$resources[$i] = array(
 					'rowid' => $obj->rowid,
 					'resource_id' => $obj->resource_id,
-					'resource_type'=>$obj->resource_type,
-					'busy'=>$obj->busy,
-					'mandatory'=>$obj->mandatory
+					'resource_type' => $obj->resource_type,
+					'busy' => $obj->busy,
+					'mandatory' => $obj->mandatory
 				);
 				$i++;
 			}
@@ -973,7 +985,7 @@ class Dolresource extends CommonObject
 		$result .= $linkend;
 
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

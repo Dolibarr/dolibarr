@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) - 2013-2018    Jean-François FERRY    <hello@librethic.io>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,22 +161,22 @@ class modTicket extends DolibarrModules
 			'tabrowid' => array("rowid", "rowid", "rowid", "rowid"),
 			'tabcond' => array(isModEnabled("ticket"), isModEnabled("ticket"), isModEnabled("ticket"), isModEnabled("ticket") && getDolGlobalString('TICKET_ENABLE_RESOLUTION')),
 			'tabhelp' => array(
-				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")),
-				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")),
-				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"), 'public'=>$langs->trans("Enter0or1").'<br>'.$langs->trans("TicketGroupIsPublicDesc"), 'fk_parent'=>$langs->trans("IfThisCategoryIsChildOfAnother")),
-				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"))
+				array('code' => $langs->trans("EnterAnyCode"), 'use_default' => $langs->trans("Enter0or1")),
+				array('code' => $langs->trans("EnterAnyCode"), 'use_default' => $langs->trans("Enter0or1")),
+				array('code' => $langs->trans("EnterAnyCode"), 'use_default' => $langs->trans("Enter0or1"), 'public' => $langs->trans("Enter0or1").'<br>'.$langs->trans("TicketGroupIsPublicDesc"), 'fk_parent' => $langs->trans("IfThisCategoryIsChildOfAnother")),
+				array('code' => $langs->trans("EnterAnyCode"), 'use_default' => $langs->trans("Enter0or1"))
 			),
 		);
 
 		// Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
 		$this->boxes = array(
-			0=>array('file'=>'box_last_ticket.php', 'enabledbydefaulton'=>'Home'),
-			1=>array('file'=>'box_last_modified_ticket.php', 'enabledbydefaulton'=>'Home'),
-			2=>array('file'=>'box_ticket_by_severity.php', 'enabledbydefaulton'=>'ticketindex'),
-			3=>array('file'=>'box_graph_nb_ticket_last_x_days.php', 'enabledbydefaulton'=>'ticketindex'),
-			4=>array('file'=>'box_graph_nb_tickets_type.php', 'enabledbydefaulton'=>'ticketindex'),
-			5=>array('file'=>'box_new_vs_close_ticket.php', 'enabledbydefaulton'=>'ticketindex')
+			0 => array('file' => 'box_last_ticket.php', 'enabledbydefaulton' => 'Home'),
+			1 => array('file' => 'box_last_modified_ticket.php', 'enabledbydefaulton' => 'Home'),
+			2 => array('file' => 'box_ticket_by_severity.php', 'enabledbydefaulton' => 'ticketindex'),
+			3 => array('file' => 'box_graph_nb_ticket_last_x_days.php', 'enabledbydefaulton' => 'ticketindex'),
+			4 => array('file' => 'box_graph_nb_tickets_type.php', 'enabledbydefaulton' => 'ticketindex'),
+			5 => array('file' => 'box_new_vs_close_ticket.php', 'enabledbydefaulton' => 'ticketindex')
 		); // Boxes list
 
 		// Permissions
@@ -333,23 +334,23 @@ class modTicket extends DolibarrModules
 
 		// Export list of tickets and attributes
 		$langs->load("ticket");
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='ExportDataset_ticket_1';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'ExportDataset_ticket_1';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r] = array(array("ticket", "export"));
-		$this->export_icon[$r]='ticket';
+		$this->export_icon[$r] = 'ticket';
 		$keyforclass = 'Ticket';
-		$keyforclassfile='/ticket/class/ticket.class.php';
-		$keyforelement='ticket';
+		$keyforclassfile = '/ticket/class/ticket.class.php';
+		$keyforelement = 'ticket';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforselect='ticket';
-		$keyforaliasextra='extra';
-		$keyforelement='ticket';
+		$keyforselect = 'ticket';
+		$keyforaliasextra = 'extra';
+		$keyforelement = 'ticket';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'ticket as t';
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'ticket as t';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'ticket_extrafields as extra on (t.rowid = extra.fk_object)';
-		$this->export_sql_end[$r] .=' WHERE 1 = 1';
-		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('ticket').')';
+		$this->export_sql_end[$r] .= ' WHERE 1 = 1';
+		$this->export_sql_end[$r] .= ' AND t.entity IN ('.getEntity('ticket').')';
 		$r++;
 	}
 
@@ -397,7 +398,7 @@ class modTicket extends DolibarrModules
 			// remove old settings
 			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'TICKET_ADDON_PDF_ODT_PATH' AND type = 'ticket' AND entity = ".((int) $conf->entity),
 			// activate default odt templates
-			array("sql" =>"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, libelle, entity, description) VALUES('generic_ticket_odt','ticket','ODT templates',".((int) $conf->entity).",'TICKET_ADDON_PDF_ODT_PATH');", "ignoreerror" =>1),
+			array("sql" => "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, libelle, entity, description) VALUES('generic_ticket_odt','ticket','ODT templates',".((int) $conf->entity).",'TICKET_ADDON_PDF_ODT_PATH');", "ignoreerror" => 1),
 		);
 
 		return $this->_init($sql, $options);

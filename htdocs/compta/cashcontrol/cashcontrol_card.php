@@ -6,6 +6,7 @@
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Andreu Bisquerra		<jove@bisquerra.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +69,7 @@ if ($contextpage == 'takepos') {
 	$_GET['optioncss'] = 'print';
 }
 
-$arrayofpaymentmode = array('cash'=>'Cash', 'cheque'=>'Cheque', 'card'=>'CreditCard');
+$arrayofpaymentmode = array('cash' => 'Cash', 'cheque' => 'Cheque', 'card' => 'CreditCard');
 
 $arrayofposavailable = array();
 if (isModEnabled('cashdesk')) {
@@ -180,7 +181,7 @@ if ($action == "start") {
 			$db->commit();
 			$action = "view";
 		} else {
-			$db->rollback;
+			$db->rollback();
 			$action = "view";
 		}
 	}

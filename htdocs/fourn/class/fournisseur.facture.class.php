@@ -1934,7 +1934,7 @@ class FactureFournisseur extends CommonInvoice
 
 			// Set new ref and define current statut
 			if (!$error) {
-				$this->ref = $num;
+				$this->ref = $this->newref;
 				$this->statut = self::STATUS_VALIDATED;
 				//$this->date_validation=$now; this is stored into log table
 			}
@@ -2313,13 +2313,13 @@ class FactureFournisseur extends CommonInvoice
 	 * @param		double		$txlocaltax2		LocalTax2 Rate
 	 * @param     	double		$qty           		Quantity
 	 * @param     	int			$idproduct			Id produit
-	 * @param	  	double		$price_base_type	HT or TTC
+	 * @param	  	string		$price_base_type	HT or TTC
 	 * @param	  	int			$info_bits			Miscellaneous information of line
 	 * @param		int			$type				Type of line (0=product, 1=service)
 	 * @param     	double		$remise_percent  	Percentage discount of the line
 	 * @param		int			$notrigger			Disable triggers
-	 * @param      	integer 	$date_start     	Date start of service
-	 * @param      	integer     $date_end       	Date end of service
+	 * @param      	int|string 	$date_start     	Date start of service
+	 * @param      	int|string  $date_end       	Date end of service
 	 * @param		array		$array_options		extrafields array
 	 * @param 		int|null	$fk_unit 			Code of the unit to use. Null to use the default one
 	 * @param		double		$pu_devise			Amount in currency
@@ -2972,7 +2972,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$obj = new $classname();
 		$numref = "";
-		$numref = $obj->getNumRef($soc, $this, $mode);
+		$numref = $obj->getNextValue($soc, $this, $mode);
 
 		if ($numref != "") {
 			return $numref;

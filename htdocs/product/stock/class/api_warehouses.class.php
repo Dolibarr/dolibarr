@@ -222,9 +222,9 @@ class Warehouses extends DolibarrApi
 
 		if ($this->warehouse->update($id, DolibarrApiAccess::$user)) {
 			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->warehouse->error);
 		}
-
-		return false;
 	}
 
 	/**

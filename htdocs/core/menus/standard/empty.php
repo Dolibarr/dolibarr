@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,9 @@ class MenuManager
 	public $atarget = ""; // To store default target to use onto links
 	public $name = "empty";
 
+	/**
+	 * @var Menu
+	 */
 	public $menu;
 	public $menu_array_after;
 
@@ -74,7 +78,7 @@ class MenuManager
 	 *
 	 *	@param	string	$mode			'top', 'left', 'jmobile'
 	 *  @param	array	$moredata		An array with more data to output
-	 *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
+	 *  @return int|string				0 or nb of top menu entries if $mode = 'topnb', string inc ase of bad parameter
 	 */
 	public function showmenu($mode, $moredata = null)
 	{
@@ -134,8 +138,7 @@ class MenuManager
 				}
 			}
 
-			$showmode = 1;
-			if (empty($noout)) {
+			if (empty($noout) && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				print_start_menu_entry_empty('', 'class="tmenuend"', $showmode);
 			}
 			if (empty($noout)) {
@@ -309,13 +312,7 @@ class MenuManager
 							}
 							print $val2['titre'];
 							if ($relurl2) {
-								if ($val2['enabled']) {
-									// Allowed
-									print '</a>';
-								} else {
-									// Not allowed
-									print '</a>';
-								}
+								print '</a>';
 							}
 							print '</li>'."\n";
 						}

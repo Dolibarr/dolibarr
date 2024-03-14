@@ -103,7 +103,7 @@ $usercandelete = (($user->hasRight('stock', 'supprimer')));
 
 $error = 0;
 
-$parameters = array('id'=>$id, 'ref'=>$ref);
+$parameters = array('id' => $id, 'ref' => $ref);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -168,7 +168,7 @@ if (empty($reshook)) {
 						header("Location: ".$backtopage);
 						exit;
 					} else {
-						header("Location: card.php?id=".urlencode($id));
+						header("Location: card.php?id=".urlencode((string) ($id)));
 						exit;
 					}
 				} else {
@@ -417,7 +417,7 @@ if ($action == 'create') {
 			// Confirm delete warehouse
 			if ($action == 'delete') {
 				$formquestion = array(
-					array('type' => 'other', 'name' => 'info', 'label' => img_warning('').$langs->trans("WarningThisWIllAlsoDeleteStock"), 'morecss'=>'warning')
+					array('type' => 'other', 'name' => 'info', 'label' => img_warning('').$langs->trans("WarningThisWIllAlsoDeleteStock"), 'morecss' => 'warning')
 				);
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("DeleteAWarehouse"), $langs->trans("ConfirmDeleteWarehouse", $object->label), "confirm_delete", $formquestion, 0, 2);
 			}
@@ -659,7 +659,7 @@ if ($action == 'create') {
 				$totalarray['nbfield']++;
 			}
 			// Hook fields
-			$parameters = array('sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray' => &$totalarray);
+			$parameters = array('sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			print "</tr>\n";
@@ -744,7 +744,7 @@ if ($action == 'create') {
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
 					print '<tr class="oddeven">';
 
-					$parameters = array('obj'=>$objp, 'totalarray' => &$totalarray);
+					$parameters = array('obj' => $objp, 'totalarray' => &$totalarray);
 					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 					print $hookmanager->resPrint;
 

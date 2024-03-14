@@ -1,4 +1,7 @@
 <?php
+/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ */
 
 // Uncomment require_once to enable corresponding fixer
 
@@ -7,8 +10,6 @@
 //require_once __DIR__.'/plugins/UrlEncodeStringifyFixer.php';
 require_once __DIR__.'/plugins/SelectDateFixer.php';
 
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- */
 define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
 define('DOL_DOCUMENT_ROOT', DOL_PROJECT_ROOT.'/htdocs');
 define('PHAN_DIR', __DIR__);
@@ -22,7 +23,7 @@ $DEPRECATED_MODULE_MAPPING = array(
 	'commande' => 'order',
 	'contrat' => 'contract',
 	'entrepot' => 'stock',
-	'expedition' => 'delivery_note',
+	'expedition' => 'shipping',
 	'facture' => 'invoice',
 	'ficheinter' => 'intervention',
 	'product_fournisseur_price' => 'productsupplierprice',
@@ -103,6 +104,7 @@ return [
 		.'|htdocs/includes/restler/.*'  // @phpstan-ignore-line
 		// Included as stub (did not seem properly analysed by phan without it)
 		.'|htdocs/includes/stripe/.*'  // @phpstan-ignore-line
+		.'|htdocs/conf/conf.php'  // @phpstan-ignore-line
 		//.'|htdocs/[^c][^o][^r][^e][^/].*'  // For testing @phpstan-ignore-line
 		//.'|htdocs/[^h].*' // For testing on restricted set @phpstan-ignore-line
 		.')@',  // @phpstan-ignore-line

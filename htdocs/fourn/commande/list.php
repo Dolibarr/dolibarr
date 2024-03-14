@@ -586,7 +586,7 @@ if (empty($reshook)) {
 
 			if ($nb_bills_created == 1) {
 				$texttoshow = $langs->trans('BillXCreated', '{s1}');
-				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?id='.urlencode($lastid).'">'.$lastref.'</a>', $texttoshow);
+				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?id='.urlencode((string) ($lastid)).'">'.$lastref.'</a>', $texttoshow);
 				setEventMessages($texttoshow, null, 'mesgs');
 			} else {
 				setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
@@ -607,82 +607,82 @@ if (empty($reshook)) {
 				$param .= '&sall='.urlencode($sall);
 			}
 			if ($socid > 0) {
-				$param .= '&socid='.urlencode($socid);
+				$param .= '&socid='.urlencode((string) ($socid));
 			}
 			if ($search_status != '') {
 				$param .= '&search_status='.urlencode($search_status);
 			}
 			if ($search_date_order_startday) {
-				$param .= '&search_date_order_startday='.urlencode($search_date_order_startday);
+				$param .= '&search_date_order_startday='.urlencode((string) ($search_date_order_startday));
 			}
 			if ($search_date_order_startmonth) {
-				$param .= '&search_date_order_startmonth='.urlencode($search_date_order_startmonth);
+				$param .= '&search_date_order_startmonth='.urlencode((string) ($search_date_order_startmonth));
 			}
 			if ($search_date_order_startyear) {
-				$param .= '&search_date_order_startyear='.urlencode($search_date_order_startyear);
+				$param .= '&search_date_order_startyear='.urlencode((string) ($search_date_order_startyear));
 			}
 			if ($search_date_order_endday) {
-				$param .= '&search_date_order_endday='.urlencode($search_date_order_endday);
+				$param .= '&search_date_order_endday='.urlencode((string) ($search_date_order_endday));
 			}
 			if ($search_date_order_endmonth) {
-				$param .= '&search_date_order_endmonth='.urlencode($search_date_order_endmonth);
+				$param .= '&search_date_order_endmonth='.urlencode((string) ($search_date_order_endmonth));
 			}
 			if ($search_date_order_endyear) {
-				$param .= '&search_date_order_endyear='.urlencode($search_date_order_endyear);
+				$param .= '&search_date_order_endyear='.urlencode((string) ($search_date_order_endyear));
 			}
 			if ($search_date_delivery_startday) {
-				$param .= '&search_date_delivery_startday='.urlencode($search_date_delivery_startday);
+				$param .= '&search_date_delivery_startday='.urlencode((string) ($search_date_delivery_startday));
 			}
 			if ($search_date_delivery_startmonth) {
-				$param .= '&search_date_delivery_startmonth='.urlencode($search_date_delivery_startmonth);
+				$param .= '&search_date_delivery_startmonth='.urlencode((string) ($search_date_delivery_startmonth));
 			}
 			if ($search_date_delivery_startyear) {
-				$param .= '&search_date_delivery_startyear='.urlencode($search_date_delivery_startyear);
+				$param .= '&search_date_delivery_startyear='.urlencode((string) ($search_date_delivery_startyear));
 			}
 			if ($search_date_delivery_endday) {
-				$param .= '&search_date_delivery_endday='.urlencode($search_date_delivery_endday);
+				$param .= '&search_date_delivery_endday='.urlencode((string) ($search_date_delivery_endday));
 			}
 			if ($search_date_delivery_endmonth) {
-				$param .= '&search_date_delivery_endmonth='.urlencode($search_date_delivery_endmonth);
+				$param .= '&search_date_delivery_endmonth='.urlencode((string) ($search_date_delivery_endmonth));
 			}
 			if ($search_date_delivery_endyear) {
-				$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
+				$param .= '&search_date_delivery_endyear='.urlencode((string) ($search_date_delivery_endyear));
 			}
 			if ($search_date_valid_startday) {
-				$param .= '&search_date_valid_startday='.urlencode($search_date_valid_startday);
+				$param .= '&search_date_valid_startday='.urlencode((string) ($search_date_valid_startday));
 			}
 			if ($search_date_valid_startmonth) {
-				$param .= '&search_date_valid_startmonth='.urlencode($search_date_valid_startmonth);
+				$param .= '&search_date_valid_startmonth='.urlencode((string) ($search_date_valid_startmonth));
 			}
 			if ($search_date_valid_startyear) {
-				$param .= '&search_date_valid_startyear='.urlencode($search_date_valid_startyear);
+				$param .= '&search_date_valid_startyear='.urlencode((string) ($search_date_valid_startyear));
 			}
 			if ($search_date_valid_endday) {
-				$param .= '&search_date_valid_endday='.urlencode($search_date_valid_endday);
+				$param .= '&search_date_valid_endday='.urlencode((string) ($search_date_valid_endday));
 			}
 			if ($search_date_valid_endmonth) {
-				$param .= '&search_date_valid_endmonth='.urlencode($search_date_valid_endmonth);
+				$param .= '&search_date_valid_endmonth='.urlencode((string) ($search_date_valid_endmonth));
 			}
 			if ($search_date_valid_endyear) {
-				$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
+				$param .= '&search_date_valid_endyear='.urlencode((string) ($search_date_valid_endyear));
 			}
 			if ($search_date_approve_startday) {
-				$param .= '&search_date_approve_startday='.urlencode($search_date_approve_startday);
+				$param .= '&search_date_approve_startday='.urlencode((string) ($search_date_approve_startday));
 			}
 			if ($search_date_approve_startmonth) {
-				$param .= '&search_date_approve_startmonth='.urlencode($search_date_approve_startmonth);
+				$param .= '&search_date_approve_startmonth='.urlencode((string) ($search_date_approve_startmonth));
 			}
 			if ($search_date_approve_startyear) {
-				$param .= '&search_date_approve_startyear='.urlencode($search_date_approve_startyear);
+				$param .= '&search_date_approve_startyear='.urlencode((string) ($search_date_approve_startyear));
 			}
 			if ($search_date_approve_endday) {
-				$param .= '&search_date_approve_endday='.urlencode($search_date_approve_endday);
+				$param .= '&search_date_approve_endday='.urlencode((string) ($search_date_approve_endday));
 			}
 			if ($search_date_approve_endmonth) {
-				$param .= '&search_date_approve_endmonth='.urlencode($search_date_approve_endmonth);
+				$param .= '&search_date_approve_endmonth='.urlencode((string) ($search_date_approve_endmonth));
 			}
 			if ($search_date_approve_endyear) {
-				$param .= '&search_date_approve_endyear='.urlencode($search_date_approve_endyear);
+				$param .= '&search_date_approve_endyear='.urlencode((string) ($search_date_approve_endyear));
 			}
 			if ($search_ref) {
 				$param .= '&search_ref='.urlencode($search_ref);
@@ -695,7 +695,7 @@ if (empty($reshook)) {
 			}
 			//if ($search_ref_customer)	$param .= '&search_ref_customer='.urlencode($search_ref_customer);
 			if ($search_user > 0) {
-				$param .= '&search_user='.urlencode($search_user);
+				$param .= '&search_user='.urlencode((string) ($search_user));
 			}
 			if ($search_sale > 0) {
 				$param .= '&search_sale='.urlencode($search_sale);
@@ -713,7 +713,7 @@ if (empty($reshook)) {
 				$param .= "&search_project_ref=".urlencode($search_project_ref);
 			}
 			if ($show_files) {
-				$param .= '&show_files='.urlencode($show_files);
+				$param .= '&show_files='.urlencode((string) ($show_files));
 			}
 			if ($optioncss != '') {
 				$param .= '&optioncss='.urlencode($optioncss);
@@ -1034,82 +1034,82 @@ if ($resql) {
 		$param .= '&sall='.urlencode($sall);
 	}
 	if ($socid > 0) {
-		$param .= '&socid='.urlencode($socid);
+		$param .= '&socid='.urlencode((string) ($socid));
 	}
 	if ($sall) {
 		$param .= "&search_all=".urlencode($sall);
 	}
 	if ($search_date_order_startday) {
-		$param .= '&search_date_order_startday='.urlencode($search_date_order_startday);
+		$param .= '&search_date_order_startday='.urlencode((string) ($search_date_order_startday));
 	}
 	if ($search_date_order_startmonth) {
-		$param .= '&search_date_order_startmonth='.urlencode($search_date_order_startmonth);
+		$param .= '&search_date_order_startmonth='.urlencode((string) ($search_date_order_startmonth));
 	}
 	if ($search_date_order_startyear) {
-		$param .= '&search_date_order_startyear='.urlencode($search_date_order_startyear);
+		$param .= '&search_date_order_startyear='.urlencode((string) ($search_date_order_startyear));
 	}
 	if ($search_date_order_endday) {
-		$param .= '&search_date_order_endday='.urlencode($search_date_order_endday);
+		$param .= '&search_date_order_endday='.urlencode((string) ($search_date_order_endday));
 	}
 	if ($search_date_order_endmonth) {
-		$param .= '&search_date_order_endmonth='.urlencode($search_date_order_endmonth);
+		$param .= '&search_date_order_endmonth='.urlencode((string) ($search_date_order_endmonth));
 	}
 	if ($search_date_order_endyear) {
-		$param .= '&search_date_order_endyear='.urlencode($search_date_order_endyear);
+		$param .= '&search_date_order_endyear='.urlencode((string) ($search_date_order_endyear));
 	}
 	if ($search_date_delivery_startday) {
-		$param .= '&search_date_delivery_startday='.urlencode($search_date_delivery_startday);
+		$param .= '&search_date_delivery_startday='.urlencode((string) ($search_date_delivery_startday));
 	}
 	if ($search_date_delivery_startmonth) {
-		$param .= '&search_date_delivery_startmonth='.urlencode($search_date_delivery_startmonth);
+		$param .= '&search_date_delivery_startmonth='.urlencode((string) ($search_date_delivery_startmonth));
 	}
 	if ($search_date_delivery_startyear) {
-		$param .= '&search_date_delivery_startyear='.urlencode($search_date_delivery_startyear);
+		$param .= '&search_date_delivery_startyear='.urlencode((string) ($search_date_delivery_startyear));
 	}
 	if ($search_date_delivery_endday) {
-		$param .= '&search_date_delivery_endday='.urlencode($search_date_delivery_endday);
+		$param .= '&search_date_delivery_endday='.urlencode((string) ($search_date_delivery_endday));
 	}
 	if ($search_date_delivery_endmonth) {
-		$param .= '&search_date_delivery_endmonth='.urlencode($search_date_delivery_endmonth);
+		$param .= '&search_date_delivery_endmonth='.urlencode((string) ($search_date_delivery_endmonth));
 	}
 	if ($search_date_delivery_endyear) {
-		$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
+		$param .= '&search_date_delivery_endyear='.urlencode((string) ($search_date_delivery_endyear));
 	}
 	if ($search_date_valid_startday) {
-		$param .= '&search_date_valid_startday='.urlencode($search_date_valid_startday);
+		$param .= '&search_date_valid_startday='.urlencode((string) ($search_date_valid_startday));
 	}
 	if ($search_date_valid_startmonth) {
-		$param .= '&search_date_valid_startmonth='.urlencode($search_date_valid_startmonth);
+		$param .= '&search_date_valid_startmonth='.urlencode((string) ($search_date_valid_startmonth));
 	}
 	if ($search_date_valid_startyear) {
-		$param .= '&search_date_valid_startyear='.urlencode($search_date_valid_startyear);
+		$param .= '&search_date_valid_startyear='.urlencode((string) ($search_date_valid_startyear));
 	}
 	if ($search_date_valid_endday) {
-		$param .= '&search_date_valid_endday='.urlencode($search_date_valid_endday);
+		$param .= '&search_date_valid_endday='.urlencode((string) ($search_date_valid_endday));
 	}
 	if ($search_date_valid_endmonth) {
-		$param .= '&search_date_valid_endmonth='.urlencode($search_date_valid_endmonth);
+		$param .= '&search_date_valid_endmonth='.urlencode((string) ($search_date_valid_endmonth));
 	}
 	if ($search_date_valid_endyear) {
-		$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
+		$param .= '&search_date_valid_endyear='.urlencode((string) ($search_date_valid_endyear));
 	}
 	if ($search_date_approve_startday) {
-		$param .= '&search_date_approve_startday='.urlencode($search_date_approve_startday);
+		$param .= '&search_date_approve_startday='.urlencode((string) ($search_date_approve_startday));
 	}
 	if ($search_date_approve_startmonth) {
-		$param .= '&search_date_approve_startmonth='.urlencode($search_date_approve_startmonth);
+		$param .= '&search_date_approve_startmonth='.urlencode((string) ($search_date_approve_startmonth));
 	}
 	if ($search_date_approve_startyear) {
-		$param .= '&search_date_approve_startyear='.urlencode($search_date_approve_startyear);
+		$param .= '&search_date_approve_startyear='.urlencode((string) ($search_date_approve_startyear));
 	}
 	if ($search_date_approve_endday) {
-		$param .= '&search_date_approve_endday='.urlencode($search_date_approve_endday);
+		$param .= '&search_date_approve_endday='.urlencode((string) ($search_date_approve_endday));
 	}
 	if ($search_date_approve_endmonth) {
-		$param .= '&search_date_approve_endmonth='.urlencode($search_date_approve_endmonth);
+		$param .= '&search_date_approve_endmonth='.urlencode((string) ($search_date_approve_endmonth));
 	}
 	if ($search_date_approve_endyear) {
-		$param .= '&search_date_approve_endyear='.urlencode($search_date_approve_endyear);
+		$param .= '&search_date_approve_endyear='.urlencode((string) ($search_date_approve_endyear));
 	}
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
@@ -1121,7 +1121,7 @@ if ($resql) {
 		$param .= '&search_company_alias='.urlencode($search_company_alias);
 	}
 	if ($search_user > 0) {
-		$param .= '&search_user='.urlencode($search_user);
+		$param .= '&search_user='.urlencode((string) ($search_user));
 	}
 	if ($search_request_author) {
 		$param .= '&search_request_author='.urlencode($search_request_author);
@@ -1163,13 +1163,13 @@ if ($resql) {
 		$param .= "&search_billed=".urlencode($search_billed);
 	}
 	if ($show_files) {
-		$param .= '&show_files='.urlencode($show_files);
+		$param .= '&show_files='.urlencode((string) ($show_files));
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
 	if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
-		$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
+		$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
 	}
 
 	// Add $param from extra fields
