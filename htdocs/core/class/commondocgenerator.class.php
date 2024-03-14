@@ -7,6 +7,7 @@
  * Copyright (C) 2016-2023  Charlene Benke           <charlene@patas-monkey.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1491,9 +1492,17 @@ abstract class CommonDocGenerator
 
 		if (!empty($fields)) {
 			// Sort extrafields by rank
-			uasort($fields, function ($a, $b) {
-				return  ($a->rank > $b->rank) ? 1 : -1;
-			});
+			uasort(
+				$fields,
+				/**
+				 * @param stdClass $a
+				 * @param stdClass $b
+				 * @return int<-1,1>
+				 */
+				static function ($a, $b) {
+					return  ($a->rank > $b->rank) ? 1 : -1;
+				}
+			);
 
 			// define some HTML content with style
 			$html .= !empty($params['style']) ? '<style>'.$params['style'].'</style>' : '';

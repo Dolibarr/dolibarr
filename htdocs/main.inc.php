@@ -101,10 +101,18 @@ function testSqlAndScriptInject($val, $type)
 		$oldval = $val;
 		$val = html_entity_decode($val, ENT_QUOTES | ENT_HTML5);	// Decode '&colon;', '&apos;', '&Tab;', '&NewLine', ...
 		// Sometimes we have entities without the ; at end so html_entity_decode does not work but entities is still interpreted by browser.
-		$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
-			// Decode '&#110;', ...
-			return realCharForNumericEntities($m);
-		}, $val);
+		$val = preg_replace_callback(
+			'/&#(x?[0-9][0-9a-f]+;?)/i',
+			/**
+			 * @param string $m
+			 * @return string
+			 */
+			static function ($m) {
+				// Decode '&#110;', ...
+				return realCharForNumericEntities($m);
+			},
+			$val
+		);
 
 		// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
 		$val = preg_replace('/<!--[^>]*-->/', '', $val);

@@ -2,6 +2,7 @@
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  * Copyright (C) 2018	Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -292,13 +293,13 @@ class ProductCombination
 		global $conf;
 
 		$sql = "SELECT pac.rowid, pac.fk_product_parent, pac.fk_product_child, pac.variation_price, pac.variation_price_percentage, pac.variation_ref_ext, pac.variation_weight";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_attribute_combination AS pac";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_attribute_combination AS pac";
 		if ($sort_by_ref) {
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product AS p ON p.rowid = pac.fk_product_child";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product AS p ON p.rowid = pac.fk_product_child";
 		}
-		$sql.= " WHERE pac.fk_product_parent = ".((int) $fk_product_parent)." AND pac.entity IN (".getEntity('product').")";
+		$sql .= " WHERE pac.fk_product_parent = ".((int) $fk_product_parent)." AND pac.entity IN (".getEntity('product').")";
 		if ($sort_by_ref) {
-			$sql.= $this->db->order('p.ref', 'ASC');
+			$sql .= $this->db->order('p.ref', 'ASC');
 		}
 
 		$query = $this->db->query($sql);
@@ -614,7 +615,7 @@ class ProductCombination
 	 * Retrieves the combination that matches the given features.
 	 *
 	 * @param 	int 						$prodid 	Id of parent product
-	 * @param 	array 						$features 	Format: [$attr] => $attr_val
+	 * @param 	array<string,string> 		$features 	Format: [$attr] => $attr_val
 	 * @return 	false|ProductCombination 				False if not found
 	 */
 	public function fetchByProductCombination2ValuePairs($prodid, array $features)
@@ -626,9 +627,15 @@ class ProductCombination
 		$prodcomb2val = new ProductCombination2ValuePair($this->db);
 		$prodcomb = new ProductCombination($this->db);
 
-		$features = array_filter($features, function ($v) {
-			return !empty($v);
-		});
+		$features = array_filter(
+			$features,
+			/**
+			 * @param mixed $v Feature information of a product.
+			 */
+			static function ($v) {
+				return !empty($v);
+			}
+		);
 
 		foreach ($features as $attr => $attr_val) {
 			$actual_comp[$attr] = $attr_val;
@@ -729,7 +736,7 @@ class ProductCombination
 
 		$this->db->begin();
 
-		$price_impact = array(1=>0); // init level price impact
+		$price_impact = array(1 => 0); // init level price impact
 
 		$forced_refvar = trim($forced_refvar);
 
