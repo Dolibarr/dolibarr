@@ -104,3 +104,6 @@ Scope is the web application (backoffice) and the APIs.
 * SSL/TLS best practices
 * Invalid or missing SPF (Sender Policy Framework) records (Incomplete or missing SPF/DKIM/DMARC)
 * Physical or social engineering attempts or issues that require physical access to a victim’s computer/device
+* Ability to include javascript into a page of the website using the website page editor are not qualified (this is the expected behaviour)
+* Ability to execute PHP code on the server using the website using the website page editor by a user that own the super permission "add php code into pages" are not qualified (this is the expected behaviour).
+ 
