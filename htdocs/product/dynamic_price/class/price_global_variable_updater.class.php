@@ -456,7 +456,7 @@ class PriceGlobalVariableUpdater
 		$langs->load("errors");
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$this->error = null;
+		$this->error = '';
 		$this->checkParameters();
 
 		//Try to load the target global variable and abort if fails
