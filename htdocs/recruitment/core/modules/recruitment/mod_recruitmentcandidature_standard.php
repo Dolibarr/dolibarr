@@ -77,8 +77,8 @@ class mod_recruitmentcandidature_standard extends ModeleNumRefRecruitmentCandida
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @param  RecruitmentCandidature	$object	Object we need next value for
-	 *  @return boolean     					false if conflict, true if ok
+	 *  @param  CommonObject	$object	Object we need next value for
+	 *  @return boolean     			false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
 	{
