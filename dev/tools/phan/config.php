@@ -549,7 +549,7 @@ return [
 		// 'PhanSyntaxReturnValueInVoid',
 		// 'PhanTypeInstantiateTraitStaticOrSelf',
 		// 'PhanUndeclaredInvokeInCallable',
-		'PhanNoopProperty',
+		// 'PhanNoopProperty',
 		'PhanNoopVariable',
 		// 'PhanPluginPrintfUnusedArgument',
 		// 'PhanSyntaxReturnExpectedValue',
