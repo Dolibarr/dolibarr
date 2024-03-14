@@ -1417,6 +1417,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 					print '</a>';
 				}
 
+				// Delete
+				if ($user->hasRight('societe', 'contact', 'delete')) {
+					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
+					print img_delete();
+					print '</a>';
+				}
+
 				print '</td>';
 			}
 
@@ -1510,6 +1517,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 				if ($user->hasRight('societe', 'contact', 'creer')) {
 					print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
 					print img_edit();
+					print '</a>';
+				}
+
+				// Delete
+				if ($user->hasRight('societe', 'contact', 'delete')) {
+					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&socid='.urlencode($obj->fk_soc).'">';
+					print img_delete();
 					print '</a>';
 				}
 
