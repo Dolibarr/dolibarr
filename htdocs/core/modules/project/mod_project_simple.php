@@ -165,19 +165,4 @@ class mod_project_simple extends ModeleNumRefProjects
 		dol_syslog("mod_project_simple::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
 	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next reference not yet used as a reference
-	 *
-	 *  @param	Societe	$objsoc     Object third party
-	 *  @param  Project	$project	Object project
-	 *  @return string|-1      		Next not used reference, -1 if KO
-	 */
-	public function project_get_num($objsoc = 0, $project = '')
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $project);
-	}
 }
