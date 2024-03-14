@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1210,9 +1211,16 @@ function updateDictionaryInFile($module, $file, $dicts)
 		$dicData .= "\t\t\t'$key'=>";
 
 		if ($key === 'tabcond') {
-			$conditions = array_map(function ($val) use ($module) {
-				return ($val === true || $val === false) ? "isModEnabled('$module')" : $val;
-			}, $value);
+			$conditions = array_map(
+				/**
+				 * @param bool|int|string $val
+				 * @return string|int
+				 */
+				function ($val) use ($module) {
+					return is_bool($val) ? "isModEnabled('$module')" : $val;
+				},
+				$value
+			);
 			$dicData .= "array(" . implode(",", $conditions) . ")";
 		} elseif ($key === 'tabhelp') {
 			$helpItems = array();
@@ -1222,9 +1230,19 @@ function updateDictionaryInFile($module, $file, $dicts)
 			$dicData .= "array(" . implode(",", $helpItems) . ")";
 		} else {
 			if (is_array($value)) {
-				$dicData .= "array(" . implode(",", array_map(function ($val) {
-					return "'$val'";
-				}, $value)) . ")";
+				$dicData .= "array(" . implode(
+					",",
+					array_map(
+						/**
+						 * @param string $val
+						 * @return string
+						 */
+						static function ($val) {
+							return "'$val'";
+						},
+						$value
+					)
+				) . ")";
 			} else {
 				$dicData .= "'$value'";
 			}

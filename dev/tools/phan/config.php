@@ -453,7 +453,7 @@ return [
 		'PhanTypeInvalidDimOffset',
 		// 'PhanPluginNoCommentOnProtectedProperty',
 		// 'PhanPluginDescriptionlessCommentOnPublicMethod',
-		'PhanPluginUnknownClosureParamType',
+		// 'PhanPluginUnknownClosureParamType',
 		'PhanPluginUnknownClosureReturnType',
 		// 'PhanPluginNoCommentOnProtectedMethod',
 		// 'PhanTypeArraySuspicious',
