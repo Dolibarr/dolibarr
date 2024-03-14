@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +78,7 @@ class modAi extends DolibarrModules
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		// To use a supported fa-xxx css style of font awesome, use this->picto='xxx'
-		$this->picto = 'fa-microchip';
+		$this->picto = 'fa-magic';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
@@ -263,7 +264,7 @@ class modAi extends DolibarrModules
 
 		// Main menu entries to add
 		$this->menu = array();
-		$r = 0;
+		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		// Add here entries to declare new menus
 		/* BEGIN MODULEBUILDER TOPMENU */
 		/* END MODULEBUILDER TOPMENU */
@@ -306,7 +307,7 @@ class modAi extends DolibarrModules
 		/* END MODULEBUILDER EXPORT AVAILABILITIES */
 
 		// Imports profiles provided by this module
-		$r = 1;
+		$r = 1;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		/* BEGIN MODULEBUILDER IMPORT AVAILABILITIES */
 		/*
 		$langs->load("agenda");
@@ -375,7 +376,7 @@ class modAi extends DolibarrModules
 		// Document templates
 		$moduledir = dol_sanitizeFileName('ai');
 		$myTmpObjects = array();
-		$myTmpObjects['Availabilities'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
+		$myTmpObjects['Availabilities'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
 
 		// foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		// 	if ($myTmpObjectKey == 'Availabilities') {

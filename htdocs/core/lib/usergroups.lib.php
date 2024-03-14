@@ -5,6 +5,7 @@
  * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2021-2023  Anthony Berton      <anthony.berton@bb2a.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,7 +147,7 @@ function user_prepare_head(User $object)
 		|| (isModEnabled('hrm') && $user->hasRight('hrm', 'employee', 'read'))
 		|| (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire') && ($user->id == $object->id || $user->hasRight('expensereport', 'readall')))
 		|| (isModEnabled('holiday') && $user->hasRight('holiday', 'read') && ($user->id == $object->id || $user->hasRight('holiday', 'readall')))
-		) {
+	) {
 		// Bank
 		$head[$h][0] = DOL_URL_ROOT.'/user/bank.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("HRAndBank");
@@ -188,7 +189,7 @@ function user_prepare_head(User $object)
 
 		$head[$h][0] = DOL_URL_ROOT.'/user/agenda.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Events");
-		if (isModEnabled('agenda')&& ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+		if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 			$nbEvent = 0;
 			// Enable caching of thirdparty count actioncomm
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -197,10 +198,10 @@ function user_prepare_head(User $object)
 			if (!is_null($dataretrieved)) {
 				$nbEvent = $dataretrieved;
 			} else {
-				$sql = "SELECT COUNT(id) as nb";
-				$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
-				$sql .= " WHERE fk_user_done = ".((int) $object->id);
-				$sql .= " AND entity IN (".getEntity('agenda').")";
+				$sql = "SELECT COUNT(ac.id) as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as ac";
+				$sql .= " WHERE ac.fk_user_action = ".((int) $object->id);
+				$sql .= " AND ac.entity IN (".getEntity('agenda').")";
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -490,7 +491,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	$colorbacklinepair1 = '';
 	$colorbacklinepair2 = '';
 	$colortextlink = '';
-	$colorbacklinepairhover = '';
 	$colorbacklinepairhover = '';
 	$colorbacklinepairchecked = '';
 	$butactionbg = '';

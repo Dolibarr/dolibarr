@@ -3467,19 +3467,6 @@ class ContratLigne extends CommonObjectLine
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;
 		}
-		// For backward compatibility
-		if (empty($this->date_start)) {
-			$this->date_start = $this->date_start;
-		}
-		if (empty($this->date_start_real)) {
-			$this->date_start_real = $this->date_start_real;
-		}
-		if (empty($this->date_end)) {
-			$this->date_end = $this->date_end;
-		}
-		if (empty($this->date_end_real)) {
-			$this->date_end_real = $this->date_end_real;
-		}
 
 		// Calcul du total TTC et de la TVA pour la ligne a partir de
 		// qty, pu, remise_percent et txtva

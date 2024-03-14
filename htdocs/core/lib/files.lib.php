@@ -644,19 +644,17 @@ function dol_fileperm($pathoffile)
 /**
  * Make replacement of strings into a file.
  *
- * @param	string	$srcfile			       Source file (can't be a directory)
+ * @param	string					$srcfile			       Source file (can't be a directory)
  * @param	array<string,string>	$arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
- * @param	string	$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
- * @param	string	$newmask			       Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
- * @param	int		$indexdatabase		       1=index new file into database.
- * @param   int     $arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/'
- * @return	int							       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
+ * @param	string					$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
+ * @param	string					$newmask			       Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @param	int						$indexdatabase		       1=index new file into database.
+ * @param   int     				$arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/'
+ * @return	int											       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
  * @see		dol_copy()
  */
 function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask = '0', $indexdatabase = 0, $arrayreplacementisregex = 0)
 {
-	global $conf;
-
 	dol_syslog("files.lib.php::dolReplaceInFile srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." indexdatabase=".$indexdatabase." arrayreplacementisregex=".$arrayreplacementisregex);
 
 	if (empty($srcfile)) {
@@ -859,14 +857,14 @@ function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 /**
  * Copy a dir to another dir. This include recursive subdirectories.
  *
- * @param	string	$srcfile			Source file (a directory)
- * @param	string	$destfile			Destination file (a directory)
- * @param	string	$newmask			Mask for new file ('0' by default means getDolGlobalString('MAIN_UMASK')). Example: '0666'
- * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
+ * @param	string					$srcfile			Source file (a directory)
+ * @param	string					$destfile			Destination file (a directory)
+ * @param	string					$newmask			Mask for new file ('0' by default means getDolGlobalString('MAIN_UMASK')). Example: '0666'
+ * @param 	int						$overwriteifexists	Overwrite file if exists (1 by default)
  * @param	array<string,string>	$arrayreplacement	Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
- * @param	int		$excludesubdir		0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
- * @param	string[]	$excludefileext		Exclude some file extensions
- * @return	int							Return integer <0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
+ * @param	int						$excludesubdir		0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
+ * @param	string[]				$excludefileext		Exclude some file extensions
+ * @return	int											Return integer <0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
  * @see		dol_copy()
  */
 function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null, $excludesubdir = 0, $excludefileext = null)
@@ -880,6 +878,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 	}
 
 	$destexists = dol_is_dir($destfile);
+
 	//if (! $overwriteifexists && $destexists) return 0;	// The overwriteifexists is for files only, so propagated to dol_copy only.
 
 	if (!$destexists) {
@@ -890,7 +889,13 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 			$dirmaskdec = octdec(getDolGlobalString('MAIN_UMASK'));
 		}
 		$dirmaskdec |= octdec('0200'); // Set w bit required to be able to create content for recursive subdirs files
-		dol_mkdir($destfile, '', decoct($dirmaskdec));
+
+		$result = dol_mkdir($destfile, '', decoct($dirmaskdec));
+
+		if (!dol_is_dir($destfile)) {
+			// The output directory does not exists and we failed to create it. So we stop here.
+			return -1;
+		}
 	}
 
 	$ossrcfile = dol_osencode($srcfile);
@@ -1104,7 +1109,7 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 				}
 
 				if ($resultecm > 0) {
-					$result = true;
+					$result = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 				} else {
 					$result = false;
 				}
@@ -1180,7 +1185,7 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 							}
 						}
 					}
-					$result = true;
+					$result = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 				}
 			}
 		}
@@ -2518,9 +2523,9 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 
 	try {
 		if ($mode == 'gz') {
-			$foundhandler = 0;
+			$foundhandler = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		} elseif ($mode == 'bz') {
-			$foundhandler = 0;
+			$foundhandler = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		} elseif ($mode == 'zip') {
 			/*if (defined('ODTPHP_PATHTOPCLZIP'))
 			 {
@@ -2736,7 +2741,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->mycompany->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'userphoto' && !empty($conf->user->dir_output)) {
 		// Wrapping for users photos (user photos are allowed to any connected users)
-		$accessallowed = 0;
+		$accessallowed = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		if (preg_match('/^\d+\/photos\//', $original_file)) {
 			$accessallowed = 1;
 		}
@@ -2772,7 +2777,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->mycompany->dir_output.'/logos/'.$original_file;
 	} elseif ($modulepart == 'memberphoto' && !empty($conf->adherent->dir_output)) {
 		// Wrapping for members photos
-		$accessallowed = 0;
+		$accessallowed = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		if (preg_match('/^\d+\/photos\//', $original_file)) {
 			$accessallowed = 1;
 		}

@@ -198,7 +198,7 @@ class CMailFile
 			}
 		}
 		if (empty($this->sendmode)) {
-			$this->sendmode = (getDolGlobalString('MAIN_MAIL_SENDMODE') ? $conf->global->MAIN_MAIL_SENDMODE : 'mail');
+			$this->sendmode = getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail');
 		}
 
 		// Add a Feedback-ID. Must be used for stats on spam report only.
@@ -1119,7 +1119,7 @@ class CMailFile
 					$result = $this->smtps->getErrors();	// applicative error code (not SMTP error code)
 					if (empty($this->error) && empty($result)) {
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
-						$res = true;
+						$res = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 					} else {
 						if (empty($this->error)) {
 							$this->error = $result;

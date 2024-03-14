@@ -453,7 +453,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$err += $this->insert_tabs();
 		}
 
-		// Insert activation of module's parts
+		// Insert activation of module's parts. Copy website templates into doctemplates.
 		if (!$err) {
 			$err += $this->insert_module_parts();
 		}
@@ -2309,6 +2309,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$this->error = ($errormsg ? $errormsg : $langs->trans('ErrorFailToCreateZip', $dest));
 							$this->errors[] = ($errormsg ? $errormsg : $langs->trans('ErrorFailToCreateZip', $dest));
 						}
+					}
+
+					// Copy also the preview website_xxx.jpg file
+					$docs = dol_dir_list($srcroot, 'files', 0, 'website_.*\.jpg$');
+					foreach ($docs as $cursorfile) {
+						$src = $srcroot.'/'.$cursorfile['name'];
+						$dest = DOL_DATA_ROOT.'/doctemplates/websites/'.$cursorfile['name'];
+
+						dol_copy($src, $dest);
 					}
 				}
 

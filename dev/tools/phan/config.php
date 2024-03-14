@@ -410,8 +410,7 @@ return [
 		'PhanDeprecatedProperty',
 		'PhanDeprecatedFunction',
 		//'PhanCompatibleNegativeStringOffset',
-		// Dolibarr has quite a few strange noop assignments like $abc=$abc;
-		'PhanPluginDuplicateExpressionAssignment',
+		// 'PhanPluginDuplicateExpressionAssignment',
 		// Nulls are likely mostly false positives
 		'PhanPluginConstantVariableNull',
 		'PhanTypeObjectUnsetDeclaredProperty',
@@ -466,9 +465,9 @@ return [
 		// 'PhanPluginNoCommentOnFunction',
 		'PhanPluginUnknownArrayFunctionParamType',
 		// 'PhanPluginDescriptionlessCommentOnPublicProperty',
-		'PhanPluginUnknownFunctionParamType',
+		// 'PhanPluginUnknownFunctionParamType',  // Finds certain errors in PHPdoc typing
 		'PhanTypeSuspiciousStringExpression',
-		'PhanPluginRedundantAssignment',
+		// 'PhanPluginRedundantAssignment',
 
 		'PhanTypeExpectedObjectPropAccess',
 		'PhanTypeInvalidRightOperandOfNumericOp',
@@ -483,7 +482,7 @@ return [
 		'PhanTypeInvalidPropertyName',
 		'PhanPluginDuplicateCatchStatementBody',
 		'PhanPluginUndeclaredVariableIsset',
-		'PhanTypeInvalidUnaryOperandIncOrDec',
+		// 'PhanTypeInvalidUnaryOperandIncOrDec',
 		// 'PhanPluginDescriptionlessCommentOnClass',
 		'PhanPluginEmptyStatementIf',
 		'PhanPluginInlineHTMLTrailing',
@@ -587,7 +586,7 @@ return [
 		'PhanTypePossiblyInvalidDimOffset', // Also checks optional array keys and requires that they are checked for existence.
 		'PhanUndeclaredGlobalVariable',
 		'PhanUndeclaredProperty',
-		'PhanPluginPrintfNotPercent',
+		// 'PhanPluginPrintfNotPercent',  // Detects fishy stuff with '%' format and suggests %%
 		'PhanPossiblyUndeclaredGlobalVariable',
 		// 'PhanPluginPossiblyStaticProtectedMethod',
 		'PhanTypeMismatchReturn',
@@ -601,7 +600,7 @@ return [
 		'PhanUndeclaredClassMethod',
 		'PhanUndeclaredMethod',
 		'PhanTypeMismatchArgumentProbablyReal',
-		'PhanPluginDuplicateExpressionAssignmentOperation',
+		'PhanPluginDuplicateExpressionAssignmentOperation',  // Suggestions for optimisation
 		'PhanTypeMismatchPropertyDefault',
 		// 'PhanPluginAlwaysReturnMethod',
 		// 'PhanPluginMissingReturnMethod',

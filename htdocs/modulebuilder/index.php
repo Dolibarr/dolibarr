@@ -1017,6 +1017,8 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 
 // Init an object
 if ($dirins && $action == 'initobject' && $module && $objectname) {
+	$warning = 0;
+
 	$objectname = ucfirst($objectname);
 
 	$dirins = $dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
@@ -1365,13 +1367,12 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			}
 		}
 
-
 		if (!$error) {
 			foreach ($filetogenerate as $srcfile => $destfile) {
 				$result = dol_copy($srcdir.'/'.$srcfile, $destdir.'/'.$destfile, $newmask, 0);
 				if ($result <= 0) {
 					if ($result < 0) {
-						$error++;
+						$warning++;
 						$langs->load("errors");
 						setEventMessages($langs->trans("ErrorFailToCopyFile", $srcdir.'/'.$srcfile, $destdir.'/'.$destfile), null, 'errors');
 					} else {
@@ -1383,6 +1384,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 					'/myobject\.class\.php/' => strtolower($objectname).'.class.php',
 					'/myobject\.lib\.php/' => strtolower($objectname).'.lib.php',
 				);
+
 				dolReplaceInFile($destdir.'/'.$destfile, $arrayreplacement, '', 0, 0, 1);
 			}
 		}
@@ -1529,8 +1531,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 		if (!$counter) {
 			$checkComment = checkExistComment($moduledescriptorfile, 0);
 			if ($checkComment < 0) {
-				$error++;
-				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
+				$warning++;
+				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), basename($moduledescriptorfile)), null, 'warnings');
 			} else {
 				$arrayofreplacement = array('/* END MODULEBUILDER LEFTMENU MYOBJECT */' => '/*LEFTMENU '.strtoupper($objectname).'*/'.$stringtoadd."\n\t\t".'/*END LEFTMENU '.strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER LEFTMENU MYOBJECT */');
 				dolReplaceInFile($moduledescriptorfile, $arrayofreplacement);
@@ -1580,7 +1582,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 		if (is_numeric($object) && $object <= 0) {
 			$pathoffiletoeditsrc = $destdir.'/class/'.strtolower($objectname).'.class.php';
 			setEventMessages($langs->trans('ErrorFailToCreateFile', $pathoffiletoeditsrc), null, 'errors');
-			$error++;
+			$warning++;
 		}
 		// check if documentation was generate and add table of properties object
 		$file = $destdir.'/class/'.strtolower($objectname).'.class.php';
@@ -1610,7 +1612,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 	// check if module is enabled
 	if (isModEnabled(strtolower($module))) {
 		$result = unActivateModule(strtolower($module));
-		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 		if ($result) {
 			setEventMessages($result, null, 'errors');
 		}
@@ -1898,11 +1900,12 @@ if ($dirins && $action == 'confirm_deletemodule') {
 		} else {
 			$error++;
 			$langs->load("errors");
-			dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
-			exit;
+			setEventMessages($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module), null, 'warnings');
 		}
 
-		$moduleobj->remove();
+		if ($moduleobj) {
+			$moduleobj->remove();
+		}
 
 		$result = dol_delete_dir_recursive($dir);
 

@@ -5,6 +5,7 @@
  * Copyright (C) 2015       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2017      	Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2017       ATM-CONSULTING		<contact@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -530,7 +531,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 		}
 
 		// Add Group from hooks
-		$parameters = array();
+		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$reshook = $hookmanager->executeHooks('printFieldListGroupByCustomerDraft', $parameters);
 		$sql .= $hookmanager->resPrint;
 

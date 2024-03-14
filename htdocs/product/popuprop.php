@@ -260,7 +260,6 @@ if ($mode && $mode != '-1') {
 		print '<td>'.dol_escape_htmltag($vals['label']).'</td>';
 		print '<td class="right">'.$vals['nbline'].'</td>';
 		print "</tr>\n";
-		$i++;
 	}
 } else {
 	print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("SelectTheTypeOfObjectToAnalyze").'</span></td></tr>';

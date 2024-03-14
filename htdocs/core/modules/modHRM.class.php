@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015-2021  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,7 +126,7 @@ class modHRM extends DolibarrModules
 
 		// Array to add new pages in new tabs
 		$this->tabs = array();
-		$this->tabs[] = array('data'=>'user:+skill_tab:Skills:hrm:1:/hrm/skill_tab.php?id=__ID__&objecttype=user');  					// To add a new tab identified by code tabname1
+		$this->tabs[] = array('data' => 'user:+skill_tab:Skills:hrm:1:/hrm/skill_tab.php?id=__ID__&objecttype=user');  					// To add a new tab identified by code tabname1
 		//$this->tabs[] = array('data'=>'job:+tabname1:Poste:mylangfile@hrm:1:/hrm/poste_list.php?fk_job=__ID__');  					// To add a new tab identified by code tabname1
 		// Example:
 		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@hrm:$user->rights->hrm->read:/hrm/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
@@ -190,7 +191,7 @@ class modHRM extends DolibarrModules
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
-		$r = 0;
+		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 
 		// Skill / Job / Position
 		$this->rights[$r][0] = 4001; // Permission id (must not be already used)

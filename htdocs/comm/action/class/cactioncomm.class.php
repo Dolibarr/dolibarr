@@ -192,9 +192,21 @@ class CActionComm
 			$nump = $this->db->num_rows($resql);
 			if ($nump) {
 				$idforallfornewmodule = 96;
-				$TSystem = array();
-				$TSystemAuto = array();
-				$TModule = array();
+				$TSystem = array(
+					'id' => [],
+					'code' => [],
+					'all' => []
+				);
+				$TSystemAuto = array(
+					'id' => [],
+					'code' => [],
+					'all' => []
+				);
+				$TModule = array(
+					'id' => [],
+					'code' => [],
+					'all' => []
+				);
 				$i = 0;
 				while ($i < $nump) {
 					$obj = $this->db->fetch_object($resql);
@@ -319,8 +331,8 @@ class CActionComm
 						}
 
 						if ($onlyautoornot > 0 && preg_match('/^module/', $obj->type) && $obj->module) {
-							$TModule['code'][$obj->code] .= ' ('.$langs->trans("Module").': '.$obj->module.')';
-							$TModule['all'][$obj->code]['label'] .= ' ('.$langs->trans("Module").': '.$obj->module.')';
+							array_key_exists($obj->code, $TModule['code']) ? ($TModule['code'][$obj->code] .= ' ('.$langs->trans("Module").': '.$obj->module.')') : ($TModule['code'][$obj->code] = ' ('.$langs->trans("Module").': '.$obj->module.')');
+							array_key_exists($obj->code, $TModule['all']) ? ($TModule['all'][$obj->code]['label'] .= ' ('.$langs->trans("Module").': '.$obj->module.')') : ($TModule['all'][$obj->code]['label'] = ' ('.$langs->trans("Module").': '.$obj->module.')');
 						}
 					}
 					$i++;

@@ -11,6 +11,7 @@
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1147,7 +1148,7 @@ class ExtraFields
 			}
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
 		} elseif ($type == 'select') {
-			$out = '';
+			$out = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 			if ($mode) {
 				$options = array();
 				foreach ($param['options'] as $okey => $val) {
@@ -1202,7 +1203,7 @@ class ExtraFields
 				$out .= '</select>';
 			}
 		} elseif ($type == 'sellist') {
-			$out = '';
+			$out = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 			if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
@@ -1310,7 +1311,6 @@ class ExtraFields
 							} else {
 								$labeltoshow = $obj->{$InfoFieldList[1]};
 							}
-							$labeltoshow = $labeltoshow;
 
 							if ($value == $obj->rowid) {
 								if (!$notrans) {
@@ -1366,7 +1366,7 @@ class ExtraFields
 			}
 			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ? null : $param['options']), $value_arr, '', 0, '', 0, '100%');
 		} elseif ($type == 'radio') {
-			$out = '';
+			$out = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 			foreach ($param['options'] as $keyopt => $val) {
 				$out .= '<input class="flat '.$morecss.'" type="radio" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '');
 				$out .= ' value="'.$keyopt.'"';
