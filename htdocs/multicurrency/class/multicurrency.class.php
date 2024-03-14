@@ -912,7 +912,7 @@ class CurrencyRate extends CommonObjectLine
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET rate = ".((float) $this->rate);
+		$sql .= "SET rate = ".((float) $this->rate);
 		if (!empty($this->date_sync)) {
 			$sql .= ", date_sync = '".$this->db->idate($this->date_sync)."'";
 		}
