@@ -1187,15 +1187,17 @@ class User extends CommonObject
 	{
 		global $conf;
 
+		$alreadyloaded = false;
+
 		if (empty($forcereload)) {
 			if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag]) {
 				// Rights for this module are already loaded, so we leave
-				return;
+				$alreadyloaded = true;
 			}
 
 			if (!empty($this->all_permissions_are_loaded)) {
 				// We already loaded all rights for this user, so we leave
-				return;
+				$alreadyloaded = true;
 			}
 		}
 
@@ -1209,211 +1211,213 @@ class User extends CommonObject
 
 		// Get permission of users + Get permissions of groups
 
-		// First user permissions
-		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
-		$sql .= " FROM ".$this->db->prefix()."user_rights as ur,";
-		$sql .= " ".$this->db->prefix()."rights_def as r";
-		$sql .= " WHERE r.id = ur.fk_id";
-		if (getDolGlobalString('MULTICOMPANY_BACKWARD_COMPATIBILITY')) {
-			// on old version, we use entity defined into table r only
-			$sql .= " AND r.entity IN (0,".(isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? "1," : "").$conf->entity.")";
-		} else {
-			// On table r=rights_def, the unique key is (id, entity) because id is hard coded into module descriptor and insert during module activation.
-			// So we must include the filter on entity on both table r. and ur.
-			$sql .= " AND r.entity = ".((int) $conf->entity)." AND ur.entity = ".((int) $conf->entity);
-		}
-		$sql .= " AND ur.fk_user= ".((int) $this->id);
-		$sql .= " AND r.perms IS NOT NULL";
-		if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-			$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
-		}
-		if ($moduletag) {
-			$sql .= " AND r.module = '".$this->db->escape($moduletag)."'";
-		}
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num) {
-				$obj = $this->db->fetch_object($resql);
-
-				if ($obj) {
-					$module = $obj->module;
-					$perms = $obj->perms;
-					$subperms = $obj->subperms;
-
-					if (!empty($perms)) {
-						if (!empty($module)) {
-							if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
-								$this->rights->$module = new stdClass();
-							}
-							if (!empty($subperms)) {
-								if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
-									$this->rights->$module->$perms = new stdClass();
-								}
-								if (empty($this->rights->$module->$perms->$subperms)) {
-									$this->nb_rights++;
-								}
-								$this->rights->$module->$perms->$subperms = 1;
-							} else {
-								if (empty($this->rights->$module->$perms)) {
-									$this->nb_rights++;
-								}
-								$this->rights->$module->$perms = 1;
-							}
-						}
-					}
-				}
-				$i++;
-			}
-			$this->db->free($resql);
-		}
-
-		// Now permissions of groups
-		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
-		$sql .= " FROM ".$this->db->prefix()."usergroup_rights as gr,";
-		$sql .= " ".$this->db->prefix()."usergroup_user as gu,";
-		$sql .= " ".$this->db->prefix()."rights_def as r";
-		$sql .= " WHERE r.id = gr.fk_id";
-		// A very strange business rules. Must be same than into user->getrights() user/perms.php and user/group/perms.php
-		if (getDolGlobalString('MULTICOMPANY_BACKWARD_COMPATIBILITY')) {
-			if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
-				$sql .= " AND gu.entity IN (0,".$conf->entity.")";
+		if (!$alreadyloaded) {
+			// First user permissions
+			$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
+			$sql .= " FROM ".$this->db->prefix()."user_rights as ur,";
+			$sql .= " ".$this->db->prefix()."rights_def as r";
+			$sql .= " WHERE r.id = ur.fk_id";
+			if (getDolGlobalString('MULTICOMPANY_BACKWARD_COMPATIBILITY')) {
+				// on old version, we use entity defined into table r only
+				$sql .= " AND r.entity IN (0,".(isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? "1," : "").$conf->entity.")";
 			} else {
-				$sql .= " AND r.entity = ".((int) $conf->entity);
+				// On table r=rights_def, the unique key is (id, entity) because id is hard coded into module descriptor and insert during module activation.
+				// So we must include the filter on entity on both table r. and ur.
+				$sql .= " AND r.entity = ".((int) $conf->entity)." AND ur.entity = ".((int) $conf->entity);
 			}
-		} else {
-			$sql .= " AND gr.entity = ".((int) $conf->entity);	// Only groups created in current entity
-			// The entity on the table usergroup_user should be useless and should never be used because it is already into gr and r.
-			// but when using MULTICOMPANY_TRANSVERSE_MODE, we may insert record that make rubbish result due to duplicate record of
-			// other entities, so we are forced to add a filter here
-			$sql .= " AND gu.entity IN (0,".$conf->entity.")";
-			$sql .= " AND r.entity = ".((int) $conf->entity);	// Only permission of modules enabled in current entity
-		}
-		// End of strange business rule
-		$sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
-		$sql .= " AND gu.fk_user = ".((int) $this->id);
-		$sql .= " AND r.perms IS NOT NULL";
-		if ($moduletag) {
-			$sql .= " AND r.module = '".$this->db->escape($moduletag)."'";
-		}
+			$sql .= " AND ur.fk_user= ".((int) $this->id);
+			$sql .= " AND r.perms IS NOT NULL";
+			if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+				$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
+			}
+			if ($moduletag) {
+				$sql .= " AND r.module = '".$this->db->escape($moduletag)."'";
+			}
 
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num) {
-				$obj = $this->db->fetch_object($resql);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
+				$i = 0;
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
 
-				if ($obj) {
-					$module = $obj->module;
-					$perms = $obj->perms;
-					$subperms = $obj->subperms;
+					if ($obj) {
+						$module = $obj->module;
+						$perms = $obj->perms;
+						$subperms = $obj->subperms;
 
-					if (!empty($perms)) {
-						if (!empty($module)) {
-							if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
-								$this->rights->$module = new stdClass();
-							}
-							if (!empty($subperms)) {
-								if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
-									$this->rights->$module->$perms = new stdClass();
+						if (!empty($perms)) {
+							if (!empty($module)) {
+								if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
+									$this->rights->$module = new stdClass();
 								}
-								if (empty($this->rights->$module->$perms->$subperms)) {
-									$this->nb_rights++;
-								}
-								$this->rights->$module->$perms->$subperms = 1;
-							} else {
-								if (empty($this->rights->$module->$perms)) {
-									$this->nb_rights++;
-								}
-								// if we have already define a subperm like this $this->rights->$module->level1->level2 with llx_user_rights, we don't want override level1 because the level2 can be not define on user group
-								if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
+								if (!empty($subperms)) {
+									if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
+										$this->rights->$module->$perms = new stdClass();
+									}
+									if (empty($this->rights->$module->$perms->$subperms)) {
+										$this->nb_rights++;
+									}
+									$this->rights->$module->$perms->$subperms = 1;
+								} else {
+									if (empty($this->rights->$module->$perms)) {
+										$this->nb_rights++;
+									}
 									$this->rights->$module->$perms = 1;
 								}
 							}
 						}
 					}
+					$i++;
 				}
-				$i++;
+				$this->db->free($resql);
 			}
-			$this->db->free($resql);
-		}
 
-		// Force permission on user for admin
-		if (!empty($this->admin)) {
-			if (empty($this->rights->user->user)) {
-				$this->rights->user->user = new stdClass();
-			}
-			$listofpermtotest = array('lire', 'creer', 'password', 'supprimer', 'export');
-			foreach ($listofpermtotest as $permtotest) {
-				if (empty($this->rights->user->user->$permtotest)) {
-					$this->rights->user->user->$permtotest = 1;
-					$this->nb_rights++;
+			// Now permissions of groups
+			$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
+			$sql .= " FROM ".$this->db->prefix()."usergroup_rights as gr,";
+			$sql .= " ".$this->db->prefix()."usergroup_user as gu,";
+			$sql .= " ".$this->db->prefix()."rights_def as r";
+			$sql .= " WHERE r.id = gr.fk_id";
+			// A very strange business rules. Must be same than into user->getrights() user/perms.php and user/group/perms.php
+			if (getDolGlobalString('MULTICOMPANY_BACKWARD_COMPATIBILITY')) {
+				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
+					$sql .= " AND gu.entity IN (0,".$conf->entity.")";
+				} else {
+					$sql .= " AND r.entity = ".((int) $conf->entity);
 				}
+			} else {
+				$sql .= " AND gr.entity = ".((int) $conf->entity);	// Only groups created in current entity
+				// The entity on the table usergroup_user should be useless and should never be used because it is already into gr and r.
+				// but when using MULTICOMPANY_TRANSVERSE_MODE, we may insert record that make rubbish result due to duplicate record of
+				// other entities, so we are forced to add a filter here
+				$sql .= " AND gu.entity IN (0,".$conf->entity.")";
+				$sql .= " AND r.entity = ".((int) $conf->entity);	// Only permission of modules enabled in current entity
 			}
-			if (empty($this->rights->user->self)) {
-				$this->rights->user->self = new stdClass();
+			// End of strange business rule
+			$sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
+			$sql .= " AND gu.fk_user = ".((int) $this->id);
+			$sql .= " AND r.perms IS NOT NULL";
+			if ($moduletag) {
+				$sql .= " AND r.module = '".$this->db->escape($moduletag)."'";
 			}
-			$listofpermtotest = array('creer', 'password');
-			foreach ($listofpermtotest as $permtotest) {
-				if (empty($this->rights->user->self->$permtotest)) {
-					$this->rights->user->self->$permtotest = 1;
-					$this->nb_rights++;
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
+				$i = 0;
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
+
+					if ($obj) {
+						$module = $obj->module;
+						$perms = $obj->perms;
+						$subperms = $obj->subperms;
+
+						if (!empty($perms)) {
+							if (!empty($module)) {
+								if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
+									$this->rights->$module = new stdClass();
+								}
+								if (!empty($subperms)) {
+									if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
+										$this->rights->$module->$perms = new stdClass();
+									}
+									if (empty($this->rights->$module->$perms->$subperms)) {
+										$this->nb_rights++;
+									}
+									$this->rights->$module->$perms->$subperms = 1;
+								} else {
+									if (empty($this->rights->$module->$perms)) {
+										$this->nb_rights++;
+									}
+									// if we have already define a subperm like this $this->rights->$module->level1->level2 with llx_user_rights, we don't want override level1 because the level2 can be not define on user group
+									if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
+										$this->rights->$module->$perms = 1;
+									}
+								}
+							}
+						}
+					}
+					$i++;
 				}
+				$this->db->free($resql);
 			}
-			// Add test on advanced permissions
-			if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-				if (empty($this->rights->user->user_advance)) {
-					$this->rights->user->user_advance = new stdClass();
+
+			// Force permission on user for admin
+			if (!empty($this->admin)) {
+				if (empty($this->rights->user->user)) {
+					$this->rights->user->user = new stdClass();
 				}
-				$listofpermtotest = array('readperms', 'write');
+				$listofpermtotest = array('lire', 'creer', 'password', 'supprimer', 'export');
 				foreach ($listofpermtotest as $permtotest) {
-					if (empty($this->rights->user->user_advance->$permtotest)) {
-						$this->rights->user->user_advance->$permtotest = 1;
+					if (empty($this->rights->user->user->$permtotest)) {
+						$this->rights->user->user->$permtotest = 1;
 						$this->nb_rights++;
 					}
 				}
-				if (empty($this->rights->user->self_advance)) {
-					$this->rights->user->self_advance = new stdClass();
+				if (empty($this->rights->user->self)) {
+					$this->rights->user->self = new stdClass();
 				}
-				$listofpermtotest = array('readperms', 'writeperms');
+				$listofpermtotest = array('creer', 'password');
 				foreach ($listofpermtotest as $permtotest) {
-					if (empty($this->rights->user->self_advance->$permtotest)) {
-						$this->rights->user->self_advance->$permtotest = 1;
+					if (empty($this->rights->user->self->$permtotest)) {
+						$this->rights->user->self->$permtotest = 1;
 						$this->nb_rights++;
 					}
 				}
-				if (empty($this->rights->user->group_advance)) {
-					$this->rights->user->group_advance = new stdClass();
-				}
-				$listofpermtotest = array('read', 'readperms', 'write', 'delete');
-				foreach ($listofpermtotest as $permtotest) {
-					if (empty($this->rights->user) || empty($this->rights->user->group_advance->$permtotest)) {
-						$this->rights->user->group_advance->$permtotest = 1;
-						$this->nb_rights++;
+				// Add test on advanced permissions
+				if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+					if (empty($this->rights->user->user_advance)) {
+						$this->rights->user->user_advance = new stdClass();
+					}
+					$listofpermtotest = array('readperms', 'write');
+					foreach ($listofpermtotest as $permtotest) {
+						if (empty($this->rights->user->user_advance->$permtotest)) {
+							$this->rights->user->user_advance->$permtotest = 1;
+							$this->nb_rights++;
+						}
+					}
+					if (empty($this->rights->user->self_advance)) {
+						$this->rights->user->self_advance = new stdClass();
+					}
+					$listofpermtotest = array('readperms', 'writeperms');
+					foreach ($listofpermtotest as $permtotest) {
+						if (empty($this->rights->user->self_advance->$permtotest)) {
+							$this->rights->user->self_advance->$permtotest = 1;
+							$this->nb_rights++;
+						}
+					}
+					if (empty($this->rights->user->group_advance)) {
+						$this->rights->user->group_advance = new stdClass();
+					}
+					$listofpermtotest = array('read', 'readperms', 'write', 'delete');
+					foreach ($listofpermtotest as $permtotest) {
+						if (empty($this->rights->user) || empty($this->rights->user->group_advance->$permtotest)) {
+							$this->rights->user->group_advance->$permtotest = 1;
+							$this->nb_rights++;
+						}
 					}
 				}
 			}
-		}
 
-		// For backward compatibility
-		if (isset($this->rights->propale) && !isset($this->rights->propal)) {
-			$this->rights->propal = $this->rights->propale;
-		}
-		if (isset($this->rights->propal) && !isset($this->rights->propale)) {
-			$this->rights->propale = $this->rights->propal;
-		}
+			// For backward compatibility
+			if (isset($this->rights->propale) && !isset($this->rights->propal)) {
+				$this->rights->propal = $this->rights->propale;
+			}
+			if (isset($this->rights->propal) && !isset($this->rights->propale)) {
+				$this->rights->propale = $this->rights->propal;
+			}
 
-		if (!$moduletag) {
-			// If the module was not define, then everything is loaded.
-			// Therefore, we can consider that the permissions are cached
-			// because they were all loaded for this user instance.
-			$this->all_permissions_are_loaded = 1;
-		} else {
-			// If the module is defined, we flag it as loaded into cache
-			$this->_tab_loaded[$moduletag] = 1;
+			if (!$moduletag) {
+				// If the module was not define, then everything is loaded.
+				// Therefore, we can consider that the permissions are cached
+				// because they were all loaded for this user instance.
+				$this->all_permissions_are_loaded = 1;
+			} else {
+				// If the module is defined, we flag it as loaded into cache
+				$this->_tab_loaded[$moduletag] = 1;
+			}
 		}
 	}
 
