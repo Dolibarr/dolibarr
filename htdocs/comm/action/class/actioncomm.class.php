@@ -242,6 +242,7 @@ class ActionComm extends CommonObject
 
 	/**
 	 * @var int 	Id of user that has done the event. Used only if AGENDA_ENABLE_DONEBY is set.
+	 * @deprecated	Use $userownerid instead
 	 */
 	public $userdoneid;
 
