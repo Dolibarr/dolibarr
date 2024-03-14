@@ -527,7 +527,7 @@ return [
 		'PhanTypeMismatchBitwiseBinaryOperands',
 		'PhanTypeMismatchDimEmpty',
 		'PhanTypeSuspiciousEcho',
-		'PhanNoopBinaryOperator',
+		// 'PhanNoopBinaryOperator',
 		// 'PhanTypeInvalidBitwiseBinaryOperator',
 		// 'PhanPluginDescriptionlessCommentOnFunction',
 		'PhanPluginPHPDocInWrongComment',
