@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2022 Alice Adminson <aadminson@example.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,7 +138,7 @@ if ($action == 'updatePrompts') {
 	$newConfigurationsJson = json_encode($currentConfigurations, JSON_UNESCAPED_UNICODE);
 	$result = dolibarr_set_const($db, 'AI_CONFIGURATIONS_PROMPT', $newConfigurationsJson, 'chaine', 0, '', $conf->entity);
 	if (!$error) {
-		$action = 'dodo';
+		$action = '';
 		if ($result) {
 			header("Location: ".$_SERVER['PHP_SELF']);
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
