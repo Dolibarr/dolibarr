@@ -511,7 +511,7 @@ return [
 		'PhanTypeSuspiciousNonTraversableForeach',
 		'PhanEmptyForeach',
 		'PhanTypeInvalidRightOperandOfBitwiseOp',
-		'PhanPluginDuplicateConditionalUnnecessary',
+		// 'PhanPluginDuplicateConditionalUnnecessary',
 		// 'PhanTraitParentReference',
 		'PhanPluginBothLiteralsBinaryOp',
 		// 'PhanTypeMismatchDeclaredParam',

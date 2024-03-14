@@ -7060,7 +7060,7 @@ class Form
 				if (strlen($min) < 2) {
 					$min = "0" . $min;
 				}
-				$retstring .= '<option value="' . $min . '"' . (($min == $smin) ? ' selected' : '') . '>' . $min . (empty($conf->dol_optimize_smallscreen) ? '' : '') . '</option>';
+				$retstring .= '<option value="' . $min . '"' . (($min == $smin) ? ' selected' : '') . '>' . $min . '</option>';
 			}
 			$retstring .= '</select>';
 

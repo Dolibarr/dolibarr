@@ -760,13 +760,13 @@ class Adherent extends CommonObject
 		$this->lastname = trim($this->lastname) ? trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname) ? trim($this->firstname) : trim($this->firstname);
 		$this->gender = trim($this->gender);
-		$this->address = ($this->address ? $this->address : $this->address);
-		$this->zip = ($this->zip ? $this->zip : $this->zip);
-		$this->town = ($this->town ? $this->town : $this->town);
-		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
-		$this->state_id = ($this->state_id > 0 ? $this->state_id : $this->state_id);
-		$this->note_public = ($this->note_public ? $this->note_public : $this->note_public);
-		$this->note_private = ($this->note_private ? $this->note_private : $this->note_private);
+		// $this->address = ($this->address ? $this->address : $this->address);
+		// $this->zip = ($this->zip ? $this->zip : $this->zip);
+		// $this->town = ($this->town ? $this->town : $this->town);
+		// $this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
+		// $this->state_id = ($this->state_id > 0 ? $this->state_id : $this->state_id);
+		// $this->note_public = ($this->note_public ? $this->note_public : $this->note_public);
+		// $this->note_private = ($this->note_private ? $this->note_private : $this->note_private);
 		$this->url = $this->url ? clean_url($this->url, 0) : '';
 		$this->setUpperOrLowerCase();
 		// Check parameters

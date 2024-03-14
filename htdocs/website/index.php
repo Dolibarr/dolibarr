@@ -3397,7 +3397,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 				// Edit CKEditor
 				if (getDolGlobalInt('WEBSITE_ALLOW_CKEDITOR')) {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editcontent&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "CKEditor" : "CKEditor")).'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editcontent&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans("CKEditor")).'</a>';
 				}
 
 				print '</span>';

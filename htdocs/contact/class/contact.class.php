@@ -604,7 +604,7 @@ class Contact extends CommonObject
 		$this->fax = trim($this->fax);
 		$this->zip = (empty($this->zip) ? '' : trim($this->zip));
 		$this->town = (empty($this->town) ? '' : trim($this->town));
-		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
+		$this->country_id = ($this->country_id > 0 ? 0 : $this->country_id);
 		if (empty($this->statut)) {
 			$this->statut = 0;
 		}

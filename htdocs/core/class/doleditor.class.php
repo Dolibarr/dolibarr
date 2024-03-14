@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021 Gaëtan MAISON <gm@ilad.org>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -200,7 +201,7 @@ class DolEditor
                             		htmlEncodeOutput: '.dol_escape_js($htmlencode_force).',
             						allowedContent: '.($disallowAnyContent ? 'false' : 'true').',		/* Advanced Content Filter (ACF) is own when allowedContent is false */
             						extraAllowedContent: \'a[target];div{float,display}\',				/* Add the style float and display into div to default other allowed tags */
-									disallowedContent: '.($disallowAnyContent ? '\'\'' : '\'\'').',		/* Tags that are not allowed */
+									disallowedContent: \'\',		/* Tags that are not allowed */
             						fullPage: '.($fullpage ? 'true' : 'false').',						/* if true, the html, header and body tags are kept */
                             		toolbar: \''.dol_escape_js($this->toolbarname).'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
@@ -280,8 +281,8 @@ class DolEditor
 				$out .= '<script nonce="'.getNonce().'" type="text/javascript">'."\n";
 				$out .= 'jQuery(document).ready(function() {'."\n";
 				$out .= '	var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
-							aceEditor.moveCursorTo('.($this->posy+1).','.$this->posx.');
-							aceEditor.gotoLine('.($this->posy+1).','.$this->posx.');
+							aceEditor.moveCursorTo('.($this->posy + 1).','.$this->posx.');
+							aceEditor.gotoLine('.($this->posy + 1).','.$this->posx.');
 	    	    		   	var StatusBar = window.ace.require("ace/ext/statusbar").StatusBar;									// Init status bar. Need lib ext-statusbar
 	        			   	var statusBar = new StatusBar(aceEditor, document.getElementById("statusBar'.$this->htmlname.'"));	// Init status bar. Need lib ext-statusbar
 
