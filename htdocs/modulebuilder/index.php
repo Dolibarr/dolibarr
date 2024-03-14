@@ -2398,15 +2398,15 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright') && 
 
 	if ($label == "Read objects of $module" && $crud != "read") {
 		$crud = "read";
-		$label == "Read objects of $module";
+		// $label = "Read objects of $module";
 	}
 	if ($label == "Create/Update objects of $module" && $crud != "write") {
 		$crud = "write";
-		$label == "Create/Update objects of $module";
+		// $label = "Create/Update objects of $module";
 	}
 	if ($label == "Delete objects of $module" && $crud != "delete") {
 		$crud = "delete";
-		$label == "Delete objects of $module";
+		// $label = "Delete objects of $module";
 	}
 
 	$permissions = $moduleobj->rights;
