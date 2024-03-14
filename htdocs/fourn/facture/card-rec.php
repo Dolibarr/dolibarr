@@ -191,7 +191,6 @@ if (empty($reshook)) {
 		}
 
 		if (! $error) {
-
 			$object->titre = GETPOST('title', 'alphanohtml'); // deprecated
 			$object->title = GETPOST('title', 'alphanohtml');
 			$object->libelle = GETPOST('libelle', 'alpha');	// deprecated
