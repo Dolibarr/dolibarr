@@ -960,6 +960,104 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 			dol_print_error($db);
 		}
 
+		//projects linked to that thirdpart because of a people of that company is linked to a project
+		if (getDolGlobalString('PROJECT_DISPLAY_LINKED_BY_CONTACT')) {
+			print "\n";
+			print load_fiche_titre($langs->trans("ProjectsLinkedToThisThirdParty"), '', '');
+
+
+			print '<div class="div-table-responsive">'."\n";
+			print '<table class="noborder centpercent">';
+
+			$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
+			$sql .= ", cls.code as opp_status_code";
+			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec on p.rowid = ec.element_id";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sc on ec.fk_socpeople = sc.rowid";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as tc on ec.fk_c_type_contact = tc.rowid";
+			$sql .= " WHERE sc.fk_soc = ".((int) $object->id);
+			$sql .= " AND p.entity IN (".getEntity('project').")";
+			$sql .= " AND tc.element = 'project'";
+			$sql .= " ORDER BY p.dateo DESC";
+
+			$result = $db->query($sql);
+			if ($result) {
+				$num = $db->num_rows($result);
+
+				print '<tr class="liste_titre">';
+				print '<td>'.$langs->trans("Ref").'</td>';
+				print '<td>'.$langs->trans("Name").'</td>';
+				print '<td class="center">'.$langs->trans("DateStart").'</td>';
+				print '<td class="center">'.$langs->trans("DateEnd").'</td>';
+				print '<td class="right">'.$langs->trans("OpportunityAmountShort").'</td>';
+				print '<td class="center">'.$langs->trans("OpportunityStatusShort").'</td>';
+				print '<td class="right">'.$langs->trans("OpportunityProbabilityShort").'</td>';
+				print '<td class="right">'.$langs->trans("Status").'</td>';
+				print '</tr>';
+
+				if ($num > 0) {
+					require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+					$projecttmp = new Project($db);
+
+					$i = 0;
+
+					while ($i < $num) {
+						$obj = $db->fetch_object($result);
+						$projecttmp->fetch($obj->id);
+
+						// To verify role of users
+						$userAccess = $projecttmp->restrictedProjectArea($user);
+
+						if ($user->rights->projet->lire && $userAccess > 0) {
+							print '<tr class="oddeven">';
+
+							// Ref
+							print '<td class="nowraponall">';
+							print $projecttmp->getNomUrl(1, '', 0, '', '-', 0, 1, '', 'project:'.$_SERVER["PHP_SELF"].'?socid=__SOCID__');
+							print '</td>';
+
+							// Label
+							print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'">'.dol_escape_htmltag($obj->title).'</td>';
+							// Date start
+							print '<td class="center">'.dol_print_date($db->jdate($obj->do), "day").'</td>';
+							// Date end
+							print '<td class="center">'.dol_print_date($db->jdate($obj->de), "day").'</td>';
+							// Opp amount
+							print '<td class="right">';
+							if ($obj->opp_status_code) {
+								print '<span class="amount">'.price($obj->opp_amount, 1, '', 1, -1, -1, '').'</span>';
+							}
+							print '</td>';
+							// Opp status
+							print '<td class="center">';
+							if ($obj->opp_status_code) {
+								print $langs->trans("OppStatus".$obj->opp_status_code);
+							}
+							print '</td>';
+							// Opp percent
+							print '<td class="right">';
+							if ($obj->opp_percent) {
+								print price($obj->opp_percent, 1, '', 1, 0).'%';
+							}
+							print '</td>';
+							// Status
+							print '<td class="right">'.$projecttmp->getLibStatut(5).'</td>';
+
+							print '</tr>';
+						}
+						$i++;
+					}
+				} else {
+					print '<tr class="oddeven"><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+				}
+				$db->free($result);
+			} else {
+				dol_print_error($db);
+			}
+		}
+
 		$parameters = array('sql' => $sql, 'function' => 'show_projects');
 		$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
