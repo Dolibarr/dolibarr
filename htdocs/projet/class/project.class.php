@@ -2607,7 +2607,7 @@ class Project extends CommonObject
 			$to = '';
 			$nbMailSend = 0;
 			$error = 0;
-			$errors_to = 0;
+			$errors_to = '';
 			while ($obj = $this->db->fetch_object($resql)) {
 				$to = $obj->email;
 				$numHolidays = num_public_holiday($lastWeekStartTS, $lastWeekEndTS, $mysoc->country_code, 1);
