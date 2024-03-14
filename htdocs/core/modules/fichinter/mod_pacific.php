@@ -121,11 +121,11 @@ class mod_pacific extends ModeleNumRefFicheinter
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Fichinter	$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @param	Societe|string		$objsoc     Object thirdparty
+	 *  @param  Fichinter|string	$object		Object we need next value for
+	 *  @return string      					Value if KO, <0 if KO
 	 */
-	public function getNextValue($objsoc = 0, $object = '')
+	public function getNextValue($objsoc = '', $object = '')
 	{
 		global $db, $conf;
 
@@ -147,7 +147,10 @@ class mod_pacific extends ModeleNumRefFicheinter
 		}
 
 		//$date=time();
-		$date = $object->datec;
+		$date = '';
+		if (!empty($object->datec)) {
+			$date = $object->datec;
+		}
 		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
