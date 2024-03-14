@@ -263,7 +263,7 @@ class pdf_standard extends CommonStickerGenerator
 	/**
 	 *	Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *	@param	Adherent	$object		        Member object. Old usage: Array of record information (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
+	 *	@param	mixed	    $object		        Member object. Old usage: Array of record information (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
 	 *	@param	Translate	$outputlangs		Lang object for output language
 	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file. Example: '5161', 'AVERYC32010', 'CARD', ...
 	 *	@param	string		$mode				Tell if doc module is called for 'member', ...
