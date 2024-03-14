@@ -467,13 +467,13 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 			'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
 		);
 
-		if (count($objects) > 1) {
-			addObjectsToApiFile($destfile, $objects, $modulename);
+		if ($action == 'initapi') {
+			if (count($objects) >= 1) {
+				addObjectsToApiFile($srcfile, $destfile, $objects, $modulename);
+			}
 		} else {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			dolReplaceInFile($destfile, $arrayreplacement);
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			dolReplaceInFile($destfile, array('/*begin methods CRUD*/' => '/*begin methods CRUD*/'."\n\t".'/*CRUD FOR '.strtoupper($objectname).'*/', '/*end methods CRUD*/' => '/*END CRUD FOR '.strtoupper($objectname).'*/'."\n\t".'/*end methods CRUD*/'));
 		}
 
 		if ($varnametoupdate) {
@@ -952,20 +952,31 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 		$filetodelete = $dirins.'/'.$relativefilename;
 		$dirtodelete  = $dirins.'/'.$dirnametodelete;
 
-		//check when we want delete api_file
+		// Get list of existing objects
+		$objects = dolGetListOfObjectClasses($destdir);
+
+		$keyofobjecttodelete = array_search($objectname, $objects);
+		if ($keyofobjecttodelete !== false) {
+			unset($objects[$keyofobjecttodelete]);
+		}
+
+		// Delete or modify the file
 		if (strpos($relativefilename, 'api') !== false) {
 			$file_api = $destdir.'/class/api_'.strtolower($module).'.class.php';
-			$removeFile = removeObjectFromApiFile($file_api, $objectname, $module);
-			$var = getFromFile($file_api, '/*begin methods CRUD*/', '/*end methods CRUD*/');
-			if (str_word_count($var) == 0) {
+
+			$removeFile = removeObjectFromApiFile($file_api, $objects, $objectname);
+
+			if (count($objects) == 0) {
 				$result = dol_delete_file($filetodelete);
 			}
+
 			if ($removeFile) {
 				setEventMessages($langs->trans("ApiObjectDeleted"), null);
 			}
 		} else {
 			$result = dol_delete_file($filetodelete);
 		}
+
 		if (!$result) {
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", basename($filetodelete)), null, 'errors');
 		} else {
@@ -4209,7 +4220,7 @@ if ($module == 'initmodule') {
 									print '<a href="'.DOL_URL_ROOT.'/api/index.php/explorer/" target="apiexplorer">'.$langs->trans("ApiExplorer").'</a>';
 								}
 							} else {
-								print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initapi&token='.newToken().'&format=php&file='.urlencode($pathtoapi).'">'.img_picto('AddAPIsForThisObject', 'generate', 'class="paddingleft"').'</a>';
+								print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initapi&token='.newToken().'&format=php&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans('AddAPIsForThisObject'), 'generate', 'class="paddingleft"').'</a>';
 							}
 						} else {
 							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initapi&token='.newToken().'&format=php&file='.urlencode($pathtoapi).'">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a>';

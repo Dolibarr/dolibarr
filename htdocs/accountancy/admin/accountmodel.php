@@ -191,10 +191,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 	// Si verif ok et action add, on ajoute la ligne
 	if ($ok && GETPOST('actionadd', 'alpha')) {
+		$newid = 0;
 		if ($tabrowid[$id]) {
 			// Get free id for insert
-			$newid = 0;
-			$sql = "SELECT MAX(".$db->sanitize($tabrowid[$id]).") newid FROM ".$db->sanitize($tabname[$id]);
+			$sql = "SELECT MAX(".$db->sanitize($tabrowid[$id]).") as newid FROM ".$db->sanitize($tabname[$id]);
 			$result = $db->query($sql);
 			if ($result) {
 				$obj = $db->fetch_object($result);
