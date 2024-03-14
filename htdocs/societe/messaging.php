@@ -94,7 +94,7 @@ $result = restrictedArea($user, 'societe', $socid, '&societe');
  *	Actions
  */
 
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -192,7 +192,7 @@ if (isModEnabled('agenda')) {
 if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 	print '<br>';
 
-	$param = '&socid='.urlencode($socid);
+	$param = '&socid='.urlencode((string) ($socid));
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}

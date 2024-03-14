@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2023      Charlene Benke       <charlene@patas_monkey.com>
  * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,9 +39,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
-$langsLoad=array('projects', 'companies');
+$langsLoad = array('projects', 'companies');
 if (isModEnabled('eventorganization')) {
-	$langsLoad[]='eventorganization';
+	$langsLoad[] = 'eventorganization';
 }
 
 $langs->loadLangs($langsLoad);
@@ -116,7 +117,7 @@ $permissiondellink = $user->hasRight('projet', 'creer');	// Used by the include 
  * Actions
  */
 
-$parameters = array('id'=>$socid, 'objcanvas'=>$objcanvas);
+$parameters = array('id' => $socid, 'objcanvas' => $objcanvas);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -977,13 +978,13 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	if ($action == 'clone') {
 		$formquestion = array(
 			'text' => $langs->trans("ConfirmClone"),
-			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid') > 0 ? GETPOSTINT('socid') : $object->socid, 'socid', '', "None", 0, 0, null, 0, 'minwidth200 maxwidth250')),
-			array('type' => 'checkbox', 'name' => 'clone_contacts', 'label' => $langs->trans("CloneContacts"), 'value' => true),
-			array('type' => 'checkbox', 'name' => 'clone_tasks', 'label' => $langs->trans("CloneTasks"), 'value' => true),
-			array('type' => 'checkbox', 'name' => 'move_date', 'label' => $langs->trans("CloneMoveDate"), 'value' => true),
-			array('type' => 'checkbox', 'name' => 'clone_notes', 'label' => $langs->trans("CloneNotes"), 'value' => true),
-			array('type' => 'checkbox', 'name' => 'clone_project_files', 'label' => $langs->trans("CloneProjectFiles"), 'value' => false),
-			array('type' => 'checkbox', 'name' => 'clone_task_files', 'label' => $langs->trans("CloneTaskFiles"), 'value' => false)
+			0 => array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid') > 0 ? GETPOSTINT('socid') : $object->socid, 'socid', '', "None", 0, 0, null, 0, 'minwidth200 maxwidth250')),
+			1 => array('type' => 'checkbox', 'name' => 'clone_contacts', 'label' => $langs->trans("CloneContacts"), 'value' => true),
+			2 => array('type' => 'checkbox', 'name' => 'clone_tasks', 'label' => $langs->trans("CloneTasks"), 'value' => true),
+			3 => array('type' => 'checkbox', 'name' => 'move_date', 'label' => $langs->trans("CloneMoveDate"), 'value' => true),
+			4 => array('type' => 'checkbox', 'name' => 'clone_notes', 'label' => $langs->trans("CloneNotes"), 'value' => true),
+			5 => array('type' => 'checkbox', 'name' => 'clone_project_files', 'label' => $langs->trans("CloneProjectFiles"), 'value' => false),
+			6 => array('type' => 'checkbox', 'name' => 'clone_task_files', 'label' => $langs->trans("CloneTaskFiles"), 'value' => false)
 		);
 
 		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ToClone"), $langs->trans("ConfirmCloneProject"), "confirm_clone", $formquestion, '', 1, 400, 590);
@@ -1644,16 +1645,16 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			// Buttons Create
 			if (!getDolGlobalString('PROJECT_HIDE_CREATE_OBJECT_BUTTON')) {
 				$arrayforbutaction = array(
-					10 => array('lang'=>'propal', 'enabled'=>isModEnabled("propal"), 'perm'=>$user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					20 => array('lang'=>'orders', 'enabled'=>isModEnabled("order"), 'perm'=>$user->hasRight('commande', 'creer'), 'label' => 'CreateOrder', 'url'=>'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					30 => array('lang'=>'bills', 'enabled'=>isModEnabled("invoice"), 'perm'=>$user->hasRight('facture', 'creer'), 'label' => 'CreateBill', 'url'=>'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					40 => array('lang'=>'supplier_proposal', 'enabled'=>isModEnabled("supplier_proposal"), 'perm'=>$user->hasRight('supplier_proposal', 'creer'), 'label' => 'AddSupplierProposal', 'url'=>'/supplier_proposal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					50 => array('lang'=>'suppliers', 'enabled'=>isModEnabled("supplier_order"), 'perm'=>$user->hasRight('fournisseur', 'commande', 'creer'), 'label' => 'AddSupplierOrder', 'url'=>'/fourn/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					60 => array('lang'=>'suppliers', 'enabled'=>isModEnabled("supplier_invoice"), 'perm'=>$user->hasRight('fournisseur', 'facture', 'creer'), 'label' => 'AddSupplierInvoice', 'url'=>'/fourn/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					70 => array('lang'=>'interventions', 'enabled'=>isModEnabled("intervention"), 'perm'=>$user->hasRight('fichinter', 'creer'), 'label' => 'AddIntervention', 'url'=>'/fichinter/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					80 => array('lang'=>'contracts', 'enabled'=>isModEnabled("contract"), 'perm'=>$user->hasRight('contrat', 'creer'), 'label' => 'AddContract', 'url'=>'/contrat/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					90 => array('lang'=>'trips', 'enabled'=>isModEnabled("expensereport"), 'perm'=>$user->hasRight('expensereport', 'creer'), 'label' => 'AddTrip', 'url'=>'/expensereport/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-				   100 => array('lang'=>'donations', 'enabled'=>isModEnabled("don"), 'perm'=>$user->hasRight('don', 'creer'), 'label' => 'AddDonation', 'url'=>'/don/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					10 => array('lang' => 'propal', 'enabled' => isModEnabled("propal"), 'perm' => $user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url' => '/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					20 => array('lang' => 'orders', 'enabled' => isModEnabled("order"), 'perm' => $user->hasRight('commande', 'creer'), 'label' => 'CreateOrder', 'url' => '/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					30 => array('lang' => 'bills', 'enabled' => isModEnabled("invoice"), 'perm' => $user->hasRight('facture', 'creer'), 'label' => 'CreateBill', 'url' => '/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					40 => array('lang' => 'supplier_proposal', 'enabled' => isModEnabled("supplier_proposal"), 'perm' => $user->hasRight('supplier_proposal', 'creer'), 'label' => 'AddSupplierProposal', 'url' => '/supplier_proposal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					50 => array('lang' => 'suppliers', 'enabled' => isModEnabled("supplier_order"), 'perm' => $user->hasRight('fournisseur', 'commande', 'creer'), 'label' => 'AddSupplierOrder', 'url' => '/fourn/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					60 => array('lang' => 'suppliers', 'enabled' => isModEnabled("supplier_invoice"), 'perm' => $user->hasRight('fournisseur', 'facture', 'creer'), 'label' => 'AddSupplierInvoice', 'url' => '/fourn/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					70 => array('lang' => 'interventions', 'enabled' => isModEnabled("intervention"), 'perm' => $user->hasRight('fichinter', 'creer'), 'label' => 'AddIntervention', 'url' => '/fichinter/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					80 => array('lang' => 'contracts', 'enabled' => isModEnabled("contract"), 'perm' => $user->hasRight('contrat', 'creer'), 'label' => 'AddContract', 'url' => '/contrat/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					90 => array('lang' => 'trips', 'enabled' => isModEnabled("expensereport"), 'perm' => $user->hasRight('expensereport', 'creer'), 'label' => 'AddTrip', 'url' => '/expensereport/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+				   100 => array('lang' => 'donations', 'enabled' => isModEnabled("don"), 'perm' => $user->hasRight('don', 'creer'), 'label' => 'AddDonation', 'url' => '/don/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
 				);
 
 				$params = array('backtopage' => $_SERVER["PHP_SELF"].'?id='.$object->id);

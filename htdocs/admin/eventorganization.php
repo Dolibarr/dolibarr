@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,20 +48,20 @@ $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
 $arrayofparameters = array(
-	'EVENTORGANIZATION_TASK_LABEL'=>array('type'=>'textarea','enabled'=>1),
-	'EVENTORGANIZATION_CATEG_THIRDPARTY_CONF'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
-	'EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
-	'EVENTORGANIZATION_FILTERATTENDEES_CAT'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
-	'EVENTORGANIZATION_FILTERATTENDEES_TYPE'=>array('type'=>'thirdparty_type:', 'enabled'=>1),
-	'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
-	'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
-	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
-	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
+	'EVENTORGANIZATION_TASK_LABEL' => array('type' => 'textarea','enabled' => 1),
+	'EVENTORGANIZATION_CATEG_THIRDPARTY_CONF' => array('type' => 'category:'.Categorie::TYPE_CUSTOMER, 'enabled' => 1),
+	'EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH' => array('type' => 'category:'.Categorie::TYPE_CUSTOMER, 'enabled' => 1),
+	'EVENTORGANIZATION_FILTERATTENDEES_CAT' => array('type' => 'category:'.Categorie::TYPE_CUSTOMER, 'enabled' => 1),
+	'EVENTORGANIZATION_FILTERATTENDEES_TYPE' => array('type' => 'thirdparty_type:', 'enabled' => 1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF' => array('type' => 'emailtemplate:conferenceorbooth', 'enabled' => 1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH' => array('type' => 'emailtemplate:conferenceorbooth', 'enabled' => 1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH' => array('type' => 'emailtemplate:conferenceorbooth', 'enabled' => 1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT' => array('type' => 'emailtemplate:conferenceorbooth', 'enabled' => 1),
 	//'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
 	//'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
-	'SERVICE_BOOTH_LOCATION'=>array('type'=>'product', 'enabled'=>1),
-	'SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION'=>array('type'=>'product', 'enabled'=>1),
-	'EVENTORGANIZATION_SECUREKEY'=>array('type'=>'securekey', 'enabled'=>1),
+	'SERVICE_BOOTH_LOCATION' => array('type' => 'product', 'enabled' => 1),
+	'SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION' => array('type' => 'product', 'enabled' => 1),
+	'EVENTORGANIZATION_SECUREKEY' => array('type' => 'securekey', 'enabled' => 1),
 );
 
 $error = 0;
@@ -80,7 +81,7 @@ if (empty($user->admin)) {
  */
 
 if ($cancel) {
-	$action  ='';
+	$action  = '';
 }
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
@@ -111,18 +112,16 @@ if ($action == 'updateMask') {
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/eventorganization/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
@@ -218,7 +217,7 @@ if ($action == 'edit') {
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($arrayofparameters as $constname => $val) {
-		if ($val['enabled']==1) {
+		if ($val['enabled'] == 1) {
 			$setupnotempty++;
 			print '<tr class="oddeven"><td><!-- '.$constname.' -->';
 			$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
@@ -230,7 +229,7 @@ if ($action == 'edit') {
 				print '<textarea class="flat" name="'.$constname.'" id="'.$constname.'" cols="50" rows="5" wrap="soft">' . "\n";
 				print getDolGlobalString($constname);
 				print "</textarea>\n";
-			} elseif ($val['type']== 'html') {
+			} elseif ($val['type'] == 'html') {
 				require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($constname, getDolGlobalString($constname), '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 				$doleditor->Create();
@@ -300,7 +299,7 @@ if ($action == 'edit') {
 		print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 		foreach ($arrayofparameters as $constname => $val) {
-			if ($val['enabled']==1) {
+			if ($val['enabled'] == 1) {
 				$setupnotempty++;
 				print '<tr class="oddeven">';
 				print '<td><!-- '.$constname.' -->';
@@ -311,7 +310,7 @@ if ($action == 'edit') {
 
 				if ($val['type'] == 'textarea') {
 					print dol_nl2br(getDolGlobalString($constname));
-				} elseif ($val['type']== 'html') {
+				} elseif ($val['type'] == 'html') {
 					print getDolGlobalString($constname);
 				} elseif ($val['type'] == 'yesno') {
 					print ajax_constantonoff($constname);
@@ -348,13 +347,13 @@ if ($action == 'edit') {
 						print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 					}
 				} elseif (preg_match('/thirdparty_type/', $val['type'])) {
-					if (getDolGlobalString($constname)==2) {
+					if (getDolGlobalString($constname) == 2) {
 						print $langs->trans("Prospect");
-					} elseif (getDolGlobalString($constname)==3) {
+					} elseif (getDolGlobalString($constname) == 3) {
 						print $langs->trans("ProspectCustomer");
-					} elseif (getDolGlobalString($constname)==1) {
+					} elseif (getDolGlobalString($constname) == 1) {
 						print $langs->trans("Customer");
-					} elseif (getDolGlobalString($constname)==0) {
+					} elseif (getDolGlobalString($constname) == 0) {
 						print $langs->trans("NorProspectNorCustomer");
 					}
 				} elseif ($val['type'] == 'product') {

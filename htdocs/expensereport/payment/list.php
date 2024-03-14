@@ -95,20 +95,20 @@ $search_all = trim(GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') :
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'pndf.rowid'=>"RefPayment",
-	'u.login'=>"User",
-	'pndf.num_payment'=>"Numero",
-	'pndf.amount'=>"Amount",
+	'pndf.rowid' => "RefPayment",
+	'u.login' => "User",
+	'pndf.num_payment' => "Numero",
+	'pndf.amount' => "Amount",
 );
 
 $arrayfields = array(
-	'pndf.rowid'				=>array('label'=>"RefPayment", 'checked'=>1, 'position'=>10),
-	'pndf.datep'			=>array('label'=>"Date", 'checked'=>1, 'position'=>20),
-	'u.login'				=>array('label'=>"User", 'checked'=>1, 'position'=>30),
-	'c.libelle'			=>array('label'=>"Type", 'checked'=>1, 'position'=>40),
-	'pndf.num_payment'	=>array('label'=>"Numero", 'checked'=>1, 'position'=>50, 'tooltip'=>"ChequeOrTransferNumber"),
-	'ba.label'			=>array('label'=>"BankAccount", 'checked'=>1, 'position'=>60, 'enable'=>(isModEnabled("bank"))),
-	'pndf.amount'			=>array('label'=>"Amount", 'checked'=>1, 'position'=>70),
+	'pndf.rowid'				=> array('label' => "RefPayment", 'checked' => 1, 'position' => 10),
+	'pndf.datep'			=> array('label' => "Date", 'checked' => 1, 'position' => 20),
+	'u.login'				=> array('label' => "User", 'checked' => 1, 'position' => 30),
+	'c.libelle'			=> array('label' => "Type", 'checked' => 1, 'position' => 40),
+	'pndf.num_payment'	=> array('label' => "Numero", 'checked' => 1, 'position' => 50, 'tooltip' => "ChequeOrTransferNumber"),
+	'ba.label'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 60, 'enable' => (isModEnabled("bank"))),
+	'pndf.amount'			=> array('label' => "Amount", 'checked' => 1, 'position' => 70),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -138,7 +138,7 @@ if (!$user->hasRight('expensereport', 'lire')) {
 
 $childids = $user->getAllChildIds(1);
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -203,7 +203,7 @@ if ($search_date_start) {
 	$sql .= " AND pndf.datep >= '" . $db->idate($search_date_start) . "'";
 }
 if ($search_date_end) {
-	$sql .=" AND pndf.datep <= '" . $db->idate($search_date_end) . "'";
+	$sql .= " AND pndf.datep <= '" . $db->idate($search_date_end) . "'";
 }
 
 if ($search_user) {
@@ -274,22 +274,22 @@ if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
 if ($search_date_startday) {
-	$param .= '&search_date_startday='.urlencode($search_date_startday);
+	$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
 }
 if ($search_date_startmonth) {
-	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+	$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
 }
 if ($search_date_startyear) {
-	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+	$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
 }
 if ($search_date_endday) {
-	$param .= '&search_date_endday='.urlencode($search_date_endday);
+	$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
 }
 if ($search_date_endmonth) {
-	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
 }
 if ($search_date_endyear) {
-	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
 }
 if ($search_user) {
 	$param .= '&search_user='.urlencode($search_user);
@@ -305,7 +305,7 @@ if ($search_amount) {
 }
 
 if ($search_bank_account) {
-	$param .= '&search_bank_account='.urlencode($search_bank_account);
+	$param .= '&search_bank_account='.urlencode((string) ($search_bank_account));
 }
 
 // Add $param from extra fields
@@ -324,9 +324,10 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 
+// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 print_barre_liste($langs->trans('ExpenseReportPayments'), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'expensereport', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 if ($search_all) {
@@ -425,7 +426,7 @@ if (!empty($arrayfields['pndf.amount']['checked'])) {
 }
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -481,7 +482,7 @@ if (!empty($arrayfields['pndf.amount']['checked'])) {
 }
 
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray'=>&$totalarray);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column

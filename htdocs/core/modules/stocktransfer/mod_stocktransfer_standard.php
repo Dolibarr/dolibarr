@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2010  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2021 		Gauthier VERDOL 	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,8 +79,8 @@ class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return boolean     			false if conflict, true if ok
+	 *  @param  CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
 	{
@@ -118,8 +119,8 @@ class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string|-1      			Value if OK, -1 if KO
+	 *  @param  StockTransfer	$object		Object we need next value for
+	 *  @return string|-1     	 			Value if OK, -1 if KO
 	 */
 	public function getNextValue($object)
 	{

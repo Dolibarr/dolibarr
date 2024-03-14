@@ -7,7 +7,7 @@
  * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2018	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015-2024	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2019	Thibault FOUCART		<support@ptibogxiv.net>
@@ -15,6 +15,7 @@
  * Copyright (C) 2020		Josep Lluís Amador 		<joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
  * Copyright (C) 2021		Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,9 @@ class Adherent extends CommonObject
 	 */
 	public $picto = 'member';
 
-
+	/**
+	 * @var string[] array of messages
+	 */
 	public $mesgs;
 
 	/**
@@ -217,6 +220,9 @@ class Adherent extends CommonObject
 	 */
 	public $gender;
 
+	/**
+	 * @var int|string date of birth
+	 */
 	public $birth;
 
 	/**
@@ -249,22 +255,49 @@ class Adherent extends CommonObject
 
 	// Fields loaded by fetch_subscriptions() from member table
 
+	/**
+	 * @var int|string date
+	 */
 	public $first_subscription_date;
 
+	/**
+	 * @var int|string date
+	 */
 	public $first_subscription_date_start;
 
+	/**
+	 * @var int|string date
+	 */
 	public $first_subscription_date_end;
 
+	/**
+	 * @var int|string date
+	 */
 	public $first_subscription_amount;
 
+	/**
+	 * @var int|string date
+	 */
 	public $last_subscription_date;
 
+	/**
+	 * @var int|string date
+	 */
 	public $last_subscription_date_start;
 
+	/**
+	 * @var int|string date
+	 */
 	public $last_subscription_date_end;
 
+	/**
+	 * @var int|string date
+	 */
 	public $last_subscription_amount;
 
+	/**
+	 * @var array
+	 */
 	public $subscriptions = array();
 
 	/**
@@ -283,7 +316,7 @@ class Adherent extends CommonObject
 
 
 	/**
-	 * @var array fields
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -291,14 +324,14 @@ class Adherent extends CommonObject
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
 		'ref_ext' => array('type' => 'varchar(128)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'civility' => array('type' => 'varchar(6)', 'label' => 'Civility', 'enabled' => 1, 'visible' => -1, 'position' => 25),
-		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'showoncombobox'=>1),
-		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'position' => 35, 'showoncombobox'=>1),
+		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'showoncombobox' => 1),
+		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'position' => 35, 'showoncombobox' => 1),
 		'login' => array('type' => 'varchar(50)', 'label' => 'Login', 'enabled' => 1, 'visible' => 1, 'position' => 40),
 		'pass' => array('type' => 'varchar(50)', 'label' => 'Pass', 'enabled' => 1, 'visible' => -1, 'position' => 45),
 		'pass_crypted' => array('type' => 'varchar(128)', 'label' => 'Pass crypted', 'enabled' => 1, 'visible' => -1, 'position' => 50),
 		'morphy' => array('type' => 'varchar(3)', 'label' => 'MemberNature', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 55),
 		'fk_adherent_type' => array('type' => 'integer', 'label' => 'Fk adherent type', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 60),
-		'societe' => array('type' => 'varchar(128)', 'label' => 'Societe', 'enabled' => 1, 'visible' => 1, 'position' => 65, 'showoncombobox'=>2),
+		'societe' => array('type' => 'varchar(128)', 'label' => 'Societe', 'enabled' => 1, 'visible' => 1, 'position' => 65, 'showoncombobox' => 2),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => 1, 'position' => 70),
 		'address' => array('type' => 'text', 'label' => 'Address', 'enabled' => 1, 'visible' => -1, 'position' => 75),
 		'zip' => array('type' => 'varchar(10)', 'label' => 'Zip', 'enabled' => 1, 'visible' => -1, 'position' => 80),
@@ -309,14 +342,14 @@ class Adherent extends CommonObject
 		'phone_perso' => array('type' => 'varchar(30)', 'label' => 'Phone perso', 'enabled' => 1, 'visible' => -1, 'position' => 120),
 		'phone_mobile' => array('type' => 'varchar(30)', 'label' => 'Phone mobile', 'enabled' => 1, 'visible' => -1, 'position' => 125),
 		'email' => array('type' => 'varchar(255)', 'label' => 'Email', 'enabled' => 1, 'visible' => 1, 'position' => 126),
-		'url' =>array('type'=>'varchar(255)', 'label'=>'Url', 'enabled'=>1, 'visible'=>-1, 'position'=>127),
+		'url' => array('type' => 'varchar(255)', 'label' => 'Url', 'enabled' => 1, 'visible' => -1, 'position' => 127),
 		'socialnetworks' => array('type' => 'text', 'label' => 'Socialnetworks', 'enabled' => 1, 'visible' => -1, 'position' => 128),
 		'birth' => array('type' => 'date', 'label' => 'DateOfBirth', 'enabled' => 1, 'visible' => -1, 'position' => 130),
 		'gender' => array('type' => 'varchar(10)', 'label' => 'Gender', 'enabled' => 1, 'visible' => -1, 'position' => 132),
 		'photo' => array('type' => 'varchar(255)', 'label' => 'Photo', 'enabled' => 1, 'visible' => -1, 'position' => 135),
 		'public' => array('type' => 'smallint(6)', 'label' => 'Public', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 145),
 		'datefin' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => 1, 'position' => 150),
-		'default_lang' =>array('type'=>'varchar(6)', 'label'=>'Default lang', 'enabled'=>1, 'visible'=>-1, 'position'=> 153),
+		'default_lang' => array('type' => 'varchar(6)', 'label' => 'Default lang', 'enabled' => 1, 'visible' => -1, 'position' => 153),
 		'note_public' => array('type' => 'text', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 155),
 		'note_private' => array('type' => 'text', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 160),
 		'datevalid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 165),
@@ -458,7 +491,7 @@ class Adherent extends CommonObject
 	 */
 	public function makeSubstitution($text)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$birthday = dol_print_date($this->birth, 'day');
 
@@ -754,13 +787,13 @@ class Adherent extends CommonObject
 		$sql .= ", login = ".($this->login ? "'".$this->db->escape($this->login)."'" : "null");
 		$sql .= ", societe = ".($this->company ? "'".$this->db->escape($this->company)."'" : ($this->societe ? "'".$this->db->escape($this->societe)."'" : "null"));
 		if ($this->socid) {
-			$sql .= ", fk_soc = ".($this->socid > 0 ? $this->db->escape($this->socid) : "null");	 // Must be modified only when creating from a third-party
+			$sql .= ", fk_soc = ".($this->socid > 0 ? (int) $this->socid : "null");	 // Must be modified only when creating from a third-party
 		}
 		$sql .= ", address = ".($this->address ? "'".$this->db->escape($this->address)."'" : "null");
 		$sql .= ", zip = ".($this->zip ? "'".$this->db->escape($this->zip)."'" : "null");
 		$sql .= ", town = ".($this->town ? "'".$this->db->escape($this->town)."'" : "null");
-		$sql .= ", country = ".($this->country_id > 0 ? $this->db->escape($this->country_id) : "null");
-		$sql .= ", state_id = ".($this->state_id > 0 ? $this->db->escape($this->state_id) : "null");
+		$sql .= ", country = ".($this->country_id > 0 ? (int) $this->country_id : "null");
+		$sql .= ", state_id = ".($this->state_id > 0 ? (int) $this->state_id : "null");
 		$sql .= ", email = '".$this->db->escape($this->email)."'";
 		$sql .= ", url = ".(!empty($this->url) ? "'".$this->db->escape($this->url)."'" : "null");
 		$sql .= ", socialnetworks = ".($this->socialnetworks ? "'".$this->db->escape(json_encode($this->socialnetworks))."'" : "null");
@@ -771,9 +804,9 @@ class Adherent extends CommonObject
 		$sql .= ", note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", photo = ".($this->photo ? "'".$this->db->escape($this->photo)."'" : "null");
 		$sql .= ", public = '".$this->db->escape($this->public)."'";
-		$sql .= ", statut = ".$this->db->escape($this->statut);
+		$sql .= ", statut = ".(int) $this->statut;
 		$sql .= ", default_lang = ".(!empty($this->default_lang) ? "'".$this->db->escape($this->default_lang)."'" : "null");
-		$sql .= ", fk_adherent_type = ".$this->db->escape($this->typeid);
+		$sql .= ", fk_adherent_type = ".(int) $this->typeid;
 		$sql .= ", morphy = '".$this->db->escape($this->morphy)."'";
 		$sql .= ", birth = ".($this->birth ? "'".$this->db->idate($this->birth)."'" : "null");
 
@@ -1029,21 +1062,18 @@ class Adherent extends CommonObject
 	/**
 	 *  Fonction to delete a member and its data
 	 *
-	 *  @param	int		$rowid		Id of member to delete
 	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return	int					Return integer <0 if KO, 0=nothing to do, >0 if OK
 	 */
-	public function delete($rowid, $user, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		$result = 0;
 		$error = 0;
 		$errorflag = 0;
 
 		// Check parameters
-		if (empty($rowid)) {
-			$rowid = $this->id;
-		}
+		$rowid = $this->id;
 
 		$this->db->begin();
 
@@ -1284,7 +1314,7 @@ class Adherent extends CommonObject
 		}
 
 		// Add link to third party for current member
-		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = ".($thirdpartyid > 0 ? $thirdpartyid : 'null');
+		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = ".($thirdpartyid > 0 ? (int) $thirdpartyid : 'null');
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setThirdPartyId", LOG_DEBUG);
@@ -2392,7 +2422,7 @@ class Adherent extends CommonObject
 		}
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -3247,7 +3277,7 @@ class Adherent extends CommonObject
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		if (property_exists($this, 'photo') || !empty($this->photo)) {
-			$return.= Form::showphoto('memberphoto', $this, 0, 60, 0, 'photokanban photoref photowithmargin photologintooltip', 'small', 0, 1);
+			$return .= Form::showphoto('memberphoto', $this, 0, 60, 0, 'photokanban photoref photowithmargin photologintooltip', 'small', 0, 1);
 		} else {
 			$return .= img_picto('', 'user');
 		}

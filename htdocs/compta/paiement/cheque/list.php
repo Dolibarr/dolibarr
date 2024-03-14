@@ -90,13 +90,13 @@ foreach ($arrayofpaymentmodetomanage as $key => $val) {
 }
 
 $arrayfields = array(
-	'bc.ref'            => array('label'=>"Ref", 'checked'=>1, 'position'=>10),
-	'bc.type'			=> array('label'=>"Type", 'checked'=>1, 'position'=>20),
-	'bc.date_bordereau' => array('label'=>"DateCreation", 'checked'=>1, 'position'=>30),
-	'ba.label'			=> array('label'=>"BankAccount", 'checked'=>1, 'position'=>40),
-	'bc.nbcheque'		=> array('label'=>"NbOfCheques", 'checked'=>1, 'position'=>50),
-	'bc.amount'			=> array('label'=>"Amount", 'checked'=>1, 'position'=>60),
-	'bc.statut'			=> array('label'=>"Status", 'checked'=>1, 'position'=>70)
+	'bc.ref'            => array('label' => "Ref", 'checked' => 1, 'position' => 10),
+	'bc.type'			=> array('label' => "Type", 'checked' => 1, 'position' => 20),
+	'bc.date_bordereau' => array('label' => "DateCreation", 'checked' => 1, 'position' => 30),
+	'ba.label'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 40),
+	'bc.nbcheque'		=> array('label' => "NbOfCheques", 'checked' => 1, 'position' => 50),
+	'bc.amount'			=> array('label' => "Amount", 'checked' => 1, 'position' => 60),
+	'bc.statut'			=> array('label' => "Status", 'checked' => 1, 'position' => 70)
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -108,7 +108,7 @@ $object = new RemiseCheque($db);
  * Actions
  */
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -221,22 +221,22 @@ if ($resql) {
 		$param .= '&contextpage='.$contextpage;
 	}
 	if ($search_date_startday) {
-		$param .= '&search_date_startday='.urlencode($search_date_startday);
+		$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
 	}
 	if ($search_date_startmonth) {
-		$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+		$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
 	}
 	if ($search_date_startyear) {
-		$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+		$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
 	}
 	if ($search_date_endday) {
-		$param .= '&search_date_endday='.urlencode($search_date_endday);
+		$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
 	}
 	if ($search_date_endmonth) {
-		$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+		$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
 	}
 	if ($search_date_endyear) {
-		$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+		$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.$limit;
@@ -245,7 +245,7 @@ if ($resql) {
 		$param .= '&search_amount='.urlencode($search_amount);
 	}
 	if ($search_account > 0) {
-		$param .= '&search_account='.urlencode($search_account);
+		$param .= '&search_account='.urlencode((string) ($search_account));
 	}
 
 	$url = DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new';
@@ -253,8 +253,8 @@ if ($resql) {
 		$url .= '&socid='.$socid;
 	}
 	$newcardbutton  = '';
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('banque', 'cheque'));
 
@@ -271,6 +271,7 @@ if ($resql) {
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit);
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
@@ -346,7 +347,7 @@ if ($resql) {
 	}
 
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields);
+	$parameters = array('arrayfields' => $arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
@@ -400,7 +401,7 @@ if ($resql) {
 	}
 
 	// Hook fields
-	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2022	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param 	DoliDB	$db				Database handler
  * @param 	string	$atarget		Target (Example: '' or '_top')
  * @param 	int		$type_user     	0=Menu for backoffice, 1=Menu for front office
- * @param  	array	$tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}> $tabMenu		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	Menu	$menu			Object Menu to return back list of menu entries
  * @param	int		$noout			1=Disable output (Initialise &$menu only).
  * @param	string	$mode			'top', 'topnb', 'left', 'jmobile'
@@ -51,6 +52,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 	// Show personalized menus
 	$menuArbo = new Menubase($db, 'auguria');
 	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'auguria', $tabMenu);
+	'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}> $newTabMenu';
 
 	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
 
@@ -176,7 +178,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 	}
 
 	$showmode = 1;
-	if (empty($noout)) {
+	if (empty($noout) && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 		print_start_menu_entry_auguria('', 'class="tmenuend"', $showmode);
 		print_end_menu_entry_auguria($showmode);
 		print_end_menu_array_auguria();
@@ -240,6 +242,8 @@ function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $cla
 
 		if (!empty($menuval['prefix']) && strpos($menuval['prefix'], '<span') === 0) {
 			print $menuval['prefix'];
+		} elseif (!empty($menuval['prefix']) && strpos($menuval['prefix'], 'fa-') === 0) {
+			print '<span class="'.$id.' '.$menuval['prefix'].'" id="mainmenuspan_'.$idsel.'"></span>';
 		} else {
 			print '<span class="'.$id.' tmenuimageforpng" id="mainmenuspan_'.$idsel.'"></span>';
 		}
@@ -305,9 +309,9 @@ function print_end_menu_array_auguria()
  * Fill &$menu (example with $forcemainmenu='home' $forceleftmenu='all', return left menu tree of Home)
  *
  * @param	DoliDB		$db                 Database handler
- * @param 	array		$menu_array_before  Table of menu entries to show before entries of menu handler (menu->liste filled with menu->add)
- * @param   array		$menu_array_after   Table of menu entries to show after entries of menu handler (menu->liste filled with menu->add)
- * @param  	array		$tabMenu       		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}> 	$menu_array_before  Table of menu entries to show before entries of menu handler (menu->liste filled with menu->add)
+ * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}>		$menu_array_after   Table of menu entries to show after entries of menu handler (menu->liste filled with menu->add)
+ * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}> 	$tabMenu       		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	Menu		$menu				Object Menu to return back list of menu entries
  * @param	int			$noout				Disable output (Initialise &$menu only).
  * @param	string		$forcemainmenu		'x'=Force mainmenu to mainmenu='x'

@@ -14,6 +14,7 @@
  * Copyright (C) 2020       Guillaume Alexandre <guillaume@tag-info.fr>
  * Copyright (C) 2022		Joachim Kueter		<jkueter@gmx.de>
  * Copyright (C) 2022  		Progiseize         	<a.bisotti@progiseize.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -277,7 +278,7 @@ class AccountancyExport
 					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
 				),
 			),
-			'cr'=> array(
+			'cr' => array(
 				'1' => $langs->trans("Unix"),
 				'2' => $langs->trans("Windows")
 			),
@@ -302,8 +303,6 @@ class AccountancyExport
 	 */
 	public function getMimeType($formatexportset)
 	{
-		$mime = 'text/csv';
-
 		switch ($formatexportset) {
 			case self::$EXPORT_TYPE_FEC:
 				$mime = 'text/tab-separated-values';
@@ -346,7 +345,7 @@ class AccountancyExport
 		$exportFile = null;
 		$exportFileName = '';
 		$exportFilePath = '';
-		$exportFileFullName ='';
+		$exportFileFullName = '';
 		$downloadFileMimeType = '';
 		$downloadFileFullName = '';
 		$downloadFilePath = '';
@@ -1000,7 +999,7 @@ class AccountancyExport
 						$invoice = new FactureFournisseur($this->db);
 						$invoice->fetch($line->fk_doc);
 						$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
-						$objectDirPath.= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
+						$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 					}
 					$arrayofinclusion = array();
 					// If it is a supplier invoice, we want to use last uploaded file
@@ -1466,7 +1465,7 @@ class AccountancyExport
 							$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 						} elseif ($line->doc_type == 'supplier_invoice') {
 							$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
-							$objectDirPath.= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
+							$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 						}
 						$arrayofinclusion = array();
 						// If it is a supplier invoice, we want to use last uploaded file
@@ -1678,7 +1677,7 @@ class AccountancyExport
 							$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 						} elseif ($line->doc_type == 'supplier_invoice') {
 							$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
-							$objectDirPath.= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
+							$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 						}
 						$arrayofinclusion = array();
 						// If it is a supplier invoice, we want to use last uploaded file
@@ -1789,7 +1788,7 @@ class AccountancyExport
 					&& $objectLines[$aIndex + 1]->piece_num == $line->piece_num
 					&& $aIndex - 1 < $aSize
 					&& $objectLines[$aIndex - 1]->piece_num == $line->piece_num
-					) {
+			) {
 				$sammelBuchung = true;
 			}
 

@@ -26,10 +26,17 @@
  *      \remarks    Class that extends all PHPunit tests. To share similare code between each test.
  */
 
+// Workaround for false security issue with main.inc.php on Windows in tests:
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+	$_SERVER['PHP_SELF'] = "phpunit";
+}
+
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+
+
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -240,7 +247,7 @@ abstract class CommonClassTest extends TestCase
 		'commande' => 'order',
 		'contrat' => 'contract',
 		'entrepot' => 'stock',
-		'expedition' => 'delivery_note',
+		'expedition' => 'shipping',
 		'facture' => 'invoice',
 		'fichinter' => 'intervention',
 		'product_fournisseur_price' => 'productsupplierprice',
@@ -289,7 +296,7 @@ abstract class CommonClassTest extends TestCase
 		'datapolicy' => 'DataPolicy',
 		'dav' => 'Dav',
 		'debugbar' => 'DebugBar',
-		'delivery_note' => 'Expedition',
+		'shipping' => 'Expedition',
 		'deplacement' => 'Deplacement',
 		"documentgeneration" => 'DocumentGeneration',  // TODO: fill in proper name
 		'don' => 'Don',
@@ -378,6 +385,30 @@ abstract class CommonClassTest extends TestCase
 		'workstation' => 'Workstation',
 		'zapier' => 'Zapier',
 	);
+
+
+	/**
+	 * Run php script (file) using the php binary used for running phpunit.
+	 *
+	 * The PHP executable may not be in the path, or refer to an uncontrolled
+	 * version.
+	 * This ensures that the php script is properly run on multiple platforms.
+	 *
+	 * @param string $phpScriptCommand The command and arguments are run by the php binary.
+	 * @param array  $output           The output returned by the command
+	 * @param int   $exitCode The exit code returned for the execution.
+	 * @return false|string  False on failure, else last line if the output from the command
+	 */
+	protected function runPhpScript($phpScriptCommand, &$output, &$exitCode)
+	{
+		$phpExecutable = PHP_BINARY;
+
+		// Build the command to execute the PHP script
+		$command = "$phpExecutable $phpScriptCommand";
+
+		// Execute the command
+		return exec($command, $output, $exitCode);
+	}
 
 	/**
 	 * Assert that a directory does not exist without triggering deprecation

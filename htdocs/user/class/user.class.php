@@ -382,11 +382,11 @@ class User extends CommonObject
 	public $egroupware_id;
 
 	public $fields = array(
-		'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		'lastname'=>array('type'=>'varchar(50)', 'label'=>'Lastname', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1),
-		'firstname'=>array('type'=>'varchar(50)', 'label'=>'Firstname', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
-		'ref_employee'=>array('type'=>'varchar(50)', 'label'=>'RefEmployee', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>30, 'searchall'=>1),
-		'national_registration_number'=>array('type'=>'varchar(50)', 'label'=>'NationalRegistrationNumber', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>40, 'searchall'=>1)
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
+		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 20, 'searchall' => 1),
+		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1),
+		'ref_employee' => array('type' => 'varchar(50)', 'label' => 'RefEmployee', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 30, 'searchall' => 1),
+		'national_registration_number' => array('type' => 'varchar(50)', 'label' => 'NationalRegistrationNumber', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 40, 'searchall' => 1)
 	);
 
 
@@ -715,7 +715,8 @@ class User extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
 
 			$defaultValues = new DefaultValues($this->db);
-			$result = $defaultValues->fetchAll('', '', 0, 0, array('t.user_id'=>array(0, $this->id), 'entity'=>array((isset($this->entity) ? $this->entity : $conf->entity), $conf->entity)));	// User 0 (all) + me (if defined)
+			$result = $defaultValues->fetchAll('', '', 0, 0, '(t.user_id:in:0,'.$this->id.') AND (entity:in:'.(isset($this->entity) ? $this->entity : $conf->entity).','.$conf->entity.')');	// User 0 (all) + me (if defined)
+			//$result = $defaultValues->fetchAll('', '', 0, 0, array('t.user_id'=>array(0, $this->id), 'entity'=>array((isset($this->entity) ? $this->entity : $conf->entity), $conf->entity)));	// User 0 (all) + me (if defined)
 
 			if (!is_array($result) && $result < 0) {
 				setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
@@ -1015,7 +1016,7 @@ class User extends CommonObject
 
 		if (!$error && !$notrigger) {
 			$langs->load("other");
-			$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid ? ' (id='.$rid.')' : ''));
+			$this->context = array('audit' => $langs->trans("PermissionsAdd").($rid ? ' (id='.$rid.')' : ''));
 
 			// Call trigger
 			$result = $this->call_trigger('USER_MODIFY', $user);
@@ -1138,7 +1139,7 @@ class User extends CommonObject
 
 		if (!$error && !$notrigger) {
 			$langs->load("other");
-			$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid ? ' (id='.$rid.')' : ''));
+			$this->context = array('audit' => $langs->trans("PermissionsDelete").($rid ? ' (id='.$rid.')' : ''));
 
 			// Call trigger
 			$result = $this->call_trigger('USER_MODIFY', $user);
@@ -2702,7 +2703,7 @@ class User extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			if (!$error && !$notrigger) {
-				$this->context = array('audit'=>$langs->trans("UserSetInGroup"), 'newgroupid'=>$group);
+				$this->context = array('audit' => $langs->trans("UserSetInGroup"), 'newgroupid' => $group);
 
 				// Call trigger
 				$result = $this->call_trigger('USER_MODIFY', $user);
@@ -2757,7 +2758,7 @@ class User extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			if (!$error && !$notrigger) {
-				$this->context = array('audit'=>$langs->trans("UserRemovedFromGroup"), 'oldgroupid'=>$group);
+				$this->context = array('audit' => $langs->trans("UserRemovedFromGroup"), 'oldgroupid' => $group);
 
 				// Call trigger
 				$result = $this->call_trigger('USER_MODIFY', $user);
@@ -3055,7 +3056,7 @@ class User extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('userdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -3091,7 +3092,7 @@ class User extends CommonObject
 
 		if ($option == 'xxx') {
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
-			$linkend = '</a>';
+			$linkend = '</a>';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		}
 
 		if ($option == 'nolink') {
@@ -3288,7 +3289,7 @@ class User extends CommonObject
 			'LDAP_FIELD_NAME'		=> 'lastname',
 			'LDAP_FIELD_FIRSTNAME'	=> 'firstname',
 			'LDAP_FIELD_LOGIN'		=> 'login',
-			'LDAP_FIELD_LOGIN_SAMBA'=> 'login',
+			'LDAP_FIELD_LOGIN_SAMBA' => 'login',
 			'LDAP_FIELD_PHONE'		=> 'office_phone',
 			'LDAP_FIELD_MOBILE'		=> 'user_mobile',
 			'LDAP_FIELD_FAX'		=> 'office_fax',
@@ -4036,12 +4037,13 @@ class User extends CommonObject
 	 *  @param	string		$sortfield		sort field
 	 *  @param	int			$limit			limit page
 	 *  @param	int			$offset			page
-	 *  @param	array		$filter			Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
-	 *  @param  string      $filtermode		Filter mode (AND or OR)
+	 * 	@param  string		$filter       	Filter as an Universal Search string.
+	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * 	@param  string      $filtermode   	No more used
 	 *  @param  bool        $entityfilter	Activate entity filter
 	 *  @return int							Return integer <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array(), $filtermode = 'AND', $entityfilter = false)
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND', $entityfilter = false)
 	{
 		global $conf, $user;
 
@@ -4066,23 +4068,14 @@ class User extends CommonObject
 		}
 
 		// Manage filter
-		$sqlwhere = array();
-		if (!empty($filter)) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (array_key_exists($key, $this->fields) && isset($this->fields[$key]['type']) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
-				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
-				}
-			}
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
-		}
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			$sql .= $this->db->plimit($limit + 1, $offset);

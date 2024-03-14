@@ -922,7 +922,7 @@ class Reception extends CommonObject
 			$this->ref = trim($this->ref);
 		}
 		if (isset($this->entity)) {
-			$this->entity = trim($this->entity);
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->ref_supplier)) {
 			$this->ref_supplier = trim($this->ref_supplier);
@@ -931,10 +931,10 @@ class Reception extends CommonObject
 			$this->socid = trim($this->socid);
 		}
 		if (isset($this->fk_user_author)) {
-			$this->fk_user_author = trim($this->fk_user_author);
+			$this->fk_user_author = (int) $this->fk_user_author;
 		}
 		if (isset($this->fk_user_valid)) {
-			$this->fk_user_valid = trim($this->fk_user_valid);
+			$this->fk_user_valid = (int) $this->fk_user_valid;
 		}
 		if (isset($this->shipping_method_id)) {
 			$this->shipping_method_id = (int) $this->shipping_method_id;

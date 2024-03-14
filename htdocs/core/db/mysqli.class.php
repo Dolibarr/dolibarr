@@ -5,6 +5,7 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -232,12 +233,12 @@ class DoliDBMysqli extends DoliDB
 	/**
 	 * Connect to server
 	 *
-	 * @param   string  $host 	Database server host
-	 * @param   string  $login 	Login
-	 * @param   string  $passwd Password
-	 * @param   string  $name 	Name of database (not used for mysql, used for pgsql)
-	 * @param   integer $port 	Port of database server
-	 * @return  mysqli|null		Database access object
+	 * @param   string          $host           Database server host
+	 * @param   string          $login          Login
+	 * @param   string          $passwd         Password
+	 * @param   string          $name           Name of database (not used for mysql, used for pgsql)
+	 * @param   integer         $port           Port of database server
+	 * @return  mysqli|mysqliDoli|false         Database access object
 	 * @see close()
 	 */
 	public function connect($host, $login, $passwd, $name, $port = 0)
@@ -337,12 +338,7 @@ class DoliDBMysqli extends DoliDB
 		}
 
 		try {
-			if (!$this->database_name) {
-				// SQL query not needing a database connection (example: CREATE DATABASE)
-				$ret = $this->db->query($query, $result_mode);
-			} else {
-				$ret = $this->db->query($query, $result_mode);
-			}
+			$ret = $this->db->query($query, $result_mode);
 		} catch (Exception $e) {
 			dol_syslog(get_class($this)."::query Exception in query instead of returning an error: ".$e->getMessage(), LOG_ERR);
 			$ret = false;
@@ -1297,6 +1293,7 @@ class mysqliDoli extends mysqli
 		if (strpos($host, 'ssl://') === 0) {
 			$host = substr($host, 6);
 			parent::options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
+			// Suppress false positive @phan-suppress-next-line PhanTypeMismatchArgumentInternalProbablyReal
 			parent::ssl_set(null, null, "", null, null);
 			$flags = MYSQLI_CLIENT_SSL;
 		}

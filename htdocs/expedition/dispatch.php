@@ -51,7 +51,7 @@ if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
 }
 
-	// Security check
+// Security check
 $id = GETPOSTINT("id");
 $ref = GETPOST('ref');
 $lineid = GETPOSTINT('lineid');
@@ -515,7 +515,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 		print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate_livraison">';
-		print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
+		print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, 0, "setdate_livraison", 1, 0);
 		print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
@@ -682,7 +682,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 			$nbfreeproduct = 0; // Nb of lins of free products/services
 			$nbproduct = 0; // Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
-									// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
+			// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
 
 			$conf->cache['product'] = array();
 
@@ -903,19 +903,19 @@ if ($object->id > 0 || !empty($object->ref)) {
 										print '</td>';
 
 										print '<td>';
-										print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number' . $suffix . '" name="lot_number' . $suffix . '" value="' . (GETPOSTISSET('lot_number' . $suffix) ? GETPOST('lot_number' . $suffix) : $objd->batch) . '">';
+										print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.(GETPOSTISSET('lot_number'.$suffix) ? GETPOST('lot_number'.$suffix) : $objd->batch).'">';
 										//print '<input type="hidden" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
 										print '</td>';
 										if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 											print '<td class="nowraponall">';
-											$dlcdatesuffix = !empty($objd->sellby) ? dol_stringtotime($objd->sellby) : dol_mktime(0, 0, 0, GETPOST('dlc' . $suffix . 'month'), GETPOST('dlc' . $suffix . 'day'), GETPOST('dlc' . $suffix . 'year'));
-											print $form->selectDate($dlcdatesuffix, 'dlc' . $suffix, '', '', 1, '');
+											$dlcdatesuffix = !empty($objd->sellby) ? dol_stringtotime($objd->sellby) : dol_mktime(0, 0, 0, GETPOST('dlc'.$suffix.'month'), GETPOST('dlc'.$suffix.'day'), GETPOST('dlc'.$suffix.'year'));
+											print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, 0, 0, 1, '');
 											print '</td>';
 										}
 										if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 											print '<td class="nowraponall">';
-											$dluodatesuffix = !empty($objd->eatby) ? dol_stringtotime($objd->eatby) : dol_mktime(0, 0, 0, GETPOST('dluo' . $suffix . 'month'), GETPOST('dluo' . $suffix . 'day'), GETPOST('dluo' . $suffix . 'year'));
-											print $form->selectDate($dluodatesuffix, 'dluo' . $suffix, '', '', 1, '');
+											$dluodatesuffix = !empty($objd->eatby) ? dol_stringtotime($objd->eatby) : dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
+											print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, 0, 0, 1, '');
 											print '</td>';
 										}
 										print '<td colspan="2">&nbsp;</td>'; // Supplier ref + Qty ordered + qty already dispatched
@@ -953,7 +953,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 										print '<input id="idline'.$suffix.'" name="idline'.$suffix.'" type="hidden" value="'.$objd->rowid.'">';
 										print '<input id="fk_parent'.$suffix.'" name="fk_parent'.$suffix.'" type="hidden" value="'.$objd->fk_parent.'">';
 										print '<input name="product'.$suffix.'" type="hidden" value="'.$objd->fk_product.'">';
-										print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';								print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
+										print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
+										print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
 										if (!empty($objd->html_label)) {
 											print $objd->html_label;
 										}
@@ -1061,13 +1062,13 @@ if ($object->id > 0 || !empty($object->ref)) {
 								if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 									print '<td class="nowraponall">';
 									$dlcdatesuffix = dol_mktime(0, 0, 0, GETPOST('dlc'.$suffix.'month'), GETPOST('dlc'.$suffix.'day'), GETPOST('dlc'.$suffix.'year'));
-									print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, '', '', 1, '');
+									print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, 0, 0, 1, '');
 									print '</td>';
 								}
 								if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 									print '<td class="nowraponall">';
 									$dluodatesuffix = dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
-									print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, '', '', 1, '');
+									print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, 0, 0, 1, '');
 									print '</td>';
 								}
 								print '<td colspan="2">&nbsp;</td>'; // Supplier ref + Qty ordered + qty already dispatched

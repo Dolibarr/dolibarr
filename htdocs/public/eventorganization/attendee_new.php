@@ -235,7 +235,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conference->status==2  || !empty($project->id) && $project->status == Project::STATUS_VALIDATED)) {
+if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conference->status == 2  || !empty($project->id) && $project->status == Project::STATUS_VALIDATED)) {
 	$error = 0;
 
 	$urlback = '';
@@ -268,10 +268,10 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		$filter = array();
 
 		if ($type == 'global') {
-			$filter = array('t.fk_project'=>((int) $id), 'customsql'=>'t.email="'.$db->escape($email).'"');
+			$filter = "(t.fk_project:=:".((int) $id).") AND (t.email:=:'".$db->escape($email)."')";
 		}
 		if ($type == 'conf') {
-			$filter = array('t.fk_actioncomm'=>((int) $id), 'customsql'=>'t.email="'.$db->escape($email).'"');
+			$filter = "(t.fk_actioncomm:=:".((int) $id).") AND (t.email:=:'".$db->escape($email)."')";
 		}
 
 		// Check if there is already an attendee into table eventorganization_conferenceorboothattendee for same event (or conference/booth)
@@ -600,7 +600,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				// Now we redirect to the payment page
 				$sourcetouse = 'organizedeventregistration';
 				$reftouse = $facture->id;
-				$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.urlencode($sourcetouse).'&ref='.urlencode($reftouse);
+				$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.urlencode((string) ($sourcetouse)).'&ref='.urlencode((string) ($reftouse));
 				if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 					if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 						$redirection .= '&securekey='.dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical

@@ -189,7 +189,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			}
 
 			// Set shipment to "Closed" if WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE is set (deprecated, has been replaced with WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE instead))
-			if (isModEnabled("delivery_note") && !empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE')) {
+			if (isModEnabled("shipping") && !empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE')) {
 				$object->fetchObjectLinked('', 'shipping', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
@@ -210,7 +210,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 
-			if (isModEnabled("delivery_note") && !empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE')) {
+			if (isModEnabled("shipping") && !empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE')) {
 				$object->fetchObjectLinked('', 'shipping', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
@@ -360,7 +360,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		if (($action == 'SHIPPING_VALIDATE') || ($action == 'SHIPPING_CLOSED')) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			if (isModEnabled('order') && isModEnabled("delivery_note") && !empty($conf->workflow->enabled) &&
+			if (isModEnabled('order') && isModEnabled("shipping") && !empty($conf->workflow->enabled) &&
 				(
 					(getDolGlobalString('WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING') && ($action == 'SHIPPING_VALIDATE')) ||
 					(getDolGlobalString('WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED') && ($action == 'SHIPPING_CLOSED'))

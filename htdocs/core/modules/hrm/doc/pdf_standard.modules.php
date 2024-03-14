@@ -7,6 +7,7 @@
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
  * Copyright (C) 2020       Marc Guenneugues        <marc.guenneugues@simicar.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,7 +186,7 @@ class pdf_standard extends ModelePDFEvaluation
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 				// Set nblines with the new command lines content after hook
@@ -227,6 +228,7 @@ class pdf_standard extends ModelePDFEvaluation
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// New page
@@ -247,11 +249,11 @@ class pdf_standard extends ModelePDFEvaluation
 
 				// Show notes
 				if (!empty($object->note_public)) {
-					$tab_top = 65;
+					$tab_top = 65;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 
 					$pdf->SetFont('', 'B', $default_font_size);
 					$pdf->MultiCell(190, 4, $outputlangs->transnoentities("Notes") . ":", 0, 'L', 0, '', 12, $tab_top);
-					$tab_top +=4;
+					$tab_top += 4;
 					$pdf->SetFont('', '', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxnotes + 1, $tab_top + 1, dol_htmlentitiesbr($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
@@ -425,7 +427,7 @@ class pdf_standard extends ModelePDFEvaluation
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -435,7 +437,7 @@ class pdf_standard extends ModelePDFEvaluation
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {

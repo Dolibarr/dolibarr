@@ -242,7 +242,7 @@ class html_cerfafr extends ModeleDon
 				fclose($handle);
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1;
 			} else {
@@ -294,6 +294,13 @@ class html_cerfafr extends ModeleDon
 		$chif = array('', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix sept', 'dix huit', 'dix neuf');
 		$secon_c = '';
 		$trio_c = '';
+		$prim = array();
+		$secon = array();
+		$trio = array();
+		'@phan-var string[] $prim
+		 @phan-var string[] $secon
+		 @phan-var string[] $trio
+        ';
 		for ($i = 1; $i <= 3; $i++) {
 			$prim[$i] = '';
 			$secon[$i] = '';

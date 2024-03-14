@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2022 Ferran Marcet <fmarcet@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
-dol_include_once('/mrp/class/mo.class.php');
-dol_include_once('/mrp/lib/mrp_mo.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp_mo.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "stocks", "other"));
@@ -118,22 +119,22 @@ $objectlist = new MouvementStock($db);
 
 // Definition of fields for list
 $arrayfields = array(
-	'm.rowid'=>array('label'=>"Ref", 'checked'=>1, 'position'=>1),
-	'm.datem'=>array('label'=>"Date", 'checked'=>1, 'position'=>2),
-	'p.ref'=>array('label'=>"ProductRef", 'checked'=>1, 'css'=>'maxwidth100', 'position'=>3),
-	'p.label'=>array('label'=>"ProductLabel", 'checked'=>0, 'position'=>5),
-	'm.batch'=>array('label'=>"BatchNumberShort", 'checked'=>1, 'position'=>8, 'enabled'=>(isModEnabled('productbatch'))),
-	'pl.eatby'=>array('label'=>"EatByDate", 'checked'=>0, 'position'=>9, 'enabled'=>(isModEnabled('productbatch'))),
-	'pl.sellby'=>array('label'=>"SellByDate", 'checked'=>0, 'position'=>10, 'enabled'=>(isModEnabled('productbatch'))),
-	'e.ref'=>array('label'=>"Warehouse", 'checked'=>1, 'position'=>100, 'enabled'=>(!($id > 0))), // If we are on specific warehouse, we hide it
-	'm.fk_user_author'=>array('label'=>"Author", 'checked'=>0, 'position'=>120),
-	'm.inventorycode'=>array('label'=>"InventoryCodeShort", 'checked'=>1, 'position'=>130),
-	'm.label'=>array('label'=>"MovementLabel", 'checked'=>1, 'position'=>140),
-	'm.type_mouvement'=>array('label'=>"TypeMovement", 'checked'=>0, 'position'=>150),
-	'origin'=>array('label'=>"Origin", 'checked'=>1, 'position'=>155),
-	'm.fk_projet'=>array('label'=>'Project', 'checked'=>0, 'position'=>180),
-	'm.value'=>array('label'=>"Qty", 'checked'=>1, 'position'=>200),
-	'm.price'=>array('label'=>"UnitPurchaseValue", 'checked'=>0, 'position'=>210)
+	'm.rowid' => array('label' => "Ref", 'checked' => 1, 'position' => 1),
+	'm.datem' => array('label' => "Date", 'checked' => 1, 'position' => 2),
+	'p.ref' => array('label' => "ProductRef", 'checked' => 1, 'css' => 'maxwidth100', 'position' => 3),
+	'p.label' => array('label' => "ProductLabel", 'checked' => 0, 'position' => 5),
+	'm.batch' => array('label' => "BatchNumberShort", 'checked' => 1, 'position' => 8, 'enabled' => (isModEnabled('productbatch'))),
+	'pl.eatby' => array('label' => "EatByDate", 'checked' => 0, 'position' => 9, 'enabled' => (isModEnabled('productbatch'))),
+	'pl.sellby' => array('label' => "SellByDate", 'checked' => 0, 'position' => 10, 'enabled' => (isModEnabled('productbatch'))),
+	'e.ref' => array('label' => "Warehouse", 'checked' => 1, 'position' => 100, 'enabled' => (!($id > 0))), // If we are on specific warehouse, we hide it
+	'm.fk_user_author' => array('label' => "Author", 'checked' => 0, 'position' => 120),
+	'm.inventorycode' => array('label' => "InventoryCodeShort", 'checked' => 1, 'position' => 130),
+	'm.label' => array('label' => "MovementLabel", 'checked' => 1, 'position' => 140),
+	'm.type_mouvement' => array('label' => "TypeMovement", 'checked' => 0, 'position' => 150),
+	'origin' => array('label' => "Origin", 'checked' => 1, 'position' => 155),
+	'm.fk_projet' => array('label' => 'Project', 'checked' => 0, 'position' => 180),
+	'm.value' => array('label' => "Qty", 'checked' => 1, 'position' => 200),
+	'm.price' => array('label' => "UnitPurchaseValue", 'checked' => 0, 'position' => 210)
 	//'m.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	//'m.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500)
 );
@@ -520,7 +521,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$param .= '&limit='.((int) $limit);
 	}
 	if ($id > 0) {
-		$param .= '&id='.urlencode($id);
+		$param .= '&id='.urlencode((string) ($id));
 	}
 	if ($search_movement) {
 		$param .= '&search_movement='.urlencode($search_movement);
@@ -727,7 +728,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields);
+	$parameters = array('arrayfields' => $arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
@@ -1009,7 +1010,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (!empty($arrayfields['m.value']['checked'])) {
 			// Qty
 			print '<td class="right">';
-			if ($objp->qty >0) {
+			if ($objp->qty > 0) {
 				print '<span class="stockmovemententry">+'.$objp->qty.'</span>';
 			} else {
 				print '<span class="stockmovementexit">'.$objp->qty.'<span>';

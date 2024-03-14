@@ -246,7 +246,7 @@ class AdherentType extends CommonObject
 				} else {
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type_lang (fk_type, lang, label, description";
 					$sql2 .= ")";
-					$sql2 .= " VALUES(".$this->id.",'".$this->db->escape($key)."','".$this->db->escape($this->multilangs["$key"]["label"])."',";
+					$sql2 .= " VALUES(".((int) $this->id).",'".$this->db->escape($key)."','".$this->db->escape($this->multilangs["$key"]["label"])."',";
 					$sql2 .= " '".$this->db->escape($this->multilangs["$key"]["description"])."'";
 					$sql2 .= ")";
 				}
@@ -395,7 +395,7 @@ class AdherentType extends CommonObject
 		$sql .= "libelle = '".$this->db->escape($this->label)."',";
 		$sql .= "morphy = '".$this->db->escape($this->morphy)."',";
 		$sql .= "subscription = '".$this->db->escape($this->subscription)."',";
-		$sql .= "amount = ".((empty($this->amount) && $this->amount == '') ? 'null' : ((float) $this->amount)).",";
+		$sql .= "amount = ".((empty($this->amount) && $this->amount == '') ? "null" : ((float) $this->amount)).",";
 		$sql .= "caneditamount = ".((int) $this->caneditamount).",";
 		$sql .= "duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."',";
 		$sql .= "note = '".$this->db->escape($this->note_public)."',";

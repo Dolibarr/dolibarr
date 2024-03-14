@@ -4,6 +4,7 @@
  * Copyright (C) 2016       Florian Henry       <florian.henry@atm-consulting.fr>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -220,16 +221,15 @@ class CGenericDic extends CommonDict
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int    $limit     offset limit
-	 * @param int    $offset    offset limit
-	 * @param array  $filter    filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int Return integer <0 if KO, >0 if OK
+	 * @param string 		$sortorder 		Sort Order
+	 * @param string 		$sortfield 		Sort field
+	 * @param int    		$limit     		Limit
+	 * @param int    		$offset    		offset limit
+	 * @param string|array  $filter    		filter USF
+	 * @param string 		$filtermode 	filter mode (AND or OR)
+	 * @return int 							Return integer <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -243,23 +243,36 @@ class CGenericDic extends CommonDict
 		}
 
 		$sql = "SELECT";
-		$sql .= " t.".$fieldrowid.",";
+		$sql .= " t.".$this->db->sanitize($fieldrowid).",";
 		$sql .= " t.code,";
-		$sql .= " t.".$fieldlabel." as label,";
+		$sql .= " t.".$this->db->sanitize($fieldlabel)." as label,";
 		$sql .= " t.active";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+		if (is_array($filter)) {
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
+				}
 			}
+			if (count($sqlwhere) > 0) {
+				$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+			}
+
+			$filter = '';
 		}
 
-		if (count($sqlwhere) > 0) {
-			$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
+
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}

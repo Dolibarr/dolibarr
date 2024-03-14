@@ -146,7 +146,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && dol_eval($val['enabled'], 1)),
+			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -668,16 +668,16 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 if ($socid > 0) {
-	$param .= '&socid='.urlencode($socid);
+	$param .= '&socid='.urlencode((string) ($socid));
 }
 if ($search_societe) {
 	$param .= '&search_societe='.urlencode($search_societe);
 }
 if ($projectid > 0) {
-	$param .= '&projectid='.urlencode($projectid);
+	$param .= '&projectid='.urlencode((string) ($projectid));
 }
 if ($contractid > 0) {
-	$param .= '&contractid='.urlencode($contractid);
+	$param .= '&contractid='.urlencode((string) ($contractid));
 }
 if ($search_date_start) {
 	$tmparray = dol_getdate($search_date_start);

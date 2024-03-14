@@ -5,6 +5,7 @@
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,24 +102,24 @@ class Position extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>2, 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => '1', 'position' => 1, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
 		//'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
-		'fk_contrat' => array('type'=>'integer:Contrat:contrat/class/contrat.class.php', 'label'=>'fk_contrat', 'enabled'=>'isModEnabled("contract")', 'position'=>50, 'notnull'=>0, 'visible'=>0,),
-		'fk_user' => array('type'=>'integer:User:user/class/user.class.php:0:(t.statut:=:1)', 'label'=>'Employee', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>1, 'default'=>0, 'picto'=>'user', 'css'=>'maxwidth300 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
-		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'JobProfile', 'enabled'=>'1', 'position'=>56, 'notnull'=>1, 'visible'=>1, 'picto'=>'jobprofile', 'css'=>'maxwidth300 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
-		'date_start' => array('type'=>'date', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>101, 'notnull'=>1, 'visible'=>1,),
-		'date_end' => array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>102, 'notnull'=>0, 'visible'=>1,),
-		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>120, 'notnull'=>0, 'visible'=>3,),
-		'abort_comment' => array('type'=>'varchar(255)', 'label'=>'AbandonmentComment', 'enabled'=>'getDolGlobalInt("HRM_JOB_POSITON_ENDING_COMMENT")', 'position'=>502, 'notnull'=>0, 'visible'=>1,),
-		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>151, 'notnull'=>0, 'visible'=>0,),
-		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>152, 'notnull'=>0, 'visible'=>0,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => '1', 'position' => 500, 'notnull' => 1, 'visible' => -2,),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => '1', 'position' => 501, 'notnull' => 0, 'visible' => -2,),
+		'fk_contrat' => array('type' => 'integer:Contrat:contrat/class/contrat.class.php', 'label' => 'fk_contrat', 'enabled' => 'isModEnabled("contract")', 'position' => 50, 'notnull' => 0, 'visible' => 0,),
+		'fk_user' => array('type' => 'integer:User:user/class/user.class.php:0:(t.statut:=:1)', 'label' => 'Employee', 'enabled' => '1', 'position' => 55, 'notnull' => 1, 'visible' => 1, 'default' => 0, 'picto' => 'user', 'css' => 'maxwidth300 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'fk_job' => array('type' => 'integer:Job:/hrm/class/job.class.php', 'label' => 'JobProfile', 'enabled' => '1', 'position' => 56, 'notnull' => 1, 'visible' => 1, 'picto' => 'jobprofile', 'css' => 'maxwidth300 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'date_start' => array('type' => 'date', 'label' => 'DateStart', 'enabled' => '1', 'position' => 101, 'notnull' => 1, 'visible' => 1,),
+		'date_end' => array('type' => 'date', 'label' => 'DateEnd', 'enabled' => '1', 'position' => 102, 'notnull' => 0, 'visible' => 1,),
+		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => '1', 'position' => 120, 'notnull' => 0, 'visible' => 3,),
+		'abort_comment' => array('type' => 'varchar(255)', 'label' => 'AbandonmentComment', 'enabled' => 'getDolGlobalInt("HRM_JOB_POSITON_ENDING_COMMENT")', 'position' => 502, 'notnull' => 0, 'visible' => 1,),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => '1', 'position' => 151, 'notnull' => 0, 'visible' => 0,),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => '1', 'position' => 152, 'notnull' => 0, 'visible' => 0,),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => '1', 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => '1', 'position' => 511, 'notnull' => -1, 'visible' => -2,),
 	);
 	public $rowid;
 	public $ref;
@@ -365,18 +366,17 @@ class Position extends CommonObject
 	/**
 	 * Load list of objects in memory from the database.
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int $limit limit
-	 * @param int $offset Offset
-	 * @param array $filter Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
-	 * @param string $filtermode Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @param 	string 		$sortorder 		Sort Order
+	 * @param 	string 		$sortfield 		Sort field
+	 * @param 	int 		$limit 			limit
+	 * @param 	int 		$offset 		Offset
+	 * @param  	string		$filter       	Filter as an Universal Search string.
+	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  	string      $filtermode   	No more used
+	 * @return 	array|int                 	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -389,25 +389,14 @@ class Position extends CommonObject
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
+
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-					$sqlwhere[] = $key . '=' . $value;
-				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;
-				} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key . ' = \'' . $this->db->idate($value) . '\'';
-				} elseif (strpos($value, '%') === false) {
-					$sqlwhere[] = $key . ' IN (' . $this->db->sanitize($this->db->escape($value)) . ')';
-				} else {
-					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
-				}
-			}
-		}
-		if (count($sqlwhere) > 0) {
-			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {
@@ -978,7 +967,7 @@ class Position extends CommonObject
 		$this->lines = array();
 
 		$objectline = new PositionLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql' => 'fk_position = ' . $this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_position:=:'.((int) $this->id).')');
 
 		if (is_numeric($result)) {
 			$this->error = $objectline->error;
@@ -1055,7 +1044,7 @@ class Position extends CommonObject
 	{
 		$TPosition = array();
 
-		$TPosition = $this->fetchAll('ASC', 't.rowid', 0, 0, array('customsql' => 'fk_user=' . $userid));
+		$TPosition = $this->fetchAll('ASC', 't.rowid', 0, 0, '(fk_user:=:'.((int) $userid).')');
 
 		return $TPosition;
 	}

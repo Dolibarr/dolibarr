@@ -54,7 +54,7 @@ $DEPRECATED_MODULE_MAPPING = array(
 	'commande' => 'order',
 	'contrat' => 'contract',
 	'entrepot' => 'stock',
-	'expedition' => 'delivery_note',
+	'expedition' => 'shipping',
 	'facture' => 'invoice',
 	'ficheinter' => 'intervention',
 	'product_fournisseur_price' => 'productsupplierprice',
@@ -93,7 +93,7 @@ $VALID_MODULE_MAPPING = array(
 	'datapolicy' => 'DataPolicy',
 	'dav' => 'Dav',
 	'debugbar' => 'DebugBar',
-	'delivery_note' => 'Expedition',
+	'shipping' => 'Expedition',
 	'deplacement' => 'Deplacement',
 	"documentgeneration" => 'DocumentGeneration',
 	'don' => 'Don',
@@ -206,6 +206,26 @@ return [
 		'mysoc' => '\Societe',
 		'nblines' => '\int',
 		'user' => '\User',
+		'dolibarr_main_data_root' => 'string',
+		'dolibarr_main_authentication' => 'string',
+		'dolibarr_main_demo' => 'string',
+		'menumanager' => 'string',
+		'errormsg' => 'string',
+		'form' => '\Form',
+		'object_rights' => 'int|stdClass',
+		'disableedit' => 'int<0,1>',
+		'disablemove' => 'int<0,1>',
+		'disableremove' => 'int<0,1>',
+		// Found in dol_eval
+		'website' => '\WebSite',
+		'websitepage' => '\WebSitePage',
+		'websitepagefile' => 'string',
+		'action' => 'string',
+		'mainmenu' => 'string',
+		'leftmenu' => 'string',
+		'objectoffield' => '\CommonObject',
+		// 'object' => '\CommonObject',  // Deprecated, not enabled because conflicts with $object assignments
+		'obj' => '\CommonObject',     // Deprecated
 	],
 
 	// Supported values: `'5.6'`, `'7.0'`, `'7.1'`, `'7.2'`, `'7.3'`, `'7.4'`, `null`.
@@ -254,6 +274,7 @@ return [
 		.'|htdocs/includes/restler/.*'  // @phpstan-ignore-line
 		// Included as stub (did not seem properly analysed by phan without it)
 		.'|htdocs/includes/stripe/.*'  // @phpstan-ignore-line
+		.'|htdocs/conf/conf.php'  // @phpstan-ignore-line
 		.')@',  // @phpstan-ignore-line
 
 	// A list of plugin files to execute.
@@ -266,16 +287,15 @@ return [
 	// Alternately, you can pass in the full path to a PHP file
 	// with the plugin's implementation (e.g. 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php')
 	'ParamMatchRegexPlugin' => [
-		'/^GETPOST$/' => [1, $sanitizeRegex],
+		'/^GETPOST$/' => [1, $sanitizeRegex, 'GetPostUnknownSanitizeType'],
 		'/^isModEnabled$/' => [0, $moduleNameRegex, 'UnknownModuleName'],
 		// Note: trick to have different key for same regex:
 		'/^isModEnable[d]$/' => [0, $deprecatedModuleNameRegex, "DeprecatedModuleName"],
-		'/^sanitizeVal$/' => [1, $sanitizeRegex],
+		'/^sanitizeVal$/' => [1, $sanitizeRegex,"UnknownSanitizeType"],
 	],
 	'plugins' => [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
-		__DIR__.'/plugins/GetPostFixerPlugin.php',   // Only detects without --automatic-fix
 		'DeprecateAliasPlugin',
 		//'EmptyMethodAndFunctionPlugin',
 		'InvalidVariableIssetPlugin',
@@ -327,6 +347,8 @@ return [
 	// Add any issue types (such as 'PhanUndeclaredMethod')
 	// here to inhibit them from being reported
 	'suppress_issue_types' => [
+		'PhanCompatibleNegativeStringOffset',	// return false positive
+
 		'PhanPluginWhitespaceTab',		// Dolibarr used tabs
 		'PhanPluginCanUsePHP71Void',	// Dolibarr is maintaining 7.0 compatibility
 		'PhanPluginShortArray',			// Dolibarr uses array()
@@ -336,6 +358,7 @@ return [
 		'PhanPluginCanUseReturnType',			// Fixer - Report/Add return types in the function definition (function abc(string $var) (adds string)
 		'PhanPluginCanUseNullableParamType',	// Fixer - Report/Add nullable parameter types in the function definition
 		'PhanPluginCanUseNullableReturnType',	// Fixer - Report/Add nullable return types in the function definition
+
 		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
 		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
 		'PhanTypeMismatchArgument',			// Not essential - 12300+ occurrences

@@ -117,11 +117,11 @@ foreach ($object->fields as $key => $val) {
 	if (!empty($val['visible'])) {
 		$visible = (int) dol_eval($val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
-			'label'=>$val['label'],
-			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && dol_eval($val['enabled'], 1)),
-			'position'=>$val['position'],
-			'help'=> isset($val['help']) ? $val['help'] : ''
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? 0 : 1),
+			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
@@ -499,7 +499,7 @@ $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
 if (!empty($id)) {
-	$param .= '&id='.urlencode($id);
+	$param .= '&id='.urlencode((string) ($id));
 }
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
@@ -533,7 +533,7 @@ $param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
-	'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
+	'validate' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
 	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
@@ -562,8 +562,8 @@ print '<input type="hidden" name="id" value="'.$id.'">';
 
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/recruitment/recruitmentcandidature_card.php', 1).'?action=create&fk_recruitmentjobposition='.$id, '', $permissiontoadd);
 
@@ -662,7 +662,7 @@ foreach ($object->fields as $key => $val) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
@@ -704,7 +704,7 @@ foreach ($object->fields as $key => $val) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray'=>&$totalarray);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
@@ -761,7 +761,7 @@ while ($i < $imaxinloop) {
 				$selected = 1;
 			}
 		}
-		print $object->getKanbanView('', array('jobpositionlink'=>$recruitment->getNomUrl(1), 'selected' => $selected));
+		print $object->getKanbanView('', array('jobpositionlink' => $recruitment->getNomUrl(1), 'selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -838,7 +838,7 @@ while ($i < $imaxinloop) {
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Action column
@@ -880,7 +880,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

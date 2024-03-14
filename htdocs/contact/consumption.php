@@ -96,7 +96,7 @@ $result = restrictedArea($user, 'contact', $object->id, 'socpeople&societe');
  * Actions
  */
 
-$parameters = array('id'=>$id);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -152,6 +152,9 @@ print '<table class="border centpercent tableforfield">';
 print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
 print $object->getCivilityLabel();
 print '</td></tr>';
+
+$thirdTypeArray = array();
+$elementTypeArray = array();
 
 if (!empty($object->thirdparty->client)) {
 	$thirdTypeArray['customer'] = $langs->trans("customer");
@@ -365,12 +368,12 @@ $param .= "&month=".urlencode($month);
 $param .= "&year=".urlencode($year);
 $param .= "&sprod_fulldescr=".urlencode($sprod_fulldescr);
 if (!empty($socid)) {
-	$param .= "&socid=".urlencode($socid);
+	$param .= "&socid=".urlencode((string) ($socid));
 }
 $param .= "&type_element=".urlencode($type_element);
 
 $total_qty = 0;
-$num=0;
+$num = 0;
 if ($sql_select) {
 	$resql = $db->query($sql);
 	if (!$resql) {
@@ -379,7 +382,7 @@ if ($sql_select) {
 
 	$num = $db->num_rows($resql);
 
-	$param = (!empty($socid) ? "&socid=".urlencode($socid) : "")."&type_element=".urlencode($type_element)."&id=".urlencode($id);
+	$param = (!empty($socid) ? "&socid=".urlencode((string) ($socid)) : "")."&type_element=".urlencode((string) ($type_element))."&id=".urlencode((string) ($id));
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
@@ -393,10 +396,10 @@ if ($sql_select) {
 		$param .= "&sref=".urlencode($sref);
 	}
 	if ($month) {
-		$param .= "&month=".urlencode($month);
+		$param .= "&month=".urlencode((string) ($month));
 	}
 	if ($year) {
-		$param .= "&year=".urlencode($year);
+		$param .= "&year=".urlencode((string) ($year));
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);

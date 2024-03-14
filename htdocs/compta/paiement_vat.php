@@ -203,7 +203,7 @@ if ($action == 'create') {
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$datepaye = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 	$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? (GETPOSTINT("remonth") ? $datepaye : -1) : 0;
-	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
+	print $form->selectDate($datepayment, '', 0, 0, 0, "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 

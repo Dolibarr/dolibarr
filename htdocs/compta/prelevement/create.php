@@ -185,7 +185,7 @@ if (empty($reshook)) {
 					setEventMessages($texttoshow, null);
 				}
 
-				header("Location: ".DOL_URL_ROOT.'/compta/prelevement/card.php?id='.urlencode($bprev->id).'&type='.urlencode($type));
+				header("Location: ".DOL_URL_ROOT.'/compta/prelevement/card.php?id='.urlencode((string) ($bprev->id)).'&type='.urlencode((string) ($type)));
 				exit;
 			}
 		}
@@ -258,7 +258,7 @@ if ($sourcetype != 'salary') {
 	$pricetowithdraw = $bprev->SommeAPrelever($type, 'salary');
 }
 if ($nb < 0) {
-	dol_print_error($bprev->error);
+	dol_print_error($db, $bprev->error);
 }
 print '<table class="border centpercent tableforfield">';
 
@@ -462,7 +462,7 @@ if ($resql) {
 		$param .= '&limit='.((int) $limit);
 	}
 	if ($socid) {
-		$param .= '&socid='.urlencode($socid);
+		$param .= '&socid='.urlencode((string) ($socid));
 	}
 	if ($option) {
 		$param .= "&option=".urlencode($option);
@@ -479,7 +479,7 @@ if ($resql) {
 	}
 	$title = $langs->trans("InvoiceWaitingWithdraw");
 	$picto = 'bill';
-	if ($type =='bank-transfer') {
+	if ($type == 'bank-transfer') {
 		if ($sourcetype != 'salary') {
 			$title = $langs->trans("InvoiceWaitingPaymentByBankTransfer");
 		} else {

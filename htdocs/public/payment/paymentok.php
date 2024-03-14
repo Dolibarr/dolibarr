@@ -882,7 +882,7 @@ if ($ispaymentok) {
 				} else {
 					$paiement->multicurrency_amounts = array($object->id => $FinalPaymentAmt); // Array with all payments dispatching
 
-					$postactionmessages[] = 'Payment was done in a different currency that currency expected of company';
+					$postactionmessages[] = 'Payment was done in a currency ('.$currencyCodeType.') other than the expected currency of company ('.$conf->currency.')';
 					$ispostactionok = -1;
 					$error++; // Not yet supported
 				}
@@ -1011,7 +1011,7 @@ if ($ispaymentok) {
 						} else {
 							$paiement->multicurrency_amounts = array($invoice->id => $FinalPaymentAmt); // Array with all payments dispatching
 
-							$postactionmessages[] = 'Payment was done in a different currency that currency expected of company';
+							$postactionmessages[] = 'Payment was done in a currency ('.$currencyCodeType.') other than the expected currency of company ('.$conf->currency.')';
 							$ispostactionok = -1;
 							$error++;
 						}
@@ -1278,7 +1278,7 @@ if ($ispaymentok) {
 					} else {
 						$paiement->multicurrency_amounts = array($object->id => $FinalPaymentAmt); // Array with all payments dispatching
 
-						$postactionmessages[] = 'Payment was done in a different currency that currency expected of company';
+						$postactionmessages[] = 'Payment was done in a currency ('.$currencyCodeType.') other than the expected currency of company ('.$conf->currency.')';
 						$ispostactionok = -1;
 						$error++; // Not yet supported
 					}
@@ -1508,7 +1508,7 @@ if ($ispaymentok) {
 					} else {
 						$paiement->multicurrency_amounts = array($object->id => $FinalPaymentAmt); // Array with all payments dispatching
 
-						$postactionmessages[] = 'Payment was done in a different currency that currency expected of company';
+						$postactionmessages[] = 'Payment was done in a currency ('.$currencyCodeType.') other than the expected currency of company ('.$conf->currency.')';
 						$ispostactionok = -1;
 						$error++; // Not yet supported
 					}
@@ -1719,7 +1719,7 @@ if ($ispaymentok) {
 						} else {
 							$paiement->multicurrency_amounts = array($invoice->id => $FinalPaymentAmt); // Array with all payments dispatching
 
-							$postactionmessages[] = 'Payment was done in a different currency that currency expected of company';
+							$postactionmessages[] = 'Payment was done in a currency ('.$currencyCodeType.') other than the expected currency of company ('.$conf->currency.')';
 							$ispostactionok = -1;
 							$error++;
 						}

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  */
 
 /**
- * \file    lib/webportal.lib.php
+ * \file    htdocs/webportal/lib/webportal.lib.php
  * \ingroup webportal
  * \brief   Library files with common functions for WebPortal
  */
@@ -40,17 +41,17 @@ function webportalAdminPrepareHead()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/webportal/admin/setup.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '"/webportal/admin/setup.php';
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/webportal/admin/setup_theme.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/webportal/admin/setup_theme.php';
 	$head[$h][1] = $langs->trans("SkinAndColors");
 	$head[$h][2] = 'themesettings';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/webportal/admin/configcss.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/webportal/admin/configcss.php';
 	$head[$h][1] = $langs->trans("CSSPage");
 	$head[$h][2] = 'css';
 	$h++;

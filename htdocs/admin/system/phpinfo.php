@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020       Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,36 +54,36 @@ if (isset($title)) {
 $maxphp = @ini_get('upload_max_filesize'); // In unknown
 if (preg_match('/k$/i', $maxphp)) {
 	$maxphp = preg_replace('/k$/i', '', $maxphp);
-	$maxphp = $maxphp * 1;
+	$maxphp *= 1;
 }
 if (preg_match('/m$/i', $maxphp)) {
 	$maxphp = preg_replace('/m$/i', '', $maxphp);
-	$maxphp = $maxphp * 1024;
+	$maxphp *= 1024;
 }
 if (preg_match('/g$/i', $maxphp)) {
 	$maxphp = preg_replace('/g$/i', '', $maxphp);
-	$maxphp = $maxphp * 1024 * 1024;
+	$maxphp *= 1024 * 1024;
 }
 if (preg_match('/t$/i', $maxphp)) {
 	$maxphp = preg_replace('/t$/i', '', $maxphp);
-	$maxphp = $maxphp * 1024 * 1024 * 1024;
+	$maxphp *= 1024 * 1024 * 1024;
 }
 $maxphp2 = @ini_get('post_max_size'); // In unknown
 if (preg_match('/k$/i', $maxphp2)) {
 	$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
-	$maxphp2 = $maxphp2 * 1;
+	$maxphp2 *= 1;
 }
 if (preg_match('/m$/i', $maxphp2)) {
 	$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
-	$maxphp2 = $maxphp2 * 1024;
+	$maxphp2 *= 1024;
 }
 if (preg_match('/g$/i', $maxphp2)) {
 	$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
-	$maxphp2 = $maxphp2 * 1024 * 1024;
+	$maxphp2 *= 1024 * 1024;
 }
 if (preg_match('/t$/i', $maxphp2)) {
 	$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
-	$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+	$maxphp2 *= 1024 * 1024 * 1024;
 }
 if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2) {
 	$langs->load("errors");

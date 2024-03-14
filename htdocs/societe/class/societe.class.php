@@ -83,7 +83,7 @@ class Societe extends CommonObject
 	public $fieldsforcombobox = 'nom,name_alias';
 
 	/**
-	 * @var array	List of child tables. To test if we can delete object.
+	 * @var array<string, array<string>>	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
 		'supplier_proposal' => array('name' => 'SupplierProposal'),
@@ -101,7 +101,7 @@ class Societe extends CommonObject
 	);
 
 	/**
-	 * @var array    List of child tables. To know object to delete on cascade.
+	 * @var string[]	List of child tables. To know object to delete on cascade.
 	 *               if name like with @ClassName:FilePathClass:ParentFkFieldName' it will call method deleteByParentField (with parentId as parameters) and FieldName to fetch and delete child object
 	 */
 	protected $childtablesoncascade = array(
@@ -188,7 +188,7 @@ class Societe extends CommonObject
 	 */
 
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
@@ -1797,9 +1797,11 @@ class Societe extends CommonObject
 	 *    @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
 	 *    @param    string	$email   		Email of third party (Warning, this can return several records)
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
+	 * 	  @param	bool	$is_client		Is the thirdparty a client ?
+	 *    @param	bool	$is_supplier	Is the thirdparty a supplier ?
 	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
+	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = false, $is_supplier = false)
 	{
 		global $langs;
 		global $conf;
@@ -1869,6 +1871,15 @@ class Societe extends CommonObject
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise_supplier as sr2 ON sr2.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise_supplier WHERE fk_soc = s.rowid AND entity IN ('.getEntity('discount').'))';
 		}
 		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
+
+		// Filter on client or supplier, for Client::fetch() and Fournisseur::fetch()
+		if ($is_client) {
+			$sql .= ' AND s.client > 0';
+		}
+		if ($is_supplier) {
+			$sql .= ' AND s.fournisseur > 0';
+		} // if both false, no test (the thirdparty can be client and/or supplier)
+
 		if ($rowid) {
 			$sql .= ' AND s.rowid = '.((int) $rowid);
 		}
@@ -2100,7 +2111,7 @@ class Societe extends CommonObject
 	 */
 	public function delete($id, User $fuser = null, $call_trigger = 1)
 	{
-		global $langs, $conf, $user;
+		global $conf, $user;
 
 		if (empty($fuser)) {
 			$fuser = $user;
@@ -2151,7 +2162,7 @@ class Societe extends CommonObject
 
 			if (!$error) {
 				foreach ($this->childtablesoncascade as $tabletodelete) {
-					$deleteFromObject = explode(':', $tabletodelete);
+					$deleteFromObject = explode(':', $tabletodelete, 4);
 					if (count($deleteFromObject) >= 2) {
 						$className = str_replace('@', '', $deleteFromObject[0]);
 						$filepath = $deleteFromObject[1];
@@ -3329,6 +3340,7 @@ class Societe extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 
 		$bac = new CompanyBankAccount($this->db);
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$bac->fetch(0, $this->id);
 
 		if ($bac->id > 0) {		// If a bank account has been found for company $this->id
@@ -4939,7 +4951,7 @@ class Societe extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $user, $langs;
+		global $langs;
 
 		if (!empty($moreparams) && !empty($moreparams['use_companybankid'])) {
 			$modelpath = "core/modules/bank/doc/";
@@ -4966,6 +4978,7 @@ class Societe extends CommonObject
 			if (!isset($this->bank_account)) {
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 				$bac = new CompanyBankAccount($this->db);
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$result = $bac->fetch(0, $this->id);
 				if ($result > 0) {
 					$this->bank_account = $bac;
@@ -5141,7 +5154,6 @@ class Societe extends CommonObject
 
 		$this->db->begin();
 
-		$field = 'accountancy_code_sell';
 		if ($type == 'buy') {
 			$field = 'accountancy_code_buy';
 		} elseif ($type == 'sell') {

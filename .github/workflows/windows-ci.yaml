@@ -55,6 +55,8 @@ jobs:
         id: cache
         uses: actions/cache/restore@v4
         with:
+          # See https://github.com/actions/cache/issues/1275#issuecomment-1925217178
+          enableCrossOsArchive: true 
           path: |
             db_init.sql
             db_init.sql.md5
@@ -112,7 +114,7 @@ jobs:
           curl "http://${{ env.PHPSERVER_DOMAIN_PORT }}"
         shell: powershell
       - name: Run PHPUnit tests
-        continue-on-error: true
+        # continue-on-error: true
         shell: cmd
         # setting up php.ini, starting the php server are currently in this step
         run: |-
@@ -141,7 +143,7 @@ jobs:
           cat htdocs/conf/conf.php
           curl "http://${{ env.PHPSERVER_DOMAIN_PORT }}"
           REM 'DOSKEY' USED to recover error code (no pipefile equivalent in windows?)
-          ( php "%PHPROOT%\phpunit" -d memory_limit=-1 -c %CD%\test\phpunit\phpunittest.xml "test\phpunit\AllTests.php" & call doskey /exename=err err=%%^^errorlevel%% ) | "${{ env.TEE }}" "${{ env.PHPUNIT_LOG }}"
+          ( php "%PHPROOT%\phpunit" -d memory_limit=-1 -c %CD%\test\phpunit\phpunittest.xml "test\phpunit\AllTests.php" --exclude-group WindowsWaitingForFix & call doskey /exename=err err=%%^^errorlevel%% ) | "${{ env.TEE }}" "${{ env.PHPUNIT_LOG }}"
           for /f "tokens=2 delims==" %%A in ('doskey /m:err') do EXIT /B %%A
       - name: Convert Raw Log to Annotations
         uses: mdeweerd/logToCheckStyle@v2024.2.9
@@ -166,5 +168,7 @@ jobs:
         uses: actions/cache/save@v4
         if: ${{ ! cancelled() }}
         with:
+          # See https://github.com/actions/cache/issues/1275#issuecomment-1925217178
+          enableCrossOsArchive: true 
           key: ${{ steps.cache.outputs.cache-primary-key }}
           path: db_init.*

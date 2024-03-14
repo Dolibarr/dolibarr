@@ -813,9 +813,9 @@ class MouvementStock extends CommonObject
 	 * 	@param		int				$qty			    	Quantity
 	 * 	@param		int				$price			    	Price
 	 * 	@param		string			$label			    	Label of stock movement
-	 * 	@param		integer|string	$datem			    	Force date of movement
-	 *	@param		integer			$eatby			    	eat-by date
-	 *	@param		integer			$sellby			    	sell-by date
+	 * 	@param		int|string		$datem			    	Force date of movement
+	 *	@param		int|string		$eatby			    	eat-by date
+	 *	@param		int|string		$sellby			    	sell-by date
 	 *	@param		string			$batch			    	batch number
 	 * 	@param		int				$id_product_batch		Id product_batch
 	 *  @param      string  		$inventorycode      	Inventory code

@@ -356,7 +356,7 @@ print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("
 print '</td>'."\n";
 print '</tr>'."\n";
 
-$result = $object->fetchAll($sortorder, $sortfield, 0, 0, array('t.type'=>$mode,'t.entity'=>array($user->entity,$conf->entity)));
+$result = $object->fetchAll($sortorder, $sortfield, 0, 0, array('t.type'=>$mode, 't.entity'=>array($user->entity,$conf->entity)));
 
 if (!is_array($result) && $result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');

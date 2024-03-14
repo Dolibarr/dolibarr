@@ -233,7 +233,7 @@ if (empty($reshook)) {
 							$line->fetch_product();
 						}
 						if (is_object($line->product) && $line->product->id > 0) {
-							if (empty($line->product->tosell)) {
+							if (empty($line->product->status)) {
 								$warningMsgLineList[$line->id] = $langs->trans('WarningLineProductNotToSell', $line->product->ref);
 							}
 						}
@@ -834,7 +834,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'import_lines_from_object'
 		&& $user->hasRight('propal', 'creer')
 		&& $object->statut == Propal::STATUS_DRAFT
-		) {
+	) {
 		// add lines from objectlinked
 		$fromElement = GETPOST('fromelement');
 		$fromElementid = GETPOST('fromelementid');
@@ -964,7 +964,7 @@ if (empty($reshook)) {
 		// Define margin
 		$margin_rate = (GETPOST('marginforalllines') ? GETPOST('marginforalllines') : 0);
 		foreach ($object->lines as &$line) {
-			$subprice = price2num($line->pa_ht * (1 + $margin_rate/100), 'MU');
+			$subprice = price2num($line->pa_ht * (1 + $margin_rate / 100), 'MU');
 			$prod = new Product($db);
 			$prod->fetch($line->fk_product);
 			if ($prod->price_min > $subprice) {
@@ -1083,7 +1083,7 @@ if (empty($reshook)) {
 			$pu_ttc_devise = 0;
 			$price_min = 0;
 			$price_min_ttc = 0;
-			$tva_npr=0;
+			$tva_npr = 0;
 			$price_base_type = (GETPOST('price_base_type', 'alpha') ? GETPOST('price_base_type', 'alpha') : 'HT');
 
 			$db->begin();
@@ -1245,8 +1245,8 @@ if (empty($reshook)) {
 				}
 
 				//If text set in desc is the same as product description (as now it's preloaded) we add it only one time
-				if ($product_desc==$desc && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
-					$product_desc='';
+				if ($product_desc == $desc && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
+					$product_desc = '';
 				}
 
 				if (!empty($product_desc) && getDolGlobalString('MAIN_NO_CONCAT_DESCRIPTION')) {
@@ -1963,7 +1963,7 @@ if ($action == 'create') {
 
 			$thirdparty = $soc;
 			$discount_type = 0;
-			$backtopage = $_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.urlencode(GETPOST('origin')).'&originid='.urlencode(GETPOSTINT('originid'));
+			$backtopage = $_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.urlencode((string) (GETPOST('origin'))).'&originid='.urlencode((string) (GETPOSTINT('originid')));
 			include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
 			print '</td></tr>';
 		}
@@ -1971,7 +1971,7 @@ if ($action == 'create') {
 		// Date
 		print '<tr class="field_addprop"><td class="titlefieldcreate fieldrequired">'.$langs->trans('DatePropal').'</td><td class="valuefieldcreate">';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		print $form->selectDate('', '', '', '', '', "addprop", 1, 1);
+		print $form->selectDate('', '', 0, 0, 0, "addprop", 1, 1);
 		print '</td></tr>';
 
 		// Validaty duration
@@ -2004,7 +2004,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Shipping Method
-		if (isModEnabled("delivery_note")) {
+		if (isModEnabled("shipping")) {
 			if (getDolGlobalString('SOCIETE_ASK_FOR_SHIPPING_METHOD') && !empty($soc->shipping_method_id)) {
 				$shipping_method_id = $soc->shipping_method_id;
 			}
@@ -2042,9 +2042,9 @@ if ($action == 'create') {
 			$syear = date("Y", $tmpdte);
 			$smonth = date("m", $tmpdte);
 			$sday = date("d", $tmpdte);
-			print $form->selectDate($syear."-".$smonth."-".$sday, 'date_livraison', '', '', '', "addprop");
+			print $form->selectDate($syear."-".$smonth."-".$sday, 'date_livraison', 0, 0, 0, "addprop");
 		} else {
-			print $form->selectDate(-1, 'date_livraison', '', '', '', "addprop", 1, 1);
+			print $form->selectDate(-1, 'date_livraison', 0, 0, 0, "addprop", 1, 1);
 		}
 		print '</td></tr>';
 
@@ -2582,7 +2582,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-			print $form->selectDate($object->date, 're', '', '', 0, "editdate");
+			print $form->selectDate($object->date, 're', 0, 0, 0, "editdate");
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
@@ -2610,7 +2610,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setecheance">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-			print $form->selectDate($object->fin_validite, 'ech', '', '', '', "editecheance");
+			print $form->selectDate($object->fin_validite, 'ech', 0, 0, 0, "editecheance");
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
@@ -2695,7 +2695,7 @@ if ($action == 'create') {
 		print '</tr>';
 
 		// Shipping Method
-		if (isModEnabled("delivery_note")) {
+		if (isModEnabled("shipping")) {
 			print '<tr><td>';
 			print '<table class="nobordernopadding centpercent"><tr><td>';
 			print $langs->trans('SendingMethod');
@@ -2884,45 +2884,49 @@ if ($action == 'create') {
 
 		print '<tr>';
 		print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
-		print '<td class="nowrap amountcard right">' . price($object->total_ht, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($object->total_ht, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ht, '', $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
+			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ht, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 		}
 		print '</tr>';
 
 		print '<tr>';
 		print '<td class="titlefieldmiddle">' . $langs->trans('AmountVAT') . '</td>';
-		print '<td class="nowrap amountcard right">' . price($object->total_tva, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($object->total_tva, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_tva, '', $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
+			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_tva, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 		}
 		print '</tr>';
 
 		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) {
 			print '<tr>';
 			print '<td class="titlefieldmiddle">' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
-			print '<td class="nowrap amountcard right">' . price($object->total_localtax1, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
+			print '<td class="nowrap amountcard right">' . price($object->total_localtax1, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-				print '<td class="nowrap amountcard right">' . price($object->total_localtax1, '', $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
+				$object->multicurrency_total_localtax1 = price2num($object->total_localtax1 * $object->multicurrency_tx, 'MT');
+
+				print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_localtax1, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 			}
 			print '</tr>';
+		}
 
-			if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) {
-				print '<tr>';
-				print '<td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
-				print '<td class="nowrap amountcard right">' . price($object->total_localtax2, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
-				if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-					print '<td class="nowrap amountcard right">' . price($object->total_localtax2, '', $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
-				}
-				print '</tr>';
+		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) {
+			print '<tr>';
+			print '<td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
+			print '<td class="nowrap amountcard right">' . price($object->total_localtax2, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
+			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+				$object->multicurrency_total_localtax2 = price2num($object->total_localtax2 * $object->multicurrency_tx, 'MT');
+
+				print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_localtax2, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 			}
+			print '</tr>';
 		}
 
 		print '<tr>';
 		print '<td>' . $langs->trans('AmountTTC') . '</td>';
-		print '<td class="nowrap amountcard right">' . price($object->total_ttc, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ttc, '', $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
+			print '<td class="nowrap amountcard right">' . price($object->multicurrency_total_ttc, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 		}
 		print '</tr>';
 

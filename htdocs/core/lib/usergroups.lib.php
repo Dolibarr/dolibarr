@@ -4,6 +4,8 @@
  * Copyright (C) 2015	    Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2021-2023  Anthony Berton      <anthony.berton@bb2a.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,7 +147,7 @@ function user_prepare_head(User $object)
 		|| (isModEnabled('hrm') && $user->hasRight('hrm', 'employee', 'read'))
 		|| (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire') && ($user->id == $object->id || $user->hasRight('expensereport', 'readall')))
 		|| (isModEnabled('holiday') && $user->hasRight('holiday', 'read') && ($user->id == $object->id || $user->hasRight('holiday', 'readall')))
-		) {
+	) {
 		// Bank
 		$head[$h][0] = DOL_URL_ROOT.'/user/bank.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("HRAndBank");
@@ -187,7 +189,7 @@ function user_prepare_head(User $object)
 
 		$head[$h][0] = DOL_URL_ROOT.'/user/agenda.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Events");
-		if (isModEnabled('agenda')&& ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+		if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 			$nbEvent = 0;
 			// Enable caching of thirdparty count actioncomm
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -196,10 +198,10 @@ function user_prepare_head(User $object)
 			if (!is_null($dataretrieved)) {
 				$nbEvent = $dataretrieved;
 			} else {
-				$sql = "SELECT COUNT(id) as nb";
-				$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
-				$sql .= " WHERE fk_user_done = ".((int) $object->id);
-				$sql .= " AND entity IN (".getEntity('agenda').")";
+				$sql = "SELECT COUNT(ac.id) as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as ac";
+				$sql .= " WHERE ac.fk_user_action = ".((int) $object->id);
+				$sql .= " AND ac.entity IN (".getEntity('agenda').")";
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -237,7 +239,7 @@ function group_prepare_head($object)
 
 	$canreadperms = true;
 	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-		$canreadperms = ($user->admin || $user->rights->user->group_advance->readperms);
+		$canreadperms = ($user->admin || $user->hasRight('user', 'group_advance', 'readperms'));
 	}
 
 	$h = 0;
@@ -490,7 +492,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	$colorbacklinepair2 = '';
 	$colortextlink = '';
 	$colorbacklinepairhover = '';
-	$colorbacklinepairhover = '';
 	$colorbacklinepairchecked = '';
 	$butactionbg = '';
 	$textbutaction = '';
@@ -504,17 +505,17 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		//Nothing
 	} else {
 		$listofdarkmodes = array(
-			'0' => $langs->trans("AlwaysDisabled"),
-			'1' => $langs->trans("AccordingToBrowser"),
-			'2' => $langs->trans("AlwaysEnabled")
+			$langs->trans("AlwaysDisabled"),
+			$langs->trans("AccordingToBrowser"),
+			$langs->trans("AlwaysEnabled")
 		);
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("DarkThemeMode").'</td>';
 		print '<td colspan="'.($colspan - 1).'">';
 		if ($edit) {
-			print $form->selectarray('THEME_DARKMODEENABLED', $listofdarkmodes, isset($conf->global->THEME_DARKMODEENABLED) ? $conf->global->THEME_DARKMODEENABLED : 0);
+			print $form->selectarray('THEME_DARKMODEENABLED', $listofdarkmodes, getDolGlobalInt('THEME_DARKMODEENABLED'));
 		} else {
-			print $listofdarkmodes[isset($conf->global->THEME_DARKMODEENABLED) ? $conf->global->THEME_DARKMODEENABLED : 0];
+			print $listofdarkmodes[getDolGlobalInt('THEME_DARKMODEENABLED')];
 		}
 		print $form->textwithpicto('', $langs->trans("DoesNotWorkWithAllThemes"));
 		print '</tr>';
@@ -545,11 +546,11 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		 print '</td>';*/
 	} else {
 		$listoftopmenumodes = array(
-			'0' => $langs->transnoentitiesnoconv("IconAndText"),
-			'1' => $langs->transnoentitiesnoconv("TextOnly"),
-			'2' => $langs->transnoentitiesnoconv("IconOnlyAllTextsOnHover"),
-			'3' => $langs->transnoentitiesnoconv("IconOnlyTextOnHover"),
-			'4' => $langs->transnoentitiesnoconv("IconOnly"),
+			$langs->transnoentitiesnoconv("IconAndText"),
+			$langs->transnoentitiesnoconv("TextOnly"),
+			$langs->transnoentitiesnoconv("IconOnlyAllTextsOnHover"),
+			$langs->transnoentitiesnoconv("IconOnlyTextOnHover"),
+			$langs->transnoentitiesnoconv("IconOnly"),
 		);
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("TopMenuDisableImages").'</td>';
@@ -637,13 +638,10 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print (empty($dolibarr_main_demo) && $edit)?'':' disabled="disabled"';	// Disabled for demo
 		print '> '.$langs->trans("UsePersonalValue").'</td>';
 		print '<td>';
-		if ($edit)
-		{
+		if ($edit) {
 			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),''),'THEME_ELDY_TOPMENU_BACK1','',1).' ';
-		}
-		   else
-		   {
-			   $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),'');
+		} else {
+			$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),'');
 			if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 			else print '';
 		   }

@@ -236,7 +236,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 
 			if (!$notrigger) {
 				// Call triggers
-				$result=$this->call_trigger('LINERECEPTION_CREATE', $user);
+				$result = $this->call_trigger('LINERECEPTION_CREATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -646,22 +646,20 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int    $limit     offset limit
-	 * @param int    $offset    offset limit
-	 * @param array  $filter    filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int Return integer <0 if KO, >0 if OK
+	 * @param string 		$sortorder 		Sort Order
+	 * @param string 		$sortfield 		Sort field
+	 * @param int    		$limit     		limit
+	 * @param int    		$offset    		offset limit
+	 * @param string|array  $filter    		filter array
+	 * @param string 		$filtermode 	filter mode (AND or OR)
+	 * @return 								int Return integer <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-
 		$sql .= " t.fk_commande,";
 		$sql .= " t.fk_product,";
 		$sql .= " t.fk_commandefourndet,";
@@ -675,26 +673,38 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$sql .= " t.batch,";
 		$sql .= " t.eatby,";
 		$sql .= " t.sellby";
-
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.comment') {
-					$sqlwhere [] = $key." LIKE '%".$this->db->escape($value)."%'";
-				} elseif ($key == 't.datec' || $key == 't.tms' || $key == 't.eatby' || $key == 't.sellby' || $key == 't.batch') {
-					$sqlwhere [] = $key." = '".$this->db->escape($value)."'";
-				} elseif ($key == 'qty') {
-					$sqlwhere [] = $key." = ".((float) $value);
-				} else {
-					$sqlwhere [] = $key." = ".((int) $value);
+		if (is_array($filter)) {
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.comment') {
+						$sqlwhere [] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+					} elseif ($key == 't.datec' || $key == 't.tms' || $key == 't.eatby' || $key == 't.sellby' || $key == 't.batch') {
+						$sqlwhere [] = $this->db->sanitize($key)." = '".$this->db->escape($value)."'";
+					} elseif ($key == 'qty') {
+						$sqlwhere [] = $this->db->sanitize($key)." = ".((float) $value);
+					} else {
+						$sqlwhere [] = $this->db->sanitize($key)." = ".((int) $value);
+					}
 				}
 			}
+			if (count($sqlwhere) > 0) {
+				$sql .= ' WHERE '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+			}
+
+			$filter = '';
 		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {
