@@ -1421,7 +1421,7 @@ class pdf_vinci extends ModelePDFMo
 			'status' => true,
 			'width' => 25, // in mm
 			'title' => array(
-				'textkey' => 'Size'
+				'textkey' => 'Dimensions'
 			),
 			'border-left' => true, // add left line separator
 		);
