@@ -1244,7 +1244,8 @@ class Website extends CommonObject
 		$arrayreplacement['__LOGO_MINI_KEY__'] = $this->db->escape($mysoc->logo_mini);
 		$arrayreplacement['__LOGO_KEY__'] = $this->db->escape($mysoc->logo);
 
-		// Copy containers
+
+		// Copy containers directory
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/containers', $conf->website->dir_output.'/'.$object->ref, 0, 1); // Overwrite if exists
 
 		// Make replacement into css and htmlheader file
@@ -1297,7 +1298,7 @@ class Website extends CommonObject
 
 		$objectpagestatic = new WebsitePage($this->db);
 
-		// Make replacement of IDs
+		// Regenerate the php files for pages
 		$fp = fopen($sqlfile, "r");
 		if ($fp) {
 			while (!feof($fp)) {
@@ -1367,7 +1368,7 @@ class Website extends CommonObject
 			}
 		}
 
-		// Regenerate index page to point to the new index page
+		// Regenerate the index.php page to point to the new index page
 		$pathofwebsite = $conf->website->dir_output.'/'.$object->ref;
 		dolSaveIndexPage($pathofwebsite, $pathofwebsite.'/index.php', $pathofwebsite.'/page'.$object->fk_default_home.'.tpl.php', $pathofwebsite.'/wrapper.php', $object);
 
@@ -1705,172 +1706,19 @@ class Website extends CommonObject
 		// Export on target sources
 		$resultarray = dol_uncompress($pathtotmpzip, $destdir);
 
+		// Remove the file README and LICENSE from the $destdir (already into the containers directory)
+		dol_delete_file($destdir.'/README.md');
+		dol_delete_file($destdir.'/LICENSE');
+
+		// Remove non required files (will be re-generated during the import)
+		dol_delete_file($destdir.'/containers/index.php');
+		dol_delete_file($destdir.'/containers/master.inc.php');
+
 		if (!empty($resultarray)) {
 			setEventMessages("Error, failed to unzip the export into target dir", null, 'errors');
 		} else {
 			setEventMessages("Website content written into ".$destdirrel, null, 'mesgs');
 		}
-
-		/*
-		$sourcedir = $conf->website->dir_output."/".$website->ref;
-
-		// Get array with hash of files (for the last sync)
-		$fichierEtat = $sourcedir . '/filelist-'.dol_sanitizeFileName($destdir).'.txt';
-		$etatPrecedent = $this->checkPreviousState($fichierEtat);
-
-		// Get list of all source files of the website
-		$arraySourcedir = dol_dir_list($sourcedir);
-
-		// Get list of modified files
-		$modifications = [];
-		foreach ($arraySourcedir as $file) {
-			if (substr($file['name'], -4) === '.old') {
-				continue;
-			}
-			$hashActuel = hash_file('md5', $file['fullname']);
-
-			// Check whether the file is new or has been modified
-			if (!isset($etatPrecedent[$file['name']]) || $etatPrecedent[$file['name']] !== $hashActuel) {
-				$modifications[] = $file;
-			}
-
-			$etatPrecedent[$file['name']] = $hashActuel;	// we store he new hash to record it later on disk.
-		}
-
-		$arraydestdir = dol_dir_list($destdir, "all", 1);
-		$differences = [];
-		$names = array_column($arraydestdir, 'name');
-		$namesSource = array_column($arraySourcedir, 'name');
-
-		if (count($modifications) > 1) {
-			foreach ($modifications as $fichierModifie) {
-				$nomFichierModifie = $fichierModifie['name'];
-				if ($nomFichierModifie == basename($fichierEtat)) {
-					continue;
-				}
-				$success = 0;
-
-				//check if it is a new file
-				if ((!preg_match('/^page\d+\.tpl\.php$/', $nomFichierModifie)) && (!in_array($nomFichierModifie, $names))) {
-					if (file_exists($fichierModifie['fullname']) && dol_is_dir($destdir.'/containers')) {
-						$cp = dol_copy($fichierModifie['fullname'], $destdir.'/containers/'.$nomFichierModifie, '0664');
-						if ($cp > 0) {
-							if (file_exists($destdir.'/containers/'.$nomFichierModifie)) {
-								$tabnumpage = array();
-								foreach ($arraydestdir as $fileDest) {
-									if ($this->extractNumberFromFilename($fileDest['name']) !== -1) {
-										$tabnumpage[] = $this->extractNumberFromFilename($fileDest['name']);
-									}
-								}
-								$getContentSource = file_get_contents($destdir.'/containers/'.$nomFichierModifie);
-								$nextpage = max($tabnumpage) + 1;
-								$chaineModifiee = preg_replace('/page\d+\.tpl\.php/', 'page' . $nextpage . '.tpl.php', $getContentSource);
-								$write = file_put_contents($destdir.'/containers/'.$nomFichierModifie, $chaineModifiee);
-								if ($write !== false) {
-									if (!touch($destdir.'/containers/'."page" . $nextpage . ".tpl.php")) {
-										setEventMessages("Please check permission to create  <b>page" . $nextpage . ".tpl.php</b> in template <b>".$website->name_template."</b>", null, 'errors');
-									}
-									$filesFound = '';
-									foreach ($arraySourcedir as $file) {
-										if ($file['name'] == $nomFichierModifie) {
-											$fileContent = file_get_contents($file['fullname']);
-											$matches = array();
-											if (preg_match("/page\d+\.tpl\.php/", $fileContent, $matches)) {
-												$filesFound = $matches[0];
-												break;
-											}
-										}
-									}
-									foreach ($arraySourcedir as $file) {
-										if ($file['name'] == $filesFound) {
-											if (!is_writable($file['fullname'])) {
-												dolChmod($file['fullname'], '0664');
-											}
-											$diff = $this->showDifferences(file_get_contents($destdir.'/containers/'."page" . $nextpage . ".tpl.php"), file_get_contents($file['fullname']), array($nextpage,$this->extractNumberFromFilename($file['name'])));
-											if ($diff != -1) {
-												$replace = $this->replaceLineUsingNum($destdir.'/containers/'."page" . $nextpage . ".tpl.php", $diff);
-												if ($replace !== false) {
-													setEventMessages("Copy file <b>page".$nextpage.".tpl.php</b> in template <b>".$this->name_template."</b> with success", null, 'warnings');
-												}
-											}
-										}
-									}
-								}
-							}
-
-							$this->saveState($etatPrecedent, $fichierEtat);
-							setEventMessages("file <b>".$nomFichierModifie."</b> was created in template <b>".$website->name_template."</b>", null, 'warnings');
-
-							header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
-							exit();
-						}
-					} else {
-						setEventMessages("Error, target dir containers not found", null, 'errors');
-						$error = 1;
-						break;
-					}
-				}
-
-				// Find the corresponding file in the destination folder
-				if (!$error && in_array($nomFichierModifie, $namesSource)) {
-					foreach ($arraydestdir as $destFile) {
-						if ($destFile['name'] == $nomFichierModifie) {
-							$sourceContent = file_get_contents($fichierModifie['fullname']);
-							$destContent = file_get_contents($destFile['fullname']);
-
-							if ($sourceContent !== $destContent) {
-								$differences[$nomFichierModifie] = $this->showDifferences($destContent, $sourceContent);
-								if (count($differences[$nomFichierModifie]) > 0) {
-									$result = $this->replaceLineUsingNum($destFile['fullname'], $differences[$nomFichierModifie]);
-									if ($result >= 0) {
-										setEventMessages("file <b>".$nomFichierModifie."</b> was modified in template <b>".$website->name_template."</b>", null, 'warnings');
-									} else {
-										if ($result == -2) {
-											setEventMessages("No permissions to write into file <b>".$destdirrel.'/'.$nomFichierModifie."</b> from the current website <b>".$website->name_template."</b>", null, 'errors');
-
-											header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
-											exit();
-										}
-										setEventMessages("file ".$nomFichierModifie." was not modified", null, 'errors');
-									}
-								}
-							}
-						}
-
-						if (preg_match('/page(\d+)\.tpl\.php/', $nomFichierModifie)) {
-							$differences[$nomFichierModifie] = $this->compareFichierModifie($sourcedir, $destdir, $fichierModifie);
-							if (count($differences[$nomFichierModifie]) > 0) {
-								$result = $this->replaceLineUsingNum($differences[$nomFichierModifie]['file_destination']['fullname'], $differences[$nomFichierModifie]);
-								if ($result !== false) {
-									if ($result == -2) {
-										setEventMessages("No permissions to write into file <b>".$destdirrel.'/'.$differences[$nomFichierModifie]['file_destination']['name']."</b> from the current website <b>".$website->name_template."</b>", null, 'errors');
-										header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
-										exit();
-									}
-									$success++;
-								}
-							}
-						}
-					}
-				}
-			}
-			if ($success > 0) {
-				// Save the state file filelist.txt
-				$this->saveState($etatPrecedent, $fichierEtat);
-				setEventMessages("file <b>".$differences[$nomFichierModifie]['file_destination']['name']."</b> was modified in template <b>".$website->name_template."</b>", null, 'warnings');
-
-				header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
-				exit();
-			}
-		} else {
-			setEventMessages("No file has been modified", null, 'errors');
-		}
-
-		// save state file
-		if (!$error) {
-			$this->saveState($etatPrecedent, $fichierEtat);
-		}
-		*/
 
 		header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
 		exit();
@@ -1938,38 +1786,6 @@ class Website extends CommonObject
 	{
 		return file_put_contents($pathname, serialize($etat));
 	}
-
-	/**
-	 * create file for save state of all files in folder
-	 *
-	 * @param string  $sourcedir   path of folder
-	 * @return void
-	 */
-	/*
-	public function initFilesStatus($sourcedir)
-	{
-		$fichierEtat = $sourcedir . '/filelist-lastwrite-doctemplates.txt';
-
-		$etatPrecedent = $this->checkPreviousState($fichierEtat);
-
-		// for first save state when create file
-		if (empty($etatPrecedent)) {
-			$arraySourcedir = dol_dir_list($sourcedir, "files");
-			$etatFichiers = [];
-
-			foreach ($arraySourcedir as $file) {
-				// Ignore .old files and the status file itself
-				if (substr($file['name'], -4) === '.old' || $file['name'] === basename($fichierEtat)) {
-					continue;
-				}
-
-				$hashActuel = hash_file('md5', $file['fullname']);
-				$etatFichiers[$file['name']] = $hashActuel;
-			}
-			$this->saveState($etatFichiers, $fichierEtat);
-		}
-	}
-	*/
 
 	/**
 	 * Compare two files has not same name but same content
