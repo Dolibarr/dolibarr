@@ -57,4 +57,3 @@ dur
 fonction
 espace
 methode
-datee
