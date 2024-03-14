@@ -272,3 +272,13 @@ $sessionname = 'DOLSESSID_'.$prefix;
 
 $_COOKIE[$sessionname] = 'obfuscatedcookie';
 unset($conf->file->instance_unique_id);
+
+unset($dolibarr_main_instance_unique_id);
+unset($dolibarr_main_db_host);
+unset($dolibarr_main_db_port);
+unset($dolibarr_main_db_name);
+unset($dolibarr_main_db_user);
+unset($dolibarr_main_db_pass);
+unset($$dolibarr_main_db_type);
+unset($dolibarr_main_document_root);
+unset($dolibarr_main_document_root_alt);
