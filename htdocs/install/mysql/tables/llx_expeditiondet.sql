@@ -24,6 +24,8 @@ create table llx_expeditiondet
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   fk_expedition     integer NOT NULL,
   fk_origin_line    integer,           -- Correspondance de la ligne avec le document d'origine (propal, commande)
+  fk_parent         integer,           -- Parent line
+  fk_product        integer,           -- Product id
   fk_entrepot       integer,           -- Entrepot de depart du produit
   qty               real,              -- Quantity
   rang              integer  DEFAULT 0
