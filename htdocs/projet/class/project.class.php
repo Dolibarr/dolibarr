@@ -2670,10 +2670,10 @@ class Project extends CommonObject
 					$actioncomm->email_sender = '';
 					$actioncomm->email_to = $to;
 
-					$actioncomm->errors_to = $errors_to;
+					$actioncomm->errors_to = (string) $errors_to;
 
 					$actioncomm->elementtype = 'project_task';
-					$actioncomm->fk_element = $this->element;
+					$actioncomm->fk_element = (int) $this->element;
 
 					$actioncomm->create($user);
 				} else {
@@ -2704,10 +2704,10 @@ class Project extends CommonObject
 					$actioncomm->email_sender = '';
 					$actioncomm->email_to = $to;
 
-					$actioncomm->errors_to = $errors_to;
+					$actioncomm->errors_to = (string) $errors_to;
 
 					$actioncomm->elementtype = 'project_task';
-					$actioncomm->fk_element = $this->element;
+					$actioncomm->fk_element = (int) $this->element;
 
 					$actioncomm->create($user);
 				}
