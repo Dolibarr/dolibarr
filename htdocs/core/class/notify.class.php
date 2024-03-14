@@ -49,9 +49,35 @@ class Notify
 	public $type;
 
 	/**
+	 * @var string email
+	 */
+	public $email;
+
+	/**
+	 * @var string threshold
+	 */
+	public $threshold;
+
+	/**
+	 * @var string context
+	 */
+	public $context;
+
+	/**
 	 * @var int		Thirdparty ID
 	 */
 	public $socid;
+
+	/**
+	 * @var int		Event action
+	 */
+	public $event;
+
+		/**
+	 * @var int		(thirdparty) Contact ID
+	 */
+	public $target;
+
 
 	/**
 	 * Date creation record (datec)
