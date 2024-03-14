@@ -49,6 +49,11 @@ class Notify
 	public $type;
 
 	/**
+	 * @var string fk_user
+	 */
+	public $fk_user;
+
+	/**
 	 * @var string email
 	 */
 	public $email;
