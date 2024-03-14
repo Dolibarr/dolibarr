@@ -148,7 +148,7 @@ class Job extends CommonObject
 	// public $class_element_line = 'Jobline';
 
 	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
+	//  * @var string[]	List of child tables. To test if we can delete object.
 	//  */
 	protected $childtables = array('hrm_evaluation', 'hrm_job_user');
 

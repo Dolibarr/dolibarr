@@ -1155,7 +1155,17 @@ if ($action == 'addcontainer' && $usercanedit) {
 		$substitutionarray = array();
 		$substitutionarray['__WEBSITE_CREATE_BY__'] = $user->getFullName($langs);
 
-		// Define id of page the new page is translation of
+		// Define id of the page the new page is translation of
+		/*
+		if ($objectpage->lang == $object->lang) {
+			// If
+			$pageidfortranslation = (GETPOSTINT('pageidfortranslation') > 0 ? GETPOSTINT('pageidfortranslation') : 0);
+			if ($pageidfortranslation > 0) {
+				// We must update the page $pageidfortranslation to set fk_page = $object->id.
+				// But what if page $pageidfortranslation is already linked to another ?
+			}
+		} else {
+		*/
 		$pageidfortranslation = (GETPOSTINT('pageidfortranslation') > 0 ? GETPOSTINT('pageidfortranslation') : 0);
 		if ($pageidfortranslation > 0) {
 			// Check if the page we are translation of is already a translation of a source page. if yes, we will use source id instead
@@ -1166,6 +1176,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 			}
 		}
 		$objectpage->fk_page = $pageidfortranslation;
+		//}
 
 		$sample = GETPOST('sample', 'alpha');
 		if (empty($sample)) {
@@ -2405,6 +2416,22 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 		}
 	}
 }
+
+if ($action == 'deletelang' && $usercanedit) {
+	$sql = "UPDATE ".MAIN_DB_PREFIX."website_page SET fk_page = NULL";
+	$sql .= " WHERE rowid = ".GETPOSTINT('deletelangforid');
+	//$sql .= " AND fk_page = ".((int) $objectpage->id);
+
+	$resql = $db->query($sql);
+	if (!$resql) {
+		setEventMessages($db->lasterror(), null, 'errors');
+	} else {
+		$objectpage->fk_page = null;
+	}
+
+	$action = 'editmeta';
+}
+
 
 // Export site
 if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
@@ -4360,7 +4387,9 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 						if ($i > 0) {
 							$tmpstring .= '<br>';
 						}
-						$tmpstring .= $tmppage->getNomUrl(1).' ('.$tmppage->lang.')';
+						$tmpstring .= $tmppage->getNomUrl(1).' '.picto_from_langcode($tmppage->lang).' '.$tmppage->lang;
+						// Button unlink
+						$tmpstring .= ' <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($object->ref).'&pageid='.((int) $objectpage->id).'&action=deletelang&token='.newToken().'&deletelangforid='.((int) $tmppage->id).'">'.img_picto($langs->trans("Remove"), 'unlink').'</a>';
 						$translatedby++;
 						$i++;
 					}
@@ -4376,17 +4405,27 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 			dol_print_error($db);
 		}
 	}
-	if (empty($translatedby) && ($action == 'editmeta' || $action == 'createcontainer' || $objectpage->fk_page > 0)) {
+	if ((empty($translatedby) || ($objectpage->lang != $object->lang)) && ($action == 'editmeta' || $action == 'createcontainer' || $objectpage->fk_page > 0)) {
 		$sourcepage = new WebsitePage($db);
-		$result = $sourcepage->fetch($objectpage->fk_page);
-		if ($result == 0) {
-			// not found, we can reset value to clean database
-		} elseif ($result > 0) {
+		$result = 1;
+		if ($objectpage->fk_page > 0) {
+			$result = $sourcepage->fetch($objectpage->fk_page);
+			if ($result == 0) {
+				// not found, we can reset value to clean database
+				// TODO
+			}
+		}
+		if ($result >= 0) {
+			if ($translatedby) {
+				print '<br>';
+			}
 			$translationof = $objectpage->fk_page;
 			print '<span class="opacitymedium">'.$langs->trans('ThisPageIsTranslationOf').'</span> ';
-			print $formwebsite->selectContainer($website, 'pageidfortranslation', ($translationof ? $translationof : -1), 1, $action, 'minwidth300', array($objectpage->id));
+			print $sourcepage->getNomUrl(2).' '.$formwebsite->selectContainer($website, 'pageidfortranslation', ($translationof ? $translationof : -1), 1, $action, 'minwidth300', array($objectpage->id));
 			if ($translationof > 0 && $sourcepage->lang) {
-				print $sourcepage->getNomUrl(2).' ('.$sourcepage->lang.')';
+				print picto_from_langcode($sourcepage->lang).' '.$sourcepage->lang;
+				// Button unlink
+				print ' <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($object->ref).'&pageid='.((int) $objectpage->id).'&action=deletelang&token='.newToken().'&deletelangforid='.((int) $objectpage->id).'">'.img_picto($langs->trans("Remove"), 'unlink').'</a>';
 			}
 		}
 	}
@@ -5161,6 +5200,12 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 
 			//var_dump($filetpl);
 			$filephp = $filetpl;
+
+			// Get session info and obfuscate session cookie
+			$savsessionname = session_name();
+			$savsessionid = $_COOKIE[$savsessionname];
+			$_COOKIE[$savsessionname] = 'obfuscatedcookie';
+
 			ob_start();
 			try {
 				$res = include $filephp;
@@ -5172,6 +5217,9 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 			}
 			$newcontent = ob_get_contents();
 			ob_end_clean();
+
+			// Restore data
+			$_COOKIE[$savsessionname] = $savsessionid;
 		}
 
 		// Change the contenteditable to "true" or "false" when mode Edit Inline is on or off

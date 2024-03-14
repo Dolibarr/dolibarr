@@ -90,7 +90,7 @@ class MultiCurrency extends CommonObject
 	public $fk_user;
 
 	/**
-	 * @var CurrencyRate 	The currency rate
+	 * @var CurrencyRate|null 	The currency rate
 	 */
 	public $rate;
 

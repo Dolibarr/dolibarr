@@ -2385,7 +2385,7 @@ class EmailCollector extends CommonObject
 									$operationslog .= '<br>We have this data to search thirdparty: id='.$idtouseforthirdparty.', email='.$emailtouseforthirdparty.', name='.$nametouseforthirdparty.', name_alias='.$namealiastouseforthirdparty;
 
 									$tmpobject = new stdClass();
-									$tmpobject->element == 'generic';
+									$tmpobject->element = 'generic';
 									$tmpobject->id = $idtouseforthirdparty;
 									$tmpobject->name = $nametouseforthirdparty;
 									$tmpobject->name_alias = $namealiastouseforthirdparty;

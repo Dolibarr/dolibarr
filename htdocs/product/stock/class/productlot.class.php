@@ -1220,7 +1220,7 @@ class Productlot extends CommonObject
 		$this->specimen = 1;
 
 		$this->entity = $conf->entity;
-		$this->fk_product = null;
+		$this->fk_product = 0;
 		$this->batch = '';
 		$this->eatby = $now - 100000;
 		$this->sellby = $now - 100000;

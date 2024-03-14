@@ -255,7 +255,7 @@ if ($action == 'edit') {
 	$out .= '<span id="prePrompt" class="spanforparamtooltip">pre-Prompt</span>';
 	$out .= '</td>';
 	$out .= '<td>';
-	$out .= '<input name="prePrompt" id="prePromptInput" class="flat minwidth500" value="">';
+	$out .= '<textarea class="flat minwidth500" id="prePromptInput" name="prePrompt" rows="3"></textarea>';
 	$out .= '</td>';
 	$out .= '</tr>';
 	$out .= '<tr class="oddeven">';
@@ -263,7 +263,7 @@ if ($action == 'edit') {
 	$out .= '<span id="postPrompt" class="spanforparamtooltip">Post-prompt</span>';
 	$out .= '</td>';
 	$out .= '<td>';
-	$out .= '<input name="postPrompt" id="postPromptInput" class="flat minwidth500" value="">';
+	$out .= '<textarea class="flat minwidth500" id="postPromptInput" name="postPrompt" rows="3"></textarea>';
 	$out .= '</td>';
 	$out .= '</tr>';
 	$out .= '</tbody>';
@@ -307,7 +307,7 @@ if ($action == 'edit' || $action == 'create') {
 			$out .= '<span id="prePrompt" class="spanforparamtooltip">pre-Prompt</span>';
 			$out .= '</td>';
 			$out .= '<td>';
-			$out .= '<input name="prePrompt" id="prePromptInput_'.$key.'" class="flat minwidth500" value="'.$config['prePrompt'].'" disabled>';
+			$out .= '<textarea class="flat minwidth500" id="prePromptInput_'.$key.'" name="prePrompt" rows="2" disabled>'.$config['prePrompt'].'</textarea>';
 			$out .= '</td>';
 			$out .= '</tr>';
 			$out .= '<tr class="oddeven">';
@@ -315,8 +315,9 @@ if ($action == 'edit' || $action == 'create') {
 			$out .= '<span id="postPrompt" class="spanforparamtooltip">Post-prompt</span>';
 			$out .= '</td>';
 			$out .= '<td>';
-			$out .= '<input name="postPrompt" id="postPromptInput_'.$key.'" class="flat minwidth500" value="'.$config['postPrompt'].'" disabled>';
+			$out .= '<textarea class="flat minwidth500" id="postPromptInput_'.$key.'" name="postPrompt" rows="2" disabled>'.$config['postPrompt'].'</textarea>';
 			$out .= '<br><input type="submit" class="button small submitBtn" name="modify" data-index="'.$key.'" style="display: none;" value="'.dol_escape_htmltag($langs->trans("Modify")).'"/>';
+
 			$out .= '</td>';
 			$out .= '</tr>';
 			$out .= '</form>';
