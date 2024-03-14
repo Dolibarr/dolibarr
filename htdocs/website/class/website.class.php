@@ -1305,7 +1305,11 @@ class Website extends CommonObject
 
 				// Warning fgets with second parameter that is null or 0 hang.
 				$buf = fgets($fp, 65000);
+				$newid = 0;
+
+				// Scan the line
 				if (preg_match('/^-- Page ID (\d+)\s[^\s]+\s(\d+).*Aliases\s(.*)\s--;/i', $buf, $reg)) {
+					// Example of line: "-- Page ID 179 -> 1__+MAX_llx_website_page__ - Aliases about-us --;"
 					$oldid = $reg[1];
 					$newid = ($reg[2] + $maxrowid);
 					$aliasesarray = explode(',', $reg[3]);
@@ -1313,7 +1317,15 @@ class Website extends CommonObject
 					dol_syslog("In sql source file, we have the page ID ".$oldid." to replace with the new ID ".$newid.", and we must create the shortcut aliases: ".$reg[3]);
 
 					//dol_move($conf->website->dir_output.'/'.$object->ref.'/page'.$oldid.'.tpl.php', $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php', 0, 1, 0, 0);
+				} elseif (preg_match('/^-- Page ID (\d+).*Aliases\s(.*)\s--;/i', $buf, $reg)) {
+					// Example of line: "-- Page ID 1__+MAX_llx_website_page__ - Aliases about-us --;"
+					$newid = ($reg[1] + $maxrowid);
+					$aliasesarray = explode(',', $reg[2]);
 
+					dol_syslog("In sql source file, we have the page with the new ID ".$newid.", and we must create the shortcut aliases: ".$reg[3]);
+				}
+
+				if ($newid) {
 					$objectpagestatic->fetch($newid);
 
 					// We regenerate the pageX.tpl.php
