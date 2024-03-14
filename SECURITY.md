@@ -97,3 +97,5 @@ Scope is the web application (back office) and the APIs.
 * Stack traces or path disclosure when logged-in user is admin
 * Any vulnerabilities due to a configuration different than the one defined into chapter "Scope for qualified vulnerabilities".
 * Brute force attacks on login page, password forgotten page or any public pages (/public/*) are not qualified if the fail2ban recommended fail2ban rules were not installed.  
+* Vulnerabilities of type XSS exploited by using javascript into a website page (with permission to edit website pages) or by using php code into a website page
+  using the permission to edit php code are not qualified, except if this allow to get higher privileges (being able to set javascript or php code is the expected behaviour).
