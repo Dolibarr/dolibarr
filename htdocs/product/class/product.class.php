@@ -12,7 +12,7 @@
  * Copyright (C) 2014		Henry Florian			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria			    <ion@agorria.com>
- * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2016-2024	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Gustavo Novaro
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
@@ -1362,8 +1362,8 @@ class Product extends CommonObject
 
 				if (!$this->hasbatch() && $this->oldcopy->hasbatch()) {
 					// Selection of all product stock movements that contains batchs
-					$sql = 'SELECT pb.qty, pb.fk_entrepot, pb.batch FROM '.MAIN_DB_PREFIX.'product_batch as pb';
-					$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON (ps.rowid = batch.fk_product_stock)';
+					$sql = 'SELECT pb.qty, ps.fk_entrepot, pb.batch FROM '.MAIN_DB_PREFIX.'product_batch as pb';
+					$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON (ps.rowid = pb.fk_product_stock)';
 					$sql .= ' WHERE ps.fk_product = '.(int) $this->id;
 
 					$resql = $this->db->query($sql);
