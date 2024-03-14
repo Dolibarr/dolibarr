@@ -7424,7 +7424,7 @@ function dol_mkdir($dir, $dataroot = '', $newmask = '')
 				}
 				$dirmaskdec |= octdec('0111'); // Set x bit required for directories
 				if (!@mkdir($ccdir_osencoded, $dirmaskdec)) {
-					// Si le is_dir a renvoye une fausse info, alors on passe ici.
+					// If the is_dir has returned a false information, we arrive here
 					dol_syslog("functions.lib::dol_mkdir: Fails to create directory '".$ccdir."' or directory already exists.", LOG_WARNING);
 					$nberr++;
 				} else {
@@ -8322,7 +8322,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__USER_SIGNATURE__' => (string) (($usersignature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($usersignature), 30) : $usersignature) : '')
 		));
 
-		if (is_object($user)) {
+		if (is_object($user) && ($user instanceof User)) {
 			$substitutionarray = array_merge($substitutionarray, array(
 				'__USER_ID__' => (string) $user->id,
 				'__USER_LOGIN__' => (string) $user->login,
@@ -13804,8 +13804,6 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 			$out .= '</li>';
 			$out .= '<!-- END timeline item -->';
-
-			$i++;
 		}
 
 		$out .= "</ul>\n";

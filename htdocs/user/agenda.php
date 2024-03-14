@@ -89,7 +89,7 @@ if (($object->id != $user->id) && !$user->hasRight('user', 'user', 'lire')) {
 	accessforbidden();
 }
 
-$parameters = array('id' => $userId);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -195,7 +195,7 @@ if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') ||
 	// Try to know count of actioncomm from cache
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 	$cachekey = 'count_events_user_'.$object->id;
-	//$nbEvent = dol_getcache($cachekey);	// TODO Add nb into badge in menu so we can get it from cache also here
+	$nbEvent = dol_getcache($cachekey);
 
 	$titlelist = $langs->trans("ActionsOnCompany").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
 	if (!empty($conf->dol_optimize_smallscreen)) {

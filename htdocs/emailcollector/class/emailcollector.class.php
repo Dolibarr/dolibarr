@@ -3363,7 +3363,7 @@ class EmailCollector extends CommonObject
 				if (empty($mode) && empty($error)) {
 					$res = imap_mail_move($connection, $imapemail, $targetdir, CP_UID);
 					if ($res == false) {
-						$errorforemail++;
+						// $errorforemail++;  // Not in loop, not needed, not initialised
 						$this->error = imap_last_error();
 						$this->errors[] = $this->error;
 

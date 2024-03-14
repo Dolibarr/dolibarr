@@ -456,20 +456,37 @@ function dolGetListOfObjectClasses($destdir)
 
 	return -1;
 }
+
 /**
- * function for check if comment begin an end exist in modMyModule class
- * @param  string  $file    filename or path
- * @param  int     $number   0 = For Menus,1 = For permissions, 2 = For Dictionaries
- * @return int     1 if OK , -1 if KO
+ * Function to check if comment begin an end exist in modMyModule class
+ *
+ * @param  string  $file    	Filename or path
+ * @param  int     $number   	0 = For Menus,1 = For permissions, 2 = For Dictionaries
+ * @return int     				1 if OK , -1 if KO
  */
 function checkExistComment($file, $number)
 {
 	if (!file_exists($file)) {
 		return -1;
 	}
+
 	$content = file_get_contents($file);
 	if ($number === 0) {
-		if (strpos($content, '/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */') !== false && strpos($content, '/* END MODULEBUILDER LEFTMENU MYOBJECT */') !== false) {
+		$ret = 0;
+		if (strpos($content, '/* BEGIN MODULEBUILDER TOPMENU MYOBJECT */') !== false) {
+			$ret++;
+		}
+		if (strpos($content, '/* END MODULEBUILDER TOPMENU MYOBJECT */') !== false) {
+			$ret++;
+		}
+		if (strpos($content, '/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */') !== false) {
+			$ret++;
+		}
+		if (strpos($content, '/* END MODULEBUILDER LEFTMENU MYOBJECT */') !== false) {
+			$ret++;
+		}
+
+		if ($ret == 4) {
 			return 1;
 		}
 	} elseif ($number === 1) {
