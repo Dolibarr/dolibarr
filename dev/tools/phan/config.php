@@ -530,7 +530,7 @@ return [
 		'PhanNoopBinaryOperator',
 		// 'PhanTypeInvalidBitwiseBinaryOperator',
 		// 'PhanPluginDescriptionlessCommentOnFunction',
-		'PhanPluginPHPDocInWrongComment',
+		// 'PhanPluginPHPDocInWrongComment',
 		'PhanRedefineClassInternal',
 		// 'PhanTypeInvalidThrowsIsInterface',
 		// 'PhanPluginRedundantAssignmentInLoop',
