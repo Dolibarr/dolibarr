@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,8 +52,9 @@ abstract class CommonObjectLine extends CommonObject
 	public $picto = 'line';
 
 	/**
-	 * Product/service unit code ('km', 'm', 'p', ...)
-	 * @var string
+	 * @var int|null                ID of the unit of measurement (rowid in llx_c_units table)
+	 * @see measuringUnitString()
+	 * @see getLabelOfUnit()
 	 */
 	public $fk_unit;
 
@@ -167,8 +169,6 @@ abstract class CommonObjectLine extends CommonObject
 		$langs->load('products');
 
 		$label_type = 'label';
-
-		$label_type = 'label';
 		if ($type == 'short') {
 			$label_type = 'short_label';
 		} elseif ($type == 'code') {
@@ -195,17 +195,18 @@ abstract class CommonObjectLine extends CommonObject
 	}
 
 	/**
-	 * Empty function to prevent errors on call of this function must be overload if useful
+	 * Empty function to prevent errors on call of this function. Must be overload if useful
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int $limit offset limit
-	 * @param int $offset offset limit
-	 * @param array $filter filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 * @return int Return integer <0 if KO, >0 if OK
+	 * @param  string      		$sortorder    	Sort Order
+	 * @param  string      		$sortfield    	Sort field
+	 * @param  int         		$limit        	Limit the number of lines returned
+	 * @param  int         		$offset       	Offset
+	 * @param  string|array		$filter       	Filter as an Universal Search string.
+	 * 											Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string      		$filtermode   	No more used
+	 * @return array|int        	         	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		return 0;
 	}

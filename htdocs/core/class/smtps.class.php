@@ -100,7 +100,7 @@ class SMTPs
 	/**
 	 * Message Content
 	 *
-	 * @var	array	$_msgContent	Array of messages
+	 * @var array{html?:array{mimeType:string,data:string,dataText:string,md5?:string},plain?:array{mimeType:string,data:string,dataText:string,md5?:string},image:array<string,array{imageName:string,cid:string,md5?:string,data:string}>,attachment:array<string,array{filename:string,cid?:string,md5?:string,data:string}>}	$msgContent	Array of messages
 	 */
 	private $_msgContent = array();
 
@@ -745,7 +745,7 @@ class SMTPs
 				$this->socket_send_str($this->getHeader().$this->getBodyContent()."\r\n".'.', '250');
 
 				// Now tell the server we are done and close the socket...
-				fputs($this->socket, 'QUIT');
+				fwrite($this->socket, 'QUIT');
 			} else {
 				// We got error code into $this->lastretval
 			}
@@ -1214,11 +1214,12 @@ class SMTPs
 	 * - $_aryEmail[user] = "userName"
 	 *
 	 *	@param		string		$_strAddr		Email address
-	 * 	@return 	array	 					An array of the various parts of an email address
+	 * 	@return 	array{org:string,real?:string,addr:string,user:string,host:string}	An array of the various parts of an email address
 	 */
 	private function _strip_email($_strAddr)
 	{
 		// phpcs:enable
+		$_aryEmail = array();
 		// Keep the original
 		$_aryEmail['org'] = $_strAddr;
 
@@ -1594,7 +1595,7 @@ class SMTPs
 
 			$content .= "--".$this->_getBoundary('mixed')."\r\n";
 
-			if (key_exists('image', $this->_msgContent)) {     // If inline image found
+			if (array_key_exists('image', $this->_msgContent)) {     // If inline image found
 				$content .= 'Content-Type: multipart/alternative; boundary="'.$this->_getBoundary('alternative').'"'."\r\n";
 				$content .= "\r\n";
 				$content .= "--".$this->_getBoundary('alternative')."\r\n";
@@ -1648,7 +1649,7 @@ class SMTPs
 					$content .= "\r\n--".$this->_getBoundary('alternative')."--\r\n";
 					$content .= "\r\n";
 				} else {
-					if (key_exists('image', $this->_msgContent)) {
+					if (array_key_exists('image', $this->_msgContent)) {
 						$content .= "Content-Type: text/plain; charset=".$this->getCharSet()."\r\n";
 						$content .= "\r\n".($_content['dataText'] ? $_content['dataText'] : strip_tags($_content['data']))."\r\n"; // Add plain text message
 						$content .= "--".$this->_getBoundary('alternative')."\r\n";
@@ -1657,7 +1658,7 @@ class SMTPs
 						$content .= "--".$this->_getBoundary('related')."\r\n";
 					}
 
-					if (!key_exists('image', $this->_msgContent) && $_content['dataText'] && getDolGlobalString('MAIN_MAIL_USE_MULTI_PART')) {
+					if (!array_key_exists('image', $this->_msgContent) && $_content['dataText'] && getDolGlobalString('MAIN_MAIL_USE_MULTI_PART')) {
 						// Add plain text message part before html part
 						$content .= 'Content-Type: multipart/alternative; boundary="'.$this->_getBoundary('alternative').'"'."\r\n";
 						$content .= "\r\n";
@@ -1678,7 +1679,7 @@ class SMTPs
 
 					$content .= "\r\n".$_content['data']."\r\n";
 
-					if (!key_exists('image', $this->_msgContent) && $_content['dataText'] && getDolGlobalString('MAIN_MAIL_USE_MULTI_PART')) {
+					if (!array_key_exists('image', $this->_msgContent) && $_content['dataText'] && getDolGlobalString('MAIN_MAIL_USE_MULTI_PART')) {
 						// Add plain text message part after html part
 						$content .= "--".$this->_getBoundary('alternative')."--\r\n";
 					}
@@ -1958,7 +1959,7 @@ class SMTPs
 		if ($this->_debug) {
 			$this->log .= $_strSend; // @CHANGE LDR for log
 		}
-		fputs($this->socket, $_strSend.$CRLF);
+		fwrite($this->socket, $_strSend.$CRLF);
 		if ($this->_debug) {
 			$this->log .= ' ('.$_returnCode.')'.$CRLF;
 		}

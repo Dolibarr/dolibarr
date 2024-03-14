@@ -41,9 +41,14 @@ class Conf extends stdClass
 	 */
 	public $db;
 
-	//! To store properties found into database
+	/**
+	 * @var Object To store global setup found into database
+	 */
 	public $global;
-	//! To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
+
+	/**
+	 * @var Object To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
+	 */
 	public $browser;
 
 	//! To store some setup of generic modules
@@ -206,7 +211,8 @@ class Conf extends stdClass
 			'member' => array(),
 			'hooks' => array(),
 			'dir' => array(),
-			'syslog' => array()
+			'syslog' => array(),
+			'websitetemplates' => array()
 		);
 
 		// First level object that are modules.
@@ -316,6 +322,7 @@ class Conf extends stdClass
 			'hooks' => array(),
 			'dir' => array(),
 			'syslog' => array(),
+			'websitetemplates' => array(),
 		);
 
 		if (!is_null($db) && is_object($db)) {
@@ -375,7 +382,7 @@ class Conf extends stdClass
 									$newvalue = $arrValue;
 								} elseif (in_array($partname, array('login', 'menus', 'substitutions', 'triggers', 'tpl'))) {
 									$newvalue = '/'.$modulename.'/core/'.$partname.'/';
-								} elseif (in_array($partname, array('models', 'theme'))) {
+								} elseif (in_array($partname, array('models', 'theme', 'websitetemplates'))) {
 									$newvalue = '/'.$modulename.'/';
 								} elseif ($value == 1) {
 									$newvalue = '/'.$modulename.'/core/modules/'.$partname.'/'; // ex: partname = societe
@@ -534,6 +541,9 @@ class Conf extends stdClass
 			}
 
 			// For mycompany storage
+			$this->mycompany->multidir_output = array($this->entity => $rootfordata."/mycompany");
+			$this->mycompany->multidir_temp = array($this->entity => $rootfortemp."/mycompany/temp");
+			// For backward compatibility
 			$this->mycompany->dir_output = $rootfordata."/mycompany";
 			$this->mycompany->dir_temp = $rootfortemp."/mycompany/temp";
 
@@ -561,8 +571,8 @@ class Conf extends stdClass
 
 			// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
 
-			// Module fournisseur
-			if (!empty($this->fournisseur)) {
+			// Module supplier is on
+			if (isModEnabled('fournisseur')) {
 				$this->fournisseur->commande = new stdClass();
 				$this->fournisseur->commande->multidir_output = array($this->entity => $rootfordata."/fournisseur/commande");
 				$this->fournisseur->commande->multidir_temp = array($this->entity => $rootfortemp."/fournisseur/commande/temp");
@@ -587,8 +597,8 @@ class Conf extends stdClass
 				$this->fournisseur->payment->dir_output = $rootfordata."/fournisseur/payment"; // For backward compatibility
 				$this->fournisseur->payment->dir_temp = $rootfortemp."/fournisseur/payment/temp"; // For backward compatibility
 
-				// To prepare split of module fournisseur into module 'fournisseur' + supplier_order + supplier_invoice
-				if (!empty($this->fournisseur->enabled) && empty($this->global->MAIN_USE_NEW_SUPPLIERMOD)) {  // By default, if module supplier is on, and we don't use yet the new modules, we set artificially the module properties
+				// To prepare split of module supplier into module 'supplier' + 'supplier_order' + 'supplier_invoice'
+				if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {  // By default, if module supplier is on, and we don't use yet the new modules, we set artificially the module properties
 					$this->supplier_order = new stdClass();
 					$this->supplier_order->enabled = 1;
 					$this->supplier_order->multidir_output = array($this->entity => $rootfordata."/fournisseur/commande");
@@ -729,7 +739,7 @@ class Conf extends stdClass
 			}
 
 			if (!isset($this->global->MAIN_ENABLE_AJAX_TOOLTIP)) {
-				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 1;
+				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 0;	// Not enabled by default (still trouble of persistent tooltip)
 			}
 
 			// By default, suppliers objects can be linked to all projects
@@ -870,7 +880,7 @@ class Conf extends stdClass
 
 			// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
 			if (!isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) {
-				$this->global->MAIN_MODULES_FOR_EXTERNAL = 'user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,reception,agenda,resource,adherent,blockedlog'; // '' means 'all'. Note that contact is added here as it should be a module later.
+				$this->global->MAIN_MODULES_FOR_EXTERNAL = 'user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,reception,agenda,resource,adherent,blockedlog,ticket'; // '' means 'all'. Note that contact is added here as it should be a module later.
 			}
 			if (!empty($this->modules_parts['moduleforexternal'])) {		// Module part to include an external module into the MAIN_MODULES_FOR_EXTERNAL list
 				foreach ($this->modules_parts['moduleforexternal'] as $key => $value) {
@@ -998,7 +1008,7 @@ class Conf extends stdClass
 			if (!isset($this->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) {
 				// Value 1 makes CSRF check for all POST parameters only
 				// Value 2 makes also CSRF check for GET requests with action = a sensitive requests like action=del, action=remove...
-				// Value 3 makes also CSRF check for all GET requests with a param action or massaction (except some sensitive values)
+				// Value 3 makes also CSRF check for all GET requests with a param action or massaction (except some non sensitive values)
 				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2; // TODO Switch value to 3
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
 			}

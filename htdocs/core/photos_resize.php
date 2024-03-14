@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("products", "other"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha') ? GETPOST('modulepart', 'alpha') : 'produit|service';
 $original_file = GETPOST("file");
@@ -338,20 +338,20 @@ if ($cancel) {
 		header("Location: ".$backtourl);
 		exit;
 	} else {
-		dol_print_error('', 'Cancel on photo_resize with a not supported value of modulepart='.$modulepart);
+		dol_print_error(null, 'Cancel on photo_resize with a not supported value of modulepart='.$modulepart);
 		exit;
 	}
 }
 
 if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex") && GETPOSTISSET("sizey")) {
 	if (empty($dir)) {
-		dol_print_error('', 'Bug: Value for $dir could not be defined.');
+		dol_print_error(null, 'Bug: Value for $dir could not be defined.');
 		exit;
 	}
 
 	$fullpath = $dir."/".$original_file;
 
-	$result = dol_imageResizeOrCrop($fullpath, 0, GETPOST('sizex', 'int'), GETPOST('sizey', 'int'));
+	$result = dol_imageResizeOrCrop($fullpath, 0, GETPOSTINT('sizex'), GETPOSTINT('sizey'));
 
 	if ($result == $fullpath) {
 		// If image is related to a given object, we create also thumbs.
@@ -398,7 +398,7 @@ if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex")
 			header("Location: ".$backtourl);
 			exit;
 		} else {
-			dol_print_error('', 'confirm_resize on photo_resize without backtourl defined for modulepart='.$modulepart);
+			dol_print_error(null, 'confirm_resize on photo_resize without backtourl defined for modulepart='.$modulepart);
 			exit;
 		}
 	} else {
@@ -416,7 +416,7 @@ if ($action == 'confirm_crop') {
 
 	$fullpath = $dir."/".$original_file;
 
-	$result = dol_imageResizeOrCrop($fullpath, 1, GETPOST('w', 'int'), GETPOST('h', 'int'), GETPOST('x', 'int'), GETPOST('y', 'int'));
+	$result = dol_imageResizeOrCrop($fullpath, 1, GETPOSTINT('w'), GETPOSTINT('h'), GETPOSTINT('x'), GETPOSTINT('y'));
 
 	if ($result == $fullpath) {
 		if (is_object($object)) {
@@ -461,7 +461,7 @@ if ($action == 'confirm_crop') {
 			header("Location: ".$backtourl);
 			exit;
 		} else {
-			dol_print_error('', 'confirm_crop on photo_resize without backtourl defined for modulepart='.$modulepart);
+			dol_print_error(null, 'confirm_crop on photo_resize without backtourl defined for modulepart='.$modulepart);
 			exit;
 		}
 	} else {

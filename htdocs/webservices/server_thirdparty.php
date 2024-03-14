@@ -432,7 +432,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
  * Create a thirdparty
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Societe		$thirdparty		    Thirdparty
+ * @param	array		$thirdparty		    Thirdparty
  * @return	array							Array result
  */
 function createThirdParty($authentication, $thirdparty)
@@ -564,7 +564,7 @@ function createThirdParty($authentication, $thirdparty)
  * Update a thirdparty
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Societe		$thirdparty		    Thirdparty
+ * @param	array		$thirdparty		    Thirdparty
  * @return	array							Array result
  */
 function updateThirdParty($authentication, $thirdparty)

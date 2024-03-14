@@ -37,8 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
-$validatemonth = GETPOST('validatemonth', 'int');
-$validateyear = GETPOST('validateyear', 'int');
+$validatemonth = GETPOSTINT('validatemonth');
+$validateyear = GETPOSTINT('validateyear');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -54,8 +54,8 @@ if (!$user->hasRight('accounting', 'bind', 'write')) {
 $accountingAccount = new AccountingAccount($db);
 
 $month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-if (GETPOST("year", 'int')) {
-	$year_start = GETPOST("year", 'int');
+if (GETPOSTINT("year")) {
+	$year_start = GETPOSTINT("year");
 } else {
 	$year_start = dol_print_date(dol_now(), '%Y');
 	if (dol_print_date(dol_now(), '%m') < $month_start) {
@@ -157,10 +157,10 @@ if ($action == 'validatehistory') {
 	}
 	$alias_societe_perentity = !getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED') ? "s" : "spe";
 	$alias_product_perentity = !getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') ? "p" : "ppe";
-	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa  ON " . $alias_product_perentity . ".accountancy_code_sell = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa2 ON " . $alias_product_perentity . ".accountancy_code_sell_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa3 ON " . $alias_product_perentity . ".accountancy_code_sell_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa4 ON " . $alias_societe_perentity . ".accountancy_code_sell = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa  ON ".$db->sanitize($alias_product_perentity).".accountancy_code_sell = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa2 ON ".$db->sanitize($alias_product_perentity).".accountancy_code_sell_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa3 ON ".$db->sanitize($alias_product_perentity).".accountancy_code_sell_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa4 ON ".$db->sanitize($alias_societe_perentity).".accountancy_code_sell = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
 	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 	$sql .= " AND l.product_type <= 2";
 	$sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
@@ -347,7 +347,7 @@ for ($i = 1; $i <= 12; $i++) {
 		$param .= '&search_date_endday='.$tmp['mday'].'&search_date_endmonth='.$tmp['mon'].'&search_date_endyear='.$tmp['year'];
 		print '<a href="'.DOL_URL_ROOT.'/accountancy/customer/list.php?'.$param.'">';
 	}
-	print $langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT));
+	print $langs->trans('MonthShort'.str_pad((int) $j, 2, '0', STR_PAD_LEFT));
 	if (!empty($tmp['mday'])) {
 		print '</a>';
 	}
@@ -362,7 +362,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef)=".$j, "fd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((int) $j), "fd.total_ht", "0").") AS month".str_pad((int) $j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(fd.total_ht) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
@@ -484,7 +484,7 @@ for ($i = 1; $i <= 12; $i++) {
 		$param .= '&search_date_endday='.$tmp['mday'].'&search_date_endmonth='.$tmp['mon'].'&search_date_endyear='.$tmp['year'];
 		print '<a href="'.DOL_URL_ROOT.'/accountancy/customer/lines.php?'.$param.'">';
 	}
-	print $langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT));
+	print $langs->trans('MonthShort'.str_pad((int) $j, 2, '0', STR_PAD_LEFT));
 	if (!empty($tmp['mday'])) {
 		print '</a>';
 	}
@@ -499,7 +499,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef)=".$j, "fd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((int) $j), "fd.total_ht", "0").") AS month".str_pad((int) $j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(fd.total_ht) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
@@ -595,7 +595,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 		if ($j > 12) {
 			$j -= 12;
 		}
-		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
+		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad((int) $j, 2, '0', STR_PAD_LEFT)).'</td>';
 	}
 	print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
@@ -605,7 +605,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 		if ($j > 12) {
 			$j -= 12;
 		}
-		$sql .= "  SUM(".$db->ifsql("MONTH(f.datef)=".$j, "fd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
+		$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((int) $j), "fd.total_ht", "0").") AS month".str_pad((int) $j, 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql .= "  SUM(fd.total_ht) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
@@ -655,7 +655,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 			if ($j > 12) {
 				$j -= 12;
 			}
-			print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
+			print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad((int) $j, 2, '0', STR_PAD_LEFT)).'</td>';
 		}
 		print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
@@ -668,14 +668,14 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 					$j -= 12;
 				}
 				$sql .= " SUM(".$db->ifsql(
-					"MONTH(f.datef)=".$j,
+					"MONTH(f.datef) = ".((int) $j),
 					" (".$db->ifsql(
 								"fd.total_ht < 0",
 								" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",	// TODO This is bugged, we must use the percent for the invoice and fd.situation_percent is cumulated percent !
 								"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))"
 							).")",
 					0
-				).") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+				).") AS month".str_pad((int) $j, 2, '0', STR_PAD_LEFT).",";
 			}
 			$sql .= "  SUM(".$db->ifsql(
 				"fd.total_ht < 0",
@@ -690,14 +690,14 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 					$j -= 12;
 				}
 				$sql .= " SUM(".$db->ifsql(
-					"MONTH(f.datef)=".$j,
+					"MONTH(f.datef) = ".((int) $j),
 					" (".$db->ifsql(
 						"fd.total_ht < 0",
 						" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty)))",
 						"  (fd.total_ht - (fd.buy_price_ht * fd.qty))"
 					).")",
 					0
-				).") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+				).") AS month".str_pad((int) $j, 2, '0', STR_PAD_LEFT).",";
 			}
 			$sql .= "  SUM(".$db->ifsql(
 				"fd.total_ht < 0",

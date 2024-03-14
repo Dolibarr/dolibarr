@@ -33,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
 $langs->loadLangs(array("mrp", "other", "stocks"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$lineid = GETPOST('lineid', 'int');
+$id = GETPOSTINT('id');
+$lineid = GETPOSTINT('lineid');
 $ref    = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm  = GETPOST('confirm', 'alpha');

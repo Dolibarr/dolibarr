@@ -92,7 +92,7 @@ if (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) {
 	$list_account[] = 'ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT';
 	$list_account[] = 'ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT';
 }
-if (isModEnabled('banque')) {
+if (isModEnabled('bank')) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH';
 }
 if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
@@ -101,7 +101,7 @@ if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 if (isModEnabled('don')) {
 	$list_account[] = 'DONATION_ACCOUNTINGACCOUNT';
 }
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	$list_account[] = 'ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT';
 }
 if (isModEnabled('loan')) {
@@ -143,13 +143,13 @@ if ($action == 'update') {
 	}
 
 	$constname = 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT';
-	$constvalue = GETPOST($constname, 'int');
+	$constvalue = GETPOSTINT($constname);
 	if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 		$error++;
 	}
 
 	$constname = 'ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT';
-	$constvalue = GETPOST($constname, 'int');
+	$constvalue = GETPOSTINT($constname);
 	if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 		$error++;
 	}
@@ -163,7 +163,7 @@ if ($action == 'update') {
 }
 
 if ($action == 'setACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT') {
-	$setDisableAuxiliaryAccountOnCustomerDeposit = GETPOST('value', 'int');
+	$setDisableAuxiliaryAccountOnCustomerDeposit = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT", $setDisableAuxiliaryAccountOnCustomerDeposit, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -177,7 +177,7 @@ if ($action == 'setACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT') {
 }
 
 if ($action == 'setACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT') {
-	$setDisableAuxiliaryAccountOnSupplierDeposit = GETPOST('value', 'int');
+	$setDisableAuxiliaryAccountOnSupplierDeposit = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "ACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT", $setDisableAuxiliaryAccountOnSupplierDeposit, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;

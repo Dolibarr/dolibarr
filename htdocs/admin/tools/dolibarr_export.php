@@ -34,7 +34,7 @@ $action = GETPOST('action', 'aZ09');
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
@@ -44,7 +44,7 @@ if (!$sortfield) {
 if (empty($page) || $page == -1) {
 	$page = 0;
 }
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $offset = $limit * $page;
 
 if (!$user->admin) {
@@ -191,7 +191,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<label for="radio_dump_postgresql">PostgreSQL Dump (pg_dump)</label>';
 	print '</div>';
 } else {
-	print 'No method available with database '.$label;
+	print 'No method available with database '.dol_escape_htmltag($label);
 }
 print '</fieldset>';
 print '</div>';
@@ -276,6 +276,12 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<input type="checkbox" name="use_mysql_quick_param" value="yes" id="checkbox_use_quick" checked="checked" />';
 	print '<label for="checkbox_use_quick">';
 	print $form->textwithpicto($langs->trans('ExportUseMySQLQuickParameter'), $langs->trans('ExportUseMySQLQuickParameterHelp'));
+	print '</label>';
+	print '<br>';
+
+	print '<input type="checkbox" name="use_force" value="no" id="checkbox_use_force" />';
+	print '<label for="checkbox_use_force">';
+	print $form->textwithpicto($langs->trans('ExportUseForce'), $langs->trans('ExportUseForceHelp'));
 	print '</label>';
 	print '<br>';
 

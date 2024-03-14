@@ -67,7 +67,7 @@ $object = new stdClass(); // For triggers
 $error = 0;
 
 // Security check
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 $securekeyreceived = GETPOST("securekey");
 $securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 2);
 

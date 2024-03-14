@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'ldap', 'users', 'admin'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 
 $socid = 0;
@@ -53,7 +53,7 @@ if (isModEnabled('multicompany') && $conf->entity > 1 && getDolGlobalString('MUL
 
 $canreadperms = true;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$canreadperms = (!empty($user->admin) || !empty($user->rights->user->group_advance->read));
+	$canreadperms = (!empty($user->admin) || $user->hasRight('user', 'group_advance', 'read'));
 }
 
 
@@ -63,7 +63,7 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 
 if ($action == 'dolibarr2ldap') {
 	$ldap = new Ldap();
-	$result = $ldap->connect_bind();
+	$result = $ldap->connectBind();
 
 	if ($result > 0) {
 		$info = $object->_load_ldap_info();
@@ -174,7 +174,7 @@ print '</tr>';
 
 // Lecture LDAP
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result > 0) {
 	$info = $object->_load_ldap_info();
 	$dn = $object->_load_ldap_dn($info, 1);

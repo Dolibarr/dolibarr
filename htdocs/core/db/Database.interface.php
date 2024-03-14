@@ -191,7 +191,7 @@ interface Database
 
 	/**
 	 *	Escape a string to insert data into a like.
-	 *  Can be used this way: LIKE '%".dbhandler->escapeforlike(dbhandler->escape(...))."%'
+	 *  Can be used this way: LIKE '%".dbhandler->escape(dbhandler->escapeforlike(...))."%'
 	 *
 	 *	@param	string	$stringtoencode		String to escape
 	 *	@return	string						String escaped

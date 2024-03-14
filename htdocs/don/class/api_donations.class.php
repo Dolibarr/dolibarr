@@ -62,8 +62,8 @@ class Donations extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->don->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('don', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->don->fetch($id);
@@ -101,10 +101,8 @@ class Donations extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
-		if (!DolibarrApiAccess::$user->rights->don->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('don', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -113,13 +111,13 @@ class Donations extends DolibarrApi
 		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
 
 		$sql = "SELECT t.rowid";
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids)) {
+		if ((!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids)) {
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."don AS t LEFT JOIN ".MAIN_DB_PREFIX."don_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 
 		$sql .= ' WHERE t.entity IN ('.getEntity('don').')';
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids)) {
+		if ((!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids)) {
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($thirdparty_ids) {
@@ -177,7 +175,7 @@ class Donations extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->don->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('don', 'creer')) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 
@@ -211,15 +209,14 @@ class Donations extends DolibarrApi
 	/**
 	 * Update order general fields (won't touch lines of order)
 	 *
-	 * @param int   $id             Id of order to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   	$id             	Id of order to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->don->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('don', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->don->fetch($id);
@@ -258,8 +255,8 @@ class Donations extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->don->supprimer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('don', 'supprimer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->don->fetch($id);
@@ -299,7 +296,7 @@ class Donations extends DolibarrApi
 	 * @url POST    {id}/validate
 	 *
 	 * @throws RestException 304
-	 * @throws RestException 401
+	 * @throws RestException 403
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
 	 *
@@ -307,8 +304,8 @@ class Donations extends DolibarrApi
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->don->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('don', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->don->fetch($id);
@@ -320,6 +317,7 @@ class Donations extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$result = $this->don->valid_promesse($id, DolibarrApiAccess::$user->id, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already validated');

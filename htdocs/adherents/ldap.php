@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "members", "ldap", "admin"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alphanohtml');
 $action = GETPOST('action', 'aZ09');
 
@@ -79,7 +79,7 @@ $result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid
 
 if ($action == 'dolibarr2ldap') {
 	$ldap = new Ldap();
-	$result = $ldap->connect_bind();
+	$result = $ldap->connectBind();
 
 	if ($result > 0) {
 		$info = $object->_load_ldap_info();
@@ -183,7 +183,7 @@ print '</tr>';
 
 // Lecture LDAP
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result > 0) {
 	$info = $object->_load_ldap_info();
 	$dn = $object->_load_ldap_dn($info, 1);

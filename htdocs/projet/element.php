@@ -41,16 +41,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 }
-if (isModEnabled('banque')) {
+if (isModEnabled('bank')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 }
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
 if (isModEnabled('deplacement')) {
@@ -59,17 +59,17 @@ if (isModEnabled('deplacement')) {
 if (isModEnabled('don')) {
 	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 }
-if (isModEnabled('expedition')) {
+if (isModEnabled('shipping')) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
 if (isModEnabled('expensereport')) {
 	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
-if (isModEnabled('ficheinter')) {
+if (isModEnabled('intervention')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
 if (isModEnabled('loan')) {
@@ -110,16 +110,16 @@ if (isModEnabled('stocktransfer')) {
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	$langs->load("bills");
 }
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	$langs->load("orders");
 }
 if (isModEnabled("propal")) {
 	$langs->load("propal");
 }
-if (isModEnabled('ficheinter')) {
+if (isModEnabled('intervention')) {
 	$langs->load("interventions");
 }
 if (isModEnabled('deplacement')) {
@@ -147,7 +147,7 @@ if (isModEnabled('eventorganization')) {
 //	$langs->load("stockstransfer");
 //}
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $datesrfc = GETPOST('datesrfc');	// deprecated
@@ -239,7 +239,7 @@ $morehtmlref .= '</div>';
 // Define a complementary filter for search of next/prev ref.
 if (!$user->hasRight('projet', 'all', 'lire')) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-	$object->next_prev_filter = "te.rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+	$object->next_prev_filter = "te.rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 }
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -306,14 +306,14 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 	// Opportunity percent
 	print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
 	if (!is_null($object->opp_percent) && strcmp($object->opp_percent, '')) {
-		print price($object->opp_percent, '', $langs, 1, 0).' %';
+		print price($object->opp_percent, 0, $langs, 1, 0).' %';
 	}
 	print '</td></tr>';
 
 	// Opportunity Amount
 	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
 	if (!is_null($object->opp_amount) && strcmp($object->opp_amount, '')) {
-		print '<span class="amount">'.price($object->opp_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
+		print '<span class="amount">'.price($object->opp_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
 		if (strcmp($object->opp_percent, '')) {
 			print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
 		}
@@ -324,7 +324,7 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 // Budget
 print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
-	print '<span class="amount">'.price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
+	print '<span class="amount">'.price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
 }
 print '</td></tr>';
 
@@ -358,7 +358,7 @@ print dol_htmlentitiesbr($object->description);
 print '</td></tr>';
 
 // Categories
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 	print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 	print "</td></tr>";
@@ -415,7 +415,7 @@ $listofreferent = array(
 		'lang'=>'orders',
 		'buttonnew'=>'CreateOrder',
 		'testnew'=>$user->hasRight('commande', 'creer'),
-		'test'=>isModEnabled('commande') && $user->hasRight('commande', 'lire')
+		'test'=>isModEnabled('order') && $user->hasRight('commande', 'lire')
 	),
 	'invoice'=>array(
 		'name'=>"CustomersInvoices",
@@ -428,7 +428,7 @@ $listofreferent = array(
 		'lang'=>'bills',
 		'buttonnew'=>'CreateBill',
 		'testnew'=>$user->hasRight('facture', 'creer'),
-		'test'=>isModEnabled('facture') && $user->hasRight('facture', 'lire')
+		'test'=>isModEnabled('invoice') && $user->hasRight('facture', 'lire')
 	),
 	'invoice_predefined'=>array(
 		'name'=>"PredefinedInvoices",
@@ -440,7 +440,7 @@ $listofreferent = array(
 		'lang'=>'bills',
 		'buttonnew'=>'CreateBill',
 		'testnew'=>$user->hasRight('facture', 'creer'),
-		'test'=>isModEnabled('facture') && $user->hasRight('facture', 'lire')
+		'test'=>isModEnabled('invoice') && $user->hasRight('facture', 'lire')
 	),
 	'proposal_supplier'=>array(
 		'name'=>"SupplierProposals",
@@ -489,7 +489,7 @@ $listofreferent = array(
 		'lang'=>'contracts',
 		'buttonnew'=>'AddContract',
 		'testnew'=>$user->hasRight('contrat', 'creer'),
-		'test'=>isModEnabled('contrat') && $user->hasRight('contrat', 'lire')
+		'test'=>isModEnabled('contract') && $user->hasRight('contrat', 'lire')
 	),
 	'intervention'=>array(
 		'name'=>"Interventions",
@@ -503,7 +503,7 @@ $listofreferent = array(
 		'lang'=>'interventions',
 		'buttonnew'=>'AddIntervention',
 		'testnew'=>$user->hasRight('ficheinter', 'creer'),
-		'test'=>isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')
+		'test'=>isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire')
 	),
 	'shipping'=>array(
 		'name'=>"Shippings",
@@ -515,7 +515,7 @@ $listofreferent = array(
 		'lang'=>'sendings',
 		'buttonnew'=>'CreateShipment',
 		'testnew'=>0,
-		'test'=>isModEnabled('expedition') && $user->hasRight('expedition', 'lire')
+		'test'=>isModEnabled('shipping') && $user->hasRight('expedition', 'lire')
 	),
 	'mrp'=>array(
 		'name'=>"MO",
@@ -651,7 +651,7 @@ $listofreferent = array(
 		'lang'=>'banks',
 		'buttonnew'=>'AddVariousPayment',
 		'testnew'=>$user->hasRight('banque', 'modifier'),
-		'test'=>isModEnabled("banque") && $user->hasRight('banque', 'lire') && !getDolGlobalString('BANK_USE_OLD_VARIOUS_PAYMENT')
+		'test'=>isModEnabled("bank") && $user->hasRight('banque', 'lire') && !getDolGlobalString('BANK_USE_OLD_VARIOUS_PAYMENT')
 	),
 		/* No need for this, available on dedicated tab "Agenda/Events"
 		 'agenda'=>array(
@@ -711,7 +711,7 @@ if ($action == "addelement") {
 } elseif ($action == "unlink") {
 	$tablename = GETPOST("tablename", "aZ09");
 	$projectField = GETPOSTISSET('projectfield') ? GETPOST('projectfield', 'aZ09') : 'fk_projet';
-	$elementselectid = GETPOST("elementselect", "int");
+	$elementselectid = GETPOSTINT("elementselect");
 
 	$result = $object->remove_element($tablename, $elementselectid, $projectField);
 	if ($result < 0) {

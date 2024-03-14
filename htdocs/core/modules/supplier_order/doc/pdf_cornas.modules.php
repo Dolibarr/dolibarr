@@ -255,7 +255,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -295,6 +295,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// Does we have at least one line with discount $this->atleastonediscount
@@ -473,7 +474,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					$height_note = 0;
 				}
 
-				// Use new auto collum system
+				// Use new auto column system
 				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 				$nexY = $tab_top + $this->tabTitleHeight;
@@ -638,9 +639,9 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					$parameters = array(
 						'object' => $object,
 						'i' => $i,
-						'pdf' =>& $pdf,
-						'curY' =>& $curY,
-						'nexY' =>& $nexY,
+						'pdf' => & $pdf,
+						'curY' => & $curY,
+						'nexY' => & $nexY,
 						'outputlangs' => $outputlangs,
 						'hidedetails' => $hidedetails
 					);
@@ -711,7 +712,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
 						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
 					}
-					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate'=>$vatrate, 'vatcode'=>$vatcode, 'amount'=> $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
+					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 
 					if ($posYAfterImage > $posYAfterDescription) {
 						$nexY = $posYAfterImage;
@@ -720,10 +721,10 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					// Add line
 					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);
-						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
+						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY, $this->page_largeur - $this->marge_droite, $nexY);
-						$pdf->SetLineStyle(array('dash'=>0));
+						$pdf->SetLineStyle(array('dash' => 0));
 					}
 
 					// Detect if some page were added automatically and output _tableau for past pages
@@ -796,7 +797,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -806,7 +807,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {
@@ -916,7 +917,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf, $mysoc;
+		global $conf, $mysoc, $hookmanager;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -1102,6 +1103,14 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			$pdf->SetTextColor(0, 0, 0);
 		}
 
+		$parameters = array('pdf' => &$pdf, 'object' => &$object, 'outputlangs' => $outputlangs, 'index' => &$index);
+
+		$reshook = $hookmanager->executeHooks('afterPDFTotalTable', $parameters, $this); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) {
+			$this->error = $hookmanager->error;
+			$this->errors = $hookmanager->errors;
+		}
+
 		$index++;
 		return ($tab2_top + ($tab2_hl * $index));
 	}
@@ -1169,7 +1178,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	 *  @param  CommandeFournisseur		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	float|int
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -1416,6 +1425,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->MultiCell($widthrecbox, 4, $carac_client_name, 0, $ltrdirection);
 
 			$posy = $pdf->getY();
@@ -1423,6 +1433,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			// Show recipient information
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetXY($posx + 2, $posy);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, $ltrdirection);
 		}
 
@@ -1631,6 +1642,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		} elseif (empty($reshook)) {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrderInternal
 			$this->cols = array_replace($this->cols, $hookmanager->resArray); // array_replace is used to preserve keys
 		} else {
 			$this->cols = $hookmanager->resArray;

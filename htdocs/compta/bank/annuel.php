@@ -103,6 +103,8 @@ if (!empty($id)) {
 $sql .= " GROUP BY dm";
 
 $resql = $db->query($sql);
+$encaiss = array();
+$decaiss = array();
 if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
@@ -301,6 +303,7 @@ if ($result < 0) {
 
 	// CRED PART
 	// Chargement du tableau des années
+	$tblyear = array();
 	$tblyear[0] = array();
 	$tblyear[1] = array();
 	$tblyear[2] = array();
@@ -339,6 +342,7 @@ if ($result < 0) {
 	$data_year_0 = array();
 	$data_year_1 = array();
 	$data_year_2 = array();
+	$datamin = array();
 
 	for ($i = 0; $i < 12; $i++) {
 		$data_year_0[$i] = isset($tblyear[0][substr("0".($i + 1), -2)]) ? $tblyear[0][substr("0".($i + 1), -2)] : 0;

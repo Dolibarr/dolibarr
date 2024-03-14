@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin                <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2013      Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 
 /**
  *	\file       htdocs/core/modules/fichinter/mod_arctic.php
- *	\ingroup    fiche intervention
+ *	\ingroup    Intervention card
  *	\brief      File with Arctic numbering module for interventions
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
@@ -121,8 +122,8 @@ class mod_arctic extends ModeleNumRefFicheinter
 	 * 	Return next free value
 	 *
 	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @param  Fichinter	$object		Object we need next value for
+	 *  @return string|0      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc = 0, $object = '')
 	{
@@ -148,8 +149,9 @@ class mod_arctic extends ModeleNumRefFicheinter
 	 *  Return next free value
 	 *
 	 *  @param	Societe		$objsoc     Object third party
-	 *  @param	Object		$objforref	Object for number to search
-	 *  @return string      			Next free value
+	 *  @param	Fichinter	$objforref	Object for number to search
+	 *  @return string|0      			Next free value, 0 if KO
+	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{

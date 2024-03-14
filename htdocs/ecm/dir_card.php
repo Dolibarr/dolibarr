@@ -41,16 +41,16 @@ $confirm    = GETPOST('confirm', 'alpha');
 
 $module  = GETPOST('module', 'alpha');
 $website = GETPOST('website', 'alpha');
-$pageid  = GETPOST('pageid', 'int');
+$pageid  = GETPOSTINT('pageid');
 if (empty($module)) {
 	$module = 'ecm';
 }
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -66,7 +66,7 @@ if (!$sortfield) {
 
 $section = GETPOST("section", 'alpha') ? GETPOST("section", 'alpha') : GETPOST("relativedir", 'alpha');
 if (!$section) {
-	dol_print_error('', "ErrorSectionParamNotDefined");
+	dol_print_error(null, "ErrorSectionParamNotDefined");
 	exit;
 }
 
@@ -336,7 +336,7 @@ if ($module == 'ecm') {
 			$i++;
 		}
 	} else {
-		$s .= join(' -> ', explode('/', $section));
+		$s .= implode(' -> ', explode('/', $section));
 	}
 	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> '.$s;
 }

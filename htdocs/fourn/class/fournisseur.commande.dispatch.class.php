@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014 Juanjo Menent	      <jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,7 +111,6 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	 */
 	public $status;
 
-	public $tms = '';
 	public $batch;
 	public $eatby = '';
 	public $sellby = '';
@@ -153,28 +153,28 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		// Clean parameters
 
 		if (isset($this->fk_commande)) {
-			$this->fk_commande = trim($this->fk_commande);
+			$this->fk_commande = (int) $this->fk_commande;
 		}
 		if (isset($this->fk_product)) {
-			$this->fk_product = trim($this->fk_product);
+			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->fk_commandefourndet)) {
-			$this->fk_commandefourndet = trim($this->fk_commandefourndet);
+			$this->fk_commandefourndet = (int) $this->fk_commandefourndet;
 		}
 		if (isset($this->qty)) {
 			$this->qty = trim($this->qty);
 		}
 		if (isset($this->fk_entrepot)) {
-			$this->fk_entrepot = trim($this->fk_entrepot);
+			$this->fk_entrepot = (int) $this->fk_entrepot;
 		}
 		if (isset($this->fk_user)) {
-			$this->fk_user = trim($this->fk_user);
+			$this->fk_user = (int) $this->fk_user;
 		}
 		if (isset($this->comment)) {
 			$this->comment = trim($this->comment);
 		}
 		if (isset($this->status)) {
-			$this->status = trim($this->status);
+			$this->status = (int) $this->status;
 		}
 		if (isset($this->batch)) {
 			$this->batch = trim($this->batch);
@@ -236,7 +236,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 
 			if (!$notrigger) {
 				// Call triggers
-				$result=$this->call_trigger('LINERECEPTION_CREATE', $user);
+				$result = $this->call_trigger('LINERECEPTION_CREATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -352,28 +352,28 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		// Clean parameters
 
 		if (isset($this->fk_commande)) {
-			$this->fk_commande = trim($this->fk_commande);
+			$this->fk_commande = (int) $this->fk_commande;
 		}
 		if (isset($this->fk_product)) {
-			$this->fk_product = trim($this->fk_product);
+			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->fk_commandefourndet)) {
-			$this->fk_commandefourndet = trim($this->fk_commandefourndet);
+			$this->fk_commandefourndet = (int) $this->fk_commandefourndet;
 		}
 		if (isset($this->qty)) {
 			$this->qty = trim($this->qty);
 		}
 		if (isset($this->fk_entrepot)) {
-			$this->fk_entrepot = trim($this->fk_entrepot);
+			$this->fk_entrepot = (int) $this->fk_entrepot;
 		}
 		if (isset($this->fk_user)) {
-			$this->fk_user = trim($this->fk_user);
+			$this->fk_user = (int) $this->fk_user;
 		}
 		if (isset($this->comment)) {
 			$this->comment = trim($this->comment);
 		}
 		if (isset($this->status)) {
-			$this->status = trim($this->status);
+			$this->status = (int) $this->status;
 		}
 		if (isset($this->batch)) {
 			$this->batch = trim($this->batch);
@@ -620,46 +620,46 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	 *	Initialise object with example values
 	 *	Id must be 0 if object instance is a specimen
 	 *
-	 *	@return	void
+	 *	@return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 
-		$this->fk_commande = '';
-		$this->fk_product = '';
-		$this->fk_commandefourndet = '';
+		$this->fk_commande = 0;
+		$this->fk_product = 0;
+		$this->fk_commandefourndet = 0;
 		$this->qty = '';
-		$this->fk_entrepot = '';
-		$this->fk_user = '';
+		$this->fk_entrepot = 0;
+		$this->fk_user = 0;
 		$this->datec = '';
 		$this->comment = '';
-		$this->status = '';
-		$this->tms = '';
+		$this->status = 0;
+		$this->tms = dol_now();
 		$this->batch = '';
 		$this->eatby = '';
 		$this->sellby = '';
+
+		return 1;
 	}
 
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int    $limit     offset limit
-	 * @param int    $offset    offset limit
-	 * @param array  $filter    filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int Return integer <0 if KO, >0 if OK
+	 * @param string 		$sortorder 		Sort Order
+	 * @param string 		$sortfield 		Sort field
+	 * @param int    		$limit     		limit
+	 * @param int    		$offset    		offset limit
+	 * @param string|array  $filter    		filter array
+	 * @param string 		$filtermode 	filter mode (AND or OR)
+	 * @return 								int Return integer <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-
 		$sql .= " t.fk_commande,";
 		$sql .= " t.fk_product,";
 		$sql .= " t.fk_commandefourndet,";
@@ -673,26 +673,38 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$sql .= " t.batch,";
 		$sql .= " t.eatby,";
 		$sql .= " t.sellby";
-
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.comment') {
-					$sqlwhere [] = $key." LIKE '%".$this->db->escape($value)."%'";
-				} elseif ($key == 't.datec' || $key == 't.tms' || $key == 't.eatby' || $key == 't.sellby' || $key == 't.batch') {
-					$sqlwhere [] = $key." = '".$this->db->escape($value)."'";
-				} elseif ($key == 'qty') {
-					$sqlwhere [] = $key." = ".((float) $value);
-				} else {
-					$sqlwhere [] = $key." = ".((int) $value);
+		if (is_array($filter)) {
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.comment') {
+						$sqlwhere [] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+					} elseif ($key == 't.datec' || $key == 't.tms' || $key == 't.eatby' || $key == 't.sellby' || $key == 't.batch') {
+						$sqlwhere [] = $this->db->sanitize($key)." = '".$this->db->escape($value)."'";
+					} elseif ($key == 'qty') {
+						$sqlwhere [] = $this->db->sanitize($key)." = ".((float) $value);
+					} else {
+						$sqlwhere [] = $this->db->sanitize($key)." = ".((int) $value);
+					}
 				}
 			}
+			if (count($sqlwhere) > 0) {
+				$sql .= ' WHERE '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+			}
+
+			$filter = '';
 		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {

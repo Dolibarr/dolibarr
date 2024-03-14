@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,19 +60,47 @@ class PaymentVarious extends CommonObject
 	/**
 	 * @var int timestamp
 	 */
-	public $tms;
 	public $datep;
+
+	/**
+	 * @var int timestamp
+	 */
 	public $datev;
 
 	/**
-	 * @var int sens of operation
+	 * @var int<0,1> Payment direction (debit or credit)
 	 */
 	public $sens;
+
+	/**
+	 * @var float
+	 */
 	public $amount;
+
+	/**
+	 * @var int Payment type (fk_typepayment)
+	 */
 	public $type_payment;
+
+	/**
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
+	 */
 	public $num_payment;
+
+	/**
+	 * @var string Name of cheque writer
+	 */
 	public $chqemetteur;
+
+	/**
+	 * @var string Bank of cheque writer
+	 */
 	public $chqbank;
+
+	/**
+	 * @var int Category id
+	 */
 	public $category_transaction;
 
 	/**
@@ -169,7 +198,7 @@ class PaymentVarious extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array fields definition
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		// TODO: fill this array
@@ -206,7 +235,7 @@ class PaymentVarious extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->amount = trim($this->amount);
+		$this->amount = (float) price2num($this->amount);
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
 		$this->fk_bank = (int) $this->fk_bank;
@@ -374,24 +403,25 @@ class PaymentVarious extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return	int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-
-		$this->tms = '';
-		$this->datep = '';
-		$this->datev = '';
-		$this->sens = '';
-		$this->amount = '';
-		$this->label = '';
+		$this->tms = dol_now();
+		$this->datep = dol_now();
+		$this->datev = dol_now();
+		$this->sens = 0;
+		$this->amount = 100;
+		$this->label = 'Specimen payment';
 		$this->accountancy_code = '';
 		$this->subledger_account = '';
 		$this->note = '';
-		$this->fk_bank = '';
-		$this->fk_user_author = '';
-		$this->fk_user_modif = '';
+		$this->fk_bank = 0;
+		$this->fk_user_author = 0;
+		$this->fk_user_modif = 0;
+
+		return 1;
 	}
 
 	/**
@@ -425,7 +455,7 @@ class PaymentVarious extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->amount = price2num(trim($this->amount));
+		$this->amount = (float) price2num($this->amount);
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
 		$this->fk_bank = (int) $this->fk_bank;
@@ -445,11 +475,11 @@ class PaymentVarious extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
-		if (isModEnabled("banque") && (empty($this->fk_account) || $this->fk_account <= 0)) {
+		if (isModEnabled("bank") && (empty($this->fk_account) || $this->fk_account <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("BankAccount"));
 			return -6;
 		}
-		if (isModEnabled("banque") && (empty($this->type_payment) || $this->type_payment <= 0)) {
+		if (isModEnabled("bank") && (empty($this->type_payment) || $this->type_payment <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -7;
 		}
@@ -500,10 +530,10 @@ class PaymentVarious extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_various");
-			$this->ref = $this->id;
+			$this->ref = (string) $this->id;
 
 			if ($this->id > 0) {
-				if (isModEnabled("banque") && !empty($this->amount)) {
+				if (isModEnabled("bank") && !empty($this->amount)) {
 					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -715,7 +745,7 @@ class PaymentVarious extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('variouspayment'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

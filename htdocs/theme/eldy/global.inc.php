@@ -1,4 +1,26 @@
 <?php
+/*
+/* Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *		\file       htdocs/theme/eldy/global.inc.php
+ *		\brief      File for CSS style sheet Eldy
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
@@ -847,14 +869,14 @@ textarea.centpercent {
 	white-space: nowrap;
 	display: inline-block;
 }
-.wrapimp {
+.wrapimp, .wrapimp pre {
 	white-space: normal !important;
 }
 .wordwrap {
 	word-wrap: break-word;
 }
 .wordbreakimp {
-	word-break: break-word;
+	word-break: break-word !important;
 }
 .wordbreak {
 	word-break: break-word;	/* cut fist between word, inside word if not possible */
@@ -862,7 +884,7 @@ textarea.centpercent {
 .wordbreakall {
 	word-break: break-all;
 }
-td.wordbreak img {
+td.wordbreak img, td.wordbreakimp img {
 	max-width: 100%;
 }
 .bold {
@@ -1032,7 +1054,7 @@ body[class*="colorblind-"] .text-success{
 	color : <?php print $textDanger; ?>
 }
 
-.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop,
+.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop, .editfielda span.fa-eye,
 .editfieldlang {
 	color: #ccc !important;
 }
@@ -1572,6 +1594,15 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
 }
 div.fiche {
 	/* text-align: justify; */
+}
+
+.display-flex {
+	display: flex;
+	flex-wrap: wrap;
+	  justify-content: space-between;
+}
+.flex-item {
+	flex:1;
 }
 
 .flexcontainer {
@@ -2184,7 +2215,7 @@ div.vmenu, td.vmenu {
 
 	.menuhider { display: block !important; }
 	.dropdown-user-image { display: none; }
-	.user-header { height: auto !important; color: var(--colorbackbody); }
+	.user-header { height: auto !important; color: var(--colortextbackhmenu); }
 
 	#id-container {
 		width: 100%;
@@ -2760,6 +2791,9 @@ a.tmenuimage:focus, .mainmenu.topmenuimage:focus {
 }
 button.ui-button.ui-corner-all.ui-widget:focus {
 	outline: none;
+}
+.tmenuimage {
+	color: var(--colortextbackhmenu);
 }
 
 /* For mainmenu, we always load the img */
@@ -3517,8 +3551,6 @@ div.tabBar {
 	border-top: 1px solid #BBB;
 	/* border-bottom: 1px solid #AAA; */
 	width: auto;
-}
-div.tabBar {
 	background: var(--colorbacktabcard1);
 }
 div.tabBar tr.titre td {
@@ -7755,6 +7787,27 @@ table.jPicker {
 	min-width: 100px;
 }
 
+/* ============================================================================== */
+/* CSS style used for BookCal                                                     */
+/* ============================================================================== */
+
+.center.bookingtab {
+	margin-left: 20px;
+}
+#bookinghoursection {
+	width: 145px;
+	height: 320px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	text-align: left;
+}
+.bookcalform {
+	border: 1px solid #000;
+	padding: 15px;
+	border-radius: 5px;
+	margin-bottom: 15px;
+}
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
@@ -7814,6 +7867,17 @@ table.jPicker {
 		margin-left: 10px;
 		margin-right: 10px;
 		text-align: start;
+	}
+
+	.bookcalform.boxtable .minwidth75 {
+		min-width: auto;
+	}
+	.center.bookingtab {
+		margin-left: 6px;
+	}
+	#bookinghoursection {
+		font-size: small;
+		width: 122px;
 	}
 }
 
@@ -7970,6 +8034,9 @@ table.jPicker {
 		max-width: 200px;      /* must be width of menu + padding + padding of sidenav */
 		width: 200px;          /* must be width of menu + padding + padding of sidenav */
 	}
+	.loginbuttonexternal {
+		width: 260px;
+	}
 	.side-nav-vert .user-menu .dropdown-menu {
 		width: 234px !important;
 	}
@@ -8107,23 +8174,32 @@ table.jPicker {
 	}
 }
 
-
 <?php
+if (getDolUserString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+	// Set a max height on multiselect when using multiselect
+	?>
+	select[multiple] {
+		height: 42px;
+	}
+	<?php
+}
+
+
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/emaillayout.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/timeline.inc.php', 0);
 
-if (getDolGlobalString('THEME_CUSTOM_CSS')) {
-	print $conf->global->THEME_CUSTOM_CSS;
-}
+
+// Add custom CSS if defined
+print getDolGlobalString('THEME_CUSTOM_CSS');
 
 ?>
 
-	div.extra_inline_chkbxlst,
-	div.extra_inline_checkbox {
-		min-width:150px;
-	}
+div.extra_inline_chkbxlst, div.extra_inline_checkbox {
+	min-width:150px;
+}
 
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {

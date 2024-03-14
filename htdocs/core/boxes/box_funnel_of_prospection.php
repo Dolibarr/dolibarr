@@ -57,7 +57,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 		$this->enabled = (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 ? 1 : 0); // Not enabled by default, still need some work
 		//$this->enabled = 1;
 
-		$this->hidden = empty($user->rights->projet->lire);
+		$this->hidden = !$user->hasRight('projet', 'lire');
 	}
 
 	/**

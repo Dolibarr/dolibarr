@@ -84,11 +84,6 @@ class AdvanceTargetingMailing extends CommonObject
 	public $fk_user_mod;
 
 	/**
-	 * @var int|string tms
-	 */
-	public $tms = '';
-
-	/**
 	 * @var array select target type
 	 */
 	public $select_target_type = array();

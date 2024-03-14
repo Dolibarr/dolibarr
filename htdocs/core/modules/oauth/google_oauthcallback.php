@@ -42,7 +42,6 @@ require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
-use OAuth\OAuth2\Service\Google;
 
 // Define $urlwithroot
 global $dolibarr_main_url_root;
@@ -105,7 +104,7 @@ if ($state) {
 
 // Add a test to check that the state parameter is provided into URL when we make the first call to ask the redirect or when we receive the callback
 // but not when callback was ok and we recall the page
-if ($action != 'delete' && !GETPOST('afteroauthloginreturn', 'int') && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
+if ($action != 'delete' && !GETPOSTINT('afteroauthloginreturn') && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
 	dol_syslog("state or statewithscopeonly and/or requestedpermissionsarray are empty");
 	setEventMessages($langs->trans('ScopeUndefined'), null, 'errors');
 	if (empty($backtourl)) {
@@ -163,7 +162,7 @@ if (!GETPOST('code')) {
 
 	// Save more data into session
 	// Not required. All data are saved into $_SESSION['datafromloginform'] when form is posted with a click on Login with
-	// Google with param actionlogin=login and beforeoauthloginredirect=1, by the functions_googleoauth.php.
+	// Google with param actionlogin=login and beforeoauthloginredirect=google, by the functions_googleoauth.php.
 	/*
 	if (!empty($_POST["tz"])) {
 		$_SESSION["tz"] = $_POST["tz"];

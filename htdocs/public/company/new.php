@@ -215,11 +215,11 @@ if (empty($reshook) && $action == 'add') {
 
 		$societe->name = GETPOST('name', 'alphanohtml');
 
-		$societe->client = GETPOST('client', 'int') ? GETPOST('client', 'int') : $societe->client;
+		$societe->client = GETPOSTINT('client') ? GETPOSTINT('client') : $societe->client;
 
 		$societe->address	= GETPOST('address', 'alphanohtml');
 
-		$societe->country_id				= GETPOST('country_id', 'int');
+		$societe->country_id				= GETPOSTINT('country_id');
 
 		$societe->phone					= GETPOST('phone', 'alpha');
 
@@ -229,7 +229,7 @@ if (empty($reshook) && $action == 'add') {
 
 		$societe->client = 2 ; // our client is a prospect
 
-		$societe->code_client		= -1;
+		$societe->code_client		= '-1';
 
 		$societe->name_alias = GETPOST('name_alias', 'alphanohtml');
 
@@ -250,7 +250,7 @@ if (empty($reshook) && $action == 'add') {
 				}
 			} else {
 				$error++;
-				$errmsg .= join('<br>', $societe->errors);
+				$errmsg .= implode('<br>', $societe->errors);
 			}
 		}
 	}

@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +118,6 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array('/');
 	if (is_array($conf->modules_parts['models'])) {
 		$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
@@ -129,18 +129,17 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 			// Determine the model path and validate that it exists
 			$file = dol_buildpath($reldir."core/modules/printsheet/doc/".$file, 0);
 			if (file_exists($file)) {
-				$filefound = 1;
 				$classname = $prefix.'_'.$template;
 				break;
 			}
 		}
-		if ($filefound) {
+		if ($classname !== '') {
 			break;
 		}
 	}
 
 	// Load the model
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$obj = new $classname($db);
@@ -185,7 +184,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 			return -1;
 		}
 	} else {
-		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
+		dol_print_error(null, $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
 		return -1;
 	}
 }

@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021 SuperAdmin
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +51,8 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 
 $arrayofparameters = array(
-	'STOCKTRANSFER_MYPARAM1'=>array('css'=>'minwidth200', 'enabled'=>1),
-	'STOCKTRANSFER_MYPARAM2'=>array('css'=>'minwidth500', 'enabled'=>1)
+	'STOCKTRANSFER_MYPARAM1' => array('css' => 'minwidth200', 'enabled' => 1),
+	'STOCKTRANSFER_MYPARAM2' => array('css' => 'minwidth500', 'enabled' => 1)
 );
 
 $error = 0;
@@ -91,18 +92,16 @@ if ($action == 'updateMask') {
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/stocktransfer/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
@@ -233,7 +232,7 @@ print '<span class="opacitymedium">'.$langs->trans("StockTransferSetupPage").'</
 
 $moduledir = 'stocktransfer';
 $myTmpObjects = array();
-$myTmpObjects[$moduledir]=array('includerefgeneration'=>1, 'includedocgeneration'=>1, 'class'=>'StockTransfer');
+$myTmpObjects[$moduledir] = array('includerefgeneration' => 1, 'includedocgeneration' => 1, 'class' => 'StockTransfer');
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	if ($myTmpObjectKey == 'MyObject') {
@@ -247,6 +246,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectKey), '', '');
 
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Name").'</td>';
@@ -343,7 +343,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 				}
 			}
 		}
-		print "</table><br>\n";
+		print "</table></div><br>\n";
 	}
 
 	if ($myTmpObjectArray['includedocgeneration']) {
@@ -374,6 +374,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			dol_print_error($db);
 		}
 
+		print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent">'."\n";
 		print '<tr class="liste_titre">'."\n";
 		print '<td>'.$langs->trans("Name").'</td>';
@@ -394,6 +395,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 				if (is_dir($dir)) {
 					$handle = opendir($dir);
 					if (is_resource($handle)) {
+						$filelist = array();
 						while (($file = readdir($handle)) !== false) {
 							$filelist[] = $file;
 						}
@@ -486,7 +488,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			}
 		}
 
-		print '</table>';
+		print '</table></div>';
 	}
 }
 

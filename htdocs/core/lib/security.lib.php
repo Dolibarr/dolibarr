@@ -363,7 +363,6 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  */
 function restrictedArea(User $user, $features, $object = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $mode = 0)
 {
-	global $conf;
 	global $hookmanager;
 
 	// Define $objectid
@@ -466,7 +465,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		}
 	}
 
-	// Features/modules to check
+	// Features/modules to check (to support the & and | operator)
 	$featuresarray = array($features);
 	if (preg_match('/&/', $features)) {
 		$featuresarray = explode("&", $features);
@@ -815,7 +814,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	// for this given object (link to company, is contact for project, ...)
 	if (!empty($objectid) && $objectid > 0) {
 		$ok = checkUserAccessToObject($user, $featuresarray, $object, $tableandshare, $feature2, $dbt_keyfield, $dbt_select, $parentfortableentity);
-		$params = array('objectid' => $objectid, 'features' => join(',', $featuresarray), 'features2' => $feature2);
+		$params = array('objectid' => $objectid, 'features' => implode(',', $featuresarray), 'features2' => $feature2);
 		//print 'checkUserAccessToObject ok='.$ok;
 		if ($mode) {
 			return $ok ? 1 : 0;
@@ -889,7 +888,10 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$feature = 'agenda';
 			$dbtablename = 'actioncomm';
 		}
-		if ($feature == 'payment_sc') {
+		if ($feature == 'payment_sc' && empty($parenttableforentity)) {
+			// If we check perm on payment page but $parenttableforentity not defined, we force value on parent table
+			$parenttableforentity = '';
+			$dbtablename = "chargesociales";
 			$feature = "chargesociales";
 			$objectid = $object->fk_charge;
 		}
@@ -897,7 +899,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		$checkonentitydone = 0;
 
 		// Array to define rules of checks to do
-		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for object Societe
 		$checkparentsoc = array('agenda', 'contact', 'contrat'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
@@ -963,7 +965,12 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				$sql .= ", ".MAIN_DB_PREFIX."societe as s)";
 				$sql .= " WHERE sc.fk_soc IN (".$db->sanitize($objectid, 1).")";
-				$sql .= " AND sc.fk_user = ".((int) $user->id);
+				$sql .= " AND (sc.fk_user = ".((int) $user->id);
+				if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+					$userschilds = $user->getAllChildIds();
+					$sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
+				}
+				$sql .= ")";
 				$sql .= " AND sc.fk_soc = s.rowid";
 				$sql .= " AND s.entity IN (".getEntity($sharedelement, 1).")";
 			} elseif (isModEnabled('multicompany')) {
@@ -1050,7 +1057,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {
 				if (empty($dbt_keyfield)) {
-					dol_print_error('', 'Param dbt_keyfield is required but not defined');
+					dol_print_error(null, 'Param dbt_keyfield is required but not defined');
 				}
 				$sql = "SELECT COUNT(dbt.".$dbt_keyfield.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -1060,7 +1067,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				// If internal user without permission to see all thirdparties: Check permission for internal users that are restricted on their objects
 				if ($feature != 'ticket') {
 					if (empty($dbt_keyfield)) {
-						dol_print_error('', 'Param dbt_keyfield is required but not defined');
+						dol_print_error(null, 'Param dbt_keyfield is required but not defined');
 					}
 					$sql = "SELECT COUNT(sc.fk_soc) as nb";
 					$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -1068,7 +1075,14 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 					$sql .= " AND sc.fk_soc = dbt.".$dbt_keyfield;
-					$sql .= " AND sc.fk_user = ".((int) $user->id);
+					$sql .= " AND (sc.fk_user = ".((int) $user->id);
+					if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+						$userschilds = $user->getAllChildIds();
+						foreach ($userschilds as $key => $value) {
+							$sql .= ' OR sc.fk_user = '.((int) $value);
+						}
+					}
+					$sql .= ')';
 				} else {
 					// On ticket, the thirdparty is not mandatory, so we need a special test to accept record with no thirdparties.
 					$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
@@ -1199,7 +1213,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 
 	$langs->loadLangs(array("main", "errors"));
 
-	if ($printheader) {
+	if ($printheader && !defined('NOHEADERNOFOOTER')) {
 		if (function_exists("llxHeader")) {
 			llxHeader('');
 		} elseif (function_exists("llxHeaderVierge")) {
@@ -1237,7 +1251,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 			}
 		}
 	}
-	if ($printfooter && function_exists("llxFooter")) {
+	if ($printfooter && !defined('NOHEADERNOFOOTER') && function_exists("llxFooter")) {
 		print '</div>';
 		llxFooter();
 	}

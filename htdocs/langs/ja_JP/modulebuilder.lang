@@ -27,8 +27,7 @@ ModuleBuilderDeschooks=このタブはフック専用。
 ModuleBuilderDescwidgets=このタブは、ウィジェットの管理/構築専用。
 ModuleBuilderDescbuildpackage=ここで、モジュールの「配布準備完了」パッケージファイル(正規化された.zipファイル)と「配布準備完了」ドキュメントファイルを生成できる。ボタンをクリックするだけで、パッケージまたはドキュメントファイルを作成できる。
 EnterNameOfModuleToDeleteDesc=モジュールを削除できる。警告：モジュールの全コーディングファイル(手動で生成または作成されたもの)および構造化されたデータとドキュメントは削除される！
-EnterNameOfObjectToDeleteDesc=オブジェクトを削除できる。警告：オブジェクトに関連する全コーディングファイル(手動で生成または作成されたもの)は削除される！
-EnterNameOfObjectToDeleteDesc=オブジェクトを削除できる。警告：オブジェクトに関連する全コーディングファイル(手動で生成または作成されたもの)は削除される！
+EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
 DangerZone=危険区域
 BuildPackage=パッケージをビルドする
 BuildPackageDesc=アプリケーションのzipパッケージを生成して、Dolibarrで配布する準備を整えることができる。また、<a href="https://www.dolistore.com"> DoliStore.com</a>のようなマーケットプレイスで配布または販売することもできる。
@@ -40,7 +39,7 @@ EditorName=編集者の名前
 EditorUrl=編集者のURL
 DescriptorFile=モジュールの記述子ファイル
 ClassFile=PHP DAOCRUDクラスのファイル
-ApiClassFile=PHPAPIクラスのファイル
+ApiClassFile=モジュールの API ファイル
 PageForList=レコードのリストのPHPページ
 PageForCreateEditView=レコードを作成/編集/表示するためのPHPページ
 PageForAgendaTab=イベントタブのPHPページ
@@ -57,7 +56,7 @@ RegenerateMissingFiles=不足しているファイルを生成する
 SpecificationFile=ドキュメントのファイル
 LanguageFile=言語のファイル
 ObjectProperties=オブジェクトのプロパティ
-Property=適当
+Property=財産
 PropertyDesc=プロパティは、オブジェクトを特徴付ける属性。この属性には、コード、ラベル、およびいくつかのオプションを持つタイプがある。
 ConfirmDeleteProperty=プロパティ<strong>%s </strong>を削除してもよいか？これにより、PHPクラスのコードが変更されるが、オブジェクトのテーブル定義から列も削除される。
 NotNull=NULLではない
@@ -71,7 +70,7 @@ ArrayOfKeyValues=key-valの配列
 ArrayOfKeyValuesDesc=フィールドが固定値のコンボリストの場合のキーと値の配列
 WidgetFile=ウィジェットファイル
 CSSFile=CSSファイル
-JSFile=Javascriptファイル
+JSFile=JavaScript ファイル
 ReadmeFile=Readmeファイル
 ChangeLog=ChangeLogファイル
 TestClassFile=PHPユニットテストクラスのファイル
@@ -92,8 +91,8 @@ ListOfMenusEntries=メニューエントリのリスト
 ListOfDictionariesEntries=辞書エントリのリスト
 ListOfPermissionsDefined=定義された権限のリスト
 SeeExamples=こちらの例を見ること
-EnabledDesc=このフィールドをアクティブにする条件。 <br> <br> 例: <br> 1 <br> isModEnabled('MAIN_MODULE_MYMODULE') <br> getDolGlobalString('MYMODULE_OPTION')==2
-VisibleDesc=フィールドは表示されているか? (例: 0=表示されない、1=リストおよび作成/更新/表示フォームで表示される、2=リストでのみ表示される、3=作成/更新/表示フォームでのみ表示される (リストを除く)、4=リストおよび更新/表示フォームで表示される(作成を除く)、  5=リストおよび表示フォームで表示される(作成と更新を除く)。 <br> <br> 負の値を使用すると、フィールドはデフォルトではリストに表示されないが、表示用に選択できることを意味する)。
+EnabledDesc=このフィールドをアクティブにする条件。<br><br>例:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')= =2
+VisibleDesc=フィールドは表示されているか? (例: 0=不可視、1=リストおよびフォームの作成/更新/表示で可視、2=リストでのみ可視、3=フォームの作成/更新/表示でのみ可視(リストでは不可視)、4=リストおよび更新/表示フォームのみ可視 (非作成)、5= リストと表示フォームのみ可視 (非作成、非更新)。<br><br> 負の値を使用すると、フィールドはデフォルトではリストに非表示だが、可視として選択可能になる)。
 ItCanBeAnExpression=表現となりえるもの。例: <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1 <br> $user->hasRight('holiday', 'define_holiday')?1:5
 DisplayOnPdfDesc=互換性のある PDF ドキュメントでこのフィールドを表示すると、「位置」フィールドで位置を管理できる。 <br>  <strong> ドキュメントに対して: </strong>  <br> 0 = 非表示  <br> 1 = 表示 <br> 2 = 空以外なら表示 <br>  <br>  <strong> ドキュメントの行に対して : </strong>  <br> 0 = 非表示  <br> 1 = １欄に表示 <br> 3 = 説明の後の行説明欄に表示 <br> 4 = 空以外なら、説明の後の説明欄に表示
 DisplayOnPdf=PDFで
@@ -107,7 +106,7 @@ PermissionsDefDesc=モジュールによって提供される新規権限をこ�
 MenusDefDescTooltip=モジュール/アプリケーションによって提供されるメニューは、モジュール記述子ファイルの配列<strong> $ this->menus</strong>に定義されている。このファイルを手動で編集するか、埋め込みエディターを使用できる。 <br> <br>注：定義されると（およびモジュールが再活性化されると）、メニューは%sの管理者ユーザが使用できるメニューエディターにも表示される。
 DictionariesDefDescTooltip=モジュール/アプリケーションによって提供されるディクショナリは、モジュール記述子ファイルの配列<strong> $ this-> dictionaries</strong>に定義されている。このファイルを手動で編集するか、埋め込みエディターを使用できる。 <br> <br>注：定義(およびモジュールの再活性化)が完了すると、%sの管理者ユーザには辞書も設定領域に表示される。
 PermissionsDefDescTooltip=モジュール/アプリケーションによって提供されるアクセス許可は、配列<strong> $ this-> rights</strong>にモジュール記述子ファイルに定義される。このファイルを手動で編集するか、埋め込みエディターを使用できる。 <br> <br>注：定義されると(およびモジュールが再活性化されると)、アクセス許可はデフォルトのアクセス許可設定%sに表示される。
-HooksDefDesc=定義する：管理したいフックのコンテキストを <b>module_parts['hooks']</b> プロパティのモジュール記述子の中に。 (コンテキストのリストは、コアコードで '<b>initHooks(</b>' を検索すると見つかる).<br>編集する：フックされた関数のコードを追加するためのフックファイルを。 (フック可能な関数は、コアコードで '<b>executeHooks</b>' を検索すると見つかる).
+HooksDefDesc=プロパティ <b>module_parts['hooks']</b>にて, モジュール記述子 ファイルにて、フックの実行を必要とするコンテキストのリストを定義する (可能なコンテキストのリストを探すにはコアコードの '<b>initHooks(</b>' を検索).<br>次に、フックされる関数のコードを含むフックコードを有するファイルを編集する (フック可能関数のリストを探すにはコアコードにて '<b>executeHooks</b>' を検索).
 TriggerDefDesc=モジュールの外部のビジネスイベント（他のモジュールによってトリガーされるイベント）が実行されるときに実行するコードをトリガーファイルで定義する。
 SeeIDsInUse=インストールで使用されているIDを確認する
 SeeReservedIDsRangeHere=予約済IDの範囲を参照すること
@@ -128,7 +127,7 @@ RealPathOfModule=モジュールの実際のパス
 ContentCantBeEmpty=ファイルの内容を空にすることはできない
 WidgetDesc=ここで、モジュールに埋め込まれるウィジェットを生成および編集できる。
 CSSDesc=ここで、モジュールにパーソナライズされたCSSが埋め込まれたファイルを生成および編集できる。
-JSDesc=ここで、モジュールにパーソナライズされたJavascriptが埋め込まれたファイルを生成および編集できる。
+JSDesc=ここで、モジュールに埋め込まれたパーソナライズされた JavaScript を使用して ファイル を生成および編集できる。
 CLIDesc=ここで、モジュールで提供するコマンドラインスクリプトをいくつか生成できる。
 CLIFile=CLIファイル
 NoCLIFile=CLIファイルがない
@@ -148,8 +147,8 @@ CSSViewClass=読取フォーム用CSS
 CSSListClass=リストのCSS
 NotEditable=編集不可
 ForeignKey=外部キー
-ForeignKeyDesc=このフィールドの値が別のテーブルに存在することを保証する必要がある場合。構文に一致する値をここに入力する: tablename.parentfieldtocheck
-TypeOfFieldsHelp=例: <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] <br> '1' は、レコードを作成するコンボの後に + ボタンを追加することを意味する <br> 'filter' はSQL 条件、例：  'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)' 
+ForeignKeyDesc=このフィールドの値が別のテーブルに存在することを保証する必要がある場合。ここに構文に一致する値を入力する: tablename.parentfield tocheck
+TypeOfFieldsHelp=例:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' の意味は、レコード作成のためにコンボの後に + ボタンを追加すること<br>'filter' はユニバーサル フィルタ構文条件、例: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=これは、フィールド/属性のタイプ。
 AsciiToHtmlConverter=アスキーからHTMLへのコンバーター
 AsciiToPdfConverter=アスキーからPDFへのコンバーター
@@ -181,3 +180,9 @@ FailedToAddCodeIntoDescriptor=記述子にコードを追加できないでし�
 DictionariesCreated=辞書 <b> %s </b> が正常に作成された
 DictionaryDeleted=辞書 <b> %s </b> が正常に削除された
 PropertyModuleUpdated=プロパティ <b> %s </b> は正常に更新された
+InfoForApiFile=* 初めてファイルを生成すると、すべてのメソッドが <strong>オブジェクトごとに.</strong>作成される<br>* <strong>削除</strong>にてクリックすると、  <strong>選択したオブジェクト</strong>のすべてのメソッドだけを削除する。
+SetupFile=モジュールセットアップのページ
+EmailingSelectors=Emails selectors
+EmailingSelectorDesc=ここでクラス ファイルを生成および編集して、一括メール送信モジュールに新しいメール ターゲット セレクターを提供できる。
+EmailingSelectorFile=メール セレクター ファイル
+NoEmailingSelector=メール セレクターなし ファイル

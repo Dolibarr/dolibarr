@@ -316,6 +316,15 @@ delete from llx_accounting_account where (rowid) in (select max_rowid from tmp_a
 drop table tmp_accounting_account_double;
 
 
+-- Sequence to removed duplicated values of llx_commande_extrafields. Run several times if you still have duplicate.
+drop table tmp_commande_extrafields_double;
+--select fk_object, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by fk_object having count(rowid) >= 2;
+create table tmp_commande_extrafields_double as (select fk_object, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_commande_extrafields group by fk_object having count(rowid) >= 2);
+--select * from tmp_links_double;
+delete from llx_commande_extrafields where (rowid) in (select max_rowid from tmp_commande_extrafields_double);	--update to avoid duplicate, delete to delete
+drop table tmp_commande_extrafields_double;
+
+
 UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid;
 
 

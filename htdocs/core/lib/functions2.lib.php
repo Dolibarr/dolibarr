@@ -6,6 +6,8 @@
  * Copyright (C) 2015       Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,11 +73,13 @@ function jsUnEscape($source)
 
 
 /**
- * Return list of modules directories. We detect directories that contains a subdirectory /core/modules
- * We discard directory modules that contains 'disabled' into their name.
+ * Return list of directories that contain modules.
  *
- * @param	string	$subdir		Sub directory (Example: '/mailings')
- * @return	array				Array of directories that can contains module descriptors
+ * Detects directories that contain a subdirectory /core/modules.
+ * Modules that contains 'disabled' in their name are excluded.
+ *
+ * @param	string					$subdir	Sub directory (Example: '/mailings' will look for /core/modules/mailings/)
+ * @return	array<string,string>			Array of directories that can contain module descriptors ($key==value)
  */
 function dolGetModulesDirs($subdir = '')
 {
@@ -97,7 +101,7 @@ function dolGetModulesDirs($subdir = '')
 					continue; // We discard module if it contains disabled into name.
 				}
 
-				if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS' && $file != 'includes') {
+				if (substr($file, 0, 1) != '.' && is_dir($dirroot.'/'.$file) && strtoupper(substr($file, 0, 3)) != 'CVS' && $file != 'includes') {
 					if (is_dir($dirroot.'/'.$file.'/core/modules'.$subdir.'/')) {
 						$modulesdir[$dirroot.'/'.$file.'/core/modules'.$subdir.'/'] = $dirroot.'/'.$file.'/core/modules'.$subdir.'/';
 					}
@@ -192,7 +196,7 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (is_object($object->user_creation)) {
+		if (! empty($object->user_creation) && is_object($object->user_creation)) {	// deprecated mode
 			if ($object->user_creation->id) {
 				print $object->user_creation->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -885,11 +889,11 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
  * Return last or next value for a mask (according to area we should not reset)
  *
  * @param   DoliDB		$db				Database handler
- * @param   string		$mask			Mask to use
+ * @param   string		$mask			Mask to use. Must contains {0...0}. Can contains {t..}, {u...}, {user_extra_xxx}, .;.
  * @param   string		$table			Table containing field with counter
  * @param   string		$field			Field containing already used values of counter
  * @param   string		$where			To add a filter on selection (for example to filter on invoice types)
- * @param   Societe		$objsoc			The company that own the object we need a counter for
+ * @param   Societe|string $objsoc		The company that own the object we need a counter for
  * @param   string		$date			Date to use for the {y},{m},{d} tags.
  * @param   string		$mode			'next' for next value or 'last' for last value
  * @param   bool		$bentityon		Activate the entity filter. Default is true (for modules not compatible with multicompany)
@@ -899,7 +903,7 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
  */
 function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $date = '', $mode = 'next', $bentityon = true, $objuser = null, $forceentity = null)
 {
-	global $conf, $user;
+	global $user;
 
 	if (!is_object($objsoc)) {
 		$valueforccc = $objsoc;
@@ -1003,6 +1007,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$regKey = array();
 	while (preg_match('/\{([A-Z]+)\-([1-9])\}/', $tmpmask, $regKey)) {
 		$maskperso[$regKey[1]] = '{'.$regKey[1].'-'.$regKey[2].'}';
+		// @phan-suppress-next-line PhanParamSuspiciousOrder
 		$maskpersonew[$regKey[1]] = str_pad('', $regKey[2], '_', STR_PAD_RIGHT);
 		$tmpmask = preg_replace('/\{'.$regKey[1].'\-'.$regKey[2].'\}/i', $maskpersonew[$regKey[1]], $tmpmask);
 	}
@@ -1191,8 +1196,10 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$maskLike = preg_replace('/\{y\}/i', '_', $maskLike);
 	$maskLike = preg_replace('/\{mm\}/i', '__', $maskLike);
 	$maskLike = preg_replace('/\{dd\}/i', '__', $maskLike);
+	// @phan-suppress-next-line PhanParamSuspiciousOrder
 	$maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'), str_pad("", dol_strlen($maskcounter), "_"), $maskLike);
 	if ($maskrefclient) {
+		// @phan-suppress-next-line PhanParamSuspiciousOrder
 		$maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), str_pad("", dol_strlen($maskrefclient), "_"), $maskLike);
 	}
 	if ($masktype) {
@@ -1215,6 +1222,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	// To ensure that all variables within the MAX() brackets are integers
 	// This avoid bad detection of max when data are noised with non numeric values at the position of the numero
 	if (getDolGlobalInt('MAIN_NUMBERING_FILTER_ON_INT_ONLY')) {
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$sql .= " AND ". $db->regexpsql($sqlstring, '^[0-9]+$', 1);
 	}
 
@@ -1264,6 +1272,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$maskLike = preg_replace('/\{dd\}/i', '__', $maskLike);
 		$maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'), $counterpadded, $maskLike);
 		if ($maskrefclient) {
+			// @phan-suppress-next-line PhanParamSuspiciousOrder
 			$maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), str_pad("", dol_strlen($maskrefclient), "_"), $maskLike);
 		}
 		if ($masktype) {
@@ -1331,7 +1340,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{y}'), '_', $maskrefclient_maskLike);
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{mm}'), '__', $maskrefclient_maskLike);
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{dd}'), '__', $maskrefclient_maskLike);
+			// @phan-suppress-next-line PhanParamSuspiciousOrder
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'), str_pad("", dol_strlen($maskcounter), "_"), $maskrefclient_maskLike);
+			// @phan-suppress-next-line PhanParamSuspiciousOrder
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), $maskrefclient_clientcode.str_pad("", dol_strlen($maskrefclient_maskcounter), "_"), $maskrefclient_maskLike);
 
 			// Get counter in database
@@ -1420,23 +1431,28 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 }
 
 /**
- * Get string between
+ * Get string from "$start" up to "$end"
+ *
+ * If string is "STARTcontentEND" and $start is "START" and $end is "END",
+ * then this function returns "content"
  *
  * @param   string  $string     String to test
- * @param   int     $start      Value for start
- * @param   int     $end        Value for end
+ * @param   string  $start      String Value for start
+ * @param   string  $end        String Value for end
  * @return  string              Return part of string
  */
 function get_string_between($string, $start, $end)
 {
-	$string = " ".$string;
 	$ini = strpos($string, $start);
-	if ($ini == 0) {
-		return "";
+	if ($ini === false) {
+		return '';
 	}
 	$ini += strlen($start);
-	$len = strpos($string, $end, $ini) - $ini;
-	return substr($string, $ini, $len);
+	$endpos = strpos($string, $end, $ini);
+	if ($endpos === false) {
+		return '';
+	}
+	return substr($string, $ini, $endpos - $ini);
 }
 
 /**
@@ -1653,10 +1669,10 @@ function numero_semaine($time)
 	// Definition du numero de semaine: nb de jours entre "premier Jeudi de l'annee" et "Jeudi de la semaine";
 	$numeroSemaine = (
 		(
-		date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
-	-
-	date("z", mktime(12, 0, 0, date("m", $premierJeudiAnnee), date("d", $premierJeudiAnnee), date("Y", $premierJeudiAnnee)))
-	) / 7
+			date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
+		-
+		date("z", mktime(12, 0, 0, date("m", $premierJeudiAnnee), date("d", $premierJeudiAnnee), date("Y", $premierJeudiAnnee)))
+		) / 7
 	) + 1;
 
 	// Cas particulier de la semaine 53
@@ -1908,7 +1924,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 					}
 					if (is_dir($tmpdir)) {
 						// all type of template is allowed
-						$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '', '', 'name', SORT_ASC, 0);
+						$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '', null, 'name', SORT_ASC, 0);
 						if (count($tmpfiles)) {
 							$listoffiles = array_merge($listoffiles, $tmpfiles);
 						}
@@ -1985,17 +2001,20 @@ function is_ip($ip)
  */
 function dol_buildlogin($lastname, $firstname)
 {
-	global $conf;
-
 	//$conf->global->MAIN_BUILD_LOGIN_RULE = 'f.lastname';
+	$charforseparator = getDolGlobalString("MAIN_USER_SEPARATOR_CHAR_FOR_GENERATED_LOGIN", '.');
+	if ($charforseparator == 'none') {
+		$charforseparator = '';
+	}
+
 	if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {	// f.lastname
 		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
-		$login .= ($login ? '.' : '');
+		$login .= ($login ? $charforseparator : '');
 		$login .= strtolower(dol_string_unaccent($lastname));
 		$login = dol_string_nospecial($login, ''); // For special names
 	} else {	// firstname.lastname
 		$login = strtolower(dol_string_unaccent($firstname));
-		$login .= ($login ? '.' : '');
+		$login .= ($login ? $charforseparator : '');
 		$login .= strtolower(dol_string_unaccent($lastname));
 		$login = dol_string_nospecial($login, ''); // For special names
 	}
@@ -2024,8 +2043,8 @@ function getSoapParams()
 	$response_timeout = (!getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT); // Response timeout
 	//print extension_loaded('soap');
 	if ($proxyuse) {
-		$params = array('connection_timeout'=>$timeout,
-					  'response_timeout'=>$response_timeout,
+		$params = array('connection_timeout' => $timeout,
+					  'response_timeout' => $response_timeout,
 					  'proxy_use'      => 1,
 					  'proxy_host'     => $proxyhost,
 					  'proxy_port'     => $proxyport,
@@ -2034,8 +2053,8 @@ function getSoapParams()
 					  'trace'		   => 1
 		);
 	} else {
-		$params = array('connection_timeout'=>$timeout,
-					  'response_timeout'=>$response_timeout,
+		$params = array('connection_timeout' => $timeout,
+					  'response_timeout' => $response_timeout,
 					  'proxy_use'      => 0,
 					  'proxy_host'     => false,
 					  'proxy_port'     => false,
@@ -2283,14 +2302,14 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql .= " SET ".$fieldfkparent." = 0";
-		$sql .= " WHERE rowid IN (".$db->sanitize(join(',', $listofidtoclean)).")"; // So we update only records detected wrong
+		$sql .= " WHERE rowid IN (".$db->sanitize(implode(',', $listofidtoclean)).")"; // So we update only records detected wrong
 		$resql = $db->query($sql);
 		if ($resql) {
 			$nb = $db->affected_rows($sql);
 			if ($nb > 0) {
 				// Removed orphelins records
 				print '<br>Some records were detected to have parent that is a child, we set them as root record for id: ';
-				print join(',', $listofidtoclean);
+				print implode(',', $listofidtoclean);
 			}
 
 			$totalnb += $nb;
@@ -2300,14 +2319,14 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		// Check and clean orphelins
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql .= " SET ".$fieldfkparent." = 0";
-		$sql .= " WHERE ".$fieldfkparent." NOT IN (".$db->sanitize(join(',', $listofid), 1).")"; // So we update only records linked to a non existing parent
+		$sql .= " WHERE ".$fieldfkparent." NOT IN (".$db->sanitize(implode(',', $listofid), 1).")"; // So we update only records linked to a non existing parent
 		$resql = $db->query($sql);
 		if ($resql) {
 			$nb = $db->affected_rows($sql);
 			if ($nb > 0) {
 				// Removed orphelins records
 				print '<br>Some orphelins were found and modified to be parent so records are visible again for id: ';
-				print join(',', $listofid);
+				print implode(',', $listofid);
 			}
 
 			$totalnb += $nb;
@@ -2498,16 +2517,16 @@ function colorLighten($hex, $percent)
 
 
 /**
- * @param string 	$hex 			color in hex
- * @param float 	$alpha 			0 to 1 to add alpha channel
- * @param bool 		$returnArray	true=return an array instead, false=return string
- * @return string|array				String or array
+ * @param string 		$hex 			color in hex
+ * @param float|false	$alpha 			0 to 1 to add alpha channel
+ * @param bool 			$returnArray	true=return an array instead, false=return string
+ * @return string|array					String or array
  */
 function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 {
 	$string = '';
-	$hex      = str_replace('#', '', $hex);
-	$length   = strlen($hex);
+	$hex = str_replace('#', '', $hex);
+	$length = strlen($hex);
 	$rgb = array();
 	$rgb['r'] = hexdec($length == 6 ? substr($hex, 0, 2) : ($length == 3 ? str_repeat(substr($hex, 0, 1), 2) : 0));
 	$rgb['g'] = hexdec($length == 6 ? substr($hex, 2, 2) : ($length == 3 ? str_repeat(substr($hex, 1, 1), 2) : 0));
@@ -2526,6 +2545,62 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 	}
 }
 
+/**
+ * Color Hex to Hsl (used for style)
+ *
+ * @param	string 			$hex 			Color in hex
+ * @param	float|false 	$alpha 			0 to 1 to add alpha channel
+ * @param	bool 			$returnArray	true=return an array instead, false=return string
+ * @return	string|array					String or array
+ */
+function colorHexToHsl($hex, $alpha = false, $returnArray = false)
+{
+	$hex = str_replace('#', '', $hex);
+	$red = hexdec(substr($hex, 0, 2)) / 255;
+	$green = hexdec(substr($hex, 2, 2)) / 255;
+	$blue = hexdec(substr($hex, 4, 2)) / 255;
+
+	$cmin = min($red, $green, $blue);
+	$cmax = max($red, $green, $blue);
+	$delta = $cmax - $cmin;
+
+	if ($delta == 0) {
+		$hue = 0;
+	} elseif ($cmax === $red) {
+		$hue = (($green - $blue) / $delta);
+	} elseif ($cmax === $green) {
+		$hue = ($blue - $red) / $delta + 2;
+	} else {
+		$hue = ($red - $green) / $delta + 4;
+	}
+
+	$hue = round($hue * 60);
+	if ($hue < 0) {
+		$hue += 360;
+	}
+
+	$lightness = (($cmax + $cmin) / 2);
+	$saturation = $delta === 0 ? 0 : ($delta / (1 - abs(2 * $lightness - 1)));
+	if ($saturation < 0) {
+		$saturation += 1;
+	}
+
+	$lightness = round($lightness * 100);
+	$saturation = round($saturation * 100);
+
+	if ($returnArray) {
+		return array(
+			'h' => $hue,
+			'l' => $lightness,
+			's' => $saturation,
+			'a' => $alpha === false ? 1 : $alpha
+		);
+	} elseif ($alpha) {
+		return 'hsla('.$hue.', '.$saturation.', '.$lightness.' / '.$alpha.')';
+	} else {
+		return 'hsl('.$hue.', '.$saturation.', '.$lightness.')';
+	}
+}
 
 /**
  * Applies the Cartesian product algorithm to an array
@@ -2613,6 +2688,10 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'accountancy';
 	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions', 'partnerships', 'recruitments'))) {
 		$moduledirforclass = preg_replace('/s$/', '', $moduleobject);
+	} elseif ($moduleobject == 'paymentsalaries') {
+		$moduledirforclass = 'salaries';
+	} elseif ($moduleobject == 'paymentexpensereports') {
+		$moduledirforclass = 'expensereport';
 	}
 
 	return $moduledirforclass;
@@ -2652,7 +2731,7 @@ if (!function_exists('dolEscapeXML')) {
 	 */
 	function dolEscapeXML($string)
 	{
-		return strtr($string, array('\''=>'&apos;', '"'=>'&quot;', '&'=>'&amp;', '<'=>'&lt;', '>'=>'&gt;'));
+		return strtr($string, array('\'' => '&apos;', '"' => '&quot;', '&' => '&amp;', '<' => '&lt;', '>' => '&gt;'));
 	}
 }
 
@@ -2773,6 +2852,7 @@ function phpSyntaxError($code)
 	ob_start();
 	$code = substr($code, strlen('<?php '));
 	$braces || $code = "if(0){{$code}\n}";
+	// @phan-suppress-next-line PhanPluginUnsafeEval
 	if (eval($code) === false) {
 		if ($braces) {
 			$braces = PHP_INT_MAX;
@@ -2785,8 +2865,8 @@ function phpSyntaxError($code)
 		if (preg_match("'syntax error, (.+) in .+ on line (\d+)$'s", $code, $code)) {
 			$code[2] = (int) $code[2];
 			$code = $code[2] <= $braces
-			? array($code[1], $code[2])
-			: array('unexpected $end'.substr($code[1], 14), $braces);
+				? array($code[1], $code[2])
+				: array('unexpected $end'.substr($code[1], 14), $braces);
 		} else {
 			$code = array('syntax error', 0);
 		}

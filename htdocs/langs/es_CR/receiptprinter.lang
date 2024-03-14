@@ -5,7 +5,6 @@ PrinterUpdated=Impresora%s actualizada
 TestSentToPrinter=Prueba enviada a la impresora%s
 ReceiptPrinter=Impresoras de recibos
 ReceiptPrinterDesc=Configuración de impresoras de recibos
-ReceiptPrinterTypeDesc=Ejemplo de valores posibles para el campo "Parámetros" según el tipo de controlador
 ListPrinters=Lista de impresoras
 SetupReceiptTemplate=Configuración de la plantilla
 CONNECTOR_DUMMY=Impresora ficticia

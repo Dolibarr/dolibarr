@@ -36,10 +36,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load translation files required by the page
 $langs->load("categories");
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
 $catname = GETPOST('catname', 'alpha');
-$nosearch = GETPOST('nosearch', 'int');
+$nosearch = GETPOSTINT('nosearch');
 
 $categstatic = new Categorie($db);
 if (is_numeric($type)) {
@@ -204,6 +204,7 @@ foreach ($fulltree as $key => $val) {
 	$entry .= '<span class="noborderoncategories" '.$color.'>'.$li.'</span>';
 	$entry .= '</td>';
 
+	// Add column counter
 	$entry .= $counter;
 
 	$entry .= '<td class="right" width="20px;">';

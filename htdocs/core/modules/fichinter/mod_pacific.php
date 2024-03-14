@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 
 /**
  *  \file       htdocs/core/modules/fichinter/mod_pacific.php
- *  \ingroup    fiche intervention
+ *  \ingroup    Intervention card
  *  \brief      File with Pacific numbering module for interventions
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
@@ -82,8 +83,8 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return boolean     			false if conflict, true if ok
+	 *  @param  CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
 	{
@@ -121,7 +122,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 * 	Return next free value
 	 *
 	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
+	 *  @param  Fichinter	$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
 	public function getNextValue($objsoc = 0, $object = '')
@@ -161,9 +162,10 @@ class mod_pacific extends ModeleNumRefFicheinter
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe	$objsoc     Object third party
-	 * 	@param	Object	$objforref	Object for number to search
-	 *  @return string      		Next free value
+	 *  @param	Societe		$objsoc     Object third party
+	 * 	@param	Fichinter	$objforref	Object for number to search
+	 *  @return string      			Next free value
+	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{

@@ -29,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.cla
 
 $langs->loadLangs(array("products", "other"));
 
-$id = GETPOST('id', 'int');
-$valueid = GETPOST('valueid', 'int');
+$id = GETPOSTINT('id');
+$valueid = GETPOSTINT('valueid');
 $ref = GETPOST('ref', 'alpha');
 $weight_impact = price2num(GETPOST('weight_impact', 'alpha'), 2);
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
@@ -47,7 +47,7 @@ $form = new Form($db);
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $cancel = GETPOST('cancel', 'alpha');
@@ -90,9 +90,9 @@ if ($object->id > 0) {
 } else {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
-$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
+$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'supprimer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'supprimer')));
 
 
 /*
@@ -115,9 +115,9 @@ if ($action == 'add') {
 }
 if ($action == 'create' && GETPOST('selectvariant', 'alpha')) {	// We click on select combination
 	$action = 'add';
-	$attribute_id = GETPOST('attribute', 'int');
-	$attribute_value_id = GETPOST('value', 'int');
-	if ($attribute_id> 0 && $attribute_value_id > 0) {
+	$attribute_id = GETPOSTINT('attribute');
+	$attribute_value_id = GETPOSTINT('value');
+	if ($attribute_id > 0 && $attribute_value_id > 0) {
 		$feature = $attribute_id . '-' . $attribute_value_id;
 		$selectedvariant[$feature] = $feature;
 		$_SESSION['addvariant_'.$object->id] = $selectedvariant;
@@ -341,7 +341,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 
 
 // Reload variants
-$productCombinations = $prodcomb->fetchAllByFkProductParent($object->id);
+$productCombinations = $prodcomb->fetchAllByFkProductParent($object->id, true);
 
 if ($action === 'confirm_deletecombination') {
 	if ($prodcomb->fetch($valueid) > 0) {
@@ -792,11 +792,11 @@ if (!empty($id) || !empty($ref)) {
 				$prodstatic->fetch($prodcomb->fk_product_child);
 
 				print $form->formconfirm(
-					"combinations.php?id=".urlencode($id)."&valueid=".urlencode($valueid),
+					"combinations.php?id=".urlencode((string) ($id))."&valueid=".urlencode((string) ($valueid)),
 					$langs->trans('Delete'),
 					$langs->trans('ProductCombinationDeleteDialog', $prodstatic->ref),
 					"confirm_deletecombination",
-					array(array('label'=> $langs->trans('DeleteLinkedProduct'), 'type'=> 'checkbox', 'name' => 'delete_product', 'value' => false)),
+					array(array('label' => $langs->trans('DeleteLinkedProduct'), 'type' => 'checkbox', 'name' => 'delete_product', 'value' => false)),
 					0,
 					1
 				);
@@ -861,15 +861,6 @@ if (!empty($id) || !empty($ref)) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 		// List of mass actions available
-		/*
-		$arrayofmassactions =  array(
-			'presend'=>$langs->trans("SendByMail"),
-			'builddoc'=>$langs->trans("PDFMerge"),
-		);
-		if ($user->rights->product->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-		if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
-		$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
-		*/
 
 		$aaa = '';
 		if (count($productCombinations)) {

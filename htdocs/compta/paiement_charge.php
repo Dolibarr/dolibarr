@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills", "compta"));
 
-$chid = GETPOST("id", 'int');
+$chid = GETPOSTINT("id");
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel');
 
@@ -60,7 +60,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		exit;
 	}
 
-	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", "int"), GETPOST("reday", "int"), GETPOST("reyear", "int"));
+	$datepaye = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 
 	if (!(GETPOST("paiementtype") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
@@ -72,7 +72,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		$error++;
 		$action = 'create';
 	}
-	if (isModEnabled("banque") && !(GETPOST("accountid") > 0)) {
+	if (isModEnabled("bank") && !(GETPOST("accountid") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
 		$error++;
 		$action = 'create';
@@ -118,7 +118,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 			}
 
 			if (!$error) {
-				$result = $paiement->addPaymentToBank($user, 'payment_sc', '(SocialContributionPayment)', GETPOST('accountid', 'int'), '', '');
+				$result = $paiement->addPaymentToBank($user, 'payment_sc', '(SocialContributionPayment)', GETPOSTINT('accountid'), '', '');
 				if (!($result > 0)) {
 					$error++;
 					setEventMessages($paiement->error, null, 'errors');
@@ -160,7 +160,8 @@ if ($action == 'create') {
 
 		//Add js for AutoFill
 		print ' $(document).ready(function () {';
-		print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){
+		print ' 	$(".AutoFillAmount").on(\'click touchstart\', function() {
+						console.log("Click on .AutoFillAmount");
                         var amount = $(this).data("value");
 						document.getElementById($(this).data(\'rowid\')).value = amount ;
 					});';
@@ -201,9 +202,9 @@ if ($action == 'create') {
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
+	$datepaye = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 	$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? (GETPOSTISSET("remonth") ? $datepaye : -1) : '';
-	print $form->selectDate($datepayment, '', '', '', 0, "add_payment", 1, 1, 0, '', '', $charge->date_ech, '', 1, $langs->trans("DateOfSocialContribution"));
+	print $form->selectDate($datepayment, '', 0, 0, 0, "add_payment", 1, 1, 0, '', '', $charge->date_ech, '', 1, $langs->trans("DateOfSocialContribution"));
 	print "</td>";
 	print '</tr>';
 
@@ -217,7 +218,7 @@ if ($action == 'create') {
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	print $form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", 'int') : $charge->accountid, "accountid", 0, '', 2, '', 0, 'maxwidth500 widthcentpercentminusx', 1); // Show opend bank account list
+	print $form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $charge->accountid, "accountid", 0, '', 2, '', 0, 'maxwidth500 widthcentpercentminusx', 1); // Show opend bank account list
 	print '</td></tr>';
 
 	// Number

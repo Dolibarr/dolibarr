@@ -36,9 +36,9 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'orders'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
@@ -54,7 +54,7 @@ $result = restrictedArea($user, 'commande', $id, '');
 
 $usercancreate  =  $user->hasRight("commande", "creer");
 
-$permissionnote = $user->rights->commande->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('commande', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 
 $object = new Commande($db);

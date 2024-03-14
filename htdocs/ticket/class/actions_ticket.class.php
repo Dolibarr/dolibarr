@@ -467,7 +467,11 @@ class ActionsTicket extends CommonHookActions
 		// Exclude status which requires specific method
 		$exclude_status = array(Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED);
 		// Exclude actual status
-		$exclude_status = array_merge($exclude_status, array(intval($object->fk_statut)));
+		$exclude_status = array_merge($exclude_status, array((int) $object->status));
+		// Exclude also the Waiting/Pending/Suspended status
+		if (!getDolGlobalString('TICKET_INCLUDE_SUSPENDED_STATUS')) {
+			$exclude_status[] = $object::STATUS_WAITING;
+		}
 
 		// Sort results to be similar to status object list
 		//sort($exclude_status);

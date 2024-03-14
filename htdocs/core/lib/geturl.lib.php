@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,17 +92,23 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	// Restrict use to some protocols only
 	$protocols = 0;
+	$redir_list = array();
 	if (is_array($allowedschemes)) {
 		foreach ($allowedschemes as $allowedscheme) {
 			if ($allowedscheme == 'http') {
 				$protocols |= CURLPROTO_HTTP;
-			}
-			if ($allowedscheme == 'https') {
+				$redir_list["HTTP"] = 1;
+			} elseif ($allowedscheme == 'https') {
 				$protocols |= CURLPROTO_HTTPS;
+				$redir_list["HTTPS"] = 1;
+			} elseif ($allowedscheme == 'ftp') {
+				$protocols |= CURLPROTO_FTP;
+				$redir_list["FTP"] = 1;
+			} elseif ($allowedscheme == 'ftps') {
+				$protocols |= CURLPROTO_FTPS;
+				$redir_list["FTPS"] = 1;
 			}
 		}
-		curl_setopt($ch, CURLOPT_PROTOCOLS, $protocols);
-		curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, $protocols);
 	}
 
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, !getDolGlobalString('MAIN_USE_CONNECT_TIMEOUT') ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
@@ -219,6 +226,16 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			}
 		}
 
+		// Moving these just before the curl_exec option really limits
+		// on windows PHP 7.4.
+		curl_setopt($ch, CURLOPT_PROTOCOLS, $protocols);
+		curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, $protocols);
+		/* CURLOPT_REDIR_PROTOCOLS_STR available from PHP 7.85.0
+		if (version_compare(PHP_VERSION, '8.3.0', '>=') && version_compare(curl_version()['version'], '7.85.0', '>=')) {
+			curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS_STR, implode(",", array_keys($redir_list)));
+		}
+		*/
+
 		// Getting response from server
 		$response = curl_exec($ch);
 
@@ -254,7 +271,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		$rep['curl_error_no'] = curl_errno($ch);
 		$rep['curl_error_msg'] = curl_error($ch);
 
-		dol_syslog("getURLContent response array is ".join(',', $rep));
+		dol_syslog("getURLContent response array is ".implode(',', $rep));
 	} else {
 		//$info = curl_getinfo($ch);
 
@@ -390,23 +407,15 @@ function getDomainFromURL($url, $mode = 0)
 /**
  * Function root url from a long url
  * For example: https://www.abc.mydomain.com/dir/page.html return 'https://www.abc.mydomain.com'
- * For example: http://www.abc.mydomain.com/ return 'https://www.abc.mydomain.com'
+ * For example: https://www.abc.mydomain.com/ return 'https://www.abc.mydomain.com'
+ * For example: http://www.abc.mydomain.com/ return 'http://www.abc.mydomain.com'
  *
  * @param	string	  $url 				    Full URL.
  * @return	string						    Returns root url
  */
 function getRootURLFromURL($url)
 {
-	$prefix = '';
-	$tmpurl = $url;
-	$reg = null;
-	if (preg_match('/^(https?:\/\/)/i', $tmpurl, $reg)) {
-		$prefix = $reg[1];
-	}
-	$tmpurl = preg_replace('/^https?:\/\//i', '', $tmpurl); // Remove http(s)://
-	$tmpurl = preg_replace('/\/.*$/i', '', $tmpurl); // Remove part after domain
-
-	return $prefix.$tmpurl;
+	return preg_replace('/^([a-z]*:\/\/[^\/]*).*/i', '$1', $url);
 }
 
 /**

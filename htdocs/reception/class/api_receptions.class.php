@@ -63,8 +63,8 @@ class Receptions extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->reception->fetch($id);
@@ -100,8 +100,8 @@ class Receptions extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -111,7 +111,7 @@ class Receptions extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -179,7 +179,7 @@ class Receptions extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		// Check mandatory fields
@@ -221,16 +221,16 @@ class Receptions extends DolibarrApi
 	/*
 	public function getLines($id)
 	{
-		if(! DolibarrApiAccess::$user->rights->reception->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->reception->fetch($id);
-		if( ! $result ) {
+		if (! $result) {
 			throw new RestException(404, 'Reception not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('reception',$this->reception->id)) {
+		if (!DolibarrApi::_checkAccessToResource('reception',$this->reception->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->reception->getLinesArray();
@@ -255,16 +255,16 @@ class Receptions extends DolibarrApi
 	/*
 	public function postLine($id, $request_data = null)
 	{
-		if(! DolibarrApiAccess::$user->rights->reception->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->reception->fetch($id);
-		if ( ! $result ) {
+		if (! $result) {
 			throw new RestException(404, 'Reception not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('reception',$this->reception->id)) {
+		if (!DolibarrApi::_checkAccessToResource('reception',$this->reception->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -323,16 +323,16 @@ class Receptions extends DolibarrApi
 	/*
 	public function putLine($id, $lineid, $request_data = null)
 	{
-		if (! DolibarrApiAccess::$user->rights->reception->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->reception->fetch($id);
-		if ( ! $result ) {
+		if (! $result) {
 			throw new RestException(404, 'Reception not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('reception',$this->reception->id)) {
+		if (!DolibarrApi::_checkAccessToResource('reception',$this->reception->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -388,8 +388,8 @@ class Receptions extends DolibarrApi
 	 */
 	public function deleteLine($id, $lineid)
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->reception->fetch($id);
@@ -403,7 +403,7 @@ class Receptions extends DolibarrApi
 
 		// TODO Check the lineid $lineid is a line of object
 
-		$updateRes = $this->reception->deleteline(DolibarrApiAccess::$user, $lineid);
+		$updateRes = $this->reception->deleteLine(DolibarrApiAccess::$user, $lineid);
 		if ($updateRes < 0) {
 			throw new RestException(405, $this->reception->error);
 		}
@@ -425,8 +425,8 @@ class Receptions extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->reception->fetch($id);
@@ -465,8 +465,8 @@ class Receptions extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->supprimer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'supprimer')) {
+			throw new RestException(403);
 		}
 		$result = $this->reception->fetch($id);
 		if (!$result) {
@@ -510,8 +510,8 @@ class Receptions extends DolibarrApi
 	 */
 	public function validate($id, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
+			throw new RestException(403);
 		}
 		$result = $this->reception->fetch($id);
 		if (!$result) {
@@ -556,19 +556,19 @@ class Receptions extends DolibarrApi
 	public function setinvoiced($id)
 	{
 
-		if(! DolibarrApiAccess::$user->rights->reception->creer) {
-				throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
+				throw new RestException(403);
 		}
-		if(empty($id)) {
+		if (empty($id)) {
 				throw new RestException(400, 'Reception ID is mandatory');
 		}
 		$result = $this->reception->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 				throw new RestException(404, 'Reception not found');
 		}
 
 		$result = $this->reception->classifyBilled(DolibarrApiAccess::$user);
-		if( $result < 0) {
+		if ($result < 0) {
 				throw new RestException(400, $this->reception->error);
 		}
 		return $result;
@@ -595,19 +595,19 @@ class Receptions extends DolibarrApi
 
 		require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 
-		if(! DolibarrApiAccess::$user->rights->reception->lire) {
-				throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'lire')) {
+				throw new RestException(403);
 		}
-		if(! DolibarrApiAccess::$user->rights->reception->creer) {
-				throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
+				throw new RestException(403);
 		}
-		if(empty($proposalid)) {
+		if (empty($proposalid)) {
 				throw new RestException(400, 'Order ID is mandatory');
 		}
 
 		$order = new Commande($this->db);
 		$result = $order->fetch($proposalid);
-		if( ! $result ) {
+		if (!$result) {
 				throw new RestException(404, 'Order not found');
 		}
 
@@ -632,8 +632,8 @@ class Receptions extends DolibarrApi
 	*/
 	public function close($id, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->reception->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->reception->fetch($id);

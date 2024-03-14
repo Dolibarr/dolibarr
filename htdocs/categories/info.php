@@ -37,7 +37,7 @@ if (!$user->hasRight('categorie', 'lire')) {
 $langs->loadLangs(array('categories', 'sendings'));
 
 $socid = 0;
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $label = GETPOST('label', 'alpha');
 
 // Security check

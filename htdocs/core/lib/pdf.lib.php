@@ -62,7 +62,7 @@ function pdf_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'pdf_admin');
 
-	if (isModEnabled("propal") || isModEnabled('facture') || isModEnabled('reception')) {
+	if (isModEnabled("propal") || isModEnabled('invoice') || isModEnabled('reception')) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_other.php';
 		$head[$h][1] = $langs->trans("Others");
 		$head[$h][2] = 'other';
@@ -429,7 +429,7 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
  *      @param  Contact|string|null	  $targetcontact	    Target contact object
  * 		@param	int			          $usecontact		    Use contact instead of company
  * 		@param	string  	          $mode				    Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
- *      @param  Object                $object               Object we want to build document for
+ *      @param  Object|null           $object               Object we want to build document for
  * 		@return	string|int				    		        String with full address or -1 if KO
  */
 function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null)
@@ -491,7 +491,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($sourcecompany->tva_intra);
 				}
 			}
-			// Professionnal Ids
+			// Professional Ids
 			$reg = array();
 			if (getDolGlobalString('MAIN_PROFID1_IN_SOURCE_ADDRESS') && !empty($sourcecompany->idprof1)) {
 				$tmp = $outputlangs->transcountrynoentities("ProfId1", $sourcecompany->country_code);
@@ -655,7 +655,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				}
 			}
 
-			// Professionnal Ids
+			// Professional Ids
 			if (getDolGlobalString('MAIN_PROFID1_IN_ADDRESS') && !empty($targetcompany->idprof1)) {
 				$tmp = $outputlangs->transcountrynoentities("ProfId1", $targetcompany->country_code);
 				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
@@ -718,7 +718,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 /**
  *   	Show header of page for PDF generation
  *
- *   	@param      TCPDF			$pdf     		Object PDF
+ *   	@param      TCPDF		$pdf     		Object PDF
  *      @param      Translate	$outputlangs	Object lang for output
  * 		@param		int			$page_height	Height of page
  *      @return	void
@@ -752,11 +752,11 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 /**
  *	Return array of possible substitutions for PDF content (without external module substitutions).
  *
- *	@param	Translate	$outputlangs	Output language
- *	@param	array       $exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', ...)
- *	@param	Object      $object         Object
- *	@param	int         $onlykey       	1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are truncated and html sanitized (to use for help tooltip)
- *  @param   array      $include        Array of family keys we want to include. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
+ *	@param	Translate	    $outputlangs	Output language
+ *	@param	array|null	    $exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', ...)
+ *	@param	Object|null     $object         Object
+ *	@param	int             $onlykey       	1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are truncated and html sanitized (to use for help tooltip)
+ *  @param  array|null      $include        Array of family keys we want to include. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
  *	@return	array						Array of substitutions
  */
 function pdf_getSubstitutionArray($outputlangs, $exclude = null, $object = null, $onlykey = 0, $include = null)
@@ -829,7 +829,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
  *  @param  int			$curx            		X
  *  @param  int			$cury            		Y
  *  @param  Account		$account         		Bank account object
- *  @param  int			$onlynumber      		Output only number (bank+desk+key+number according to country, but without name of bank and domiciliation)
+ *  @param  int			$onlynumber      		Output only number (bank+desk+key+number according to country, but without name of bank and address)
  *  @param	int			$default_font_size		Default font size
  *  @return	float                               The Y PDF position
  */
@@ -942,9 +942,9 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 
 	$pdf->SetFont('', '', $default_font_size - $diffsizecontent);
 
-	if (empty($onlynumber) && !empty($account->domiciliation)) {
+	if (empty($onlynumber) && (!empty($account->domiciliation) || !empty($account->address))) {
 		$pdf->SetXY($curx, $cury);
-		$val = $outputlangs->transnoentities("Residence").': '.$outputlangs->convToOutputCharset($account->domiciliation);
+		$val = $outputlangs->transnoentities("Residence").': '.$outputlangs->convToOutputCharset(empty($account->address) ? $account->domiciliation : $account->address);
 		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
 		//$nboflines=dol_nboflines_bis($val,120);
 		//$cury+=($nboflines*3)+2;
@@ -996,7 +996,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 /**
  *  Show footer of page for PDF generation
  *
- *	@param	TCPDF			$pdf     		The PDF factory
+ *	@param	TCPDF		$pdf     		The PDF factory
  *  @param  Translate	$outputlangs	Object lang for output
  * 	@param	string		$paramfreetext	Constant name of free text
  * 	@param	Societe		$fromcompany	Object company
@@ -1245,7 +1245,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {   // by default
 					$pdf->MultiCell(0, 3, $line, 0, $align, 0);
 				} else {
-					$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
+					$pdf->writeHTMLCell($dims['wk'] - $dims['lm'] - $dims['rm'], $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
 				}
 				$posy -= $freetextheight;
 			}
@@ -1270,7 +1270,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			if (getDolGlobalInt('PDF_FOOTER_DISABLE_PAGEBREAK') === 1) {
 				$pdf->SetAutoPageBreak(0, 0);
 			} // Option for disable auto pagebreak
-			$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $mycustomfooterheight, $dims['lm'], $dims['hk'] - $posy, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
+			$pdf->writeHTMLCell($dims['wk'] - $dims['lm'] - $dims['rm'], $mycustomfooterheight, $dims['lm'], $dims['hk'] - $posy, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
 			if (getDolGlobalInt('PDF_FOOTER_DISABLE_PAGEBREAK') === 1) {
 				$pdf->SetAutoPageBreak(1, 0);
 			} // Restore pagebreak
@@ -1297,7 +1297,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {   // by default
 					$pdf->MultiCell(0, 3, $line, 0, $align, 0);
 				} else {
-					$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
+					$pdf->writeHTMLCell($dims['wk'] - $dims['lm'] - $dims['rm'], $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
 				}
 				$posy -= $freetextheight;
 			}
@@ -1418,9 +1418,10 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
  *  @param  int				$hideref       		Hide reference
  *  @param  int				$hidedesc           Hide description
  * 	@param	int				$issupplierline		Is it a line for a supplier object ?
+ *  @param	string			$align				text alignment ('L', 'C', 'R', 'J' (default))
  * 	@return	string
  */
-function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $posy, $hideref = 0, $hidedesc = 0, $issupplierline = 0)
+function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $posy, $hideref = 0, $hidedesc = 0, $issupplierline = 0, $align = 'J')
 {
 	global $db, $conf, $langs, $hookmanager;
 
@@ -1442,6 +1443,7 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 	}
 	if (empty($reshook)) {
 		$labelproductservice = pdf_getlinedesc($object, $i, $outputlangs, $hideref, $hidedesc, $issupplierline);
+		$labelproductservice = preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php[^\"]*modulepart=medias[^\"]*file=([^\"]*)/', '\1file:/'.DOL_DATA_ROOT.'/medias/\2\3', $labelproductservice, -1, $nbrep);
 
 		//var_dump($labelproductservice);exit;
 
@@ -1453,7 +1455,7 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 		//var_dump($labelproductservice);exit;
 
 		// Description
-		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, 'J', true);
+		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, $align, true);
 		$result .= $labelproductservice;
 	}
 	return $result;
@@ -1709,7 +1711,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	$libelleproduitservice = $prefix_prodserv.$ref_prodserv.$libelleproduitservice;
 
 	// Add an additional description for the category products
-	if (getDolGlobalString('CATEGORY_ADD_DESC_INTO_DOC') && $idprod && isModEnabled('categorie')) {
+	if (getDolGlobalString('CATEGORY_ADD_DESC_INTO_DOC') && $idprod && isModEnabled('category')) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$categstatic = new Categorie($db);
 		// recovering the list of all the categories linked to product
@@ -2295,11 +2297,11 @@ function pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails = 0)
 /**
  * Return line percent
  *
- * @param Object $object Object
- * @param int $i Current line number
- * @param Translate $outputlangs Object langs for output
- * @param int $hidedetails Hide details (0=no, 1=yes, 2=just special lines)
- * @param HookManager $hookmanager Hook manager instance
+ * @param Object                $object             Object
+ * @param int                   $i                  Current line number
+ * @param Translate             $outputlangs        Object langs for output
+ * @param int                   $hidedetails        Hide details (0=no, 1=yes, 2=just special lines)
+ * @param HookManager|null      $hookmanager        Hook manager instance
  * @return string
  */
 function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookmanager = null)

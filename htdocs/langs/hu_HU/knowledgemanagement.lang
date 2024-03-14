@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=Tudásmenedzsment (KM) vagy Help-Desk bázis kezel
 # Admin page
 #
 KnowledgeManagementSetup = Tudáskezelő rendszer beállítása
-Settings = Beállítások
 KnowledgeManagementSetupPage = Tudáskezelő rendszer beállítási oldala
 
 
 #
 # About page
 #
-About = Névjegy
 KnowledgeManagementAbout = A tudásmenedzsmentről
 KnowledgeManagementAboutPage = Tudáskezelés az oldalról
 
 KnowledgeManagementArea = Tudásmenedzsment
 MenuKnowledgeRecord = Tudásbázis
+MenuKnowledgeRecordShort = Tudásbázis
 ListKnowledgeRecord = Cikkek listája
 NewKnowledgeRecord = Új cikk
 ValidateReply = A megoldás érvényesítése
@@ -47,8 +46,14 @@ KnowledgeRecord = Cikk
 KnowledgeRecordExtraFields = Extra mezők a cikkhez
 GroupOfTicket=Jegyek csoportjai
 YouCanLinkArticleToATicketCategory=A cikket összekapcsolhatja egy jegycsoporttal (így a cikk kiemelve lesz a csoport minden jegyén)
-SuggestedForTicketsInGroup=Jegyekhez ajánlott, ha csoport van
+SuggestedForTicketsInGroup=Jegykészítésnél javasolt
 
 SetObsolete=Beállítás elavultként
 ConfirmCloseKM=Megerősíti, hogy a cikk elavultként zárult be?
 ConfirmReopenKM=Szeretné visszaállítani ezt a cikket "Érvényesített" állapotba?
+BoxLastKnowledgerecordDescription=Legutóbbi %s cikk
+BoxLastKnowledgerecord=Utolsó cikkek
+BoxLastKnowledgerecordContent=Utolsó cikkek
+BoxLastKnowledgerecordModifiedContent=Utoljára módosított cikkek
+BoxLastModifiedKnowledgerecordDescription=Legutóbbi %s módosított cikk
+BoxLastModifiedKnowledgerecord=Utoljára módosított cikkek

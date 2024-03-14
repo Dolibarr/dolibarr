@@ -1,0 +1,116 @@
+<?php
+/**
+ * This is an automatically generated baseline for Phan issues.
+ * When Phan is invoked with --load-baseline=path/to/baseline.php,
+ * The pre-existing issues listed in this file won't be emitted.
+ *
+ * This file can be updated by invoking Phan with --save-baseline=path/to/baseline.php
+ * (can be combined with --load-baseline)
+ */
+return [
+    // # Issue statistics:
+    // PhanPluginSuspiciousParamPosition : 45+ occurrences
+    // PhanParamSignatureMismatch : 25+ occurrences
+    // PhanUndeclaredConstant : 15+ occurrences
+    // PhanPluginDuplicateExpressionBinaryOp : 10+ occurrences
+    // PhanTypeArraySuspiciousNull : 10+ occurrences
+    // PhanTypeInvalidUnaryOperandNumeric : 8 occurrences
+    // PhanRedefineFunctionInternal : 6 occurrences
+    // PhanPluginUnsafeEval : 5 occurrences
+    // PhanParamSuspiciousOrder : 4 occurrences
+    // PhanParamTooMany : 4 occurrences
+    // PhanPluginSuspiciousParamOrder : 4 occurrences
+    // PhanUndeclaredFunctionInCallable : 4 occurrences
+    // PhanAccessMethodProtected : 1 occurrence
+    // PhanAccessPropertyStaticAsNonStatic : 1 occurrence
+    // PhanNoopArray : 1 occurrence
+    // PhanNoopArrayAccess : 1 occurrence
+    // PhanNoopStringLiteral : 1 occurrence
+    // PhanPluginAlwaysReturnFunction : 1 occurrence
+
+    // Currently, file_suppressions and directory_suppressions are the only supported suppressions
+    'file_suppressions' => [
+        'htdocs/adherents/stats/geo.php' => ['PhanTypeArraySuspiciousNull'],
+        'htdocs/adherents/type.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
+        'htdocs/admin/receiptprinter.php' => ['PhanRedefineFunctionInternal'],
+        'htdocs/admin/translation.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/api/class/api_documents.class.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
+        'htdocs/barcode/printsheet.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
+        'htdocs/categories/class/api_categories.class.php' => ['PhanAccessMethodProtected'],
+        'htdocs/categories/viewcat.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
+        'htdocs/collab/index.php' => ['PhanParamTooMany'],
+        'htdocs/comm/action/index.php' => ['PhanPluginSuspiciousParamPosition', 'PhanTypeArraySuspiciousNull', 'PhanTypeInvalidUnaryOperandNumeric'],
+        'htdocs/comm/mailing/card.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/comm/mailing/cibles.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/comm/mailing/info.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/compta/accounting-files.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
+        'htdocs/compta/bank/various_payment/card.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/compta/bank/various_payment/document.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/compta/bank/various_payment/info.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/compta/cashcontrol/cashcontrol_card.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
+        'htdocs/compta/facture/agenda-rec.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/compta/facture/card-rec.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/compta/prelevement/class/bonprelevement.class.php' => ['PhanParamTooMany'],
+        'htdocs/compta/prelevement/create.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/compta/sociales/class/paymentsocialcontribution.class.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
+        'htdocs/compta/sociales/document.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/compta/sociales/info.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/compta/sociales/note.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/compta/tva/class/paymentvat.class.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
+        'htdocs/compta/tva/document.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/core/actions_massactions.inc.php' => ['PhanPluginSuspiciousParamOrder'],
+        'htdocs/core/class/commondocgenerator.class.php' => ['PhanTypeArraySuspiciousNull'],
+        'htdocs/core/class/commonobject.class.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/core/class/evalmath.class.php' => ['PhanPluginUnsafeEval'],
+        'htdocs/core/class/html.form.class.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/core/class/html.formmail.class.php' => ['PhanNoopArray'],
+        'htdocs/core/class/rssparser.class.php' => ['PhanUndeclaredFunctionInCallable'],
+        'htdocs/core/db/mysqli.class.php' => ['PhanParamSignatureMismatch'],
+        'htdocs/core/db/pgsql.class.php' => ['PhanParamSignatureMismatch'],
+        'htdocs/core/db/sqlite3.class.php' => ['PhanParamSignatureMismatch'],
+        'htdocs/core/filemanagerdol/connectors/php/connector.lib.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/core/get_info.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/core/lib/files.lib.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
+        'htdocs/core/lib/functions.lib.php' => ['PhanParamTooMany', 'PhanPluginAlwaysReturnFunction', 'PhanPluginUnsafeEval', 'PhanRedefineFunctionInternal'],
+        'htdocs/core/lib/price.lib.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/core/lib/usergroups.lib.php' => ['PhanNoopArrayAccess'],
+        'htdocs/core/menus/standard/auguria_menu.php' => ['PhanParamSuspiciousOrder'],
+        'htdocs/core/menus/standard/eldy_menu.php' => ['PhanParamSuspiciousOrder'],
+        'htdocs/core/menus/standard/empty.php' => ['PhanParamSuspiciousOrder'],
+        'htdocs/core/modules/barcode/mod_barcode_thirdparty_standard.php' => ['PhanParamSignatureMismatch'],
+        'htdocs/core/modules/import/import_xlsx.modules.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/core/modules/member/doc/pdf_standard.class.php' => ['PhanParamSignatureMismatch'],
+        'htdocs/core/modules/movement/doc/pdf_standard.modules.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
+        'htdocs/core/modules/mrp/doc/pdf_vinci.modules.php' => ['PhanTypeArraySuspiciousNull'],
+        'htdocs/core/modules/syslog/mod_syslog_file.php' => ['PhanParamSignatureMismatch', 'PhanParamSuspiciousOrder'],
+        'htdocs/core/modules/syslog/mod_syslog_syslog.php' => ['PhanParamSignatureMismatch'],
+        'htdocs/don/class/don.class.php' => ['PhanParamTooMany'],
+        'htdocs/expensereport/class/paymentexpensereport.class.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
+        'htdocs/fourn/class/api_supplier_invoices.class.php' => ['PhanPluginSuspiciousParamOrder'],
+        'htdocs/fourn/facture/card-rec.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/intracommreport/list.php' => ['PhanAccessPropertyStaticAsNonStatic'],
+        'htdocs/loan/card.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/loan/class/paymentloan.class.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
+        'htdocs/loan/document.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/loan/info.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/loan/note.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/loan/payment/card.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/loan/schedule.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/mrp/class/mo.class.php' => ['PhanParamSignatureMismatch'],
+        'htdocs/product/admin/product_tools.php' => ['PhanNoopStringLiteral'],
+        'htdocs/product/card.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/projet/tasks/list.php' => ['PhanTypeArraySuspiciousNull'],
+        'htdocs/public/bookcal/index.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
+        'htdocs/public/opensurvey/index.php' => ['PhanPluginSuspiciousParamOrder'],
+        'htdocs/public/payment/paymentok.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/public/recruitment/index.php' => ['PhanPluginSuspiciousParamOrder'],
+        'htdocs/societe/class/companybankaccount.class.php' => ['PhanParamSignatureMismatch'],
+        'htdocs/stripe/class/actions_stripe.class.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/takepos/invoice.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/user/class/user.class.php' => ['PhanParamSignatureMismatch'],
+        'htdocs/variants/class/ProductCombination.class.php' => ['PhanPluginSuspiciousParamPosition'],
+        'internal' => ['PhanUndeclaredConstant'],
+    ],
+    // 'directory_suppressions' => ['src/directory_name' => ['PhanIssueName1', 'PhanIssueName2']] can be manually added if needed.
+    // (directory_suppressions will currently be ignored by subsequent calls to --save-baseline, but may be preserved in future Phan releases)
+];

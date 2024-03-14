@@ -39,13 +39,20 @@ if (empty($conf) || !is_object($conf)) {
 if (!isset($parameters)) {
 	$parameters = array();
 }
+'
+@phan-var-force CommonObject $object
+@phan-var-force string $action
+@phan-var-force Conf $conf
+@phan-var-force Translate $conf
+@phan-var-force array<string,mixed> $parameters
+';
 
 $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 print $hookmanager->resPrint;
 if (empty($reshook)) {
 	$params = array();
-	$params['cols'] = key_exists('colspanvalue', $parameters) ? $parameters['colspanvalue'] : '';
+	$params['cols'] = array_key_exists('colspanvalue', $parameters) ? $parameters['colspanvalue'] : '';
 	if (!empty($parameters['tdclass'])) {
 		$params['tdclass'] = $parameters['tdclass'];
 	}

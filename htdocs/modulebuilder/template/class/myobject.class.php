@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2023  Frédéric France          <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024  Frédéric France          <frederic.france@free.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,8 +50,13 @@ class MyObject extends CommonObject
 	public $table_element = 'mymodule_myobject';
 
 	/**
+	 * @var string 	If permission must be checkec with hasRight('mymodule', 'read') and not hasright('mymodyle', 'myobject', 'read'), you can uncomment this line
+	 */
+	//public $element_for_permission = 'mymodule';
+
+	/**
 	 * @var int  	Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 * 				0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 0;
 
@@ -102,7 +108,7 @@ class MyObject extends CommonObject
 	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
-	 *	'validate' is 1 if need to validate with $this->validateField()
+	 *	'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
 	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
@@ -110,30 +116,30 @@ class MyObject extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields into database and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid'         => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id', 'css'=>'left'),
-		'entity'        => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>10),
-		'ref'           => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'noteditable'=>0, 'default'=>'', 'notnull'=> 1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1, 'comment'=>'Reference of object', 'validate'=>1),
-		'label'         => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>'Help text', 'showoncombobox'=>2, 'validate'=>1, 'alwayseditable'=>1),
-		'amount'        => array('type'=>'price', 'label'=>'Amount', 'enabled'=>1, 'visible'=>1, 'default'=>'null', 'position'=>40, 'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for amount', 'validate'=>1),
-		'qty'           => array('type'=>'real', 'label'=>'Qty', 'enabled'=>1, 'visible'=>1, 'default'=>'0', 'position'=>45, 'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for quantity', 'css'=>'maxwidth75imp', 'validate'=>1),
-		'fk_soc' 		=> array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'picto'=>'company', 'label'=>'ThirdParty', 'visible'=> 1, 'enabled'=>'isModEnabled("societe")', 'position'=>50, 'notnull'=>-1, 'index'=>1, 'help'=>'OrganizationEventLinkToThirdParty', 'validate'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
-		'fk_project'    => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'picto'=>'project', 'enabled'=>'isModEnabled("project")', 'visible'=>-1, 'position'=>52, 'notnull'=>-1, 'index'=>1, 'validate'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
-		'description'   => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>3, 'position'=>60, 'validate'=>1),
-		'note_public'   => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61, 'validate'=>1, 'cssview'=>'wordbreak'),
-		'note_private'  => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>62, 'validate'=>1, 'cssview'=>'wordbreak'),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=> 1, 'position'=>500),
-		'tms'           => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=> 0, 'position'=>501),
+		'rowid'         => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
+		'entity'        => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'default' => 1, 'index' => 1, 'position' => 10),
+		'ref'           => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'noteditable' => 0, 'default' => '', 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 20, 'searchall' => 1, 'comment' => 'Reference of object', 'validate' => 1),
+		'label'         => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => 'Help text', 'showoncombobox' => 2, 'validate' => 1, 'alwayseditable' => 1),
+		'amount'        => array('type' => 'price', 'label' => 'Amount', 'enabled' => 1, 'visible' => 1, 'default' => 'null', 'position' => 40, 'searchall' => 0, 'isameasure' => 1, 'help' => 'Help text for amount', 'validate' => 1),
+		'qty'           => array('type' => 'real', 'label' => 'Qty', 'enabled' => 1, 'visible' => 1, 'default' => '0', 'position' => 45, 'searchall' => 0, 'isameasure' => 1, 'help' => 'Help text for quantity', 'css' => 'maxwidth75imp', 'validate' => 1),
+		'fk_soc' 		=> array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'picto' => 'company', 'label' => 'ThirdParty', 'visible' => 1, 'enabled' => 'isModEnabled("societe")', 'position' => 50, 'notnull' => -1, 'index' => 1, 'help' => 'OrganizationEventLinkToThirdParty', 'validate' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'fk_project'    => array('type' => 'integer:Project:projet/class/project.class.php:1', 'label' => 'Project', 'picto' => 'project', 'enabled' => 'isModEnabled("project")', 'visible' => -1, 'position' => 52, 'notnull' => -1, 'index' => 1, 'validate' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'description'   => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => 3, 'position' => 60, 'validate' => 1),
+		'note_public'   => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 61, 'validate' => 1, 'cssview' => 'wordbreak'),
+		'note_private'  => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 62, 'validate' => 1, 'cssview' => 'wordbreak'),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 500),
+		'tms'           => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'notnull' => 0, 'position' => 501),
 		//'date_validation '    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'picto'=>'user', 'enabled'=>1, 'visible'=>-2, 'notnull'=> 1, 'position'=>510, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax150'),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'picto'=>'user', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511, 'csslist'=>'tdoverflowmax150'),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'picto' => 'user', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 510, 'foreignkey' => 'user.rowid', 'csslist' => 'tdoverflowmax150'),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'picto' => 'user', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 511, 'csslist' => 'tdoverflowmax150'),
 		//'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
-		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>0, 'notnull'=>0, 'position'=>600),
-		'import_key'    => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
-		'model_pdf' 	=> array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'notnull'=>-1, 'position'=>1010),
-		'status'        => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=> 1, 'default'=>0, 'index'=>1, 'position'=>2000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 9=>'Canceled'), 'validate'=>1),
+		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => 0, 'notnull' => 0, 'position' => 600),
+		'import_key'    => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'index' => 0, 'position' => 1000),
+		'model_pdf' 	=> array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'notnull' => -1, 'position' => 1010),
+		'status'        => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'default' => 0, 'index' => 1, 'position' => 2000, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', 9 => 'Canceled'), 'validate' => 1),
 	);
 
 	/**
@@ -176,11 +182,6 @@ class MyObject extends CommonObject
 	 * @var integer|string date_creation
 	 */
 	public $date_creation;
-
-	/**
-	 * @var integer tms
-	 */
-	public $tms;
 
 	/**
 	 * @var int ID
@@ -247,7 +248,7 @@ class MyObject extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -442,7 +443,7 @@ class MyObject extends CommonObject
 	 * @param  int         	$offset       	Offset
 	 * @param  string		$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
-	 * @param  string      	$filtermode   	Filter mode (AND or OR)
+	 * @param  string      	$filtermode   	No more used
 	 * @return array|int                 	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 1000, $offset = 0, string $filter = '', $filtermode = 'AND')
@@ -462,63 +463,15 @@ class MyObject extends CommonObject
 		} else {
 			$sql .= " WHERE 1 = 1";
 		}
-		// Manage filter
-		/* We keep this part of code that is still used by a lot of old class. The 'else" shows how to switch to Universal Search filters
-		$sqlwhere = array();
-		if (is_array($filter) && count($filter) > 0) {
-			dol_syslog("Warning: Use of an array  as filter is now forbidden and deprecated. Use an universal SQL filter string instead", LOG_WARNING);
-			foreach ($filter as $key => $value) {
-				$columnName = preg_replace('/^t\./', '', $key);
-				if ($key === 'customsql') {
-					// Never use 'customsql' with a value from a user input since it is injected as is. The value must be hard coded.
-					$sqlwhere[] = $value;
-					continue;
-				} elseif (isset($this->fields[$columnName])) {
-					$type = $this->fields[$columnName]['type'];
-					if (preg_match('/^integer/', $type)) {
-						if (is_int($value)) {
-							// single value
-							$sqlwhere[] = $key . " = " . intval($value);
-						} elseif (is_array($value)) {
-							if (empty($value)) {
-								continue;
-							}
-							$sqlwhere[] = $key . ' IN (' . $this->db->sanitize(implode(',', array_map('intval', $value))) . ')';
-						}
-						continue;
-					} elseif (in_array($type, array('date', 'datetime', 'timestamp'))) {
-						$sqlwhere[] = $key . " = '" . $this->db->idate($value) . "'";
-						continue;
-					}
-				}
 
-				// when the $key doesn't fall into the previously handled categories, we do as if the column were a varchar/text
-				if (is_array($value) && count($value)) {
-					$value = implode(',', array_map(function ($v) {
-						return "'" . $this->db->sanitize($this->db->escape($v)) . "'";
-					}, $value));
-					$sqlwhere[] = $key . ' IN (' . $this->db->sanitize($value, true) . ')';
-				} elseif (is_scalar($value)) {
-					if (strpos($value, '%') === false) {
-						$sqlwhere[] = $key . " = '" . $this->db->sanitize($this->db->escape($value)) . "'";
-					} else {
-						$sqlwhere[] = $key . " LIKE '%" . $this->db->escapeforlike($this->db->escape($value)) . "%'";
-					}
-				}
-			}
-		} else { */
+		// Manage filter
 		$errormessage = '';
 		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
 		if ($errormessage) {
 			$this->errors[] = $errormessage;
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
-
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			return -1;
 		}
-		/*}
-		if (count($sqlwhere) > 0) {
-			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
-		}*/
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
@@ -537,6 +490,10 @@ class MyObject extends CommonObject
 				$record = new self($this->db);
 				$record->setVarsFromFetchObj($obj);
 
+				if (!empty($record->isextrafieldmanaged)) {
+					$record->fetch_optionals();
+				}
+
 				$records[$record->id] = $record;
 
 				$i++;
@@ -546,7 +503,7 @@ class MyObject extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -605,7 +562,7 @@ class MyObject extends CommonObject
 	 */
 	public function validate($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -617,8 +574,8 @@ class MyObject extends CommonObject
 			return 0;
 		}
 
-		/* if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule','write'))
-		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->mymodule->myobject->myobject_advance->validate))))
+		/* if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule', 'myobject', 'write'))
+		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('mymodule', 'myobject_advance', 'validate')))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -640,7 +597,10 @@ class MyObject extends CommonObject
 		if (!empty($num)) {
 			// Validate
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET ref = '".$this->db->escape($num)."',";
+			$sql .= " SET ";
+			if (!empty($this->fields['ref'])) {
+				$sql .= " ref = '".$this->db->escape($num)."',";
+			}
 			$sql .= " status = ".self::STATUS_VALIDATED;
 			if (!empty($this->fields['date_validation'])) {
 				$sql .= ", date_validation = '".$this->db->idate($now)."'";
@@ -1111,7 +1071,7 @@ class MyObject extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1119,7 +1079,7 @@ class MyObject extends CommonObject
 		// $this->property1 = ...
 		// $this->property2 = ...
 
-		$this->initAsSpecimenCommon();
+		return $this->initAsSpecimenCommon();
 	}
 
 	/**
@@ -1132,7 +1092,7 @@ class MyObject extends CommonObject
 		$this->lines = array();
 
 		$objectline = new MyObjectLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_myobject = '.((int) $this->id)));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_myobject:=:'.((int) $this->id).')');
 
 		if (is_numeric($result)) {
 			$this->setErrorsFromObject($objectline);
@@ -1173,7 +1133,7 @@ class MyObject extends CommonObject
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -1211,7 +1171,7 @@ class MyObject extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$result = 0;
 		$includedocgeneration = 0;
@@ -1235,6 +1195,23 @@ class MyObject extends CommonObject
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Return validation test result for a field.
+	 * Need MAIN_ACTIVATE_VALIDATION_RESULT to be called.
+	 *
+	 * @param  array   $fields	       		Array of properties of field to show
+	 * @param  string  $fieldKey            Key of attribute
+	 * @param  string  $fieldValue          value of attribute
+	 * @return bool 						Return false if fail, true on success, set $this->error for error message
+	 */
+	public function validateField($fields, $fieldKey, $fieldValue)
+	{
+		// Add your own validation rules here.
+		// ...
+
+		return parent::validateField($fields, $fieldKey, $fieldValue);
 	}
 
 	/**

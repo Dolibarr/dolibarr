@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010      François Legastelois <flegastelois@teclib.com>
  * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +41,8 @@ $langs->loadLangs(array('projects', 'users', 'companies'));
 
 $action = GETPOST('action', 'aZ09');
 $mode = GETPOST("mode", 'alpha');
-$id = GETPOST('id', 'int');
-$taskid = GETPOST('taskid', 'int');
+$id = GETPOSTINT('id');
+$taskid = GETPOSTINT('taskid');
 
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'perdaycard';
 
@@ -50,7 +51,7 @@ if ($mode == 'mine') {
 	$mine = 1;
 }
 
-$projectid = GETPOSTISSET("id") ? GETPOST("id", "int", 1) : GETPOST("projectid", "int");
+$projectid = GETPOSTISSET("id") ? GETPOSTINT("id", 1) : GETPOSTINT("projectid");
 
 $hookmanager->initHooks(array('timesheetperdaycard'));
 
@@ -62,15 +63,15 @@ $result = restrictedArea($user, 'projet', $projectid);
 
 $now = dol_now();
 
-$year = GETPOST('reyear', 'int') ? GETPOST('reyear', 'int') : (GETPOST("year", "int") ? GETPOST("year", "int") : (GETPOST("addtimeyear", "int") ? GETPOST("addtimeyear", "int") : date("Y")));
-$month = GETPOST('remonth', 'int') ? GETPOST('remonth', 'int') : (GETPOST("month", "int") ? GETPOST("month", "int") : (GETPOST("addtimemonth", "int") ? GETPOST("addtimemonth", "int") : date("m")));
-$day = GETPOST('reday', 'int') ? GETPOST('reday', 'int') : (GETPOST("day", "int") ? GETPOST("day", "int") : (GETPOST("addtimeday", "int") ? GETPOST("addtimeday", "int") : date("d")));
-$week = GETPOST("week", "int") ? GETPOST("week", "int") : date("W");
+$year = GETPOSTINT('reyear') ? GETPOSTINT('reyear') : (GETPOSTINT("year") ? GETPOSTINT("year") : (GETPOSTINT("addtimeyear") ? GETPOSTINT("addtimeyear") : date("Y")));
+$month = GETPOSTINT('remonth') ? GETPOSTINT('remonth') : (GETPOSTINT("month") ? GETPOSTINT("month") : (GETPOSTINT("addtimemonth") ? GETPOSTINT("addtimemonth") : date("m")));
+$day = GETPOSTINT('reday') ? GETPOSTINT('reday') : (GETPOSTINT("day") ? GETPOSTINT("day") : (GETPOSTINT("addtimeday") ? GETPOSTINT("addtimeday") : date("d")));
+$week = GETPOSTINT("week") ? GETPOSTINT("week") : date("W");
 
 $day = (int) $day;
 
 //$search_categ = GETPOST("search_categ", 'alpha');
-$search_usertoprocessid = GETPOST('search_usertoprocessid', 'int');
+$search_usertoprocessid = GETPOSTINT('search_usertoprocessid');
 $search_task_ref = GETPOST('search_task_ref', 'alpha');
 $search_task_label = GETPOST('search_task_label', 'alpha');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
@@ -124,9 +125,9 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Definition of fields for list
 $arrayfields = array();
-$arrayfields['t.planned_workload'] = array('label'=>'PlannedWorkload', 'checked'=>1, 'enabled'=>1, 'position'=>0);
-$arrayfields['t.progress'] = array('label'=>'ProgressDeclared', 'checked'=>1, 'enabled'=>1, 'position'=>0);
-$arrayfields['timeconsumed'] = array('label'=>'TimeConsumed', 'checked'=>1, 'enabled'=>1, 'position'=>15);
+$arrayfields['t.planned_workload'] = array('label' => 'PlannedWorkload', 'checked' => 1, 'enabled' => 1, 'position' => 0);
+$arrayfields['t.progress'] = array('label' => 'ProgressDeclared', 'checked' => 1, 'enabled' => 1, 'position' => 0);
+$arrayfields['timeconsumed'] = array('label' => 'TimeConsumed', 'checked' => 1, 'enabled' => 1, 'position' => 15);
 /*$arrayfields=array(
  // Project
  'p.opp_amount'=>array('label'=>$langs->trans("OpportunityAmountShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>103),
@@ -140,7 +141,7 @@ $arrayfields['timeconsumed'] = array('label'=>'TimeConsumed', 'checked'=>1, 'ena
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 		if (!empty($extrafields->attributes[$object->table_element]['list'][$key])) {
-			$arrayfields["efpt.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs((int) $extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+			$arrayfields["efpt.".$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => (($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => (abs((int) $extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 		}
 	}
 }
@@ -182,8 +183,8 @@ if (GETPOST("button_search_x", 'alpha') || GETPOST("button_search.x", 'alpha') |
 }
 
 if (GETPOST('submitdateselect')) {
-	if (GETPOST('remonth', 'int') && GETPOST('reday', 'int') && GETPOST('reyear', 'int')) {
-		$daytoparse = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+	if (GETPOSTINT('remonth') && GETPOSTINT('reday') && GETPOSTINT('reyear')) {
+		$daytoparse = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 	}
 
 	$action = '';
@@ -286,7 +287,7 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 			$taskid = $object->id;
 
 			if (GETPOSTISSET($taskid.'progress')) {
-				$object->progress = GETPOST($taskid.'progress', 'int');
+				$object->progress = GETPOSTINT($taskid.'progress');
 			} else {
 				unset($object->progress);
 			}
@@ -294,8 +295,8 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 			$object->timespent_duration = $val;
 			$object->timespent_fk_user = $usertoprocess->id;
 			$object->timespent_note = GETPOST($key.'note');
-			if (GETPOST($key."hour", 'int') != '' && GETPOST($key."hour", 'int') >= 0) {	// If hour was entered
-				$object->timespent_datehour = dol_mktime(GETPOST($key."hour", 'int'), GETPOST($key."min", 'int'), 0, $monthofday, $dayofday, $yearofday);
+			if (GETPOSTINT($key."hour") != '' && GETPOSTINT($key."hour") >= 0) {	// If hour was entered
+				$object->timespent_datehour = dol_mktime(GETPOSTINT($key."hour"), GETPOSTINT($key."min"), 0, $monthofday, $dayofday, $yearofday);
 				$object->timespent_withhour = 1;
 			} else {
 				$object->timespent_datehour = dol_mktime(12, 0, 0, $monthofday, $dayofday, $yearofday);
@@ -645,7 +646,7 @@ $isavailable[$daytoparse] = $isavailablefordayanduser; // in projectLinesPerWeek
 
 $test = num_public_holiday($daytoparsegmt, $daytoparsegmt + 86400, $mysoc->country_code);
 if ($test) {
-	$isavailable[$daytoparse] = array('morning'=>false, 'afternoon'=>false, 'morning_reason'=>'public_holiday', 'afternoon_reason'=>'public_holiday');
+	$isavailable[$daytoparse] = array('morning' => false, 'afternoon' => false, 'morning_reason' => 'public_holiday', 'afternoon_reason' => 'public_holiday');
 }
 
 $tmparray = dol_getdate($daytoparse, true); // detail of current day

@@ -2,6 +2,7 @@
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
  * Copyright (C) 2023       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +19,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+
 /**
  * Class ProductAttribute
  * Used to represent a product attribute
@@ -96,14 +98,14 @@ class ProductAttribute extends CommonObject
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(255)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>'width200'),
-		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'ExternalRef', 'enabled' => 1, 'visible' => 0, 'position' => 20, 'searchall'=>1),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'help'=>"", 'showoncombobox'=>'1',),
-		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'default'=>0, 'position'=>40, 'notnull'=>1,),
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => '1', 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => '1', 'index' => 1, 'css' => 'left', 'comment' => "Id"),
+		'ref' => array('type' => 'varchar(255)', 'label' => 'Ref', 'visible' => 1, 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'index' => 1, 'searchall' => 1, 'comment' => "Reference of object", 'css' => 'width200'),
+		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'ExternalRef', 'enabled' => 1, 'visible' => 0, 'position' => 20, 'searchall' => 1),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => '1', 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'help' => "", 'showoncombobox' => '1',),
+		'position' => array('type' => 'integer', 'label' => 'Rank', 'enabled' => 1, 'visible' => 0, 'default' => 0, 'position' => 40, 'notnull' => 1,),
 	);
 
 	/**
@@ -1304,8 +1306,8 @@ class ProductAttribute extends CommonObject
 	 *	But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
 	 *	@param	string		$action				Action code
-	 *	@param  string		$seller            	Object of seller third party
-	 *	@param  string  	$buyer             	Object of buyer third party
+	 *	@param  Societe		$seller            	Object of seller third party
+	 *	@param  Societe  	$buyer             	Object of buyer third party
 	 *	@param	int			$selected		   	Object line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
 	 *  @param	string		$defaulttpldir		Directory where to find the template
@@ -1391,8 +1393,8 @@ class ProductAttribute extends CommonObject
 	 *	@param  int		    		$num               	Number of line (0)
 	 *	@param  int		    		$i					I
 	 *	@param  int		    		$dateSelector      	1=Show also date range input fields
-	 *	@param  string	    		$seller            	Object of seller third party
-	 *	@param  string	    		$buyer             	Object of buyer third party
+	 *	@param  Societe	    		$seller            	Object of seller third party
+	 *	@param  Societe	    		$buyer             	Object of buyer third party
 	 *	@param	int					$selected		   	Object line selected
 	 *  @param  Extrafields			$extrafields		Object of extrafields
 	 *  @param	string				$defaulttpldir		Directory where to find the template (deprecated)

@@ -38,10 +38,10 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'donations'));
 
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
+$projectid = (GETPOST('projectid') ? GETPOSTINT('projectid') : 0);
 
 $hookmanager->initHooks(array('donnote'));
 
@@ -57,7 +57,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'don', $object->id, '');
 
-$permissionnote = $user->rights->don->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('don', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 
 /*

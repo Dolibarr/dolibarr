@@ -7,9 +7,9 @@
  * Copyright (C) 2014       Marcos García 		 <marcosgdf@gmail.com>
  * Copyright (C) 2015       Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet		 <fmarcet@2byte.es>
- * Copyright (C) 2018       Thibault FOUCART		 <support@ptibogxiv.net>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2020       Andreu Bisquerra Gaya <jove@bisquerra.com>
+ * Copyright (C) 2018       Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2020       Andreu Bisquerra Gaya 	<jove@bisquerra.com>
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  * Copyright (C) 2023       Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2023       Sylvain Legrand			<technique@infras.fr>
@@ -57,11 +57,25 @@ class Paiement extends CommonObject
 	 */
 	public $picto = 'payment';
 
+	/**
+	 * @var int							Invoice ID
+	 */
 	public $facid;
+
+	/**
+	 * @var int							Company ID
+	 */
 	public $socid;
 
+	/**
+	 * @var int
+	 */
 	public $datepaye;
-	public $date;		// same than $datepaye
+
+	/**
+	 * @var int							same than $datepaye
+	 */
+	public $date;
 
 	/**
 	 * @deprecated
@@ -75,38 +89,73 @@ class Paiement extends CommonObject
 	 */
 	public $montant;
 
-	public $amount; // Total amount of payment (in the main currency)
-	public $multicurrency_amount; // Total amount of payment (in the currency of the bank account)
-	public $amounts = array(); // array: invoice ID => amount for that invoice (in the main currency)
-	public $multicurrency_amounts = array(); // array: invoice ID => amount for that invoice (in the invoice's currency)
-	public $multicurrency_tx = array(); // array: invoice ID => currency tx for that invoice
-	public $multicurrency_code = array(); // array: invoice ID => currency code for that invoice
-
-	public $pos_change = 0; // Excess received in TakePOS cash payment
-
-	public $author;
-	public $paiementid; 	// ID of mode of payment. Is saved into fields fk_paiement on llx_paiement = id of llx_c_paiement
-	public $paiementcode; 	// Code of mode of payment.
+	/**
+	 * @var float							Total amount of payment (in the main currency)
+	 */
+	public $amount;
 
 	/**
-	 * @var string Type of payment label
+	 * @var float							Total amount of payment (in the currency of the bank account)
+	 */
+	public $multicurrency_amount;
+
+	/**
+	 * @var float[] array: invoice ID => amount for that invoice (in the main currency)
+	 */
+	public $amounts = array();
+
+	/**
+	 * @var float[] array: invoice ID => amount for that invoice (in the invoice's currency)
+	 */
+	public $multicurrency_amounts = array();
+
+	/**
+	 * @var float[] Multicurrency rate (array: invoice ID => currency rate ("taux" in French) for that invoice)
+	 */
+	public $multicurrency_tx = array();
+
+	/**
+	 * @var string[] Multicurrency code (array: invoice ID => currency code for that invoice)
+	 */
+	public $multicurrency_code = array();
+
+	/**
+	 * @var float							Excess received in TakePOS cash payment
+	 */
+	public $pos_change = 0.0;
+
+	public $author;
+
+	/**
+	 * @var int								ID of mode of payment. Is saved into fields fk_paiement on llx_paiement = id of llx_c_paiement
+	 */
+	public $paiementid;
+
+	/**
+	 * @var string							Code of mode of payment.
+	 */
+	public $paiementcode;
+
+	/**
+	 * @var string							Type of payment label
 	 */
 	public $type_label;
 
 	/**
-	 * @var string Type of payment code (seems duplicate with $paiementcode);
+	 * @var string							Type of payment code (seems duplicate with $paiementcode);
 	 */
 	public $type_code;
 
 	/**
-	 * @var string Numero du CHQ, VIR, etc...
+	 * @var string
 	 * @deprecated
 	 * @see $num_payment
 	 */
 	public $num_paiement;
 
 	/**
-	 * @var string Numero du CHQ, VIR, etc...
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
@@ -277,7 +326,7 @@ class Paiement extends CommonObject
 			// Add controls of input validity
 			if ($value_converted === false) {
 				// We failed to find the conversion for one invoice
-				$this->error = 'FailedToFoundTheConversionRateForInvoice';
+				$this->error = $langs->trans('FailedToFoundTheConversionRateForInvoice');
 				return -1;
 			}
 			if (empty($currencyofpayment)) {
@@ -320,13 +369,13 @@ class Paiement extends CommonObject
 		}
 
 
-		$totalamount = price2num($totalamount);
-		$totalamount_converted = price2num($totalamount_converted);
+		$totalamount = (float) price2num($totalamount);
+		$totalamount_converted = (float) price2num($totalamount_converted);
 
 		// Check parameters
 		if (empty($totalamount) && empty($atleastonepaymentnotnull)) {	 // We accept negative amounts for withdraw reject but not empty arrays
 			$this->errors[] = 'TotalAmountEmpty';
-			$this->error = 'TotalAmountEmpty';
+			$this->error = $langs->trans('TotalAmountEmpty');
 			return -1;
 		}
 
@@ -342,9 +391,9 @@ class Paiement extends CommonObject
 
 		if ($way == 'dolibarr') {
 			$total = $totalamount;
-			$mtotal = $totalamount_converted; // Maybe use price2num with MT for the converted value
+			$mtotal = $totalamount_converted;
 		} else {
-			$total = $totalamount_converted; // Maybe use price2num with MT for the converted value
+			$total = $totalamount_converted;
 			$mtotal = $totalamount;
 		}
 
@@ -545,15 +594,13 @@ class Paiement extends CommonObject
 	 * Delete a payment and generated links into account
 	 *  - Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
 	 *  - Si le paiement porte sur au moins une facture a "payee", on refuse
-	 * @TODO Add first param User $user
 	 *
+	 * @param	User	$user			User making the deletion
 	 * @param	int		$notrigger		No trigger
 	 * @return 	int     				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
-		global $user;
-
 		$error = 0;
 
 		$bank_line_id = $this->bank_line;
@@ -658,7 +705,7 @@ class Paiement extends CommonObject
 		$error = 0;
 		$bank_line_id = 0;
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			if ($accountid <= 0) {
 				$this->error = 'Bad value for parameter accountid='.$accountid;
 				dol_syslog(get_class($this).'::addPaymentToBank '.$this->error, LOG_ERR);
@@ -1156,7 +1203,7 @@ class Paiement extends CommonObject
 			}
 
 			if (!$mybool) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -1209,7 +1256,7 @@ class Paiement extends CommonObject
 	 *	id must be 0 if object instance is a specimen.
 	 *
 	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
-	 *  @return	void
+	 *  @return	int
 	 */
 	public function initAsSpecimen($option = '')
 	{
@@ -1225,6 +1272,8 @@ class Paiement extends CommonObject
 		$this->specimen = 1;
 		$this->facid = 1;
 		$this->datepaye = $nownotime;
+
+		return 1;
 	}
 
 
@@ -1412,6 +1461,6 @@ class Paiement extends CommonObject
 	{
 		$accountline = new AccountLine($this->db);
 		$accountline->fetch($this->bank_line);
-		return $accountline->rappro;
+		return $accountline->rappro ? true : false;
 	}
 }

@@ -4,6 +4,8 @@
  * Copyright (C) 2015	    Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2021-2023  Anthony Berton      <anthony.berton@bb2a.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,7 +147,7 @@ function user_prepare_head(User $object)
 		|| (isModEnabled('hrm') && $user->hasRight('hrm', 'employee', 'read'))
 		|| (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire') && ($user->id == $object->id || $user->hasRight('expensereport', 'readall')))
 		|| (isModEnabled('holiday') && $user->hasRight('holiday', 'read') && ($user->id == $object->id || $user->hasRight('holiday', 'readall')))
-		) {
+	) {
 		// Bank
 		$head[$h][0] = DOL_URL_ROOT.'/user/bank.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("HRAndBank");
@@ -185,9 +187,9 @@ function user_prepare_head(User $object)
 		$head[$h][2] = 'document';
 		$h++;
 
-		$head[$h][0] = DOL_URL_ROOT.'/user/info.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/user/agenda.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Events");
-		if (isModEnabled('agenda')&& ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+		if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 			$nbEvent = 0;
 			// Enable caching of thirdparty count actioncomm
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -196,10 +198,10 @@ function user_prepare_head(User $object)
 			if (!is_null($dataretrieved)) {
 				$nbEvent = $dataretrieved;
 			} else {
-				$sql = "SELECT COUNT(id) as nb";
-				$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
-				$sql .= " WHERE fk_user_done = ".((int) $object->id);
-				$sql .= " AND entity IN (".getEntity('agenda').")";
+				$sql = "SELECT COUNT(ac.id) as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as ac";
+				$sql .= " WHERE ac.fk_user_action = ".((int) $object->id);
+				$sql .= " AND ac.entity IN (".getEntity('agenda').")";
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -237,7 +239,7 @@ function group_prepare_head($object)
 
 	$canreadperms = true;
 	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-		$canreadperms = ($user->admin || $user->rights->user->group_advance->readperms);
+		$canreadperms = ($user->admin || $user->hasRight('user', 'group_advance', 'readperms'));
 	}
 
 	$h = 0;
@@ -490,7 +492,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	$colorbacklinepair2 = '';
 	$colortextlink = '';
 	$colorbacklinepairhover = '';
-	$colorbacklinepairhover = '';
 	$colorbacklinepairchecked = '';
 	$butactionbg = '';
 	$textbutaction = '';
@@ -504,17 +505,17 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		//Nothing
 	} else {
 		$listofdarkmodes = array(
-			'0' => $langs->trans("AlwaysDisabled"),
-			'1' => $langs->trans("AccordingToBrowser"),
-			'2' => $langs->trans("AlwaysEnabled")
+			$langs->trans("AlwaysDisabled"),
+			$langs->trans("AccordingToBrowser"),
+			$langs->trans("AlwaysEnabled")
 		);
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("DarkThemeMode").'</td>';
 		print '<td colspan="'.($colspan - 1).'">';
 		if ($edit) {
-			print $form->selectarray('THEME_DARKMODEENABLED', $listofdarkmodes, isset($conf->global->THEME_DARKMODEENABLED) ? $conf->global->THEME_DARKMODEENABLED : 0);
+			print $form->selectarray('THEME_DARKMODEENABLED', $listofdarkmodes, getDolGlobalInt('THEME_DARKMODEENABLED'));
 		} else {
-			print $listofdarkmodes[isset($conf->global->THEME_DARKMODEENABLED) ? $conf->global->THEME_DARKMODEENABLED : 0];
+			print $listofdarkmodes[getDolGlobalInt('THEME_DARKMODEENABLED')];
 		}
 		print $form->textwithpicto('', $langs->trans("DoesNotWorkWithAllThemes"));
 		print '</tr>';
@@ -526,14 +527,14 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		/*
 		 print '<tr class="oddeven">';
 		 print '<td>'.$langs->trans("TopMenuDisableImages").'</td>';
-		 print '<td>'.($conf->global->THEME_TOPMENU_DISABLE_IMAGE?$conf->global->THEME_TOPMENU_DISABLE_IMAGE:$langs->trans("Default")).'</td>';
+		 print '<td>'.(getDolGlobalString('THEME_TOPMENU_DISABLE_IMAGE',$langs->trans("Default")).'</td>';
 		 print '<td class="left" class="nowrap" width="20%"><input name="check_THEME_TOPMENU_DISABLE_IMAGE" id="check_THEME_TOPMENU_DISABLE_IMAGE" type="checkbox" '.(!empty($object->conf->THEME_ELDY_TEXTLINK)?" checked":"");
 		 print (empty($dolibarr_main_demo) && $edit)?'':' disabled="disabled"';	// Disabled for demo
 		 print '> '.$langs->trans("UsePersonalValue").'</td>';
 		 print '<td>';
 		 if ($edit)
 		 {
-		 print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_TOPMENU_DISABLE_IMAGE,array()),''),'THEME_TOPMENU_DISABLE_IMAGE','',1).' ';
+		 print $formother->selectColor(colorArrayToHex(colorStringToArray(getDolGlobalString('THEME_TOPMENU_DISABLE_IMAGE'),array()),''),'THEME_TOPMENU_DISABLE_IMAGE','',1).' ';
 		 }
 		 else
 		 {
@@ -545,11 +546,11 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		 print '</td>';*/
 	} else {
 		$listoftopmenumodes = array(
-			'0' => $langs->transnoentitiesnoconv("IconAndText"),
-			'1' => $langs->transnoentitiesnoconv("TextOnly"),
-			'2' => $langs->transnoentitiesnoconv("IconOnlyAllTextsOnHover"),
-			'3' => $langs->transnoentitiesnoconv("IconOnlyTextOnHover"),
-			'4' => $langs->transnoentitiesnoconv("IconOnly"),
+			$langs->transnoentitiesnoconv("IconAndText"),
+			$langs->transnoentitiesnoconv("TextOnly"),
+			$langs->transnoentitiesnoconv("IconOnlyAllTextsOnHover"),
+			$langs->transnoentitiesnoconv("IconOnlyTextOnHover"),
+			$langs->transnoentitiesnoconv("IconOnly"),
 		);
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("TopMenuDisableImages").'</td>';
@@ -637,13 +638,10 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print (empty($dolibarr_main_demo) && $edit)?'':' disabled="disabled"';	// Disabled for demo
 		print '> '.$langs->trans("UsePersonalValue").'</td>';
 		print '<td>';
-		if ($edit)
-		{
+		if ($edit) {
 			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),''),'THEME_ELDY_TOPMENU_BACK1','',1).' ';
-		}
-		   else
-		   {
-			   $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),'');
+		} else {
+			$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),'');
 			if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 			else print '';
 		   }
@@ -1201,524 +1199,4 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 	print '</table>';
 	print '</div>';
-}
-
-/**
- *    	Show html area with actions (done or not, ignore the name of function).
- *      Note: Global parameter $param must be defined.
- *
- * 		@param	Conf		       $conf		   Object conf
- * 		@param	Translate	       $langs		   Object langs
- * 		@param	DoliDB		       $db			   Object db
- * 		@param	mixed			   $filterobj	   Filter on object Adherent|Societe|Project|Product|CommandeFournisseur|Dolresource|Ticket... to list events linked to an object
- * 		@param	Contact|null       $objcon		   Filter on object contact to filter events on a contact
- *      @param  int			       $noprint        Return string but does not output it
- *      @param  string|string[]    $actioncode     Filter on actioncode
- *      @param  string             $donetodo       Filter on event 'done' or 'todo' or ''=nofilter (all).
- *      @param  array              $filters        Filter on other fields
- *      @param  string             $sortfield      Sort field
- *      @param  string             $sortorder      Sort order
- *      @param	string			   $module		   You can add module name here if elementtype in table llx_actioncomm is objectkey@module
- *      @return	string|void				           Return html part or void if noprint is 1
- */
-function show_actions_done_user($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC', $module = '')
-{
-	global $user, $conf, $hookmanager;
-	global $form;
-	global $param, $massactionbutton;
-
-	$start_year = GETPOST('dateevent_startyear', 'int');
-	$start_month = GETPOST('dateevent_startmonth', 'int');
-	$start_day = GETPOST('dateevent_startday', 'int');
-	$end_year = GETPOST('dateevent_endyear', 'int');
-	$end_month = GETPOST('dateevent_endmonth', 'int');
-	$end_day = GETPOST('dateevent_endday', 'int');
-	$tms_start = '';
-	$tms_end = '';
-
-	if (!empty($start_year) && !empty($start_month) && !empty($start_day)) {
-		$tms_start = dol_mktime(0, 0, 0, $start_month, $start_day, $start_year, 'tzuserrel');
-	}
-	if (!empty($end_year) && !empty($end_month) && !empty($end_day)) {
-		$tms_end = dol_mktime(23, 59, 59, $end_month, $end_day, $end_year, 'tzuserrel');
-	}
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
-		$tms_start = '';
-		$tms_end = '';
-	}
-	dol_include_once('/comm/action/class/actioncomm.class.php');
-
-	// Check parameters
-	if (!is_object($filterobj) && !is_object($objcon)) {
-		dol_print_error('', 'BadParameter');
-	}
-
-	$out = '';
-	$histo = array();
-	$numaction = 0;
-	$now = dol_now('tzuser');
-
-	// Open DSI -- Fix order by -- Begin
-	$sortfield_list = explode(',', $sortfield);
-	$sortfield_label_list = array('a.id' => 'id', 'a.datep' => 'dp', 'a.percent' => 'percent');
-	$sortfield_new_list = array();
-	foreach ($sortfield_list as $sortfield_value) {
-		$sortfield_new_list[] = $sortfield_label_list[trim($sortfield_value)];
-	}
-	$sortfield_new = implode(',', $sortfield_new_list);
-
-	$sql = '';
-
-	if (isModEnabled('agenda')) {
-		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-		$hookmanager->initHooks(array('agendadao'));
-
-		// Recherche histo sur actioncomm
-		if (is_object($objcon) && $objcon->id > 0) {
-			$sql = "SELECT DISTINCT a.id, a.label as label,";
-		} else {
-			$sql = "SELECT a.id, a.label as label,";
-		}
-		$sql .= " a.datep as dp,";
-		$sql .= " a.datep2 as dp2,";
-		$sql .= " a.percent as percent, 'action' as type,";
-		$sql .= " a.fk_element, a.elementtype,";
-		$sql .= " c.code as acode, c.libelle as alabel, c.picto as apicto,";
-		$sql .= " u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname";
-		if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur'))) {
-			$sql .= ", sp.lastname, sp.firstname";
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
-			/* Nothing */
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'Project') {
-			/* Nothing */
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
-			$sql .= ", m.lastname, m.firstname";
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
-			$sql .= ", o.ref";
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'Product') {
-			$sql .= ", o.ref";
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') {
-			$sql .= ", o.ref";
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') {
-			$sql .= ", o.ref";
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
-			$sql .= ", o.ref";
-		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && $filterobj->table_element && $filterobj->element) {
-			if (!empty($filterobj->fields['ref'])) {
-				$sql .= ", o.ref";
-			} elseif (!empty($filterobj->fields['label'])) {
-				$sql .= ", o.label";
-			}
-		}
-
-		// Fields from hook
-		$parameters = array('sql' => &$sql, 'filterobj' => $filterobj, 'objcon' => $objcon);
-		$reshook = $hookmanager->executeHooks('showActionsDoneListSelect', $parameters);    // Note that $action and $object may have been modified by hook
-		if (!empty($hookmanager->resPrint)) {
-			$sql.= $hookmanager->resPrint;
-		}
-
-		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
-		$force_filter_contact = false;
-		if (is_object($objcon) && $objcon->id > 0) {
-			$force_filter_contact = true;
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as r ON a.id = r.fk_actioncomm";
-			$sql .= " AND r.element_type = '".$db->escape($objcon->table_element)."' AND r.fk_element = ".((int) $objcon->id);
-		}
-
-
-		// Fields from hook
-		$parameters = array('sql' => &$sql, 'filterobj' => $filterobj, 'objcon' => $objcon);
-		$reshook = $hookmanager->executeHooks('showActionsDoneListFrom', $parameters);    // Note that $action and $object may have been modified by hook
-		if (!empty($hookmanager->resPrint)) {
-			$sql.= $hookmanager->resPrint;
-		}
-
-		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
-		$sql .= " AND u.rowid = ".((int) $filterobj->id);
-
-
-		if (!empty($tms_start) && !empty($tms_end)) {
-			$sql .= " AND ((a.datep BETWEEN '".$db->idate($tms_start)."' AND '".$db->idate($tms_end)."') OR (a.datep2 BETWEEN '".$db->idate($tms_start)."' AND '".$db->idate($tms_end)."'))";
-		} elseif (empty($tms_start) && !empty($tms_end)) {
-			$sql .= " AND ((a.datep <= '".$db->idate($tms_end)."') OR (a.datep2 <= '".$db->idate($tms_end)."'))";
-		} elseif (!empty($tms_start) && empty($tms_end)) {
-			$sql .= " AND ((a.datep >= '".$db->idate($tms_start)."') OR (a.datep2 >= '".$db->idate($tms_start)."'))";
-		}
-		if (is_array($actioncode) && !empty($actioncode)) {
-			$sql .= ' AND (';
-			foreach ($actioncode as $key => $code) {
-				if ($key != 0) {
-					$sql .= " OR ";
-				}
-				if (!empty($code)) {
-					addEventTypeSQL($sql, $code, "");
-				}
-			}
-			$sql .= ')';
-		} elseif (!empty($actioncode)) {
-			addEventTypeSQL($sql, $actioncode);
-		}
-
-		addOtherFilterSQL($sql, $donetodo, $now, $filters);
-
-		// Fields from hook
-		$parameters = array('sql' => &$sql, 'filterobj' => $filterobj, 'objcon' => $objcon, 'module' => $module);
-		$reshook = $hookmanager->executeHooks('showActionsDoneListWhere', $parameters);    // Note that $action and $object may have been modified by hook
-		if (!empty($hookmanager->resPrint)) {
-			$sql.= $hookmanager->resPrint;
-		}
-
-		if (is_array($actioncode)) {
-			foreach ($actioncode as $code) {
-				$sql2 = addMailingEventTypeSQL($code, $objcon, $filterobj);
-				if (!empty($sql2)) {
-					if (!empty($sql)) {
-						$sql = $sql." UNION ".$sql2;
-					} elseif (empty($sql)) {
-						$sql = $sql2;
-					}
-					break;
-				}
-			}
-		} else {
-			$sql2 = addMailingEventTypeSQL($actioncode, $objcon, $filterobj);
-			if (!empty($sql) && !empty($sql2)) {
-				$sql = $sql." UNION ".$sql2;
-			} elseif (empty($sql) && !empty($sql2)) {
-				$sql = $sql2;
-			}
-		}
-	}
-
-	//TODO Add limit in nb of results
-	if ($sql) {
-		$sql .= $db->order($sortfield_new, $sortorder);
-
-		dol_syslog("usergroups.lib::show_actions_dones", LOG_DEBUG);
-
-		$resql = $db->query($sql);
-		if ($resql) {
-			$i = 0;
-			$num = $db->num_rows($resql);
-
-			while ($i < $num) {
-				$obj = $db->fetch_object($resql);
-
-				if ($obj->type == 'action') {
-					$contactaction = new ActionComm($db);
-					$contactaction->id = $obj->id;
-					$result = $contactaction->fetchResources();
-					if ($result < 0) {
-						dol_print_error($db);
-						setEventMessage("user.lib::show_actions_done Error fetch resource", 'errors');
-					}
-
-					//if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
-					//elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
-					$tododone = '';
-					if (($obj->percent >= 0 and $obj->percent < 100) || ($obj->percent == -1 && (!empty($obj->datep) && $obj->datep > $now))) {
-						$tododone = 'todo';
-					}
-
-					$histo[$numaction] = array(
-						'type'=>$obj->type,
-						'tododone'=>$tododone,
-						'id'=>$obj->id,
-						'datestart'=>$db->jdate($obj->dp),
-						'dateend'=>$db->jdate($obj->dp2),
-						'note'=>$obj->label,
-						'percent'=>$obj->percent,
-
-						'userid'=>$obj->user_id,
-						'login'=>$obj->user_login,
-						'userfirstname'=>$obj->user_firstname,
-						'userlastname'=>$obj->user_lastname,
-						'userphoto'=>$obj->user_photo,
-
-						'contact_id'=>$obj->fk_contact,
-						'socpeopleassigned' => $contactaction->socpeopleassigned,
-						'lastname' => empty($obj->lastname) ? '' : $obj->lastname,
-						'firstname' => empty($obj->firstname) ? '' : $obj->firstname,
-						'fk_element'=>$obj->fk_element,
-						'elementtype'=>$obj->elementtype,
-						// Type of event
-						'acode'=>$obj->acode,
-						'alabel'=>$obj->alabel,
-						'libelle'=>$obj->alabel, // deprecated
-						'apicto'=>$obj->apicto
-					);
-				} else {
-					$histo[$numaction] = array(
-						'type'=>$obj->type,
-						'tododone'=>'done',
-						'id'=>$obj->id,
-						'datestart'=>$db->jdate($obj->dp),
-						'dateend'=>$db->jdate($obj->dp2),
-						'note'=>$obj->label,
-						'percent'=>$obj->percent,
-						'acode'=>$obj->acode,
-
-						'userid'=>$obj->user_id,
-						'login'=>$obj->user_login,
-						'userfirstname'=>$obj->user_firstname,
-						'userlastname'=>$obj->user_lastname,
-						'userphoto'=>$obj->user_photo
-					);
-				}
-
-				$numaction++;
-				$i++;
-			}
-		} else {
-			dol_print_error($db);
-		}
-	}
-
-	if (isModEnabled('agenda')|| (isModEnabled('mailing') && !empty($objcon->email))) {
-		$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
-
-		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-
-		$formactions = new FormActions($db);
-
-		$actionstatic = new ActionComm($db);
-		$userstatic = new User($db);
-		$userlinkcache = array();
-		$contactstatic = new Contact($db);
-		$elementlinkcache = array();
-
-		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'?id='.$filterobj->id.'" method="POST">';
-		$out .= '<input type="hidden" name="token" value="'.newToken().'">';
-		if ($objcon && get_class($objcon) == 'User' &&
-			(is_null($filterobj) || get_class($filterobj) == 'User')) {
-			$out .= '<input type="hidden" name="id" value="'.$objcon->id.'" />';
-		} else {
-			$out .= '<input type="hidden" name="id" value="'.$filterobj->id.'" />';
-		}
-		if ($filterobj && get_class($filterobj) == 'User') {
-			$out .= '<input type="hidden" name="id" value="'.$filterobj->id.'" />';
-		}
-
-		$out .= "\n";
-
-		$out .= '<div class="div-table-responsive-no-min">';
-		$out .= '<table class="noborder centpercent">';
-
-		$out .= '<tr class="liste_titre">';
-
-		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			$out .= '<th class="liste_titre width50 middle">';
-			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
-			$out .= $searchpicto;
-			$out .= '</th>';
-		}
-
-		if ($donetodo) {
-			$out .= '<td class="liste_titre"></td>';
-		}
-
-		$out .= '<td class="liste_titre"><input type="text" class="width50" name="search_rowid" value="'.(isset($filters['search_rowid']) ? $filters['search_rowid'] : '').'"></td>';
-		$out .= '<td class="liste_titre"></td>';
-		$out .= '<td class="liste_titre">';
-		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', !getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : -1, 0, (!getDolGlobalString('AGENDA_USE_MULTISELECT_TYPE') ? 0 : 1), 1, 'minwidth100 maxwidth150');
-		$out .= '</td>';
-		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
-		$out .= '<td class="liste_titre center">';
-		$out .= $form->selectDateToDate($tms_start, $tms_end, 'dateevent', 1);
-		$out .= '</td>';
-		$out .= '<td class="liste_titre"></td>';
-		$out .= '<td class="liste_titre"></td>';
-		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			$out .= '<td class="liste_titre" align="middle">';
-			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
-			$out .= $searchpicto;
-			$out .= '</td>';
-		}
-		$out .= '</tr>';
-
-		$out .= '<tr class="liste_titre">';
-		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			$out .= getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
-		}
-		if ($donetodo) {
-			$tmp = '';
-			if (get_class($filterobj) == 'User') {
-				$tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&userid='.$filterobj->id.'&status=done">';
-			}
-			$tmp .= ($donetodo != 'done' ? $langs->trans("ActionsToDoShort") : '');
-			$tmp .= ($donetodo != 'done' && $donetodo != 'todo' ? ' / ' : '');
-			$tmp .= ($donetodo != 'todo' ? $langs->trans("ActionsDoneShort") : '');
-			//$out.=$langs->trans("ActionsToDoShort").' / '.$langs->trans("ActionsDoneShort");
-			if (get_class($filterobj) == 'User') {
-				$tmp .= '</a>';
-			}
-			$out .= getTitleFieldOfList($tmp);
-		}
-		$out .= getTitleFieldOfList("Ref", 0, $_SERVER["PHP_SELF"], 'a.id', '', $param, '', $sortfield, $sortorder);
-		$out .= getTitleFieldOfList("Owner");
-		$out .= getTitleFieldOfList("Type");
-		$out .= getTitleFieldOfList("Label", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
-		$out .= getTitleFieldOfList("Date", 0, $_SERVER["PHP_SELF"], 'a.datep,a.id', '', $param, '', $sortfield, $sortorder, 'center ');
-		$out .= getTitleFieldOfList("Status", 0, $_SERVER["PHP_SELF"], 'a.percent', '', $param, '', $sortfield, $sortorder, 'center ');
-		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			$out .= getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
-		}
-		$out .= '<td></td>';
-		$out .= '</tr>';
-
-		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
-		$caction = new CActionComm($db);
-		$arraylist = $caction->liste_array(1, 'code', '', (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : 0), '', 1);
-
-		foreach ($histo as $key => $value) {
-			$actionstatic->fetch($histo[$key]['id']); // TODO Do we need this, we already have a lot of data of line into $histo
-
-			$actionstatic->type_picto = $histo[$key]['apicto'];
-			$actionstatic->type_code = $histo[$key]['acode'];
-
-			$out .= '<tr class="oddeven">';
-
-			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-				$out .= '<td></td>';
-			}
-
-			// Done or todo
-			if ($donetodo) {
-				$out .= '<td class="nowrap">';
-				$out .= '</td>';
-			}
-
-			// Ref
-			$out .= '<td class="nowraponall">';
-			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'mailing') {
-				$out .= '<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
-				$out .= $histo[$key]['id'];
-				$out .= '</a>';
-			} else {
-				$out .= $actionstatic->getNomUrl(1, -1);
-			}
-			$out .= '</td>';
-
-			// Author of event
-			$out .= '<td class="tdoverflowmax125">';
-			if ($histo[$key]['userid'] > 0) {
-				if (isset($userlinkcache[$histo[$key]['userid']])) {
-					$link = $userlinkcache[$histo[$key]['userid']];
-				} else {
-					$userstatic->fetch($histo[$key]['userid']);
-					$link = $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, 'firstelselast', '');
-					$userlinkcache[$histo[$key]['userid']] = $link;
-				}
-				$out .= $link;
-			}
-			$out .= '</td>';
-
-			// Type
-			$labeltype = $actionstatic->type_code;
-			if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
-				$labeltype = 'AC_OTH';
-			}
-			if (!empty($actionstatic->code) && preg_match('/^TICKET_MSG/', $actionstatic->code)) {
-				$labeltype = $langs->trans("Message");
-			} else {
-				if (!empty($arraylist[$labeltype])) {
-					$labeltype = $arraylist[$labeltype];
-				}
-				if ($actionstatic->type_code == 'AC_OTH_AUTO' && ($actionstatic->type_code != $actionstatic->code) && $labeltype && !empty($arraylist[$actionstatic->code])) {
-					$labeltype .= ' - '.$arraylist[$actionstatic->code]; // Use code in priority on type_code
-				}
-			}
-			$out .= '<td class="tdoverflowmax125" title="'.$labeltype.'">';
-			$out .= $actionstatic->getTypePicto();
-			//if (empty($conf->dol_optimize_smallscreen)) {
-			$out .= $labeltype;
-			//}
-			$out .= '</td>';
-
-			// Title/Label of event
-			$out .= '<td class="tdoverflowmax300"';
-			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'action') {
-				$transcode = $langs->trans("Action".$histo[$key]['acode']);
-				//$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
-				$libelle = $histo[$key]['note'];
-				$actionstatic->id = $histo[$key]['id'];
-				$out .= ' title="'.dol_escape_htmltag($libelle).'">';
-				$out .= dol_trunc($libelle, 120);
-			}
-			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'mailing') {
-				$out .= '<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
-				$transcode = $langs->trans("Action".$histo[$key]['acode']);
-				$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : 'Send mass mailing');
-				$out .= ' title="'.dol_escape_htmltag($libelle).'">';
-				$out .= dol_trunc($libelle, 120);
-			}
-			$out .= '</td>';
-
-			// Date
-			$out .= '<td class="center nowraponall">';
-			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
-			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart']) {
-				$tmpa = dol_getdate($histo[$key]['datestart'], true);
-				$tmpb = dol_getdate($histo[$key]['dateend'], true);
-				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-					$out .= '-'.dol_print_date($histo[$key]['dateend'], 'hour', 'tzuserrel');
-				} else {
-					$out .= '-'.dol_print_date($histo[$key]['dateend'], 'dayhour', 'tzuserrel');
-				}
-			}
-			$late = 0;
-			if ($histo[$key]['percent'] == 0 && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
-				$late = 1;
-			}
-			if ($histo[$key]['percent'] == 0 && !$histo[$key]['datestart'] && $histo[$key]['dateend'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
-				$late = 1;
-			}
-			if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && $histo[$key]['dateend'] && $histo[$key]['dateend'] < ($now - $delay_warning)) {
-				$late = 1;
-			}
-			if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && !$histo[$key]['dateend'] && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
-				$late = 1;
-			}
-			if ($late) {
-				$out .= img_warning($langs->trans("Late")).' ';
-			}
-			$out .= "</td>\n";
-
-			// Status
-			$out .= '<td class="nowrap center">'.$actionstatic->LibStatut($histo[$key]['percent'], 2, 0, $histo[$key]['datestart']).'</td>';
-			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-				$out .= '<td></td>';
-			}
-
-			$out .= "</tr>\n";
-			$i++;
-		}
-		if (empty($histo)) {
-			$colspan = 9;
-			$out .= '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
-		}
-
-		$out .= "</table>\n";
-		$out .= "</div>\n";
-
-		$out .= '</form>';
-	}
-
-	if ($noprint) {
-		return $out;
-	} else {
-		print $out;
-	}
 }

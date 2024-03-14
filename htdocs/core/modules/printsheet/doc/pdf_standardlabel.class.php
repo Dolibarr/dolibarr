@@ -242,7 +242,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 		$this->code = $srctemplatepath;
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) {
-			dol_print_error('', 'ErrorBadTypeForCard'.$this->code);
+			dol_print_error(null, 'ErrorBadTypeForCard'.$this->code);
 			exit;
 		}
 		$this->type = 'pdf';

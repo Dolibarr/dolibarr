@@ -133,4 +133,4 @@ HideAllPerms=Barcha ruxsat qatorlarini yashirish
 UserPublicPageDesc=Ushbu foydalanuvchi uchun virtual kartani yoqishingiz mumkin. Foydalanuvchi profili va shtrix-kodi bilan url mavjud bo'lib, u smartfonga ega bo'lgan har bir kishi uni skanerlashi va kontaktingizni manzillar kitobiga qo'shishi mumkin.
 EnablePublicVirtualCard=Foydalanuvchining virtual tashrifnomasini yoqing
 UserEnabledDisabled=Foydalanuvchi holati oʻzgardi: %s
-AlternativeEmailForOAuth2=Alternative Email for OAuth2 login
+AlternativeEmailForOAuth2=OAuth2 tizimiga kirish uchun muqobil elektron pochta

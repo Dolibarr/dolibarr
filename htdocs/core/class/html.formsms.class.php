@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,10 @@ class FormSms
 	public $fromid;
 	public $fromname;
 	public $fromsms;
+
+	/**
+	 * @var string
+	 */
 	public $fromtype;
 	public $replytoname;
 	public $replytomail;
@@ -48,9 +52,25 @@ class FormSms
 	public $tomail;
 
 	public $withsubstit; // Show substitution array
+
+	/**
+	 * @var int
+	 */
 	public $withfrom;
+
+	/**
+	 * @var int
+	 */
 	public $withto;
+
+	/**
+	 * @var int
+	 */
 	public $withtopic;
+
+	/**
+	 * @var int
+	 */
 	public $withbody;
 
 	/**
@@ -207,7 +227,7 @@ function limitChars(textarea, limit, infodiv)
 							$sms->error = 'The SMS manager "'.$classfile.'" defined into SMS setup MAIN_MODULE_'.strtoupper($sendmode).'_SMS is not found';
 						}
 					} catch (Exception $e) {
-						dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
+						dol_print_error(null, 'Error to get list of senders: '.$e->getMessage());
 						exit;
 					}
 				} else {

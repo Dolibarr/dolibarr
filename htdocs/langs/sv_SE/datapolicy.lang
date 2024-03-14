@@ -23,7 +23,7 @@ Module4100Desc = Modul för att hantera sekretess (i enlighet med GDPR)
 #
 datapolicySetup = Inställning av sekretesspolicy
 Deletion = Radering av data
-datapolicySetupPage = Beroende på lagarna i ditt land (exempelvis <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">artikel 5</a> i GDPR) måste personuppgifter sparas under en period som inte överstiger vad som är nödvändigt för de ändamål för vilka de samlades in, förutom för arkivändamål. <br> Raderingen kommer att göras automatiskt efter en viss varaktighet utan händelse (längden som du kommer att ha angett nedan).
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
 NB_MONTHS = %s månader
 ONE_YEAR = 1 år
 NB_YEARS = %s år
@@ -40,16 +40,16 @@ DATAPOLICY_CONTACT_FOURNISSEUR = Leverantör
 DATAPOLICY_ADHERENT = Medlem
 DATAPOLICY_Tooltip_SETUP = Typ av kontakt - ange dina val för varje typ.
 DATAPOLICYMail = E-postinställningar
-DATAPOLICYSUBJECTMAIL = Ärenderad för e-post
+DATAPOLICYSUBJECTMAIL = Subject of the email
 DATAPOLICYCONTENTMAIL = Innehållet i e-post
 DATAPOLICYSUBSITUTION = Du kan använda följande variabler i din e-post (LINKACCEPT gör det möjligt att skapa en länk som registrerar personens samtycke, LINKREFUSED gör det möjligt att registrera personens nekande):
 DATAPOLICYACCEPT = Meddelande efter överenskommelse
-DATAPOLICYREFUSE = Meddelande efter oenighet
+DATAPOLICYREFUSE = Message after disagreement
 SendAgreementText = Du kan skicka e-post angående GDPR till alla dina relevanta kontakter (som ännu inte har fått ett mejl och som du inte har registrerat något för om deras GDPR-avtal). För att göra detta, använd följande knapp.
 SendAgreement = Skicka e-post
 AllAgreementSend = All e-post har skickats
 TXTLINKDATAPOLICYACCEPT = Text för länken "godkänn"
-TXTLINKDATAPOLICYREFUSE = Text för länken "neka"
+TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
 
 
 #
@@ -57,13 +57,13 @@ TXTLINKDATAPOLICYREFUSE = Text för länken "neka"
 #
 DATAPOLICY_BLOCKCHECKBOX = GDPR: hantering av personuppgifter
 DATAPOLICY_consentement = Samtycke inhämtat för behandling av personuppgifter
-DATAPOLICY_opposition_traitement = Motsätter sig hantering av personuppgifter
-DATAPOLICY_opposition_prospection = Motsätter sig hantering av personuppgifter i prospekteringssyfte
+DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
+DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
 
 #
 # Popup
 #
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonymisera en tredjepart
+DATAPOLICY_POPUP_ANONYME_TITLE = Anonymisera en tredje part
 DATAPOLICY_POPUP_ANONYME_TEXTE = Du kan inte ta bort den här kontakten från Dolibarr eftersom det finns relaterade objekt. I enlighet med GDPR kommer du att göra all denna data anonym för att uppfylla dina skyldigheter. Vill du fortsätta?
 
 #
@@ -78,15 +78,11 @@ DATAPOLICY_PORTABILITE_CONFIRMATION = Du vill exportera den här kontaktens pers
 #
 ANONYMISER_AT = Anonymiserade %s
 
-# V2
-DATAPOLICYReturn = GDPR-validering
-DATAPOLICY_date = Datum för godkännande/nekande av GDPR
-DATAPOLICY_send = Datum då sekretessförfrågan skickats
-DATAPOLICYReturn = GDPR-validering
+DATAPOLICY_date = Date of agreement/disagreement GDPR
+DATAPOLICY_send = Date agreement email sent
 DATAPOLICY_SEND = Skicka GDPR-förfrågan
 MailSent = E-post har skickats
 
 # ERROR
-ErrorSubjectIsRequired = Fel: Ämnet för e-post är obligatoriskt. Ange det i modulinställningen
-=På grund av ett tekniskt problem kunde vi inte registrera ditt val. Vi ber om ursäkt för det. Kontakta oss för att skicka oss ditt val.
-NUMBER_MONTH_BEFORE_DELETION = Antal månader före radering
+=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
+NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

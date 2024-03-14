@@ -37,7 +37,6 @@ include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 
 use Webklex\PHPIMAP\ClientManager;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
-use Webklex\PHPIMAP\Exceptions\InvalidWhereQueryCriteriaException;
 
 
 use OAuth\Common\Storage\DoliStorage;
@@ -54,7 +53,7 @@ if (!isModEnabled('emailcollector')) {
 $langs->loadLangs(array("admin", "mails", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
@@ -62,7 +61,7 @@ $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'emailcollectorcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$operationid = GETPOST('operationid', 'int');
+$operationid = GETPOSTINT('operationid');
 
 // Initialize technical objects
 $object = new EmailCollector($db);
@@ -155,7 +154,7 @@ if (GETPOST('addfilter', 'alpha')) {
 
 if ($action == 'deletefilter') {
 	$emailcollectorfilter = new EmailCollectorFilter($db);
-	$emailcollectorfilter->fetch(GETPOST('filterid', 'int'));
+	$emailcollectorfilter->fetch(GETPOSTINT('filterid'));
 	if ($emailcollectorfilter->id > 0) {
 		$result = $emailcollectorfilter->delete($user);
 		if ($result > 0) {
@@ -199,7 +198,7 @@ if (GETPOST('addoperation', 'alpha')) {
 
 if ($action == 'updateoperation') {
 	$emailcollectoroperation = new EmailCollectorAction($db);
-	$emailcollectoroperation->fetch(GETPOST('rowidoperation2', 'int'));
+	$emailcollectoroperation->fetch(GETPOSTINT('rowidoperation2'));
 
 	$emailcollectoroperation->actionparam = GETPOST('operationparam2', 'alphawithlgt');
 
@@ -222,7 +221,7 @@ if ($action == 'updateoperation') {
 }
 if ($action == 'deleteoperation') {
 	$emailcollectoroperation = new EmailCollectorAction($db);
-	$emailcollectoroperation->fetch(GETPOST('operationid', 'int'));
+	$emailcollectoroperation->fetch(GETPOSTINT('operationid'));
 	if ($emailcollectoroperation->id > 0) {
 		$result = $emailcollectoroperation->delete($user);
 		if ($result > 0) {

@@ -16,7 +16,6 @@ CurrenciesUsed_help_to_add=أضف العملات والأسعار المختلف
 rate=معدل
 MulticurrencyReceived=العملة الأصلية المستلمة
 MulticurrencyRemainderToTake=المبلغ المتبقي ، العملة الأصلية
-MulticurrencyPaymentAmount=المبلغ المدفوع ، العملة الأصلية
 AmountToOthercurrency=المبلغ إلى (بعملة حساب الاستقبال)
 CurrencyRateSyncSucceed=تمت مزامنة سعر العملة بنجاح
 MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=استخدم عملة المستند للمدفوعات عبر الإنترنت

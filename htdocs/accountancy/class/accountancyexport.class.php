@@ -14,6 +14,7 @@
  * Copyright (C) 2020       Guillaume Alexandre <guillaume@tag-info.fr>
  * Copyright (C) 2022		Joachim Kueter		<jkueter@gmx.de>
  * Copyright (C) 2022  		Progiseize         	<a.bisotti@progiseize.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,16 +82,20 @@ class AccountancyExport
 	public $errors = array();
 
 	/**
-	 *
-	 * @var string Separator
+	 * @var string 	Separator
 	 */
 	public $separator = '';
 
 	/**
-	 *
-	 * @var string End of line
+	 * @var string 	End of line
 	 */
 	public $end_line = '';
+
+	/**
+	 * @var array 	Generated file
+	 */
+	public $generatedfiledata = array();
+
 
 	/**
 	 * Constructor
@@ -195,7 +200,7 @@ class AccountancyExport
 	 */
 	public function getTypeConfig()
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$exporttypes = array(
 			'param' => array(
@@ -273,7 +278,7 @@ class AccountancyExport
 					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
 				),
 			),
-			'cr'=> array(
+			'cr' => array(
 				'1' => $langs->trans("Unix"),
 				'2' => $langs->trans("Windows")
 			),
@@ -298,8 +303,6 @@ class AccountancyExport
 	 */
 	public function getMimeType($formatexportset)
 	{
-		$mime = 'text/csv';
-
 		switch ($formatexportset) {
 			case self::$EXPORT_TYPE_FEC:
 				$mime = 'text/tab-separated-values';
@@ -319,29 +322,30 @@ class AccountancyExport
 	 * @param	int		$formatexportset			Id of export format
 	 * @param	int		$withAttachment				[=0] Not add files
 	 * 												or 1 to have attached in an archive (ex : Quadratus) - Force output mode to write in a file (output mode = 1)
-	 * @param	int		$downloadMode				[=0] Direct download
+	 * @param	int		$downloadMode				[=0] Direct download. Deprecated. Always use value 1.
 	 * 												or 1 to download after writing files - Forced by default when use withAttachment = 1
 	 * 												or -1 not to download files
-	 * @param	int		$outputMode					[=0] Print on screen
-	 * 												or 1 to write in file and uses a temp directory - Forced by default when use withAttachment = 1
+	 * @param	int		$outputMode					[=0] Print on screen. Deprecated. Always use value 1.
+	 * 												or 1 to write in file and uses the temp directory - Forced by default when use withAttachment = 1
 	 * 												or 2 to write in file a default export directory (accounting/export/)
-	 * @return 	int		Return integer <0 if KO, >0 OK
+	 * @param	int		$noouput					0=old mode. Deprecated. Always use value 1.
+	 * 												or 1=Do not output the file on stdout with this method. This must always be done by the main page, never by a method.
+	 * @return 	int									Return integer <0 if KO, >0 OK. The property ->generatedfile is also filled.
 	 */
-	public function export(&$TData, $formatexportset, $withAttachment = 0, $downloadMode = 0, $outputMode = 0)
+	public function export(&$TData, $formatexportset, $withAttachment = 0, $downloadMode = 0, $outputMode = 0, $noouput = 0)
 	{
-		global $conf, $langs;
-		global $search_date_end; // Used into /accountancy/tpl/export_journal.tpl.php
+		global $db, $conf, $langs;	// The tpl file use $db
+		global $search_date_end; 	// Used into /accountancy/tpl/export_journal.tpl.php
 
 		// Define name of file to save
 		$filename = 'general_ledger-'.$this->getFormatCode($formatexportset);
 		$type_export = 'general_ledger';
 
-		global $db; // The tpl file use $db
 		$completefilename = '';
 		$exportFile = null;
 		$exportFileName = '';
 		$exportFilePath = '';
-		$exportFileFullName ='';
+		$exportFileFullName = '';
 		$downloadFileMimeType = '';
 		$downloadFileFullName = '';
 		$downloadFilePath = '';
@@ -369,17 +373,19 @@ class AccountancyExport
 			// begin to print header for direct download
 			top_httphead($mimetype, 1);
 		}
+
 		include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
+
 		if ($outputMode == 1 || $outputMode == 2) {
 			if ($outputMode == 1) {
-				// uses temp directory by default to write files
+				// uses the temp directory by default to write files
 				if (!empty($conf->accounting->multidir_temp[$conf->entity])) {
 					$outputDir = $conf->accounting->multidir_temp[$conf->entity];
 				} else {
 					$outputDir = $conf->accounting->dir_temp;
 				}
 			} else {
-				// uses default export directory "accounting/export"
+				// uses the default export directory "accounting/export"
 				if (!empty($conf->accounting->multidir_output[$conf->entity])) {
 					$outputDir = $conf->accounting->multidir_output[$conf->entity];
 				} else {
@@ -503,7 +509,8 @@ class AccountancyExport
 				break;
 		}
 
-		// create and download export file or archive
+
+		// Create and download export file or archive
 		if ($outputMode == 1 || $outputMode == 2) {
 			$error = 0;
 
@@ -558,14 +565,19 @@ class AccountancyExport
 					}
 
 					// download export file or archive
-					if (!empty($downloadFileMimeType) && !empty($downloadFileFullName) && !empty($downloadFilePath)) {
+					if (!empty($downloadFileMimeType) && !empty($downloadFileFullName) && !empty($downloadFilePath) && empty($noouput)) {
+						// deprecated. We must not use this anymore, but have $noouput = 1 because HTTP header must be sent
+						// into main page not into a method.
 						header('Content-Type: ' . $downloadFileMimeType);
 						header('Content-Disposition: attachment; filename=' . $downloadFileFullName);
 						header('Cache-Control: Public, must-revalidate');
 						header('Pragma: public');
 						header('Content-Length: ' . dol_filesize($downloadFilePath));
+
 						readfileLowMemory($downloadFilePath);
 					}
+
+					$this->generatedfiledata = array('downloadFilePath' => $downloadFilePath, 'downloadFileMimeType' => $downloadFileMimeType, 'downloadFileFullName' => $downloadFileFullName);
 				}
 			}
 
@@ -987,7 +999,7 @@ class AccountancyExport
 						$invoice = new FactureFournisseur($this->db);
 						$invoice->fetch($line->fk_doc);
 						$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
-						$objectDirPath.= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
+						$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 					}
 					$arrayofinclusion = array();
 					// If it is a supplier invoice, we want to use last uploaded file
@@ -1343,6 +1355,7 @@ class AccountancyExport
 
 		foreach ($objectLines as $line) {
 			if ($line->debit == 0 && $line->credit == 0) {
+				//var_dump($line->id);
 				//unset($array[$line]);
 			} else {
 				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
@@ -1452,7 +1465,7 @@ class AccountancyExport
 							$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 						} elseif ($line->doc_type == 'supplier_invoice') {
 							$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
-							$objectDirPath.= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
+							$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 						}
 						$arrayofinclusion = array();
 						// If it is a supplier invoice, we want to use last uploaded file
@@ -1492,6 +1505,7 @@ class AccountancyExport
 				$tab[] = $attachmentFileName;
 
 				$output = implode($separator, $tab).$end_line;
+
 				if ($exportFile) {
 					fwrite($exportFile, $output);
 				} else {
@@ -1663,7 +1677,7 @@ class AccountancyExport
 							$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 						} elseif ($line->doc_type == 'supplier_invoice') {
 							$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
-							$objectDirPath.= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
+							$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 						}
 						$arrayofinclusion = array();
 						// If it is a supplier invoice, we want to use last uploaded file
@@ -1774,7 +1788,7 @@ class AccountancyExport
 					&& $objectLines[$aIndex + 1]->piece_num == $line->piece_num
 					&& $aIndex - 1 < $aSize
 					&& $objectLines[$aIndex - 1]->piece_num == $line->piece_num
-					) {
+			) {
 				$sammelBuchung = true;
 			}
 

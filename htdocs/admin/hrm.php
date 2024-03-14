@@ -4,6 +4,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,8 +57,8 @@ $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'evaluation';
 
 $arrayofparameters = array(
-	'HRM_MAXRANK'=>array('type'=>'integer','enabled'=>1),
-	'HRM_DEFAULT_SKILL_DESCRIPTION'=>array('type'=>'varchar','enabled'=>1),
+	'HRM_MAXRANK' => array('type' => 'integer','enabled' => 1),
+	'HRM_DEFAULT_SKILL_DESCRIPTION' => array('type' => 'varchar','enabled' => 1),
 );
 
 $error = 0;
@@ -73,7 +74,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'update') {
-	$max_rank = GETPOST('HRM_MAXRANK', 'int');
+	$max_rank = GETPOSTINT('HRM_MAXRANK');
 
 	// We complete skill possible level notation if necessary
 	if (!empty($max_rank)) {
@@ -116,18 +117,16 @@ if ($action == 'update') {
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/hrm/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
@@ -212,7 +211,7 @@ print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "hrm"
 
 $moduledir = 'hrm';
 $myTmpObjects = array();
-$myTmpObjects['evaluation'] = array('label'=>'Evaluation', 'includerefgeneration'=>1, 'includedocgeneration'=>0);
+$myTmpObjects['evaluation'] = array('label' => 'Evaluation', 'includerefgeneration' => 1, 'includedocgeneration' => 0);
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	if ($myTmpObjectKey != $type) {
@@ -374,6 +373,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 				if (is_dir($dir)) {
 					$handle = opendir($dir);
 					if (is_resource($handle)) {
+						$filelist = array();
 						while (($file = readdir($handle)) !== false) {
 							$filelist[] = $file;
 						}
@@ -487,7 +487,7 @@ if ($action == 'edit') {
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($arrayofparameters as $constname => $val) {
-		if ($val['enabled']==1) {
+		if ($val['enabled'] == 1) {
 			$setupnotempty++;
 			print '<tr class="oddeven"><td>';
 			$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
@@ -572,7 +572,7 @@ if ($action == 'edit') {
 		print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 		foreach ($arrayofparameters as $constname => $val) {
-			if ($val['enabled']==1) {
+			if ($val['enabled'] == 1) {
 				$setupnotempty++;
 				print '<tr class="oddeven"><td>';
 				$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
@@ -581,7 +581,7 @@ if ($action == 'edit') {
 
 				if ($val['type'] == 'textarea') {
 					print dol_nl2br(getDolGlobalString($constname));
-				} elseif ($val['type']== 'html') {
+				} elseif ($val['type'] == 'html') {
 					print getDolGlobalString($constname);
 				} elseif ($val['type'] == 'yesno') {
 					print ajax_constantonoff($constname);
@@ -592,7 +592,7 @@ if ($action == 'edit') {
 					$tmp = explode(':', $val['type']);
 
 					$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, getDolGlobalString($constname));
-					if ($template<0) {
+					if ($template < 0) {
 						setEventMessages(null, $formmail->errors, 'errors');
 					}
 					print $langs->trans($template->label);

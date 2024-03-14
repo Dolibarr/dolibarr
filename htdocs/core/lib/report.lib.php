@@ -63,7 +63,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 
 	print '<table class="border tableforfield centpercent">'."\n";
 
-	$variante = ($periodlink || $exportlink);
+	$variant = ($periodlink || $exportlink);
 
 	// Ligne de titre
 	print '<tr>';
@@ -71,7 +71,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	print '<td>';
 	print $reportname;
 	print '</td>';
-	if ($variante) {
+	if ($variant) {
 		print '<td></td>';
 	}
 	print '</tr>'."\n";
@@ -82,7 +82,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 		print '<td width="150">'.$langs->trans("CalculationMode").'</td>';
 		print '<td>';
 		print $calcmode;
-		if ($variante) {
+		if ($variant) {
 			print '<td></td>';
 		}
 		print '</td>';
@@ -96,7 +96,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	if ($period) {
 		print $period;
 	}
-	if ($variante) {
+	if ($variant) {
 		print '<td class="nowraponall">'.$periodlink.'</td>';
 	}
 	print '</td>';
@@ -106,7 +106,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	print '<tr>';
 	print '<td>'.$langs->trans("ReportDescription").'</td>';
 	print '<td>'.$description.'</td>';
-	if ($variante) {
+	if ($variant) {
 		print '<td></td>';
 	}
 	print '</tr>'."\n";
@@ -117,7 +117,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	print '<td>';
 	print dol_print_date($builddate, 'dayhour');
 	print '</td>';
-	if ($variante) {
+	if ($variant) {
 		print '<td>'.($exportlink ? $langs->trans("Export").': '.$exportlink : '').'</td>';
 	}
 	print '</tr>'."\n";

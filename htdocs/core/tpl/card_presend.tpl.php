@@ -35,6 +35,7 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
+$fileparams = array();
 
 if ($action == 'presend') {
 	$langs->load("mails");
@@ -78,7 +79,7 @@ if ($action == 'presend') {
 		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang($newlang);
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions', 'sendings'));
+		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'main', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions', 'sendings'));
 		if (!empty($defaulttopiclang)) {
 			$outputlangs->loadLangs(array($defaulttopiclang));
 		}
@@ -220,11 +221,11 @@ if ($action == 'presend') {
 			}
 		}
 	}
+
 	if (getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
 		$listeuser = array();
 		$fuserdest = new User($db);
-
-		$result = $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>"t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email <> ''"), 'AND', true);
+		$result = $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, "(t.statut:=:1) AND (t.employee:=:1) AND (t.email:isnot:NULL) AND (t.email:!=:'')", 'AND', true);
 		if ($result > 0 && is_array($fuserdest->users) && count($fuserdest->users) > 0) {
 			foreach ($fuserdest->users as $uuserdest) {
 				$listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id, 'email');
@@ -273,10 +274,10 @@ if ($action == 'presend') {
 
 	$substitutionarray['__CHECK_READ__'] = "";
 	if (is_object($object) && is_object($object->thirdparty)) {
-		$checkRead= '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php';
-		$checkRead.='?tag='.(!empty($object->thirdparty->tag) ? urlencode($object->thirdparty->tag) : "");
-		$checkRead.='&securitykey='.(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY') ? urlencode(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')) : "");
-		$checkRead.='" width="1" height="1" style="width:1px;height:1px" border="0"/>';
+		$checkRead = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php';
+		$checkRead .= '?tag='.(!empty($object->thirdparty->tag) ? urlencode($object->thirdparty->tag) : "");
+		$checkRead .= '&securitykey='.(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY') ? urlencode(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')) : "");
+		$checkRead .= '" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 		$substitutionarray['__CHECK_READ__'] = $checkRead;
 	}
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
@@ -383,7 +384,7 @@ if ($action == 'presend') {
 	// Array of other parameters
 	$formmail->param['action'] = 'send';
 	$formmail->param['models'] = $modelmail;
-	$formmail->param['models_id'] = GETPOST('modelmailselected', 'int');
+	$formmail->param['models_id'] = GETPOSTINT('modelmailselected');
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"].'?id='.$object->id;
 	$formmail->param['fileinit'] = array($file);

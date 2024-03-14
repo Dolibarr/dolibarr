@@ -38,13 +38,13 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'withdrawals'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'prelevement', '', 'bons');
 
-$usercancreate = $user->rights->prelevement->bons->creer;
+$usercancreate = $user->hasRight('prelevement', 'bons', 'creer');
 
 
 /*
@@ -93,7 +93,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("AmountToWithdraw").'</td>';
 print '<td class="right"><span class="amount">';
-print price($bprev->SommeAPrelever('direct-debit'), '', '', 1, -1, -1, 'auto');
+print price($bprev->SommeAPrelever('direct-debit'), 0, '', 1, -1, -1, 'auto');
 print '</span></td></tr></table></div><br>';
 
 

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +77,7 @@ class mod_mo_standard extends ModeleNumRefMos
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @param  Object		$object		Object we need next value for
+	 *  @param  CommonObject	$object	Object we need next value for
 	 *  @return boolean     			false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
@@ -113,8 +114,8 @@ class mod_mo_standard extends ModeleNumRefMos
 	 * 	Return next free value
 	 *
 	 *  @param	Product		$objprod    Object product
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @param  Mo			$object		Object we need next value for
+	 *  @return string|-1      			Value if OK, -1 if KO
 	 */
 	public function getNextValue($objprod, $object)
 	{

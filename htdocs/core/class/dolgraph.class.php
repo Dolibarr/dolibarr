@@ -1,6 +1,7 @@
 <?php
 /* Copyright (c) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -700,7 +701,7 @@ class DolGraph
 		}
 
 		//print "max=".$max." res=".$res;
-		return $res;
+		return (int) $res;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -781,7 +782,7 @@ class DolGraph
 		// phpcs:enable
 		global $langs;
 
-		dol_syslog(get_class($this) . "::draw_jflot this->type=" . join(',', $this->type) . " this->MaxValue=" . $this->MaxValue);
+		dol_syslog(get_class($this) . "::draw_jflot this->type=" . implode(',', $this->type) . " this->MaxValue=" . $this->MaxValue);
 
 		if (empty($this->width) && empty($this->height)) {
 			print 'Error width or height not set';
@@ -1068,7 +1069,7 @@ class DolGraph
 		// phpcs:enable
 		global $langs;
 
-		dol_syslog(get_class($this) . "::draw_chart this->type=" . join(',', $this->type) . " this->MaxValue=" . $this->MaxValue);
+		dol_syslog(get_class($this) . "::draw_chart this->type=" . implode(',', $this->type) . " this->MaxValue=" . $this->MaxValue);
 
 		if (empty($this->width) && empty($this->height)) {
 			print 'Error width or height not set';
@@ -1288,7 +1289,6 @@ class DolGraph
 			$this->stringtoshow .= '],
 					datasets: [';
 			$i = 0;
-			$i = 0;
 			while ($i < $nblot) {	// Loop on each series
 				$color = 'rgb(' . $this->datacolor[$i][0] . ', ' . $this->datacolor[$i][1] . ', ' . $this->datacolor[$i][2] . ')';
 
@@ -1310,11 +1310,7 @@ class DolGraph
 			$type = 'bar';
 			$xaxis = '';
 
-			if (!isset($this->type[$firstlot]) || $this->type[$firstlot] == 'bars') {
-				$type = 'bar';
-			}
 			if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'horizontalbars') {
-				$type = 'bar';
 				$xaxis = "indexAxis: 'y', ";
 			}
 			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$firstlot] == 'linesnopoint')) {
@@ -1348,7 +1344,7 @@ class DolGraph
 				$this->stringtoshow .= 'tooltip: { mode: \'nearest\',
 					callbacks: {';
 				if (is_array($this->tooltipsTitles)) {
-					$this->stringtoshow .='
+					$this->stringtoshow .= '
 							title: function(tooltipItem, data) {
 								var tooltipsTitle ='.json_encode($this->tooltipsTitles).'
 								return tooltipsTitle[tooltipItem[0].datasetIndex];
@@ -1360,7 +1356,7 @@ class DolGraph
 								return tooltipslabels[tooltipItem.datasetIndex]
 							}';
 				}
-				$this->stringtoshow .='}},';
+				$this->stringtoshow .= '}},';
 			}
 			$this->stringtoshow .= "}, \n";
 
@@ -1388,7 +1384,7 @@ class DolGraph
 				$this->stringtoshow .= 'tooltips: { mode: \'nearest\',
 					callbacks: {';
 				if (is_array($this->tooltipsTitles)) {
-					$this->stringtoshow .='
+					$this->stringtoshow .= '
 							title: function(tooltipItem, data) {
 								var tooltipsTitle ='.json_encode($this->tooltipsTitles).'
 								return tooltipsTitle[tooltipItem[0].datasetIndex];
@@ -1400,7 +1396,7 @@ class DolGraph
 								return tooltipslabels[tooltipItem.datasetIndex]
 							}';
 				}
-				$this->stringtoshow .='}},';
+				$this->stringtoshow .= '}},';
 			}
 			$this->stringtoshow .= '};';
 			$this->stringtoshow .= '
@@ -1540,7 +1536,7 @@ class DolGraph
 	/**
 	 * Output HTML string to total value
 	 *
-	 * @return	string							HTML string to total value
+	 * @return	float|int							HTML string to total value
 	 */
 	public function total()
 	{
@@ -1587,16 +1583,16 @@ class DolGraph
 	public static function getDefaultGraphSizeForStats($direction, $defaultsize = '')
 	{
 		global $conf;
+		$defaultsize = (int) $defaultsize;
 
 		if ($direction == 'width') {
 			if (empty($conf->dol_optimize_smallscreen)) {
-				return ($defaultsize ? $defaultsize : '500');
+				return ($defaultsize ? $defaultsize : 500);
 			} else {
-				return (empty($_SESSION['dol_screenwidth']) ? '280' : ($_SESSION['dol_screenwidth'] - 40));
+				return (empty($_SESSION['dol_screenwidth']) ? 280 : ($_SESSION['dol_screenwidth'] - 40));
 			}
-		}
-		if ($direction == 'height') {
-			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : '220') : '200');
+		} elseif ($direction == 'height') {
+			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : 220) : 200);
 		}
 		return 0;
 	}

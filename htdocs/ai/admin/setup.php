@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2022 Alice Adminson <aadminson@example.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,31 +25,33 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
-global $langs, $user;
-
-// Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once '../lib/ai.lib.php';
 
-// Access control
-if (!$user->admin) {
-	accessforbidden();
-}
+$langs->loadLangs(array("admin"));
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
+if (empty($action)) {
+	$action = 'edit';
+}
+
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
-
 $error = 0;
 $setupnotempty = 0;
+
+// Access control
+if (!$user->admin) {
+	accessforbidden();
+}
+
 
 // Set this to 1 to use the factory to manage constants. Warning, the generated module will be compatible with version v15+ only
 $useFormSetup = 1;
@@ -59,22 +62,21 @@ if (!class_exists('FormSetup')) {
 
 $formSetup = new FormSetup($db);
 
-// Setup conf AI_PUBLIC_INTERFACE_TOPIC
-$item = $formSetup->newItem('AI_KEY_API_CHATGPT');
-$item->defaultFieldValue = '';
+// List all available IA
+$arrayofia = array('chatgpt');
 
+foreach ($arrayofia as $ia) {
+	// Setup conf AI_PUBLIC_INTERFACE_TOPIC
+	/*$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_ENDPOINT');	// Name of constant must end with _KEY so it is encrypted when saved into database.
+	$item->defaultFieldValue = '';
+	$item->cssClass = 'minwidth500';*/
 
-// Save API Key
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$apiKey = GETPOST('api_key', 'alpha');
-	// Validate and clean $apiKey here
-	dolibarr_set_const($db, 'MAIN_AI_CHATGPT_API_KEY', $apiKey, 'chaine', 0, '', $conf->entity);
+	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_KEY');	// Name of constant must end with _KEY so it is encrypted when saved into database.
+	$item->defaultFieldValue = '';
+	$item->cssClass = 'minwidth500';
 }
 
-// Retrieve existing API Key
-$apiKey = dolibarr_get_const($db, 'MAIN_AI_CHATGPT_API_KEY');
-
-$setupnotempty =+ count($formSetup->items);
+$setupnotempty = + count($formSetup->items);
 
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -83,11 +85,6 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 /*
  * Actions
  */
-
-// For retrocompatibility Dolibarr < 15.0
-if (versioncompare(explode('.', DOL_VERSION), array(15)) < 0 && $action == 'update' && !empty($user->admin)) {
-	$formSetup->saveConfFromPost();
-}
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
@@ -117,18 +114,16 @@ if ($action == 'updateMask') {
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/ai/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele."_".strtolower($tmpobjectkey);
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
@@ -190,50 +185,52 @@ if ($action == 'updateMask') {
 	}
 }
 
+$action = 'edit';
+
 
 /*
  * View
  */
 
- $form = new Form($db);
+$form = new Form($db);
 
- $help_url = '';
- $page_name = "AiSetup";
+$help_url = '';
+$title = "AiSetup";
 
- llxHeader('', $langs->trans($page_name), $help_url);
+llxHeader('', $langs->trans($title), $help_url);
 
- // Subheader
- $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
+// Subheader
+$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
- print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
- // Configuration header
- $head = aiAdminPrepareHead();
- print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "fa-microchip");
+// Configuration header
+$head = aiAdminPrepareHead();
+print dol_get_fiche_head($head, 'settings', $langs->trans($title), -1, "fa-microchip");
 
- // Setup page goes here
- //echo '<span class="opacitymedium">'.$langs->trans("AiSetupPage").'</span><br><br>';
+// Setup page goes here
+//echo '<span class="opacitymedium">'.$langs->trans("AiSetupPage").'</span><br><br>';
 
 
 if ($action == 'edit') {
-	 print $formSetup->generateOutput(true);
-	 print '<br>';
+	print $formSetup->generateOutput(true);
+	print '<br>';
 } elseif (!empty($formSetup->items)) {
 	print $formSetup->generateOutput();
 	print '<div class="tabsAction">';
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 	print '</div>';
 } else {
-	 print '<br>'.$langs->trans("NothingToSetup");
+	print '<br>'.$langs->trans("NothingToSetup");
 }
 
 
 if (empty($setupnotempty)) {
-	 print '<br>'.$langs->trans("NothingToSetup");
+	print '<br>'.$langs->trans("NothingToSetup");
 }
 
- // Page end
- print dol_get_fiche_end();
+// Page end
+print dol_get_fiche_end();
 
- llxFooter();
- $db->close();
+llxFooter();
+$db->close();

@@ -157,7 +157,7 @@ class LignePrelevement
 	 *
 	 *    @param	int		$status     Id status
 	 *    @param    int		$mode       0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
-	 * 	  @return   null|string      		Label
+	 * 	  @return   null|string      	Return status label (or null if $mode != 0, 1, 2, 3 or 4)
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -192,7 +192,7 @@ class LignePrelevement
 			}
 		}
 		// return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
-		return;
+		return null;
 	}
 
 	/**

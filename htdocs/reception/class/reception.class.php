@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
- * Copyright (C) 2022-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 
@@ -183,7 +183,7 @@ class Reception extends CommonObject
 			}
 
 			if (!$mybool) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -863,6 +863,19 @@ class Reception extends CommonObject
 				$this->error = $langs->trans('ErrorProductDoesNotNeedBatchNumber', $product->ref);
 				return -1;
 			}
+
+			// check sell-by / eat-by date is mandatory
+			$errorMsgArr = Productlot::checkSellOrEatByMandatoryFromProductAndDates($product, $sellby, $eatby);
+			if (!empty($errorMsgArr)) {
+				$errorMessage = '<b>' . $product->ref . '</b> : ';
+				$errorMessage .= '<ul>';
+				foreach ($errorMsgArr as $errorMsg) {
+					$errorMessage .= '<li>' . $errorMsg . '</li>';
+				}
+				$errorMessage .= '</ul>';
+				$this->error = $errorMessage;
+				return -1;
+			}
 		}
 		unset($product);
 
@@ -909,7 +922,7 @@ class Reception extends CommonObject
 			$this->ref = trim($this->ref);
 		}
 		if (isset($this->entity)) {
-			$this->entity = trim($this->entity);
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->ref_supplier)) {
 			$this->ref_supplier = trim($this->ref_supplier);
@@ -918,13 +931,13 @@ class Reception extends CommonObject
 			$this->socid = trim($this->socid);
 		}
 		if (isset($this->fk_user_author)) {
-			$this->fk_user_author = trim($this->fk_user_author);
+			$this->fk_user_author = (int) $this->fk_user_author;
 		}
 		if (isset($this->fk_user_valid)) {
-			$this->fk_user_valid = trim($this->fk_user_valid);
+			$this->fk_user_valid = (int) $this->fk_user_valid;
 		}
 		if (isset($this->shipping_method_id)) {
-			$this->shipping_method_id = trim($this->shipping_method_id);
+			$this->shipping_method_id = (int) $this->shipping_method_id;
 		}
 		if (isset($this->tracking_number)) {
 			$this->tracking_number = trim($this->tracking_number);
@@ -1401,7 +1414,7 @@ class Reception extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1452,6 +1465,8 @@ class Reception extends CommonObject
 			$this->lines[] = $line;
 			$xnbp++;
 		}
+
+		return 1;
 	}
 
 	/**

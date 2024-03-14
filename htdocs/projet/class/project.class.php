@@ -8,6 +8,8 @@
  * Copyright (C) 2019      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -291,49 +293,49 @@ class Project extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'fk_project' =>array('type'=>'integer', 'label'=>'Parent', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'position'=>12),
-		'ref' =>array('type'=>'varchar(50)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'showoncombobox'=>1, 'position'=>15, 'searchall'=>1),
-		'title' =>array('type'=>'varchar(255)', 'label'=>'ProjectLabel', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>17, 'showoncombobox'=>2, 'searchall'=>1),
-		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>3, 'notnull'=>1, 'position'=>19),
-		'fk_soc' =>array('type'=>'integer', 'label'=>'Thirdparty', 'enabled'=>1, 'visible'=>0, 'position'=>20),
-		'dateo' =>array('type'=>'date', 'label'=>'DateStart', 'enabled'=>1, 'visible'=>1, 'position'=>30),
-		'datee' =>array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>1, 'visible'=>1, 'position'=>35),
-		'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>3, 'position'=>55, 'searchall'=>1),
-		'public' =>array('type'=>'integer', 'label'=>'Visibility', 'enabled'=>1, 'visible'=>1, 'position'=>65),
-		'fk_opp_status' =>array('type'=>'integer', 'label'=>'OpportunityStatusShort', 'enabled'=>'getDolGlobalString("PROJECT_USE_OPPORTUNITIES")', 'visible'=>1, 'position'=>75),
-		'opp_percent' =>array('type'=>'double(5,2)', 'label'=>'OpportunityProbabilityShort', 'enabled'=>'getDolGlobalString("PROJECT_USE_OPPORTUNITIES")', 'visible'=>1, 'position'=>80),
-		'note_private' =>array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>85, 'searchall'=>1),
-		'note_public' =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>90, 'searchall'=>1),
-		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPdf', 'enabled'=>1, 'visible'=>0, 'position'=>95),
-		'date_close' =>array('type'=>'datetime', 'label'=>'DateClosing', 'enabled'=>1, 'visible'=>0, 'position'=>105),
-		'fk_user_close' =>array('type'=>'integer', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>0, 'position'=>110),
-		'opp_amount' =>array('type'=>'double(24,8)', 'label'=>'OpportunityAmountShort', 'enabled'=>1, 'visible'=>'getDolGlobalString("PROJECT_USE_OPPORTUNITIES")', 'position'=>115),
-		'budget_amount' =>array('type'=>'double(24,8)', 'label'=>'Budget', 'enabled'=>1, 'visible'=>-1, 'position'=>119),
-		'usage_opportunity' =>array('type'=>'integer', 'label'=>'UsageOpportunity', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
-		'usage_task' =>array('type'=>'integer', 'label'=>'UsageTasks', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
-		'usage_bill_time' =>array('type'=>'integer', 'label'=>'UsageBillTimeShort', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
-		'usage_organize_event' =>array('type'=>'integer', 'label'=>'UsageOrganizeEvent', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
+		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
+		'fk_project' => array('type' => 'integer', 'label' => 'Parent', 'enabled' => 1, 'visible' => 1, 'notnull' => 0, 'position' => 12),
+		'ref' => array('type' => 'varchar(50)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'showoncombobox' => 1, 'position' => 15, 'searchall' => 1),
+		'title' => array('type' => 'varchar(255)', 'label' => 'ProjectLabel', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 17, 'showoncombobox' => 2, 'searchall' => 1),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => 3, 'notnull' => 1, 'position' => 19),
+		'fk_soc' => array('type' => 'integer', 'label' => 'Thirdparty', 'enabled' => 1, 'visible' => 0, 'position' => 20),
+		'dateo' => array('type' => 'date', 'label' => 'DateStart', 'enabled' => 1, 'visible' => 1, 'position' => 30),
+		'datee' => array('type' => 'date', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => 1, 'position' => 35),
+		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => 3, 'position' => 55, 'searchall' => 1),
+		'public' => array('type' => 'integer', 'label' => 'Visibility', 'enabled' => 1, 'visible' => 1, 'position' => 65),
+		'fk_opp_status' => array('type' => 'integer', 'label' => 'OpportunityStatusShort', 'enabled' => 'getDolGlobalString("PROJECT_USE_OPPORTUNITIES")', 'visible' => 1, 'position' => 75),
+		'opp_percent' => array('type' => 'double(5,2)', 'label' => 'OpportunityProbabilityShort', 'enabled' => 'getDolGlobalString("PROJECT_USE_OPPORTUNITIES")', 'visible' => 1, 'position' => 80),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 85, 'searchall' => 1),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 90, 'searchall' => 1),
+		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'ModelPdf', 'enabled' => 1, 'visible' => 0, 'position' => 95),
+		'date_close' => array('type' => 'datetime', 'label' => 'DateClosing', 'enabled' => 1, 'visible' => 0, 'position' => 105),
+		'fk_user_close' => array('type' => 'integer', 'label' => 'UserClosing', 'enabled' => 1, 'visible' => 0, 'position' => 110),
+		'opp_amount' => array('type' => 'double(24,8)', 'label' => 'OpportunityAmountShort', 'enabled' => 1, 'visible' => 'getDolGlobalString("PROJECT_USE_OPPORTUNITIES")', 'position' => 115),
+		'budget_amount' => array('type' => 'double(24,8)', 'label' => 'Budget', 'enabled' => 1, 'visible' => -1, 'position' => 119),
+		'usage_opportunity' => array('type' => 'integer', 'label' => 'UsageOpportunity', 'enabled' => 1, 'visible' => -1, 'position' => 130),
+		'usage_task' => array('type' => 'integer', 'label' => 'UsageTasks', 'enabled' => 1, 'visible' => -1, 'position' => 135),
+		'usage_bill_time' => array('type' => 'integer', 'label' => 'UsageBillTimeShort', 'enabled' => 1, 'visible' => -1, 'position' => 140),
+		'usage_organize_event' => array('type' => 'integer', 'label' => 'UsageOrganizeEvent', 'enabled' => 1, 'visible' => -1, 'position' => 145),
 		// Properties for event organization
-		'date_start_event' =>array('type'=>'date', 'label'=>'DateStartEvent', 'enabled'=>"isModEnabled('eventorganization')", 'visible'=>1, 'position'=>200),
-		'date_end_event' =>array('type'=>'date', 'label'=>'DateEndEvent', 'enabled'=>"isModEnabled('eventorganization')", 'visible'=>1, 'position'=>201),
-		'location' =>array('type'=>'text', 'label'=>'Location', 'enabled'=>1, 'visible'=>3, 'position'=>55, 'searchall'=>202),
-		'accept_conference_suggestions' =>array('type'=>'integer', 'label'=>'AllowUnknownPeopleSuggestConf', 'enabled'=>1, 'visible'=>-1, 'position'=>210),
-		'accept_booth_suggestions' =>array('type'=>'integer', 'label'=>'AllowUnknownPeopleSuggestBooth', 'enabled'=>1, 'visible'=>-1, 'position'=>211),
-		'price_registration' =>array('type'=>'double(24,8)', 'label'=>'PriceOfRegistration', 'enabled'=>1, 'visible'=>-1, 'position'=>212),
-		'price_booth' =>array('type'=>'double(24,8)', 'label'=>'PriceOfBooth', 'enabled'=>1, 'visible'=>-1, 'position'=>215),
-		'max_attendees' =>array('type'=>'integer', 'label'=>'MaxNbOfAttendees', 'enabled'=>1, 'visible'=>-1, 'position'=>215),
+		'date_start_event' => array('type' => 'date', 'label' => 'DateStartEvent', 'enabled' => "isModEnabled('eventorganization')", 'visible' => 1, 'position' => 200),
+		'date_end_event' => array('type' => 'date', 'label' => 'DateEndEvent', 'enabled' => "isModEnabled('eventorganization')", 'visible' => 1, 'position' => 201),
+		'location' => array('type' => 'text', 'label' => 'Location', 'enabled' => 1, 'visible' => 3, 'position' => 55, 'searchall' => 202),
+		'accept_conference_suggestions' => array('type' => 'integer', 'label' => 'AllowUnknownPeopleSuggestConf', 'enabled' => 1, 'visible' => -1, 'position' => 210),
+		'accept_booth_suggestions' => array('type' => 'integer', 'label' => 'AllowUnknownPeopleSuggestBooth', 'enabled' => 1, 'visible' => -1, 'position' => 211),
+		'price_registration' => array('type' => 'double(24,8)', 'label' => 'PriceOfRegistration', 'enabled' => 1, 'visible' => -1, 'position' => 212),
+		'price_booth' => array('type' => 'double(24,8)', 'label' => 'PriceOfBooth', 'enabled' => 1, 'visible' => -1, 'position' => 215),
+		'max_attendees' => array('type' => 'integer', 'label' => 'MaxNbOfAttendees', 'enabled' => 1, 'visible' => -1, 'position' => 215),
 		// Generic
-		'datec' =>array('type'=>'datetime', 'label'=>'DateCreationShort', 'enabled'=>1, 'visible'=>-2, 'position'=>400),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>405),
-		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>410),
-		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModification', 'enabled'=>1, 'visible'=>0, 'position'=>415),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>420),
-		'email_msgid'=>array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'enabled'=>1, 'visible'=>-1, 'position'=>450, 'help'=>'EmailMsgIDWhenSourceisEmail', 'csslist'=>'tdoverflowmax125'),
-		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500),
+		'datec' => array('type' => 'datetime', 'label' => 'DateCreationShort', 'enabled' => 1, 'visible' => -2, 'position' => 400),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModificationShort', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 405),
+		'fk_user_creat' => array('type' => 'integer', 'label' => 'UserCreation', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 410),
+		'fk_user_modif' => array('type' => 'integer', 'label' => 'UserModification', 'enabled' => 1, 'visible' => 0, 'position' => 415),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'position' => 420),
+		'email_msgid' => array('type' => 'varchar(255)', 'label' => 'EmailMsgID', 'enabled' => 1, 'visible' => -1, 'position' => 450, 'help' => 'EmailMsgIDWhenSourceisEmail', 'csslist' => 'tdoverflowmax125'),
+		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 500),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -351,6 +353,7 @@ class Project extends CommonObject
 	 * Closed status
 	 */
 	const STATUS_CLOSED = 2;
+
 
 	/**
 	 *  Constructor
@@ -493,7 +496,7 @@ class Project extends CommonObject
 		$sql .= ", ".($this->email_msgid ? "'".$this->db->escape($this->email_msgid)."'" : 'null');
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : 'null');
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null');
-		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".setEntity($this);
 		$sql .= ", ".(!isset($this->ip) ? 'NULL' : "'".$this->db->escape($this->ip)."'");
 		$sql .= ")";
 
@@ -601,8 +604,8 @@ class Project extends CommonObject
 			$sql .= ", usage_organize_event = ".($this->usage_organize_event ? 1 : 0);
 			$sql .= ", accept_conference_suggestions = ".($this->accept_conference_suggestions ? 1 : 0);
 			$sql .= ", accept_booth_suggestions = ".($this->accept_booth_suggestions ? 1 : 0);
-			$sql .= ", price_registration = ".(strcmp($this->price_registration, '') ? price2num($this->price_registration) : "null");
-			$sql .= ", price_booth = ".(strcmp($this->price_booth, '') ? price2num($this->price_booth) : "null");
+			$sql .= ", price_registration = ".(isset($this->price_registration) && strcmp($this->price_registration, '') ? price2num($this->price_registration) : "null");
+			$sql .= ", price_booth = ".(isset($this->price_booth) && strcmp($this->price_booth, '') ? price2num($this->price_booth) : "null");
 			$sql .= ", max_attendees = ".(strcmp($this->max_attendees, '') ? price2num($this->max_attendees) : "null");
 			$sql .= ", date_start_event = ".($this->date_start_event != '' ? "'".$this->db->idate($this->date_start_event)."'" : 'null');
 			$sql .= ", date_end_event = ".($this->date_end_event != '' ? "'".$this->db->idate($this->date_end_event)."'" : 'null');
@@ -874,7 +877,7 @@ class Project extends CommonObject
 		}
 
 		$parameters = array(
-			'sql'=>$sql,
+			'sql' => $sql,
 			'type' => $type,
 			'tablename' => $tablename,
 			'datefieldname'  => $datefieldname,
@@ -916,6 +919,7 @@ class Project extends CommonObject
 		} else {
 			dol_print_error($this->db);
 		}
+		return -1;
 	}
 
 	/**
@@ -947,14 +951,14 @@ class Project extends CommonObject
 
 		// Set fk_projet into elements to null
 		$listoftables = array(
-			'propal'=>'fk_projet', 'commande'=>'fk_projet', 'facture'=>'fk_projet',
-			'supplier_proposal'=>'fk_projet', 'commande_fournisseur'=>'fk_projet', 'facture_fourn'=>'fk_projet',
-			'expensereport_det'=>'fk_projet', 'contrat'=>'fk_projet',
-			'fichinter'=>'fk_projet',
-			'don'=>array('field'=>'fk_projet', 'module'=>'don'),
-			'actioncomm'=>'fk_project',
-			'mrp_mo'=>'fk_project',
-			'entrepot'=>'fk_project'
+			'propal' => 'fk_projet', 'commande' => 'fk_projet', 'facture' => 'fk_projet',
+			'supplier_proposal' => 'fk_projet', 'commande_fournisseur' => 'fk_projet', 'facture_fourn' => 'fk_projet',
+			'expensereport_det' => 'fk_projet', 'contrat' => 'fk_projet',
+			'fichinter' => 'fk_projet',
+			'don' => array('field' => 'fk_projet', 'module' => 'don'),
+			'actioncomm' => 'fk_project',
+			'mrp_mo' => 'fk_project',
+			'entrepot' => 'fk_project'
 		);
 		foreach ($listoftables as $key => $value) {
 			if (is_array($value)) {
@@ -1203,7 +1207,7 @@ class Project extends CommonObject
 				return 1;
 			} else {
 				$this->db->rollback();
-				$this->error = join(',', $this->errors);
+				$this->error = implode(',', $this->errors);
 				dol_syslog(get_class($this)."::setValid ".$this->error, LOG_ERR);
 				return -1;
 			}
@@ -1222,8 +1226,6 @@ class Project extends CommonObject
 	 */
 	public function setClose($user)
 	{
-		global $langs, $conf;
-
 		$now = dol_now();
 
 		$error = 0;
@@ -1256,7 +1258,7 @@ class Project extends CommonObject
 					return 1;
 				} else {
 					$this->db->rollback();
-					$this->error = join(',', $this->errors);
+					$this->error = implode(',', $this->errors);
 					dol_syslog(get_class($this)."::setClose ".$this->error, LOG_ERR);
 					return -1;
 				}
@@ -1460,7 +1462,7 @@ class Project extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('projectdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1476,7 +1478,7 @@ class Project extends CommonObject
 	 *  Used to build previews or test instances.
 	 * 	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1495,7 +1497,8 @@ class Project extends CommonObject
 		$this->date_start = $now;
 		$this->date_end = $now + (3600 * 24 * 365);
 		$this->note_public = 'SPECIMEN';
-		$this->fk_element = 20000;
+		$this->note_private = 'Private Note';
+		$this->fk_project = 0;
 		$this->opp_amount = 20000;
 		$this->budget_amount = 10000;
 
@@ -1518,6 +1521,8 @@ class Project extends CommonObject
 		 $xnbp++;
 		 }
 		 */
+
+		return 1;
 	}
 
 	/**
@@ -1629,13 +1634,13 @@ class Project extends CommonObject
 
 		if ($mode == 0) {
 			$sql .= " AND ( p.public = 1";
-			$sql .= " OR ( ec.fk_c_type_contact IN (".$this->db->sanitize(join(',', array_keys($listofprojectcontacttype))).")";
+			$sql .= " OR ( ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', array_keys($listofprojectcontacttype))).")";
 			$sql .= " AND ec.fk_socpeople = ".((int) $user->id).")";
 			$sql .= " )";
 		} elseif ($mode == 1) {
 			$sql .= " AND ec.element_id = p.rowid";
 			$sql .= " AND (";
-			$sql .= "  ( ec.fk_c_type_contact IN (".$this->db->sanitize(join(',', array_keys($listofprojectcontacttype))).")";
+			$sql .= "  ( ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', array_keys($listofprojectcontacttype))).")";
 			$sql .= " AND ec.fk_socpeople = ".((int) $user->id).")";
 			$sql .= " )";
 		} elseif ($mode == 2) {
@@ -1800,7 +1805,7 @@ class Project extends CommonObject
 
 				foreach (array('internal', 'external') as $source) {
 					$tab = $origin_project->liste_contact(-1, $source);
-					if (is_array($tab) && count($tab)>0) {
+					if (is_array($tab) && count($tab) > 0) {
 						foreach ($tab as $contacttoadd) {
 							$clone_project->add_contact($contacttoadd['id'], $contacttoadd['code'], $contacttoadd['source'], $notrigger);
 							if ($clone_project->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
@@ -2085,7 +2090,7 @@ class Project extends CommonObject
 		$this->weekWorkLoadPerTask = array();
 
 		if (empty($datestart)) {
-			dol_print_error('', 'Error datestart parameter is empty');
+			dol_print_error(null, 'Error datestart parameter is empty');
 		}
 
 		$sql = "SELECT ptt.rowid as taskid, ptt.element_duration, ptt.element_date, ptt.element_datehour, ptt.fk_element";
@@ -2149,7 +2154,7 @@ class Project extends CommonObject
 		$this->monthWorkLoadPerTask = array();
 
 		if (empty($datestart)) {
-			dol_print_error('', 'Error datestart parameter is empty');
+			dol_print_error(null, 'Error datestart parameter is empty');
 		}
 
 		$sql = "SELECT ptt.rowid as taskid, ptt.element_duration, ptt.element_date, ptt.element_datehour, ptt.fk_element";
@@ -2180,6 +2185,7 @@ class Project extends CommonObject
 					$date = explode('-', $obj->element_date);
 					$week_number = getWeekNumber($date[2], $date[1], $date[0]);
 				}
+				'@phan-var-force int $week_number';  // Needed because phan considers it might be null
 				if (empty($weekalreadyfound[$week_number])) {
 					$this->monthWorkLoad[$week_number] = $obj->element_duration;
 					$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] = $obj->element_duration;
@@ -2486,7 +2492,7 @@ class Project extends CommonObject
 			$return .= '<br><div class="info-box-ref tdoverflowmax150 inline-block valignmiddle">'.$this->thirdparty->getNomUrl(1);
 			$return .= '</div><div class="inline-block valignmiddle">';
 			$return .= dol_print_phone($this->thirdparty->phone, $this->thirdparty->country_code, 0, $this->thirdparty->id, 'tel', 'hidenum', 'phone');
-			$return .='</div>';
+			$return .= '</div>';
 		}
 		if (!empty($arraydata['assignedusers'])) {
 			$return .= '<br>';
@@ -2548,5 +2554,178 @@ class Project extends CommonObject
 		}
 
 		return $children;
+	}
+
+	/**
+	 * Method for calculating weekly hours worked and generating a report
+	 * @return int   0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function createWeeklyReport()
+	{
+		global $mysoc, $user;
+
+		$now = dol_now();
+		$nowDate = dol_getdate($now, true);
+		$errorsMsg = array();
+
+		$firstDayOfWeekTS = dol_get_first_day_week($nowDate['mday'], $nowDate['mon'], $nowDate['year']);
+
+		$firstDayOfWeekDate = dol_mktime(0, 0, 0, $nowDate['mon'], $firstDayOfWeekTS['first_day'], $nowDate['year']);
+
+		$lastWeekStartTS = dol_time_plus_duree($firstDayOfWeekDate, -7, 'd');
+
+		$lastWeekEndTS = dol_time_plus_duree($lastWeekStartTS, 6, 'd');
+
+		$startDate = dol_print_date($lastWeekStartTS, '%Y-%m-%d 00:00:00');
+		$endDate = dol_print_date($lastWeekEndTS, '%Y-%m-%d 23:59:59');
+
+		$sql = "SELECT
+		u.rowid AS user_id,
+		CONCAT(u.firstname, ' ', u.lastname) AS name,
+		u.email,u.weeklyhours,
+		SUM(et.element_duration) AS total_seconds
+		FROM
+			llx_element_time AS et
+		JOIN
+			llx_user AS u ON et.fk_user = u.rowid
+		WHERE
+			et.element_date BETWEEN '".$this->db->escape($startDate)."' AND '".$this->db->escape($endDate)."'
+			AND et.elementtype = 'task'
+		GROUP BY
+			et.fk_user";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			dol_print_error($this->db);
+			return -1;
+		} else {
+			$reportContent = "<span>Weekly time report from $startDate to $endDate </span><br><br>";
+			$reportContent .= '<table border="1" style="border-collapse: collapse;">';
+			$reportContent .= '<tr><th>Nom d\'utilisateur</th><th>Temps saisi (heures)</th><th>Temps travaillé par semaine (heures)</th></tr>';
+
+			$weekendEnabled = 0;
+			$to = '';
+			$nbMailSend = 0;
+			$error = 0;
+			$errors_to = 0;
+			while ($obj = $this->db->fetch_object($resql)) {
+				$to = $obj->email;
+				$numHolidays = num_public_holiday($lastWeekStartTS, $lastWeekEndTS, $mysoc->country_code, 1);
+				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY') && getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY')) {
+					$numHolidays = $numHolidays - 2;
+					$weekendEnabled = 2;
+				}
+
+				$dailyHours = $obj->weeklyhours / (7 - $weekendEnabled);
+
+				// Adjust total on seconde
+				$adjustedSeconds = $obj->total_seconds + ($numHolidays * $dailyHours * 3600);
+
+				$totalHours = round($adjustedSeconds / 3600, 2);
+
+				$reportContent .= "<tr><td>{$obj->name}</td><td>{$totalHours}</td><td>".round($obj->weeklyhours, 2)."</td></tr>";
+
+				$reportContent .= '</table>';
+
+				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+
+				// PREPARE EMAIL
+				$errormesg = '';
+
+				$subject = 'Rapport hebdomadaire des temps travaillés';
+
+				$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+				if (empty($from)) {
+					$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
+					$error++;
+				}
+
+				$mail = new CMailFile($subject, $to, $from, $reportContent, array(), array(), array(), '', '', 0, -1, '', '', 0, 'text/html');
+
+				if ($mail->sendfile()) {
+					$nbMailSend++;
+
+					// Add a line into event table
+					require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+					// Insert record of emails sent
+					$actioncomm = new ActionComm($this->db);
+
+					$actioncomm->type_code = 'AC_OTH_AUTO'; // Event insert into agenda automatically
+					$actioncomm->socid = $this->thirdparty->id; // To link to a company
+					$actioncomm->contact_id = 0;
+
+					$actioncomm->code = 'AC_EMAIL';
+					$actioncomm->label = 'createWeeklyReportOK()';
+					$actioncomm->fk_project = $this->id;
+					$actioncomm->datep = dol_now();
+					$actioncomm->datef = $actioncomm->datep;
+					$actioncomm->percentage = -1; // Not applicable
+					$actioncomm->authorid = $user->id; // User saving action
+					$actioncomm->userownerid = $user->id; // Owner of action
+					// Fields when action is an email (content should be added into note)
+					$actioncomm->email_msgid = $mail->msgid;
+					$actioncomm->email_subject = $subject;
+					$actioncomm->email_from = $from;
+					$actioncomm->email_sender = '';
+					$actioncomm->email_to = $to;
+
+					$actioncomm->errors_to = $errors_to;
+
+					$actioncomm->elementtype = 'project_task';
+					$actioncomm->fk_element = $this->element;
+
+					$actioncomm->create($user);
+				} else {
+					$errormesg = $mail->error.' : '.$to;
+					$error++;
+
+					// Add a line into event table
+					require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+					// Insert record of emails sent
+					$actioncomm = new ActionComm($this->db);
+
+					$actioncomm->type_code = 'AC_OTH_AUTO'; // Event insert into agenda automatically
+					$actioncomm->socid = $this->thirdparty->id; // To link to a company
+					$actioncomm->contact_id = 0;
+
+					$actioncomm->code = 'AC_EMAIL';
+					$actioncomm->label = 'createWeeklyReportKO()';
+					$actioncomm->note_private = $errormesg;
+					$actioncomm->fk_project = $this->id;
+					$actioncomm->datep = dol_now();
+					$actioncomm->datef = $actioncomm->datep;
+					$actioncomm->authorid = $user->id; // User saving action
+					$actioncomm->userownerid = $user->id; // Owner of action
+					// Fields when action is an email (content should be added into note)
+					$actioncomm->email_msgid = $mail->msgid;
+					$actioncomm->email_from = $from;
+					$actioncomm->email_sender = '';
+					$actioncomm->email_to = $to;
+
+					$actioncomm->errors_to = $errors_to;
+
+					$actioncomm->elementtype = 'project_task';
+					$actioncomm->fk_element = $this->element;
+
+					$actioncomm->create($user);
+				}
+				$this->db->commit();
+			}
+		}
+		if ($errormesg) {
+			$errorsMsg[] = $errormesg;
+		}
+
+		if (!$error) {
+			$this->output .= 'Nb of emails sent : '.$nbMailSend;
+			dol_syslog(__METHOD__." end - ".$this->output, LOG_INFO);
+			return 0;
+		} else {
+			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? implode(', ', $errorsMsg) : $error;
+			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
+			return $error;
+		}
 	}
 }

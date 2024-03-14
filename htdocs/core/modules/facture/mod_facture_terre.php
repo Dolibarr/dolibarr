@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,8 +113,8 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return boolean     			false if conflict, true if ok
+	 *  @param  CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
 	{
@@ -201,7 +202,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 * @param   Societe		$objsoc		Object third party
 	 * @param   Facture		$invoice	Object invoice
 	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string       			Next ref value or last ref if $mode is 'last', <= 0 if KO
+	 * @return  string|int<-1,0>       	Next ref value or last ref if $mode is 'last', -1 or 0 if KO
 	 */
 	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{
@@ -273,7 +274,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 			dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
 			return $prefix.$yymm."-".$num;
 		} else {
-			dol_print_error('', 'Bad parameter for getNextValue');
+			dol_print_error(null, 'Bad parameter for getNextValue');
 		}
 
 		return 0;
@@ -283,9 +284,10 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 *  Return next free value
 	 *
 	 *  @param  Societe     $objsoc         Object third party
-	 *  @param  string      $objforref      Object for number to search
+	 *  @param  Facture      $objforref      Object for number to search
 	 *  @param   string     $mode           'next' for next value or 'last' for last value
-	 *  @return  string                     Next free value
+	 *  @return  string|int<-1,0>           Next free value, -1 or 0 if error
+	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref, $mode = 'next')
 	{

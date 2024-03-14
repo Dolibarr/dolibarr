@@ -61,8 +61,6 @@ class mailing_mailing_mymodule_selector1 extends MailingTargets
 		global $langs;
 		$langs->load("members");
 
-		$form = new Form($this->db);
-
 		$arraystatus = array(1=>'Option 1', 2=>'Option 2');
 
 		$s = '';
@@ -104,9 +102,9 @@ class mailing_mailing_mymodule_selector1 extends MailingTargets
 		$target = array();
 		$j = 0;
 
-		$sql = " select rowid as id, label, firstname, lastname";
-		$sql .= " from ".MAIN_DB_PREFIX."myobject";
-		$sql .= " where email IS NOT NULL AND email <> ''";
+		$sql = "SELECT rowid as id, firstname, lastname, email";
+		$sql .= " FROM ".MAIN_DB_PREFIX."myobject";
+		$sql .= " WHERE email IS NOT NULL AND email <> ''";
 		if (GETPOSTISSET('filter') && GETPOST('filter', 'alphanohtml') != 'none') {
 			$sql .= " AND status = '".$this->db->escape(GETPOST('filter', 'alphanohtml'))."'";
 		}
@@ -118,7 +116,7 @@ class mailing_mailing_mymodule_selector1 extends MailingTargets
 			$num = $this->db->num_rows($result);
 			$i = 0;
 
-			dol_syslog("mailinglist_mymodule_myobject.modules.php: mailing ".$num." targets found");
+			dol_syslog(__METHOD__.":add_to_target ".$num." targets found");
 
 			$old = '';
 			while ($i < $num) {
@@ -126,10 +124,10 @@ class mailing_mailing_mymodule_selector1 extends MailingTargets
 				if ($old != $obj->email) {
 					$target[$j] = array(
 						'email' => $obj->email,
-						'name' => $obj->lastname,
 						'id' => $obj->id,
 						'firstname' => $obj->firstname,
-						'other' => $obj->label,
+						'lastname' => $obj->lastname,
+						//'other' => $obj->label,
 						'source_url' => $this->url($obj->id),
 						'source_id' => $obj->id,
 						'source_type' => 'myobject@mymodule'
@@ -188,7 +186,9 @@ class mailing_mailing_mymodule_selector1 extends MailingTargets
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
-		$sql = "select count(distinct(email)) as nb from ".MAIN_DB_PREFIX."myobject as p where email IS NOT NULL AND email != ''";
+		$sql = "SELECT COUNT(DISTINCT(email)) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."myobject as p";
+		$sql .= " WHERE email IS NOT NULL AND email <> ''";
 
 		$a = parent::getNbOfRecipients($sql);
 

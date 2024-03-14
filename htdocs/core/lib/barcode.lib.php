@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2016 Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2004-2010 Folke Ashberg: Some lines of code were inspired from work
  *                         of Folke Ashberg into PHP-Barcode 0.3pl2, available as GPL
  *                         source code at http://www.ashberg.de/bar.
@@ -405,17 +406,14 @@ function barcode_encode_genbarcode($code, $encoding)
  * @param	string	$mode   	png,gif,jpg (default='png')
  * @param	int		$total_y	the total height of the image ( default: scale * 60 )
  * @param	array	$space		default:  $space[top]   = 2 * $scale; $space[bottom]= 2 * $scale;  $space[left]  = 2 * $scale;  $space[right] = 2 * $scale;
- * @return	string|null
+ * @return	string|void
  */
-function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0, $space = '')
+function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0, $space = [])
 {
 	global $bar_color, $bg_color, $text_color;
 	global $font_loc, $filebarcode;
 
 	//print "$text, $bars, $scale, $mode, $total_y, $space, $font_loc, $filebarcode<br>";
-	//var_dump($text);
-	//var_dump($bars);
-	//var_dump($font_loc);
 
 	/* set defaults */
 	if ($scale < 1) {
@@ -490,7 +488,7 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 		if (trim($v)) {
 			$inf = explode(":", $v);
 			$fontsize = $scale * ($inf[1] / 1.8);
-			$fontheight = $total_y - ($fontsize / 2.7) + 2;
+			$fontheight = round($total_y - ($fontsize / 2.7) + 2);
 			imagettftext($im, $fontsize, 0, $space['left'] + ($scale * $inf[0]) + 2, $fontheight, $col_text, $font_loc, $inf[2]);
 		}
 	}
@@ -504,7 +502,7 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 		header("Content-Type: image/gif; name=\"barcode.gif\"");
 		imagegif($im);
 	} elseif (!empty($filebarcode)) {
-		// To write into  a file onto disk
+		// To write into a file onto disk
 		imagepng($im, $filebarcode);
 	} else {
 		header("Content-Type: image/png; name=\"barcode.png\"");

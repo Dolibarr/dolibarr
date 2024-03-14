@@ -744,7 +744,7 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
  * Uddate an invoice, only change the state of an invoice
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Facture		$invoice			Invoice
+ * @param	array		$invoice			Invoice
  * @return	array							Array result
  */
 function updateInvoice($authentication, $invoice)

@@ -157,7 +157,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('pdfgeneration'));
-		$parameters = array('file'=>$file, 'outputlangs'=>$outputlangs);
+		$parameters = array('file' => $file, 'outputlangs' => $outputlangs);
 		global $action;
 		$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -190,6 +190,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$pdf->SetCompression(false);
 		}
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 		$nboflines = count($this->lines);
@@ -226,7 +227,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('pdfgeneration'));
-		$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+		$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 		global $action;
 		$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) {
@@ -236,7 +237,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		dolChmod($file);
 
-		$this->result = array('fullpath'=>$file);
+		$this->result = array('fullpath' => $file);
 
 		$outputlangs->charset_output = $sav_charset_output;
 		return 1; // No error
@@ -290,7 +291,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		$pdf->SetFont('', '', $default_font_size);
 		$pdf->SetXY(10, 32);
-		$pdf->MultiCell(0, 2, $outputlangs->transnoentities("Account"), 0, 'L');
+		$pdf->MultiCell(0, 2, $outputlangs->transnoentities("BankAccount"), 0, 'L');
 		pdf_bank($pdf, $outputlangs, 32, 32, $this->account, 1);
 
 		$pdf->SetFont('', '', $default_font_size);

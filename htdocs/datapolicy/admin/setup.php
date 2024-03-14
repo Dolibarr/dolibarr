@@ -51,7 +51,7 @@ if (getDolGlobalString('DATAPOLICY_USE_SPECIFIC_DELAY_FOR_CONTACT')) {
 		'DATAPOLICY_CONTACT_FOURNISSEUR'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'contact', 'class="pictofixedwidth"')),
 	);
 }
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	$arrayofparameters['Member'] = array(
 		'DATAPOLICY_ADHERENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'member', 'class="pictofixedwidth"')),
 	);
@@ -88,10 +88,10 @@ foreach ($arrayofparameters as $title => $tab) {
 		// Modify constant only if key was posted (avoid resetting key to the null value)
 		if (GETPOSTISSET($key)) {
 			if (preg_match('/category:/', $val['type'])) {
-				if (GETPOST($key, 'int') == '-1') {
+				if (GETPOSTINT($key) == '-1') {
 					$val_const = '';
 				} else {
-					$val_const = GETPOST($key, 'int');
+					$val_const = GETPOSTINT($key);
 				}
 			} else {
 				$val_const = GETPOST($key, 'alpha');

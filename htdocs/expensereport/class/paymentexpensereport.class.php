@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI  <info@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,8 +56,14 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public $fk_expensereport;
 
+	/**
+	 * @var int|string
+	 */
 	public $datec = '';
-	public $tms = '';
+
+	/**
+	 * @var int|string
+	 */
 	public $datep = '';
 	public $amount; // Total amount of payment
 	public $amounts = array(); // Array of amounts
@@ -66,6 +73,10 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public $fk_typepayment;
 
+	/**
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
+	 */
 	public $num_payment;
 
 	/**
@@ -121,8 +132,6 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public function create($user)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$now = dol_now();
@@ -134,13 +143,13 @@ class PaymentExpenseReport extends CommonObject
 
 		// Clean parameters
 		if (isset($this->fk_expensereport)) {
-			$this->fk_expensereport = trim($this->fk_expensereport);
+			$this->fk_expensereport = (int) $this->fk_expensereport;
 		}
 		if (isset($this->amount)) {
 			$this->amount = trim($this->amount);
 		}
 		if (isset($this->fk_typepayment)) {
-			$this->fk_typepayment = trim($this->fk_typepayment);
+			$this->fk_typepayment = (int) $this->fk_typepayment;
 		}
 		if (isset($this->num_payment)) {
 			$this->num_payment = trim($this->num_payment);
@@ -290,13 +299,13 @@ class PaymentExpenseReport extends CommonObject
 		// Clean parameters
 
 		if (isset($this->fk_expensereport)) {
-			$this->fk_expensereport = trim($this->fk_expensereport);
+			$this->fk_expensereport = (int) $this->fk_expensereport;
 		}
 		if (isset($this->amount)) {
 			$this->amount = trim($this->amount);
 		}
 		if (isset($this->fk_typepayment)) {
-			$this->fk_typepayment = trim($this->fk_typepayment);
+			$this->fk_typepayment = (int) $this->fk_typepayment;
 		}
 		if (isset($this->num_payment)) {
 			$this->num_payment = trim($this->num_payment);
@@ -305,13 +314,13 @@ class PaymentExpenseReport extends CommonObject
 			$this->note = trim($this->note);
 		}
 		if (isset($this->fk_bank)) {
-			$this->fk_bank = trim($this->fk_bank);
+			$this->fk_bank = (int) $this->fk_bank;
 		}
 		if (isset($this->fk_user_creat)) {
-			$this->fk_user_creat = trim($this->fk_user_creat);
+			$this->fk_user_creat = (int) $this->fk_user_creat;
 		}
 		if (isset($this->fk_user_modif)) {
-			$this->fk_user_modif = trim($this->fk_user_modif);
+			$this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 
 
@@ -494,23 +503,25 @@ class PaymentExpenseReport extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 
-		$this->fk_expensereport = '';
+		$this->fk_expensereport = 0;
 		$this->datec = '';
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->datep = '';
 		$this->amount = '';
-		$this->fk_typepayment = '';
+		$this->fk_typepayment = 0;
 		$this->num_payment = '';
 		$this->note = '';
-		$this->fk_bank = '';
-		$this->fk_user_creat = '';
-		$this->fk_user_modif = '';
+		$this->fk_bank = 0;
+		$this->fk_user_creat = 0;
+		$this->fk_user_modif = 0;
+
+		return 1;
 	}
 
 
@@ -532,7 +543,7 @@ class PaymentExpenseReport extends CommonObject
 
 		$error = 0;
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);
@@ -754,7 +765,7 @@ class PaymentExpenseReport extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Type").'</span> : <span class="info-box-label">'.$this->fk_typepayment.'</span>';
 		}
 		if (property_exists($this, 'fk_bank') && !is_null($this->fk_bank)) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("Account").'</span> : <span class="info-box-label">'.$this->fk_bank.'</span>';
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("BankAccount").'</span> : <span class="info-box-label">'.$this->fk_bank.'</span>';
 		}
 		if (property_exists($this, 'amount')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';

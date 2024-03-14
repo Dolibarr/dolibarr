@@ -33,11 +33,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$withproject = GETPOST('withproject', 'int');
+$withproject = GETPOSTINT('withproject');
 $project_ref = GETPOST('project_ref', 'alpha');
 
 $object = new Task($db);
@@ -71,7 +71,7 @@ if ($action == 'addcontact' && $user->hasRight('projet', 'creer')) {
 			$idfortaskuser = ((GETPOST("userid") != 0 && GETPOST('userid') != -1) ? GETPOST("userid") : 0); // GETPOST('contactid') may val -1 to mean empty or -2 to means "everybody"
 			$typeid = GETPOST('type');
 		} else {
-			$idfortaskuser = ((GETPOST("contactid") > 0) ? GETPOST("contactid", 'int') : 0); // GETPOST('contactid') may val -1 to mean empty or -2 to means "everybody"
+			$idfortaskuser = ((GETPOST("contactid") > 0) ? GETPOSTINT("contactid") : 0); // GETPOST('contactid') may val -1 to mean empty or -2 to means "everybody"
 			$typeid = GETPOST('typecontact');
 		}
 		if ($idfortaskuser == -2) {
@@ -105,7 +105,7 @@ if ($action == 'addcontact' && $user->hasRight('projet', 'creer')) {
 // bascule du statut d'un contact
 if ($action == 'swapstatut' && $user->hasRight('projet', 'creer')) {
 	if ($object->fetch($id, $ref)) {
-		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
+		$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 	} else {
 		dol_print_error($db);
 	}
@@ -114,7 +114,7 @@ if ($action == 'swapstatut' && $user->hasRight('projet', 'creer')) {
 // Efface un contact
 if ($action == 'deleteline' && $user->hasRight('projet', 'creer')) {
 	$object->fetch($id, $ref);
-	$result = $object->delete_contact(GETPOST("lineid", 'int'));
+	$result = $object->delete_contact(GETPOSTINT("lineid"));
 
 	if ($result >= 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));
@@ -157,7 +157,7 @@ llxHeader('', $title, $help_url);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* Card view and edit mode                                                       */
 /*                                                                             */
 /* *************************************************************************** */
 
@@ -203,7 +203,7 @@ if ($id > 0 || !empty($ref)) {
 			// Define a complementary filter for search of next/prev ref.
 			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-				$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+				$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 			}
 
 			dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -259,8 +259,8 @@ if ($id > 0 || !empty($ref)) {
 
 			// Budget
 			print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-			if (strcmp($projectstatic->budget_amount, '')) {
-				print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+			if (isset($projectstatic->budget_amount) && strcmp($projectstatic->budget_amount, '')) {
+				print price($projectstatic->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
 			}
 			print '</td></tr>';
 
@@ -294,7 +294,7 @@ if ($id > 0 || !empty($ref)) {
 			print '</td></tr>';
 
 			// Categories
-			if (isModEnabled('categorie')) {
+			if (isModEnabled('category')) {
 				print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 				print $form->showCategories($projectstatic->id, 'project', 1);
 				print "</td></tr>";
@@ -408,7 +408,7 @@ if ($id > 0 || !empty($ref)) {
 			} else {
 				$contactsofproject = $projectstatic->getListContactId('internal');
 			}
-			print $form->select_dolusers((GETPOSTISSET('userid') ? GETPOST('userid', 'int') : $user->id), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 1, $langs->trans("ResourceNotAssignedToProject"));
+			print $form->select_dolusers((GETPOSTISSET('userid') ? GETPOSTINT('userid') : $user->id), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 1, $langs->trans("ResourceNotAssignedToProject"));
 			print '</td>';
 			print '<td>';
 			$formcompany->selectTypeContact($object, '', 'type', 'internal', 'position');

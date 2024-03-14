@@ -63,13 +63,13 @@ class Partnerships extends DolibarrApi
 	 *
 	 * @url	GET partnerships/{id}
 	 *
-	 * @throws RestException 401 Not allowed
+	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->partnership->read) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('partnership', 'read')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->partnership->fetch($id);
@@ -104,13 +104,11 @@ class Partnerships extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
 		$obj_ret = array();
 		$tmpobject = new Partnership($this->db);
 
-		if (!DolibarrApiAccess::$user->rights->partnership->read) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('partnership', 'read')) {
+			throw new RestException(403);
 		}
 
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
@@ -119,7 +117,7 @@ class Partnerships extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if ($restrictonsocid && !DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
+		if ($restrictonsocid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -190,8 +188,8 @@ class Partnerships extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->partnership->write) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('partnership', 'write')) {
+			throw new RestException(403);
 		}
 
 		// Check mandatory fields
@@ -219,9 +217,9 @@ class Partnerships extends DolibarrApi
 	/**
 	 * Update partnership
 	 *
-	 * @param int   $id             Id of partnership to update
-	 * @param array $request_data   Datas
-	 * @return int
+	 * @param 	int   	$id             	Id of partnership to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 *
 	 * @throws RestException
 	 *
@@ -229,8 +227,8 @@ class Partnerships extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->partnership->write) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('partnership', 'write')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->partnership->fetch($id);
@@ -277,8 +275,8 @@ class Partnerships extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->partnership->delete) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('partnership', 'delete')) {
+			throw new RestException(403);
 		}
 		$result = $this->partnership->fetch($id);
 		if (!$result) {
@@ -286,7 +284,7 @@ class Partnerships extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('partnership', $this->partnership->id, 'partnership')) {
-			throw new RestException(401, 'Access to instance id='.$this->partnership->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access to instance id='.$this->partnership->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->partnership->delete(DolibarrApiAccess::$user)) {

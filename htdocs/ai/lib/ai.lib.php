@@ -40,6 +40,11 @@ function aiAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
+	$head[$h][0] = dol_buildpath("/ai/admin/custom_prompt.php", 1);
+	$head[$h][1] = $langs->trans("CustomPrompt");
+	$head[$h][2] = 'custom';
+	$h++;
+
 	/*
 	$head[$h][0] = dol_buildpath("/ai/admin/myobject_extrafields.php", 1);
 	$head[$h][1] = $langs->trans("ExtraFields");

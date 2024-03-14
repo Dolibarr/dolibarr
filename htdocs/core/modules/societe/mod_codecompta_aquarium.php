@@ -2,6 +2,8 @@
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +108,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$texte .= $langs->trans("ModuleCompanyCodeSupplier".$this->name, '{s1}')."<br>\n";
 		$texte = str_replace(array('{s1}', '{s2}'), array($s1, $s2), $texte);
 		$texte .= "<br>\n";
-		if (!isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || !empty($conf->global->$conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) {
+		if (getDolGlobalInt('COMPANY_AQUARIUM_REMOVE_SPECIAL')) {
 			$texte .= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
 		}
 		//if (!empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)) $texte.=$langs->trans('COMPANY_AQUARIUM_REMOVE_ALPHA').' = '.yn($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)."<br>\n";
@@ -129,7 +131,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 * Return an example of result returned by getNextValue
 	 *
 	 * @param	Translate	$langs		Object langs
-	 * @param	societe		$objsoc		Object thirdparty
+	 * @param	Societe		$objsoc		Object thirdparty
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */
@@ -192,12 +194,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$codetouse = $prefix.strtoupper($codetouse);
 
 		$is_dispo = $this->verif($db, $codetouse, $societe, $type);
-		if (!$is_dispo) {
-			$this->code = $codetouse;
-		} else {
-			// Pour retour
-			$this->code = $codetouse;
-		}
+		$this->code = $codetouse;
 		dol_syslog("mod_codecompta_aquarium::get_code found code=".$this->code);
 		return $is_dispo;
 	}

@@ -211,8 +211,8 @@ class DolEditor
                                     language: \''.dol_escape_js($langs->defaultlang).'\',
                                     textDirection: \''.dol_escape_js($langs->trans("DIRECTION")).'\',
                                     on : {
-                                                instanceReady : function( ev )
-                                                {
+                                                instanceReady : function(ev) {
+													console.log("ckeditor instanceReady");
                                                     // Output paragraphs as <p>Text</p>.
                                                     this.dataProcessor.writer.setRules( \'p\', {
                                                         indent : false,
@@ -221,13 +221,24 @@ class DolEditor
                                                         breakBeforeClose : false,
                                                         breakAfterClose : true
                                                     });
-                                                }
-                                          },
+                                                },
+												/* This is to remove the tab Link on image popup. Does not work, so commented */
+												/*
+												dialogDefinition: function (event) {
+										            var dialogName = event.data.name;
+										            var dialogDefinition = event.data.definition;
+										            if (dialogName == \'image\') {
+										                dialogDefinition.removeContents(\'Link\');
+										            }
+										        }
+												*/
+										},
 									disableNativeSpellChecker: '.(!getDolGlobalString('CKEDITOR_NATIVE_SPELLCHECKER') ? 'true' : 'false');
 
 				if ($this->uselocalbrowser) {
 					$out .= ','."\n";
 					// To use filemanager with old fckeditor (GPL)
+					// Note: ckeditorFilebrowserBrowseUrl and ckeditorFilebrowserImageBrowseUrl are defined in header by main.inc.php. They include url to browser with url of upload connector in parameter
 					$out .= '    filebrowserBrowseUrl : ckeditorFilebrowserBrowseUrl,';
 					$out .= '    filebrowserImageBrowseUrl : ckeditorFilebrowserImageBrowseUrl,';
 					//$out.= '    filebrowserUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/upload.php?Type=File\',';

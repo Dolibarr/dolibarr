@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - languages
 Language_am_ET=tiếng Ethiopia
 Language_af_ZA=Tiếng Afrikaans (Nam Phi)
-Language_en_AE=Tiếng Ả Rập (Các tiểu vương quốc Ả Rập thống nhất)
 Language_ar_AR=Ả Rập
 Language_ar_DZ=Tiếng Ả Rập (Algeria)
 Language_ar_EG=Ả Rập (Ai Cập)
@@ -28,7 +27,7 @@ Language_de_CH=Đức (Thụy Sĩ)
 Language_de_LU=Tiếng Đức (Luxembourg)
 Language_el_GR=Hy Lạp
 Language_el_CY=Hy Lạp (Síp)
-Language_en_AE=Tiếng Ả Rập (Các tiểu vương quốc Ả Rập thống nhất)
+Language_en_AE=English (United Arab Emirates)
 Language_en_AU=Anh (Úc)
 Language_en_CA=Anh (Canada)
 Language_en_GB=Anh (Vương quốc Anh)
@@ -57,7 +56,6 @@ Language_es_PE=Tây Ban Nha (Peru)
 Language_es_PR=Tây Ban Nha (Puerto Rico)
 Language_es_US=Tiếng Tây Ban Nha (Mỹ)
 Language_es_UY=Tây Ban Nha (Uruguay)
-Language_es_GT=Tiếng Tây Ban Nha (Guatemala)
 Language_es_VE=Tây Ban Nha (Venezuela)
 Language_et_EE=Tiếng Estonia
 Language_eu_ES=Basque

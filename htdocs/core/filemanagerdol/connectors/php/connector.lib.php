@@ -2,6 +2,7 @@
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * == BEGIN LICENSE ==
  *
@@ -265,7 +266,7 @@ function CreateFolder($resourceType, $currentFolder)
 
 				switch ($sErrorMsg) {
 					case '':
-						$sErrorNumber = '0';
+						$sErrorNumber = '0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 						break;
 					case 'Invalid argument':
 					case 'No such file or directory':
@@ -954,10 +955,9 @@ function IsHtmlExtension($ext, $formExtensions)
 /**
  * Detect HTML in the first KB to prevent against potential security issue with
  * IE/Safari/Opera file type auto detection bug.
- * Returns true if file contain insecure HTML code at the beginning.
  *
  * @param string $filePath absolute path to file
- * @return boolean
+ * @return bool|-1		Returns true if the file contains insecure HTML code at the beginning, or -1 if error
  */
 function DetectHtml($filePath)
 {
@@ -1015,11 +1015,10 @@ function DetectHtml($filePath)
 /**
  * Check file content.
  * Currently this function validates only image files.
- * Returns false if file is invalid.
  *
  * @param 	string 	$filePath 		Absolute path to file
  * @param 	string 	$extension 		File extension
- * @return 	boolean					True or false
+ * @return 	bool|-1					Returns true if the file is valid, false if the file is invalid, -1 if error.
  */
 function IsImageValid($filePath, $extension)
 {

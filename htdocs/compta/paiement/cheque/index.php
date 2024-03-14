@@ -148,7 +148,7 @@ foreach ($arrayofpaymentmodetomanage as $val) {
 		}
 		print '</th>';
 		print '<th>'.$langs->trans("Date")."</th>";
-		print '<th>'.$langs->trans("Account").'</th>';
+		print '<th>'.$langs->trans("BankAccount").'</th>';
 		print '<th class="right">'.$langs->trans("NbOfCheques").'</th>';
 		print '<th class="right">'.$langs->trans("Amount").'</th>';
 		print '<th class="right">'.$langs->trans("Status").'</th>';

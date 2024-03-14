@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
 $langs->loadLangs(array("partnership", "companies"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
@@ -57,9 +57,9 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->partnership->multidir_output[$object->entity]."/".$object->id;
 }
 
-$permissiontoread = $user->rights->partnership->read;
-$permissionnote = $user->rights->partnership->write; // Used by the include of actions_setnotes.inc.php
-$permissiontoadd = $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoread = $user->hasRight('partnership', 'read');
+$permissionnote = $user->hasRight('partnership', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->hasRight('partnership', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 $managedfor = getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 
 // Security check - Protection if external user

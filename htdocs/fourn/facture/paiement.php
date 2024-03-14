@@ -53,24 +53,24 @@ $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-$facid = GETPOST('facid', 'int');
-$socid = GETPOST('socid', 'int');
-$accountid = GETPOST('accountid', 'int');
-$day = GETPOST('day', 'int');
-$month = GETPOST('month', 'int');
-$year = GETPOST('year', 'int');
+$facid = GETPOSTINT('facid');
+$socid = GETPOSTINT('socid');
+$accountid = GETPOSTINT('accountid');
+$day = GETPOSTINT('day');
+$month = GETPOSTINT('month');
+$year = GETPOSTINT('year');
 
 $search_ref = GETPOST('search_ref', 'alpha');
-$search_account = GETPOST('search_account', 'int');
+$search_account = GETPOSTINT('search_account');
 $search_paymenttype = GETPOST('search_paymenttype');
 $search_amount = GETPOST('search_amount', 'alpha'); // alpha because we must be able to search on "< x"
 $search_company = GETPOST('search_company', 'alpha');
 $search_payment_num = GETPOST('search_payment_num', 'alpha');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOST('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -140,7 +140,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_array_options = array();
 }
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -155,6 +155,7 @@ if (empty($reshook)) {
 		$totalpayment = 0;
 		$atleastonepaymentnotnull = 0;
 		$multicurrency_totalpayment = 0;
+		$formquestion = array();
 
 		// Generate payment array and check if there is payment higher than invoice and payment date before invoice date
 		$tmpinvoice = new FactureFournisseur($db);
@@ -216,7 +217,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOST($key, 'int'));
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOSTINT($key));
 			}
 		}
 
@@ -226,7 +227,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			// If bank module is on, account is required to enter a payment
 			if (GETPOST('accountid') <= 0) {
 				setEventMessages($langs->transnoentities('ErrorFieldRequired', $langs->transnoentities('AccountToCredit')), null, 'errors');
@@ -268,7 +269,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_paiement' && $confirm == 'yes') {
 		$error = 0;
 
-		$datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+		$datepaye = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 
 		$multicurrency_code = array();
 		$multicurrency_tx = array();
@@ -311,14 +312,20 @@ if (empty($reshook)) {
 			// Creation of payment line
 			$paiement = new PaiementFourn($db);
 			$paiement->datepaye     = $datepaye;
-			$paiement->amounts      = $amounts; // Array of amounts
+
+			$correctedAmounts = [];
+			foreach ($amounts as $key => $value) {
+				$correctedAmounts[$key] = (float) $value;
+			}
+
+			$paiement->amounts      = $correctedAmounts; // Array of amounts
 			$paiement->multicurrency_amounts = $multicurrency_amounts;
 			$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
 			$paiement->multicurrency_tx = $multicurrency_tx; // Array with all currency tx of payments dispatching
-			$paiement->paiementid   = GETPOST('paiementid', 'int');
+			$paiement->paiementid   = GETPOSTINT('paiementid');
 			$paiement->num_payment  = GETPOST('num_paiement', 'alphanohtml');
 			$paiement->note_private = GETPOST('comment', 'alpha');
-			$paiement->fk_account   = GETPOST('accountid', 'int');
+			$paiement->fk_account   = GETPOSTINT('accountid');
 
 			if (!$error) {
 				// Create payment and update this->multicurrency_amounts if this->amounts filled or
@@ -385,7 +392,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	$object = new FactureFournisseur($db);
 	$result = $object->fetch($facid);
 
-	$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+	$datefacture = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 	$dateinvoice = ($datefacture == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datefacture);
 
 	$sql = 'SELECT s.nom as name, s.rowid as socid,';
@@ -507,14 +514,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 			print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
 			// $object is default vendor invoice
-			$adddateof = array(array('adddateof'=>$object->date));
-			$adddateof[] = array('adddateof'=>$object->date_echeance, 'labeladddateof'=>$langs->transnoentities('DateDue'));
-			print $form->selectDate($dateinvoice, '', '', '', 0, "addpaiement", 1, 1, 0, '', '', $adddateof);
+			$adddateof = array(array('adddateof' => $object->date));
+			$adddateof[] = array('adddateof' => $object->date_echeance, 'labeladddateof' => $langs->transnoentities('DateDue'));
+			print $form->selectDate($dateinvoice, '', 0, 0, 0, "addpaiement", 1, 1, 0, '', '', $adddateof);
 			print '</td></tr>';
 			print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
 			$form->select_types_paiements(!GETPOST('paiementid') ? $obj->fk_mode_reglement : GETPOST('paiementid'), 'paiementid');
 			print '</td>';
-			if (isModEnabled("banque")) {
+			if (isModEnabled("bank")) {
 				print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
 				print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 				print $form->select_comptes(empty($accountid) ? $obj->fk_account : $accountid, 'accountid', 0, '', 2, '', 0, 'widthcentpercentminusx maxwidth500', 1);
@@ -530,7 +537,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			print dol_get_fiche_end();
 
 
-			$parameters = array('facid'=>$facid, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
+			$parameters = array('facid' => $facid, 'ref' => $ref, 'objcanvas' => $objcanvas);
 			$reshook = $hookmanager->executeHooks('paymentsupplierinvoices', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 			$error = $hookmanager->error;
 			$errors = $hookmanager->errors;
@@ -602,6 +609,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						$total = 0;
 						$total_ttc = 0;
 						$totalrecu = 0;
+						$totalrecucreditnote = 0;	// PHP Warning:  Undefined variable $totalrecucreditnote
+						$totalrecudeposits = 0;		// PHP Warning:  Undefined variable $totalrecudeposits
 						while ($i < $num) {
 							$objp = $db->fetch_object($resql);
 
@@ -832,7 +841,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					$text .= '<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
 					print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
 				}
-				print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type, $langs->trans('PayedSuppliersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice);
+				print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id.'&socid='.$object->socid.'&type='.$object->type, $langs->trans('PayedSuppliersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice);
 			}
 
 			print '</form>';

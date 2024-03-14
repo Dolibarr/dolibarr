@@ -214,7 +214,7 @@ class pdf_beluga extends ModelePDFProjects
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -267,6 +267,7 @@ class pdf_beluga extends ModelePDFProjects
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// New page
@@ -316,106 +317,106 @@ class pdf_beluga extends ModelePDFProjects
 				$nexY = $tab_top + $heightoftitleline + 1;
 
 				$listofreferent = array(
-					'propal'=>array(
-						'name'=>"Proposals",
-						'title'=>"ListProposalsAssociatedProject",
-						'class'=>'Propal',
-						'table'=>'propal',
-						'datefieldname'=>'datep',
-						'test'=> isModEnabled('propal') && $user->hasRight('propal', 'lire'),
-						'lang'=>'propal'),
-					'order'=>array(
-						'name'=>"CustomersOrders",
-						'title'=>"ListOrdersAssociatedProject",
-						'class'=>'Commande',
-						'table'=>'commande',
-						'datefieldname'=>'date_commande',
-						'test'=> isModEnabled('commande') && $user->hasRight('commande', 'lire'),
-						'lang'=>'orders'),
-					'invoice'=>array(
-						'name'=>"CustomersInvoices",
-						'title'=>"ListInvoicesAssociatedProject",
-						'class'=>'Facture',
-						'margin'=>'add',
-						'table'=>'facture',
-						'datefieldname'=>'datef',
-						'test'=> isModEnabled('facture') && $user->hasRight('facture', 'lire'),
-						'lang'=>'bills'),
-					'invoice_predefined'=>array(
-						'name'=>"PredefinedInvoices",
-						'title'=>"ListPredefinedInvoicesAssociatedProject",
-						'class'=>'FactureRec',
-						'table'=>'facture_rec',
-						'datefieldname'=>'datec',
-						'test'=> isModEnabled('facture') && $user->hasRight('facture', 'lire'),
-						'lang'=>'bills'),
-					'order_supplier'=>array(
-						'name'=>"SuppliersOrders",
-						'title'=>"ListSupplierOrdersAssociatedProject",
-						'class'=>'CommandeFournisseur',
-						'table'=>'commande_fournisseur',
-						'datefieldname'=>'date_commande',
-						'test'=>(isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire),
-						'lang'=>'orders'),
-					'invoice_supplier'=>array(
-						'name'=>"BillsSuppliers",
-						'title'=>"ListSupplierInvoicesAssociatedProject",
-						'class'=>'FactureFournisseur',
-						'margin'=>'minus',
-						'table'=>'facture_fourn',
-						'datefieldname'=>'datef',
-						'test'=>(isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire),
-						'lang'=>'bills'),
-					'contract'=>array(
-						'name'=>"Contracts",
-						'title'=>"ListContractAssociatedProject",
-						'class'=>'Contrat',
-						'table'=>'contrat',
-						'datefieldname'=>'date_contrat',
-						'test'=> isModEnabled('contrat') && $user->hasRight('contrat', 'lire'),
-						'lang'=>'contract'),
-					'intervention'=>array(
-						'name'=>"Interventions",
-						'title'=>"ListFichinterAssociatedProject",
-						'class'=>'Fichinter',
-						'table'=>'fichinter',
-						'datefieldname'=>'date_valid',
-						'disableamount'=>1,
-						'test'=>isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire'),
-						'lang'=>'interventions'),
-					'trip'=>array(
-						'name'=>"TripsAndExpenses",
-						'title'=>"ListExpenseReportsAssociatedProject",
-						'class'=>'Deplacement',
-						'table'=>'deplacement',
-						'datefieldname'=>'dated',
-						'margin'=>'minus',
-						'disableamount'=>1,
-						'test'=>isModEnabled('deplacement') && $user->rights->deplacement->lire,
-						'lang'=>'trip'),
-					'expensereport'=>array(
-						'name'=>"ExpensesReports",
-						'title'=>"ListExpenseReportsAssociatedProject",
-						'class'=>'ExpenseReport',
-						'table'=>'expensereport',
-						'datefieldname'=>'dated',
-						'margin'=>'minus',
-						'disableamount'=>1,
-						'test'=>isModEnabled('expensereport') && $user->rights->expensereport->lire,
-						'lang'=>'trip'),
-					'agenda'=>array(
-						'name'=>"Agenda",
-						'title'=>"ListActionsAssociatedProject",
-						'class'=>'ActionComm',
-						'table'=>'actioncomm',
-						'datefieldname'=>'datep',
-						'disableamount'=>1,
-						'test'=> isModEnabled('agenda') && $user->rights->agenda->allactions->read,
-						'lang'=>'agenda')
+					'propal' => array(
+						'name' => "Proposals",
+						'title' => "ListProposalsAssociatedProject",
+						'class' => 'Propal',
+						'table' => 'propal',
+						'datefieldname' => 'datep',
+						'test' => isModEnabled('propal') && $user->hasRight('propal', 'lire'),
+						'lang' => 'propal'),
+					'order' => array(
+						'name' => "CustomersOrders",
+						'title' => "ListOrdersAssociatedProject",
+						'class' => 'Commande',
+						'table' => 'commande',
+						'datefieldname' => 'date_commande',
+						'test' => isModEnabled('order') && $user->hasRight('commande', 'lire'),
+						'lang' => 'orders'),
+					'invoice' => array(
+						'name' => "CustomersInvoices",
+						'title' => "ListInvoicesAssociatedProject",
+						'class' => 'Facture',
+						'margin' => 'add',
+						'table' => 'facture',
+						'datefieldname' => 'datef',
+						'test' => isModEnabled('invoice') && $user->hasRight('facture', 'lire'),
+						'lang' => 'bills'),
+					'invoice_predefined' => array(
+						'name' => "PredefinedInvoices",
+						'title' => "ListPredefinedInvoicesAssociatedProject",
+						'class' => 'FactureRec',
+						'table' => 'facture_rec',
+						'datefieldname' => 'datec',
+						'test' => isModEnabled('invoice') && $user->hasRight('facture', 'lire'),
+						'lang' => 'bills'),
+					'order_supplier' => array(
+						'name' => "SuppliersOrders",
+						'title' => "ListSupplierOrdersAssociatedProject",
+						'class' => 'CommandeFournisseur',
+						'table' => 'commande_fournisseur',
+						'datefieldname' => 'date_commande',
+						'test' => (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'commande', 'lire')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')),
+						'lang' => 'orders'),
+					'invoice_supplier' => array(
+						'name' => "BillsSuppliers",
+						'title' => "ListSupplierInvoicesAssociatedProject",
+						'class' => 'FactureFournisseur',
+						'margin' => 'minus',
+						'table' => 'facture_fourn',
+						'datefieldname' => 'datef',
+						'test' => (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire')),
+						'lang' => 'bills'),
+					'contract' => array(
+						'name' => "Contracts",
+						'title' => "ListContractAssociatedProject",
+						'class' => 'Contrat',
+						'table' => 'contrat',
+						'datefieldname' => 'date_contrat',
+						'test' => isModEnabled('contract') && $user->hasRight('contrat', 'lire'),
+						'lang' => 'contract'),
+					'intervention' => array(
+						'name' => "Interventions",
+						'title' => "ListFichinterAssociatedProject",
+						'class' => 'Fichinter',
+						'table' => 'fichinter',
+						'datefieldname' => 'date_valid',
+						'disableamount' => 1,
+						'test' => isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire'),
+						'lang' => 'interventions'),
+					'trip' => array(
+						'name' => "TripsAndExpenses",
+						'title' => "ListExpenseReportsAssociatedProject",
+						'class' => 'Deplacement',
+						'table' => 'deplacement',
+						'datefieldname' => 'dated',
+						'margin' => 'minus',
+						'disableamount' => 1,
+						'test' => isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire'),
+						'lang' => 'trip'),
+					'expensereport' => array(
+						'name' => "ExpensesReports",
+						'title' => "ListExpenseReportsAssociatedProject",
+						'class' => 'ExpenseReport',
+						'table' => 'expensereport',
+						'datefieldname' => 'dated',
+						'margin' => 'minus',
+						'disableamount' => 1,
+						'test' => isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire'),
+						'lang' => 'trip'),
+					'agenda' => array(
+						'name' => "Agenda",
+						'title' => "ListActionsAssociatedProject",
+						'class' => 'ActionComm',
+						'table' => 'actioncomm',
+						'datefieldname' => 'datep',
+						'disableamount' => 1,
+						'test' => isModEnabled('agenda') && $user->hasRight('agenda', 'allactions', 'read'),
+						'lang' => 'agenda')
 				);
 
 				$hookmanager->initHooks(array('completeListOfReferent'));
-				$hookmanager->executeHooks('completeListOfReferent', ['listofreferent'=>$listofreferent], $object, $action);
+				$hookmanager->executeHooks('completeListOfReferent', ['listofreferent' => $listofreferent], $object, $action);
 				if (!empty($hookmanager->resArray)) {
 					$listofreferent = array_merge($listofreferent, $hookmanager->resArray);
 				}
@@ -612,7 +613,7 @@ class pdf_beluga extends ModelePDFProjects
 										$date = $element->date_contrat;
 									}
 									if (empty($date)) {
-										$date = $element->datev; // Fiche inter
+										$date = $element->datev; // Intervention card
 									}
 								}
 
@@ -708,7 +709,7 @@ class pdf_beluga extends ModelePDFProjects
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -718,7 +719,7 @@ class pdf_beluga extends ModelePDFProjects
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {
@@ -770,7 +771,7 @@ class pdf_beluga extends ModelePDFProjects
 	 *  @param  Project		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -826,6 +827,8 @@ class pdf_beluga extends ModelePDFProjects
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

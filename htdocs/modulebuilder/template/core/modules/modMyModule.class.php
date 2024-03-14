@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,6 +27,7 @@
  *  \brief      Description and activation file for module MyModule
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+
 
 /**
  *  Description and activation class for module MyModule
@@ -123,6 +124,8 @@ class modMyModule extends DolibarrModules
 			),
 			// Set this to 1 if features of module are opened to external users
 			'moduleforexternal' => 0,
+			// Set this to 1 if the module provides a website template into doctemplates/websites/website_template-mytemplate
+			'websitetemplates' => 0
 		);
 
 		// Data directories to create when module is enabled.
@@ -134,7 +137,7 @@ class modMyModule extends DolibarrModules
 
 		// Dependencies
 		// A condition to hide module
-		$this->hidden = false;
+		$this->hidden = getDolGlobalInt('MODULE_MYMODULE_DISABLED'); // A condition to disable module;
 		// List of module class names that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR')...)
 		$this->depends = array();
 		// List of module class names to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
@@ -146,7 +149,7 @@ class modMyModule extends DolibarrModules
 		$this->langfiles = array("mymodule@mymodule");
 
 		// Prerequisites
-		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 1); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
 		$this->need_javascript_ajax = 0;
 
@@ -169,7 +172,7 @@ class modMyModule extends DolibarrModules
 			'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
 		)*/
 
-		if (!isset($conf->mymodule) || !isset($conf->mymodule->enabled)) {
+		if (!isModEnabled("mymodule")) {
 			$conf->mymodule = new stdClass();
 			$conf->mymodule->enabled = 0;
 		}
@@ -177,9 +180,12 @@ class modMyModule extends DolibarrModules
 		// Array to add new pages in new tabs
 		$this->tabs = array();
 		// Example:
-		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
-		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@mymodule:$user->rights->othermodule->read:/mymodule/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
-		// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
+		// To add a new tab identified by code tabname1
+		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@mymodule:$user->hasRight('mymodule', 'read'):/mymodule/mynewtab1.php?id=__ID__');
+		// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
+		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@mymodule:$user->hasRight('othermodule', 'read'):/mymodule/mynewtab2.php?id=__ID__',
+		// To remove an existing tab identified by code tabname
+		// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');
 		//
 		// Where objecttype can be
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
@@ -290,7 +296,7 @@ class modMyModule extends DolibarrModules
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", ($o * 10) + 3); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete objects of MyModule'; // Permission label
 		$this->rights[$r][4] = 'myobject';
-		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->mymodule->myobject->delete)
+		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->hasRight('mymodule', 'myobject', 'delete'))
 		$r++;
 		*/
 		/* END MODULEBUILDER PERMISSIONS */
@@ -298,8 +304,10 @@ class modMyModule extends DolibarrModules
 		// Main menu entries to add
 		$this->menu = array();
 		$r = 0;
+
 		// Add here entries to declare new menus
-		/* BEGIN MODULEBUILDER TOPMENU */
+
+		/* BEGIN MODULEBUILDER TOPMENU MYOBJECT */
 		$this->menu[$r++] = array(
 			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'top', // This is a Top menu entry
@@ -315,7 +323,8 @@ class modMyModule extends DolibarrModules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
-		/* END MODULEBUILDER TOPMENU */
+		/* END MODULEBUILDER TOPMENU MYOBJECT */
+
 		/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */
 		/*$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=mymodule',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
@@ -361,14 +370,16 @@ class modMyModule extends DolibarrModules
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);*/
 		/* END MODULEBUILDER LEFTMENU MYOBJECT */
+
+
 		// Exports profiles provided by this module
 		$r = 1;
 		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */
 		/*
 		$langs->load("mymodule@mymodule");
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='myobject@mymodule';
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r] = $this->picto;
 		// Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
 		$keyforclass = 'MyObject'; $keyforclassfile='/mymodule/class/myobject.class.php'; $keyforelement='myobject@mymodule';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
@@ -385,8 +396,8 @@ class modMyModule extends DolibarrModules
 		//$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
 		//$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'myobject as t';
-		//$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'myobject_line as tl ON tl.fk_myobject = t.rowid';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'mymodule_myobject as t';
+		//$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'mymodule_myobject_line as tl ON tl.fk_myobject = t.rowid';
 		$this->export_sql_end[$r] .=' WHERE 1 = 1';
 		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('myobject').')';
 		$r++; */
@@ -397,9 +408,9 @@ class modMyModule extends DolibarrModules
 		/* BEGIN MODULEBUILDER IMPORT MYOBJECT */
 		/*
 		$langs->load("mymodule@mymodule");
-		$this->import_code[$r]=$this->rights_class.'_'.$r;
-		$this->import_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->import_icon[$r]='myobject@mymodule';
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = 'MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->import_icon[$r] = $this->picto;
 		$this->import_tables_array[$r] = array('t' => MAIN_DB_PREFIX.'mymodule_myobject', 'extra' => MAIN_DB_PREFIX.'mymodule_myobject_extrafields');
 		$this->import_tables_creator_array[$r] = array('t' => 'fk_user_author'); // Fields to store import user id
 		$import_sample = array();
@@ -450,11 +461,12 @@ class modMyModule extends DolibarrModules
 		// Create extrafields during init
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		//$extrafields = new ExtraFields($this->db);
-		//$result1=$extrafields->addExtraField('mymodule_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
-		//$result2=$extrafields->addExtraField('mymodule_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
-		//$result3=$extrafields->addExtraField('mymodule_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
-		//$result4=$extrafields->addExtraField('mymodule_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
-		//$result5=$extrafields->addExtraField('mymodule_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
+		//$result0=$extrafields->addExtraField('mymodule_separator1', "Separator 1", 'separator', 1,  0, 'thirdparty',   0, 0, '', array('options'=>array(1=>1)), 1, '', 1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
+		//$result1=$extrafields->addExtraField('mymodule_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
+		//$result2=$extrafields->addExtraField('mymodule_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
+		//$result3=$extrafields->addExtraField('mymodule_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
+		//$result4=$extrafields->addExtraField('mymodule_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
+		//$result5=$extrafields->addExtraField('mymodule_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
 
 		// Permissions
 		$this->remove($options);

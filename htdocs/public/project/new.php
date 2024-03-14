@@ -240,14 +240,14 @@ if (empty($reshook) && $action == 'add') {
 			//var_dump($thirdparty->array_options);exit;
 			if ($ret < 0) {
 				$error++;
-				$errmsg = ($extrafields->error ? $extrafields->error.'<br>' : '').join('<br>', $extrafields->errors);
+				$errmsg = ($extrafields->error ? $extrafields->error.'<br>' : '').implode('<br>', $extrafields->errors);
 			}
 
 			if (!$error) {
 				$result = $thirdparty->create($user);
 				if ($result <= 0) {
 					$error++;
-					$errmsg = ($thirdparty->error ? $thirdparty->error.'<br>' : '').join('<br>', $thirdparty->errors);
+					$errmsg = ($thirdparty->error ? $thirdparty->error.'<br>' : '').implode('<br>', $thirdparty->errors);
 				} else {
 					$proj->socid = $thirdparty->id;
 				}
@@ -409,7 +409,7 @@ if (empty($reshook) && $action == 'add') {
 				dol_syslog("project lead ".$proj->ref." has been created, we redirect to ".$urlback);
 			} else {
 				$error++;
-				$errmsg .= $proj->error.'<br>'.join('<br>', $proj->errors);
+				$errmsg .= $proj->error.'<br>'.implode('<br>', $proj->errors);
 			}
 		} else {
 			setEventMessage($errmsg, 'errors');
@@ -539,7 +539,7 @@ print '</td></tr>';
 if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
 	if ($country_code) {
-		print $formcompany->select_state(GETPOST("state_id", 'int'), $country_code);
+		print $formcompany->select_state(GETPOSTINT("state_id"), $country_code);
 	} else {
 		print '';
 	}

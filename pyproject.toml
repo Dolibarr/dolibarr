@@ -7,8 +7,9 @@ build-backend = "setuptools.build_meta"
 # `codespell` can be run as a standalone program from the CLI
 # with the appropriate default options.
 
-skip = "*/langs/*,*/build/exe/*,**.log,*.pdf,*dev/resources/*,*.phar,*.z,*.gz,*.sql,*htdocs/includes/*,*/textiso.txt,*.js,*README-*,*build/rpm/*spec,*build/pad/*ml,*htdocs/includes/phpoffice/*,*htdocs/includes/tecnickcom/*,*dev/initdemo/removeconfdemo.sh,*dev/tools/codespell/*,*pyproject.toml,*build/exe/*,*fontawe*,*htdocs/theme/*/flags-sprite.inc.php,*dev/setup/codetemplates/codetemplates.xml,*/php.ini,*/html_cerfafr.*,*/lessc.class.php,*.asciidoc,*.xml,*opensurvey/css/style.css"
+skip = "*/.*/*,*/langs/*,*/build/exe/*,**.log,*.pdf,*dev/resources/*,*.phar,*.z,*.gz,*.sql,*.svg,*htdocs/includes/*,*/textiso.txt,*.js,*README-*,*build/rpm/*spec,*build/pad/*ml,*htdocs/includes/phpoffice/*,*htdocs/includes/tecnickcom/*,*dev/initdemo/removeconfdemo.sh,*dev/tools/codespell/*,*pyproject.toml,*build/exe/*,*fontawe*,*htdocs/theme/*/flags-sprite.inc.php,*dev/setup/codetemplates/codetemplates.xml,*/php.ini,*/html_cerfafr.*,*/lessc.class.php,*.asciidoc,*.xml,*opensurvey/css/style.css,*dev/tools/phan/stubs/*,*/documents"
 
+check-hidden = true
 quiet-level=2
 ignore-regex = '\\[fnrstv]'
 builtin = "clear,rare,informal,usage,code,names"
@@ -26,3 +27,25 @@ uri-ignore-words-list="ned"
 
 [tool.setuptools]
 include-package-data = false
+
+# pyproject.toml
+
+[tool.yamlfix]
+# allow_duplicate_keys = true
+line_length = 80
+# none_representation = "null"
+# comments_min_spaces_from_content = 2
+# comments_require_starting_space = true
+# whitelines = 0
+# comment_whitelines = 0
+# section_whitelines = 0
+# explicit_start = true
+# sequence_style = keep_style   # flow_style, block_style, keep_style
+# indent_mapping = 2
+# indent_offset = 2
+# indent_sequence = 4
+# none_representation = ""
+# quote_basic_values = false
+# YAMLFIX_quote_keys_and_basic_values = false
+# uote_representation = false
+# preserve_quotes = false

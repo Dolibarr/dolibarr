@@ -63,36 +63,36 @@ $workflowcodes = array(
 	'WORKFLOW_PROPAL_AUTOCREATE_ORDER'=>array(
 		'family'=>'create',
 		'position'=>10,
-		'enabled'=>(isModEnabled("propal") && isModEnabled('commande')),
+		'enabled'=>(isModEnabled("propal") && isModEnabled('order')),
 		'picto'=>'order'
 	),
 	'WORKFLOW_ORDER_AUTOCREATE_INVOICE'=>array(
 		'family'=>'create',
 		'position'=>20,
-		'enabled'=>(isModEnabled('commande') && isModEnabled('facture')),
+		'enabled'=>(isModEnabled('order') && isModEnabled('invoice')),
 		'picto'=>'bill'
 	),
 	'WORKFLOW_TICKET_CREATE_INTERVENTION' => array(
 		'family'=>'create',
 		'position'=>25,
-		'enabled'=>(isModEnabled('ticket') && isModEnabled('ficheinter')),
+		'enabled'=>(isModEnabled('ticket') && isModEnabled('intervention')),
 		'picto'=>'ticket'
 	),
 
-	'separator1'=>array('family'=>'separator', 'position'=>25, 'title'=>'', 'enabled'=>((isModEnabled("propal") && isModEnabled('commande')) || (isModEnabled('commande') && isModEnabled('facture')) || (isModEnabled('ticket') && isModEnabled('ficheinter')))),
+	'separator1'=>array('family'=>'separator', 'position'=>25, 'title'=>'', 'enabled'=>((isModEnabled("propal") && isModEnabled('order')) || (isModEnabled('order') && isModEnabled('invoice')) || (isModEnabled('ticket') && isModEnabled('intervention')))),
 
 	// Automatic classification of proposal
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array(
 		'family'=>'classify_proposal',
 		'position'=>30,
-		'enabled'=>(isModEnabled("propal") && isModEnabled('commande')),
+		'enabled'=>(isModEnabled("propal") && isModEnabled('order')),
 		'picto'=>'propal',
 		'warning'=>''
 	),
 	'WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL'=>array(
 		'family'=>'classify_proposal',
 		'position'=>31,
-		'enabled'=>(isModEnabled("propal") && isModEnabled('facture')),
+		'enabled'=>(isModEnabled("propal") && isModEnabled('invoice')),
 		'picto'=>'propal',
 		'warning'=>''
 	),
@@ -101,19 +101,19 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING'=>array(  // when shipping validated
 		'family'=>'classify_order',
 		'position'=>40,
-		'enabled'=>(isModEnabled("expedition") && isModEnabled('commande')),
+		'enabled'=>(isModEnabled("shipping") && isModEnabled('order')),
 		'picto'=>'order'
 	),
 	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED'=>array( // when shipping closed
 		'family'=>'classify_order',
 		'position'=>41,
-		'enabled'=>(isModEnabled("expedition") && isModEnabled('commande')),
+		'enabled'=>(isModEnabled("shipping") && isModEnabled('order')),
 		'picto'=>'order'
 	),
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array(
 		'family'=>'classify_order',
 		'position'=>42,
-		'enabled'=>(isModEnabled('facture') && isModEnabled('commande')),
+		'enabled'=>(isModEnabled('invoice') && isModEnabled('order')),
 		'picto'=>'order',
 		'warning'=>''
 	), // For this option, if module invoice is disabled, it does not exists, so "Classify billed" for order must be done manually from order card.
@@ -166,7 +166,7 @@ $workflowcodes = array(
 	'WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE' => array(
 		'family' => 'classify_shipping',
 		'position' => 91,
-		'enabled' => isModEnabled("expedition") && isModEnabled("facture") && getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0',
+		'enabled' => isModEnabled("shipping") && isModEnabled("invoice") && getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0',
 		'picto' => 'shipment'
 	),
 
@@ -215,6 +215,8 @@ if (!empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['w
 $workflowcodes = array_filter($workflowcodes, function ($var) {
 	return $var['enabled'];
 });
+
+
 
 /*
  * View

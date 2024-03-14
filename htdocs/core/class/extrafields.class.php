@@ -11,6 +11,7 @@
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,12 +45,12 @@ class ExtraFields
 	public $db;
 
 	/**
-	 * @var array New array to store extrafields definition
+	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,mixed[]>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>}> New array to store extrafields definition
 	 */
 	public $attributes;
 
 	/**
-	 * @var array	Array with boolean of status of groups
+	 * @var array<string,bool>	Array with boolean of status of groups
 	 */
 	public $expand_display;
 
@@ -69,25 +70,25 @@ class ExtraFields
 	public $errno;
 
 	/**
-	 * @var array 	Array of type to label
+	 * @var array<string,string> 	Array of type to label
 	 */
 	public static $type2label = array(
-		'varchar'=>'String1Line',
-		'text'=>'TextLongNLines',
-		'html'=>'HtmlText',
-		'int'=>'Int',
-		'double'=>'Float',
-		'date'=>'Date',
-		'datetime'=>'DateAndTime',
+		'varchar' => 'String1Line',
+		'text' => 'TextLongNLines',
+		'html' => 'HtmlText',
+		'int' => 'Int',
+		'double' => 'Float',
+		'date' => 'Date',
+		'datetime' => 'DateAndTime',
 		//'datetimegmt'=>'DateAndTimeUTC',
-		'boolean'=>'Boolean',
-		'price'=>'ExtrafieldPrice',
-		'pricecy'=>'ExtrafieldPriceWithCurrency',
-		'phone'=>'ExtrafieldPhone',
-		'mail'=>'ExtrafieldMail',
-		'url'=>'ExtrafieldUrl',
-		'ip'=>'ExtrafieldIP',
-		'icon'=>'Icon',
+		'boolean' => 'Boolean',
+		'price' => 'ExtrafieldPrice',
+		'pricecy' => 'ExtrafieldPriceWithCurrency',
+		'phone' => 'ExtrafieldPhone',
+		'mail' => 'ExtrafieldMail',
+		'url' => 'ExtrafieldUrl',
+		'ip' => 'ExtrafieldIP',
+		'icon' => 'Icon',
 		'password' => 'ExtrafieldPassword',
 		'select' => 'ExtrafieldSelect',
 		'sellist' => 'ExtrafieldSelectList',
@@ -116,7 +117,7 @@ class ExtraFields
 	 *
 	 *  @param	string			$attrname           Code of attribute
 	 *  @param  string			$label              label of attribute
-	 *  @param  string			$type               Type of attribute ('boolean','int','varchar','text','html','date','datehour','price', 'pricecy', 'phone','mail','password','url','select','checkbox','separate',...)
+	 *  @param  string			$type               Type of attribute ('boolean','int','varchar','text','html','date','datetime','price', 'pricecy', 'phone','mail','password','url','select','checkbox','separate',...)
 	 *  @param  int				$pos                Position of attribute
 	 *  @param  string			$size               Size/length definition of attribute ('5', '24,8', ...). For float, it contains 2 numeric separated with a comma.
 	 *  @param  string			$elementtype        Element type. Same value than object->table_element (Example 'member', 'product', 'thirdparty', ...)
@@ -148,7 +149,8 @@ class ExtraFields
 
 		$result = 0;
 
-		if ($type == 'separate') {
+		if ($type == 'separator' || $type == 'separate') {
+			$type = 'separate';
 			$unique = 0;
 			$required = 0;
 		}	// Force unique and not required if this is a separator field to avoid troubles.
@@ -170,7 +172,7 @@ class ExtraFields
 			$err2 = $this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
 				$this->error = '';
-				$this->errno = 0;
+				$this->errno = '0';
 				return 1;
 			} else {
 				return -2;
@@ -185,7 +187,7 @@ class ExtraFields
 	 *  This is a private method. For public method, use addExtraField.
 	 *
 	 *	@param	string	$attrname			code of attribute
-	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datehour','price','pricecy','phone','mail','password','url','select','checkbox', ...)
+	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime', 'price', 'pricecy', 'phone', 'mail', 'password', 'url', 'select', 'checkbox', ...)
 	 *  @param	string	$length				Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
@@ -252,9 +254,9 @@ class ExtraFields
 				}
 			}
 			$field_desc = array(
-				'type'=>$typedb,
-				'value'=>$lengthdb,
-				'null'=>($required ? 'NOT NULL' : 'NULL'),
+				'type' => $typedb,
+				'value' => $lengthdb,
+				'null' => ($required ? 'NOT NULL' : 'NULL'),
 				'default' => $default_value
 			);
 
@@ -281,7 +283,7 @@ class ExtraFields
 	 *
 	 *	@param	string			$attrname		code of attribute
 	 *	@param	string			$label			label of attribute
-	 *  @param	string				$type			Type of attribute ('int', 'varchar', 'text', 'html', 'date', 'datehour', 'float')
+	 *  @param	string			$type			Type of attribute ('int', 'varchar', 'text', 'html', 'date', 'datehour', 'float')
 	 *  @param	int				$pos			Position of attribute
 	 *  @param	string			$size			Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string			$elementtype	Element type ('member', 'product', 'thirdparty', ...)
@@ -529,7 +531,7 @@ class ExtraFields
 	 *
 	 *  @param	string	$attrname			Name of attribute
 	 *  @param	string	$label				Label of attribute
-	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
+	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime','price','phone','mail','password','url','select','checkbox', ...)
 	 *  @param	int		$length				Length of attribute
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
@@ -601,11 +603,11 @@ class ExtraFields
 				$typedb = $type;
 				$lengthdb = $length;
 			}
-			$field_desc = array('type'=>$typedb, 'value'=>$lengthdb, 'null'=>($required ? 'NOT NULL' : 'NULL'), 'default'=>$default);
+			$field_desc = array('type' => $typedb, 'value' => $lengthdb, 'null' => ($required ? 'NOT NULL' : 'NULL'), 'default' => $default);
 
 			if (is_object($hookmanager)) {
 				$hookmanager->initHooks(array('extrafieldsdao'));
-				$parameters = array('field_desc'=>&$field_desc, 'table'=>$table, 'attr_name'=>$attrname, 'label'=>$label, 'type'=>$type, 'length'=>$length, 'unique'=>$unique, 'required'=>$required, 'pos'=>$pos, 'param'=>$param, 'alwayseditable'=>$alwayseditable, 'perms'=>$perms, 'list'=>$list, 'help'=>$help, 'default'=>$default, 'computed'=>$computed, 'entity'=>$entity, 'langfile'=>$langfile, 'enabled'=>$enabled, 'totalizable'=>$totalizable, 'printable'=>$printable);
+				$parameters = array('field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length, 'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity, 'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable);
 				$reshook = $hookmanager->executeHooks('updateExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				if ($reshook < 0) {
@@ -965,9 +967,9 @@ class ExtraFields
 		$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
 		$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
 		$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
-		$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '2');
+		$perms = (int) dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '2');
 		$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-		$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
+		$list = (string) dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
 		$totalizable = $this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
 		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 		$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
@@ -1077,24 +1079,24 @@ class ExtraFields
 			$out ='<link rel="stylesheet" href="'.dol_buildpath('/myfield/css/fontawesome-iconpicker.min.css', 1).'">';
 			$out.='<script src="'.dol_buildpath('/myfield/js/fontawesome-iconpicker.min.js', 1).'"></script>';
 			*/
-			$out.= '<input type="text" class="form-control icp icp-auto iconpicker-element iconpicker-input flat '.$morecss.' maxwidthonsmartphone"';
-			$out.= ' name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
+			$out .= '<input type="text" class="form-control icp icp-auto iconpicker-element iconpicker-input flat '.$morecss.' maxwidthonsmartphone"';
+			$out .= ' name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			if (getDolGlobalInt('MAIN_ADD_ICONPICKER_JS')) {
-				$out.='<script>';
-				$options="{ title: '<b>".$langs->trans("IconFieldSelector")."</b>', placement: 'right', showFooter: false, templates: {";
-				$options.="iconpicker: '<div class=\"iconpicker\"><div style=\"background-color:#EFEFEF;\" class=\"iconpicker-items\"></div></div>',";
-				$options.="iconpickerItem: '<a role=\"button\" href=\"#\" class=\"iconpicker-item\" style=\"background-color:#DDDDDD;\"><i></i></a>',";
+				$out .= '<script>';
+				$options = "{ title: '<b>".$langs->trans("IconFieldSelector")."</b>', placement: 'right', showFooter: false, templates: {";
+				$options .= "iconpicker: '<div class=\"iconpicker\"><div style=\"background-color:#EFEFEF;\" class=\"iconpicker-items\"></div></div>',";
+				$options .= "iconpickerItem: '<a role=\"button\" href=\"#\" class=\"iconpicker-item\" style=\"background-color:#DDDDDD;\"><i></i></a>',";
 				// $options.="buttons: '<button style=\"background-color:#FFFFFF;\" class=\"iconpicker-btn iconpicker-btn-cancel btn btn-default btn-sm\">".$langs->trans("Cancel")."</button>";
 				// $options.="<button style=\"background-color:#FFFFFF;\" class=\"iconpicker-btn iconpicker-btn-accept btn btn-primary btn-sm\">".$langs->trans("Save")."</button>',";
-				$options.="footer: '<div class=\"popover-footer\" style=\"background-color:#EFEFEF;\"></div>',";
-				$options.="search: '<input type=\"search\" class\"form-control iconpicker-search\" placeholder=\"".$langs->trans("TypeToFilter")."\" />',";
-				$options.="popover: '<div class=\"iconpicker-popover popover\">";
-				$options.="   <div class=\"arrow\" ></div>";
-				$options.="   <div class=\"popover-title\" style=\"text-align:center;background-color:#EFEFEF;\"></div>";
-				$options.="   <div class=\"popover-content \" ></div>";
-				$options.="</div>'}}";
-				$out.="$('#".$keyprefix.$key.$keysuffix."').iconpicker(".$options.");";
-				$out.='</script>';
+				$options .= "footer: '<div class=\"popover-footer\" style=\"background-color:#EFEFEF;\"></div>',";
+				$options .= "search: '<input type=\"search\" class\"form-control iconpicker-search\" placeholder=\"".$langs->trans("TypeToFilter")."\" />',";
+				$options .= "popover: '<div class=\"iconpicker-popover popover\">";
+				$options .= "   <div class=\"arrow\" ></div>";
+				$options .= "   <div class=\"popover-title\" style=\"text-align:center;background-color:#EFEFEF;\"></div>";
+				$options .= "   <div class=\"popover-content \" ></div>";
+				$options .= "</div>'}}";
+				$out .= "$('#".$keyprefix.$key.$keysuffix."').iconpicker(".$options.");";
+				$out .= '</script>';
 			}
 		} elseif ($type == 'text') {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
@@ -1120,11 +1122,11 @@ class ExtraFields
 				} else {
 					$checked = ' value="1" ';
 				}
-				$out = '<input type="hidden" name="'.$keyprefix.$key.$keysuffix.'_boolean" value="1">';	// A hidden field ending with "_boolean" that is always set to 1.
-				$out .= '<input type="checkbox" class="flat valignmiddle'.($morecss ? ' '.$morecss : '').' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam ? $moreparam : '').'>';
+				$out = '<input type="checkbox" class="flat valignmiddle'.($morecss ? ' '.$morecss : '').' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam ? $moreparam : '').'>';
 			} else {
 				$out = $form->selectyesno($keyprefix.$key.$keysuffix, $value, 1, false, 1);
 			}
+			$out .= '<input type="hidden" name="'.$keyprefix.$key.$keysuffix.'_boolean" value="1">';	// A hidden field ending with "_boolean" that is always set to 1.
 		} elseif ($type == 'price') {
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value = price($value);
@@ -1146,7 +1148,7 @@ class ExtraFields
 			}
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
 		} elseif ($type == 'select') {
-			$out = '';
+			$out = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 			if ($mode) {
 				$options = array();
 				foreach ($param['options'] as $okey => $val) {
@@ -1201,7 +1203,7 @@ class ExtraFields
 				$out .= '</select>';
 			}
 		} elseif ($type == 'sellist') {
-			$out = '';
+			$out = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 			if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
@@ -1309,7 +1311,6 @@ class ExtraFields
 							} else {
 								$labeltoshow = $obj->{$InfoFieldList[1]};
 							}
-							$labeltoshow = $labeltoshow;
 
 							if ($value == $obj->rowid) {
 								if (!$notrans) {
@@ -1365,7 +1366,7 @@ class ExtraFields
 			}
 			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ? null : $param['options']), $value_arr, '', 0, '', 0, '100%');
 		} elseif ($type == 'radio') {
-			$out = '';
+			$out = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 			foreach ($param['options'] as $keyopt => $val) {
 				$out .= '<input class="flat '.$morecss.'" type="radio" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '');
 				$out .= ' value="'.$keyopt.'"';
@@ -1596,7 +1597,7 @@ class ExtraFields
 			$element = $extrafieldsobjectkey;		// $extrafieldsobjectkey comes from $object->table_element but we need $object->element
 			if ($element == 'socpeople') {
 				$element = 'contact';
-			} elseif ( $element == 'projet' ) {
+			} elseif ($element == 'projet') {
 				$element = 'project';
 			}
 
@@ -1647,9 +1648,9 @@ class ExtraFields
 		$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
 		$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
 		$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
-		$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '2');
+		$perms = (int) dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '2');
 		$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-		$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
+		$list = (string) dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
 		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 		$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
@@ -1689,7 +1690,11 @@ class ExtraFields
 			if (!empty($value)) {
 				$checked = ' checked ';
 			}
-			$value = '<input type="checkbox" '.$checked.' '.($moreparam ? $moreparam : '').' readonly disabled>';
+			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
+				$value = '<input type="checkbox" '.$checked.' '.($moreparam ? $moreparam : '').' readonly disabled>';
+			} else {
+				$value = yn($value ? 1 : 0);
+			}
 		} elseif ($type == 'mail') {
 			$value = dol_print_email($value, 0, 0, 0, 64, 1, 1);
 		} elseif ($type == 'ip') {
@@ -2027,13 +2032,13 @@ class ExtraFields
 	{
 		global $conf, $langs;
 
-		$tagtype='tr';
-		$tagtype_dyn='td';
+		$tagtype = 'tr';
+		$tagtype_dyn = 'td';
 
-		if ($display_type=='line') {
-			$tagtype='div';
-			$tagtype_dyn='span';
-			$colspan=0;
+		if ($display_type == 'line') {
+			$tagtype = 'div';
+			$tagtype_dyn = 'span';
+			$colspan = 0;
 		}
 
 		$extrafield_param = $this->attributes[$object->table_element]['param'][$key];
@@ -2047,7 +2052,7 @@ class ExtraFields
 		$expand_display = false;
 		if (is_array($extrafield_param_list) && count($extrafield_param_list) > 0) {
 			$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
-			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? (empty($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) ? false : true) : ($extrafield_collapse_display_value == 2 ? false : true));
+			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOSTINT('ignorecollapsesetup')) ? (empty($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) ? false : true) : ($extrafield_collapse_display_value == 2 ? false : true));
 		}
 		$disabledcookiewrite = 0;
 		if ($mode == 'create') {
@@ -2152,17 +2157,17 @@ class ExtraFields
 
 				$enabled = 1;
 				if (isset($this->attributes[$object->table_element]['enabled'][$key])) {	// 'enabled' is often a condition on module enabled or not
-					$enabled = dol_eval($this->attributes[$object->table_element]['enabled'][$key], 1, 1, '2');
+					$enabled = (int) dol_eval($this->attributes[$object->table_element]['enabled'][$key], 1, 1, '2');
 				}
 
 				$visibility = 1;
 				if (isset($this->attributes[$object->table_element]['list'][$key])) {		// 'list' is option for visibility
-					$visibility = intval(dol_eval($this->attributes[$object->table_element]['list'][$key], 1, 1, '2'));
+					$visibility = (int) dol_eval($this->attributes[$object->table_element]['list'][$key], 1, 1, '2');
 				}
 
 				$perms = 1;
 				if (isset($this->attributes[$object->table_element]['perms'][$key])) {
-					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1, 1, '2');
+					$perms = (int) dol_eval($this->attributes[$object->table_element]['perms'][$key], 1, 1, '2');
 				}
 				if (empty($enabled)
 					|| (
@@ -2205,13 +2210,13 @@ class ExtraFields
 
 				if (in_array($key_type, array('date'))) {
 					// Clean parameters
-					$value_key = dol_mktime(12, 0, 0, GETPOST("options_".$key."month", 'int'), GETPOST("options_".$key."day", 'int'), GETPOST("options_".$key."year", 'int'));
+					$value_key = dol_mktime(12, 0, 0, GETPOSTINT("options_".$key."month"), GETPOSTINT("options_".$key."day"), GETPOSTINT("options_".$key."year"));
 				} elseif (in_array($key_type, array('datetime'))) {
 					// Clean parameters
-					$value_key = dol_mktime(GETPOST("options_".$key."hour", 'int'), GETPOST("options_".$key."min", 'int'), GETPOST("options_".$key."sec", 'int'), GETPOST("options_".$key."month", 'int'), GETPOST("options_".$key."day", 'int'), GETPOST("options_".$key."year", 'int'), 'tzuserrel');
+					$value_key = dol_mktime(GETPOSTINT("options_".$key."hour"), GETPOSTINT("options_".$key."min"), GETPOSTINT("options_".$key."sec"), GETPOSTINT("options_".$key."month"), GETPOSTINT("options_".$key."day"), GETPOSTINT("options_".$key."year"), 'tzuserrel');
 				} elseif (in_array($key_type, array('datetimegmt'))) {
 					// Clean parameters
-					$value_key = dol_mktime(GETPOST("options_".$key."hour", 'int'), GETPOST("options_".$key."min", 'int'), GETPOST("options_".$key."sec", 'int'), GETPOST("options_".$key."month", 'int'), GETPOST("options_".$key."day", 'int'), GETPOST("options_".$key."year", 'int'), 'gmt');
+					$value_key = dol_mktime(GETPOSTINT("options_".$key."hour"), GETPOSTINT("options_".$key."min"), GETPOSTINT("options_".$key."sec"), GETPOSTINT("options_".$key."month"), GETPOSTINT("options_".$key."day"), GETPOSTINT("options_".$key."year"), 'gmt');
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					$value_arr = GETPOST("options_".$key, 'array'); // check if an array
 					if (!empty($value_arr)) {
@@ -2302,14 +2307,14 @@ class ExtraFields
 						$value_key = array();
 						// values provided as a component year, month, day, etc.
 						if (GETPOST($dateparamname_start . 'year')) {
-							$value_key['start'] = dol_mktime(0, 0, 0, GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int'));
+							$value_key['start'] = dol_mktime(0, 0, 0, GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'));
 						}
 						if (GETPOST($dateparamname_start . 'year')) {
-							$value_key['end'] = dol_mktime(23, 59, 59, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'));
+							$value_key['end'] = dol_mktime(23, 59, 59, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'));
 						}
 					} elseif (GETPOST($keysuffix."options_".$key.$keyprefix."year")) {
 						// Clean parameters
-						$value_key = dol_mktime(12, 0, 0, GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'));
+						$value_key = dol_mktime(12, 0, 0, GETPOSTINT($keysuffix."options_".$key.$keyprefix."month"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."day"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."year"));
 					} else {
 						continue; // Value was not provided, we should not set it.
 					}
@@ -2318,26 +2323,26 @@ class ExtraFields
 					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
 					if (GETPOST($dateparamname_start . 'year') && GETPOST($dateparamname_end . 'year')) {
 						// values provided as a date pair (start date + end date), each date being broken down as year, month, day, etc.
-						$dateparamname_end_hour = GETPOST($dateparamname_end . 'hour', 'int') != '-1' ? GETPOST($dateparamname_end . 'hour', 'int') : '23';
-						$dateparamname_end_min = GETPOST($dateparamname_end . 'min', 'int') != '-1' ? GETPOST($dateparamname_end . 'min', 'int') : '59';
-						$dateparamname_end_sec = GETPOST($dateparamname_end . 'sec', 'int') != '-1' ? GETPOST($dateparamname_end . 'sec', 'int') : '59';
+						$dateparamname_end_hour = GETPOSTINT($dateparamname_end . 'hour') != '-1' ? GETPOSTINT($dateparamname_end . 'hour') : '23';
+						$dateparamname_end_min = GETPOSTINT($dateparamname_end . 'min') != '-1' ? GETPOSTINT($dateparamname_end . 'min') : '59';
+						$dateparamname_end_sec = GETPOSTINT($dateparamname_end . 'sec') != '-1' ? GETPOSTINT($dateparamname_end . 'sec') : '59';
 						if ($key_type == 'datetimegmt') {
 							$value_key = array(
-								'start' => dol_mktime(GETPOST($dateparamname_start . 'hour', 'int'), GETPOST($dateparamname_start . 'min', 'int'), GETPOST($dateparamname_start . 'sec', 'int'), GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int'), 'gmt'),
-								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'), 'gmt')
+								'start' => dol_mktime(GETPOSTINT($dateparamname_start . 'hour'), GETPOSTINT($dateparamname_start . 'min'), GETPOSTINT($dateparamname_start . 'sec'), GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'gmt'),
+								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'gmt')
 							);
 						} else {
 							$value_key = array(
-								'start' => dol_mktime(GETPOST($dateparamname_start . 'hour', 'int'), GETPOST($dateparamname_start . 'min', 'int'), GETPOST($dateparamname_start . 'sec', 'int'), GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int'), 'tzuserrel'),
-								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'), 'tzuserrel')
+								'start' => dol_mktime(GETPOSTINT($dateparamname_start . 'hour'), GETPOSTINT($dateparamname_start . 'min'), GETPOSTINT($dateparamname_start . 'sec'), GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'tzuserrel'),
+								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'tzuserrel')
 							);
 						}
 					} elseif (GETPOST($keysuffix."options_".$key.$keyprefix."year")) {
 						// Clean parameters
 						if ($key_type == 'datetimegmt') {
-							$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."sec", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'), 'gmt');
+							$value_key = dol_mktime(GETPOSTINT($keysuffix."options_".$key.$keyprefix."hour"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."min"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."sec"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."month"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."day"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."year"), 'gmt');
 						} else {
-							$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."sec", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'), 'tzuserrel');
+							$value_key = dol_mktime(GETPOSTINT($keysuffix."options_".$key.$keyprefix."hour"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."min"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."sec"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."month"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."day"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."year"), 'tzuserrel');
 						}
 					} else {
 						continue; // Value was not provided, we should not set it.

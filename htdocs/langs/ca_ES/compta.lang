@@ -162,6 +162,7 @@ CalcModeVATDebt=Mode d'<b>%sIVA sobre comptabilitat de compromís%s </b>.
 CalcModeVATEngagement=Mode d'<b>%sIVA sobre ingressos-despeses%s</b>.
 CalcModeDebt=Anàlisi de documents registrats coneguts
 CalcModeEngagement=Anàlisi dels pagaments registrats coneguts
+CalcModePayment=Anàlisi dels pagaments registrats coneguts
 CalcModeBookkeeping=Anàlisi de dades publicades a la taula de compilació de llibres.
 CalcModeNoBookKeeping=Fins i tot si encara no es comptabilitzen a Ledger
 CalcModeLT1= Metode <b>%sRE factures a client - factures de proveïdor%s</b>
@@ -253,7 +254,7 @@ CalculationMode=Mode de càlcul
 AccountancyJournal=Diari de codi de comptable
 ACCOUNTING_VAT_SOLD_ACCOUNT=Compte (del pla comptable) que s'utilitzarà com a compte predeterminat per a l'IVA a les vendes (utilitzat si no està definit a la configuració del diccionari d'IVA)
 ACCOUNTING_VAT_BUY_ACCOUNT=Compte (del pla comptable) que s'utilitzarà com a compte predeterminat per a l'IVA a les compres (utilitzat si no està definit a la configuració del diccionari d'IVA)
-ACCOUNTING_REVENUESTAMP_SOLD_ACCOUNT=account (del gràfic de account) que s'utilitzarà per al timbre d'ingressos a <span class='notranslate'>sales /span>
+ACCOUNTING_REVENUESTAMP_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used for the revenue stamp on sales
 ACCOUNTING_REVENUESTAMP_BUY_ACCOUNT=account (del gràfic de account) que s'utilitzarà per al segell d'ingressos de les compres
 ACCOUNTING_VAT_PAY_ACCOUNT=Compte (del pla comptable) que s'utilitzarà com a compte predeterminat per a pagar l'IVA
 ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT=Compte (del pla comptable) que s'utilitzarà com a compte predeterminat per a l'IVA en compres per a càrrecs inversos (crèdit)

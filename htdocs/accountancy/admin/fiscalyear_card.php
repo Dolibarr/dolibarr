@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 $langs->loadLangs(array("admin", "compta"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
 $action = GETPOST('action', 'aZ09');
@@ -70,8 +70,8 @@ foreach ($tmpstatus2label as $key => $val) {
 	$status2label[$key] = $langs->trans($val);
 }
 
-$date_start = dol_mktime(0, 0, 0, GETPOST('fiscalyearmonth', 'int'), GETPOST('fiscalyearday', 'int'), GETPOST('fiscalyearyear', 'int'));
-$date_end = dol_mktime(0, 0, 0, GETPOST('fiscalyearendmonth', 'int'), GETPOST('fiscalyearendday', 'int'), GETPOST('fiscalyearendyear', 'int'));
+$date_start = dol_mktime(0, 0, 0, GETPOSTINT('fiscalyearmonth'), GETPOSTINT('fiscalyearday'), GETPOSTINT('fiscalyearyear'));
+$date_end = dol_mktime(0, 0, 0, GETPOSTINT('fiscalyearendmonth'), GETPOSTINT('fiscalyearendday'), GETPOSTINT('fiscalyearendyear'));
 
 $permissiontoadd = $user->hasRight('accounting', 'fiscalyear', 'write');
 
@@ -95,7 +95,7 @@ if ($reshook < 0) {
 }
 
 if ($action == 'confirm_delete' && $confirm == "yes") {
-	$result = $object->delete($id);
+	$result = $object->delete($user);
 	if ($result >= 0) {
 		header("Location: fiscalyear.php");
 		exit();

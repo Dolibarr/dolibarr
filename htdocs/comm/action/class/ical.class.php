@@ -3,7 +3,7 @@
  * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	   Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,13 +38,39 @@ class ICal
 	 */
 	public $file;
 
-	// Text in file
+	/**
+	 * @var string  Text in file
+	 */
 	public $file_text;
-	public $cal; // Array to save iCalendar parse data
-	public $event_count; // Number of Events
-	public $todo_count; // Number of Todos
-	public $freebusy_count; // Number of Freebusy
-	public $last_key; //Help variable save last key (multiline string)
+
+	/**
+	 * @var array Array to save iCalendar parse data
+	 */
+	public $cal;
+
+	/**
+	 * @var int Number of Events
+	 */
+	public $event_count;
+
+	/**
+	 * @var int Number of Todos
+	 */
+	public $todo_count;
+
+	/**
+	 * @var int Number of Freebusy
+	 */
+	public $freebusy_count;
+
+	/**
+	 * @var string Help variable save last key (multiline string)
+	 */
+	public $last_key;
+
+	/**
+	 * @var string error message
+	 */
 	public $error;
 
 
@@ -117,7 +143,7 @@ class ICal
 		$this->cal = array(); // new empty array
 
 		$this->event_count = -1;
-		$this->file_text = null;
+		$this->file_text = '';
 
 		// Save file into a cache
 		if ($usecachefile) {
@@ -142,10 +168,10 @@ class ICal
 			}
 		}
 
-		$this->file_text = preg_split("[\n]", $this->file_text);
+		$file_text_array = preg_split("[\n]", $this->file_text);
 
 		// is this text vcalendar standard text ? on line 1 is BEGIN:VCALENDAR
-		if (!stristr($this->file_text[0], 'BEGIN:VCALENDAR')) {
+		if (!stristr($file_text_array[0], 'BEGIN:VCALENDAR')) {
 			return 'error not VCALENDAR';
 		}
 
@@ -153,7 +179,7 @@ class ICal
 		$tmpkey = '';
 		$tmpvalue = '';
 		$type = '';
-		foreach ($this->file_text as $text) {
+		foreach ($file_text_array as $text) {
 			$text = trim($text); // trim one line
 			if (!empty($text)) {
 				// get Key and Value VCALENDAR:Begin -> Key = VCALENDAR, Value = begin

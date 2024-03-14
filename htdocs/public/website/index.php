@@ -105,11 +105,13 @@ if (empty($pageid)) {
 	$objectpage = new WebsitePage($db);
 
 	if ($pageref) {
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$result = $objectpage->fetch(0, $object->id, $pageref);
 		if ($result > 0) {
 			$pageid = $objectpage->id;
 		} elseif ($result == 0) {
 			// Page not found from ref=pageurl, we try using alternative alias
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$result = $objectpage->fetch(0, $object->id, null, $pageref);
 			if ($result > 0) {
 				$pageid = $objectpage->id;

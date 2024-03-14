@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -257,8 +258,8 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
-					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
+				if (getDolGlobalString('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalString('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
@@ -322,7 +323,7 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 				}
 
 				// Make substitutions into odt
-				$array_user = $this->get_substitutionarray_user($object, $outputlangs);
+				$array_user = $this->get_substitutionarray_user($user, $outputlangs);
 				$array_soc = $this->get_substitutionarray_mysoc($mysoc, $outputlangs);
 				$array_thirdparty = $this->get_substitutionarray_thirdparty($socobject, $outputlangs);
 				$array_other = $this->get_substitutionarray_other($outputlangs);
@@ -409,7 +410,7 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 	/**
 	 * get substitution array for object
 	 *
-	 * @param User          $object         user
+	 * @param CommonObject  $object         user
 	 * @param Translate     $outputlangs    translation object
 	 * @param string        $array_key      key for array
 	 * @return array                        array of substitutions
@@ -417,12 +418,18 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
 		// phpcs:enable
+		if (!$object instanceof User) {
+			dol_syslog("Expected Ticket object, got ".gettype($object), LOG_ERR);
+			return array();
+		}
+
 		$array_other = array();
 		foreach ($object as $key => $value) {
 			if (!is_array($value) && !is_object($value)) {
 				$array_other[$array_key.'_'.$key] = $value;
 			}
 		}
+
 		return $array_other;
 	}
 }

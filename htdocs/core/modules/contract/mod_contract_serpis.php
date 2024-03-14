@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,36 +29,25 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
  */
 class mod_contract_serpis extends ModelNumRefContracts
 {
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
+
+	// variables inherited from ModelNumRefContracts class
+	public $name = 'Serpis';
 	public $version = 'dolibarr';
 
+	// variables not inherited
+
+	/**
+	 * @var string
+	 */
 	public $prefix = 'CT';
 
 	/**
-	 * @var string Error code (or message)
+	 *	Constructor
 	 */
-	public $error = '';
-
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Serpis';
-
-	/**
-	 * @var string model name
-	 */
-	public $name = 'Serpis';
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto = 1;
-
+	public function __construct()
+	{
+		$this->code_auto = 1;
+	}
 
 	/**
 	 *	Return default description of numbering model
@@ -86,8 +76,8 @@ class mod_contract_serpis extends ModelNumRefContracts
 	/**
 	 *	Test if existing numbers make problems with numbering
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return boolean     			false if conflict, true if ok
+	 *  @param  CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
 	{
@@ -123,8 +113,8 @@ class mod_contract_serpis extends ModelNumRefContracts
 	 *	Return next value
 	 *
 	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$contract	contract object
-	 *	@return string      			Value if OK, 0 if KO
+	 *	@param	Contrat		$contract	contract object
+	 *	@return string|-1      			Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $contract)
 	{
@@ -160,20 +150,5 @@ class mod_contract_serpis extends ModelNumRefContracts
 
 		dol_syslog("mod_contract_serpis::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Return next value
-	 *
-	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$objforref  contract object
-	 *	@return string      			Value if OK, 0 if KO
-	 */
-	public function contract_get_num($objsoc, $objforref)
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $objforref);
 	}
 }

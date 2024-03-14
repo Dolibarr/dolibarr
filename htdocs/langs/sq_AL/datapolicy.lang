@@ -23,7 +23,7 @@ Module4100Desc = Moduli për menaxhimin e privatësisë së të dhënave (përpu
 #
 datapolicySetup = Konfigurimi i politikës së privatësisë së të dhënave të modulit
 Deletion = Fshirja e të dhënave
-datapolicySetupPage = Në varësi të ligjeve të vendeve tuaja (Shembull <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Neni 5</a> i GDPR), të dhënat personale duhet të mbahen për një periudhë jo duke e tejkaluar atë të nevojshme për qëllimet për të cilat janë mbledhur, përveç për qëllime arkivore.<br>Fshirja do të bëhet automatikisht pas një kohe të caktuar pa ngjarje (kohëzgjatja që do të keni treguar më poshtë).
+datapolicySetupPage = Në varësi të ligjeve të vendeve tuaja (Shembull <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Neni 5</a> i GDPR), të dhënat personale duhet të mbahen për një periudhë duke mos e tejkaluar kohëzgjatjen, të dhënat nevojiten për qëllimin për të cilin janë mbledhur, përveç për qëllime arkivore.<br>Fshirja do të bëhet automatikisht pas një kohëzgjatjeje të caktuar pa ngjarje (kohëzgjatja të cilat do t'i keni treguar më poshtë).
 NB_MONTHS = %s muaj
 ONE_YEAR = 1 vit
 NB_YEARS = %s vjet
@@ -49,7 +49,7 @@ SendAgreementText = Ju mund t'u dërgoni një email GDPR të gjithë kontakteve 
 SendAgreement = Dërgo email
 AllAgreementSend = Të gjitha emailet janë dërguar
 TXTLINKDATAPOLICYACCEPT = Teksti për lidhjen "marrëveshje"
-TXTLINKDATAPOLICYREFUSE = Teksti për lidhjen "marrëveshje"
+TXTLINKDATAPOLICYREFUSE = Teksti për lidhjen "mosmarrëveshje"
 
 
 #
@@ -78,15 +78,11 @@ DATAPOLICY_PORTABILITE_CONFIRMATION = Ju dëshironi të eksportoni të dhënat p
 #
 ANONYMISER_AT = Anonimoi %s
 
-# V2
-DATAPOLICYReturn = Vleresimi i GDPR
-DATAPOLICY_date = Data e marrëveshjes/marrëveshjes GDPR
-DATAPOLICY_send = Data e dërgimit të emailit të marrëveshjes
-DATAPOLICYReturn = Vleresimi i GDPR
+DATAPOLICY_date = Data e marrëveshjes/mosmarrëveshjes GDPR
+DATAPOLICY_send = Data e dërgimit të email-it të marrëveshjes
 DATAPOLICY_SEND = Dërgo email GDPR
 MailSent = Email është dërguar
 
 # ERROR
-ErrorSubjectIsRequired = Gabim: Subjekti i emailit kërkohet. Tregojeni atë në konfigurimin e modulit
-=Për shkak të një problemi teknik, ne nuk mundëm të regjistronim zgjedhjen tuaj. Kërkojmë falje për këtë. Na kontaktoni për të na dërguar zgjedhjen tuaj.
-NUMBER_MONTH_BEFORE_DELETION = Numri i muajit para fshirjes
+=Për shkak të një problemi teknik, ne nuk mundëm të regjistronim zgjedhjen tuaj. Kërkojmë falje për këtë. Na kontaktoni për të na njoftuar zgjedhjen tuaj.
+NUMBER_MONTH_BEFORE_DELETION = Numri i muajve para fshirjes

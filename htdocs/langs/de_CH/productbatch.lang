@@ -3,6 +3,7 @@ ManageLotSerial=Verwende Lot / Seriennummer
 ProductStatusOnBatch=Ja (Lot erforderlich)
 ProductStatusOnSerial=Ja (eindeutige Seriennummer nötig)
 ProductStatusNotOnBatch=Nein (Lot / Seriennummer nicht verwendet)
+BatchSellOrEatByMandatoryNone=Keine Mutterfirma
 Batch=Lot / Seriennumer
 atleast1batchfield="Verbrauchen bis:" - oder "Verkaufen bis:" - Datum. Oder Lot / Seriennummer
 batch_number=Lot / Seriennummer

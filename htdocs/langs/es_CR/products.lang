@@ -170,7 +170,6 @@ DoNotRemovePreviousCombinations=No elimine las variantes anteriores
 ErrorDeletingGeneratedProducts=Se produjo un error al intentar eliminar variantes de producto existentes
 NbOfDifferentValues=No. de valores diferentes
 NbProducts=Numero de productos
-ParentProductOfVariant=Producto principal de la variante
 HideChildProducts=Ocultar productos variantes
 ShowChildProducts=Mostrar productos variantes
 NoEditVariants=Vaya a la tarjeta del producto principal y edite el impacto del precio de las variantes en la pestaña de variantes

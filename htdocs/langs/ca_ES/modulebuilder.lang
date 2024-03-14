@@ -27,8 +27,7 @@ ModuleBuilderDeschooks=Aquesta pestanya està dedicada als ganxos (hooks)
 ModuleBuilderDescwidgets=Aquesta pestanya està dedicada a gestionar/crear ginys.
 ModuleBuilderDescbuildpackage=Aquí podeu generar un fitxer de paquet "a punt per a distribuir" (un fitxer .zip normalitzat) del vostre mòdul i un fitxer de documentació "a punt per a distribuir". Simplement feu clic al botó per a crear el paquet o el fitxer de documentació.
 EnterNameOfModuleToDeleteDesc=Podeu suprimir el vostre mòdul. AVÍS: se suprimiran tots els fitxers de codificació del mòdul (generats o creats manualment) I la documentació estructurada i la documentació.
-EnterNameOfObjectToDeleteDesc=Podeu suprimir un objecte. AVÍS: Tots els fitxers de codificació (generats o creats manualment) relacionats amb l'objecte s'eliminaran.
-EnterNameOfObjectToDeleteDesc=Podeu suprimir un objecte. AVÍS: Tots els fitxers de codificació (generats o creats manualment) relacionats amb l'objecte s'eliminaran.
+EnterNameOfObjectToDeleteDesc=Podeu esborrar un objecte. ADVERTÈNCIA: S'eliminaran tots els fitxers de codificació (generats o creats manualment) relacionats amb l'objecte!
 DangerZone=Zona perillosa
 BuildPackage=Construeix el paquet
 BuildPackageDesc=Pots generar un paquet zip de la teva aplicació perquè puguis distribuir-lo a qualsevol Dolibarr. També podeu distribuir-lo o vendre'l a <a href="https://www.dolistore.com">DoliStore.com</a>.
@@ -149,7 +148,7 @@ CSSListClass=CSS per a llistats
 NotEditable=No editable
 ForeignKey=Clau forana
 ForeignKeyDesc=Si s'ha de garantir que el valor d'aquest camp existeix en una altra taula. Introduïu aquí un valor que coincideixi amb la sintaxi: tablename.parentfieldtocheck
-TypeOfFieldsHelp=Exemple:<br>varchar(99)<br>correu electrònic<br>telèfon<br>ip<br>url<br>contrasenyab0392bzcc span>double(24,8)<br>real<br>text<br>html <br>date<br>datetime<br>timestamp <br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]b0342fccfda<1 /span><span class='notranslate'><br>'1' significa que afegim un botó + després de la combinació per crear el registre<br>'filtre' és un Condició de sintaxi del filtre universal, exemple: '((estat:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Aquest és el tipus de camp/atribut.
 AsciiToHtmlConverter=Convertidor Ascii a HTML
 AsciiToPdfConverter=Convertidor Ascii a PDF
@@ -181,5 +180,9 @@ FailedToAddCodeIntoDescriptor=No s'ha pogut afegir el codi al descriptor. Compro
 DictionariesCreated=Diccionari <b>%s</b> creat correctament
 DictionaryDeleted=El diccionari <b>%s</b> s'ha eliminat correctament
 PropertyModuleUpdated=La propietat <b>%s</b> s'ha actualitzat correctament
-InfoForApiFile=* Quan genereu un fitxer per primera vegada, es crearan tots els mètodes <strong>per a cada objecte.</strong><br>* Quan feu clic a <strong>remove</strong> només elimineu tots els mètodes de la classe <span ='notranslate'><strong></span>objecte seleccionat</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Pàgina per a la configuració del mòdul
+EmailingSelectors=Selectors de correus electrònics
+EmailingSelectorDesc=Podeu generar i editar aquí els fitxers de classe per proporcionar nous selectors de destinació de correu electrònic per al mòdul d'enviament massiu de correu electrònic
+EmailingSelectorFile=Fitxer selector de correus electrònics
+NoEmailingSelector=No hi ha cap fitxer de selecció de correus electrònics

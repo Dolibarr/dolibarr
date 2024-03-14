@@ -56,7 +56,7 @@ class box_validated_projects extends ModeleBoxes
 		$this->db = $db;
 		$this->boxlabel = "ProjectTasksWithoutTimeSpent";
 
-		$this->hidden = empty($user->rights->projet->lire);
+		$this->hidden = !$user->hasRight('projet', 'lire');
 
 		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 			$this->enabled = 0;

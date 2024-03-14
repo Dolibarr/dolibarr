@@ -73,7 +73,7 @@ if (!empty($conf->$module->dir_temp)) {
 
 top_httphead();
 
-dol_syslog(join(',', $_GET));
+dol_syslog(implode(',', $_GET));
 
 $result = false;
 

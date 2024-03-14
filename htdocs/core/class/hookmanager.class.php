@@ -129,7 +129,7 @@ class HookManager
 		}
 		// Log the init of hook but only for hooks there are declared to be managed
 		if (count($arraytolog) > 0) {
-			dol_syslog(get_class($this)."::initHooks Loading hooks: ".join(', ', $arraytolog), LOG_DEBUG);
+			dol_syslog(get_class($this)."::initHooks Loading hooks: ".implode(', ', $arraytolog), LOG_DEBUG);
 		}
 
 		foreach ($arraycontext as $context) {
@@ -163,7 +163,7 @@ class HookManager
 			$parameters = array();
 		}
 
-		$parameters['context'] = join(':', $this->contextarray);
+		$parameters['context'] = implode(':', $this->contextarray);
 		//dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
 
 		// Define type of hook ('output' or 'addreplace').
@@ -207,8 +207,9 @@ class HookManager
 		}
 
 		// Init return properties
-		$this->resPrint = '';
-		$this->resArray = array();
+		$localResPrint = '';
+		$localResArray = array();
+
 		$this->resNbOfHooks = 0;
 
 		// Here, the value for $method and $hooktype are given.
@@ -238,7 +239,7 @@ class HookManager
 					$modulealreadyexecuted[$module] = $module;
 
 					// Clean class (an error may have been set from a previous call of another method for same module/hook)
-					$actionclassinstance->error = 0;
+					$actionclassinstance->error = '';
 					$actionclassinstance->errors = array();
 
 					if (getDolGlobalInt('MAIN_HOOK_DEBUG')) {
@@ -258,21 +259,22 @@ class HookManager
 							$error++;
 							$this->error = $actionclassinstance->error;
 							$this->errors = array_merge($this->errors, (array) $actionclassinstance->errors);
-							dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error) ? '' : " ".$this->error).(empty($this->errors) ? '' : " ".join(",", $this->errors)), LOG_ERR);
+							dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error) ? '' : " ".$this->error).(empty($this->errors) ? '' : " ".implode(",", $this->errors)), LOG_ERR);
 						}
 
 						if (isset($actionclassinstance->results) && is_array($actionclassinstance->results)) {
 							if ($resactiontmp > 0) {
-								$this->resArray = $actionclassinstance->results;
+								$localResArray = $actionclassinstance->results;
 							} else {
-								$this->resArray = array_merge($this->resArray, $actionclassinstance->results);
+								$localResArray = array_merge_recursive($localResArray, $actionclassinstance->results);
 							}
 						}
+
 						if (!empty($actionclassinstance->resprints)) {
 							if ($resactiontmp > 0) {
-								$this->resPrint = $actionclassinstance->resprints;
+								$localResPrint = $actionclassinstance->resprints;
 							} else {
-								$this->resPrint .= $actionclassinstance->resprints;
+								$localResPrint .= $actionclassinstance->resprints;
 							}
 						}
 					} else {
@@ -291,23 +293,23 @@ class HookManager
 						$resaction += $resactiontmp;
 
 						if (!empty($actionclassinstance->results) && is_array($actionclassinstance->results)) {
-							$this->resArray = array_merge($this->resArray, $actionclassinstance->results);
+							$localResArray = array_merge_recursive($localResArray, $actionclassinstance->results);
 						}
 						if (!empty($actionclassinstance->resprints)) {
-							$this->resPrint .= $actionclassinstance->resprints;
+							$localResPrint .= $actionclassinstance->resprints;
 						}
 						if (is_numeric($resactiontmp) && $resactiontmp < 0) {
 							$error++;
 							$this->error = $actionclassinstance->error;
 							$this->errors = array_merge($this->errors, (array) $actionclassinstance->errors);
-							dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error) ? '' : " ".$this->error).(empty($this->errors) ? '' : " ".join(",", $this->errors)), LOG_ERR);
+							dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error) ? '' : " ".$this->error).(empty($this->errors) ? '' : " ".implode(",", $this->errors)), LOG_ERR);
 						}
 
 						// TODO dead code to remove (do not disable this, but fix your hook instead): result must not be a string but an int. you must use $actionclassinstance->resprints to return a string
 						if (!is_array($resactiontmp) && !is_numeric($resactiontmp)) {
 							dol_syslog('Error: Bug into hook '.$method.' of module class '.get_class($actionclassinstance).'. Method must not return a string but an int (0=OK, 1=Replace, -1=KO) and set string into ->resprints', LOG_ERR);
 							if (empty($actionclassinstance->resprints)) {
-								$this->resPrint .= $resactiontmp;
+								$localResPrint .= $resactiontmp;
 							}
 						}
 					}
@@ -319,6 +321,9 @@ class HookManager
 				}
 			}
 		}
+
+		$this->resPrint = $localResPrint;
+		$this->resArray = $localResArray;
 
 		return ($error ? -1 : $resaction);
 	}

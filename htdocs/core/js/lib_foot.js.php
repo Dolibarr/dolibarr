@@ -96,12 +96,13 @@ if (empty($conf->dol_no_mouse_hover)) {
 	target.off("mouseover mouseout");
 	target.on("mouseover", function(event) {
 		console.log("we will create timer for ajax call");
+	    event.stopImmediatePropagation();
+		clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
+
 		var params = JSON.parse($(this).attr("data-params"));
 		params.token = currenttoken;
 		var elemfortooltip = $(this);
 
-	    event.stopImmediatePropagation();
-		clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
 	    elemtostoretooltiptimer.data("openTimeoutId", setTimeout(function() {
 			target.tooltip("close");
 			$.ajax({
@@ -119,7 +120,7 @@ if (empty($conf->dol_no_mouse_hover)) {
 			 }, opendelay));
 	});
 	target.on("mouseout", function(event) {
-		console.log("mouse out");
+		console.log("mouse out of a .classforajaxtooltip");
 	    event.stopImmediatePropagation();
 	    clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
 	    target.tooltip("close");

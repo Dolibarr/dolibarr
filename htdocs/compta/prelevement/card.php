@@ -38,17 +38,17 @@ $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawal
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $type = GETPOST('type', 'aZ09');
-$date_trans = dol_mktime(GETPOST('date_transhour', 'int'), GETPOST('date_transmin', 'int'), GETPOST('date_transsec', 'int'), GETPOST('date_transmonth', 'int'), GETPOST('date_transday', 'int'), GETPOST('date_transyear', 'int'));
+$date_trans = dol_mktime(GETPOSTINT('date_transhour'), GETPOSTINT('date_transmin'), GETPOSTINT('date_transsec'), GETPOSTINT('date_transmonth'), GETPOSTINT('date_transday'), GETPOSTINT('date_transyear'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -104,7 +104,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	if ($action == 'setbankaccount' && $permissiontoadd) {
 		$object->oldcopy = dol_clone($object, 2);
-		$object->fk_bank_account = GETPOST('fk_bank_account', 'int');
+		$object->fk_bank_account = GETPOSTINT('fk_bank_account');
 		$object->update($user);
 	}
 
@@ -119,7 +119,7 @@ if (empty($reshook)) {
 	if ($action == 'infotrans' && $permissiontosend) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+		$dt = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 
 		/*
 		if ($_FILES['userfile']['name'] && basename($_FILES['userfile']['name'],".ps") == $object->ref)
@@ -150,7 +150,7 @@ if (empty($reshook)) {
 
 	// Set direct debit order to credited, create payment and close invoices
 	if ($action == 'setinfocredit' && $permissiontocreditdebit) {
-		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+		$dt = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 
 		if (($object->type != 'bank-transfer' && $object->statut == BonPrelevement::STATUS_CREDITED) || ($object->type == 'bank-transfer' && $object->statut == BonPrelevement::STATUS_DEBITED)) {
 			$error = 1;
@@ -236,7 +236,7 @@ if ($id > 0 || $ref) {
 			print '<form name="setdate_trans" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_trans">';
-			print $form->selectDate($object->date_trans ? $object->date_trans : -1, 'date_trans', 0, '', "setdate_trans");
+			print $form->selectDate($object->date_trans ? $object->date_trans : -1, 'date_trans', 0, 0, "setdate_trans");
 			print '<input type="submit" class="button button-edit smallpaddingimp valign middle" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
@@ -383,7 +383,7 @@ if ($id > 0 || $ref) {
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyTransmision").'</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans("TransData").'</td><td>';
-		print $form->selectDate('', '', '', '', '', "userfile", 1, 1);
+		print $form->selectDate('', '', 0, 0, 0, "userfile", 1, 1);
 		print '</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $form->selectarray("methode", $object->methodes_trans);
@@ -403,7 +403,7 @@ if ($id > 0 || $ref) {
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyCredit").'</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans('CreditDate').'</td><td>';
-		print $form->selectDate(-1, '', '', '', '', "infocredit", 1, 1);
+		print $form->selectDate(-1, '', 0, 0, 0, "infocredit", 1, 1);
 		print '</td></tr>';
 		print '</table>';
 		print '<br><div class="center"><span class="opacitymedium">'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice").'</span></div>';
@@ -460,7 +460,7 @@ if ($id > 0 || $ref) {
 	if ($salaryBonPl) {
 		$sql = "SELECT pl.rowid, pl.statut, pl.amount, pl.fk_user,";
 		$sql .= " u.rowid as socid, u.login as name";
-		$sql .=" FROM llx_prelevement_lignes as pl";
+		$sql .= " FROM llx_prelevement_lignes as pl";
 		$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
 		$sql .= ", ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $id);
@@ -506,7 +506,7 @@ if ($id > 0 || $ref) {
 		$num = $db->num_rows($result);
 		$i = 0;
 
-		$urladd = "&id=".urlencode($id);
+		$urladd = "&id=".urlencode((string) ($id));
 		if ($limit > 0 && $limit != $conf->liste_limit) {
 			$urladd .= '&limit='.((int) $limit);
 		}
@@ -527,6 +527,7 @@ if ($id > 0 || $ref) {
 		if (!empty($sortorder)) {
 			print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 		}
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($langs->trans("Lines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2023  Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ class Loan extends CommonObject
 	public $fk_project;
 
 	/**
-	 * @var int totalpaid
+	 * @var float totalpaid
 	 */
 	public $totalpaid;
 
@@ -501,21 +501,23 @@ class Loan extends CommonObject
 		$langs->loadLangs(array("customers", "bills"));
 
 		unset($this->labelStatus); // Force to reset the array of status label, because label can change depending on parameters
-		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
-			global $langs;
-			$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
-			$this->labelStatus[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Paid');
-			$this->labelStatus[self::STATUS_STARTED] = $langs->transnoentitiesnoconv("BillStatusStarted");
-			if ($status == 0 && $alreadypaid > 0) {
-				$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
-			}
-			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
-			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatusShort[self::STATUS_STARTED] = $langs->transnoentitiesnoconv("BillStatusStarted");
-			if ($status == 0 && $alreadypaid > 0) {
-				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
-			}
+		// Always true because of 'unset':
+		// if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+		global $langs;
+		$this->labelStatus = array();
+		$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
+		$this->labelStatus[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Paid');
+		$this->labelStatus[self::STATUS_STARTED] = $langs->transnoentitiesnoconv("BillStatusStarted");
+		if ($status == 0 && $alreadypaid > 0) {
+			$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 		}
+		$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
+		$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Paid');
+		$this->labelStatusShort[self::STATUS_STARTED] = $langs->transnoentitiesnoconv("BillStatusStarted");
+		if ($status == 0 && $alreadypaid > 0) {
+			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
+		}
+		// }  // End of empty(labelStatus,labelStatusShort)
 
 		$statusType = 'status1';
 		if (($status == 0 && $alreadypaid > 0) || $status == self::STATUS_STARTED) {
@@ -594,7 +596,7 @@ class Loan extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -609,7 +611,7 @@ class Loan extends CommonObject
 	 *  Used to build previews or test instances.
 	 * 	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -631,6 +633,8 @@ class Loan extends CommonObject
 		$this->capital = 20000;
 		$this->nbterm = 48;
 		$this->rate = 4.3;
+
+		return 1;
 	}
 
 	/**

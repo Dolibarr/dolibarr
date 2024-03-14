@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,9 +119,9 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @param	Societe			$objsoc     Object thirdparty
+	 *  @param  PaiementFourn	$object		Object we need next value for
+	 *  @return string|0      				Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -139,20 +140,5 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 		$numFinal = get_next_value($db, $mask, 'paiementfourn', 'ref', '', $objsoc, $object->datepaye);
 
 		return  $numFinal;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next free value
-	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	string		$objforref	Object for number to search
-	 *  @return string      			Next free value
-	 */
-	public function commande_get_num($objsoc, $objforref)
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $objforref);
 	}
 }

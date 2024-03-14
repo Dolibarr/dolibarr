@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012   Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010        Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,8 +82,8 @@ class mod_ticket_simple extends ModeleNumRefTicket
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@param	Object		$object		Object we need next value for
-	 *  @return boolean     			false if conflict, true if ok
+	 *	@param	CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
 	{
@@ -119,7 +120,7 @@ class mod_ticket_simple extends ModeleNumRefTicket
 	 *
 	 *  @param  Societe $objsoc    	Object third party
 	 *  @param  Ticket 	$ticket 	Object ticket
-	 *  @return string              Value if OK, 0 if KO
+	 *  @return string|-1           Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $ticket)
 	{

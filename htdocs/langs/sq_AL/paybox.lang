@@ -13,7 +13,7 @@ PaymentCode=Kodi i pagesës
 PayBoxDoPayment=Paguani me Paybox
 YouWillBeRedirectedOnPayBox=Do të ridrejtoheni në faqen e sigurt të Paybox për të futur informacionin e kartës së kreditit
 Continue=Tjetri
-SetupPayBoxToHavePaymentCreatedAutomatically=Konfiguro Paybox-in tuaj me url <b>%s<span class='notranslate'></b> automatikisht, kur pagesa të krijohen në</span vërtetuar nga Paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Kjo faqe konfirmon që pagesa juaj është regjistruar. Faleminderit.
 YourPaymentHasNotBeenRecorded=Pagesa juaj NUK është regjistruar dhe transaksioni është anuluar. Faleminderit.
 AccountParameter=Parametrat e llogarisё

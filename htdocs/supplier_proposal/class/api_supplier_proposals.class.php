@@ -63,8 +63,8 @@ class SupplierProposals extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->supplier_proposal->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->supplier_proposal->fetch($id);
@@ -96,8 +96,8 @@ class SupplierProposals extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->supplier_proposal->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -107,7 +107,7 @@ class SupplierProposals extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 

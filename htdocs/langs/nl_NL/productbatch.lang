@@ -6,6 +6,9 @@ ProductStatusNotOnBatch=Nee (partij / serienummer niet gebruikt)
 ProductStatusOnBatchShort=Partij
 ProductStatusOnSerialShort=Serienummer
 ProductStatusNotOnBatchShort=Nee
+BatchSellOrEatByMandatoryList=Make %s or %s mandatory
+BatchSellOrEatByMandatoryNone=Geen
+BatchSellOrEatByMandatoryAll=%s and %s
 Batch=Partij / Serienummer
 atleast1batchfield=Vervaldatum of uiterste verkoopdatum of Partij / Serienummer
 batch_number=Partij / Serienummer
@@ -45,3 +48,5 @@ OutOfOrder=Buiten gebruik
 InWorkingOrder=In werkende staat
 ToReplace=vervang
 CantMoveNonExistantSerial=Fout. U vraagt een verplaatsing op een record voor een serie die niet meer bestaat. Misschien neemt u hetzelfde serienummer meerdere keren in hetzelfde magazijn in dezelfde zending of is het door een andere zending gebruikt. Verwijder deze zending en maak een andere klaar. 
+TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Lottabel onvolledige runreparatie met parameter '...repair.php?standard=confirmed'
+IlligalQtyForSerialNumbers= voorraad correctie vereist vanwege uniek serienummer.

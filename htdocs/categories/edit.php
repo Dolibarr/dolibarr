@@ -34,23 +34,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->load("categories");
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alphanohtml');
 $action = (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'edit');
 $confirm = GETPOST('confirm');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$socid = (int) GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $label = (string) GETPOST('label', 'alphanohtml');
 $description = (string) GETPOST('description', 'restricthtml');
 $color = preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('color', 'alphanohtml'));
-$position = (int) GETPOST('position', 'int');
-$visible = (int) GETPOST('visible', 'int');
-$parent = (int) GETPOST('parent', 'int');
+$position = GETPOSTINT('position');
+$visible = GETPOSTINT('visible');
+$parent = GETPOSTINT('parent');
 
 if ($id == "") {
-	dol_print_error('', 'Missing parameter id');
+	dol_print_error(null, 'Missing parameter id');
 	exit();
 }
 

@@ -40,8 +40,8 @@ $langs->loadLangs(array('contracts', 'companies'));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$socid = GETPOST('socid', 'int');
-$id = GETPOST('id', 'int');
+$socid = GETPOSTINT('socid');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
@@ -98,7 +98,7 @@ if (empty($reshook)) {
 	// Toggle the status of a contact
 	if ($action == 'swapstatut' && $user->hasRight('contrat', 'creer')) {
 		if ($object->fetch($id)) {
-			$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
+			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 		} else {
 			dol_print_error($db, $object->error);
 		}
@@ -107,7 +107,7 @@ if (empty($reshook)) {
 	// Delete contact
 	if ($action == 'deletecontact' && $user->hasRight('contrat', 'creer')) {
 		$object->fetch($id);
-		$result = $object->delete_contact(GETPOST("lineid", 'int'));
+		$result = $object->delete_contact(GETPOSTINT("lineid"));
 
 		if ($result >= 0) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -132,7 +132,7 @@ $userstatic = new User($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* Card view and edit mode                                                       */
 /*                                                                             */
 /* *************************************************************************** */
 

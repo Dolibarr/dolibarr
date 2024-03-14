@@ -47,7 +47,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->commande->lire);
+		$this->hidden = !$user->hasRight('commande', 'lire');
 	}
 
 	/**
@@ -105,7 +105,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 			include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
 			$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
 			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray)) {
-				$endyear = GETPOST($param_year, 'int');
+				$endyear = GETPOSTINT($param_year);
 				$shownb = GETPOST($param_shownb, 'alpha');
 				$showtot = GETPOST($param_showtot, 'alpha');
 			} else {

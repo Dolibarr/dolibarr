@@ -67,7 +67,6 @@ AccountsArea=Espace comptes
 AccountCard=Fiche compte
 DeleteAccount=Suppression de compte
 ConfirmDeleteAccount=Êtes-vous sûr de vouloir effacer ce compte bancaire ?
-Account=Compte
 BankTransactionByCategories=Écritures bancaires par tags/catégories
 BankTransactionForCategory=Écritures bancaires pour le tag/catégorie <b>%s</b>
 RemoveFromRubrique=Supprimer lien avec rubrique

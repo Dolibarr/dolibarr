@@ -67,7 +67,6 @@ AccountsArea=منطقة الحسابات
 AccountCard=بطاقة الحساب
 DeleteAccount=حذف الحساب
 ConfirmDeleteAccount=هل أنت متأكد أنك تريد حذف هذا الحساب؟
-Account=حساب
 BankTransactionByCategories=القيود البنكية حسب الفئات
 BankTransactionForCategory=القيود البنكية للفئة <b>%s</b>
 RemoveFromRubrique=إزالة الارتباط مع هذه الفئة

@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2021       Christophe Battarel			<christophe@altairis.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +78,7 @@ class mod_sn_standard extends ModeleNumRefBatch
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@param	Object		$object		Object we need next value for
+	 *	@param	CommonObject	$object	Object we need next value for
 	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
 	public function canBeActivated($object)
@@ -116,7 +117,7 @@ class mod_sn_standard extends ModeleNumRefBatch
 	 *
 	 *  @param	Societe		$objsoc     Object thirdparty
 	 *  @param  Productlot	$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @return string|int      		String if OK, <0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

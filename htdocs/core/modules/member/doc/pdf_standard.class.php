@@ -5,6 +5,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo	<jlb@j1b.org>
  * Copyright (C) 2006-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 Francis Appels  <francis.appels@yahoo.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,7 +120,7 @@ class pdf_standard extends CommonStickerGenerator
 
 		$member = new Adherent($db);
 		$member->id = $idmember;
-		$member->ref = $idmember;
+		$member->ref = (string) $idmember;
 
 		// Define photo
 		$dir = $conf->adherent->dir_output;
@@ -323,14 +324,15 @@ class pdf_standard extends CommonStickerGenerator
 				$nb = 1; // Protection to avoid empty page
 			}
 
+			$arrayofmembers = array();
 			for ($j = 0; $j < $nb; $j++) {
 				$arrayofmembers[] = array(
-					'textleft'=>$textleft,
-					'textheader'=>$textheader,
-					'textfooter'=>$textfooter,
-					'textright'=>$textright,
-					'id'=>(isset($object->id) ? $object->id : ""),
-					'photo'=>(isset($object->photo) ? $object->photo : "")
+					'textleft' => $textleft,
+					'textheader' => $textheader,
+					'textfooter' => $textfooter,
+					'textright' => $textright,
+					'id' => (isset($object->id) ? $object->id : ""),
+					'photo' => (isset($object->photo) ? $object->photo : "")
 				);
 			}
 
@@ -342,7 +344,7 @@ class pdf_standard extends CommonStickerGenerator
 
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) {
-			dol_print_error('', 'ErrorBadTypeForCard'.$this->code);
+			dol_print_error(null, 'ErrorBadTypeForCard'.$this->code);
 			exit;
 		}
 
@@ -373,7 +375,7 @@ class pdf_standard extends CommonStickerGenerator
 			$title = $outputlangs->transnoentities('MembersCards');
 			$keywords = $outputlangs->transnoentities('MembersCards')." ".$outputlangs->transnoentities("Foundation")." ".$outputlangs->convToOutputCharset($mysoc->name);
 		} else {
-			dol_print_error('', 'Bad value for $mode');
+			dol_print_error(null, 'Bad value for $mode');
 			return -1;
 		}
 
@@ -455,7 +457,7 @@ class pdf_standard extends CommonStickerGenerator
 
 		dolChmod($file);
 
-		$this->result = array('fullpath'=>$file);
+		$this->result = array('fullpath' => $file);
 
 		// Output to http stream
 		if (empty($nooutput)) {

@@ -136,6 +136,11 @@ if (empty($versionfrom) && empty($versionto) && !is_writable($conffile)) {
 	exit;
 }
 
+// Ensure $modulesdir is set and array
+if (!isset($modulesdir) || !is_array($modulesdir)) {
+	$modulesdir = array();
+}
+
 if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 	$error = 0;
 
@@ -423,7 +428,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 			print $langs->trans("ErrorFailedToConnect")."<br>";
 		}
 	} else {
-		dol_print_error('', 'step5.php: unknown choice of action');
+		dol_print_error(null, 'step5.php: unknown choice of action');
 	}
 
 	$db->close();
@@ -533,7 +538,7 @@ if ($action == "set") {
 		$morehtml .= '</a></div>';
 	}
 } else {
-	dol_print_error('', 'step5.php: unknown choice of action='.$action.' in create lock file seaction');
+	dol_print_error(null, 'step5.php: unknown choice of action='.$action.' in create lock file seaction');
 }
 
 // Clear cache files

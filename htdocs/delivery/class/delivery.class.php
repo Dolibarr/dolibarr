@@ -6,7 +6,7 @@
  * Copyright (C) 2011-2023 Philippe Grand	     <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry	     <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2023      Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024 Frédéric France       <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 
@@ -280,7 +280,7 @@ class Delivery extends CommonObject
 	 *  @param	array	$array_options			Array options
 	 *	@return	int								Return integer <0 if KO, >0 if OK
 	 */
-	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = null)
+	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = [])
 	{
 		// phpcs:enable
 		$error = 0;
@@ -599,10 +599,10 @@ class Delivery extends CommonObject
 	 * Update a livraison line (only extrafields)
 	 *
 	 * @param 	int		$id					Id of line (livraison line)
-	 * @param	array		$array_options		extrafields array
+	 * @param	array	$array_options		extrafields array
 	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
-	public function update_line($id, $array_options = 0)
+	public function update_line($id, $array_options = [])
 	{
 		// phpcs:enable
 		global $conf;
@@ -636,7 +636,7 @@ class Delivery extends CommonObject
 	 *  @param	array	$array_options			Array options
 	 *	@return	void
 	 */
-	public function addline($origin_id, $qty, $array_options = null)
+	public function addline($origin_id, $qty, $array_options = [])
 	{
 		global $conf;
 
@@ -657,7 +657,7 @@ class Delivery extends CommonObject
 	 *	@param	int		$lineid		Line id
 	 *	@return	integer				Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
-	public function deleteline($lineid)
+	public function deleteLine($lineid)
 	{
 		if ($this->statut == 0) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
@@ -965,7 +965,7 @@ class Delivery extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1012,6 +1012,8 @@ class Delivery extends CommonObject
 		$line->total_ht       = 100;
 
 		$this->lines[$i] = $line;
+
+		return 1;
 	}
 
 	/**
@@ -1117,7 +1119,7 @@ class Delivery extends CommonObject
 	 *  @param     int			$hideref        Hide ref
 	 *  @return    int             				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		global $conf, $langs;
 

@@ -264,11 +264,11 @@ class pdf_crabe extends ModelePDFFactures
 
 			// Definition of $dir and $file
 			if ($object->specimen) {
-				$dir = empty($conf->facture->multidir_output[$conf->entity]) ? $conf->facture->dir_output : $conf->facture->multidir_output[$conf->entity];
+				$dir = empty($conf->facture->multidir_output[$object->entity]) ? $conf->facture->dir_output : $conf->facture->multidir_output[$object->entity];
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = (empty($conf->facture->multidir_output[$conf->entity]) ? $conf->facture->dir_output : $conf->facture->multidir_output[$conf->entity])."/".$objectref;
+				$dir = (empty($conf->facture->multidir_output[$object->entity]) ? $conf->facture->dir_output : $conf->facture->multidir_output[$object->entity])."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 			if (!file_exists($dir)) {
@@ -285,7 +285,7 @@ class pdf_crabe extends ModelePDFFactures
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -367,6 +367,7 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->setSignature($cert, $certprivate, $this->emetteur->name, '', 2, $info);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// Set $this->atleastonediscount if you have at least one discount
@@ -775,7 +776,7 @@ class pdf_crabe extends ModelePDFFactures
 					if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
 						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
 					}
-					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate'=>$vatrate, 'vatcode'=>$vatcode, 'amount'=> $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
+					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 
 					if ($posYAfterImage > $posYAfterDescription) {
 						$nexY = $posYAfterImage;
@@ -784,10 +785,10 @@ class pdf_crabe extends ModelePDFFactures
 					// Add line
 					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);
-						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
+						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY + 1, $this->page_largeur - $this->marge_droite, $nexY + 1);
-						$pdf->SetLineStyle(array('dash'=>0));
+						$pdf->SetLineStyle(array('dash' => 0));
 					}
 
 					$nexY += 2; // Add space between lines
@@ -872,7 +873,7 @@ class pdf_crabe extends ModelePDFFactures
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -882,7 +883,7 @@ class pdf_crabe extends ModelePDFFactures
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {
@@ -1111,7 +1112,7 @@ class pdf_crabe extends ModelePDFFactures
 	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs, $outputlangsbis)
 	{
 		// phpcs:enable
-		global $conf, $mysoc;
+		global $conf, $mysoc, $hookmanager;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -1204,8 +1205,9 @@ class pdf_crabe extends ModelePDFFactures
 				if ($object->mode_reglement_code == "PRE") {
 					require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 					$bac = new CompanyBankAccount($this->db);
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$bac->fetch(0, $object->thirdparty->id);
-					$iban= $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
+					$iban = $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
 					$lib_mode_reg .= ' '.$outputlangs->trans("PaymentTypePREdetails", dol_trunc($iban, 6, 'right', 'UTF-8', 1));
 				}
 				$pdf->MultiCell(80, 5, $lib_mode_reg, 0, 'L');
@@ -1237,6 +1239,14 @@ class pdf_crabe extends ModelePDFFactures
 					}
 					if (isModEnabled('paybox')) {
 						$useonlinepayment++;
+					}
+					$parameters = array();
+					$action = '';
+					$reshook = $hookmanager->executeHooks('doShowOnlinePaymentUrl', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+					if ($reshook > 0) {
+						if (isset($hookmanager->resArray['showonlinepaymenturl'])) {
+							$useonlinepayment += $hookmanager->resArray['showonlinepaymenturl'];
+						}
 					}
 				}
 
@@ -1387,8 +1397,6 @@ class pdf_crabe extends ModelePDFFactures
 			if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_IFNULL') && $tvaisnull) {
 				// Nothing to do
 			} else {
-				// FIXME amount of vat not supported with multicurrency
-
 				//Local tax 1 before VAT
 				//if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				//{
@@ -1415,8 +1423,10 @@ class pdf_crabe extends ModelePDFFactures
 							$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
+							$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
+
 							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-							$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+							$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', 1);
 						}
 					}
 				}
@@ -1446,8 +1456,10 @@ class pdf_crabe extends ModelePDFFactures
 							$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
+							$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
+
 							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-							$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+							$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', 1);
 						}
 					}
 				}
@@ -1507,8 +1519,11 @@ class pdf_crabe extends ModelePDFFactures
 							$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
 
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+
+							$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
+
 							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-							$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+							$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', 1);
 						}
 					}
 				}
@@ -1537,8 +1552,10 @@ class pdf_crabe extends ModelePDFFactures
 						$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
 						$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
+						$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
+
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+						$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', 1);
 					}
 				}
 				//}
@@ -1787,7 +1804,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	int							top shift of linked object lines
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
@@ -2114,6 +2131,7 @@ class pdf_crabe extends ModelePDFFactures
 			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_name, 0, $ltrdirection);
 
 			$posy = $pdf->getY();
@@ -2121,6 +2139,7 @@ class pdf_crabe extends ModelePDFFactures
 			// Show recipient information
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetXY($posx + 2, $posy);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->MultiCell($widthrecbox - 2, 4, $carac_client, 0, $ltrdirection);
 
 			// Show shipping address
@@ -2131,11 +2150,11 @@ class pdf_crabe extends ModelePDFFactures
 					$contactshipping = $object->fetch_Contact($idaddressshipping[0]);
 					$companystatic = new Societe($this->db);
 					$companystatic->fetch($object->contact->fk_soc);
-					$carac_client_name_shipping=pdfBuildThirdpartyName($object->contact, $outputlangs);
+					$carac_client_name_shipping = pdfBuildThirdpartyName($object->contact, $outputlangs);
 					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, $usecontact, 'target', $object);
 				} else {
-					$carac_client_name_shipping=pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
-					$carac_client_shipping=pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);
+					$carac_client_name_shipping = pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);
 				}
 				if (!empty($carac_client_shipping)) {
 					$posy += $hautcadre;
@@ -2154,7 +2173,7 @@ class pdf_crabe extends ModelePDFFactures
 					$posy = $pdf->getY();
 
 					// Show shipping information
-					$pdf->SetXY($posx+2, $posy);
+					$pdf->SetXY($posx + 2, $posy);
 					$pdf->SetFont('', '', $default_font_size - 1);
 					$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_shipping, '', 'L');
 					$top_shift += $hautcadre;
@@ -2163,6 +2182,7 @@ class pdf_crabe extends ModelePDFFactures
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
 		return $top_shift;
 	}
 

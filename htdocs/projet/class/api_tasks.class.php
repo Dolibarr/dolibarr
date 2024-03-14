@@ -67,8 +67,8 @@ class Tasks extends DolibarrApi
 	 */
 	public function get($id, $includetimespent = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->task->fetch($id);
@@ -109,8 +109,8 @@ class Tasks extends DolibarrApi
 	{
 		global $db, $conf;
 
-		if (!DolibarrApiAccess::$user->rights->projet->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -120,7 +120,7 @@ class Tasks extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -189,7 +189,7 @@ class Tasks extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		// Check mandatory fields
@@ -229,8 +229,8 @@ class Tasks extends DolibarrApi
 	/*
 	public function getLines($id, $includetimespent=0)
 	{
-		if(! DolibarrApiAccess::$user->rights->projet->lire) {
-			throw new RestException(401);
+		if(! DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->project->fetch($id);
@@ -274,8 +274,8 @@ class Tasks extends DolibarrApi
 	{
 		global $db;
 
-		if (!DolibarrApiAccess::$user->rights->projet->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->task->fetch($id);
@@ -315,8 +315,8 @@ class Tasks extends DolibarrApi
 	/*
 	public function postLine($id, $request_data = null)
 	{
-		if(! DolibarrApiAccess::$user->rights->projet->creer) {
-			throw new RestException(401);
+		if(! DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->project->fetch($id);
@@ -382,8 +382,8 @@ class Tasks extends DolibarrApi
 	/*
 	public function putLine($id, $lineid, $request_data = null)
 	{
-		if(! DolibarrApiAccess::$user->rights->projet->creer) {
-			throw new RestException(401);
+		if(! DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->project->fetch($id);
@@ -435,15 +435,14 @@ class Tasks extends DolibarrApi
 	/**
 	 * Update task general fields (won't touch time spent of task)
 	 *
-	 * @param int   $id             Id of task to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   	$id             	Id of task to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->task->fetch($id);
@@ -483,8 +482,8 @@ class Tasks extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->supprimer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'supprimer')) {
+			throw new RestException(403);
 		}
 		$result = $this->task->fetch($id);
 		if (!$result) {
@@ -526,8 +525,8 @@ class Tasks extends DolibarrApi
 	 */
 	public function addTimeSpent($id, $date, $duration, $user_id = 0, $note = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
+			throw new RestException(403);
 		}
 		$result = $this->task->fetch($id);
 		if ($result <= 0) {
@@ -585,8 +584,8 @@ class Tasks extends DolibarrApi
 	 */
 	public function putTimeSpent($id, $timespent_id, $date, $duration, $user_id = 0, $note = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
+			throw new RestException(403);
 		}
 		$this->timespentRecordChecks($id, $timespent_id);
 
@@ -630,8 +629,8 @@ class Tasks extends DolibarrApi
 	 */
 	public function deleteTimeSpent($id, $timespent_id)
 	{
-		if (!DolibarrApiAccess::$user->rights->projet->supprimer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'supprimer')) {
+			throw new RestException(403);
 		}
 		$this->timespentRecordChecks($id, $timespent_id);
 

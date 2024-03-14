@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
@@ -135,7 +135,7 @@ $head = contact_prepare_head($object);
 
 if ($action == 'edit') {
 	/*
-	 * Fiche en mode edition
+	 * Card in edit mode
 	 */
 
 	print '<form name="perso" method="POST" enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';

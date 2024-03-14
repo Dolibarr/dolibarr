@@ -4,7 +4,8 @@
  * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2013-2018 Philippe Grand      	<philippe.grand@atoo-net.com>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024	Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,41 +36,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
  */
 class mod_codeclient_elephant extends ModeleThirdPartyCode
 {
-	/**
-	 * @var string model name
-	 */
+	// variables inherited from ModeleThirdPartyCode class
 	public $name = 'Elephant';
+	public $version = 'dolibarr';
 
-	/**
-	 * @var int Code modifiable
-	 */
-	public $code_modifiable;
-
-	/**
-	 * @var int Code modifiable si il est invalid
-	 */
-	public $code_modifiable_invalide;
-
-	/**
-	 * @var int Code modifiables si il est null
-	 */
-	public $code_modifiable_null;
-
-	/**
-	 * @var int Code facultatif
-	 */
-	public $code_null;
-
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto;
+	// variables not inherited
 
 	/**
 	 * @var string search string
@@ -80,11 +51,6 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 * @var int Nombre de chiffres du compteur
 	 */
 	public $numbitcounter;
-
-	/**
-	 * @var int thirdparty prefix is required when using {pre}
-	 */
-	public $prefixIsRequired;
 
 
 	/**
@@ -159,7 +125,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 * Return an example of result returned by getNextValue
 	 *
 	 * @param	Translate	$langs		Object langs
-	 * @param	societe		$objsoc		Object thirdparty
+	 * @param	Societe		$objsoc		Object thirdparty
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */
@@ -220,7 +186,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 *
 	 * @param	Societe		$objsoc     Object third party
 	 * @param  	int		    $type       Client ou fournisseur (0:customer, 1:supplier)
-	 * @return 	string      			Value if OK, '' if module not configured, <0 if KO
+	 * @return 	string|-1      			Value if OK, '' if module not configured, -1 if KO
 	 */
 	public function getNextValue($objsoc = 0, $type = -1)
 	{
@@ -311,7 +277,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$code = strtoupper(trim($code));
 
 		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
-			$result = 0;
+			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		} else {

@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
 
@@ -45,13 +47,12 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	}
 
 	/**
-	 * Is the module active ?
+	 * Is the logger active ?
 	 *
-	 * @return int
+	 * @return int		1 if logger enabled
 	 */
 	public function isActive()
 	{
-		global $conf;
 		return !getDolGlobalString('SYSLOG_DISABLE_LOGHANDLER_FILE') ? 1 : 0; // Set SYSLOG_DISABLE_LOGHANDLER_FILE to 1 to disable this loghandler
 	}
 
@@ -134,6 +135,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 * @param  	array 	$content 			Array containing the info about the message
 	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename.
 	 * @return	void
+	 * @phan-suppress PhanPluginDuplicateArrayKey
 	 */
 	public function export($content, $suffixinfilename = '')
 	{

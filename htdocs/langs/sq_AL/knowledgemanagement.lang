@@ -26,14 +26,12 @@ ModuleKnowledgeManagementDesc=Menaxhoni një bazë të menaxhimit të njohurive 
 # Admin page
 #
 KnowledgeManagementSetup = Konfigurimi i sistemit të menaxhimit të njohurive
-Settings = Cilësimet
 KnowledgeManagementSetupPage = Faqja e konfigurimit të sistemit të menaxhimit të njohurive
 
 
 #
 # About page
 #
-About = Rreth
 KnowledgeManagementAbout = Rreth Menaxhimit të Dijes
 KnowledgeManagementAboutPage = Menaxhimi i njohurive rreth faqes
 

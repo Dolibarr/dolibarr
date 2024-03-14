@@ -20,6 +20,7 @@
  * Copyright (C) 2019-2020  Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2020  		Pierre Ardoin     	 <mapiolca@me.com>
  * Copyright (C) 2022  		Vincent de Grandpré  <vincent@de-grandpre.quebec>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,10 +61,10 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (isModEnabled('propal')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 }
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 if (isModEnabled('accounting')) {
@@ -83,31 +84,33 @@ $langs->loadLangs(array('products', 'other'));
 if (isModEnabled('stock')) {
 	$langs->load("stocks");
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	$langs->load("bills");
 }
 if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }
 
-$mesg = ''; $error = 0; $errors = array();
+$mesg = '';
+$error = 0;
+$errors = array();
 
 $refalreadyexists = 0;
 
 // Get parameters
-$id  = GETPOST('id', 'int');
+$id  = GETPOSTINT('id');
 if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
 	$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'nohtml') : null);
 } else {
 	$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : null);
 }
-$type = (GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT);
+$type = (GETPOSTISSET('type') ? GETPOSTINT('type') : Product::TYPE_PRODUCT);
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$socid = GETPOST('socid', 'int');
-$duration_value = GETPOST('duration_value', 'int');
+$socid = GETPOSTINT('socid');
+$duration_value = GETPOSTINT('duration_value');
 $duration_unit = GETPOST('duration_unit', 'alpha');
 
 $accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
@@ -216,7 +219,7 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('barcode',
 	$createbarcode = 0;
 }
 
-$parameters = array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
+$parameters = array('id' => $id, 'ref' => $ref, 'objcanvas' => $objcanvas);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -248,7 +251,7 @@ if (empty($reshook)) {
 	// merge products
 	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
 		$error = 0;
-		$productOriginId = GETPOST('product_origin', 'int');
+		$productOriginId = GETPOSTINT('product_origin');
 		$productOrigin = new Product($db);
 
 		if ($productOriginId <= 0) {
@@ -505,7 +508,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$units = GETPOST('units', 'int');
+			$units = GETPOSTINT('units');
 
 			$object->entity				= $conf->entity;
 			$object->ref				= $ref;
@@ -568,6 +571,7 @@ if (empty($reshook)) {
 			$object->status             	 = GETPOST('statut');
 			$object->status_buy = GETPOST('statut_buy');
 			$object->status_batch = GETPOST('status_batch');
+			$object->sell_or_eat_by_mandatory = GETPOSTINT('sell_or_eat_by_mandatory');
 			$object->batch_mask = GETPOST('batch_mask');
 
 			$object->barcode_type = GETPOST('fk_barcode_type');
@@ -591,14 +595,14 @@ if (empty($reshook)) {
 			$object->note_private          	 = dol_htmlcleanlastbr(GETPOST('note_private', 'restricthtml'));
 			$object->note               	 = $object->note_private; // deprecated
 			$object->customcode              = GETPOST('customcode', 'alphanohtml');
-			$object->country_id = GETPOST('country_id', 'int');
-			$object->state_id = GETPOST('state_id', 'int');
-			$object->lifetime               = GETPOST('lifetime', 'int');
-			$object->qc_frequency           = GETPOST('qc_frequency', 'int');
+			$object->country_id = GETPOSTINT('country_id');
+			$object->state_id = GETPOSTINT('state_id');
+			$object->lifetime               = GETPOSTINT('lifetime');
+			$object->qc_frequency           = GETPOSTINT('qc_frequency');
 			$object->duration_value     	 = $duration_value;
 			$object->duration_unit      	 = $duration_unit;
-			$object->fk_default_warehouse	 = GETPOST('fk_default_warehouse', 'int');
-			$object->fk_default_workstation	 = GETPOST('fk_default_workstation', 'int');
+			$object->fk_default_warehouse	 = GETPOSTINT('fk_default_warehouse');
+			$object->fk_default_workstation	 = GETPOSTINT('fk_default_workstation');
 			$object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte') ? GETPOST('seuil_stock_alerte') : 0;
 			$object->desiredstock          = GETPOST('desiredstock') ? GETPOST('desiredstock') : 0;
 			$object->canvas             	 = GETPOST('canvas');
@@ -614,14 +618,14 @@ if (empty($reshook)) {
 			$object->surface_units      	 = GETPOST('surface_units'); // This is not the fk_unit but the power of unit
 			$object->volume             	 = GETPOST('volume');
 			$object->volume_units       	 = GETPOST('volume_units'); // This is not the fk_unit but the power of unit
-			$finished = GETPOST('finished', 'int');
+			$finished = GETPOSTINT('finished');
 			if ($finished >= 0) {
 				$object->finished = $finished;
 			} else {
 				$object->finished = null;
 			}
 
-			$units = GETPOST('units', 'int');
+			$units = GETPOSTINT('units');
 			if ($units > 0) {
 				$object->fk_unit = $units;
 			} else {
@@ -758,22 +762,23 @@ if (empty($reshook)) {
 					$object->note = $object->note_private;
 				}
 				$object->customcode             = GETPOST('customcode', 'alpha');
-				$object->country_id = GETPOST('country_id', 'int');
-				$object->state_id = GETPOST('state_id', 'int');
-				$object->lifetime               = GETPOST('lifetime', 'int');
-				$object->qc_frequency           = GETPOST('qc_frequency', 'int');
-				$object->status                 = GETPOST('statut', 'int');
-				$object->status_buy             = GETPOST('statut_buy', 'int');
+				$object->country_id = GETPOSTINT('country_id');
+				$object->state_id = GETPOSTINT('state_id');
+				$object->lifetime               = GETPOSTINT('lifetime');
+				$object->qc_frequency           = GETPOSTINT('qc_frequency');
+				$object->status                 = GETPOSTINT('statut');
+				$object->status_buy             = GETPOSTINT('statut_buy');
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
+				$object->sell_or_eat_by_mandatory = GETPOSTINT('sell_or_eat_by_mandatory');
 				$object->batch_mask = GETPOST('batch_mask', 'alpha');
-				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse', 'int');
-				$object->fk_default_workstation   = GETPOST('fk_default_workstation', 'int');
+				$object->fk_default_warehouse   = GETPOSTINT('fk_default_warehouse');
+				$object->fk_default_workstation   = GETPOSTINT('fk_default_workstation');
 				// removed from update view so GETPOST always empty
 				/*
 				$object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
 				$object->desiredstock           = GETPOST('desiredstock');
 				*/
-				$object->duration_value         = GETPOST('duration_value', 'int');
+				$object->duration_value         = GETPOSTINT('duration_value');
 				$object->duration_unit          = GETPOST('duration_unit', 'alpha');
 
 				$object->canvas                 = GETPOST('canvas');
@@ -791,21 +796,21 @@ if (empty($reshook)) {
 				$object->volume                 = GETPOST('volume');
 				$object->volume_units           = GETPOST('volume_units'); // This is not the fk_unit but the power of unit
 
-				$finished = GETPOST('finished', 'int');
+				$finished = GETPOSTINT('finished');
 				if ($finished >= 0) {
 					$object->finished = $finished;
 				} else {
 					$object->finished = null;
 				}
 
-				$fk_default_bom = GETPOST('fk_default_bom', 'int');
+				$fk_default_bom = GETPOSTINT('fk_default_bom');
 				if ($fk_default_bom >= 0) {
 					$object->fk_default_bom = $fk_default_bom;
 				} else {
 					$object->fk_default_bom = null;
 				}
 
-				$units = GETPOST('units', 'int');
+				$units = GETPOSTINT('units');
 				if ($units > 0) {
 					$object->fk_unit = $units;
 				} else {
@@ -1180,7 +1185,7 @@ if (empty($reshook)) {
 				);
 
 				if ($result > 0) {
-					header("Location: ".DOL_URL_ROOT."/commande/card.php?id=".urlencode($commande->id));
+					header("Location: ".DOL_URL_ROOT."/commande/card.php?id=".urlencode((string) ($commande->id)));
 					exit;
 				}
 			} elseif (GETPOST('factureid') > 0) {
@@ -1249,7 +1254,10 @@ $formcompany = new FormCompany($db);
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
-
+$sellOrEatByMandatoryList = null;
+if (isModEnabled('productbatch')) {
+	$sellOrEatByMandatoryList = Product::getSellOrEatByMandatoryList();
+}
 
 $title = $langs->trans('ProductServiceCard');
 
@@ -1355,7 +1363,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		print load_fiche_titre($title, $linkback, $picto);
 
 		// We set country_id, country_code and country for the selected country
-		$object->country_id = GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : null;
+		$object->country_id = GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : null;
 		if ($object->country_id > 0) {
 			$tmparray = getCountry($object->country_id, 'all');
 			$object->country_code = $tmparray['code'];
@@ -1453,6 +1461,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print '</td></tr>';
 					}
 				}
+
+				// SellBy / EatBy mandatory list
+				if (!empty($sellOrEatByMandatoryList)) {
+					print '<tr><td>'.$langs->trans('BatchSellOrEatByMandatoryList', $langs->trans('SellByDate'), $langs->trans('EatByDate')).'</td><td>';
+					print $form->selectarray('sell_or_eat_by_mandatory', $sellOrEatByMandatoryList, GETPOSTINT('sell_or_eat_by_mandatory'));
+					print '</td></tr>';
+				}
 			}
 
 			$showbarcode = isModEnabled('barcode');
@@ -1468,7 +1483,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					if (empty($fk_barcode_type) && getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE')) {
 						$fk_barcode_type = getDolGlobalInt("PRODUIT_DEFAULT_BARCODE_TYPE");
 					} else {
-						$fk_barcode_type=0;
+						$fk_barcode_type = 0;
 					}
 				}
 				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
@@ -1500,14 +1515,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 			}
 
-			if ($type != 1 && isModEnabled('stock')) {
+			if (($type != 1 || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
 				// Default warehouse
 				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 				print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
-				print $formproduct->selectWarehouses(GETPOST('fk_default_warehouse', 'int'), 'fk_default_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'minwidth300 widthcentpercentminusxx maxwidth500');
-				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?&action=create&type='.GETPOST('type', 'int')).'">';
+				print $formproduct->selectWarehouses(GETPOSTINT('fk_default_warehouse'), 'fk_default_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'minwidth300 widthcentpercentminusxx maxwidth500');
+				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?&action=create&type='.GETPOSTINT('type')).'">';
 				print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span>';
 				print '</a>';
+
 				print '</td>';
 				print '</tr>';
 
@@ -1542,7 +1558,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if ($type == 1) {
 				print '<tr><td>'.$langs->trans("Duration").'</td><td>';
 				print img_picto('', 'clock', 'class="pictofixedwidth"');
-				print '<input name="duration_value" size="4" value="'.GETPOST('duration_value', 'int').'">';
+				print '<input name="duration_value" size="4" value="'.GETPOSTINT('duration_value').'">';
 				print $formproduct->selectMeasuringUnits("duration_unit", "time", (GETPOSTISSET('duration_value') ? GETPOST('duration_value', 'alpha') : 'h'), 0, 1);
 
 				// Mandatory period
@@ -1653,7 +1669,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			// Other attributes
-			$parameters = array('colspan' => ' colspan="2"', 'cols'=>2);
+			$parameters = array('colspan' => ' colspan="2"', 'cols' => 2);
 			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			if (empty($reshook)) {
@@ -1672,7 +1688,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print "</td></tr>";
 			//}
 
-			if (isModEnabled('categorie')) {
+			if (isModEnabled('category')) {
 				// Categories
 				print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
@@ -1867,7 +1883,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		 * Product card
 		 */
 
-		// Fiche en mode edition
+		// Card in edit mode
 		if ($action == 'edit' && $usercancreate) {
 			//WYSIWYG Editor
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -1913,6 +1929,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$parameters = array();
 			// Note that $action and $object may be modified by hook
 			$reshook = $hookmanager->executeHooks('tabContentEditProduct', $parameters, $object, $action);
+
 			if (empty($reshook)) {
 				print '<table class="border allwidth">';
 
@@ -2061,6 +2078,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							print '</td></tr>';
 						}
 					}
+
+					// SellBy / EatBy mandatory list
+					if (!empty($sellOrEatByMandatoryList)) {
+						if (GETPOSTISSET('sell_or_eat_by_mandatory')) {
+							$sellOrEatByMandatorySelectedId = GETPOSTINT('sell_or_eat_by_mandatory');
+						} else {
+							$sellOrEatByMandatorySelectedId = $object->sell_or_eat_by_mandatory;
+						}
+						print '<tr><td>'.$langs->trans('BatchSellOrEatByMandatoryList', $langs->trans('SellByDate'), $langs->trans('EatByDate')).'</td><td>';
+						print $form->selectarray('sell_or_eat_by_mandatory', $sellOrEatByMandatoryList, $sellOrEatByMandatorySelectedId);
+						print '</td></tr>';
+					}
 				}
 
 				// Barcode
@@ -2111,7 +2140,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// Stock
-				if ($object->isProduct() && isModEnabled('stock')) {
+				if (($object->isProduct() || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
 					// Default warehouse
 					print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 					print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
@@ -2130,7 +2159,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					*/
 				}
 
-				if ($object->isService() && $conf->workstation->enabled) {
+				if ($object->isService() && isModEnabled('workstation')) {
 					// Default workstation
 					print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
 					print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
@@ -2232,7 +2261,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td>'.$langs->trans("CountryOrigin").'</td>';
 					print '<td>';
 					print img_picto('', 'globe-americas', 'class="paddingrightonly"');
-					print $form->select_country(GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : $object->country_id, 'country_id', '', 0, 'minwidth100 maxwidthonsmartphone');
+					print $form->select_country(GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : $object->country_id, 'country_id', '', 0, 'minwidth100 maxwidthonsmartphone');
 					if ($user->admin) {
 						print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 					}
@@ -2248,7 +2277,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						}
 
 						print img_picto('', 'state', 'class="pictofixedwidth"');
-						print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOST('state_id', 'int') : $object->state_id, $object->country_code);
+						print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOSTINT('state_id') : $object->state_id, $object->country_code);
 						print '</td>';
 						print '</tr>';
 					}
@@ -2269,7 +2298,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// Tags-Categories
-				if (isModEnabled('categorie')) {
+				if (isModEnabled('category')) {
 					print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 					$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
 					$c = new Categorie($db);
@@ -2392,7 +2421,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			print '</form>';
 		} else {
-			// Fiche en mode visu
+			// Card in view mode
 
 			$showbarcode = isModEnabled('barcode');
 			if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('barcode', 'lire_advance')) {
@@ -2505,6 +2534,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							print '</td></tr>';
 						}
 					}
+
+					print '<tr><td>'.$langs->trans('BatchSellOrEatByMandatoryList', $langs->trans('SellByDate'), $langs->trans('EatByDate')).'</td><td>';
+					print $object->getSellOrEatByMandatoryLabel();
+					print '</td></tr>';
 				}
 
 				if (!getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING')) {
@@ -2610,7 +2643,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// Description
-				print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>'.(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true)).'</td></tr>';
+				print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreakimp wrapimp">'.(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true)).'</td></tr>';
 
 				// Public URL
 				if (!getDolGlobalString('PRODUCT_DISABLE_PUBLIC_URL')) {
@@ -2620,7 +2653,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// Default warehouse
-				if ($object->isProduct() && isModEnabled('stock')) {
+				if (($object->isProduct() || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
 					$warehouse = new Entrepot($db);
 					$warehouse->fetch($object->fk_default_warehouse);
 
@@ -2665,9 +2698,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td>';
 					print $object->duration_value;
 					if ($object->duration_value > 1) {
-						$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
+						$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
 					} elseif ($object->duration_value > 0) {
-						$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
+						$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
 					}
 					print(!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? "&nbsp;".$langs->trans($dur[$object->duration_unit])."&nbsp;" : '');
 
@@ -2795,7 +2828,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 				// Categories
-				if (isModEnabled('categorie')) {
+				if (isModEnabled('category')) {
 					print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 					print $form->showCategories($object->id, Categorie::TYPE_PRODUCT, 1);
 					print "</td></tr>";
@@ -2852,9 +2885,9 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 	// Define confirmation messages
 	$formquestionclone = array(
 		'text' => $langs->trans("ConfirmClone"),
-		array('type' => 'text', 'name' => 'clone_ref', 'label' => $langs->trans("NewRefForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->ref : $tmpcode, 'morecss'=>'width150'),
-		array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneContentProduct"), 'value' => 1),
-		array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 1),
+		0 => array('type' => 'text', 'name' => 'clone_ref', 'label' => $langs->trans("NewRefForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->ref : $tmpcode, 'morecss' => 'width150'),
+		1 => array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneContentProduct"), 'value' => 1),
+		2 => array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 1),
 	);
 	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("CustomerPrices").')', 'value' => 0);
@@ -2958,7 +2991,7 @@ if (getDolGlobalString('PRODUCT_ADD_FORM_ADD_TO') && $object->id && ($action == 
 	}
 
 	// Commande
-	if (isModEnabled('commande') && $user->hasRight('commande', 'creer')) {
+	if (isModEnabled('order') && $user->hasRight('commande', 'creer')) {
 		$commande = new Commande($db);
 
 		$langs->load("orders");
@@ -2978,7 +3011,7 @@ if (getDolGlobalString('PRODUCT_ADD_FORM_ADD_TO') && $object->id && ($action == 
 	}
 
 	// Factures
-	if (isModEnabled('facture') && $user->hasRight('facture', 'creer')) {
+	if (isModEnabled('invoice') && $user->hasRight('facture', 'creer')) {
 		$invoice = new Facture($db);
 
 		$langs->load("bills");

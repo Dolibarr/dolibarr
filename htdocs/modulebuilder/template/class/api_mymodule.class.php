@@ -54,7 +54,8 @@ class MyModuleApi extends DolibarrApi
 		$this->myobject = new MyObject($this->db);
 	}
 
-	/*begin methods CRUD*/
+
+	/* BEGIN MODULEBUILDER API MYOBJECT */
 
 	/**
 	 * Get properties of a myobject object
@@ -71,7 +72,7 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->read) {
+		if (!DolibarrApiAccess::$user->hasRight('mymodule', 'myobject', 'read')) {
 			throw new RestException(403);
 		}
 		if (!DolibarrApi::_checkAccessToResource('myobject', $id, 'mymodule_myobject')) {
@@ -110,7 +111,7 @@ class MyModuleApi extends DolibarrApi
 		$obj_ret = array();
 		$tmpobject = new MyObject($this->db);
 
-		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->read) {
+		if (!DolibarrApiAccess::$user->hasRight('mymodule', 'myobject', 'read')) {
 			throw new RestException(403);
 		}
 
@@ -195,12 +196,12 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->write) {
+		if (!DolibarrApiAccess::$user->hasRight('mymodule', 'myobject', 'write')) {
 			throw new RestException(403);
 		}
 
 		// Check mandatory fields
-		$result = $this->_validate($request_data);
+		$result = $this->_validateMyObject($request_data);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -224,9 +225,9 @@ class MyModuleApi extends DolibarrApi
 	/**
 	 * Update myobject
 	 *
-	 * @param int   $id             Id of myobject to update
-	 * @param array $request_data   Datas
-	 * @return int
+	 * @param 	int   		$id             Id of myobject to update
+	 * @param 	array 		$request_data   Datas
+	 * @return 	Object						Object after update
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
@@ -236,7 +237,7 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->write) {
+		if (!DolibarrApiAccess::$user->hasRight('mymodule', 'myobject', 'write')) {
 			throw new RestException(403);
 		}
 		if (!DolibarrApi::_checkAccessToResource('myobject', $id, 'mymodule_myobject')) {
@@ -321,7 +322,7 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * @throws	RestException
 	 */
-	private function _validate($data)
+	private function _validateMyObject($data)
 	{
 		$myobject = array();
 		foreach ($this->myobject->fields as $field => $propfield) {
@@ -336,7 +337,9 @@ class MyModuleApi extends DolibarrApi
 		return $myobject;
 	}
 
-	/*end methods CRUD*/
+	/* END MODULEBUILDER API MYOBJECT */
+
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**

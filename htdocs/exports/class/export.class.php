@@ -764,7 +764,7 @@ class Export
 								// Export of compute field does not work. $obj contains $obj->alias_field and formula may contains $obj->field
 								// Also the formula may contains objects of class that are not loaded.
 								$computestring = $this->array_export_special[$indice][$key];
-								//$tmp = dol_eval($computestring, 1, 0, '1');
+								//$tmp = (string) dol_eval($computestring, 1, 0, '2');
 								//$obj->$alias = $tmp;
 
 								$this->error = "ERROPNOTSUPPORTED. Operation ".$computestring." not supported. Export of 'computed' extrafields is not yet supported, please remove field.";
@@ -802,8 +802,6 @@ class Export
 	 */
 	public function create($user)
 	{
-		global $conf;
-
 		dol_syslog("Export.class.php::create");
 
 		$this->db->begin();

@@ -36,7 +36,7 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 require_once $path."../../htdocs/master.inc.php";
@@ -52,6 +52,9 @@ $version = DOL_VERSION;
 $error = 0;
 $forcecommit = 0;
 $confirmed = 0;
+
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -70,7 +73,7 @@ $required_fields = array_unique(array_values(array_filter($required_fields, "dol
 if (!isset($argv[1])) {
 	// print "Usage: $script_file (nocommitiferror|commitiferror) [id_group]\n";
 	print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...] [-y]\n";
-	exit(-1);
+	exit(1);
 }
 
 foreach ($argv as $key => $val) {
@@ -120,11 +123,11 @@ if (!$confirmed) {
 
 if (!getDolGlobalString('LDAP_GROUP_DN')) {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for groups not defined inside Dolibarr");
-	exit(-1);
+	exit(1);
 }
 
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result >= 0) {
 	$justthese = array();
 
@@ -236,11 +239,11 @@ if ($result >= 0) {
 		}
 		print "\n";
 	} else {
-		dol_print_error('', $ldap->error);
+		dol_print_error(null, $ldap->error);
 		$error++;
 	}
 } else {
-	dol_print_error('', $ldap->error);
+	dol_print_error(null, $ldap->error);
 	$error++;
 }
 

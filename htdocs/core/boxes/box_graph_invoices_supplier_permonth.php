@@ -47,7 +47,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->fournisseur->facture->lire);
+		$this->hidden = !$user->hasRight('fournisseur', 'facture', 'lire');
 	}
 
 	/**
@@ -102,7 +102,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 			$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
 			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray)) {
-				$endyear = GETPOST($param_year, 'int');
+				$endyear = GETPOSTINT($param_year);
 				$shownb = GETPOST($param_shownb, 'alpha');
 				$showtot = GETPOST($param_showtot, 'alpha');
 			} else {

@@ -404,6 +404,8 @@ if ($event->type == 'payout.created') {
 		$payment_amount = $payment_amountInDolibarr;
 		// TODO Check payment_amount in Stripe (received) is same than the one in Dolibarr
 
+		$postactionmessages = array();
+
 		if ($paymentTypeId == "CB" && ($paymentTypeIdInDolibarr == 'card' || empty($paymentTypeIdInDolibarr))) {
 			// Case payment type in Stripe and into prelevement_demande are both CARD.
 			// For this case, payment should already have been recorded so we just update flag of payment request if not yet 1
@@ -422,7 +424,7 @@ if ($event->type == 'payout.created') {
 			} else {
 				$paiement->multicurrency_amounts = [$invoice_id => $payment_amount];   // Array with all payments dispatching
 
-				$postactionmessages[] = 'Payment was done in a different currency than currency expected of company';
+				$postactionmessages[] = 'Payment was done in a currency ('.$currencyCodeType.') other than the expected currency of company ('.$conf->currency.')';
 				$ispostactionok = -1;
 				// Not yet supported, so error
 				$error++;
@@ -454,7 +456,7 @@ if ($event->type == 'payout.created') {
 				// This include closing invoices to 'paid' (and trigger including unsuspending) and regenerating document
 				$paiement_id = $paiement->create($user, 1);
 				if ($paiement_id < 0) {
-					$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
+					$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . implode("<br>\n", $paiement->errors);
 					$ispostactionok = -1;
 					$error++;
 
@@ -466,8 +468,8 @@ if ($event->type == 'payout.created') {
 				}
 			}
 
-			if (!$error && isModEnabled('banque')) {
-				// Search again the payment to see if it is already linked to a bank payment record (We should always find the payement now we have created before).
+			if (!$error && isModEnabled('bank')) {
+				// Search again the payment to see if it is already linked to a bank payment record (We should always find the payment that was created before).
 				$ispaymentdone = 0;
 				$sql = "SELECT p.rowid, p.fk_bank FROM llx_paiement as p";
 				$sql .= " WHERE p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."'";
@@ -492,7 +494,7 @@ if ($event->type == 'payout.created') {
 						$label = '(CustomerInvoicePayment)';
 						$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, $customer_id, '');
 						if ($result < 0) {
-							$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
+							$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . implode("<br>\n", $paiement->errors);
 							$ispostactionok = -1;
 							$error++;
 						} else {

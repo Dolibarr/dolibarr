@@ -162,6 +162,7 @@ CalcModeVATDebt=Chế độ <b>%sVAT về kế toán cam kết%s</b>.
 CalcModeVATEngagement=Chế độ <b>%sVAT đối với thu nhập-chi phí%s.</b>
 CalcModeDebt=Phân tích các tài liệu được ghi lại đã biết
 CalcModeEngagement=Phân tích các khoản thanh toán được ghi nhận đã biết
+CalcModePayment=Phân tích các khoản thanh toán được ghi nhận đã biết
 CalcModeBookkeeping=Phân tích dữ liệu được báo cáo trong bảng Sổ sách kế toán.
 CalcModeNoBookKeeping=Ngay cả khi chúng chưa được hạch toán vào Sổ Cái
 CalcModeLT1= Chế độ <b>%sRE trên hoá đơn của khách hàng - nhà cung cấp hoá đơn%s</b>

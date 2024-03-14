@@ -20,7 +20,7 @@ ModulePartnershipName=Upravljanje partnerstva
 PartnershipDescription=Modul Partnerski management
 PartnershipDescriptionLong= Modul Partnerski management
 Partnership=Partnerstvo
-Partnerships=Partnerships
+Partnerships=Partnerstva
 AddPartnership=Dodajte partnerstvo
 CancelPartnershipForExpiredMembers=Partnerstvo: Prekličite partnerstvo članov s potečeno naročnino
 PartnershipCheckBacklink=Partnerstvo: Preverite napotitveno povratno povezavo
@@ -29,7 +29,7 @@ PartnershipCheckBacklink=Partnerstvo: Preverite napotitveno povratno povezavo
 # Menu
 #
 NewPartnership=Novo partnerstvo
-NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
+NewPartnershipbyWeb=Vaša zahteva za partnerstvo je bila uspešno dodana. Morda vas kmalu kontaktiramo ...
 ListOfPartnerships=Seznam partnerstev
 
 #
@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Partnerstvo posvečeno temu članu
 DatePartnershipStart=Začetni datum
 DatePartnershipEnd=Končni datum
 ReasonDecline=Razlog za zavrnitev
-ReasonDeclineOrCancel=Razlog za zavrnitev
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=Partnerstvo že obstaja
 ManagePartnership=Upravljajte partnerstvo
 BacklinkNotFoundOnPartnerWebsite=Povratne povezave ni mogoče najti na partnerskem spletnem mestu
@@ -82,15 +82,17 @@ YourPartnershipRefusedTopic=Partnerstvo zavrnjeno
 YourPartnershipAcceptedTopic=Partnerstvo sprejeto
 YourPartnershipCanceledTopic=Partnerstvo preklicano
 
-YourPartnershipWillSoonBeCanceledContent=Obveščamo vas, da bo vaše partnerstvo kmalu preklicano (povratne povezave ni mogoče najti)
-YourPartnershipRefusedContent=Obveščamo vas, da je bila vaša prošnja za partnerstvo zavrnjena.
+YourPartnershipWillSoonBeCanceledContent=Obveščamo vas, da bo naše partnerstvo kmalu prekinjeno (nismo dobili podaljšanja ali pa ni bil izpolnjen predpogoj za naše partnerstvo). Prosimo, kontaktirajte nas, če ste to prejeli zaradi napake.
+YourPartnershipRefusedContent=Obveščamo vas, da je bila vaša prošnja za partnerstvo zavrnjena. Predpogoji niso izpolnjeni. Kontaktirajte nas, če potrebujete več informacij.
 YourPartnershipAcceptedContent=Obveščamo vas, da je bila vaša prošnja za partnerstvo sprejeta.
-YourPartnershipCanceledContent=Obveščamo vas, da je vaše partnerstvo preklicano.
+YourPartnershipCanceledContent=Obveščamo vas, da je naše partnerstvo preklicano. Prosimo, kontaktirajte nas, če potrebujete več informacij.
 
 CountLastUrlCheckError=Število napak pri zadnjem preverjanju URL-ja
 LastCheckBacklink=Datum zadnjega preverjanja URL-ja
-ReasonDeclineOrCancel=Razlog za zavrnitev
 
 NewPartnershipRequest=Nova zahteva za partnerstvo
 NewPartnershipRequestDesc=Ta obrazec vam omogoča, da zaprosite za sodelovanje v enem od naših partnerskih programov. Če potrebujete pomoč pri izpolnjevanju tega obrazca, se obrnite na e-pošto <b> %s </b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Ta stran mora vsebovati vsaj eno povezavo do ene od naslednjih domen: %s
+
+IPOfApplicant=IP prijavitelja
 

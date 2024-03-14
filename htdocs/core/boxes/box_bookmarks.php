@@ -45,7 +45,7 @@ class box_bookmarks extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->bookmark->lire);
+		$this->hidden = !$user->hasRight('bookmark', 'lire');
 	}
 
 	/**

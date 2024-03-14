@@ -44,7 +44,7 @@ class modFacture extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user;
+		global $conf, $langs, $user;
 
 		$this->db = $db;
 		$this->numero = 30;
@@ -73,7 +73,7 @@ class modFacture extends DolibarrModules
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='text')
 
 		// Config pages
-		$this->config_page_url = array("facture.php");
+		$this->config_page_url = array("invoice.php");
 
 		// Constants
 		$this->const = array();
@@ -257,8 +257,8 @@ class modFacture extends DolibarrModules
 			'f.fk_projet' => 'Project Id',
 			'f.fk_account' => 'Bank Account',
 			'f.fk_currency' => 'Currency*',
-			'f.fk_cond_reglement' => 'Payment Condition',
-			'f.fk_mode_reglement' => 'Payment Mode',
+			'f.fk_cond_reglement' => 'PaymentTerm',
+			'f.fk_mode_reglement' => 'PaymentMode',
 			'f.date_lim_reglement' => 'DateMaxPayment',
 			'f.note_public' => 'InvoiceNote',
 			'f.note_private' => 'NotePrivate',
@@ -368,7 +368,7 @@ class modFacture extends DolibarrModules
 			'fd.remise_percent' => 'Reduc. (%)',
 			// remise
 			// fk_remise_except
-			// subprice
+			'fd.subprice' => 'UnitPriceHT',
 			// price
 			'fd.total_ht' => 'LineTotalHT',
 			'fd.total_tva' => 'LineTotalVAT',
@@ -433,7 +433,7 @@ class modFacture extends DolibarrModules
 			'fd.remise_percent' => '0',
 			// remise
 			// fk_remise_except
-			// subprice
+			'fd.subprice' => '100',
 			// price
 			'fd.total_ht' => '100',
 			'fd.total_tva' => '21',
@@ -487,7 +487,9 @@ class modFacture extends DolibarrModules
 
 		// Exports
 		//--------
-		$r = 1;
+		$r = 0;
+
+		$langs->loadLangs(array("suppliers", "multicurrency", "bills"));
 
 		$alias_product_perentity = !getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') ? "p" : "ppe";
 
@@ -505,8 +507,9 @@ class modFacture extends DolibarrModules
 			's.tva_intra'=>'VATIntra',
 			't.libelle'=>"ThirdPartyType", // 'ce.code'=>"Staff", "cfj.libelle"=>"JuridicalStatus",
 			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer', 'f.fk_facture_source'=>'SourceInvoiceId',
-			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue", 'f.total_ht'=>"TotalHT",
-			'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.localtax1'=>'LT1', 'f.localtax2'=>'LT2', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
+			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue",
+			'f.fk_cond_reglement'=>'IdPaymentTerm', 'f.fk_mode_reglement'=>'IdPaymentMode',
+			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.localtax1'=>'LT1', 'f.localtax2'=>'LT2', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
 			'none.rest'=>'Rest',
 			'f.note_private'=>"NotePrivate", 'f.note_public'=>"NotePublic"
 		);
@@ -547,7 +550,8 @@ class modFacture extends DolibarrModules
 			's.rowid'=>'Numeric', 's.nom'=>'Text', 'ps.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 'cd.nom'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
 			't.libelle'=>"Text", // 'ce.code'=>"List:c_effectif:libelle:code", "cfj.libelle"=>"Text",
-			'f.rowid'=>'Numeric', 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.fk_facture_source'=>'Numeric', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date", 'f.fk_mode_reglement'=>'Numeric',
+			'f.rowid'=>'Numeric', 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.fk_facture_source'=>'Numeric', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date",
+			'f.fk_cond_reglement'=>'Numeric', 'f.fk_mode_reglement'=>'Numeric',
 			'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric", 'f.localtax1'=>'Numeric', 'f.localtax2'=>'Numeric', 'f.paye'=>"Boolean", 'f.fk_statut'=>'Numeric', 'f.close_code'=>'Text', 'f.close_note'=>'Text',
 			'none.rest'=>"NumericCompute",
 			'f.note_private'=>"Text", 'f.note_public'=>"Text",
@@ -632,8 +636,9 @@ class modFacture extends DolibarrModules
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode',
 			's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
 			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer', 'f.fk_facture_source'=>'SourceInvoiceId',
-			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue", 'f.total_ht'=>"TotalHT",
-			'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.localtax1'=>'LT1', 'f.localtax2'=>'LT2', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
+			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue",
+			'f.fk_cond_reglement'=>'IdPaymentTerm', 'f.fk_mode_reglement'=>'IdPaymentMode',
+			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.localtax1'=>'LT1', 'f.localtax2'=>'LT2', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
 			'none.rest'=>'Rest',
 			'f.note_private'=>"NotePrivate", 'f.note_public'=>"NotePublic", 'f.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin',
 			'f.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin', 'pj.ref'=>'ProjectRef', 'pj.title'=>'ProjectLabel', 'p.rowid'=>'PaymentId', 'p.ref'=>'PaymentRef',
@@ -657,6 +662,7 @@ class modFacture extends DolibarrModules
 			's.rowid'=>'Numeric', 's.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 'cd.nom'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
 			'f.rowid'=>"Numeric", 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.fk_facture_source'=>'Numeric', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date",
+			'f.fk_cond_reglement'=>'Numeric', 'f.fk_mode_reglement'=>'Numeric',
 			'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric", 'f.localtax1'=>'Numeric', 'f.localtax2'=>'Numeric', 'f.paye'=>"Boolean", 'f.fk_statut'=>'Status', 'f.close_code'=>'Text', 'f.close_note'=>'Text',
 			'none.rest'=>'NumericCompute',
 			'f.note_private'=>"Text", 'f.note_public'=>"Text", 'f.fk_user_author'=>'Numeric', 'uc.login'=>'Text', 'f.fk_user_valid'=>'Numeric', 'uv.login'=>'Text',

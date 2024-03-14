@@ -85,19 +85,20 @@ if (!$base) {
 			}
 		}
 
-		//  var_dump($link);
-
 		print '<table class="noborder">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Fields").'</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Index").'</td>';
-		print '<td></td>';
-		print '<td></td>';
-		print '<td></td>';
-		print '<td></td>';
+		print '<td>'.$langs->trans("Fields").'</td>';
+		print '<td>'.$langs->trans("Type").'</td>';
+		print '<td>'.$langs->trans("Collation").'</td>';
+		print '<td>'.$langs->trans("Null").'</td>';
+		print '<td>'.$langs->trans("Index").'</td>';
+		print '<td>'.$langs->trans("Default").'</td>';
+		print '<td>'.$langs->trans("Extra").'</td>';
+		print '<td>'.$langs->trans("Privileges").'</td>';
 		print '<td>'.$langs->trans("FieldsLinked").'</td>';
 		print '</tr>';
 
-		//$sql = "DESCRIBE ".$table;
+		// $sql = "DESCRIBE ".$table;
 		$sql = "SHOW FULL COLUMNS IN ".$db->escape($table);
 
 		$resql = $db->query($sql);
@@ -106,19 +107,30 @@ if (!$base) {
 			$i = 0;
 			while ($i < $num) {
 				$row = $db->fetch_row($resql);
+
 				print '<tr class="oddeven">';
+				// field
 				print "<td>".$row[0]."</td>";
+				// type
 				print "<td>".$row[1]."</td>";
+				// collation
+				print "<td>".$row[2]."</td>";
+				// null
 				print "<td>".$row[3]."</td>";
+				// key
 				print "<td>".(empty($row[4]) ? '' : $row[4])."</td>";
+				// default
 				print "<td>".(empty($row[5]) ? '' : $row[5])."</td>";
+				// extra
 				print "<td>".(empty($row[6]) ? '' : $row[6])."</td>";
+				// privileges
 				print "<td>".(empty($row[7]) ? '' : $row[7])."</td>";
 
 				print "<td>".(isset($link[$row[0]][0]) ? $link[$row[0]][0] : '').".";
 				print(isset($link[$row[0]][1]) ? $link[$row[0]][1] : '')."</td>";
 
-				print '<!-- ALTER ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' COLLATE utf8_unicode_ci; -->';
+				print '<!-- ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' COLLATE utf8_unicode_ci; -->';
+				print '<!-- ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' CHARACTER SET utf8; -->';
 				print '</tr>';
 				$i++;
 			}

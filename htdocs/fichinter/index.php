@@ -44,7 +44,7 @@ $hookmanager->initHooks(array('interventionindex'));
 $langs->load("interventions");
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
@@ -94,10 +94,11 @@ if ($resql) {
 	$total = 0;
 	$totalinprocess = 0;
 	$dataseries = array();
+	$colorseries = array();
 	$vals = array();
 	$bool = false;
 	// -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
-	if ($num>0) {
+	if ($num > 0) {
 		while ($row = $db->fetch_row($resql)) {
 			if (!isset($vals[$row[1]])) {
 				$vals[$row[1]] = 0;
@@ -172,7 +173,7 @@ if ($resql) {
 /*
  * Draft orders
  */
-if (isModEnabled('ficheinter')) {
+if (isModEnabled('intervention')) {
 	$sql = "SELECT f.rowid, f.ref, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -295,7 +296,7 @@ if ($resql) {
  * interventions to process
  */
 
-if (isModEnabled('ficheinter')) {
+if (isModEnabled('intervention')) {
 	$sql = "SELECT f.rowid, f.ref, f.fk_statut, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";

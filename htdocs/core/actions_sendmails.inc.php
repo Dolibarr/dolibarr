@@ -155,7 +155,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				}
 			}
 		} else {
-			dol_print_error('', "Use actions_sendmails.in.php for an element/object '".$object->element."' that is not supported");
+			dol_print_error(null, "Use actions_sendmails.in.php for an element/object '".$object->element."' that is not supported");
 		}
 
 		if (is_object($hookmanager)) {
@@ -309,6 +309,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			}
 
 			$replyto = dol_string_nospecial(GETPOST('replytoname'), ' ', array(",")).' <'.GETPOST('replytomail').'>';
+
 			$message = GETPOST('message', 'restricthtml');
 			$subject = GETPOST('subject', 'restricthtml');
 
@@ -433,10 +434,10 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 					setEventMessages($mesg, null, 'mesgs');
 
 					$moreparam = '';
-					if (isset($paramname2) || isset($paramval2)) {
+					if (isset($paramval2)) {
 						$moreparam .= '&'.($paramname2 ? $paramname2 : 'mid').'='.$paramval2;
 					}
-					header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname ? $paramname : 'id').'='.(is_object($object) ? $object->id : '').$moreparam);
+					header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname ?? 'id').'='.(is_object($object) ? $object->id : '').$moreparam);
 					exit;
 				} else {
 					$langs->load("other");

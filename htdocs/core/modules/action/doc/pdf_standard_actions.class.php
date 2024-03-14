@@ -186,6 +186,7 @@ class pdf_standard_actions
 			$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 			$pdf->SetKeywords($outputlangs->convToOutputCharset($this->title." ".$this->subject));
 
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 			$nbpage = $this->_pages($pdf, $outputlangs); // Write content
@@ -354,12 +355,10 @@ class pdf_standard_actions
 	 *	@param	TCPDF		$pdf     		Object PDF
 	 *	@param  Translate	$outputlangs	Object lang for output
 	 *	@param	int			$pagenb			Page nb
-	 *  @return	integer
+	 *  @return	float|int                   Return topshift value
 	 */
 	private function _pagehead(&$pdf, $outputlangs, $pagenb)
 	{
-		global $conf, $langs;
-
 		// Do not add the BACKGROUND as this is a report
 		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 

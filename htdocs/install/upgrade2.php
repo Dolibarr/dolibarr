@@ -1575,7 +1575,7 @@ function migrate_price_facture($db, $langs, $conf)
 				$facligne->total_ttc = $total_ttc;
 
 				dolibarr_install_syslog("upgrade2: line ".$rowid.": facid=".$obj->facid." pu=".$pu." qty=".$qty." vatrate=".$vatrate." remise_percent=".$remise_percent." remise_global=".$remise_percent_global." -> ".$total_ht.", ".$total_tva.", ".$total_ttc);
-				print ". ";
+				print '. ';
 				$facligne->update_total();
 
 
@@ -1676,29 +1676,9 @@ function migrate_price_propal($db, $langs, $conf)
 				$propalligne->total_ttc = $total_ttc;
 
 				dolibarr_install_syslog("upgrade2: Line ".$rowid.": propalid=".$obj->rowid." pu=".$pu." qty=".$qty." vatrate=".$vatrate." remise_percent=".$remise_percent." remise_global=".$remise_percent_global." -> ".$total_ht.", ".$total_tva.", ".$total_ttc);
-				print ". ";
+				print '. ';
 				$propalligne->update_total();
 
-
-				/* On touche pas a propal mere
-				 $propal = new Propal($db);
-				 $propal->id=$obj->rowid;
-				 if ( $propal->fetch($propal->id) >= 0 )
-				 {
-				 if ( $propal->update_price() > 0 )
-				 {
-				 print ". ";
-				 }
-				 else
-				 {
-				 print "Error id=".$propal->id;
-				 }
-				 }
-				 else
-				 {
-				 print "Error #3";
-				 }
-				 */
 				$i++;
 			}
 		} else {
@@ -1780,7 +1760,7 @@ function migrate_price_contrat($db, $langs, $conf)
 				$contratligne->total_ttc = $total_ttc;
 
 				dolibarr_install_syslog("upgrade2: Line ".$rowid.": contratdetid=".$obj->rowid." pu=".$pu." qty=".$qty." vatrate=".$vatrate." remise_percent=".$remise_percent."  -> ".$total_ht.", ".$total_tva." , ".$total_ttc);
-				print ". ";
+				print '. ';
 				$contratligne->update_total();
 
 				$i++;
@@ -1861,28 +1841,9 @@ function migrate_price_commande($db, $langs, $conf)
 				$commandeligne->total_ttc = $total_ttc;
 
 				dolibarr_install_syslog("upgrade2: Line ".$rowid." : commandeid=".$obj->rowid." pu=".$pu." qty=".$qty." vatrate=".$vatrate." remise_percent=".$remise_percent." remise_global=".$remise_percent_global."  -> ".$total_ht.", ".$total_tva.", ".$total_ttc);
-				print ". ";
+				print '. ';
 				$commandeligne->update_total();
 
-				/* On touche pas a facture mere
-				 $commande = new Commande($db);
-				 $commande->id = $obj->rowid;
-				 if ( $commande->fetch($commande->id) >= 0 )
-				 {
-				 if ( $commande->update_price() > 0 )
-				 {
-				 print ". ";
-				 }
-				 else
-				 {
-				 print "Error id=".$commande->id;
-				 }
-				 }
-				 else
-				 {
-				 print "Error #3";
-				 }
-				 */
 				$i++;
 			}
 		} else {
@@ -1973,28 +1934,9 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
 				$commandeligne->total_ttc = $total_ttc;
 
 				dolibarr_install_syslog("upgrade2: Line ".$rowid.": commandeid=".$obj->rowid." pu=".$pu."  qty=".$qty." vatrate=".$vatrate." remise_percent=".$remise_percent." remise_global=".$remise_percent_global." -> ".$total_ht.", ".$total_tva.", ".$total_ttc);
-				print ". ";
+				print '. ';
 				$commandeligne->update_total();
 
-				/* On touche pas a facture mere
-				 $commande = new Commande($db);
-				 $commande->id = $obj->rowid;
-				 if ( $commande->fetch($commande->id) >= 0 )
-				 {
-				 if ( $commande->update_price() > 0 )
-				 {
-				 print ". ";
-				 }
-				 else
-				 {
-				 print "Error id=".$commande->id;
-				 }
-				 }
-				 else
-				 {
-				 print "Error #3";
-				 }
-				 */
 				$i++;
 			}
 		} else {
@@ -2040,7 +1982,7 @@ function migrate_modeles($db, $langs, $conf)
 
 	dolibarr_install_syslog("upgrade2::migrate_modeles");
 
-	if (isModEnabled('facture')) {
+	if (isModEnabled('invoice')) {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 		$modellist = ModelePDFFactures::liste_modeles($db);
 		if (count($modellist) == 0) {
@@ -2053,7 +1995,7 @@ function migrate_modeles($db, $langs, $conf)
 		}
 	}
 
-	if (isModEnabled('commande')) {
+	if (isModEnabled('order')) {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 		$modellist = ModelePDFCommandes::liste_modeles($db);
 		if (count($modellist) == 0) {
@@ -2066,7 +2008,7 @@ function migrate_modeles($db, $langs, $conf)
 		}
 	}
 
-	if (isModEnabled("expedition")) {
+	if (isModEnabled("shipping")) {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 		$modellist = ModelePdfExpedition::liste_modeles($db);
 		if (count($modellist) == 0) {
@@ -2125,7 +2067,7 @@ function migrate_commande_expedition($db, $langs, $conf)
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
+					print '. ';
 					$i++;
 				}
 			}
@@ -2205,7 +2147,7 @@ function migrate_commande_livraison($db, $langs, $conf)
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
+					print '. ';
 					$i++;
 				}
 			}
@@ -2301,7 +2243,7 @@ function migrate_detail_livraison($db, $langs, $conf)
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
+					print '. ';
 					$i++;
 				}
 			}
@@ -2373,7 +2315,7 @@ function migrate_stocks($db, $langs, $conf)
 					$error++;
 					dol_print_error($db);
 				}
-				print ". ";
+				print '. ';
 				$i++;
 			}
 		}
@@ -2437,7 +2379,7 @@ function migrate_menus($db, $langs, $conf)
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
+					print '. ';
 					$i++;
 				}
 			}
@@ -2505,7 +2447,7 @@ function migrate_commande_deliveryaddress($db, $langs, $conf)
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
+					print '. ';
 					$i++;
 				}
 			} else {
@@ -2589,7 +2531,7 @@ function migrate_restore_missing_links($db, $langs, $conf)
 					$error++;
 					dol_print_error($db);
 				}
-				//print ". ";
+				//print '. ';
 				$i++;
 			}
 		} else {
@@ -2648,7 +2590,7 @@ function migrate_restore_missing_links($db, $langs, $conf)
 					$error++;
 					dol_print_error($db);
 				}
-				//print ". ";
+				//print '. ';
 				$i++;
 			}
 		} else {
@@ -2725,7 +2667,7 @@ function migrate_project_user_resp($db, $langs, $conf)
 							dol_print_error($db);
 						}
 					}
-					print ". ";
+					print '. ';
 
 					$i++;
 				}
@@ -2803,7 +2745,7 @@ function migrate_project_task_actors($db, $langs, $conf)
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
+					print '. ';
 					$i++;
 				}
 			}
@@ -2884,7 +2826,7 @@ function migrate_relationship_tables($db, $langs, $conf, $table, $fk_source, $so
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
+					print '. ';
 					$i++;
 				}
 			} else {
@@ -2964,7 +2906,7 @@ function migrate_element_time($db, $langs, $conf)
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
+					print '. ';
 					$oldtime++;
 					if (!empty($totaltime[$obj->fk_element])) {
 						$totaltime[$obj->fk_element] += $newtime;
@@ -3073,7 +3015,7 @@ function migrate_customerorder_shipping($db, $langs, $conf)
 							$error++;
 							dol_print_error($db);
 						}
-						print ". ";
+						print '. ';
 						$i++;
 					}
 				} else {
@@ -3160,7 +3102,7 @@ function migrate_shipping_delivery($db, $langs, $conf)
 							$error++;
 							dol_print_error($db);
 						}
-						print ". ";
+						print '. ';
 					} else {
 						$error++;
 						dol_print_error($db);
@@ -3248,7 +3190,7 @@ function migrate_shipping_delivery2($db, $langs, $conf)
 					$error++;
 					dol_print_error($db);
 				}
-				print ". ";
+				print '. ';
 				$i++;
 			}
 		} else {
@@ -3315,7 +3257,7 @@ function migrate_actioncomm_element($db, $langs, $conf)
 				// We will drop at next version because a migrate should be runnable several times if it fails.
 				//$sqlDrop = "ALTER TABLE ".MAIN_DB_PREFIX."actioncomm DROP COLUMN ".$field;
 				//$db->query($sqlDrop);
-				//print ". ";
+				//print '. ';
 			} else {
 				dol_print_error($db);
 				$db->rollback();
@@ -3392,7 +3334,7 @@ function migrate_mode_reglement($db, $langs, $conf)
 							dol_print_error($db);
 							$error++;
 						}
-						print ". ";
+						print '. ';
 					}
 
 					if (!$error) {
@@ -3536,7 +3478,7 @@ function migrate_categorie_association($db, $langs, $conf)
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
+					print '. ';
 					$i++;
 				}
 			} else {
@@ -3604,7 +3546,7 @@ function migrate_event_assignement($db, $langs, $conf)
 					$error++;
 					dol_print_error($db);
 				}
-				print ". ";
+				print '. ';
 				$i++;
 			}
 		} else {
@@ -3670,7 +3612,7 @@ function migrate_event_assignement_contact($db, $langs, $conf)
 					$error++;
 					dol_print_error($db);
 				}
-				print ". ";
+				print '. ';
 				$i++;
 			}
 		} else {
@@ -3837,7 +3779,7 @@ function migrate_remise_entity($db, $langs, $conf)
 					dol_print_error($db);
 				}
 
-				print ". ";
+				print '. ';
 				$i++;
 			}
 		} else {
@@ -3928,7 +3870,7 @@ function migrate_remise_except_entity($db, $langs, $conf)
 					dol_print_error($db);
 				}
 
-				print ". ";
+				print '. ';
 				$i++;
 			}
 		} else {
@@ -3993,7 +3935,7 @@ function migrate_user_rights_entity($db, $langs, $conf)
 					dol_print_error($db);
 				}
 
-				print ". ";
+				print '. ';
 				$i++;
 			}
 		} else {
@@ -4058,7 +4000,7 @@ function migrate_usergroup_rights_entity($db, $langs, $conf)
 					dol_print_error($db);
 				}
 
-				print ". ";
+				print '. ';
 				$i++;
 			}
 		} else {
@@ -4271,7 +4213,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		$user = new User($db);	// To avoid error during migration
 	}
 
-	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force.", listofmodule=".join(',', array_keys($listofmodule)));
+	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force.", listofmodule=".implode(',', array_keys($listofmodule)));
 
 	$reloadactionformodules = array(
 		'MAIN_MODULE_AGENDA' => array('class' => 'modAgenda', 'remove'=> 1),

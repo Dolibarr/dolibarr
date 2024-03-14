@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Cédric Salvador <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +92,7 @@ class Link extends CommonObject
 
 		// Check parameters
 		if (empty($this->url)) {
-			$this->error = $langs->trans("NoUrl");
+			$this->error = $langs->trans("NoURL");
 			return -1;
 		}
 
@@ -207,11 +208,11 @@ class Link extends CommonObject
 			}
 		} else {
 			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-				// Doublon
+				// Duplicate
 				$this->error = $langs->trans("ErrorDuplicateField");
 				$result = -1;
 			} else {
-				$this->error = $langs->trans("Error sql = ".$sql);
+				$this->error = $langs->trans("Error sql")."= $sql";
 				$result = -2;
 			}
 			$this->db->rollback();
@@ -236,7 +237,7 @@ class Link extends CommonObject
 		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".$this->db->prefix()."links";
 		$sql .= " WHERE objecttype = '".$this->db->escape($objecttype)."' AND objectid = ".((int) $objectid);
 		if ($conf->entity != 0) {
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " AND entity = ".((int) $conf->entity);
 		}
 		if ($sortfield) {
 			if (empty($sortorder)) {

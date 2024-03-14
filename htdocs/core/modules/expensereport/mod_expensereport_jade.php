@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017 Maxime Kohlhaas <support@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,8 +83,8 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return boolean     			false if conflict, true if ok
+	 *  @param  CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
 	{
@@ -119,7 +120,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	 * 	Return next free value
 	 *
 	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @return string|0      			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{

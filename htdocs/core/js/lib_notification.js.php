@@ -170,7 +170,7 @@ function check_events() {
 							body: body,
 							lang: '<?php print dol_escape_js($langs->getDefaultLang(1)); ?>',
 							tag: value.id_agenda,
-							requireInteraction: true
+							requireInteraction: true	/* wait that the user click or close the notification */
 							/* only supported for persistent notification shown using ServiceWorkerRegistration.showNotification() so disabled */
 							/* actions: [{ action: 'action1', title: 'New Button Label' }, { action: 'action2', title: 'Another Button' }] */
 						};
@@ -185,7 +185,7 @@ function check_events() {
 
 						if (noti[index]) {
 							noti[index].onclick = function (event) {
-								/* If the use has clicked on button Activate */
+								/* If the user has clicked on button Activate */
 								console.log("A click on notification on browser has been done for url="+url);
 								event.preventDefault(); // prevent the browser from focusing the Notification's tab
 								window.focus();
@@ -212,9 +212,9 @@ function check_events() {
 
 		result = 1;
 	} else {
-		console.log("Cancel check_events() with dolnotif_nb_test_for_page="+dolnotif_nb_test_for_page+". Check is useless because javascript Notification.permission is "+Notification.permission+" (blocked manually or web site is not https).");
+		console.log("Cancel check_events() with dolnotif_nb_test_for_page="+dolnotif_nb_test_for_page+". Check is useless because javascript Notification.permission is "+Notification.permission+" (blocked manually or web site is not https or browser is in Private mode).");
 
-		result = 2;	// We return a positive so the repeated check will done even if authroization is not yet allowed may be after this check)
+		result = 2;	// We return a positive so the repeated check will done even if authorization is not yet allowed may be after this check)
 	}
 
 	if (dolnotif_nb_test_for_page >= 5) {

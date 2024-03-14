@@ -8,6 +8,9 @@ concurrency:
     group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
     cancel-in-progress: true
 
+env:
+  CACHE_KEY_PART: ${{ github.event_name == 'pull_request' && format('{0}-{1}', github.base_ref, github.head_ref) || github.ref_name }}
+  GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job
@@ -41,8 +44,11 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ./.github/tmp
-          key: "phpstan-cache-${{ matrix.php-version }}-${{ github.run_id }}"
+          key: phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-${{ github.run_id }}
           restore-keys: |
+            phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-
+            phpstan-cache-${{ matrix.php-version }}-${{ github.head_ref }}-
+            phpstan-cache-${{ matrix.php-version }}-${{ github.base_ref }}-
             phpstan-cache-${{ matrix.php-version }}-
       - name: Show debug into
         run: cd ./.github/tmp && ls -al
@@ -50,7 +56,8 @@ jobs:
       # Run PHPStan
       - name: Run PHPStan
         id: phpstan
-        run: phpstan -vvv analyse --error-format=checkstyle --memory-limit 4G -a build/phpstan/bootstrap_action.php -c phpstan.neon | cs2pr --graceful-warnings
+        run: |
+          phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a build/phpstan/bootstrap_action.php | tee _stan.xml | cs2pr --graceful-warnings
         # continue-on-error: true
 
       # Save cache
@@ -59,4 +66,11 @@ jobs:
         if: ${{ success() || ( ! cancelled() && steps.cache.outputs.cache-hit != 'true' ) }}
         with:
           path: ./.github/tmp
-          key: "phpstan-cache-${{ matrix.php-version }}-${{ github.run_id }}"
+          key: phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-${{ github.run_id }}
+      - name: Provide phpstan log as artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: phpstan-srcrt
+          path: ${{ github.workspace }}/_stan.xml
+          retention-days: 2

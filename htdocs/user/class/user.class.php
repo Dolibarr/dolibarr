@@ -12,8 +12,9 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       charlene Benke          <charlie@patas-monkey.com>
  * Copyright (C) 2018-2021       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -277,7 +278,7 @@ class User extends CommonObject
 	public $clicktodial_poste;
 
 	/**
-	 * @var string 	0 by default, 1 if click to dial data were already loaded for this user
+	 * @var int 	0 by default, 1 if click to dial data were already loaded for this user
 	 */
 	public $clicktodial_loaded;
 
@@ -294,6 +295,10 @@ class User extends CommonObject
 	 * @var string photo filename
 	 */
 	public $photo;
+
+	/**
+	 * @var string default language
+	 */
 	public $lang;
 
 	/**
@@ -377,11 +382,11 @@ class User extends CommonObject
 	public $egroupware_id;
 
 	public $fields = array(
-		'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		'lastname'=>array('type'=>'varchar(50)', 'label'=>'LastName', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1),
-		'firstname'=>array('type'=>'varchar(50)', 'label'=>'FirstName', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
-		'ref_employee'=>array('type'=>'varchar(50)', 'label'=>'RefEmployee', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>30, 'searchall'=>1),
-		'national_registration_number'=>array('type'=>'varchar(50)', 'label'=>'NationalRegistrationNumber', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>40, 'searchall'=>1)
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
+		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 20, 'searchall' => 1),
+		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1),
+		'ref_employee' => array('type' => 'varchar(50)', 'label' => 'RefEmployee', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 30, 'searchall' => 1),
+		'national_registration_number' => array('type' => 'varchar(50)', 'label' => 'NationalRegistrationNumber', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 40, 'searchall' => 1)
 	);
 
 
@@ -710,7 +715,8 @@ class User extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
 
 			$defaultValues = new DefaultValues($this->db);
-			$result = $defaultValues->fetchAll('', '', 0, 0, array('t.user_id'=>array(0, $this->id), 'entity'=>array((isset($this->entity) ? $this->entity : $conf->entity), $conf->entity)));	// User 0 (all) + me (if defined)
+			$result = $defaultValues->fetchAll('', '', 0, 0, '(t.user_id:in:0,'.$this->id.') AND (entity:in:'.(isset($this->entity) ? $this->entity : $conf->entity).','.$conf->entity.')');	// User 0 (all) + me (if defined)
+			//$result = $defaultValues->fetchAll('', '', 0, 0, array('t.user_id'=>array(0, $this->id), 'entity'=>array((isset($this->entity) ? $this->entity : $conf->entity), $conf->entity)));	// User 0 (all) + me (if defined)
 
 			if (!is_array($result) && $result < 0) {
 				setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
@@ -746,7 +752,7 @@ class User extends CommonObject
 	 *  You can use it like this: if ($user->hasRight('module', 'level11')).
 	 *  It replaces old syntax: if ($user->rights->module->level1)
 	 *
-	 * 	@param	int		$module			Module of permission to check
+	 * 	@param	string	$module			Module of permission to check
 	 *  @param  string	$permlevel1		Permission level1 (Example: 'read', 'write', 'delete')
 	 *  @param  string	$permlevel2		Permission level2
 	 *  @return int						1 if user has permission, 0 if not.
@@ -784,7 +790,7 @@ class User extends CommonObject
 		}
 
 		$moduleRightsMapping = array(
-			'product' => 'produit',	// We must check $user->rights->produit...
+			'product' => 'produit',
 			'margin' => 'margins',
 			'comptabilite' => 'compta'
 		);
@@ -794,21 +800,25 @@ class User extends CommonObject
 			$rightsPath = $moduleRightsMapping[$rightsPath];
 		}
 
-		// If module is abc@module, we check permission user->rights->module->abc->permlevel1
+		// If module is abc@module, we check permission user->hasRight(module, abc, permlevel1)
 		$tmp = explode('@', $rightsPath, 2);
 		if (!empty($tmp[1])) {
 			if (strpos($module, '@') !== false) {
 				$module = $tmp[1];
 			}
-			$rightsPath = $tmp[1];
-			$permlevel2 = $permlevel1;
-			$permlevel1 = $tmp[0];
+			if ($tmp[0] != $tmp[1]) {
+				// If $module = 'myobject@mymodule'
+				$rightsPath = $tmp[1];
+				$permlevel2 = $permlevel1;
+				$permlevel1 = $tmp[0];
+			} else {
+				// If $module = 'abc@abc'
+				$rightsPath = $tmp[1];
+			}
 		}
 
 		// In $conf->modules, we have 'accounting', 'product', 'facture', ...
 		// In $user->rights, we have 'accounting', 'produit', 'facture', ...
-		//var_dump($module);
-		//var_dump($rightsPath);
 		//var_dump($this->rights->$rightsPath);
 		//var_dump($conf->modules);
 		//var_dump($module.' '.isModEnabled($module).' '.$rightsPath.' '.$permlevel1.' '.$permlevel2);
@@ -1006,7 +1016,7 @@ class User extends CommonObject
 
 		if (!$error && !$notrigger) {
 			$langs->load("other");
-			$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid ? ' (id='.$rid.')' : ''));
+			$this->context = array('audit' => $langs->trans("PermissionsAdd").($rid ? ' (id='.$rid.')' : ''));
 
 			// Call trigger
 			$result = $this->call_trigger('USER_MODIFY', $user);
@@ -1129,7 +1139,7 @@ class User extends CommonObject
 
 		if (!$error && !$notrigger) {
 			$langs->load("other");
-			$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid ? ' (id='.$rid.')' : ''));
+			$this->context = array('audit' => $langs->trans("PermissionsDelete").($rid ? ' (id='.$rid.')' : ''));
 
 			// Call trigger
 			$result = $this->call_trigger('USER_MODIFY', $user);
@@ -1158,7 +1168,7 @@ class User extends CommonObject
 	public function clearrights()
 	{
 		dol_syslog(get_class($this)."::clearrights reset user->rights");
-		$this->rights = null;
+		$this->rights = new stdClass();
 		$this->nb_rights = 0;
 		$this->all_permissions_are_loaded = 0;
 		$this->_tab_loaded = array();
@@ -1166,7 +1176,7 @@ class User extends CommonObject
 
 
 	/**
-	 *	Load permissions granted to user into object user
+	 *	Load permissions granted to a user->id into object user->rights
 	 *
 	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
 	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)
@@ -2693,7 +2703,7 @@ class User extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			if (!$error && !$notrigger) {
-				$this->context = array('audit'=>$langs->trans("UserSetInGroup"), 'newgroupid'=>$group);
+				$this->context = array('audit' => $langs->trans("UserSetInGroup"), 'newgroupid' => $group);
 
 				// Call trigger
 				$result = $this->call_trigger('USER_MODIFY', $user);
@@ -2748,7 +2758,7 @@ class User extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			if (!$error && !$notrigger) {
-				$this->context = array('audit'=>$langs->trans("UserRemovedFromGroup"), 'oldgroupid'=>$group);
+				$this->context = array('audit' => $langs->trans("UserRemovedFromGroup"), 'oldgroupid' => $group);
 
 				// Call trigger
 				$result = $this->call_trigger('USER_MODIFY', $user);
@@ -2810,6 +2820,7 @@ class User extends CommonObject
 	 *  @param	string	$cssclass		Force a css class
 	 * 	@param	string	$imagesize		'mini', 'small' or '' (original)
 	 *	@return	string					String with URL link
+	 * 	@see getImagePublicURLOfObject()
 	 */
 	public function getPhotoUrl($width, $height, $cssclass = '', $imagesize = '')
 	{
@@ -2823,7 +2834,7 @@ class User extends CommonObject
 	/**
 	 * Return array of data to show into tooltips
 	 *
-	 * @param array $params ex option, infologin
+	 * @param array $params 	Array with options, infologin
 	 * @since v18
 	 * @return array
 	 */
@@ -2910,7 +2921,7 @@ class User extends CommonObject
 				$data['phone'] = '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");
 			}
 			if (!empty($_SESSION["disablemodules"])) {
-				$data['disabledmodules'] = '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.dol_string_nohtmltag(join(', ', explode(',', $_SESSION["disablemodules"])));
+				$data['disabledmodules'] = '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.dol_string_nohtmltag(implode(', ', explode(',', $_SESSION["disablemodules"])));
 			}
 		}
 
@@ -2951,6 +2962,7 @@ class User extends CommonObject
 			'objecttype' => $this->element,
 			'infologin' => $infologin,
 			'option' => $option,
+			'hidethirdpartylogo' => $hidethirdpartylogo,
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
@@ -3044,7 +3056,7 @@ class User extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('userdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -3080,7 +3092,7 @@ class User extends CommonObject
 
 		if ($option == 'xxx') {
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
-			$linkend = '</a>';
+			$linkend = '</a>';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		}
 
 		if ($option == 'nolink') {
@@ -3277,7 +3289,7 @@ class User extends CommonObject
 			'LDAP_FIELD_NAME'		=> 'lastname',
 			'LDAP_FIELD_FIRSTNAME'	=> 'firstname',
 			'LDAP_FIELD_LOGIN'		=> 'login',
-			'LDAP_FIELD_LOGIN_SAMBA'=> 'login',
+			'LDAP_FIELD_LOGIN_SAMBA' => 'login',
 			'LDAP_FIELD_PHONE'		=> 'office_phone',
 			'LDAP_FIELD_MOBILE'		=> 'user_mobile',
 			'LDAP_FIELD_FAX'		=> 'office_fax',
@@ -3460,6 +3472,7 @@ class User extends CommonObject
 		$this->status = 1;
 
 		$this->entity = 1;
+
 		return 1;
 	}
 
@@ -4024,12 +4037,13 @@ class User extends CommonObject
 	 *  @param	string		$sortfield		sort field
 	 *  @param	int			$limit			limit page
 	 *  @param	int			$offset			page
-	 *  @param	array		$filter			Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
-	 *  @param  string      $filtermode		Filter mode (AND or OR)
+	 * 	@param  string		$filter       	Filter as an Universal Search string.
+	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * 	@param  string      $filtermode   	No more used
 	 *  @param  bool        $entityfilter	Activate entity filter
 	 *  @return int							Return integer <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array(), $filtermode = 'AND', $entityfilter = false)
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND', $entityfilter = false)
 	{
 		global $conf, $user;
 
@@ -4054,23 +4068,14 @@ class User extends CommonObject
 		}
 
 		// Manage filter
-		$sqlwhere = array();
-		if (!empty($filter)) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (isset($this->fields[$key]['type']) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
-				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
-				}
-			}
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
-		}
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			$sql .= $this->db->plimit($limit + 1, $offset);
@@ -4126,12 +4131,10 @@ class User extends CommonObject
 
 		$this->findUserIdByEmailCache[$email] = -1;
 
-		global $conf;
-
 		$sql = 'SELECT rowid';
 		$sql .= ' FROM '.$this->db->prefix().'user';
 		if (getDolGlobalString('AGENDA_DISABLE_EXACT_USER_EMAIL_COMPARE_FOR_EXTERNAL_CALENDAR')) {
-			$sql .= " WHERE email LIKE '%".$this->db->escape($email)."%'";
+			$sql .= " WHERE email LIKE '%".$this->db->escape($this->db->escapeforlike($email))."%'";
 		} else {
 			$sql .= " WHERE email = '".$this->db->escape($email)."'";
 		}

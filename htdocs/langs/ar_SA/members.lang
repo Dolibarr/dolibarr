@@ -124,10 +124,6 @@ ExportDataset_member_1=الأعضاء والمساهمات
 ImportDataset_member_1=أعضاء
 LastMembersModified=آخر %s الأعضاء المعدلة
 LastSubscriptionsModified=أحدث مساهمات %s المعدلة
-String=سلسلة
-Text=النص
-Int=Int
-DateAndTime=التاريخ والوقت
 PublicMemberCard=بطاقة عضو العامة
 SubscriptionNotRecorded=المساهمة غير مسجلة
 AddSubscription=إنشاء مساهمة
@@ -241,6 +237,12 @@ CreateDolibarrThirdPartyDesc=الطرف الثالث هو الكيان القا�
 MemberFirstname=الاسم الأول للعضو
 MemberLastname=اسم العائلة للعضو
 MemberCodeDesc=عضو كود فريد لجميع أعضاء
-NoRecordedMembers=لم يتم تسجيل أعضاء
 MemberSubscriptionStartFirstDayOf=تاريخ بدء العضوية يتوافق مع اليوم الأول من أ
 MemberSubscriptionStartAfter=الحد الأدنى للفترة قبل دخول تاريخ البدء حيز التنفيذ الاشتراك باستثناء التجديدات (على سبيل المثال +3 شهر = +3 أشهر، -5 يوم = -5 أيام، +1Y = +1 عام )
+SubscriptionLinkedToConciliatedTransaction=Membership is linked to a conciliated transaction so this modification is not allowed.
+ConfirmMassSubsriptionCreation=Confirm subscription creation
+ConfirmMassSubsriptionCreationQuestion=Are you sure you want to create the %s selected subscription(s)?
+XSubsriptionCreated=%s subscription(s) created
+XSubsriptionErrors=%s subscription(s) where in error
+CreateSubscription=إنشاء الاشتراك
+WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction

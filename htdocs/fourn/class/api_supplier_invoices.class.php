@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2023	Joachim Kueter		    <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -228,10 +229,9 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Update supplier invoice
 	 *
-	 * @param int   $id             Id of supplier invoice to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   	$id             	Id of supplier invoice to update
+	 * @param 	array 	$request_data  		Datas
+	 * @return 	Object|false				Updated object
 	 *
 	 * @throws RestException 403
 	 * @throws RestException 404
@@ -399,7 +399,7 @@ class SupplierInvoices extends DolibarrApi
 	 * Add payment line to a specific supplier invoice with the remain to pay as amount.
 	 *
 	 * @param int     $id                               Id of invoice
-	 * @param string  $datepaye           {@from body}  Payment date        {@type timestamp}
+	 * @param int     $datepaye           {@from body}  Payment date        {@type timestamp}
 	 * @param int     $payment_mode_id    {@from body}  Payment mode ID (look it up via REST GET to /setup/dictionary/payment_types) {@min 1}
 	 * @param string  $closepaidinvoices  {@from body}  Close paid invoices {@choice yes,no}
 	 * @param int     $accountid          {@from body}  Bank account ID (look it up via REST GET to /bankaccounts) {@min 1}
@@ -435,7 +435,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(404, 'Invoice not found');
 		}
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			if (empty($accountid)) {
 				throw new RestException(400, 'Bank account ID is mandatory');
 			}
@@ -460,12 +460,12 @@ class SupplierInvoices extends DolibarrApi
 		$amounts = array();
 		$multicurrency_amounts = array();
 
-		$paymentamount = price2num($paymentamount, 'MT');
+		$paymentamount = (float) price2num($paymentamount, 'MT');
 
 		$amounts[$id] = $paymentamount;
 
 		// Multicurrency
-		$newvalue = price2num($this->invoice->multicurrency_total_ttc, 'MT');
+		$newvalue = (float) price2num($this->invoice->multicurrency_total_ttc, 'MT');
 		$multicurrency_amounts[$id] = $newvalue;
 
 		// Creation of payment line
@@ -474,7 +474,7 @@ class SupplierInvoices extends DolibarrApi
 		$paiement->amounts      = $amounts; // Array with all payments dispatching with invoice id
 		$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paiement->paiementid = $payment_mode_id;
-		$paiement->paiementcode = dol_getIdFromCode($this->db, $payment_mode_id, 'c_paiement', 'id', 'code', 1);
+		$paiement->paiementcode = (string) dol_getIdFromCode($this->db, $payment_mode_id, 'c_paiement', 'id', 'code', 1);
 		$paiement->num_payment = $num_payment;
 		$paiement->note_public = $comment;
 
@@ -484,7 +484,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(400, 'Payment error : ' . $paiement->error);
 		}
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			$result = $paiement->addPaymentToBank(DolibarrApiAccess::$user, 'payment_supplier', '(SupplierInvoicePayment)', $accountid, $chqemetteur, $chqbank);
 			if ($result < 0) {
 				$this->db->rollback();
@@ -579,7 +579,7 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->remise_percent,
 			$request_data->date_start,
 			$request_data->date_end,
-			$request_data->ventil,
+			$request_data->fk_code_ventilation,
 			$request_data->info_bits,
 			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->product_type,
@@ -702,9 +702,14 @@ class SupplierInvoices extends DolibarrApi
 
 		// TODO Check the lineid $lineid is a line of object
 
-		$updateRes = $this->invoice->deleteline($lineid);
+		$updateRes = $this->invoice->deleteLine($lineid);
 		if ($updateRes > 0) {
-			return $this->get($id);
+			return array(
+				'success' => array(
+					'code' => 200,
+					'message' => 'line '.$lineid.' deleted'
+				)
+			);
 		} else {
 			throw new RestException(405, $this->invoice->error);
 		}

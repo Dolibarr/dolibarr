@@ -1,10 +1,22 @@
 # Please add in alphabetical order->(`sort -u` like).
 EPR->ERP
-alpahnohtml->alphanohtml
+alpah->alpha
+alphanothtml->alphanohtml
+alpahnothtml->alphanohtml
+aplha->alpha
+aplhanothtml->alphanohtml
+aploha->alpha
+aplohanothtml->alphanohtml
+aplphanothtml->alphanohtml
 choosed->chosen
+dokument->document
 dolibar->dolibarr
 dollibar->dolibarr
 dollibarr->dolibarr
+# fiche->card
 mot de passe->password
 not de passe->password
+nothtml->nohtml
 tableau de bord->state board
+tagret->target
+thridparty->thirdparty

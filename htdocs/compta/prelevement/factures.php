@@ -35,20 +35,20 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals', 'suppliers'));
+$langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals', 'salaries', 'suppliers'));
 
 // Get supervariables
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
-$userid = GETPOST('userid', 'int');
+$socid = GETPOSTINT('socid');
+$userid = GETPOSTINT('userid');
 $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -275,9 +275,9 @@ if ($resql) {
 	$i = 0;
 
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param.='&limit='.((int) $limit);
+		$param .= '&limit='.((int) $limit);
 	}
-	$param = "&id=".urlencode($id);
+	$param = "&id=".urlencode((string) ($id));
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -342,7 +342,7 @@ if ($resql) {
 		print '<tr class="oddeven">';
 
 		print '<td class="nowraponall">';
-		print ($salaryBonPl ? $salarytmp->getNomUrl(1) : $invoicetmp->getNomUrl(1));
+		print($salaryBonPl ? $salarytmp->getNomUrl(1) : $invoicetmp->getNomUrl(1));
 		print "</td>\n";
 
 		if ($object->type == 'bank-transfer' && !$salaryBonPl) {

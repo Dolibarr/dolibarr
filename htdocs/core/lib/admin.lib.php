@@ -4,6 +4,7 @@
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -543,7 +544,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 	if ($error == 0) {
 		$ok = 1;
 	} else {
-		$ok = 0;
+		$ok = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 	}
 
 	return $ok;
@@ -565,7 +566,7 @@ function dolibarr_del_const($db, $name, $entity = 1)
 	global $conf;
 
 	if (empty($name)) {
-		dol_print_error('', 'Error call dolibar_del_const with parameter name empty');
+		dol_print_error(null, 'Error call dolibar_del_const with parameter name empty');
 		return -1;
 	}
 
@@ -1115,7 +1116,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 		return $ret;
 	}
 
-	$ret = array('nbmodules'=>0, 'errors'=>array(), 'nbperms'=>0);
+	$ret = array('nbmodules' => 0, 'errors' => array(), 'nbperms' => 0);
 	$modName = $value;
 	$modFile = $modName.".class.php";
 
@@ -1194,7 +1195,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 								if (empty($resarray['errors'])) {
 									$activate = true;
 								} else {
-									$activateerr = join(', ', $resarray['errors']);
+									$activateerr = implode(', ', $resarray['errors']);
 									foreach ($resarray['errors'] as $errorMessage) {
 										dol_syslog($errorMessage, LOG_ERR);
 									}
@@ -1725,7 +1726,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 			$obj = $db->fetch_object($result); // Take first result of select
 
 			if (empty($obj)) {	// If not yet into table
-				$obj = (object) array('rowid'=>'', 'name'=>$const, 'value'=>'', 'type'=>$type, 'note'=>'');
+				$obj = (object) array('rowid' => '', 'name' => $const, 'value' => '', 'type' => $type, 'note' => '');
 			}
 
 			if (empty($strictw3c)) {
@@ -1753,7 +1754,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 
 			if ($const == 'ADHERENT_MAILMAN_URL') {
 				print '. '.$langs->trans("Example").': <a href="#" id="exampleclick1">'.img_down().'</a><br>';
-				//print 'http://lists.exampe.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&subscribees=%EMAIL%&send_welcome_msg_to_this_batch=1';
+				//print 'http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&subscribees=%EMAIL%&send_welcome_msg_to_this_batch=1';
 				print '<div id="example1" class="hidden">';
 				print 'http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members/add?subscribees_upload=%EMAIL%&amp;adminpw=%MAILMAN_ADMINPW%&amp;subscribe_or_invite=0&amp;send_welcome_msg_to_this_batch=0&amp;notification_to_list_owner=0';
 				print '</div>';
@@ -1769,7 +1770,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 				print 'mymailmanlist<br>';
 				print 'mymailmanlist1,mymailmanlist2<br>';
 				print 'TYPE:Type1:mymailmanlist1,TYPE:Type2:mymailmanlist2<br>';
-				if (isModEnabled('categorie')) {
+				if (isModEnabled('category')) {
 					print 'CATEG:Categ1:mymailmanlist1,CATEG:Categ2:mymailmanlist2<br>';
 				}
 				print '</div>';

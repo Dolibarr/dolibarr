@@ -90,13 +90,13 @@ AccountancyAreaDescProd=ステップ%s: 製品/サービスの勘定科目を定
 
 AccountancyAreaDescBind=ステップ%s：既存の%s行と勘定科目の間の結合が完了していることを確認する。これにより、アプリケーションはワンクリックで元帳のトランザクションを仕訳できるようになる。不足している結合を完了する。これには、メニューエントリ%sを使用する。
 AccountancyAreaDescWriteRecords=ステップ%s：元帳にトランザクションを書き込む。これを行うには、メニュー<strong> %s </strong>に移動し、ボタン<strong>%s</strong>をクリックする。
-AccountancyAreaDescAnalyze=ステップ%s：既存のトランザクションを追加または編集し、報告書sとエクスポートを生成する。
-
-AccountancyAreaDescClosePeriod=ステップ%s：期間を閉じて、将来変更できないようにする。
+AccountancyAreaDescAnalyze=ステップ %s: レポートを読むか、他の簿記担当者用のエクスポート ファイルを生成する。
+AccountancyAreaDescClosePeriod=ステップ %s: 期間を終了するため、今後同じ期間にデータを転送できなくなります。
 
 TheFiscalPeriodIsNotDefined=設定の必須ステップが完了していない（会計期間が定義されていない）
 TheJournalCodeIsNotDefinedOnSomeBankAccount=設定の必須ステップが完了していない(全銀行口座に対して会計コード仕訳帳が定義されていない)
 Selectchartofaccounts=アクティブな勘定科目表を選択する
+CurrentChartOfAccount=現在アクティブな勘定科目表
 ChangeAndLoad=変更してロード
 Addanaccount=勘定科目を追加
 AccountAccounting=勘定科目
@@ -134,7 +134,7 @@ WriteBookKeeping=会計での取引の記録
 Bookkeeping=元帳
 BookkeepingSubAccount=補助元帳
 AccountBalance=勘定残高
-AccountBalanceSubAccount=サブアカウントの残高
+AccountBalanceSubAccount=補助科目残高
 ObjectsRef=ソースオブジェクト参照
 CAHTF=税引前の合計購入ベンダー
 TotalExpenseReport=総経費報告書
@@ -312,7 +312,7 @@ AutomaticBindingDone=自動結合が実行された（%s）-一部のレコー�
 DoManualBindingForFailedRecord=自動的にリンクされない %s 行(s)を手動でリンクする必要がある。
 
 ErrorAccountancyCodeIsAlreadyUse=エラー、この勘定科目表は使用されているため、削除または無効化できない
-MvtNotCorrectlyBalanced=動きのバランスが正しくない。借方=%s＆貸方= %s
+MvtNotCorrectlyBalanced=動きの残高が正しくない。借方=%s＆貸方= %s
 Balancing=バランシング
 FicheVentilation=結合カード
 GeneralLedgerIsWritten=トランザクションは元帳に書き込まれる
@@ -343,7 +343,7 @@ AccountingJournalType3=購入
 AccountingJournalType4=バンク
 AccountingJournalType5=経費報告書s
 AccountingJournalType8=目録
-AccountingJournalType9=Retained earnings
+AccountingJournalType9=留保所得
 GenerationOfAccountingEntries=会計仕訳の生成
 ErrorAccountingJournalIsAlreadyUse=この仕訳帳は既に使用されている
 AccountingAccountForSalesTaxAreDefinedInto=注：消費税の勘定科目は、メニュー<b> %s </b> --<b> %s</b>に定義されている。
@@ -450,12 +450,12 @@ AccountancyClosureStep1=ステップ 1 : 動きを検証してロックする
 AccountancyClosureStep2=ステップ 2 : 会計期間を閉じる
 AccountancyClosureStep3=ステップ 3 : エントリを抽出する (オプション)
 AccountancyClosureClose=会計期間を閉じる
-AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries
+AccountancyClosureAccountingReversal=「利益剰余金」項目を抽出して記録する
 AccountancyClosureStep3NewFiscalPeriod=次会計期間
-AccountancyClosureGenerateClosureBookkeepingRecords=Generate "Retained earnings" entries on the next fiscal period
-AccountancyClosureSeparateAuxiliaryAccounts=When generating the "Retained earnings" entries, detail the sub-ledger accounts
+AccountancyClosureGenerateClosureBookkeepingRecords=次の会計年度に「利益剰余金」の仕訳を生成する。
+AccountancyClosureSeparateAuxiliaryAccounts=「利益剰余金」エントリを生成するときは、補助元帳勘定の詳細を記載する。
 AccountancyClosureCloseSuccessfully=会計期間は無事終了した
-AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping entries for "Retained earnings" has been inserted successfully
+AccountancyClosureInsertAccountingReversalSuccessfully=「利益剰余金」の簿記エントリが正常に挿入された
 
 ## Confirm box
 ConfirmMassUnletteringAuto=一括自動照合解除確定
@@ -464,7 +464,7 @@ ConfirmMassUnletteringQuestion=選択した %s レコード(s)を照合解除す
 ConfirmMassDeleteBookkeepingWriting=一括削除確定
 ConfirmMassDeleteBookkeepingWritingQuestion=これにより、会計からトランザクションが削除される (同じトランザクションに関連するすべての行エントリが削除される)。 %s 選択したエントリを削除してもよいか?
 AccountancyClosureConfirmClose=今の会計期間を閉じてもよろしい か? <span class="warning">会計期間の終了は元に戻せない操作であり、この期間中のエントリの変更または削除は永久にブロックされることを理解したものとする</span> 。
-AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
+AccountancyClosureConfirmAccountingReversal=「利益剰余金」への仕訳を記録したいか？
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=設定のいくつかの必須の手順が実行されない。それらを完了すること

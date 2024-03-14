@@ -43,11 +43,15 @@ $ref					= GETPOST('ref', 'alpha');
 $address				= GETPOST('address', 'alpha');
 $zip					= GETPOST('zipcode', 'alpha');
 $town					= GETPOST('town', 'alpha');
-$description			= GETPOST('description', 'restricthtml');
-$confirm				= GETPOST('confirm', 'aZ09');
-$fk_code_type_resource	= GETPOST('fk_code_type_resource', 'aZ09');
 $country_id				= GETPOSTINT('country_id');
 $state_id				= GETPOSTINT('state_id');
+$description			= GETPOST('description', 'restricthtml');
+$phone					= GETPOST('phone', 'alpha');
+$email					= GETPOST('email', 'alpha');
+$max_users				= GETPOSTINT('max_users');
+$url					= GETPOST('url', 'alpha');
+$confirm				= GETPOST('confirm', 'aZ09');
+$fk_code_type_resource	= GETPOST('fk_code_type_resource', 'aZ09');
 
 // Protection if external user
 if ($user->socid > 0) {
@@ -66,8 +70,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
 
-$permissiontoadd = $user->rights->resource->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->resource->delete;
+$permissiontoadd = $user->hasRight('resource', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('resource', 'delete');
 
 
 /*
@@ -106,10 +110,14 @@ if (empty($reshook)) {
 				$object->address				= $address;
 				$object->zip					= $zip;
 				$object->town					= $town;
-				$object->description            = $description;
-				$object->fk_code_type_resource  = $fk_code_type_resource;
-				$object->country_id             = $country_id;
+				$object->country_id				= $country_id;
 				$object->state_id				= $state_id;
+				$object->description			= $description;
+				$object->phone					= $phone;
+				$object->email					= $email;
+				$object->max_users				= $max_users;
+				$object->url					= $url;
+				$object->fk_code_type_resource	= $fk_code_type_resource;
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -120,7 +128,7 @@ if (empty($reshook)) {
 				$result = $object->create($user);
 				if ($result > 0) {
 					// Creation OK
-					setEventMessages($langs->trans('ResourceCreatedWithSuccess'), null, 'mesgs');
+					setEventMessages($langs->trans('ResourceCreatedWithSuccess'), null);
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 					exit;
 				} else {
@@ -150,10 +158,14 @@ if (empty($reshook)) {
 				$object->address				= $address;
 				$object->zip					= $zip;
 				$object->town					= $town;
-				$object->description  			= $description;
-				$object->fk_code_type_resource  = $fk_code_type_resource;
 				$object->country_id             = $country_id;
 				$object->state_id				= $state_id;
+				$object->description  			= $description;
+				$object->phone					= $phone;
+				$object->email					= $email;
+				$object->max_users				= $max_users;
+				$object->url					= $url;
+				$object->fk_code_type_resource  = $fk_code_type_resource;
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -183,10 +195,10 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
 		$res = $object->fetch($id);
 		if ($res > 0) {
-			$result = $object->delete($id);
+			$result = $object->delete($user);
 
 			if ($result >= 0) {
-				setEventMessages($langs->trans('RessourceSuccessfullyDeleted'), null, 'mesgs');
+				setEventMessages($langs->trans('RessourceSuccessfullyDeleted'), null);
 				header('Location: '.DOL_URL_ROOT.'/resource/list.php');
 				exit;
 			} else {
@@ -220,7 +232,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 	if ($action == 'create' || $action == 'edit') {
 		if (!$user->hasRight('resource', 'write')) {
-			accessforbidden('', 0, 1);
+			accessforbidden('', 0);
 		}
 
 		// Create/Edit object
@@ -233,7 +245,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 		// Ref
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("ResourceFormLabel_ref").'</td>';
-		print '<td><input class="minwidth200" name="ref" value="'.($ref ? $ref : $object->ref).'" autofocus="autofocus"></td></tr>';
+		print '<td><input class="minwidth200" name="ref" value="'.($ref ?: $object->ref).'" autofocus="autofocus"></td></tr>';
 
 		// Address
 		print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
@@ -257,14 +269,14 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 		// Origin country
 		print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
-		print $form->select_country($object->country_id, 'country_id');
+		print $form->select_country($object->country_id);
 		if ($user->admin) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 		print '</td></tr>';
 
 		// State
-		if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 			if ((getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
 				print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
 			} else {
@@ -290,9 +302,37 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('description', ($description ? $description : $object->description), '', '200', 'dolibarr_notes', false);
+		$doleditor = new DolEditor('description', ($description ?: $object->description), '', '200', 'dolibarr_notes', false);
 		$doleditor->Create();
 		print '</td></tr>';
+
+		// Phone
+		print '<td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
+		print '<td>';
+		print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
+		print '<input type="tel" name="phone" id="phone" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'"></td>';
+		print '</tr>';
+
+		// Email
+		print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0).'</td>';
+		print '<td>';
+		print img_picto('', 'object_email', 'class="pictofixedwidth"');
+		print '<input type="email" name="email" id="email" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email).'"></td>';
+		print '</tr>';
+
+		// Max users
+		print '<tr><td>'.$form->editfieldkey('MaxUsers', 'max_users', '', $object, 0).'</td>';
+		print '<td>';
+		print img_picto('', 'object_user', 'class="pictofixedwidth"');
+		print '<input type="number" name="max_users" id="max_users" value="'.(GETPOSTISSET('max_users') ? GETPOSTINT('max_users') : $object->max_users).'"></td>';
+		print '</tr>';
+
+		// URL
+		print '<tr><td>'.$form->editfieldkey('URL', 'url', '', $object, 0).'</td>';
+		print '<td>';
+		print img_picto('', 'object_url', 'class="pictofixedwidth"');
+		print '<input type="url" name="url" id="url" value="'.(GETPOSTISSET('url') ? GETPOST('url', 'alpha') : $object->url).'"></td>';
+		print '</tr>';
 
 		// Other attributes
 		$parameters = array();
@@ -326,7 +366,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref');
 
 
 		print '<div class="fichecenter">';
@@ -353,13 +393,13 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '</td>';
 		print '</tr>';
 
-		// Origin country code
+		// Max users
 		print '<tr>';
-		print '<td>'.$langs->trans("CountryOrigin").'</td>';
+		print '<td>'.$langs->trans("MaxUsers").'</td>';
 		print '<td>';
-		print getCountry($object->country_id, 0, $db);
+		print $object->max_users;
 		print '</td>';
-
+		print '</tr>';
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
