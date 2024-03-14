@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2015   Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +82,7 @@ class modMargin extends DolibarrModules
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
-		$this->const = array(0=>array('MARGIN_TYPE', 'chaine', 'costprice', 'Rule for margin calculation by default', 0, 'current', 0)); // List of particular constants to add when module is enabled
+		$this->const = array(0 => array('MARGIN_TYPE', 'chaine', 'costprice', 'Rule for margin calculation by default', 0, 'current', 0)); // List of particular constants to add when module is enabled
 
 		// New pages on tabs
 		$this->tabs = array(
@@ -96,27 +97,27 @@ class modMargin extends DolibarrModules
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
-		$r = 0;
+		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
-		$r = 0;
+		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 
 		// left menu entry
 		$this->menu[$r] = array(
-			'fk_menu'=>'fk_mainmenu=billing', // Put 0 if this is a top menu
-			'type'=>'left', // This is a Top menu entry
-			'titre'=>'Margins',
+			'fk_menu' => 'fk_mainmenu=billing', // Put 0 if this is a top menu
+			'type' => 'left', // This is a Top menu entry
+			'titre' => 'Margins',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
-			'mainmenu'=>'billing',
-			'leftmenu'=>'margins',
-			'url'=>'/margin/index.php',
-			'langs'=>'margins', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>100,
-			'enabled'=>'isModEnabled("margin")', // Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->margins->liretous', // Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+			'mainmenu' => 'billing',
+			'leftmenu' => 'margins',
+			'url' => '/margin/index.php',
+			'langs' => 'margins', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position' => 100,
+			'enabled' => 'isModEnabled("margin")', // Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
+			'perms' => '$user->rights->margins->liretous', // Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
+			'target' => '',
+			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
 

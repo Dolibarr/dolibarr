@@ -97,17 +97,17 @@ $extrafields = new ExtraFields($db);
 
 
 $arrayfields = array(
-	'f.titre'=>array('label'=>"Ref", 'checked'=>1),
-	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
-	'f.fk_contrat'=>array('label'=>"Contract", 'checked'=>1),
-	'f.duree'=>array('label'=>"Duration", 'checked'=>1),
-	'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>1),
-	'f.frequency'=>array('label'=>"RecurringInvoiceTemplate", 'checked'=>1),
-	'f.nb_gen_done'=>array('label'=>"NbOfGenerationDoneShort", 'checked'=>1),
-	'f.date_last_gen'=>array('label'=>"DateLastGeneration", 'checked'=>1),
-	'f.date_when'=>array('label'=>"NextDateToExecution", 'checked'=>1),
-	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	'f.titre' => array('label' => "Ref", 'checked' => 1),
+	's.nom' => array('label' => "ThirdParty", 'checked' => 1),
+	'f.fk_contrat' => array('label' => "Contract", 'checked' => 1),
+	'f.duree' => array('label' => "Duration", 'checked' => 1),
+	'f.total_ttc' => array('label' => "AmountTTC", 'checked' => 1),
+	'f.frequency' => array('label' => "RecurringInvoiceTemplate", 'checked' => 1),
+	'f.nb_gen_done' => array('label' => "NbOfGenerationDoneShort", 'checked' => 1),
+	'f.date_last_gen' => array('label' => "DateLastGeneration", 'checked' => 1),
+	'f.date_when' => array('label' => "NextDateToExecution", 'checked' => 1),
+	'f.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
+	'f.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
 );
 
 
@@ -378,7 +378,7 @@ if ($action == 'create') {
 		print $form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'));
 		print "</td><td>";
 		print '<input type="text" name="frequency" value="'.GETPOSTINT('frequency').'" size="4">&nbsp;';
-		print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency') ? GETPOST('unit_frequency') : 'm'));
+		print $form->selectarray('unit_frequency', array('d' => $langs->trans('Day'), 'm' => $langs->trans('Month'), 'y' => $langs->trans('Year')), (GETPOST('unit_frequency') ? GETPOST('unit_frequency') : 'm'));
 		print "</td></tr>";
 
 		// First date of execution for cron
@@ -386,7 +386,7 @@ if ($action == 'create') {
 		if (empty($date_next_execution)) {
 			$date_next_execution = (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
 		}
-		print $form->selectDate($date_next_execution, '', 1, 1, '', "add", 1, 1);
+		print $form->selectDate($date_next_execution, '', 1, 1, 0, "add", 1, 1);
 		print "</td></tr>";
 
 		// Number max of generation
@@ -625,7 +625,7 @@ if ($action == 'create') {
 				print '<table class="nobordernopadding">';
 				print '<tr><td>';
 				print '<input type="text" name="frequency" value="'.$object->frequency.'" size="5">&nbsp;';
-				print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), ($object->unit_frequency ? $object->unit_frequency : 'm'));
+				print $form->selectarray('unit_frequency', array('d' => $langs->trans('Day'), 'm' => $langs->trans('Month'), 'y' => $langs->trans('Year')), ($object->unit_frequency ? $object->unit_frequency : 'm'));
 				print '</td>';
 				print '<td class="left"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 				print '</tr></table></form>';

@@ -265,6 +265,12 @@ ALTER TABLE llx_societe ADD COLUMN phone_mobile varchar(20) after phone;
 ALTER TABLE llx_facture ADD INDEX idx_facture_tms (tms);
 ALTER TABLE llx_facture_fourn ADD INDEX idx_facture_fourn_tms (tms);
 
+ALTER TABLE llx_element_element MODIFY COLUMN sourcetype VARCHAR(64) NOT NULL;
+ALTER TABLE llx_element_element MODIFY COLUMN targettype VARCHAR(64) NOT NULL;
+ALTER TABLE llx_c_type_contact MODIFY COLUMN element VARCHAR(64) NOT NULL;
+
+ALTER TABLE llx_product_association ADD COLUMN import_key varchar(14) DEFAULT NULL;
+
 -- Dispatcher for virtual products
 ALTER TABLE llx_expeditiondet ADD COLUMN fk_parent integer NULL AFTER fk_origin_line;
 ALTER TABLE llx_expeditiondet ADD COLUMN fk_product integer NULL AFTER fk_parent;

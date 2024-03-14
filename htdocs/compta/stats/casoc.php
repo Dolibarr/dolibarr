@@ -197,7 +197,7 @@ $allparams = array_merge($commonparams, $headerparams, $tableparams);
 $headerparams = array_merge($commonparams, $headerparams);
 $tableparams = array_merge($commonparams, $tableparams);
 
-$paramslink="";
+$paramslink = "";
 foreach ($allparams as $key => $value) {
 	$paramslink .= '&'.$key.'='.$value;
 }
@@ -221,8 +221,8 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
 
-$exportlink="";
-$namelink="";
+$exportlink = "";
+$namelink = "";
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
@@ -354,6 +354,10 @@ $sql .= " ORDER BY s.rowid";
 //echo $sql;
 
 $amount = array();
+$amount_ht = array();
+$address_zip = array();
+$address_town = array();
+$address_pays = array();
 
 dol_syslog("casoc", LOG_DEBUG);
 $result = $db->query($sql);

@@ -45,6 +45,11 @@ require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
 
+
+/*
+ * View
+ */
+
 top_httphead();
 
 //get data from AJAX
@@ -54,14 +59,22 @@ $jsonData = json_decode($rawData, true);
 if (is_null($jsonData)) {
 	dol_print_error('data with format JSON valide.');
 }
-$chatGPT = new Ai($db);
+$ai = new Ai($db);
 
+$function = 'textgeneration';
 $instructions = dol_string_nohtmltag($jsonData['instructions'], 1, 'UTF-8');
+$format = empty($jsonData['instructions']) ? '' : $jsonData['instructions'];
 
-$generatedContent = $chatGPT->generateContent($instructions, 'gpt-3.5-turbo', 'MAILING');
+$generatedContent = $ai->generateContent($instructions, 'auto', $function, $format);
 
 if (is_array($generatedContent) && $generatedContent['error']) {
-	print "Error : " . $generatedContent['message'];
+	// client errors
+	if ($generatedContent['code'] >= 400) {
+		print "Error : " . $generatedContent['message'];
+		print '<br><a href="'.DOL_MAIN_URL_ROOT.'/ai/admin/setup.php">'.$langs->trans('Check Config of Module').'</a>';
+	} else {
+		print "Error returned by API call: " . $generatedContent['message'];
+	}
 } else {
 	print $generatedContent;
 }

@@ -344,6 +344,7 @@ WarningConfFileMustBeReadOnly=Warning, your config file (<b>htdocs/conf/conf.php
 WarningsOnXLines=Warnings on <b>%s</b> source record(s)
 WarningNoDocumentModelActivated=No model, for document generation, has been activated. A model will be chosen by default until you check your module setup.
 WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable the installation/migration tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Omitting the creation of this file is a grave security risk.
+WarningUpgradeHasBeenUnlocked=Warning, upgrade process has been unlocked for everybody
 WarningUntilDirRemoved=This security warning will remain active as long as the vulnerability is present.
 WarningCloseAlways=Warning, closing is done even if amount differs between source and target elements. Enable this feature with caution.
 WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
@@ -373,7 +374,7 @@ WarningModuleNeedRefresh = Module <b>%s</b> has been disabled. Don't forget to e
 WarningPermissionAlreadyExist=Existing permissions for this object
 WarningGoOnAccountancySetupToAddAccounts=If this list is empty, go into menu %s - %s - %s to load or create accounts for your chart of account.
 WarningCorrectedInvoiceNotFound=Corrected invoice not found
-WarningCommentNotFound=Please check placement of start and end comments for <b>%s</b> section in file <b>%s</b> before submitting your action
+WarningCommentNotFound=Warning: Can't find the start and/or end comments for the section <b>%s</b> into the file <b>%s</b>
 WarningAlreadyReverse=Stock movement already reversed
 
 SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with credit transfer payments.

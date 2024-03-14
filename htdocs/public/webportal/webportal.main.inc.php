@@ -1,4 +1,28 @@
 <?php
+/* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ * \file    htdocs/public/webportal/webportal.main.inc.php
+ * \ingroup webportal
+ * \brief   Main include file for WebPortal
+ */
+
 if (!defined('WEBPORTAL')) { define('WEBPORTAL', 1); }
 if (!defined('NOLOGIN')) { define('NOLOGIN', 1); }
 if (!defined('NOREQUIREUSER')) { define('NOREQUIREUSER', 1); }
@@ -38,20 +62,14 @@ if (!function_exists('dol_getprefix')) {
 }
 
 
-// Change this following line to use the correct relative path (../, ../../, etc)
-$res = 0;
-if (!$res && file_exists('../../main.inc.php')) $res = @include '../../main.inc.php';                // to work if your module directory is into dolibarr root htdocs directory
-if (!$res && file_exists('../../../main.inc.php')) $res = @include '../../../main.inc.php';            // to work if your module directory is into a subdir of root htdocs directory
-if (!$res && file_exists('../../../../main.inc.php')) $res = @include '../../../../main.inc.php';            // to work if your module directory is into a subdir of root htdocs directory
-if (!$res && file_exists('../../../../../main.inc.php')) $res = @include '../../../../../main.inc.php';            // to work if your module directory is into a subdir of root htdocs directory
-if (!$res && file_exists('../../../../../../main.inc.php')) $res = @include '../../../../../../main.inc.php';            // to work if your module directory is into a subdir of root htdocs directory
-if (!$res) die('Include of main fails');
+include '../../main.inc.php';
+
 require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societeaccount.class.php';
-dol_include_once('/public/webportal/lib/webportal.lib.php');
-dol_include_once('/webportal/class/context.class.php');
-dol_include_once('/webportal/class/webportalmember.class.php');
-dol_include_once('/webportal/class/webportalpartnership.class.php');
+require_once DOL_DOCUMENT_ROOT . '/public/webportal/lib/webportal.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/webportal/class/context.class.php';
+require_once DOL_DOCUMENT_ROOT . '/webportal/class/webportalmember.class.php';
+require_once DOL_DOCUMENT_ROOT . '/webportal/class/webportalpartnership.class.php';
 
 // Init session. Name of session is specific to WEBPORTAL instance.
 // Must be done after the include of filefunc.inc.php so global variables of conf file are defined (like $dolibarr_main_instance_unique_id or $dolibarr_main_force_https).
@@ -211,6 +229,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 					if (!$error) {
 						// get partnership
 						$logged_partnership = new WebPortalPartnership($db);
+						// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 						$result = $logged_partnership->fetch(0, '', $logged_member->id, $websiteaccount->thirdparty->id);
 						if ($result < 0) {
 							$error++;

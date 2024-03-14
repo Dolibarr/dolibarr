@@ -6,6 +6,7 @@
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022       Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +60,7 @@ class Task extends CommonObjectLine
 	public $picto = 'projecttask';
 
 	/**
-	 * @var array	List of child tables. To test if we can delete object.
+	 * @var array<string, array<string>>	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
 		'element_time' => array('name' => 'Task', 'parent' => 'projet_task', 'parentkey' => 'fk_element', 'parenttypefield' => 'elementtype', 'parenttypevalue' => 'task')
@@ -881,7 +882,7 @@ class Task extends CommonObjectLine
 			$result .= (($addlabel && $this->label) ? $sep.dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 		}
 
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1190,7 +1191,7 @@ class Task extends CommonObjectLine
 	 *
 	 * @param	User|null	$userp			      Return roles on project for this internal user. If set, usert and taskid must not be defined.
 	 * @param	User|null	$usert			      Return roles on task for this internal user. If set userp must NOT be defined. -1 means no filter.
-	 * @param 	int			$projectid		      Project id list separated with , to filter on project
+	 * @param 	string		$projectid		      Project id list separated with , to filter on project
 	 * @param 	int			$taskid			      Task id to filter on a task
 	 * @param	integer		$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
 	 * @return 	array|int					      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
@@ -1595,7 +1596,7 @@ class Task extends CommonObjectLine
 	/**
 	 *  Calculate quantity and value of time consumed using the thm (hourly amount value of work for user entering time)
 	 *
-	 *	@param		User		$fuser		Filter on a dedicated user
+	 *	@param		User|string	$fuser		Filter on a dedicated user
 	 *  @param		string		$dates		Start date (ex 00:00:00)
 	 *  @param		string		$datee		End date (ex 23:59:59)
 	 *  @return 	array	        		Array of info for task array('amount','nbseconds','nblinesnull')

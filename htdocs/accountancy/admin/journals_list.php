@@ -50,8 +50,10 @@ if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
+$acts = array();
 $acts[0] = "activate";
 $acts[1] = "disable";
+$actl = array();
 $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"');
 $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
@@ -128,7 +130,7 @@ $tabcond[35] = isModEnabled('accounting');
 
 // List of help for fields
 $tabhelp = array();
-$tabhelp[35] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[35] = array('code' => $langs->trans("EnterAnyCode"));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck = array();
@@ -186,7 +188,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		if ($tabrowid[$id]) {
 			// Get free id for insert
 			$newid = 0;
-			$sql = "SELECT MAX(".$tabrowid[$id].") newid from ".$tabname[$id];
+			$sql = "SELECT MAX(".$db->sanitize($tabrowid[$id]).") newid FROM ".$db->sanitize($tabname[$id]);
 			$result = $db->query($sql);
 			if ($result) {
 				$obj = $db->fetch_object($result);
@@ -197,12 +199,12 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 
 		// Add new entry
-		$sql = "INSERT INTO ".$tabname[$id]." (";
+		$sql = "INSERT INTO ".$db->sanitize($tabname[$id])." (";
 		// List of fields
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
 			$sql .= $tabrowid[$id].",";
 		}
-		$sql .= $tabfieldinsert[$id];
+		$sql .= $db->sanitize($tabfieldinsert[$id]);
 		$sql .= ",active,entity)";
 		$sql .= " VALUES(";
 
@@ -228,7 +230,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$result = $db->query($sql);
 		if ($result) {	// Add is ok
 			setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
-			$_POST = array('id'=>$id); // Clean $_POST array, we keep only id
+			$_POST = array('id' => $id); // Clean $_POST array, we keep only id
 		} else {
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
@@ -247,10 +249,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 
 		// Modify entry
-		$sql = "UPDATE ".$tabname[$id]." SET ";
+		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET ";
 		// Modifie valeur des champs
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
-			$sql .= $tabrowid[$id]."=";
+			$sql .= $db->sanitize($tabrowid[$id])." = ";
 			$sql .= "'".$db->escape($rowid)."', ";
 		}
 		$i = 0;
@@ -262,7 +264,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
 			$i++;
 		}
-		$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
+		$sql .= " WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
 		$sql .= " AND entity = ".((int) $conf->entity);
 
 		dol_syslog("actionmodify", LOG_DEBUG);
@@ -287,7 +289,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 		$rowidcol = "rowid";
 	}
 
-	$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol." = ".((int) $rowid);
+	$sql = "DELETE from ".$db->sanitize($tabname[$id])." WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
 	$sql .= " AND entity = ".((int) $conf->entity);
 
 	dol_syslog("delete", LOG_DEBUG);
@@ -310,9 +312,9 @@ if ($action == $acts[0]) {
 	}
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol." = ".((int) $rowid);
+		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 1 WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
 	} elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$db->escape($code)."'";
+		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 1 WHERE code = '".$db->escape($code)."'";
 	}
 	$sql .= " AND entity = ".$conf->entity;
 
@@ -331,9 +333,9 @@ if ($action == $acts[1]) {
 	}
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol." = ".((int) $rowid);
+		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 0 WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
 	} elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$db->escape($code)."'";
+		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 0 WHERE code='".$db->escape($code)."'";
 	}
 	$sql .= " AND entity = ".$conf->entity;
 
@@ -451,7 +453,7 @@ if ($id) {
 		}
 
 		$tmpaction = 'create';
-		$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+		$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
 		$reshook = $hookmanager->executeHooks('createDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 		$error = $hookmanager->error;
 		$errors = $hookmanager->errors;
@@ -479,7 +481,7 @@ if ($id) {
 
 		$param = '&id='.((int) $id);
 		if ($search_country_id > 0) {
-			$param .= '&search_country_id='.urlencode($search_country_id);
+			$param .= '&search_country_id='.urlencode((string) ($search_country_id));
 		}
 		$paramwithsearch = $param;
 		if ($sortorder) {
@@ -561,7 +563,7 @@ if ($id) {
 				print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
 				if ($action == 'edit' && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code))) {
 					$tmpaction = 'edit';
-					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
 					$reshook = $hookmanager->executeHooks('editDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 					$error = $hookmanager->error;
 					$errors = $hookmanager->errors;
@@ -580,7 +582,7 @@ if ($id) {
 					print '</td>';
 				} else {
 					$tmpaction = 'view';
-					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
 					$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
 					$error = $hookmanager->error;

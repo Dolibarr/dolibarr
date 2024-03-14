@@ -146,6 +146,7 @@ if ($resql) {
 	setEventMessages($db->lasterror, null, 'errors');
 }
 
+// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $num, 'title_accountancy', 0, '', '', $limit);
 
 if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {

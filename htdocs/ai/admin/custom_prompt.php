@@ -38,11 +38,6 @@ if (empty($action)) {
 	$action = 'edit';
 }
 
-$value = GETPOST('value', 'alpha');
-$label = GETPOST('label', 'alpha');
-$scandir = GETPOST('scan_dir', 'alpha');
-$type = 'myobject';
-
 $error = 0;
 $setupnotempty = 0;
 
@@ -71,8 +66,12 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 // List of AI features
 $arrayofaifeatures = array(
-	'emailing' => 'Emailing',
-	'imagegeneration' => 'ImageGeneration'
+	'textgeneration' => array('label' => 'TextGeneration', 'picto'=>'', 'status'=>'development'),
+	'imagegeneration' => array('label' => 'ImageGeneration', 'picto'=>'', 'status'=>'notused'),
+	'videogeneration' => array('label' => 'VideoGeneration', 'picto'=>'', 'status'=>'notused'),
+	'transcription' => array('label' => 'Transcription', 'picto'=>'', 'status'=>'notused'),
+	'translation' => array('label' => 'Translation', 'picto'=>'', 'status'=>'notused'),
+	'audiotext' => array('label' => 'AudioText', 'picto'=>'', 'status'=>'notused')
 );
 
 
@@ -80,12 +79,12 @@ $arrayofaifeatures = array(
  * Actions
  */
 
-$modulename = GETPOST('module_name');
-$pre_prompt = GETPOST('prePrompt', 'alpha');
-$post_prompt = GETPOST('postPrompt', 'alpha');
+$functioncode = GETPOST('functioncode', 'alpha');
+$pre_prompt = GETPOST('prePrompt');
+$post_prompt = GETPOST('postPrompt');
 // get all configs in const AI
 
-$currentConfigurationsJson = dolibarr_get_const($db, 'AI_CONFIGURATIONS_PROMPT', $conf->entity);
+$currentConfigurationsJson = getDolGlobalString('AI_CONFIGURATIONS_PROMPT');
 $currentConfigurations = json_decode($currentConfigurationsJson, true);
 
 if ($action == 'update' && GETPOST('cancel')) {
@@ -93,7 +92,7 @@ if ($action == 'update' && GETPOST('cancel')) {
 }
 if ($action == 'update' && !GETPOST('cancel')) {
 	$error = 0;
-	if (empty($modulename)) {
+	if (empty($functioncode)) {
 		$error++;
 		setEventMessages($langs->trans('ErrorInputRequired'), null, 'errors');
 	}
@@ -101,12 +100,12 @@ if ($action == 'update' && !GETPOST('cancel')) {
 		$currentConfigurations = [];
 	}
 
-	if (empty($modulename) || (empty($pre_prompt) && empty($post_prompt))) {
-		if (isset($currentConfigurations[$modulename])) {
-			unset($currentConfigurations[$modulename]);
+	if (empty($functioncode) || (empty($pre_prompt) && empty($post_prompt))) {
+		if (isset($currentConfigurations[$functioncode])) {
+			unset($currentConfigurations[$functioncode]);
 		}
 	} else {
-		$currentConfigurations[$modulename] = [
+		$currentConfigurations[$functioncode] = [
 			'prePrompt' => $pre_prompt,
 			'postPrompt' => $post_prompt,
 		];
@@ -125,6 +124,46 @@ if ($action == 'update' && !GETPOST('cancel')) {
 	}
 
 	$action = 'edit';
+}
+
+if ($action == 'updatePrompts') {
+	$key = GETPOST('key', 'alpha');
+
+	$currentConfigurations[$key] = [
+		'prePrompt' => $pre_prompt,
+		'postPrompt' => $post_prompt,
+	];
+
+	$newConfigurationsJson = json_encode($currentConfigurations, JSON_UNESCAPED_UNICODE);
+	$result = dolibarr_set_const($db, 'AI_CONFIGURATIONS_PROMPT', $newConfigurationsJson, 'chaine', 0, '', $conf->entity);
+	if (!$error) {
+		$action = 'dodo';
+		if ($result) {
+			header("Location: ".$_SERVER['PHP_SELF']);
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+			exit;
+		} else {
+			setEventMessages($langs->trans("ErrorUpdating"), null, 'errors');
+		}
+	}
+}
+
+if ($action == 'confirm_deleteproperty' && GETPOST('confirm') == 'yes') {
+	$key = GETPOST('key', 'alpha');
+
+	if (isset($currentConfigurations[$key])) {
+		unset($currentConfigurations[$key]);
+
+		$newConfigurationsJson = json_encode($currentConfigurations, JSON_UNESCAPED_UNICODE);
+		$res = dolibarr_set_const($db, 'AI_CONFIGURATIONS_PROMPT', $newConfigurationsJson, 'chaine', 0, '', $conf->entity);
+		if ($res) {
+			header("Location: ".$_SERVER['PHP_SELF']);
+			setEventMessages($langs->trans("SetupDeleted"), null, 'mesgs');
+			exit;
+		} else {
+			setEventMessages($langs->trans("ErrorDeleting"), null, 'errors');
+		}
+	}
 }
 
 
@@ -153,10 +192,24 @@ $newbutton = '';
 
 print load_fiche_titre($langs->trans("AIPromptForFeatures"), $newbutton, '');
 
+if ($action == 'deleteproperty') {
+	$formconfirm = $form->formconfirm(
+		$_SERVER["PHP_SELF"].'?key='.urlencode(GETPOST('key', 'alpha')),
+		$langs->trans('Delete'),
+		$langs->trans('ConfirmDeleteSetup', GETPOST('key', 'alpha')),
+		'confirm_deleteproperty',
+		'',
+		0,
+		1
+	);
+	print $formconfirm;
+}
+
 if ($action == 'edit') {
 	$out .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 	$out .= '<input type="hidden" name="action" value="update">';
+
 
 	$out .= '<table class="noborder centpercent">';
 	$out .= '<thead>';
@@ -172,10 +225,12 @@ if ($action == 'edit') {
 	$out .= '</td>';
 	$out .= '<td>';
 	// Combo list of AI features
-	$out .= '<select name="module_name" id="module_select" class="flat minwidth500">';
+	$out .= '<select name="functioncode" id="functioncode" class="flat minwidth500">';
 	$out .= '<option>&nbsp;</option>';
 	foreach ($arrayofaifeatures as $key => $val) {
-		$out .= '<option value="'.$val.'">'.$langs->trans($arrayofaifeatures[$key]).'</option>';
+		$labelhtml = $langs->trans($arrayofaifeatures[$key]['label']).($arrayofaifeatures[$key]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotUsed").')</span>' : "");
+		$labeltext = $langs->trans($arrayofaifeatures[$key]['label']);
+		$out .= '<option value="'.$key.'" data-html="'.dol_escape_htmltag($labelhtml).'">'.dol_escape_htmltag($labeltext).'</option>';
 	}
 	/*
 	$sql = "SELECT name FROM llx_const WHERE name LIKE 'MAIN_MODULE_%' AND value = '1'";
@@ -191,7 +246,7 @@ if ($action == 'edit') {
 	}
 	*/
 	$out .= '</select>';
-	$out .= ajax_combobox("module_select");
+	$out .= ajax_combobox("functioncode");
 
 	$out .= '</td>';
 	$out .= '</tr>';
@@ -215,7 +270,7 @@ if ($action == 'edit') {
 	$out .= '</table>';
 
 	$out .= $form->buttonsSaveCancel("Add", "");
-
+	$out .= '</form>';
 	$out .= '<br><br><br>';
 
 	print $out;
@@ -223,39 +278,53 @@ if ($action == 'edit') {
 
 
 if ($action == 'edit' || $action == 'create') {
-	$out = '<table class="noborder centpercent">';
-	foreach ($currentConfigurations as $key => $config) {
-		if (!preg_match('/^[a-z]+$/i', $key)) {	// Ignore empty saved setup
-			continue;
-		}
-		$out .= '<thead>';
-		$out .= '<tr class="liste_titre">';
-		$out .= '<td>'.$langs->trans($arrayofaifeatures[$key]).'</td>';
-		$out .= '<td></td>';
-		$out .= '</tr>';
-		$out .= '</thead>';
-		$out .= '<tbody>';
-		$out .= '<tr class="oddeven">';
-		$out .= '<td class="col-setup-title">';
-		$out .= '<span id="prePrompt" class="spanforparamtooltip">pre-Prompt</span>';
-		$out .= '</td>';
-		$out .= '<td>';
-		$out .= '<input name="prePrompt" id="prePromptInput" class="flat minwidth500" value="'.$config['prePrompt'].'">';
-		$out .= '</td>';
-		$out .= '</tr>';
-		$out .= '<tr class="oddeven">';
-		$out .= '<td class="col-setup-title">';
-		$out .= '<span id="postPrompt" class="spanforparamtooltip">Post-prompt</span>';
-		$out .= '</td>';
-		$out .= '<td>';
-		$out .= '<input name="postPrompt" id="postPromptInput" class="flat minwidth500" value="'.$config['postPrompt'].'">';
-		$out .= '</td>';
-		$out .= '</tr>';
-	}
-	$out .= '</tbody>';
-	$out .= '</table>';
+	$out = '';
 
-	$out .= '</form>';
+	if (!empty($currentConfigurations)) {
+		$out = '<table class="noborder centpercent">';
+		foreach ($currentConfigurations as $key => $config) {
+			if (!empty($key) && !preg_match('/^[a-z]+$/i', $key)) {	// Ignore empty saved setup
+				continue;
+			}
+
+			$out .= '<thead>';
+			$out .= '<tr class="liste_titre">';
+			$out .= '<td>'.$arrayofaifeatures[$key]['picto'].' '.$langs->trans($arrayofaifeatures[$key]['label']);
+			$out .= '<a class="viewfielda reposition marginleftonly marginrighttonly showInputBtn" href="#" data-index="'.$key.'" data-state="edit" data-icon-edit="'.dol_escape_htmltag(img_edit()).'" data-icon-cancel="'.dol_escape_htmltag(img_view()).'">'.img_edit().'</a>';
+			$out .= '<a class="deletefielda  marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&key='.urlencode($key).'">'.img_delete().'</a>';
+			$out .= '</td>';
+			$out .= '<td></td>';
+			$out .= '</tr>';
+			$out .= '</thead>';
+			$out .= '<tbody>';
+
+			$out .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
+			$out .= '<input type="hidden" name="key" value="'.$key.'" />';
+			$out .= '<input type="hidden" name="action" value="updatePrompts">';
+			$out .= '<tr class="oddeven">';
+			$out .= '<td class="col-setup-title">';
+			$out .= '<span id="prePrompt" class="spanforparamtooltip">pre-Prompt</span>';
+			$out .= '</td>';
+			$out .= '<td>';
+			$out .= '<input name="prePrompt" id="prePromptInput_'.$key.'" class="flat minwidth500" value="'.$config['prePrompt'].'" disabled>';
+			$out .= '</td>';
+			$out .= '</tr>';
+			$out .= '<tr class="oddeven">';
+			$out .= '<td class="col-setup-title">';
+			$out .= '<span id="postPrompt" class="spanforparamtooltip">Post-prompt</span>';
+			$out .= '</td>';
+			$out .= '<td>';
+			$out .= '<input name="postPrompt" id="postPromptInput_'.$key.'" class="flat minwidth500" value="'.$config['postPrompt'].'" disabled>';
+			$out .= '<br><input type="submit" class="button small submitBtn" name="modify" data-index="'.$key.'" style="display: none;" value="'.dol_escape_htmltag($langs->trans("Modify")).'"/>';
+			$out .= '</td>';
+			$out .= '</tr>';
+			$out .= '</form>';
+		}
+		$out .= '</tbody>';
+		$out .= '</table>';
+	}
+
 
 	$out .= "<script>
     var configurations =  ".$currentConfigurationsJson.";
@@ -272,7 +341,31 @@ if ($action == 'edit' || $action == 'create') {
                 $('#postPromptInput').val('');
             }
         });
-    });
+
+		$('.showInputBtn').click(function() {
+			event.preventDefault();
+			var index = $(this).data('index');
+			var state = $(this).data('state');
+
+			if(state === 'edit') {
+				$('#prePromptInput_'+index).removeAttr('disabled').focus();
+				$('#postPromptInput_'+index).removeAttr('disabled');
+				$('.submitBtn[data-index=' + index + ']').show();
+				$(this).html($(this).data('icon-cancel'));
+				$(this).data('state', 'cancel');
+
+			} else {
+
+				$('#prePromptInput_'+index).attr('disabled', 'disabled');
+				$('#postPromptInput_'+index).attr('disabled', 'disabled');
+				$('.submitBtn[data-index=' + index + ']').hide();
+				$(this).html($(this).data('icon-edit'));
+				$(this).data('state', 'edit');
+			}
+		});
+	});
+
+
     </script>";
 
 	print $out;

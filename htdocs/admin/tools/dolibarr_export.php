@@ -191,7 +191,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<label for="radio_dump_postgresql">PostgreSQL Dump (pg_dump)</label>';
 	print '</div>';
 } else {
-	print 'No method available with database '.$label;
+	print 'No method available with database '.dol_escape_htmltag($label);
 }
 print '</fieldset>';
 print '</div>';

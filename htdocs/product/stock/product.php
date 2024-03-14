@@ -144,7 +144,7 @@ if ($cancel) {
 	$action = '';
 }
 
-$parameters = array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
+$parameters = array('id' => $id, 'ref' => $ref, 'objcanvas' => $objcanvas);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -181,6 +181,7 @@ if ($action == 'addlimitstockwarehouse' && $user->hasRight('produit', 'creer')) 
 
 	if ($maj_ok) {
 		$pse = new ProductStockEntrepot($db);
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		if ($pse->fetch(0, $id, GETPOSTINT('fk_entrepot')) > 0) {
 			// Update
 			$pse->seuil_stock_alerte = $seuil_stock_alerte;
@@ -795,7 +796,7 @@ if ($id > 0 || $ref) {
 			}
 
 			// Number of product from sales order already sent (partial shipping)
-			if (isModEnabled("delivery_note")) {
+			if (isModEnabled("shipping")) {
 				require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 				$filterShipmentStatus = '';
 				if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
@@ -1146,12 +1147,12 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 						print '<td class="right" width="10%"><input type="text" name="batch_number" value="'.$pdluo->batch.'"></td>';
 						if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 							print '<td class="center" width="10%">';
-							print $form->selectDate($pdluo->sellby, 'sellby', '', '', 1, '', 1, 0);
+							print $form->selectDate($pdluo->sellby, 'sellby', 0, 0, 1, '', 1, 0);
 							print '</td>';
 						}
 						if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 							print '<td class="center" width="10%">';
-							print $form->selectDate($pdluo->eatby, 'eatby', '', '', 1, '', 1, 0);
+							print $form->selectDate($pdluo->eatby, 'eatby', 0, 0, 1, '', 1, 0);
 							print '</td>';
 						}
 						print '<td class="right" colspan="3">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';

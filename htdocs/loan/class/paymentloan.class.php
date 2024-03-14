@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2023 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,7 +61,10 @@ class PaymentLoan extends CommonObject
 	 */
 	public $datep = '';
 
-	public $amounts = array(); // Array of amounts
+	/**
+	 * @var array Array of amounts
+	 */
+	public $amounts = array();
 
 	public $amount_capital; // Total amount of payment
 
@@ -152,7 +155,7 @@ class PaymentLoan extends CommonObject
 			$this->fk_typepayment = (int) $this->fk_typepayment;
 		}
 		if (isset($this->num_payment)) {
-			$this->num_payment = (int) $this->num_payment;
+			$this->num_payment = trim($this->num_payment);
 		}
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
@@ -314,7 +317,7 @@ class PaymentLoan extends CommonObject
 			$this->fk_typepayment = (int) $this->fk_typepayment;
 		}
 		if (isset($this->num_payment)) {
-			$this->num_payment = (int) $this->num_payment;
+			$this->num_payment = trim($this->num_payment);
 		}
 		if (isset($this->note_private)) {
 			$this->note = trim($this->note_private);

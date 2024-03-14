@@ -374,7 +374,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Docdate").'</td>';
 	print '<td>';
-	print $form->selectDate('', 'doc_date', '', '', '', "create_mvt", 1, 1);
+	print $form->selectDate('', 'doc_date', 0, 0, 0, "create_mvt", 1, 1);
 	print '</td>';
 	print '</tr>';
 
@@ -447,7 +447,7 @@ if ($action == 'create') {
 		print $langs->trans('Docdate');
 		print '</td>';
 		if ($action != 'editdate') {
-			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&piece_num='.urlencode($object->piece_num).'&mode='.urlencode($mode).'">'.img_edit($langs->transnoentitiesnoconv('SetDate'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&piece_num='.urlencode((string) ($object->piece_num)).'&mode='.urlencode((string) ($mode)).'">'.img_edit($langs->transnoentitiesnoconv('SetDate'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td colspan="3">';
@@ -459,7 +459,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
-			print $form->selectDate($object->doc_date ? $object->doc_date : - 1, 'doc_date', '', '', '', "setdate");
+			print $form->selectDate($object->doc_date ? $object->doc_date : - 1, 'doc_date', 0, 0, 0, "setdate");
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
@@ -474,7 +474,7 @@ if ($action == 'create') {
 		print $langs->trans('Codejournal');
 		print '</td>';
 		if ($action != 'editjournal') {
-			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editjournal&token='.newToken().'&piece_num='.urlencode($object->piece_num).'&mode='.urlencode($mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editjournal&token='.newToken().'&piece_num='.urlencode((string) ($object->piece_num)).'&mode='.urlencode((string) ($mode)).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -501,7 +501,7 @@ if ($action == 'create') {
 		print $langs->trans('Piece');
 		print '</td>';
 		if ($action != 'editdocref') {
-			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdocref&token='.newToken().'&piece_num='.urlencode($object->piece_num).'&mode='.urlencode($mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdocref&token='.newToken().'&piece_num='.urlencode((string) ($object->piece_num)).'&mode='.urlencode((string) ($mode)).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';

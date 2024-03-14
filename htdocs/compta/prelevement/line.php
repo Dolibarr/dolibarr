@@ -111,7 +111,7 @@ if ($action == 'confirm_rejet' && $permissiontoadd) {
 				$result = $rej->create($user, $id, GETPOSTINT('motif'), $daterej, $lipre->bon_rowid, GETPOSTINT('facturer'));
 
 				if ($result > 0) {
-					header("Location: line.php?id=".urlencode($id).'&type='.urlencode($type));
+					header("Location: line.php?id=".urlencode((string) ($id)).'&type='.urlencode((string) ($type)));
 					exit;
 				}
 			}
@@ -119,7 +119,7 @@ if ($action == 'confirm_rejet' && $permissiontoadd) {
 			$action = "rejet";
 		}
 	} else {
-		header("Location: line.php?id=".urlencode($id).'&type='.urlencode($type));
+		header("Location: line.php?id=".urlencode((string) ($id)).'&type='.urlencode((string) ($type)));
 		exit;
 	}
 }
@@ -233,7 +233,7 @@ if ($id) {
 		//Date
 		print '<tr><td class="fieldrequired valid">'.$langs->trans("RefusedData").'</td>';
 		print '<td class="valid">';
-		print $form->selectDate('', '', '', '', '', "confirm_rejet");
+		print $form->selectDate('', '', 0, 0, 0, "confirm_rejet");
 		print '</td></tr>';
 
 		//Reason
@@ -343,7 +343,7 @@ if ($id) {
 		$num = $db->num_rows($result);
 		$i = 0;
 
-		$urladd = "&id=".urlencode($id);
+		$urladd = "&id=".urlencode((string) ($id));
 		$title = $langs->trans("Bills");
 		if ($type == 'bank-transfer') {
 			$title = $langs->trans("SupplierInvoices");

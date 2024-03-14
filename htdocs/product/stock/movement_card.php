@@ -5,6 +5,7 @@
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,21 +104,21 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 $arrayfields = array(
-	'm.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'm.datem'=>array('label'=>$langs->trans("Date"), 'checked'=>1),
-	'p.ref'=>array('label'=>$langs->trans("ProductRef"), 'checked'=>1, 'css'=>'maxwidth100'),
-	'p.label'=>array('label'=>$langs->trans("ProductLabel"), 'checked'=>1),
-	'm.batch'=>array('label'=>$langs->trans("BatchNumberShort"), 'checked'=>1, 'enabled'=>(isModEnabled('productbatch'))),
-	'pl.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(isModEnabled('productbatch'))),
-	'pl.sellby'=>array('label'=>$langs->trans("SellByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(isModEnabled('productbatch'))),
-	'e.ref'=>array('label'=>$langs->trans("Warehouse"), 'checked'=>1, 'enabled'=>(!($id > 0))), // If we are on specific warehouse, we hide it
-	'm.fk_user_author'=>array('label'=>$langs->trans("Author"), 'checked'=>0),
-	'm.inventorycode'=>array('label'=>$langs->trans("InventoryCodeShort"), 'checked'=>1),
-	'm.label'=>array('label'=>$langs->trans("MovementLabel"), 'checked'=>1),
-	'm.type_mouvement'=>array('label'=>$langs->trans("TypeMovement"), 'checked'=>1),
-	'origin'=>array('label'=>$langs->trans("Origin"), 'checked'=>1),
-	'm.value'=>array('label'=>$langs->trans("Qty"), 'checked'=>1),
-	'm.price'=>array('label'=>$langs->trans("UnitPurchaseValue"), 'checked'=>0),
+	'm.rowid' => array('label' => $langs->trans("Ref"), 'checked' => 1),
+	'm.datem' => array('label' => $langs->trans("Date"), 'checked' => 1),
+	'p.ref' => array('label' => $langs->trans("ProductRef"), 'checked' => 1, 'css' => 'maxwidth100'),
+	'p.label' => array('label' => $langs->trans("ProductLabel"), 'checked' => 1),
+	'm.batch' => array('label' => $langs->trans("BatchNumberShort"), 'checked' => 1, 'enabled' => (isModEnabled('productbatch'))),
+	'pl.eatby' => array('label' => $langs->trans("EatByDate"), 'checked' => 0, 'position' => 10, 'enabled' => (isModEnabled('productbatch'))),
+	'pl.sellby' => array('label' => $langs->trans("SellByDate"), 'checked' => 0, 'position' => 10, 'enabled' => (isModEnabled('productbatch'))),
+	'e.ref' => array('label' => $langs->trans("Warehouse"), 'checked' => 1, 'enabled' => (!($id > 0))), // If we are on specific warehouse, we hide it
+	'm.fk_user_author' => array('label' => $langs->trans("Author"), 'checked' => 0),
+	'm.inventorycode' => array('label' => $langs->trans("InventoryCodeShort"), 'checked' => 1),
+	'm.label' => array('label' => $langs->trans("MovementLabel"), 'checked' => 1),
+	'm.type_mouvement' => array('label' => $langs->trans("TypeMovement"), 'checked' => 1),
+	'origin' => array('label' => $langs->trans("Origin"), 'checked' => 1),
+	'm.value' => array('label' => $langs->trans("Qty"), 'checked' => 1),
+	'm.price' => array('label' => $langs->trans("UnitPurchaseValue"), 'checked' => 0),
 	//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	//'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
 );
@@ -249,6 +250,7 @@ if ($action == "correct_stock") {
 
 // Transfer stock from a warehouse to another warehouse
 if ($action == "transfert_stock" && !$cancel) {
+	$error = 0;
 	$product = new Product($db);
 	if (!empty($product_id)) {
 		$result = $product->fetch($product_id);
@@ -689,7 +691,7 @@ if ($resql) {
 		$param .= '&limit='.((int) $limit);
 	}
 	if ($id > 0) {
-		$param .= '&id='.urlencode($id);
+		$param .= '&id='.urlencode((string) ($id));
 	}
 	if ($search_movement) {
 		$param .= '&search_movement='.urlencode($search_movement);
@@ -716,7 +718,7 @@ if ($resql) {
 		$param .= '&search_user='.urlencode($search_user);
 	}
 	if ($idproduct > 0) {
-		$param .= '&idproduct='.urlencode($idproduct);
+		$param .= '&idproduct='.urlencode((string) ($idproduct));
 	}
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -754,6 +756,10 @@ if ($resql) {
 	}
 
 	if ($sall) {
+		if (!isset($fieldstosearchall) || !is_array($fieldstosearchall)) {
+			// Ensure $fieldstosearchall is array
+			$fieldstosearchall = array();
+		}
 		foreach ($fieldstosearchall as $key => $val) {
 			$fieldstosearchall[$key] = $langs->trans($val);
 		}
@@ -891,7 +897,7 @@ if ($resql) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields);
+	$parameters = array('arrayfields' => $arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
@@ -963,7 +969,7 @@ if ($resql) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
 	// Hook fields
-	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (!empty($arrayfields['m.datec']['checked'])) {

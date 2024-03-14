@@ -260,7 +260,7 @@ if ($id > 0 || !empty($ref)) {
 			// Budget
 			print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 			if (isset($projectstatic->budget_amount) && strcmp($projectstatic->budget_amount, '')) {
-				print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+				print price($projectstatic->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
 			}
 			print '</td></tr>';
 

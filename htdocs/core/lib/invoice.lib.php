@@ -5,6 +5,7 @@
  * Copyright (C) 2015       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2017      	Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2017       ATM-CONSULTING		<contact@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ function facture_prepare_head($object)
 
 	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
-		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?id='.urlencode($object->id);
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?id='.urlencode((string) ($object->id));
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
@@ -73,7 +74,7 @@ function facture_prepare_head($object)
 		}
 		$langs->load("banks");
 
-		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?id='.urlencode($object->id);
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?id='.urlencode((string) ($object->id));
 		$head[$h][1] = $langs->trans('StandingOrders');
 		if ($nbStandingOrders > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbStandingOrders.'</span>';
@@ -120,7 +121,7 @@ function facture_prepare_head($object)
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/agenda.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (isModEnabled('agenda')&& ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
 		// Enable caching of thirdparty count actioncomm
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -177,7 +178,7 @@ function invoice_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/facture.php';
+	$head[$h][0] = DOL_URL_ROOT.'/admin/invoice.php';
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h++;
@@ -193,7 +194,7 @@ function invoice_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'invoice_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/facture_cust_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/invoice_cust_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsCustomerInvoices");
 	$nbExtrafields = $extrafields->attributes['facture']['count'];
 	if ($nbExtrafields > 0) {
@@ -202,7 +203,7 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/facturedet_cust_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/invoicedet_cust_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = $extrafields->attributes['facturedet']['count'];
 	if ($nbExtrafields > 0) {
@@ -211,7 +212,7 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'attributeslines';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/facture_rec_cust_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/invoice_rec_cust_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsCustomerInvoicesRec");
 	$nbExtrafields = $extrafields->attributes['facture_rec']['count'];
 	if ($nbExtrafields > 0) {
@@ -220,7 +221,7 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'attributesrec';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/facturedet_rec_cust_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/invoicedet_rec_cust_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLinesRec");
 	$nbExtrafields = $extrafields->attributes['facturedet_rec']['count'];
 	if ($nbExtrafields > 0) {
@@ -230,7 +231,7 @@ function invoice_admin_prepare_head()
 	$h++;
 
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 0) {	// Warning, implementation with value 1 is seriously bugged and a new one not compatible is expected to become stable
-		$head[$h][0] = DOL_URL_ROOT.'/admin/facture_situation.php';
+		$head[$h][0] = DOL_URL_ROOT.'/admin/invoice_situation.php';
 		$head[$h][1] = $langs->trans("InvoiceSituation");
 		$head[$h][2] = 'situation';
 		$h++;
@@ -262,7 +263,7 @@ function invoice_rec_prepare_head($object)
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/agenda-rec.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (isModEnabled('agenda')&& ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
 		// Enable caching of thirdparty count actioncomm
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -346,7 +347,7 @@ function getNumberInvoicesPieChart($mode)
 
 	if (($mode == 'customers' && isModEnabled('invoice') && $user->hasRight('facture', 'lire'))
 		|| ($mode == 'suppliers' && (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) && $user->hasRight('fournisseur', 'facture', 'lire'))
-		) {
+	) {
 		global $badgeStatus1, $badgeStatus3, $badgeStatus4, $badgeStatus8, $badgeStatus11;
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
@@ -402,7 +403,7 @@ function getNumberInvoicesPieChart($mode)
 									,array($langs->trans('InvoiceNotLate15Days'), $obj->nbnotlate15 - $obj->nbnotlate30)
 									,array($langs->trans('InvoiceNotLate30Days'), $obj->nbnotlate30));
 				*/
-				$dataseries[$i]=array($langs->transnoentitiesnoconv('NbOfOpenInvoices'), $obj->nblate30, $obj->nblate15 - $obj->nblate30, $obj->nblatenow - $obj->nblate15, $obj->nbnotlatenow - $obj->nbnotlate15, $obj->nbnotlate15 - $obj->nbnotlate30, $obj->nbnotlate30);
+				$dataseries[$i] = array($langs->transnoentitiesnoconv('NbOfOpenInvoices'), $obj->nblate30, $obj->nblate15 - $obj->nblate30, $obj->nblatenow - $obj->nblate15, $obj->nbnotlatenow - $obj->nbnotlate15, $obj->nbnotlate15 - $obj->nbnotlate30, $obj->nbnotlate30);
 				$i++;
 			}
 			if (!empty($dataseries[0])) {
@@ -530,7 +531,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 		}
 
 		// Add Group from hooks
-		$parameters = array();
+		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$reshook = $hookmanager->executeHooks('printFieldListGroupByCustomerDraft', $parameters);
 		$sql .= $hookmanager->resPrint;
 

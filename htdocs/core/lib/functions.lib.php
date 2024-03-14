@@ -261,6 +261,16 @@ function isModEnabled($module)
 		$arrayconv['supplier_order'] = 'fournisseur';
 		$arrayconv['supplier_invoice'] = 'fournisseur';
 	}
+	// Special case.
+	// @TODO Replace isModEnabled('delivery_note') with
+	// isModEnabled('shipping') && getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')
+	if ($module == 'delivery_note') {
+		if (!getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')) {
+			return false;
+		} else {
+			$module = 'shipping';
+		}
+	}
 
 	$module_alt = $module;
 	if (!empty($arrayconv[$module])) {
@@ -682,7 +692,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 {
 	global $mysoc, $user, $conf;
 
-	if (empty($paramname)) {
+	if (empty($paramname)) {   // Explicit test for null for phan.
 		return 'BadFirstParameterForGETPOST';
 	}
 	if (empty($check)) {
@@ -874,6 +884,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value, when using variable parameters __XXX__ in the GET URL)
 	// Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOMPANY_COUNTRY_ID__, __USER_ID__, ...
 	// We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
+	'@phan-var-force string $paramname';
 	if (!is_array($out) && empty($_POST[$paramname]) && empty($noreplace)) {
 		$reg = array();
 		$maxloop = 20;
@@ -951,7 +962,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			$out = preg_replace('/([<>])([-+]?\d)/', '\1 \2', $out);
 		}
 
-		// @phan-suppress-next-line ParamMatchRegexError
+		// @phan-suppress-next-line UnknownSanitizeType
 		$out = sanitizeVal($out, $check, $filter, $options);
 	}
 
@@ -998,7 +1009,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
  */
 function GETPOSTINT($paramname, $method = 0)
 {
-	// @phan-suppress-next-line GetPostShouldBeGetPostInt
 	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
 }
 
@@ -2116,9 +2126,10 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 	if (!empty($conf->use_javascript_ajax)) {
 		// Add code to open url using the popup. Add also hidden field to retrieve the returned variables
 		$out .= '<!-- code to open popup and variables to retrieve returned variables -->';
-		$out .= '<div id="idfordialog'.$name.'" class="hidden">div for dialog</div>';
-		$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">div for returned id</div>';
-		$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">div for returned label</div>';
+		$out .= '<div id="idfordialog'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for dialog' : '').'</div>';
+		$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for returned id' : '').'</div>';
+		$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for returned label' : '').'</div>';
+
 		$out .= '<!-- Add js code to open dialog popup on dialog -->';
 		$out .= '<script nonce="'.getNonce().'" type="text/javascript">
 					jQuery(document).ready(function () {
@@ -2333,8 +2344,10 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		if (empty($tabsname)) {
 			$tabsname = str_replace("@", "", $picto);
 		}
-		$out .= '<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
-		$out .= '<div class="tab"><a href="#" class="tab moretab inline-block tabunactive"><span class="hideonsmartphone">'.$langs->trans("More").'</span>... ('.$nbintab.')</a></div>'; // Do not use "reposition" class in the "More".
+		$out .= '<div id="moretabs'.$tabsname.'" class="inline-block tabsElem valignmiddle">';
+		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
+			$out .= '<div class="tab valignmiddle"><a href="#" class="tab moretab inline-block tabunactive valignmiddle"><span class="hideonsmartphone">'.$langs->trans("More").'</span>... ('.$nbintab.')</a></div>'; // Do not use "reposition" class in the "More".
+		}
 		$out .= '<div id="moretabsList'.$tabsname.'" style="width: '.$widthofpopup.'px; position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px; z-index:10;">';
 		$out .= $outmore;
 		$out .= '</div>';
@@ -2790,7 +2803,7 @@ function fieldLabel($langkey, $fieldkey, $fieldrequired = 0)
 /**
  * Return string to add class property on html element with pair/impair.
  *
- * @param	string	$var			0 or 1
+ * @param	boolean	$var			false or true
  * @param	string	$moreclass		More class to add
  * @return	string					String to add class onto HTML element
  */
@@ -2962,10 +2975,12 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 			if ($tzoutput == 'tzserver') {
 				$to_gmt = false;
 				$offsettzstring = @date_default_timezone_get(); // Example 'Europe/Berlin' or 'Indian/Reunion'
+				// @phan-suppress-next-line PhanPluginRedundantAssignment
 				$offsettz = 0;	// Timezone offset with server timezone (because to_gmt is false), so 0
+				// @phan-suppress-next-line PhanPluginRedundantAssignment
 				$offsetdst = 0;	// Dst offset with server timezone (because to_gmt is false), so 0
 			} elseif ($tzoutput == 'tzuser' || $tzoutput == 'tzuserrel') {
-				$to_gmt = true;
+				$to_gmt = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? 'UTC' : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
 
 				if (class_exists('DateTimeZone')) {
@@ -4012,7 +4027,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			} elseif ($withpicto == 'mobile') {
 				$picto = 'phoning_mobile';
 			} else {
-				$picto = '';
+				$picto = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 			}
 		}
 		if ($adddivfloat == 1) {
@@ -4273,6 +4288,7 @@ function isValidEmail($address, $acceptsupervisorkey = 0, $acceptuserkey = 0)
  *	@param	    string		$domain	    			Domain name (Ex: "yahoo.com", "yhaoo.com", "dolibarr.fr")
  *	@return     int     							-1 if error (function not available), 0=Not valid, 1=Valid
  *  @see isValidEmail()
+ *  @suppress PhanDeprecatedFunctionInternal Error in Phan plugins incorrectly tags some functions here
  */
 function isValidMXRecord($domain)
 {
@@ -4368,7 +4384,7 @@ function dol_substr($string, $start, $length = null, $stringencoding = '', $trun
 	global $langs;
 
 	if (empty($stringencoding)) {
-		$stringencoding = $langs->charset_output;
+		$stringencoding = (empty($langs) ? 'UTF-8' : $langs->charset_output);
 	}
 
 	$ret = '';
@@ -6228,7 +6244,7 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0,
  *		Function used into PDF and HTML pages
  *
  *		@param	float				$amount			Amount to format
- *		@param	integer				$form			Type of format, HTML or not (not by default)
+ *		@param	int<0,1>			$form			Type of formatting: 1=HTML, 0=no formatting (no by default)
  *		@param	Translate|string	$outlangs		Object langs for output. '' use default lang. 'none' use international separators.
  *		@param	int					$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accuracy) before being inserted into database or after a computation, so this parameter should be useless.
  *		@param	int					$rounding		MINIMUM number of decimal to show: 0=no change, -1=we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
@@ -6412,7 +6428,7 @@ function price2num($amount, $rounding = '', $option = 0)
 		// So if number was already a good number, it is converted into local Dolibarr setup.
 		if (is_numeric($amount)) {
 			// We put in temps value of decimal ("0.00001"). Works with 0 and 2.0E-5 and 9999.10
-			$temps = sprintf("%0.10F", $amount - intval($amount)); // temps=0.0000000000 or 0.0000200000 or 9999.1000000000
+			$temps = sprintf("%10.10F", $amount - intval($amount)); // temps=0.0000000000 or 0.0000200000 or 9999.1000000000
 			$temps = preg_replace('/([\.1-9])0+$/', '\\1', $temps); // temps=0. or 0.00002 or 9999.1
 			$nbofdec = max(0, dol_strlen($temps) - 2); // -2 to remove "0."
 			$amount = number_format($amount, $nbofdec, $dec, $thousand);
@@ -6461,7 +6477,7 @@ function price2num($amount, $rounding = '', $option = 0)
 		// to format defined by LC_NUMERIC after a calculation and we want source format to be defined by Dolibarr setup.
 		if (is_numeric($amount)) {
 			// We put in temps value of decimal ("0.00001"). Works with 0 and 2.0E-5 and 9999.10
-			$temps = sprintf("%0.10F", $amount - intval($amount)); // temps=0.0000000000 or 0.0000200000 or 9999.1000000000
+			$temps = sprintf("%10.10F", $amount - intval($amount)); // temps=0.0000000000 or 0.0000200000 or 9999.1000000000
 			$temps = preg_replace('/([\.1-9])0+$/', '\\1', $temps); // temps=0. or 0.00002 or 9999.1
 			$nbofdec = max(0, dol_strlen($temps) - 2); // -2 to remove "0."
 			$amount = number_format($amount, min($nbofdec, $nbofdectoround), $dec, $thousand); // Convert amount to format with dolibarr dec and thousand
@@ -6891,7 +6907,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 		if (($mysoc->country_code == $thirdpartytouse->country_code)
 			|| (in_array($mysoc->country_code, array('FR', 'MC')) && in_array($thirdpartytouse->country_code, array('FR', 'MC')))
 			|| (in_array($mysoc->country_code, array('MQ', 'GP')) && in_array($thirdpartytouse->country_code, array('MQ', 'GP')))
-			) {
+		) {
 			// If country of thirdparty to consider is ours
 			if ($idprodfournprice > 0) {     // We want vat for product for a "supplier" object
 				$result = $product->get_buyprice($idprodfournprice, 0, 0, 0);
@@ -7631,9 +7647,14 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 		$dom = new DOMDocument(null, 'UTF-8');
 		$dom->loadHTML($stringtoclean, LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOXMLDECL);
 
-		if (is_object($dom)) {
+		if ($dom instanceof DOMDocument) {
 			for ($els = $dom->getElementsByTagname('*'), $i = $els->length - 1; $i >= 0; $i--) {
-				for ($attrs = $els->item($i)->attributes, $ii = $attrs->length - 1; $ii >= 0; $ii--) {
+				$el = $els->item($i);
+				if (!$el instanceof DOMElement) {
+					continue;
+				}
+				$attrs = $el->attributes;
+				for ($ii = $attrs->length - 1; $ii >= 0; $ii--) {
 					//var_dump($attrs->item($ii));
 					if (!empty($attrs->item($ii)->name)) {
 						if (! in_array($attrs->item($ii)->name, $allowed_attributes)) {
@@ -7685,7 +7706,7 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
  *
  *	@param	string	$stringtoclean			String to clean
  *  @param	array	$disallowed_tags		Array of tags not allowed
- *  @param	string	$cleanalsosomestyles	Clean also some tags
+ *  @param	int 	$cleanalsosomestyles	Clean also some tags
  *	@return string	    					String cleaned
  *
  * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags() dol_string_onlythesehtmlattributes()
@@ -8049,7 +8070,7 @@ function dol_htmlcleanlastbr($stringtodecode)
  * @param   string	$a					Operand a
  * @param   string	$b					Operand b (ENT_QUOTES|ENT_HTML5=convert simple, double quotes, colon, e accent, ...)
  * @param   string	$c					Operand c
- * @param	string	$keepsomeentities	Entities but &, <, >, " are not converted.
+ * @param	int 	$keepsomeentities	Entities but &, <, >, " are not converted.
  * @return  string						String decoded
  */
 function dol_html_entity_decode($a, $b, $c = 'UTF-8', $keepsomeentities = 0)
@@ -8087,7 +8108,7 @@ function dol_htmlentities($string, $flags = ENT_QUOTES | ENT_SUBSTITUTE, $encodi
  *	Example, if string contains euro symbol that has ascii code 128
  *
  *	@param	string		$s      	String to check
- *  @param	string		$clean		Clean if it is not an ISO. Warning, if file is utf8, you will get a bad formatted file.
+ *  @param	int 		$clean		Clean if it is not an ISO. Warning, if file is utf8, you will get a bad formatted file.
  *	@return	int|string  	   		0 if bad iso, 1 if good iso, Or the clean string if $clean is 1
  *  @deprecated Duplicate of ascii_check()
  *  @see ascii_check()
@@ -8275,12 +8296,13 @@ function dol_concatdesc($text1, $text2, $forxml = false, $invert = false)
 /**
  * Return array of possible common substitutions. This includes several families like: 'system', 'mycompany', 'object', 'objectamount', 'date', 'user'
  *
- * @param	Translate	$outputlangs	Output language
- * @param   int         $onlykey        1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are trunc and html sanitized (to use for help tooltip)
- * @param   array       $exclude        Array of family keys we want to exclude. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
- * @param   Object      $object         Object for keys on object
- * @param   array       $include        Array of family keys we want to include. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
- * @return	array						Array of substitutions
+ * @param	Translate       $outputlangs    Output language
+ * @param   int             $onlykey        1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys),
+ *                                          2=Values are trunc and html sanitized (to use for help tooltip)
+ * @param   array|null      $exclude        Array of family keys we want to exclude. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
+ * @param   Object|null     $object         Object for keys on object
+ * @param   array|null      $include        Array of family keys we want to include. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
+ * @return	array                           Array of substitutions
  * @see setSubstitFromObject()
  */
 function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null, $object = null, $include = null)
@@ -8300,7 +8322,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__USER_SIGNATURE__' => (string) (($usersignature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($usersignature), 30) : $usersignature) : '')
 		));
 
-		if (is_object($user)) {
+		if (is_object($user) && ($user instanceof User)) {
 			$substitutionarray = array_merge($substitutionarray, array(
 				'__USER_ID__' => (string) $user->id,
 				'__USER_LOGIN__' => (string) $user->login,
@@ -8445,7 +8467,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = 'Direct download url of a contract';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = 'Direct download url of a supplier proposal';
 
-			if (isModEnabled("delivery_note") && (!is_object($object) || $object->element == 'shipping')) {
+			if (isModEnabled("shipping") && (!is_object($object) || $object->element == 'shipping')) {
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = 'Shipping tracking number';
 				$substitutionarray['__SHIPPINGTRACKNUMURL__'] = 'Shipping tracking url';
 				$substitutionarray['__SHIPPINGMETHOD__'] = 'Shipping method';
@@ -8694,7 +8716,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			}
 
 			// Complete substitution array with the url to make online payment
-			$paymenturl = '';
 			if (empty($substitutionarray['__REF__'])) {
 				$paymenturl = '';
 			} else {
@@ -9289,7 +9310,7 @@ function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0)
  *	Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events.
  *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
  *
- *	@param	string		$mesg			Message string
+ *	@param	string|null	$mesg			Message string
  *	@param	array|null	$mesgs			Message array
  *  @param  string		$style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
  *  @param	string		$messagekey		A key to be used to allow the feature "Never show this message again"
@@ -9539,7 +9560,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *
  *  @param      array		$array      		Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
  *  @param      string		$index				Key in array to use for sorting criteria
- *  @param      int			$order				Sort order ('asc' or 'desc')
+ *  @param      string		$order				Sort order ('asc' or 'desc')
  *  @param      int			$natsort			If values are strings (I said value not type): 0=Use alphabetical order, 1=use "natural" sort (natsort)
  *   											If values are numeric (I said value not type): 0=Use numeric order (even if type is string) so use a "natural" sort, 1=use "natural" sort too (same than 0), -1=Force alphabetical order
  *  @param      int			$case_sensitive		1=sort is case sensitive, 0=not case sensitive
@@ -9757,13 +9778,13 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 }
 
 /**
- *	Check if a variable with name $var start with $text.
+ *	Check if a variable with name $var startx with $text.
  *  Can be used to forge dol_eval() conditions.
  *
- *  @param	$var		string		Variable
- *  @param	$regextext	string		Text that must be a valid regex string
- *  @param	$matchrule	int			1=Test if start with, 0=Test if equal
- *  @return	boolean|string			True or False, text if bad use.
+ *  @param	string	$var		Variable
+ *  @param	string	$regextext	Text that must be a valid regex string
+ *  @param	int		$matchrule	1=Test if start with, 0=Test if equal
+ *  @return	boolean|string		True or False, text if bad usage.
  */
 function isStringVarMatching($var, $regextext, $matchrule = 1)
 {
@@ -9787,9 +9808,9 @@ function isStringVarMatching($var, $regextext, $matchrule = 1)
  * Verify if condition in string is ok or not
  *
  * @param 	string		$strToEvaluate	String with condition to check
- * @param	string	$onlysimplestring	'0' (deprecated, used for computed property of extrafields)=Accept all chars,
+ * @param	string	$onlysimplestring	'0' (deprecated, do not use it anymore)=Accept all chars,
  * 										'1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
- * 										'2' (rarely used)=Accept also '[]'
+ * 										'2' (used for example for the compute property of extrafields)=Accept also '[]'
  * @return 	boolean						True or False. Note: It returns also True if $strToEvaluate is ''. False if error
  */
 function verifCond($strToEvaluate, $onlysimplestring = '1')
@@ -9799,7 +9820,7 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
 	if (isset($strToEvaluate) && $strToEvaluate !== '') {
 		//var_dump($strToEvaluate);
 		//$rep = dol_eval($strToEvaluate, 1, 0, '1'); // to show the error
-		$rep = dol_eval($strToEvaluate, 1, 1, $onlysimplestring); // The dol_eval() must contains all the "global $xxx;" for all variables $xxx found into the string condition
+		$rep = (int) dol_eval($strToEvaluate, 1, 1, $onlysimplestring); // The dol_eval() must contains all the "global $xxx;" for all variables $xxx found into the string condition
 		$rights = $rep && (!is_string($rep) || strpos($rep, 'Bad string syntax to evaluate') === false);
 		//var_dump($rights);
 	}
@@ -9811,15 +9832,15 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
  * This function is called by verifCond() or trans() and transnoentitiesnoconv().
  *
  * @param 	string	$s					String to evaluate
- * @param	int		$returnvalue		0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
+ * @param	int		$returnvalue		0=No return (deprecated, used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
  * @param   int     $hideerrors     	1=Hide errors
- * @param	string	$onlysimplestring	'0' (deprecated, used for computed property of extrafields)=Accept all chars,
+ * @param	string	$onlysimplestring	'0' (deprecated, do not use it anymore)=Accept all chars,
  * 										'1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
- * 										'2' (rarely used)=Accept also '[]'
+ * 										'2' (used for example for the compute property of extrafields)=Accept also '[]'
  * @return	mixed						Nothing or return result of eval
  * @see verifCond()
  */
-function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1')
+function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1')
 {
 	// Only this global variables can be read by eval function and returned to caller
 	global $conf;	// Read of const is done with getDolGlobalString() but we need $conf->currency for example
@@ -9832,16 +9853,21 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 	global $object;
 	global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
 
+	$isObBufferActive = false;  // When true, the ObBuffer must be cleaned in the exception handler
 	if (!in_array($onlysimplestring, array('0', '1', '2'))) {
 		return "Bad call of dol_eval. Parameter onlysimplestring must be '0' (deprecated), '1' or '2'";
 	}
 
 	try {
 		// Test on dangerous char (used for RCE), we allow only characters to make PHP variable testing
-		if ($onlysimplestring == '1') {
-			// We must accept: '1 && getDolGlobalInt("doesnotexist1") && getDolGlobalString("MAIN_FEATURES_LEVEL")'
-			// We must accept: '$user->hasRight("cabinetmed", "read") && !$object->canvas=="patient@cabinetmed"'
+		if ($onlysimplestring == '1' || $onlysimplestring == '2') {
+			// We must accept with 1: '1 && getDolGlobalInt("doesnotexist1") && getDolGlobalString("MAIN_FEATURES_LEVEL")'
+			// We must accept with 1: '$user->hasRight("cabinetmed", "read") && !$object->canvas=="patient@cabinetmed"'
+			// We must accept with 2: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
 			$specialcharsallowed = '^$_+-.*>&|=!?():"\',/@';
+			if ($onlysimplestring == '2') {
+				$specialcharsallowed .= '[]';
+			}
 			if (getDolGlobalString('MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL')) {
 				$specialcharsallowed .= getDolGlobalString('MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL');
 			}
@@ -9867,50 +9893,15 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
 			if (strpos($scheck, '(') !== false) {
 				if ($returnvalue) {
-					return 'Bad string syntax to evaluate (mode 1, found call of a function or method without using the direct name of the function): '.$s;
+					return 'Bad string syntax to evaluate (mode '.$onlysimplestring.', found call of a function or method without using the direct name of the function): '.$s;
 				} else {
-					dol_syslog('Bad string syntax to evaluate (mode 1, found call of a function or method without using the direct name of the function): '.$s);
+					dol_syslog('Bad string syntax to evaluate (mode '.$onlysimplestring.', found call of a function or method without using the direct name of the function): '.$s);
 					return '';
 				}
 			}
 			// TODO
-			// We can exclude $ char that are not: $db, $langs, $leftmenu, $topmenu, $user, $langs, $objectoffield, $object...,
-		} elseif ($onlysimplestring == '2') {
-			// We must accept: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
-			$specialcharsallowed = '^$_+-.*>&|=!?():"\',/@[]';
-			if (getDolGlobalString('MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL')) {
-				$specialcharsallowed .= getDolGlobalString('MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL');
-			}
-			if (preg_match('/[^a-z0-9\s'.preg_quote($specialcharsallowed, '/').']/i', $s)) {
-				if ($returnvalue) {
-					return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
-				} else {
-					dol_syslog('Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s);
-					return '';
-				}
-			}
-			$savescheck = '';
-			$scheck = $s;
-			while ($scheck && $savescheck != $scheck) {
-				$savescheck = $scheck;
-				$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $scheck);	// accept parenthesis in '...->method(...'
-				$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-				$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-				$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
-				$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
-				$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);		// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
-			}
-			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
-			if (strpos($scheck, '(') !== false) {
-				if ($returnvalue) {
-					return 'Bad string syntax to evaluate (mode 2, found call of a function or method without using the direct name of the function): '.$s;
-				} else {
-					dol_syslog('Bad string syntax to evaluate (mode 2, found call of a function or method without using the direct name of the function): '.$s);
-					return '';
-				}
-			}
-			// TODO
-			// We can exclude $ char that are not: $db, $leftmenu, $topmenu, $user, $langs, $object...,
+			// We can exclude $ char that are not:
+			// $db, $langs, $leftmenu, $topmenu, $user, $langs, $objectoffield, $object...,
 		}
 		if (is_array($s) || $s === 'Array') {
 			return 'Bad string syntax to evaluate (value is Array) '.var_export($s, true);
@@ -9950,6 +9941,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "require", "include", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func"));
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
 
 		$forbiddenphpmethods = array('invoke', 'invokeArgs');	// Method of ReflectionFunction to execute a function
@@ -9979,11 +9971,28 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 		//print $s."<br>\n";
 		if ($returnvalue) {
 			if ($hideerrors) {
-				return @eval('return '.$s.';');
+				ob_start();	// An evaluation has no reason to output data
+				$isObBufferActive = true;
+				$tmps = @eval('return '.$s.';');
+				$tmpo = ob_get_clean();
+				$isObBufferActive = false;
+				if ($tmpo) {
+					print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: '.$s;
+				}
+				return $tmps;
 			} else {
-				return eval('return '.$s.';');
+				ob_start();	// An evaluation has no reason to output data
+				$isObBufferActive = true;
+				$tmps = eval('return '.$s.';');
+				$tmpo = ob_get_clean();
+				$isObBufferActive = false;
+				if ($tmpo) {
+					print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: '.$s;
+				}
+				return $tmps;
 			}
 		} else {
+			dol_syslog('Do not use anymore dol_eval with param returnvalue=0', LOG_WARNING);
 			if ($hideerrors) {
 				@eval($s);
 			} else {
@@ -9991,6 +10000,11 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			}
 		}
 	} catch (Error $e) {
+		if ($isObBufferActive) {
+			// Clean up buffer which was left behind due to exception.
+			$tmpo = ob_get_clean();
+			$isObBufferActive = false;
+		}
 		$error = 'dol_eval try/catch error : ';
 		$error .= $e->getMessage();
 		dol_syslog($error, LOG_WARNING);
@@ -10305,8 +10319,8 @@ function getLanguageCodeFromCountryCode($countrycode)
  *  @param	Conf			$conf           Object conf
  *  @param  Translate		$langs          Object langs
  *  @param  object|null		$object         Object object
- *  @param  array			$head          	Object head
- *  @param  int				$h				New position to fill
+ *  @param  array<array<int,string>>	$head          	List of head tabs (updated by this function)
+ *  @param  int				$h				New position to fill (updated by this function)
  *  @param  string			$type           Value for object where objectvalue can be
  *                              			'thirdparty'       to add a tab in third party view
  *		                        	      	'intervention'     to add a tab in intervention view
@@ -10405,6 +10419,8 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						$newtab[1] = $label;
 						$newtab[2] = str_replace('+', '', $values[1]);
 						$h++;
+					} else {
+						continue;
 					}
 				} elseif (count($values) == 5) {       // case deprecated
 					dol_syslog('Passing 5 values in tabs module_parts is deprecated. Please update to 6 with permissions.', LOG_WARNING);
@@ -10665,7 +10681,7 @@ function printCommonFooter($zone = 'private')
 		}
 
 		// Add DebugBar data
-		if ($user->hasRight('debugbar', 'read') && is_object($debugbar)) {
+		if ($user->hasRight('debugbar', 'read') && $debugbar instanceof DebugBar\DebugBar) {
 			$debugbar['time']->stopMeasure('pageaftermaster');
 			print '<!-- Output debugbar data -->'."\n";
 			$renderer = $debugbar->getRenderer();
@@ -11188,12 +11204,12 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$famime = 'file-alt';
 	} elseif (preg_match('/\.(xml|xhtml)$/i', $tmpfile)) {
 		$mime = 'text/xml';
-		$imgmime = 'other.png';
+		$imgmime = 'other.png';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$srclang = 'xml';
 		$famime = 'file-alt';
 	} elseif (preg_match('/\.xaml$/i', $tmpfile)) {
 		$mime = 'text/xml';
-		$imgmime = 'other.png';
+		$imgmime = 'other.png';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$srclang = 'xaml';
 		$famime = 'file-alt';
 	} elseif (preg_match('/\.bas$/i', $tmpfile)) {					// Languages
@@ -11357,16 +11373,16 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$famime = 'file-image';
 	} elseif (preg_match('/\.vcs$/i', $tmpfile)) {					// Calendar
 		$mime = 'text/calendar';
-		$imgmime = 'other.png';
+		$imgmime = 'other.png';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$famime = 'file-alt';
 	} elseif (preg_match('/\.ics$/i', $tmpfile)) {
 		$mime = 'text/calendar';
-		$imgmime = 'other.png';
+		$imgmime = 'other.png';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$famime = 'file-alt';
 	} elseif (preg_match('/\.torrent$/i', $tmpfile)) {				// Other
 		$mime = 'application/x-bittorrent';
-		$imgmime = 'other.png';
-		$famime = 'file-o';
+		$imgmime = 'other.png';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$famime = 'file-o';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 	} elseif (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i', $tmpfile)) {	// Audio
 		$mime = 'audio';
 		$imgmime = 'audio.png';
@@ -11406,12 +11422,12 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$famime = 'file-archive';
 	} elseif (preg_match('/\.(exe|com)$/i', $tmpfile)) {					// Exe
 		$mime = 'application/octet-stream';
-		$imgmime = 'other.png';
-		$famime = 'file-o';
+		$imgmime = 'other.png';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$famime = 'file-o';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 	} elseif (preg_match('/\.(dll|lib|o|so|a)$/i', $tmpfile)) {				// Lib
 		$mime = 'library';
 		$imgmime = 'library.png';
-		$famime = 'file-o';
+		$famime = 'file-o';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 	} elseif (preg_match('/\.err$/i', $tmpfile)) {							 // phpcs:ignore
 		$mime = 'error';
 		$imgmime = 'error.png';
@@ -11663,7 +11679,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 		$return = !empty($html) ? $html : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
 	} elseif (getDolGlobalString('MAIN_STATUS_USES_IMAGES')) {
 		// Use status with images (for backward compatibility)
-		$return = '';
+		$return = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$htmlLabel      = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : $statusLabel).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
 		$htmlLabelShort = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : (!empty($statusLabelShort) ? $statusLabelShort : $statusLabel)).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
 
@@ -12059,16 +12075,16 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 /**
  * Get an array with properties of an element.
  *
- * @param   string 	$element_type 	Element type (Value of $object->element). Example:
- * 									'action', 'facture', 'project', 'project_task' or
- * 									'myobject@mymodule' or
- * 									'myobject_mysubobject' (where mymodule = myobject, like 'project_task')
+ * @param   string $elementType       Element type (Value of $object->element). Example:
+ *                                    'action', 'facture', 'project', 'project_task' or
+ *                                    'myobject@mymodule' or
+ *                                    'myobject_mysubobject' (where mymodule = myobject, like 'project_task')
  * @return  array					array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>)
  * @see fetchObjectByElement(), getMultiDirOutput()
  */
-function getElementProperties($element_type)
+function getElementProperties($elementType)
 {
-	global $conf;
+	global $conf, $db, $hookmanager;
 
 	$regs = array();
 
@@ -12077,13 +12093,13 @@ function getElementProperties($element_type)
 	$classfile = $classname = $classpath = $subdir = $dir_output = '';
 
 	// Parse element/subelement
-	$module = $element_type;
-	$element = $element_type;
-	$subelement = $element_type;
-	$table_element = $element_type;
+	$module = $elementType;
+	$element = $elementType;
+	$subelement = $elementType;
+	$table_element = $elementType;
 
 	// If we ask a resource form external module (instead of default path)
-	if (preg_match('/^([^@]+)@([^@]+)$/i', $element_type, $regs)) {	// 'myobject@mymodule'
+	if (preg_match('/^([^@]+)@([^@]+)$/i', $elementType, $regs)) {	// 'myobject@mymodule'
 		$element = $subelement = $regs[1];
 		$module = $regs[2];
 	}
@@ -12096,138 +12112,138 @@ function getElementProperties($element_type)
 	}
 
 	// For compatibility and to work with non standard path
-	if ($element_type == "action") {
+	if ($elementType == "action") {
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
 		$module = 'agenda';
 		$table_element = 'actioncomm';
-	} elseif ($element_type == 'cronjob') {
+	} elseif ($elementType == 'cronjob') {
 		$classpath = 'cron/class';
 		$module = 'cron';
 		$table_element = 'cron';
-	} elseif ($element_type == 'adherent_type') {
+	} elseif ($elementType == 'adherent_type') {
 		$classpath = 'adherents/class';
 		$classfile = 'adherent_type';
 		$module = 'adherent';
 		$subelement = 'adherent_type';
 		$classname = 'AdherentType';
 		$table_element = 'adherent_type';
-	} elseif ($element_type == 'bank_account') {
+	} elseif ($elementType == 'bank_account') {
 		$classpath = 'compta/bank/class';
 		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
 		$classfile = 'account';
 		$classname = 'Account';
-	} elseif ($element_type == 'category') {
+	} elseif ($elementType == 'category') {
 		$classpath = 'categories/class';
 		$module = 'categorie';
 		$subelement = 'categorie';
 		$table_element = 'categorie';
-	} elseif ($element_type == 'contact') {
+	} elseif ($elementType == 'contact') {
 		$classpath = 'contact/class';
 		$classfile = 'contact';
 		$module = 'societe';
 		$subelement = 'contact';
 		$table_element = 'socpeople';
-	} elseif ($element_type == 'inventory') {
+	} elseif ($elementType == 'inventory') {
 		$module = 'product';
 		$classpath = 'product/inventory/class';
-	} elseif ($element_type == 'stock') {
+	} elseif ($elementType == 'stock') {
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
 		$classname = 'Entrepot';
 		$table_element = 'entrepot';
-	} elseif ($element_type == 'project') {
+	} elseif ($elementType == 'project') {
 		$classpath = 'projet/class';
 		$module = 'projet';
 		$table_element = 'projet';
-	} elseif ($element_type == 'project_task') {
+	} elseif ($elementType == 'project_task') {
 		$classpath = 'projet/class';
 		$module = 'projet';
 		$subelement = 'task';
 		$table_element = 'projet_task';
-	} elseif ($element_type == 'facture' || $element_type == 'invoice') {
+	} elseif ($elementType == 'facture' || $elementType == 'invoice') {
 		$classpath = 'compta/facture/class';
 		$module = 'facture';
 		$subelement = 'facture';
 		$table_element = 'facture';
-	} elseif ($element_type == 'commande' || $element_type == 'order') {
+	} elseif ($elementType == 'commande' || $elementType == 'order') {
 		$classpath = 'commande/class';
 		$module = 'commande';
 		$subelement = 'commande';
 		$table_element = 'commande';
-	} elseif ($element_type == 'propal') {
+	} elseif ($elementType == 'propal') {
 		$classpath = 'comm/propal/class';
 		$table_element = 'propal';
-	} elseif ($element_type == 'shipping') {
+	} elseif ($elementType == 'shipping') {
 		$classpath = 'expedition/class';
 		$classfile = 'expedition';
 		$classname = 'Expedition';
 		$module = 'expedition';
 		$table_element = 'expedition';
-	} elseif ($element_type == 'supplier_proposal') {
+	} elseif ($elementType == 'delivery_note') {
+		$classpath = 'delivery/class';
+		$subelement = 'delivery';
+		$module = 'expedition';
+	} elseif ($elementType == 'delivery') {
+		$classpath = 'delivery/class';
+		$subelement = 'delivery';
+		$module = 'expedition';
+	} elseif ($elementType == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
 		$element = 'supplierproposal';
 		$classfile = 'supplier_proposal';
 		$subelement = 'supplierproposal';
-	} elseif ($element_type == 'shipping') {
-		$classpath = 'expedition/class';
-		$subelement = 'expedition';
-		$module = 'expedition_bon';
-	} elseif ($element_type == 'delivery') {
-		$classpath = 'delivery/class';
-		$subelement = 'delivery';
-		$module = 'expedition';
-	} elseif ($element_type == 'contract') {
+	} elseif ($elementType == 'contract') {
 		$classpath = 'contrat/class';
 		$module = 'contrat';
 		$subelement = 'contrat';
 		$table_element = 'contract';
-	} elseif ($element_type == 'mailing') {
+	} elseif ($elementType == 'mailing') {
 		$classpath = 'comm/mailing/class';
 		$module = 'mailing';
 		$classfile = 'mailing';
 		$classname = 'Mailing';
 		$subelement = '';
-	} elseif ($element_type == 'member') {
+	} elseif ($elementType == 'member') {
 		$classpath = 'adherents/class';
 		$module = 'adherent';
 		$subelement = 'adherent';
 		$table_element = 'adherent';
-	} elseif ($element_type == 'usergroup') {
+	} elseif ($elementType == 'usergroup') {
 		$classpath = 'user/class';
 		$module = 'user';
-	} elseif ($element_type == 'mo') {
+	} elseif ($elementType == 'mo') {
 		$classpath = 'mrp/class';
 		$classfile = 'mo';
 		$classname = 'Mo';
 		$module = 'mrp';
 		$subelement = '';
 		$table_element = 'mrp_mo';
-	} elseif ($element_type == 'cabinetmed_cons') {
+	} elseif ($elementType == 'cabinetmed_cons') {
 		$classpath = 'cabinetmed/class';
 		$module = 'cabinetmed';
 		$subelement = 'cabinetmedcons';
 		$table_element = 'cabinetmedcons';
-	} elseif ($element_type == 'fichinter') {
+	} elseif ($elementType == 'fichinter') {
 		$classpath = 'fichinter/class';
 		$module = 'ficheinter';
 		$subelement = 'fichinter';
 		$table_element = 'fichinter';
-	} elseif ($element_type == 'dolresource' || $element_type == 'resource') {
+	} elseif ($elementType == 'dolresource' || $elementType == 'resource') {
 		$classpath = 'resource/class';
 		$module = 'resource';
 		$subelement = 'dolresource';
 		$table_element = 'resource';
-	} elseif ($element_type == 'propaldet') {
+	} elseif ($elementType == 'propaldet') {
 		$classpath = 'comm/propal/class';
 		$module = 'propal';
 		$subelement = 'propaleligne';
-	} elseif ($element_type == 'opensurvey_sondage') {
+	} elseif ($elementType == 'opensurvey_sondage') {
 		$classpath = 'opensurvey/class';
 		$module = 'opensurvey';
 		$subelement = 'opensurveysondage';
-	} elseif ($element_type == 'order_supplier') {
+	} elseif ($elementType == 'order_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.commande';
@@ -12235,7 +12251,7 @@ function getElementProperties($element_type)
 		$subelement = '';
 		$classname = 'CommandeFournisseur';
 		$table_element = 'commande_fournisseur';
-	} elseif ($element_type == 'invoice_supplier') {
+	} elseif ($elementType == 'invoice_supplier') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.facture';
@@ -12243,19 +12259,19 @@ function getElementProperties($element_type)
 		$subelement = '';
 		$classname = 'FactureFournisseur';
 		$table_element = 'facture_fourn';
-	} elseif ($element_type == "service") {
+	} elseif ($elementType == "service") {
 		$classpath = 'product/class';
 		$subelement = 'product';
 		$table_element = 'product';
-	} elseif ($element_type == 'salary') {
+	} elseif ($elementType == 'salary') {
 		$classpath = 'salaries/class';
 		$module = 'salaries';
-	} elseif ($element_type == 'payment_salary') {
+	} elseif ($elementType == 'payment_salary') {
 		$classpath = 'salaries/class';
 		$classfile = 'paymentsalary';
 		$classname = 'PaymentSalary';
 		$module = 'salaries';
-	} elseif ($element_type == 'productlot') {
+	} elseif ($elementType == 'productlot') {
 		$module = 'productbatch';
 		$classpath = 'product/stock/class';
 		$classfile = 'productlot';
@@ -12263,27 +12279,27 @@ function getElementProperties($element_type)
 		$element = 'productlot';
 		$subelement = '';
 		$table_element = 'product_lot';
-	} elseif ($element_type == 'websitepage') {
+	} elseif ($elementType == 'websitepage') {
 		$classpath = 'website/class';
 		$classfile = 'websitepage';
 		$classname = 'Websitepage';
 		$module = 'website';
 		$subelement = 'websitepage';
 		$table_element = 'website_page';
-	} elseif ($element_type == 'fiscalyear') {
+	} elseif ($elementType == 'fiscalyear') {
 		$classpath = 'core/class';
 		$module = 'accounting';
 		$subelement = 'fiscalyear';
-	} elseif ($element_type == 'chargesociales') {
+	} elseif ($elementType == 'chargesociales') {
 		$classpath = 'compta/sociales/class';
 		$module = 'tax';
 		$table_element = 'chargesociales';
-	} elseif ($element_type == 'tva') {
+	} elseif ($elementType == 'tva') {
 		$classpath = 'compta/tva/class';
 		$module = 'tax';
 		$subdir = '/vat';
 		$table_element = 'tva';
-	} elseif ($element_type == 'emailsenderprofile') {
+	} elseif ($elementType == 'emailsenderprofile') {
 		$module = '';
 		$classpath = 'core/class';
 		$classfile = 'emailsenderprofile';
@@ -12323,7 +12339,7 @@ function getElementProperties($element_type)
 	}
 	$dir_output .= $subdir;
 
-	$element_properties = array(
+	$elementProperties = array(
 		'module' => $module,
 		'element' => $element,
 		'table_element' => $table_element,
@@ -12334,8 +12350,35 @@ function getElementProperties($element_type)
 		'dir_output' => $dir_output
 	);
 
-	//var_dump($element_properties);
-	return $element_properties;
+
+	// Add  hook
+	if (!is_object($hookmanager)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($db);
+	}
+	$hookmanager->initHooks(array('elementproperties'));
+
+
+	// Hook params
+	$parameters = array(
+		'elementType' => $elementType,
+		'elementProperties' => $elementProperties
+	);
+
+	$reshook = $hookmanager->executeHooks('getElementProperties', $parameters);
+
+	if ($reshook) {
+		$elementProperties = $hookmanager->resArray;
+	} elseif (!empty($hookmanager->resArray) && is_array($hookmanager->resArray)) { // resArray is always an array but for sécurity against misconfigured external modules
+		$elementProperties = array_replace($elementProperties, $hookmanager->resArray);
+	}
+
+	// context of elementproperties doesn't need to exist out of this function so delete it to avoid elementproperties context is equal to all
+	if (($key = array_search('elementproperties', $hookmanager->contextarray)) !== false) {
+		unset($hookmanager->contextarray[$key]);
+	}
+
+	return $elementProperties;
 }
 
 /**
@@ -12698,6 +12741,9 @@ function jsonOrUnserialize($stringtodecode)
  */
 function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 0, $nopar = 0, $noerror = 0)
 {
+	if ($filter === '') {
+		return '';
+	}
 	if (!preg_match('/^\(.*\)$/', $filter)) {    // If $filter does not start and end with ()
 		$filter = '(' . $filter . ')';
 	}
@@ -12717,6 +12763,7 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 
 	$t = preg_replace_callback('/'.$regexstring.'/i', 'dolForgeDummyCriteriaCallback', $filter);
 	$t = str_replace(array('and','or','AND','OR',' '), '', $t);		// Remove the only strings allowed between each () criteria
 	// If the string result contains something else than '()', the syntax was wrong
+
 	if (preg_match('/[^\(\)]/', $t)) {
 		$tmperrorstr = 'Bad syntax of the search string';
 		$errorstr = 'Bad syntax of the search string: '.$filter;
@@ -12997,7 +13044,7 @@ function getTimelineIcon($actionstatic, &$histo, $key)
 	} elseif ($actionstatic->code == 'AC_TICKET_MODIFY') {
 		$iconClass = 'fa fa-pencilxxx';
 	} elseif (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
-		$iconClass = 'fa fa-comments';
+		$iconClass = 'fa fa-comments';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 	} elseif (preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
 		$iconClass = 'fa fa-mask';
 	} elseif (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
@@ -13066,7 +13113,7 @@ function getActionCommEcmList($object)
  * 		@param	Translate	       $langs		   Object langs
  * 		@param	DoliDB		       $db			   Object db
  * 		@param	mixed			   $filterobj	   Filter on object Adherent|Societe|Project|Product|CommandeFournisseur|Dolresource|Ticket|... to list events linked to an object
- * 		@param	Contact		       $objcon		   Filter on object contact to filter events on a contact
+ * 		@param	Contact|null       $objcon		   Filter on object contact to filter events on a contact
  *      @param  int			       $noprint        Return string but does not output it
  *      @param  string		       $actioncode     Filter on actioncode
  *      @param  string             $donetodo       Filter on event 'done' or 'todo' or ''=nofilter (all).
@@ -13075,7 +13122,7 @@ function getActionCommEcmList($object)
  *      @param  string             $sortorder      Sort order
  *      @return	string|void				           Return html part or void if noprint is 1
  */
-function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC')
+function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC')
 {
 	global $user, $conf;
 	global $form;
@@ -13090,6 +13137,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 	}
 
 	$histo = array();
+	'@phan-var-force array<int,array{type:string,tododone:string,id:string,datestart:int|string,dateend:int|string,note:string,message:string,percent:string,userid:string,login:string,userfirstname:string,userlastname:string,userphoto:string,msg_from?:string,contact_id?:string,socpeopleassigned?:int[],lastname?:string,firstname?:string,fk_element?:int,elementtype?:string,acode:string,alabel?:string,libelle?:string,apicto?:string}> $histo';
+
 	$numaction = 0;
 	$now = dol_now();
 
@@ -13169,7 +13218,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 		}
 
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
-		if ($force_filter_contact === false) {
+		if (!$force_filter_contact) {
 			if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) {
 				$sql .= " AND a.fk_soc = ".((int) $filterobj->id);
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) {
@@ -13297,6 +13346,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			while ($i < $imaxinloop) {
 				$obj = $db->fetch_object($resql);
 
+				'@phan-var-force array{apicto:string,contact_id:string,dp:string,dp2:string,firstname:string,label:string,message:string,msg_from:string,ref:string,type:string,user_lastname:string} $obj';
 				if ($obj->type == 'action') {
 					$contactaction = new ActionComm($db);
 					$contactaction->id = $obj->id;
@@ -13754,8 +13804,6 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 
 			$out .= '</li>';
 			$out .= '<!-- END timeline item -->';
-
-			$i++;
 		}
 
 		$out .= "</ul>\n";

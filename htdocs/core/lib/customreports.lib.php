@@ -65,7 +65,7 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
-		if (!empty($val['isameasure']) && (!isset($val['enabled']) || dol_eval($val['enabled'], 1, 1, '1'))) {
+		if (!empty($val['isameasure']) && (!isset($val['enabled']) || (int) dol_eval($val['enabled'], 1, 1, '1'))) {
 			$position = (empty($val['position']) ? 0 : intval($val['position']));
 			$arrayofmesures[$tablealias.'.'.$key.'-sum'] = array(
 				'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>',
@@ -100,7 +100,8 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 	// Add extrafields to Measures
 	if (!empty($object->isextrafieldmanaged) && isset($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-			if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
+			if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || (int) dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
+				// @phan-suppress-next-line PhanTypeMismatchDimAssignment
 				$position = (!empty($val['position']) ? $val['position'] : 0);
 				$arrayofmesures[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-sum'] = array(
 					'label' => img_picto('', (empty($object->picto) ? 'generic' : $object->picto), 'class="pictofixedwidth"').$labelofobject.': '.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>',
@@ -206,10 +207,10 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 				'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
 				continue;
 			}
-			if (isset($val['enabled']) && !dol_eval($val['enabled'], 1, 1, '1')) {
+			if (isset($val['enabled']) && ! (int) dol_eval($val['enabled'], 1, 1, '1')) {
 				continue;
 			}
-			if (isset($val['visible']) && !dol_eval($val['visible'], 1, 1, '1')) {
+			if (isset($val['visible']) && ! (int) dol_eval($val['visible'], 1, 1, '1')) {
 				continue;
 			}
 			if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
@@ -371,10 +372,10 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 				'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
 				continue;
 			}
-			if (isset($val['enabled']) && !dol_eval($val['enabled'], 1, 1, '1')) {
+			if (isset($val['enabled']) && ! (int) dol_eval($val['enabled'], 1, 1, '1')) {
 				continue;
 			}
-			if (isset($val['visible']) && !dol_eval($val['visible'], 1, 1, '1')) {
+			if (isset($val['visible']) && ! (int) dol_eval($val['visible'], 1, 1, '1')) {
 				continue;
 			}
 			if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {

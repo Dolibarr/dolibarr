@@ -7,7 +7,8 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $editor_url;
 
 	/**
-	 * @var string Family
+	 * @var string 	Family
 	 * @see $familyinfo
 	 *
 	 * Native values: 'crm', 'financial', 'hr', 'projects', 'products', 'ecm', 'technic', 'other'.
@@ -69,7 +70,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $family;
 
 	/**
-	 * @var array Custom family information
+	 * @var array<string,array{position:string,label:string}> Custom family information
 	 * @see $family
 	 *
 	 * e.g.:
@@ -140,7 +141,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $menu = array();
 
 	/**
-	 * @var array Module parts
+	 * @var array{triggers?:int<0,1>,login?:int<0,1>,substitutions?:int<0,1>,menus?:int<0,1>,theme?:int<0,1>,tpl?:int<0,1>,barcode?:int<0,1>,models?:int<0,1>,printing?:int<0,1>,css?:string[],js?:string[],hooks?:array{data:string[],entity:string},moduleforexternal?:int<0,1>,websitetemplates?:int<0,1>,contactelement?:int<0,1>} Module parts
 	 *  array(
 	 *      // Set this to 1 if module has its own trigger directory (/mymodule/core/triggers)
 	 *      'triggers' => 0,
@@ -247,7 +248,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $export_code;
 
 	/**
-	 * @var string Module export label
+	 * @var string[] Module export label
 	 */
 	public $export_label;
 
@@ -279,7 +280,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $import_code;
 
 	/**
-	 * @var string Module import label
+	 * @var string[] Module import label
 	 */
 	public $import_label;
 
@@ -335,7 +336,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 
 	/**
-	 * @var string[] List of module class names that must be enabled if this module is enabled. e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
+	 * @var array 	List of module class names that must be enabled if this module is enabled. e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
+	 * 				Another example : array('always'=>array("modBanque", "modFacture", "modProduct", "modCategorie"), 'FR'=>array('modBlockedLog'));
 	 * @see $requiredby
 	 */
 	public $depends;
@@ -690,7 +692,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-		$content='';
+		$content = '';
 		$pathoffile = $this->getDescLongReadmeFound();
 
 		if ($pathoffile) {     // Mostly for external modules
@@ -800,7 +802,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			if ((float) DOL_VERSION >= 6.0) {
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
 
-				$content = dolMd2Html($content, 'parsedown', array('doc/'=>dol_buildpath(strtolower($this->name).'/doc/', 1)));
+				$content = dolMd2Html($content, 'parsedown', array('doc/' => dol_buildpath(strtolower($this->name).'/doc/', 1)));
 			} else {
 				$content = nl2br($content);
 			}
@@ -1746,7 +1748,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			return 0;
 		}
 
-		dol_syslog(get_class($this)."::insert_const", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		foreach ($this->const as $key => $value) {
 			$name      = $this->const[$key][0];
@@ -1788,7 +1790,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						$err++;
 					}
 				} else {
-					dol_syslog(get_class($this)."::insert_const constant '".$name."' already exists", LOG_DEBUG);
+					dol_syslog(__METHOD__." constant '".$name."' already exists", LOG_DEBUG);
 				}
 			} else {
 				$err++;
@@ -2492,7 +2494,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if ($this->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
 			$versionTitle =  $langs->trans("Version").' '.$this->getVersion(1);
 			if ($this->needUpdate) {
-				$versionTitle.= '<br>'.$langs->trans('ModuleUpdateAvailable').' : '.$this->lastVersion;
+				$versionTitle .= '<br>'.$langs->trans('ModuleUpdateAvailable').' : '.$this->lastVersion;
 			}
 
 			$return .=  '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').' classfortooltip" title="'.dol_escape_js($versionTitle).'" >';
