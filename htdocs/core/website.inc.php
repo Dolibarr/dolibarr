@@ -263,3 +263,12 @@ if (!defined('USEDOLIBARREDITOR') && empty($website->status)) {
 	print '<center><br><br>'.$weblangs->trans("SorryWebsiteIsCurrentlyOffLine").'</center>';
 	exit;
 }
+
+
+// Get session info and obfuscate session cookie and other variables
+$prefix = dol_getprefix('');
+$sessionname = 'DOLSESSID_'.$prefix;
+//$savsessionid = $_COOKIE[$sessionname];
+
+$_COOKIE[$sessionname] = 'obfuscatedcookie';
+unset($conf->file->instance_unique_id);
