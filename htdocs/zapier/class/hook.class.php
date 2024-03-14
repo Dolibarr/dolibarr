@@ -101,7 +101,7 @@ class Hook extends CommonObject
 			'enabled' => 1,
 			'visible' => 0,
 			'notnull' => 1,
-			'default' => 1,
+			'default' => '1',
 			'index' => 1,
 			'position' => 20,
 		),
@@ -178,7 +178,7 @@ class Hook extends CommonObject
 			'enabled' => 1,
 			'visible' => 1,
 			'notnull' => 1,
-			'default' => 0,
+			'default' => '0',
 			'index' => 1,
 			'position' => 1000,
 			'arrayofkeyval' => array(
