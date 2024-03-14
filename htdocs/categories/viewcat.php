@@ -1357,7 +1357,7 @@ if ($type == Categorie::TYPE_TICKET) {
 
 // Note that $action and $object may have been modified by some hooks
 $parameters = array('type' => $type, 'id' => $id, 'label' => $label);
-$reshook = $hookmanager->executeHooks('addMoreCategoryList', $parameters, $object, $action);
+$reshook = $hookmanager->executeHooks('addMoreCategoriesList', $parameters, $object, $action);
 
 // End of page
 llxFooter();
