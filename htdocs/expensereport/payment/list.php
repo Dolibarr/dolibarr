@@ -517,9 +517,9 @@ while ($i < $imaxinloop) {
 
 	if ($objp->bid) {
 		$accountstatic->fetch($objp->bid);
-		$paymentexpensereportstatic->fk_bank = $accountstatic->getNomUrl(1);
+		$paymentexpensereportstatic->fk_bank = $accountstatic->id;
 	} else {
-		$paymentexpensereportstatic->fk_bank = null;
+		$paymentexpensereportstatic->fk_bank = 0;
 	}
 
 	$userstatic->id = $objp->userid;
