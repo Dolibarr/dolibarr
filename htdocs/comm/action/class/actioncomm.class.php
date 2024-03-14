@@ -241,12 +241,6 @@ class ActionComm extends CommonObject
 	public $userownerid;
 
 	/**
-	 * @var int 	Id of user that has done the event. Used only if AGENDA_ENABLE_DONEBY is set.
-	 * @deprecated	Use $userownerid instead
-	 */
-	public $userdoneid;
-
-	/**
 	 * @var int[] Array of contact ids
 	 */
 	public $socpeopleassigned = array();
@@ -494,7 +488,6 @@ class ActionComm extends CommonObject
 		}
 
 		$userownerid = $this->userownerid;
-		$userdoneid = $this->userdoneid;
 
 		// Be sure assigned user is defined as an array of array('id'=>,'mandatory'=>,...).
 		if (empty($this->userassigned) || count($this->userassigned) == 0 || !is_array($this->userassigned)) {
@@ -544,7 +537,6 @@ class ActionComm extends CommonObject
 		$sql .= "fk_contact,";
 		$sql .= "fk_user_author,";
 		$sql .= "fk_user_action,";
-		$sql .= "fk_user_done,";
 		$sql .= "label,percent,priority,fulldayevent,location,";
 		$sql .= "transparency,";
 		$sql .= "fk_element,";
@@ -583,7 +575,6 @@ class ActionComm extends CommonObject
 		$sql .= ((isset($this->contact_id) && $this->contact_id > 0) ? ((int) $this->contact_id) : "null").", "; // deprecated, use ->socpeopleassigned
 		$sql .= (isset($user->id) && $user->id > 0 ? $user->id : "null").", ";
 		$sql .= ($userownerid > 0 ? $userownerid : "null").", ";
-		$sql .= ($userdoneid > 0 ? $userdoneid : "null").", ";
 		$sql .= "'".$this->db->escape($this->label)."', ";
 		$sql .= "'".$this->db->escape($this->percentage)."', ";
 		$sql .= "'".$this->db->escape($this->priority)."', ";
@@ -812,7 +803,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.fk_soc,";
 		$sql .= " a.fk_project,";
 		$sql .= " a.fk_user_author, a.fk_user_mod,";
-		$sql .= " a.fk_user_action, a.fk_user_done,";
+		$sql .= " a.fk_user_action,";
 		$sql .= " a.fk_contact, a.percent as percentage,";
 		$sql .= " a.fk_element as elementid, a.elementtype,";
 		$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
@@ -1162,16 +1153,9 @@ class ActionComm extends CommonObject
 			$this->fk_project = 0;
 		}
 
-		// Check parameters
-		if ($this->percentage == 0 && $this->userdoneid > 0) {
-			$this->error = "ErrorCantSaveADoneUserWithZeroPercentage";
-			return -1;
-		}
-
 		$socid = (($this->socid > 0) ? $this->socid : 0);
 		$contactid = (($this->contact_id > 0) ? $this->contact_id : 0);
 		$userownerid = ($this->userownerid ? $this->userownerid : 0);
-		$userdoneid = ($this->userdoneid ? $this->userdoneid : 0);
 
 		// If a type_id is set, we must also have the type_code set
 		if ($this->type_id > 0) {
@@ -1209,7 +1193,6 @@ class ActionComm extends CommonObject
 		$sql .= ", transparency = '".$this->db->escape($this->transparency)."'";
 		$sql .= ", fk_user_mod = ".((int) $user->id);
 		$sql .= ", fk_user_action = ".($userownerid > 0 ? ((int) $userownerid) : "null");
-		$sql .= ", fk_user_done = ".($userdoneid > 0 ? ((int) $userdoneid) : "null");
 		if (!empty($this->fk_element)) {
 			$sql .= ", fk_element=".($this->fk_element ? ((int) $this->fk_element) : "null");
 		}
@@ -1432,7 +1415,7 @@ class ActionComm extends CommonObject
 		}
 		$sql .= " AND a.entity IN (".getEntity('agenda').")";
 		if (!$user->hasRight('agenda', 'allactions', 'read')) {
-			$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id);
+			$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id);
 			$sql .= " OR ar.fk_element = ".((int) $user->id);
 			$sql .= ")";
 		}
@@ -2004,7 +1987,6 @@ class ActionComm extends CommonObject
 		$buildfile = true;
 		$login = '';
 		$logina = '';
-		$logind = '';
 		$logint = '';
 		$eventorganization = '';
 
@@ -2354,9 +2336,6 @@ class ActionComm extends CommonObject
 			}
 			if ($logint) {
 				$more = $langs->transnoentities("ActionsToDoBy").' '.$logint;
-			}
-			if ($logind) {
-				$more = $langs->transnoentities("ActionsDoneBy").' '.$logind;
 			}
 			if ($eventorganization) {
 				$langs->load("eventorganization");
