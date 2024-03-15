@@ -60,6 +60,14 @@ class GeoMapEditor
 			$tmp2->coordinates = [];
 			if ($tmp->type == 'Point') {
 				$tmp2->coordinates = [$tmp->coordinates[1], $tmp->coordinates[0]];
+			} elseif ($tmp->type == 'Polygon') {
+				foreach ($tmp->coordinates as $polygon) {
+					$polyg = [];
+					foreach ($polygon as $key => $value) {
+						$polyg[] = [$value[1], $value[0]];
+					}
+					$tmp2->coordinates[] = $polyg;
+				}
 			} else {
 				foreach ($tmp->coordinates as $key => $value) {
 					$tmp2->coordinates[] = [$value[1], $value[0]];
@@ -130,6 +138,7 @@ class GeoMapEditor
 			} else if (markerType == "polygon" && Object.keys(geoms).length != 0) {
 				map.setView([48.852, 2.351], 12);
 				// map.setView(geoms.coordinates, 14);
+				L.polygon(geoms.coordinates).addTo(map);
 			} else if (Object.keys(geoms).length === 0) {
 				map.setView([48.852, 2.351], 12);
 			}
