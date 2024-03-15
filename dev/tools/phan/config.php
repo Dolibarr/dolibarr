@@ -495,7 +495,7 @@ return [
 		'PhanTypeInvalidLeftOperandOfBitwiseOp',
 		// 'PhanTypeMismatchDimAssignment',
 		// 'PhanPluginDescriptionlessCommentOnProtectedMethod',
-		'PhanPluginPrintfIncompatibleArgumentTypeWeak',
+		// 'PhanPluginPrintfIncompatibleArgumentTypeWeak',
 		'PhanUndeclaredVariableAssignOp',
 		'PhanTypeExpectedObjectOrClassName',
 		'PhanEmptyFQSENInClasslike',
