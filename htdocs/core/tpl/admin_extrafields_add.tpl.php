@@ -137,7 +137,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 		});
 
 		/* Autofill the code with label */
-		<?php if (empty($conf->global->MAIN_EXTRAFIELDS_CODE_AUTOFILL_DISABLED)) : ?>
+		<?php if (!getDolGlobalInt('MAIN_EXTRAFIELDS_CODE_AUTOFILL_DISABLED')) : ?>
 		jQuery("#label").keyup(function() {
 			console.log("Update new field");
 			$("#attrname").val( $(this).val().normalize('NFD').replace(/\s/g, "_").replace(/[^a-zA-Z0-9_]/g, '').toLowerCase() );
