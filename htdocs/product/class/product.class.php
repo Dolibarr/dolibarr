@@ -3605,13 +3605,13 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			while ($obj = $this->db->fetch_object($result)) {
-				if ($obj->role == 'toconsume') {
+				if ($obj->role == 'toconsume' && empty($warehouseid)) {
 					$this->stats_mrptoconsume['customers'] += $obj->nb_customers;
 					$this->stats_mrptoconsume['nb'] += $obj->nb;
 					$this->stats_mrptoconsume['rows'] += $obj->nb_rows;
 					$this->stats_mrptoconsume['qty'] += ($obj->qty ? $obj->qty : 0);
 				}
-				if ($obj->role == 'consumed') {
+				if ($obj->role == 'consumed' && empty($warehouseid)) {
 					//$this->stats_mrptoconsume['customers'] += $obj->nb_customers;
 					//$this->stats_mrptoconsume['nb'] += $obj->nb;
 					//$this->stats_mrptoconsume['rows'] += $obj->nb_rows;
