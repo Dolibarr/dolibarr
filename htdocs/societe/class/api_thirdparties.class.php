@@ -1204,12 +1204,6 @@ class Thirdparties extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$notification->context['caller'] = $request_data['caller'];
-				continue;
-			}
-
 			$notification->$field = $value;
 		}
 
