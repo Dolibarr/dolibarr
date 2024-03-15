@@ -1514,7 +1514,7 @@ class BookKeeping extends CommonObject
 	 * @param  string  $field          Field
 	 * @param  string  $value          Value
 	 * @param  string  $mode           Mode ('' or _tmp')
-	 * @return number                  Return integer <0 if KO, >0 if OK
+	 * @return int                     Return integer <0 if KO, >0 if OK
 	 */
 	public function updateByMvt($piece_num = '', $field = '', $value = '', $mode = '')
 	{

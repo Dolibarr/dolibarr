@@ -140,7 +140,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -10434,6 +10434,55 @@ abstract class CommonObject
 		if (in_array($this->element, array('don', 'donation', 'shipping'))) {
 			$statusfield = 'fk_statut';
 		}
+
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+		$sql .= " SET ".$statusfield." = ".((int) $status);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		if ($this->db->query($sql)) {
+			if (!$error) {
+				$this->oldcopy = clone $this;
+			}
+
+			if (!$error && !$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger($triggercode, $user);
+				if ($result < 0) {
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				$this->status = $status;
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				return -1;
+			}
+		} else {
+			$this->error = $this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 *	Set to a signed status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *  @param  string  $triggercode    Trigger code to use
+	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 */
+	public function setSignedStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
+	{
+		$error = 0;
+
+		$this->db->begin();
+
+		$statusfield = 'signed_status';
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 		$sql .= " SET ".$statusfield." = ".((int) $status);

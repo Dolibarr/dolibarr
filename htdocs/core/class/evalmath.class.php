@@ -57,6 +57,9 @@
  *
  * AUTHOR INFORMATION
  * Copyright 2005, Miles Kaufmann.
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * LICENSE
  * Redistribution and use in source and binary forms, with or without
@@ -129,7 +132,7 @@ class EvalMath
 	 * Evaluate
 	 *
 	 * @param string $expr 	String
-	 * @return boolean|number|NULL|mixed Result
+	 * @return boolean|int|float|NULL|mixed Result
 	 */
 	public function e($expr)
 	{
@@ -140,7 +143,7 @@ class EvalMath
 	 * Evaluate
 	 *
 	 * @param string $expr 	String
-	 * @return boolean|number|NULL|mixed Result
+	 * @return boolean|int|float|NULL|mixed Result
 	 */
 	public function evaluate($expr)
 	{
@@ -166,8 +169,8 @@ class EvalMath
 			}
 			$this->v[$matches[1]] = $tmp; // if so, stick it in the variable array
 			return $this->v[$matches[1]]; // and return the resulting value
-										  // ===============
-										  // is it a function assignment?
+			// ===============
+			// is it a function assignment?
 		} elseif (preg_match('/^\s*([a-z]\w*)\s*\(\s*([a-z]\w*(?:\s*,\s*[a-z]\w*)*)\s*\)\s*=\s*(.+)$/', $expr, $matches)) {
 			$fnn = $matches[1]; // get the function name
 			if (in_array($matches[1], $this->fb)) { // make sure it isn't built in
@@ -252,7 +255,7 @@ class EvalMath
 
 		while (1) { // 1 Infinite Loop ;)
 			$op = substr($expr, $index, 1); // get the first character at the current index
-											// find out if we're currently at the beginning of a number/variable/function/parenthesis/operand
+			// find out if we're currently at the beginning of a number/variable/function/parenthesis/operand
 			$match = array();
 			$ex = preg_match('/^([a-z]\w*\(?|\d+(?:\.\d*)?|\.\d+|\()/', substr($expr, $index), $match);
 			// ===============
@@ -261,7 +264,7 @@ class EvalMath
 				$index++;
 			} elseif ($op == '_') { // we have to explicitly deny this, because it's legal on the stack
 				return $this->trigger(4, "illegal character '_'", "_"); // but not in the input expression
-																		// ===============
+				// ===============
 			} elseif ((in_array($op, $ops) or $ex) and $expecting_op) { // are we putting an operator on the stack?
 				if ($ex) { // are we expecting an operator but have a number/variable/function/opening parenthesis?
 					$op = '*';
@@ -427,7 +430,7 @@ class EvalMath
 					}
 					eval('$stack->push('.$fnn.'($op1));'); // perfectly safe eval()
 				} elseif (array_key_exists($fnn, $this->f)) { // user function
-															  // get args
+					// get args
 					$args = array();
 					for ($i = count($this->f[$fnn]['args']) - 1; $i >= 0; $i--) {
 						if (is_null($args[$this->f[$fnn]['args'][$i]] = $stack->pop())) {

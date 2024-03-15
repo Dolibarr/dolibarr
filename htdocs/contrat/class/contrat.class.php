@@ -184,6 +184,12 @@ class Contrat extends CommonObject
 	 */
 	public $date_contrat;
 
+	/**
+	 * Status of the contract (0=NoSignature, 1=SignedBySender, 2=SignedByReceiver, 9=SignedByAll)
+	 * @var int
+	 */
+	public $signed_status = 0;
+
 	public $commercial_signature_id;
 	public $fk_commercial_signature;
 	public $commercial_suivi_id;
@@ -243,7 +249,7 @@ class Contrat extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -251,10 +257,11 @@ class Contrat extends CommonObject
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'ref_customer' => array('type' => 'varchar(50)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 25, 'searchall' => 1),
 		'ref_supplier' => array('type' => 'varchar(50)', 'label' => 'RefSupplier', 'enabled' => 1, 'visible' => -1, 'position' => 26, 'searchall' => 1),
-		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 30, 'index' => 1),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 30, 'index' => 1),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 35),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 40),
 		'date_contrat' => array('type' => 'datetime', 'label' => 'Date contrat', 'enabled' => 1, 'visible' => -1, 'position' => 45),
+		'signed_status' => array('type' => 'smallint(6)', 'label' => 'SignedStatus', 'enabled' => 1, 'visible' => -1, 'position' => 50, 'arrayofkeyval' => array(0 => 'NoSignature', 1 => 'SignedSender', 2 => 'SignedReceiver', 9 => 'SignedAll')),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'notnull' => 1, 'position' => 70),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 75),
 		'fk_commercial_signature' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'SaleRepresentative Signature', 'enabled' => 1, 'visible' => -1, 'position' => 80),
@@ -275,6 +282,25 @@ class Contrat extends CommonObject
 	const STATUS_VALIDATED = 1;
 	const STATUS_CLOSED = 2;
 
+	/*
+	 * No signature
+	 */
+	const STATUS_NO_SIGNATURE    = 0;
+
+	/*
+	 * Signed by sender
+	 */
+	CONST STATUS_SIGNED_SENDER   = 1;
+
+	/*
+	 * Signed by receiver
+	 */
+	CONST STATUS_SIGNED_RECEIVER = 2;
+
+	/*
+	 * Signed by all
+	 */
+	CONST STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
 
 
 	/**
@@ -2953,6 +2979,22 @@ class Contrat extends CommonObject
 		$return .= '</div>';
 		return $return;
 	}
+
+	// @Todo getLibSignedStatus, LibSignedStatus
+
+	/**
+	 * Set signed status
+	 *
+	 * @param  User   $user        Object user that modify
+	 * @param  int    $status      Newsigned  status to set (often a constant like self::STATUS_XXX)
+	 * @param  int    $notrigger   1 = Does not execute triggers, 0 = Execute triggers
+	 * @param  string $triggercode Trigger code to use
+	 * @return int                 0 < if KO, > 0 if OK
+	 */
+	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, $triggercode = ''): int
+	{
+		return $this->setSignedStatusCommon($user, $status, $notrigger, $triggercode);
+	}
 }
 
 
@@ -3110,7 +3152,7 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
-		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 30, 'index' => 1),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 30, 'index' => 1),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 35),
 		'qty' => array('type' => 'integer', 'label' => 'Quantity', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 35, 'isameasure' => 1),
 		'total_ht' => array('type' => 'integer', 'label' => 'AmountHT', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 36, 'isameasure' => 1),
@@ -3129,7 +3171,7 @@ class ContratLigne extends CommonObjectLine
 		'fk_user_ouverture' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserStartingService', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 135),
 		'fk_user_cloture' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserClosingService', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 135),
 		'statut' => array('type' => 'smallint(6)', 'label' => 'Statut', 'enabled' => 1, 'visible' => -1, 'position' => 500, 'arrayofkeyval' => array(0 => 'Draft', 4 => 'Open', 5 => 'Closed')),
-		'rang' => array('type' => 'integer', 'label' => 'Rank', 'enabled' => 1, 'visible' => 0, 'position' => 500, 'default' => 0)
+		'rang' => array('type' => 'integer', 'label' => 'Rank', 'enabled' => 1, 'visible' => 0, 'position' => 500, 'default' => '0')
 	);
 	// END MODULEBUILDER PROPERTIES
 

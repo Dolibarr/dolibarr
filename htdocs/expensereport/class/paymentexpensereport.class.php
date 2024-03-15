@@ -2,6 +2,7 @@
 /* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI  <info@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +66,13 @@ class PaymentExpenseReport extends CommonObject
 	 * @var int|string
 	 */
 	public $datep = '';
+	/**
+	 * @var float|int
+	 */
 	public $amount; // Total amount of payment
+	/**
+	 * @var array<float|int>
+	 */
 	public $amounts = array(); // Array of amounts
 
 	/**
@@ -94,7 +101,14 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var string
+	 */
 	public $type_code;
+
+	/**
+	 * @var string
+	 */
 	public $type_label;
 
 	/**
@@ -693,7 +707,7 @@ class PaymentExpenseReport extends CommonObject
 		}
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
