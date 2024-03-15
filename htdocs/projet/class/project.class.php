@@ -2607,7 +2607,7 @@ class Project extends CommonObject
 			$to = '';
 			$nbMailSend = 0;
 			$error = 0;
-			$errors_to = 0;
+			$errors_to = '';
 			while ($obj = $this->db->fetch_object($resql)) {
 				$to = $obj->email;
 				$numHolidays = num_public_holiday($lastWeekStartTS, $lastWeekEndTS, $mysoc->country_code, 1);
@@ -2670,7 +2670,7 @@ class Project extends CommonObject
 					$actioncomm->email_sender = '';
 					$actioncomm->email_to = $to;
 
-					$actioncomm->errors_to = (string) $errors_to;
+					$actioncomm->errors_to = $errors_to;
 
 					$actioncomm->elementtype = 'project_task';
 					$actioncomm->fk_element = (int) $this->element;
@@ -2704,7 +2704,7 @@ class Project extends CommonObject
 					$actioncomm->email_sender = '';
 					$actioncomm->email_to = $to;
 
-					$actioncomm->errors_to = (string) $errors_to;
+					$actioncomm->errors_to = $errors_to;
 
 					$actioncomm->elementtype = 'project_task';
 					$actioncomm->fk_element = (int) $this->element;
