@@ -1197,7 +1197,7 @@ class Thirdparties extends DolibarrApi
 		$notification = new Notify($this->db);
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		$notification->fetch($notification_id, $id, -1, '');
+		$notification->fetch($notification_id, $id);
 
 		if ($notification->socid != $id) {
 			throw new RestException(403, "Not allowed due to bad consistency of input data");
