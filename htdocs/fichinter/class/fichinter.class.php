@@ -58,6 +58,7 @@ class Fichinter extends CommonObject
 		'datee' => array('type' => 'date', 'label' => 'Datee', 'enabled' => 1, 'visible' => -1, 'position' => 90),
 		'datet' => array('type' => 'date', 'label' => 'Datet', 'enabled' => 1, 'visible' => -1, 'position' => 95),
 		'duree' => array('type' => 'double', 'label' => 'Duree', 'enabled' => 1, 'visible' => -1, 'position' => 100),
+		'signed_status' => array('type' => 'smallint(6)', 'label' => 'SignedStatus', 'enabled' => 1, 'visible' => -1, 'position' => 101, 'arrayofkeyval' => array(0 => 'NoSignature', 1 => 'SignedSender', 2 => 'SignedReceiver', 9 => 'SignedAll')),
 		'description' => array('type' => 'html', 'label' => 'Description', 'enabled' => 1, 'visible' => -1, 'position' => 105, 'showoncombobox' => 2),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 110),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 115),
@@ -135,6 +136,12 @@ class Fichinter extends CommonObject
 	public $statut = 0; // 0=draft, 1=validated, 2=invoiced, 3=Terminate
 
 	/**
+	 * Signed Status of the intervention (0=NoSignature, 1=SignedBySender, 2=SignedByReceiver, 9=SignedByAll)
+	 * @var int
+	 */
+	public $signed_status = 0;
+
+	/**
 	 * @var string description
 	 */
 	public $description;
@@ -184,6 +191,26 @@ class Fichinter extends CommonObject
 	 * Closed
 	 */
 	const STATUS_CLOSED = 3;
+
+	/*
+	 * No signature
+	 */
+	const STATUS_NO_SIGNATURE    = 0;
+
+	/*
+	 * Signed by sender
+	 */
+	CONST STATUS_SIGNED_SENDER   = 1;
+
+	/*
+	 * Signed by receiver
+	 */
+	CONST STATUS_SIGNED_RECEIVER = 2;
+
+	/*
+	 * Signed by all
+	 */
+	CONST STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
 
 	/**
 	 * Date delivery
@@ -1599,6 +1626,20 @@ class Fichinter extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;
+	}
+
+	/**
+	 * Set signed status
+	 *
+	 * @param  User   $user        Object user that modify
+	 * @param  int    $status      Newsigned  status to set (often a constant like self::STATUS_XXX)
+	 * @param  int    $notrigger   1 = Does not execute triggers, 0 = Execute triggers
+	 * @param  string $triggercode Trigger code to use
+	 * @return int                 0 < if KO, > 0 if OK
+	 */
+	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, $triggercode = ''): int
+	{
+		return $this->setSignedStatusCommon($user, $status, $notrigger, $triggercode);
 	}
 }
 

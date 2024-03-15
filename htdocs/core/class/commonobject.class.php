@@ -10467,6 +10467,55 @@ abstract class CommonObject
 		}
 	}
 
+	/**
+	 *	Set to a signed status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *  @param  string  $triggercode    Trigger code to use
+	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 */
+	public function setSignedStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
+	{
+		$error = 0;
+
+		$this->db->begin();
+
+		$statusfield = 'signed_status';
+
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+		$sql .= " SET ".$statusfield." = ".((int) $status);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		if ($this->db->query($sql)) {
+			if (!$error) {
+				$this->oldcopy = clone $this;
+			}
+
+			if (!$error && !$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger($triggercode, $user);
+				if ($result < 0) {
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				$this->status = $status;
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				return -1;
+			}
+		} else {
+			$this->error = $this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
 
 	/**
 	 * Initialise object with example values
