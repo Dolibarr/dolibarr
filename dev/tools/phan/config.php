@@ -604,7 +604,7 @@ return [
 		// 'PhanTypeMismatchPropertyDefault',
 		// 'PhanPluginAlwaysReturnMethod',
 		// 'PhanPluginMissingReturnMethod',
-		'PhanUndeclaredTypeReturnType',
+		// 'PhanUndeclaredTypeReturnType',
 		'PhanUndeclaredClassProperty',
 		'PhanTypeArraySuspiciousNullable',
 		// 'PhanPluginInconsistentReturnMethod',
