@@ -22,6 +22,8 @@
  *      \brief      File of class to parse RSS feeds
  */
 
+// @phan-file-suppress PhanPluginPHPDocInWrongComment
+
 /**
  * 	Class to parse RSS files
  */
@@ -805,7 +807,6 @@ class RssParser
 	}
 }
 
-// @phan-suppress PhanPluginPHPDocInWrongComment
 /*
  * A method for the xml_set_external_entity_ref_handler()
  *
