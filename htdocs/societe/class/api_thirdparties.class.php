@@ -1275,7 +1275,7 @@ class Thirdparties extends DolibarrApi
 
 		$socid = (int) $account->socid;
 
-		if ($account->socid == $id) {
+		if ($socid == $id) {
 			return $account->delete(DolibarrApiAccess::$user);
 		} else {
 			throw new RestException(416);
