@@ -1278,7 +1278,7 @@ class Thirdparties extends DolibarrApi
 		if ($socid == $id) {
 			return $account->delete(DolibarrApiAccess::$user);
 		} else {
-			throw new RestException(416);
+			throw new RestException(403, "Not allowed due to bad consistency of input data");
 		}
 	}
 
