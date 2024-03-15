@@ -1266,7 +1266,7 @@ class Thirdparties extends DolibarrApi
 	public function deleteCompanyBankAccount($id, $bankaccount_id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$account = new CompanyBankAccount($this->db);
