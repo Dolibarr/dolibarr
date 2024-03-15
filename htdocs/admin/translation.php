@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2017       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -301,7 +302,9 @@ foreach ($modulesdir as $keydir => $tmpsearchdir) {
 		}
 		//var_dump($i.' - '.$keydir.' - '.$dir_lang_osencoded.' -> '.$moduledirname . ' / ' . $tmpfile.' -> '.$langkey);
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$result = $newlang->load($langkey, 0, 0, '', 0); // Load translation files + database overwrite
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$result = $newlangfileonly->load($langkey, 0, 0, '', 1); // Load translation files only
 		if ($result < 0) {
 			print 'Failed to load language file '.$tmpfile.'<br>'."\n";
@@ -313,6 +316,7 @@ foreach ($modulesdir as $keydir => $tmpsearchdir) {
 		}
 		//print 'After loading lang '.$langkey.', newlang has '.count($newlang->tab_translate).' records<br>'."\n";
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$result = $langsenfileonly->load($langkey, 0, 0, '', 1); // Load translation files only
 	}
 	$i++;
