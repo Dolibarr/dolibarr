@@ -314,7 +314,9 @@ if ($object->id > 0) {
 	}
 
 	$author = new User($db);
-	if (!empty($object->fk_user_author)) {
+	if (!empty($object->user_creation_id)) {
+		$author->fetch($object->user_creation_id);
+	} elseif (!empty($object->fk_user_author)) {
 		$author->fetch($object->fk_user_author);
 	}
 
