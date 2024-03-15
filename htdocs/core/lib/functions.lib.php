@@ -13969,7 +13969,7 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 	}
 
 	if ($printfooter && function_exists("llxFooter")) {
-    	llxFooter();
+		llxFooter();
 	}
 	exit(0);
 }
