@@ -10008,6 +10008,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 			} else {
 				eval($s);
 			}
+			return '';
 		}
 	} catch (Error $e) {
 		if ($isObBufferActive) {
