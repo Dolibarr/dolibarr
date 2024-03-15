@@ -13967,8 +13967,8 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
         $reshook = $hookmanager->executeHooks('getErrorRecordNotFound', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
     	print $hookmanager->resPrint;
     }
-	
-    if ($printfooter && function_exists("llxFooter")) {
+
+	if ($printfooter && function_exists("llxFooter")) {
         llxFooter();
     }
     exit(0);
