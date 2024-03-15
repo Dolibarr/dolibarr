@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017 	Laurent Destailleur <eldy@stocks.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -291,7 +292,7 @@ class pdf_standard extends ModelePDFMovement
 		// Add where from extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 		// Add where from hooks
-		$parameters = array();
+		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -446,7 +447,6 @@ class pdf_standard extends ModelePDFMovement
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$num = $this->db->num_rows($resql);
-					$i = 0;
 					$nblines = $num;
 					for ($i = 0; $i < $nblines; $i++) {
 						$objp = $this->db->fetch_object($resql);

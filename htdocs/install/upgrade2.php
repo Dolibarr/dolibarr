@@ -2008,7 +2008,7 @@ function migrate_modeles($db, $langs, $conf)
 		}
 	}
 
-	if (isModEnabled("delivery_note")) {
+	if (isModEnabled("shipping")) {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 		$modellist = ModelePdfExpedition::liste_modeles($db);
 		if (count($modellist) == 0) {

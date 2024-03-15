@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Dimitri Mouillard    <dmouillard@teclib.com>
  * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -249,22 +250,22 @@ if (!empty($search_id)) {
 	$param .= '&search_status='.urlencode($search_status);
 }
 if (!empty($search_month) && $search_month > 0) {
-	$param .= '&search_month='.urlencode($search_month);
+	$param .= '&search_month='.urlencode((string) ($search_month));
 }
 if (!empty($search_year) && $search_year > 0) {
-	$param .= '&search_year='.urlencode($search_year);
+	$param .= '&search_year='.urlencode((string) ($search_year));
 }
 if (!empty($search_validator) && $search_validator > 0) {
-	$param .= '&search_validator='.urlencode($search_validator);
+	$param .= '&search_validator='.urlencode((string) ($search_validator));
 }
 if (!empty($search_employee) && $search_employee > 0) {
-	$param .= '&search_employee='.urlencode($search_employee);
+	$param .= '&search_employee='.urlencode((string) ($search_employee));
 }
 if (!empty($search_description)) {
 	$param .= '&search_description='.urlencode($search_description);
 }
 if (!empty($search_type) && $search_type > 0) {
-	$param .= '&search_type='.urlencode($search_type);
+	$param .= '&search_type='.urlencode((string) ($search_type));
 }
 if (!empty($search_prev_solde)) {
 	$param .= '&search_prev_solde='.urlencode($search_prev_solde);
@@ -464,12 +465,12 @@ while ($i < min($num, $limit)) {
 
 	$holidaylogstatic->id = $obj['rowid'];
 	$holidaylogstatic->date = $obj['date_action'];
-	$holidaylogstatic->validator		= $obj['fk_user_action'];
-	$holidaylogstatic->employee			= $obj['fk_user_update'];
-	$holidaylogstatic->description		= $obj['type_action'];
+	$holidaylogstatic->validator = $obj['fk_user_action'];
+	$holidaylogstatic->employee = $obj['fk_user_update'];
+	$holidaylogstatic->description = $obj['type_action'];
 	$holidaylogstatic->type = $obj['fk_type'];
 	$holidaylogstatic->balance_previous = $obj['prev_solde'];
-	$holidaylogstatic->balance_new		= $obj['new_solde'];
+	$holidaylogstatic->balance_new = $obj['new_solde'];
 
 	print '<tr class="oddeven">';
 

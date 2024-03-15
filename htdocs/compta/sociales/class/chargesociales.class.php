@@ -4,6 +4,7 @@
  * Copyright (C) 2016-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2017      Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2021      Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -192,7 +193,7 @@ class ChargeSociales extends CommonObject
 				$this->paye = $obj->paye;
 				$this->periode = $this->db->jdate($obj->period);
 				$this->period = $this->db->jdate($obj->period);
-				$this->import_key = $this->import_key;
+				$this->import_key = $obj->import_key;
 
 				$this->db->free($resql);
 
@@ -405,8 +406,8 @@ class ChargeSociales extends CommonObject
 	/**
 	 * Calculate amount remaining to pay by year
 	 *
-	 * @param   int     $year       Year
-	 * @return  number
+	 * @param   int			$year       Year
+	 * @return  int|float 	  	        Returns -1 when error (Note: could be mistaken with an amount)
 	 */
 	public function solde($year = 0)
 	{
@@ -653,7 +654,7 @@ class ChargeSociales extends CommonObject
 		$result .= $linkend;
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

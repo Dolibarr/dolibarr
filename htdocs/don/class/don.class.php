@@ -8,6 +8,7 @@
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021      Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -382,11 +383,11 @@ class Don extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->address = ($this->address > 0 ? $this->address : $this->address);
-		$this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
-		$this->town = ($this->town > 0 ? $this->town : $this->town);
-		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
-		$this->country = ($this->country ? $this->country : $this->country);
+		// $this->address = ($this->address > 0 ? $this->address : $this->address);
+		// $this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
+		// $this->town = ($this->town > 0 ? $this->town : $this->town);
+		// $this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
+		// $this->country = ($this->country ? $this->country : $this->country);
 		$this->amount = (float) price2num($this->amount);
 
 		// Check parameters
@@ -499,11 +500,11 @@ class Don extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->address = ($this->address > 0 ? $this->address : $this->address);
-		$this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
-		$this->town = ($this->town > 0 ? $this->town : $this->town);
-		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
-		$this->country = ($this->country ? $this->country : $this->country);
+		// $this->address = ($this->address > 0 ? $this->address : $this->address);
+		// $this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
+		// $this->town = ($this->town > 0 ? $this->town : $this->town);
+		// $this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
+		// $this->country = ($this->country ? $this->country : $this->country);
 		$this->amount = (float) price2num($this->amount);
 
 		// Check parameters

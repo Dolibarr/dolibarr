@@ -3,6 +3,7 @@
  * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,19 +94,19 @@ class StockTransferLine extends CommonObjectLine
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => '1', 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => '1', 'index' => 1, 'comment' => "Id"),
-		'amount' => array('type' => 'price', 'label' => 'Amount', 'enabled' => '1', 'position' => 40, 'notnull' => 0, 'visible' => 1, 'default' => 'null', 'isameasure' => '1', 'help' => "Help text for amount",),
-		'qty' => array('type' => 'real', 'label' => 'Qty', 'enabled' => '1', 'position' => 45, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => '1', 'css' => 'maxwidth75imp', 'help' => "Help text for quantity",),
-		'fk_warehouse_destination' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Entrepôt de destination', 'enabled' => '1', 'position' => 50, 'notnull' => 1, 'visible' => 1,),
-		'fk_warehouse_source' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Entrepôt source', 'enabled' => '1', 'position' => 50, 'notnull' => 1, 'visible' => 1,),
-		'fk_stocktransfer' => array('type' => 'integer:StockTransfer:stocktransfer/stock/class/stocktransfer.class.php', 'label' => 'StockTransfer', 'enabled' => '1', 'position' => 50, 'notnull' => 1, 'visible' => 0,),
-		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php', 'label' => 'Product', 'enabled' => '1', 'position' => 50, 'notnull' => 1, 'visible' => 1,),
-		'batch' => array('type' => 'varchar(128)', 'label' => 'Batch', 'enabled' => '1', 'position' => 1000, 'notnull' => -1, 'visible' => 1,),
-		'pmp' => array('type' => 'double'/*, 'help'=>'THMEstimatedHelp'*/, 'label' => 'PMP', 'enabled' => '1', 'position' => 50, 'notnull' => 0, 'visible' => 1,),
-		'rang' => array('type' => 'integer', 'label' => 'Qty', 'enabled' => '1', 'position' => 45, 'notnull' => 0, 'visible' => 0, 'default' => '0', 'isameasure' => '1', 'css' => 'maxwidth75imp', 'help' => "Help text for quantity",),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'comment' => "Id"),
+		'amount' => array('type' => 'price', 'label' => 'Amount', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => 1, 'default' => 'null', 'isameasure' => 1, 'help' => "Help text for amount",),
+		'qty' => array('type' => 'real', 'label' => 'Qty', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'css' => 'maxwidth75imp', 'help' => "Help text for quantity",),
+		'fk_warehouse_destination' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Entrepôt de destination', 'enabled' => 1, 'position' => 50, 'notnull' => 1, 'visible' => 1,),
+		'fk_warehouse_source' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Entrepôt source', 'enabled' => 1, 'position' => 50, 'notnull' => 1, 'visible' => 1,),
+		'fk_stocktransfer' => array('type' => 'integer:StockTransfer:stocktransfer/stock/class/stocktransfer.class.php', 'label' => 'StockTransfer', 'enabled' => 1, 'position' => 50, 'notnull' => 1, 'visible' => 0,),
+		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php', 'label' => 'Product', 'enabled' => 1, 'position' => 50, 'notnull' => 1, 'visible' => 1,),
+		'batch' => array('type' => 'varchar(128)', 'label' => 'Batch', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => 1,),
+		'pmp' => array('type' => 'double'/*, 'help'=>'THMEstimatedHelp'*/, 'label' => 'PMP', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => 1,),
+		'rang' => array('type' => 'integer', 'label' => 'Qty', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => 0, 'default' => '0', 'isameasure' => 1, 'css' => 'maxwidth75imp', 'help' => "Help text for quantity",),
 	);
 	public $rowid;
 	public $amount;

@@ -74,7 +74,6 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		}
 	}
 
-	$ref = str_replace(' ', '', $ref);
 	$out = '';
 
 	// Define $urlwithroot

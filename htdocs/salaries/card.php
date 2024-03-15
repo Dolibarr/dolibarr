@@ -330,7 +330,7 @@ if ($action == 'add' && empty($cancel)) {
 
 			if (GETPOST('saveandnew', 'alpha')) {
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-				header("Location: card.php?action=create&fk_project=" . urlencode($projectid) . "&accountid=" . urlencode($accountid) . '&paymenttype=' . urlencode(GETPOSTINT('paymenttype')) . '&datepday=' . GETPOSTINT("datepday") . '&datepmonth=' . GETPOSTINT("datepmonth") . '&datepyear=' . GETPOSTINT("datepyear"));
+				header("Location: card.php?action=create&fk_project=" . urlencode((string) ($projectid)) . "&accountid=" . urlencode((string) ($accountid)) . '&paymenttype=' . urlencode((string) (GETPOSTINT('paymenttype'))) . '&datepday=' . GETPOSTINT("datepday") . '&datepmonth=' . GETPOSTINT("datepmonth") . '&datepyear=' . GETPOSTINT("datepyear"));
 				exit;
 			} else {
 				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $object->id);
@@ -402,7 +402,8 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 
 	if ($object->id > 0) {
 		$object->paye = 0;
-		$object->id = $object->ref = null;
+		$object->id = 0;
+		$object->ref = '';
 
 		if (GETPOST('amount', 'alphanohtml')) {
 			$object->amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT', 2);

@@ -204,7 +204,7 @@ if ($disablenofollow) {
 } ?>
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user"></span>
-<input type="text" id="username" maxlength="255" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
+<input type="text" id="username" maxlength="255" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" autocapitalize="off" autocomplete="on" spellcheck="false" autocorrect="off" />
 </div>
 </div>
 
@@ -402,9 +402,9 @@ if (!empty($_SESSION['dol_loginmesg'])) {
 	$message = $_SESSION['dol_loginmesg'];	// By default this is an error message
 	if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
 		$message = str_replace('<!-- warning -->', '', $message);
-		print '<div class="warning">';
+		print '<div class="warning" role="alert">';
 	} else {
-		print '<div class="error">';
+		print '<div class="error" role="alert">';
 	}
 	print dol_escape_htmltag($message);
 	print '</div>'; ?>

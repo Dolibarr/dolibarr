@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +71,7 @@ $signature = ((!empty($user->signature) && !getDolGlobalString('MAIN_MAIL_DO_NOT
 
 $targetobject = null; // Not defined with mass emailing
 
-$parameters = array('mode'=>'emailing');
+$parameters = array('mode' => 'emailing');
 $substitutionarray = FormMail::getAvailableSubstitKey('emailing', $targetobject);
 
 $object->substitutionarrayfortest = $substitutionarray;
@@ -237,7 +238,7 @@ if (empty($reshook)) {
 
 						$signature = ((!empty($user->signature) && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $user->signature : '');
 
-						$parameters = array('mode'=>'emailing');
+						$parameters = array('mode' => 'emailing');
 						$substitutionarray = getCommonSubstitutionArray($langs, 0, array('object', 'objectamount'), $targetobject); // Note: On mass emailing, this is null because be don't know object
 
 						// Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
@@ -437,19 +438,14 @@ if (empty($reshook)) {
 				// Loop finished, set global statut of mail
 				if ($nbko > 0) {
 					$statut = 2; // Status 'sent partially' (because at least one error)
-					if ($nbok > 0) {
-						setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", $nbok), null, 'mesgs');
-					} else {
-						setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", $nbok), null, 'mesgs');
-					}
+					setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", $nbok), null, 'mesgs');
 				} else {
 					if ($nbok >= $num) {
 						$statut = 3; // Send to everybody
-						setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", $nbok), null, 'mesgs');
 					} else {
 						$statut = 2; // Status 'sent partially' (because not send to everybody)
-						setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", $nbok), null, 'mesgs');
 					}
+					setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", $nbok), null, 'mesgs');
 				}
 
 				$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".((int) $statut)." WHERE rowid = ".((int) $object->id);
@@ -488,7 +484,7 @@ if (empty($reshook)) {
 
 			$signature = ((!empty($user->signature) && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $user->signature : '');
 
-			$parameters = array('mode'=>'emailing');
+			$parameters = array('mode' => 'emailing');
 			$substitutionarray = getCommonSubstitutionArray($langs, 0, array('object', 'objectamount'), $targetobject); // Note: On mass emailing, this is null because be don't know object
 
 			// other are set at begin of page
@@ -536,7 +532,7 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans("MailSuccessfulySent", $mailfile->getValidAddress($object->email_from, 2), $mailfile->getValidAddress($object->sendto, 2)), null, 'mesgs');
 				$action = '';
 			} else {
-				setEventMessages($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result, null, 'errors');
+				setEventMessages($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.json_encode($result), null, 'errors');
 				$action = 'test';
 			}
 		}
@@ -849,6 +845,63 @@ if ($action == 'create') {
 	print $htmlother->selectColor(GETPOST('bgcolor'), 'bgcolor', '', 0);
 	print '</td></tr>';
 
+	$formmail = new FormMail($db);
+	$formmail->withfckeditor = 1;
+	$formmail->withaiprompt = 'html';
+	$formmail->withlayout = 1;
+
+	print '<tr class="fieldsforemail"><td></td><td>';
+	$out = '';
+	// Add link to add layout
+	if ($formmail->withlayout && $formmail->withfckeditor) {
+		$out .= '<a href="#" id="linkforlayouttemplates" class="reposition notasortlink inline-block alink marginrightonly">';
+		$out .= img_picto($langs->trans("FillMessageWithALayout"), 'layout', 'class="paddingrightonly"');
+		$out .= $langs->trans("FillMessageWithALayout").'...';
+		$out .= '</a> &nbsp; &nbsp; ';
+
+		$out .= '<script>
+			$(document).ready(function() {
+				  $("#linkforlayouttemplates").click(function() {
+					console.log("We click on linkforlayouttemplates");
+					event.preventDefault();
+					jQuery("#template-selector").toggle();
+					//jQuery("#template-selector").attr("style", "aaa");
+					jQuery("#ai_input").hide();
+				});
+			});
+		</script>
+		';
+	}
+
+	// Add link to add AI content
+	if ($formmail->withaiprompt && isModEnabled('ai')) {
+		$out .= '<a href="#" id="linkforaiprompt" class="reposition notasortlink inline-block alink marginrightonly">';
+		$out .= img_picto($langs->trans("FillMessageWithAIContent"), 'ai', 'class="paddingrightonly"');
+		$out .= $langs->trans("FillMessageWithAIContent").'...';
+		$out .= '</a>';
+		$out .= '<script>
+					$(document).ready(function() {
+						$("#linkforaiprompt").click(function() {
+							console.log("We click on linkforaiprompt");
+							event.preventDefault();
+							jQuery("#ai_input").toggle();
+							jQuery("#template-selector").hide();
+							if (!jQuery("ai_input").is(":hidden")) {
+								console.log("Set focus on input field");
+								jQuery("#ai_instructions").focus();
+							}
+						});
+					});
+				</script>';
+	}
+	if ($formmail->withfckeditor) {
+		$out .= $formmail->getModelEmailTemplate();
+	}
+	if ($formmail->withaiprompt && isModEnabled('ai')) {
+		$out .= $formmail->getSectionForAIPrompt();
+	}
+	print $out;
+	print '</td></tr>';
 	print '</table>';
 
 	print '<div style="padding-top: 10px">';
@@ -883,7 +936,7 @@ if ($action == 'create') {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.(!empty($urlfrom) ? '&urlfrom='.urlencode($urlfrom) : ''), $langs->trans("DeleteMailing"), $langs->trans("ConfirmDeleteMailing"), "confirm_delete", '', '', 1);
 		}
 
-		if ($action != 'edit' && $action != 'edittxt' &&$action != 'edithtml') {
+		if ($action != 'edit' && $action != 'edittxt' && $action != 'edithtml') {
 			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
 
 			/*
@@ -970,20 +1023,20 @@ if ($action == 'create') {
 			$morehtmlref .= $form->editfieldval("", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string', '', null, null, '', 1);
 			$morehtmlref .= '</div>';
 
-			$morehtmlright = '';
+			$morehtmlstatus = '';
 			$nbtry = $nbok = 0;
 			if ($object->status == 2 || $object->status == 3) {
 				$nbtry = $object->countNbOfTargets('alreadysent');
 				$nbko  = $object->countNbOfTargets('alreadysentko');
 
-				$morehtmlright .= ' ('.$nbtry.'/'.$object->nbemail;
+				$morehtmlstatus .= ' ('.$nbtry.'/'.$object->nbemail;
 				if ($nbko) {
-					$morehtmlright .= ' - '.$nbko.' '.$langs->trans("Error");
+					$morehtmlstatus .= ' - '.$nbko.' '.$langs->trans("Error");
 				}
-				$morehtmlright .= ') &nbsp; ';
+				$morehtmlstatus .= ') &nbsp; ';
 			}
 
-			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
@@ -1098,8 +1151,8 @@ if ($action == 'create') {
 				// Create an array for form
 				$formquestion = array(
 					'text' => $langs->trans("ConfirmClone"),
-				array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneContent"), 'value' => 1),
-				array('type' => 'checkbox', 'name' => 'clone_receivers', 'label' => $langs->trans("CloneReceivers"), 'value' => 0)
+				0 => array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneContent"), 'value' => 1),
+				1 => array('type' => 'checkbox', 'name' => 'clone_receivers', 'label' => $langs->trans("CloneReceivers"), 'value' => 0)
 				);
 				// Incomplete payment. On demande si motif = escompte ou autre
 				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneEMailing', $object->ref), 'confirm_clone', $formquestion, 'yes', 2, 240);
@@ -1190,7 +1243,7 @@ if ($action == 'create') {
 				$formmail = new FormMail($db);
 				$formmail->fromname = $object->email_from;
 				$formmail->frommail = $object->email_from;
-				$formmail->withsubstit =0;
+				$formmail->withsubstit = 0;
 				$formmail->withfrom = 0;
 				$formmail->withto = $user->email ? $user->email : 1;
 				$formmail->withtocc = 0;
@@ -1199,7 +1252,7 @@ if ($action == 'create') {
 				$formmail->withtopicreadonly = 1;
 				$formmail->withfile = 0;
 				$formmail->withlayout = 0;
-				$formmail->withaiprompt = 0;
+				$formmail->withaiprompt = '';
 				$formmail->withbody = 0;
 				$formmail->withbodyreadonly = 1;
 				$formmail->withcancel = 1;
@@ -1292,20 +1345,20 @@ if ($action == 'create') {
 			$morehtmlref .= $form->editfieldval("", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string', '', null, null, '', 1);
 			$morehtmlref .= '</div>';
 
-			$morehtmlright = '';
+			$morehtmlstatus = '';
 			$nbtry = $nbok = 0;
 			if ($object->status == 2 || $object->status == 3) {
 				$nbtry = $object->countNbOfTargets('alreadysent');
 				$nbko  = $object->countNbOfTargets('alreadysentko');
 
-				$morehtmlright .= ' ('.$nbtry.'/'.$object->nbemail;
+				$morehtmlstatus .= ' ('.$nbtry.'/'.$object->nbemail;
 				if ($nbko) {
-					$morehtmlright .= ' - '.$nbko.' '.$langs->trans("Error");
+					$morehtmlstatus .= ' - '.$nbko.' '.$langs->trans("Error");
 				}
-				$morehtmlright .= ') &nbsp; ';
+				$morehtmlstatus .= ') &nbsp; ';
 			}
 
-			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';

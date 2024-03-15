@@ -668,16 +668,16 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 if ($socid > 0) {
-	$param .= '&socid='.urlencode($socid);
+	$param .= '&socid='.urlencode((string) ($socid));
 }
 if ($search_societe) {
 	$param .= '&search_societe='.urlencode($search_societe);
 }
 if ($projectid > 0) {
-	$param .= '&projectid='.urlencode($projectid);
+	$param .= '&projectid='.urlencode((string) ($projectid));
 }
 if ($contractid > 0) {
-	$param .= '&contractid='.urlencode($contractid);
+	$param .= '&contractid='.urlencode((string) ($contractid));
 }
 if ($search_date_start) {
 	$tmparray = dol_getdate($search_date_start);

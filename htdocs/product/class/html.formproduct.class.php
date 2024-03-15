@@ -288,7 +288,7 @@ class FormProduct
 	{
 		global $conf, $langs, $user, $hookmanager;
 
-		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectWarehouses " . (is_array($selected) ? 'selected is array' : $selected) . ", $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out = '';
 		if (!getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {

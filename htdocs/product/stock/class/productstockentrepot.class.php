@@ -4,6 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,13 +138,13 @@ class ProductStockEntrepot extends CommonObject
 			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 
 			//if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action to call a trigger.
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action to call a trigger.
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) $error++;
-				//// End call triggers
+			//// Call triggers
+			//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
+			//if ($result < 0) $error++;
+			//// End call triggers
 			//}
 		}
 
@@ -232,15 +233,15 @@ class ProductStockEntrepot extends CommonObject
 	 *
 	 * @param int	 $fk_product 	Product from which we want to get limit and desired stock by warehouse
 	 * @param int	 $fk_entrepot 	Warehouse in which we want to get products limit and desired stock
-	 * @param string $sortorder  	Sort Order
-	 * @param string $sortfield  	Sort field
-	 * @param int    $limit      	limit
-	 * @param int    $offset     	offset limit
-	 * @param array  $filter     	filter array
-	 * @param string $filtermode 	filter mode (AND or OR)
-	 * @return int|array 			Return integer <0 if KO, array if OK
+	 * @param string 		$sortorder  	Sort Order
+	 * @param string 		$sortfield  	Sort field
+	 * @param int    		$limit      	Limit
+	 * @param int    		$offset     	Offset limit
+	 * @param string|array  $filter     	Filter USF.
+	 * @param string 		$filtermode 	Filter mode (AND or OR)
+	 * @return int|array 					Return integer <0 if KO, array if OK
 	 */
-	public function fetchAll($fk_product = 0, $fk_entrepot = 0, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($fk_product = 0, $fk_entrepot = 0, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -256,14 +257,27 @@ class ProductStockEntrepot extends CommonObject
 		$sql .= " WHERE 1=1";
 
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				$sqlwhere[] = $key." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+		if (is_array($filter)) {
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+				}
 			}
+			if (count($sqlwhere) > 0) {
+				$sql .= " AND ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+			}
+
+			$filter = '';
 		}
-		if (count($sqlwhere) > 0) {
-			$sql .= " AND ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($fk_product) && $fk_product > 0) {
@@ -286,11 +300,11 @@ class ProductStockEntrepot extends CommonObject
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				$lines[$obj->rowid] = array(
-										'id'=>$obj->rowid
-										,'fk_product'=>$obj->fk_product
-										,'fk_entrepot'=>$obj->fk_entrepot
-										,'seuil_stock_alerte'=>$obj->seuil_stock_alerte
-										,'desiredstock'=>$obj->desiredstock
+										'id' => $obj->rowid
+										,'fk_product' => $obj->fk_product
+										,'fk_entrepot' => $obj->fk_entrepot
+										,'seuil_stock_alerte' => $obj->seuil_stock_alerte
+										,'desiredstock' => $obj->desiredstock
 									);
 			}
 			$this->db->free($resql);

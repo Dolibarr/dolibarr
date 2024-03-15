@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022-2023	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2022	    Anthony Berton       	<bertonanthony@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 	$error = 0;
 	$connect_id = null;
 	$newsectioniso = '';
-	$mesg="";
+	$mesg = "";
 
 	if (!is_numeric($ftp_port)) {
 		$mesg = $langs->transnoentitiesnoconv("FailedToConnectToFTPServer", $ftp_server, $ftp_port);
@@ -110,7 +111,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 		}
 	}
 
-	$arrayresult = array('conn_id'=>$connect_id, 'ok'=>$ok, 'mesg'=>$mesg, 'curdir'=>$section, 'curdiriso'=>$newsectioniso);
+	$arrayresult = array('conn_id' => $connect_id, 'ok' => $ok, 'mesg' => $mesg, 'curdir' => $section, 'curdiriso' => $newsectioniso);
 	return $arrayresult;
 }
 
@@ -144,10 +145,7 @@ function dol_ftp_close($connect_id)
 
 	// Close FTP connection
 	if ($connect_id) {
-		if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
-		} elseif (getDolGlobalString('FTP_CONNECT_WITH_SSL')) {
-			return ftp_close($connect_id);
-		} else {
+		if (!getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
 			return ftp_close($connect_id);
 		}
 	}

@@ -3,6 +3,8 @@
  * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2022		Anthony Berton		<anthony.berton@bb2a.fr>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -277,12 +279,10 @@ class Utils
 			$ext = 'sql';
 			if (in_array($type, array('mysql', 'mysqli'))) {
 				$prefix = 'mysqldump';
-				$ext = 'sql';
 			}
 			//if ($label == 'PostgreSQL') { $prefix='pg_dump'; $ext='dump'; }
 			if (in_array($type, array('pgsql'))) {
 				$prefix = 'pg_dump';
-				$ext = 'sql';
 			}
 			$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.dol_print_date(dol_now('gmt'), "dayhourlogsmall", 'tzuser').'.'.$ext;
 		}
@@ -466,7 +466,7 @@ class Utils
 						$langs->load("errors");
 						dol_syslog("Datadump retval after exec=".$retval, LOG_ERR);
 						$errormsg = 'Error '.$retval;
-						$ok = 0;
+						$ok = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 					} else {
 						$i = 0;
 						if (!empty($output_arr)) {
@@ -1007,7 +1007,7 @@ class Utils
 			return -1;
 		}
 
-		dol_include_once('/core/lib/files.lib.php');
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$nbSaves = intval(getDolGlobalString('SYSLOG_FILE_SAVES', 10));
 
@@ -1413,7 +1413,7 @@ class Utils
 		dol_syslog("Utils::cleanUnfinishedCronjob Starting cleaning");
 
 		// Import Cronjob class if not present
-		dol_include_once('/cron/class/cronjob.class.php');
+		require_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
 
 		// Get this job object
 		$this_job = new Cronjob($db);

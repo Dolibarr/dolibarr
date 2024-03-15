@@ -2,6 +2,7 @@
 /* Copyright (C) 2017  Laurent Destailleur      <eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024  Frédéric France          <frederic.france@free.fr>
  * Copyright (C) 2023  Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,27 +112,27 @@ class TimeSpent extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => '1', 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => '1', 'index' => 1, 'css' => 'left', 'comment' => "Id"),
-		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => '1', 'position' => 17, 'notnull' => 0, 'visible' => -2,),
-		'import_key' => array('type' => 'varchar(14)', 'label' => 'import_key', 'enabled' => '1', 'position' => 15, 'notnull' => 0, 'visible' => -1,),
-		'fk_element' => array('type' => 'integer', 'label' => 'fk_element', 'enabled' => '1', 'position' => 2, 'notnull' => 1, 'visible' => -1,),
-		'elementtype' => array('type' => 'varchar(32)', 'label' => 'elementtype', 'enabled' => '1', 'position' => 3, 'notnull' => 1, 'visible' => -1,),
-		'element_date' => array('type' => 'date', 'label' => 'element_date', 'enabled' => '1', 'position' => 4, 'notnull' => 0, 'visible' => -1,),
-		'element_datehour' => array('type' => 'datetime', 'label' => 'element_datehour', 'enabled' => '1', 'position' => 5, 'notnull' => 0, 'visible' => -1,),
-		'element_date_withhour' => array('type' => 'integer', 'label' => 'element_date_withhour', 'enabled' => '1', 'position' => 6, 'notnull' => 0, 'visible' => -1,),
-		'element_duration' => array('type' => 'double', 'label' => 'element_duration', 'enabled' => '1', 'position' => 7, 'notnull' => 0, 'visible' => -1,),
-		'fk_product' => array('type' => 'integer', 'label' => 'fk_product', 'enabled' => '1', 'position' => 8, 'notnull' => 0, 'visible' => -1,),
-		'fk_user' => array('type' => 'integer', 'label' => 'fk_user', 'enabled' => '1', 'position' => 9, 'notnull' => 0, 'visible' => -1,),
-		'thm' => array('type' => 'double(24,8)', 'label' => 'thm', 'enabled' => '1', 'position' => 10, 'notnull' => 0, 'visible' => -1,),
-		'invoice_id' => array('type' => 'integer', 'label' => 'invoice_id', 'enabled' => '1', 'position' => 11, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
-		'invoice_line_id' => array('type' => 'integer', 'label' => 'invoice_line_id', 'enabled' => '1', 'position' => 12, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
-		'intervention_id' => array('type' => 'integer', 'label' => 'intervention_id', 'enabled' => '1', 'position' => 13, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
-		'intervention_line_id' => array('type' => 'integer', 'label' => 'intervention_line_id', 'enabled' => '1', 'position' => 14, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
-		'datec' => array('type' => 'datetime', 'label' => 'datec', 'enabled' => '1', 'position' => 16, 'notnull' => 0, 'visible' => -1,),
-		'note' => array('type' => 'text', 'label' => 'note', 'enabled' => '1', 'position' => 18, 'notnull' => 0, 'visible' => -1,),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 17, 'notnull' => 0, 'visible' => -2,),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'import_key', 'enabled' => 1, 'position' => 15, 'notnull' => 0, 'visible' => -1,),
+		'fk_element' => array('type' => 'integer', 'label' => 'fk_element', 'enabled' => 1, 'position' => 2, 'notnull' => 1, 'visible' => -1,),
+		'elementtype' => array('type' => 'varchar(32)', 'label' => 'elementtype', 'enabled' => 1, 'position' => 3, 'notnull' => 1, 'visible' => -1,),
+		'element_date' => array('type' => 'date', 'label' => 'element_date', 'enabled' => 1, 'position' => 4, 'notnull' => 0, 'visible' => -1,),
+		'element_datehour' => array('type' => 'datetime', 'label' => 'element_datehour', 'enabled' => 1, 'position' => 5, 'notnull' => 0, 'visible' => -1,),
+		'element_date_withhour' => array('type' => 'integer', 'label' => 'element_date_withhour', 'enabled' => 1, 'position' => 6, 'notnull' => 0, 'visible' => -1,),
+		'element_duration' => array('type' => 'double', 'label' => 'element_duration', 'enabled' => 1, 'position' => 7, 'notnull' => 0, 'visible' => -1,),
+		'fk_product' => array('type' => 'integer', 'label' => 'fk_product', 'enabled' => 1, 'position' => 8, 'notnull' => 0, 'visible' => -1,),
+		'fk_user' => array('type' => 'integer', 'label' => 'fk_user', 'enabled' => 1, 'position' => 9, 'notnull' => 0, 'visible' => -1,),
+		'thm' => array('type' => 'double(24,8)', 'label' => 'thm', 'enabled' => 1, 'position' => 10, 'notnull' => 0, 'visible' => -1,),
+		'invoice_id' => array('type' => 'integer', 'label' => 'invoice_id', 'enabled' => 1, 'position' => 11, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
+		'invoice_line_id' => array('type' => 'integer', 'label' => 'invoice_line_id', 'enabled' => 1, 'position' => 12, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
+		'intervention_id' => array('type' => 'integer', 'label' => 'intervention_id', 'enabled' => 1, 'position' => 13, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
+		'intervention_line_id' => array('type' => 'integer', 'label' => 'intervention_line_id', 'enabled' => 1, 'position' => 14, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
+		'datec' => array('type' => 'datetime', 'label' => 'datec', 'enabled' => 1, 'position' => 16, 'notnull' => 0, 'visible' => -1,),
+		'note' => array('type' => 'text', 'label' => 'note', 'enabled' => 1, 'position' => 18, 'notnull' => 0, 'visible' => -1,),
 	);
 	public $rowid;
 	public $import_key;
