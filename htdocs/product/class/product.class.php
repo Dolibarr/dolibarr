@@ -3482,11 +3482,11 @@ class Product extends CommonObject
 	/**
 	 *  Charge tableau des stats réception fournisseur pour le produit/service
 	 *
-	 * @param  int    	$socid           Id societe pour filtrer sur une societe
-	 * @param  string 	$filtrestatut    Id statut pour filtrer sur un statut
-	 * @param  int    	$forVirtualStock Ignore rights filter for virtual stock calculation.
+	 * @param  int    	$socid           	Id societe pour filtrer sur une societe
+	 * @param  string 	$filtrestatut    	Id statut pour filtrer sur un statut
+	 * @param  int    	$forVirtualStock 	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
-	 * @return int                     Array of stats in $this->stats_reception, <0 if ko or >0 if ok
+	 * @return int                     		Array of stats in $this->stats_reception, <0 if ko or >0 if ok
 	 */
 	public function load_stats_reception($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null)
 	{
@@ -3543,12 +3543,12 @@ class Product extends CommonObject
 	/**
 	 *  Charge tableau des stats production pour le produit/service
 	 *
-	 * @param  int    	$socid           Id societe pour filtrer sur une societe
-	 * @param  string 	$filtrestatut    Id statut pour filtrer sur un statut
-	 * @param  int    	$forVirtualStock Ignore rights filter for virtual stock calculation.
+	 * @param	int    	$socid           	Id societe pour filtrer sur une societe
+	 * @param	string 	$filtrestatut    	Id statut pour filtrer sur un statut
+	 * @param	int    	$forVirtualStock 	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
-	 * @param   int $warehouseid Filter by a warehouse
-	 * @return integer                 Array of stats in $this->stats_mrptoproduce (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
+	 * @param   int 	$warehouseid 		Filter by a warehouse. Warning: When a filter on a warehous is set, it is not possible to calculate an accurate virtual stock because we can't knnow in which warehouse will be done virtual stock changes.
+	 * @return 	integer                 	Array of stats in $this->stats_mrptoproduce (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
 	 */
 	public function load_stats_inproduction($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null, $warehouseid = 0)
 	{
