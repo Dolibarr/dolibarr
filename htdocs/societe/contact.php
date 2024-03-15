@@ -136,6 +136,8 @@ if (empty($reshook)) {
 if ($action == 'confirm_delete' && $user->hasRight('societe', 'contact', 'delete')) {
 	$id = GETPOST('id', 'int');
 	if (!empty($id) && $socid > 0) {
+		$db->begin();
+
 		$sql = "DELETE t, et FROM llx_socpeople AS t";
 		$sql .= " LEFT JOIN llx_socpeople_extrafields AS et ON t.rowid = et.fk_object";
 		$sql .= " WHERE t.fk_soc = ".((int) $socid);
@@ -144,8 +146,8 @@ if ($action == 'confirm_delete' && $user->hasRight('societe', 'contact', 'delete
 
 		$result = $db->query($sql);
 		if (!$result) {
-			$error++;
 			setEventMessages($db->lasterror(), null, 'errors');
+			$db->rollback();
 		} else {
 			$db->commit();
 			setEventMessages('ContactDeleted', null, 'mesgs');
