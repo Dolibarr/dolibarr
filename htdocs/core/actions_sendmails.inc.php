@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
 *  Copyright (C) 2013 Juanjo Menent		   <jmenent@2byte.es>
 *
 * This program is free software; you can redistribute it and/or modify
@@ -29,6 +30,10 @@
 // $triggersendname must be set (can be '')
 // $actiontypecode can be set
 // $object and $uobject may be defined
+'
+@phan-var-force Societe      $mysoc
+@phan-var-force CommonObject $object
+';
 
 /*
  * Add file in email form
@@ -357,7 +362,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			$substitutionarray['__EMAIL__'] = $sendto;
 			$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
 
-			$parameters = array('mode'=>'formemail');
+			$parameters = array('mode' => 'formemail');
 			complete_substitutions_array($substitutionarray, $langs, $object, $parameters);
 
 			$subject = make_substitutions($subject, $substitutionarray);

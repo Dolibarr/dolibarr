@@ -15,6 +15,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1196,9 +1197,9 @@ class FactureFournisseur extends CommonInvoice
 		}
 		if (isset($this->fk_project)) {
 			if (empty($this->fk_project)) {
-				$this->fk_project = null;
+				$this->fk_project = 0;
 			} else {
-				$this->fk_project = intval($this->fk_project);
+				$this->fk_project = (int) $this->fk_project;
 			}
 		}
 		if (isset($this->cond_reglement_id)) {
@@ -2064,7 +2065,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param      int         $fk_remise_except       Id discount used
 	 *	@return     int                                 >0 if OK, <0 if KO
 	 */
-	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $fk_code_ventilation = 0, $info_bits = '', $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = 0, $array_options = [], $fk_unit = null, $origin_id = 0, $pu_devise = 0, $ref_supplier = '', $special_code = '', $fk_parent_line = 0, $fk_remise_except = 0)
+	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = 0, $date_end = 0, $fk_code_ventilation = 0, $info_bits = 0, $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = 0, $array_options = [], $fk_unit = null, $origin_id = 0, $pu_devise = 0, $ref_supplier = '', $special_code = '', $fk_parent_line = 0, $fk_remise_except = 0)
 	{
 		global $langs, $mysoc, $conf;
 

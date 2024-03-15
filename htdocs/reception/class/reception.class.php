@@ -12,6 +12,7 @@
  * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,7 +126,7 @@ class Reception extends CommonObject
 	public $listmeths; // List of carriers
 
 	/**
-	 * @var CommandeFournisseur
+	 * @var ?CommandeFournisseur
 	 */
 	public $commandeFournisseur;
 
@@ -731,7 +732,11 @@ class Reception extends CommonObject
 				$this->fetch_origin();
 				if (empty($this->origin_object->lines)) {
 					$res = $this->origin_object->fetch_lines();
-					$this->commandeFournisseur = $this->origin_object;	// deprecated
+					if ($this->origin_object instanceof CommandeFournisseur) {
+						$this->commandeFournisseur = $this->origin_object;	// deprecated
+					} else {
+						$this->commandeFournisseur = null;	// deprecated
+					}
 					if ($res < 0) {
 						return $res;
 					}
@@ -742,7 +747,7 @@ class Reception extends CommonObject
 			$qty_wished = array();
 
 			$supplierorderdispatch = new CommandeFournisseurDispatch($this->db);
-			$filter = array('t.fk_commande'=>$this->origin_id);
+			$filter = array('t.fk_commande' => $this->origin_id);
 			if (getDolGlobalInt('SUPPLIER_ORDER_USE_DISPATCH_STATUS')) {
 				$filter['t.status'] = 1; // Restrict to lines with status validated
 			}
@@ -1305,7 +1310,7 @@ class Reception extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

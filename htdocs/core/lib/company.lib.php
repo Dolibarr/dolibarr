@@ -524,7 +524,7 @@ function societe_admin_prepare_head()
  *    @param	Translate	$outputlangs	Langs object for output translation
  *    @param	int			$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
  *    @param	string		$searchlabel    Label of country to search (warning: searching on label is not reliable)
- *    @return	mixed       				Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
+ *    @return	int|string|array{id:int,code:string,label:string}	Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
  */
 function getCountry($searchkey, $withcode = '', $dbtouse = null, $outputlangs = null, $entconv = 1, $searchlabel = '')
 {
@@ -1515,6 +1515,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 					print '</a>';
 				}
 
+				// Delete
+				if ($user->hasRight('societe', 'contact', 'delete')) {
+					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
+					print img_delete();
+					print '</a>';
+				}
+
 				print '</td>';
 			}
 
@@ -1608,6 +1615,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 				if ($user->hasRight('societe', 'contact', 'creer')) {
 					print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
 					print img_edit();
+					print '</a>';
+				}
+
+				// Delete
+				if ($user->hasRight('societe', 'contact', 'delete')) {
+					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&socid='.urlencode($obj->fk_soc).'">';
+					print img_delete();
 					print '</a>';
 				}
 
@@ -2042,6 +2056,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			dol_print_error($db);
 		}
 	}
+
+	'@phan-var-force array<int,array{userid:int,type:string,tododone:string,apicto:string,acode:string,alabel:string,note:string,id:int,percent:int<0,100>,datestart:int,dateend:int,fk_element:string,elementtype:string,contact_id:string,lastname:string,firstname:string,contact_photo:string,socpeaopleassigned:int[],login:string,userfirstname:string,userlastname:string,userphoto:string}> $histo';
 
 	if (isModEnabled('agenda') || (isModEnabled('mailing') && !empty($objcon->email))) {
 		$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;

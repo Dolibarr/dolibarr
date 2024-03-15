@@ -307,7 +307,6 @@ class PaymentExpenseReport extends CommonObject
 	public function update($user = null, $notrigger = 0)
 	{
 		// phpcs:enable
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -337,13 +336,8 @@ class PaymentExpenseReport extends CommonObject
 			$this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 
-
-		// Check parameters
-		// Put here code to add control on parameters values
-
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_expensereport SET";
-
 		$sql .= " fk_expensereport=".(isset($this->fk_expensereport) ? $this->fk_expensereport : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
@@ -355,8 +349,6 @@ class PaymentExpenseReport extends CommonObject
 		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
 		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").",";
 		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null");
-
-
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -393,7 +385,6 @@ class PaymentExpenseReport extends CommonObject
 	public function delete($user, $notrigger = 0)
 	{
 		// phpcs:enable
-		global $conf, $langs;
 		$error = 0;
 
 		$this->db->begin();
@@ -524,13 +515,14 @@ class PaymentExpenseReport extends CommonObject
 		$this->id = 0;
 
 		$this->fk_expensereport = 0;
-		$this->datec = '';
+		$this->datec = dol_now();
 		$this->tms = dol_now();
-		$this->datep = '';
-		$this->amount = '';
+		$this->datep = dol_now();
+		$this->amount = 100;
 		$this->fk_typepayment = 0;
-		$this->num_payment = '';
-		$this->note = '';
+		$this->num_payment = '123456';
+		$this->note_public = 'Public note';
+		$this->note_private = 'Private note';
 		$this->fk_bank = 0;
 		$this->fk_user_creat = 0;
 		$this->fk_user_modif = 0;
@@ -553,7 +545,7 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
-		global $langs, $conf;
+		global $langs;
 
 		$error = 0;
 

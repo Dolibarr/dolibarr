@@ -226,13 +226,13 @@ abstract class CommonObject
 
 	/**
 	 * @var Project 		The related project object
-	 * @deprecated
-	 * @see project
+	 * @deprecated  Use $project instead
+	 * @see $project
 	 */
 	public $projet;
 
 	/**
-	 * @deprecated
+	 * @deprecated  Use $fk_project instead
 	 * @see $fk_project
 	 */
 	public $fk_projet;
@@ -274,13 +274,13 @@ abstract class CommonObject
 	public $origin_id;
 
 	/**
-	 * @var	Object		Origin object. This is set by fetch_origin() from this->origin and this->origin_id.
+	 * @var	?CommonObject	Origin object. This is set by fetch_origin() from this->origin and this->origin_id.
 	 */
 	public $origin_object;
 
 	/**
-	 * @var string|CommonObject		Sometime the type of the originating object ('commande', 'facture', ...), sometime the object (like onh MouvementStock)
-	 * @deprecated					Use now $origin_type and $origin_id;
+	 * @var CommonObject|string|null	Sometimes the type of the originating object ('commande', 'facture', ...), sometimes the object (as with MouvementStock)
+	 * @deprecated						Use now $origin_type and $origin_id;
 	 * @see fetch_origin()
 	 */
 	public $origin;
@@ -322,7 +322,7 @@ abstract class CommonObject
 
 	/**
 	 * @var int 		The object's status. Use status instead.
-	 * @deprecated
+	 * @deprecated  Use $status instead
 	 * @see setStatut()
 	 */
 	public $statut;
@@ -369,7 +369,7 @@ abstract class CommonObject
 
 	/**
 	 * var	int			State ID
-	 * @deprecated	Use state_id. We can remove this property when the field 'fk_departement' have been renamed into 'state_id' in all tables
+	 * @deprecated	Use $state_id. We can remove this property when the field 'fk_departement' have been renamed into 'state_id' in all tables
 	 */
 	public $fk_departement;
 
@@ -447,7 +447,7 @@ abstract class CommonObject
 
 	/**
 	 * @var int 		Payment terms ID
-	 * @deprecated Kept for compatibility
+	 * @deprecated Use $cond_reglement_id instead - Kept for compatibility
 	 * @see cond_reglement_id;
 	 */
 	public $cond_reglement;
@@ -730,13 +730,13 @@ abstract class CommonObject
 	public $specimen = 0;
 
 	/**
-	 * @var	int			Id of contact to send object (used by the trigger of module Agenda)
+	 * @var	int[]		Id of contacts to send objects (mails, etc.)
 	 */
 	public $sendtoid;
 
 	/**
 	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
-	 * @deprecated		Duplicate of $totalpaid
+	 * @deprecated		Use $totalpaid instead
 	 */
 	public $alreadypaid;
 	/**
@@ -792,8 +792,8 @@ abstract class CommonObject
 
 	/**
 	 * @var string[]	List of child tables. To know object to delete on cascade.
-	 * 					If name is like '@ClassName:FilePathClass:ParentFkFieldName', it will
-	 *					call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object.
+	 *               If name is like '@ClassName:FilePathClass:ParentFkFieldName', it will
+	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object.
 	 */
 	protected $childtablesoncascade = array();
 
@@ -4205,98 +4205,20 @@ abstract class CommonObject
 			if (!empty($this->linkedObjectsIds)) {
 				$tmparray = $this->linkedObjectsIds;
 				foreach ($tmparray as $objecttype => $objectids) {       // $objecttype is a module name ('facture', 'mymodule', ...) or a module name with a suffix ('project_task', 'mymodule_myobj', ...)
-					// Parse element/subelement (ex: project_task, cabinetmed_consultation, ...)
-					$module = $element = $subelement = $objecttype;
-					$regs = array();
-					if ($objecttype != 'supplier_proposal' && $objecttype != 'order_supplier' && $objecttype != 'invoice_supplier'
-						&& preg_match('/^([^_]+)_([^_]+)/i', $objecttype, $regs)) {
-						$module = $element = $regs[1];
-						$subelement = $regs[2];
-					}
+					$element_properties = getElementProperties($objecttype);
+					$element = $element_properties['element'];
+					$classPath = $element_properties['classpath'];
+					$classFile = $element_properties['classfile'];
+					$className = $element_properties['classname'];
+					$module = $element_properties['module'];
 
-					$classpath = $element.'/class';
-					// To work with non standard classpath or module name
-					if ($objecttype == 'facture') {
-						$classpath = 'compta/facture/class';
-					} elseif ($objecttype == 'facturerec') {
-						$classpath = 'compta/facture/class';
-						$module = 'facture';
-					} elseif ($objecttype == 'propal') {
-						$classpath = 'comm/propal/class';
-					} elseif ($objecttype == 'supplier_proposal') {
-						$classpath = 'supplier_proposal/class';
-					} elseif ($objecttype == 'shipping') {
-						$classpath = 'expedition/class';
-						$subelement = 'expedition';
-						$module = 'expedition';
-					} elseif ($objecttype == 'delivery') {
-						$classpath = 'delivery/class';
-						$subelement = 'delivery';
-						$module = 'shipping';
-					} elseif ($objecttype == 'invoice_supplier' || $objecttype == 'order_supplier') {
-						$classpath = 'fourn/class';
-						$module = 'fournisseur';
-					} elseif ($objecttype == 'fichinter') {
-						$classpath = 'fichinter/class';
-						$subelement = 'fichinter';
-						$module = 'ficheinter';
-					} elseif ($objecttype == 'subscription') {
-						$classpath = 'adherents/class';
-						$module = 'adherent';
-					} elseif ($objecttype == 'contact') {
-						$module = 'societe';
-					}
-					// Set classfile
-					$classfile = strtolower($subelement);
-					$classname = ucfirst($subelement);
-
-					if ($objecttype == 'order') {
-						$classfile = 'commande';
-						$classname = 'Commande';
-					} elseif ($objecttype == 'invoice_supplier') {
-						$classfile = 'fournisseur.facture';
-						$classname = 'FactureFournisseur';
-					} elseif ($objecttype == 'order_supplier') {
-						$classfile = 'fournisseur.commande';
-						$classname = 'CommandeFournisseur';
-					} elseif ($objecttype == 'supplier_proposal') {
-						$classfile = 'supplier_proposal';
-						$classname = 'SupplierProposal';
-					} elseif ($objecttype == 'facturerec') {
-						$classfile = 'facture-rec';
-						$classname = 'FactureRec';
-					} elseif ($objecttype == 'subscription') {
-						$classfile = 'subscription';
-						$classname = 'Subscription';
-					} elseif ($objecttype == 'project' || $objecttype == 'projet') {
-						$classpath = 'projet/class';
-						$classfile = 'project';
-						$classname = 'Project';
-					} elseif ($objecttype == 'conferenceorboothattendee') {
-						$classpath = 'eventorganization/class';
-						$classfile = 'conferenceorboothattendee';
-						$classname = 'ConferenceOrBoothAttendee';
-						$module = 'eventorganization';
-					} elseif ($objecttype == 'conferenceorbooth') {
-						$classpath = 'eventorganization/class';
-						$classfile = 'conferenceorbooth';
-						$classname = 'ConferenceOrBooth';
-						$module = 'eventorganization';
-					} elseif ($objecttype == 'mo') {
-						$classpath = 'mrp/class';
-						$classfile = 'mo';
-						$classname = 'Mo';
-						$module = 'mrp';
-					}
-
-					// Here $module, $classfile and $classname are set, we can use them.
+					// Here $module, $classFile and $className are set, we can use them.
 					if (isModEnabled($module) && (($element != $this->element) || $alsosametype)) {
 						if ($loadalsoobjects && (is_numeric($loadalsoobjects) || ($loadalsoobjects === $objecttype))) {
-							dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
-							//print '/'.$classpath.'/'.$classfile.'.class.php '.class_exists($classname);
-							if (class_exists($classname)) {
+							dol_include_once('/'.$classPath.'/'.$classFile.'.class.php');
+							if (class_exists($className)) {
 								foreach ($objectids as $i => $objectid) {	// $i is rowid into llx_element_element
-									$object = new $classname($this->db);
+									$object = new $className($this->db);
 									$ret = $object->fetch($objectid);
 									if ($ret >= 0) {
 										$this->linkedObjects[$objecttype][$i] = $object;
@@ -8955,7 +8877,7 @@ abstract class CommonObject
 	/**
 	 * Returns the rights used for this class
 	 *
-	 * @return int|stdClass		Object of permission for the module
+	 * @return null|int|stdClass		Object of permission for the module
 	 */
 	public function getRights()
 	{

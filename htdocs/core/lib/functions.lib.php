@@ -12176,6 +12176,10 @@ function getElementProperties($elementType)
 		$module = 'facture';
 		$subelement = 'facture';
 		$table_element = 'facture';
+	} elseif ($elementType == 'facturerec') {
+		$classpath = 'compta/facture/class';
+		$module = 'facture';
+		$classname = 'FactureRec';
 	} elseif ($elementType == 'commande' || $elementType == 'order') {
 		$classpath = 'commande/class';
 		$module = 'commande';
@@ -12316,6 +12320,16 @@ function getElementProperties($elementType)
 		$classname = 'EmailSenderProfile';
 		$table_element = 'c_email_senderprofile';
 		$subelement = '';
+	} elseif ($elementType == 'conferenceorboothattendee') {
+		$classpath = 'eventorganization/class';
+		$classfile = 'conferenceorboothattendee';
+		$classname = 'ConferenceOrBoothAttendee';
+		$module = 'eventorganization';
+	} elseif ($elementType == 'conferenceorbooth') {
+		$classpath = 'eventorganization/class';
+		$classfile = 'conferenceorbooth';
+		$classname = 'ConferenceOrBooth';
+		$module = 'eventorganization';
 	}
 
 	if (empty($classfile)) {
@@ -13866,9 +13880,9 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
  * request.
  *
  * @param string $prefix Prefix used to build the date selector (for instance using Form::selectDate)
- * @param int $timestamp If null, the timestamp will be created from request data
- * @param bool $hourTime If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
- * @param bool $gm If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @param ?int $timestamp If null, the timestamp will be created from request data
+ * @param string $hourTime If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @param string $gm If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
  * @return string Portion of URL with query parameters for the specified date
  */
 function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto')

@@ -656,8 +656,6 @@ class ExpenseReport extends CommonObject
 	 */
 	public function fetch($id, $ref = '')
 	{
-		global $conf;
-
 		$sql = "SELECT d.rowid, d.entity, d.ref, d.note_public, d.note_private,"; // DEFAULT
 		$sql .= " d.detail_refuse, d.detail_cancel, d.fk_user_refuse, d.fk_user_cancel,"; // ACTIONS
 		$sql .= " d.date_refuse, d.date_cancel,"; // ACTIONS
@@ -885,6 +883,8 @@ class ExpenseReport extends CommonObject
 		$sql .= " WHERE f.rowid = ".((int) $id);
 		$sql .= " AND f.entity = ".$conf->entity;
 
+
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
@@ -920,7 +920,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 
 		$now = dol_now();
 
@@ -983,10 +983,10 @@ class ExpenseReport extends CommonObject
 	 * @param   User    $user           User
 	 * @return  int                     Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch_line_by_project($projectid, $user = '')
+	public function fetch_line_by_project($projectid, $user)
 	{
 		// phpcs:enable
-		global $conf, $db, $langs;
+		global $langs;
 
 		$langs->load('trips');
 
@@ -1086,8 +1086,6 @@ class ExpenseReport extends CommonObject
 	public function fetch_lines()
 	{
 		// phpcs:enable
-		global $conf;
-
 		$this->lines = array();
 
 		$sql = ' SELECT de.rowid, de.comments, de.qty, de.value_unit, de.date, de.rang,';
@@ -1792,7 +1790,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
 	{
-		global $langs, $conf, $hookmanager;
+		global $langs, $hookmanager;
 
 		$result = '';
 
@@ -1906,7 +1904,7 @@ class ExpenseReport extends CommonObject
 	 * @param    float       $qty                      Qty
 	 * @param    double      $up                       Unit price (price with tax)
 	 * @param    int         $fk_c_type_fees           Type payment
-	 * @param    string      $vatrate                  Vat rate (Can be '10' or '10 (ABC)')
+	 * @param    int<-1,0>|string	$vatrate                  Vat rate (Can be '10' or '10 (ABC)')
 	 * @param    string      $date                     Date
 	 * @param    string      $comments                 Description
 	 * @param    int         $fk_project               Project id
@@ -1917,7 +1915,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function addline($qty = 0, $up = 0, $fk_c_type_fees = 0, $vatrate = 0, $date = '', $comments = '', $fk_project = 0, $fk_c_exp_tax_cat = 0, $type = 0, $fk_ecm_files = 0)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		dol_syslog(get_class($this)."::addline qty=$qty, up=$up, fk_c_type_fees=$fk_c_type_fees, vatrate=$vatrate, date=$date, fk_project=$fk_project, type=$type, comments=$comments", LOG_DEBUG);
 
@@ -2029,7 +2027,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function checkRules($type = 0, $seller = '')
 	{
-		global $user, $conf, $db, $langs, $mysoc;
+		global $conf, $db, $langs, $mysoc;
 
 		$langs->load('trips');
 
@@ -2105,7 +2103,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function applyOffset($type = 0, $seller = '')
 	{
-		global $conf, $mysoc;
+		global $mysoc;
 
 		if (!getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 			return false;
@@ -2327,10 +2325,10 @@ class ExpenseReport extends CommonObject
 	/**
 	 * deleteline
 	 *
-	 * @param   int     $rowid      	Row id
-	 * @param   User    $fuser      	User
-	 * @param   int     $notrigger      1=No trigger
-	 * @return  int                 	Return integer <0 if KO, >0 if OK
+	 * @param   int			$rowid      	Row id
+	 * @param   User|string	$fuser      	User
+	 * @param   int<0,1>	$notrigger      1=No trigger
+	 * @return  int<0,1>                 	Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteLine($rowid, $fuser = '', $notrigger = 0)
 	{
@@ -2473,8 +2471,6 @@ class ExpenseReport extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf;
-
 		$outputlangs->load("trips");
 
 		if (!dol_strlen($modele)) {
@@ -2530,7 +2526,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function loadStateBoard()
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->nb = array();
 
@@ -3040,7 +3036,7 @@ class ExpenseReportLine extends CommonObjectLine
 	 */
 	public function insert($notrigger = 0, $fromaddline = false)
 	{
-		global $user, $conf;
+		global $user;
 
 		$error = 0;
 
@@ -3182,7 +3178,7 @@ class ExpenseReportLine extends CommonObjectLine
 	 */
 	public function update(User $user)
 	{
-		global $langs, $conf;
+		global $langs;
 
 		$error = 0;
 
