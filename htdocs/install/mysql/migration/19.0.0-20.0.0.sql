@@ -232,8 +232,8 @@ ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtex
 -- Rename const to add customer categories on not customer/prospect third-party if enabled
 UPDATE llx_const SET name = 'THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT' WHERE name = 'THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER';
 
-ALTER TABLE llx_fichinter ADD COLUMN signed_status integer DEFAULT NULL AFTER duree;
-ALTER TABLE llx_contrat ADD COLUMN signed_status integer DEFAULT NULL AFTER date_contrat;
+ALTER TABLE llx_fichinter ADD COLUMN signed_status smallint DEFAULT NULL AFTER duree;
+ALTER TABLE llx_contrat ADD COLUMN signed_status smallint DEFAULT NULL AFTER date_contrat;
 
 ALTER TABLE llx_mailing ADD COLUMN messtype	varchar(16) DEFAULT 'email' after rowid;
 
