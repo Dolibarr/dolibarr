@@ -302,8 +302,8 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 				'src' => getDolUserString($source),
 				'name' => dol_string_nohtmltag(getDolUserString($name)),
 				'offsettz' => (int) (empty($user->conf->$offsettz) ? 0 : $user->conf->$offsettz),
-				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				'color' => dol_string_nohtmltag(getDolUserString($color)),
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				'default' => dol_string_nohtmltag(getDolUserString($default)),
 				'buggedfile' => dol_string_nohtmltag(isset($user->conf->buggedfile) ? $user->conf->buggedfile : '')
 			);

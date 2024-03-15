@@ -525,7 +525,12 @@ class Task extends CommonObjectLine
 					$project->getLinesArray(null); // this method does not return <= 0 if fails
 					$projectCompleted = array_reduce(
 						$project->lines,
-						function ($allTasksCompleted, $task) {
+						/**
+						 * @param bool $allTasksCompleted
+						 * @param Task $task
+						 * @return bool
+						 */
+						static function ($allTasksCompleted, $task) {
 							return $allTasksCompleted && $task->progress >= 100;
 						},
 						1

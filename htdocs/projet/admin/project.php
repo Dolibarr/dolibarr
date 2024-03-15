@@ -841,6 +841,18 @@ print '<input type="number" class="width50" id="timesheetFreezeDuration" name="t
 print '<input type="submit" class="button small reposition" name="PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '</tr>';
+
+$key = 'PROJECT_DISPLAY_LINKED_BY_CONTACT';
+echo '<tr class="oddeven">',
+		'<td class="left">',
+			$form->textwithpicto($langs->transnoentities($key), $langs->transnoentities($key . '_help')),
+		'</td>',
+		'<td class="right" colspan="2">',
+			ajax_constantonoff($key),
+		'</td>',
+	'</tr>';
+
+
 print '</table>';
 print '</div>';
 

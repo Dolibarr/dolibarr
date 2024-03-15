@@ -23,7 +23,7 @@
  *  \ingroup    hrm
  *  \brief      File of class to manage Evaluation numbering rules standard
  */
-dol_include_once('/core/modules/hrm/modules_evaluation.php');
+require_once DOL_DOCUMENT_ROOT . '/core/modules/hrm/modules_evaluation.php';
 
 
 /**
