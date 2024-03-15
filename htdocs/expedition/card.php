@@ -1453,7 +1453,7 @@ if ($action == 'create') {
 							$nbofsuggested = 0;
 
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
-								if ($stock_warehouse->real > 0) {
+								if ($stock_warehouse->real > 0 || !empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) {
 									$nbofsuggested++;
 								}
 							}
@@ -1466,7 +1466,7 @@ if ($action == 'create') {
 								}
 
 								$tmpwarehouseObject->fetch($warehouse_id);
-								if ($stock_warehouse->real > 0) {
+								if ($stock_warehouse->real > 0 || !empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) {
 									$stock = + $stock_warehouse->real; // Convert it to number
 									$deliverableQty = min($quantityToBeDelivered, $stock);
 									$deliverableQty = max(0, $deliverableQty);
@@ -1569,7 +1569,7 @@ if ($action == 'create') {
 							$nbofsuggested = 0;
 							$batchlist = array();
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
-								if (($stock_warehouse->real > 0) && (count($stock_warehouse->detail_batch))) {
+								if (($stock_warehouse->real > 0 || !empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) && (count($stock_warehouse->detail_batch))) {
 									$nbofsuggested+=count($stock_warehouse->detail_batch);
 								}
 								if (!empty($stock_warehouse->detail_batch)) {
@@ -1603,7 +1603,7 @@ if ($action == 'create') {
 								}
 
 								$tmpwarehouseObject->fetch($warehouse_id);
-								if (($stock_warehouse->real > 0) && (count($stock_warehouse->detail_batch))) {
+								if (($stock_warehouse->real > 0 || !empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) && (count($stock_warehouse->detail_batch))) {
 									$batchStock = +$dbatch->qty; // To get a numeric
 									if (isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
 										$deliverableQty = min($quantityToBeDelivered, $batchStock - $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)]);
@@ -1690,6 +1690,9 @@ if ($action == 'create') {
 									$disabled = '';
 								}
 								print '<input class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0"'.($disabled ? ' '.$disabled : '').'> ';
+								if (empty($disabled) && !empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) {
+									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
+								}
 							} else {
 								print $langs->trans("NA");
 							}
