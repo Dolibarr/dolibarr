@@ -171,6 +171,11 @@ $setupnotempty += count($formSetup->items);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
+$moduledir = 'mymodule';
+$myTmpObjects = array();
+// TODO Scan list of objects to fill this array
+$myTmpObjects['myobject'] = array('label'=>'MyObject', 'includerefgeneration'=>0, 'includedocgeneration'=>0, 'class'=>'MyObject');
+
 
 /*
  * Actions
@@ -201,40 +206,42 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
-	$tmpobjectkey = GETPOST('object');
+	$tmpobjectkey = GETPOST('object', 'aZ09');
 
-	$tmpobject = new $tmpobjectkey($db);
-	$tmpobject->initAsSpecimen();
+	if (in_array($tmpobjectkey, $myTmpObjects)) {
+		$tmpobject = new $tmpobjectkey($db);
+		$tmpobject->initAsSpecimen();
 
-	// Search template files
-	$file = '';
-	$classname = '';
-	$filefound = 0;
-	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir) {
-		$file = dol_buildpath($reldir."core/modules/mymodule/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
-		if (file_exists($file)) {
-			$filefound = 1;
-			$classname = "pdf_".$modele."_".strtolower($tmpobjectkey);
-			break;
+		// Search template files
+		$file = '';
+		$classname = '';
+		$filefound = 0;
+		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir) {
+			$file = dol_buildpath($reldir."core/modules/mymodule/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
+			if (file_exists($file)) {
+				$filefound = 1;
+				$classname = "pdf_".$modele."_".strtolower($tmpobjectkey);
+				break;
+			}
 		}
-	}
 
-	if ($filefound) {
-		require_once $file;
+		if ($filefound) {
+			require_once $file;
 
-		$module = new $classname($db);
+			$module = new $classname($db);
 
-		if ($module->write_file($tmpobject, $langs) > 0) {
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=mymodule-".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
-			return;
+			if ($module->write_file($tmpobject, $langs) > 0) {
+				header("Location: ".DOL_URL_ROOT."/document.php?modulepart=mymodule-".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
+				return;
+			} else {
+				setEventMessages($module->error, null, 'errors');
+				dol_syslog($module->error, LOG_ERR);
+			}
 		} else {
-			setEventMessages($module->error, null, 'errors');
-			dol_syslog($module->error, LOG_ERR);
+			setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+			dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 		}
-	} else {
-		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
-		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
@@ -325,12 +332,6 @@ if (!empty($formSetup->items)) {
 } else {
 	print '<br>'.$langs->trans("NothingToSetup");
 }
-
-
-$moduledir = 'mymodule';
-$myTmpObjects = array();
-// TODO Scan list of objects
-$myTmpObjects['myobject'] = array('label'=>'MyObject', 'includerefgeneration'=>0, 'includedocgeneration'=>0, 'class'=>'MyObject');
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {

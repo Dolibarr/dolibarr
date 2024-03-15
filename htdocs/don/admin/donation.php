@@ -64,9 +64,9 @@ if ($action == 'specimen') {
 	$dir = DOL_DOCUMENT_ROOT."/core/modules/dons/";
 	$file = $modele.".modules.php";
 	if ($modele !== '' && file_exists($dir.$file)) {
-		$classname = $modele;
 		require_once $dir.$file;
 
+		$classname = (string) $modele;
 		$obj = new $classname($db);
 
 		if ($obj->write_file($don, $langs) > 0) {
