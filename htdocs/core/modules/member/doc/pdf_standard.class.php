@@ -264,11 +264,11 @@ class pdf_standard extends CommonStickerGenerator
 	 *	Function to build PDF on disk, then output on HTTP stream.
 	 *
 	 *	@param	Adherent|array	    $object		        Member object. Old usage: Array of record information (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
-	 *	@param	Translate	$outputlangs		Lang object for output language
-	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file. Example: '5161', 'AVERYC32010', 'CARD', ...
-	 *	@param	string		$mode				Tell if doc module is called for 'member', ...
-	 *  @param  int         $nooutput           1=Generate only file on disk and do not return it on response
-	 *  @param	string		$filename			Name of output file (without extension)
+	 *	@param	Translate			$outputlangs		Lang object for output language
+	 *	@param	string				$srctemplatepath	Full path of source filename for generator using a template file. Example: '5161', 'AVERYC32010', 'CARD', ...
+	 *	@param	string				$mode				Tell if doc module is called for 'member', ...
+	 *  @param  int         		$nooutput           1=Generate only file on disk and do not return it on response
+	 *  @param	string				$filename			Name of output file (without extension)
 	 *	@return	int								1=OK, 0=KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath, $mode = 'member', $nooutput = 0, $filename = 'tmp_cards')
