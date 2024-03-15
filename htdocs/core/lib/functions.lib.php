@@ -13925,32 +13925,31 @@ function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto'
  * @global object $object Current object, can be modified by hooks.
  * @return void This function terminates script execution after outputting the error page.
  */
-
 function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
- {
-    global $conf, $db, $user, $langs, $hookmanager;
+{
+	global $conf, $db, $user, $langs, $hookmanager;
     global $action, $object;
   
-    if (!is_object($langs)) {
-      include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
-      $langs = new Translate('', $conf);
-      $langs->setDefaultLang();
+	if (!is_object($langs)) {
+    	include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+    	$langs = new Translate('', $conf);
+    	$langs->setDefaultLang();
     }
   
-   $langs->load("errors");
+	$langs->load("errors");
   
-   if ($printheader) {
-     if (function_exists("llxHeader")) {
-       llxHeader('');
+	if ($printheader) {
+    	if (function_exists("llxHeader")) {
+    		llxHeader('');
      } elseif (function_exists("llxHeaderVierge")) {
-       llxHeaderVierge('');
+    	llxHeaderVierge('');
      }
    }
    print '<div class="error">';
-   if (empty($message)) {
-     print $langs->trans("ErrorRecordNotFound");
+	if (empty($message)) {
+		print $langs->trans("ErrorRecordNotFound");
    } else {
-     print $langs->trans($message);
+		print $langs->trans($message);
    }
    print '</div>';
    print '<br>';
@@ -13962,9 +13961,9 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
        $hookmanager->initHooks(array('main'));
      }
   
-     $parameters = array('message'=>$message, 'params'=>$params);
-     $reshook = $hookmanager->executeHooks('getErrorRecordNotFound', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-     print $hookmanager->resPrint;
+    	$parameters = array('message'=>$message, 'params'=>$params);
+    	$reshook = $hookmanager->executeHooks('getErrorRecordNotFound', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+    	print $hookmanager->resPrint;
    }
    if ($printfooter && function_exists("llxFooter")) {
      llxFooter();
