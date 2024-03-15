@@ -393,15 +393,15 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 			if ($nbofgraph == 2) {
 				$stringtoshow .= '<div class="fichecenter"><div class="containercenter"><div class="fichehalfleft">';
-				if ($showpropalnb) {
+				if (isModEnabled('propal') && $showpropalnb) {
 					$stringtoshow .= $px2->show();
-				} elseif ($showordernb) {
+				} elseif (isModEnabled('commande') && $showordernb) {
 					$stringtoshow .= $px3->show();
 				}
 				$stringtoshow .= '</div><div class="fichehalfright">';
-				if ($showinvoicenb) {
+				if (isModEnabled('facture') && $showinvoicenb) {
 					$stringtoshow .= $px1->show();
-				} elseif ($showordernb) {
+				} elseif (isModEnabled('commande') && $showordernb) {
 					$stringtoshow .= $px3->show();
 				}
 				$stringtoshow .= '</div></div></div>';

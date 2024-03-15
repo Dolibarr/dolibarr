@@ -233,6 +233,9 @@ if (!isModEnabled('cron')) {
 			} else {
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_EMAIL&token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
 			}
+		} else {
+			$langs->load("cron");
+			print '<span class="opacitymedium warning">'.$langs->trans("JobNotFound", $langs->transnoentitiesnoconv("sendEmailsReminder")).'</span>';
 		}
 	}
 }

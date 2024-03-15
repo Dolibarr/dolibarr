@@ -563,7 +563,7 @@ class Evaluation extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('EVALUATION_VALIDATE', $user);
+				$result = $this->call_trigger('HRM_EVALUATION_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -579,6 +579,12 @@ class Evaluation extends CommonObject
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'evaluation/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'evaluation/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'evaluation/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'evaluation/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
@@ -665,9 +671,7 @@ class Evaluation extends CommonObject
 			return 0;
 		}
 
-
-
-		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'EVALUATION_UNVALIDATE');
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'HRM_EVALUATION_UNVALIDATE');
 	}
 
 	/**
@@ -684,9 +688,7 @@ class Evaluation extends CommonObject
 			return 0;
 		}
 
-
-
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'EVALUATION_CANCEL');
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'HRM_EVALUATION_CANCEL');
 	}
 
 	/**
@@ -703,9 +705,7 @@ class Evaluation extends CommonObject
 			return 0;
 		}
 
-
-
-		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'EVALUATION_REOPEN');
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'HRM_EVALUATION_REOPEN');
 	}
 
 	/**

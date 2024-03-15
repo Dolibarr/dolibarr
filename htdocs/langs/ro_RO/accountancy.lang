@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=Dacă configurezi contul contabil pe linii de raport
 DescVentilDoneExpenseReport=Consultați aici lista liniilor rapoartelor de cheltuieli și contul contabil a taxelor lor
 
 Closure=Închidere anuală
-DescClosure=Consultă aici numărul de mișcări pe lună nevalidate și blocate
+AccountancyClosureStep1Desc=Consultă aici numărul de mișcări pe lună nevalidate și blocate
 OverviewOfMovementsNotValidated=Prezentare generală a mișcărilor nevalidate și blocate
 AllMovementsWereRecordedAsValidated=Toate mișcările au fost înregistrate ca validate și blocate
 NotAllMovementsCouldBeRecordedAsValidated=Nu toate mișcările au putut fi înregistrate ca validate și blocate

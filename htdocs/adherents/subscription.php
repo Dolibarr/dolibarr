@@ -81,9 +81,6 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $errmsg = '';
 
-$defaultdelay = 1;
-$defaultdelayunit = 'y';
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('subscription'));
 
@@ -213,6 +210,8 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 	// Subscription informations
 	$datesubscription = 0;
 	$datesubend = 0;
+	$defaultdelay = !empty($adht->duration_value) ? $adht->duration_value : 1;
+	$defaultdelayunit = !empty($adht->duration_unit) ? $adht->duration_unit : 'y';
 	$paymentdate = ''; // Do not use 0 here, default value is '' that means not filled where 0 means 1970-01-01
 	if (GETPOST("reyear", "int") && GETPOST("remonth", "int") && GETPOST("reday", "int")) {
 		$datesubscription = dol_mktime(0, 0, 0, GETPOST("remonth", "int"), GETPOST("reday", "int"), GETPOST("reyear", "int"));
@@ -475,6 +474,9 @@ if (! ($object->id > 0)) {
 */
 
 $adht->fetch($object->typeid);
+
+$defaultdelay = !empty($adht->duration_value) ? $adht->duration_value : 1;
+$defaultdelayunit = !empty($adht->duration_unit) ? $adht->duration_unit : 'y';
 
 $head = member_prepare_head($object);
 
@@ -990,9 +992,9 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	}
 	if (!$dateto) {
 		if (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH')) {
-			$dateto = dol_get_last_day($currentyear, $currentmonth);
+			$dateto = dol_get_last_day(dol_print_date($datefrom, "%Y"), dol_print_date($datefrom, "%m"));
 		} elseif (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR')) {
-			$dateto = dol_get_last_day($currentyear);
+			$dateto = dol_get_last_day(dol_print_date($datefrom, "%Y"));
 		} else {
 			$dateto = -1; // By default, no date is suggested
 		}

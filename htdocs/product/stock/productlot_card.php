@@ -150,9 +150,23 @@ if (empty($reshook)) {
 
 	if ($action == 'seteatby' && $user->rights->stock->creer && ! GETPOST('cancel', 'alpha')) {
 		$newvalue = dol_mktime(12, 0, 0, GETPOST('eatbymonth', 'int'), GETPOST('eatbyday', 'int'), GETPOST('eatbyyear', 'int'));
-		$result = $object->setValueFrom('eatby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
-		if ($result < 0) {
-			setEventMessages($object->error, null, 'errors');
+
+		// check parameters
+		$object->eatby = $newvalue;
+		$res = $object->checkSellOrEatByMandatory('eatby');
+		if ($res < 0) {
+			$error++;
+		}
+
+		if (!$error) {
+			$result = $object->setValueFrom('eatby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if ($error) {
+			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'editeatby';
 		} else {
 			$action = 'view';
@@ -161,9 +175,23 @@ if (empty($reshook)) {
 
 	if ($action == 'setsellby' && $user->rights->stock->creer && ! GETPOST('cancel', 'alpha')) {
 		$newvalue = dol_mktime(12, 0, 0, GETPOST('sellbymonth', 'int'), GETPOST('sellbyday', 'int'), GETPOST('sellbyyear', 'int'));
-		$result = $object->setValueFrom('sellby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
-		if ($result < 0) {
-			setEventMessages($object->error, null, 'errors');
+
+		// check parameters
+		$object->sellby = $newvalue;
+		$res = $object->checkSellOrEatByMandatory('sellby');
+		if ($res < 0) {
+			$error++;
+		}
+
+		if (!$error) {
+			$result = $object->setValueFrom('sellby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if ($error) {
+			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'editsellby';
 		} else {
 			$action = 'view';
@@ -377,7 +405,17 @@ $title = $langs->trans("ProductLot");
 $help_url = '';
 
 llxHeader('', $title, $help_url);
-
+$res = $object->fetch_product();
+if ($res > 0 && $object->product) {
+	if ($object->product->sell_or_eat_by_mandatory == Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY) {
+		$object->fields['sellby']['notnull'] = 1;
+	} elseif ($object->product->sell_or_eat_by_mandatory == Product::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY) {
+		$object->fields['eatby']['notnull'] = 1;
+	} elseif ($object->product->sell_or_eat_by_mandatory == Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT) {
+		$object->fields['sellby']['notnull'] = 1;
+		$object->fields['eatby']['notnull'] = 1;
+	}
+}
 
 // Part to create
 if ($action == 'create') {
@@ -468,7 +506,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Sell by
 	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 		print '<tr><td>';
-		print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
+		print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker', '', $object->fields['sellby']['notnull']);
 		print '</td><td>';
 		print $form->editfieldval($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker', '', null, null, '', 1, '', 'id', 'auto', array(), $action);
 		print '</td>';
@@ -478,7 +516,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Eat by
 	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 		print '<tr><td>';
-		print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
+		print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker', '', $object->fields['eatby']['notnull']);
 		print '</td><td>';
 		print $form->editfieldval($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker', '', null, null, '', 1, '', 'id', 'auto', array(), $action);
 		print '</td>';

@@ -105,13 +105,13 @@ class Productlot extends CommonObject
 		'fk_product'    => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>5, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'picto' => 'product', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'maxwidth150'),
 		'batch'         => array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'comment'=>'Batch', 'searchall'=>1, 'picto'=>'lot'),
 		'entity'        => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
-		'sellby'        => array('type'=>'date', 'label'=>'SellByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_SELLBY)?1:0', 'visible'=>5, 'position'=>60),
+		'sellby'        => array('type'=>'date', 'label'=>'SellByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_SELLBY)?1:0', 'visible'=>1, 'notnull'=>0, 'position'=>60),
+		'eatby'         => array('type'=>'date', 'label'=>'EatByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_EATBY)?1:0', 'visible'=>1, 'notnull'=>0, 'position'=>62),
 		'eol_date'        => array('type'=>'date', 'label'=>'EndOfLife', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_TRACEABILITY)?0:1', 'visible'=>5, 'position'=>70),
 		'manufacturing_date' => array('type'=>'date', 'label'=>'ManufacturingDate', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_TRACEABILITY)?0:1', 'visible'=>5, 'position'=>80),
 		'scrapping_date'     => array('type'=>'date', 'label'=>'DestructionDate', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_TRACEABILITY)?0:1', 'visible'=>5, 'position'=>90),
 		//'commissionning_date'        => array('type'=>'date', 'label'=>'FirstUseDate', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_TRACEABILITY)?0:1', 'visible'=>5, 'position'=>100),
 		//'qc_frequency'        => array('type'=>'varchar(6)', 'label'=>'QCFrequency', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_QUALITYCONTROL)?1:0', 'visible'=>5, 'position'=>110),
-		'eatby'         => array('type'=>'date', 'label'=>'EatByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_EATBY)?1:0', 'visible'=>5, 'position'=>62),
 		'model_pdf'		=> array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 215),
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => -2, 'position' => 310),
 		'datec'         => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500),
@@ -172,6 +172,126 @@ class Productlot extends CommonObject
 	}
 
 	/**
+	 * Check sell or eat by date is mandatory
+	 *
+	 * @param	string 		$onlyFieldName		[=''] check all fields by default or only one field name ("sellby", "eatby")
+	 * @return 	int			<0 if KO, 0 nothing done, >0 if OK
+	 */
+	public function checkSellOrEatByMandatory($onlyFieldName = '')
+	{
+		global $conf;
+
+		if (getDolGlobalString('PRODUCT_DISABLE_SELLBY') && getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+			return 0;
+		}
+
+		$errorMsgArr = array();
+		if ($this->fk_product > 0) {
+			$res = $this->fetch_product();
+			$product = $this->product;
+			if ($res <= 0) {
+				$errorMsgArr[] = $product->errorsToString();
+			}
+
+			if (empty($errorMsgArr)) {
+				$errorMsgArr = self::checkSellOrEatByMandatoryFromProductAndDates($product, $this->sellby, $this->eatby, $onlyFieldName, true);
+			}
+		}
+
+		if (!empty($errorMsgArr)) {
+			$this->errors = array_merge($this->errors, $errorMsgArr);
+			return -1;
+		} else {
+			return 1;
+		}
+	}
+
+	/**
+	 * Check sell or eat by date is mandatory from product id and sell-by and eat-by dates
+	 *
+	 * @param 	int 		$productId			Product id
+	 * @param	int			$sellBy				Sell by date
+	 * @param 	int			$eatBy				Eat by date
+	 * @param	string 		$onlyFieldName		[=''] check all fields by default or only one field name ("sellby", "eatby")
+	 * @return 	array|null	Array of errors or null if nothing done
+	 */
+	public static function checkSellOrEatByMandatoryFromProductIdAndDates($productId, $sellBy, $eatBy, $onlyFieldName = '')
+	{
+		global $conf, $db;
+
+		if (getDolGlobalString('PRODUCT_DISABLE_SELLBY') && getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+			return null;
+		}
+
+		$errorMsgArr = array();
+		if ($productId > 0) {
+			$product = new Product($db);
+			$res = $product->fetch($productId);
+			if ($res <= 0) {
+				$errorMsgArr[] = $product->errorsToString();
+			}
+
+			if (empty($errorMsgArr)) {
+				$errorMsgArr = self::checkSellOrEatByMandatoryFromProductAndDates($product, $sellBy, $eatBy, $onlyFieldName, true);
+			}
+		}
+
+		return $errorMsgArr;
+	}
+
+	/**
+	 * Check sell or eat by date is mandatory from product and sell-by and eat-by dates
+	 *
+	 * @param 	Product 	$product			Product object
+	 * @param	int			$sellBy				Sell by date
+	 * @param 	int			$eatBy				Eat by date
+	 * @param	string 		$onlyFieldName		[=''] check all fields by default or only one field name ("sellby", "eatby")
+	 * @param	bool		$alreadyCheckConf	[=false] conf hasn't been already checked by default or true not to check conf
+	 * @return 	array|null	Array of errors or null if nothing done
+	 */
+	public static function checkSellOrEatByMandatoryFromProductAndDates($product, $sellBy, $eatBy, $onlyFieldName = '', $alreadyCheckConf = false)
+	{
+		global $conf, $langs;
+
+		if ($alreadyCheckConf === false && getDolGlobalString('PRODUCT_DISABLE_SELLBY') && getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+			return null;
+		}
+
+		$errorMsgArr = array();
+		$checkSellByMandatory = false;
+		$checkEatByMandatory = false;
+
+		$sellOrEatByMandatoryId = $product->sell_or_eat_by_mandatory;
+		if (empty($conf->global->PRODUCT_DISABLE_SELLBY) && $sellOrEatByMandatoryId == Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY && ($onlyFieldName == '' || $onlyFieldName == 'sellby')) {
+			$checkSellByMandatory = true;
+		} elseif (empty($conf->global->PRODUCT_DISABLE_EATBY) && $sellOrEatByMandatoryId == Product::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY && ($onlyFieldName == '' || $onlyFieldName == 'eatby')) {
+			$checkEatByMandatory = true;
+		} elseif ($sellOrEatByMandatoryId == Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT) {
+			if (empty($conf->global->PRODUCT_DISABLE_SELLBY) && ($onlyFieldName == '' || $onlyFieldName == 'sellby')) {
+				$checkSellByMandatory = true;
+			}
+			if (empty($conf->global->PRODUCT_DISABLE_EATBY) && ($onlyFieldName == '' || $onlyFieldName == 'eatby')) {
+				$checkEatByMandatory = true;
+			}
+		}
+
+		if ($checkSellByMandatory === true) {
+			if (!isset($sellBy) || dol_strlen($sellBy) == 0) {
+				// error : sell by is mandatory
+				$errorMsgArr[] = $langs->trans('ErrorFieldRequired', $langs->transnoentities('SellByDate'));
+			}
+		}
+		if ($checkEatByMandatory === true) {
+			if (!isset($eatBy) || dol_strlen($eatBy) == 0) {
+				// error : eat by is mandatory
+				$errorMsgArr[] = $langs->trans('ErrorFieldRequired', $langs->transnoentities('EatByDate'));
+			}
+		}
+
+		return $errorMsgArr;
+	}
+
+	/**
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
@@ -215,78 +335,86 @@ class Productlot extends CommonObject
 			return -1;
 		}
 		// Put here code to add control on parameters values
-
-		// Insert request
-		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'(';
-		$sql .= 'entity,';
-		$sql .= 'fk_product,';
-		$sql .= 'batch,';
-		$sql .= 'eatby,';
-		$sql .= 'sellby,';
-		$sql .= 'eol_date,';
-		$sql .= 'manufacturing_date,';
-		$sql .= 'scrapping_date,';
-		//$sql .= 'commissionning_date,';
-		//$sql .= 'qc_frequency,';
-		$sql .= 'datec,';
-		$sql .= 'fk_user_creat,';
-		$sql .= 'fk_user_modif,';
-		$sql .= 'import_key';
-		$sql .= ') VALUES (';
-		$sql .= ' '.(!isset($this->entity) ? $conf->entity : $this->entity).',';
-		$sql .= ' '.(!isset($this->fk_product) ? 'NULL' : $this->fk_product).',';
-		$sql .= ' '.(!isset($this->batch) ? 'NULL' : "'".$this->db->escape($this->batch)."'").',';
-		$sql .= ' '.(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").',';
-		$sql .= ' '.(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").',';
-		$sql .= ' '.(!isset($this->eol_date) || dol_strlen($this->eol_date) == 0 ? 'NULL' : "'".$this->db->idate($this->eol_date)."'").',';
-		$sql .= ' '.(!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) == 0 ? 'NULL' : "'".$this->db->idate($this->manufacturing_date)."'").',';
-		$sql .= ' '.(!isset($this->scrapping_date) || dol_strlen($this->scrapping_date) == 0 ? 'NULL' : "'".$this->db->idate($this->scrapping_date)."'").',';
-		//$sql .= ' '.(!isset($this->commissionning_date) || dol_strlen($this->commissionning_date) == 0 ? 'NULL' : "'".$this->db->idate($this->commissionning_date)."'").',';
-		//$sql .= ' '.(!isset($this->qc_frequency) ? 'NULL' : $this->qc_frequency).',';
-		$sql .= ' '."'".$this->db->idate(dol_now())."'".',';
-		$sql .= ' '.(!isset($this->fk_user_creat) ? 'NULL' : $this->fk_user_creat).',';
-		$sql .= ' '.(!isset($this->fk_user_modif) ? 'NULL' : $this->fk_user_modif).',';
-		$sql .= ' '.(!isset($this->import_key) ? 'NULL' : $this->import_key);
-		$sql .= ')';
-
-		$this->db->begin();
-
-		$resql = $this->db->query($sql);
-		if (!$resql) {
+		$res = $this->checkSellOrEatByMandatory();
+		if ($res < 0) {
 			$error++;
-			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
+			// Insert request
+			$sql = 'INSERT INTO ' . $this->db->prefix() . $this->table_element . '(';
+			$sql .= 'entity,';
+			$sql .= 'fk_product,';
+			$sql .= 'batch,';
+			$sql .= 'eatby,';
+			$sql .= 'sellby,';
+			$sql .= 'eol_date,';
+			$sql .= 'manufacturing_date,';
+			$sql .= 'scrapping_date,';
+			//$sql .= 'commissionning_date,';
+			//$sql .= 'qc_frequency,';
+			$sql .= 'datec,';
+			$sql .= 'fk_user_creat,';
+			$sql .= 'fk_user_modif,';
+			$sql .= 'import_key';
+			$sql .= ') VALUES (';
+			$sql .= ' ' . (!isset($this->entity) ? $conf->entity : $this->entity) . ',';
+			$sql .= ' ' . (!isset($this->fk_product) ? 'NULL' : $this->fk_product) . ',';
+			$sql .= ' ' . (!isset($this->batch) ? 'NULL' : "'" . $this->db->escape($this->batch) . "'") . ',';
+			$sql .= ' ' . (!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'" . $this->db->idate($this->eatby) . "'") . ',';
+			$sql .= ' ' . (!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'" . $this->db->idate($this->sellby) . "'") . ',';
+			$sql .= ' ' . (!isset($this->eol_date) || dol_strlen($this->eol_date) == 0 ? 'NULL' : "'" . $this->db->idate($this->eol_date) . "'") . ',';
+			$sql .= ' ' . (!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) == 0 ? 'NULL' : "'" . $this->db->idate($this->manufacturing_date) . "'") . ',';
+			$sql .= ' ' . (!isset($this->scrapping_date) || dol_strlen($this->scrapping_date) == 0 ? 'NULL' : "'" . $this->db->idate($this->scrapping_date) . "'") . ',';
+			//$sql .= ' '.(!isset($this->commissionning_date) || dol_strlen($this->commissionning_date) == 0 ? 'NULL' : "'".$this->db->idate($this->commissionning_date)."'").',';
+			//$sql .= ' '.(!isset($this->qc_frequency) ? 'NULL' : $this->qc_frequency).',';
+			$sql .= ' ' . "'" . $this->db->idate(dol_now()) . "'" . ',';
+			$sql .= ' ' . (!isset($this->fk_user_creat) ? 'NULL' : $this->fk_user_creat) . ',';
+			$sql .= ' ' . (!isset($this->fk_user_modif) ? 'NULL' : $this->fk_user_modif) . ',';
+			$sql .= ' ' . (!isset($this->import_key) ? 'NULL' : $this->import_key);
+			$sql .= ')';
 
-			// Actions on extra fields
+			$this->db->begin();
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = 'Error ' . $this->db->lasterror();
+			}
+
 			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
+				$this->id = $this->db->last_insert_id($this->db->prefix() . $this->table_element);
+
+				// Actions on extra fields
+				if (!$error) {
+					$result = $this->insertExtraFields();
+					if ($result < 0) {
+						$error++;
+					}
+				}
+
+				if (!$error && !$notrigger) {
+					// Call triggers
+					$result = $this->call_trigger('PRODUCTLOT_CREATE', $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
 				}
 			}
 
-			if (!$error && !$notrigger) {
-				// Call triggers
-				$result = $this->call_trigger('PRODUCTLOT_CREATE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
+			// Commit or rollback
+			if ($error) {
+				$this->db->rollback();
+			} else {
+				$this->db->commit();
 			}
 		}
 
-		// Commit or rollback
 		if ($error) {
-			$this->db->rollback();
-
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 			return -1 * $error;
 		} else {
-			$this->db->commit();
-
 			return $this->id;
 		}
 	}
@@ -418,64 +546,75 @@ class Productlot extends CommonObject
 			 $this->import_key = trim($this->import_key);
 		}
 
+		// Check parameters
+		// Put here code to add a control on parameters values
+		$res = $this->checkSellOrEatByMandatory();
+		if ($res < 0) {
+			$error++;
+		}
+
 		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 		if (empty($this->oldcopy)) {
 			$this->oldcopy = dol_clone($this);
 		}
 
-		// Update request
-		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET';
-		$sql .= ' entity = '.(isset($this->entity) ? $this->entity : "null").',';
-		$sql .= ' fk_product = '.(isset($this->fk_product) ? $this->fk_product : "null").',';
-		$sql .= ' batch = '.(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").',';
-		$sql .= ' eatby = '.(!isset($this->eatby) || dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').',';
-		$sql .= ' sellby = '.(!isset($this->sellby) || dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null').',';
-		$sql .= ' eol_date = '.(!isset($this->eol_date) || dol_strlen($this->eol_date) != 0 ? "'".$this->db->idate($this->eol_date)."'" : 'null').',';
-		$sql .= ' manufacturing_date = '.(!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) != 0 ? "'".$this->db->idate($this->manufacturing_date)."'" : 'null').',';
-		$sql .= ' scrapping_date = '.(!isset($this->scrapping_date) || dol_strlen($this->scrapping_date) != 0 ? "'".$this->db->idate($this->scrapping_date)."'" : 'null').',';
-		//$sql .= ' commissionning_date = '.(!isset($this->first_use_date) || dol_strlen($this->first_use_date) != 0 ? "'".$this->db->idate($this->first_use_date)."'" : 'null').',';
-		//$sql .= ' qc_frequency = '.(!isset($this->qc_frequency) || dol_strlen($this->qc_frequency) != 0 ? "'".$this->db->escape($this->qc_frequency)."'" : 'null').',';
-		$sql .= ' datec = '.(!isset($this->datec) || dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').',';
-		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
-		$sql .= ' fk_user_creat = '.(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").',';
-		$sql .= ' fk_user_modif = '.(isset($this->fk_user_modif) ? $this->fk_user_modif : "null").',';
-		$sql .= ' import_key = '.(isset($this->import_key) ? $this->import_key : "null");
-		$sql .= ' WHERE rowid='.((int) $this->id);
-
-		$this->db->begin();
-
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error++;
-			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
-		}
-
-		// Actions on extra fields
 		if (!$error) {
-			$result = $this->insertExtraFields();
-			if ($result < 0) {
+			// Update request
+			$sql = 'UPDATE ' . $this->db->prefix() . $this->table_element . ' SET';
+			$sql .= ' entity = ' . (isset($this->entity) ? $this->entity : "null") . ',';
+			$sql .= ' fk_product = ' . (isset($this->fk_product) ? $this->fk_product : "null") . ',';
+			$sql .= ' batch = ' . (isset($this->batch) ? "'" . $this->db->escape($this->batch) . "'" : "null") . ',';
+			$sql .= ' eatby = ' . (!isset($this->eatby) || dol_strlen($this->eatby) != 0 ? "'" . $this->db->idate($this->eatby) . "'" : 'null') . ',';
+			$sql .= ' sellby = ' . (!isset($this->sellby) || dol_strlen($this->sellby) != 0 ? "'" . $this->db->idate($this->sellby) . "'" : 'null') . ',';
+			$sql .= ' eol_date = ' . (!isset($this->eol_date) || dol_strlen($this->eol_date) != 0 ? "'" . $this->db->idate($this->eol_date) . "'" : 'null') . ',';
+			$sql .= ' manufacturing_date = ' . (!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) != 0 ? "'" . $this->db->idate($this->manufacturing_date) . "'" : 'null') . ',';
+			$sql .= ' scrapping_date = ' . (!isset($this->scrapping_date) || dol_strlen($this->scrapping_date) != 0 ? "'" . $this->db->idate($this->scrapping_date) . "'" : 'null') . ',';
+			//$sql .= ' commissionning_date = '.(!isset($this->first_use_date) || dol_strlen($this->first_use_date) != 0 ? "'".$this->db->idate($this->first_use_date)."'" : 'null').',';
+			//$sql .= ' qc_frequency = '.(!isset($this->qc_frequency) || dol_strlen($this->qc_frequency) != 0 ? "'".$this->db->escape($this->qc_frequency)."'" : 'null').',';
+			$sql .= ' datec = ' . (!isset($this->datec) || dol_strlen($this->datec) != 0 ? "'" . $this->db->idate($this->datec) . "'" : 'null') . ',';
+			$sql .= ' tms = ' . (dol_strlen($this->tms) != 0 ? "'" . $this->db->idate($this->tms) . "'" : "'" . $this->db->idate(dol_now()) . "'") . ',';
+			$sql .= ' fk_user_creat = ' . (isset($this->fk_user_creat) ? $this->fk_user_creat : "null") . ',';
+			$sql .= ' fk_user_modif = ' . (isset($this->fk_user_modif) ? $this->fk_user_modif : "null") . ',';
+			$sql .= ' import_key = ' . (isset($this->import_key) ? $this->import_key : "null");
+			$sql .= ' WHERE rowid=' . ((int) $this->id);
+
+			$this->db->begin();
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
 				$error++;
+				$this->errors[] = 'Error ' . $this->db->lasterror();
+			}
+
+			// Actions on extra fields
+			if (!$error) {
+				$result = $this->insertExtraFields();
+				if ($result < 0) {
+					$error++;
+				}
+			}
+
+			if (!$error && !$notrigger) {
+				// Call triggers
+				$result = $this->call_trigger('PRODUCTLOT_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			// Commit or rollback
+			if ($error) {
+				$this->db->rollback();
+			} else {
+				$this->db->commit();
 			}
 		}
 
-		if (!$error && !$notrigger) {
-			// Call triggers
-			$result = $this->call_trigger('PRODUCTLOT_MODIFY', $user);
-			if ($result < 0) {
-				$error++;
-			}
-			// End call triggers
-		}
-
-		// Commit or rollback
 		if ($error) {
-			$this->db->rollback();
-
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 			return -1 * $error;
 		} else {
-			$this->db->commit();
-
 			return 1;
 		}
 	}

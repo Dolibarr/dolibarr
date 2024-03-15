@@ -334,7 +334,7 @@ if (isModEnabled('project')) {
 $now = dol_now();
 
 $title = $langs->trans("SocialContribution").' - '.$langs->trans("Card");
-$help_url = 'EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
+$help_url = 'EN:Module_Taxes_and_social_contributions|FR:Module_Taxes_et_charges_spéciales|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
 llxHeader("", $title, $help_url);
 
 
@@ -400,7 +400,7 @@ if ($action == 'create') {
 	print '<tr><td>';
 	print $langs->trans('Employee');
 	print '</td>';
-	print '<td>'.img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($fk_user, 'userid', 1).'</td></tr>';
+	print '<td>'.img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers('', 'userid', 1).'</td></tr>';
 
 	// Project
 	if (isModEnabled('project')) {

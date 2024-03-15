@@ -1299,6 +1299,7 @@ $(document).ready(function() {
 });
 <?php } ?>
 
+
 jQuery(document).ready(function() {
 	// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
 	if (window.location && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {
@@ -1310,21 +1311,40 @@ jQuery(document).ready(function() {
 	}
 
 	// Code to set tooltip on search field
-	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not("maxwidthdate")').attr('title', '<?php echo dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum")) ?>');
+	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not(".maxwidthdate")').attr('title', '<?php echo dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum")) ?>');
 });
 
 
+jQuery(document).ready(function() {
+	jQuery(".butAction.dropdown-toggle").on("click", function(event) {
+		console.log("Click on .butAction.dropdown-toggle");
+		var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
+			 var offset = parentholder.offset();
+		var widthdocument = $(document).width();
+		var left = offset.left;
+		var right = widthdocument - offset.left - parentholder.width();
+		var widthpopup = parentholder.children(".dropdown-content").width();
+		console.log("left="+left+" right="+right+" width="+widthpopup+" widthdocument="+widthdocument);
+		if (widthpopup + right >= widthdocument) {
+			right = 10;
+		}
+		parentholder.toggleClass("open");
+		parentholder.children(".dropdown-content").css({"right": right+"px", "left": "auto"});
+	});
+});
+
+
+<?php
+if (empty($conf->global->MAIN_DISABLE_SELECT2_FOCUS_PROTECTION) && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
+	?>
 /*
- * Hacky fix for a bug in select2 with jQuery 3.6.0's new nested-focus "protection"
+ * Hacky fix for a bug in select2 with jQuery 3.6.4's new nested-focus "protection"
+ * This fix needs to click a second time when clicking into a combo with ajax (see Test4d and Test5a in test_forms.php
  * see: https://github.com/select2/select2/issues/5993
  * see: https://github.com/jquery/jquery/issues/4382
  *
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
-
-<?php
-if (empty($conf->global->MAIN_DISABLE_SELECT2_FOCUS_PROTECTION) && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
-	?>
 $(document).on('select2:open', (e) => {
 	console.log("Execute the focus (click on combo or use space when on component");
 	const target = $(e.target);

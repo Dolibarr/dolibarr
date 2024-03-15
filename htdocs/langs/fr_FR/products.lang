@@ -82,6 +82,7 @@ NewPrice=Nouveau prix
 MinPrice=Prix de vente min.
 EditSellingPriceLabel=Modifier le libellé du prix de vente
 CantBeLessThanMinPrice=Le prix de vente ne doit pas être inférieur au minimum pour ce produit (%s HT). Ce message peut aussi être provoqué par une remise trop importante.
+CantBeLessThanMinPriceInclTax=Le prix de vente ne doit pas être inférieur au minimum pour ce produit (%s TTC). Ce message peut aussi être provoqué par une remise trop importante.
 ContractStatusClosed=Clôturé
 ErrorProductAlreadyExists=Un produit avec la référence %s existe déjà.
 ErrorProductBadRefOrLabel=La valeur de la référence ou du libellé est incorrecte.
@@ -351,6 +352,7 @@ PackagingForThisProductDesc=Vous achèterez automatiquement un multiple de cette
 QtyRecalculatedWithPackaging=La quantité de la ligne a été recalculée en fonction de l'emballage du fournisseur
 
 #Attributes
+Attributes=Attributs
 VariantAttributes=Attributs de variante
 ProductAttributes=Attributs de variantes pour les produits
 ProductAttributeName=Attribut de variante %s
@@ -430,3 +432,8 @@ ConfirmEditExtrafield = Sélectionnez l'extrafield que vous souhaitez modifier
 ConfirmEditExtrafieldQuestion = Voulez-vous vraiment modifier cet extrafield ?
 ModifyValueExtrafields = Modifier la valeur d'un extrafield
 OrProductsWithCategories=Ou des produits avec des tags/catégories
+StockableProduct=Activer la gestion des stocks
+StockableProductDescription=Si cette option est désactivée, la modification du stock pour cet élément n'est pas prise en compte. Les mouvements de stock ne seront pas pris en compte dans les commandes client, commande fournisseur, expédition, réception, ordre de fabrication.<br /> Dans les faits, cette option se comporte comme une activation/désactivation du module stock mais à l'échelle du produit/service
+StockDisabled=Stock désactivé
+StockEnabled=Stock activé
+WarningLineProductNotToSell=Le produit ou service "%s" n'est pas en vente mais a été cloné

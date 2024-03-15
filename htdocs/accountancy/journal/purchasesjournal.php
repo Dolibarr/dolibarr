@@ -3,7 +3,7 @@
  * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
@@ -71,6 +71,8 @@ if ($user->socid > 0) {
 if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
+
+$error = 0;
 
 
 /*
@@ -182,6 +184,7 @@ if ($result) {
 	$tabrctva = array();
 	$tabrclocaltax1 = array();
 	$tabrclocaltax2 = array();
+	$vatdata_cache = array();
 
 	$num = $db->num_rows($result);
 
@@ -208,7 +211,13 @@ if ($result) {
 			}
 		}
 
-		$vatdata = getTaxesFromId($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), $mysoc, $mysoc, 0);
+		$tax_id = $obj->tva_tx . ($obj->vat_src_code ? ' (' . $obj->vat_src_code . ')' : '');
+		if (array_key_exists($tax_id, $vatdata_cache)) {
+			$vatdata = $vatdata_cache[$tax_id];
+		} else {
+			$vatdata = getTaxesFromId($tax_id, $mysoc, $mysoc, 0);
+				$vatdata_cache[$tax_id] = $vatdata;
+		}
 		$compta_tva = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cpttva);
 		$compta_localtax1 = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cpttva);
 		$compta_localtax2 = (!empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cpttva);
@@ -219,8 +228,8 @@ if ($result) {
 			$def_tva[$obj->rowid][$compta_tva][vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : '')] = (vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''));
 		}
 
-		//$line = new SupplierInvoiceLine($db);
-		//$line->fetch($obj->fdid);
+		$line = new SupplierInvoiceLine($db);
+		$line->fetch($obj->fdid);
 
 		$tabfac[$obj->rowid]["date"] = $db->jdate($obj->df);
 		$tabfac[$obj->rowid]["datereg"] = $db->jdate($obj->dlr);
@@ -230,7 +239,7 @@ if ($result) {
 		$tabfac[$obj->rowid]["type"] = $obj->type;
 		$tabfac[$obj->rowid]["description"] = $obj->description;
 		$tabfac[$obj->rowid]["close_code"] = $obj->close_code; // close_code = 'replaced' for replacement invoices (not used in most european countries)
-		//$tabfac[$obj->rowid]["fk_facturefourndet"] = $obj->fdid;
+		$tabfac[$obj->rowid]["fk_facturefourndet"] = $obj->fdid;
 
 		// Avoid warnings
 		if (!isset($tabttc[$obj->rowid][$compta_soc])) {
@@ -318,8 +327,16 @@ if ($result) {
 	dol_print_error($db);
 }
 
+// Check for too many invoices first.
+if (count($tabfac) > 10000) { // Global config in htdocs/admin/const.php???
+	$error++;
+	setEventMessages("TooManyInvoicesToProcessPleaseUseAMoreSelectiveFilter", null, 'errors');
+}
+
 $errorforinvoice = array();
 
+/*
+// Old way, 1 query for each invoice
 // Loop in invoices to detect lines with not binding lines
 foreach ($tabfac as $key => $val) {		// Loop on each invoice
 	$sql = "SELECT COUNT(fd.rowid) as nb";
@@ -336,12 +353,38 @@ foreach ($tabfac as $key => $val) {		// Loop on each invoice
 		dol_print_error($db);
 	}
 }
+*/
+// New way, single query, load all unbound lines
+$sql = "
+SELECT
+    fk_facture_fourn,
+    COUNT(fd.rowid) as nb
+FROM
+    llx_facture_fourn_det as fd
+WHERE
+    fd.product_type <= 2
+    AND fd.fk_code_ventilation <= 0
+    AND fd.total_ttc <> 0
+	AND fk_facture_fourn IN (".$db->sanitize(join(",", array_keys($tabfac))).")
+GROUP BY fk_facture_fourn
+";
+$resql = $db->query($sql);
+
+$num = $db->num_rows($resql);
+$i = 0;
+while ($i < $num) {
+	$obj = $db->fetch_object($resql);
+	if ($obj->nb > 0) {
+		$errorforinvoice[$obj->fk_facture_fourn] = 'somelinesarenotbound';
+	}
+	$i++;
+}
 //var_dump($errorforinvoice);exit;
 
 
 
 // Bookkeeping Write
-if ($action == 'writebookkeeping') {
+if ($action == 'writebookkeeping' && !$error) {
 	$now = dol_now();
 	$error = 0;
 
@@ -407,7 +450,7 @@ if ($action == 'writebookkeeping') {
 				$bookkeeping->date_creation = $now;
 				$bookkeeping->doc_type = 'supplier_invoice';
 				$bookkeeping->fk_doc = $key;
-				$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+				$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
 				$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 
 				$bookkeeping->subledger_account = $tabcompany[$key]['code_compta_fournisseur'];
@@ -468,7 +511,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'supplier_invoice';
 					$bookkeeping->fk_doc = $key;
-					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+					$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
 					$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 
 					if (getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT')) {
@@ -566,7 +609,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'supplier_invoice';
 						$bookkeeping->fk_doc = $key;
-						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+						$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
 						$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 
 						$bookkeeping->subledger_account = '';
@@ -619,7 +662,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'supplier_invoice';
 					$bookkeeping->fk_doc = $key;
-					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+					$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
 					$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 
 					$bookkeeping->subledger_account = '';
@@ -712,7 +755,7 @@ if ($action == 'writebookkeeping') {
 $form = new Form($db);
 
 // Export
-if ($action == 'exportcsv') {		// ISO and not UTF8 !
+if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 	$sep = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
 
 	$filename = 'journal';
@@ -894,6 +937,25 @@ if (empty($action) || $action == 'view') {
 
 	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
+	if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') != 'blockedonclosed') {
+		// Test that setup is complete (we are in accounting, so test on entity is always on $conf->entity only, no sharing allowed)
+		// Fiscal period test
+		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_fiscalyear WHERE entity = ".((int) $conf->entity);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj->nb == 0) {
+				print '<br><div class="warning">'.img_warning().' '.$langs->trans("TheFiscalPeriodIsNotDefined");
+				$desc = ' : '.$langs->trans("AccountancyAreaDescFiscalPeriod", 4, '{link}');
+				$desc = str_replace('{link}', '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("FiscalPeriod").'</strong>', $desc);
+				print $desc;
+				print '</div>';
+			}
+		} else {
+			dol_print_error($db);
+		}
+	}
+
 	// Button to write into Ledger
 	$acctSupplierNotConfigured = in_array(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER'), ['','-1']);
 	if ($acctSupplierNotConfigured) {
@@ -903,7 +965,7 @@ if (empty($action) || $action == 'view') {
 		print $desc;
 		print '</div>';
 	}
-	print '<div class="tabsAction tabsActionNoBottom centerimp">';
+	print '<br><div class="tabsAction tabsActionNoBottom centerimp">';
 	if (getDolGlobalString('ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL') && $in_bookkeeping == 'notyet') {
 		print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
 	}

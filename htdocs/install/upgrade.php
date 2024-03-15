@@ -79,9 +79,9 @@ if ($dolibarr_main_db_type == "mssql") {
 }
 
 
-dolibarr_install_syslog("--- upgrade: Entering upgrade.php page");
+dolibarr_install_syslog("--- upgrade: entering upgrade.php page ".$versionfrom." ".$versionto);
 if (!is_object($conf)) {
-	dolibarr_install_syslog("upgrade2: conf file not initialized", LOG_ERR);
+	dolibarr_install_syslog("upgrade: conf file not initialized", LOG_ERR);
 }
 
 

@@ -478,6 +478,12 @@ class Delivery extends CommonObject
 							if (!$resql) {
 								$error++; $this->error = $this->db->lasterror();
 							}
+							$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'expedition/receipt/".$this->db->escape($this->newref)."'";
+							$sql .= " WHERE filepath = 'expedition/receipt/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+							$resql = $this->db->query($sql);
+							if (!$resql) {
+								$error++; $this->error = $this->db->lasterror();
+							}
 
 							// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 							$oldref = dol_sanitizeFileName($this->ref);
@@ -1101,7 +1107,7 @@ class Delivery extends CommonObject
 	 *  @param     int			$hideref        Hide ref
 	 *  @return    int             				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		global $conf, $langs;
 

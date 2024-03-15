@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2020       Maxime Kohlhaas         <maxime@atm-consulting.fr>
+ * Copyright (C) 2023       Ferran Marcet           <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -330,7 +331,7 @@ if ($resql) {
 
 		$amount_ht[$obj->socid] = (empty($obj->amount) ? 0 : $obj->amount);
 		$amount[$obj->socid] = $obj->amount_ttc;
-		//$name[$obj->socid] = $obj->name.' '.$obj->firstname;
+		$name[$obj->socid] = $obj->name;
 
 		$address_zip[$obj->socid] = $obj->zip;
 		$address_town[$obj->socid] = $obj->town;

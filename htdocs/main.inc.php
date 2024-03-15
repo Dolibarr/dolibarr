@@ -713,7 +713,7 @@ if (!defined('NOLOGIN')) {
 		// If in demo mode, we check we go to home page through the public/demo/index.php page
 		if (!empty($dolibarr_main_demo) && $_SERVER['PHP_SELF'] == DOL_URL_ROOT.'/index.php') {  // We ask index page
 			if (empty($_SERVER['HTTP_REFERER']) || !preg_match('/public/', $_SERVER['HTTP_REFERER'])) {
-				dol_syslog("Call index page from another url than demo page (call is done from page ".$_SERVER['HTTP_REFERER'].")");
+				dol_syslog("Call index page from another url than demo page (call is done from page ".(empty($_SERVER['HTTP_REFERER']) ? '' : $_SERVER['HTTP_REFER']).")");
 				$url = '';
 				$url .= ($url ? '&' : '').($dol_hide_topmenu ? 'dol_hide_topmenu='.$dol_hide_topmenu : '');
 				$url .= ($url ? '&' : '').($dol_hide_leftmenu ? 'dol_hide_leftmenu='.$dol_hide_leftmenu : '');
@@ -2158,14 +2158,26 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			$toprightmenu .= $form->textwithtooltip('', $langs->trans("ModuleBuilder"), 2, 1, $text, 'login_block_elem', 2);
 		}
 
-		// Link to print main content area
+		// Link to print main content area (optioncss=print)
 		if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			$qs = dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 
 			if (isset($_POST) && is_array($_POST)) {
 				foreach ($_POST as $key => $value) {
-					if ($key !== 'action' && $key !== 'password' && !is_array($value)) {
-						$qs .= '&'.$key.'='.urlencode($value);
+					$key = preg_replace('/[^a-z0-9_\.\-\[\]]/i', '', $key);
+					if (in_array($key, array('action', 'massaction', 'password'))) {
+						continue;
+					}
+					if (!is_array($value)) {
+						if ($value !== '') {
+							$qs .= '&'.urlencode($key).'='.urlencode($value);
+						}
+					} else {
+						foreach ($value as $value2) {
+							if (($value2 !== '') && (!is_array($value2))) {
+								$qs .= '&'.urlencode($key).'[]='.urlencode($value2);
+							}
+						}
 					}
 				}
 			}
@@ -2352,6 +2364,10 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<span id="topmenuloginmoreinfo-btn"><i class="fa fa-caret-right"></i> '.$langs->trans("ShowMoreInfos").'</span>';
 	$dropdownBody .= '<div id="topmenuloginmoreinfo" >';
 
+	$dropdownBody .= '<br><b>'.$langs->trans("Easya").'</b>: <i class="fa fa-code-branch"></i> '.$conf->global->EASYA_VERSION;
+	$dropdownBody .= '<br><b>'.$langs->trans("Dolibarr").'</b>: <i class="fa fa-heart"></i> '.$conf->global->MAIN_VERSION_LAST_UPGRADE;
+	$dropdownBody .= '<br>';
+
 	// login infos
 	if (!empty($user->admin)) {
 		$dropdownBody .= '<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
@@ -2523,22 +2539,6 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 					closeTopMenuLoginDropdown();
                 }
             });
-
-	        jQuery(".butAction.dropdown-toggle").on("click", function(event) {
-				console.log("Click on .butAction.dropdown-toggle");
-				var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
-            	var offset = parentholder.offset();
-				var widthdocument = $(document).width();
-				var left = offset.left;
-				var right = widthdocument - offset.left - parentholder.width();
-				var widthpopup = parentholder.children(".dropdown-content").width();
-				console.log("left="+left+" right="+right+" width="+widthpopup+" widthdocument="+widthdocument);
-				if (widthpopup + right >= widthdocument) {
-					right = 10;
-				}
-	            parentholder.toggleClass("open");
-	            parentholder.children(".dropdown-content").css({"right": right+"px", "left": "auto"});
-	        });
 		';
 
 

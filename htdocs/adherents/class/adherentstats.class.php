@@ -282,7 +282,7 @@ class AdherentStats extends Stats
 		$sql .= " GROUP BY c.rowid, c.label";
 		$sql .= " ORDER BY label ASC";
 
-		dol_syslog("box_members_by_type::select nb of members per type", LOG_DEBUG);
+		dol_syslog("box_members_by_tag::select nb of members per tag", LOG_DEBUG);
 		$result = $this->db->query($sql);
 
 		if ($result) {

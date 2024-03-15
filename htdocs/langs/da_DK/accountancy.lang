@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=Hvis du opsætter regnskabskonto på typen af ​​
 DescVentilDoneExpenseReport=Her vises listen over linjerne for udgiftsrapporter og deres gebyrkonto
 
 Closure=Årlig lukning
-DescClosure=Se her antallet af bevægelser pr. måned, der endnu ikke er valideret og låst
+AccountancyClosureStep1Desc=Se her antallet af bevægelser pr. måned, der endnu ikke er valideret og låst
 OverviewOfMovementsNotValidated=Oversigt over bevægelser, der ikke er valideret og låst
 AllMovementsWereRecordedAsValidated=Alle bevægelser blev registreret som validerede og låste
 NotAllMovementsCouldBeRecordedAsValidated=Ikke alle bevægelser kunne registreres som validerede og låste

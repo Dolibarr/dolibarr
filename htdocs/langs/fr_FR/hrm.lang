@@ -28,6 +28,7 @@ DateEval=Date d'évaluation
 JobCard=Fiche emploi
 JobPosition=Profil de poste
 JobsPosition=Profils de poste
+Positions = Postes
 NewSkill=Nouvelle compétence
 SkillType=Type de compétence
 Skilldets=Liste des niveaux pour cette compétence

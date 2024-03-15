@@ -29,6 +29,10 @@ if (empty($conf) || !is_object($conf)) {
 
 <!-- BEGIN PHP TEMPLATE STOCKCORRECTION.TPL.PHP -->
 <?php
+/**
+ * @var Product $object
+ */
+
 $productref = '';
 if ($object->element == 'product') {
 	$productref = $object->ref;
@@ -54,6 +58,19 @@ if ($pdluoid > 0) {
 	}
 }
 
+$sellByCss = '';
+$eatByCss = '';
+if ($object->sell_or_eat_by_mandatory == Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY) {
+	$sellByCss = 'fieldrequired';
+} elseif ($object->sell_or_eat_by_mandatory == Product::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY) {
+	$eatByCss = 'fieldrequired';
+} elseif ($object->sell_or_eat_by_mandatory == Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT) {
+	$sellByCss = 'fieldrequired';
+	$eatByCss = 'fieldrequired';
+}
+
+$disableSellBy = getDolGlobalInt('PRODUCT_DISABLE_SELLBY');
+$disableEatBy = getDolGlobalInt('PRODUCT_DISABLE_EATBY');
 print '<script type="text/javascript">
 		jQuery(document).ready(function() {
 			function init_price()
@@ -67,23 +84,43 @@ print '<script type="text/javascript">
 				init_price();
 			});
 			jQuery("#nbpiece").keyup(function(event) {
-				console.log("We enter a qty on "+event.which);
-				if ( event.which == 54 ) {  /* char - */
+				console.log("We enter a qty on "+event.key);
+				if ( event.key == "-" ) {  /* char - */
 					console.log("We set direction to value 1");
 					jQuery("#nbpiece").val(jQuery("#nbpiece").val().replace("-", ""));
-
 					jQuery("#mouvement option").removeAttr("selected").change();
 					jQuery("#mouvement option[value=1]").attr("selected","selected").trigger("change");
 					jQuery("#mouvement").trigger("change");
-				} else if ( event.which == 187 ) {  /* char + */
+				} else if ( event.key == "+" ) {  /* char + */
 					console.log("We set direction to value 0");
+					jQuery("#nbpiece").val(jQuery("#nbpiece").val().replace("+", ""));
 					jQuery("#mouvement option").removeAttr("selected").change();
 					jQuery("#mouvement option[value=0]").attr("selected","selected").trigger("change");
 					jQuery("#mouvement").trigger("change");
 				}
-			});
-		});
-		</script>';
+			});';
+
+if ($disableSellBy == 0 || $disableEatBy == 0) {
+		print '
+			var disableSellBy = '.dol_escape_js($disableSellBy).';
+			var disableEatBy = '.dol_escape_js($disableSellBy).';
+			jQuery("#batch_number").change(function(event) {
+				var batch = jQuery(this).val();
+				jQuery.getJSON("'.DOL_URL_ROOT.'/product/ajax/product_lot.php?action=search&token='.currentToken().'&product_id='.$id.'&batch="+batch, function(data) {
+					if (data.length > 0) {
+						var productLot = data[0];
+						if (disableSellBy == 0) {
+							jQuery("#sellby").val(productLot.sellby);
+						}
+						if (disableEatBy == 0) {
+							jQuery("#eatby").val(productLot.eatby);
+						}
+					}
+				});
+			});';
+}
+print  '});';
+print '</script>';
 
 
 print load_fiche_titre($langs->trans("StockCorrection"), '', 'generic');
@@ -155,21 +192,21 @@ if (ismodEnabled('productbatch') &&
 		print '<input type="text" name="batch_number_bis" size="40" disabled="disabled" value="'.(GETPOST('batch_number') ?GETPOST('batch_number') : $pdluo->batch).'">';
 		print '<input type="hidden" name="batch_number" value="'.(GETPOST('batch_number') ?GETPOST('batch_number') : $pdluo->batch).'">';
 	} else {
-		print img_picto('', 'barcode', 'class="pictofixedwidth"').'<input type="text" name="batch_number" class="minwidth300" value="'.(GETPOST('batch_number') ? GETPOST('batch_number') : $pdluo->batch).'">';
+		print img_picto('', 'barcode', 'class="pictofixedwidth"').'<input type="text" id="batch_number" name="batch_number" class="minwidth300" value="'.(GETPOST('batch_number') ? GETPOST('batch_number') : $pdluo->batch).'">';
 	}
 	print '</td>';
 	print '</tr>';
 
 	print '<tr>';
 	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
-		print '<td>'.$langs->trans("SellByDate").'</td><td>';
+		print '<td'.($sellByCss ? ' class="'.$sellByCss.'"' : '').'>'.$langs->trans("SellByDate").'</td><td>';
 		$sellbyselected = dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
 		// If form was opened for a specific pdluoid, field is disabled
 		print $form->selectDate(($pdluo->id > 0 ? $pdluo->sellby : $sellbyselected), 'sellby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0));
 		print '</td>';
 	}
 	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-		print '<td>'.$langs->trans("EatByDate").'</td><td>';
+		print '<td'.($eatByCss ? ' class="'.$eatByCss.'"' : '').'>'.$langs->trans("EatByDate").'</td><td>';
 		$eatbyselected = dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
 		// If form was opened for a specific pdluoid, field is disabled
 		print $form->selectDate(($pdluo->id > 0 ? $pdluo->eatby : $eatbyselected), 'eatby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0));

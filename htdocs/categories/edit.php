@@ -79,51 +79,59 @@ $error = 0;
 /*
  * Actions
  */
-
-if ($cancel) {
-	if ($backtopage) {
-		header("Location: ".$backtopage);
-		exit;
-	} else {
-		header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
-		exit;
-	}
+$parameters = array('id' => $id, 'ref' => $ref, 'cancel'=> $cancel, 'backtopage' => $backtopage, 'socid' => $socid, 'label' => $label, 'description' => $description, 'color' => $color, 'visible' => $visible, 'parent' => $parent);
+// Note that $action and $object may be modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-// Action mise a jour d'une categorie
-if ($action == 'update' && $user->rights->categorie->creer) {
-	$object->oldcopy = dol_clone($object);
-	$object->label = $label;
-	$object->description    = dol_htmlcleanlastbr($description);
-	$object->color          = $color;
-	$object->socid          = ($socid > 0 ? $socid : 0);
-	$object->visible        = $visible;
-	$object->fk_parent = $parent != -1 ? $parent : 0;
-
-	if (empty($object->label)) {
-		$error++;
-		$action = 'edit';
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
-	}
-	if (!$error && empty($object->error)) {
-		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
-		if ($ret < 0) {
-			$error++;
+if (empty($reshook)) {
+	if ($cancel) {
+		if ($backtopage) {
+			header("Location: ".$backtopage);
+			exit;
+		} else {
+			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
+			exit;
 		}
+	}
 
-		if (!$error && $object->update($user) > 0) {
-			if ($backtopage) {
-				header("Location: ".$backtopage);
-				exit;
+	// Action mise a jour d'une categorie
+	if ($action == 'update' && $user->rights->categorie->creer) {
+		$object->oldcopy = dol_clone($object);
+		$object->label = $label;
+		$object->description    = dol_htmlcleanlastbr($description);
+		$object->color          = $color;
+		$object->socid          = ($socid > 0 ? $socid : 0);
+		$object->visible        = $visible;
+		$object->fk_parent = $parent != -1 ? $parent : 0;
+
+		if (empty($object->label)) {
+			$error++;
+			$action = 'edit';
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
+		}
+		if (!$error && empty($object->error)) {
+			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+			if ($ret < 0) {
+				$error++;
+			}
+
+			if (!$error && $object->update($user) > 0) {
+				if ($backtopage) {
+					header("Location: ".$backtopage);
+					exit;
+				} else {
+					header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
+					exit;
+				}
 			} else {
-				header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
-				exit;
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 

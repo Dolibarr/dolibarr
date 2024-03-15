@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=Os ydych chi'n gosod cyfrif cyfrifyddu ar y math o l
 DescVentilDoneExpenseReport=Ymgynghorwch yma â'r rhestr o linellau adroddiadau treuliau a'u cyfrif cyfrifo ffioedd
 
 Closure=Cau blynyddol
-DescClosure=Consult here the number of movements by month not yet validated & locked
+AccountancyClosureStep1Desc=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked

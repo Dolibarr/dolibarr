@@ -580,7 +580,9 @@ class Documents extends DolibarrApi
 				} elseif (is_array($ecmfile->lines) && count($ecmfile->lines) > 0) {
 					$count = count($filearray);
 					for ($i = 0 ; $i < $count ; $i++) {
-						if ($filearray[$i]['name'] == $ecmfile->lines[$i]->filename) $filearray[$i] = array_merge($filearray[$i], (array) $ecmfile->lines[0]);
+						if ($filearray[$i]['name'] == $ecmfile->lines[$i]->filename) {
+							$filearray[$i] = array_merge($filearray[$i], (array) $ecmfile->lines[0]);
+						}
 					}
 				}
 			}
@@ -637,6 +639,8 @@ class Documents extends DolibarrApi
 		//var_dump($modulepart);
 		//var_dump($filename);
 		//var_dump($filecontent);exit;
+
+		$modulepartorig = $modulepart;
 
 		if (empty($modulepart)) {
 			throw new RestException(400, 'Modulepart not provided.');
@@ -875,7 +879,14 @@ class Documents extends DolibarrApi
 			throw new RestException(500, "Refused to deliver file ".$dest_file);
 		}
 
-		$result = dol_move($destfiletmp, $dest_file, 0, $overwriteifexists, 1, 1);
+		$moreinfo = array('note_private' => 'File uploaded using API /documents from IP '.getUserRemoteIP());
+		if (!empty($object) && is_object($object) && $object->id > 0) {
+			$moreinfo['src_object_type'] = $object->table_element;
+			$moreinfo['src_object_id'] = $object->id;
+		}
+
+		// Move the temporary file at its final emplacement
+		$result = dol_move($destfiletmp, $dest_file, 0, $overwriteifexists, 1, 1, $moreinfo);
 		if (!$result) {
 			throw new RestException(500, "Failed to move file into '".$destfile."'");
 		}

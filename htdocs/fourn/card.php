@@ -108,6 +108,7 @@ if (empty($reshook)) {
 		$result = $object->update($object->id, $user, 1, 0, 1);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+			$_GET['action'] = 'editsupplieraccountancycode';
 		}
 	}
 	// Set vat number accounting account
@@ -486,7 +487,7 @@ if ($object->id > 0) {
 		}
 	}
 
-	if (isModEnabled("supplier_invoice")) {
+	if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'read'))) {
 		$warn = '';
 		$tmp = $object->getOutstandingBills('supplier');
 		$outstandingOpened = $tmp['opened'];
@@ -868,6 +869,15 @@ if ($object->id > 0) {
 		} else {
 			dol_print_error($db);
 		}
+	}
+
+	// Allow external modules to add their own shortlist of recent objects
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreRecentObjects', $parameters, $object, $action);
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	} else {
+		print $hookmanager->resPrint;
 	}
 
 	print '</div></div>';

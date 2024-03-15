@@ -1142,6 +1142,9 @@ class User extends CommonObject
 		}
 		$sql .= " AND ur.fk_user= ".((int) $this->id);
 		$sql .= " AND r.perms IS NOT NULL";
+		if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+			$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
+		}
 		if ($moduletag) {
 			$sql .= " AND r.module = '".$this->db->escape($moduletag)."'";
 		}
@@ -1362,6 +1365,11 @@ class User extends CommonObject
 
 		dol_syslog(get_class($this)."::setstatus", LOG_DEBUG);
 		if ($result) {
+			if ($status == 0) {
+				$this->context['actionmsg'] = 'User '.$this->login.' disabled';
+			} else {
+				$this->context['actionmsg'] = 'User '.$this->login.' enabled';
+			}
 			// Call trigger
 			$result = $this->call_trigger('USER_ENABLEDISABLE', $user);
 			if ($result < 0) {

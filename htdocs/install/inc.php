@@ -130,7 +130,7 @@ function usage($program, $header)
 	echo "      Display this help message.\n";
 }
 
-if (php_sapi_name() === "cli") {
+if (php_sapi_name() === "cli" && (float) PHP_VERSION > 7.0) {
 	$rest_index = 0;
 	$opts = getopt($short_options, $long_options, $rest_index);
 

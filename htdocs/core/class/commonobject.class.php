@@ -619,6 +619,19 @@ abstract class CommonObject
 	public $user_modification_id;
 
 
+	/**
+	 * @var int ID
+	 * @deprecated	Use $user_creation_id
+	 */
+	public $fk_user_creat;
+
+	/**
+	 * @var int ID
+	 * @deprecated 	Use $user_modification_id
+	 */
+	public $fk_user_modif;
+
+
 	public $next_prev_filter;
 
 	/**
@@ -2078,7 +2091,7 @@ abstract class CommonObject
 		}
 
 		// For backward compatibility
-		if ($this->table_element == 'facture_rec' && $fieldid == 'title') {
+		if (in_array($this->table_element, array('facture_rec', 'facture_fourn_rec')) && $fieldid == 'title') {
 			$fieldid = 'titre';
 		}
 
@@ -3405,9 +3418,10 @@ abstract class CommonObject
 	 *
 	 *  @param      string		$note		New value for note
 	 *  @param		string		$suffix		'', '_public' or '_private'
+	 *  @param      int         $notrigger  1=Does not execute triggers, 0=execute triggers
 	 *  @return     int      		   		<0 if KO, >0 if OK
 	 */
-	public function update_note($note, $suffix = '')
+	public function update_note($note, $suffix = '', $notrigger = 0)
 	{
 		// phpcs:enable
 		global $user;
@@ -3450,6 +3464,34 @@ abstract class CommonObject
 			} else {
 				$this->note = $note; // deprecated
 				$this->note_private = $note;
+			}
+			if (empty($notrigger)) {
+				switch ($this->element) {
+					case 'societe':
+						$trigger_name = 'COMPANY_MODIFY';
+						break;
+					case 'commande':
+						$trigger_name = 'ORDER_MODIFY';
+						break;
+					case 'facture':
+						$trigger_name = 'BILL_MODIFY';
+						break;
+					case 'invoice_supplier':
+						$trigger_name = 'BILL_SUPPLIER_MODIFY';
+						break;
+					case 'facturerec':
+						$trigger_name = 'BILLREC_MODIFIY';
+						break;
+					case 'expensereport':
+						$trigger_name = 'EXPENSE_REPORT_MODIFY';
+						break;
+					default:
+						$trigger_name = strtoupper($this->element) . '_MODIFY';
+				}
+				$ret = $this->call_trigger($trigger_name, $user);
+				if ($ret < 0) {
+					return -1;
+				}
 			}
 			return 1;
 		} else {
@@ -6621,6 +6663,7 @@ abstract class CommonObject
 						$this->array_options["options_".$key] = null;
 					}
 					break;
+				case 'price':
 				case 'double':
 					$value = price2num($value);
 					if (!is_numeric($value) && $value != '') {
@@ -6639,9 +6682,6 @@ abstract class CommonObject
 						 $this->array_options[$key] = null;
 					 }
 					 break;*/
-				case 'price':
-					$this->array_options["options_".$key] = price2num($this->array_options["options_".$key]);
-					break;
 				case 'date':
 				case 'datetime':
 					if (empty($this->array_options["options_".$key])) {
@@ -8312,7 +8352,7 @@ abstract class CommonObject
 						}
 
 						// HTML, text, select, integer and varchar: take into account default value in database if in create mode
-						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'varchar', 'select', 'int', 'boolean'))) {
+						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'varchar', 'select', 'radio', 'int', 'boolean'))) {
 							if ($action == 'create') {
 								$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? $value : $extrafields->attributes[$this->table_element]['default'][$key];
 							}
@@ -8424,8 +8464,8 @@ abstract class CommonObject
 							var val = $("select[name=\""+parent_list+"\"]").val();
 							var parentVal = parent_list + ":" + val;
 							if(typeof val == "string"){
-				    		    if(val != "") {
-					    			var options = orig_select.find("option[parent=\""+parentVal+"\"]").clone();
+								if(val != "") {
+									var options = orig_select.find("option[parent=\""+parentVal+"\"]").clone();
 									$("select[name=\""+child_list+"\"] option[parent]").remove();
 									$("select[name=\""+child_list+"\"]").append(options);
 								} else {
@@ -8433,7 +8473,7 @@ abstract class CommonObject
 									$("select[name=\""+child_list+"\"] option[parent]").remove();
 									$("select[name=\""+child_list+"\"]").append(options);
 								}
-				    		} else if(val > 0) {
+							} else if(val > 0) {
 								var options = orig_select.find("option[parent=\""+parentVal+"\"]").clone();
 								$("select[name=\""+child_list+"\"] option[parent]").remove();
 								$("select[name=\""+child_list+"\"]").append(options);
@@ -8454,15 +8494,15 @@ abstract class CommonObject
 
 								//Hide daughters lists
 								if ($("#"+child_list).val() == 0 && $("#"+parent_list).val() == 0){
-								    $("#"+child_list).hide();
+									$("#"+child_list).hide();
 								//Show mother lists
 								} else if ($("#"+parent_list).val() != 0){
-								    $("#"+parent_list).show();
+									$("#"+parent_list).show();
 								}
 								//Show the child list if the parent list value is selected
 								$("select[name=\""+parent_list+"\"]").click(function() {
-								    if ($(this).val() != 0){
-								        $("#"+child_list).show()
+									if ($(this).val() != 0){
+										$("#"+child_list).show()
 									}
 								});
 
@@ -9031,9 +9071,9 @@ abstract class CommonObject
 
 
 	/**
-	 * Function to prepare a part of the query for insert by returning an array with all properties of object.
+	 * Function to return the array of data key-value from the ->fields and all the ->properties of an object.
 	 *
-	 * Note $this->${field} are set by the page that make the createCommon() or the updateCommon().
+	 * Note: $this->${field} are set by the page that make the createCommon() or the updateCommon().
 	 * $this->${field} should be a clean and string value (so date are formated for SQL insert).
 	 *
 	 * @return array		Array with all values of each properties to update
@@ -9112,7 +9152,7 @@ abstract class CommonObject
 
 		foreach ($this->fields as $field => $info) {
 			if ($this->isDate($info)) {
-				if (is_null($obj->$field) || $obj->$field === '' || $obj->$field === '0000-00-00 00:00:00' || $obj->$field === '1000-01-01 00:00:00') {
+				if (!isset($obj->$field) || is_null($obj->$field) || $obj->$field === '' || $obj->$field === '0000-00-00 00:00:00' || $obj->$field === '1000-01-01 00:00:00') {
 					$this->$field = '';
 				} else {
 					$this->$field = $db->jdate($obj->$field);
@@ -9128,7 +9168,7 @@ abstract class CommonObject
 							$this->$field = (double) $obj->$field;
 						}
 					} else {
-						if (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+						if (isset($obj->$field) && (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1))) {
 							$this->$field = (int) $obj->$field;
 						} else {
 							$this->$field = null;
@@ -9143,7 +9183,7 @@ abstract class CommonObject
 						$this->$field = (double) $obj->$field;
 					}
 				} else {
-					if (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
+					if (isset($obj->$field) && (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1))) {
 						$this->$field = (double) $obj->$field;
 					} else {
 						$this->$field = null;
@@ -9236,6 +9276,11 @@ abstract class CommonObject
 		}
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) {
 			$fieldvalues['fk_user_creat'] = $user->id;
+			$this->fk_user_creat = $user->id;
+		}
+		if (array_key_exists('user_modification_id', $fieldvalues) && !($fieldvalues['user_modification_id'] > 0)) {
+			$fieldvalues['user_modification_id'] = $user->id;
+			$this->user_modification_id = $user->id;
 		}
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 		if (array_key_exists('ref', $fieldvalues)) {
@@ -9349,7 +9394,12 @@ abstract class CommonObject
 					$line = (object) $line;
 				}
 
-				$result = $line->create($user, 1);
+				$result = 0;
+				if (method_exists($line, 'insert')) {
+					$result = $line->insert($user, 1);
+				} elseif (method_exists($line, 'create')) {
+					$result = $line->create($user, 1);
+				}
 				if ($result < 0) {
 					$this->error = $line->error;
 					$this->db->rollback();

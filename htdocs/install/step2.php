@@ -87,7 +87,7 @@ if (@file_exists($forcedfile)) {
 	}
 }
 
-dolibarr_install_syslog("- step2: entering step2.php page");
+dolibarr_install_syslog("--- step2: entering step2.php page");
 
 
 /*

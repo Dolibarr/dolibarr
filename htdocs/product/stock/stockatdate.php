@@ -325,7 +325,7 @@ if ($sortfield == 'stock' && !empty($search_fk_warehouse)) {
 }
 $sql .= $db->order($sortfield, $sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if ($date && $dateIsValid) {	// We avoid a heavy sql if mandatory parameter date not yet defined
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
@@ -427,7 +427,7 @@ if (!empty($search_fk_warehouse)) {
 	}
 }
 if ($productid > 0) {
-	$param .= '&productid='.$productid;
+	$param .= '&productid='.(int) $productid;
 }
 if (GETPOST('dateday', 'int') > 0) {
 	$param .= '&dateday='.GETPOST('dateday', 'int');
@@ -587,8 +587,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		print '<td class="nowrap">'.$prod->getNomUrl(1, '').'</td>';
 
 		// Product label
-		print '<td>'.$objp->label;
-		print '<input type="hidden" name="desc'.$i.'" value="'.dol_escape_htmltag($objp->description).'">'; // TODO Remove this and make a fetch to get description when creating order instead of a GETPOST
+		print '<td>';
+		print dol_escape_htmltag($objp->label);
 		print '</td>';
 
 		if ($mode == 'future') {

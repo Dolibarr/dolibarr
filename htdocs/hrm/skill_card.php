@@ -124,7 +124,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'hrm_SKILL_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'HRM_SKILL_MODIFY'; // Name of trigger action code to execute when we modify record
 
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
@@ -578,7 +578,7 @@ if ($action != "create" && $action != "edit") {
 	$title = $langs->transnoentitiesnoconv("Skilldets");
 	$morejs = array();
 	$morecss = array();
-	$nbtotalofrecords = 0;
+	$nbtotalofrecords = '';
 
 	// Build and execute select
 	// --------------------------------------------------------------------
@@ -812,7 +812,7 @@ if ($action != "create" && $action != "edit") {
 
 	print '</form>' . "\n";
 
-	//  if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+	//  if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
 	//      $hidegeneratedfilelistifempty = 1;
 	//      if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
 	//          $hidegeneratedfilelistifempty = 0;

@@ -1007,7 +1007,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		// Deal with supplier ref price (idprodfournprice = int)
 		if (jQuery('#idprodfournprice').val() > 0)
 		{
-			console.log("objectline_create.tpl #idprodfournprice is is an ID > 0, so we set some properties into page");
+			console.log("objectline_create.tpl #idprodfournprice is an ID > 0, so we set some properties into page");
 
 			var up = parseFloat($('option:selected', this).attr('data-up')); 							// When select is done from HTML select
 			if (isNaN(up)) { up = parseFloat(jQuery('#idprodfournprice').attr('data-up'));}				// When select is done from HTML input with ajax autocomplete
@@ -1032,14 +1032,43 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 				stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
 			}
 
-			console.log("objectline_create.tpl We find supplier price : up = "+up+", up_locale = "+up_locale+", qty = "+qty+", tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", stringforvatrateselection="+stringforvatrateselection+", discount = "+discount+" for product supplier ref id = "+jQuery('#idprodfournprice').val());
+			var supplier_ref = $('option:selected', this).attr('data-supplier-ref');											// When select is done from HTML select
+			if (typeof supplier_ref === 'undefined') { supplier_ref = jQuery('#idprodfournprice').attr('data-supplier-ref');}	// When select is done from HTML input with ajax autocomplete
 
-			if (typeof up_locale === 'undefined') {
-				jQuery("#price_ht").val(up);
-			} else {
-				jQuery("#price_ht").val(up_locale);
+			var has_multicurrency_up = false;
+			<?php
+			if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
+				?>
+				var object_multicurrency_code = '<?php print dol_escape_js($object->multicurrency_code); ?>';
+
+				var multicurrency_code = $('option:selected', this).attr('data-multicurrency-code');                                			// When select is done from HTML select
+				if (multicurrency_code == undefined) { multicurrency_code = jQuery('#idprodfournprice').attr('data-multicurrency-code'); }  	// When select is done from HTML input with ajax autocomplete
+
+				var multicurrency_up = parseFloat($('option:selected', this).attr('data-multicurrency-unitprice'));                                	// When select is done from HTML select
+				if (isNaN(multicurrency_up)) { multicurrency_up = parseFloat(jQuery('#idprodfournprice').attr('data-multicurrency-unitprice')); }   // When select is done from HTML input with ajax autocomplete
+
+				if (multicurrency_code == object_multicurrency_code) {
+					has_multicurrency_up = true;
+					jQuery("#multicurrency_price_ht").val(multicurrency_up);
+				}
+
+				console.log("objectline_create.tpl Multicurrency values : object_multicurrency_code = "+object_multicurrency_code+", multicurrency_code = "+multicurrency_code+", multicurrency_up = "+multicurrency_up);
+				<?php
+			}
+			?>
+
+			console.log("objectline_create.tpl We find supplier price : up = "+up+", up_locale = "+up_locale+", has_multicurrency_up = "+has_multicurrency_up+", supplier_ref = "+supplier_ref+" qty = "+qty+", tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", stringforvatrateselection="+stringforvatrateselection+", discount = "+discount+" for product supplier ref id = "+jQuery('#idprodfournprice').val());
+
+			if (has_multicurrency_up === false) {
+				if (typeof up_locale === 'undefined') {
+					jQuery("#price_ht").val(up);
+				} else {
+					jQuery("#price_ht").val(up_locale);
+				}
 			}
 
+			// Set supplier_ref
+			$('#fourn_ref').val(supplier_ref);
 			// Set vat rate if field is an input box
 			$('#tva_tx').val(tva_tx);
 			// Set vat rate by selecting the combo

@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=Егер сіз бухгалтерлік есепт�
 DescVentilDoneExpenseReport=Мұнда шығыстар туралы есептер мен олардың есепке алу шоттарының тізімін қараңыз
 
 Closure=Жылдық жабылу
-DescClosure=Consult here the number of movements by month not yet validated & locked
+AccountancyClosureStep1Desc=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked

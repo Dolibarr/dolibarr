@@ -1585,7 +1585,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
-		$sql .= " WHERE elementtype='task' ";
+		$sql .= " WHERE elementtype = 'task'";
+		$sql .= " AND p.entity IN (".getEntity('project').")";
 		if (empty($projectidforalltimes) && empty($allprojectforuser)) {
 			// Limit on one task
 			$sql .= " AND t.fk_element =".((int) $object->id);
@@ -2209,7 +2210,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					}
 				}
 				if (!empty($arrayfields['p.project_label']['checked'])) {
-					print '<td class="nowraponall">';
 					if (empty($conf->cache['project'][$task_time->fk_projet])) {
 						$tmpproject = new Project($db);
 						$tmpproject->fetch($task_time->fk_projet);
@@ -2217,7 +2217,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					} else {
 						$tmpproject = $conf->cache['project'][$task_time->fk_projet];
 					}
-					print $tmpproject->title;
+					print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($tmpproject->title).'">';
+					print dol_escape_htmltag($tmpproject->title);
 					print '</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
@@ -2249,7 +2250,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Task label
 			if (!empty($arrayfields['t.element_label']['checked'])) {
 				if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
-					print '<td class="nowrap tdoverflowmax300" title="'.dol_escape_htmltag($task_time->label).'">';
+					print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($task_time->label).'">';
 					print dol_escape_htmltag($task_time->label);
 					print '</td>';
 					if (!$i) {

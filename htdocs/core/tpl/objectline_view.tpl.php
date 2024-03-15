@@ -391,9 +391,15 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 }
 
 // Price total without tax
-if ($line->special_code == 3) { ?>
-	<td class="linecoloption nowrap right"><?php $coldisplay++; ?><?php print $langs->trans('Option'); ?></td>
-<?php } else {
+if ($line->special_code == 3) {
+	$coldisplay++;
+	$colspanOptions	= '';
+	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
+		$coldisplay++;
+		$colspanOptions	= ' colspan="2"';
+	}
+	print '<td class="linecoloption nowrap right"'.$colspanOptions.'>'.$langs->trans('Option').'</td>';
+} else {
 	print '<td class="linecolht nowrap right">';
 	$coldisplay++;
 	print $tooltiponprice;

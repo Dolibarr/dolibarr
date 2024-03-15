@@ -309,7 +309,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $sepavatid, 0, 'L');
 
 				$address = '______________________________________________';
-				if ($thirdparty->id > 0) {
+				if(!empty($object->owner_address)) {
+					$address = $object->owner_address;
+				} elseif ($thirdparty->id > 0) {
 					$tmpaddresswithoutcountry = $thirdparty->getFullAddress();	// we test on address without country
 					if ($tmpaddresswithoutcountry) {
 						$address = $thirdparty->getFullAddress(1);	// full address

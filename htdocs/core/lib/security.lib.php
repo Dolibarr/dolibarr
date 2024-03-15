@@ -172,7 +172,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
  *	Decode a string with a symetric encryption. Used to decrypt sensitive data saved into database.
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *
- *	@param   string		$chain		string to encode
+ *	@param   string		$chain		string to decode
  *	@param   string		$key		If '', we use $conf->file->instance_unique_id
  *	@return  string					encoded string
  *  @since v17
@@ -187,15 +187,23 @@ function dolDecrypt($chain, $key = '')
 	}
 
 	if (empty($key)) {
-		$key = $conf->file->instance_unique_id;
+		if (!empty($conf->file->dolcrypt_key)) {
+			// If dolcrypt_key is defined, we used it in priority
+			$key = $conf->file->dolcrypt_key;
+		} else {
+			// We fall back on the instance_unique_id
+			$key = $conf->file->instance_unique_id;
+		}
 	}
 
+	//var_dump('key='.$key);
 	$reg = array();
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
 		$ciphering = $reg[1];
 		if (function_exists('openssl_decrypt')) {
 			if (empty($key)) {
-				return 'Error dolDecrypt decrypt key is empty';
+				dol_syslog("Error dolDecrypt decrypt key is empty", LOG_WARNING);
+				return $chain;
 			}
 			$tmpexplode = explode(':', $reg[2]);
 			if (!empty($tmpexplode[1]) && is_string($tmpexplode[0])) {
@@ -204,7 +212,8 @@ function dolDecrypt($chain, $key = '')
 				$newchain = openssl_decrypt($tmpexplode[0], $ciphering, $key, 0, null);
 			}
 		} else {
-			$newchain = 'Error dolDecrypt function openssl_decrypt() not available';
+			dol_syslog("Error dolDecrypt openssl_decrypt is not available", LOG_ERR);
+			return $chain;
 		}
 		return $newchain;
 	} else {
@@ -875,7 +884,10 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$feature = 'agenda';
 			$dbtablename = 'actioncomm';
 		}
-		if ($feature == 'payment_sc') {
+		if ($feature == 'payment_sc' && empty($parenttableforentity)) {
+			// If we check perm on payment page but $parenttableforentity not defined, we force value on parent table
+			$parenttableforentity = '';
+			$dbtablename = "chargesociales";
 			$feature = "chargesociales";
 			$objectid = $object->fk_charge;
 		}
@@ -883,7 +895,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		$checkonentitydone = 0;
 
 		// Array to define rules of checks to do
-		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for object Societe
 		$checkparentsoc = array('agenda', 'contact', 'contrat'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
@@ -1093,16 +1105,14 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$useridtocheck = 0;
 			if ($feature == 'holiday') {
 				$useridtocheck = $object->fk_user;
-				if (!in_array($object->fk_user, $childids) && !in_array($object->fk_validator, $childids)) {
+				if (!$user->hasRight('holiday', 'readall') && !in_array($useridtocheck, $childids) && !in_array($object->fk_validator, $childids)) {
 					return false;
 				}
 			}
 			if ($feature == 'expensereport') {
 				$useridtocheck = $object->fk_user_author;
-				if (!$user->rights->expensereport->readall) {
-					if (!in_array($useridtocheck, $childids)) {
-						return false;
-					}
+				if (!$user->hasRight('expensereport', 'readall') && !in_array($useridtocheck, $childids)) {
+					return false;
 				}
 			}
 		}

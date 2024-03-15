@@ -40,6 +40,7 @@ $rowid = GETPOST('rowid', 'int');
 $massaction = GETPOST('massaction', 'aZ09');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'accountingaccountlist'; // To manage different context of search
+$mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 $search_account = GETPOST('search_account', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
@@ -90,7 +91,7 @@ $arrayfields = array(
 	'aa.pcg_type'=>array('label'=>"Pcgtype", 'checked'=>1, 'help'=>'PcgtypeDesc'),
 	'categories'=>array('label'=>"AccountingCategories", 'checked'=>-1, 'help'=>'AccountingCategoriesDesc'),
 	'aa.reconcilable'=>array('label'=>"Reconcilable", 'checked'=>1),
-	'aa.import_key'=>array('label'=>"ImportId", 'checked'=>-1),
+	'aa.import_key'=>array('label'=>"ImportId", 'checked'=>-1, 'help'=>''),
 	'aa.active'=>array('label'=>"Activated", 'checked'=>1)
 );
 
@@ -259,7 +260,7 @@ if (strlen(trim($search_account))) {
 			$search_account_tmp_clean = $search_account_tmp;
 			$search_account_clean = $search_account;
 			$startchar = '%';
-			if (strpos($search_account_tmp, '^') === 0) {
+			if (substr($search_account_tmp, 0, 1) === '^') {
 				$startchar = '';
 				$search_account_tmp_clean = preg_replace('/^\^/', '', $search_account_tmp);
 				$search_account_clean = preg_replace('/^\^/', '', $search_account);
@@ -413,7 +414,7 @@ if ($resql) {
 	print '<br>';
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+	$selectedfields = ((!empty($mode) && $mode != 'kanban') ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	$moreforfilter = '';

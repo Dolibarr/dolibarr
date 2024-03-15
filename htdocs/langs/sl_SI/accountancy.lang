@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=Če nastavite računovodski račun na vrstice poroč
 DescVentilDoneExpenseReport=Tukaj si oglejte seznam vrstic poročil o stroških in njihovih obračunskih računov za provizije
 
 Closure=Letno zaprtje
-DescClosure=Tukaj si oglejte število premikov po mesecih, ki še niso potrjeni in zaklenjeni
+AccountancyClosureStep1Desc=Tukaj si oglejte število premikov po mesecih, ki še niso potrjeni in zaklenjeni
 OverviewOfMovementsNotValidated=Pregled premikov ni preverjen in zaklenjen
 AllMovementsWereRecordedAsValidated=Vsi premiki so bili zabeleženi kot potrjeni in zaklenjeni
 NotAllMovementsCouldBeRecordedAsValidated=Vseh premikov ni bilo mogoče zabeležiti kot potrjenih in zaklenjenih

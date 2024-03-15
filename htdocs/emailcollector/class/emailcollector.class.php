@@ -1128,6 +1128,8 @@ class EmailCollector extends CommonObject
 		$this->fetchFilters();
 		$this->fetchActions();
 
+		$targetdir = ($this->target_directory ? $this->target_directory : ''); // Can be '[Gmail]/Trash' or 'mytag'
+
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 			if ($this->acces_type == 1) {
 				// Mode OAUth2 with PHP-IMAP
@@ -1233,7 +1235,6 @@ class EmailCollector extends CommonObject
 				return -2;
 			}
 			$sourcedir = $this->source_directory;
-			$targetdir = ($this->target_directory ? $this->target_directory : ''); // Can be '[Gmail]/Trash' or 'mytag'
 
 			$connectstringserver = $this->getConnectStringIMAP();
 			$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
@@ -1630,7 +1631,7 @@ class EmailCollector extends CommonObject
 
 				$emailto = $this->decodeSMTPSubject($overview[0]->to);
 
-				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop)." - ".dol_escape_htmltag((string) $imapemail)." - References: ".dol_escape_htmltag($headers['References'])." - Subject: ".dol_escape_htmltag($headers['Subject']);
+				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop)." - ".dol_escape_htmltag($this->uidAsString($imapemail))." - References: ".dol_escape_htmltag($headers['References'])." - Subject: ".dol_escape_htmltag($headers['Subject']);
 				dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']." Subject: ".$headers['Subject']);
 
 
@@ -3186,8 +3187,8 @@ class EmailCollector extends CommonObject
 								$imapemail->move($targetdir);
 							}
 						} else {
-							dol_syslog("EmailCollector::doCollectOneCollector move message ".((string) $imapemail)." to ".$connectstringtarget, LOG_DEBUG);
-							$operationslog .= '<br>Move mail '.((string) $imapemail).' - '.$msgid;
+							dol_syslog("EmailCollector::doCollectOneCollector move message ".($this->uidAsString($imapemail))." to ".$connectstringtarget, LOG_DEBUG);
+							$operationslog .= '<br>Move mail '.($this->uidAsString($imapemail)).' - '.$msgid;
 
 							$arrayofemailtodelete[$imapemail] = $msgid;
 						}
@@ -3195,7 +3196,7 @@ class EmailCollector extends CommonObject
 						if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 							dol_syslog("EmailCollector::doCollectOneCollector message '".($imapemail->getHeader()->get('subject'))."' using this->host=".$this->host.", this->access_type=".$this->acces_type." was set to read", LOG_DEBUG);
 						} else {
-							dol_syslog("EmailCollector::doCollectOneCollector message ".((string) $imapemail)." to ".$connectstringtarget." was set to read", LOG_DEBUG);
+							dol_syslog("EmailCollector::doCollectOneCollector message ".($this->uidAsString($imapemail))." to ".$connectstringtarget." was set to read", LOG_DEBUG);
 						}
 					}
 				} else {
@@ -3549,5 +3550,20 @@ class EmailCollector extends CommonObject
 		$text = preg_replace('/[\x{1F1E0}-\x{1F1FF}]/u', '', $text);
 
 		return $text;
+	}
+
+	/**
+	 * Get UID of message as a string
+	 *
+	 * @param int|Webklex\PHPIMAP\Message	$imapemail		UID as int (if native IMAP) or as object (if external library)
+	 * @return string						UID as string
+	 */
+	protected function uidAsString($imapemail)
+	{
+		if (is_object($imapemail)) {
+			return $imapemail->getAttributes()["uid"];
+		} else {
+			return (string) $imapemail;
+		}
 	}
 }
