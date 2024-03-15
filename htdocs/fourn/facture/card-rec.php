@@ -1184,9 +1184,9 @@ if ($action == 'create') {
 		}
 		$morehtmlref .= '</div>';
 
-		$morehtmlright = '';
+		$morehtmlstatus = '';
 
-		dol_banner_tab($object, 'ref', $linkback, 1, 'title', 'none', $morehtmlref, '', 0, '', $morehtmlright);
+		dol_banner_tab($object, 'ref', $linkback, 1, 'title', 'none', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';

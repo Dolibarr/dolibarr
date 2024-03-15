@@ -9785,6 +9785,7 @@ abstract class CommonObject
 		foreach ($fieldvalues as $k => $v) {
 			$keys[$k] = $k;
 			$value = $this->fields[$k];
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$values[$k] = $this->quote($v, $value); // May return string 'NULL' if $value is null
 		}
 
@@ -10087,7 +10088,9 @@ abstract class CommonObject
 		foreach ($fieldvalues as $k => $v) {
 			$keys[$k] = $k;
 			$value = $this->fields[$k];
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$values[$k] = $this->quote($v, $value);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
 		}
 
