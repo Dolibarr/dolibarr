@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,12 +59,20 @@ class PaymentVAT extends CommonObject
 	public $datep = '';
 
 	/**
-	 * @deprecated
+	 * @deprecated Use $amount instead
 	 * @see $amount
+	 * @var float|int
 	 */
 	public $total;
 
+	/**
+	 * @var float|int
+	 */
 	public $amount; // Total amount of payment
+
+	/**
+	 * @var array<float|int>
+	 */
 	public $amounts = array(); // Array of amounts
 
 	/**
@@ -73,7 +82,7 @@ class PaymentVAT extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $num_payment instead
 	 * @see $num_payment
 	 */
 	public $num_paiement;
@@ -578,7 +587,7 @@ class PaymentVAT extends CommonObject
 			$acc = new Account($this->db);
 			$acc->fetch($accountid);
 
-			$total = $this->total;
+			$total = $this->amount;
 			if ($mode == 'payment_vat') {
 				$total = -$total;
 			}

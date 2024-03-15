@@ -15,7 +15,6 @@ return [
     // PhanUndeclaredConstant : 15+ occurrences
     // PhanPluginDuplicateExpressionBinaryOp : 10+ occurrences
     // PhanTypeArraySuspiciousNull : 10+ occurrences
-    // PhanTypeInvalidUnaryOperandNumeric : 8 occurrences
     // PhanRedefineFunctionInternal : 6 occurrences
     // PhanPluginUnsafeEval : 5 occurrences
     // PhanParamSuspiciousOrder : 4 occurrences
@@ -39,7 +38,7 @@ return [
         'htdocs/categories/class/api_categories.class.php' => ['PhanAccessMethodProtected'],
         'htdocs/categories/viewcat.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/collab/index.php' => ['PhanParamTooMany'],
-        'htdocs/comm/action/index.php' => ['PhanTypeArraySuspiciousNull', 'PhanTypeInvalidUnaryOperandNumeric'],
+        'htdocs/comm/action/index.php' => ['PhanTypeArraySuspiciousNull'],
         'htdocs/comm/mailing/card.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/compta/accounting-files.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
         'htdocs/compta/cashcontrol/cashcontrol_card.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
@@ -72,14 +71,12 @@ return [
         'htdocs/core/modules/syslog/mod_syslog_syslog.php' => ['PhanParamSignatureMismatch'],
         'htdocs/core/triggers/interface_80_modStripe_Stripe.class.php' => ['PhanTypeMismatchPropertyProbablyReal'],
         'htdocs/don/class/don.class.php' => ['PhanParamTooMany'],
-        'htdocs/expensereport/class/paymentexpensereport.class.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
         'htdocs/fourn/class/api_supplier_invoices.class.php' => ['PhanPluginSuspiciousParamOrder'],
         'htdocs/intracommreport/list.php' => ['PhanAccessPropertyStaticAsNonStatic'],
         'htdocs/loan/class/paymentloan.class.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
         'htdocs/mrp/class/mo.class.php' => ['PhanParamSignatureMismatch'],
         'htdocs/product/admin/product_tools.php' => ['PhanNoopStringLiteral'],
         'htdocs/projet/tasks/list.php' => ['PhanTypeArraySuspiciousNull'],
-        'htdocs/public/bookcal/index.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
         'htdocs/public/opensurvey/index.php' => ['PhanPluginSuspiciousParamOrder'],
         'htdocs/public/payment/paymentok.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/public/recruitment/index.php' => ['PhanPluginSuspiciousParamOrder'],
