@@ -273,3 +273,6 @@ ALTER TABLE llx_product_association ADD COLUMN import_key varchar(14) DEFAULT NU
 
 ALTER TABLE llx_ticket ADD COLUMN barcode varchar(255) DEFAULT NULL after extraparams;
 ALTER TABLE llx_ticket ADD COLUMN fk_barcode_type integer DEFAULT NULL after barcode;
+
+ALTER TABLE llx_ticket ADD UNIQUE INDEX uk_ticket_barcode_barcode_type (barcode, fk_barcode_type, entity);
+ALTER TABLE llx_ticket ADD CONSTRAINT llx_ticket_fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES  llx_c_barcode_type (rowid);
