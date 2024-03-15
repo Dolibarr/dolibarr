@@ -589,7 +589,7 @@ return [
 		// 'PhanPluginPrintfNotPercent',  // Detects fishy stuff with '%' format and suggests %%
 		'PhanPossiblyUndeclaredGlobalVariable',
 		// 'PhanPluginPossiblyStaticProtectedMethod',
-		'PhanTypeMismatchReturn',
+		// 'PhanTypeMismatchReturn',
 		// 'PhanPluginMoreSpecificActualReturnType',
 		// 'PhanTypeMismatchReturnProbablyReal',
 		'PhanPossiblyUndeclaredVariable',
