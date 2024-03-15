@@ -13929,15 +13929,15 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 {
 	global $conf, $db, $user, $langs, $hookmanager;
 	global $action, $object;
-	
+
 	if (!is_object($langs)) {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
     	$langs = new Translate('', $conf);
     	$langs->setDefaultLang();
 	}
-	
+
     $langs->load("errors");
-	
+
     if ($printheader) {
         if (function_exists("llxHeader")) {
             llxHeader('');
@@ -13945,7 +13945,7 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
             llxHeaderVierge('');
         }
     }
-	
+
     print '<div class="error">';
     if (empty($message)) {
         print $langs->trans("ErrorRecordNotFound");
@@ -13954,7 +13954,7 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
     }
     print '</div>';
     print '<br>';
-	
+
     if (empty($showonlymessage)) {
         if (empty($hookmanager)) {
         	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -13962,7 +13962,7 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
         	// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
             $hookmanager->initHooks(array('main'));
         }
-  
+
         $parameters = array('message'=>$message, 'params'=>$params);
         $reshook = $hookmanager->executeHooks('getErrorRecordNotFound', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
     	print $hookmanager->resPrint;
