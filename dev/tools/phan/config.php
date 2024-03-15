@@ -591,7 +591,7 @@ return [
 		// 'PhanPluginPossiblyStaticProtectedMethod',
 		'PhanTypeMismatchReturn',
 		// 'PhanPluginMoreSpecificActualReturnType',
-		'PhanTypeMismatchReturnProbablyReal',
+		// 'PhanTypeMismatchReturnProbablyReal',
 		'PhanPossiblyUndeclaredVariable',
 		'PhanTypeMismatchArgument',
 		// 'PhanPluginUnreachableCode',
