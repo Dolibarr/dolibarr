@@ -2398,15 +2398,15 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright') && 
 
 	if ($label == "Read objects of $module" && $crud != "read") {
 		$crud = "read";
-		$label == "Read objects of $module";
+		// $label = "Read objects of $module";
 	}
 	if ($label == "Create/Update objects of $module" && $crud != "write") {
 		$crud = "write";
-		$label == "Create/Update objects of $module";
+		// $label = "Create/Update objects of $module";
 	}
 	if ($label == "Delete objects of $module" && $crud != "delete") {
 		$crud = "delete";
-		$label == "Delete objects of $module";
+		// $label = "Delete objects of $module";
 	}
 
 	$permissions = $moduleobj->rights;
@@ -4353,8 +4353,9 @@ if ($module == 'initmodule') {
 							$mod = strtolower($module);
 							$obj = strtolower($tabobj);
 							$newproperty = dolGetButtonTitle($langs->trans('NewProperty'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.urlencode($module).'&tabobj=createproperty&obj='.urlencode($tabobj));
+							$nbOfProperties = count($reflectorpropdefault['fields']);
 
-							print_barre_liste($langs->trans("ObjectProperties"), 0, $_SERVER["PHP_SELF"], '', '', '', '', '', 0, '', 0, $newproperty, '', '', 0, 0, 1);
+							print_barre_liste($langs->trans("ObjectProperties"), 0, $_SERVER["PHP_SELF"], '', '', '', '', '', $nbOfProperties, '', 0, $newproperty, '', '', 0, 0, 1);
 
 							//var_dump($reflectorpropdefault);exit;
 							print '<!-- Table with properties of object -->'."\n";

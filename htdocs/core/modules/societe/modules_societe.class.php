@@ -72,11 +72,11 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 	/**
 	 *  Return next value available
 	 *
-	 *	@param	Societe		$objsoc		Object thirdparty
-	 *	@param	int			$type		Type
-	 *  @return string      			Value
+	 *	@param	Societe|string	$objsoc		Object thirdparty
+	 *	@param	int				$type		Type
+	 *  @return string      				Value
 	 */
-	public function getNextValue($objsoc = 0, $type = -1)
+	public function getNextValue($objsoc = '', $type = -1)
 	{
 		global $langs;
 		return $langs->trans("Function_getNextValue_InModuleNotWorking");
@@ -254,7 +254,7 @@ abstract class ModeleAccountancyCode extends CommonNumRefGenerator
 	 *
 	 *  @param	DoliDB	$db             Database handler
 	 *  @param  Societe	$societe        Third party object
-	 *  @param  int		$type			'customer' or 'supplier'
+	 *  @param  string	$type			'customer' or 'supplier'
 	 *  @return	int						>=0 if OK, <0 if KO
 	 */
 	public function get_code($db, $societe, $type = '')

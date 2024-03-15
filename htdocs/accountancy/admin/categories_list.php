@@ -201,9 +201,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 	// Si verif ok et action add, on ajoute la ligne
 	if ($ok && GETPOST('actionadd', 'alpha')) {
+		$newid = 0;
+
 		if ($tabrowid[$id]) {
 			// Get free id for insert
-			$newid = 0;
 			$sql = "SELECT MAX(".$db->sanitize($tabrowid[$id]).") newid FROM ".$db->sanitize($tabname[$id]);
 			$result = $db->query($sql);
 			if ($result) {
@@ -309,11 +310,7 @@ if (GETPOST('actioncancel', 'alpha')) {
 }
 
 if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
-	if ($tabrowid[$id]) {
-		$rowidcol = $tabrowid[$id];
-	} else {
-		$rowidcol = "rowid";
-	}
+	$rowidcol = "rowid";
 
 	$sql = "DELETE from ".$db->sanitize($tabname[$id])." WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
 
@@ -330,11 +327,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 
 // activate
 if ($action == $acts[0]) {
-	if ($tabrowid[$id]) {
-		$rowidcol = $tabrowid[$id];
-	} else {
-		$rowidcol = "rowid";
-	}
+	$rowidcol = "rowid";
 
 	if ($rowid) {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 1 WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
@@ -342,19 +335,17 @@ if ($action == $acts[0]) {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 1 WHERE code = '".$db->escape($code)."'";
 	}
 
-	$result = $db->query($sql);
-	if (!$result) {
-		dol_print_error($db);
+	if ($sql) {
+		$result = $db->query($sql);
+		if (!$result) {
+			dol_print_error($db);
+		}
 	}
 }
 
 // disable
 if ($action == $acts[1]) {
-	if ($tabrowid[$id]) {
-		$rowidcol = $tabrowid[$id];
-	} else {
-		$rowidcol = "rowid";
-	}
+	$rowidcol = "rowid";
 
 	if ($rowid) {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 0 WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
@@ -362,19 +353,17 @@ if ($action == $acts[1]) {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 0 WHERE code = '".$db->escape($code)."'";
 	}
 
-	$result = $db->query($sql);
-	if (!$result) {
-		dol_print_error($db);
+	if ($sql) {
+		$result = $db->query($sql);
+		if (!$result) {
+			dol_print_error($db);
+		}
 	}
 }
 
 // favorite
 if ($action == 'activate_favorite') {
-	if ($tabrowid[$id]) {
-		$rowidcol = $tabrowid[$id];
-	} else {
-		$rowidcol = "rowid";
-	}
+	$rowidcol = "rowid";
 
 	if ($rowid) {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET favorite = 1 WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
@@ -382,19 +371,17 @@ if ($action == 'activate_favorite') {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET favorite = 1 WHERE code = '".$db->escape($code)."'";
 	}
 
-	$result = $db->query($sql);
-	if (!$result) {
-		dol_print_error($db);
+	if ($sql) {
+		$result = $db->query($sql);
+		if (!$result) {
+			dol_print_error($db);
+		}
 	}
 }
 
 // disable favorite
 if ($action == 'disable_favorite') {
-	if ($tabrowid[$id]) {
-		$rowidcol = $tabrowid[$id];
-	} else {
-		$rowidcol = "rowid";
-	}
+	$rowidcol = "rowid";
 
 	if ($rowid) {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET favorite = 0 WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
@@ -402,9 +389,11 @@ if ($action == 'disable_favorite') {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET favorite = 0 WHERE code = '".$db->escape($code)."'";
 	}
 
-	$result = $db->query($sql);
-	if (!$result) {
-		dol_print_error($db);
+	if ($sql) {
+		$result = $db->query($sql);
+		if (!$result) {
+			dol_print_error($db);
+		}
 	}
 }
 

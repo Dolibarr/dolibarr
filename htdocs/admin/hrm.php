@@ -66,6 +66,11 @@ $setupnotempty = 0;
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
+$moduledir = 'hrm';
+$myTmpObjects = array();
+// TODO Scan list of objects to fill this array
+$myTmpObjects['evaluation'] = array('label' => 'Evaluation', 'includerefgeneration' => 1, 'includedocgeneration' => 0);
+
 
 /*
  * Actions
@@ -109,38 +114,40 @@ if ($action == 'update') {
 	}
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
-	$tmpobjectkey = GETPOST('object');
+	$tmpobjectkey = GETPOST('object', 'aZ09');
 
-	$tmpobject = new $tmpobjectkey($db);
-	$tmpobject->initAsSpecimen();
+	if (in_array($tmpobjectkey, $myTmpObjects)) {
+		$tmpobject = new $tmpobjectkey($db);
+		$tmpobject->initAsSpecimen();
 
-	// Search template files
-	$file = '';
-	$classname = '';
-	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir) {
-		$file = dol_buildpath($reldir."core/modules/hrm/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
-		if (file_exists($file)) {
-			$classname = "pdf_".$modele;
-			break;
+		// Search template files
+		$file = '';
+		$classname = '';
+		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir) {
+			$file = dol_buildpath($reldir."core/modules/hrm/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
+			if (file_exists($file)) {
+				$classname = "pdf_".$modele;
+				break;
+			}
 		}
-	}
 
-	if ($classname !== '') {
-		require_once $file;
+		if ($classname !== '') {
+			require_once $file;
 
-		$module = new $classname($db);
+			$module = new $classname($db);
 
-		if ($module->write_file($tmpobject, $langs) > 0) {
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
-			return;
+			if ($module->write_file($tmpobject, $langs) > 0) {
+				header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
+				return;
+			} else {
+				setEventMessages($module->error, null, 'errors');
+				dol_syslog($module->error, LOG_ERR);
+			}
 		} else {
-			setEventMessages($module->error, null, 'errors');
-			dol_syslog($module->error, LOG_ERR);
+			setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+			dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 		}
-	} else {
-		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
-		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
@@ -209,9 +216,6 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 $head = hrmAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "hrm");
 
-$moduledir = 'hrm';
-$myTmpObjects = array();
-$myTmpObjects['evaluation'] = array('label' => 'Evaluation', 'includerefgeneration' => 1, 'includedocgeneration' => 0);
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	if ($myTmpObjectKey != $type) {

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +65,7 @@ if (empty($reshook)) {
 
 		$assetdepreciationoptions->setInfosForMode($mode_key, $class_type, true);
 
-		$width = ($mode_key == "economic")? "pull-left" : "pull-left";
+		$width = "pull-left";
 		print '<table class="liste centpercent '. $width .'" id="block_' . $mode_key . '">' . "\n";
 		print '<tr class="liste_titre"><td colspan="5">'.$langs->trans($mode_info['label']).'</td></tr>';
 		$mode_info['fields'] = dol_sort_array($mode_info['fields'], 'position');

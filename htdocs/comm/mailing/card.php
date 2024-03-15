@@ -1023,20 +1023,20 @@ if ($action == 'create') {
 			$morehtmlref .= $form->editfieldval("", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string', '', null, null, '', 1);
 			$morehtmlref .= '</div>';
 
-			$morehtmlright = '';
+			$morehtmlstatus = '';
 			$nbtry = $nbok = 0;
 			if ($object->status == 2 || $object->status == 3) {
 				$nbtry = $object->countNbOfTargets('alreadysent');
 				$nbko  = $object->countNbOfTargets('alreadysentko');
 
-				$morehtmlright .= ' ('.$nbtry.'/'.$object->nbemail;
+				$morehtmlstatus .= ' ('.$nbtry.'/'.$object->nbemail;
 				if ($nbko) {
-					$morehtmlright .= ' - '.$nbko.' '.$langs->trans("Error");
+					$morehtmlstatus .= ' - '.$nbko.' '.$langs->trans("Error");
 				}
-				$morehtmlright .= ') &nbsp; ';
+				$morehtmlstatus .= ') &nbsp; ';
 			}
 
-			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
@@ -1345,20 +1345,20 @@ if ($action == 'create') {
 			$morehtmlref .= $form->editfieldval("", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string', '', null, null, '', 1);
 			$morehtmlref .= '</div>';
 
-			$morehtmlright = '';
+			$morehtmlstatus = '';
 			$nbtry = $nbok = 0;
 			if ($object->status == 2 || $object->status == 3) {
 				$nbtry = $object->countNbOfTargets('alreadysent');
 				$nbko  = $object->countNbOfTargets('alreadysentko');
 
-				$morehtmlright .= ' ('.$nbtry.'/'.$object->nbemail;
+				$morehtmlstatus .= ' ('.$nbtry.'/'.$object->nbemail;
 				if ($nbko) {
-					$morehtmlright .= ' - '.$nbko.' '.$langs->trans("Error");
+					$morehtmlstatus .= ' - '.$nbko.' '.$langs->trans("Error");
 				}
-				$morehtmlright .= ') &nbsp; ';
+				$morehtmlstatus .= ') &nbsp; ';
 			}
 
-			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';

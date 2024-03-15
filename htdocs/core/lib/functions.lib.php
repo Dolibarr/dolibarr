@@ -5608,18 +5608,18 @@ function dol_print_error($db = null, $error = '', $errors = null)
 	}
 
 	if ($error || $errors) {
-		$langs->load("errors");
-
 		// Merge all into $errors array
 		if (is_array($error) && is_array($errors)) {
 			$errors = array_merge($error, $errors);
-		} elseif (is_array($error)) {
+		} elseif (is_array($error)) {	// deprecated, use second parameters
 			$errors = $error;
-		} elseif (is_array($errors)) {
+		} elseif (is_array($errors) && !empty($error)) {
 			$errors = array_merge(array($error), $errors);
-		} else {
+		} elseif (!empty($error)) {
 			$errors = array_merge(array($error), array($errors));
 		}
+
+		$langs->load("errors");
 
 		foreach ($errors as $msg) {
 			if (empty($msg)) {
@@ -7929,9 +7929,17 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step (preg_replace).
 			// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
 			// using a non coventionnel way to be encoded, to not have them sanitized just after)
-			$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
-				return realCharForNumericEntities($m);
-			}, $out);
+			$out = preg_replace_callback(
+				'/&#(x?[0-9][0-9a-f]+;?)/i',
+				/**
+				 * @param string $m
+				 * @return string
+				 */
+				static function ($m) {
+					return realCharForNumericEntities($m);
+				},
+				$out
+			);
 
 
 			// Now we remove all remaining HTML entities starting with a number. We don't want such entities.
@@ -9728,14 +9736,14 @@ function dol_osencode($str)
  *      Return an id or code from a code or id.
  *      Store also Code-Id into a cache to speed up next request on same key.
  *
- * 		@param	DoliDB	$db				Database handler
- * 		@param	string	$key			Code or Id to get Id or Code
- * 		@param	string	$tablename		Table name without prefix
- * 		@param	string	$fieldkey		Field to search the key into
- * 		@param	string	$fieldid		Field to get
- *      @param  int		$entityfilter	Filter by entity
- *      @param	string	$filters		Filters to add. WARNING: string must be escaped for SQL and not coming from user input.
- *      @return int<-1,max>				ID of code if OK, 0 if key empty, -1 if KO
+ * 		@param	DoliDB				$db				Database handler
+ * 		@param	string				$key			Code or Id to get Id or Code
+ * 		@param	string				$tablename		Table name without prefix
+ * 		@param	string				$fieldkey		Field to search the key into
+ * 		@param	string				$fieldid		Field to get
+ *      @param  int					$entityfilter	Filter by entity
+ *      @param	string				$filters		Filters to add. WARNING: string must be escaped for SQL and not coming from user input.
+ *      @return int<-1,max>|string					ID of code if OK, 0 if key empty, -1 if KO
  *      @see $langs->getLabelFromKey
  */
 function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0, $filters = '')
@@ -12168,6 +12176,10 @@ function getElementProperties($elementType)
 		$module = 'facture';
 		$subelement = 'facture';
 		$table_element = 'facture';
+	} elseif ($elementType == 'facturerec') {
+		$classpath = 'compta/facture/class';
+		$module = 'facture';
+		$classname = 'FactureRec';
 	} elseif ($elementType == 'commande' || $elementType == 'order') {
 		$classpath = 'commande/class';
 		$module = 'commande';
@@ -12308,6 +12320,16 @@ function getElementProperties($elementType)
 		$classname = 'EmailSenderProfile';
 		$table_element = 'c_email_senderprofile';
 		$subelement = '';
+	} elseif ($elementType == 'conferenceorboothattendee') {
+		$classpath = 'eventorganization/class';
+		$classfile = 'conferenceorboothattendee';
+		$classname = 'ConferenceOrBoothAttendee';
+		$module = 'eventorganization';
+	} elseif ($elementType == 'conferenceorbooth') {
+		$classpath = 'eventorganization/class';
+		$classfile = 'conferenceorbooth';
+		$classname = 'ConferenceOrBooth';
+		$module = 'eventorganization';
 	}
 
 	if (empty($classfile)) {
@@ -13131,7 +13153,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 	global $param, $massactionbutton;
 
-	dol_include_once('/comm/action/class/actioncomm.class.php');
+	require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 
 	// Check parameters
 	if (!is_object($filterobj) && !is_object($objcon)) {
@@ -13858,9 +13880,9 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
  * request.
  *
  * @param string $prefix Prefix used to build the date selector (for instance using Form::selectDate)
- * @param int $timestamp If null, the timestamp will be created from request data
- * @param bool $hourTime If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
- * @param bool $gm If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @param ?int $timestamp If null, the timestamp will be created from request data
+ * @param string $hourTime If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @param string $gm If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
  * @return string Portion of URL with query parameters for the specified date
  */
 function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto')

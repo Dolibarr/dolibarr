@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2022 Alice Adminson <aadminson@example.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,7 +138,7 @@ if ($action == 'updatePrompts') {
 	$newConfigurationsJson = json_encode($currentConfigurations, JSON_UNESCAPED_UNICODE);
 	$result = dolibarr_set_const($db, 'AI_CONFIGURATIONS_PROMPT', $newConfigurationsJson, 'chaine', 0, '', $conf->entity);
 	if (!$error) {
-		$action = 'dodo';
+		$action = '';
 		if ($result) {
 			header("Location: ".$_SERVER['PHP_SELF']);
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -255,7 +256,7 @@ if ($action == 'edit') {
 	$out .= '<span id="prePrompt" class="spanforparamtooltip">pre-Prompt</span>';
 	$out .= '</td>';
 	$out .= '<td>';
-	$out .= '<input name="prePrompt" id="prePromptInput" class="flat minwidth500" value="">';
+	$out .= '<textarea class="flat minwidth500" id="prePromptInput" name="prePrompt" rows="3"></textarea>';
 	$out .= '</td>';
 	$out .= '</tr>';
 	$out .= '<tr class="oddeven">';
@@ -263,7 +264,7 @@ if ($action == 'edit') {
 	$out .= '<span id="postPrompt" class="spanforparamtooltip">Post-prompt</span>';
 	$out .= '</td>';
 	$out .= '<td>';
-	$out .= '<input name="postPrompt" id="postPromptInput" class="flat minwidth500" value="">';
+	$out .= '<textarea class="flat minwidth500" id="postPromptInput" name="postPrompt" rows="3"></textarea>';
 	$out .= '</td>';
 	$out .= '</tr>';
 	$out .= '</tbody>';
@@ -307,7 +308,7 @@ if ($action == 'edit' || $action == 'create') {
 			$out .= '<span id="prePrompt" class="spanforparamtooltip">pre-Prompt</span>';
 			$out .= '</td>';
 			$out .= '<td>';
-			$out .= '<input name="prePrompt" id="prePromptInput_'.$key.'" class="flat minwidth500" value="'.$config['prePrompt'].'" disabled>';
+			$out .= '<textarea class="flat minwidth500" id="prePromptInput_'.$key.'" name="prePrompt" rows="2" disabled>'.$config['prePrompt'].'</textarea>';
 			$out .= '</td>';
 			$out .= '</tr>';
 			$out .= '<tr class="oddeven">';
@@ -315,8 +316,9 @@ if ($action == 'edit' || $action == 'create') {
 			$out .= '<span id="postPrompt" class="spanforparamtooltip">Post-prompt</span>';
 			$out .= '</td>';
 			$out .= '<td>';
-			$out .= '<input name="postPrompt" id="postPromptInput_'.$key.'" class="flat minwidth500" value="'.$config['postPrompt'].'" disabled>';
+			$out .= '<textarea class="flat minwidth500" id="postPromptInput_'.$key.'" name="postPrompt" rows="2" disabled>'.$config['postPrompt'].'</textarea>';
 			$out .= '<br><input type="submit" class="button small submitBtn" name="modify" data-index="'.$key.'" style="display: none;" value="'.dol_escape_htmltag($langs->trans("Modify")).'"/>';
+
 			$out .= '</td>';
 			$out .= '</tr>';
 			$out .= '</form>';
