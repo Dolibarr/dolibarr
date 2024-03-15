@@ -97,7 +97,7 @@ $search_unit_frequency = GETPOST('search_unit_frequency', 'alpha');
 $search_nb_gen_done = GETPOST('search_nb_gen_done', 'alpha');
 $search_status = GETPOST('search_status', 'intcomma');
 
-$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$limit = GETPOSTINT('limit', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");

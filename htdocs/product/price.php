@@ -1950,7 +1950,7 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 	$prodcustprice = new ProductCustomerPrice($db);
 
-	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+	$limit = GETPOSTINT('limit', $conf->liste_limit);
 	$sortfield = GETPOST('sortfield', 'aZ09comma');
 	$sortorder = GETPOST('sortorder', 'aZ09comma');
 	$page = (GETPOSTINT("page") ? GETPOSTINT("page") : 0);

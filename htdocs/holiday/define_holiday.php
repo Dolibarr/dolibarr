@@ -45,7 +45,7 @@ $search_name = GETPOST('search_name', 'alpha');
 $search_supervisor = GETPOSTINT('search_supervisor');
 
 // Load variable for pagination
-$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$limit = GETPOSTINT('limit', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list

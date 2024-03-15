@@ -73,7 +73,7 @@ $search_cheque_num		= GETPOST('search_cheque_num', 'alpha');
 $search_bank_account	= GETPOSTINT('search_bank_account');
 $search_amount			= GETPOST('search_amount', 'alpha'); // alpha because we must be able to search on '< x'
 
-$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$limit = GETPOSTINT('limit', $conf->liste_limit);
 $sortfield				= GETPOST('sortfield', 'aZ09comma');
 $sortorder				= GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT('page');

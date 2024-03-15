@@ -62,7 +62,7 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = "ASC";
 }
-$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$limit = GETPOSTINT('limit', $conf->liste_limit);
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1

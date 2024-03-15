@@ -73,7 +73,7 @@ $search_sale = GETPOSTINT('search_sale');
 $search_categ_cus = GETPOSTINT("search_categ_cus");
 $search_product_category = GETPOSTINT('search_product_category');
 
-$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$limit = GETPOSTINT('limit', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");

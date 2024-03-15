@@ -55,7 +55,7 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 $hookmanager->initHooks(array('invoicesuppliercarddocument'));
 
 // Get parameters
-$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$limit = GETPOSTINT('limit', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
