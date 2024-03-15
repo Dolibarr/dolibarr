@@ -1454,7 +1454,8 @@ class FormMail extends Form
 		$out .= '<td>';
 		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." />';
 		$out .= '<input id="generate_button" type="button" class="button smallpaddingimp"  value="'.$langs->trans('Generate').'"/>';
-		$out .= '<div id="ai_status_message" class="fieldrequired hideobject" >'.$langs->trans("AIProcessingPleaseWait").'</div>';
+		$out .= '<div id="ai_status_message" class="fieldrequired hideobject marginrightonly" >';
+		$out .= '<i class="loader"></i>'.$langs->trans("AIProcessingPleaseWait").'</div>';
 		$out .= "</td></tr>\n";
 
 		$out .= "<script type='text/javascript'>
@@ -1471,6 +1472,7 @@ class FormMail extends Form
 					var instructions = $('#ai_instructions').val();
 					
 					$('#ai_status_message').show();
+					$('.icon-container .loader').show();
 
 					//editor on readonly
         			if (CKEDITOR.instances.message) {
@@ -1498,7 +1500,9 @@ class FormMail extends Form
 							// remove readonly
 							$('#ai_instructions').val('');
 
-							$('#ai_status_message').hide();
+							setTimeout(function() {
+								$('#ai_status_message').hide();
+							}, 3000);
 						},
 						error: function(xhr, status, error) {
 							alert(error);
