@@ -1166,11 +1166,13 @@ class Thirdparties extends DolibarrApi
 
 		$notification->fetch($notification_id);
 
-		if (!$notification->socid == $id) {
-			throw new RestException(403);
-		}
+		$socid = (int) $notification->socid;
 
-		return $notification->delete(DolibarrApiAccess::$user);
+		if ($socid == $id) {
+			return $notification->delete(DolibarrApiAccess::$user);
+		} else {
+			throw new RestException(403, "Not allowed due to bad consistency of input data");
+		}
 	}
 
 	/**
