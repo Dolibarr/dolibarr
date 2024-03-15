@@ -123,6 +123,8 @@ if (empty($reshook)) {
 	if (($action == 'update_vat') && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$tva_tx_txt = GETPOST('tva_tx', 'alpha'); // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
 
+		$price_label = GETPOST('price_label', 'alpha');
+
 		// We must define tva_tx, npr and local taxes
 		$tva_tx = $tva_tx_txt;
 		$reg = array();
@@ -190,6 +192,7 @@ if (empty($reshook)) {
 		$object->localtax2_tx = $localtax2;
 		$object->localtax1_type = $localtax1_type;
 		$object->localtax2_type = $localtax2_type;
+		$object->price_label = $price_label;
 
 		$db->begin();
 
@@ -216,7 +219,7 @@ if (empty($reshook)) {
 					//$localtaxarray=array('0'=>$localtax1_type,'1'=>$localtax1,'2'=>$localtax2_type,'3'=>$localtax2);
 					$localtaxarray = array(); // We do not store localtaxes into product, we will use instead the "vat code" to retrieve them.
 					$level = $i;
-					$ret = $object->updatePrice($oldprice, $oldpricebasetype, $user, $tva_tx, $oldminprice, $level, $oldnpr, 0, 0, $localtaxarray, $vatratecode);
+					$ret = $object->updatePrice($oldprice, $oldpricebasetype, $user, $tva_tx, $oldminprice, $level, $oldnpr, 0, 0, $localtaxarray, $vatratecode, $price_label);
 
 					if ($ret < 0) {
 						$error++;
@@ -238,7 +241,7 @@ if (empty($reshook)) {
 				//$localtaxarray=array('0'=>$localtax1_type,'1'=>$localtax1,'2'=>$localtax2_type,'3'=>$localtax2);
 				$localtaxarray = array(); // We do not store localtaxes into product, we will use instead the "vat code" to retrieve them when required.
 				$level = 0;
-				$ret = $object->updatePrice($oldprice, $oldpricebasetype, $user, $tva_tx, $oldminprice, $level, $oldnpr, 0, 0, $localtaxarray, $vatratecode);
+				$ret = $object->updatePrice($oldprice, $oldpricebasetype, $user, $tva_tx, $oldminprice, $level, $oldnpr, 0, 0, $localtaxarray, $vatratecode, $price_label);
 
 				if ($ret < 0) {
 					$error++;
@@ -382,6 +385,7 @@ if (empty($reshook)) {
 			$newprice_min = price2num(GETPOST('price_min', 'alpha'), '', 2);
 			$newpricebase = GETPOST('price_base_type', 'alpha');
 			$tva_tx_txt = GETPOST('tva_tx', 'alpha'); // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
+			$price_label = GETPOST('price_label', 'alpha');
 
 			$tva_tx = $tva_tx_txt;
 			$vatratecode = '';
@@ -447,6 +451,7 @@ if (empty($reshook)) {
 
 			$pricestoupdate[0] = array(
 				'price' => $newprice,
+				'price_label' => $price_label,
 				'price_min' => $newprice_min,
 				'price_base_type' => $newpricebase,
 				'default_vat_code' => $vatratecode,
@@ -478,7 +483,7 @@ if (empty($reshook)) {
 
 				// If price has changed, we update it
 				if (!array_key_exists($key, $object->multiprices) || $object->multiprices[$key] != $newprice || $object->multiprices_min[$key] != $newprice_min || $object->multiprices_base_type[$key] != $val['price_base_type'] || $object->multiprices_tva_tx[$key] != $newvattx) {
-					$res = $object->updatePrice($newprice, $val['price_base_type'], $user, $val['vat_tx'], $newprice_min, $key, $val['npr'], $psq, 0, $val['localtaxes_array'], $val['default_vat_code']);
+					$res = $object->updatePrice($newprice, $val['price_base_type'], $user, $val['vat_tx'], $newprice_min, $key, $val['npr'], $psq, 0, $val['localtaxes_array'], $val['default_vat_code'], $val['price_label']);
 				} else {
 					$res = 0;
 				}
@@ -638,6 +643,7 @@ if (empty($reshook)) {
 		$prodcustprice->price = price2num(GETPOST("price"), 'MU');
 		$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
 		$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
+		$prodcustprice->price_label = GETPOST("price_label", 'alpha');
 
 		$tva_tx_txt = GETPOST("tva_tx", 'alpha');
 
@@ -761,6 +767,7 @@ if (empty($reshook)) {
 		$prodcustprice->price = price2num(GETPOST("price"), 'MU');
 		$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
 		$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
+		$prodcustprice->price_label = GETPOST("price_label", 'alpha');
 
 		$tva_tx_txt = GETPOST("tva_tx");
 
@@ -1234,7 +1241,11 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 			print '<i class="opacitymedium"> - ' . price($object->price_min_ttc).' '.$langs->trans('TTC') . '</i>';
 		}
 	}
+	print '</td></tr>';
 
+	// Price Label
+	print '<tr class="field_price_label"><td>'.$langs->trans("PriceLabel").'</td><td>';
+	print $object->price_label;
 	print '</td></tr>';
 
 	// Price by quantity
@@ -1521,6 +1532,14 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 		print '</td>';
 		print '</tr>';
 
+		// Price Label
+		print '<tr><td>';
+		print $langs->trans('PriceLabel');
+		print '</td><td>';
+		print '<input name="price_label" maxlength="255" class="minwidth300 maxwidth400onsmartphone" value="'.$object->price_label.'">';
+		print '</td>';
+		print '</tr>';
+
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
@@ -1661,6 +1680,7 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 	$sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.default_vat_code, p.recuperableonly, p.localtax1_tx, p.localtax1_type, p.localtax2_tx, p.localtax2_type,";
 	$sql .= " p.price_level, p.price_min, p.price_min_ttc,p.price_by_qty,";
 	$sql .= " p.date_price as dp, p.fk_price_expression, u.rowid as user_id, u.login";
+	$sql .= " ,p.price_label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product_price as p,";
 	$sql .= " ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE fk_product = ".((int) $object->id);
@@ -1740,6 +1760,7 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 			}
 			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
 			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
+			print '<td class="right">'.$langs->trans("Label").'</td>';
 			print '<td class="right">'.$langs->trans("ChangedBy").'</td>';
 			if ($user->hasRight('produit', 'supprimer')) {
 				print '<td class="right">&nbsp;</td>';
@@ -1869,6 +1890,11 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 				}
 				print '</td>';
 
+				// Price Label
+				print '<td class="right">';
+				print $objp->price_label;
+				print '</td>';
+
 				// User
 				print '<td class="right">';
 				if ($objp->user_id > 0) {
@@ -1877,6 +1903,7 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 					print $userstatic->getNomUrl(1, '', 0, 0, 24, 0, 'login');
 				}
 				print '</td>';
+
 
 				// Action
 				if ($user->hasRight('produit', 'supprimer')) {
@@ -2014,6 +2041,14 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		}
 		print '</td></tr>';
 
+		// Price Label
+		print '<tr><td>';
+		print $langs->trans('PriceLabel');
+		print '</td><td>';
+		print '<input name="price_label" maxlength="255" class="minwidth300 maxwidth400onsmartphone" value="'.$object->price_label.'">';
+		print '</td>';
+		print '</tr>';
+
 		print '</table>';
 
 		print '</div>';
@@ -2101,6 +2136,16 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		}
 		print '</tr>';
 
+
+
+		// Price Label
+		print '<tr><td>';
+		print $langs->trans('PriceLabel');
+		print '</td><td>';
+		print '<input name="price_label" maxlength="255" class="minwidth300 maxwidth400onsmartphone" value="'.$prodcustprice->price_label.'">';
+		print '</td>';
+		print '</tr>';
+
 		print '</table>';
 
 
@@ -2164,6 +2209,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 			}
 			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
 			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
+			print '<td class="right">'.$langs->trans("PriceLabel").'</td>';
 			print '<td class="right">'.$langs->trans("ChangedBy").'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
@@ -2228,6 +2274,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 
 				print '<td class="right">'.price($line->price_min).'</td>';
 				print '<td class="right">'.price($line->price_min_ttc).'</td>';
+				print '<td class="right">'.$line->price_label.'</td>';
 
 				// User
 				$userstatic = new User($db);
@@ -2272,7 +2319,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		print '<table class="liste centpercent">'."\n";
 
 		if (count($prodcustprice->lines) > 0 || $search_soc) {
-			$colspan = 9;
+			$colspan = 10;
 			if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
 				$colspan++;
 			}
@@ -2301,6 +2348,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		}
 		print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
 		print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
+		print '<td class="right">'.$langs->trans("PriceLabel").'</td>';
 		print '<td class="right">'.$langs->trans("ChangedBy").'</td>';
 		print '<td></td>';
 		print '</tr>';
@@ -2360,6 +2408,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 
 		print '<td class="right">'.price($object->price_min).'</td>';
 		print '<td class="right">'.price($object->price_min_ttc).'</td>';
+		print '<td class="right">'.$object->price_label.'</td>';
 		print '<td class="right">';
 		print '</td>';
 		if ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer')) {
@@ -2438,6 +2487,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 
 				print '<td class="right">'.price($line->price_min).'</td>';
 				print '<td class="right">'.price($line->price_min_ttc).'</td>';
+				print '<td class="right">'.$line->price_label.'</td>';
 
 				// User
 				$userstatic = new User($db);
