@@ -69,7 +69,7 @@ class GeoMapEditor
 		}
 		if ($centroidjson != '{}') {
 			if (null === json_decode($centroidjson)) {
-				$centroidjson == '{}';
+				$centroidjson = '{}';
 			} else {
 				// OpenLayers it's "longitude, latitude".
 				// inverting coordinates

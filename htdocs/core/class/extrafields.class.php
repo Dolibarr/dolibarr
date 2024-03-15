@@ -1644,7 +1644,7 @@ class ExtraFields
 				$out .= $geomapeditor->getHtml($keyprefix.$key.$keysuffix, $geojson, $centroidjson, $type);
 			} else {
 				// If keyprefix is search_ or search_options_, we must just use a simple text field
-				$out = '';
+				$out = ''; // @phan-suppress-current-line PhanPluginRedundantAssignment
 			}
 		} elseif ($type == 'password') {
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
