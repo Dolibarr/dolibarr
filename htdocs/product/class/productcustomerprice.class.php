@@ -44,6 +44,7 @@ class ProductCustomerPrice extends CommonObject
 		'price_ttc' => array('type' => 'decimal(20,6)', 'label' => 'TTC', 'enabled' => 1, 'visible' => 1, 'position' => 8, 'notnull' => -1, 'comment' => 'Price TTC'),
 		'price_min' => array('type' => 'decimal(20,6)', 'label' => 'MinPriceHT', 'enabled' => 1, 'visible' => 1, 'position' => 9, 'notnull' => -1, 'comment' => 'Minimum Price'),
 		'price_min_ttc' => array('type' => 'decimal(20,6)', 'label' => 'MinPriceTTC', 'enabled' => 1, 'visible' => 1, 'position' => 10, 'notnull' => -1, 'comment' => 'Minimum Price TTC'),
+		'price_label' => array('type' => 'varchar(255)', 'label' => 'PriceLabel', 'enabled' => 1, 'visible' => 1, 'position' => 20, 'notnull' => -1, 'comment' => 'Price Label'),
 		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => 1, 'position' => 510, 'notnull' => 1, 'foreignkey' => 'user.rowid', 'csslist' => 'tdoverflowmax100'),
 	);
 
@@ -91,6 +92,7 @@ class ProductCustomerPrice extends CommonObject
 	public $localtax1_tx;
 	public $localtax2_type;
 	public $localtax2_tx;
+	public $price_label;
 
 	/**
 	 * @var int User ID
@@ -170,6 +172,9 @@ class ProductCustomerPrice extends CommonObject
 		if (isset($this->fk_user)) {
 			$this->fk_user = (int) $this->fk_user;
 		}
+		if (isset($this->price_label)) {
+			$this->price_label = trim($this->price_label);
+		}
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
 		}
@@ -228,6 +233,7 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= "localtax2_type,";
 		$sql .= "localtax2_tx,";
 		$sql .= "fk_user,";
+		$sql .= "price_label,";
 		$sql .= "import_key";
 		$sql .= ") VALUES (";
 		$sql .= " ".((int) $conf->entity).",";
@@ -248,6 +254,7 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " ".(empty($this->localtax2_type) ? "'0'" : "'".$this->db->escape($this->localtax2_type)."'").",";
 		$sql .= " ".(!isset($this->localtax2_tx) ? 'NULL' : (empty($this->localtax2_tx) ? 0 : $this->localtax2_tx)).",";
 		$sql .= " ".((int) $user->id).",";
+		$sql .=  " ".(!isset($this->price_label) ? 'NULL' : "'".$this->db->escape($this->price_label)."'").",";
 		$sql .= " ".(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'");
 		$sql .= ")";
 
@@ -321,6 +328,7 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " t.localtax1_tx,";
 		$sql .= " t.localtax2_tx,";
 		$sql .= " t.fk_user,";
+		$sql .= " t.price_label,";
 		$sql .= " t.import_key";
 		$sql .= " FROM ".$this->db->prefix()."product_customer_price as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
@@ -350,6 +358,7 @@ class ProductCustomerPrice extends CommonObject
 				$this->localtax1_tx = $obj->localtax1_tx;
 				$this->localtax2_tx = $obj->localtax2_tx;
 				$this->fk_user = $obj->fk_user;
+				$this->price_label = $obj->price_label;
 				$this->import_key = $obj->import_key;
 
 				$this->db->free($resql);
@@ -407,6 +416,7 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " t.localtax1_type,";
 		$sql .= " t.localtax2_type,";
 		$sql .= " t.fk_user,";
+		$sql .= " t.price_label,";
 		$sql .= " t.import_key,";
 		$sql .= " soc.nom as socname,";
 		$sql .= " prod.ref as prodref";
@@ -483,6 +493,7 @@ class ProductCustomerPrice extends CommonObject
 				$line->localtax1_type = $obj->localtax1_type;
 				$line->localtax2_type = $obj->localtax2_type;
 				$line->fk_user = $obj->fk_user;
+				$line->price_label = $obj->price_label;
 				$line->import_key = $obj->import_key;
 				$line->socname = $obj->socname;
 				$line->prodref = $obj->prodref;
@@ -535,6 +546,7 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " t.localtax1_tx,";
 		$sql .= " t.localtax2_tx,";
 		$sql .= " t.fk_user,";
+		$sql .= " t.price_label,";
 		$sql .= " t.import_key,";
 		$sql .= " soc.nom as socname,";
 		$sql .= " prod.ref as prodref";
@@ -590,6 +602,7 @@ class ProductCustomerPrice extends CommonObject
 				$line->localtax1_tx = $obj->localtax1_tx;
 				$line->localtax2_tx = $obj->localtax2_tx;
 				$line->fk_user = $obj->fk_user;
+				$line->price_label = $obj->price_label;
 				$line->import_key = $obj->import_key;
 				$line->socname = $obj->socname;
 				$line->prodref = $obj->prodref;
@@ -662,6 +675,9 @@ class ProductCustomerPrice extends CommonObject
 		if (isset($this->fk_user)) {
 			$this->fk_user = (int) $this->fk_user;
 		}
+		if (isset($this->price_label)) {
+			$this->price_label = trim($this->price_label);
+		}
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
 		}
@@ -722,6 +738,7 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= "localtax1_type,";
 		$sql .= "localtax2_type,";
 		$sql .= "fk_user,";
+		$sql .= "price_label,";
 		$sql .= "import_key";
 
 		$sql .= ") 		";
@@ -745,6 +762,7 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " t.localtax1_type,";
 		$sql .= " t.localtax2_type,";
 		$sql .= " t.fk_user,";
+		$sql .= " t.price_label,";
 		$sql .= " t.import_key";
 
 		$sql .= " FROM ".$this->db->prefix()."product_customer_price as t";
@@ -780,6 +798,7 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " localtax1_type=".(!empty($this->localtax1_type) ? "'".$this->db->escape($this->localtax1_type)."'" : "'0'").",";
 		$sql .= " localtax2_type=".(!empty($this->localtax2_type) ? "'".$this->db->escape($this->localtax2_type)."'" : "'0'").",";
 		$sql .= " fk_user=".$user->id.",";
+		$sql .= " price_label=".(isset($this->price_label) ? "'".$this->db->escape($this->price_label)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 
 		$sql .= " WHERE rowid=".((int) $this->id);
@@ -876,6 +895,7 @@ class ProductCustomerPrice extends CommonObject
 							$prodsocpriceupd->price_base_type = $this->price_base_type;
 							$prodsocpriceupd->tva_tx = $this->tva_tx;
 							$prodsocpriceupd->recuperableonly = $this->recuperableonly;
+							$prodsocpriceupd->price_label = $this->price_label;
 
 							$resultupd = $prodsocpriceupd->update($user, 0, $forceupdateaffiliate);
 							if ($resultupd < 0) {
@@ -894,6 +914,7 @@ class ProductCustomerPrice extends CommonObject
 						$prodsocpricenew->price_base_type = $this->price_base_type;
 						$prodsocpricenew->tva_tx = $this->tva_tx;
 						$prodsocpricenew->recuperableonly = $this->recuperableonly;
+						$prodsocpricenew->price_label = $this->price_label;
 
 						$resultupd = $prodsocpricenew->create($user, 0, $forceupdateaffiliate);
 						if ($resultupd < 0) {
@@ -1039,6 +1060,7 @@ class ProductCustomerPrice extends CommonObject
 		$this->localtax1_tx = '';
 		$this->localtax2_tx = '';
 		$this->fk_user = 0;
+		$this->price_label = '';
 		$this->import_key = '';
 
 		return 1;
@@ -1093,6 +1115,7 @@ class PriceByCustomerLine
 	 * @var int User ID
 	 */
 	public $fk_user;
+	public $price_label;
 
 	public $import_key;
 	public $socname;
