@@ -2885,10 +2885,12 @@ class Ticket extends CommonObject
 
 				$moreinheader = 'X-Dolibarr-Info: sendTicketMessageByEmail'."\r\n";
 				if (!empty($this->email_msgid)) {
-					$moreinheader .= 'References <'.$this->email_msgid.'>'."\r\n";
+					// We must also add 1 entry In-Reply-To: <$this->email_msgid> with Message-ID we respond from (See RFC5322).
+					$moreinheader .= 'In-Reply-To: <'.$this->email_msgid.'>'."\r\n";
 				}
 
 				$mailfile = new CMailFile($subject, $receiver, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid, $moreinheader, 'ticket', '', $upload_dir_tmp);
+
 				if ($mailfile->error) {
 					setEventMessages($mailfile->error, null, 'errors');
 				} else {
