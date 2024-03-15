@@ -601,7 +601,7 @@ return [
 		'PhanUndeclaredMethod',
 		'PhanTypeMismatchArgumentProbablyReal',
 		'PhanPluginDuplicateExpressionAssignmentOperation',  // Suggestions for optimisation
-		'PhanTypeMismatchPropertyDefault',
+		// 'PhanTypeMismatchPropertyDefault',
 		// 'PhanPluginAlwaysReturnMethod',
 		// 'PhanPluginMissingReturnMethod',
 		'PhanUndeclaredTypeReturnType',
