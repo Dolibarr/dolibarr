@@ -2143,7 +2143,7 @@ class Product extends CommonObject
 	 * @param  int    $product_id     Filter on a particular product id
 	 * @param  string $fourn_ref      Filter on a supplier price ref. 'none' to exclude ref in search.
 	 * @param  int    $fk_soc         If of supplier
-	 * @return int                    Return integer <-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
+	 * @return int|string             Return integer <-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...), or printable result of hook
 	 * @see getSellPrice(), find_min_price_product_fournisseur()
 	 */
 	public function get_buyprice($prodfournprice, $qty, $product_id = 0, $fourn_ref = '', $fk_soc = 0)

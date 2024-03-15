@@ -535,7 +535,7 @@ function getCountry($searchkey, $withcode = '', $dbtouse = null, $outputlangs = 
 	// Check parameters
 	if (empty($searchkey) && empty($searchlabel)) {
 		if ($withcode === 'all') {
-			return array('id' => '', 'code' => '', 'label' => '');
+			return array('id' => 0, 'code' => '', 'label' => '');
 		} else {
 			return '';
 		}

@@ -1404,7 +1404,7 @@ class BOM extends CommonObject
 	 * BOM costs calculation based on cost_price or pmp of each BOM line.
 	 * Set the property ->total_cost and ->unit_cost of BOM.
 	 *
-	 * @return int			Return integer <0 if KO, >0 if OK
+	 * @return int|string	Return integer <0 if KO, >0 if OK, or printable error result from hook
 	 */
 	public function calculateCosts()
 	{
