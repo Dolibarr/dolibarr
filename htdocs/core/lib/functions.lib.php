@@ -13927,14 +13927,14 @@ function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto'
  */
 function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
 {
-    global $conf, $db, $user, $langs, $hookmanager;
-    global $action, $object;
-  
+	global $conf, $db, $user, $langs, $hookmanager;
+	global $action, $object;
+	
     if (!is_object($langs)) {
-        include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
-        $langs = new Translate('', $conf);
-        $langs->setDefaultLang();
-    }
+		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+    	$langs = new Translate('', $conf);
+    	$langs->setDefaultLang();
+	}
   
     $langs->load("errors");
   
