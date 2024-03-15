@@ -1760,6 +1760,7 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 			}
 			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
 			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
+			print '<td class="right">'.$langs->trans("Label").'</td>';
 			print '<td class="right">'.$langs->trans("ChangedBy").'</td>';
 			if ($user->hasRight('produit', 'supprimer')) {
 				print '<td class="right">&nbsp;</td>';
@@ -2318,7 +2319,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		print '<table class="liste centpercent">'."\n";
 
 		if (count($prodcustprice->lines) > 0 || $search_soc) {
-			$colspan = 9;
+			$colspan = 10;
 			if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
 				$colspan++;
 			}
