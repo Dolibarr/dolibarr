@@ -205,7 +205,7 @@ class Partnership extends CommonObject
 	public function create(User $user, $notrigger = 0)
 	{
 		if ($this->fk_soc <= 0 && $this->fk_member <= 0) {
-			$this->error[] = "ErrorThirpdartyOrMemberidIsMandatory";
+			$this->errors[] = "ErrorThirpdartyOrMemberidIsMandatory";
 			return -1;
 		}
 
@@ -522,7 +522,7 @@ class Partnership extends CommonObject
 	public function update(User $user, $notrigger = 0)
 	{
 		if ($this->fk_soc <= 0 && $this->fk_member <= 0) {
-			$this->error[] = "ErrorThirpdartyOrMemberidIsMandatory";
+			$this->errors[] = "ErrorThirpdartyOrMemberidIsMandatory"; // Mistyping in key is in translations
 			return -1;
 		}
 		if (empty($this->fk_user_creat)) {	// For the case the object was created with empty user (from public page).

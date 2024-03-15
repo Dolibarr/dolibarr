@@ -807,7 +807,7 @@ if (empty($reshook)) {
 				if ($fk_default_bom >= 0) {
 					$object->fk_default_bom = $fk_default_bom;
 				} else {
-					$object->fk_default_bom = null;
+					$object->fk_default_bom = 0;
 				}
 
 				$units = GETPOSTINT('units');

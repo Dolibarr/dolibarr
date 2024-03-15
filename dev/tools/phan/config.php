@@ -457,7 +457,7 @@ return [
 		'PhanPluginUnknownClosureReturnType',
 		// 'PhanPluginNoCommentOnProtectedMethod',
 		// 'PhanTypeArraySuspicious',
-		'PhanTypeMismatchPropertyProbablyReal',
+		// 'PhanTypeMismatchPropertyProbablyReal',
 		// 'PhanPluginNoCommentOnPrivateMethod',
 		'PhanPluginUnknownArrayFunctionReturnType',
 		'PhanTypeInvalidLeftOperandOfAdd',
