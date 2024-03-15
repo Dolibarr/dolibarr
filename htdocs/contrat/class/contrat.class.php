@@ -290,17 +290,17 @@ class Contrat extends CommonObject
 	/*
 	 * Signed by sender
 	 */
-	CONST STATUS_SIGNED_SENDER   = 1;
+	const STATUS_SIGNED_SENDER   = 1;
 
 	/*
 	 * Signed by receiver
 	 */
-	CONST STATUS_SIGNED_RECEIVER = 2;
+	const STATUS_SIGNED_RECEIVER = 2;
 
 	/*
 	 * Signed by all
 	 */
-	CONST STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
+	const STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
 
 
 	/**
@@ -3148,7 +3148,7 @@ class ContratLigne extends CommonObjectLine
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),

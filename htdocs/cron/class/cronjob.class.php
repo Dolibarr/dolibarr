@@ -1297,7 +1297,7 @@ class Cronjob extends CommonObject
 				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params."); (Note: Log for cron jobs may be into a different log file)", LOG_DEBUG);
 
 				// Create Object for the called module
-				$nameofclass = $this->objectname;
+				$nameofclass = (string) $this->objectname;
 				$object = new $nameofclass($this->db);
 				if ($this->entity > 0) {
 					$object->entity = $this->entity; // We work on a dedicated entity
