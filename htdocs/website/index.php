@@ -3397,7 +3397,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 				// Edit CKEditor
 				if (getDolGlobalInt('WEBSITE_ALLOW_CKEDITOR')) {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editcontent&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "CKEditor" : "CKEditor")).'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editcontent&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans("CKEditor")).'</a>';
 				}
 
 				print '</span>';
@@ -5200,6 +5200,12 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 
 			//var_dump($filetpl);
 			$filephp = $filetpl;
+
+			// Get session info and obfuscate session cookie
+			$savsessionname = session_name();
+			$savsessionid = $_COOKIE[$savsessionname];
+			$_COOKIE[$savsessionname] = 'obfuscatedcookie';
+
 			ob_start();
 			try {
 				$res = include $filephp;
@@ -5211,6 +5217,9 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 			}
 			$newcontent = ob_get_contents();
 			ob_end_clean();
+
+			// Restore data
+			$_COOKIE[$savsessionname] = $savsessionid;
 		}
 
 		// Change the contenteditable to "true" or "false" when mode Edit Inline is on or off

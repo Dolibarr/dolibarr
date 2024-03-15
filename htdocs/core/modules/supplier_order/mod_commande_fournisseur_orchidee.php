@@ -122,11 +122,11 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe				$objsoc     Object third party
+	 *  @param	Societe|string		$objsoc     Object third party
 	 *  @param  CommandeFournisseur	$object		Object
 	 *  @return string|0      					Value if OK, 0 if KO
 	 */
-	public function getNextValue($objsoc = 0, $object = '')
+	public function getNextValue($objsoc = '', $object = '')
 	{
 		global $db, $conf;
 

@@ -124,14 +124,13 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate	$langs		Object langs
-	 * @param	Societe		$objsoc		Object thirdparty
-	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-	 * @return	string					Return string example
+	 * @param	Translate		$langs		Object langs
+	 * @param	Societe|string	$objsoc		Object thirdparty
+	 * @param	int				$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objsoc = 0, $type = -1)
+	public function getExample($langs, $objsoc = '', $type = -1)
 	{
-		$error = 0;
 		$examplecust = '';
 		$examplesup = '';
 		$errmsg = array(
@@ -150,12 +149,10 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			if (!$examplecust && ($cssforerror == 'error' || $this->error != 'NotConfigured')) {
 				$langs->load("errors");
 				$examplecust = '<span class="'.$cssforerror.'">'.$langs->trans('ErrorBadMask').'</span>';
-				$error = 1;
 			}
 			if (in_array($examplecust, $errmsg)) {
 				$langs->load("errors");
 				$examplecust = '<span class="'.$cssforerror.'">'.$langs->trans($examplecust).'</span>';
-				$error = 1;
 			}
 		}
 		if ($type != 0) {
@@ -163,12 +160,10 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			if (!$examplesup && ($cssforerror == 'error' || $this->error != 'NotConfigured')) {
 				$langs->load("errors");
 				$examplesup = '<span class="'.$cssforerror.'">'.$langs->trans('ErrorBadMask').'</span>';
-				$error = 1;
 			}
 			if (in_array($examplesup, $errmsg)) {
 				$langs->load("errors");
 				$examplesup = '<span class="'.$cssforerror.'">'.$langs->trans($examplesup).'</span>';
-				$error = 1;
 			}
 		}
 
@@ -184,23 +179,23 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	/**
 	 * Return next value
 	 *
-	 * @param	Societe		$objsoc     Object third party
-	 * @param  	int		    $type       Client ou fournisseur (0:customer, 1:supplier)
-	 * @return 	string|-1      			Value if OK, '' if module not configured, -1 if KO
+	 * @param	Societe|string	$objsoc     Object third party
+	 * @param  	int		    	$type       Client ou fournisseur (0:customer, 1:supplier)
+	 * @return 	string|-1      				Value if OK, '' if module not configured, -1 if KO
 	 */
-	public function getNextValue($objsoc = 0, $type = -1)
+	public function getNextValue($objsoc = '', $type = -1)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// Get Mask value
 		$mask = '';
 		if ($type == 0) {
-			$mask = !getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER') ? '' : $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
+			$mask = getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER');
 		}
 		if ($type == 1) {
-			$mask = !getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER') ? '' : $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
+			$mask = getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER');
 		}
 		if (!$mask) {
 			$this->error = 'NotConfigured';

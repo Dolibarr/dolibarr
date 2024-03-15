@@ -459,8 +459,8 @@ class Facture extends CommonInvoice
 
 		$this->ref_client = trim($this->ref_client);
 
-		$this->note = (isset($this->note) ? trim($this->note) : trim($this->note_private)); // deprecated
-		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : trim($this->note_private));
+		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : '');
+		$this->note = (isset($this->note) ? trim($this->note) : $this->note_private); // deprecated
 		$this->note_public = trim($this->note_public);
 		if (!$this->cond_reglement_id) {
 			$this->cond_reglement_id = 0;

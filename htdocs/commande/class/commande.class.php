@@ -1303,8 +1303,8 @@ class Commande extends CommonOrder
 	{
 		global $conf, $hookmanager;
 
-		dol_include_once('/multicurrency/class/multicurrency.class.php');
-		dol_include_once('/core/class/extrafields.class.php');
+		require_once DOL_DOCUMENT_ROOT . '/multicurrency/class/multicurrency.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
 		$error = 0;
 

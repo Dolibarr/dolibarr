@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,9 +123,9 @@ class mod_task_simple extends ModeleNumRefTask
 	/**
 	 *  Return next value
 	 *
-	 *  @param   Societe	$objsoc		Object third party
-	 *  @param   Task	$object		Object Task
-	 *  @return	string|-1			Value if OK, -1 if KO
+	 *  @param   Societe|string	$objsoc		Object third party
+	 *  @param   Task|string	$object		Object Task
+	 *  @return	string|-1					Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -160,19 +161,5 @@ class mod_task_simple extends ModeleNumRefTask
 
 		dol_syslog("mod_task_simple::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next reference not yet used as a reference
-	 *
-	 *  @param  Societe	$objsoc     Object third party
-	 *  @param  Task	$object     Object task
-	 *  @return string|-1           Next not used reference, -1 if KO
-	 */
-	public function task_get_num($objsoc = 0, $object = '')
-	{
-		return $this->getNextValue($objsoc, $object);
 	}
 }

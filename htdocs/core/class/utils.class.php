@@ -4,6 +4,7 @@
  * Copyright (C) 2022		Anthony Berton		<anthony.berton@bb2a.fr>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1006,7 +1007,7 @@ class Utils
 			return -1;
 		}
 
-		dol_include_once('/core/lib/files.lib.php');
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$nbSaves = intval(getDolGlobalString('SYSLOG_FILE_SAVES', 10));
 
@@ -1412,7 +1413,7 @@ class Utils
 		dol_syslog("Utils::cleanUnfinishedCronjob Starting cleaning");
 
 		// Import Cronjob class if not present
-		dol_include_once('/cron/class/cronjob.class.php');
+		require_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
 
 		// Get this job object
 		$this_job = new Cronjob($db);
