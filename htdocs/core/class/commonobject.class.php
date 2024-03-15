@@ -8955,7 +8955,7 @@ abstract class CommonObject
 	/**
 	 * Returns the rights used for this class
 	 *
-	 * @return int|stdClass		Object of permission for the module
+	 * @return null|int|stdClass		Object of permission for the module
 	 */
 	public function getRights()
 	{
