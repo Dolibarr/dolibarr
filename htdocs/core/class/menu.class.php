@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@ class Menu
 	/**
 	 * List of menu items
 	 *
-	 * @var array<array{url:string,titre:string,level:string,enabled:int<0,2>,target:string,mainmenu:string,leftmenu:string,position:int,id:string,idsel:string,classname:string,prefix:string}>
+	 * @var array<array{url:string,titre:string,enabled:int<0,2>,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,id:string,idsel:string,classname:string,prefix:string}>
 	 */
 	public $liste;
 

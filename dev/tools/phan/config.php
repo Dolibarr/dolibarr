@@ -526,7 +526,7 @@ return [
 		// 'PhanTypeMismatchArgumentInternalProbablyReal',
 		'PhanTypeMismatchBitwiseBinaryOperands',
 		'PhanTypeMismatchDimEmpty',
-		'PhanTypeSuspiciousEcho',
+		// 'PhanTypeSuspiciousEcho',
 		// 'PhanNoopBinaryOperator',
 		// 'PhanTypeInvalidBitwiseBinaryOperator',
 		// 'PhanPluginDescriptionlessCommentOnFunction',
