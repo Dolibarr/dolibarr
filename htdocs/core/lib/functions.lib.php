@@ -13936,15 +13936,15 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 		$langs->setDefaultLang();
 	}
 
-    $langs->load("errors");
+	$langs->load("errors");
 
-    if ($printheader) {
-        if (function_exists("llxHeader")) {
-            llxHeader('');
-        } elseif (function_exists("llxHeaderVierge")) {
-            llxHeaderVierge('');
-        }
-    }
+	if ($printheader) {
+    	if (function_exists("llxHeader")) {
+			llxHeader('');
+		} elseif (function_exists("llxHeaderVierge")) {
+			llxHeaderVierge('');
+		}
+	}
 
     print '<div class="error">';
     if (empty($message)) {
