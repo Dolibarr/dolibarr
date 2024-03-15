@@ -300,8 +300,6 @@ class Notify
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->ref = $obj->socid.'-'.$obj->label; // Generate an artificial ref
-
 				$this->id = $obj->rowid;
 				$this->type = $obj->type;
 				$this->socid = $obj->socid;
@@ -323,6 +321,64 @@ class Notify
 		}
 	}
 
+	/**
+	 *	Update record in database
+	 *
+	 *	@param	User|null	$user	     Object user
+	 *  @param  int     	$notrigger   1=Disable triggers
+	 *	@return	int					     Return integer <=0 if KO, >0 if OK
+	 */
+	public function update(User $user = null, $notrigger = -1)
+	{
+		global $langs;
+
+		$error = 0;
+
+		if (!$this->id) {
+			return -1;
+		}
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."notify_def SET";
+		$sql .= " type = '".$this->db->escape($this->type)."'";
+//		$sql .= ",fk_user='".$this->db->escape($this->fk_user)."'";
+//		$sql .= ",email='".$this->db->escape($this->email)."'";
+//		$sql .= ",threshold='".$this->db->escape($this->threshold)."'";
+//		$sql .= ",context='".$this->db->escape($this->context)."'";
+		$sql .= ",fk_soc='".$this->db->escape($this->socid)."'";
+		$sql .= ",fk_action = '".$this->db->escape($this->event)."'";
+		$sql .= ",fk_contact = '".$this->db->escape($this->target)."'";
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('COMPANY_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+		} else {
+			$error++;
+			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$this->error = $langs->trans('ErrorDuplicateField');
+			} else {
+				$this->error = $this->db->lasterror();
+			}
+			$this->errors[] = $this->error;
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
 	/**
 	 * Return number of notifications activated for action code (and third party)
