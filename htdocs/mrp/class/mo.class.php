@@ -231,7 +231,7 @@ class Mo extends CommonObject
 	protected $childtablesoncascade = array('mrp_production');
 
 	/**
-	 * @var MoLine[]|BOMLine[]     Array of subtable lines
+	 * @var MoLine[]     Array of subtable lines
 	 */
 	public $lines = array();
 
