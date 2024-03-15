@@ -446,7 +446,7 @@ return [
 		'PhanRedefinedClassReference',
 		// 'PhanPluginNoCommentOnClass',
 		// 'PhanPluginNotFullyQualifiedGlobalConstant',
-		'PhanTypeMismatchDefault',
+		// 'PhanTypeMismatchDefault',
 		// 'PhanPluginPHPDocHashComment',
 		'PhanPluginShortArrayList',
 		'PhanPluginUnknownArrayPropertyType',
