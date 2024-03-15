@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,7 +169,8 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 		$sql .= " FROM ".MAIN_DB_PREFIX."boxes as b";
 		$sql .= " WHERE b.entity = ".$conf->entity;
 		$sql .= " AND b.rowid = ".((int) $rowid);
-		dol_syslog(get_class($this)."::fetch rowid=".$rowid);
+
+		dol_syslog(get_class($this)."::fetch rowid=".((int) $rowid));
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -193,7 +195,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	 * Standard method to show a box (usage by boxes not mandatory, a box can still use its own showBox function)
 	 *
 	 * @param   array   $head       Array with properties of box title
-	 * @param   array   $contents   Array with properties of box lines
+	 * @param   array<array<array{tr?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>   $contents   Array with properties of box lines
 	 * @param	int		$nooutput	No print, only return string
 	 * @return  string
 	 */
@@ -202,7 +204,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 		global $langs, $user, $conf;
 
 		if (!empty($this->hidden)) {
-			return '\n<!-- Box ".get_class($this)." hidden -->\n'; // Nothing done if hidden (for example when user has no permission)
+			return "\n<!-- Box ".get_class($this)." hidden -->\n"; // Nothing done if hidden (for example when user has no permission)
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

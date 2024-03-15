@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2023	Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,32 +55,32 @@ abstract class CommonNumRefGenerator
 	protected $db;
 
 	/**
-	 * @var int<0,1>            Code facultatif
+	 * @var int<0,1>            Is Code optional 0 or 1
 	 */
 	public $code_null;
 
 	/**
-	 * @var int<0,1>            Code modifiable
+	 * @var int<0,1>            Is Code editable 0 or 1
 	 */
 	public $code_modifiable;
 
 	/**
-	 * @var int<0,1>            Code modifiable si il est invalid
+	 * @var int<0,1>            Is Code editable if invalid 0 or 1
 	 */
 	public $code_modifiable_invalide;
 
 	/**
-	 * @var int<0,1>            Code modifiable si il est null
+	 * @var int<0,1>            Is Code editable if null
 	 */
 	public $code_modifiable_null;
 
 	/**
-	 * @var int<0,1>            Automatic numbering
+	 * @var int<0,1>            Automatic numbering 0 or 1
 	 */
 	public $code_auto;
 
 	/**
-	 * @var int<0,1>            Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
+	 * @var int<0,1>             The third party prefix field must be filled in when using {pre}
 	 */
 	public $prefixIsRequired;
 
@@ -131,7 +132,7 @@ abstract class CommonNumRefGenerator
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@param	Object		$object		Object we need next value for
+	 *	@param	CommonObject	$object	Object we need next value for
 	 *	@return boolean     			false if conflict, true if ok
 	 */
 	public function canBeActivated($object)

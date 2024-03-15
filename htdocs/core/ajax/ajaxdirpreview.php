@@ -220,7 +220,7 @@ if ($type == 'directory') {
 		'mrp-mo'
 	);
 
-	$parameters = array('modulepart'=>$module);
+	$parameters = array('modulepart' => $module);
 	$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
 	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
 		$automodules[] = $hookmanager->resArray['module'];
@@ -274,7 +274,7 @@ if ($type == 'directory') {
 	} elseif ($module == 'mrp-mo') {
 		$upload_dir = $conf->mrp->dir_output;
 	} else {
-		$parameters = array('modulepart'=>$module);
+		$parameters = array('modulepart' => $module);
 		$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
 		if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
 			$upload_dir = $hookmanager->resArray['directory'];
@@ -321,7 +321,7 @@ if ($type == 'directory') {
 					$param .= '&website='.urlencode(GETPOST('website', 'alpha'));
 				}
 				if (!preg_match('/pageid=/', $param)) {
-					$param .= '&pageid='.urlencode(GETPOSTINT('pageid'));
+					$param .= '&pageid='.urlencode((string) (GETPOSTINT('pageid')));
 				}
 				//if (!preg_match('/backtopage=/',$param)) $param.='&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid);
 			}
@@ -422,20 +422,21 @@ if ($useajax || $action == 'deletefile') {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 	$form = new Form($db);
-	$formquestion['urlfile'] = array('type'=>'hidden', 'value'=>$urlfile, 'name'=>'urlfile'); // We must always put field, even if empty because it is filled by javascript later
-	$formquestion['section'] = array('type'=>'hidden', 'value'=>$section, 'name'=>'section'); // We must always put field, even if empty because it is filled by javascript later
-	$formquestion['section_id'] = array('type'=>'hidden', 'value'=>$section_id, 'name'=>'section_id'); // We must always put field, even if empty because it is filled by javascript later
-	$formquestion['section_dir'] = array('type'=>'hidden', 'value'=>$section_dir, 'name'=>'section_dir'); // We must always put field, even if empty because it is filled by javascript later
-	$formquestion['sortfield'] = array('type'=>'hidden', 'value'=>$sortfield, 'name'=>'sortfield'); // We must always put field, even if empty because it is filled by javascript later
-	$formquestion['sortorder'] = array('type'=>'hidden', 'value'=>$sortorder, 'name'=>'sortorder'); // We must always put field, even if empty because it is filled by javascript later
+	$formquestion = array();
+	$formquestion['urlfile'] = array('type' => 'hidden', 'value' => $urlfile, 'name' => 'urlfile'); // We must always put field, even if empty because it is filled by javascript later
+	$formquestion['section'] = array('type' => 'hidden', 'value' => $section, 'name' => 'section'); // We must always put field, even if empty because it is filled by javascript later
+	$formquestion['section_id'] = array('type' => 'hidden', 'value' => $section_id, 'name' => 'section_id'); // We must always put field, even if empty because it is filled by javascript later
+	$formquestion['section_dir'] = array('type' => 'hidden', 'value' => $section_dir, 'name' => 'section_dir'); // We must always put field, even if empty because it is filled by javascript later
+	$formquestion['sortfield'] = array('type' => 'hidden', 'value' => $sortfield, 'name' => 'sortfield'); // We must always put field, even if empty because it is filled by javascript later
+	$formquestion['sortorder'] = array('type' => 'hidden', 'value' => $sortorder, 'name' => 'sortorder'); // We must always put field, even if empty because it is filled by javascript later
 	if (!empty($action) && $action == 'file_manager') {
-		$formquestion['file_manager'] = array('type'=>'hidden', 'value'=>1, 'name'=>'file_manager');
+		$formquestion['file_manager'] = array('type' => 'hidden', 'value' => 1, 'name' => 'file_manager');
 	}
 	if (!empty($websitekey)) {
-		$formquestion['website'] = array('type'=>'hidden', 'value'=>$websitekey, 'name'=>'website');
+		$formquestion['website'] = array('type' => 'hidden', 'value' => $websitekey, 'name' => 'website');
 	}
 	if (!empty($pageid) && $pageid > 0) {
-		$formquestion['pageid'] = array('type'=>'hidden', 'value'=>$pageid, 'name'=>'pageid');
+		$formquestion['pageid'] = array('type' => 'hidden', 'value' => $pageid, 'name' => 'pageid');
 	}
 
 	print $form->formconfirm($url, $langs->trans("DeleteFile"), $langs->trans("ConfirmDeleteFile"), 'confirm_deletefile', $formquestion, "no", ($useajax ? 'deletefile' : 0));

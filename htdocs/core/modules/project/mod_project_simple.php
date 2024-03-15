@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +86,7 @@ class mod_project_simple extends ModeleNumRefProjects
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@param	Object		$object		Object we need next value for
+	 *	@param	CommonObject	$object	Object we need next value for
 	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
 	public function canBeActivated($object)
@@ -163,20 +164,5 @@ class mod_project_simple extends ModeleNumRefProjects
 
 		dol_syslog("mod_project_simple::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next reference not yet used as a reference
-	 *
-	 *  @param	Societe	$objsoc     Object third party
-	 *  @param  Project	$project	Object project
-	 *  @return string|-1      		Next not used reference, -1 if KO
-	 */
-	public function project_get_num($objsoc = 0, $project = '')
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $project);
 	}
 }

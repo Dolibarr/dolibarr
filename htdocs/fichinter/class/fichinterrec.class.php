@@ -8,6 +8,7 @@
  * Copyright (C) 2015       Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016-2018  Charlie Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -304,7 +305,7 @@ class FichinterRec extends Fichinter
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $rowid;
-				$this->title				= $obj->title;
+				$this->title = $obj->title;
 				$this->ref                  = $obj->title;
 				$this->description = $obj->description;
 				$this->datec				= $obj->datec;
@@ -674,7 +675,7 @@ class FichinterRec extends Fichinter
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -685,6 +686,8 @@ class FichinterRec extends Fichinter
 		parent::initAsSpecimen();
 
 		$this->usenewprice = 1;
+
+		return 1;
 	}
 
 	/**

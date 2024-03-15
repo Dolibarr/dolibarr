@@ -794,7 +794,7 @@ class DoliDBPgsql extends DoliDB
 			'42P07' => 'DB_ERROR_TABLE_OR_KEY_ALREADY_EXISTS',
 			'42703' => 'DB_ERROR_NOSUCHFIELD',
 			1060 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
-			42701=> 'DB_ERROR_COLUMN_ALREADY_EXISTS',
+			42701 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
 			'42710' => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
 			'23505' => 'DB_ERROR_RECORD_ALREADY_EXISTS',
 			'42704' => 'DB_ERROR_NO_INDEX_TO_DROP', // May also be Type xxx does not exists
@@ -1068,6 +1068,10 @@ class DoliDBPgsql extends DoliDB
 	{
 		// phpcs:enable
 		// FIXME: $fulltext_keys parameter is unused
+
+		$sqlfields = array();
+		$sqlk = array();
+		$sqluq = array();
 
 		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');

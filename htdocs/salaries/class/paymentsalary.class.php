@@ -2,6 +2,8 @@
 /* Copyright (C) 2011-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2021       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +63,7 @@ class PaymentSalary extends CommonObject
 	public $fk_salary;
 
 	/**
-	 * @var int				Payment creation date
+	 * @var int|string				Payment creation date
 	 */
 	public $datec = '';
 
@@ -151,10 +153,10 @@ class PaymentSalary extends CommonObject
 	public $datev = '';
 
 	/**
-	 * @var array
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
 	);
 
 	/**
@@ -555,7 +557,7 @@ class PaymentSalary extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -572,6 +574,8 @@ class PaymentSalary extends CommonObject
 		$this->fk_bank = 0;
 		$this->fk_user_author = 0;
 		$this->fk_user_modif = 0;
+
+		return 1;
 	}
 
 
@@ -983,11 +987,16 @@ class PaymentSalary extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'fk_bank')) {
-			$return .= ' |  <span class="info-box-label">'.$this->fk_bank.'</span>';
+		if (property_exists($this, 'fk_bank') && is_numeric($this->fk_bank)) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$account = new AccountLine($this->db);
+			$account->fetch($this->fk_bank);
+			$return .= ' |  <span class="info-box-label">'.$account->getNomUrl(1).'</span>';
 		}
-		if (property_exists($this, 'fk_user_author')) {
-			$return .= '<br><span class="info-box-status">'.$this->fk_user_author.'</span>';
+		if (property_exists($this, 'fk_user_author') && is_numeric($this->fk_user_author)) {
+			$userstatic = new User($this->db);
+			$userstatic->fetch($this->fk_user_author);
+			$return .= '<br><span class="info-box-status">'.$userstatic->getNomUrl(1).'</span>';
 		}
 
 		if (property_exists($this, 'fk_typepayment')) {

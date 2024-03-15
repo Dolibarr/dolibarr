@@ -650,7 +650,8 @@ $html .= '</div>';
 
 $html .= '</section>'."\n";
 
-$tmp = '';
+
+$tmpstan = '';
 $nblines = 0;
 if (!empty($output_arrtd)) {
 	foreach ($output_arrtd as $line) {
@@ -659,16 +660,16 @@ if (!empty($output_arrtd)) {
 		preg_match('/^::error file=(.*),line=(\d+),col=(\d+)::(.*)$/', $line, $reg);
 		if (!empty($reg[1])) {
 			if ($nblines < 20) {
-				$tmp .= '<tr class="nohidden">';
+				$tmpstan .= '<tr class="nohidden">';
 			} else {
-				$tmp .= '<tr class="hidden sourcephpstan">';
+				$tmpstan .= '<tr class="hidden sourcephpstan">';
 			}
-			$tmp .= '<td>'.dolPrintLabel($reg[1]).'</td>';
-			$tmp .= '<td class="">';
-			$tmp .= '<a href="'.($urlgit.$reg[1].'#L'.$reg[2]).'" target="_blank">'.dolPrintLabel($reg[2]).'</a>';
-			$tmp .= '</td>';
-			$tmp .= '<td class="tdoverflowmax300" title="'.dolPrintHTMLForAttribute($reg[4]).'">'.dolPrintLabel($reg[4]).'</td>';
-			$tmp .= '</tr>'."\n";
+			$tmpstan .= '<td>'.dolPrintLabel($reg[1]).'</td>';
+			$tmpstan .= '<td class="">';
+			$tmpstan .= '<a href="'.($urlgit.$reg[1].'#L'.$reg[2]).'" target="_blank">'.dolPrintLabel($reg[2]).'</a>';
+			$tmpstan .= '</td>';
+			$tmpstan .= '<td class="tdoverflowmax300" title="'.dolPrintHTMLForAttribute($reg[4]).'">'.dolPrintLabel($reg[4]).'</td>';
+			$tmpstan .= '</tr>'."\n";
 
 			$nblines++;
 		}
@@ -685,6 +686,9 @@ if (count($output_phan_json) != 0) {
 	foreach ($phan_notices as $notice) {
 		if (!empty($notice['location'])) {
 			$path = $notice['location']['path'];
+			if ($path == 'internal') {
+				continue;
+			}
 			$line_start = $notice['location']['lines']['begin'];
 			$line_end = $notice['location']['lines']['end'];
 			if ($line_start == $line_end) {
@@ -770,7 +774,8 @@ $html .= '</section>';
 
 
 // Technical debt PHPstan
-if ($nblines != 0) {
+
+if ($dirphpstan != 'disabled') {
 	$datatable_script .= '
  if (typeof(DataTable)==="function") {jQuery(".sourcephpstan").toggle(true);}
  let phpstantable = new DataTable("#technicaldebt table", {
@@ -786,7 +791,7 @@ if ($nblines != 0) {
 	$html .= '<div class="div-table-responsive">'."\n";
 	$html .= '<table class="list_technical_debt centpercent">'."\n";
 	$html .= '<thead><tr class="trgroup"><td>File</td><td>Line</td><td>Type</td></tr></thead><tbody>'."\n";
-	$html .= $tmp;
+	$html .= $tmpstan;
 	$html .= '<tbody></table>';
 	// Disabled, no more required as list is managed with datatable
 	//$html .= '<div><span class="seedetail" data-source="phpstan" id="sourcephpstan">Show all...</span></div>';
@@ -798,7 +803,7 @@ if ($nblines != 0) {
 
 // Technical debt Phan
 
-if ($phan_nblines != 0) {
+if ($dir_phan != 'disabled') {
 	$datatable_script .= '
  if (typeof(DataTable)==="function") {jQuery(".sourcephan").toggle(true);}
  let phantable = new DataTable("#technicaldebtphan table", {

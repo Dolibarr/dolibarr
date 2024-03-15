@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +21,8 @@
  *      \ingroup    core
  *      \brief      File of class to parse RSS feeds
  */
+
+// @phan-file-suppress PhanPluginPHPDocInWrongComment
 
 /**
  * 	Class to parse RSS files
@@ -272,6 +275,7 @@ class RssParser
 				}
 
 				try {
+					// @phan-suppress-next-line PhanTypeMismatchArgumentInternalProbablyReal
 					$xmlparser = xml_parser_create(null);
 
 					xml_parser_set_option($xmlparser, XML_OPTION_CASE_FOLDING, 0);
@@ -474,42 +478,33 @@ class RssParser
 							}
 						}
 					} elseif ($rss->_format == 'atom') {
-						if (getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')) {
-							$itemLink = (isset($item['link']) ? sanitizeVal((string) $item['link']) : '');
-							$itemTitle = sanitizeVal((string) $item['title']);
-							$itemDescription = sanitizeVal($this->getAtomItemDescription($item));
-							$itemPubDate = sanitizeVal((string) $item['created']);
-							$itemId = sanitizeVal((string) $item['id']);
-							$itemAuthor = sanitizeVal((string) ($item['author'] ? $item['author'] : $item['author_name']));
-						} else {
-							$itemLink = (isset($item['link']) ? sanitizeVal((string) $item['link']) : '');
-							$itemTitle = sanitizeVal((string) $item['title']);
-							$itemDescription = sanitizeVal($this->getAtomItemDescription($item));
-							$itemPubDate = sanitizeVal((string) $item['created']);
-							$itemId = sanitizeVal((string) $item['id']);
-							$itemAuthor = sanitizeVal((string) ($item['author'] ? $item['author'] : $item['author_name']));
-						}
+						$itemLink = (isset($item['link']) ? sanitizeVal((string) $item['link']) : '');
+						$itemTitle = sanitizeVal((string) $item['title']);
+						$itemDescription = sanitizeVal($this->getAtomItemDescription($item));
+						$itemPubDate = sanitizeVal((string) $item['created']);
+						$itemId = sanitizeVal((string) $item['id']);
+						$itemAuthor = sanitizeVal((string) ($item['author'] ? $item['author'] : $item['author_name']));
 						$itemCategory = array();
 					} else {
-						$itemCategory = array();
 						$itemLink = '';
 						$itemTitle = '';
 						$itemDescription = '';
 						$itemPubDate = '';
 						$itemId = '';
 						$itemAuthor = '';
+						$itemCategory = array();
 						print 'ErrorBadFeedFormat';
 					}
 
 					// Add record to result array
 					$this->_rssarray[$i] = array(
-						'link'=>$itemLink,
-						'title'=>$itemTitle,
-						'description'=>$itemDescription,
-						'pubDate'=>$itemPubDate,
-						'category'=>$itemCategory,
-						'id'=>$itemId,
-						'author'=>$itemAuthor
+						'link' => $itemLink,
+						'title' => $itemTitle,
+						'description' => $itemDescription,
+						'pubDate' => $itemPubDate,
+						'category' => $itemCategory,
+						'id' => $itemId,
+						'author' => $itemAuthor
 					);
 					//var_dump($this->_rssarray);
 
@@ -811,7 +806,6 @@ class RssParser
 		return "";
 	}
 }
-
 
 /*
  * A method for the xml_set_external_entity_ref_handler()

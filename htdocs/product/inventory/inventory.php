@@ -261,7 +261,7 @@ if (empty($reshook)) {
 	}
 
 	// Save quantity found during inventory (when we click on Save button on inventory page)
-	if ($action =='updateinventorylines' && $permissiontoadd) {
+	if ($action == 'updateinventorylines' && $permissiontoadd) {
 		$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
@@ -356,7 +356,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';*/
 
 	if (GETPOST('addline', 'alpha')) {
-		$qty= (GETPOST('qtytoadd') != '' ? price2num(GETPOST('qtytoadd', 'MS')) : null);
+		$qty = (GETPOST('qtytoadd') != '' ? price2num(GETPOST('qtytoadd', 'MS')) : null);
 		if ($fk_warehouse <= 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
@@ -373,12 +373,12 @@ if (empty($reshook)) {
 			$tmpproduct = new Product($db);
 			$result = $tmpproduct->fetch($fk_product);
 
-			if (empty($error) && $tmpproduct->status_batch>0 && empty($batch)) {
+			if (empty($error) && $tmpproduct->status_batch > 0 && empty($batch)) {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorProductNeedBatchNumber", $tmpproduct->ref), null, 'errors');
 			}
-			if (empty($error) && $tmpproduct->status_batch==2 && !empty($batch) && $qty>1) {
+			if (empty($error) && $tmpproduct->status_batch == 2 && !empty($batch) && $qty > 1) {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("TooManyQtyForSerialNumber", $tmpproduct->ref, $batch), null, 'errors');
@@ -1050,6 +1050,7 @@ if ($resql) {
 		if (isModEnabled('productbatch')) {
 			print '<td id="id_'.$obj->rowid.'_batch" data-batch="'.dol_escape_htmltag($obj->batch).'">';
 			$batch_static = new Productlot($db);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$res = $batch_static->fetch(0, $product_static->id, $obj->batch);
 			if ($res) {
 				print $batch_static->getNomUrl(1);

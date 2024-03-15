@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +59,7 @@ if (empty($reshook)) {
 		if (empty($assetdepreciationoptions->deprecation_options[$mode_key]) && $mode_key == "accelerated_depreciation") {
 			continue;
 		}
-		$width = ($mode_key == "economic")? "pull-left" : "pull-left";
+		$width = "pull-left";
 		print '<table class="liste centpercent '. $width .'" id="block_' . $mode_key . '">' . "\n";
 		print '<tr class="liste_titre"><td colspan="5">'.$langs->trans($mode_info['label']).'</td></tr>';
 		foreach ($mode_info['fields'] as $field_key => $field_info) {

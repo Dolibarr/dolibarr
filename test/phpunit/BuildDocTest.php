@@ -87,11 +87,15 @@ class BuildDocTest extends CommonClassTest
 	{
 		global $conf,$user,$langs,$db;
 
-		if (!isModEnabled('facture')) {
+		if (!isModEnabled('supplier')) {
+			print __METHOD__." supplier module not enabled\n";
+			die(1);
+		}
+		if (!isModEnabled('invoice')) {
 			print __METHOD__." invoice module not enabled\n";
 			die(1);
 		}
-		if (!isModEnabled('commande')) {
+		if (!isModEnabled('order')) {
 			print __METHOD__." order module not enabled\n";
 			die(1);
 		}
@@ -99,15 +103,15 @@ class BuildDocTest extends CommonClassTest
 			print __METHOD__." propal module not enabled\n";
 			die(1);
 		}
-		if (!isModEnabled('projet')) {
+		if (!isModEnabled('project')) {
 			print __METHOD__." project module not enabled\n";
 			die(1);
 		}
-		if (!isModEnabled('expedition')) {
+		if (!isModEnabled('shipping')) {
 			print __METHOD__." shipment module not enabled\n";
 			die(1);
 		}
-		if (!isModEnabled('ficheinter')) {
+		if (!isModEnabled('intervention')) {
 			print __METHOD__." intervention module not enabled\n";
 			die(1);
 		}
@@ -233,7 +237,7 @@ class BuildDocTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$conf->fournisseur->facture->dir_output .= '/temp';
+		$conf->fournisseur->facture->dir_output .= '/temp';	// To not poluate the existing dir_output dir
 		$localobject = new FactureFournisseur($db);
 		$localobject->initAsSpecimen();
 

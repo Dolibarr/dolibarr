@@ -6,6 +6,7 @@
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022       Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +60,7 @@ class Task extends CommonObjectLine
 	public $picto = 'projecttask';
 
 	/**
-	 * @var array	List of child tables. To test if we can delete object.
+	 * @var array<string, array<string>>	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
 		'element_time' => array('name' => 'Task', 'parent' => 'projet_task', 'parentkey' => 'fk_element', 'parenttypefield' => 'elementtype', 'parenttypevalue' => 'task')
@@ -451,7 +452,7 @@ class Task extends CommonObjectLine
 
 		// Clean parameters
 		if (isset($this->fk_project)) {
-			$this->fk_project = trim($this->fk_project);
+			$this->fk_project = (int) $this->fk_project;
 		}
 		if (isset($this->ref)) {
 			$this->ref = trim($this->ref);
@@ -472,7 +473,7 @@ class Task extends CommonObjectLine
 			$this->planned_workload = trim($this->planned_workload);
 		}
 		if (isset($this->budget_amount)) {
-			$this->budget_amount = trim($this->budget_amount);
+			$this->budget_amount = (float) $this->budget_amount;
 		}
 
 		if (!empty($this->date_start) && !empty($this->date_end) && $this->date_start > $this->date_end) {
@@ -524,7 +525,12 @@ class Task extends CommonObjectLine
 					$project->getLinesArray(null); // this method does not return <= 0 if fails
 					$projectCompleted = array_reduce(
 						$project->lines,
-						function ($allTasksCompleted, $task) {
+						/**
+						 * @param bool $allTasksCompleted
+						 * @param Task $task
+						 * @return bool
+						 */
+						static function ($allTasksCompleted, $task) {
 							return $allTasksCompleted && $task->progress >= 100;
 						},
 						1
@@ -881,7 +887,7 @@ class Task extends CommonObjectLine
 			$result .= (($addlabel && $this->label) ? $sep.dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 		}
 
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -897,7 +903,7 @@ class Task extends CommonObjectLine
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -912,6 +918,8 @@ class Task extends CommonObjectLine
 		$this->progress = '25';
 		$this->status = 0;
 		$this->note = 'This is a specimen task not';
+
+		return 1;
 	}
 
 	/**
@@ -1188,7 +1196,7 @@ class Task extends CommonObjectLine
 	 *
 	 * @param	User|null	$userp			      Return roles on project for this internal user. If set, usert and taskid must not be defined.
 	 * @param	User|null	$usert			      Return roles on task for this internal user. If set userp must NOT be defined. -1 means no filter.
-	 * @param 	int			$projectid		      Project id list separated with , to filter on project
+	 * @param 	string		$projectid		      Project id list separated with , to filter on project
 	 * @param 	int			$taskid			      Task id to filter on a task
 	 * @param	integer		$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
 	 * @return 	array|int					      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
@@ -1593,7 +1601,7 @@ class Task extends CommonObjectLine
 	/**
 	 *  Calculate quantity and value of time consumed using the thm (hourly amount value of work for user entering time)
 	 *
-	 *	@param		User		$fuser		Filter on a dedicated user
+	 *	@param		User|string	$fuser		Filter on a dedicated user
 	 *  @param		string		$dates		Start date (ex 00:00:00)
 	 *  @param		string		$datee		End date (ex 23:59:59)
 	 *  @return 	array	        		Array of info for task array('amount','nbseconds','nblinesnull')

@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  *
@@ -315,7 +315,10 @@ if (empty($reshook) && $action == 'add') {
 				$company->name_alias = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
 			}
 
-			$company->update(0);
+			$res = $company->update(0, $user);
+			if ($res < 0) {
+				setEventMessages($company->error, $company->errors, 'errors');
+			}
 		}
 
 		// Fill array 'array_options' with data from add form
@@ -594,7 +597,7 @@ jQuery(document).ready(function () {
 
 // Type
 $partnershiptype = new PartnershipType($db);
-$listofpartnershipobj = $partnershiptype->fetchAll('', '', 1000, 0, array('active'=>1));
+$listofpartnershipobj = $partnershiptype->fetchAll('', '', 1000, 0, '(active:=:1)');
 $listofpartnership = array();
 foreach ($listofpartnershipobj as $partnershipobj) {
 	$listofpartnership[$partnershipobj->id] = $partnershipobj->label;

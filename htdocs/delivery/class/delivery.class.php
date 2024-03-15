@@ -280,7 +280,7 @@ class Delivery extends CommonObject
 	 *  @param	array	$array_options			Array options
 	 *	@return	int								Return integer <0 if KO, >0 if OK
 	 */
-	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = null)
+	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = [])
 	{
 		// phpcs:enable
 		$error = 0;
@@ -636,7 +636,7 @@ class Delivery extends CommonObject
 	 *  @param	array	$array_options			Array options
 	 *	@return	void
 	 */
-	public function addline($origin_id, $qty, $array_options = null)
+	public function addline($origin_id, $qty, $array_options = [])
 	{
 		global $conf;
 
@@ -965,7 +965,7 @@ class Delivery extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1012,6 +1012,8 @@ class Delivery extends CommonObject
 		$line->total_ht       = 100;
 
 		$this->lines[$i] = $line;
+
+		return 1;
 	}
 
 	/**

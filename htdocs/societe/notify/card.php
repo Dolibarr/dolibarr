@@ -75,7 +75,7 @@ $hookmanager->initHooks(array('thirdpartynotification', 'globalcard'));
  * Actions
  */
 
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -286,7 +286,7 @@ if ($result > 0) {
 		print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$form->selectarray("actionid", $actions, '', 1, 0, 0, '', 0, 0, 0, '', 'minwidth100imp maxwidthonsmartphone');
 		print '</td>';
 		print '<td>';
-		$type = array('email'=>$langs->trans("EMail"));
+		$type = array('email' => $langs->trans("EMail"));
 		print $form->selectarray("typeid", $type, '', 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 		print '</td>';
 		print '<td class="right"><input type="submit" class="button button-add" value="'.$langs->trans("Add").'"></td>';
@@ -447,7 +447,7 @@ if ($result > 0) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="socid" value="'.$object->id.'">';
 
-	// List of active notifications
+	// List of active notifications  @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 	// Line with titles

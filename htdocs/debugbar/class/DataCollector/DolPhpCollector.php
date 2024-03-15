@@ -76,18 +76,26 @@ class PhpCollector extends DataCollector implements Renderable
 	/**
 	 * Returns a list of messages ordered by their timestamp.
 	 *
-	 * @return array A list of messages ordered by time.
+	 * @return array<array{time:int}> A list of messages ordered by time.
 	 */
 	public function getMessages()
 	{
 		$messages = $this->messages;
 
-		usort($messages, function ($itemA, $itemB) {
-			if ($itemA['time'] === $itemB['time']) {
-				return 0;
+		usort(
+			$messages,
+			/**
+			 * @param array{time:int} $itemA Message A information
+			 * @param array{time:int} $itemB Message B information
+			 * @return int<-1,1> -1 if Item A before Item B, 0 if same, 1 if later.
+			 */
+			static function ($itemA, $itemB) {
+				if ($itemA['time'] === $itemB['time']) {
+					return 0;
+				}
+				return $itemA['time'] < $itemB['time'] ? -1 : 1;
 			}
-			return $itemA['time'] < $itemB['time'] ? -1 : 1;
-		});
+		);
 
 		return $messages;
 	}

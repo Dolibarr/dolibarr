@@ -5,14 +5,16 @@
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2020	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2018	Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018-2022  Ferran Marcet         	<fmarcet@2byte.es>
- * Copyright (C) 2021       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2012-2015	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2018		Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2022	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2021		Josep Lluís Amador		<joseplluis@lliuretic.cat>
+ * Copyright (C) 2022		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -395,7 +397,7 @@ class CommandeFournisseur extends CommonOrder
 		'multicurrency_total_ttc' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyAmountTTC', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 240),
 		'date_creation' => array('type' => 'datetime', 'label' => 'Date creation', 'enabled' => 1, 'visible' => -1, 'position' => 500),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => 1, 'notnull' => 1, 'position' => 50),
-		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 1000, 'index' => 1),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 1000, 'index' => 1),
 		'tms' => array('type' => 'datetime', 'label' => "DateModificationShort", 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 501),
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => 0, 'position' => 700),
 		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'position' => 701),
@@ -1359,7 +1361,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
-				$result = 0;
+				$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 
 				if ($error == 0) {
 					// Call trigger
@@ -1411,7 +1413,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
 			if ($this->db->query($sql)) {
-				$result = 0;
+				$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 
 				// Call trigger
 				$result = $this->call_trigger('ORDER_SUPPLIER_CANCEL', $user);
@@ -1863,8 +1865,10 @@ class CommandeFournisseur extends CommonOrder
 		// Clear fields
 		$this->user_author_id     = $user->id;
 		$this->user_validation_id = 0;
+		$this->date               = dol_now();
 		$this->date_creation      = 0;
 		$this->date_validation    = 0;
+		$this->date_commande      = 0;
 		$this->ref_supplier       = '';
 		$this->user_approve_id    = 0;
 		$this->user_approve_id2   = 0;
@@ -2210,8 +2214,8 @@ class CommandeFournisseur extends CommonOrder
 	 * @param 	int			$entrepot				Id of warehouse to add product
 	 * @param 	double		$price					Unit Price for PMP value calculation (Unit price without Tax and taking into account discount)
 	 * @param	string		$comment				Comment for stock movement
-	 * @param	integer		$eatby					eat-by date
-	 * @param	integer		$sellby					sell-by date
+	 * @param	int|string	$eatby					eat-by date
+	 * @param	int|string	$sellby					sell-by date
 	 * @param	string		$batch					Lot number
 	 * @param	int			$fk_commandefourndet	Id of supplier order line
 	 * @param	int			$notrigger          	1 = notrigger
@@ -2316,6 +2320,8 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function deleteLine($idline, $notrigger = 0)
 	{
+		global $user;
+
 		if ($this->statut == 0) {
 			$line = new CommandeFournisseurLigne($this->db);
 
@@ -2333,12 +2339,11 @@ class CommandeFournisseur extends CommonOrder
 				}
 			}
 
-			if ($line->delete($notrigger) > 0) {
+			if ($line->delete($user, $notrigger) > 0) {
 				$this->update_price(1);
 				return 1;
 			} else {
-				$this->error = $line->error;
-				$this->errors = $line->errors;
+				$this->setErrorsFromObject($line);
 				return -1;
 			}
 		} else {
@@ -2893,7 +2898,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param		string		$ref_supplier		Supplier ref
 	 *	@return    	int         	    			Return integer < 0 if error, > 0 if ok
 	 */
-	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $notrigger = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
+	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $notrigger = 0, $date_start = '', $date_end = '', $array_options = [], $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
 	{
 		global $mysoc, $conf, $langs;
 		dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type, $fk_unit");
@@ -3079,7 +3084,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -3156,6 +3161,8 @@ class CommandeFournisseur extends CommonOrder
 
 			$xnbp++;
 		}
+
+		return 1;
 	}
 
 	/**
@@ -3526,6 +3533,7 @@ class CommandeFournisseur extends CommonOrder
 			$qtywished = array();
 
 			$supplierorderdispatch = new CommandeFournisseurDispatch($this->db);
+
 			$filter = array('t.fk_commande' => $this->id);
 			if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS')) {
 				$filter['t.status'] = 1; // Restrict to lines with status validated
@@ -4155,12 +4163,15 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	/**
 	 * 	Delete line in database
 	 *
+	 *  @param		User	$user		User making the change
 	 *	@param      int     $notrigger  1=Disable call to triggers
 	 *	@return     int                 Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
-		global $user;
+		if (empty($user)) {
+			global $user;
+		}
 
 		$error = 0;
 

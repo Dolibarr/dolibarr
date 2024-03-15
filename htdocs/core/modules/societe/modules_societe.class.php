@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,14 +61,6 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
  */
 abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 {
-
-	// variables inherited from CommonNumRefGenerator class
-	public $code_null;
-	public $code_modifiable;
-	public $code_modifiable_invalide;
-	public $code_auto;
-
-
 	/**
 	 * Constructor
 	 *
@@ -78,11 +72,11 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 	/**
 	 *  Return next value available
 	 *
-	 *	@param	Societe		$objsoc		Object thirdparty
-	 *	@param	int			$type		Type
-	 *  @return string      			Value
+	 *	@param	Societe|string	$objsoc		Object thirdparty
+	 *	@param	int				$type		Type
+	 *  @return string      				Value
 	 */
-	public function getNextValue($objsoc = 0, $type = -1)
+	public function getNextValue($objsoc = '', $type = -1)
 	{
 		global $langs;
 		return $langs->trans("Function_getNextValue_InModuleNotWorking");
@@ -143,8 +137,6 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 		$s = '';
 		if ($type == -1) {
 			$s .= $langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
-		} elseif ($type == -1) {
-			$s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
 		} elseif ($type == 0) {
 			$s .= $langs->trans("CustomerCodeDesc").'<br>';
 		} elseif ($type == 1) {
@@ -262,7 +254,7 @@ abstract class ModeleAccountancyCode extends CommonNumRefGenerator
 	 *
 	 *  @param	DoliDB	$db             Database handler
 	 *  @param  Societe	$societe        Third party object
-	 *  @param  int		$type			'customer' or 'supplier'
+	 *  @param  string	$type			'customer' or 'supplier'
 	 *  @return	int						>=0 if OK, <0 if KO
 	 */
 	public function get_code($db, $societe, $type = '')

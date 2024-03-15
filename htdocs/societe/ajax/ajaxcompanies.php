@@ -83,7 +83,7 @@ if (!$socid) {
 
 // Generate list of companies
 if (! $socid) {
-	echo json_encode(array('nom'=>'ErrorBadParameter', 'label'=>'ErrorBadParameter', 'key'=>'ErrorBadParameter', 'value'=>'ErrorBadParameter'));
+	echo json_encode(array('nom' => 'ErrorBadParameter', 'label' => 'ErrorBadParameter', 'key' => 'ErrorBadParameter', 'value' => 'ErrorBadParameter'));
 	exit;
 }
 
@@ -147,6 +147,7 @@ if ($resql) {
 		if ($socid) {
 			$label = preg_replace('/('.preg_quote($socid, '/').')/i', '<strong>$1</strong>', $label, 1);
 		}
+		$row_array = array();
 		$row_array['label'] = $label;
 
 		$row_array['value'] = $row['nom'];
@@ -175,5 +176,5 @@ if ($resql) {
 
 	echo json_encode($return_arr);
 } else {
-	echo json_encode(array('nom'=>'Error', 'label'=>'Error', 'key'=>'Error', 'value'=>'Error'));
+	echo json_encode(array('nom' => 'Error', 'label' => 'Error', 'key' => 'Error', 'value' => 'Error'));
 }

@@ -49,11 +49,11 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sc
 $mode = GETPOST('mode', 'alpha');
 
 
-$search_ref = GETPOSTINT('search_ref');
+$search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_typeid = GETPOSTINT('search_typeid');
 $search_amount = GETPOST('search_amount', 'alpha');
-$search_status = GETPOSTINT('search_status');
+$search_status = GETPOST('search_status', 'intcomma');
 $search_date_startday = GETPOSTINT('search_date_startday');
 $search_date_startmonth = GETPOSTINT('search_date_startmonth');
 $search_date_startyear = GETPOSTINT('search_date_startyear');
@@ -97,20 +97,20 @@ if (!$sortorder) {
 $filtre = GETPOSTINT("filtre");
 
 $arrayfields = array(
-	'cs.rowid'		=>array('label'=>"Ref", 'checked'=>1, 'position'=>10),
-	'cs.libelle'	=>array('label'=>"Label", 'checked'=>1, 'position'=>20),
-	'cs.fk_type'	=>array('label'=>"Type", 'checked'=>1, 'position'=>30),
-	'cs.date_ech'	=>array('label'=>"Date", 'checked'=>1, 'position'=>40),
-	'cs.periode'	=>array('label'=>"PeriodEndDate", 'checked'=>1, 'position'=>50),
-	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enable'=>(isModEnabled('project'))),
-	'cs.fk_user'	=>array('label'=>"Employee", 'checked'=>1, 'position'=>70),
-	'cs.fk_mode_reglement'	=>array('checked'=>-1, 'position'=>80, 'label'=>"DefaultPaymentMode"),
-	'cs.amount'		=>array('label'=>"Amount", 'checked'=>1, 'position'=>100),
-	'cs.paye'		=>array('label'=>"Status", 'checked'=>1, 'position'=>110),
+	'cs.rowid'		=> array('label' => "Ref", 'checked' => 1, 'position' => 10),
+	'cs.libelle'	=> array('label' => "Label", 'checked' => 1, 'position' => 20),
+	'cs.fk_type'	=> array('label' => "Type", 'checked' => 1, 'position' => 30),
+	'cs.date_ech'	=> array('label' => "Date", 'checked' => 1, 'position' => 40),
+	'cs.periode'	=> array('label' => "PeriodEndDate", 'checked' => 1, 'position' => 50),
+	'p.ref'			=> array('label' => "ProjectRef", 'checked' => 1, 'position' => 60, 'enabled' => (isModEnabled('project'))),
+	'cs.fk_user'	=> array('label' => "Employee", 'checked' => 1, 'position' => 70),
+	'cs.fk_mode_reglement'	=> array('checked' => -1, 'position' => 80, 'label' => "DefaultPaymentMode"),
+	'cs.amount'		=> array('label' => "Amount", 'checked' => 1, 'position' => 100),
+	'cs.paye'		=> array('label' => "Status", 'checked' => 1, 'position' => 110),
 );
 
 if (isModEnabled("bank")) {
-	$arrayfields['cs.fk_account'] = array('checked'=>-1, 'position'=>90, 'label'=>"DefaultBankAccount");
+	$arrayfields['cs.fk_account'] = array('checked' => -1, 'position' => 90, 'label' => "DefaultBankAccount");
 }
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -134,7 +134,7 @@ $result = restrictedArea($user, 'tax', '', 'chargesociales', 'charges');
  * Actions
  */
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -328,7 +328,7 @@ if ($search_amount) {
 	$param .= '&search_amount='.urlencode($search_amount);
 }
 if ($search_typeid) {
-	$param .= '&search_typeid='.urlencode($search_typeid);
+	$param .= '&search_typeid='.urlencode((string) ($search_typeid));
 }
 if ($search_users) {
 	foreach ($search_users as $id_user) {
@@ -336,7 +336,7 @@ if ($search_users) {
 	}
 }
 if ($search_type) {
-	$param .= '&search_type='.urlencode($search_type);
+	$param .= '&search_type='.urlencode((string) ($search_type));
 }
 if ($search_account) {
 	$param .= '&search_account='.$search_account;
@@ -345,47 +345,47 @@ if ($search_status != '' && $search_status != '-1') {
 	$param .= '&search_status='.urlencode($search_status);
 }
 if ($search_date_startday) {
-	$param .= '&search_date_startday='.urlencode($search_date_startday);
+	$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
 }
 if ($search_date_startmonth) {
-	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+	$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
 }
 if ($search_date_startyear) {
-	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+	$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
 }
 if ($search_date_endday) {
-	$param .= '&search_date_endday='.urlencode($search_date_endday);
+	$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
 }
 if ($search_date_endmonth) {
-	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
 }
 if ($search_date_endyear) {
-	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
 }
 if ($search_date_limit_startday) {
-	$param .= '&search_date_limit_startday='.urlencode($search_date_limit_startday);
+	$param .= '&search_date_limit_startday='.urlencode((string) ($search_date_limit_startday));
 }
 if ($search_date_limit_startmonth) {
-	$param .= '&search_date_limit_startmonth='.urlencode($search_date_limit_startmonth);
+	$param .= '&search_date_limit_startmonth='.urlencode((string) ($search_date_limit_startmonth));
 }
 if ($search_date_limit_startyear) {
-	$param .= '&search_date_limit_startyear='.urlencode($search_date_limit_startyear);
+	$param .= '&search_date_limit_startyear='.urlencode((string) ($search_date_limit_startyear));
 }
 if ($search_date_limit_endday) {
-	$param .= '&search_date_limit_endday='.urlencode($search_date_limit_endday);
+	$param .= '&search_date_limit_endday='.urlencode((string) ($search_date_limit_endday));
 }
 if ($search_date_limit_endmonth) {
-	$param .= '&search_date_limit_endmonth='.urlencode($search_date_limit_endmonth);
+	$param .= '&search_date_limit_endmonth='.urlencode((string) ($search_date_limit_endmonth));
 }
 if ($search_date_limit_endyear) {
-	$param .= '&search_date_limit_endyear='.urlencode($search_date_limit_endyear);
+	$param .= '&search_date_limit_endyear='.urlencode((string) ($search_date_limit_endyear));
 }
 
 $url = DOL_URL_ROOT.'/compta/sociales/card.php?action=create';
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewSocialContribution'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
@@ -411,6 +411,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 
+// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
@@ -537,13 +538,14 @@ if (!empty($arrayfields['cs.amount']['checked'])) {
 // Filter: Status
 if (!empty($arrayfields['cs.paye']['checked'])) {
 	print '<td class="liste_titre right parentonrightofpage">';
-	$liststatus = array('0'=>$langs->trans("Unpaid"), '1'=>$langs->trans("Paid"));
+	$liststatus = array('0' => $langs->trans("Unpaid"), '1' => $langs->trans("Paid"));
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);
 	print '</td>';
 }
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -618,7 +620,7 @@ if (!empty($arrayfields['cs.paye']['checked'])) {
 }
 
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray'=>&$totalarray);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -634,8 +636,12 @@ $i = 0;
 $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-$totalarray['val'] = array('totalttcfield'=>0);
+$totalarray['val'] = array('totalttcfield' => 0);
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+if (!isset($TLoadedUsers) || !is_array($TLoadedUsers)) {
+	// Ensure array is initialised
+	$TLoadedUsers = array();
+}
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 
@@ -659,7 +665,7 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		print $chargesociale_static->getKanbanView('', array('project'=> $projectstatic, 'selected' => in_array($chargesociale_static->id, $arrayofselected)));
+		print $chargesociale_static->getKanbanView('', array('project' => $projectstatic, 'selected' => in_array($chargesociale_static->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -860,7 +866,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

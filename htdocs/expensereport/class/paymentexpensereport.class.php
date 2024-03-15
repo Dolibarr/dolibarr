@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI  <info@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +56,14 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public $fk_expensereport;
 
+	/**
+	 * @var int|string
+	 */
 	public $datec = '';
+
+	/**
+	 * @var int|string
+	 */
 	public $datep = '';
 	public $amount; // Total amount of payment
 	public $amounts = array(); // Array of amounts
@@ -495,7 +503,7 @@ class PaymentExpenseReport extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -512,6 +520,8 @@ class PaymentExpenseReport extends CommonObject
 		$this->fk_bank = 0;
 		$this->fk_user_creat = 0;
 		$this->fk_user_modif = 0;
+
+		return 1;
 	}
 
 

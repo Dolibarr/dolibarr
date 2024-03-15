@@ -232,7 +232,7 @@ if (GETPOST('sortfield') == 'f.datef, f.ref, l.rowid') {
 $form = new Form($db);
 $formother = new FormOther($db);
 
-$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
+$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
 llxHeader('', $langs->trans("SuppliersVentilation"), $help_url);
 
@@ -403,25 +403,25 @@ if ($result) {
 		$param .= '&search_societe='.urlencode($search_societe);
 	}
 	if ($search_lineid) {
-		$param .= '&search_lineid='.urlencode($search_lineid);
+		$param .= '&search_lineid='.urlencode((string) ($search_lineid));
 	}
 	if ($search_date_startday) {
-		$param .= '&search_date_startday='.urlencode($search_date_startday);
+		$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
 	}
 	if ($search_date_startmonth) {
-		$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+		$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
 	}
 	if ($search_date_startyear) {
-		$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+		$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
 	}
 	if ($search_date_endday) {
-		$param .= '&search_date_endday='.urlencode($search_date_endday);
+		$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
 	}
 	if ($search_date_endmonth) {
-		$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+		$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
 	}
 	if ($search_date_endyear) {
-		$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+		$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
 	}
 	if ($search_invoice) {
 		$param .= '&search_invoice='.urlencode($search_invoice);
@@ -452,8 +452,8 @@ if ($result) {
 	}
 
 	$arrayofmassactions = array(
-		'ventil'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate")
-		,'set_default_account'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount")
+		'ventil' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate")
+		,'set_default_account' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount")
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
@@ -474,10 +474,12 @@ if ($result) {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
 	if ($massaction == 'set_default_account') {
-		$formquestion[]=array('type' => 'other',
+		$formquestion = array();
+		$formquestion[] = array('type' => 'other',
 				'name' => 'set_default_account',
 				'label' => $langs->trans("AccountancyCode"),
 				'value' => $formaccounting->select_account('', 'default_account', 1, array(), 0, 0, 'maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone'));
@@ -611,26 +613,26 @@ if ($result) {
 		$facturefourn_static_det->desc = $objp->description;
 
 		$accountingAccountArray = array(
-			'dom'=>$objp->aarowid,
-			'intra'=>$objp->aarowid_intra,
-			'export'=>$objp->aarowid_export,
-			'thirdparty' =>$objp->aarowid_thirdparty);
+			'dom' => $objp->aarowid,
+			'intra' => $objp->aarowid_intra,
+			'export' => $objp->aarowid_export,
+			'thirdparty' => $objp->aarowid_thirdparty);
 
 		$code_buy_p_notset = '';
 		$code_buy_t_notset = '';
 
 		$suggestedid = 0;
 
-		$return=$accountingAccount->getAccountingCodeToBind($mysoc, $thirdpartystatic, $product_static, $facturefourn_static, $facturefourn_static_det, $accountingAccountArray, 'supplier');
-		if (!is_array($return) && $return<0) {
+		$return = $accountingAccount->getAccountingCodeToBind($mysoc, $thirdpartystatic, $product_static, $facturefourn_static, $facturefourn_static_det, $accountingAccountArray, 'supplier');
+		if (!is_array($return) && $return < 0) {
 			setEventMessage($accountingAccount->error, 'errors');
 		} else {
-			$suggestedid=$return['suggestedid'];
-			$suggestedaccountingaccountfor=$return['suggestedaccountingaccountfor'];
-			$suggestedaccountingaccountbydefaultfor=$return['suggestedaccountingaccountbydefaultfor'];
-			$code_buy_l=$return['code_l'];
-			$code_buy_p=$return['code_p'];
-			$code_buy_t=$return['code_t'];
+			$suggestedid = $return['suggestedid'];
+			$suggestedaccountingaccountfor = $return['suggestedaccountingaccountfor'];
+			$suggestedaccountingaccountbydefaultfor = $return['suggestedaccountingaccountbydefaultfor'];
+			$code_buy_l = $return['code_l'];
+			$code_buy_p = $return['code_p'];
+			$code_buy_t = $return['code_t'];
 		}
 		//var_dump($return);
 
@@ -783,7 +785,7 @@ if ($result) {
 		if (!empty($toselect)) {
 			$ischecked = 0;
 			if (in_array($objp->rowid."_".$i, $toselect)) {
-				$ischecked=1;
+				$ischecked = 1;
 			}
 		}
 
