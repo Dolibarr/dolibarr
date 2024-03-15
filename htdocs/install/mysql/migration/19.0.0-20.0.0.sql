@@ -270,3 +270,6 @@ ALTER TABLE llx_element_element MODIFY COLUMN targettype VARCHAR(64) NOT NULL;
 ALTER TABLE llx_c_type_contact MODIFY COLUMN element VARCHAR(64) NOT NULL;
 
 ALTER TABLE llx_product_association ADD COLUMN import_key varchar(14) DEFAULT NULL;
+
+ALTER TABLE llx_ticket ADD COLUMN barcode varchar(255) DEFAULT NULL after extraparams;
+ALTER TABLE llx_ticket ADD COLUMN fk_barcode_type integer DEFAULT NULL after barcode;
