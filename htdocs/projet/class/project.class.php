@@ -2673,7 +2673,7 @@ class Project extends CommonObject
 					$actioncomm->errors_to = $errors_to;
 
 					$actioncomm->elementtype = 'project_task';
-					$actioncomm->fk_element = $this->element;
+					$actioncomm->fk_element = (int) $this->element;
 
 					$actioncomm->create($user);
 				} else {
@@ -2707,7 +2707,7 @@ class Project extends CommonObject
 					$actioncomm->errors_to = $errors_to;
 
 					$actioncomm->elementtype = 'project_task';
-					$actioncomm->fk_element = $this->element;
+					$actioncomm->fk_element = (int) $this->element;
 
 					$actioncomm->create($user);
 				}
