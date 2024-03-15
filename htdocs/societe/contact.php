@@ -133,7 +133,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 }
 
-if ($action == 'confirm_delete') {
+if ($action == 'confirm_delete' && $user->hasRight('societe', 'contact', 'delete')) {
 	$id = GETPOST('id', 'int');
 	if (!empty($id) && $socid > 0) {
 		$sql = "DELETE t, et FROM llx_socpeople AS t";
