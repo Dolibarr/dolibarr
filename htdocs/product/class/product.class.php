@@ -1971,7 +1971,7 @@ class Product extends CommonObject
 		// Add new price
 		$sql = "INSERT INTO ".$this->db->prefix()."product_price(price_level,date_price, fk_product, fk_user_author, price_label, price, price_ttc, price_base_type,tosell, tva_tx, default_vat_code, recuperableonly,";
 		$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, price_min,price_min_ttc,price_by_qty,entity,fk_price_expression) ";
-		$sql .= " VALUES(".($level ? ((int) $level) : 1).", '".$this->db->idate($now)."', ".((int) $this->id).", ".((int) $user->id).", ".(empty($this->price_label)?"null":"'".$this->db->escape($this->price_label)."'").", ".((float) price2num($this->price)).", ".((float) price2num($this->price_ttc)).",'".$this->db->escape($this->price_base_type)."',".((int) $this->status).", ".((float) price2num($this->tva_tx)).", ".($this->default_vat_code ? ("'".$this->db->escape($this->default_vat_code)."'") : "null").", ".((int) $this->tva_npr).",";
+		$sql .= " VALUES(".($level ? ((int) $level) : 1).", '".$this->db->idate($now)."', ".((int) $this->id).", ".((int) $user->id).", ".(empty($this->price_label) ? "null" : "'".$this->db->escape($this->price_label)."'").", ".((float) price2num($this->price)).", ".((float) price2num($this->price_ttc)).",'".$this->db->escape($this->price_base_type)."',".((int) $this->status).", ".((float) price2num($this->tva_tx)).", ".($this->default_vat_code ? ("'".$this->db->escape($this->default_vat_code)."'") : "null").", ".((int) $this->tva_npr).",";
 		$sql .= " ".price2num($this->localtax1_tx).", ".price2num($this->localtax2_tx).", '".$this->db->escape($this->localtax1_type)."', '".$this->db->escape($this->localtax2_type)."', ".price2num($this->price_min).", ".price2num($this->price_min_ttc).", ".price2num($this->price_by_qty).", ".((int) $conf->entity).",".($this->fk_price_expression > 0 ? ((int) $this->fk_price_expression) : 'null');
 		$sql .= ")";
 
@@ -2308,7 +2308,7 @@ class Product extends CommonObject
 	 * @param  double $newprice          New price
 	 * @param  string $newpricebase      HT or TTC
 	 * @param  User   $user              Object user that make change
-	 * @param  double $newvat            New VAT Rate (For example 8.5. Should not be a string)
+	 * @param  ?double $newvat           New VAT Rate (For example 8.5. Should not be a string)
 	 * @param  double $newminprice       New price min
 	 * @param  int    $level             0=standard, >0 = level if multilevel prices
 	 * @param  int    $newnpr            0=Standard vat rate, 1=Special vat rate for French NPR VAT
@@ -2320,7 +2320,7 @@ class Product extends CommonObject
 	 * @param  int    $notrigger         Disable triggers
 	 * @return int                            Return integer <0 if KO, >0 if OK
 	 */
-	public function updatePrice($newprice, $newpricebase, $user, $newvat = '', $newminprice = 0, $level = 0, $newnpr = 0, $newpbq = 0, $ignore_autogen = 0, $localtaxes_array = array(), $newdefaultvatcode = '', $price_label = '', $notrigger = 0)
+	public function updatePrice($newprice, $newpricebase, $user, $newvat = null, $newminprice = 0, $level = 0, $newnpr = 0, $newpbq = 0, $ignore_autogen = 0, $localtaxes_array = array(), $newdefaultvatcode = '', $price_label = '', $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -2342,7 +2342,7 @@ class Product extends CommonObject
 		}
 
 		// Check parameters
-		if ($newvat == '') {
+		if ($newvat === null || $newvat == '') {  // Maintain '' for backwards compatibility
 			$newvat = $this->tva_tx;
 		}
 
