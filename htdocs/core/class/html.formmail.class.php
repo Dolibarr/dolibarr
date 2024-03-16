@@ -1004,8 +1004,6 @@ class FormMail extends Form
 				$out .= '</td>';
 				$out .= '<td>';
 
-				$this->withaiprompt = 'html';
-				$this->withlayout = 1;
 				// Add link to add layout
 				if ($this->withlayout && $this->withfckeditor) {
 					$out .= '<a href="#" id="linkforlayouttemplates" class="reposition notasortlink inline-block alink marginrightonly">';
