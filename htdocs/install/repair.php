@@ -5,6 +5,7 @@
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021      Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -234,15 +235,15 @@ if ($ok && GETPOST('standard', 'alpha')) {
 	$extrafields = new ExtraFields($db);
 
 	// List of tables that has an extrafield table
-	$listofmodulesextra = array('societe'=>'societe', 'adherent'=>'adherent', 'product'=>'product',
-				'socpeople'=>'socpeople', 'propal'=>'propal', 'commande'=>'commande',
-				'facture'=>'facture', 'facturedet'=>'facturedet', 'facture_rec'=>'facture_rec', 'facturedet_rec'=>'facturedet_rec',
-				'supplier_proposal'=>'supplier_proposal', 'commande_fournisseur'=>'commande_fournisseur',
-				'facture_fourn'=>'facture_fourn', 'facture_fourn_rec'=>'facture_fourn_rec', 'facture_fourn_det'=>'facture_fourn_det', 'facture_fourn_det_rec'=>'facture_fourn_det_rec',
-				'fichinter'=>'fichinter', 'fichinterdet'=>'fichinterdet',
-				'inventory'=>'inventory',
-				'actioncomm'=>'actioncomm', 'bom_bom'=>'bom_bom', 'mrp_mo'=>'mrp_mo',
-				'adherent_type'=>'adherent_type', 'user'=>'user', 'partnership'=>'partnership', 'projet'=>'projet', 'projet_task'=>'projet_task', 'ticket'=>'ticket');
+	$listofmodulesextra = array('societe' => 'societe', 'adherent' => 'adherent', 'product' => 'product',
+				'socpeople' => 'socpeople', 'propal' => 'propal', 'commande' => 'commande',
+				'facture' => 'facture', 'facturedet' => 'facturedet', 'facture_rec' => 'facture_rec', 'facturedet_rec' => 'facturedet_rec',
+				'supplier_proposal' => 'supplier_proposal', 'commande_fournisseur' => 'commande_fournisseur',
+				'facture_fourn' => 'facture_fourn', 'facture_fourn_rec' => 'facture_fourn_rec', 'facture_fourn_det' => 'facture_fourn_det', 'facture_fourn_det_rec' => 'facture_fourn_det_rec',
+				'fichinter' => 'fichinter', 'fichinterdet' => 'fichinterdet',
+				'inventory' => 'inventory',
+				'actioncomm' => 'actioncomm', 'bom_bom' => 'bom_bom', 'mrp_mo' => 'mrp_mo',
+				'adherent_type' => 'adherent_type', 'user' => 'user', 'partnership' => 'partnership', 'projet' => 'projet', 'projet_task' => 'projet_task', 'ticket' => 'ticket');
 	//$listofmodulesextra = array('fichinter'=>'fichinter');
 
 	print '<tr><td colspan="2"><br>*** Check fields into extra table structure match table of definition. If not add column into table</td></tr>';
@@ -275,7 +276,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 				if (in_array($fieldname, array('rowid', 'tms', 'fk_object', 'import_key'))) {
 					continue;
 				}
-				$arrayoffieldsfound[$fieldname] = array('type'=>$fieldtype);
+				$arrayoffieldsfound[$fieldname] = array('type' => $fieldtype);
 			}
 			print ' - Found '.count($arrayoffieldsfound).' fields into table';
 			if (count($arrayoffieldsfound) > 0) {
@@ -318,12 +319,12 @@ if ($ok && GETPOST('standard', 'alpha')) {
 					}
 
 					$field_desc = array(
-						'type'=>$typedb,
-						'value'=>$lengthdb,
-						'attribute'=>$attribute,
-						'default'=>$default,
-						'extra'=>$extra,
-						'null'=>$null
+						'type' => $typedb,
+						'value' => $lengthdb,
+						'attribute' => $attribute,
+						'default' => $default,
+						'extra' => $extra,
+						'null' => $null
 					);
 					//var_dump($field_desc);exit;
 
@@ -510,7 +511,7 @@ if ($ok && GETPOST('restore_thirdparties_logos')) {
 			if (!empty($name)) {
 				$filetotest = $dolibarr_main_data_root.'/societe/logos/'.$name.$ext;
 				$filetotestsmall = $dolibarr_main_data_root.'/societe/logos/thumbs/'.$name.'_small'.$ext;
-				$exists = dol_is_file($filetotest);
+				$exists = (int) dol_is_file($filetotest);
 				print 'Check thirdparty '.$obj->rowid.' name='.$obj->name.' logo='.$obj->logo.' file '.$filetotest." exists=".$exists."<br>\n";
 				if ($exists) {
 					$filetarget = $dolibarr_main_data_root.'/societe/'.$obj->rowid.'/logos/'.$name.$ext;
@@ -585,7 +586,7 @@ if ($ok && GETPOST('restore_user_pictures', 'alpha')) {
 				$filetotest = $dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/'.$name.$ext;
 				$filetotestsmall = $dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/thumbs/'.$name.'_small'.$ext;
 				$filetotestmini = $dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/thumbs/'.$name.'_mini'.$ext;
-				$exists = dol_is_file($filetotest);
+				$exists = (int) dol_is_file($filetotest);
 				print 'Check user '.$obj->rowid.' lastname='.$obj->lastname.' firstname='.$obj->firstname.' photo='.$obj->photo.' file '.$filetotest." exists=".$exists."<br>\n";
 				if ($exists) {
 					$filetarget = $dolibarr_main_data_root.'/users/'.$obj->rowid.'/'.$name.$ext;
