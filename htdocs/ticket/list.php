@@ -448,7 +448,7 @@ if ($search_dateclose_end) {
 
 if (!$user->socid && ($mode == "mine" || (!$user->admin && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')))) {
 	$sql .= " AND (t.fk_user_assign = ".((int) $user->id);
-	if (empty(getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY'))) {
+	if (!getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')) {
 		$sql .= " OR t.fk_user_create = ".((int) $user->id);
 	}
 	$sql .= ")";
@@ -497,7 +497,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && !empty(getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE')) && $search_all && !$page) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/ticket/card.php?id='.$id);
@@ -780,7 +780,7 @@ if ($massaction == 'presendonclose') {
 		"name" => "massaction",
 		"value" => "close"
 	]);
-	$selectedchoice = (!empty(getDolGlobalString('TICKET_NOTIFY_AT_CLOSING'))) ? "yes" : "no";
+	$selectedchoice = getDolGlobalString('TICKET_NOTIFY_AT_CLOSING') ? "yes" : "no";
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassTicketClosingSendEmail"), $langs->trans("ConfirmMassTicketClosingSendEmailQuestion"), 'confirm_send_close', $hidden_form, $selectedchoice, 0, 200, 500, 1);
 }
 
@@ -1135,18 +1135,18 @@ while ($i < $imaxinloop) {
 
 					// display a warning on untreated tickets
 					$is_open = ($object->status != Ticket::STATUS_CLOSED && $object->status != Ticket::STATUS_CANCELED );
-					$should_show_warning = (!empty(getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE')) || !empty(getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE')));
+					$should_show_warning = (getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE') || getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE'));
 					if ($is_open && $should_show_warning) {
 						$date_last_msg_sent = (int) $object->date_last_msg_sent;
 						$hour_diff = ($now - $date_last_msg_sent) / 3600 ;
 
-						if (!empty(getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE') && $date_last_msg_sent == 0)) {
+						if (getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE') && $date_last_msg_sent == 0) {
 							$creation_date =  $object->datec;
 							$hour_diff_creation = ($now - $creation_date) / 3600 ;
 							if ($hour_diff_creation > getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE')) {
 								print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayForFirstResponseTooLong', getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE')), 'warning', 'style="color: red;"', false, 0, 0, '', '');
 							}
-						} elseif (!empty(getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE')) && $hour_diff > getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE')) {
+						} elseif (getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE') && $hour_diff > getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE')) {
 							print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayFromLastResponseTooLong', getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE')), 'warning');
 						}
 					}
