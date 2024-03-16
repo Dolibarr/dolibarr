@@ -3495,6 +3495,7 @@ class EmailCollector extends CommonObject
 				$params[strtolower($x->attribute)] = $x->value;
 			}
 		}
+		'@phan-var-force array{filename?:string,name?:string,charset?:string} $params';
 
 		// ATTACHMENT
 		// Any part with a filename is an attachment,
