@@ -3408,10 +3408,11 @@ class FactureFournisseur extends CommonInvoice
 	{
 		global $conf, $langs, $user;
 
-		$error = 0;
 		$this->output = '';
 		$this->error = '';
 		$nbMailSend = 0;
+
+		$error = 0;
 		$errorsMsg = array();
 
 		$langs->load('bills');
@@ -3692,7 +3693,7 @@ class FactureFournisseur extends CommonInvoice
 
 			return 0;
 		} else {
-			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? implode(', ', $errorsMsg) : $error;
+			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(empty($errorsMsg) ? $error : implode(', ', $errorsMsg));
 
 			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
 
