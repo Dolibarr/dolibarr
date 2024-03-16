@@ -171,6 +171,7 @@ class InterfaceStripe extends DolibarrTriggers
 							}
 
 							// Update Customer on Stripe
+							// @phan-suppress-next-line PhanDeprecatedFunction
 							$customer->save();
 						} catch (Exception $e) {
 							//var_dump(\Stripe\Stripe::getApiVersion());
@@ -229,6 +230,7 @@ class InterfaceStripe extends DolibarrTriggers
 							// @phan-suppress-next-line PhanTypeMismatchPropertyProbablyReal
 							$card->metadata = array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']));
 							try {
+								// @phan-suppress-next-line PhanDeprecatedFunction
 								$card->save();
 							} catch (Exception $e) {
 								$ok = -1;
