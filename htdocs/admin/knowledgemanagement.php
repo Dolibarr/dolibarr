@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@ global $langs, $user;
 // Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/knowledgemanagement/lib/knowledgemanagement.lib.php";
+require_once DOL_DOCUMENT_ROOT."/knowledgemanagement/class/knowledgerecord.class.php";
 
 // Translations
 $langs->loadLangs(array("admin", "knowledgemanagement"));
@@ -64,7 +66,7 @@ if (!$user->admin) {
 $moduledir = 'knowledgemanagement';
 $myTmpObjects = array();
 // TODO Scan list of objects to fill this array
-$myTmpObjects['knowledgemanagement'] = array('label' => 'KnowledgeManagement', 'includerefgeneration' => 0, 'includedocgeneration' => 0, 'class' => 'KnowledgeManagement');
+$myTmpObjects['knowledgemanagement'] = array('label' => 'KnowledgeManagement', 'includerefgeneration' => 1, 'includedocgeneration' => 0, 'class' => 'KnowledgeRecord');
 
 
 /*
@@ -366,7 +368,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 				$handle = opendir($dir);
 				if (is_resource($handle)) {
 					while (($file = readdir($handle)) !== false) {
-						if (strpos($file, 'mod_'.strtolower($myTmpObjectKey).'_') === 0 && substr($file, dol_strlen($file) - 3, 3) == 'php') {
+						if (strpos($file, 'mod_'.strtolower($myTmpObjectArray['class']).'_') === 0 && substr($file, dol_strlen($file) - 3, 3) == 'php') {
 							$file = substr($file, 0, dol_strlen($file) - 4);
 
 							require_once $dir.'/'.$file.'.php';

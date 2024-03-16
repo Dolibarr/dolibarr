@@ -491,7 +491,7 @@ class Notify
 								$link = '<a href="'.$urlwithroot.'/compta/facture/card.php?facid='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
 								$object_type = 'facture';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoiceCancelled", $link);
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoiceCanceled", $link);
 								break;
 							case 'BILL_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/compta/facture/card.php?facid='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
@@ -509,7 +509,7 @@ class Notify
 								$link = '<a href="'.$urlwithroot.'/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->commande->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'commande');
 								$object_type = 'order';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextOrderCancelled", $link);
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextOrderCanceled", $link);
 								break;
 							case 'ORDER_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';

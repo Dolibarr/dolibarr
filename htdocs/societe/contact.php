@@ -60,7 +60,8 @@ if (isModEnabled('notification')) {
 	$langs->load("mails");
 }
 
-$mesg = ''; $error = 0; $errors = array();
+$error = 0;
+$errors = array();
 
 
 // Get parameters

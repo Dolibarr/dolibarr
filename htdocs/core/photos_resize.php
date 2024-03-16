@@ -560,11 +560,11 @@ if (!empty($conf->use_javascript_ajax)) {
 
 	if (empty($conf->dol_no_mouse_hover)) {
 		print '<div style="border: 1px solid #888888; width: '.$widthforcrop.'px;">';
-		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$object->entity.'&file='.urlencode($original_file).'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
+		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.((int) $object->entity).'&file='.urlencode($original_file).'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
 		print '</div>';
 		print '</div><br>';
 
-		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).($num ? '&num='.$num : '').'" method="POST">';
+		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).($num ? '&num='.urlencode($num) : '').'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="backtourl" value="'.$backtourl.'">';
 		print '
@@ -608,7 +608,7 @@ jQuery(document).ready(function() {
         console.log("We click on submitcrop");
 	    var idClicked = e.target.id;
 	    if (parseInt(jQuery(\'#w\').val())) return true;
-	    alert(\''.dol_escape_js($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Dimension"))).'\');
+	    alert(\''.dol_escape_js($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Size"))).'\');
 	    return false;
 	});
 });
