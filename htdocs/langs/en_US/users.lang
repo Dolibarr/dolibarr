@@ -134,4 +134,3 @@ UserPublicPageDesc=You can enable a virtual card for this user. An url with the 
 EnablePublicVirtualCard=Enable the user's virtual business card
 UserEnabledDisabled=User status changed: %s
 AlternativeEmailForOAuth2=Alternative Email for OAuth2 login
-ContactDeleted=Contact has been delete successfully
