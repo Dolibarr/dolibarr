@@ -42,7 +42,6 @@ $modulepart = GETPOST('modulepart', 'aZ09');    // Used by actions_setmoduleopti
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
-$tmpobjectkey = GETPOST('object', 'aZ09');
 $type = 'webportal';
 
 $error = 0;
@@ -116,7 +115,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 $moduledir = 'webportal';
 $myTmpObjects = array();
-//$myTmpObjects['webportal'] = array('label' => 'WebPortal', 'includerefgeneration' => 0, 'includedocgeneration' => 0, 'class' => 'WebPortal');
+$myTmpObjects['webportal'] = array('label' => 'WebPortal', 'includerefgeneration' => 0, 'includedocgeneration' => 0, 'class' => 'WebPortal');
 
 $tmpobjectkey = GETPOST('object', 'aZ09');
 if ($tmpobjectkey && !array_key_exists($tmpobjectkey, $myTmpObjects)) {
@@ -193,7 +192,6 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		$tmpobjectkey = GETPOST('object', 'aZ09');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'WEBPORTAL_' . strtoupper($tmpobjectkey) . '_ADDON_PDF';
 			if (getDolGlobalString($constforval) == "$value") {
