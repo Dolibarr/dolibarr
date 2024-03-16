@@ -66,8 +66,10 @@ class Notify
 
 	// This codes actions are defined into table llx_notify_def
 	public static $arrayofnotifsupported = array(
+		'BILL_CANCEL',
 		'BILL_VALIDATE',
 		'BILL_PAYED',
+		'ORDER_CANCEL',
 		'ORDER_CREATE',
 		'ORDER_VALIDATE',
 		'ORDER_CLOSE',
@@ -485,6 +487,12 @@ class Notify
 						$subject = '['.$appli.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification").($projtitle ? ' '.$projtitle : '');
 
 						switch ($notifcode) {
+							case 'BILL_CANCEL':
+								$link = '<a href="'.$urlwithroot.'/compta/facture/card.php?facid='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$dir_output = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
+								$object_type = 'facture';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoiceCancelled", $link);
+								break;
 							case 'BILL_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/compta/facture/card.php?facid='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
@@ -496,6 +504,12 @@ class Notify
 								$dir_output = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
 								$object_type = 'facture';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoicePayed", $link);
+								break;
+							case 'ORDER_CANCEL':
+								$link = '<a href="'.$urlwithroot.'/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$dir_output = $conf->commande->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'commande');
+								$object_type = 'order';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextOrderCancelled", $link);
 								break;
 							case 'ORDER_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
