@@ -647,7 +647,7 @@ class FormMail extends Form
 								if ($this->frommail) {
 									$s .= ' &lt;' . getDolGlobalString('MAIN_MAIL_EMAIL_FROM').'&gt;';
 								}
-								array('label' => $s, 'data-html' => $s);
+								$liste['main_from'] = array('label' => $s, 'data-html' => $s);
 							}
 						}
 
@@ -1469,7 +1469,7 @@ class FormMail extends Form
 
 				$('#generate_button').click(function() {
 					var instructions = $('#ai_instructions').val();
-					
+
 					$('#ai_status_message').show();
 
 					//editor on readonly

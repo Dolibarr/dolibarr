@@ -259,7 +259,7 @@ class Skill extends CommonObject
 		$this->db->begin();
 
 		// Create level of skills
-		for ($i; $i <= $MaxNumberSkill ; $i++) {
+		while ($i <= $MaxNumberSkill) {
 			$skilldet = new Skilldet($this->db);
 			$skilldet->description = $defaultSkillDesc . " " . $i;
 			$skilldet->rankorder = $i;
@@ -269,9 +269,10 @@ class Skill extends CommonObject
 			if ($result <= 0) {
 				$error++;
 			}
+			$i++;
 		}
 
-		if (! $error) {
+		if (!$error) {
 			$this->db->commit();
 
 			setEventMessage($langs->trans('SkillCreated'), $i);
