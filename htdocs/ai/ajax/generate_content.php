@@ -69,7 +69,7 @@ $generatedContent = $ai->generateContent($instructions, 'auto', $function, $form
 
 if (is_array($generatedContent) && $generatedContent['error']) {
 	// Output error
-	if ($generatedContent['code'] == 429) {
+	if (!empty($generatedContent['code']) && $generatedContent['code'] == 429) {
 		print "Quota or allowed period exceeded. Retry Later !";
 	} elseif ($generatedContent['code'] >= 400) {
 		print "Error : " . $generatedContent['message'];

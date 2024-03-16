@@ -207,7 +207,6 @@ print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "fa-c
 // Setup page goes here
 //echo '<span class="opacitymedium">'.$langs->trans("BookCalSetupPage").'</span><br><br>';
 
-
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);
 	print '<br>';

@@ -68,6 +68,11 @@ $moduledir = 'asset';
 $myTmpObjects = array();
 $myTmpObjects['Asset'] = array('includerefgeneration' => 1, 'includedocgeneration' => 0);
 
+$tmpobjectkey = GETPOST('object', 'aZ09');
+if ($tmpobjectkey && array_key_exists($tmpobjectkey, $myTmpObjects)) {
+	accessforbidden('Bad value for object. Hack attempt ?');
+}
+
 
 /*
  * Actions
@@ -201,11 +206,7 @@ print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "asse
 echo '<span class="opacitymedium">'.$langs->trans("AssetSetupPage").'</span>';
 
 
-
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-	if ($myTmpObjectKey == 'MyObject') {
-		continue;
-	}
 	if ($myTmpObjectArray['includerefgeneration']) {
 		/*
 		 * Assets Numbering model

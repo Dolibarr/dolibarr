@@ -88,68 +88,6 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconst', 'aZ09');
-	$maskvalue = GETPOST('maskvalue', 'alpha');
-
-	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
-		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
-		if (!($res > 0)) {
-			$error++;
-		}
-	}
-
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
-} elseif ($action == 'setmod') {
-	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
-	$tmpobjectkey = GETPOST('object', 'aZ09');
-	if (!empty($tmpobjectkey)) {
-		$constforval = 'Ai_'.strtoupper($tmpobjectkey)."_ADDON";
-		dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
-	}
-} elseif ($action == 'set') {
-	// Activate a model
-	$ret = addDocumentModel($value, $type, $label, $scandir);
-} elseif ($action == 'del') {
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0) {
-		$tmpobjectkey = GETPOST('object', 'aZ09');
-		if (!empty($tmpobjectkey)) {
-			$constforval = 'Ai_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-			if (getDolGlobalString($constforval) == "$value") {
-				dolibarr_del_const($db, $constforval, $conf->entity);
-			}
-		}
-	}
-} elseif ($action == 'setdoc') {
-	// Set or unset default model
-	$tmpobjectkey = GETPOST('object', 'aZ09');
-	if (!empty($tmpobjectkey)) {
-		$constforval = 'Ai_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-		if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
-			// The constant that was read before the new set
-			// We therefore requires a variable to have a coherent view
-			$conf->global->$constforval = $value;
-		}
-
-		// We disable/enable the document template (into llx_document_model table)
-		$ret = delDocumentModel($value, $type);
-		if ($ret > 0) {
-			$ret = addDocumentModel($value, $type, $label, $scandir);
-		}
-	}
-} elseif ($action == 'unsetdoc') {
-	$tmpobjectkey = GETPOST('object', 'aZ09');
-	if (!empty($tmpobjectkey)) {
-		$constforval = 'Ai_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-		dolibarr_del_const($db, $constforval, $conf->entity);
-	}
-}
-
 $action = 'edit';
 
 
