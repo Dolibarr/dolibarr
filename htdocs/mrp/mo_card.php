@@ -432,7 +432,7 @@ if ($action == 'create') {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
-		$arrayOfObjBom = array();
+		$arrayOfMoLines = array();
 		foreach ($objectbom->lines as $key => $val) {
 			$moLine = new MoLine($db);
 			$moLine->id = $objectbom->lines[$key]->id;
@@ -443,9 +443,9 @@ if ($action == 'create') {
 			$moLine->qty_frozen = $objectbom->lines[$key]->qty_frozen;
 			$moLine->disable_stock_change = $objectbom->lines[$key]->disable_stock_change;
 
-			$arrayOfObjBom[] = $moLine;
+			$arrayOfMoLines[] = $moLine;
 		}
-		$object->lines = $arrayOfObjBom;
+		$object->lines = $arrayOfMoLines;
 		$object->mrptype = $objectbom->bomtype;
 		$object->bom = $objectbom;
 
