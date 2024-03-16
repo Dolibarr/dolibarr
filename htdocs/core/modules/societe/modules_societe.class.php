@@ -136,14 +136,14 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 
 		$s = '';
 		if ($type == -1) {
-			$s .= $langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
+			$s .= $langs->trans("Name").': <b>'.$this->getName($langs).'</b><br>';
 		} elseif ($type == 0) {
 			$s .= $langs->trans("CustomerCodeDesc").'<br>';
 		} elseif ($type == 1) {
 			$s .= $langs->trans("SupplierCodeDesc").'<br>';
 		}
 		if ($type != -1) {
-			$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
+			$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getName($langs).'</b><br>';
 		}
 		$s .= '<br>';
 		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
