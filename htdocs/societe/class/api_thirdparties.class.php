@@ -1273,11 +1273,13 @@ class Thirdparties extends DolibarrApi
 
 		$account->fetch($bankaccount_id);
 
-		if (!$account->socid == $id) {
-			throw new RestException(403);
-		}
+		$socid = (int) $account->socid;
 
-		return $account->delete(DolibarrApiAccess::$user);
+		if ($socid == $id) {
+			return $account->delete(DolibarrApiAccess::$user);
+		} else {
+			throw new RestException(403, "Not allowed due to bad consistency of input data");
+		}
 	}
 
 	/**
