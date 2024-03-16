@@ -934,7 +934,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				// Extra fields
 				$extrafieldsobjectkey = $taskstatic->table_element;
 				$extrafieldsobjectprefix = 'efpt.';
-				$obj = $lines[$i]->obj;
+				$obj = $lines[$i];
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 				// Fields from hook
 				$parameters = array('arrayfields' => $arrayfields, 'obj' => $lines[$i]);

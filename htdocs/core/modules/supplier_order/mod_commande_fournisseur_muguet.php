@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,11 +132,11 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	/**
 	 * 	Return next value
 	 *
-	 *  @param	Societe				$objsoc     Object third party
+	 *  @param	Societe|string		$objsoc     Object third party
 	 *  @param  CommandeFournisseur	$object		Object
 	 *  @return string      					Value if OK, 0 if KO
 	 */
-	public function getNextValue($objsoc = 0, $object = '')
+	public function getNextValue($objsoc, $object)
 	{
 		global $db, $conf;
 
@@ -166,7 +167,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 		} else {
-			$num = sprintf("%04s", $max + 1);
+			$num = sprintf("%04d", $max + 1);
 		}
 
 		return $this->prefix.$yymm."-".$num;

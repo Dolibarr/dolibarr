@@ -3,6 +3,7 @@
  * Copyright (C) 2009-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2012-2016 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -519,6 +520,7 @@ class ImportXlsx extends ModeleImports
 													// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
 												} elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) {
+													// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldRefNotIn', $key, $newval, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
 												} else {
 													$this->errors[$error]['lib'] = 'ErrorBadDefinitionOfImportProfile';

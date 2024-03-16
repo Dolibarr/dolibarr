@@ -185,9 +185,9 @@ if (isModEnabled('project')) {
 }
 $morehtmlref .= '</div>';
 
-$morehtmlright = '';
+$morehtmlstatus = '';
 
-dol_banner_tab($object, 'loanid', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+dol_banner_tab($object, 'loanid', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 ?>
 <script type="text/javascript">

@@ -6,6 +6,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -241,6 +242,7 @@ if ($type == 'bank-transfer') {
 llxHeader('', $title);
 
 
+// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 $head = bon_prelevement_prepare_head($bprev, $bprev->nbOfInvoiceToPay($type), $bprev->nbOfInvoiceToPay($type, 'salary'));
 if ($type) {
 	print dol_get_fiche_head($head, (!GETPOSTISSET('sourcetype') ? 'invoice' : 'salary'), $langs->trans("Invoices"), -1, $bprev->picto);

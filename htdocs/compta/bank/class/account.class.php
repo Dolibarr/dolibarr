@@ -93,8 +93,10 @@ class Account extends CommonObject
 	public $bank;
 
 	/**
-	 * Status
+	 * Status closed
+	 *
 	 * @var int
+	 * @deprecated 	Duplicate field. We already have the field $this->status
 	 */
 	public $clos = self::STATUS_OPEN;
 
@@ -201,13 +203,6 @@ class Account extends CommonObject
 	public $type_lib = array();
 
 	/**
-	 * Array listing all the potential status of an account.
-	 * Defined in __construct
-	 * @var array<int, string>		array: int of the status => translated label of the status
-	 */
-	public $status = array();
-
-	/**
 	 * Accountancy code
 	 * @var string
 	 */
@@ -312,13 +307,13 @@ class Account extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'ref' => array('type' => 'varchar(12)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 25),
 		'label' => array('type' => 'varchar(30)', 'label' => 'Label', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 30),
-		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 35, 'index' => 1),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 35, 'index' => 1),
 		'bank' => array('type' => 'varchar(60)', 'label' => 'Bank', 'enabled' => 1, 'visible' => -1, 'position' => 40),
 		'code_banque' => array('type' => 'varchar(128)', 'label' => 'Code banque', 'enabled' => 1, 'visible' => -1, 'position' => 45),
 		'code_guichet' => array('type' => 'varchar(6)', 'label' => 'Code guichet', 'enabled' => 1, 'visible' => -1, 'position' => 50),
@@ -387,17 +382,17 @@ class Account extends CommonObject
 
 		$this->db = $db;
 
-		$this->solde = 0;
+		$this->balance = 0;
 
 		$this->type_lib = array(
-			self::TYPE_SAVINGS => $langs->trans("BankType0"),
-			self::TYPE_CURRENT => $langs->trans("BankType1"),
-			self::TYPE_CASH => $langs->trans("BankType2"),
+			self::TYPE_SAVINGS => $langs->transnoentitiesnoconv("BankType0"),
+			self::TYPE_CURRENT => $langs->transnoentitiesnoconv("BankType1"),
+			self::TYPE_CASH => $langs->transnoentitiesnoconv("BankType2"),
 		);
 
-		$this->status = array(
-			self::STATUS_OPEN => $langs->trans("StatusAccountOpened"),
-			self::STATUS_CLOSED => $langs->trans("StatusAccountClosed")
+		$this->labelStatus = array(
+			self::STATUS_OPEN => $langs->transnoentitiesnoconv("StatusAccountOpened"),
+			self::STATUS_CLOSED => $langs->transnoentitiesnoconv("StatusAccountClosed")
 		);
 	}
 
@@ -2744,41 +2739,6 @@ class AccountLine extends CommonObjectLine
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		//global $langs;
-
-		//$langs->load('companies');
-		/*
-		if ($mode == 0)
-		{
-			if ($status==0) return $langs->trans("ActivityCeased");
-			if ($status==1) return $langs->trans("InActivity");
-		}
-		if ($mode == 1)
-		{
-			if ($status==0) return $langs->trans("ActivityCeased");
-			if ($status==1) return $langs->trans("InActivity");
-		}
-		if ($mode == 2)
-		{
-			if ($status==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"').' '.$langs->trans("ActivityCeased");
-			if ($status==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"').' '.$langs->trans("InActivity");
-		}
-		if ($mode == 3)
-		{
-			if ($status==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
-			if ($status==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
-		}
-		if ($mode == 4)
-		{
-			if ($status==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"').' '.$langs->trans("ActivityCeased");
-			if ($status==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"').' '.$langs->trans("InActivity");
-		}
-		if ($mode == 5)
-		{
-			if ($status==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
-			if ($status==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
-		}*/
-
 		return '';
 	}
 

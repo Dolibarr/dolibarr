@@ -551,8 +551,8 @@ function GetParentFolder($folderPath)
 /**
  * CreateServerFolder
  *
- * @param 	string	$folderPath		Folder
- * @param 	string	$lastFolder		Folder
+ * @param 	string	$folderPath		Folder - Folder to create (recursively)
+ * @param 	?string	$lastFolder		Internal - Child Folder we are creating, prevents recursion
  * @return	string					''=success, error message otherwise
  */
 function CreateServerFolder($folderPath, $lastFolder = null)
@@ -585,6 +585,7 @@ function CreateServerFolder($folderPath, $lastFolder = null)
 			return "Can't create $folderPath directory";
 		}
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$sErrorMsg = CreateServerFolder($sParent, $folderPath);
 		if ($sErrorMsg != '') {
 			return $sErrorMsg;

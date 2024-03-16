@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,8 +147,8 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 		   "&PBX_OUTPUT=".$IBS_OUTPUT.
 		   "&PBX_SOURCE=".$PBX_SOURCE.
 		   "&PBX_TYPEPAIEMENT=".$PBX_TYPEPAIEMENT;
-	"&PBX_HASH=".$PBX_HASH;
-	"&PBX_TIME=".$PBX_TIME;
+	// "&PBX_HASH=".$PBX_HASH;
+	// "&PBX_TIME=".$PBX_TIME;
 
 	$binKey = pack("H*", dol_decode($conf->global->PAYBOX_HMAC_KEY));
 

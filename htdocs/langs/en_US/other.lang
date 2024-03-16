@@ -327,6 +327,7 @@ SetupOfFTPClientModuleNotComplete=The setup of the FTP or SFTP client module see
 FTPFeatureNotSupportedByYourPHP=Your PHP does not support FTP or SFTP functions
 FailedToConnectToFTPServer=Failed to connect to server (server %s, port %s)
 FailedToConnectToFTPServerWithCredentials=Failed to login to server with defined login/password
+FailedToChdirOnFTPServer=Failed to change directory on the FTP server
 FTPFailedToRemoveFile=Failed to remove file <b>%s</b>.
 FTPFailedToRemoveDir=Failed to remove directory <b>%s</b>: check permissions and that the directory is empty.
 FTPPassiveMode=Passive mode

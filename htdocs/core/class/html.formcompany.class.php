@@ -130,6 +130,8 @@ class FormCompany extends Form
 			}
 			$this->db->free($resql);
 		}
+		//return natural sorted list
+		natsort($effs);
 		return $effs;
 	}
 

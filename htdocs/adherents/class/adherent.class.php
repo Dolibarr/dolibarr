@@ -316,12 +316,12 @@ class Adherent extends CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
-		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'default' => 1, 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 12, 'index' => 1),
-		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
+		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'default' => '1', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 12, 'index' => 1),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
 		'ref_ext' => array('type' => 'varchar(128)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'civility' => array('type' => 'varchar(6)', 'label' => 'Civility', 'enabled' => 1, 'visible' => -1, 'position' => 25),
 		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'showoncombobox' => 1),
@@ -760,13 +760,13 @@ class Adherent extends CommonObject
 		$this->lastname = trim($this->lastname) ? trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname) ? trim($this->firstname) : trim($this->firstname);
 		$this->gender = trim($this->gender);
-		$this->address = ($this->address ? $this->address : $this->address);
-		$this->zip = ($this->zip ? $this->zip : $this->zip);
-		$this->town = ($this->town ? $this->town : $this->town);
-		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
-		$this->state_id = ($this->state_id > 0 ? $this->state_id : $this->state_id);
-		$this->note_public = ($this->note_public ? $this->note_public : $this->note_public);
-		$this->note_private = ($this->note_private ? $this->note_private : $this->note_private);
+		// $this->address = ($this->address ? $this->address : $this->address);
+		// $this->zip = ($this->zip ? $this->zip : $this->zip);
+		// $this->town = ($this->town ? $this->town : $this->town);
+		// $this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
+		// $this->state_id = ($this->state_id > 0 ? $this->state_id : $this->state_id);
+		// $this->note_public = ($this->note_public ? $this->note_public : $this->note_public);
+		// $this->note_private = ($this->note_private ? $this->note_private : $this->note_private);
 		$this->url = $this->url ? clean_url($this->url, 0) : '';
 		$this->setUpperOrLowerCase();
 		// Check parameters

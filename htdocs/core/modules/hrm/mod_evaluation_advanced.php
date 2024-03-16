@@ -26,7 +26,7 @@
  * \brief      File containing class for advanced numbering model of Evaluation
  */
 
-dol_include_once('/core/modules/hrm/modules_evaluation.php');
+ require_once DOL_DOCUMENT_ROOT . '/core/modules/hrm/modules_evaluation.php';
 
 
 /**

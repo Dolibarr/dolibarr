@@ -51,6 +51,11 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
+$moduledir = 'workstation';
+$myTmpObjects = array();
+$myTmpObjects['workstation'] = array('includerefgeneration' => 1, 'includedocgeneration' => 0);
+
+
 
 /*
  * Actions
@@ -77,38 +82,41 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
-	$tmpobjectkey = GETPOST('object');
+	$tmpobjectkey = GETPOST('object', 'aZ09');
 
-	$tmpobject = new $tmpobjectkey($db);
-	$tmpobject->initAsSpecimen();
+	if (array_key_exists($tmpobjectkey, $myTmpObjects)) {
+		$nameofclass = ucfirst($tmpobjectkey);
+		$tmpobject = new $nameofclass($db);
+		$tmpobject->initAsSpecimen();
 
-	// Search template files
-	$file = '';
-	$classname = '';
-	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir) {
-		$file = dol_buildpath($reldir."core/modules/workstation/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
-		if (file_exists($file)) {
-			$classname = "pdf_".$modele;
-			break;
+		// Search template files
+		$file = '';
+		$classname = '';
+		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir) {
+			$file = dol_buildpath($reldir."core/modules/workstation/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
+			if (file_exists($file)) {
+				$classname = "pdf_".$modele;
+				break;
+			}
 		}
-	}
 
-	if ($classname !== '') {
-		require_once $file;
+		if ($classname !== '') {
+			require_once $file;
 
-		$module = new $classname($db);
+			$module = new $classname($db);
 
-		if ($module->write_file($tmpobject, $langs) > 0) {
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
-			return;
+			if ($module->write_file($tmpobject, $langs) > 0) {
+				header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
+				return;
+			} else {
+				setEventMessages($module->error, null, 'errors');
+				dol_syslog($module->error, LOG_ERR);
+			}
 		} else {
-			setEventMessages($module->error, null, 'errors');
-			dol_syslog($module->error, LOG_ERR);
+			setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+			dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 		}
-	} else {
-		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
-		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 } elseif ($action == 'set') {
 	// Activate a model
@@ -217,11 +225,6 @@ if ($action == 'edit') {
 		print '<br>'.$langs->trans("NothingToSetup");
 	}*/
 }
-
-
-$moduledir = 'workstation';
-$myTmpObjects = array();
-$myTmpObjects['workstation'] = array('includerefgeneration' => 1, 'includedocgeneration' => 0);
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {

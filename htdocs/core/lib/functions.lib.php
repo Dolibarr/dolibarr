@@ -4618,7 +4618,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'ai', 'angle-double-down', 'angle-double-up', 'asset',
-				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'bookmark', 'bom', 'briefcase-medical', 'bug', 'building',
+				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'bom', 'bookcal', 'bookmark', 'briefcase-medical', 'bug', 'building',
 				'card', 'calendarlist', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
 				'cash-register', 'category', 'chart', 'check', 'clock', 'clone', 'close_title', 'code', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cross', 'cubes',
 				'check-circle', 'check-square', 'currency', 'multicurrency',
@@ -4666,6 +4666,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'asset' => 'money-check-alt', 'autofill' => 'fill',
 				'bank_account' => 'university',
 				'bill' => 'file-invoice-dollar', 'billa' => 'file-excel', 'billr' => 'file-invoice-dollar', 'billd' => 'file-medical',
+				'bookcal' => 'calendar-check',
 				'supplier_invoice' => 'file-invoice-dollar', 'supplier_invoicea' => 'file-excel', 'supplier_invoicer' => 'file-invoice-dollar', 'supplier_invoiced' => 'file-medical',
 				'bom' => 'shapes',
 				'card' => 'address-card', 'chart' => 'chart-line', 'company' => 'building', 'contact' => 'address-book', 'contract' => 'suitcase', 'collab' => 'people-arrows', 'conversation' => 'comments', 'country' => 'globe-americas', 'cron' => 'business-time', 'cross' => 'times',
@@ -4764,6 +4765,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'action' => 'infobox-action', 'account' => 'infobox-bank_account', 'accounting_account' => 'infobox-bank_account', 'accountline' => 'infobox-bank_account', 'accountancy' => 'infobox-bank_account', 'asset' => 'infobox-bank_account',
 				'bank_account' => 'infobox-bank_account',
 				'bill' => 'infobox-commande', 'billa' => 'infobox-commande', 'billr' => 'infobox-commande', 'billd' => 'infobox-commande',
+				'bookcal' => 'infobox-action',
 				'margin' => 'infobox-bank_account', 'conferenceorbooth' => 'infobox-project',
 				'cash-register' => 'infobox-bank_account', 'contract' => 'infobox-contrat', 'check' => 'font-status4', 'collab' => 'infobox-action', 'conversation' => 'infobox-contrat',
 				'donation' => 'infobox-commande', 'dolly' => 'infobox-commande',  'dollyrevert' => 'flip infobox-order_supplier',
@@ -5606,18 +5608,18 @@ function dol_print_error($db = null, $error = '', $errors = null)
 	}
 
 	if ($error || $errors) {
-		$langs->load("errors");
-
 		// Merge all into $errors array
 		if (is_array($error) && is_array($errors)) {
 			$errors = array_merge($error, $errors);
-		} elseif (is_array($error)) {
+		} elseif (is_array($error)) {	// deprecated, use second parameters
 			$errors = $error;
-		} elseif (is_array($errors)) {
+		} elseif (is_array($errors) && !empty($error)) {
 			$errors = array_merge(array($error), $errors);
-		} else {
+		} elseif (!empty($error)) {
 			$errors = array_merge(array($error), array($errors));
 		}
+
+		$langs->load("errors");
 
 		foreach ($errors as $msg) {
 			if (empty($msg)) {
@@ -7644,7 +7646,7 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 		$stringtoclean = '<?xml encoding="UTF-8"><html><body>'.$stringtoclean.'</body></html>';
 
 		// Warning: loadHTML does not support HTML5 on old libxml versions.
-		$dom = new DOMDocument(null, 'UTF-8');
+		$dom = new DOMDocument('', 'UTF-8');
 		$dom->loadHTML($stringtoclean, LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOXMLDECL);
 
 		if ($dom instanceof DOMDocument) {
@@ -7927,9 +7929,17 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step (preg_replace).
 			// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
 			// using a non coventionnel way to be encoded, to not have them sanitized just after)
-			$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
-				return realCharForNumericEntities($m);
-			}, $out);
+			$out = preg_replace_callback(
+				'/&#(x?[0-9][0-9a-f]+;?)/i',
+				/**
+				 * @param string $m
+				 * @return string
+				 */
+				static function ($m) {
+					return realCharForNumericEntities($m);
+				},
+				$out
+			);
 
 
 			// Now we remove all remaining HTML entities starting with a number. We don't want such entities.
@@ -9726,14 +9736,14 @@ function dol_osencode($str)
  *      Return an id or code from a code or id.
  *      Store also Code-Id into a cache to speed up next request on same key.
  *
- * 		@param	DoliDB	$db				Database handler
- * 		@param	string	$key			Code or Id to get Id or Code
- * 		@param	string	$tablename		Table name without prefix
- * 		@param	string	$fieldkey		Field to search the key into
- * 		@param	string	$fieldid		Field to get
- *      @param  int		$entityfilter	Filter by entity
- *      @param	string	$filters		Filters to add. WARNING: string must be escaped for SQL and not coming from user input.
- *      @return int<-1,max>				ID of code if OK, 0 if key empty, -1 if KO
+ * 		@param	DoliDB				$db				Database handler
+ * 		@param	string				$key			Code or Id to get Id or Code
+ * 		@param	string				$tablename		Table name without prefix
+ * 		@param	string				$fieldkey		Field to search the key into
+ * 		@param	string				$fieldid		Field to get
+ *      @param  int					$entityfilter	Filter by entity
+ *      @param	string				$filters		Filters to add. WARNING: string must be escaped for SQL and not coming from user input.
+ *      @return int<-1,max>|string					ID of code if OK, 0 if key empty, -1 if KO
  *      @see $langs->getLabelFromKey
  */
 function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0, $filters = '')
@@ -9998,6 +10008,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 			} else {
 				eval($s);
 			}
+			return '';
 		}
 	} catch (Error $e) {
 		if ($isObBufferActive) {
@@ -12166,6 +12177,10 @@ function getElementProperties($elementType)
 		$module = 'facture';
 		$subelement = 'facture';
 		$table_element = 'facture';
+	} elseif ($elementType == 'facturerec') {
+		$classpath = 'compta/facture/class';
+		$module = 'facture';
+		$classname = 'FactureRec';
 	} elseif ($elementType == 'commande' || $elementType == 'order') {
 		$classpath = 'commande/class';
 		$module = 'commande';
@@ -12306,6 +12321,16 @@ function getElementProperties($elementType)
 		$classname = 'EmailSenderProfile';
 		$table_element = 'c_email_senderprofile';
 		$subelement = '';
+	} elseif ($elementType == 'conferenceorboothattendee') {
+		$classpath = 'eventorganization/class';
+		$classfile = 'conferenceorboothattendee';
+		$classname = 'ConferenceOrBoothAttendee';
+		$module = 'eventorganization';
+	} elseif ($elementType == 'conferenceorbooth') {
+		$classpath = 'eventorganization/class';
+		$classfile = 'conferenceorbooth';
+		$classname = 'ConferenceOrBooth';
+		$module = 'eventorganization';
 	}
 
 	if (empty($classfile)) {
@@ -13129,7 +13154,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 	global $param, $massactionbutton;
 
-	dol_include_once('/comm/action/class/actioncomm.class.php');
+	require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 
 	// Check parameters
 	if (!is_object($filterobj) && !is_object($objcon)) {
@@ -13856,9 +13881,9 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
  * request.
  *
  * @param string $prefix Prefix used to build the date selector (for instance using Form::selectDate)
- * @param int $timestamp If null, the timestamp will be created from request data
- * @param bool $hourTime If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
- * @param bool $gm If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @param ?int $timestamp If null, the timestamp will be created from request data
+ * @param string $hourTime If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @param string $gm If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
  * @return string Portion of URL with query parameters for the specified date
  */
 function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto')

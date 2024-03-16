@@ -171,6 +171,11 @@ $setupnotempty += count($formSetup->items);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
+$moduledir = 'mymodule';
+$myTmpObjects = array();
+// TODO Scan list of objects to fill this array
+$myTmpObjects['myobject'] = array('label'=>'MyObject', 'includerefgeneration'=>0, 'includedocgeneration'=>0, 'class'=>'MyObject');
+
 
 /*
  * Actions
@@ -201,40 +206,43 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
-	$tmpobjectkey = GETPOST('object');
+	$tmpobjectkey = GETPOST('object', 'aZ09');
 
-	$tmpobject = new $tmpobjectkey($db);
-	$tmpobject->initAsSpecimen();
+	if (in_array($tmpobjectkey, $myTmpObjects)) {
+		$className = $myTmpObjects[$tmpobjectkey];
+		$tmpobject = new $className($db);
+		$tmpobject->initAsSpecimen();
 
-	// Search template files
-	$file = '';
-	$classname = '';
-	$filefound = 0;
-	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir) {
-		$file = dol_buildpath($reldir."core/modules/mymodule/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
-		if (file_exists($file)) {
-			$filefound = 1;
-			$classname = "pdf_".$modele."_".strtolower($tmpobjectkey);
-			break;
+		// Search template files
+		$file = '';
+		$className = '';
+		$filefound = 0;
+		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir) {
+			$file = dol_buildpath($reldir."core/modules/mymodule/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
+			if (file_exists($file)) {
+				$filefound = 1;
+				$className = "pdf_".$modele."_".strtolower($tmpobjectkey);
+				break;
+			}
 		}
-	}
 
-	if ($filefound) {
-		require_once $file;
+		if ($filefound) {
+			require_once $file;
 
-		$module = new $classname($db);
+			$module = new $className($db);
 
-		if ($module->write_file($tmpobject, $langs) > 0) {
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=mymodule-".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
-			return;
+			if ($module->write_file($tmpobject, $langs) > 0) {
+				header("Location: ".DOL_URL_ROOT."/document.php?modulepart=mymodule-".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
+				return;
+			} else {
+				setEventMessages($module->error, null, 'errors');
+				dol_syslog($module->error, LOG_ERR);
+			}
 		} else {
-			setEventMessages($module->error, null, 'errors');
-			dol_syslog($module->error, LOG_ERR);
+			setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+			dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 		}
-	} else {
-		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
-		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
@@ -327,14 +335,8 @@ if (!empty($formSetup->items)) {
 }
 
 
-$moduledir = 'mymodule';
-$myTmpObjects = array();
-// TODO Scan list of objects
-$myTmpObjects['myobject'] = array('label'=>'MyObject', 'includerefgeneration'=>0, 'includedocgeneration'=>0, 'class'=>'MyObject');
-
-
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-	if ($myTmpObjectArray['includerefgeneration']) {
+	if (!empty($myTmpObjectArray['includerefgeneration'])) {
 		/*
 		 * Orders Numbering model
 		 */
@@ -406,8 +408,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 								print '</td>';
 
-								$nameofclass = $myTmpObjectArray['class'];
-								$mytmpinstance = new $nameofclass($db);
+								$className = $myTmpObjectArray['class'];
+								$mytmpinstance = new $className($db);
 								$mytmpinstance->initAsSpecimen();
 
 								// Info
@@ -442,7 +444,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		print "</table><br>\n";
 	}
 
-	if ($myTmpObjectArray['includedocgeneration']) {
+	if (!empty($myTmpObjectArray['includedocgeneration'])) {
 		/*
 		 * Document templates generators
 		 */
@@ -500,10 +502,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 								if (file_exists($dir.'/'.$file)) {
 									$name = substr($file, 4, dol_strlen($file) - 16);
-									$classname = substr($file, 0, dol_strlen($file) - 12);
+									$className = substr($file, 0, dol_strlen($file) - 12);
 
 									require_once $dir.'/'.$file;
-									$module = new $classname($db);
+									$module = new $className($db);
 
 									$modulequalified = 1;
 									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

@@ -10,6 +10,7 @@
  * Copyright (C) 2016-2018  Charlie Benke           <charlie@patas-monkey.com>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -730,9 +731,7 @@ if ($action == 'create') {
 				// Show product and description
 				if (isset($object->lines[$i]->product_type)) {
 					$type = $object->lines[$i]->product_type;
-				} else {
-					$object->lines[$i]->fk_product_type;
-				}
+				} // else { $object->lines[$i]->fk_product_type; }
 				// Try to enhance type detection using date_start and date_end for free lines when type
 				// was not saved.
 				if (!empty($objp->date_start)) {

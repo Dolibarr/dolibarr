@@ -1,7 +1,6 @@
 <?php
-/* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021 SuperAdmin
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2004-2017 	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +45,7 @@ $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'knowledgemanagement';
 
 $arrayofparameters = array(
-	'KNOWLEDGEMANAGEMENT_MYPARAM1' => array('type' => 'string', 'css' => 'minwidth500' ,'enabled' => 0),
+	//'KNOWLEDGEMANAGEMENT_MYPARAM1' => array('type' => 'string', 'css' => 'minwidth500' ,'enabled' => 0),
 	//'KNOWLEDGEMANAGEMENT_MYPARAM2'=>array('type'=>'textarea','enabled'=>1),
 	//'KNOWLEDGEMANAGEMENT_MYPARAM3'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
 	//'KNOWLEDGEMANAGEMENT_MYPARAM4'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
@@ -61,6 +60,11 @@ $setupnotempty = 0;
 if (!$user->admin) {
 	accessforbidden();
 }
+
+$moduledir = 'knowledgemanagement';
+$myTmpObjects = array();
+// TODO Scan list of objects to fill this array
+$myTmpObjects['knowledgemanagement'] = array('label' => 'KnowledgeManagement', 'includerefgeneration' => 0, 'includedocgeneration' => 0, 'class' => 'KnowledgeManagement');
 
 
 /*
@@ -87,38 +91,41 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
-	$tmpobjectkey = GETPOST('object');
+	$tmpobjectkey = GETPOST('object', 'aZ09');
 
-	$tmpobject = new $tmpobjectkey($db);
-	$tmpobject->initAsSpecimen();
+	if (array_key_exists($tmpobjectkey, $myTmpObjects)) {
+		$className = $myTmpObjects[$tmpobjectkey]['class'];
+		$tmpobject = new $className($db);
+		$tmpobject->initAsSpecimen();
 
-	// Search template files
-	$file = '';
-	$classname = '';
-	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir) {
-		$file = dol_buildpath($reldir."core/modules/knowledgemanagement/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
-		if (file_exists($file)) {
-			$classname = "pdf_".$modele;
-			break;
+		// Search template files
+		$file = '';
+		$className = '';
+		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir) {
+			$file = dol_buildpath($reldir."core/modules/knowledgemanagement/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
+			if (file_exists($file)) {
+				$className = "pdf_".$modele;
+				break;
+			}
 		}
-	}
 
-	if ($classname !== '') {
-		require_once $file;
+		if ($className !== '') {
+			require_once $file;
 
-		$module = new $classname($db);
+			$module = new $className($db);
 
-		if ($module->write_file($tmpobject, $langs) > 0) {
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
-			return;
+			if ($module->write_file($tmpobject, $langs) > 0) {
+				header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
+				return;
+			} else {
+				setEventMessages($module->error, null, 'errors');
+				dol_syslog($module->error, LOG_ERR);
+			}
 		} else {
-			setEventMessages($module->error, null, 'errors');
-			dol_syslog($module->error, LOG_ERR);
+			setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+			dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 		}
-	} else {
-		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
-		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
@@ -332,16 +339,8 @@ if ($action == 'edit') {
 }
 
 
-$moduledir = 'knowledgemanagement';
-$myTmpObjects = array();
-$myTmpObjects['MyObject'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
-
-
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-	if ($myTmpObjectKey == 'MyObject') {
-		continue;
-	}
-	if ($myTmpObjectArray['includerefgeneration']) {
+	if (!empty($myTmpObjectArray['includerefgeneration'])) {
 		/*
 		 * Orders Numbering model
 		 */
@@ -413,7 +412,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 								print '</td>';
 
-								$mytmpinstance = new $myTmpObjectKey($db);
+								$className = $myTmpObjectArray['class'];
+								$mytmpinstance = new $className($db);
 								$mytmpinstance->initAsSpecimen();
 
 								// Info
@@ -448,7 +448,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		print "</table><br>\n";
 	}
 
-	if ($myTmpObjectArray['includedocgeneration']) {
+	if (!empty($myTmpObjectArray['includedocgeneration'])) {
 		/*
 		 * Document templates generators
 		 */
@@ -507,10 +507,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 								if (file_exists($dir.'/'.$file)) {
 									$name = substr($file, 4, dol_strlen($file) - 16);
-									$classname = substr($file, 0, dol_strlen($file) - 12);
+									$className = substr($file, 0, dol_strlen($file) - 12);
 
 									require_once $dir.'/'.$file;
-									$module = new $classname($db);
+									$module = new $className($db);
 
 									$modulequalified = 1;
 									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
