@@ -179,6 +179,9 @@ class FormMail extends Form
 
 	public $substit = array();
 	public $substit_lines = array();
+	/**
+	 * @var array{models:string,langmodels?:string,fileinit?:string[],returnurl:string}
+	 */
 	public $param = array();
 
 	public $withtouser = array();
