@@ -58,9 +58,10 @@ $arrayofparameters = array(
 $error = 0;
 $setupnotempty = 0;
 
+$tmpobjectkey = GETPOST('object', 'aZ09');
 $moduledir = 'recruitment';
 $myTmpObjects = array();
-$myTmpObjects['RecruitmentCandidature'] = array('includerefgeneration' => 1, 'includedocgeneration' => 0);
+$myTmpObjects['recruitmentcandidature'] = array('label' => 'RecruitmentCandidature', 'includerefgeneration' => 1, 'includedocgeneration' => 0, 'class' => 'RecruitmentCandidature');
 
 
 /*
@@ -86,50 +87,45 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'specimen') {
+} elseif ($action == 'specimen' && $tmpobjectkey) {
 	$modele = GETPOST('module', 'alpha');
-	$tmpobjectkey = GETPOST('object', 'aZ09');
 
-	if (array_key_exists($tmpobjectkey, $myTmpObjects)) {
-		$className = $myTmpObjects[$tmpobjectkey]['class'];
-		$tmpobject = new $className($db);
-		$tmpobject->initAsSpecimen();
+	$className = $myTmpObjects[$tmpobjectkey]['class'];
+	$tmpobject = new $className($db);
+	$tmpobject->initAsSpecimen();
 
-		// Search template files
-		$file = '';
-		$classname = '';
-		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-		foreach ($dirmodels as $reldir) {
-			$file = dol_buildpath($reldir."core/modules/mymodule/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
-			if (file_exists($file)) {
-				$classname = "pdf_".$modele;
-				break;
-			}
+	// Search template files
+	$file = '';
+	$classname = '';
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+	foreach ($dirmodels as $reldir) {
+		$file = dol_buildpath($reldir."core/modules/mymodule/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
+		if (file_exists($file)) {
+			$classname = "pdf_".$modele;
+			break;
 		}
+	}
 
-		if ($classname !== '') {
-			require_once $file;
+	if ($classname !== '') {
+		require_once $file;
 
-			$module = new $classname($db);
+		$module = new $classname($db);
 
-			if ($module->write_file($tmpobject, $langs) > 0) {
-				header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
-				return;
-			} else {
-				setEventMessages($module->error, null, 'errors');
-				dol_syslog($module->error, LOG_ERR);
-			}
+		if ($module->write_file($tmpobject, $langs) > 0) {
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
+			return;
 		} else {
-			setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
-			dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+			setEventMessages($module->error, null, 'errors');
+			dol_syslog($module->error, LOG_ERR);
 		}
+	} else {
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 } elseif ($action == 'set') {
 	// Activate a model
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 } elseif ($action == 'del') {
-	$tmpobjectkey = GETPOST('object', 'aZ09');
-
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
 		$constforval = 'RECRUITMENT_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
@@ -139,7 +135,6 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
-	$tmpobjectkey = GETPOST('object', 'aZ09');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'RECRUITMENT_'.strtoupper($tmpobjectkey)."_ADDON";
 
@@ -147,7 +142,6 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'setdoc') {
 	// Set default model
-	$tmpobjectkey = GETPOST('object', 'aZ09');
 	$constforval = 'RECRUITMENT_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 	if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
 		// The constant that was read before the new set
@@ -161,7 +155,6 @@ if ($action == 'updateMask') {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 } elseif ($action == 'unsetdoc') {
-	$tmpobjectkey = GETPOST('object', 'aZ09');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'RECRUITMENT_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		dolibarr_del_const($db, $constforval, $conf->entity);
@@ -312,7 +305,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 								print '</td>';
 
-								$mytmpinstance = new $myTmpObjectKey($db);
+								$className = $myTmpObjectArray['class'];
+								$mytmpinstance = new $className($db);
 								$mytmpinstance->initAsSpecimen();
 
 								// Info

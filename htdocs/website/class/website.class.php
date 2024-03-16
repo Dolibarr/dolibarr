@@ -1310,7 +1310,7 @@ class Website extends CommonObject
 				$newid = 0;
 
 				// Scan the line
-				if (preg_match('/^-- Page ID (\d+)\s[^\s]+\s(\d+).*Aliases\s(.*)\s--;/i', $buf, $reg)) {
+				if (preg_match('/^-- Page ID (\d+)\s[^\s]+\s(\d+).*Aliases\s(.+)\s--;/i', $buf, $reg)) {
 					// Example of line: "-- Page ID 179 -> 1__+MAX_llx_website_page__ - Aliases about-us --;"
 					$oldid = $reg[1];
 					$newid = ($reg[2] + $maxrowid);
@@ -1324,7 +1324,7 @@ class Website extends CommonObject
 					$newid = ($reg[1] + $maxrowid);
 					$aliasesarray = explode(',', $reg[2]);
 
-					dol_syslog("In sql source file, we have the page with the new ID ".$newid.", and we must create the shortcut aliases: ".$reg[3]);
+					dol_syslog("In sql source file, we have the page with the new ID ".$newid.", and we must create the shortcut aliases: ".$reg[2]);
 				}
 
 				if ($newid) {
