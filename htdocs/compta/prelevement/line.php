@@ -43,7 +43,7 @@ $socid = GETPOSTINT('socid');
 
 $type = GETPOST('type', 'aZ09');
 
-$limit = GETPOSTINT('limit', $conf->liste_limit);
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");

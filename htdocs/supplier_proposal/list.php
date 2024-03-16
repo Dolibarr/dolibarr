@@ -106,7 +106,7 @@ $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all'
 $mesg = (GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 
 $optioncss = GETPOST('optioncss', 'alpha');
-$limit = GETPOSTINT('limit', $conf->liste_limit);
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");

@@ -49,7 +49,7 @@ $page = $_GET["page"];
 if ($page < 0) {
 	$page = 0;
 }
-$limit = GETPOSTINT('limit', $conf->liste_limit);
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $offset = $limit * $page;
 
 $year = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
