@@ -3632,6 +3632,9 @@ supplier_proposalDESC
 suppliersproposalsindex
 with
 
+# pdf_vinci_modules.php ('textkey')
+Dimensions
+
 # Seem to be global settings
 AI_CONFIGURATIONS_PROMPT
 WEBPORTAL_BANNER_BACKGROUND
