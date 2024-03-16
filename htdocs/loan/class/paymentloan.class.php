@@ -170,13 +170,13 @@ class PaymentLoan extends CommonObject
 			$this->fk_loan = (int) $this->fk_loan;
 		}
 		if (isset($this->amount_capital)) {
-			$this->amount_capital = price2num($this->amount_capital ? $this->amount_capital : 0);
+			$this->amount_capital = (float) price2num($this->amount_capital ? $this->amount_capital : 0);
 		}
 		if (isset($this->amount_insurance)) {
-			$this->amount_insurance = price2num($this->amount_insurance ? $this->amount_insurance : 0);
+			$this->amount_insurance = (float) price2num($this->amount_insurance ? $this->amount_insurance : 0);
 		}
 		if (isset($this->amount_interest)) {
-			$this->amount_interest = price2num($this->amount_interest ? $this->amount_interest : 0);
+			$this->amount_interest = (float) price2num($this->amount_interest ? $this->amount_interest : 0);
 		}
 		if (isset($this->fk_typepayment)) {
 			$this->fk_typepayment = (int) $this->fk_typepayment;
@@ -201,7 +201,7 @@ class PaymentLoan extends CommonObject
 		}
 
 		$totalamount = $this->amount_capital + $this->amount_insurance + $this->amount_interest;
-		$totalamount = price2num($totalamount);
+		$totalamount = (float) price2num($totalamount);
 
 		// Check parameters
 		if ($totalamount == 0) {
@@ -332,13 +332,13 @@ class PaymentLoan extends CommonObject
 			$this->fk_loan = (int) $this->fk_loan;
 		}
 		if (isset($this->amount_capital)) {
-			$this->amount_capital = trim($this->amount_capital);
+			$this->amount_capital = (float) $this->amount_capital;
 		}
 		if (isset($this->amount_insurance)) {
-			$this->amount_insurance = trim($this->amount_insurance);
+			$this->amount_insurance = (float) $this->amount_insurance;
 		}
 		if (isset($this->amount_interest)) {
-			$this->amount_interest = trim($this->amount_interest);
+			$this->amount_interest = (float) $this->amount_interest;
 		}
 		if (isset($this->fk_typepayment)) {
 			$this->fk_typepayment = (int) $this->fk_typepayment;
