@@ -2448,9 +2448,9 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 /**
  * Search in task lines with a particular parent if there is a task for a particular user (in taskrole)
  *
- * @param 	string	$inc				Counter that count number of lines legitimate to show (for return)
+ * @param 	int		$inc				Counter that count number of lines legitimate to show (for return)
  * @param 	int		$parent				Id of parent task to start
- * @param 	array	$lines				Array of all tasks
+ * @param 	Task[]	$lines				Array of all tasks
  * @param	string	$taskrole			Array of task filtered on a particular user
  * @return	int							1 if there is
  */
