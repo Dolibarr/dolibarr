@@ -11,6 +11,7 @@ aplphanothtml->alphanohtml
 choosed->chosen
 dokument->document
 dolibar->dolibarr
+dolibarrr->dolibarr
 dollibar->dolibarr
 dollibarr->dolibarr
 # fiche->card

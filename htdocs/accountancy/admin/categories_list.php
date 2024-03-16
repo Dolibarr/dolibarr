@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2023  Laurent Destailleur      <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2024  Alexandre Spangaro       <aspangaro@easya.solutions>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -305,9 +306,9 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
 
-if (GETPOST('actioncancel', 'alpha')) {
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
-}
+// if (GETPOST('actioncancel', 'alpha')) {
+// 	$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
+// }
 
 if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 	$rowidcol = "rowid";

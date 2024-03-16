@@ -1060,11 +1060,13 @@ class Task extends CommonObjectLine
 		if ($morewherefilter) {
 			$sql .= $morewherefilter;
 		}
+
 		// Add where from extra fields
 		$extrafieldsobjectkey = 'projet_task';
 		$extrafieldsobjectprefix = 'efpt.';
-		global $db; // needed for extrafields_list_search_sql.tpl
+		global $db, $conf; // needed for extrafields_list_search_sql.tpl
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+
 		// Add where from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
