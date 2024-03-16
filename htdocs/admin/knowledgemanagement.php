@@ -65,7 +65,7 @@ if (!$user->admin) {
 $moduledir = 'knowledgemanagement';
 $myTmpObjects = array();
 // TODO Scan list of objects to fill this array
-$myTmpObjects['knowledgemanagement'] = array('label'=>'KnowledgeManagement', 'includerefgeneration'=>0, 'includedocgeneration'=>0, 'class'=>'KnowledgeManagement');
+$myTmpObjects['knowledgemanagement'] = array('label' => 'KnowledgeManagement', 'includerefgeneration' => 0, 'includedocgeneration' => 0, 'class' => 'KnowledgeManagement');
 
 
 /*
@@ -94,8 +94,9 @@ if ($action == 'updateMask') {
 	$modele = GETPOST('module', 'alpha');
 	$tmpobjectkey = GETPOST('object', 'aZ09');
 
-	if (in_array($tmpobjectkey, $myTmpObjects)) {
-		$tmpobject = new $tmpobjectkey($db);
+	if (array_key_exists($tmpobjectkey, $myTmpObjects)) {
+		$nameofclass = $myTmpObjects['class'];
+		$tmpobject = new $nameofclass($db);
 		$tmpobject->initAsSpecimen();
 
 		// Search template files
@@ -455,7 +456,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		print "</table><br>\n";
 	}
 
-	if ($myTmpObjectArray['includedocgeneration']) {
+	if (array_key_exists('includedocgeneration', $myTmpObjectArray)) {
 		/*
 		 * Document templates generators
 		 */
