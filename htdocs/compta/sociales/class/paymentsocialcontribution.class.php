@@ -186,7 +186,7 @@ class PaymentSocialContribution extends CommonObject
 			$this->fk_charge = (int) $this->fk_charge;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->fk_typepaiement)) {
 			$this->fk_typepaiement = (int) $this->fk_typepaiement;
