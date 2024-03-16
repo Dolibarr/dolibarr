@@ -118,7 +118,9 @@ class GeoMapEditor
 			});
 			console.log(centroid);
 			if (centroid.type == "Point") {
-				map.setView(centroid.coordinates, 12);
+				map.setView(centroid.coordinates, 11);
+			} else {
+				map.setView([48.852, 2.351], 12);
 			}
 			if (markerType == "point" && Object.keys(geoms).length != 0) {
 				//map.setView(geoms.coordinates, 17);
@@ -130,17 +132,13 @@ class GeoMapEditor
 					drawPolygon: false,
 				});
 			} else if (markerType == "multipts" && Object.keys(geoms).length != 0) {
-				//map.setView([48.852, 2.351], 12);
 				L.multipoint(geoms.coordinates).addTo(map);
 			} else if (markerType == "linestrg" && Object.keys(geoms).length != 0) {
-				//map.setView([48.852, 2.351], 12);
 				L.polyline(geoms.coordinates).addTo(map);
 			} else if (markerType == "polygon" && Object.keys(geoms).length != 0) {
-				map.setView([48.852, 2.351], 12);
-				// map.setView(geoms.coordinates, 14);
 				L.polygon(geoms.coordinates).addTo(map);
 			} else if (Object.keys(geoms).length === 0) {
-				map.setView([48.852, 2.351], 12);
+				// map.setView([48.852, 2.351], 12);
 			}
 			var tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 				maxZoom: 19,
