@@ -116,7 +116,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 $moduledir = 'webportal';
 $myTmpObjects = array();
-$myTmpObjects['WebPortal'] = array('label' => 'WebPortal', 'includerefgeneration' => 0, 'includedocgeneration' => 0);
+//$myTmpObjects['webportal'] = array('label' => 'WebPortal', 'includerefgeneration' => 0, 'includedocgeneration' => 0, 'class' => 'WebPortal');
 
 $tmpobjectkey = GETPOST('object', 'aZ09');
 if ($tmpobjectkey && !array_key_exists($tmpobjectkey, $myTmpObjects)) {
@@ -146,10 +146,11 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'specimen') {
+} elseif ($action == 'specimen' && $tmpobjectkey) {
 	$modele = GETPOST('module', 'alpha');
 
-	$tmpobject = new $tmpobjectkey($db);
+	$className = $myTmpObjects[$tmpobjectkey]['class'];
+	$tmpobject = new $className($db);
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
@@ -362,7 +363,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 								print '</td>';
 
-								$mytmpinstance = new $myTmpObjectKey($db);
+								$className = $myTmpObjectArray['class'];
+								$mytmpinstance = new $className($db);
 								$mytmpinstance->initAsSpecimen();
 
 								// Info
