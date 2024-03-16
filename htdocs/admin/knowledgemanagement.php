@@ -77,10 +77,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconst', 'aZ09');
-	$maskorder = GETPOST('maskorder', 'alpha');
+	$maskdata = GETPOST('maskKnowledgeRecord', 'alpha');
 
 	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
-		$res = dolibarr_set_const($db, $maskconst, $maskorder, 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, $maskconst, $maskdata, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
@@ -131,7 +131,7 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
-	$tmpobjectkey = GETPOST('object');
+	$tmpobjectkey = GETPOST('object', 'aZ09');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'KNOWLEDGEMANAGEMENT_'.strtoupper($tmpobjectkey)."_ADDON";
 		dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
@@ -142,7 +142,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		$tmpobjectkey = GETPOST('object');
+		$tmpobjectkey = GETPOST('object', 'aZ09');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'KNOWLEDGEMANAGEMENT_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 			if (getDolGlobalString($constforval) == "$value") {
@@ -152,7 +152,7 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'setdoc') {
 	// Set or unset default model
-	$tmpobjectkey = GETPOST('object');
+	$tmpobjectkey = GETPOST('object', 'aZ09');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'KNOWLEDGEMANAGEMENT_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
@@ -168,7 +168,7 @@ if ($action == 'updateMask') {
 		}
 	}
 } elseif ($action == 'unsetdoc') {
-	$tmpobjectkey = GETPOST('object');
+	$tmpobjectkey = GETPOST('object', 'aZ09');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'KNOWLEDGEMANAGEMENT_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		dolibarr_del_const($db, $constforval, $conf->entity);
@@ -404,11 +404,11 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								print '</td>'."\n";
 
 								print '<td class="center">';
-								$constforvar = 'KNOWLEDGEMANAGEMENT_'.strtoupper($myTmpObjectKey).'_ADDON';
+								$constforvar = 'KNOWLEDGEMANAGEMENT_'.strtoupper($myTmpObjectArray['class']).'_ADDON';
 								if (getDolGlobalString($constforvar) == $file) {
 									print img_picto($langs->trans("Activated"), 'switch_on');
 								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectKey).'&value='.urlencode($file).'">';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectArray['class']).'&value='.urlencode($file).'">';
 									print img_picto($langs->trans("Disabled"), 'switch_off');
 									print '</a>';
 								}

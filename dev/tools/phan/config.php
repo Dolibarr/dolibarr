@@ -408,7 +408,7 @@ return [
 	'suppress_issue_types' => [
 		// Dolibarr uses a lot of internal deprecated stuff, not reporting
 		'PhanDeprecatedProperty',
-		'PhanDeprecatedFunction',
+		// 'PhanDeprecatedFunction',
 		//'PhanCompatibleNegativeStringOffset',
 		// 'PhanPluginDuplicateExpressionAssignment',
 		// Nulls are likely mostly false positives
@@ -589,7 +589,7 @@ return [
 		// 'PhanPluginPrintfNotPercent',  // Detects fishy stuff with '%' format and suggests %%
 		'PhanPossiblyUndeclaredGlobalVariable',
 		// 'PhanPluginPossiblyStaticProtectedMethod',
-		'PhanTypeMismatchReturn',
+		// 'PhanTypeMismatchReturn',
 		// 'PhanPluginMoreSpecificActualReturnType',
 		// 'PhanTypeMismatchReturnProbablyReal',
 		'PhanPossiblyUndeclaredVariable',

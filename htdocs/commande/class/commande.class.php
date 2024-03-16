@@ -2424,7 +2424,7 @@ class Commande extends CommonOrder
 	/**
 	 * 	Applique une remise relative
 	 *
-	 *  @deprecated
+	 *  @deprecated Use setDiscount() instead.
 	 *  @see setDiscount()
 	 * 	@param     	User		$user		User qui positionne la remise
 	 * 	@param     	float		$remise		Discount (percent)
@@ -2435,6 +2435,7 @@ class Commande extends CommonOrder
 	{
 		// phpcs:enable
 		dol_syslog(get_class($this)."::set_remise is deprecated, use setDiscount instead", LOG_NOTICE);
+		// @phan-suppress-next-line PhanDeprecatedFunction
 		return $this->setDiscount($user, $remise, $notrigger);
 	}
 

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2022 Jeritiana Ravelojaona <jeritiana.rav@smartone.ai>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
  * @param	string	$usertotest		Login
  * @param	string	$passwordtotest	Password
  * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
- * @return	string					Login if OK, '' if KO
+ * @return	string|false			Login if OK, false if KO
  */
 function check_user_password_openid_connect($usertotest, $passwordtotest, $entitytotest)
 {

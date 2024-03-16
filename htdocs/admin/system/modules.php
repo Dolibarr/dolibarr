@@ -311,7 +311,7 @@ print '</tr>';
 if ($sortfield == "name" && $sortorder == "asc") {
 	usort(
 		$moduleList,
-		/** @return bool */
+		/** @return int */
 		function (stdClass $a, stdClass $b) {
 			return strcasecmp($a->name, $b->name);
 		}
@@ -319,7 +319,7 @@ if ($sortfield == "name" && $sortorder == "asc") {
 } elseif ($sortfield == "name" && $sortorder == "desc") {
 	usort(
 		$moduleList,
-		/** @return bool */
+		/** @return int */
 		static function (stdClass $a, stdClass $b) {
 			return strcasecmp($b->name, $a->name);
 		}
@@ -327,7 +327,7 @@ if ($sortfield == "name" && $sortorder == "asc") {
 } elseif ($sortfield == "version" && $sortorder == "asc") {
 	usort(
 		$moduleList,
-		/** @return bool */
+		/** @return int */
 		static function (stdClass $a, stdClass $b) {
 			return strcasecmp($a->version, $b->version);
 		}
@@ -335,7 +335,7 @@ if ($sortfield == "name" && $sortorder == "asc") {
 } elseif ($sortfield == "version" && $sortorder == "desc") {
 	usort(
 		$moduleList,
-		/** @return bool */
+		/** @return int */
 		static function (stdClass $a, stdClass $b) {
 			return strcasecmp($b->version, $a->version);
 		}

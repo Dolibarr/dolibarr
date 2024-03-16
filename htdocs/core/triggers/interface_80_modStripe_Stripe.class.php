@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright (C) 2018  ptibogxiv	<support@ptibogxiv.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +53,7 @@ class InterfaceStripe extends DolibarrTriggers
 	}
 
 	/**
-	 * Function called when a Dolibarrr business event is done.
+	 * Function called when a Dolibarr business event is done.
 	 * All functions "runTrigger" are triggered if file
 	 * is inside directory core/triggers
 	 *
@@ -157,7 +158,7 @@ class InterfaceStripe extends DolibarrTriggers
 									$isineec = isInEEC($object);
 									if ($object->country_code && $isineec) {
 										//$taxids = $customer->allTaxIds($customer->id);
-										$customer->createTaxId($customer->id, array('type'=>'eu_vat', 'value'=>$vatcleaned));
+										$customer->createTaxId($customer->id, array('type' => 'eu_vat', 'value' => $vatcleaned));
 									}
 								} else {
 									$taxids = $customer->allTaxIds($customer->id);
@@ -171,6 +172,7 @@ class InterfaceStripe extends DolibarrTriggers
 							}
 
 							// Update Customer on Stripe
+							// @phan-suppress-next-line PhanDeprecatedFunction
 							$customer->save();
 						} catch (Exception $e) {
 							//var_dump(\Stripe\Stripe::getApiVersion());
@@ -227,8 +229,9 @@ class InterfaceStripe extends DolibarrTriggers
 						$card = $stripe->cardStripe($customer, $object, $stripeacc, $servicestatus);
 						if ($card) {
 							// @phan-suppress-next-line PhanTypeMismatchPropertyProbablyReal
-							$card->metadata = array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']));
+							$card->metadata = array('dol_id' => $object->id, 'dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']));
 							try {
+								// @phan-suppress-next-line PhanDeprecatedFunction
 								$card->save();
 							} catch (Exception $e) {
 								$ok = -1;

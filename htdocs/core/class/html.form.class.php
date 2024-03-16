@@ -4321,7 +4321,7 @@ class Form
 	 *                                > 0 : force deposit percentage (for example, from company object)
 	 * @param int $noprint if set to one we return the html to print, if 0 (default) we print it
 	 * @return    void|string
-	 * @deprecated
+	 * @deprecated Use getSelectConditionsPaiements() instead and handle noprint locally.
 	 */
 	public function select_conditions_paiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '', $deposit_percent = -1, $noprint = 0)
 	{
