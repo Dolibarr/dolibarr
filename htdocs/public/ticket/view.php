@@ -221,7 +221,7 @@ $formticket = new FormTicket($db);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('ticketpublicview', 'globalcard'));
 
-if (empty(getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE'))) {
+if (!getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print '<div class="error">'.$langs->trans('TicketPublicInterfaceForbidden').'</div>';
 	$db->close();
 	exit();
@@ -331,7 +331,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '</td></tr>';
 
 		// Progression
-		if (!empty(getDolGlobalString('TICKET_SHOW_PROGRESSION'))) {
+		if (getDolGlobalString('TICKET_SHOW_PROGRESSION')) {
 			print '<tr><td>'.$langs->trans("Progression").'</td><td>';
 			print ($object->dao->progress > 0 ? dol_escape_htmltag($object->dao->progress) : '0').'%';
 			print '</td></tr>';
