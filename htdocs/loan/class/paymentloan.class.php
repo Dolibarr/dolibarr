@@ -121,10 +121,15 @@ class PaymentLoan extends CommonObject
 	 * @var string
 	 */
 	public $label;
+
 	/**
-	 * @var string
+	 * @var int
 	 */
 	public $paymenttype;
+
+	/**
+	 * @var int
+	 */
 	public $bank_account;
 	public $bank_line;
 
@@ -543,7 +548,7 @@ class PaymentLoan extends CommonObject
 			// Insert payment into llx_bank
 			$bank_line_id = $acc->addline(
 				$this->datep,
-				$this->paymenttype, // Payment mode ID or code ("CHQ or VIR for example")
+				$this->paymenttype, // Payment mode ID or code ("CHQ or VIR for example") it's integer in db
 				$label,
 				$total,
 				$this->num_payment,
