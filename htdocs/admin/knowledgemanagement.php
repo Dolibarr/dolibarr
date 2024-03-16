@@ -65,7 +65,7 @@ if (!$user->admin) {
 $moduledir = 'knowledgemanagement';
 $myTmpObjects = array();
 // TODO Scan list of objects to fill this array
-$myTmpObjects['knowledgemanagement'] = array('label'=>'KnowledgeManagement', 'includerefgeneration'=>0, 'includedocgeneration'=>0, 'class'=>'KnowledgeManagement');
+$myTmpObjects['knowledgemanagement'] = array('label' => 'KnowledgeManagement', 'includerefgeneration' => 0, 'includedocgeneration' => 0, 'class' => 'KnowledgeManagement');
 
 
 /*
@@ -420,7 +420,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 								print '</td>';
 
-								$mytmpinstance = new $myTmpObjectKey($db);
+								$nameforclass = $myTmpObjects[$myTmpObjectKey]['class'];
+								$mytmpinstance = new $nameforclass($db);
 								$mytmpinstance->initAsSpecimen();
 
 								// Info
