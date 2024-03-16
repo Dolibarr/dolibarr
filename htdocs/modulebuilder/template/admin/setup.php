@@ -209,7 +209,8 @@ if ($action == 'updateMask') {
 	$tmpobjectkey = GETPOST('object', 'aZ09');
 
 	if (in_array($tmpobjectkey, $myTmpObjects)) {
-		$tmpobject = new $tmpobjectkey($db);
+		$className = $myTmpObjects[$tmpobjectkey];
+		$tmpobject = new $className($db);
 		$tmpobject->initAsSpecimen();
 
 		// Search template files
@@ -407,8 +408,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 								print '</td>';
 
-								$nameofclass = $myTmpObjectArray['class'];
-								$mytmpinstance = new $nameofclass($db);
+								$className = $myTmpObjectArray['class'];
+								$mytmpinstance = new $className($db);
 								$mytmpinstance->initAsSpecimen();
 
 								// Info

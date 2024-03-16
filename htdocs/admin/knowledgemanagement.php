@@ -1,7 +1,6 @@
 <?php
-/* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021 SuperAdmin
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2004-2017 	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +94,8 @@ if ($action == 'updateMask') {
 	$tmpobjectkey = GETPOST('object', 'aZ09');
 
 	if (in_array($tmpobjectkey, $myTmpObjects)) {
-		$tmpobject = new $tmpobjectkey($db);
+		$className = $myTmpObjects[$tmpobjectkey];
+		$tmpobject = new $className($db);
 		$tmpobject->initAsSpecimen();
 
 		// Search template files
@@ -337,11 +337,6 @@ if ($action == 'edit') {
 		//print '<br>'.$langs->trans("NothingToSetup");
 	}
 }
-
-
-$moduledir = 'knowledgemanagement';
-$myTmpObjects = array();
-$myTmpObjects['MyObject'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
