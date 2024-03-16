@@ -468,7 +468,7 @@ return [
 		'PhanPluginUnknownArrayFunctionParamType',
 		// 'PhanPluginDescriptionlessCommentOnPublicProperty',
 		// 'PhanPluginUnknownFunctionParamType',  // Finds certain errors in PHPdoc typing
-		'PhanTypeSuspiciousStringExpression',
+		// 'PhanTypeSuspiciousStringExpression',
 		// 'PhanPluginRedundantAssignment',
 
 		'PhanTypeExpectedObjectPropAccess',
