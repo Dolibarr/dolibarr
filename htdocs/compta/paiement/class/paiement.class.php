@@ -68,12 +68,12 @@ class Paiement extends CommonObject
 	public $socid;
 
 	/**
-	 * @var int
+	 * @var int|string
 	 */
 	public $datepaye;
 
 	/**
-	 * @var int							same than $datepaye
+	 * @var int|string					same than $datepaye
 	 */
 	public $date;
 
