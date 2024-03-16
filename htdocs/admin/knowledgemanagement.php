@@ -76,11 +76,11 @@ $myTmpObjects['knowledgemanagement'] = array('label' => 'KnowledgeManagement', '
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconst', 'aZ09');
-	$maskorder = GETPOST('maskorder', 'alpha');
+	$maskconst = GETPOST('maskconst', 'alpha');
+	$maskdata = GETPOST('maskKnowledgeRecord', 'alpha');
 
 	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
-		$res = dolibarr_set_const($db, $maskconst, $maskorder, 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, $maskconst, $maskdata, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
