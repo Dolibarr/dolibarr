@@ -94,7 +94,7 @@ if ($action == 'updateMask') {
 	$tmpobjectkey = GETPOST('object', 'aZ09');
 
 	if (array_key_exists($tmpobjectkey, $myTmpObjects)) {
-		$className = $myTmpObjects['class'];
+		$className = $myTmpObjects[$tmpobjectkey]['class'];
 		$tmpobject = new $className($db);
 		$tmpobject->initAsSpecimen();
 
@@ -412,7 +412,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 								print '</td>';
 
-								$mytmpinstance = new $myTmpObjectKey($db);
+								$className = $myTmpObjectArray['class'];
+								$mytmpinstance = new $className($db);
 								$mytmpinstance->initAsSpecimen();
 
 								// Info
