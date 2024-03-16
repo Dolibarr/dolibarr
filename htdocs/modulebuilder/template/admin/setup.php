@@ -176,6 +176,11 @@ $myTmpObjects = array();
 // TODO Scan list of objects to fill this array
 $myTmpObjects['myobject'] = array('label'=>'MyObject', 'includerefgeneration'=>0, 'includedocgeneration'=>0, 'class'=>'MyObject');
 
+$tmpobjectkey = GETPOST('object', 'aZ09');
+if ($tmpobjectkey && !array_key_exists($tmpobjectkey, $myTmpObjects)) {
+	accessforbidden('Bad value for object. Hack attempt ?');
+}
+
 
 /*
  * Actions
@@ -206,47 +211,43 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
-	$tmpobjectkey = GETPOST('object', 'aZ09');
 
-	if (array_key_exists($tmpobjectkey, $myTmpObjects)) {
-		$className = $myTmpObjects[$tmpobjectkey]['class'];
-		$tmpobject = new $className($db);
-		$tmpobject->initAsSpecimen();
+	$className = $myTmpObjects[$tmpobjectkey]['class'];
+	$tmpobject = new $className($db);
+	$tmpobject->initAsSpecimen();
 
-		// Search template files
-		$file = '';
-		$className = '';
-		$filefound = 0;
-		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-		foreach ($dirmodels as $reldir) {
-			$file = dol_buildpath($reldir."core/modules/mymodule/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
-			if (file_exists($file)) {
-				$filefound = 1;
-				$className = "pdf_".$modele."_".strtolower($tmpobjectkey);
-				break;
-			}
+	// Search template files
+	$file = '';
+	$className = '';
+	$filefound = 0;
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+	foreach ($dirmodels as $reldir) {
+		$file = dol_buildpath($reldir."core/modules/mymodule/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
+		if (file_exists($file)) {
+			$filefound = 1;
+			$className = "pdf_".$modele."_".strtolower($tmpobjectkey);
+			break;
 		}
+	}
 
-		if ($filefound) {
-			require_once $file;
+	if ($filefound) {
+		require_once $file;
 
-			$module = new $className($db);
+		$module = new $className($db);
 
-			if ($module->write_file($tmpobject, $langs) > 0) {
-				header("Location: ".DOL_URL_ROOT."/document.php?modulepart=mymodule-".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
-				return;
-			} else {
-				setEventMessages($module->error, null, 'errors');
-				dol_syslog($module->error, LOG_ERR);
-			}
+		if ($module->write_file($tmpobject, $langs) > 0) {
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=mymodule-".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
+			return;
 		} else {
-			setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
-			dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+			setEventMessages($module->error, null, 'errors');
+			dol_syslog($module->error, LOG_ERR);
 		}
+	} else {
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
-	$tmpobjectkey = GETPOST('object', 'aZ09');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey)."_ADDON";
 		dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
@@ -257,7 +258,6 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		$tmpobjectkey = GETPOST('object', 'aZ09');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 			if (getDolGlobalString($constforval) == "$value") {
@@ -267,7 +267,6 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'setdoc') {
 	// Set or unset default model
-	$tmpobjectkey = GETPOST('object', 'aZ09');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
@@ -283,7 +282,6 @@ if ($action == 'updateMask') {
 		}
 	}
 } elseif ($action == 'unsetdoc') {
-	$tmpobjectkey = GETPOST('object', 'aZ09');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		dolibarr_del_const($db, $constforval, $conf->entity);
