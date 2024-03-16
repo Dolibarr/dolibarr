@@ -5646,7 +5646,7 @@ abstract class CommonObject
 		$filefound = dol_sanitizePathName($filefound);
 
 		// If generator was found
-		global $db; // Required to solve a conception default making an include of some code that uses $db instead of $this->db just after.
+		global $db; // Required to solve a conception error making an include of some code that uses $db instead of $this->db just after.
 
 		require_once $filefound;
 
@@ -5706,12 +5706,14 @@ abstract class CommonObject
 		// update model_pdf in object
 		$this->model_pdf = $saved_model;
 
+		var_dump($filefound);
 		if (in_array(get_class($this), array('Adherent'))) {
 			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
 		} else {
 			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 		// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
+		var_dump($filefound);
 
 		if ($resultwritefile > 0) {
 			$outputlangs->charset_output = $sav_charset_output;
