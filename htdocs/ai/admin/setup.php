@@ -173,9 +173,6 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 $head = aiAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($title), -1, "fa-microchip");
 
-// Setup page goes here
-//echo '<span class="opacitymedium">'.$langs->trans("AiSetupPage").'</span><br><br>';
-
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);
