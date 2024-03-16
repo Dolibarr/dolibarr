@@ -295,9 +295,9 @@ class Notify
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (fk_soc, fk_action, type, fk_contact, datec)";
-		$sql .= " VALUES (".((int) $this->socid).", ".((int) $this->event).", '".$this->type."',";
-		$sql .= " ".((int) $this->target).",'".$this->db->idate($this->datec)."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (fk_soc, fk_action, fk_contact, type, datec)";
+		$sql .= " VALUES (".((int) $this->socid).", ".((int) $this->event).", ".((int) $this->target).",";
+		$sql .= "'".$this->db->escape($this->type)."', '".$this->db->idate($this->datec)."')";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
