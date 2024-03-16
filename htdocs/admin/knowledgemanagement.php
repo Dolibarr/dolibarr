@@ -76,7 +76,7 @@ $myTmpObjects['knowledgemanagement'] = array('label' => 'KnowledgeManagement', '
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconst', 'alpha');
+	$maskconst = GETPOST('maskconst', 'aZ09');
 	$maskdata = GETPOST('maskKnowledgeRecord', 'alpha');
 
 	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
