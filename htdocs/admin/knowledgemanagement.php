@@ -63,6 +63,10 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
+if (!getDolGlobalString('KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADDON')) {
+	$conf->global->KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADDON = 'mod_knowledgerecord_standard';
+}
+
 $moduledir = 'knowledgemanagement';
 $myTmpObjects = array();
 // TODO Scan list of objects to fill this array
