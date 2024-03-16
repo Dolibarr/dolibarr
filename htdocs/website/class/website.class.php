@@ -1319,7 +1319,7 @@ class Website extends CommonObject
 					dol_syslog("In sql source file, we have the page ID ".$oldid." to replace with the new ID ".$newid.", and we must create the shortcut aliases: ".$reg[3]);
 
 					//dol_move($conf->website->dir_output.'/'.$object->ref.'/page'.$oldid.'.tpl.php', $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php', 0, 1, 0, 0);
-				} elseif (preg_match('/^-- Page ID (\d+).*Aliases\s(.*)\s--;/i', $buf, $reg)) {
+				} elseif (preg_match('/^-- Page ID (\d+).*Aliases\s(.*)\s--;/i', $buf, /** @var string[] $reg */ $reg)) {
 					// Example of line: "-- Page ID 1__+MAX_llx_website_page__ - Aliases about-us --;"
 					$newid = ($reg[1] + $maxrowid);
 					$aliasesarray = explode(',', $reg[2]);
