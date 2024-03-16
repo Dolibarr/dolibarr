@@ -647,7 +647,7 @@ class FormMail extends Form
 								if ($this->frommail) {
 									$s .= ' &lt;' . getDolGlobalString('MAIN_MAIL_EMAIL_FROM').'&gt;';
 								}
-								array('label' => $s, 'data-html' => $s);
+								$liste['main_from'] = array('label' => $s, 'data-html' => $s);
 							}
 						}
 
@@ -1440,9 +1440,10 @@ class FormMail extends Form
 	 * Return Html code for AI instruction of message and autofill result
 	 *
 	 * @param	string		$format			Format for output ('', 'html', ...)
+	 * @param   string      $htmlContent    HTML name of WYSIWIG field
 	 * @return 	string      				HTML code to ask AI instruction and autofill result
 	 */
-	public function getSectionForAIPrompt($format = '')
+	public function getSectionForAIPrompt($format = '', $htmlContent = 'message')
 	{
 		global $langs;
 
@@ -1469,12 +1470,12 @@ class FormMail extends Form
 
 				$('#generate_button').click(function() {
 					var instructions = $('#ai_instructions').val();
-					
+
 					$('#ai_status_message').show();
 
 					//editor on readonly
-        			if (CKEDITOR.instances.message) {
-						CKEDITOR.instances.message.setReadOnly(1);
+        			if (CKEDITOR.instances.".$htmlContent.") {
+						CKEDITOR.instances.".$htmlContent.".setReadOnly(1);
 					}
 
 					$.ajax({
@@ -1486,13 +1487,13 @@ class FormMail extends Form
 							'instructions': instructions,
 						}),
 						success: function(response) {
-							console.log('Add response into field message: '+response);
+							console.log('Add response into field ".$htmlContent.": '+response);
 
-							jQuery('#message').val(response);
+							jQuery('#".$htmlContent."').val(response);
 
-							if (CKEDITOR.instances && CKEDITOR.instances.message && ".getDolGlobalInt('FCKEDITOR_ENABLE_MAIL', 0).") {
-								CKEDITOR.instances.message.setReadOnly(0);
-								CKEDITOR.instances.message.setData(response);
+							if (CKEDITOR.instances && CKEDITOR.instances.".$htmlContent." && ".getDolGlobalInt('FCKEDITOR_ENABLE_MAIL', 0).") {
+								CKEDITOR.instances.".$htmlContent.".setReadOnly(0);
+								CKEDITOR.instances.".$htmlContent.".setData(response);
 							}
 
 							// remove readonly
@@ -1516,10 +1517,10 @@ class FormMail extends Form
 
 	/**
 	 * Return HTML code for selection of email layout
-	 *
+	 * @param   string      $htmlContent    HTML name of WYSIWIG field
 	 * @return 	string      HTML for model email boxes
 	 */
-	public function getModelEmailTemplate()
+	public function getModelEmailTemplate($htmlContent = 'message')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
 
@@ -1551,7 +1552,7 @@ class FormMail extends Form
 						var template = $(this).data('template');
 						var contentHtml = $(this).data('content');
 
-						var editorInstance = CKEDITOR.instances.message;
+						var editorInstance = CKEDITOR.instances.".$htmlContent.";
 						if (editorInstance) {
 							editorInstance.setData(contentHtml);
 						}

@@ -23,7 +23,6 @@ return [
     // PhanUndeclaredFunctionInCallable : 4 occurrences
     // PhanAccessMethodProtected : 1 occurrence
     // PhanAccessPropertyStaticAsNonStatic : 1 occurrence
-    // PhanNoopArray : 1 occurrence
     // PhanNoopArrayAccess : 1 occurrence
     // PhanNoopStringLiteral : 1 occurrence
     // PhanPluginAlwaysReturnFunction : 1 occurrence
@@ -50,7 +49,7 @@ return [
         'htdocs/core/class/commondocgenerator.class.php' => ['PhanTypeArraySuspiciousNull'],
         'htdocs/core/class/evalmath.class.php' => ['PhanPluginUnsafeEval'],
         'htdocs/core/class/html.form.class.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/core/class/html.formmail.class.php' => ['PhanNoopArray'],
+        'htdocs/core/class/html.formprojet.class.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/core/class/rssparser.class.php' => ['PhanUndeclaredFunctionInCallable'],
         'htdocs/core/db/mysqli.class.php' => ['PhanParamSignatureMismatch'],
         'htdocs/core/db/pgsql.class.php' => ['PhanParamSignatureMismatch'],
