@@ -112,7 +112,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	}
 
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
-	curl_setopt($ch, CURLOPT_TIMEOUT, getDolGlobalint('MAIN_USE_RESPONSE_TIMEOUT', 30));
+	curl_setopt($ch, CURLOPT_TIMEOUT, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
 
 	// limit size of downloaded files. TODO Add MAIN_SECURITY_MAXFILESIZE_DOWNLOADED
 	$maxsize = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
