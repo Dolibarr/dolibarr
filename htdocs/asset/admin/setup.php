@@ -95,8 +95,9 @@ if ($action == 'updateMask') {
 	$modele = GETPOST('module', 'alpha');
 	$tmpobjectkey = GETPOST('object', 'aZ09');
 
-	if (in_array($tmpobjectkey, $myTmpObjects)) {
-		$tmpobject = new $tmpobjectkey($db);
+	if (array_key_exists($tmpobjectkey, $myTmpObjects)) {
+		$nameofclass = ucfirst($tmpobjectkey);
+		$tmpobject = new $nameofclass($db);
 		$tmpobject->initAsSpecimen();
 
 		// Search template files

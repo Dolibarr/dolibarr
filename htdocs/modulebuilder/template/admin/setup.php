@@ -215,14 +215,14 @@ if ($action == 'updateMask') {
 
 		// Search template files
 		$file = '';
-		$classname = '';
+		$className = '';
 		$filefound = 0;
 		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
 			$file = dol_buildpath($reldir."core/modules/mymodule/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
 			if (file_exists($file)) {
 				$filefound = 1;
-				$classname = "pdf_".$modele."_".strtolower($tmpobjectkey);
+				$className = "pdf_".$modele."_".strtolower($tmpobjectkey);
 				break;
 			}
 		}
@@ -230,7 +230,7 @@ if ($action == 'updateMask') {
 		if ($filefound) {
 			require_once $file;
 
-			$module = new $classname($db);
+			$module = new $className($db);
 
 			if ($module->write_file($tmpobject, $langs) > 0) {
 				header("Location: ".DOL_URL_ROOT."/document.php?modulepart=mymodule-".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
@@ -502,10 +502,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 								if (file_exists($dir.'/'.$file)) {
 									$name = substr($file, 4, dol_strlen($file) - 16);
-									$classname = substr($file, 0, dol_strlen($file) - 12);
+									$className = substr($file, 0, dol_strlen($file) - 12);
 
 									require_once $dir.'/'.$file;
-									$module = new $classname($db);
+									$module = new $className($db);
 
 									$modulequalified = 1;
 									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

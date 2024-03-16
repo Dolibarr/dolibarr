@@ -499,7 +499,7 @@ return [
 		'PhanUndeclaredVariableAssignOp',
 		'PhanTypeExpectedObjectOrClassName',
 		'PhanEmptyFQSENInClasslike',
-		'PhanTypeMismatchArgumentInternalReal',
+		// 'PhanTypeMismatchArgumentInternalReal',
 		// 'PhanUnextractableAnnotationElementName',
 		// 'PhanCommentParamWithoutRealParam',
 		// 'PhanRedefinedExtendedClass',
