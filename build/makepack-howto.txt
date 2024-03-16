@@ -30,7 +30,7 @@ Prerequisites to build autoexe DoliWamp package from Windows:
 > Install Perl for Windows (https://strawberryperl.com/)
 > Install isetup-5.5.8.exe (https://www.jrsoftware.org)
 > Install Microsoft Visual C++ Redistributable 2017 (https://learn.microsoft.com/en-US/cpp/windows/latest-supported-vc-redist?view=msvc-170)
-> Install WampServer-3.2.*-64.exe (Apache 2.4.51, PHP 7.3.33, MariaDB 10.6.5 for example. Version must match the values found into doliwamp.iss)
+> Install WampServer-3.2.6-64.exe (Apache 2.4.51, PHP 7.4.26, MariaDB 10.6.5 for example. Version must match the values found into doliwamp.iss)
 > Install GIT for Windows (https://git-scm.com/ => You must choose option "Add Git bash profile", "Git commit as-is")
 > Install Dolibarr current version:   
   git clone https://github.com/dolibarr/dolibarr  or  git clone --branch X.Y https://github.com/dolibarr/dolibarr  
