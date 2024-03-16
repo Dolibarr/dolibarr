@@ -606,10 +606,11 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 	} else {
 		$error++;
 	}
+	'@phan-var-force array<int,string[]> $permissions';
 	if (!$error) {
 		// prepare permissions array
 		$count_perms = count($permissions);
-		for ($i = 0;$i < $count_perms;$i++) {
+		foreach (array_keys($permissions) as $i) {
 			$permissions[$i][0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1)";
 			$permissions[$i][1] = "\$this->rights[\$r][1] = '".$permissions[$i][1]."'";
 			$permissions[$i][4] = "\$this->rights[\$r][4] = '".$permissions[$i][4]."'";
