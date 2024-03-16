@@ -186,7 +186,7 @@ class CTicketCategory extends CommonObject
 
 		$this->db = $db;
 
-		if (empty(getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) && isset($this->fields['rowid']) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -530,7 +530,7 @@ class CTicketCategory extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty(getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER'))) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
