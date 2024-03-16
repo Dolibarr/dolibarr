@@ -406,8 +406,8 @@ class ChargeSociales extends CommonObject
 	/**
 	 * Calculate amount remaining to pay by year
 	 *
-	 * @param   int     $year       Year
-	 * @return  number
+	 * @param   int			$year       Year
+	 * @return  int|float 	  	        Returns -1 when error (Note: could be mistaken with an amount)
 	 */
 	public function solde($year = 0)
 	{

@@ -28,6 +28,7 @@
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
+
 /**
  *  Description and activation class for module MyModule
  */
@@ -303,8 +304,10 @@ class modMyModule extends DolibarrModules
 		// Main menu entries to add
 		$this->menu = array();
 		$r = 0;
+
 		// Add here entries to declare new menus
-		/* BEGIN MODULEBUILDER TOPMENU */
+
+		/* BEGIN MODULEBUILDER TOPMENU MYOBJECT */
 		$this->menu[$r++] = array(
 			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'top', // This is a Top menu entry
@@ -320,7 +323,8 @@ class modMyModule extends DolibarrModules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
-		/* END MODULEBUILDER TOPMENU */
+		/* END MODULEBUILDER TOPMENU MYOBJECT */
+
 		/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */
 		/*$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=mymodule',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
@@ -366,6 +370,8 @@ class modMyModule extends DolibarrModules
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);*/
 		/* END MODULEBUILDER LEFTMENU MYOBJECT */
+
+
 		// Exports profiles provided by this module
 		$r = 1;
 		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */

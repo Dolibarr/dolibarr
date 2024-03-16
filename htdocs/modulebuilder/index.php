@@ -467,13 +467,13 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 			'---Put here your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
 		);
 
-		if (count($objects) > 1) {
-			addObjectsToApiFile($destfile, $objects, $modulename);
+		if ($action == 'initapi') {
+			if (count($objects) >= 1) {
+				addObjectsToApiFile($srcfile, $destfile, $objects, $modulename);
+			}
 		} else {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			dolReplaceInFile($destfile, $arrayreplacement);
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			dolReplaceInFile($destfile, array('/*begin methods CRUD*/' => '/*begin methods CRUD*/'."\n\t".'/*CRUD FOR '.strtoupper($objectname).'*/', '/*end methods CRUD*/' => '/*END CRUD FOR '.strtoupper($objectname).'*/'."\n\t".'/*end methods CRUD*/'));
 		}
 
 		if ($varnametoupdate) {
@@ -952,20 +952,31 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 		$filetodelete = $dirins.'/'.$relativefilename;
 		$dirtodelete  = $dirins.'/'.$dirnametodelete;
 
-		//check when we want delete api_file
+		// Get list of existing objects
+		$objects = dolGetListOfObjectClasses($destdir);
+
+		$keyofobjecttodelete = array_search($objectname, $objects);
+		if ($keyofobjecttodelete !== false) {
+			unset($objects[$keyofobjecttodelete]);
+		}
+
+		// Delete or modify the file
 		if (strpos($relativefilename, 'api') !== false) {
 			$file_api = $destdir.'/class/api_'.strtolower($module).'.class.php';
-			$removeFile = removeObjectFromApiFile($file_api, $objectname, $module);
-			$var = getFromFile($file_api, '/*begin methods CRUD*/', '/*end methods CRUD*/');
-			if (str_word_count($var) == 0) {
+
+			$removeFile = removeObjectFromApiFile($file_api, $objects, $objectname);
+
+			if (count($objects) == 0) {
 				$result = dol_delete_file($filetodelete);
 			}
+
 			if ($removeFile) {
 				setEventMessages($langs->trans("ApiObjectDeleted"), null);
 			}
 		} else {
 			$result = dol_delete_file($filetodelete);
 		}
+
 		if (!$result) {
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", basename($filetodelete)), null, 'errors');
 		} else {
@@ -1017,6 +1028,8 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 
 // Init an object
 if ($dirins && $action == 'initobject' && $module && $objectname) {
+	$warning = 0;
+
 	$objectname = ucfirst($objectname);
 
 	$dirins = $dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
@@ -1365,13 +1378,12 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			}
 		}
 
-
 		if (!$error) {
 			foreach ($filetogenerate as $srcfile => $destfile) {
 				$result = dol_copy($srcdir.'/'.$srcfile, $destdir.'/'.$destfile, $newmask, 0);
 				if ($result <= 0) {
 					if ($result < 0) {
-						$error++;
+						$warning++;
 						$langs->load("errors");
 						setEventMessages($langs->trans("ErrorFailToCopyFile", $srcdir.'/'.$srcfile, $destdir.'/'.$destfile), null, 'errors');
 					} else {
@@ -1383,6 +1395,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 					'/myobject\.class\.php/' => strtolower($objectname).'.class.php',
 					'/myobject\.lib\.php/' => strtolower($objectname).'.lib.php',
 				);
+
 				dolReplaceInFile($destdir.'/'.$destfile, $arrayreplacement, '', 0, 0, 1);
 			}
 		}
@@ -1529,8 +1542,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 		if (!$counter) {
 			$checkComment = checkExistComment($moduledescriptorfile, 0);
 			if ($checkComment < 0) {
-				$error++;
-				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
+				$warning++;
+				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), basename($moduledescriptorfile)), null, 'warnings');
 			} else {
 				$arrayofreplacement = array('/* END MODULEBUILDER LEFTMENU MYOBJECT */' => '/*LEFTMENU '.strtoupper($objectname).'*/'.$stringtoadd."\n\t\t".'/*END LEFTMENU '.strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER LEFTMENU MYOBJECT */');
 				dolReplaceInFile($moduledescriptorfile, $arrayofreplacement);
@@ -1580,7 +1593,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 		if (is_numeric($object) && $object <= 0) {
 			$pathoffiletoeditsrc = $destdir.'/class/'.strtolower($objectname).'.class.php';
 			setEventMessages($langs->trans('ErrorFailToCreateFile', $pathoffiletoeditsrc), null, 'errors');
-			$error++;
+			$warning++;
 		}
 		// check if documentation was generate and add table of properties object
 		$file = $destdir.'/class/'.strtolower($objectname).'.class.php';
@@ -1610,7 +1623,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 	// check if module is enabled
 	if (isModEnabled(strtolower($module))) {
 		$result = unActivateModule(strtolower($module));
-		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 		if ($result) {
 			setEventMessages($result, null, 'errors');
 		}
@@ -1898,11 +1911,12 @@ if ($dirins && $action == 'confirm_deletemodule') {
 		} else {
 			$error++;
 			$langs->load("errors");
-			dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
-			exit;
+			setEventMessages($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module), null, 'warnings');
 		}
 
-		$moduleobj->remove();
+		if ($moduleobj) {
+			$moduleobj->remove();
+		}
 
 		$result = dol_delete_dir_recursive($dir);
 
@@ -2384,15 +2398,15 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright') && 
 
 	if ($label == "Read objects of $module" && $crud != "read") {
 		$crud = "read";
-		$label == "Read objects of $module";
+		// $label = "Read objects of $module";
 	}
 	if ($label == "Create/Update objects of $module" && $crud != "write") {
 		$crud = "write";
-		$label == "Create/Update objects of $module";
+		// $label = "Create/Update objects of $module";
 	}
 	if ($label == "Delete objects of $module" && $crud != "delete") {
 		$crud = "delete";
-		$label == "Delete objects of $module";
+		// $label = "Delete objects of $module";
 	}
 
 	$permissions = $moduleobj->rights;
@@ -4206,7 +4220,7 @@ if ($module == 'initmodule') {
 									print '<a href="'.DOL_URL_ROOT.'/api/index.php/explorer/" target="apiexplorer">'.$langs->trans("ApiExplorer").'</a>';
 								}
 							} else {
-								print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initapi&token='.newToken().'&format=php&file='.urlencode($pathtoapi).'">'.img_picto('AddAPIsForThisObject', 'generate', 'class="paddingleft"').'</a>';
+								print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initapi&token='.newToken().'&format=php&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans('AddAPIsForThisObject'), 'generate', 'class="paddingleft"').'</a>';
 							}
 						} else {
 							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initapi&token='.newToken().'&format=php&file='.urlencode($pathtoapi).'">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a>';
@@ -4339,8 +4353,9 @@ if ($module == 'initmodule') {
 							$mod = strtolower($module);
 							$obj = strtolower($tabobj);
 							$newproperty = dolGetButtonTitle($langs->trans('NewProperty'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.urlencode($module).'&tabobj=createproperty&obj='.urlencode($tabobj));
+							$nbOfProperties = count($reflectorpropdefault['fields']);
 
-							print_barre_liste($langs->trans("ObjectProperties"), 0, $_SERVER["PHP_SELF"], '', '', '', '', '', 0, '', 0, $newproperty, '', '', 0, 0, 1);
+							print_barre_liste($langs->trans("ObjectProperties"), 0, $_SERVER["PHP_SELF"], '', '', '', '', '', $nbOfProperties, '', 0, $newproperty, '', '', 0, 0, 1);
 
 							//var_dump($reflectorpropdefault);exit;
 							print '<!-- Table with properties of object -->'."\n";

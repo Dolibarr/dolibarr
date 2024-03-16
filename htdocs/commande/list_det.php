@@ -12,6 +12,7 @@
  * Copyright (C) 2016-2021  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2023  Charlene Benke	        <charlene@patas-monkey.com>
  * Copyright (C) 2021-2023 	Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1107,7 +1108,7 @@ if ($resql) {
 	// Payment term
 	if (!empty($arrayfields['c.fk_cond_reglement']['checked'])) {
 		print '<td class="liste_titre">';
-		$form->select_conditions_paiements($search_fk_cond_reglement, 'search_fk_cond_reglement', 1, 1, 1);
+		print $form->getSelectConditionsPaiements($search_fk_cond_reglement, 'search_fk_cond_reglement', 1, 1, 1);
 		print '</td>';
 	}
 	// Payment mode

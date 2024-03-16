@@ -259,6 +259,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				}
 				$file = $dir . '/' . $filename;
 				$object->builddoc_filename = $filename; // For triggers
+				$object->context['builddoc_filename'] = $filename; // For triggers
 				//print "newfileformat=".$newfileformat;
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;

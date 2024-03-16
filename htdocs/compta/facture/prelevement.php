@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2014  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -314,7 +314,9 @@ if ($object->id > 0) {
 	}
 
 	$author = new User($db);
-	if ($object->fk_user_author) {
+	if (!empty($object->user_creation_id)) {
+		$author->fetch($object->user_creation_id);
+	} elseif (!empty($object->fk_user_author)) {
 		$author->fetch($object->fk_user_author);
 	}
 

@@ -140,7 +140,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -226,13 +226,13 @@ abstract class CommonObject
 
 	/**
 	 * @var Project 		The related project object
-	 * @deprecated
-	 * @see project
+	 * @deprecated  Use $project instead
+	 * @see $project
 	 */
 	public $projet;
 
 	/**
-	 * @deprecated
+	 * @deprecated  Use $fk_project instead
 	 * @see $fk_project
 	 */
 	public $fk_projet;
@@ -274,13 +274,13 @@ abstract class CommonObject
 	public $origin_id;
 
 	/**
-	 * @var	Object		Origin object. This is set by fetch_origin() from this->origin and this->origin_id.
+	 * @var	?CommonObject	Origin object. This is set by fetch_origin() from this->origin and this->origin_id.
 	 */
 	public $origin_object;
 
 	/**
-	 * @var string|CommonObject		Sometime the type of the originating object ('commande', 'facture', ...), sometime the object (like onh MouvementStock)
-	 * @deprecated					Use now $origin_type and $origin_id;
+	 * @var CommonObject|string|null	Sometimes the type of the originating object ('commande', 'facture', ...), sometimes the object (as with MouvementStock)
+	 * @deprecated						Use now $origin_type and $origin_id;
 	 * @see fetch_origin()
 	 */
 	public $origin;
@@ -322,7 +322,7 @@ abstract class CommonObject
 
 	/**
 	 * @var int 		The object's status. Use status instead.
-	 * @deprecated
+	 * @deprecated  Use $status instead
 	 * @see setStatut()
 	 */
 	public $statut;
@@ -369,7 +369,7 @@ abstract class CommonObject
 
 	/**
 	 * var	int			State ID
-	 * @deprecated	Use state_id. We can remove this property when the field 'fk_departement' have been renamed into 'state_id' in all tables
+	 * @deprecated	Use $state_id. We can remove this property when the field 'fk_departement' have been renamed into 'state_id' in all tables
 	 */
 	public $fk_departement;
 
@@ -447,7 +447,7 @@ abstract class CommonObject
 
 	/**
 	 * @var int 		Payment terms ID
-	 * @deprecated Kept for compatibility
+	 * @deprecated Use $cond_reglement_id instead - Kept for compatibility
 	 * @see cond_reglement_id;
 	 */
 	public $cond_reglement;
@@ -503,6 +503,16 @@ abstract class CommonObject
 	 * @var float 		Multicurrency total amount including taxes (TTC = "Toutes Taxes Comprises" in French)
 	 */
 	public $multicurrency_total_ttc;
+
+	/**
+	 * @var float Multicurrency total localta1
+	 */
+	public $multicurrency_total_localtax1;	// not in database
+
+	/**
+	 * @var float Multicurrency total localtax2
+	 */
+	public $multicurrency_total_localtax2;	// not in database
 
 	/**
 	 * @var string
@@ -720,13 +730,13 @@ abstract class CommonObject
 	public $specimen = 0;
 
 	/**
-	 * @var	int			Id of contact to send object (used by the trigger of module Agenda)
+	 * @var	int[]		Id of contacts to send objects (mails, etc.)
 	 */
 	public $sendtoid;
 
 	/**
 	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
-	 * @deprecated		Duplicate of $totalpaid
+	 * @deprecated		Use $totalpaid instead
 	 */
 	public $alreadypaid;
 	/**
@@ -8867,7 +8877,7 @@ abstract class CommonObject
 	/**
 	 * Returns the rights used for this class
 	 *
-	 * @return int|stdClass		Object of permission for the module
+	 * @return null|int|stdClass		Object of permission for the module
 	 */
 	public function getRights()
 	{
@@ -9697,6 +9707,7 @@ abstract class CommonObject
 		foreach ($fieldvalues as $k => $v) {
 			$keys[$k] = $k;
 			$value = $this->fields[$k];
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$values[$k] = $this->quote($v, $value); // May return string 'NULL' if $value is null
 		}
 
@@ -9999,7 +10010,9 @@ abstract class CommonObject
 		foreach ($fieldvalues as $k => $v) {
 			$keys[$k] = $k;
 			$value = $this->fields[$k];
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$values[$k] = $this->quote($v, $value);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
 		}
 
@@ -10343,6 +10356,55 @@ abstract class CommonObject
 		if (in_array($this->element, array('don', 'donation', 'shipping'))) {
 			$statusfield = 'fk_statut';
 		}
+
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+		$sql .= " SET ".$statusfield." = ".((int) $status);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		if ($this->db->query($sql)) {
+			if (!$error) {
+				$this->oldcopy = clone $this;
+			}
+
+			if (!$error && !$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger($triggercode, $user);
+				if ($result < 0) {
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				$this->status = $status;
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				return -1;
+			}
+		} else {
+			$this->error = $this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 *	Set to a signed status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *  @param  string  $triggercode    Trigger code to use
+	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 */
+	public function setSignedStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
+	{
+		$error = 0;
+
+		$this->db->begin();
+
+		$statusfield = 'signed_status';
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 		$sql .= " SET ".$statusfield." = ".((int) $status);

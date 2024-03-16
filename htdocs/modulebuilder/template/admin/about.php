@@ -83,7 +83,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $form = new Form($db);
 
 $help_url = '';
-$title = "MyModuleAbout";
+$title = "MyModuleSetup";
 
 llxHeader('', $langs->trans($title), $help_url, '', 0, 0, '', '', '', 'mod-mymodule page-admin_about');
 

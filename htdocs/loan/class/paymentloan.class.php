@@ -2,6 +2,7 @@
 /* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,14 +63,23 @@ class PaymentLoan extends CommonObject
 	public $datep = '';
 
 	/**
-	 * @var array Array of amounts
+	 * @var array<float|int> Array of amounts
 	 */
 	public $amounts = array();
 
-	public $amount_capital; // Total amount of payment
+	/**
+	 * @var float|int  Total amount of payment
+	 */
+	public $amount_capital;
 
+	/**
+	 * @var float|int
+	 */
 	public $amount_insurance;
 
+	/**
+	 * @var float|int
+	 */
 	public $amount_interest;
 
 	/**
@@ -98,11 +108,28 @@ class PaymentLoan extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var string
+	 */
 	public $type_code;
+	/**
+	 * @var string
+	 */
 	public $type_label;
 	public $chid;
+	/**
+	 * @var string
+	 */
 	public $label;
+
+	/**
+	 * @var int
+	 */
 	public $paymenttype;
+
+	/**
+	 * @var int
+	 */
 	public $bank_account;
 	public $bank_line;
 
@@ -521,7 +548,7 @@ class PaymentLoan extends CommonObject
 			// Insert payment into llx_bank
 			$bank_line_id = $acc->addline(
 				$this->datep,
-				$this->paymenttype, // Payment mode ID or code ("CHQ or VIR for example")
+				$this->paymenttype, // Payment mode ID or code ("CHQ or VIR for example") it's integer in db
 				$label,
 				$total,
 				$this->num_payment,
@@ -666,7 +693,7 @@ class PaymentLoan extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

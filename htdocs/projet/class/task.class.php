@@ -525,7 +525,12 @@ class Task extends CommonObjectLine
 					$project->getLinesArray(null); // this method does not return <= 0 if fails
 					$projectCompleted = array_reduce(
 						$project->lines,
-						function ($allTasksCompleted, $task) {
+						/**
+						 * @param bool $allTasksCompleted
+						 * @param Task $task
+						 * @return bool
+						 */
+						static function ($allTasksCompleted, $task) {
 							return $allTasksCompleted && $task->progress >= 100;
 						},
 						1
@@ -929,9 +934,9 @@ class Task extends CommonObjectLine
 	 * @param	string	$filteronproj    		Filter on project ref or label
 	 * @param	string	$filteronprojstatus		Filter on project status ('-1'=no filter, '0,1'=Draft+Validated only)
 	 * @param	string	$morewherefilter		Add more filter into where SQL request (must start with ' AND ...')
-	 * @param	string	$filteronprojuser		Filter on user that is a contact of project
-	 * @param	string	$filterontaskuser		Filter on user assigned to task
-	 * @param	Extrafields	$extrafields	    Show additional column from project or task
+	 * @param	int		$filteronprojuser		Filter on user that is a contact of project
+	 * @param	int		$filterontaskuser		Filter on user assigned to task
+	 * @param	?Extrafields	$extrafields	Show additional column from project or task
 	 * @param   int     $includebilltime    	Calculate also the time to bill and billed
 	 * @param   array   $search_array_options 	Array of search filters. Not Used yet.
 	 * @param   int     $loadextras         	Fetch all Extrafields on each project and task
@@ -940,9 +945,9 @@ class Task extends CommonObjectLine
 	 * @param	string	$sortorder				Sort order
 	 * @return 	array|string					Array of tasks
 	 */
-	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1, $sortfield = '', $sortorder = '')
+	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = null, $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1, $sortfield = '', $sortorder = '')
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		$tasks = array();
 
@@ -1049,7 +1054,7 @@ class Task extends CommonObjectLine
 		if ($filteronproj) {
 			$sql .= natural_search(array("p.ref", "p.title"), $filteronproj);
 		}
-		if ($filteronprojstatus && $filteronprojstatus != '-1') {
+		if ($filteronprojstatus && (int) $filteronprojstatus != '-1') {
 			$sql .= " AND p.fk_statut IN (".$this->db->sanitize($filteronprojstatus).")";
 		}
 		if ($morewherefilter) {

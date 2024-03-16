@@ -68,10 +68,12 @@ $format = empty($jsonData['instructions']) ? '' : $jsonData['instructions'];
 $generatedContent = $ai->generateContent($instructions, 'auto', $function, $format);
 
 if (is_array($generatedContent) && $generatedContent['error']) {
-	// client errors
-	if ($generatedContent['code'] >= 400) {
+	// Output error
+	if ($generatedContent['code'] == 429) {
+		print "Quota or allowed period exceeded. Retry Later !";
+	} elseif ($generatedContent['code'] >= 400) {
 		print "Error : " . $generatedContent['message'];
-		print '<br><a href="'.DOL_MAIN_URL_ROOT.'/ai/admin/setup.php">'.$langs->trans('Check Config of Module').'</a>';
+		print '<br><a href="'.DOL_MAIN_URL_ROOT.'/ai/admin/setup.php">'.$langs->trans('ErrorGoToModuleSetup').'</a>';
 	} else {
 		print "Error returned by API call: " . $generatedContent['message'];
 	}
