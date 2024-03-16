@@ -268,6 +268,54 @@ class Notify
 		}
 	}
 
+	/**
+	 * Create notification information record.
+	 *
+	 * @param   User|null   $user		User
+	 * @param   int    		$notrigger  1=Disable triggers
+	 * @return	int						Return integer <0 if KO, > 0 if OK (ID of newly created company notification information)
+	 */
+	public function create(User $user = null, $notrigger = 0)
+	{
+		$now = dol_now();
+
+		$error = 0;
+
+		// Check parameters
+		if (empty($this->socid)) {
+			$this->error = 'BadValueForParameter';
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
+		if (empty($this->datec)) {
+			$this->datec = $now;
+		}
+
+		$this->db->begin();
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (fk_soc, fk_action, type, fk_contact, datec)";
+		$sql .= " VALUES (".((int) $this->socid).", ".((int) $this->event).", '".$this->type."',";
+		$sql .= " ".((int) $this->target).",'".$this->db->idate($this->datec)."')";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->affected_rows($resql)) {
+				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."notify_def");
+			}
+		} else {
+			$error++;
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return $this->id;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
 	/**
 	 * 	Load record from database
