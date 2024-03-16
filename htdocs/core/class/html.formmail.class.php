@@ -1455,7 +1455,7 @@ class FormMail extends Form
 		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." />';
 		$out .= '<input id="generate_button" type="button" class="button smallpaddingimp"  value="'.$langs->trans('Generate').'"/>';
 		$out .= '<div id="ai_status_message" class="fieldrequired hideobject marginrightonly" >';
-		$out .= '<i class="loader"></i>'.$langs->trans("AIProcessingPleaseWait").'</div>';
+		$out .= '<i class="fa fa-spinner fa-spin fa-2x fa-fw"></i>'.$langs->trans("AIProcessingPleaseWait").'</div>';
 		$out .= "</td></tr>\n";
 
 		$out .= "<script type='text/javascript'>
