@@ -377,7 +377,7 @@ class MenuManager
 				$altok = 0;
 				$blockvmenuopened = false;
 				$num = count($menu_array);
-				for ($i = 0; $i < $num; $i++) {
+				foreach (array_keys($menu_array) as $i) {
 					$alt++;
 					if (empty($menu_array[$i]['level'])) {
 						$altok++;
