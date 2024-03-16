@@ -370,6 +370,8 @@ class MenuManager
 				return 0;
 			}
 
+			'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}> $menu_array';
+
 			if (empty($noout)) {
 				$alt = 0;
 				$altok = 0;
