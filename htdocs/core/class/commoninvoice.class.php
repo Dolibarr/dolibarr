@@ -437,13 +437,17 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *  Return list of payments
 	 *
+	 *  @see $error Empty string '' if no error.
+	 *
 	 *	@param		string	$filtertype		1 to filter on type of payment == 'PRE'
 	 *  @param      int     $multicurrency  Return multicurrency_amount instead of amount
-	 *  @return     array					Array with list of payments
+	 *  @return     array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int}>		 Array with list of payments
 	 */
 	public function getListOfPayments($filtertype = '', $multicurrency = 0)
 	{
 		$retarray = array();
+		// By default no error, list can be empty.
+		$this->error = '';
 
 		$table = 'paiement_facture';
 		$table2 = 'paiement';

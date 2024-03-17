@@ -219,7 +219,7 @@ class RssParser
 		$newpathofdestfile = $cachedir.'/'.dol_hash($this->_urlRSS, 3); // Force md5 hash (does not contain special chars)
 		$newmask = '0644';
 
-		//dol_syslog("RssPArser::parser parse url=".$urlRSS." => cache file=".$newpathofdestfile);
+		//dol_syslog("RssParser::parser parse url=".$urlRSS." => cache file=".$newpathofdestfile);
 		$nowgmt = dol_now();
 
 		// Search into cache
@@ -289,7 +289,9 @@ class RssParser
 					}
 
 					xml_set_object($xmlparser, $this);
+					// @phan-suppress-next-line PhanUndeclaredFunctionInCallable
 					xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element');
+					// @phan-suppress-next-line PhanUndeclaredFunctionInCallable
 					xml_set_character_data_handler($xmlparser, 'feed_cdata');
 
 					$status = xml_parse($xmlparser, $str, false);
