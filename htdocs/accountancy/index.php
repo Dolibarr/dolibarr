@@ -263,7 +263,6 @@ if (isModEnabled('accounting')) {
 	print '</div>';
 
 	print '<div class="clearboth"></div>';
-
 } elseif (isModEnabled('comptabilite')) {
 	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 
