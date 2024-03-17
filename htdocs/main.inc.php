@@ -1694,7 +1694,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 			$hookmanager = new HookManager($db);
 		}
 		$hookmanager->initHooks(array("main"));
-
+		$error = 0;
 		$result = $user->call_trigger('BEFORE_PAGE_LOAD', $user);
 		if ($result < 0) {
 			$error++;
