@@ -376,11 +376,23 @@ if (!empty($line->remise_percent) && $line->special_code != 3) {
 if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 	$coldisplay++;
-	print '<td class="linecolcycleref nowrap right">'.$line->situation_percent.'%</td>';
-	$coldisplay++;
-	$locataxes_array = getLocalTaxesFromRate($line->tva.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), 0, ($senderissupplier ? $mysoc : $object->thirdparty), ($senderissupplier ? $object->thirdparty : $mysoc));
-	$tmp = calcul_price_total($line->qty, $line->pu, $line->remise_percent, $line->txtva, -1, -1, 0, 'HT', $line->info_bits, $line->type, ($senderissupplier ? $object->thirdparty : $mysoc), $locataxes_array, 100, $object->multicurrency_tx, $line->multicurrency_subprice);
-	print '<td align="right" class="linecolcycleref2 nowrap">'.price($sign * $tmp[0]).'</td>';
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+		print '<td class="linecolcycleref nowrap right">'.$line->situation_percent.'%</td>';
+		$coldisplay++;
+		$locataxes_array = getLocalTaxesFromRate($line->tva.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), 0, ($senderissupplier ? $mysoc : $object->thirdparty), ($senderissupplier ? $object->thirdparty : $mysoc));
+		$tmp = calcul_price_total($line->qty, $line->pu, $line->remise_percent, $line->txtva, -1, -1, 0, 'HT', $line->info_bits, $line->type, ($senderissupplier ? $object->thirdparty : $mysoc), $locataxes_array, 100, $object->multicurrency_tx, $line->multicurrency_subprice);
+		print '<td class="linecolcycleref2 right nowrap">'.price($sign * $tmp[0]).'</td>';
+	} elseif (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+		$previous_progress = $line->get_allprev_progress($object->id);
+		$current_progress = $previous_progress + floatval($line->situation_percent);
+		print '<td class="linecolcycleref nowrap right">'.$current_progress.'%</td>';
+		$coldisplay++;
+		print '<td  class="nowrap right">'.$line->situation_percent.'%</td>';
+		$coldisplay++;
+		$locataxes_array = getLocalTaxesFromRate($line->tva.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), 0, ($senderissupplier ? $mysoc : $object->thirdparty), ($senderissupplier ? $object->thirdparty : $mysoc));
+		$tmp = calcul_price_total($line->qty, $line->pu, $line->remise_percent, $line->txtva, -1, -1, 0, 'HT', $line->info_bits, $line->type, ($senderissupplier ? $object->thirdparty : $mysoc), $locataxes_array, 100, $object->multicurrency_tx, $line->multicurrency_subprice);
+		print '<td class="linecolcycleref2 right nowrap">'.price($sign * $tmp[0]).'</td>';
+	}
 }
 
 if ($usemargins && isModEnabled('margin') && empty($user->socid)) {

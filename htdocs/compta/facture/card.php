@@ -1938,7 +1938,7 @@ if (empty($reshook)) {
 				$action = 'create';
 			}
 
-			if (!$error) {
+			if (!$error && getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 				$result = $object->fetch(GETPOSTINT('situations'));
 				$object->fk_facture_source = GETPOSTINT('situations');
 				$object->type = Facture::TYPE_SITUATION;
@@ -2014,6 +2014,102 @@ if (empty($reshook)) {
 				//$object->remise_percent = price2num(GETPOST('remise_percent'), '', 2);
 				$object->fk_account = GETPOSTINT('fk_account');
 
+
+				// Special properties of replacement invoice
+
+				$object->situation_counter = $object->situation_counter + 1;
+				$id = $object->createFromCurrent($user);
+				if ($id <= 0) {
+					$mesg = $object->error;
+				} else {
+					$nextSituationInvoice = new Facture($db);
+					$nextSituationInvoice->fetch($id);
+
+					// create extrafields with data from create form
+					$extrafields->fetch_name_optionals_label($nextSituationInvoice->table_element);
+					$ret = $extrafields->setOptionalsFromPost(null, $nextSituationInvoice);
+					if ($ret > 0) {
+						$nextSituationInvoice->insertExtraFields();
+					}
+				}
+			}
+
+			if (!$error && getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+				$result = $object->fetch(GETPOSTINT('situations'));
+				$object->fk_facture_source = GETPOSTINT('situations');
+				$object->type = Facture::TYPE_SITUATION;
+
+				if (!empty($origin) && !empty($originid)) {
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+
+					$object->origin = $origin;
+					$object->origin_id = $originid;
+
+					// retained warranty
+					if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
+						$retained_warranty = GETPOSTINT('retained_warranty');
+						if (price2num($retained_warranty) > 0) {
+							$object->retained_warranty = price2num($retained_warranty);
+						}
+
+						if (GETPOSTINT('retained_warranty_fk_cond_reglement') > 0) {
+							$object->retained_warranty_fk_cond_reglement = GETPOSTINT('retained_warranty_fk_cond_reglement');
+						}
+
+						$retained_warranty_date_limit = GETPOST('retained_warranty_date_limit');
+						if (!empty($retained_warranty_date_limit) && $db->jdate($retained_warranty_date_limit)) {
+							$object->retained_warranty_date_limit = $db->jdate($retained_warranty_date_limit);
+						}
+						$object->retained_warranty_date_limit = !empty($object->retained_warranty_date_limit) ? $object->retained_warranty_date_limit : $object->calculate_date_lim_reglement($object->retained_warranty_fk_cond_reglement);
+					}
+
+					foreach ($object->lines as $i => &$line) {
+						$line->origin = $object->origin;
+						$line->origin_id = $line->id;
+						$line->fk_prev_id = $line->id;
+						$line->fetch_optionals();
+						$line->situation_percent = 0; // get good progress including credit note
+
+						// The $line->situation_percent has been modified, so we must recalculate all amounts
+						$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, '', $line->situation_percent);
+
+						$line->total_ht = $tabprice[0];
+						$line->total_tva = $tabprice[1];
+						$line->total_ttc = $tabprice[2];
+						$line->total_localtax1 = $tabprice[9];
+						$line->total_localtax2 = $tabprice[10];
+						$line->multicurrency_total_ht  = $tabprice[16];
+						$line->multicurrency_total_tva = $tabprice[17];
+						$line->multicurrency_total_ttc = $tabprice[18];
+
+						// If fk_remise_except defined we check if the reduction has already been applied
+						if ($line->fk_remise_except) {
+							$discount = new DiscountAbsolute($line->db);
+							$result = $discount->fetch($line->fk_remise_except);
+							if ($result > 0) {
+								// Check if discount not already affected to another invoice
+								if ($discount->fk_facture_line > 0) {
+									$line->fk_remise_except = 0;
+								}
+							}
+						}
+					}
+				}
+
+				$object->fetch_thirdparty();
+				$object->date = $dateinvoice;
+				$object->date_pointoftax = $date_pointoftax;
+				$object->note_public = trim(GETPOST('note_public', 'restricthtml'));
+				$object->note = trim(GETPOST('note', 'restricthtml'));
+				$object->note_private = trim(GETPOST('note', 'restricthtml'));
+				$object->ref_client = GETPOST('ref_client', 'alpha');
+				$object->model_pdf = GETPOST('model', 'alpha');
+				$object->fk_project = GETPOSTINT('projectid');
+				$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
+				$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
+				//$object->remise_absolue =price2num(GETPOST('remise_absolue'), 'MU', 2);
+				//$object->remise_percent = price2num(GETPOST('remise_percent'), '', 2);
+				$object->fk_account = GETPOSTINT('fk_account');
 
 				// Special properties of replacement invoice
 
@@ -2696,6 +2792,25 @@ if (empty($reshook)) {
 			}
 		}
 
+		// Invoice situation
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			$previousprogress = $line->get_allprev_progress($line->fk_facture);
+			$fullprogress = price2num(GETPOST('progress', 'alpha'));
+
+			if ($fullprogress < $previousprogress) {
+				$error++;
+				setEventMessages($langs->trans('CantBeLessThanMinPercent'), null, 'errors');
+			}
+
+			// Max 100%
+			if ($fullprogress > 100) {
+				$fullprogress = 100;
+			}
+			$addprogress = $fullprogress - $previousprogress;
+
+		} else {
+			$addprogress = price2num(GETPOST('progress', 'alpha'));
+		}
 
 		// Update line
 		if (!$error) {
@@ -2737,7 +2852,7 @@ if (empty($reshook)) {
 				$label,
 				$special_code,
 				$array_options,
-				price2num(GETPOST('progress', 'alpha')),
+				$addprogress,
 				GETPOST('units', 'alpha'),
 				$pu_ht_devise
 			);
@@ -2806,7 +2921,7 @@ if (empty($reshook)) {
 		if (GETPOST('all_progress') != "") {
 			$all_progress = GETPOSTINT('all_progress');
 			foreach ($object->lines as $line) {
-				$percent = $line->get_prev_progress($object->id);
+				$percent = $line->get_allprev_progress($object->id);
 				if ((float) $all_progress < (float) $percent) {
 					$mesg = $langs->trans("Line").' '.$i.' : '.$langs->trans("CantBeLessThanMinPercent");
 					setEventMessages($mesg, null, 'warnings');
