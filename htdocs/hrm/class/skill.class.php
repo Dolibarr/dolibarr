@@ -133,8 +133,6 @@ class Skill extends CommonObject
 	public $date_validite;
 	public $temps_theorique;
 	public $skill_type;
-	public $note_public;
-	public $note_private;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -145,9 +143,9 @@ class Skill extends CommonObject
 	//  */
 	// public $table_element_line = 'hrm_skillline';
 
-	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
-	//  */
+	/**
+	 * @var string    Field with ID of parent key if this object has a parent
+	 */
 	public $fk_element = 'fk_skill';
 
 	// /**
@@ -155,16 +153,19 @@ class Skill extends CommonObject
 	//  */
 	// public $class_element_line = 'Skillline';
 
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	protected $childtables = array('hrm_skillrank', 'hrm_evaluationdet');
+	/**
+	 * @var array<string,string[]>	List of child tables. To test if we can delete object.
+	 */
+	protected $childtables = array(
+		'hrm_skillrank' => ['name' => 'SkillRank'],
+		'hrm_evaluationdet' => ['name' => 'EvaluationDet'],
+	);
 
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	//  */
+	/**
+	 * @var string[]    List of child tables. To know object to delete on cascade.
+	 *                  If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
+	 *                  call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	 */
 	protected $childtablesoncascade = array('hrm_skilldet');
 
 	// /**
