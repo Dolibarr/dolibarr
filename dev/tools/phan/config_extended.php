@@ -263,6 +263,7 @@ return [
 	//	to `exclude_analysis_directory_list`.
 	"exclude_analysis_directory_list" => [
 		'htdocs/includes/',
+		'htdocs/install/doctemplates/websites/',
 		'htdocs/core/class/lessc.class.php', // External library
 		PHAN_DIR . '/stubs/',
 	],
