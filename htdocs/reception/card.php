@@ -1037,7 +1037,7 @@ if ($action == 'create') {
 			// Note that if an extrafield with the same name exists in the origin supplier order line, the value
 			// from the HTTP query will be ignored
 			foreach ($suffix2numAsked as $suffix => $n) {
-				$dispatchLines[$n]['array_options'] = $extrafields->getOptionalsFromPost('commande_fournisseur_dispatch', '_' . $suffix, '');
+				$dispatchLines[$n]['array_options'] = $extrafields->getOptionalsFromPost('receptiondet_batch', '_' . $suffix, '');
 			}
 
 			print '<script type="text/javascript">
@@ -1818,7 +1818,7 @@ if ($action == 'create') {
 		//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received";
 		$sql .= ', p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch';
 		$sql .= ', p.description as product_desc';
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+		$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as ed";
 		$sql .= ", ".MAIN_DB_PREFIX."reception as e";
 		$sql .= ", ".MAIN_DB_PREFIX.$origin."det as obj";
 		//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_reception = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";

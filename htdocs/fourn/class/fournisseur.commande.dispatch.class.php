@@ -57,7 +57,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'commande_fournisseur_dispatch'; //!< Name of table without prefix where object is stored
+	public $table_element = 'receptiondet_batch'; //!< Name of table without prefix where object is stored
 	public $lines = array();
 
 	/**

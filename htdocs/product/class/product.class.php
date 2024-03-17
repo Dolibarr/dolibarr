@@ -3495,7 +3495,7 @@ class Product extends CommonObject
 
 		$sql = "SELECT COUNT(DISTINCT cf.fk_soc) as nb_suppliers, COUNT(DISTINCT cf.rowid) as nb,";
 		$sql .= " COUNT(fd.rowid) as nb_rows, SUM(fd.qty) as qty";
-		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur_dispatch as fd";
+		$sql .= " FROM ".$this->db->prefix()."receptiondet_batch as fd";
 		$sql .= ", ".$this->db->prefix()."commande_fournisseur as cf";
 		$sql .= ", ".$this->db->prefix()."societe as s";
 		if (!$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {

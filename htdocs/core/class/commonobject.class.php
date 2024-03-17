@@ -4529,7 +4529,7 @@ abstract class CommonObject
 		if ($elementTable == 'expensereport') {
 			$fieldstatus = "fk_statut";
 		}
-		if ($elementTable == 'commande_fournisseur_dispatch') {
+		if ($elementTable == 'receptiondet_batch') {
 			$fieldstatus = "status";
 		}
 		if ($elementTable == 'prelevement_bons') {
