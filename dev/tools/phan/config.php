@@ -497,7 +497,7 @@ return [
 		// 'PhanPluginDescriptionlessCommentOnProtectedMethod',
 		// 'PhanPluginPrintfIncompatibleArgumentTypeWeak',
 		'PhanUndeclaredVariableAssignOp',
-		'PhanTypeExpectedObjectOrClassName',
+		// 'PhanTypeExpectedObjectOrClassName',
 		'PhanEmptyFQSENInClasslike',
 		// 'PhanTypeMismatchArgumentInternalReal',
 		// 'PhanUnextractableAnnotationElementName',
