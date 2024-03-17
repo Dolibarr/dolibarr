@@ -193,7 +193,7 @@ class PaymentExpenseReport extends CommonObject
 			$this->amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
 		}
-		$totalamount = price2num($totalamount);
+		// $totalamount = (float) price2num($totalamount);
 
 		// Check parameters
 		if ($totalamount == 0) {
