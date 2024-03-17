@@ -782,6 +782,7 @@ if (empty($reshook)) {
 			$price_base_type = (GETPOST('price_base_type', 'alpha') ? GETPOST('price_base_type', 'alpha') : 'HT');
 
 			$price_min = $price_min_ttc = 0;
+			$tva_npr = 0;
 
 			// Ecrase $pu par celui du produit
 			// Ecrase $desc par celui du produit
