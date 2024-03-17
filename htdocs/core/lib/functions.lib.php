@@ -3149,7 +3149,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$dtts = new DateTime();
 		$dtts->setTimestamp($timetouse);
 		$dtts->setTimezone($tzo);
-		$month = $dtts->format("m");
+		$month = (int) $dtts->format("m");
 		$month = sprintf("%02d", $month); // $month may be return with format '06' on some installation and '6' on other, so we force it to '06'.
 		if ($encodetooutput) {
 			$monthtext = $outputlangs->transnoentities('Month'.$month);
