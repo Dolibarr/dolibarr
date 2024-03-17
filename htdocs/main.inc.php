@@ -1695,6 +1695,11 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		}
 		$hookmanager->initHooks(array("main"));
 
+		$result = $user->call_trigger('BEFORE_PAGE_LOAD', $user);
+		if ($result < 0) {
+			$error++;
+		}
+		
 		$parameters = array('contentsecuritypolicy' => $contentsecuritypolicy, 'mode' => 'active');
 		$result = $hookmanager->executeHooks('setContentSecurityPolicy', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($result > 0) {
@@ -3851,6 +3856,11 @@ if (!function_exists("llxFooter")) {
 		$reshook = $hookmanager->executeHooks('beforeBodyClose', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			print $hookmanager->resPrint;
+		}
+
+		$result = $user->call_trigger('AFTER_PAGE_LOAD', $user);
+		if ($result < 0) {
+			$error++;
 		}
 
 		print "</body>\n";
