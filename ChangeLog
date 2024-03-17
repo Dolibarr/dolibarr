@@ -38,9 +38,11 @@ The following changes may create regressions for some external modules, but were
 ***** ChangeLog for 19.0.1 compared to 19.0.0 *****
 
 FIX: 16.0 - parent company gets emptied when updating a third party from the card in edit mode (#28269)
+FIX: 17.0: $num doesn't take trigger-modified newref into account, leading to inconsistencies if BILL_SUPPLIER_VALIDATE changes the invoice's ref (#28684)
 FIX: #22948
+FIX: #24265 regression cannot see all product on takepos (#28753)
 FIX: #28205
-FIX: 28251 Fixing subpermission name on api_multicurrencies.class.php (#28252)
+FIX: #28251 Fixing subpermission name on api_multicurrencies.class.php (#28252)
 FIX: #28369
 FIX: #28429
 FIX: #28491 (#28522)
@@ -49,6 +51,8 @@ FIX: #28533 Mo::deleteLine removes the "main" MoLine if consumed line is delete 
 FIX: #28564
 FIX: Adding the dependencies list feature for extrafields "select" (#28549)
 FIX: Add new hidden conf "DISABLE_QTY_OVERWRITTEN" (#28523)
+FIX: Amount of localtaxes in foreign currency was wrong on screen and PDF
+FIX: an error in a complex else condition
 FIX: avoid error "Column 'entity' in where clause is ambiguous" (#28270)
 FIX: avoid Unknown column 'pfp.ref_fourn' (#28145)
 FIX: avoid warning "error parsing attribute name in Entity" (#28543)
@@ -59,27 +63,41 @@ FIX: Bad picto on list of permission of a user when user not admin
 FIX: bad timezone for the start/end date of an event
 FIX: Better test on validity of compute field syntax with parenthesis
 FIX: close #28279
+FIX: Count of virtual stock at Services and MoLine with disabled stock change (#28580)
 FIX: disabled pito of menu must be greyed.
 FIX: Don't display column when it's out of date (#28271)
 FIX: duplicate with lines: 414-416 (#28358)
+FIX: edit bank suggested for credit transfer payment in invoice setup
 FIX: Error When cloning fourn price no default value for tva_tx (#28368)
+FIX: fatal error Unsupported operand types when recording load payment
+FIX: Fix create shipping with product who have negative stocks on warehouse but the negative stock transfer is allowed (#26217)
 FIX: migration missing 2 columns in llx_resource and 1 in llx_user
 FIX: missing trans
 FIX: notification module: for supplier orders (any of the 3 triggers), user can choose an e-mail template in conf, but the conf is not used when sending the notification (#28216)
-FIX: Not truncate the multicurrency rate shown on cards (even if the global MAIN_MAX_DECIMALS_SHOWN is set to 0) (#28211)
+FIX: Not trancate the multicurrency rate shown on cards (even if the global MAIN_MAX_DECIMALS_SHOWN is set to 0) (#28211)
+FIX: Option MAIN_DOC_USE_TIMING can be a string with date format
 FIX: Payment on customer invoice - Remove accountid in url if empty for apply default value (#28156)
 FIX: Pb in redirect of a website page in USEDOLIBARRSERVER mode
+FIX: permission on payment file of a tax
 FIX: PHP Warning: Undefined variable $lib (#28342)
+FIX: PHP Warning: Undefined variable $mode (#28697)
 FIX: Picto for mime
+FIX: Picto in top menu
 FIX: position of field in list of field in shipment list
 FIX: postgresql error (#28542)
 FIX: quote in sql request
 FIX: Responsive on admin project
 FIX: Shipment closing action has wrong value (#28174)
+FIX: skip adding tab if user doesn't have permission (#28698)
 FIX: some tooltips has disappeared on invoice action button
 FIX: Special code is now transmitted by args only in order supplier (#28546)
+FIX: Special code is now transmitted by args only in order supplier (#28619)
 FIX: subscription must be editable when accounting isn't reconciled (#28469)
+FIX: Translation for select  (#28677)
+FIX: upload odt files should not start/end with space
 FIX: Value of field int = 0 from modulebuilder must not be set to null
+FIX: Wrong currency shown in TakePOS payment page
+FIX: #yogosha21416
 
 
 ***** ChangeLog for 19.0.0 compared to 18.0.0 *****
