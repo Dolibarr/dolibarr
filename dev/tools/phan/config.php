@@ -505,7 +505,7 @@ return [
 		// 'PhanRedefinedExtendedClass',
 		'PhanTypeComparisonFromArray',
 		'PhanPluginConstantVariableBool',
-		'PhanPluginPrintfVariableFormatString',
+		// 'PhanPluginPrintfVariableFormatString',
 		'PhanTypeMismatchDimFetch',
 		'PhanTypeMismatchDimFetchNullable',
 		'PhanTypeSuspiciousNonTraversableForeach',
