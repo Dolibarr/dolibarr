@@ -1118,10 +1118,11 @@ if ($mode == 'graph') {
 
 		$dir = $conf->user->dir_temp;
 		dol_mkdir($dir);
-		$filenamenb = $dir.'/customreport_'.$object->element.'.png';
-		$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=user&file=customreport_'.$object->element.'.png';
+		// $customreportkey may be defined when using customreports.php as an include
+		$filenamekey = $dir.'/customreport_'.$object->element.(empty($customreportkey) ? '' : $customreportkey).'.png';
+		$fileurlkey = DOL_URL_ROOT.'/viewimage.php?modulepart=user&file=customreport_'.$object->element.(empty($customreportkey) ? '' : $customreportkey).'.png';
 
-		$px1->draw($filenamenb, $fileurlnb);
+		$px1->draw($filenamekey, $fileurlkey);
 
 		$texttoshow = $langs->trans("NoRecordFound");
 		if (!GETPOSTISSET('search_measures') || !GETPOSTISSET('search_xaxis')) {
