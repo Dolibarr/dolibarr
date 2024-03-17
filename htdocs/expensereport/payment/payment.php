@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -91,8 +91,8 @@ if ($action == 'add_payment') {
 		foreach ($_POST as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_') {
 				if (GETPOST($key)) {
-					$amounts[$expensereport->fk_user_author] = price2num(GETPOST($key));
-					$total += price2num(GETPOST($key));
+					$amounts[$expensereport->fk_user_author] = (float) price2num(GETPOST($key));
+					$total += (float) price2num(GETPOST($key));
 				}
 			}
 		}
