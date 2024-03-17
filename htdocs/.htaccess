@@ -1,0 +1,7 @@
+RewriteEngine On
+
+RewriteRule ^(.+)/(.+)\.php$ index.php?url_route=$1&url_filename=$2 [QSA,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+

@@ -9,7 +9,8 @@
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      Rafael San José      <rsanjose@alxarfe.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -261,8 +262,6 @@ if (empty($dolibarr_mailing_limit_sendbyday)) {
 if (empty($dolibarr_strict_mode)) {
 	$dolibarr_strict_mode = 0; // For debug in php strict mode
 }
-
-define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root); // Filesystem core php (htdocs)
 
 if (!file_exists(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php")) {
 	print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";

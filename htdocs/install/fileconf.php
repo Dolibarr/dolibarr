@@ -6,7 +6,8 @@
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Rafael San José         <rsanjose@alxarafe.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,7 +145,7 @@ if (!empty($force_install_message)) {
 		<td class="label"><label for="main_dir"><b><?php print $langs->trans("WebPagesDirectory"); ?></b></label></td>
 <?php
 if (empty($dolibarr_main_document_root)) {
-	$dolibarr_main_document_root = GETPOSTISSET('main_dir') ? GETPOST('main_dir') : detect_dolibarr_main_document_root();
+	$dolibarr_main_document_root = GETPOSTISSET('main_dir') ? GETPOST('main_dir') : DOL_DOCUMENT_ROOT;
 }
 ?>
 		<td class="label">
@@ -208,7 +209,7 @@ if (!empty($force_install_noedit)) {
 	<!-- Root URL $dolibarr_main_url_root -->
 	<?php
 	if (empty($dolibarr_main_url_root)) {
-		$dolibarr_main_url_root = GETPOSTISSET('main_url') ? GETPOST('main_url') : detect_dolibarr_main_url_root();
+		$dolibarr_main_url_root = GETPOSTISSET('main_url') ? GETPOST('main_url') : DOL_URL_ROOT;
 	}
 	?>
 	<tr>
