@@ -1606,7 +1606,7 @@ if (!function_exists("llxHeader")) {
  */
 function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 {
-	global $db, $conf, $hookmanager;
+	global $db, $conf, $user, $hookmanager;
 
 	if ($contenttype == 'text/html') {
 		header("Content-Type: text/html; charset=".$conf->file->character_set_client);
