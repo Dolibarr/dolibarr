@@ -1442,7 +1442,7 @@ class DoliDBSqlite3 extends DoliDB
 	/**
 	 * calc_days_in_year
 	 *
-	 * @param 	string	$year		Year
+	 * @param 	int		$year		Year
 	 * @return	int					Nb of days in year
 	 */
 	private static function calc_days_in_year($year)

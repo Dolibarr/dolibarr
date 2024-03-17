@@ -171,6 +171,7 @@ $VALID_MODULE_MAPPING = array(
 	'syslog' => 'Syslog',
 	'takepos' => 'TakePos',
 	'tax' => 'Tax',
+	'theme_datacolor' => 'array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int},3:array{0:int,1:int,2:int}}',
 	'ticket' => 'Ticket',
 	'user' => 'User',
 	'variants' => 'Variants',
@@ -370,7 +371,7 @@ return [
 
 		'ConstantVariablePlugin', // Warns about values that are actually constant
 		//'HasPHPDocPlugin', // Requires PHPDoc
-		'InlineHTMLPlugin', // html in PHP file, or at end of file
+		// 'InlineHTMLPlugin', // html in PHP file, or at end of file
 		//'NonBoolBranchPlugin', // Requires test on bool, nont on ints
 		//'NonBoolInLogicalArithPlugin',
 		'NumericalComparisonPlugin',
@@ -471,7 +472,8 @@ return [
 
 		'PhanTypeExpectedObjectPropAccess',
 		'PhanTypeInvalidRightOperandOfNumericOp',
-		'PhanPluginInlineHTML',
+		// 'PhanPluginInlineHTML',
+		// 'PhanPluginInlineHTMLTrailing',
 		// 'PhanPluginUnknownFunctionReturnType',
 		// 'PhanPluginDescriptionlessCommentOnProtectedProperty',
 		'PhanPluginRedundantAssignmentInGlobalScope',
@@ -485,10 +487,9 @@ return [
 		// 'PhanTypeInvalidUnaryOperandIncOrDec',
 		// 'PhanPluginDescriptionlessCommentOnClass',
 		'PhanPluginEmptyStatementIf',
-		'PhanPluginInlineHTMLTrailing',
 		// 'PhanUndeclaredStaticMethod',
 		// 'PhanPluginDescriptionlessCommentOnPrivateMethod',
-		'PhanPluginPrintfIncompatibleArgumentType',
+		// 'PhanPluginPrintfIncompatibleArgumentType',
 		'PhanPossiblyNullTypeMismatchProperty',
 		'PhanRedefineClass',
 		'PhanRedefineFunction',
@@ -505,7 +506,7 @@ return [
 		// 'PhanRedefinedExtendedClass',
 		'PhanTypeComparisonFromArray',
 		'PhanPluginConstantVariableBool',
-		'PhanPluginPrintfVariableFormatString',
+		// 'PhanPluginPrintfVariableFormatString',
 		'PhanTypeMismatchDimFetch',
 		'PhanTypeMismatchDimFetchNullable',
 		'PhanTypeSuspiciousNonTraversableForeach',
@@ -517,14 +518,14 @@ return [
 		// 'PhanTypeMismatchDeclaredParam',
 		// 'PhanCommentDuplicateMagicMethod',
 		// 'PhanParamSpecial1',
-		'PhanPluginInlineHTMLLeading',
+		// 'PhanPluginInlineHTMLLeading',
 		// 'PhanPluginUseReturnValueInternalKnown',
 		// 'PhanRedefinedInheritedInterface',
 		// 'PhanTypeComparisonToArray',
 		'PhanTypeConversionFromArray',
 		// 'PhanTypeInvalidLeftOperandOfIntegerOp',
 		// 'PhanTypeMismatchArgumentInternalProbablyReal',
-		'PhanTypeMismatchBitwiseBinaryOperands',
+		// 'PhanTypeMismatchBitwiseBinaryOperands',
 		'PhanTypeMismatchDimEmpty',
 		// 'PhanTypeSuspiciousEcho',
 		// 'PhanNoopBinaryOperator',

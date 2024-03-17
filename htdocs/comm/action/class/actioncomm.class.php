@@ -308,7 +308,7 @@ class ActionComm extends CommonObject
 	public $icalname;
 
 	/**
-	 * @var string Ical color
+	 * @var int<0,3> Ical color
 	 */
 	public $icalcolor;
 

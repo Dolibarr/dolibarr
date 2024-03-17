@@ -854,7 +854,7 @@ class Productlot extends CommonObject
 
 		$sql = "SELECT COUNT(DISTINCT cf.fk_soc) as nb_customers, COUNT(DISTINCT cf.rowid) as nb,";
 		$sql .= " COUNT(cfd.rowid) as nb_rows, SUM(cfdi.qty) as qty";
-		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur_dispatch as cfdi";
+		$sql .= " FROM ".$this->db->prefix()."receptiondet_batch as cfdi";
 		$sql .= " INNER JOIN ".$this->db->prefix()."commande_fournisseurdet as cfd ON (cfd.rowid = cfdi.fk_commandefourndet)";
 		$sql .= " INNER JOIN ".$this->db->prefix()."commande_fournisseur as cf ON (cf.rowid = cfd.fk_commande)";
 		//      $sql .= ", ".$this->db->prefix()."societe as s";
@@ -929,7 +929,7 @@ class Productlot extends CommonObject
 
 		$sql = "SELECT COUNT(DISTINCT recep.fk_soc) as nb_customers, COUNT(DISTINCT recep.rowid) as nb,";
 		$sql .= " COUNT(cfdi.rowid) as nb_rows, SUM(cfdi.qty) as qty";
-		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur_dispatch as cfdi";
+		$sql .= " FROM ".$this->db->prefix()."receptiondet_batch as cfdi";
 		$sql .= " INNER JOIN ".$this->db->prefix()."reception as recep ON (recep.rowid = cfdi.fk_reception)";
 		//      $sql .= ", ".$this->db->prefix()."societe as s";
 		if (!$user->hasRight('societe', 'client', 'voir')) {

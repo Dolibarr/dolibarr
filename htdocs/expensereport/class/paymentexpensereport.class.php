@@ -160,7 +160,7 @@ class PaymentExpenseReport extends CommonObject
 			$this->fk_expensereport = (int) $this->fk_expensereport;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->fk_typepayment)) {
 			$this->fk_typepayment = (int) $this->fk_typepayment;
@@ -189,11 +189,11 @@ class PaymentExpenseReport extends CommonObject
 
 		$totalamount = 0;
 		foreach ($this->amounts as $key => $value) {  // How payment is dispatch
-			$newvalue = price2num($value, 'MT');
+			$newvalue = (float) price2num($value, 'MT');
 			$this->amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
 		}
-		$totalamount = price2num($totalamount);
+		// $totalamount = (float) price2num($totalamount);
 
 		// Check parameters
 		if ($totalamount == 0) {
@@ -315,7 +315,7 @@ class PaymentExpenseReport extends CommonObject
 			$this->fk_expensereport = (int) $this->fk_expensereport;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->fk_typepayment)) {
 			$this->fk_typepayment = (int) $this->fk_typepayment;
