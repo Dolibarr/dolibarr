@@ -12,6 +12,7 @@
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
  * Copyright (C) 2018	    Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -391,7 +392,7 @@ if (empty($reshook)) {
 					$ent = "entl".$i;
 					$idl = "idl".$i;
 
-					$entrepot_id = is_numeric(GETPOSTINT($ent)) ? GETPOSTINT($ent) : GETPOSTINT('entrepot_id');
+					$entrepot_id = is_numeric(GETPOST($ent)) ? GETPOSTINT($ent) : GETPOSTINT('entrepot_id');
 
 					/*
 					if (!empty($lineToTest)) {
@@ -520,24 +521,24 @@ if (empty($reshook)) {
 			$object->tracking_number = trim(GETPOST('tracking_number', 'alpha'));
 		}
 		if ($action == 'settracking_url') {
-			$object->tracking_url = trim(GETPOSTINT('tracking_url'));
+			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
 		if ($action == 'settrueWeight') {
-			$object->trueWeight = trim(GETPOSTINT('trueWeight'));
+			$object->trueWeight = GETPOSTINT('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
 		}
 		if ($action == 'settrueWidth') {
-			$object->trueWidth = trim(GETPOSTINT('trueWidth'));
+			$object->trueWidth = GETPOSTINT('trueWidth');
 		}
 		if ($action == 'settrueHeight') {
-			$object->trueHeight = trim(GETPOSTINT('trueHeight'));
+			$object->trueHeight = GETPOSTINT('trueHeight');
 			$object->size_units = GETPOSTINT('size_units');
 		}
 		if ($action == 'settrueDepth') {
-			$object->trueDepth = trim(GETPOSTINT('trueDepth'));
+			$object->trueDepth = GETPOSTINT('trueDepth');
 		}
 		if ($action == 'setshipping_method_id') {
-			$object->shipping_method_id = trim(GETPOSTINT('shipping_method_id'));
+			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 		}
 
 		if (!$error) {
@@ -1255,7 +1256,7 @@ if ($action == 'create') {
 							// Show warehouse combo list
 							$ent = "entl".$indiceAsked;
 							$idl = "idl".$indiceAsked;
-							$tmpentrepot_id = is_numeric(GETPOSTINT($ent)) ? GETPOSTINT($ent) : $warehouse_id;
+							$tmpentrepot_id = is_numeric(GETPOST($ent)) ? GETPOSTINT($ent) : $warehouse_id;
 							if ($line->fk_product > 0) {
 								print '<!-- Show warehouse selection -->';
 								print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 0, 0, $line->fk_product, '', 1);
