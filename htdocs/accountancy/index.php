@@ -80,7 +80,7 @@ llxHeader('', $langs->trans("AccountancyArea"), $help_url);
 if (isModEnabled('accounting')) {
 	$step = 0;
 
-	$resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
+
 
 	$helpisexpanded = empty($resultboxes['boxactivated']) || (empty($resultboxes['boxlista']) && empty($resultboxes['boxlistb'])); // If there is no widget, the tooltip help is expanded by default.
 	$showtutorial = '';
@@ -264,32 +264,6 @@ if (isModEnabled('accounting')) {
 
 	print '<div class="clearboth"></div>';
 
-	print '<div class="fichecenter fichecenterbis">';
-
-	/*
-	 * Show boxes
-	 */
-	$boxlist = '<div class="twocolumns">';
-
-	$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
-
-	$boxlist .= $resultboxes['boxlista'];
-
-	$boxlist .= '</div>';
-
-	$boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
-
-	$boxlist .= $resultboxes['boxlistb'];
-
-	$boxlist .= '</div>';
-	$boxlist .= "\n";
-
-	$boxlist .= '</div>';
-
-
-	print $boxlist;
-
-	print '</div>';
 } elseif (isModEnabled('comptabilite')) {
 	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 
@@ -299,6 +273,21 @@ if (isModEnabled('accounting')) {
 	// This case can happen mode no accounting module is on but module "intracommreport" is on
 	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 }
+
+/*
+ * Show boxes
+ */
+$resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
+$boxlist = '<div class="twocolumns">';
+$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+$boxlist .= $resultboxes['boxlista'];
+$boxlist .= '</div>';
+$boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+$boxlist .= $resultboxes['boxlistb'];
+$boxlist .= '</div>';
+$boxlist .= "\n";
+$boxlist .= '</div>';
+print $boxlist;
 
 // End of page
 llxFooter();
