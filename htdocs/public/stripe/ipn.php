@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2018-2020  Thibault FOUCART       <support@ptibogxiv.net>
- * Copyright (C) 2018       Fédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Fédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -337,7 +338,7 @@ if ($event->type == 'payout.created') {
 	dol_syslog("Try to find a payment in database for the payment_intent id = ".$TRANSACTIONID);
 
 	$sql = "SELECT pi.rowid, pi.fk_facture, pi.fk_prelevement_bons, pi.amount, pi.type, pi.traite";
-	$sql .= " FROM llx_prelevement_demande as pi";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pi";
 	$sql .= " WHERE pi.ext_payment_id = '".$db->escape($TRANSACTIONID)."'";
 	$sql .= " AND pi.ext_payment_site = '".$db->escape($service)."'";
 
@@ -438,7 +439,7 @@ if ($event->type == 'payout.created') {
 			$paiement->ext_payment_site = $service;
 
 			$ispaymentdone = 0;
-			$sql = "SELECT p.rowid FROM llx_paiement as p";
+			$sql = "SELECT p.rowid FROM ".MAIN_DB_PREFIX."paiement as p";
 			$sql .= " WHERE p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."'";
 			$sql .= " AND p.ext_payment_site = '".$db->escape($paiement->ext_payment_site)."'";
 			$result = $db->query($sql);
@@ -472,7 +473,7 @@ if ($event->type == 'payout.created') {
 			if (!$error && isModEnabled('bank')) {
 				// Search again the payment to see if it is already linked to a bank payment record (We should always find the payment that was created before).
 				$ispaymentdone = 0;
-				$sql = "SELECT p.rowid, p.fk_bank FROM llx_paiement as p";
+				$sql = "SELECT p.rowid, p.fk_bank FROM ".MAIN_DB_PREFIX."paiement as p";
 				$sql .= " WHERE p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."'";
 				$sql .= " AND p.ext_payment_site = '".$db->escape($paiement->ext_payment_site)."'";
 				$sql .= " AND p.fk_bank <> 0";

@@ -2587,9 +2587,9 @@ class Project extends CommonObject
 		u.email,u.weeklyhours,
 		SUM(et.element_duration) AS total_seconds
 		FROM
-			llx_element_time AS et
+			".MAIN_DB_PREFIX."element_time AS et
 		JOIN
-			llx_user AS u ON et.fk_user = u.rowid
+			".MAIN_DB_PREFIX."user AS u ON et.fk_user = u.rowid
 		WHERE
 			et.element_date BETWEEN '".$this->db->escape($startDate)."' AND '".$this->db->escape($endDate)."'
 			AND et.elementtype = 'task'
