@@ -156,6 +156,8 @@ if (empty($reshook)) {
 			$num = $db->num_rows($resql);
 			$i = 0;
 			$totalarray = array();
+			$option = '';
+
 			while ($i < $num) {
 				$line = $db->fetch_object($resql);
 
@@ -926,7 +928,13 @@ if (isModEnabled('productbatch')) {
 	print $langs->trans("Batch");
 	print '</td>';
 }
-print '<td class="right">'.$langs->trans("ExpectedQty").'</td>';
+if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
+	// Expected quantity = If inventory is open: Quantity currently in stock (may change if stock movement are done during the inventory)
+	print '<td class="right">'.$form->textwithpicto($langs->trans("ExpectedQty"), $langs->trans("QtyCurrentlyKnownInStock")).'</td>';
+} else {
+	// Expected quantity = If inventory is closed: Quantity we had in stock when we start the inventory.
+	print '<td class="right">'.$form->textwithpicto($langs->trans("ExpectedQty"), $langs->trans("QtyInStockWhenInventoryWasValidated")).'</td>';
+}
 if (getDolGlobalString('INVENTORY_MANAGE_REAL_PMP')) {
 	print '<td class="right">'.$langs->trans('PMPExpected').'</td>';
 	print '<td class="right">'.$langs->trans('ExpectedValuation').'</td>';
@@ -1060,7 +1068,8 @@ if ($resql) {
 			print '</td>';
 		}
 
-		// Expected quantity = Quantity in stock when we start inventory
+		// Expected quantity = If inventory is open: Quantity currently in stock (may change if stock movement are done during the inventory)
+		// Expected quantity = If inventory is closed: Quantity we had in stock when we start the inventory.
 		print '<td class="right expectedqty" id="id_'.$obj->rowid.'" title="Stock viewed at last update: '.$obj->qty_stock.'">';
 		$valuetoshow = $obj->qty_stock;
 		// For inventory not yet close, we overwrite with the real value in stock now
