@@ -15,6 +15,7 @@
  * Copyright (C) 2019-2023	Alexandre Spangaro		<aspangaro@easya.solutions>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2023		Joachim Kueter		    <git-jk@bloxera.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,7 +104,7 @@ $search_datelimit_endmonth = GETPOSTINT('search_datelimit_endmonth');
 $search_datelimit_endyear = GETPOSTINT('search_datelimit_endyear');
 $search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
 $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
-$search_categ_sup = trim(GETPOSTINT("search_categ_sup"));
+$search_categ_sup = GETPOSTINT("search_categ_sup");
 $search_product_category = GETPOSTINT('search_product_category');
 
 $option = GETPOST('search_option');
@@ -932,10 +933,10 @@ if ($option) {
 	$param .= "&search_option=".urlencode($option);
 }
 if ($search_categ_sup > 0) {
-	$param .= '&search_categ_sup='.urlencode($search_categ_sup);
+	$param .= '&search_categ_sup='.$search_categ_sup;
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
-	$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
+	$param .= '&search_type_thirdparty='.$search_type_thirdparty;
 }
 
 // Add $param from extra fields
