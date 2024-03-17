@@ -631,6 +631,7 @@ class ProductCombination
 			$features,
 			/**
 			 * @param mixed $v Feature information of a product.
+			 * @return bool
 			 */
 			static function ($v) {
 				return !empty($v);

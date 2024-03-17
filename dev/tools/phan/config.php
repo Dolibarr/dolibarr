@@ -454,7 +454,7 @@ return [
 		// 'PhanPluginNoCommentOnProtectedProperty',
 		// 'PhanPluginDescriptionlessCommentOnPublicMethod',
 		// 'PhanPluginUnknownClosureParamType',
-		'PhanPluginUnknownClosureReturnType',
+		// 'PhanPluginUnknownClosureReturnType',
 		// 'PhanPluginNoCommentOnProtectedMethod',
 		// 'PhanTypeArraySuspicious',
 		// 'PhanTypeMismatchPropertyProbablyReal',
