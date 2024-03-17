@@ -22,6 +22,11 @@
  *
  * To include this tool into another PHP page:
  * define('USE_CUSTOM_REPORT_AS_INCLUDE', 1);
+ * define('MAIN_DO_NOT_USE_JQUERY_MULTISELECT', 1);
+ * define('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY', 1);	// TODO Use a variable
+ * $SHOWLEGEND = 0;
+ * $search_xaxis = array('t.column');
+ * $customreportkey='abc';
  * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
 
@@ -931,6 +936,11 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		}
 	}
 	$sql = preg_replace('/,\s*$/', '', $sql);
+
+	// Can overwrite the SQL with a custom SQL string (when used as an include)
+	if (!empty($customsql)) {
+		$sql = $customsql;
+	}
 }
 //print $sql;
 
