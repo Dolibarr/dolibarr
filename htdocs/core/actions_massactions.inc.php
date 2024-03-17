@@ -1082,6 +1082,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 
 			if ($objecttmp->element == 'societe') {
 				/** @var Societe $objecttmp */
+				'@phan-var-force Societe $objecttmp';
 				// TODO Change signature of delete for Societe
 				$result = $objecttmp->delete($objecttmp->id, $user, 1);
 			} else {
