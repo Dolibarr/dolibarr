@@ -60,9 +60,9 @@ function webportalAdminPrepareHead()
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@webportal:/webportal/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'website');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'webportal');
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'website', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'webportal', 'remove');
 
 	return $head;
 }
