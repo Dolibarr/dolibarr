@@ -10105,7 +10105,7 @@ For developers:
 WARNING:
 - A lot of class files (*.class.php) has moved into subdirectories. So If you use
   or develop non official modules that includes Dolibarr classes, you will have to rename
-  path to thoose classes into the include function.
+  path to those classes into the include function.
 - Also, parameters of the "fetch()" method for class "User" has changed to reflect
   other fetch methods.
 - If you build a personalised themes, you must rename the style sheet into style.css.php.
