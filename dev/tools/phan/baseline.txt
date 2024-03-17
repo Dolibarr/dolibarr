@@ -17,15 +17,10 @@ return [
     // PhanTypeArraySuspiciousNull : 10+ occurrences
     // PhanTypeMismatchReturn : 10+ occurrences
     // PhanRedefineFunctionInternal : 6 occurrences
-    // PhanPluginUnsafeEval : 5 occurrences
-    // PhanParamSuspiciousOrder : 4 occurrences
     // PhanParamTooMany : 4 occurrences
-    // PhanPluginSuspiciousParamOrder : 4 occurrences
-    // PhanUndeclaredFunctionInCallable : 4 occurrences
     // PhanTypeMismatchPropertyProbablyReal : 2 occurrences
     // PhanAccessMethodProtected : 1 occurrence
     // PhanAccessPropertyStaticAsNonStatic : 1 occurrence
-    // PhanNoopArrayAccess : 1 occurrence
     // PhanNoopStringLiteral : 1 occurrence
     // PhanPluginAlwaysReturnFunction : 1 occurrence
 
@@ -48,14 +43,11 @@ return [
         'htdocs/compta/cashcontrol/cashcontrol_card.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/compta/prelevement/class/bonprelevement.class.php' => ['PhanParamTooMany'],
         'htdocs/compta/prelevement/create.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/core/actions_massactions.inc.php' => ['PhanPluginSuspiciousParamOrder'],
         'htdocs/core/class/commondocgenerator.class.php' => ['PhanTypeArraySuspiciousNull'],
         'htdocs/core/class/commonobject.class.php' => ['PhanTypeMismatchReturnNullable'],
-        'htdocs/core/class/evalmath.class.php' => ['PhanPluginUnsafeEval'],
         'htdocs/core/class/extrafields.class.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/core/class/html.form.class.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/core/class/html.formprojet.class.php' => ['PhanTypeMismatchReturnNullable'],
-        'htdocs/core/class/rssparser.class.php' => ['PhanUndeclaredFunctionInCallable'],
         'htdocs/core/class/smtps.class.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/core/class/stats.class.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/core/db/mysqli.class.php' => ['PhanParamSignatureMismatch'],
@@ -64,25 +56,20 @@ return [
         'htdocs/core/get_info.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/core/lib/date.lib.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/core/lib/files.lib.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
-        'htdocs/core/lib/functions.lib.php' => ['PhanParamTooMany', 'PhanPluginAlwaysReturnFunction', 'PhanPluginUnsafeEval', 'PhanRedefineFunctionInternal'],
+        'htdocs/core/lib/functions.lib.php' => ['PhanParamTooMany', 'PhanPluginAlwaysReturnFunction', 'PhanRedefineFunctionInternal'],
         'htdocs/core/lib/functions2.lib.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/core/lib/pdf.lib.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/core/lib/price.lib.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/core/lib/usergroups.lib.php' => ['PhanNoopArrayAccess'],
         'htdocs/core/lib/website.lib.php' => ['PhanTypeMismatchReturnNullable'],
-        'htdocs/core/menus/standard/auguria_menu.php' => ['PhanParamSuspiciousOrder'],
-        'htdocs/core/menus/standard/eldy_menu.php' => ['PhanParamSuspiciousOrder'],
-        'htdocs/core/menus/standard/empty.php' => ['PhanParamSuspiciousOrder'],
         'htdocs/core/modules/DolibarrModules.class.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/core/modules/movement/doc/pdf_standard.modules.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/core/modules/mrp/doc/pdf_vinci.modules.php' => ['PhanTypeArraySuspiciousNull'],
         'htdocs/core/modules/societe/modules_societe.class.php' => ['PhanTypeMismatchReturn'],
-        'htdocs/core/modules/syslog/mod_syslog_file.php' => ['PhanParamSignatureMismatch', 'PhanParamSuspiciousOrder'],
+        'htdocs/core/modules/syslog/mod_syslog_file.php' => ['PhanParamSignatureMismatch'],
         'htdocs/core/modules/syslog/mod_syslog_syslog.php' => ['PhanParamSignatureMismatch'],
         'htdocs/don/class/don.class.php' => ['PhanParamTooMany'],
         'htdocs/expedition/class/api_shipments.class.php' => ['PhanTypeMismatchReturn'],
         'htdocs/expensereport/class/api_expensereports.class.php' => ['PhanTypeMismatchReturn'],
-        'htdocs/fourn/class/api_supplier_invoices.class.php' => ['PhanPluginSuspiciousParamOrder'],
         'htdocs/fourn/class/fournisseur.commande.class.php' => ['PhanTypeMismatchReturn'],
         'htdocs/fourn/class/fournisseur.facture.class.php' => ['PhanTypeMismatchReturn'],
         'htdocs/intracommreport/list.php' => ['PhanAccessPropertyStaticAsNonStatic'],
@@ -93,9 +80,7 @@ return [
         'htdocs/projet/class/projectstats.class.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/projet/class/task.class.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/projet/tasks/list.php' => ['PhanTypeArraySuspiciousNull'],
-        'htdocs/public/opensurvey/index.php' => ['PhanPluginSuspiciousParamOrder'],
         'htdocs/public/payment/paymentok.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/public/recruitment/index.php' => ['PhanPluginSuspiciousParamOrder'],
         'htdocs/societe/class/companybankaccount.class.php' => ['PhanParamSignatureMismatch'],
         'htdocs/stripe/admin/stripe.php' => ['PhanDeprecatedFunction'],
         'htdocs/stripe/class/actions_stripe.class.php' => ['PhanPluginSuspiciousParamPosition'],
