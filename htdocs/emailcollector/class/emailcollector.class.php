@@ -3521,7 +3521,7 @@ class EmailCollector extends CommonObject
 				}
 
 				// Get file name (with extension)
-				$file_name_complete = $params['filename'];
+				$file_name_complete = $filename;
 				$destination = $destdir.$file_name_complete;
 
 				// Extract file extension
