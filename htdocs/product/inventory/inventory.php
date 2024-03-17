@@ -150,6 +150,7 @@ if (empty($reshook)) {
 		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated, id.pmp_real';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 		$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
+		$sql .= ' ORDER BY id.rowid';
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -185,9 +186,10 @@ if (empty($reshook)) {
 					$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->detail_batch[$line->batch]->qty;
 				}
 
-
 				if (!is_null($qty_view)) {
 					$stock_movement_qty = price2num($qty_view - $realqtynow, 'MS');
+					//print "Process inventory line ".$line->rowid." product=".$product_static->id." realqty=".$realqtynow." qty_stock=".$qty_stock." qty_view=".$qty_view." warehouse=".$line->fk_warehouse." qty to move=".$stock_movement_qty."<br>\n";
+
 					if ($stock_movement_qty != 0) {
 						if ($stock_movement_qty < 0) {
 							$movement_type = 1;

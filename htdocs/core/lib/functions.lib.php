@@ -7897,7 +7897,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 							'show-body-only' => true,
 							"indent-attributes" => false,
 							"vertical-space" => false,
-							'ident' => false,
+							//'ident' => false,			// Not always supported
 							"wrap" => 0
 							// HTML5 tags
 							//'new-blocklevel-tags' => 'article aside audio bdi canvas details dialog figcaption figure footer header hgroup main menu menuitem nav section source summary template track video',
