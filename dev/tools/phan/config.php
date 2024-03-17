@@ -488,7 +488,7 @@ return [
 		'PhanPluginInlineHTMLTrailing',
 		// 'PhanUndeclaredStaticMethod',
 		// 'PhanPluginDescriptionlessCommentOnPrivateMethod',
-		'PhanPluginPrintfIncompatibleArgumentType',
+		// 'PhanPluginPrintfIncompatibleArgumentType',
 		'PhanPossiblyNullTypeMismatchProperty',
 		'PhanRedefineClass',
 		'PhanRedefineFunction',
