@@ -14,13 +14,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- This table should have been named llx_receptiondet_batch_extrafields
 -- ===================================================================
 
-create table llx_commande_fournisseur_dispatch_extrafields
-(
-  rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  fk_object        integer NOT NULL,    -- object id
-  import_key       varchar(14)      	-- import key
-)ENGINE=innodb;
+
+ALTER TABLE llx_receptiondet_batch_extrafields ADD UNIQUE INDEX uk_receptiondet_batch_extrafields (fk_object);

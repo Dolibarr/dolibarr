@@ -35,31 +35,31 @@
 function get_tz_array()
 {
 	$tzarray = array(
-		-11=>"Pacific/Midway",
-		-10=>"Pacific/Fakaofo",
-		-9=>"America/Anchorage",
-		-8=>"America/Los_Angeles",
-		-7=>"America/Dawson_Creek",
-		-6=>"America/Chicago",
-		-5=>"America/Bogota",
-		-4=>"America/Anguilla",
-		-3=>"America/Araguaina",
-		-2=>"America/Noronha",
-		-1=>"Atlantic/Azores",
-		0=>"Africa/Abidjan",
-		1=>"Europe/Paris",
-		2=>"Europe/Helsinki",
-		3=>"Europe/Moscow",
-		4=>"Asia/Dubai",
-		5=>"Asia/Karachi",
-		6=>"Indian/Chagos",
-		7=>"Asia/Jakarta",
-		8=>"Asia/Hong_Kong",
-		9=>"Asia/Tokyo",
-		10=>"Australia/Sydney",
-		11=>"Pacific/Noumea",
-		12=>"Pacific/Auckland",
-		13=>"Pacific/Enderbury"
+		-11 => "Pacific/Midway",
+		-10 => "Pacific/Fakaofo",
+		-9 => "America/Anchorage",
+		-8 => "America/Los_Angeles",
+		-7 => "America/Dawson_Creek",
+		-6 => "America/Chicago",
+		-5 => "America/Bogota",
+		-4 => "America/Anguilla",
+		-3 => "America/Araguaina",
+		-2 => "America/Noronha",
+		-1 => "Atlantic/Azores",
+		0 => "Africa/Abidjan",
+		1 => "Europe/Paris",
+		2 => "Europe/Helsinki",
+		3 => "Europe/Moscow",
+		4 => "Asia/Dubai",
+		5 => "Asia/Karachi",
+		6 => "Indian/Chagos",
+		7 => "Asia/Jakarta",
+		8 => "Asia/Hong_Kong",
+		9 => "Asia/Tokyo",
+		10 => "Australia/Sydney",
+		11 => "Pacific/Noumea",
+		12 => "Pacific/Auckland",
+		13 => "Pacific/Enderbury"
 	);
 	return $tzarray;
 }
@@ -296,11 +296,11 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 				$sTime .= dol_print_date($iSecond, 'hourduration', true);
 			}
 		} elseif ($format == 'allhourminsec') {
-			return sprintf("%02d", ($sWeek * $lengthOfWeek * $nbHbyDay + $sDay * $nbHbyDay + (int) floor($iSecond/3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600) / 60))).':'.sprintf("%02d", ((int) ($iSecond % 60)));
+			return sprintf("%02d", ($sWeek * $lengthOfWeek * $nbHbyDay + $sDay * $nbHbyDay + (int) floor($iSecond / 3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600) / 60))).':'.sprintf("%02d", ((int) ($iSecond % 60)));
 		} elseif ($format == 'allhourmin') {
-			return sprintf("%02d", ($sWeek * $lengthOfWeek * $nbHbyDay + $sDay * $nbHbyDay + (int) floor($iSecond/3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600)/60)));
+			return sprintf("%02d", ($sWeek * $lengthOfWeek * $nbHbyDay + $sDay * $nbHbyDay + (int) floor($iSecond / 3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600) / 60)));
 		} elseif ($format == 'allhour') {
-			return sprintf("%02d", ($sWeek * $lengthOfWeek * $nbHbyDay + $sDay * $nbHbyDay + (int) floor($iSecond/3600)));
+			return sprintf("%02d", ($sWeek * $lengthOfWeek * $nbHbyDay + $sDay * $nbHbyDay + (int) floor($iSecond / 3600)));
 		}
 	} elseif ($format == 'hour') {	// only hour part
 		$sTime = dol_print_date($iSecond, '%H', true);
@@ -431,12 +431,12 @@ function dol_stringtotime($string, $gm = 1)
 		dol_syslog("dol_stringtotime call to function with deprecated parameter format", LOG_WARNING);
 		// Date est au format 'DD/MM/YY' ou 'DD/MM/YY HH:MM:SS'
 		// Date est au format 'DD/MM/YYYY' ou 'DD/MM/YYYY HH:MM:SS'
-		$sday = $reg[1];
-		$smonth = $reg[2];
-		$syear = $reg[3];
-		$shour = $reg[4];
-		$smin = $reg[5];
-		$ssec = $reg[6];
+		$sday = (int) $reg[1];
+		$smonth = (int) $reg[2];
+		$syear = (int) $reg[3];
+		$shour = (int) $reg[4];
+		$smin = (int) $reg[5];
+		$ssec = (int) $reg[6];
 		if ($syear < 50) {
 			$syear += 1900;
 		}
@@ -448,12 +448,12 @@ function dol_stringtotime($string, $gm = 1)
 		|| preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/i', $string, $reg)	// Convert date with format YYYY-MM-DD HH:MM:SS
 		|| preg_match('/^([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})Z$/i', $string, $reg)		// Convert date with format YYYYMMDDTHHMMSSZ
 	) {
-		$syear = $reg[1];
-		$smonth = $reg[2];
-		$sday = $reg[3];
-		$shour = $reg[4];
-		$smin = $reg[5];
-		$ssec = $reg[6];
+		$syear = (int) $reg[1];
+		$smonth = (int) $reg[2];
+		$sday = (int) $reg[3];
+		$shour = (int) $reg[4];
+		$smin = (int) $reg[5];
+		$ssec = (int) $reg[6];
 		$string = sprintf("%04d%02d%02d%02d%02d%02d", $syear, $smonth, $sday, $shour, $smin, $ssec);
 	}
 
@@ -950,7 +950,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				$jour_1sunsept = date("d", $date_1sunsept);
 				$mois_1sunsept = date("m", $date_1sunsept);
 				if ($jour_1sunsept == $jour && $mois_1sunsept == $mois) {
-					$ferie=true;
+					$ferie = true;
 				}
 				// Geneva fast in Switzerland
 			}
