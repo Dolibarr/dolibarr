@@ -2618,7 +2618,7 @@ class EmailCollector extends CommonObject
 								$actioncomm->percentage  = -1; // Not applicable
 								$actioncomm->socid       = $thirdpartystatic->id;
 								$actioncomm->contact_id = $contactstatic->id;
-								$actioncomm->socpeopleassigned = (!empty($contactstatic->id) ? array($contactstatic->id => '') : array());
+								$actioncomm->socpeopleassigned = (!empty($contactstatic->id) ? array($contactstatic->id) : array());
 								$actioncomm->authorid    = $user->id; // User saving action
 								$actioncomm->userownerid = $user->id; // Owner of action
 								// Fields when action is an email (content should be added into note)
