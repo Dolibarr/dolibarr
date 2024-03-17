@@ -279,3 +279,5 @@ ALTER TABLE llx_ticket ADD CONSTRAINT llx_ticket_fk_product_barcode_type FOREIGN
 
 -- Force INVOICE_USE_SITUATION to value 2 if exist
 UPDATE llx_const SET value = 2 WHERE __DECRYPT('name')__ = 'INVOICE_USE_SITUATION' AND __DECRYPT('value')__ = '1';
+
+ALTER TABLE llx_societe ADD COLUMN fk_parent integer NULL;

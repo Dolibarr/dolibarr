@@ -1332,7 +1332,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	$dictionnaires['tabfieldvalue'][] = (array_key_exists('code', $columns) && array_key_exists('label', $columns) ? 'code,label' : '');
 	$dictionnaires['tabfieldinsert'][] = (array_key_exists('code', $columns) && array_key_exists('label', $columns) ? 'code,label' : '');
 	$dictionnaires['tabrowid'][] = $primaryKey;
-	$dictionnaires['tabcond'][] = isModEnabled('$modulename');
+	$dictionnaires['tabcond'][] = isModEnabled('$modulename');  // @phan-suppress-current-line UnknownModuleName
 	$dictionnaires['tabhelp'][] = (array_key_exists('code', $columns) ? array('code' => $langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip') : '');
 
 	// Build the dictionary string

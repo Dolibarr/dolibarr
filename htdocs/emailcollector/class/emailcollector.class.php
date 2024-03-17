@@ -3075,19 +3075,17 @@ class EmailCollector extends CommonObject
 									// Search template files
 									$file = '';
 									$classname = '';
-									$filefound = 0;
 									$reldir = '';
 									$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 									foreach ($dirmodels as $reldir) {
 										$file = dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
 										if (file_exists($file)) {
-											$filefound = 1;
 											$classname = $modele;
 											break;
 										}
 									}
 
-									if ($filefound) {
+									if ($classname !== '') {
 										if ($savesocid > 0) {
 											if ($savesocid != $tickettocreate->socid) {
 												$errorforactions++;
@@ -3521,7 +3519,7 @@ class EmailCollector extends CommonObject
 				}
 
 				// Get file name (with extension)
-				$file_name_complete = $params['filename'];
+				$file_name_complete = $filename;
 				$destination = $destdir.$file_name_complete;
 
 				// Extract file extension

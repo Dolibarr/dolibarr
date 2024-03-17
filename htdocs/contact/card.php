@@ -52,7 +52,8 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
 
-$mesg = ''; $error = 0; $errors = array();
+$error = 0;
+$errors = array();
 
 // Get parameters
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');

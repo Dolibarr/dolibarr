@@ -2143,7 +2143,7 @@ class Product extends CommonObject
 	 * @param  int    $product_id     Filter on a particular product id
 	 * @param  string $fourn_ref      Filter on a supplier price ref. 'none' to exclude ref in search.
 	 * @param  int    $fk_soc         If of supplier
-	 * @return int                    Return integer <-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
+	 * @return int|string             Return integer <-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...), or printable result of hook
 	 * @see getSellPrice(), find_min_price_product_fournisseur()
 	 */
 	public function get_buyprice($prodfournprice, $qty, $product_id = 0, $fourn_ref = '', $fk_soc = 0)
@@ -3482,11 +3482,11 @@ class Product extends CommonObject
 	/**
 	 *  Charge tableau des stats réception fournisseur pour le produit/service
 	 *
-	 * @param  int    	$socid           Id societe pour filtrer sur une societe
-	 * @param  string 	$filtrestatut    Id statut pour filtrer sur un statut
-	 * @param  int    	$forVirtualStock Ignore rights filter for virtual stock calculation.
+	 * @param  int    	$socid           	Id societe pour filtrer sur une societe
+	 * @param  string 	$filtrestatut    	Id statut pour filtrer sur un statut
+	 * @param  int    	$forVirtualStock 	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
-	 * @return int                     Array of stats in $this->stats_reception, <0 if ko or >0 if ok
+	 * @return int                     		Array of stats in $this->stats_reception, <0 if ko or >0 if ok
 	 */
 	public function load_stats_reception($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null)
 	{
@@ -3543,12 +3543,12 @@ class Product extends CommonObject
 	/**
 	 *  Charge tableau des stats production pour le produit/service
 	 *
-	 * @param  int    	$socid           Id societe pour filtrer sur une societe
-	 * @param  string 	$filtrestatut    Id statut pour filtrer sur un statut
-	 * @param  int    	$forVirtualStock Ignore rights filter for virtual stock calculation.
+	 * @param	int    	$socid           	Id societe pour filtrer sur une societe
+	 * @param	string 	$filtrestatut    	Id statut pour filtrer sur un statut
+	 * @param	int    	$forVirtualStock 	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
-	 * @param   int $warehouseid Filter by a warehouse
-	 * @return integer                 Array of stats in $this->stats_mrptoproduce (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
+	 * @param   int 	$warehouseid 		Filter by a warehouse. Warning: When a filter on a warehous is set, it is not possible to calculate an accurate virtual stock because we can't knnow in which warehouse will be done virtual stock changes.
+	 * @return 	integer                 	Array of stats in $this->stats_mrptoproduce (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
 	 */
 	public function load_stats_inproduction($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null, $warehouseid = 0)
 	{
@@ -3605,13 +3605,13 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			while ($obj = $this->db->fetch_object($result)) {
-				if ($obj->role == 'toconsume') {
+				if ($obj->role == 'toconsume' && empty($warehouseid)) {
 					$this->stats_mrptoconsume['customers'] += $obj->nb_customers;
 					$this->stats_mrptoconsume['nb'] += $obj->nb;
 					$this->stats_mrptoconsume['rows'] += $obj->nb_rows;
 					$this->stats_mrptoconsume['qty'] += ($obj->qty ? $obj->qty : 0);
 				}
-				if ($obj->role == 'consumed') {
+				if ($obj->role == 'consumed' && empty($warehouseid)) {
 					//$this->stats_mrptoconsume['customers'] += $obj->nb_customers;
 					//$this->stats_mrptoconsume['nb'] += $obj->nb;
 					//$this->stats_mrptoconsume['rows'] += $obj->nb_rows;

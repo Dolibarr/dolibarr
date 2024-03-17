@@ -895,10 +895,10 @@ if ($action == 'create') {
 				</script>';
 	}
 	if ($formmail->withfckeditor) {
-		$out .= $formmail->getModelEmailTemplate();
+		$out .= $formmail->getModelEmailTemplate('bodyemail');
 	}
 	if ($formmail->withaiprompt && isModEnabled('ai')) {
-		$out .= $formmail->getSectionForAIPrompt();
+		$out .= $formmail->getSectionForAIPrompt('', 'bodyemail');
 	}
 	print $out;
 	print '</td></tr>';

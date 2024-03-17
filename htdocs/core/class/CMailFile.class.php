@@ -81,19 +81,20 @@ class CMailFile
 	 */
 	public $errors = array();
 
-	public $smtps; // Contains SMTPs object (if this method is used)
-	public $phpmailer; // Contains PHPMailer object (if this method is used)
+
+	/**
+	 * @var SMTPS (if this method is used)
+	 */
+	public $smtps;
+	/**
+	 * @var Swift_Mailer (if the method is used)
+	 */
+	public $mailer;
 
 	/**
 	 * @var Swift_SmtpTransport
 	 */
 	public $transport;
-
-	/**
-	 * @var Swift_Mailer
-	 */
-	public $mailer;
-
 	/**
 	 * @var Swift_Plugins_Loggers_ArrayLogger
 	 */
@@ -108,9 +109,13 @@ class CMailFile
 	//! Defined background directly in body tag
 	public $bodyCSS;
 
+	/**
+	 * @var string	Message-ID of the email to send (generated)
+	 */
 	public $msgid;
 	public $headers;
 	public $message;
+
 	/**
 	 * @var array fullfilenames list (full path of filename on file system)
 	 */
@@ -579,12 +584,15 @@ class CMailFile
 			//$this->message = new Swift_SignedMessage();
 			// Adding a trackid header to a message
 			$headers = $this->message->getHeaders();
+
 			$headers->addTextHeader('X-Dolibarr-TRACKID', $this->trackid.'@'.$host);
 			$this->msgid = time().'.swiftmailer-dolibarr-'.$this->trackid.'@'.$host;
 			$headerID = $this->msgid;
 			$msgid = $headers->get('Message-ID');
 			$msgid->setId($headerID);
-			$headers->addIdHeader('References', $headerID);
+
+			// Add 'References:' header
+			//$headers->addIdHeader('References', $headerID);
 
 			if (!empty($moreinheader)) {
 				$moreinheaderarray = preg_split('/[\r\n]+/', $moreinheader);
@@ -727,11 +735,12 @@ class CMailFile
 		}
 	}
 
-
 	/**
 	 * Send mail that was prepared by constructor.
 	 *
-	 * @return    int|bool|string	True if mail sent, false otherwise.  Negative int if error in hook.  String if incorrect send mode.
+	 * @return    bool	True if mail sent, false otherwise.  Negative int if error in hook.  String if incorrect send mode.
+	 *
+	 * @phan-suppress PhanTypeMismatchReturnNullable  False positif by phan for unclear reason.
 	 */
 	public function sendfile()
 	{
@@ -1536,7 +1545,7 @@ class CMailFile
 			// References is kept in response and Message-ID is returned into In-Reply-To:
 			$this->msgid = time().'.phpmail-dolibarr-'.$trackid.'@'.$host;
 			$out .= 'Message-ID: <'.$this->msgid.">".$this->eol2; // Uppercase seems replaced by phpmail
-			$out .= 'References: <'.$this->msgid.">".$this->eol2;
+			//$out .= 'References: <'.$this->msgid.">".$this->eol2;
 			$out .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host.$this->eol2;
 		} else {
 			$this->msgid = time().'.phpmail@'.$host;

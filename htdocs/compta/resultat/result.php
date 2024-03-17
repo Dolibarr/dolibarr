@@ -3,6 +3,7 @@
  * Copyright (C) 2016-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Laurent Destailleur     <eldy@destailleur.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -260,12 +261,12 @@ print '<th class="liste_titre right">'.$langs->trans("PreviousPeriod").'</th>';
 print '<th class="liste_titre right">'.$langs->trans("SelectedPeriod").'</th>';
 foreach ($months as $k => $v) {
 	if (($k + 1) >= $date_startmonth && $k < $date_endmonth) {
-		print '<th class="liste_titre right width50">'.$langs->trans('MonthShort'.sprintf("%02s", ($k + 1))).'</th>';
+		print '<th class="liste_titre right width50">'.$langs->trans('MonthShort'.sprintf("%02d", ($k + 1))).'</th>';
 	}
 }
 foreach ($months as $k => $v) {
 	if (($k + 1) < $date_startmonth) {
-		print '<th class="liste_titre right width50">'.$langs->trans('MonthShort'.sprintf("%02s", ($k + 1))).'</th>';
+		print '<th class="liste_titre right width50">'.$langs->trans('MonthShort'.sprintf("%02d", ($k + 1))).'</th>';
 	}
 }
 print	'</tr>';
