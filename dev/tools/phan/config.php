@@ -436,7 +436,7 @@ return [
 		// 'PhanPluginUnknownMethodReturnType',
 		'PhanPluginUnknownArrayMethodParamType',
 		'PhanPluginWhitespaceTab',   // Dolibarr uses tabs
-		'PhanPluginWhitespaceTrailing',   // Should be handled by other tools
+		// 'PhanPluginWhitespaceTrailing',
 		// 'PhanPluginCanUsePHP71Void',
 		'PhanPluginUnknownArrayMethodReturnType',
 		'PhanTypeMismatchArgumentInternal',
