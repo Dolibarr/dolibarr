@@ -9849,6 +9849,7 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
  * 										'2' (used for example for the compute property of extrafields)=Accept also '[]'
  * @return	mixed						Nothing or return result of eval
  * @see verifCond()
+ * @phan-suppress PhanPluginUnsafeEval
  */
 function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1')
 {
