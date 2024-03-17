@@ -3859,6 +3859,7 @@ if (!function_exists("llxFooter")) {
 		}
 
 		$result = $user->call_trigger('AFTER_PAGE_LOAD', $user);
+		$error = 0;
 		if ($result < 0) {
 			$error++;
 		}
