@@ -591,7 +591,7 @@ class RssParser
 		} elseif ($this->_format == 'atom' && $this->incontent) {
 			// if inside an Atom content construct (e.g. content or summary) field treat tags as text
 			// if tags are inlined, then flatten
-			$attrs_str = implode(' ', array_map('map_attrs', array_keys($attrs), array_values($attrs)));
+			$attrs_str = implode(' ', array_map('rss_map_attrs', array_keys($attrs), array_values($attrs)));
 
 			$this->append_content("<$element $attrs_str>");
 
@@ -824,6 +824,17 @@ function extEntHandler($parser, $ent, $base, $sysID, $pubID)  {
 }
 */
 
+/**
+ * Function to convert an XML object into an array
+ *
+ * @param	string 	$k		Key
+ * @param	string 	$v		Value
+ * @return	string
+ */
+function rss_map_attrs($k, $v)
+{
+	return "$k=\"$v\"";
+}
 
 /**
  * Function to convert an XML object into an array
