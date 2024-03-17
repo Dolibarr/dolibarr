@@ -582,7 +582,7 @@ class DiscountAbsolute
 			$sql .= " AND f.type = ". (int) $invoice::TYPE_DEPOSIT;
 		} else {
 			$this->error = get_class($this)."::getSumDepositsUsed was called with a bad object as a first parameter";
-			dol_print_error($this->error);
+			dol_print_error($this->db, $this->error);
 			return -1;
 		}
 
@@ -623,7 +623,7 @@ class DiscountAbsolute
 			$sql .= " AND f.type IN (".$this->db->sanitize($invoice::TYPE_STANDARD.", ".$invoice::TYPE_CREDIT_NOTE).")"; // Find discount coming from credit note or excess paid
 		} else {
 			$this->error = get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
-			dol_print_error($this->error);
+			dol_print_error($this->db, $this->error);
 			return -1;
 		}
 
@@ -661,7 +661,7 @@ class DiscountAbsolute
 			$sql .= " WHERE rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_source = ".((int) $invoice->id);
 		} else {
 			$this->error = get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
-			dol_print_error($this->error);
+			dol_print_error($this->db, $this->error);
 			return -1;
 		}
 

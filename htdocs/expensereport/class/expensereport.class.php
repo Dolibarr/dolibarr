@@ -2340,10 +2340,13 @@ class ExpenseReport extends CommonObject
 	 */
 	public function periode_existe($fuser, $date_debut, $date_fin)
 	{
+		global $conf;
+
 		// phpcs:enable
 		$sql = "SELECT rowid, date_debut, date_fin";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " WHERE fk_user_author = ".((int) $fuser->id);
+		$sql .= " WHERE entity = ".((int) $conf->entity); // not shared, only for the current entity
+		$sql .= " AND fk_user_author = ".((int) $fuser->id);
 
 		dol_syslog(get_class($this)."::periode_existe sql=".$sql);
 		$result = $this->db->query($sql);
