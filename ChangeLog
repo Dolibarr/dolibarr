@@ -30,9 +30,8 @@ The following changes may create regressions for some external modules, but were
 * The signature for all ->delete() method has been modified to match the modulebuilder template (so first paramis now always $user), except
   the delete for thirdparty (still accept the id of thirdparty to delete as first parameter). Will probably be modified into another version.
 * Route for API /thirdparties/gateways has been renamed into /thirdparties/accounts to better match the api object name.
-* The $userdoneid in actioncomm class is deprecated. Please use $userownerid instead.
-* The field fk_user_done in actioncomm table is deprecated. Please use fk_user_action instead.
-* The AGENDA_ENABLE_DONEBY hidden option has been removed.
+* The AGENDA_ENABLE_DONEBY hidden option has been removed. So $userdoneid in actioncomm class is deprecated. Please use $userownerid instead. Also,
+  the field $fk_user_done in actioncomm table is deprecated. Please use $fk_user_action instead.
 * The table commande_fournisseur_dispatch has been renamed into receptiondet_batch to better match its goal.
 
 
