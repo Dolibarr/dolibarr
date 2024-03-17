@@ -8153,8 +8153,6 @@ table.jPicker {
 		margin-top: 30px;
 	}
 }
-
-
 @media only screen and (max-width: 320px)
 {
 	.dropdown dd ul {
@@ -8206,3 +8204,5 @@ div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
 
 }
+
+

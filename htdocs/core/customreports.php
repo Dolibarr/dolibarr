@@ -724,18 +724,20 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 			$sql .= $val." as x_".$key.", ";
 		}
 	}
-	foreach ($search_groupby as $key => $val) {
-		if (preg_match('/\-year$/', $val)) {
-			$tmpval = preg_replace('/\-year$/', '', $val);
-			$sql .= "DATE_FORMAT(".$tmpval.", '%Y') as g_".$key.', ';
-		} elseif (preg_match('/\-month$/', $val)) {
-			$tmpval = preg_replace('/\-month$/', '', $val);
-			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m') as g_".$key.', ';
-		} elseif (preg_match('/\-day$/', $val)) {
-			$tmpval = preg_replace('/\-day$/', '', $val);
-			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m-%d') as g_".$key.', ';
-		} else {
-			$sql .= $val." as g_".$key.", ";
+	if (!empty($search_groupby)) {
+		foreach ($search_groupby as $key => $val) {
+			if (preg_match('/\-year$/', $val)) {
+				$tmpval = preg_replace('/\-year$/', '', $val);
+				$sql .= "DATE_FORMAT(".$tmpval.", '%Y') as g_".$key.', ';
+			} elseif (preg_match('/\-month$/', $val)) {
+				$tmpval = preg_replace('/\-month$/', '', $val);
+				$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m') as g_".$key.', ';
+			} elseif (preg_match('/\-day$/', $val)) {
+				$tmpval = preg_replace('/\-day$/', '', $val);
+				$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m-%d') as g_".$key.', ';
+			} else {
+				$sql .= $val." as g_".$key.", ";
+			}
 		}
 	}
 	foreach ($search_measures as $key => $val) {
@@ -880,18 +882,20 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 			$sql .= $val.", ";
 		}
 	}
-	foreach ($search_groupby as $key => $val) {
-		if (preg_match('/\-year$/', $val)) {
-			$tmpval = preg_replace('/\-year$/', '', $val);
-			$sql .= "DATE_FORMAT(".$tmpval.", '%Y'), ";
-		} elseif (preg_match('/\-month$/', $val)) {
-			$tmpval = preg_replace('/\-month$/', '', $val);
-			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m'), ";
-		} elseif (preg_match('/\-day$/', $val)) {
-			$tmpval = preg_replace('/\-day$/', '', $val);
-			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m-%d'), ";
-		} else {
-			$sql .= $val.', ';
+	if (!empty($search_groupby)) {
+		foreach ($search_groupby as $key => $val) {
+			if (preg_match('/\-year$/', $val)) {
+				$tmpval = preg_replace('/\-year$/', '', $val);
+				$sql .= "DATE_FORMAT(".$tmpval.", '%Y'), ";
+			} elseif (preg_match('/\-month$/', $val)) {
+				$tmpval = preg_replace('/\-month$/', '', $val);
+				$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m'), ";
+			} elseif (preg_match('/\-day$/', $val)) {
+				$tmpval = preg_replace('/\-day$/', '', $val);
+				$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m-%d'), ";
+			} else {
+				$sql .= $val.', ';
+			}
 		}
 	}
 	$sql = preg_replace('/,\s*$/', '', $sql);
@@ -910,18 +914,20 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 			$sql .= $val.', ';
 		}
 	}
-	foreach ($search_groupby as $key => $val) {
-		if (preg_match('/\-year$/', $val)) {
-			$tmpval = preg_replace('/\-year$/', '', $val);
-			$sql .= "DATE_FORMAT(".$tmpval.", '%Y'), ";
-		} elseif (preg_match('/\-month$/', $val)) {
-			$tmpval = preg_replace('/\-month$/', '', $val);
-			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m'), ";
-		} elseif (preg_match('/\-day$/', $val)) {
-			$tmpval = preg_replace('/\-day$/', '', $val);
-			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m-%d'), ";
-		} else {
-			$sql .= $val.', ';
+	if (!empty($search_groupby)) {
+		foreach ($search_groupby as $key => $val) {
+			if (preg_match('/\-year$/', $val)) {
+				$tmpval = preg_replace('/\-year$/', '', $val);
+				$sql .= "DATE_FORMAT(".$tmpval.", '%Y'), ";
+			} elseif (preg_match('/\-month$/', $val)) {
+				$tmpval = preg_replace('/\-month$/', '', $val);
+				$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m'), ";
+			} elseif (preg_match('/\-day$/', $val)) {
+				$tmpval = preg_replace('/\-day$/', '', $val);
+				$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m-%d'), ";
+			} else {
+				$sql .= $val.', ';
+			}
 		}
 	}
 	$sql = preg_replace('/,\s*$/', '', $sql);

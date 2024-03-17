@@ -2566,6 +2566,8 @@ class Project extends CommonObject
 
 		$now = dol_now();
 		$nowDate = dol_getdate($now, true);
+
+		$errormesg = '';
 		$errorsMsg = array();
 
 		$firstDayOfWeekTS = dol_get_first_day_week($nowDate['mday'], $nowDate['mon'], $nowDate['year']);
@@ -2714,7 +2716,7 @@ class Project extends CommonObject
 				$this->db->commit();
 			}
 		}
-		if ($errormesg) {
+		if (!empty($errormesg)) {
 			$errorsMsg[] = $errormesg;
 		}
 
@@ -2723,7 +2725,7 @@ class Project extends CommonObject
 			dol_syslog(__METHOD__." end - ".$this->output, LOG_INFO);
 			return 0;
 		} else {
-			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? implode(', ', $errorsMsg) : $error;
+			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(empty($errorsMsg) ? $error : implode(', ', $errorsMsg));
 			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
 			return $error;
 		}

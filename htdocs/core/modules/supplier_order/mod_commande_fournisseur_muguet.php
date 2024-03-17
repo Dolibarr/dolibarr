@@ -167,7 +167,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 		} else {
-			$num = sprintf("%04s", $max + 1);
+			$num = sprintf("%04d", $max + 1);
 		}
 
 		return $this->prefix.$yymm."-".$num;

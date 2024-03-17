@@ -979,8 +979,8 @@ function getSocialNetworkSharingLinks()
 /**
  * Return HTML content to add structured data for an article, news or Blog Post.
  *
- * @param	Object	$object			Object
- * @return  string					HTML img content or '' if no image found
+ * @param	Object	$object		Object
+ * @return  int					HTML img content or '' if no image found
  * @see getImagePublicURLOfObject()
  */
 function getNbOfImagePublicURLOfObject($object)

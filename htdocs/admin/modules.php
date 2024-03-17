@@ -1318,7 +1318,7 @@ if ($mode == 'deploy') {
 
 			print '<input class="flat minwidth400" type="file" name="fileinstall" id="fileinstall"> ';
 
-			print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Upload")).'" class="button">';
+			print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Upload")).'" class="button small">';
 
 			if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
 				if ($user->admin) {

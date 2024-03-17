@@ -6,6 +6,7 @@
  * Copyright (C) 2013 Cedric GROSS <c.gross@kreiz-it.fr>
  * Copyright (C) 2014 Marcos García <marcosgdf@gmail.com>
  * Copyright (C) 2015 Bahfir Abbes <bafbes@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@ class InterfaceContactRoles extends DolibarrTriggers
 	}
 
 	/**
-	 * Function called when a Dolibarrr business event is done.
+	 * Function called when a Dolibarr business event is done.
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 * Following properties may be set before calling trigger. The may be completed by this trigger to be used for writing the event into database:

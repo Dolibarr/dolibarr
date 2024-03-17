@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -200,7 +201,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 			if ($max >= (pow(10, 4) - 1)) {
 				$num = $max; // If counter > 9999, we do not format on 4 chars, we take number as it is
 			} else {
-				$num = sprintf("%04s", $max);
+				$num = sprintf("%04d", $max);
 			}
 
 			$ref = '';
@@ -229,7 +230,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 			if ($max >= (pow(10, 4) - 1)) {
 				$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 			} else {
-				$num = sprintf("%04s", $max + 1);
+				$num = sprintf("%04d", $max + 1);
 			}
 
 			dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
