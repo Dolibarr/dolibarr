@@ -233,7 +233,7 @@ if ($result > 0) {
 	$sql .= " c.rowid as contactid, c.lastname, c.firstname, c.email";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
 	$sql .= " ".MAIN_DB_PREFIX."notify_def as n,";
-	$sql .= " ".MAIN_DB_PREFIX."socpeople c";
+	$sql .= " ".MAIN_DB_PREFIX."socpeople as c";
 	$sql .= " WHERE a.rowid = n.fk_action";
 	$sql .= " AND c.rowid = n.fk_contact";
 	$sql .= " AND c.fk_soc = ".((int) $object->id);
