@@ -9,7 +9,7 @@
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
  * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2021-2023 Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,7 +137,7 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 	$sql .= ", s.rowid as socid";
 	$sql .= ", s.code_client, s.code_compta, s.email";
 	$sql .= ", cc.rowid as country_id, cc.code as country_code";
-	$sql .= ", (SELECT SUM(pf.amount) FROM llx_paiement_facture as pf WHERE pf.fk_facture = f.rowid) as am";
+	$sql .= ", (SELECT SUM(pf.amount) FROM ".MAIN_DB_PREFIX."paiement_facture as pf WHERE pf.fk_facture = f.rowid) as am";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
@@ -283,7 +283,7 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 	$sql .= ", s.nom as name";
 	$sql .= ", s.rowid as socid";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.email";
-	$sql .= ", (SELECT SUM(pf.amount) FROM llx_paiementfourn_facturefourn as pf WHERE pf.fk_facturefourn = ff.rowid) as am";
+	$sql .= ", (SELECT SUM(pf.amount) FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf WHERE pf.fk_facturefourn = ff.rowid) as am";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql .= " WHERE s.rowid = ff.fk_soc";
 	$sql .= " AND ff.entity IN (".getEntity('facture_fourn').")";
