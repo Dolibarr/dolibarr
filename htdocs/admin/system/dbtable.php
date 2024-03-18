@@ -4,6 +4,7 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,9 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 
+/** @var Conf $conf */
+/** @var DoliDB $db */
+
 $langs->load("admin");
 
 if (!$user->admin) {
@@ -43,12 +47,12 @@ $table = GETPOST('table', 'alpha');
 llxHeader();
 
 
-print load_fiche_titre($langs->trans("Table")." ".$table, '', 'title_setup');
+print load_fiche_titre($langs->trans("Table") . " " . $table, '', 'title_setup');
 
 // Define request to get table description
 $base = 0;
 if (preg_match('/mysql/i', $conf->db->type)) {
-	$sql = "SHOW TABLE STATUS LIKE '".$db->escape($table)."'";
+	$sql = "SHOW TABLE STATUS LIKE '" . $db->escape($table) . "'";
 	$base = 1;
 } elseif ($conf->db->type == 'pgsql') {
 	$sql = "SELECT conname,contype FROM pg_constraint";
@@ -87,19 +91,19 @@ if (!$base) {
 
 		print '<table class="noborder">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Fields").'</td>';
-		print '<td>'.$langs->trans("Type").'</td>';
-		print '<td>'.$langs->trans("Collation").'</td>';
-		print '<td>'.$langs->trans("Null").'</td>';
-		print '<td>'.$langs->trans("Index").'</td>';
-		print '<td>'.$langs->trans("Default").'</td>';
-		print '<td>'.$langs->trans("Extra").'</td>';
-		print '<td>'.$langs->trans("Privileges").'</td>';
-		print '<td>'.$langs->trans("FieldsLinked").'</td>';
+		print '<td>' . $langs->trans("Fields") . '</td>';
+		print '<td>' . $langs->trans("Type") . '</td>';
+		print '<td>' . $langs->trans("Collation") . '</td>';
+		print '<td>' . $langs->trans("Null") . '</td>';
+		print '<td>' . $langs->trans("Index") . '</td>';
+		print '<td>' . $langs->trans("Default") . '</td>';
+		print '<td>' . $langs->trans("Extra") . '</td>';
+		print '<td>' . $langs->trans("Privileges") . '</td>';
+		print '<td>' . $langs->trans("FieldsLinked") . '</td>';
 		print '</tr>';
 
 		// $sql = "DESCRIBE ".$table;
-		$sql = "SHOW FULL COLUMNS IN ".$db->escape($table);
+		$sql = "SHOW FULL COLUMNS IN " . $db->escape($table);
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -110,27 +114,27 @@ if (!$base) {
 
 				print '<tr class="oddeven">';
 				// field
-				print "<td>".$row[0]."</td>";
+				print "<td>" . $row[0] . "</td>";
 				// type
-				print "<td>".$row[1]."</td>";
+				print "<td>" . $row[1] . "</td>";
 				// collation
-				print "<td>".$row[2]."</td>";
+				print "<td>" . $row[2] . "</td>";
 				// null
-				print "<td>".$row[3]."</td>";
+				print "<td>" . $row[3] . "</td>";
 				// key
-				print "<td>".(empty($row[4]) ? '' : $row[4])."</td>";
+				print "<td>" . (empty($row[4]) ? '' : $row[4]) . "</td>";
 				// default
-				print "<td>".(empty($row[5]) ? '' : $row[5])."</td>";
+				print "<td>" . (empty($row[5]) ? '' : $row[5]) . "</td>";
 				// extra
-				print "<td>".(empty($row[6]) ? '' : $row[6])."</td>";
+				print "<td>" . (empty($row[6]) ? '' : $row[6]) . "</td>";
 				// privileges
-				print "<td>".(empty($row[7]) ? '' : $row[7])."</td>";
+				print "<td>" . (empty($row[7]) ? '' : $row[7]) . "</td>";
 
-				print "<td>".(isset($link[$row[0]][0]) ? $link[$row[0]][0] : '').".";
-				print(isset($link[$row[0]][1]) ? $link[$row[0]][1] : '')."</td>";
+				print "<td>" . (isset($link[$row[0]][0]) ? $link[$row[0]][0] : '') . ".";
+				print (isset($link[$row[0]][1]) ? $link[$row[0]][1] : '') . "</td>";
 
-				print '<!-- ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' COLLATE utf8_unicode_ci; -->';
-				print '<!-- ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' CHARACTER SET utf8; -->';
+				print '<!-- ALTER TABLE ' . $db->sanitize($table) . ' MODIFY ' . $db->sanitize($row[0]) . ' ' . $db->sanitize($row[1]) . ' COLLATE ' . $conf->db->dolibarr_main_db_collation . '; -->';
+				print '<!-- ALTER TABLE ' . $db->sanitize($table) . ' MODIFY ' . $db->sanitize($row[0]) . ' ' . $db->sanitize($row[1]) . ' CHARACTER SET '.$conf->db->character_set.'; -->';
 				print '</tr>';
 				$i++;
 			}
