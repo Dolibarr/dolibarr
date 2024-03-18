@@ -1573,6 +1573,7 @@ if (empty($reshook)) {
 									$TTotalByTva[$line->tva_tx] += $line->total_ttc;
 								}
 
+								$amount_ttc_diff = 0.;
 								foreach ($TTotalByTva as $tva => &$total) {
 									$coef = $total / $srcobject->total_ttc; // Calc coef
 									$am = $amount * $coef;
