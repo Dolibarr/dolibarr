@@ -2953,7 +2953,8 @@ class pdf_octopus extends ModelePDFFactures
 	 * current: current status invoice data
 	 *
 	 */
-	public function _getDataSituation(&$object) {
+	public function _getDataSituation(&$object)
+	{
 		global $conf, $db;
 		// $btpModule = new modBtp($db);
 
@@ -3111,8 +3112,8 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * Display retained Warranty
 	 *
-	 * @param  Facture $object
-	 * @return bool
+	 * @param   $object  Facture
+	 * @return	bool
 	 */
 	public function displayRetainedWarranty($object)
 	{
@@ -3148,7 +3149,6 @@ class pdf_octopus extends ModelePDFFactures
 					}
 				}
 			}
-
 			return $displayWarranty;
 		}
 	}
@@ -3156,10 +3156,12 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * Get info line of the last situation
 	 *
-	 * @param  Facture $object
+	 * @param  Facture	$object
+	 * @param  int		$current_line	Id of the current line
 	 * @return bool
 	 */
-	public function _getInfosLineLastSituation(&$object, &$current_line) {
+	public function _getInfosLineLastSituation(&$object, &$current_line)
+	{
 		if (empty($object->situation_cycle_ref) || $object->situation_counter <= 1) {
 			return;
 		}
@@ -3303,7 +3305,8 @@ class pdf_octopus extends ModelePDFFactures
 	 *  @param  Translate	$outputlangsbis Object lang for output bis
 	 *	@return int							Position pour suite
 	 */
-	protected function _resumeLastPage(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis) {
+	protected function _resumeLastPage(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis)
+	{
 		global $conf, $mysoc, $hookmanager;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -3372,7 +3375,7 @@ class pdf_octopus extends ModelePDFFactures
 		if (count($propals)) {
 			$propal = array_pop($propals);
 
-			$total_ht = ($conf->multicurrency->enabled && $propal->mylticurrency_tx != 1 ? $propal->multicurrency_total_ht : $propal->total_ht);
+			$total_ht = ($conf->multicurrency->enabled && $propal->mylticurrency_tx != 1) ? $propal->multicurrency_total_ht : $propal->total_ht;
 			$remain_to_pay = $total_ht;
 
 			$pdf->SetTextColor(0,0,60);
@@ -3445,12 +3448,12 @@ class pdf_octopus extends ModelePDFFactures
 				$force_to_zero = true;
 			}
 
-			$pdf->MultiCell($this->page_largeur-($this->marge_droite+$this->marge_gauche), 3, $ref. ' '.$invoice->ref. ' '. $outputlangs->transnoentities("InvoiceOfDate", dol_print_date($invoice->date,"%d/%m/%Y",false,$outputlangs)), 0, 'L', 0);
+			$pdf->MultiCell($this->page_largeur-($this->marge_droite+$this->marge_gauche), 3, $ref. ' '.$invoice->ref. ' '. $outputlangs->transnoentities("InvoiceOfDate", dol_print_date($invoice->date, "%d/%m/%Y", false, $outputlangs)), 0, 'L', 0);
 
 			$pdf->SetFont('','', $default_font_size - 1);
 
-			$sign=1;
-			if ($invoice->type == 2 && ! empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign=-1;
+			$sign = 1;
+			if ($invoice->type == 2 && ! empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign = -1;
 
 			$posy += 7;
 			// Total HT
@@ -3465,7 +3468,7 @@ class pdf_octopus extends ModelePDFFactures
 			$tvas = array();
 			for ($i=0; $i < count($invoice->lines); $i++) {
 				$tvaligne = $invoice->lines[$i]->total_tva;
-				$vatrate=(string) $invoice->lines[$i]->tva_tx;
+				$vatrate = (string) $invoice->lines[$i]->tva_tx;
 
 				if (($invoice->lines[$i]->info_bits & 0x01) == 0x01) {
 					$vatrate.='*';
@@ -3476,21 +3479,20 @@ class pdf_octopus extends ModelePDFFactures
 				$tvas[$vatrate] += $tvaligne;
 			}
 
-
 			// Show VAT by rates and total
-			$pdf->SetFillColor(248,248,248);
-			foreach($tvas as $tvakey => $tvaval) {
+			$pdf->SetFillColor(248, 248, 248);
+			foreach ($tvas as $tvakey => $tvaval) {
 				if ($tvakey != 0) {	// On affiche pas taux 0
 					$index++;
 					$pdf->SetXY($posx, $posy + $height * $index);
 
 					$tvacompl='';
 					if (preg_match('/\*/',$tvakey)) {
-						$tvakey=str_replace('*','',$tvakey);
+						$tvakey = str_replace('*', '', $tvakey);
 						$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 					}
-					$totalvat =$outputlangs->transcountrynoentities("TotalVAT",$mysoc->country_code).' ';
-					$totalvat.=vatrate($tvakey,1).$tvacompl;
+					$totalvat = $outputlangs->transcountrynoentities("TotalVAT", $mysoc->country_code).' ';
+					$totalvat.= vatrate($tvakey, 1).$tvacompl;
 					$pdf->MultiCell($width, $height, $totalvat, 0, 'L', 1);
 
 					$pdf->SetXY($posx+$width, $posy + $height * $index);
@@ -3505,8 +3507,8 @@ class pdf_octopus extends ModelePDFFactures
 
 			// Total TTC
 			$pdf->SetXY($posx, $posy + $height * $index);
-			$pdf->SetTextColor(0,0,60);
-			$pdf->SetFillColor(224,224,224);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->SetFillColor(224, 224, 224);
 			$pdf->MultiCell($width, $height, $outputlangs->transnoentities("TotalTTC"), $useborder, 'L', 1);
 
 
@@ -3527,8 +3529,8 @@ class pdf_octopus extends ModelePDFFactures
 				$index++;
 
 				$pdf->SetXY($posx, $posy + $height * $index);
-				$pdf->SetTextColor(0,0,60);
-				$pdf->SetFillColor(241,241,241);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->SetFillColor(241, 241, 241);
 				$pdf->MultiCell($width, $height, $outputlangs->transnoentities("ReductionWarrantyShort", $retainedWarrantyRate), $useborder, 'L', 1);
 
 
@@ -3550,8 +3552,8 @@ class pdf_octopus extends ModelePDFFactures
 
 				// Total TTC
 				$pdf->SetXY($posx, $posy + $height * $index);
-				$pdf->SetTextColor(0,0,60);
-				$pdf->SetFillColor(224,224,224);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->SetFillColor(224, 224, 224);
 				if ($basePrice == 'HT') {
 					$pdf->MultiCell($width, $height, $outputlangs->transnoentities("TotalWithRgHT"), $useborder, 'L', 1);
 				} else if ($basePrice == 'TTC') {
@@ -3570,10 +3572,10 @@ class pdf_octopus extends ModelePDFFactures
 
 			$index++;
 
-			$pdf->SetTextColor(0,0,0);
+			$pdf->SetTextColor(0, 0, 0);
 
-			$creditnoteamount=$invoice->getSumCreditNotesUsed();
-			$depositsamount=$invoice->getSumDepositsUsed();
+			$creditnoteamount = $invoice->getSumCreditNotesUsed();
+			$depositsamount = $invoice->getSumDepositsUsed();
 			$deja_regle = $invoice->getSommePaiement();
 
 			$resteapayer = 0;
@@ -3607,7 +3609,7 @@ class pdf_octopus extends ModelePDFFactures
 			// Escompte
 			if ($invoice->close_code == Facture::CLOSECODE_DISCOUNTVAT) {
 				$index++;
-				$pdf->SetFillColor(255,255,255);
+				$pdf->SetFillColor(255, 255, 255);
 
 				$pdf->SetXY($posx, $posy + $height * $index);
 				$pdf->MultiCell($width, $height, $outputlangs->transnoentities("EscompteOfferedShort"), $useborder, 'L', 1);
@@ -3618,15 +3620,15 @@ class pdf_octopus extends ModelePDFFactures
 			}
 
 			$index++;
-			$pdf->SetTextColor(0,0,60);
-			$pdf->SetFillColor(224,224,224);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->SetFillColor(224, 224, 224);
 			$pdf->SetXY($posx, $posy + $height * $index);
 			$pdf->MultiCell($width, $height, $outputlangs->transnoentities("RemainderToPay"), $useborder, 'L', 1);
 			$pdf->SetXY($posx+$width, $posy + $height * $index);
 			$pdf->MultiCell($width2, $height, price($resteapayer, 0, $outputlangs), $useborder, 'R', 1);
 
 			$pdf->SetFont('','', $default_font_size - 1);
-			$pdf->SetTextColor(0,0,0);
+			$pdf->SetTextColor(0, 0, 0);
 
 			$index++;
 
