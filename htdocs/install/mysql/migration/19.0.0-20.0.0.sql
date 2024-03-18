@@ -227,8 +227,10 @@ ALTER TABLE llx_product ADD COLUMN last_main_doc varchar(255);
 
 ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtext;
 
-ALTER TABLE llx_commande_fournisseur_dispatch_extrafields RENAME llx_receptiondet_batch_extrafields;
-ALTER TABLE llx_commande_fournisseur_dispatch RENAME llx_receptiondet_batch;
+-- VMYSQL4.3 ALTER TABLE llx_commande_fournisseur_dispatch_extrafields RENAME llx_receptiondet_batch_extrafields;
+-- VMYSQL4.3 ALTER TABLE llx_commande_fournisseur_dispatch RENAME llx_receptiondet_batch;
+-- VPGSQL8.2 ALTER TABLE llx_commande_fournisseur_dispatch_extrafields RENAME TO llx_receptiondet_batch_extrafields;
+-- VPGSQL8.2 ALTER TABLE llx_commande_fournisseur_dispatch RENAME TO llx_receptiondet_batch;
 
 -- Rename const to add customer categories on not customer/prospect third-party if enabled
 UPDATE llx_const SET name = 'THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT' WHERE name = 'THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER';
