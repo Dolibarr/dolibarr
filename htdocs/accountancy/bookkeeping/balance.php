@@ -443,7 +443,7 @@ if ($action != 'export_csv') {
 	print_liste_field_titre("Balance", $_SERVER["PHP_SELF"], "", $param, "", 'class="right"', $sortfield, $sortorder);
 
 	// Hook fields
-	$parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
@@ -547,7 +547,7 @@ if ($action != 'export_csv') {
 
 				// Show first line of a break
 				print '<tr class="trforbreak">';
-				print '<td colspan="'.($colspan+1).'" class="tdforbreak">'.$root_account_number.($root_account_description ? ' - '.$root_account_description : '').'</td>';
+				print '<td colspan="'.($colspan + 1).'" class="tdforbreak">'.$root_account_number.($root_account_description ? ' - '.$root_account_description : '').'</td>';
 				print '</tr>';
 
 				$displayed_account = $root_account_number;
@@ -690,7 +690,7 @@ if ($action != 'export_csv') {
 
 		$accountingResult = $object->accountingResult($search_date_start, $search_date_end);
 		if ($accountingResult < 0) {
-			$accountingResultDebit = price(price2num(abs($accountingResult), 'MT'));
+			$accountingResultDebit = price(abs(price2num($accountingResult, 'MT')));
 			$accountingResultClassCSS = ' error';
 		} else {
 			$accountingResultCredit = price(price2num($accountingResult, 'MT'));

@@ -347,7 +347,7 @@ $db->close();
 function _isInBoxList($idrss, array $boxlist)
 {
 	foreach ($boxlist as $box) {
-		if ($box->boxcode === "lastrssinfos" && strpos($box->note, $idrss) !== false) {
+		if ($box->boxcode === "lastrssinfos" && strpos($box->note, (string) $idrss) !== false) {
 			return true;
 		}
 	}
