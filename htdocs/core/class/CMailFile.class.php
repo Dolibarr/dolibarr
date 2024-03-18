@@ -275,8 +275,9 @@ class CMailFile
 				// Search into the body for <img src="data:image/ext;base64,..." to replace them with an embedded file
 				// This convert an embedded file with src="data:image... into a cid link + attached file
 				$resultImageData = $this->findHtmlImagesIsSrcData($upload_dir_tmp);
-				if ($resultImageData<0) {
-					dol_syslog("CMailFile::CMailfile: Error on findHtmlImagesInSrcData");
+				if ($resultImageData < 0) {
+					dol_syslog("CMailFile::CMailfile: Error on findHtmlImagesInSrcData code=".$resultImageData." upload_dir_tmp=".$upload_dir_tmp);
+					dol_syslog("CMailFile::CMailfile: ".implode(',', $this->errors));	// Output errors set by findHtmlImagesInSrcData
 					$this->error = 'ErrorInAddAttachementsImageBaseOnMedia';
 					return;
 				}
@@ -1900,8 +1901,6 @@ class CMailFile
 	 */
 	private function findHtmlImagesIsSrcData($images_dir)
 	{
-		global $conf;
-
 		// Build the array of image extensions
 		$extensions = array_keys($this->image_types);
 
@@ -1927,7 +1926,7 @@ class CMailFile
 		if (!empty($matches) && !empty($matches[1])) {
 			if (empty($images_dir)) {
 				// No temp directory provided, so we are not able to support convertion of data:image into physical images.
-				$this->error = 'NoTempDirProvidedInCMailConstructorSoCantConvertDataImgOnDisk';
+				$this->errors[] = 'NoTempDirProvidedInCMailConstructorSoCantConvertDataImgOnDisk';
 				return -1;
 			}
 
@@ -1949,7 +1948,7 @@ class CMailFile
 						dolChmod($destfiletmp);
 					} else {
 						$this->errors[] = "Failed to open file '".$destfiletmp."' for write";
-						return -1;
+						return -2;
 					}
 				}
 
