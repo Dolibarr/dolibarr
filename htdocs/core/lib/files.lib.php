@@ -359,8 +359,8 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 
 			$filearrayindatabase = array_merge($filearrayindatabase, dol_dir_list_in_database($relativedirold, '', null, 'name', SORT_ASC));
 		}
-	} else if ($modulepart == 'ticket') {
-		foreach($filearray as $key => $val) {
+	} elseif ($modulepart == 'ticket') {
+		foreach ($filearray as $key => $val) {
 			$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filearray[$key]['path']);
 			$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
 			$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
