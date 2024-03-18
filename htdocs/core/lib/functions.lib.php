@@ -4373,7 +4373,7 @@ function dol_strlen($string, $stringencoding = 'UTF-8')
  * Make a substring. Works even if mbstring module is not enabled for better compatibility.
  *
  * @param	string		$string				String to scan
- * @param	string		$start				Start position (0 for first char)
+ * @param	int			$start				Start position (0 for first char)
  * @param	int|null	$length				Length (in nb of characters or nb of bytes depending on trunconbytes param)
  * @param   string		$stringencoding		Page code used for input string encoding
  * @param	int			$trunconbytes		1=Length is max of bytes instead of max of characters
@@ -6245,7 +6245,7 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0,
  *		Function to format a value into an amount for visual output
  *		Function used into PDF and HTML pages
  *
- *		@param	float				$amount			Amount to format
+ *		@param	string|float		$amount			Amount value to format
  *		@param	int<0,1>			$form			Type of formatting: 1=HTML, 0=no formatting (no by default)
  *		@param	Translate|string	$outlangs		Object langs for output. '' use default lang. 'none' use international separators.
  *		@param	int					$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accuracy) before being inserted into database or after a computation, so this parameter should be useless.
@@ -6332,7 +6332,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 
 	// Format number
-	$output = number_format($amount, $nbdecimal, $dec, $thousand);
+	$output = number_format((float) $amount, $nbdecimal, $dec, $thousand);
 	if ($form) {
 		$output = preg_replace('/\s/', '&nbsp;', $output);
 		$output = preg_replace('/\'/', '&#039;', $output);
