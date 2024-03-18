@@ -2807,7 +2807,6 @@ if (empty($reshook)) {
 				$fullprogress = 100;
 			}
 			$addprogress = $fullprogress - $previousprogress;
-
 		} else {
 			$addprogress = price2num(GETPOST('progress', 'alpha'));
 		}
