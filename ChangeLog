@@ -38,7 +38,7 @@ FIX: duplicate with lines: 414-416 (#28358)
 FIX: edit bank suggested for credit transfer payment in invoice setup
 FIX: Error When cloning fourn price no default value for tva_tx (#28368)
 FIX: fatal error Unsupported operand types when recording load payment
-FIX: Fix create shipping with product who have negative stocks on warehouse but the negative stock transfert is allowed (#26217)
+FIX: Fix create shipping with product who have negative stocks on warehouse but the negative stock transfer is allowed (#26217)
 FIX: migration missing 2 columns in llx_resource and 1 in llx_user
 FIX: missing trans
 FIX: notification module: for supplier orders (any of the 3 triggers), user can choose an e-mail template in conf, but the conf is not used when sending the notification (#28216)
@@ -63,7 +63,7 @@ FIX: Special code is now transmitted by args only in order supplier (#28619)
 FIX: subscription must be editable when accounting isn't reconciled (#28469)
 FIX: Translation for select  (#28677)
 FIX: upload odt files should not start/end with space
-FIX: Value of field int = 0 from modulebuilder must nto be set to null
+FIX: Value of field int = 0 from modulebuilder must not be set to null
 FIX: Wrong currency shown in TakePOS payment page
 FIX: #yogosha21416
 
