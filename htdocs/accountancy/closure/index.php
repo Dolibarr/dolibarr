@@ -161,7 +161,7 @@ $formaccounting = new FormAccounting($db);
 
 $title = $langs->trans('Closure');
 
-$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Cl.C3.B4ture_annuelle';
+$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Cl.C3.B4ture_annuelle';
 
 llxHeader('', $title, $help_url);
 
@@ -334,7 +334,7 @@ if (isset($current_fiscal_period)) {
 		print '<td class="right">' . $langs->trans("Year") . '</td>';
 	}
 	for ($i = 1; $i <= 12; $i++) {
-		print '<td class="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
+		print '<td class="right">' . $langs->trans('MonthShort' . str_pad((string) $i, 2, '0', STR_PAD_LEFT)) . '</td>';
 	}
 	print '<td class="right"><b>' . $langs->trans("Total") . '</b></td>';
 	print '</tr>';
