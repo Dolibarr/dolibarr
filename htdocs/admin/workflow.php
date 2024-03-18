@@ -158,7 +158,7 @@ $workflowcodes = array(
 	'WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE' => array(
 		'family' => 'classify_shipping',
 		'position' => 90,
-		'enabled' => isModEnabled("expedition") && isModEnabled("facture"),
+		'enabled' => isModEnabled("shipping") && isModEnabled("invoice"),
 		'picto' => 'shipment',
 		'deprecated' => 1
 	),
@@ -217,10 +217,10 @@ $workflowcodes = array_filter(
 	$workflowcodes,
 	/**
 	 * @param array{enabled:int<0,1>} $var
-	 * @return int<0,1>
+	 * @return bool
 	 */
 	static function ($var) {
-		return $var['enabled'];
+		return (bool) $var['enabled'];
 	}
 );
 
