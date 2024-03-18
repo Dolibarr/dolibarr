@@ -43,10 +43,10 @@ function getHtmlOfLayout($name)
 		} else {
 			$out .= '<img alt="Gray rectangle" width="100px" height="100px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC" />';
 		}
-		$out .= '</div> 
+		$out .= '</div>
             <h2>'.$langs->trans('TitleOfMailHolder').'</h2>
             <div class="email-template-text">
-            <p>'.$langs->trans('ContentOfMailHOlder').'</p>
+            <p>'.$langs->trans('ContentOfMailHolder').'</p>
             </div>';
 		if (!(empty($user->signature))) {
 			$out .= '<h4><strong>'.dol_htmlentities($user->signature).'</strong></h4>';
