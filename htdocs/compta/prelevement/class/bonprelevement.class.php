@@ -672,7 +672,7 @@ class BonPrelevement extends CommonObject
 	 *
 	 *	@param	User		$user		Id of user
 	 *	@param 	int			$date		Date of action
-	 *	@param	string		$method		Method of transmission to bank (0=Internet, 1=Api...)
+	 *	@param	int			$method		Method of transmission to bank (0=Internet, 1=Api...)
 	 *	@return	int						>0 if OK, <0 if KO
 	 */
 	public function set_infotrans($user, $date, $method)
