@@ -179,7 +179,7 @@ $VALID_MODULE_MAPPING = array(
 	'webportal' => 'WebPortal',
 	'webservices' => 'WebServices',
 	'webservicesclient' => 'WebServicesClient',
-	'website' => 'string',  // See discussion https://github.com/Dolibarr/dolibarr/pull/28891#issuecomment-2002268334
+	'website' => 'Website',
 	'workflow' => 'Workflow',
 	'workstation' => 'Workstation',
 	'zapier' => 'Zapier',
@@ -278,7 +278,7 @@ return [
 		'objectoffield' => '\CommonObject',
 		'senderissupplier' => 'int<0,1,2>',
 		'user' => '\User',
-		'website' => '\WebSite',
+		'website' => 'string',  // See discussion https://github.com/Dolibarr/dolibarr/pull/28891#issuecomment-2002268334  // Disable because Phan infers Website type
 		'websitepage' => '\WebSitePage',
 		'websitepagefile' => 'string',
 		// 'object' => '\CommonObject',  // Deprecated, not enabled because conflicts with $object assignments
