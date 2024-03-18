@@ -217,10 +217,10 @@ $workflowcodes = array_filter(
 	$workflowcodes,
 	/**
 	 * @param array{enabled:int<0,1>} $var
-	 * @return int<0,1>
+	 * @return bool
 	 */
 	static function ($var) {
-		return $var['enabled'];
+		return (bool) $var['enabled'];
 	}
 );
 

@@ -172,7 +172,7 @@ if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned')
 	$idtoremove = GETPOST('removedassigned');
 
 	if (!empty($_SESSION['assignedtouser'])) {
-		$tmpassigneduserids = json_decode($_SESSION['assignedtouser'], 1);
+		$tmpassigneduserids = json_decode($_SESSION['assignedtouser'], true);
 	} else {
 		$tmpassigneduserids = array();
 	}
@@ -199,7 +199,7 @@ if (empty($reshook) && (GETPOST('removedassignedresource') || GETPOST('removedas
 	$idtoremove = GETPOST('removedassignedresource');
 
 	if (!empty($_SESSION['assignedtoresource'])) {
-		$tmpassignedresourceids = json_decode($_SESSION['assignedtoresource'], 1);
+		$tmpassignedresourceids = json_decode($_SESSION['assignedtoresource'], true);
 	} else {
 		$tmpassignedresourceids = array();
 	}

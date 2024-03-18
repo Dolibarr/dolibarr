@@ -94,7 +94,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		dol_copy($pathoffiletoedittarget, $pathoffiletoedittarget.'.back', $newmask, 1);
 
 		// Edit class files
-		$contentclass = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
+		$contentclass = file_get_contents(dol_osencode($pathoffiletoeditsrc));
 
 		// Update ->fields (to add or remove entries defined into $addfieldentry)
 		if (count($object->fields)) {
@@ -321,7 +321,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	// Backup old file
 	dol_copy($pathoffiletoedittarget, $pathoffiletoedittarget.'.back', $newmask, 1);
 
-	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
+	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc));
 
 	$i = 0;
 	$texttoinsert = '-- BEGIN MODULEBUILDER FIELDS'."\n";
@@ -389,7 +389,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	$pathoffiletoedittarget = preg_replace('/\.sql$/', '.key.sql', $pathoffiletoedittarget);
 	$pathoffiletoedittarget = preg_replace('/\.sql.new$/', '.key.sql.new', $pathoffiletoedittarget);
 
-	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
+	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc));
 
 	$i = 0;
 	$texttoinsert = '-- BEGIN MODULEBUILDER INDEXES'."\n";
@@ -898,7 +898,7 @@ function writePermsInAsciiDoc($file, $destfile)
 	$array = explode(";", $content);
 	$permissions = array_filter($array);
 	// delete  occurrences "$r++" and ID
-	$permissions = str_replace('$r++', 1, $permissions);
+	$permissions = str_replace('$r++', '1', $permissions);
 
 	$permsN = array();
 	foreach ($permissions as $i => $element) {
