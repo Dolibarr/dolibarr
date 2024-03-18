@@ -94,34 +94,90 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 /*
  * Actions
  */
-
-if ($cancel) {
-	header("Location: ".DOL_URL_ROOT.'/accountancy/bookkeeping/list.php');
-	exit;
+$parameters = array();
+$reshook_onBeforeActions = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook_onBeforeActions < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-
-if ($action == "confirm_update") {
-	$error = 0;
-
-	if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
-		$error++;
-		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
-		$action = 'update';
-	}
-	if (empty($accountingaccount_number) || $accountingaccount_number == '-1') {
-		$error++;
-		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
-		$action = 'update';
+if (empty($reshook_onBeforeActions)) {
+	if ($cancel) {
+		header("Location: ".DOL_URL_ROOT.'/accountancy/bookkeeping/list.php');
+		exit;
 	}
 
-	if (!$error) {
-		$object = new BookKeeping($db);
+	if ($action == "confirm_update") {
+		$error = 0;
 
-		$result = $object->fetch($id, null, $mode);
-		if ($result < 0) {
+		if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
 			$error++;
-			setEventMessages($object->error, $object->errors, 'errors');
-		} else {
+			setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
+			$action = 'update';
+		}
+		if (empty($accountingaccount_number) || $accountingaccount_number == '-1') {
+			$error++;
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
+			$action = 'update';
+		}
+
+		if (!$error) {
+			$object = new BookKeeping($db);
+
+			$result = $object->fetch($id, null, $mode);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				$object->numero_compte = $accountingaccount_number;
+				$object->subledger_account = $subledger_account;
+				$object->subledger_label = $subledger_label;
+				$object->label_compte = $accountingaccount_label;
+				$object->label_operation = $label_operation;
+				$object->debit = $debit;
+				$object->credit = $credit;
+
+				if ((float) $debit != 0.0) {
+					$object->montant = $debit; // deprecated
+					$object->amount = $debit;
+					$object->sens = 'D';
+				}
+				if ((float) $credit != 0.0) {
+					$object->montant = $credit; // deprecated
+					$object->amount = $credit;
+					$object->sens = 'C';
+				}
+
+				$result = $object->update($user, false, $mode);
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				} else {
+					if ($mode != '_tmp') {
+						setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+					}
+
+					$debit = 0;
+					$credit = 0;
+
+					$action = '';
+				}
+			}
+		}
+	} elseif ($action == "add") {
+		$error = 0;
+
+		if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
+			$error++;
+			setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
+			$action = '';
+		}
+		if (empty($accountingaccount_number) || $accountingaccount_number == '-1') {
+			$error++;
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
+			$action = '';
+		}
+
+		if (!$error) {
+			$object = new BookKeeping($db);
+
 			$object->numero_compte = $accountingaccount_number;
 			$object->subledger_account = $subledger_account;
 			$object->subledger_label = $subledger_label;
@@ -129,19 +185,28 @@ if ($action == "confirm_update") {
 			$object->label_operation = $label_operation;
 			$object->debit = $debit;
 			$object->credit = $credit;
+			$object->doc_date = (string) GETPOST('doc_date', 'alpha');
+			$object->doc_type = (string) GETPOST('doc_type', 'alpha');
+			$object->piece_num = $piece_num;
+			$object->doc_ref = (string) GETPOST('doc_ref', 'alpha');
+			$object->code_journal = $journal_code;
+			$object->journal_label = $journal_label;
+			$object->fk_doc = GETPOSTINT('fk_doc');
+			$object->fk_docdet = GETPOSTINT('fk_docdet');
 
 			if ((float) $debit != 0.0) {
 				$object->montant = $debit; // deprecated
 				$object->amount = $debit;
 				$object->sens = 'D';
 			}
+
 			if ((float) $credit != 0.0) {
 				$object->montant = $credit; // deprecated
 				$object->amount = $credit;
 				$object->sens = 'C';
 			}
 
-			$result = $object->update($user, false, $mode);
+			$result = $object->createStd($user, false, $mode);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
@@ -155,113 +220,70 @@ if ($action == "confirm_update") {
 				$action = '';
 			}
 		}
-	}
-} elseif ($action == "add") {
-	$error = 0;
-
-	if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
-		$error++;
-		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
-		$action = '';
-	}
-	if (empty($accountingaccount_number) || $accountingaccount_number == '-1') {
-		$error++;
-		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
-		$action = '';
-	}
-
-	if (!$error) {
+	} elseif ($action == "confirm_delete") {
 		$object = new BookKeeping($db);
 
-		$object->numero_compte = $accountingaccount_number;
-		$object->subledger_account = $subledger_account;
-		$object->subledger_label = $subledger_label;
-		$object->label_compte = $accountingaccount_label;
-		$object->label_operation = $label_operation;
-		$object->debit = $debit;
-		$object->credit = $credit;
-		$object->doc_date = (string) GETPOST('doc_date', 'alpha');
-		$object->doc_type = (string) GETPOST('doc_type', 'alpha');
-		$object->piece_num = $piece_num;
-		$object->doc_ref = (string) GETPOST('doc_ref', 'alpha');
-		$object->code_journal = $journal_code;
-		$object->journal_label = $journal_label;
-		$object->fk_doc = GETPOSTINT('fk_doc');
-		$object->fk_docdet = GETPOSTINT('fk_docdet');
+		$result = $object->fetch($id, null, $mode);
+		$piece_num = $object->piece_num;
 
-		if ((float) $debit != 0.0) {
-			$object->montant = $debit; // deprecated
-			$object->amount = $debit;
-			$object->sens = 'D';
-		}
-
-		if ((float) $credit != 0.0) {
-			$object->montant = $credit; // deprecated
-			$object->amount = $credit;
-			$object->sens = 'C';
-		}
-
-		$result = $object->createStd($user, false, $mode);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
-			if ($mode != '_tmp') {
-				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+			$result = $object->delete($user, false, $mode);
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
+		}
+		$action = '';
+	} elseif ($action == "confirm_create") {
+		$error = 0;
 
-			$debit = 0;
-			$credit = 0;
+		$object = new BookKeeping($db);
 
-			$action = '';
+		if (!$journal_code || $journal_code == '-1') {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Journal")), null, 'errors');
+			$action = 'create';
+			$error++;
+		}
+		if (!GETPOST('doc_ref', 'alpha')) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Piece")), null, 'errors');
+			$action = 'create';
+			$error++;
+		}
+
+		if (!$error) {
+			$object->label_compte = '';
+			$object->debit = 0;
+			$object->credit = 0;
+			$object->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+			$object->doc_type = GETPOST('doc_type', 'alpha');
+			$object->piece_num = GETPOSTINT('next_num_mvt');
+			$object->doc_ref = GETPOST('doc_ref', 'alpha');
+			$object->code_journal = $journal_code;
+			$object->journal_label = $journal_label;
+			$object->fk_doc = 0;
+			$object->fk_docdet = 0;
+			$object->montant = 0; // deprecated
+			$object->amount = 0;
+
+			$result = $object->createStd($user, 0, $mode);
+			$reshook = $hookmanager->executeHooks('onConfirmCreate_onAfterCreateEmptyLine', $parameters, $object, $action);
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				if ($mode != '_tmp') {
+					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+				}
+				$action = '';
+				$id = $object->id;
+				$piece_num = $object->piece_num;
+			}
 		}
 	}
-} elseif ($action == "confirm_delete") {
-	$object = new BookKeeping($db);
 
-	$result = $object->fetch($id, null, $mode);
-	$piece_num = $object->piece_num;
-
-	if ($result < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
-	} else {
-		$result = $object->delete($user, false, $mode);
-		if ($result < 0) {
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
-	}
-	$action = '';
-} elseif ($action == "confirm_create") {
-	$error = 0;
-
-	$object = new BookKeeping($db);
-
-	if (!$journal_code || $journal_code == '-1') {
-		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Journal")), null, 'errors');
-		$action = 'create';
-		$error++;
-	}
-	if (!GETPOST('doc_ref', 'alpha')) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Piece")), null, 'errors');
-		$action = 'create';
-		$error++;
-	}
-
-	if (!$error) {
-		$object->label_compte = '';
-		$object->debit = 0;
-		$object->credit = 0;
-		$object->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
-		$object->doc_type = GETPOST('doc_type', 'alpha');
-		$object->piece_num = GETPOSTINT('next_num_mvt');
-		$object->doc_ref = GETPOST('doc_ref', 'alpha');
-		$object->code_journal = $journal_code;
-		$object->journal_label = $journal_label;
-		$object->fk_doc = 0;
-		$object->fk_docdet = 0;
-		$object->montant = 0; // deprecated
-		$object->amount = 0;
-
-		$result = $object->createStd($user, 0, $mode);
+	if ($action == 'setdate') {
+		$datedoc = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+		$result = $object->updateByMvt($piece_num, 'doc_date', $db->idate($datedoc), $mode);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
@@ -269,67 +291,50 @@ if ($action == "confirm_update") {
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			}
 			$action = '';
-			$id = $object->id;
-			$piece_num = $object->piece_num;
+		}
+	}
+
+	if ($action == 'setjournal') {
+		$result = $object->updateByMvt($piece_num, 'code_journal', $journal_code, $mode);
+		$result = $object->updateByMvt($piece_num, 'journal_label', $journal_label, $mode);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			if ($mode != '_tmp') {
+				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+			}
+			$action = '';
+		}
+	}
+
+	if ($action == 'setdocref') {
+		$refdoc = GETPOST('doc_ref', 'alpha');
+		$result = $object->updateByMvt($piece_num, 'doc_ref', $refdoc, $mode);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			if ($mode != '_tmp') {
+				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+			}
+			$action = '';
+		}
+	}
+
+	// Validate transaction
+	if ($action == 'valid') {
+		$result = $object->transformTransaction(0, $piece_num);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			header("Location: list.php?sortfield=t.piece_num&sortorder=asc");
+			exit;
 		}
 	}
 }
-
-if ($action == 'setdate') {
-	$datedoc = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
-	$result = $object->updateByMvt($piece_num, 'doc_date', $db->idate($datedoc), $mode);
-	if ($result < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
-	} else {
-		if ($mode != '_tmp') {
-			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-		}
-		$action = '';
-	}
-}
-
-if ($action == 'setjournal') {
-	$result = $object->updateByMvt($piece_num, 'code_journal', $journal_code, $mode);
-	$result = $object->updateByMvt($piece_num, 'journal_label', $journal_label, $mode);
-	if ($result < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
-	} else {
-		if ($mode != '_tmp') {
-			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-		}
-		$action = '';
-	}
-}
-
-if ($action == 'setdocref') {
-	$refdoc = GETPOST('doc_ref', 'alpha');
-	$result = $object->updateByMvt($piece_num, 'doc_ref', $refdoc, $mode);
-	if ($result < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
-	} else {
-		if ($mode != '_tmp') {
-			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-		}
-		$action = '';
-	}
-}
-
-// Validate transaction
-if ($action == 'valid') {
-	$result = $object->transformTransaction(0, $piece_num);
-	if ($result < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
-	} else {
-		header("Location: list.php?sortfield=t.piece_num&sortorder=asc");
-		exit;
-	}
-}
-
 
 /*
  * View
  */
-
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
@@ -394,6 +399,7 @@ if ($action == 'create') {
 	print '<td><input type="text" class="minwidth200 name="doc_type" value=""/></td>';
 	print '</tr>';
 	*/
+	$reshook_onCreate_onAfterShowFields = $hookmanager->executeHooks('onCreate_onAfterShowFields', $parameters, $object, $action);
 
 	print '</table>';
 
@@ -590,7 +596,7 @@ if ($action == 'create') {
 		print '<td class="titlefield">' . $langs->trans("Control") . '</td>';
 		if ($object->doc_type == 'customer_invoice')
 		{
-		 $sqlmid = 'SELECT rowid as ref';
+		$sqlmid = 'SELECT rowid as ref';
 			$sqlmid .= " FROM ".MAIN_DB_PREFIX."facture as fac";
 			$sqlmid .= " WHERE fac.rowid=" . ((int) $object->fk_doc);
 			dol_syslog("accountancy/bookkeeping/card.php::sqlmid=" . $sqlmid, LOG_DEBUG);
@@ -804,7 +810,7 @@ if ($action == 'create') {
 	}
 }
 
-print dol_get_fiche_end();
+	print dol_get_fiche_end();
 
 // End of page
 llxFooter();
