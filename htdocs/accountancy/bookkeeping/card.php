@@ -95,11 +95,11 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
  * Actions
  */
 $parameters = array();
-$reshook_onBeforeActions = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
-if ($reshook_onBeforeActions < 0) {
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-if (empty($reshook_onBeforeActions)) {
+if (empty($reshook)) {
 	if ($cancel) {
 		header("Location: ".DOL_URL_ROOT.'/accountancy/bookkeeping/list.php');
 		exit;
@@ -267,10 +267,11 @@ if (empty($reshook_onBeforeActions)) {
 			$object->amount = 0;
 
 			$result = $object->createStd($user, 0, $mode);
-			$reshook = $hookmanager->executeHooks('onConfirmCreate_onAfterCreateEmptyLine', $parameters, $object, $action);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
+				$reshook = $hookmanager->executeHooks('afterCreateBookkeeping', $parameters, $object, $action);
+
 				if ($mode != '_tmp') {
 					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 				}
@@ -399,7 +400,7 @@ if ($action == 'create') {
 	print '<td><input type="text" class="minwidth200 name="doc_type" value=""/></td>';
 	print '</tr>';
 	*/
-	$reshook_onCreate_onAfterShowFields = $hookmanager->executeHooks('onCreate_onAfterShowFields', $parameters, $object, $action);
+	$reshookAddLine = $hookmanager->executeHooks('bookkeepingAddLine', $parameters, $object, $action);
 
 	print '</table>';
 

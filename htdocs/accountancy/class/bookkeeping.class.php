@@ -721,16 +721,6 @@ class BookKeeping extends CommonObject
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element.$mode);
-
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action to call a trigger.
-			//if (! $notrigger) {
-
-			// // Call triggers
-			// $result=$this->call_trigger('MYOBJECT_CREATE',$user);
-			// if ($result < 0) $error++;
-			// // End call triggers
-			//}
 		}
 
 		// Commit or rollback
