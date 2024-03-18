@@ -588,9 +588,7 @@ if ($resql) {
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
-	if ($massactionbutton) {
-		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
-	}
+	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 	print '<table class="tagtable liste">';
 
@@ -652,9 +650,7 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
-		}
+		print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
 	}
 
 	if (!empty($arrayfields['f.ref']['checked'])) {
@@ -688,14 +684,6 @@ if ($resql) {
 
 	print "</tr>\n";
 
-	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
-		}
-	}
-	print '</tr>';
-
 	if ($num) {
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 
@@ -723,13 +711,11 @@ if ($resql) {
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="nowrap center">';
-				if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-					$selected = 0;
-					if (in_array($obj->request_row_id, $arrayofselected)) {
-						$selected = 1;
-					}
-					print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').'>';
+				$selected = 0;
+				if (in_array($obj->request_row_id, $arrayofselected) || empty($arrayofselected)) {
+					$selected = 1;
 				}
+				print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').'>';
 				print '</td>';
 			}
 
@@ -851,13 +837,11 @@ if ($resql) {
 			// Action column
 			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="nowrap center">';
-				if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-					$selected = 0;
-					if (in_array($obj->request_row_id, $arrayofselected)) {
-						$selected = 1;
-					}
-					print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').'>';
+				$selected = 0;
+				if (in_array($obj->request_row_id, $arrayofselected) || empty($arrayofselected)) {
+					$selected = 1;
 				}
+				print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').'>';
 				print '</td>';
 			}
 			print '</tr>';
@@ -868,11 +852,8 @@ if ($resql) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 	} else {
-		$colspan = 6;
+		$colspan = 7;
 		if ($type == 'bank-transfer') {
-			$colspan++;
-		}
-		if ($massactionbutton || $massaction) {
 			$colspan++;
 		}
 		print '<tr class="oddeven"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
