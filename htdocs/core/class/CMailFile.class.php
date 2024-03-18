@@ -1901,8 +1901,14 @@ class CMailFile
 	 */
 	private function findHtmlImagesIsSrcData($images_dir)
 	{
+		global $conf;
+
 		// Build the array of image extensions
 		$extensions = array_keys($this->image_types);
+
+		if (empty($images_dir)) {
+			$images_dir = $conf->admin->dir_output.'/temp/'.uniqid('cmailfile');
+		}
 
 		if ($images_dir && !dol_is_dir($images_dir)) {
 			dol_mkdir($images_dir, DOL_DATA_ROOT);
