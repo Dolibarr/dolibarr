@@ -688,8 +688,8 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
 	//print 'start_week='.$start_week.' tmparray[wday]='.$tmparray['wday'].' day offset='.$days.' seconds offset='.$seconds.'<br>';
 
 	//Get first day of week
-	$tmpdaytms = date($tmparray[0]) - $seconds; // $tmparray[0] is day of parameters
-	$tmpday = date("d", $tmpdaytms);
+	$tmpdaytms = (int) date($tmparray[0]) - $seconds; // $tmparray[0] is day of parameters
+	$tmpday = (int) date("d", $tmpdaytms);
 
 	//Check first day of week is in same month than current day or not
 	if ($tmpday > $day) {
@@ -795,9 +795,9 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$ferie = false;
 		$specialdayrule = array();
 
-		$jour  = gmdate("d", $timestampStart);
-		$mois  = gmdate("m", $timestampStart);
-		$annee = gmdate("Y", $timestampStart);
+		$jour  = (int) gmdate("d", $timestampStart);
+		$mois  = (int) gmdate("m", $timestampStart);
+		$annee = (int) gmdate("Y", $timestampStart);
 
 		//print "jour=".$jour." month=".$mois." year=".$annee." includesaturday=".$includesaturday." includesunday=".$includesunday."\n";
 
@@ -1089,7 +1089,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
  *
  *	@param	Translate	$outputlangs	Object langs
  *  @param	int			$short			0=Return long label, 1=Return short label
- *	@return array						Month string or array if selected < 0
+ *	@return array<int<1,12>,string>		String of months in normal or short string format
  */
 function monthArray($outputlangs, $short = 0)
 {
@@ -1132,7 +1132,7 @@ function monthArray($outputlangs, $short = 0)
  *
  *	@param	int 		$month			Month number
  *  @param	int			$year			Year number
- *	@return array						Week numbers
+ *	@return string[]					Week numbers (week 1 is '01')
  */
 function getWeekNumbersOfMonth($month, $year)
 {
@@ -1147,9 +1147,9 @@ function getWeekNumbersOfMonth($month, $year)
 /**
  *	Return array of first day of weeks.
  *
- *	@param	array 		$TWeek			array of week numbers
+ *	@param	string[] 	$TWeek			array of week numbers (week 1 must be '01')
  *  @param	int			$year			Year number
- *	@return array						First day of week
+ *	@return string[]					First day of week (day 1 is '01')
  */
 function getFirstDayOfEachWeek($TWeek, $year)
 {
@@ -1165,9 +1165,9 @@ function getFirstDayOfEachWeek($TWeek, $year)
 /**
  *	Return array of last day of weeks.
  *
- *	@param	array 		$TWeek			array of week numbers
+ *	@param	string[] 	$TWeek			array of week numbers
  *  @param	int			$year			Year number
- *	@return array						Last day of week
+ *	@return string[]					Last day of week (day 1 is '01')
  */
 function getLastDayOfEachWeek($TWeek, $year)
 {
@@ -1183,11 +1183,11 @@ function getLastDayOfEachWeek($TWeek, $year)
  *	@param	int 		$day			Day number
  *	@param	int 		$month			Month number
  *  @param	int			$year			Year number
- *	@return int							Week number
+ *	@return string						Week number as two digits (week 1 is '01')
  */
 function getWeekNumber($day, $month, $year)
 {
 	$date = new DateTime($year.'-'.$month.'-'.$day);
 	$week = $date->format("W");
-	return (int) $week;
+	return $week;
 }
