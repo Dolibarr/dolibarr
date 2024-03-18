@@ -83,6 +83,9 @@ class BonPrelevement extends CommonObject
 
 	public $factures = array();
 
+	/**
+	 * @var array<int,string>
+	 */
 	public $methodes_trans = array();
 
 	public $invoice_in_error = array();
@@ -171,6 +174,9 @@ class BonPrelevement extends CommonObject
 	public $credite;
 	public $note;
 	public $date_trans;
+	/**
+	 * @var int Current transport method, index to $methodes_trans
+	 */
 	public $method_trans;
 	public $fk_user_trans;
 	public $date_credit;
