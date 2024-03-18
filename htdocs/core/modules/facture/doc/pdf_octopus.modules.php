@@ -1,17 +1,17 @@
 <?php
-/* Copyright (C) 2004-2014  Laurent Destailleur	 <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin		   <regis.houssin@inodbox.com>
- * Copyright (C) 2008	   Raphael Bertrand		<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2014  Juanjo Menent		   <jmenent@2byte.es>
- * Copyright (C) 2012	   Christophe Battarel	 <christophe.battarel@altairis.fr>
- * Copyright (C) 2012	   Cédric Salvador		 <csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2014  Raphaël Doursenaud	  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2015	   Marcos García		   <marcosgdf@gmail.com>
- * Copyright (C) 2017	   Ferran Marcet		   <fmarcet@2byte.es>
- * Copyright (C) 2018	   Frédéric France		 <frederic.france@netlogic.fr>
- * Copyright (C) 2022	   Anthony Berton		  <anthony.berton@bb2a.fr>
- * Copyright (C) 2022-2024  Alexandre Spangaro	  <aspangaro@open-dsi.fr>
- * Copyright (C) 2022-2024  Eric Seigne	  		<eric.seigne@cap-rel.fr>
+/* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2008       Raphael Bertrand        <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015       Marcos Garcia           <marcosgdf@gmail.com>
+ * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
+ * Copyright (C) 2022-2024  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2022-2024  Eric Seigne             <eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1694,13 +1694,16 @@ class pdf_octopus extends ModelePDFFactures
 
 				// VAT
 				$tvas = array();
-				for ($i=0; $i<sizeof($object->lines); $i++)
-				{
+				for ($i=0; $i < count($object->lines); $i++) {
 					$tvaligne = $object->lines[$i]->total_tva;
 					$vatrate=(string) $object->lines[$i]->tva_tx;
 
-					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
-					if (! isset($tvas[$vatrate])) 				$tvas[$vatrate]=0;
+					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
+						$vatrate.='*';
+					}
+					if (! isset($tvas[$vatrate])) {
+						$tvas[$vatrate]=0;
+					}
 					$tvas[$vatrate] += $tvaligne;
 				}
 
@@ -2413,7 +2416,6 @@ class pdf_octopus extends ModelePDFFactures
 	 * 		@param	Facture		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @param	int			$heightforqrinvoice	Height for QR invoices
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
@@ -3072,7 +3074,7 @@ class pdf_octopus extends ModelePDFFactures
 		}
 
 		//Le nouveau cumul = cumul antérieur + current
-		$TDataSituation['nouveau_cumul'] = $this->_somme_situation($TDataSituation['current'], $TDataSituation['cumul_anterieur']);
+		$TDataSituation['nouveau_cumul'] = $this->sumSituation($TDataSituation['current'], $TDataSituation['cumul_anterieur']);
 
 		//erics
 		// print "<p>" . json_encode($TDataSituation['cumul_anterieur']) ."</p>";
@@ -3080,20 +3082,20 @@ class pdf_octopus extends ModelePDFFactures
 	}
 
 	/**
-	 * calcul la somme des deux tableaux, clés par clé avec prise en compte des tableaux imbriqués
+	 * Calculates the sum of two arrays, key by key, taking into account nested arrays
 	 *
 	 * @param   [type]  $a  [$a description]
 	 * @param   [type]  $b  [$b description]
 	 *
 	 * @return  [type]	  [return description]
 	 */
-	public function _somme_situation($a, $b)
+	public function sumSituation($a, $b)
 	{
 		$ret = array();
 		if (is_array($a)) {
 			foreach ($a as $k => $v) {
 				if (is_array($v)) {
-					$ret[$k] = $this->_somme_situation($v, $b[$k]);
+					$ret[$k] = $this->sumSituation($v, $b[$k]);
 				} else {
 					$ret[$k] = $a[$k];
 					if (isset($b[$k])) {
@@ -3102,7 +3104,7 @@ class pdf_octopus extends ModelePDFFactures
 				}
 			}
 		} else {
-			dol_syslog("_somme_situation first arg is not an array");
+			dol_syslog("sumSituation first arg is not an array");
 		}
 		return $ret;
 	}
@@ -3336,7 +3338,7 @@ class pdf_octopus extends ModelePDFFactures
 			$object->fetchPreviousNextSituationInvoice();
 		}
 
-		$previousinvoices = sizeof($object->tab_previous_situation_invoice) ? $object->tab_previous_situation_invoice : array();
+		$previousinvoices = count($object->tab_previous_situation_invoice) ? $object->tab_previous_situation_invoice : array();
 
 		$remain_to_pay = 0;
 
@@ -3344,23 +3346,17 @@ class pdf_octopus extends ModelePDFFactures
 		$propals = array();
 		$orders = array();
 
-		if (sizeof($previousinvoices))
-		{
-			foreach ($previousinvoices as $invoice)
-			{
-				if ($invoice->is_first())
-				{
+		if (count($previousinvoices)) {
+			foreach ($previousinvoices as $invoice) {
+				if ($invoice->is_first()) {
 					$invoice->fetchObjectLinked();
 
 					$propals = isset($invoice->linkedObjects['propal']) ? $invoice->linkedObjects['propal'] : array();
 					$orders = isset($invoice->linkedObjects['commande']) ? $invoice->linkedObjects['commande'] : array();
 				}
 			}
-		}
-		else
-		{
-			if ($object->is_first())
-			{
+		} else {
+			if ($object->is_first()) {
 				$object->fetchObjectLinked();
 
 				$propals = isset($object->linkedObjects['propal']) ? $object->linkedObjects['propal'] : array();
@@ -3369,8 +3365,7 @@ class pdf_octopus extends ModelePDFFactures
 			}
 		}
 
-		if (count($propals))
-		{
+		if (count($propals)) {
 			$propal = array_pop($propals);
 
 			$total_ht = ($conf->multicurrency->enabled && $propal->mylticurrency_tx != 1 ? $propal->multicurrency_total_ht : $propal->total_ht);
@@ -3392,9 +3387,7 @@ class pdf_octopus extends ModelePDFFactures
 			$this->printRect($pdf, $posx, $posy, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 6);	// Rect prend une longueur en 3eme param et 4eme param
 
 			$posy += 4;
-		}
-		else if (count($orders))
-		{
+		} else if (count($orders)) {
 			$order = array_pop($orders);
 
 			$total_ht = ($conf->multicurrency->enabled && $order->mylticurrency_tx != 1 ? $order->multicurrency_total_ht : $order->total_ht);
@@ -3426,8 +3419,7 @@ class pdf_octopus extends ModelePDFFactures
 		$force_to_zero = false;
 
 		$idinv = 0;//count($previousinvoices);
-		while ($idinv < count($previousinvoices))
-		{
+		while ($idinv < count($previousinvoices)) {
 			$invoice = $previousinvoices[$idinv];
 
 			$posy += 7;
@@ -3467,29 +3459,29 @@ class pdf_octopus extends ModelePDFFactures
 			$pdf->MultiCell($width2, $height, price($sign * ($total_ht + (! empty($invoice->remise)?$invoice->remise:0)), 0, $outputlangs), 0, 'R', 1);
 
 			$tvas = array();
-			for ($i=0; $i<sizeof($invoice->lines); $i++)
-			{
+			for ($i=0; $i < count($invoice->lines); $i++) {
 				$tvaligne = $invoice->lines[$i]->total_tva;
 				$vatrate=(string) $invoice->lines[$i]->tva_tx;
 
-				if (($invoice->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
-				if (! isset($tvas[$vatrate])) 				$tvas[$vatrate]=0;
+				if (($invoice->lines[$i]->info_bits & 0x01) == 0x01) {
+					$vatrate.='*';
+				}
+				if (! isset($tvas[$vatrate])) {
+					$tvas[$vatrate]=0;
+				}
 				$tvas[$vatrate] += $tvaligne;
 			}
 
 
 			// Show VAT by rates and total
 			$pdf->SetFillColor(248,248,248);
-			foreach($tvas as $tvakey => $tvaval)
-			{
-				if ($tvakey != 0)	// On affiche pas taux 0
-				{
+			foreach($tvas as $tvakey => $tvaval) {
+				if ($tvakey != 0) {	// On affiche pas taux 0
 					$index++;
 					$pdf->SetXY($posx, $posy + $height * $index);
 
 					$tvacompl='';
-					if (preg_match('/\*/',$tvakey))
-					{
+					if (preg_match('/\*/',$tvakey)) {
 						$tvakey=str_replace('*','',$tvakey);
 						$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 					}
@@ -3527,8 +3519,7 @@ class pdf_octopus extends ModelePDFFactures
 			$total_ht_rg = 0;
 			$total_ttc_rg = 0;
 
-			if ($this->is_rg)
-			{
+			if ($this->is_rg) {
 				$index++;
 
 				$pdf->SetXY($posx, $posy + $height * $index);
@@ -3601,8 +3592,7 @@ class pdf_octopus extends ModelePDFFactures
 			$pdf->MultiCell($width2, $height, price($deja_regle + $depositsamount, 0, $outputlangs), 0, 'R', 0);
 
 			// Credit note
-			if ($creditnoteamount)
-			{
+			if ($creditnoteamount) {
 				$index++;
 				$pdf->SetXY($posx, $posy + $height * $index);
 				$pdf->MultiCell($width, $height, $outputlangs->transnoentities("CreditNotes"), 0, 'L', 0);
@@ -3611,8 +3601,7 @@ class pdf_octopus extends ModelePDFFactures
 			}
 
 			// Escompte
-			if ($invoice->close_code == Facture::CLOSECODE_DISCOUNTVAT)
-			{
+			if ($invoice->close_code == Facture::CLOSECODE_DISCOUNTVAT) {
 				$index++;
 				$pdf->SetFillColor(255,255,255);
 
@@ -3637,8 +3626,7 @@ class pdf_octopus extends ModelePDFFactures
 
 			$index++;
 
-			if ($deja_regle > 0)
-			{
+			if ($deja_regle > 0) {
 				$title=$outputlangs->transnoentities("PaymentsAlreadyDone");
 				if ($invoice->type == 2) $title=$outputlangs->transnoentities("PaymentsBackAlreadyDone");
 
@@ -3670,10 +3658,8 @@ class pdf_octopus extends ModelePDFFactures
 
 				$payments = $invoice->getListOfPayments();
 
-				if (sizeof($payments))
-				{
-					foreach ($payments as $payment)
-					{
+				if (count($payments)) {
+					foreach ($payments as $payment) {
 
 						$pdf->SetXY($posx, $posy + $height * $index + $y);
 						$pdf->MultiCell($width4, $height-1, dol_print_date($this->db->jdate($payment['date']),'day',false,$outputlangs,true), 0, 'L', 0);
@@ -3691,7 +3677,6 @@ class pdf_octopus extends ModelePDFFactures
 
 					}
 				}
-
 			}
 
 			// Output Rect
@@ -3700,8 +3685,7 @@ class pdf_octopus extends ModelePDFFactures
 			$posy += $height * $index + $y;
 
 			$pageposafter=$pdf->getPage();
-			if ($pageposafter > $pageposbefore)	// There is a pagebreak
-			{
+			if ($pageposafter > $pageposbefore) {	// There is a pagebreak
 				$pdf->rollbackTransaction(true);
 
 				$pageposafter=$pageposbefore;
@@ -3712,10 +3696,7 @@ class pdf_octopus extends ModelePDFFactures
 				$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 				$posy = $tab_top_newpage + 1;
-
-			}
-			else
-			{
+			} else {
 				$idinv++;
 				$remain_to_pay -= ($sign * ($total_ht + (! empty($invoice->remise) ? $invoice->remise : 0)));
 
@@ -3729,7 +3710,6 @@ class pdf_octopus extends ModelePDFFactures
 								$rem += $discount->amount_ht;
 							}
 						}
-
 					}
 				}
 
@@ -3739,8 +3719,7 @@ class pdf_octopus extends ModelePDFFactures
 			}
 		}
 
-		if ($force_to_zero)
-		{
+		if ($force_to_zero) {
 			$remain_to_pay = 0;
 		}
 

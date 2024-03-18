@@ -142,7 +142,7 @@ if ($nolinesbefore) {
 		// Fields for situation invoice
 		if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 			print '<td class="linecolcycleref right">'.$langs->trans('Progress').'</td>';
-			if(getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 				print '<td class="nobottom nowrap right"></td>';
 			}
 			print '<td class="linecolcycleref2 right"></td>';
