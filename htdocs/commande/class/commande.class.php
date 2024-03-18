@@ -2985,7 +2985,7 @@ class Commande extends CommonOrder
 
 			if (!$notrigger && empty($error)) {
 				// Call trigger
-				$result = $this->call_trigger('ORDER_CLASSIFY_BILLED', $user);
+				$result = $this->call_trigger('ORDER_BILLED', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -3035,7 +3035,7 @@ class Commande extends CommonOrder
 
 			if (!$notrigger && empty($error)) {
 				// Call trigger
-				$result = $this->call_trigger('ORDER_CLASSIFY_UNBILLED', $user);
+				$result = $this->call_trigger('ORDER_UNBILLED', $user);
 				if ($result < 0) {
 					$error++;
 				}
