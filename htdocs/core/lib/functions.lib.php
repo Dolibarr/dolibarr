@@ -3149,7 +3149,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$dtts = new DateTime();
 		$dtts->setTimestamp($timetouse);
 		$dtts->setTimezone($tzo);
-		$month = $dtts->format("m");
+		$month = (int) $dtts->format("m");
 		$month = sprintf("%02d", $month); // $month may be return with format '06' on some installation and '6' on other, so we force it to '06'.
 		if ($encodetooutput) {
 			$monthtext = $outputlangs->transnoentities('Month'.$month);
@@ -3946,7 +3946,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	$newphoneastart = $newphoneaend = '';
 	if (!empty($addlink)) {	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
 		if ($addlink == 'tel' || $conf->browser->layout == 'phone' || (isModEnabled('clicktodial') && getDolGlobalString('CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS'))) {	// If phone or option for, we use link of phone
-			$newphoneastart = '<a href="tel:'.$phone.'">';
+			$newphoneastart = '<a href="tel:'.urlencode($phone).'">';
 			$newphoneaend .= '</a>';
 		} elseif (isModEnabled('clicktodial') && $addlink == 'AC_TEL') {		// If click to dial, we use click to dial url
 			if (empty($user->clicktodial_loaded)) {
@@ -3962,9 +3962,9 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			$clicktodial_poste = (!empty($user->clicktodial_poste) ? urlencode($user->clicktodial_poste) : '');
 			$clicktodial_login = (!empty($user->clicktodial_login) ? urlencode($user->clicktodial_login) : '');
 			$clicktodial_password = (!empty($user->clicktodial_password) ? urlencode($user->clicktodial_password) : '');
-			// This line is for backward compatibility
+			// This line is for backward compatibility  @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 			$url = sprintf($urlmask, urlencode($phone), $clicktodial_poste, $clicktodial_login, $clicktodial_password);
-			// Thoose lines are for substitution
+			// Those lines are for substitution
 			$substitarray = array('__PHONEFROM__' => $clicktodial_poste,
 								'__PHONETO__' => urlencode($phone),
 								'__LOGIN__' => $clicktodial_login,
@@ -9849,6 +9849,7 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
  * 										'2' (used for example for the compute property of extrafields)=Accept also '[]'
  * @return	mixed						Nothing or return result of eval
  * @see verifCond()
+ * @phan-suppress PhanPluginUnsafeEval
  */
 function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1')
 {

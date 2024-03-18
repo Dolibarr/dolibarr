@@ -67,8 +67,6 @@ ALTER TABLE llx_categories_extrafields DROP INDEX idx_categories_extrafields;
 ALTER TABLE llx_categories_extrafields ADD UNIQUE INDEX uk_categories_extrafields (fk_object);
 ALTER TABLE llx_commande_extrafields DROP INDEX idx_commande_extrafields;
 ALTER TABLE llx_commande_extrafields ADD UNIQUE INDEX uk_commande_extrafields (fk_object);
-ALTER TABLE llx_commande_fournisseur_dispatch_extrafields DROP INDEX idx_commande_fournisseur_dispatch_extrafields;
-ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD UNIQUE INDEX uk_commande_fournisseur_dispatch_extrafields (fk_object);
 ALTER TABLE llx_commande_fournisseur_extrafields DROP INDEX idx_commande_fournisseur_extrafields;
 ALTER TABLE llx_commande_fournisseur_extrafields ADD UNIQUE INDEX uk_commande_fournisseur_extrafields (fk_object);
 ALTER TABLE llx_commande_fournisseurdet_extrafields DROP INDEX idx_commande_fournisseurdet_extrafields;
@@ -228,6 +226,9 @@ ALTER TABLE llx_product DROP COLUMN onportal;
 ALTER TABLE llx_product ADD COLUMN last_main_doc varchar(255);
 
 ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtext;
+
+ALTER TABLE llx_commande_fournisseur_dispatch_extrafields RENAME llx_receptiondet_batch_extrafields;
+ALTER TABLE llx_commande_fournisseur_dispatch RENAME llx_receptiondet_batch;
 
 -- Rename const to add customer categories on not customer/prospect third-party if enabled
 UPDATE llx_const SET name = 'THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT' WHERE name = 'THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER';

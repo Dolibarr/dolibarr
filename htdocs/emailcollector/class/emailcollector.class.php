@@ -2618,7 +2618,7 @@ class EmailCollector extends CommonObject
 								$actioncomm->percentage  = -1; // Not applicable
 								$actioncomm->socid       = $thirdpartystatic->id;
 								$actioncomm->contact_id = $contactstatic->id;
-								$actioncomm->socpeopleassigned = (!empty($contactstatic->id) ? array($contactstatic->id => '') : array());
+								$actioncomm->socpeopleassigned = (!empty($contactstatic->id) ? array($contactstatic->id) : array());
 								$actioncomm->authorid    = $user->id; // User saving action
 								$actioncomm->userownerid = $user->id; // Owner of action
 								// Fields when action is an email (content should be added into note)
@@ -2645,14 +2645,6 @@ class EmailCollector extends CommonObject
 								// Overwrite values with values extracted from source email
 								$errorforthisaction = $this->overwritePropertiesOfObject($actioncomm, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
 
-								//var_dump($fk_element_id);
-								//var_dump($fk_element_type);
-								//var_dump($alreadycreated);
-								//var_dump($operation['type']);
-								//var_dump($actioncomm);
-								//var_dump($objectemail);
-								//exit;
-
 								if ($errorforthisaction) {
 									$errorforactions++;
 								} else {
@@ -2661,7 +2653,7 @@ class EmailCollector extends CommonObject
 										$errorforactions++;
 										$this->errors = $actioncomm->errors;
 									} else {
-										if ($fk_element_type == "ticket") {
+										if ($fk_element_type == "ticket" && is_object($objectemail)) {
 											if ($objectemail->status == Ticket::STATUS_CLOSED || $objectemail->status == Ticket::STATUS_CANCELED) {
 												if ($objectemail->fk_user_assign != null) {
 													$res = $objectemail->setStatut(Ticket::STATUS_ASSIGNED);
