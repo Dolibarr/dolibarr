@@ -1694,7 +1694,8 @@ class pdf_octopus extends ModelePDFFactures
 
 				// VAT
 				$tvas = array();
-				for ($i=0; $i < count($object->lines); $i++) {
+				$nblines = count($object->lines);
+				for ($i=0; $i < $nblines; $i++) {
 					$tvaligne = $object->lines[$i]->total_tva;
 					$vatrate=(string) $object->lines[$i]->tva_tx;
 
@@ -3467,7 +3468,8 @@ class pdf_octopus extends ModelePDFFactures
 			$pdf->MultiCell($width2, $height, price($sign * ($total_ht + (! empty($invoice->remise)?$invoice->remise:0)), 0, $outputlangs), 0, 'R', 1);
 
 			$tvas = array();
-			for ($i=0; $i < count($invoice->lines); $i++) {
+			$nblines = count($invoice->lines);
+			for ($i=0; $i < $nblines; $i++) {
 				$tvaligne = $invoice->lines[$i]->total_tva;
 				$vatrate = (string) $invoice->lines[$i]->tva_tx;
 
@@ -3489,7 +3491,7 @@ class pdf_octopus extends ModelePDFFactures
 
 					$tvacompl = '';
 					if (preg_match('/\*/', $tvakey)) {
-						$tvakey = str_replace('*' , '', $tvakey);
+						$tvakey = str_replace('*', '', $tvakey);
 						$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 					}
 					$totalvat = $outputlangs->transcountrynoentities("TotalVAT", $mysoc->country_code).' ';
