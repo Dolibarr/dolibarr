@@ -497,7 +497,7 @@ return [
 		// 'PhanTypeMismatchDimAssignment',
 		// 'PhanPluginDescriptionlessCommentOnProtectedMethod',
 		// 'PhanPluginPrintfIncompatibleArgumentTypeWeak',
-		'PhanUndeclaredVariableAssignOp',
+		// 'PhanUndeclaredVariableAssignOp',
 		// 'PhanTypeExpectedObjectOrClassName',
 		'PhanEmptyFQSENInClasslike',
 		// 'PhanTypeMismatchArgumentInternalReal',

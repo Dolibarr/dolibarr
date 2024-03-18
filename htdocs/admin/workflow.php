@@ -158,7 +158,7 @@ $workflowcodes = array(
 	'WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE' => array(
 		'family' => 'classify_shipping',
 		'position' => 90,
-		'enabled' => isModEnabled("expedition") && isModEnabled("facture"),
+		'enabled' => isModEnabled("shipping") && isModEnabled("invoice"),
 		'picto' => 'shipment',
 		'deprecated' => 1
 	),
