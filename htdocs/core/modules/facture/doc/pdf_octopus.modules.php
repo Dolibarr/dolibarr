@@ -935,7 +935,7 @@ class pdf_octopus extends ModelePDFFactures
 					}
 
 					// Retrieving information from the previous line
-					$TInfosLigneSituationPrecedente = $this->_getInfosLineDerniereSituation($object, $object->lines[$i]);
+					$TInfosLigneSituationPrecedente = $this->_getInfosLineLastSituation($object, $object->lines[$i]);
 
 					// Sum
 					$columkey = 'btpsomme';
@@ -2582,7 +2582,7 @@ class pdf_octopus extends ModelePDFFactures
 			),
 			'border-left' => true, // add left line separator
 			'overtitle' => array(
-				'textkey' => 'Chantier', // use lang key is usefull in somme case with module
+				'textkey' => 'Chantier', // use lang key is useful in somme case with module
 				'align' => 'C',
 				'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 				'width' => 18
@@ -2609,7 +2609,7 @@ class pdf_octopus extends ModelePDFFactures
 			),
 			'border-left' => true, // add left line separator
 			'overtitle' => array(
-				'textkey' => $outputlangs->transnoentities('BtpSituationDate', $derniere_situation->situation_counter, dol_print_date($derniere_situation->date, "%d/%m/%Y")), // use lang key is usefull in somme case with module
+				'textkey' => $outputlangs->transnoentities('BtpSituationDate', $derniere_situation->situation_counter, dol_print_date($derniere_situation->date, "%d/%m/%Y")), // use lang key is useful in somme case with module
 				'align' => 'C',
 				'padding' => array(0.5,0.2,0.5,0.2), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 				'width' => 10+15 //current width + amount cell width
@@ -2645,7 +2645,7 @@ class pdf_octopus extends ModelePDFFactures
 			),
 			'border-left' => true, // add left line separator
 			'overtitle' => array(
-				'textkey' => $outputlangs->transnoentities('BtpSituationDate', $object->situation_counter, dol_print_date($object->date, "%d/%m/%Y")), // use lang key is usefull in somme case with module
+				'textkey' => $outputlangs->transnoentities('BtpSituationDate', $object->situation_counter, dol_print_date($object->date, "%d/%m/%Y")), // use lang key is useful in somme case with module
 				'align' => 'C',
 				'padding' => array(0.5,0.2,0.5,0.2), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 				'width' => 10+15
@@ -2792,7 +2792,7 @@ class pdf_octopus extends ModelePDFFactures
 			$pdf->MultiCell(36, 2, $outputlangs->transnoentities("BtpCurrentSituation", $object->situation_counter), '', 'C');
 		}
 
-		// ADD HORIZONTALE LINES
+		// ADD HORIZONTAL LINES
 		$pdf->line($this->posx_cumul_anterieur-1, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);
 
 		$pdf->line($this->posx_cumul_anterieur-1, $tab_top+24, $this->page_largeur-$this->marge_droite, $tab_top+24);
@@ -2807,7 +2807,7 @@ class pdf_octopus extends ModelePDFFactures
 
 
 		// ADD TEXT INTO CELL
-		/**********************Titres*******************************/
+		/********************** Titles ******************************/
 		$pdf->SetXY($this->marge_gauche+2, $tab_top+8);
 		$pdf->MultiCell(60, 2, $outputlangs->transnoentities("BtpMainWork"), '', 'L');
 
@@ -2859,7 +2859,7 @@ class pdf_octopus extends ModelePDFFactures
 		$pdf->SetFont('', '', $default_font_size - 2);
 		/***********************************************************/
 
-		/**********************Données*******************************/
+		/********************** Data *******************************/
 		$TToDisplay = array(
 			'cumul_anterieur',
 			'nouveau_cumul',
@@ -2867,8 +2867,8 @@ class pdf_octopus extends ModelePDFFactures
 		);
 
 		$x = $this->marge_gauche+85;
-		//		unset($this->TDataSituation['derniere_situation']);
-		//print json_encode($object->lines);exit;
+		// unset($this->TDataSituation['derniere_situation']);
+		// print json_encode($object->lines);exit;
 		// print json_encode($this->TDataSituation);exit;
 		foreach ($TToDisplay as $col) {
 			// Travaux principaux
@@ -2912,7 +2912,7 @@ class pdf_octopus extends ModelePDFFactures
 
 
 			if ($displayWarranty) {
-				// Retenue de garantie
+				// Retained warranty
 				$pdf->SetXY($x, $tab_top+74);
 				$pdf->MultiCell(32, 2, price($this->TDataSituation[$col]['retenue_garantie'], 0, '', 1, -1, 2), '', 'R');
 				$nextY = $tab_top+93;
@@ -2920,7 +2920,7 @@ class pdf_octopus extends ModelePDFFactures
 				$nextY = $tab_top+74;
 			}
 
-			// Montant à payer TTC
+			// Amount payable incl. VAT
 			$pdf->SetFont('', 'B', $default_font_size - 1);
 			$pdf->SetXY($x, $nextY);
 			$pdf->MultiCell(32, 2, price($this->TDataSituation[$col]['total_a_payer'], 0, '', 1, -1, 2), '', 'R');
@@ -2933,28 +2933,27 @@ class pdf_octopus extends ModelePDFFactures
 
 
 	/**
-	 * Recupere les données des factures de situations
+	 * Recovers data from situation invoices
 	 *
 	 * NOTE :
-	 * 	Travaux principaux : lignes de la facture de situation qui étaient déjà présentes sur la facture antérieure
-	 * 	Travaux supplémentaires : lignes de la facture de situation qui se sont ajoutées par rapport à la facture antérieure
-	 * 	Exemple : S1 avec l1 (tp), l2 (tp)
-	 * 			  S2 avec l1 (tp), l2 (tp), l3 (ts)
-	 * 			  S3 avec l1 (tp), l2 (tp), l3 (tp), l4 (ts)
+	 * 	Main work: lines on the status invoice that were already present on the previous invoice
+	 * 	Additional work: lines on the status invoice that have been added to the previous invoice
+	 * 	Example : S1 with l1 (tp), l2 (tp)
+	 * 			  S2 with l1 (tp), l2 (tp), l3 (ts)
+	 * 			  S3 with l1 (tp), l2 (tp), l3 (tp), l4 (ts)
 	 *
 	 * @param   $object  Facture
 	 *
 	 * @return  array
 	 *
-	 * Détails du tableau retourné:
+	 * Details of returned table
 	 *
-	 * cumul_anterieur : données de la facture de situation précédente
-	 * nouveau_cumul   : données du cumul de toutes les factures de situations jusqu'à l'actuelle
-	 * current		 : données de la facture de situation en cours
+	 * cumul_anterieur: data from previous status invoice
+	 * nouveau_cumul: Cumulative data from all invoices up to the current one
+	 * current: current status invoice data
 	 *
 	 */
-	public function _getDataSituation(&$object)
-	{
+	public function _getDataSituation(&$object) {
 		global $conf, $db;
 		// $btpModule = new modBtp($db);
 
@@ -3110,7 +3109,9 @@ class pdf_octopus extends ModelePDFFactures
 	}
 
 	/**
-	 * @param Facture $object
+	 * Display retained Warranty
+	 *
+	 * @param  Facture $object
 	 * @return bool
 	 */
 	public function displayRetainedWarranty($object)
@@ -3123,7 +3124,7 @@ class pdf_octopus extends ModelePDFFactures
 
 			// TODO : add a flag on invoices to store this conf USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION_FINAL
 
-			// note : we dont need to test USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION because if $object->retained_warranty is not empty it's because it was set when this conf was active
+			// note : we don't need to test USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION because if $object->retained_warranty is not empty it's because it was set when this conf was active
 
 			$displayWarranty = false;
 			if (!empty($object->retained_warranty)) {
@@ -3152,15 +3153,20 @@ class pdf_octopus extends ModelePDFFactures
 		}
 	}
 
-	public function _getInfosLineDerniereSituation(&$object, &$current_line)
-	{
+	/**
+	 * Get info line of the last situation
+	 *
+	 * @param  Facture $object
+	 * @return bool
+	 */
+	public function _getInfosLineLastSituation(&$object, &$current_line) {
 		if (empty($object->situation_cycle_ref) || $object->situation_counter <= 1) {
 			return;
 		}
 
 		$facDerniereSituation = &$this->TDataSituation['derniere_situation'];
-		//var_dump($current_line);exit;
-		// On cherche la ligne précédente de la ligne sur laquelle on se trouve :
+
+		// Find the previous line of the line you are on
 		foreach ($facDerniereSituation->lines as $l) {
 			if ($l->rowid == $current_line->fk_prev_id) {
 				// Récupération du total_ht sans prendre en compte la progression (pour la colonne "sommes")
@@ -3290,15 +3296,14 @@ class pdf_octopus extends ModelePDFFactures
 	 *  Show last page with a resume of all invoices
 	 *
 	 *  @param	TCPDF		$pdf			Object PDF
-	 *	@param  Facture		$object		 Object invoice
-	 *	@param  int			$deja_regle	 Amount already paid (in the currency of invoice)
-	 *	@param	int			$posy			Position depart
-	 *	@param	Translate	$outputlangs	Objet langs
-	 *  @param  Translate	$outputlangsbis	Object lang for output bis
+	 *	@param  Facture		$object         Object invoice
+	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
+	 *	@param	int			$posy           Position depart
+	 *	@param	Translate	$outputlangs    Object langs
+	 *  @param  Translate	$outputlangsbis Object lang for output bis
 	 *	@return int							Position pour suite
 	 */
-	protected function _resumeLastPage(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis)
-	{
+	protected function _resumeLastPage(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis) {
 		global $conf, $mysoc, $hookmanager;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -3361,7 +3366,6 @@ class pdf_octopus extends ModelePDFFactures
 
 				$propals = isset($object->linkedObjects['propal']) ? $object->linkedObjects['propal'] : array();
 				$orders = isset($object->linkedObjects['commande']) ? $object->linkedObjects['commande'] : array();
-
 			}
 		}
 
@@ -3387,7 +3391,7 @@ class pdf_octopus extends ModelePDFFactures
 			$this->printRect($pdf, $posx, $posy, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 6);	// Rect prend une longueur en 3eme param et 4eme param
 
 			$posy += 4;
-		} else if (count($orders)) {
+		} elseif (count($orders)) {
 			$order = array_pop($orders);
 
 			$total_ht = ($conf->multicurrency->enabled && $order->mylticurrency_tx != 1 ? $order->multicurrency_total_ht : $order->total_ht);
@@ -3727,7 +3731,6 @@ class pdf_octopus extends ModelePDFFactures
 
 		$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
-
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('','', $default_font_size - 1);
 		$pdf->SetXY($this->marge_gauche, $posy + 1);
@@ -3739,6 +3742,5 @@ class pdf_octopus extends ModelePDFFactures
 
 		$pdf->SetDrawColor(128,128,128);
 		$this->printRect($pdf, $this->marge_gauche, $posy, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 7);
-
 	}
 }
