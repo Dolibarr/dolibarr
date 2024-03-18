@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2016 Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2004-2010 Folke Ashberg: Some lines of code were inspired from work
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *                         of Folke Ashberg into PHP-Barcode 0.3pl2, available as GPL
  *                         source code at http://www.ashberg.de/bar.
  *
@@ -199,7 +200,7 @@ function barcode_gen_ean_sum($ean)
  */
 function barcode_gen_ean_bars($ean)
 {
-	$digits = array(3211, 2221, 2122, 1411, 1132, 1231, 1114, 1312, 1213, 3112);
+	$digits = array('3211', '2221', '2122', '1411', '1132', '1231', '1114', '1312', '1213', '3112');
 	$mirror = array("000000", "001011", "001101", "001110", "010011", "011001", "011100", "010101", "010110", "011010");
 	$guards = array("9a1a", "1a1a1", "a1a7");
 
@@ -231,7 +232,7 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
 {
 	$ean = trim($ean);
 	if (preg_match("/[^0-9]/i", $ean)) {
-		return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (not a numeric)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (not a numeric)");
+		return array("error" => "Invalid encoding/code. encoding=".$encoding." code=".$ean." (not a numeric)", "text" => "Invalid encoding/code. encoding=".$encoding." code=".$ean." (not a numeric)");
 	}
 	$encoding = strtoupper($encoding);
 	if ($encoding == "ISBN") {
@@ -243,7 +244,7 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
 		$encoding = "ISBN";
 	}
 	if (strlen($ean) < 12 || strlen($ean) > 13) {
-		return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 numbers)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 numbers)");
+		return array("error" => "Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 numbers)", "text" => "Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 numbers)");
 	}
 
 	$ean = substr($ean, 0, 12);
@@ -287,11 +288,11 @@ function barcode_encode_upc($upc, $encoding = "UPC")
 {
 	$upc = trim($upc);
 	if (preg_match("/[^0-9]/i", $upc)) {
-		return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$upc." (not a numeric)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$upc." (not a numeric)");
+		return array("error" => "Invalid encoding/code. encoding=".$encoding." code=".$upc." (not a numeric)", "text" => "Invalid encoding/code. encoding=".$encoding." code=".$upc." (not a numeric)");
 	}
 	$encoding = strtoupper($encoding);
 	if (strlen($upc) < 11 || strlen($upc) > 12) {
-		return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$upc." (must have 11/12 numbers)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$upc." (must have 11/12 numbers)");
+		return array("error" => "Invalid encoding/code. encoding=".$encoding." code=".$upc." (must have 11/12 numbers)", "text" => "Invalid encoding/code. encoding=".$encoding." code=".$upc." (must have 11/12 numbers)");
 	}
 
 	$upc = substr("0".$upc, 0, 12);
@@ -424,7 +425,7 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 		$total_y = (int) $scale * 60;
 	}
 	if (!$space) {
-		$space = array('top'=>2 * $scale, 'bottom'=>2 * $scale, 'left'=>2 * $scale, 'right'=>2 * $scale);
+		$space = array('top' => 2 * $scale, 'bottom' => 2 * $scale, 'left' => 2 * $scale, 'right' => 2 * $scale);
 	}
 
 	/* count total width */
@@ -458,8 +459,8 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 	$col_bg = imagecolorallocate($im, $bg_color[0], $bg_color[1], $bg_color[2]);
 	$col_bar = imagecolorallocate($im, $bar_color[0], $bar_color[1], $bar_color[2]);
 	$col_text = imagecolorallocate($im, $text_color[0], $text_color[1], $text_color[2]);
-	$height = round($total_y - ($scale * 10));
-	$height2 = round($total_y - $space['bottom']);
+	$height = (int) round($total_y - ($scale * 10));
+	$height2 = (int) round($total_y - $space['bottom']);
 
 	/* paint the bars */
 	$width = true;
@@ -488,7 +489,7 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 		if (trim($v)) {
 			$inf = explode(":", $v);
 			$fontsize = $scale * ($inf[1] / 1.8);
-			$fontheight = round($total_y - ($fontsize / 2.7) + 2);
+			$fontheight = (int) round($total_y - ($fontsize / 2.7) + 2);
 			imagettftext($im, $fontsize, 0, $space['left'] + ($scale * $inf[0]) + 2, $fontheight, $col_text, $font_loc, $inf[2]);
 		}
 	}
