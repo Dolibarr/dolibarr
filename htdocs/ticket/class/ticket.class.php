@@ -1848,9 +1848,9 @@ class Ticket extends CommonObject
 			$actioncomm->attachedfiles = $attachedfiles;
 		}
 
-		if (!empty($mimefilename_list) && is_array($mimefilename_list)) {
-			$actioncomm->note_private = dol_concatdesc($actioncomm->note_private, "\n".$langs->transnoentities("AttachedFiles").': '.implode(';', $mimefilename_list));
-		}
+		//if (!empty($mimefilename_list) && is_array($mimefilename_list)) {
+		//	$actioncomm->note_private = dol_concatdesc($actioncomm->note_private, "\n".$langs->transnoentities("AttachedFiles").': '.implode(';', $mimefilename_list));
+		//}
 		$actionid = $actioncomm->create($user);
 		if ($actionid <= 0) {
 			$error++;
