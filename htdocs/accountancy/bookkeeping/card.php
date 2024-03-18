@@ -94,6 +94,7 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 /*
  * Actions
  */
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
@@ -229,7 +230,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
-			$result = $object->delete($user, false, $mode);
+			$result = $object->delete($user, 0, $mode);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -269,6 +270,8 @@ if (empty($reshook)) {
 			$result = $object->createStd($user, 0, $mode);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
+
+				$action = 'create';
 			} else {
 				$reshook = $hookmanager->executeHooks('afterCreateBookkeeping', $parameters, $object, $action);
 
@@ -411,6 +414,7 @@ if ($action == 'create') {
 	print '</form>';
 } else {
 	$object = new BookKeeping($db);
+
 	$result = $object->fetchPerMvt($piece_num, $mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -811,7 +815,7 @@ if ($action == 'create') {
 	}
 }
 
-	print dol_get_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();
