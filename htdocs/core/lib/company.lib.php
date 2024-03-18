@@ -321,7 +321,6 @@ function societe_prepare_head(Societe $object)
 			if (!is_null($dataretrieved)) {
 				$nbNotif = $dataretrieved;
 			} else {
-
 				// List of notifications enabled for contacts
 				$sql = "SELECT COUNT(n.rowid) as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
@@ -330,8 +329,7 @@ function societe_prepare_head(Societe $object)
 				$sql .= " WHERE a.rowid = n.fk_action";
 				$sql .= " AND c.rowid = n.fk_contact";
 				$sql .= " AND c.fk_soc = ".((int) $object->id);
-
- 				$resql = $db->query($sql);
+				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
 					$nbNotif = $obj->nb;
