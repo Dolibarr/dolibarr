@@ -13931,3 +13931,71 @@ function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto'
 
 	return '&' . http_build_query($TParam);
 }
+
+/**
+ * Displays an error page when a record is not found. It allows customization of the message,
+ * whether to include the header and footer, and if only the message should be shown without additional details.
+ * The function also supports executing additional hooks for customized handling of error pages.
+ *
+ * @param string $message Custom error message to display. If empty, a default "Record Not Found" message is shown.
+ * @param int $printheader Determines if the page header should be printed (1 = yes, 0 = no).
+ * @param int $printfooter Determines if the page footer should be printed (1 = yes, 0 = no).
+ * @param int $showonlymessage If set to 1, only the error message is displayed without any additional information or hooks.
+ * @param mixed $params Optional parameters to pass to hooks for further processing or customization.
+ * @global object $conf Dolibarr configuration object (global)
+ * @global object $db Database connection object (global)
+ * @global object $user Current user object (global)
+ * @global Translate $langs Language translation object, initialized within the function if not already.
+ * @global object $hookmanager Hook manager object, initialized within the function if not already for executing hooks.
+ * @global string $action Current action, can be modified by hooks.
+ * @global object $object Current object, can be modified by hooks.
+ * @return void This function terminates script execution after outputting the error page.
+ */
+function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
+{
+	global $conf, $db, $user, $langs, $hookmanager;
+	global $action, $object;
+
+	if (!is_object($langs)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+		$langs = new Translate('', $conf);
+		$langs->setDefaultLang();
+	}
+
+	$langs->load("errors");
+
+	if ($printheader) {
+		if (function_exists("llxHeader")) {
+			llxHeader('');
+		} elseif (function_exists("llxHeaderVierge")) {
+			llxHeaderVierge('');
+		}
+	}
+
+	print '<div class="error">';
+	if (empty($message)) {
+		print $langs->trans("ErrorRecordNotFound");
+	} else {
+		print $langs->trans($message);
+	}
+	print '</div>';
+	print '<br>';
+
+	if (empty($showonlymessage)) {
+		if (empty($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($db);
+			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+			$hookmanager->initHooks(array('main'));
+		}
+
+		$parameters = array('message'=>$message, 'params'=>$params);
+		$reshook = $hookmanager->executeHooks('getErrorRecordNotFound', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		print $hookmanager->resPrint;
+	}
+
+	if ($printfooter && function_exists("llxFooter")) {
+		llxFooter();
+	}
+	exit(0);
+}
