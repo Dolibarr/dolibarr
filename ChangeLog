@@ -28,11 +28,11 @@ FIX: Bad column for total in bom list
 FIX: Bad condition on button back to draft on recruitment job.
 FIX: Bad CRLF when sending text only content. Fix dol_htmlwithnojs()
 FIX: Bad picto on list of permission of a user when user not admin
-FIX: bad timzeone for the start/end date of an event
+FIX: bad timezone for the start/end date of an event
 FIX: Better test on validity of compute field syntax with parenthesis
 FIX: close #28279
 FIX: Count of virtual stock at Services and MoLine with disabled stock change (#28580)
-FIX: disabled pito of menu must be greyed.
+FIX: disabled picto of menu must be greyed.
 FIX: Don't display column when it's out of date (#28271)
 FIX: duplicate with lines: 414-416 (#28358)
 FIX: edit bank suggested for credit transfer payment in invoice setup
