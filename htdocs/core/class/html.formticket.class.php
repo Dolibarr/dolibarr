@@ -1635,6 +1635,7 @@ class FormTicket
 				$mail_signature = make_substitutions(getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE'), $this->substit);
 				print '<input type="hidden" name="mail_signature" value="'.$mail_signature.'">';
 				$texttooltip .= '<br><br><u>'.$langs->trans("TicketMessageMailFooter").'</u><br>'.$mail_signature;
+			}
 			print $form->textwithpicto('', $texttooltip, 1, 'help');
 		}
 		print '</label></td></tr>';
