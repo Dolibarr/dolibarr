@@ -14,6 +14,7 @@
  * Copyright (C) 2021       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2023       William Mead            <william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +71,7 @@ $mode = GETPOST("mode", 'alpha');
 $search_all = trim(GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 
-$search_id = trim(GETPOSTINT("search_id"));
+$search_id = GETPOSTINT("search_id");
 $search_nom = trim(GETPOST("search_nom", 'restricthtml'));
 $search_alias = trim(GETPOST("search_alias", 'restricthtml'));
 $search_nom_only = trim(GETPOST("search_nom_only", 'restricthtml'));
@@ -897,16 +898,16 @@ if ($search_all != '') {
 	$param = "&search_all=".urlencode($search_all);
 }
 if ($search_categ_cus > 0) {
-	$param .= '&search_categ_cus='.urlencode($search_categ_cus);
+	$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
 }
 if ($search_categ_sup > 0) {
-	$param .= '&search_categ_sup='.urlencode($search_categ_sup);
+	$param .= '&search_categ_sup='.urlencode((string) ($search_categ_sup));
 }
 if ($searchCategoryCustomerOperator == 1) {
-	$param .= "&search_category_customer_operator=".urlencode($searchCategoryCustomerOperator);
+	$param .= "&search_category_customer_operator=".urlencode((string) ($searchCategoryCustomerOperator));
 }
 if ($searchCategorySupplierOperator == 1) {
-	$param .= "&search_category_supplier_operator=".urlencode($searchCategorySupplierOperator);
+	$param .= "&search_category_supplier_operator=".urlencode((string) ($searchCategorySupplierOperator));
 }
 foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 	$param .= "&search_category_customer_list[]=".urlencode($searchCategoryCustomer);
@@ -915,7 +916,7 @@ foreach ($searchCategorySupplierList as $searchCategorySupplier) {
 	$param .= "&search_category_supplier_list[]=".urlencode($searchCategorySupplier);
 }
 if ($search_sale > 0) {
-	$param .= '&search_sale='.urlencode($search_sale);
+	$param .= '&search_sale='.urlencode((string) ($search_sale));
 }
 if ($search_id > 0) {
 	$param .= "&search_id=".urlencode($search_id);
@@ -999,13 +1000,13 @@ if ($search_price_level != '') {
 	$param .= '&search_price_level='.urlencode($search_price_level);
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
-	$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
+	$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
 }
 if ($search_type != '') {
 	$param .= '&search_type='.urlencode($search_type);
 }
 if ($search_status != '') {
-	$param .= '&search_status='.urlencode($search_status);
+	$param .= '&search_status='.urlencode((string) ($search_status));
 }
 if (is_array($search_level) && count($search_level)) {
 	foreach ($search_level as $slevel) {
@@ -1027,49 +1028,49 @@ if ($type != '') {
 	$param .= '&type='.urlencode($type);
 }
 if ($search_date_creation_startmonth) {
-	$param .= '&search_date_creation_startmonth='.urlencode($search_date_creation_startmonth);
+	$param .= '&search_date_creation_startmonth='.urlencode((string) ($search_date_creation_startmonth));
 }
 if ($search_date_creation_startyear) {
-	$param .= '&search_date_creation_startyear='.urlencode($search_date_creation_startyear);
+	$param .= '&search_date_creation_startyear='.urlencode((string) ($search_date_creation_startyear));
 }
 if ($search_date_creation_startday) {
-	$param .= '&search_date_creation_startday='.urlencode($search_date_creation_startday);
+	$param .= '&search_date_creation_startday='.urlencode((string) ($search_date_creation_startday));
 }
 if ($search_date_creation_start) {
 	$param .= '&search_date_creation_start='.urlencode($search_date_creation_start);
 }
 if ($search_date_creation_endmonth) {
-	$param .= '&search_date_creation_endmonth='.urlencode($search_date_creation_endmonth);
+	$param .= '&search_date_creation_endmonth='.urlencode((string) ($search_date_creation_endmonth));
 }
 if ($search_date_creation_endyear) {
-	$param .= '&search_date_creation_endyear='.urlencode($search_date_creation_endyear);
+	$param .= '&search_date_creation_endyear='.urlencode((string) ($search_date_creation_endyear));
 }
 if ($search_date_creation_endday) {
-	$param .= '&search_date_creation_endday='.urlencode($search_date_creation_endday);
+	$param .= '&search_date_creation_endday='.urlencode((string) ($search_date_creation_endday));
 }
 if ($search_date_creation_end) {
 	$param .= '&search_date_creation_end='.urlencode($search_date_creation_end);
 }
 if ($search_date_modif_startmonth) {
-	$param .= '&search_date_modif_startmonth='.urlencode($search_date_modif_startmonth);
+	$param .= '&search_date_modif_startmonth='.urlencode((string) ($search_date_modif_startmonth));
 }
 if ($search_date_modif_startyear) {
-	$param .= '&search_date_modif_startyear='.urlencode($search_date_modif_startyear);
+	$param .= '&search_date_modif_startyear='.urlencode((string) ($search_date_modif_startyear));
 }
 if ($search_date_modif_startday) {
-	$param .= '&search_date_modif_startday='.urlencode($search_date_modif_startday);
+	$param .= '&search_date_modif_startday='.urlencode((string) ($search_date_modif_startday));
 }
 if ($search_date_modif_start) {
 	$param .= '&search_date_modif_start='.urlencode($search_date_modif_start);
 }
 if ($search_date_modif_endmonth) {
-	$param .= '&search_date_modif_endmonth='.urlencode($search_date_modif_endmonth);
+	$param .= '&search_date_modif_endmonth='.urlencode((string) ($search_date_modif_endmonth));
 }
 if ($search_date_modif_endyear) {
-	$param .= '&search_date_modif_endyear='.urlencode($search_date_modif_endyear);
+	$param .= '&search_date_modif_endyear='.urlencode((string) ($search_date_modif_endyear));
 }
 if ($search_date_modif_endday) {
-	$param .= '&search_date_modif_endday='.urlencode($search_date_modif_endday);
+	$param .= '&search_date_modif_endday='.urlencode((string) ($search_date_modif_endday));
 }
 if ($search_date_modif_end) {
 	$param .= '&search_date_modif_end=' . urlencode($search_date_modif_end);

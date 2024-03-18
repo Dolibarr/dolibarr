@@ -670,7 +670,7 @@ if ($search_email) {
 	$param .= "&search_email=".urlencode($search_email);
 }
 if ($search_categ > 0 || $search_categ == -2) {
-	$param .= "&search_categ=".urlencode($search_categ);
+	$param .= "&search_categ=".urlencode((string) ($search_categ));
 }
 if ($search_company) {
 	$param .= "&search_company=".urlencode($search_company);

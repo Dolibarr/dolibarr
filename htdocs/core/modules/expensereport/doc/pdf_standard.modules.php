@@ -7,6 +7,7 @@
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
  * Copyright (C) 2020       Marc Guenneugues        <marc.guenneugues@simicar.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -305,7 +306,7 @@ class pdf_standard extends ModeleExpenseReport
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
 
-					$tab_top = 95;
+					$tab_top = 95;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 
 					$pdf->SetFont('', '', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxpiece - 1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
@@ -794,7 +795,7 @@ class pdf_standard extends ModeleExpenseReport
 			}
 
 			// Show recipient
-			$posy = 50;
+			$posy = 50;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 			$posx = 100;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;

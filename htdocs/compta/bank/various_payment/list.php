@@ -148,27 +148,27 @@ $search_all = GETPOSTISSET("search_all") ? trim(GETPOST("search_all", 'alpha')) 
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'v.rowid'=>"Ref",
-	'v.label'=>"Label",
-	'v.datep'=>"DatePayment",
-	'v.datev'=>"DateValue",
-	'v.amount'=>$langs->trans("Debit").", ".$langs->trans("Credit"),
+	'v.rowid' => "Ref",
+	'v.label' => "Label",
+	'v.datep' => "DatePayment",
+	'v.datev' => "DateValue",
+	'v.amount' => $langs->trans("Debit").", ".$langs->trans("Credit"),
 );
 
 // Definition of fields for lists
 $arrayfields = array(
-	'ref'			=>array('label'=>"Ref", 'checked'=>1, 'position'=>100),
-	'label'			=>array('label'=>"Label", 'checked'=>1, 'position'=>110),
-	'datep'			=>array('label'=>"DatePayment", 'checked'=>1, 'position'=>120),
-	'datev'			=>array('label'=>"DateValue", 'checked'=>-1, 'position'=>130),
-	'type'			=>array('label'=>"PaymentMode", 'checked'=>1, 'position'=>140),
-	'project'		=>array('label'=>"Project", 'checked'=>1, 'position'=>200, "enabled"=>isModEnabled('project')),
-	'bank'			=>array('label'=>"BankAccount", 'checked'=>1, 'position'=>300, "enabled"=>isModEnabled("bank")),
-	'entry'			=>array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>310, "enabled"=>isModEnabled("bank")),
-	'account'		=>array('label'=>"AccountAccountingShort", 'checked'=>1, 'position'=>400, "enabled"=>isModEnabled('accounting')),
-	'subledger'		=>array('label'=>"SubledgerAccount", 'checked'=>1, 'position'=>410, "enabled"=>isModEnabled('accounting')),
-	'debit'			=>array('label'=>"Debit", 'checked'=>1, 'position'=>500),
-	'credit'		=>array('label'=>"Credit", 'checked'=>1, 'position'=>510),
+	'ref'			=> array('label' => "Ref", 'checked' => 1, 'position' => 100),
+	'label'			=> array('label' => "Label", 'checked' => 1, 'position' => 110),
+	'datep'			=> array('label' => "DatePayment", 'checked' => 1, 'position' => 120),
+	'datev'			=> array('label' => "DateValue", 'checked' => -1, 'position' => 130),
+	'type'			=> array('label' => "PaymentMode", 'checked' => 1, 'position' => 140),
+	'project'		=> array('label' => "Project", 'checked' => 1, 'position' => 200, "enabled" => isModEnabled('project')),
+	'bank'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 300, "enabled" => isModEnabled("bank")),
+	'entry'			=> array('label' => "BankTransactionLine", 'checked' => 1, 'position' => 310, "enabled" => isModEnabled("bank")),
+	'account'		=> array('label' => "AccountAccountingShort", 'checked' => 1, 'position' => 400, "enabled" => isModEnabled('accounting')),
+	'subledger'		=> array('label' => "SubledgerAccount", 'checked' => 1, 'position' => 410, "enabled" => isModEnabled('accounting')),
+	'debit'			=> array('label' => "Debit", 'checked' => 1, 'position' => 500),
+	'credit'		=> array('label' => "Credit", 'checked' => 1, 'position' => 510),
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -401,7 +401,7 @@ if ($search_datev_end) {
 	$param .= '&search_datev_end='.urlencode($search_datev_end);
 }
 if ($search_type_id > 0) {
-	$param .= '&search_type_id='.urlencode($search_type_id);
+	$param .= '&search_type_id='.urlencode((string) ($search_type_id));
 }
 if ($search_amount_deb) {
 	$param .= '&search_amount_deb='.urlencode($search_amount_deb);
@@ -410,7 +410,7 @@ if ($search_amount_cred) {
 	$param .= '&search_amount_cred='.urlencode($search_amount_cred);
 }
 if ($search_bank_account > 0) {
-	$param .= '&search_account='.urlencode($search_bank_account);
+	$param .= '&search_account='.urlencode((string) ($search_bank_account));
 }
 if ($search_accountancy_account > 0) {
 	$param .= '&search_accountancy_account='.urlencode($search_accountancy_account);
@@ -421,7 +421,7 @@ if ($search_accountancy_subledger > 0) {
 
 $url = DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create';
 if (!empty($socid)) {
-	$url .= '&socid='.urlencode($socid);
+	$url .= '&socid='.urlencode((string) ($socid));
 }
 
 // List of mass actions available
@@ -443,8 +443,8 @@ print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $newcardbutton  = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewVariousPayment'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('banque', 'modifier'));
 
@@ -462,7 +462,7 @@ if ($search_all) {
 
 $arrayofmassactions = array();
 
-$moreforfilter= '';
+$moreforfilter = '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
@@ -662,7 +662,7 @@ if ($arrayfields['credit']['checked']) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray'=>&$totalarray);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
@@ -904,7 +904,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

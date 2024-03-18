@@ -123,10 +123,10 @@ if ($sortorder) {
 	$param .= '&sortorder='.urlencode($sortorder);
 }
 if ($year) {
-	$param .= '&year='.urlencode($year);
+	$param .= '&year='.urlencode((string) ($year));
 }
 if ($search_sc_type) {
-	$param .= '&search_sc_type='.urlencode($search_sc_type);
+	$param .= '&search_sc_type='.urlencode((string) ($search_sc_type));
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);

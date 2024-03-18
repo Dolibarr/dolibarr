@@ -5,14 +5,16 @@
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2020	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2018	Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2018-2022  Ferran Marcet         	<fmarcet@2byte.es>
- * Copyright (C) 2021       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2012-2015	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2018		Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2022	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2021		Josep Lluís Amador		<joseplluis@lliuretic.cat>
+ * Copyright (C) 2022		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -395,7 +397,7 @@ class CommandeFournisseur extends CommonOrder
 		'multicurrency_total_ttc' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyAmountTTC', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 240),
 		'date_creation' => array('type' => 'datetime', 'label' => 'Date creation', 'enabled' => 1, 'visible' => -1, 'position' => 500),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => 1, 'notnull' => 1, 'position' => 50),
-		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 1000, 'index' => 1),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 1000, 'index' => 1),
 		'tms' => array('type' => 'datetime', 'label' => "DateModificationShort", 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 501),
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => 0, 'position' => 700),
 		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'position' => 701),
@@ -1359,7 +1361,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
-				$result = 0;
+				$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 
 				if ($error == 0) {
 					// Call trigger
@@ -1411,7 +1413,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
 			if ($this->db->query($sql)) {
-				$result = 0;
+				$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 
 				// Call trigger
 				$result = $this->call_trigger('ORDER_SUPPLIER_CANCEL', $user);
@@ -1863,8 +1865,10 @@ class CommandeFournisseur extends CommonOrder
 		// Clear fields
 		$this->user_author_id     = $user->id;
 		$this->user_validation_id = 0;
+		$this->date               = dol_now();
 		$this->date_creation      = 0;
 		$this->date_validation    = 0;
+		$this->date_commande      = 0;
 		$this->ref_supplier       = '';
 		$this->user_approve_id    = 0;
 		$this->user_approve_id2   = 0;
@@ -1925,7 +1929,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param		int			$date_end				Date end of service
 	 *	@param		array		$array_options			extrafields array
 	 *	@param 		int|null	$fk_unit 				Code of the unit to use. Null to use the default one
-	 *	@param 		string		$pu_ht_devise			Amount in currency
+	 *	@param 		int|string		$pu_ht_devise			Amount in currency
 	 *	@param		string		$origin					'order', ...
 	 *	@param		int			$origin_id				Id of origin object
 	 *	@param		int			$rang					Rank
@@ -2202,7 +2206,7 @@ class CommandeFournisseur extends CommonOrder
 
 
 	/**
-	 * Save a receiving into the tracking table of receiving (commande_fournisseur_dispatch) and add product into stock warehouse.
+	 * Save a receiving into the tracking table of receiving (receptiondet_batch) and add product into stock warehouse.
 	 *
 	 * @param 	User		$user					User object making change
 	 * @param 	int			$product				Id of product to dispatch
@@ -2210,8 +2214,8 @@ class CommandeFournisseur extends CommonOrder
 	 * @param 	int			$entrepot				Id of warehouse to add product
 	 * @param 	double		$price					Unit Price for PMP value calculation (Unit price without Tax and taking into account discount)
 	 * @param	string		$comment				Comment for stock movement
-	 * @param	integer		$eatby					eat-by date
-	 * @param	integer		$sellby					sell-by date
+	 * @param	int|string	$eatby					eat-by date
+	 * @param	int|string	$sellby					sell-by date
 	 * @param	string		$batch					Lot number
 	 * @param	int			$fk_commandefourndet	Id of supplier order line
 	 * @param	int			$notrigger          	1 = notrigger
@@ -2247,7 +2251,7 @@ class CommandeFournisseur extends CommonOrder
 		if (($this->statut == self::STATUS_ORDERSENT || $this->statut == self::STATUS_RECEIVED_PARTIALLY || $this->statut == self::STATUS_RECEIVED_COMPLETELY)) {
 			$this->db->begin();
 
-			$sql = "INSERT INTO ".$this->db->prefix()."commande_fournisseur_dispatch";
+			$sql = "INSERT INTO ".$this->db->prefix()."receptiondet_batch";
 			$sql .= " (fk_commande, fk_product, qty, fk_entrepot, fk_user, datec, fk_commandefourndet, status, comment, eatby, sellby, batch, fk_reception) VALUES";
 			$sql .= " ('".$this->id."','".$product."','".$qty."',".($entrepot > 0 ? "'".$entrepot."'" : "null").",'".$user->id."','".$this->db->idate($now)."','".$fk_commandefourndet."', ".$dispatchstatus.", '".$this->db->escape($comment)."', ";
 			$sql .= ($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ".($batch ? "'".$this->db->escape($batch)."'" : "null").", ".($fk_reception > 0 ? "'".$this->db->escape($fk_reception)."'" : "null");
@@ -2495,7 +2499,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " e.rowid as warehouse_id, e.ref as entrepot,";
 		$sql .= " cfd.rowid as dispatchedlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status, cfd.fk_commandefourndet";
 		$sql .= " FROM ".$this->db->prefix()."product as p,";
-		$sql .= " ".$this->db->prefix()."commande_fournisseur_dispatch as cfd";
+		$sql .= " ".$this->db->prefix()."receptiondet_batch as cfd";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."entrepot as e ON cfd.fk_entrepot = e.rowid";
 		$sql .= " WHERE cfd.fk_commande = ".((int) $this->id);
 		$sql .= " AND cfd.fk_product = p.rowid";
@@ -2876,13 +2880,13 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 *	@param     	int			$rowid           	ID de la ligne de facture
 	 *	@param     	string		$desc            	Line description
-	 *	@param     	float		$pu              	Unit price
-	 *	@param     	float		$qty             	Quantity
-	 *	@param     	float		$remise_percent  	Percent discount on line
-	 *	@param     	float		$txtva          	VAT rate
-	 *  @param     	float		$txlocaltax1	    Localtax1 tax
-	 *  @param     	float		$txlocaltax2   		Localtax2 tax
-	 *  @param     	float		$price_base_type 	Type of price base
+	 *	@param     	int|float	$pu              	Unit price
+	 *	@param     	int|float	$qty             	Quantity
+	 *	@param     	int|float	$remise_percent  	Percent discount on line
+	 *	@param     	int|float	$txtva          	VAT rate
+	 *  @param     	int|float	$txlocaltax1	    Localtax1 tax
+	 *  @param     	int|float	$txlocaltax2   		Localtax2 tax
+	 *  @param     	string		$price_base_type 	Type of price base
 	 *	@param		int			$info_bits			Miscellaneous information
 	 *	@param		int			$type				Type of line (0=product, 1=service)
 	 *  @param		int			$notrigger			Disable triggers
@@ -2890,11 +2894,11 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param      integer     $date_end       	Date end of service
 	 *  @param		array		$array_options		Extrafields array
 	 * 	@param 		int|null	$fk_unit 			Code of the unit to use. Null to use the default one
-	 * 	@param		float		$pu_ht_devise		Unit price in currency
+	 * 	@param		int|float	$pu_ht_devise		Unit price in currency
 	 *  @param		string		$ref_supplier		Supplier ref
 	 *	@return    	int         	    			Return integer < 0 if error, > 0 if ok
 	 */
-	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $notrigger = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
+	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $notrigger = 0, $date_start = 0, $date_end = 0, $array_options = [], $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
 	{
 		global $mysoc, $conf, $langs;
 		dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type, $fk_unit");
@@ -3239,8 +3243,8 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *	@param          User	$user   Object user
-	 *  @param          int		$mode   "opened", "awaiting" for orders awaiting reception
+	 *	@param	User	$user   Object user
+	 *  @param	string	$mode   "opened", "awaiting" for orders awaiting reception
 	 *	@return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode = 'opened')
@@ -3657,7 +3661,7 @@ class CommandeFournisseur extends CommonOrder
 
 		$sql = 'SELECT cd.rowid, cd.fk_product,';
 		$sql .= ' sum(cfd.qty) as qty';
-		$sql .= ' FROM '.$this->db->prefix().'commande_fournisseur_dispatch as cfd,';
+		$sql .= ' FROM '.$this->db->prefix().'receptiondet_batch as cfd,';
 		if ($filtre_statut >= 0) {
 			$sql .= ' '.$this->db->prefix().'reception as e,';
 		}

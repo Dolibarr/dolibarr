@@ -3,6 +3,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2023       Joachim Kueter     		<git-jk@bloxera.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -286,9 +287,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 
 		if (GETPOSTISSET("clone_sens")) {
 			$object->sens = GETPOSTINT("clone_sens");
-		} else {
-			$object->sens = $object->sens;
-		}
+		} // else { $object->sens = $object->sens; }
 
 		if (GETPOSTISSET("clone_amount")) {
 			$object->amount = GETPOSTFLOAT("clone_amount");
@@ -615,9 +614,9 @@ if ($id) {
 	$morehtmlref .= '</div>';
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlright = '';
+	$morehtmlstatus = '';
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';

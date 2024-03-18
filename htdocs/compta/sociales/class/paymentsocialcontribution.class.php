@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,12 +83,19 @@ class PaymentSocialContribution extends CommonObject
 	public $bank_line;
 
 	/**
-	 * @deprecated
+	 * @deprecated  Use $amount instead.
 	 * @see $amount
+	 * @var float|int
 	 */
 	public $total;
 
+	/**
+	 * @var float|int
+	 */
 	public $amount; // Total amount of payment
+	/**
+	 * @var array<float|int>
+	 */
 	public $amounts = array(); // Array of amounts
 
 	/**
@@ -97,7 +105,7 @@ class PaymentSocialContribution extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $num_payment instead
 	 * @see $num_payment
 	 */
 	public $num_paiement;
@@ -178,7 +186,7 @@ class PaymentSocialContribution extends CommonObject
 			$this->fk_charge = (int) $this->fk_charge;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->fk_typepaiement)) {
 			$this->fk_typepaiement = (int) $this->fk_typepaiement;
@@ -201,11 +209,11 @@ class PaymentSocialContribution extends CommonObject
 
 		$totalamount = 0;
 		foreach ($this->amounts as $key => $value) {  // How payment is dispatch
-			$newvalue = price2num($value, 'MT');
+			$newvalue = (float) price2num($value, 'MT');
 			$this->amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
 		}
-		$totalamount = price2num($totalamount);
+		$totalamount = (float) price2num($totalamount);
 
 		// Check parameters
 		if ($totalamount == 0) {
@@ -232,7 +240,7 @@ class PaymentSocialContribution extends CommonObject
 				foreach ($this->amounts as $key => $amount) {
 					$contribid = $key;
 					if (is_numeric($amount) && $amount != 0) {
-						$amount = price2num($amount);
+						$amount = (float) price2num($amount);
 
 						// If we want to closed paid invoices
 						if ($closepaidcontrib) {
@@ -243,8 +251,8 @@ class PaymentSocialContribution extends CommonObject
 							$creditnotes = 0;
 							//$deposits=$contrib->getSumDepositsUsed();
 							$deposits = 0;
-							$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
-							$remaintopay = price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
+							$alreadypayed = (float) price2num($paiement + $creditnotes + $deposits, 'MT');
+							$remaintopay = (float) price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
 							if ($remaintopay == 0) {
 								$result = $contrib->setPaid($user);
 							} else {
@@ -318,8 +326,10 @@ class PaymentSocialContribution extends CommonObject
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->datep = $this->db->jdate($obj->datep);
 				$this->amount = $obj->amount;
+				$this->total = $obj->amount;
 				$this->fk_typepaiement = $obj->fk_typepaiement;
 				$this->num_payment = $obj->num_payment;
+				$this->num_paiement = $obj->num_payment;
 				$this->note_private = $obj->note;
 				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_creat = $obj->fk_user_creat;
@@ -359,7 +369,7 @@ class PaymentSocialContribution extends CommonObject
 			$this->fk_charge = (int) $this->fk_charge;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->fk_typepaiement)) {
 			$this->fk_typepaiement = (int) $this->fk_typepaiement;
@@ -577,7 +587,7 @@ class PaymentSocialContribution extends CommonObject
 			$acc = new Account($this->db);
 			$acc->fetch($accountid);
 
-			$total = $this->total;
+			$total = $this->amount;
 			if ($mode == 'payment_sc') {
 				$total = -$total;
 			}

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2023  Laurent Destailleur      <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2024  Alexandre Spangaro       <aspangaro@easya.solutions>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -201,9 +202,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 	// Si verif ok et action add, on ajoute la ligne
 	if ($ok && GETPOST('actionadd', 'alpha')) {
+		$newid = 0;
+
 		if ($tabrowid[$id]) {
 			// Get free id for insert
-			$newid = 0;
 			$sql = "SELECT MAX(".$db->sanitize($tabrowid[$id]).") newid FROM ".$db->sanitize($tabname[$id]);
 			$result = $db->query($sql);
 			if ($result) {
@@ -304,16 +306,12 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
 
-if (GETPOST('actioncancel', 'alpha')) {
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
-}
+// if (GETPOST('actioncancel', 'alpha')) {
+// 	$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
+// }
 
 if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
-	if ($tabrowid[$id]) {
-		$rowidcol = $tabrowid[$id];
-	} else {
-		$rowidcol = "rowid";
-	}
+	$rowidcol = "rowid";
 
 	$sql = "DELETE from ".$db->sanitize($tabname[$id])." WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
 
@@ -330,11 +328,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 
 // activate
 if ($action == $acts[0]) {
-	if ($tabrowid[$id]) {
-		$rowidcol = $tabrowid[$id];
-	} else {
-		$rowidcol = "rowid";
-	}
+	$rowidcol = "rowid";
 
 	if ($rowid) {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 1 WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
@@ -342,19 +336,17 @@ if ($action == $acts[0]) {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 1 WHERE code = '".$db->escape($code)."'";
 	}
 
-	$result = $db->query($sql);
-	if (!$result) {
-		dol_print_error($db);
+	if ($sql) {
+		$result = $db->query($sql);
+		if (!$result) {
+			dol_print_error($db);
+		}
 	}
 }
 
 // disable
 if ($action == $acts[1]) {
-	if ($tabrowid[$id]) {
-		$rowidcol = $tabrowid[$id];
-	} else {
-		$rowidcol = "rowid";
-	}
+	$rowidcol = "rowid";
 
 	if ($rowid) {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 0 WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
@@ -362,19 +354,17 @@ if ($action == $acts[1]) {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 0 WHERE code = '".$db->escape($code)."'";
 	}
 
-	$result = $db->query($sql);
-	if (!$result) {
-		dol_print_error($db);
+	if ($sql) {
+		$result = $db->query($sql);
+		if (!$result) {
+			dol_print_error($db);
+		}
 	}
 }
 
 // favorite
 if ($action == 'activate_favorite') {
-	if ($tabrowid[$id]) {
-		$rowidcol = $tabrowid[$id];
-	} else {
-		$rowidcol = "rowid";
-	}
+	$rowidcol = "rowid";
 
 	if ($rowid) {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET favorite = 1 WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
@@ -382,19 +372,17 @@ if ($action == 'activate_favorite') {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET favorite = 1 WHERE code = '".$db->escape($code)."'";
 	}
 
-	$result = $db->query($sql);
-	if (!$result) {
-		dol_print_error($db);
+	if ($sql) {
+		$result = $db->query($sql);
+		if (!$result) {
+			dol_print_error($db);
+		}
 	}
 }
 
 // disable favorite
 if ($action == 'disable_favorite') {
-	if ($tabrowid[$id]) {
-		$rowidcol = $tabrowid[$id];
-	} else {
-		$rowidcol = "rowid";
-	}
+	$rowidcol = "rowid";
 
 	if ($rowid) {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET favorite = 0 WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
@@ -402,9 +390,11 @@ if ($action == 'disable_favorite') {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET favorite = 0 WHERE code = '".$db->escape($code)."'";
 	}
 
-	$result = $db->query($sql);
-	if (!$result) {
-		dol_print_error($db);
+	if ($sql) {
+		$result = $db->query($sql);
+		if (!$result) {
+			dol_print_error($db);
+		}
 	}
 }
 
@@ -461,7 +451,7 @@ $fieldlist = explode(',', $tabfield[$id]);
 
 $param = '&id='.$id;
 if ($search_country_id > 0) {
-	$param .= '&search_country_id='.urlencode($search_country_id);
+	$param .= '&search_country_id='.urlencode((string) ($search_country_id));
 }
 $paramwithsearch = $param;
 if ($sortorder) {
@@ -474,7 +464,7 @@ if (GETPOST('from', 'alpha')) {
 	$paramwithsearch .= '&from='.urlencode(GETPOST('from', 'alpha'));
 }
 if ($listlimit) {
-	$paramwithsearch .= '&listlimit='.urlencode(GETPOSTINT('listlimit'));
+	$paramwithsearch .= '&listlimit='.urlencode((string) (GETPOSTINT('listlimit')));
 }
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';

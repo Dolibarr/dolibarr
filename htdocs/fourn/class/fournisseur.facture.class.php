@@ -15,6 +15,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1196,9 +1197,9 @@ class FactureFournisseur extends CommonInvoice
 		}
 		if (isset($this->fk_project)) {
 			if (empty($this->fk_project)) {
-				$this->fk_project = null;
+				$this->fk_project = 0;
 			} else {
-				$this->fk_project = intval($this->fk_project);
+				$this->fk_project = (int) $this->fk_project;
 			}
 		}
 		if (isset($this->cond_reglement_id)) {
@@ -1934,7 +1935,7 @@ class FactureFournisseur extends CommonInvoice
 
 			// Set new ref and define current statut
 			if (!$error) {
-				$this->ref = $num;
+				$this->ref = $this->newref;
 				$this->statut = self::STATUS_VALIDATED;
 				//$this->date_validation=$now; this is stored into log table
 			}
@@ -2064,7 +2065,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param      int         $fk_remise_except       Id discount used
 	 *	@return     int                                 >0 if OK, <0 if KO
 	 */
-	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $fk_code_ventilation = 0, $info_bits = '', $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = 0, $array_options = [], $fk_unit = null, $origin_id = 0, $pu_devise = 0, $ref_supplier = '', $special_code = '', $fk_parent_line = 0, $fk_remise_except = 0)
+	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = 0, $date_end = 0, $fk_code_ventilation = 0, $info_bits = 0, $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = 0, $array_options = [], $fk_unit = null, $origin_id = 0, $pu_devise = 0, $ref_supplier = '', $special_code = '', $fk_parent_line = 0, $fk_remise_except = 0)
 	{
 		global $langs, $mysoc, $conf;
 
@@ -2313,13 +2314,13 @@ class FactureFournisseur extends CommonInvoice
 	 * @param		double		$txlocaltax2		LocalTax2 Rate
 	 * @param     	double		$qty           		Quantity
 	 * @param     	int			$idproduct			Id produit
-	 * @param	  	double		$price_base_type	HT or TTC
+	 * @param	  	string		$price_base_type	HT or TTC
 	 * @param	  	int			$info_bits			Miscellaneous information of line
 	 * @param		int			$type				Type of line (0=product, 1=service)
 	 * @param     	double		$remise_percent  	Percentage discount of the line
 	 * @param		int			$notrigger			Disable triggers
-	 * @param      	integer 	$date_start     	Date start of service
-	 * @param      	integer     $date_end       	Date end of service
+	 * @param      	int|string 	$date_start     	Date start of service
+	 * @param      	int|string  $date_end       	Date end of service
 	 * @param		array		$array_options		extrafields array
 	 * @param 		int|null	$fk_unit 			Code of the unit to use. Null to use the default one
 	 * @param		double		$pu_devise			Amount in currency
@@ -2972,7 +2973,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$obj = new $classname();
 		$numref = "";
-		$numref = $obj->getNumRef($soc, $this, $mode);
+		$numref = $obj->getNextValue($soc, $this, $mode);
 
 		if ($numref != "") {
 			return $numref;
@@ -3407,10 +3408,11 @@ class FactureFournisseur extends CommonInvoice
 	{
 		global $conf, $langs, $user;
 
-		$error = 0;
 		$this->output = '';
 		$this->error = '';
 		$nbMailSend = 0;
+
+		$error = 0;
 		$errorsMsg = array();
 
 		$langs->load('bills');
@@ -3691,7 +3693,7 @@ class FactureFournisseur extends CommonInvoice
 
 			return 0;
 		} else {
-			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? implode(', ', $errorsMsg) : $error;
+			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(empty($errorsMsg) ? $error : implode(', ', $errorsMsg));
 
 			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
 

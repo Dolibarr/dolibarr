@@ -52,7 +52,8 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
 
-$mesg = ''; $error = 0; $errors = array();
+$error = 0;
+$errors = array();
 
 // Get parameters
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
@@ -1462,16 +1463,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
-		if (isModEnabled('order') || isModEnabled("delivery_note")) {
+		if (isModEnabled('order') || isModEnabled("shipping")) {
 			print '<tr><td class="titlefield tdoverflow">';
-			if (isModEnabled("delivery_note")) {
+			if (isModEnabled("shipping")) {
 				print $langs->trans("ContactForOrdersOrShipments");
 			} else {
 				print $langs->trans("ContactForOrders");
 			}
 			print '</td><td>';
 			$none = $langs->trans("NoContactForAnyOrder");
-			if (isModEnabled("delivery_note")) {
+			if (isModEnabled("shipping")) {
 				$none = $langs->trans("NoContactForAnyOrderOrShipments");
 			}
 			print $object->ref_commande ? $object->ref_commande : $none;

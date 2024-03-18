@@ -26,10 +26,17 @@
  *      \remarks    Class that extends all PHPunit tests. To share similare code between each test.
  */
 
+// Workaround for false security issue with main.inc.php on Windows in tests:
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+	$_SERVER['PHP_SELF'] = "phpunit";
+}
+
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+
+
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -240,7 +247,7 @@ abstract class CommonClassTest extends TestCase
 		'commande' => 'order',
 		'contrat' => 'contract',
 		'entrepot' => 'stock',
-		'expedition' => 'delivery_note',
+		'expedition' => 'shipping',
 		'facture' => 'invoice',
 		'fichinter' => 'intervention',
 		'product_fournisseur_price' => 'productsupplierprice',
@@ -289,7 +296,7 @@ abstract class CommonClassTest extends TestCase
 		'datapolicy' => 'DataPolicy',
 		'dav' => 'Dav',
 		'debugbar' => 'DebugBar',
-		'delivery_note' => 'Expedition',
+		'shipping' => 'Expedition',
 		'deplacement' => 'Deplacement',
 		"documentgeneration" => 'DocumentGeneration',  // TODO: fill in proper name
 		'don' => 'Don',

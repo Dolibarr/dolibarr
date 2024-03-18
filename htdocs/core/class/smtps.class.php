@@ -100,7 +100,7 @@ class SMTPs
 	/**
 	 * Message Content
 	 *
-	 * @var	array	$_msgContent	Array of messages
+	 * @var array{html?:array{mimeType:string,data:string,dataText:string,md5?:string},plain?:array{mimeType:string,data:string,dataText:string,md5?:string},image:array<string,array{imageName:string,cid:string,md5?:string,data:string}>,attachment:array<string,array{filename:string,cid?:string,md5?:string,data:string}>}	$msgContent	Array of messages
 	 */
 	private $_msgContent = array();
 
@@ -651,12 +651,9 @@ class SMTPs
 	 */
 	public function sendMsg()
 	{
-		global $conf;
-
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-		/**
-		 * Default return value
-		 */
+
+		// Default return value
 		$_retVal = false;
 
 		// Connect to Server
@@ -1451,10 +1448,10 @@ class SMTPs
 
 		$trackid = $this->getTrackId();
 		if ($trackid) {
-			// References is kept in response and Message-ID is returned into In-Reply-To:
 			$_header .= 'Message-ID: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
-			$_header .= 'References: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
 			$_header .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host."\r\n";
+			// References and In-Reply-To: will be set by caller
+			//$_header .= 'References: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
 		} else {
 			$_header .= 'Message-ID: <'.time().'.SMTPs@'.$host.">\r\n";
 		}
@@ -1464,10 +1461,6 @@ class SMTPs
 		if ($this->getMoreInHeader()) {
 			$_header .= $this->getMoreInHeader(); // Value must include the "\r\n";
 		}
-
-		//$_header .=
-		//                 'Read-Receipt-To: '   . $this->getFrom( 'org' ) . "\r\n"
-		//                 'Return-Receipt-To: ' . $this->getFrom( 'org' ) . "\r\n";
 
 		if ($this->getSensitivity()) {
 			$_header .= 'Sensitivity: '.$this->getSensitivity()."\r\n";
@@ -1493,6 +1486,7 @@ class SMTPs
 		$_header .= 'X-Dolibarr-Option: '.($conf->global->MAIN_MAIL_USE_MULTI_PART ? 'MAIN_MAIL_USE_MULTI_PART' : 'No MAIN_MAIL_USE_MULTI_PART')."\r\n";
 		$_header .= 'Mime-Version: 1.0'."\r\n";
 
+		// TODO Add also $this->references and In-Reply-To
 
 		return $_header;
 	}

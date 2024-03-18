@@ -12,6 +12,7 @@
  * Copyright (C) 2018-2021	Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2021		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -274,22 +275,22 @@ if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
 if ($search_date_startday) {
-	$param .= '&search_date_startday='.urlencode($search_date_startday);
+	$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
 }
 if ($search_date_startmonth) {
-	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+	$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
 }
 if ($search_date_startyear) {
-	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+	$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
 }
 if ($search_date_endday) {
-	$param .= '&search_date_endday='.urlencode($search_date_endday);
+	$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
 }
 if ($search_date_endmonth) {
-	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
 }
 if ($search_date_endyear) {
-	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
 }
 if ($search_user) {
 	$param .= '&search_user='.urlencode($search_user);
@@ -305,7 +306,7 @@ if ($search_amount) {
 }
 
 if ($search_bank_account) {
-	$param .= '&search_bank_account='.urlencode($search_bank_account);
+	$param .= '&search_bank_account='.urlencode((string) ($search_bank_account));
 }
 
 // Add $param from extra fields
@@ -517,9 +518,9 @@ while ($i < $imaxinloop) {
 
 	if ($objp->bid) {
 		$accountstatic->fetch($objp->bid);
-		$paymentexpensereportstatic->fk_bank = $accountstatic->getNomUrl(1);
+		$paymentexpensereportstatic->fk_bank = $accountstatic->id;
 	} else {
-		$paymentexpensereportstatic->fk_bank = null;
+		$paymentexpensereportstatic->fk_bank = 0;
 	}
 
 	$userstatic->id = $objp->userid;

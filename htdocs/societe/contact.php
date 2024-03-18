@@ -60,7 +60,8 @@ if (isModEnabled('notification')) {
 	$langs->load("mails");
 }
 
-$mesg = ''; $error = 0; $errors = array();
+$error = 0;
+$errors = array();
 
 
 // Get parameters
@@ -133,6 +134,29 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 }
 
+if ($action == 'confirm_delete' && $user->hasRight('societe', 'contact', 'delete')) {
+	$id = GETPOST('id', 'int');
+	if (!empty($id) && $socid > 0) {
+		$db->begin();
+
+		$sql = "DELETE t, et FROM llx_socpeople AS t";
+		$sql .= " LEFT JOIN llx_socpeople_extrafields AS et ON t.rowid = et.fk_object";
+		$sql .= " WHERE t.fk_soc = ".((int) $socid);
+		$sql .= " AND t.rowid = ".((int) $id);
+		$sql .= " AND ((t.fk_user_creat = ".((int) $user->id)." AND t.priv = 1) OR t.priv = 0)";
+
+		$result = $db->query($sql);
+		if (!$result) {
+			setEventMessages($db->lasterror(), null, 'errors');
+			$db->rollback();
+		} else {
+			$db->commit();
+			setEventMessages('ContactDeleted', null, 'mesgs');
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$socid);
+			exit();
+		}
+	}
+}
 
 /*
  *  View
@@ -183,6 +207,18 @@ if ($action != 'presend') {
 	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 		$result = show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1);
 	}
+}
+if ($action == 'delete') {
+	$formconfirm = $form->formconfirm(
+		$_SERVER["PHP_SELF"].'?id='.GETPOST('id').'&socid='.$object->id,
+		$langs->trans('Delete'),
+		$langs->trans('ConfirmDeleteContact', GETPOST('id', 'alpha')),
+		'confirm_delete',
+		'',
+		0,
+		1
+	);
+	print $formconfirm;
 }
 
 // End of page

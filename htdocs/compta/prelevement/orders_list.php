@@ -235,7 +235,7 @@ llxHeader('', $title, $help_url);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 $param = '';
-$param .= "&statut=".urlencode($statut);
+$param .= "&statut=".urlencode((string) ($statut));
 if ($type == 'bank-transfer') {
 	$param .= '&type=bank-transfer';
 }
