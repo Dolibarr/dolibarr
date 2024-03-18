@@ -1589,8 +1589,9 @@ function check_value($mask, $value)
 function binhex($bin, $pad = false, $upper = false)
 {
 	$last = dol_strlen($bin) - 1;
+	$x = 0;
 	for ($i = 0; $i <= $last; $i++) {
-		$x += $bin[$last - $i] * pow(2, $i);
+		$x += ($bin[$last - $i] ? 1 : 0) << $i;
 	}
 	$x = dechex($x);
 	if ($pad) {
