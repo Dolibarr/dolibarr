@@ -226,4 +226,3 @@ if (!$base) {
 // End of page
 llxFooter();
 $db->close();
-
