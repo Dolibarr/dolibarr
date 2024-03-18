@@ -154,7 +154,7 @@ class Cregion extends CommonDict
 	 *  @param      int	            $fk_pays      Country Id
 	 *  @return     int          	>0 if OK, 0 if not found, <0 if KO
 	 */
-	public function fetch($id, $code_region = '', $fk_pays = 0)
+	public function fetch($id, $code_region = 0, $fk_pays = 0)
 	{
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
