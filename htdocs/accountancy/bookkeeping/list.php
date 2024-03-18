@@ -53,7 +53,7 @@ $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bookkeepinglist';
 
 // Search Parameters
-$search_mvt_num = GETPOSTINT('search_mvt_num');
+$search_mvt_num = GETPOST('search_mvt_num', 'intcomma');
 $search_doc_type = GETPOST("search_doc_type", 'alpha');
 $search_doc_ref = GETPOST("search_doc_ref", 'alpha');
 $search_date_startyear =  GETPOSTINT('search_date_startyear');
