@@ -1378,7 +1378,10 @@ if ($ispaymentok) {
 								$listofmimes = array(dol_mimetype($file));
 							}
 
-							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, $cc, '', 0, $ishtml);
+							$trackid = 'inv'.$object->id;
+							$upload_dir_tmp = $conf->admin->dir_output.'/temp/'.uniqid('cmailfile');
+
+							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, $cc, '', 0, $ishtml, '', '', $trackid, '', 'standard', '', $upload_dir_tmp);
 
 							$result = $mailfile->sendfile();
 							if ($result) {
