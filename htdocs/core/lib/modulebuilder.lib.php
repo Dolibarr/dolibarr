@@ -94,7 +94,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		dol_copy($pathoffiletoedittarget, $pathoffiletoedittarget.'.back', $newmask, 1);
 
 		// Edit class files
-		$contentclass = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
+		$contentclass = file_get_contents(dol_osencode($pathoffiletoeditsrc));
 
 		// Update ->fields (to add or remove entries defined into $addfieldentry)
 		if (count($object->fields)) {
@@ -321,7 +321,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	// Backup old file
 	dol_copy($pathoffiletoedittarget, $pathoffiletoedittarget.'.back', $newmask, 1);
 
-	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
+	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc));
 
 	$i = 0;
 	$texttoinsert = '-- BEGIN MODULEBUILDER FIELDS'."\n";
@@ -389,7 +389,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	$pathoffiletoedittarget = preg_replace('/\.sql$/', '.key.sql', $pathoffiletoedittarget);
 	$pathoffiletoedittarget = preg_replace('/\.sql.new$/', '.key.sql.new', $pathoffiletoedittarget);
 
-	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
+	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc));
 
 	$i = 0;
 	$texttoinsert = '-- BEGIN MODULEBUILDER INDEXES'."\n";
@@ -898,7 +898,7 @@ function writePermsInAsciiDoc($file, $destfile)
 	$array = explode(";", $content);
 	$permissions = array_filter($array);
 	// delete  occurrences "$r++" and ID
-	$permissions = str_replace('$r++', 1, $permissions);
+	$permissions = str_replace('$r++', '1', $permissions);
 
 	$permsN = array();
 	foreach ($permissions as $i => $element) {
@@ -1326,13 +1326,13 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	$dictionnaires['langs'] = $modulename.'@'.$modulename;
 	$dictionnaires['tabname'][] = strtolower($namedic);
 	$dictionnaires['tablib'][] = ucfirst(substr($namedic, 2));
-	$dictionnaires['tabsql'][] = 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.strtolower($namedic).' as f';
+	$dictionnaires['tabsql'][] = 'SELECT t.rowid as rowid, t.code, t.label, t.active FROM '.MAIN_DB_PREFIX.strtolower($namedic).' as t';
 	$dictionnaires['tabsqlsort'][] = (array_key_exists('label', $columns) ? 'label ASC' : '');
 	$dictionnaires['tabfield'][] = (array_key_exists('code', $columns) && array_key_exists('label', $columns) ? 'code,label' : '');
 	$dictionnaires['tabfieldvalue'][] = (array_key_exists('code', $columns) && array_key_exists('label', $columns) ? 'code,label' : '');
 	$dictionnaires['tabfieldinsert'][] = (array_key_exists('code', $columns) && array_key_exists('label', $columns) ? 'code,label' : '');
 	$dictionnaires['tabrowid'][] = $primaryKey;
-	$dictionnaires['tabcond'][] = isModEnabled('$modulename');
+	$dictionnaires['tabcond'][] = isModEnabled('$modulename');  // @phan-suppress-current-line UnknownModuleName
 	$dictionnaires['tabhelp'][] = (array_key_exists('code', $columns) ? array('code' => $langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip') : '');
 
 	// Build the dictionary string

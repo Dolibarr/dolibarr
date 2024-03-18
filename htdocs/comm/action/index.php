@@ -1493,7 +1493,7 @@ if (is_readable($color_file)) {
 	include $color_file;
 }
 if (!is_array($theme_datacolor)) {
-	$theme_datacolor = array(array(120, 130, 150), array(200, 160, 180), array(190, 190, 220));
+	$theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(250, 190, 80), array(80, 166, 90), array(190, 190, 100), array(91, 115, 247), array(140, 140, 220), array(190, 120, 120), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
 }
 
 $massactionbutton = '';
@@ -1793,7 +1793,7 @@ $db->close();
  * @param   int		$showinfo        Add extended information (used by day and week view)
  * @param   int		$minheight       Minimum height for each event. 60px by default.
  * @param	int		$nonew			 0=Add "new entry button", 1=No "new entry button", -1=Only "new entry button"
- * @param	array	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
+ * @param	array{}|array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int}}	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
  * @return	void
  */
 function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $nonew = 0, $bookcalcalendarsarray = array())
@@ -1803,6 +1803,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	global $theme_datacolor;
 	global $cachethirdparties, $cachecontacts, $cacheusers, $colorindexused;
 	global $hookmanager;
+
+	'@phan-var-force array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int},3:array{0:int,1:int,2:int}} $theme_datacolor
+	 @phan-var-force User[] $cacheusers
+	 @phan-var-force array<int<0,3>> $colorindexused';
 
 	if ($conf->use_javascript_ajax) {	// Enable the "Show more button..."
 		$conf->global->MAIN_JS_SWITCH_AGENDA = 1;
@@ -1954,7 +1958,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							}
 						}
 						//print '|'.($color).'='.($idusertouse?$idusertouse:0).'='.$colorindex.'<br>';
-						// Define color
+						// Define color  // @suppress-next-line PhanPluginPrintfIncompatibleArgumentType
 						$color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
 					}
 					$cssclass = $cssclass.' eventday_'.$ymd;

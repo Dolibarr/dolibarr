@@ -179,6 +179,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 				$this->lastTime = $now;
 			}
 
+			// @phan-suppress-next-line PhanParamSuspiciousOrder
 			$message = dol_print_date(dol_now('gmt'), 'standard', 'gmt').$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident > 0 ? str_pad('', $this->ident, ' ') : '').$content['message'];
 			fwrite($filefd, $message."\n");
 			fclose($filefd);

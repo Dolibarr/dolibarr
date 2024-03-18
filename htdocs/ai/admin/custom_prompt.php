@@ -159,10 +159,10 @@ if ($action == 'confirm_deleteproperty' && GETPOST('confirm') == 'yes') {
 		$res = dolibarr_set_const($db, 'AI_CONFIGURATIONS_PROMPT', $newConfigurationsJson, 'chaine', 0, '', $conf->entity);
 		if ($res) {
 			header("Location: ".$_SERVER['PHP_SELF']);
-			setEventMessages($langs->trans("SetupDeleted"), null, 'mesgs');
+			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 			exit;
 		} else {
-			setEventMessages($langs->trans("ErrorDeleting"), null, 'errors');
+			setEventMessages($langs->trans("NoRecordDeleted"), null, 'errors');
 		}
 	}
 }
@@ -207,7 +207,7 @@ if ($action == 'deleteproperty') {
 }
 
 if ($action == 'edit') {
-	$out .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	$out = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 	$out .= '<input type="hidden" name="action" value="update">';
 

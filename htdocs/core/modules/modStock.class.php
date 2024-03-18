@@ -264,7 +264,7 @@ class modStock extends DolibarrModules
 			'p.price' => "product", 'p.tva_tx' => 'product', 'p.tosell' => "product", 'p.tobuy' => "product", 'p.duration' => "product",
 			'p.datec' => 'product', 'p.tms' => 'product', 'p.pmp' => 'product', 'p.cost_price' => 'product',
 			'ps.reel' => 'stock',
-			'p.seuil_stock_alerte' => 'product', 'p.barcode' => 'product', 'bt.libelle' => 'c_barcode_type',
+			'p.seuil_stock_alerte' => 'product', 'p.barcode' => 'product', 'bt.libelle' => 'product',
 		);	// We define here only fields that use another icon that the one defined into export_icon
 		if (isModEnabled('barcode')) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode' => 'product'));

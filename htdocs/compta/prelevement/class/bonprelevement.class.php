@@ -83,6 +83,9 @@ class BonPrelevement extends CommonObject
 
 	public $factures = array();
 
+	/**
+	 * @var array<int,string>
+	 */
 	public $methodes_trans = array();
 
 	public $invoice_in_error = array();
@@ -171,6 +174,9 @@ class BonPrelevement extends CommonObject
 	public $credite;
 	public $note;
 	public $date_trans;
+	/**
+	 * @var int Current transport method, index to $methodes_trans
+	 */
 	public $method_trans;
 	public $fk_user_trans;
 	public $date_credit;
@@ -2136,7 +2142,7 @@ class BonPrelevement extends CommonObject
 	 *	@param	string		$row_cc				pl.number AS cc,			Not used for SEPA
 	 *	@param	string		$row_somme			pl.amount AS somme,
 	 *	@param	string		$row_ref			Invoice ref (f.ref) or Salary ref
-	 *	@param	string		$row_idfac			p.fk_facture AS idfac or p.fk_facture_fourn or p.fk_salary,
+	 *	@param	int			$row_idfac			p.fk_facture AS idfac or p.fk_facture_fourn or p.fk_salary,
 	 *	@param	string		$row_iban			rib.iban_prefix AS iban,
 	 *	@param	string		$row_bic			rib.bic AS bic,
 	 *	@param	string		$row_datec			rib.datec,

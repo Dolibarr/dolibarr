@@ -2193,14 +2193,14 @@ class Expedition extends CommonObject
 
 		if (!empty($tracking) && !empty($value)) {
 			$url = str_replace('{TRACKID}', $value, $tracking);
-			$this->tracking_url = sprintf('<a target="_blank" rel="noopener noreferrer" href="%s">'.($value ? $value : 'url').'</a>', $url, $url);
+			$this->tracking_url = sprintf('<a target="_blank" rel="noopener noreferrer" href="%s">%s</a>', $url, ($value ? $value : 'url'));
 		} else {
 			$this->tracking_url = $value;
 		}
 	}
 
 	/**
-	 *	Classify the shipping as closed (this record also the stock movement)
+	 *	Classify the shipping as closed (this records also the stock movement)
 	 *
 	 *	@return     int     Return integer <0 if KO, >0 if OK
 	 */

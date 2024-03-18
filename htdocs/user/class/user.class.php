@@ -336,7 +336,10 @@ class User extends CommonObject
 	public $lastsearch_values_tmp; // To store current search criteria for user
 	public $lastsearch_values; // To store last saved search criteria for user
 
-	public $users = array(); // To store all tree of users hierarchy
+	/**
+	 * @var array<int,array{rowid:int,id:int,fk_user:int,fk_soc:int,firstname:string,lastname:string,login:string,statut:int,entity:string,email:string,gender:int,admin:string,photo:string,fullpath:string,fullname:string,level:int}>  Store the entire hierarchy tree of users
+	 */
+	public $users = array();
 	public $parentof; // To store an array of all parents for all ids.
 	private $cache_childids; // Cache array of already loaded children
 
@@ -3635,7 +3638,7 @@ class User extends CommonObject
 	/**
 	 * Return and array with all instantiated first level children users of current user
 	 *
-	 * @return	User[]|int
+	 * @return	User[]|int<-1,-1>
 	 * @see getAllChildIds()
 	 */
 	public function get_children()
@@ -3664,7 +3667,7 @@ class User extends CommonObject
 	/**
 	 *  Load this->parentof that is array(id_son=>id_parent, ...)
 	 *
-	 *  @return     int     Return integer <0 if KO, >0 if OK
+	 *  @return     int<-1,1>     Return integer <0 if KO, >0 if OK
 	 */
 	private function loadParentOf()
 	{
@@ -3759,7 +3762,7 @@ class User extends CommonObject
 			return -1;
 		}
 
-		// We add the fullpath property to each elements of first level (no parent exists)
+		// We add the fullpath property to each element of the first level (no parent exists)
 		dol_syslog(get_class($this)."::get_full_tree call to build_path_from_id_user", LOG_DEBUG);
 		foreach ($this->users as $key => $val) {
 			$result = $this->build_path_from_id_user($key, 0); // Process a branch from the root user key (this user has no parent)
@@ -3776,9 +3779,10 @@ class User extends CommonObject
 			$keyfilter2 = '_'.$deleteafterid.'$';
 			$keyfilter3 = '^'.$deleteafterid.'_';
 			$keyfilter4 = '_'.$deleteafterid.'_';
-			foreach ($this->users as $key => $val) {
-				if (preg_match('/'.$keyfilter1.'/', $val['fullpath']) || preg_match('/'.$keyfilter2.'/', $val['fullpath'])
-					|| preg_match('/'.$keyfilter3.'/', $val['fullpath']) || preg_match('/'.$keyfilter4.'/', $val['fullpath'])) {
+			foreach (array_keys($this->users) as $key) {
+				$fullpath = $this->users[$key]['fullpath'];
+				if (preg_match('/'.$keyfilter1.'/', $fullpath) || preg_match('/'.$keyfilter2.'/', $fullpath)
+					|| preg_match('/'.$keyfilter3.'/', $fullpath) || preg_match('/'.$keyfilter4.'/', $fullpath)) {
 					unset($this->users[$key]);
 				}
 			}
@@ -3836,7 +3840,7 @@ class User extends CommonObject
 	 *
 	 * 	@param		int		$id_user		id_user entry to update
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop (no more required, a protection is added with array useridfound)
-	 *	@return		int                     Return integer < 0 if KO (infinite loop), >= 0 if OK
+	 *	@return		int<-1,1>               Return integer < 0 if KO (infinite loop), >= 0 if OK
 	 */
 	public function build_path_from_id_user($id_user, $protection = 0)
 	{

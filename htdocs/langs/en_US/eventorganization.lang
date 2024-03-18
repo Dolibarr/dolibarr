@@ -27,6 +27,7 @@ EventOrganizationMenuLeft = Organized events
 EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
 
 PaymentEvent=Payment of event
+EventFee=Event fee
 
 #
 # Admin page

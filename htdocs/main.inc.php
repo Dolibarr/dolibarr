@@ -342,7 +342,7 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"])) {
 	$cookievalue = json_encode($cookiearrayvalue);
 	//var_dump('setcookie cookiename='.$cookiename.' cookievalue='.$cookievalue);
 	if (PHP_VERSION_ID < 70300) {
-		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', null, ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // keep cookie 1 year and add tag httponly
+		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', '', ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // keep cookie 1 year and add tag httponly
 	} else {
 		// Only available for php >= 7.3
 		$cookieparams = array(
@@ -2332,8 +2332,10 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				}
 				$text .= '<a class="help" target="_blank" rel="noopener noreferrer" href="';
 				if ($mode == 'wiki') {
+					// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 					$text .= sprintf($helpbaseurl, urlencode(html_entity_decode($helppage)));
 				} else {
+					// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 					$text .= sprintf($helpbaseurl, $helppage);
 				}
 				$text .= '">';

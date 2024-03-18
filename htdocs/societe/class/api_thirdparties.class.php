@@ -320,25 +320,21 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Merge a thirdparty into another one.
+	 * Merge a third party into another one.
 	 *
-	 * Merge content (properties, notes) and objects (like invoices, events, orders, proposals, ...) of a thirdparty into a target thirdparty,
-	 * then delete the merged thirdparty.
-	 * If a property has a defined value both in thirdparty to delete and thirdparty to keep, the value into the thirdparty to
+	 * Merge content (properties, notes) and objects (like invoices, events, orders, proposals, ...) of a thirdparty into a target third party,
+	 * then delete the merged third party.
+	 * If a property has a defined value both in third party to delete and third party to keep, the value into the third party to
 	 * delete will be ignored, the value of target thirdparty will remain, except for notes (content is concatenated).
 	 *
-	 * @param int   $id             ID of thirdparty to keep (the target thirdparty)
-	 * @param int   $idtodelete     ID of thirdparty to remove (the thirdparty to delete), once data has been merged into the target thirdparty.
-	 * @return int
+	 * @param int   $id             ID of thirdparty to keep (the target third party)
+	 * @param int   $idtodelete     ID of thirdparty to remove (the thirdparty to delete), once data has been merged into the target third party.
+	 * @return Object				Return the resulted third party.
 	 *
 	 * @url PUT {id}/merge/{idtodelete}
 	 */
 	public function merge($id, $idtodelete)
 	{
-		global $user;
-
-		$error = 0;
-
 		if ($id == $idtodelete) {
 			throw new RestException(400, 'Try to merge a thirdparty into itself');
 		}
@@ -415,7 +411,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @param	int		$id				ID of thirdparty
 	 * @param	int		$priceLevel		Price level to apply to thirdparty
-	 * @return	object					Thirdparty data without useless information
+	 * @return	Object					Thirdparty data without useless information
 	 *
 	 * @url PUT {id}/setpricelevel/{priceLevel}
 	 *

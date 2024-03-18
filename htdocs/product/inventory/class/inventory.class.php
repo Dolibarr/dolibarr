@@ -264,7 +264,6 @@ class Inventory extends CommonObject
 	 */
 	public function validate(User $user, $notrigger = 0, $include_sub_warehouse = 0)
 	{
-		global $conf;
 		$this->db->begin();
 
 		$result = 0;
@@ -281,10 +280,17 @@ class Inventory extends CommonObject
 
 			// Scan existing stock to prefill the inventory
 			$sql = "SELECT ps.rowid, ps.fk_entrepot as fk_warehouse, ps.fk_product, ps.reel,";
-			$sql .= " pb.batch, pb.qty";
+			if (isModEnabled('productbatch')) {
+				$sql .= " pb.batch as batch, pb.qty as qty,";
+			} else {
+				$sql .= " '' as batch, 0 as qty,";
+			}
+			$sql .= " p.ref, p.tobatch";
 			$sql .= " FROM ".$this->db->prefix()."product_stock as ps";
-			$sql .= " LEFT JOIN ".$this->db->prefix()."product_batch as pb ON pb.fk_product_stock = ps.rowid,";
-			$sql .= " ".$this->db->prefix()."product as p, ".$this->db->prefix()."entrepot as e";
+			if (isModEnabled('productbatch')) {
+				$sql .= " LEFT JOIN ".$this->db->prefix()."product_batch as pb ON pb.fk_product_stock = ps.rowid";
+			}
+			$sql .= ", ".$this->db->prefix()."product as p, ".$this->db->prefix()."entrepot as e";
 			$sql .= " WHERE p.entity IN (".getEntity('product').")";
 			$sql .= " AND ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid";
 			if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
@@ -317,6 +323,7 @@ class Inventory extends CommonObject
 				$sql .= " WHERE pa.fk_product_pere = ps.fk_product";
 				$sql .= ")";
 			}
+			$sql .= " ORDER BY p.rowid";
 
 			$inventoryline = new InventoryLine($this->db);
 
@@ -335,10 +342,18 @@ class Inventory extends CommonObject
 					$inventoryline->datec = dol_now();
 
 					if (isModEnabled('productbatch')) {
+						if ($obj->batch && empty($obj->tobatch)) {
+							// Bad consistency of data. The product is not a product with lot/serial but we found a stock for some lot/serial.
+							$result = -2;
+							$this->error = 'The product ID='.$obj->ref." has stock with lot/serial but is configured to not manage lot/serial. You must first fix this, this way: Set the product to have 'Management of Lot/Serial' to Yes, then set it back to 'Management of Lot/Serial to No";
+							break;
+						}
+
 						$inventoryline->qty_stock = ($obj->batch ? $obj->qty : $obj->reel); // If there is batch detail, we take qty for batch, else global qty
 					} else {
 						$inventoryline->qty_stock = $obj->reel;
 					}
+					//var_dump($obj->batch.' '.$obj->qty.' '.$obj->reel.' '.$this->error);exit;
 
 					$resultline = $inventoryline->create($user);
 					if ($resultline <= 0) {

@@ -218,7 +218,7 @@ class modReception extends DolibarrModules
 		$keyforelement = 'reception';
 		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'commande_fournisseur_dispatch';
+		$keyforselect = 'receptiondet_batch';
 		$keyforelement = 'reception_line';
 		$keyforaliasextra = 'extra2';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
@@ -232,8 +232,8 @@ class modReception extends DolibarrModules
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON s.fk_pays = co.rowid,';
-		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch as ed';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch_extrafields as extra2 ON ed.rowid = extra2.fk_object';
+		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'receptiondet_batch as ed';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'receptiondet_batch_extrafields as extra2 ON ed.rowid = extra2.fk_object';
 		$this->export_sql_end[$r] .= ' , '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on cd.fk_product = p.rowid';
 		if ($idcontacts && getDolGlobalString('RECEPTION_ADD_CONTACTS_IN_EXPORT')) {
