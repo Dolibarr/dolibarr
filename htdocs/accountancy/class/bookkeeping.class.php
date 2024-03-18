@@ -738,11 +738,10 @@ class BookKeeping extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int $id Id object
-	 * @param string $ref Ref
-	 * @param string $mode 	Mode
-	 *
-	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param int 		$id 	Id object
+	 * @param string 	$ref 	Ref
+	 * @param string 	$mode 	Mode ('' or 'tmp_')
+	 * @return int 				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $mode = '')
 	{
@@ -1545,15 +1544,16 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param User 		$user 		User that deletes
 	 * @param int 		$notrigger 	false=launch triggers after, true=disable triggers
-	 * @param string 	$mode 		Mode
+	 * @param string 	$mode 		Mode ('' or 'tmp_')
 	 * @return int 					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0, $mode = '')
 	{
 		global $langs;
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$result = $this->canModifyBookkeeping($this->id);
+		$result = $this->canModifyBookkeeping($this->id, $mode);
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
@@ -2357,9 +2357,10 @@ class BookKeeping extends CommonObject
 	 * Is the bookkeeping can be modified or deleted ?
 	 *
 	 * @param 	int		$id		Bookkeeping ID
+	 * @param 	string 	$mode 	Mode ('' or 'tmp_')
 	 * @return 	int				Return integer <0 if KO, == 0 if No, == 1 if Yes
 	 */
-	public function canModifyBookkeeping($id)
+	public function canModifyBookkeeping($id, $mode = '')
 	{
 		global $conf;
 
@@ -2371,7 +2372,7 @@ class BookKeeping extends CommonObject
 			}
 
 			$bookkeeping = new BookKeeping($this->db);
-			$result = $bookkeeping->fetch($id);
+			$result = $bookkeeping->fetch($id, null, $mode);
 			if ($result <= 0) {
 				return $result;
 			}
@@ -2392,7 +2393,7 @@ class BookKeeping extends CommonObject
 			}
 
 			$bookkeeping = new BookKeeping($this->db);
-			$result = $bookkeeping->fetch($id);
+			$result = $bookkeeping->fetch($id, null, $mode);
 			if ($result <= 0) {
 				return $result;
 			}
