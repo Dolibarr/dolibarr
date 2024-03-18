@@ -52,10 +52,10 @@ if ($action == 'convertutf8') {
 		while ($i < $num) {
 			$row = $db->fetch_row($resql);
 			if ($row[0] == $field) {
-				$sql = 'ALTER TABLE '.$db->sanitize($table).' MODIFY '.$db->sanitize($row[0]).' '.$row[1].' CHARACTER SET utf8';		// We must not sanitize the $row[1]
+				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." CHARACTER SET utf8";		// We must not sanitize the $row[1]
 				$db->query($sql);
 
-				$sql = 'ALTER TABLE '.$db->sanitize($table).' MODIFY '.$db->sanitize($row[0]).' '.$row[1].' COLLATE utf8_unicode_ci';	// We must not sanitize the $row[1]
+				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE utf8_unicode_ci";	// We must not sanitize the $row[1]
 				$db->query($sql);
 
 				break;
@@ -73,10 +73,10 @@ if ($action == 'convertutf8mb4') {
 		while ($i < $num) {
 			$row = $db->fetch_row($resql);
 			if ($row[0] == $field) {
-				$sql = 'ALTER TABLE '.$db->sanitize($table).' MODIFY '.$db->sanitize($row[0]).' '.$row[1].' CHARACTER SET utf8mb4';		// We must not sanitize the $row[1]
+				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." CHARACTER SET utf8mb4";		// We must not sanitize the $row[1]
 				$db->query($sql);
 
-				$sql = 'ALTER TABLE '.$db->sanitize($table).' MODIFY '.$db->sanitize($row[0]).' '.$row[1].' COLLATE utf8mb4_unicode_ci';	// We must not sanitize the $row[1]
+				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE utf8mb4_unicode_ci";	// We must not sanitize the $row[1]
 				$db->query($sql);
 
 				break;
