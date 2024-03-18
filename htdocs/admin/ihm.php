@@ -121,7 +121,7 @@ if ($action == 'update') {
 		}
 
 		if (GETPOSTISSET('THEME_TOPMENU_DISABLE_IMAGE')) {
-			$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
+			$val = GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
 			if (!$val) {
 				dolibarr_del_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', $conf->entity);
 			} else {

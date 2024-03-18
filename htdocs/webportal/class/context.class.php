@@ -1,4 +1,26 @@
 <?php
+/* Copyright (C) 2023-2024 	Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+ /**
+ * \file       htdocs/webportal/class/context.class.php
+ * \ingroup    webportal
+ * \brief      File of context class for WebPortal
+ */
 
 require_once __DIR__ . '/controller.class.php';
 require_once __DIR__ . '/webPortalTheme.class.php';
@@ -20,10 +42,24 @@ class Context
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	public $title;
+
+	/**
+	 * @var string
+	 */
 	public $desc;
 
+	/**
+	 * @var string
+	 */
 	public $meta_title;
+
+	/**
+	 * @var string
+	 */
 	public $meta_desc;
 
 	/**
@@ -32,7 +68,14 @@ class Context
 	 */
 	public $appliName;
 
+	/**
+	 * @var string
+	 */
 	public $controller;
+
+	/**
+	 * @var boolean
+	 */
 	public $controller_found = false;
 
 	/**
@@ -264,7 +307,7 @@ class Context
 	 * @return	string
 	 * @deprecated see getControllerUrl()
 	 */
-	public function getRootUrl($controller = false, $moreParams = '', $addToken = true)
+	public function getRootUrl($controller = '', $moreParams = '', $addToken = true)
 	{
 		return self::getControllerUrl($controller, $moreParams, $addToken);
 	}
@@ -277,7 +320,7 @@ class Context
 	 * @param	bool			$addToken		Add token hash only if controller is set
 	 * @return	string
 	 */
-	public function getControllerUrl($controller = false, $moreParams = '', $addToken = true)
+	public function getControllerUrl($controller = '', $moreParams = '', $addToken = true)
 	{
 		// TODO : addToken parameter on auto to detect (create or edit) action and add token on url
 		$url = $this->rootUrl;
@@ -303,12 +346,12 @@ class Context
 	 * Used for external link (like email or web page)
 	 * so remove token and contextual behavior associate with current user
 	 *
-	 * @param 	bool			$controller				Controller
+	 * @param 	string			$controller				Controller
 	 * @param 	string|array	$moreParams				More parameters
 	 * @param	array			$Tparams				Parameters
 	 * @return	string
 	 */
-	static public function getPublicControllerUrl($controller = false, $moreParams = '', $Tparams = array())
+	static public function getPublicControllerUrl($controller = '', $moreParams = '', $Tparams = array())
 	{
 		$url = self::getRootConfigUrl();
 

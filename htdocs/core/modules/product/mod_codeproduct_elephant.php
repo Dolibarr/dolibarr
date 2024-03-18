@@ -3,6 +3,8 @@
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,17 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
  */
 class mod_codeproduct_elephant extends ModeleProductCode
 {
-
 	// variables inherited from ModelProductCode class
 	public $name = 'Elephant';
 	public $version = 'dolibarr';
-	public $code_null;
-	public $code_modifiable;
-	public $code_modifiable_invalide;
-	public $code_modifiable_null;
-	public $code_auto;
-	public $prefixIsRequired;
-
 
 	// variables not inherited
 
@@ -124,12 +118,12 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate	$langs		Object langs
-	 * @param	Product		$objproduct		Object product
-	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-	 * @return	string					Return string example
+	 * @param	Translate		$langs		Object langs
+	 * @param	Product|string	$objproduct	Object product
+	 * @param	int				$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objproduct = null, $type = -1)
+	public function getExample($langs, $objproduct = '', $type = -1)
 	{
 		$exampleproduct = $exampleservice = '';
 
@@ -262,7 +256,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$code = strtoupper(trim($code));
 
 		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
-			$result = 0;
+			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		} else {

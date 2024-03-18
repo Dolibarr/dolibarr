@@ -25,7 +25,7 @@
  */
 
 /**
- *      \file       htdocs/admin/commande_fournisseur_dispatch_extrafields.php
+ *      \file       htdocs/admin/receptiondet_batch.php
  *		\ingroup    reception
  *		\brief      Page to setup extra fields of reception
  */
@@ -56,7 +56,7 @@ foreach ($tmptype2label as $key => $val) {
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
-$elementtype = 'commande_fournisseur_dispatch'; //Must be the $table_element of the class that manage extrafield
+$elementtype = 'receptiondet_batch'; //Must be the $table_element of the class that manage extrafield
 
 if (!$user->admin) {
 	accessforbidden();

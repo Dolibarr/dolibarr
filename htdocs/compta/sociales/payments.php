@@ -57,7 +57,7 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -123,10 +123,10 @@ if ($sortorder) {
 	$param .= '&sortorder='.urlencode($sortorder);
 }
 if ($year) {
-	$param .= '&year='.urlencode($year);
+	$param .= '&year='.urlencode((string) ($year));
 }
 if ($search_sc_type) {
-	$param .= '&search_sc_type='.urlencode($search_sc_type);
+	$param .= '&search_sc_type='.urlencode((string) ($search_sc_type));
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);

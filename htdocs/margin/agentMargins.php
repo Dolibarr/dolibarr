@@ -39,7 +39,7 @@ $mesg = '';
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -129,11 +129,11 @@ print '</td></tr>';
 // Start date
 print '<td>'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-print $form->selectDate($startdate, 'startdate', '', '', 1, "sel", 1, 1);
+print $form->selectDate($startdate, 'startdate', 0, 0, 1, "sel", 1, 1);
 print '</td>';
 print '<td>'.$langs->trans('DateEnd').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-print $form->selectDate($enddate, 'enddate', '', '', 1, "sel", 1, 1);
+print $form->selectDate($enddate, 'enddate', 0, 0, 1, "sel", 1, 1);
 print '</td>';
 print '<td style="text-align: center;">';
 print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Refresh')).'" />';
@@ -208,22 +208,22 @@ if (!empty($agentid)) {
 	$param .= "&amp;agentid=".urlencode($agentid);
 }
 if (!empty($startdateday)) {
-	$param .= "&amp;startdateday=".urlencode($startdateday);
+	$param .= "&amp;startdateday=".urlencode((string) ($startdateday));
 }
 if (!empty($startdatemonth)) {
-	$param .= "&amp;startdatemonth=".urlencode($startdatemonth);
+	$param .= "&amp;startdatemonth=".urlencode((string) ($startdatemonth));
 }
 if (!empty($startdateyear)) {
-	$param .= "&amp;startdateyear=".urlencode($startdateyear);
+	$param .= "&amp;startdateyear=".urlencode((string) ($startdateyear));
 }
 if (!empty($enddateday)) {
-	$param .= "&amp;enddateday=".urlencode($enddateday);
+	$param .= "&amp;enddateday=".urlencode((string) ($enddateday));
 }
 if (!empty($enddatemonth)) {
-	$param .= "&amp;enddatemonth=".urlencode($enddatemonth);
+	$param .= "&amp;enddatemonth=".urlencode((string) ($enddatemonth));
 }
 if (!empty($enddateyear)) {
-	$param .= "&amp;enddateyear=".urlencode($enddateyear);
+	$param .= "&amp;enddateyear=".urlencode((string) ($enddateyear));
 }
 
 
@@ -233,6 +233,7 @@ if ($result) {
 	$num = $db->num_rows($result);
 
 	print '<br>';
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
 
 	if (getDolGlobalString('MARGIN_TYPE') == "1") {

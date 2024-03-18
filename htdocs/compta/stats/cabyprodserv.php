@@ -209,7 +209,7 @@ $allparams = array_merge($commonparams, $headerparams, $tableparams);
 $headerparams = array_merge($commonparams, $headerparams);
 $tableparams = array_merge($commonparams, $tableparams);
 
-$paramslink="";
+$paramslink = "";
 foreach ($allparams as $key => $value) {
 	$paramslink .= '&'.$key.'='.$value;
 }
@@ -232,8 +232,8 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
 
-$exportlink="";
-$namelink="";
+$exportlink = "";
+$namelink = "";
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
@@ -360,6 +360,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 	dol_syslog("cabyprodserv", LOG_DEBUG);
 	$result = $db->query($sql);
+	$amount_ht = array();
+	$amount = array();
+	$qty = array();
 	if ($result) {
 		$num = $db->num_rows($result);
 		$i = 0;

@@ -82,7 +82,7 @@ class box_members_by_type extends ModeleBoxes
 		$year = date('Y');
 		$numberyears = getDolGlobalInt("MAIN_NB_OF_YEAR_IN_MEMBERSHIP_WIDGET_GRAPH");
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByType").($numberyears ? ' ('.($year-$numberyears).' - '.$year.')' : ''));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByType").($numberyears ? ' ('.($year - $numberyears).' - '.$year.')' : ''));
 
 		if ($user->hasRight('adherent', 'lire')) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
@@ -138,11 +138,12 @@ class box_members_by_type extends ModeleBoxes
 					'text' => $langs->trans("Total")
 				);
 				$line++;
+				$AdherentType = array();
 				foreach ($sumMembers as $key => $data) {
 					$adhtype = new AdherentType($this->db);
 					$adhtype->id = $key;
 
-					if ($key=='total') {
+					if ($key == 'total') {
 						break;
 					}
 					$adhtype->label = $data['label'];

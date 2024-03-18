@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,7 @@ $langs->loadLangs(array('products', 'companies', 'contracts'));
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 
 $statut = GETPOST('statut') ? GETPOST('statut') : 1;
 
@@ -154,9 +155,9 @@ if ($resql) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
-			$nb[$obj->status.true] = $obj->nb;
+			$nb[$obj->status.((string) true)] = $obj->nb;
 			if ($obj->status != 5) {
-				$vals[$obj->status.true] = $obj->nb;
+				$vals[$obj->status.((string) true)] = $obj->nb;
 				$totalinprocess += $obj->nb;
 			}
 			$total += $obj->nb;
@@ -175,26 +176,28 @@ include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Services").'</th></tr>'."\n";
-$listofstatus = array(0, 4, 4, 5); $bool = false;
+$listofstatus = array(0, 4, 4, 5);
+$bool = false;
 foreach ($listofstatus as $status) {
-	$dataseries[] = array($staticcontratligne->LibStatut($status, 1, ($bool ? 1 : 0)), (isset($nb[$status.$bool]) ? (int) $nb[$status.$bool] : 0));
+	$bool_str = (string) $bool;
+	$dataseries[] = array($staticcontratligne->LibStatut($status, 1, ($bool ? 1 : 0)), (isset($nb[$status.$bool_str]) ? (int) $nb[$status.$bool_str] : 0));
 	if ($status == ContratLigne::STATUS_INITIAL) {
-		$colorseries[$status.$bool] = '-'.$badgeStatus0;
+		$colorseries[$status.$bool_str] = '-'.$badgeStatus0;
 	}
 	if ($status == ContratLigne::STATUS_OPEN && !$bool) {
-		$colorseries[$status.$bool] = $badgeStatus4;
+		$colorseries[$status.$bool_str] = $badgeStatus4;
 	}
 	if ($status == ContratLigne::STATUS_OPEN && $bool) {
-		$colorseries[$status.$bool] = $badgeStatus1;
+		$colorseries[$status.$bool_str] = $badgeStatus1;
 	}
 	if ($status == ContratLigne::STATUS_CLOSED) {
-		$colorseries[$status.$bool] = $badgeStatus6;
+		$colorseries[$status.$bool_str] = $badgeStatus6;
 	}
 
 	if (empty($conf->use_javascript_ajax)) {
 		print '<tr class="oddeven">';
 		print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool ? 1 : 0)).'</td>';
-		print '<td class="right"><a href="services_list.php?search_status='.((int) $status).($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool] ? $nb[$status.$bool] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
+		print '<td class="right"><a href="services_list.php?search_status='.((int) $status).($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool_str] ? $nb[$status.$bool_str] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
 		print "</tr>\n";
 	}
 	if ($status == 4 && !$bool) {
@@ -219,12 +222,14 @@ if (!empty($conf->use_javascript_ajax)) {
 
 	print '</td></tr>';
 }
-$listofstatus = array(0, 4, 4, 5); $bool = false;
+$listofstatus = array(0, 4, 4, 5);
+$bool = false;
 foreach ($listofstatus as $status) {
+	$bool_str = (string) $bool;
 	if (empty($conf->use_javascript_ajax)) {
 		print '<tr class="oddeven">';
 		print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool ? 1 : 0)).'</td>';
-		print '<td class="right"><a href="services_list.php?search_status='.((int) $status).($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool] ? $nb[$status.$bool] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
+		print '<td class="right"><a href="services_list.php?search_status='.((int) $status).($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool_str] ? $nb[$status.$bool_str] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
 		if ($status == 4 && !$bool) {
 			$bool = true;
 		} else {

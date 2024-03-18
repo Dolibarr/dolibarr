@@ -7,6 +7,7 @@
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2021  Christophe Battarel		<christophe@altairis.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +96,7 @@ $search_timespent_endmin = GETPOSTINT("search_timespent_duration_endmin");
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }        // If $page is not defined, or '' or -1
@@ -262,11 +263,7 @@ if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
 			}
 		}
 	} else {
-		if (empty($id)) {
-			$action = 'createtime';
-		} else {
-			$action = 'createtime';
-		}
+		$action = 'createtime';
 	}
 }
 
@@ -1012,7 +1009,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Budget
 			print '<tr><td>' . $langs->trans("Budget") . '</td><td>';
 			if (!is_null($projectstatic->budget_amount) && strcmp($projectstatic->budget_amount, '')) {
-				print '<span class="amount">' . price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency) . '</span>';
+				print '<span class="amount">' . price($projectstatic->budget_amount, 0, $langs, 1, 0, 0, $conf->currency) . '</span>';
 			}
 			print '</td></tr>';
 
@@ -1268,25 +1265,25 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		// Definition of fields for list
 		$arrayfields = array();
-		$arrayfields['t.element_date'] = array('label'=>$langs->trans("Date"), 'checked'=>1);
-		$arrayfields['p.fk_soc'] = array('label'=>$langs->trans("ThirdParty"), 'type'=>'integer:Societe:/societe/class/societe.class.php:1','checked'=>1);
-		$arrayfields['s.name_alias'] = array('label'=>$langs->trans("AliasNameShort"), 'type'=>'integer:Societe:/societe/class/societe.class.php:1');
+		$arrayfields['t.element_date'] = array('label' => $langs->trans("Date"), 'checked' => 1);
+		$arrayfields['p.fk_soc'] = array('label' => $langs->trans("ThirdParty"), 'type' => 'integer:Societe:/societe/class/societe.class.php:1','checked' => 1);
+		$arrayfields['s.name_alias'] = array('label' => $langs->trans("AliasNameShort"), 'type' => 'integer:Societe:/societe/class/societe.class.php:1');
 		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
 			if (! empty($allprojectforuser)) {
 				$arrayfields['p.project_ref'] = ['label' => $langs->trans('RefProject'), 'checked' => 1];
 				$arrayfields['p.project_label'] = ['label' => $langs->trans('ProjectLabel'), 'checked' => 1];
 			}
-			$arrayfields['t.element_ref'] = array('label'=>$langs->trans("RefTask"), 'checked'=>1);
-			$arrayfields['t.element_label'] = array('label'=>$langs->trans("LabelTask"), 'checked'=>1);
+			$arrayfields['t.element_ref'] = array('label' => $langs->trans("RefTask"), 'checked' => 1);
+			$arrayfields['t.element_label'] = array('label' => $langs->trans("LabelTask"), 'checked' => 1);
 		}
 		$arrayfields['author'] = array('label' => $langs->trans("By"), 'checked' => 1);
 		$arrayfields['t.note'] = array('label' => $langs->trans("Note"), 'checked' => 1);
 		if (isModEnabled('service') && !empty($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 			$arrayfields['t.fk_product'] = array('label' => $langs->trans("Product"), 'checked' => 1);
 		}
-		$arrayfields['t.element_duration'] = array('label'=>$langs->trans("Duration"), 'checked'=>1);
-		$arrayfields['value'] = array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>isModEnabled("salaries"));
-		$arrayfields['valuebilled'] = array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>(((getDolGlobalInt('PROJECT_HIDE_TASKS') || !getDolGlobalInt('PROJECT_BILL_TIME_SPENT')) ? 0 : 1) && $projectstatic->usage_bill_time));
+		$arrayfields['t.element_duration'] = array('label' => $langs->trans("Duration"), 'checked' => 1);
+		$arrayfields['value'] = array('label' => $langs->trans("Value"), 'checked' => 1, 'enabled' => isModEnabled("salaries"));
+		$arrayfields['valuebilled'] = array('label' => $langs->trans("Billed"), 'checked' => 1, 'enabled' => (((getDolGlobalInt('PROJECT_HIDE_TASKS') || !getDolGlobalInt('PROJECT_BILL_TIME_SPENT')) ? 0 : 1) && $projectstatic->usage_bill_time));
 		// Extra fields
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -1300,10 +1297,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$param .= '&limit='.((int) $limit);
 		}
 		if ($search_month > 0) {
-			$param .= '&search_month=' . urlencode($search_month);
+			$param .= '&search_month=' . urlencode((string) ($search_month));
 		}
 		if ($search_year > 0) {
-			$param .= '&search_year=' . urlencode($search_year);
+			$param .= '&search_year=' . urlencode((string) ($search_year));
 		}
 		if (!empty($search_user)) { 	// We keep param if -1 because default value is forced to user id if not set
 			$param .= '&search_user='.urlencode($search_user);
@@ -1330,40 +1327,40 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$param .= '&search_note=' . urlencode($search_note);
 		}
 		if ($search_duration != '') {
-			$param .= '&amp;search_field2=' . urlencode($search_duration);
+			$param .= '&amp;search_field2=' . urlencode((string) ($search_duration));
 		}
 		if ($optioncss != '') {
 			$param .= '&optioncss=' . urlencode($optioncss);
 		}
 		if ($search_date_startday) {
-			$param .= '&search_date_startday=' . urlencode($search_date_startday);
+			$param .= '&search_date_startday=' . urlencode((string) ($search_date_startday));
 		}
 		if ($search_date_startmonth) {
-			$param .= '&search_date_startmonth=' . urlencode($search_date_startmonth);
+			$param .= '&search_date_startmonth=' . urlencode((string) ($search_date_startmonth));
 		}
 		if ($search_date_startyear) {
-			$param .= '&search_date_startyear=' . urlencode($search_date_startyear);
+			$param .= '&search_date_startyear=' . urlencode((string) ($search_date_startyear));
 		}
 		if ($search_date_endday) {
-			$param .= '&search_date_endday=' . urlencode($search_date_endday);
+			$param .= '&search_date_endday=' . urlencode((string) ($search_date_endday));
 		}
 		if ($search_date_endmonth) {
-			$param .= '&search_date_endmonth=' . urlencode($search_date_endmonth);
+			$param .= '&search_date_endmonth=' . urlencode((string) ($search_date_endmonth));
 		}
 		if ($search_date_endyear) {
-			$param .= '&search_date_endyear=' . urlencode($search_date_endyear);
+			$param .= '&search_date_endyear=' . urlencode((string) ($search_date_endyear));
 		}
 		if ($search_timespent_starthour) {
-			$param .= '&search_timespent_duration_starthour=' . urlencode($search_timespent_starthour);
+			$param .= '&search_timespent_duration_starthour=' . urlencode((string) ($search_timespent_starthour));
 		}
 		if ($search_timespent_startmin) {
-			$param .= '&search_timespent_duration_startmin=' . urlencode($search_timespent_startmin);
+			$param .= '&search_timespent_duration_startmin=' . urlencode((string) ($search_timespent_startmin));
 		}
 		if ($search_timespent_endhour) {
-			$param .= '&search_timespent_duration_endhour=' . urlencode($search_timespent_endhour);
+			$param .= '&search_timespent_duration_endhour=' . urlencode((string) ($search_timespent_endhour));
 		}
 		if ($search_timespent_endmin) {
-			$param .= '&search_timespent_duration_endmin=' . urlencode($search_timespent_endmin);
+			$param .= '&search_timespent_duration_endmin=' . urlencode((string) ($search_timespent_endmin));
 		}
 
 		/*
@@ -1371,13 +1368,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 		 */
 		if ($id) {
-			$param .= '&id=' . urlencode($id);
+			$param .= '&id=' . urlencode((string) ($id));
 		}
 		if ($projectid) {
-			$param .= '&projectid=' . urlencode($projectid);
+			$param .= '&projectid=' . urlencode((string) ($projectid));
 		}
 		if ($withproject) {
-			$param .= '&withproject=' . urlencode($withproject);
+			$param .= '&withproject=' . urlencode((string) ($withproject));
 		}
 		// Add $param from hooks
 		$parameters = array();
@@ -1421,7 +1418,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print $langs->trans('DateInvoice');
 				print '</td>';
 				print '<td>';
-				print $form->selectDate('', '', '', '', '', '', 1, 1);
+				print $form->selectDate('', '', 0, 0, 0, '', 1, 1);
 				print '</td>';
 				print '</tr>';
 
@@ -1551,7 +1548,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$tasks = array();
 
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 
 		$sql = "SELECT t.rowid, t.fk_element, t.element_date, t.element_datehour, t.element_date_withhour, t.element_duration, t.fk_user, t.note, t.thm,";
 		$sql .= " t.fk_product,";
@@ -1835,7 +1832,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (isModEnabled("service") && !empty($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 					print '<td class="nowraponall">';
 					print img_picto('', 'service');
-					print $form->select_produits((GETPOSTISSET('fk_product')?GETPOSTINT("fk_product"):''), 'fk_product', '1', 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth150', 0, '', null, 1);
+					print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOSTINT("fk_product") : ''), 'fk_product', '1', 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth150', 0, '', null, 1);
 					print '</td>';
 				}
 			}
@@ -2397,8 +2394,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 						if ($task_time->invoice_id) {
 							$result = $tmpinvoice->fetch($task_time->invoice_id);
 							if ($result > 0) {
-								if ($action=='editline' && $_GET['lineid'] == $task_time->rowid) {
-									print $formproject->selectInvoiceAndLine($task_time->invoice_id, $task_time->invoice_line_id, 'invoiceid', 'invoicelineid', 'maxwidth500', array('p.rowid'=>$projectstatic->id));
+								if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid) {
+									print $formproject->selectInvoiceAndLine($task_time->invoice_id, $task_time->invoice_line_id, 'invoiceid', 'invoicelineid', 'maxwidth500', array('p.rowid' => $projectstatic->id));
 								} else {
 									print $tmpinvoice->getNomUrl(1);
 									if (!empty($task_time->invoice_line_id)) {

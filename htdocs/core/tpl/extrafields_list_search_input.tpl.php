@@ -5,7 +5,7 @@ print '<!-- extrafields_list_search_input.tpl.php -->'."\n";
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 if (empty($extrafieldsobjectkey) && is_object($object)) {

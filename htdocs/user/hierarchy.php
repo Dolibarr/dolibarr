@@ -48,16 +48,16 @@ if (empty($mode)) {
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 
 
-$search_statut = GETPOSTINT('search_statut');
-if ($search_statut == '' || $search_statut == '0') {
-	$search_statut = '1';
+$search_status = GETPOST('search_status', 'intcomma');
+if ($search_status == '' || $search_status == '0') {
+	$search_status = '1';
 }
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
-	$search_statut = "";
+	$search_status = "";
 }
 
 if ($contextpage == 'employeelist') {
@@ -106,7 +106,7 @@ llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'bodyfor
 
 
 // Load hierarchy of users
-$user_arbo = $userstatic->get_full_tree(0, ($search_statut != '' && $search_statut >= 0) ? "statut = ".$search_statut : '');
+$user_arbo = $userstatic->get_full_tree(0, ($search_status != '' && $search_status >= 0) ? "statut = ".$search_status : '');
 
 
 // Count total nb of records
@@ -169,7 +169,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 
 	//var_dump($data);
 
-	$param = "&search_statut=".urlencode($search_statut);
+	$param = "&search_status=".urlencode($search_status);
 	$param = "&contextpage=".urlencode($contextpage);
 
 	$newcardbutton = '';
@@ -212,7 +212,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	print '<td class="liste_titre">&nbsp;</td>';
 	// Status
 	print '<td class="liste_titre right">';
-	print $form->selectarray('search_statut', array('-1'=>'', '1'=>$langs->trans('Enabled')), $search_statut, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
+	print $form->selectarray('search_status', array('-1'=>'', '1'=>$langs->trans('Enabled')), $search_status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td>';
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

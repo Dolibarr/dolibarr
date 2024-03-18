@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2017       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,14 +51,15 @@ if ($mode == 'searchkey') {
 	$transvalue = GETPOST('transvalue', 'restricthtml');
 }
 
-
+// Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -247,7 +249,7 @@ if ($transvalue) {
 }
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && !empty($debug)) ? '?debug=1' : '').'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 if (isset($optioncss) && $optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -290,6 +292,7 @@ foreach ($modulesdir as $keydir => $tmpsearchdir) {
 	$dir_lang_osencoded = dol_osencode($dir_lang);
 
 	$filearray = dol_dir_list($dir_lang_osencoded, 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
+
 	foreach ($filearray as $file) {
 		$tmpfile = preg_replace('/.lang/i', '', basename($file['name']));
 		$moduledirname = (basename(dirname(dirname($dir_lang))));
@@ -300,7 +303,9 @@ foreach ($modulesdir as $keydir => $tmpsearchdir) {
 		}
 		//var_dump($i.' - '.$keydir.' - '.$dir_lang_osencoded.' -> '.$moduledirname . ' / ' . $tmpfile.' -> '.$langkey);
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$result = $newlang->load($langkey, 0, 0, '', 0); // Load translation files + database overwrite
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$result = $newlangfileonly->load($langkey, 0, 0, '', 1); // Load translation files only
 		if ($result < 0) {
 			print 'Failed to load language file '.$tmpfile.'<br>'."\n";
@@ -312,6 +317,7 @@ foreach ($modulesdir as $keydir => $tmpsearchdir) {
 		}
 		//print 'After loading lang '.$langkey.', newlang has '.count($newlang->tab_translate).' records<br>'."\n";
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$result = $langsenfileonly->load($langkey, 0, 0, '', 1); // Load translation files only
 	}
 	$i++;
@@ -395,12 +401,12 @@ if ($mode == 'overwrite') {
 
 			print '<tr class="oddeven">';
 
-			print '<td>'.$obj->lang.'</td>'."\n";
+			print '<td>'.dol_escape_htmltag($obj->lang).'</td>'."\n";
 			print '<td>';
 			if ($action == 'edit' && $obj->rowid == GETPOSTINT('rowid')) {
 				print '<input type="text" class="quatrevingtpercent" name="transkey" value="'.dol_escape_htmltag($obj->transkey).'">';
 			} else {
-				print $obj->transkey;
+				print dol_escape_htmltag($obj->transkey);
 			}
 			print '</td>'."\n";
 
@@ -415,7 +421,7 @@ if ($mode == 'overwrite') {
 				print '<input type="text" class="quatrevingtpercent" name="transvalue" value="'.dol_escape_htmltag($obj->transvalue).'">';
 			} else {
 				//print $obj->transkey.' '.$langsenfileonly->tab_translate[$obj->transkey];
-				$titleforvalue = $langs->trans("Translation").' en_US for key '.$obj->transkey.':<br>'.($langsenfileonly->tab_translate[$obj->transkey] ? $langsenfileonly->trans($obj->transkey) : '<span class="opacitymedium">'.$langs->trans("None").'</span>');
+				$titleforvalue = $langs->trans("Translation").' en_US for key '.$obj->transkey.':<br>'.(!empty($langsenfileonly->tab_translate[$obj->transkey]) ? $langsenfileonly->trans($obj->transkey) : '<span class="opacitymedium">'.$langs->trans("None").'</span>');
 				/*if ($obj->lang != 'en_US') {
 					$titleforvalue .= '<br>'.$langs->trans("Translation").' '.$obj->lang.' '...;
 				}*/
@@ -432,9 +438,9 @@ if ($mode == 'overwrite') {
 				print ' &nbsp; ';
 				print '<input type="submit" class="button buttongen button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 			} else {
-				print '<a class="reposition editfielda paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.urlencode($mode).'&action=edit&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_edit().'</a>';
+				print '<a class="reposition editfielda paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.urlencode($mode).'&action=edit&token='.newToken().'">'.img_edit().'</a>';
 				print ' &nbsp; ';
-				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.urlencode($mode).'&action=delete&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
+				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.urlencode($mode).'&action=delete&token='.newToken().'">'.img_delete().'</a>';
 			}
 			print '</td>';
 
@@ -560,7 +566,7 @@ if ($mode == 'searchkey') {
 		if ($i <= $offset) {
 			continue;
 		}
-		if ($i > ($offset + $limit)) {
+		if ($limit && $i > ($offset + $limit)) {
 			break;
 		}
 		print '<tr class="oddeven"><td>'.$langcode.'</td><td>'.$key.'</td><td class="small">';
@@ -616,6 +622,7 @@ if ($mode == 'searchkey') {
 			print '<a class="marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&mode='.urlencode($mode).'&action=delete&token='.newToken().'&mode='.urlencode($mode).'">'.img_delete().'</a>';
 			print '&nbsp;&nbsp;';
 
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$htmltext = $langs->trans("TransKeyWithoutOriginalValue", $key);
 			print $form->textwithpicto('', $htmltext, 1, 'warning');
 		}

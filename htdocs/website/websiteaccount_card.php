@@ -209,13 +209,13 @@ if ($action == 'create') {
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
-	if ($backtopageforcancel) {
+	if (!empty($backtopageforcancel)) {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
-	if ($backtopagejsfields) {
+	if (!empty($backtopagejsfields)) {
 		print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
 	}
-	if ($dol_openinpopup) {
+	if (!empty($dol_openinpopup)) {
 		print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
 	}
 

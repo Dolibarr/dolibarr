@@ -156,8 +156,9 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 }
 
 /*
-* MENU Dropdown
-*/
+ * MENU Dropdown
+ */
+ 
 .login_block.usedropdown .logout-btn{
 	display: none;
 }
@@ -207,7 +208,7 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 }
 
 div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown, div#topmenu-quickadd-dropdown {
-	<?php if (!getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE')) { ?>
+	<?php if (!$disableimages) { ?>
 		line-height: 46px;
 	<?php } ?>
 }

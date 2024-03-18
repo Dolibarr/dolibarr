@@ -60,8 +60,7 @@ $search_datepayment_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datepayment_
 $search_type = GETPOSTINT('search_type');
 $search_account				= GETPOSTINT('search_account');
 $search_amount 				= GETPOST('search_amount', 'alpha');
-$search_status = GETPOSTINT('search_status');
-$ltt = GETPOSTINT("ltt");
+$search_status = GETPOST('search_status', 'intcomma');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield					= GETPOST('sortfield', 'aZ09comma');
@@ -83,16 +82,16 @@ if (!$sortorder) {
 }
 
 $arrayfields = array(
-	't.rowid'			=>array('checked'=>1, 'position'=>10, 'label'=>"Ref",),
-	't.label'			=>array('checked'=>1, 'position'=>20, 'label'=>"Label"),
-	't.datev'			=>array('checked'=>1, 'position'=>30, 'label'=>"PeriodEndDate"),
-	't.fk_typepayment'	=>array('checked'=>1, 'position'=>50, 'label'=>"DefaultPaymentMode"),
-	't.amount'			=>array('checked'=>1, 'position'=>90, 'label'=>"Amount"),
-	't.status'			=>array('checked'=>1, 'position'=>90, 'label'=>"Status"),
+	't.rowid'			=> array('checked' => 1, 'position' => 10, 'label' => "Ref",),
+	't.label'			=> array('checked' => 1, 'position' => 20, 'label' => "Label"),
+	't.datev'			=> array('checked' => 1, 'position' => 30, 'label' => "PeriodEndDate"),
+	't.fk_typepayment'	=> array('checked' => 1, 'position' => 50, 'label' => "DefaultPaymentMode"),
+	't.amount'			=> array('checked' => 1, 'position' => 90, 'label' => "Amount"),
+	't.status'			=> array('checked' => 1, 'position' => 90, 'label' => "Status"),
 );
 
 if (isModEnabled("bank")) {
-	$arrayfields['t.fk_account'] = array('checked'=>1, 'position'=>60, 'label'=>"DefaultBankAccount");
+	$arrayfields['t.fk_account'] = array('checked' => 1, 'position' => 60, 'label' => "DefaultBankAccount");
 }
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -116,7 +115,7 @@ $result = restrictedArea($user, 'tax', '', 'tva', 'charges');
  * Actions
  */
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -172,8 +171,8 @@ $help_url = '';
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT t.rowid, t.amount, t.label, t.datev, t.datep, t.paye as status, t.fk_typepayment as type, t.fk_account,';
-$sql.= ' ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,';
-$sql.= ' t.num_payment, pst.code as payment_code,';
+$sql .= ' ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,';
+$sql .= ' t.num_payment, pst.code as payment_code,';
 $sql .= ' SUM(ptva.amount) as alreadypayed';
 
 $sqlfields = $sql; // $sql fields to remove for count total
@@ -361,8 +360,8 @@ if (!empty($socid)) {
 	$url .= '&socid='.$socid;
 }
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewVATPayment'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
@@ -401,7 +400,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -487,6 +486,7 @@ if (!empty($arrayfields['t.amount']['checked'])) {
 if (!empty($arrayfields['t.status']['checked'])) {
 	print '<td class="liste_titre right parentonrightofpage">';
 	$liststatus = array('0' => $langs->trans("Unpaid"), '1' => $langs->trans("Paid"));
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
@@ -495,7 +495,7 @@ if (!empty($arrayfields['t.status']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -553,7 +553,7 @@ if (!empty($arrayfields['t.status']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -771,7 +771,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

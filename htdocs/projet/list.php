@@ -8,6 +8,7 @@
  * Copyright (C) 2018 	   Ferran Marcet	    <fmarcet@2byte.es>
  * Copyright (C) 2019 	   Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2020	   Tobias Sean			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +78,7 @@ $diroutputmassaction = $conf->project->dir_output.'/temp/massgeneration/'.$user-
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -101,16 +102,16 @@ $search_opp_status = GETPOST("search_opp_status", 'alpha');
 $search_opp_percent = GETPOST("search_opp_percent", 'alpha');
 $search_opp_amount = GETPOST("search_opp_amount", 'alpha');
 $search_budget_amount = GETPOST("search_budget_amount", 'alpha');
-$search_public = GETPOSTINT("search_public");
+$search_public = GETPOST("search_public", 'intcomma');
 $search_project_user = GETPOSTINT('search_project_user');
 $search_project_contact = GETPOSTINT('search_project_contact');
 $search_sale = GETPOSTINT('search_sale');
-$search_usage_opportunity = GETPOSTINT('search_usage_opportunity');
-$search_usage_task = GETPOSTINT('search_usage_task');
-$search_usage_bill_time = GETPOSTINT('search_usage_bill_time');
-$search_usage_event_organization = GETPOSTINT('search_usage_event_organization');
-$search_accept_conference_suggestions = GETPOSTINT('search_accept_conference_suggestions');
-$search_accept_booth_suggestions = GETPOSTINT('search_accept_booth_suggestions');
+$search_usage_opportunity = GETPOST('search_usage_opportunity', 'intcomma');
+$search_usage_task = GETPOST('search_usage_task', 'intcomma');
+$search_usage_bill_time = GETPOST('search_usage_bill_time', 'intcomma');
+$search_usage_event_organization = GETPOST('search_usage_event_organization', 'intcomma');
+$search_accept_conference_suggestions = GETPOST('search_accept_conference_suggestions', 'intcomma');
+$search_accept_booth_suggestions = GETPOST('search_accept_booth_suggestions', 'intcomma');
 $search_price_registration = GETPOST("search_price_registration", 'alpha');
 $search_price_booth = GETPOST("search_price_booth", 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
@@ -226,11 +227,11 @@ foreach ($object->fields as $key => $val) {
 	if (!empty($val['visible'])) {
 		$visible = dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['p.'.$key] = array(
-			'label'=>$val['label'],
-			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
-			'position'=>$val['position'],
-			'help'=> isset($val['help']) ? $val['help'] : ''
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? 0 : 1),
+			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
@@ -238,12 +239,12 @@ foreach ($object->fields as $key => $val) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 // Add non object fields to fields for list
-$arrayfields['s.nom'] = array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>21, 'enabled'=>(!isModEnabled('societe') ? 0 : 1));
-$arrayfields['s.name_alias'] = array('label'=>"AliasNameShort", 'checked'=>0, 'position'=>22);
-$arrayfields['commercial'] = array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>0, 'position'=>23);
-$arrayfields['c.assigned'] = array('label'=>$langs->trans("AssignedTo"), 'checked'=>1, 'position'=>120);
-$arrayfields['opp_weighted_amount'] = array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'enabled'=>(!getDolGlobalString('PROJECT_USE_OPPORTUNITIES') ? 0 : 1), 'position'=>106);
-$arrayfields['u.login'] = array('label'=>"Author", 'checked'=>-1, 'position'=>165);
+$arrayfields['s.nom'] = array('label' => $langs->trans("ThirdParty"), 'checked' => 1, 'position' => 21, 'enabled' => (!isModEnabled('societe') ? 0 : 1));
+$arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'checked' => 0, 'position' => 22);
+$arrayfields['commercial'] = array('label' => $langs->trans("SaleRepresentativesOfThirdParty"), 'checked' => 0, 'position' => 23);
+$arrayfields['c.assigned'] = array('label' => $langs->trans("AssignedTo"), 'checked' => 1, 'position' => 120);
+$arrayfields['opp_weighted_amount'] = array('label' => $langs->trans('OpportunityWeightedAmountShort'), 'checked' => 0, 'enabled' => (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES') ? 0 : 1), 'position' => 106);
+$arrayfields['u.login'] = array('label' => "Author", 'checked' => -1, 'position' => 165);
 // Force some fields according to search_usage filter...
 if (GETPOST('search_usage_opportunity')) {
 	//$arrayfields['p.usage_opportunity']['visible'] = 1;	// Not require, filter on search_opp_status is enough
@@ -274,7 +275,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -395,11 +396,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			if ($nbok > 1) {
-				setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
-			} else {
-				setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
-			}
+			setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
 			$db->commit();
 		} else {
 			$db->rollback();
@@ -495,7 +492,7 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as p";
-if (!empty($extrafields->attributes[$object->table_element]['label']) &&is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
@@ -812,121 +809,121 @@ if ($search_all != '') {
 	$param .= '&search_all='.urlencode($search_all);
 }
 if ($search_sday) {
-	$param .= '&search_sday='.urlencode($search_sday);
+	$param .= '&search_sday='.urlencode((string) ($search_sday));
 }
 if ($search_smonth) {
-	$param .= '&search_smonth='.urlencode($search_smonth);
+	$param .= '&search_smonth='.urlencode((string) ($search_smonth));
 }
 if ($search_syear) {
-	$param .= '&search_syear='.urlencode($search_syear);
+	$param .= '&search_syear='.urlencode((string) ($search_syear));
 }
 if ($search_eday) {
-	$param .= '&search_eday='.urlencode($search_eday);
+	$param .= '&search_eday='.urlencode((string) ($search_eday));
 }
 if ($search_emonth) {
-	$param .= '&search_emonth='.urlencode($search_emonth);
+	$param .= '&search_emonth='.urlencode((string) ($search_emonth));
 }
 if ($search_eyear) {
-	$param .= '&search_eyear='.urlencode($search_eyear);
+	$param .= '&search_eyear='.urlencode((string) ($search_eyear));
 }
 if ($search_date_start_startmonth) {
-	$param .= '&search_date_start_startmonth='.urlencode($search_date_start_startmonth);
+	$param .= '&search_date_start_startmonth='.urlencode((string) ($search_date_start_startmonth));
 }
 if ($search_date_start_startyear) {
-	$param .= '&search_date_start_startyear='.urlencode($search_date_start_startyear);
+	$param .= '&search_date_start_startyear='.urlencode((string) ($search_date_start_startyear));
 }
 if ($search_date_start_startday) {
-	$param .= '&search_date_start_startday='.urlencode($search_date_start_startday);
+	$param .= '&search_date_start_startday='.urlencode((string) ($search_date_start_startday));
 }
 if ($search_date_start_start) {
 	$param .= '&search_date_start_start='.urlencode($search_date_start_start);
 }
 if ($search_date_start_endmonth) {
-	$param .= '&search_date_start_endmonth='.urlencode($search_date_start_endmonth);
+	$param .= '&search_date_start_endmonth='.urlencode((string) ($search_date_start_endmonth));
 }
 if ($search_date_start_endyear) {
-	$param .= '&search_date_start_endyear='.urlencode($search_date_start_endyear);
+	$param .= '&search_date_start_endyear='.urlencode((string) ($search_date_start_endyear));
 }
 if ($search_date_start_endday) {
-	$param .= '&search_date_start_endday='.urlencode($search_date_start_endday);
+	$param .= '&search_date_start_endday='.urlencode((string) ($search_date_start_endday));
 }
 if ($search_date_start_end) {
 	$param .= '&search_date_start_end='.urlencode($search_date_start_end);
 }
 if ($search_date_end_startmonth) {
-	$param .= '&search_date_end_startmonth='.urlencode($search_date_end_startmonth);
+	$param .= '&search_date_end_startmonth='.urlencode((string) ($search_date_end_startmonth));
 }
 if ($search_date_end_startyear) {
-	$param .= '&search_date_end_startyear='.urlencode($search_date_end_startyear);
+	$param .= '&search_date_end_startyear='.urlencode((string) ($search_date_end_startyear));
 }
 if ($search_date_end_startday) {
-	$param .= '&search_date_end_startday='.urlencode($search_date_end_startday);
+	$param .= '&search_date_end_startday='.urlencode((string) ($search_date_end_startday));
 }
 if ($search_date_end_start) {
 	$param .= '&search_date_end_start='.urlencode($search_date_end_start);
 }
 if ($search_date_end_endmonth) {
-	$param .= '&search_date_end_endmonth='.urlencode($search_date_end_endmonth);
+	$param .= '&search_date_end_endmonth='.urlencode((string) ($search_date_end_endmonth));
 }
 if ($search_date_end_endyear) {
-	$param .= '&search_date_end_endyear='.urlencode($search_date_end_endyear);
+	$param .= '&search_date_end_endyear='.urlencode((string) ($search_date_end_endyear));
 }
 if ($search_date_end_endday) {
-	$param .= '&search_date_end_endday='.urlencode($search_date_end_endday);
+	$param .= '&search_date_end_endday='.urlencode((string) ($search_date_end_endday));
 }
 if ($search_date_end_end) {
 	$param .= '&search_date_end_end=' . urlencode($search_date_end_end);
 }
 if ($search_date_creation_startmonth) {
-	$param .= '&search_date_creation_startmonth='.urlencode($search_date_creation_startmonth);
+	$param .= '&search_date_creation_startmonth='.urlencode((string) ($search_date_creation_startmonth));
 }
 if ($search_date_creation_startyear) {
-	$param .= '&search_date_creation_startyear='.urlencode($search_date_creation_startyear);
+	$param .= '&search_date_creation_startyear='.urlencode((string) ($search_date_creation_startyear));
 }
 if ($search_date_creation_startday) {
-	$param .= '&search_date_creation_startday='.urlencode($search_date_creation_startday);
+	$param .= '&search_date_creation_startday='.urlencode((string) ($search_date_creation_startday));
 }
 if ($search_date_creation_start) {
 	$param .= '&search_date_creation_start='.urlencode($search_date_creation_start);
 }
 if ($search_date_creation_endmonth) {
-	$param .= '&search_date_creation_endmonth='.urlencode($search_date_creation_endmonth);
+	$param .= '&search_date_creation_endmonth='.urlencode((string) ($search_date_creation_endmonth));
 }
 if ($search_date_creation_endyear) {
-	$param .= '&search_date_creation_endyear='.urlencode($search_date_creation_endyear);
+	$param .= '&search_date_creation_endyear='.urlencode((string) ($search_date_creation_endyear));
 }
 if ($search_date_creation_endday) {
-	$param .= '&search_date_creation_endday='.urlencode($search_date_creation_endday);
+	$param .= '&search_date_creation_endday='.urlencode((string) ($search_date_creation_endday));
 }
 if ($search_date_creation_end) {
 	$param .= '&search_date_creation_end='.urlencode($search_date_creation_end);
 }
 if ($search_date_modif_startmonth) {
-	$param .= '&search_date_modif_startmonth='.urlencode($search_date_modif_startmonth);
+	$param .= '&search_date_modif_startmonth='.urlencode((string) ($search_date_modif_startmonth));
 }
 if ($search_date_modif_startyear) {
-	$param .= '&search_date_modif_startyear='.urlencode($search_date_modif_startyear);
+	$param .= '&search_date_modif_startyear='.urlencode((string) ($search_date_modif_startyear));
 }
 if ($search_date_modif_startday) {
-	$param .= '&search_date_modif_startday='.urlencode($search_date_modif_startday);
+	$param .= '&search_date_modif_startday='.urlencode((string) ($search_date_modif_startday));
 }
 if ($search_date_modif_start) {
 	$param .= '&search_date_modif_start='.urlencode($search_date_modif_start);
 }
 if ($search_date_modif_endmonth) {
-	$param .= '&search_date_modif_endmonth='.urlencode($search_date_modif_endmonth);
+	$param .= '&search_date_modif_endmonth='.urlencode((string) ($search_date_modif_endmonth));
 }
 if ($search_date_modif_endyear) {
-	$param .= '&search_date_modif_endyear='.urlencode($search_date_modif_endyear);
+	$param .= '&search_date_modif_endyear='.urlencode((string) ($search_date_modif_endyear));
 }
 if ($search_date_modif_endday) {
-	$param .= '&search_date_modif_endday='.urlencode($search_date_modif_endday);
+	$param .= '&search_date_modif_endday='.urlencode((string) ($search_date_modif_endday));
 }
 if ($search_date_modif_end) {
 	$param .= '&search_date_modif_end=' . urlencode($search_date_modif_end);
 }
 if ($socid) {
-	$param .= '&socid='.urlencode($socid);
+	$param .= '&socid='.urlencode((string) ($socid));
 }
 if (!empty($search_category_array)) {
 	foreach ($search_category_array as $tmpval) {
@@ -961,10 +958,10 @@ if ($search_project_user > 0) {
 	$param .= '&search_project_user='.urlencode($search_project_user);
 }
 if ($search_project_contact > 0) {
-	$param .= '&search_project_contact='.urlencode($search_project_contact);
+	$param .= '&search_project_contact='.urlencode((string) ($search_project_contact));
 }
 if ($search_sale > 0) {
-	$param .= '&search_sale='.urlencode($search_sale);
+	$param .= '&search_sale='.urlencode((string) ($search_sale));
 }
 if ($search_opp_amount != '') {
 	$param .= '&search_opp_amount='.urlencode($search_opp_amount);
@@ -1015,8 +1012,8 @@ $param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
-	'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
-	'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+	'validate' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
+	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
@@ -1049,8 +1046,8 @@ if ($search_usage_event_organization == 1) {
 }
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewProject'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('projet', 'creer'));
 
@@ -1159,7 +1156,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 
@@ -1250,7 +1247,7 @@ if (!empty($arrayfields['p.datee']['checked'])) {
 // Visibility
 if (!empty($arrayfields['p.public']['checked'])) {
 	print '<td class="liste_titre center">';
-	$array = array(''=>'', 0 => $langs->trans("PrivateProject"), 1 => $langs->trans("SharedProject"));
+	$array = array('' => '', 0 => $langs->trans("PrivateProject"), 1 => $langs->trans("SharedProject"));
 	print $form->selectarray('search_public', $array, $search_public, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth75');
 	print '</td>';
 }
@@ -1334,7 +1331,7 @@ if (!empty($arrayfields['u.login']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Creation date
@@ -1489,7 +1486,7 @@ if (!empty($arrayfields['u.login']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray'=>&$totalarray);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['p.datec']['checked'])) {
@@ -1618,7 +1615,7 @@ while ($i < $imaxinloop) {
 		}
 
 		$selected = in_array($object->id, $arrayofselected);
-		$arrayofdata = array('assignedusers' => $stringassignedusers, 'thirdparty'=>$companystatic, 'selected' => $selected);
+		$arrayofdata = array('assignedusers' => $stringassignedusers, 'thirdparty' => $companystatic, 'selected' => $selected);
 
 		print $object->getKanbanView('', $arrayofdata);
 
@@ -1982,7 +1979,7 @@ while ($i < $imaxinloop) {
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
@@ -2044,7 +2041,6 @@ while ($i < $imaxinloop) {
 
 		print '</tr>'."\n";
 	}
-	//}
 
 	$i++;
 }
@@ -2065,7 +2061,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql' => $sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

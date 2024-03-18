@@ -1,9 +1,12 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ *
+ * For 'price()', replace $form parameter that is '' with 0.
  */
 
 declare(strict_types=1);
 
+use ast\flags;
 use Microsoft\PhpParser\Node\Expression\CallExpression;
 use Microsoft\PhpParser\Node\QualifiedName;
 use Phan\AST\TolerantASTConverter\NodeUtils;
@@ -16,10 +19,10 @@ use Phan\Plugin\Internal\IssueFixingPlugin\IssueFixer;
 use Microsoft\PhpParser\Node\Expression\ArgumentExpression;
 use Microsoft\PhpParser\Node\DelimitedList\ArgumentExpressionList;
 use Microsoft\PhpParser\Node\StringLiteral;
+use Microsoft\PhpParser\Node\ReservedWord;
+use Microsoft\PhpParser\Token;
 
 /**
- * Implements --automatic-fix for GetPostFixerPlugin
- *
  * This is a prototype, there are various features it does not implement.
  */
 
@@ -30,24 +33,16 @@ call_user_func(static function (): void {
 	 */
 	$fix = static function (CodeBase $code_base, FileCacheEntry $contents, IssueInstance $instance): ?FileEditSet {
 		$line = $instance->getLine();
-		$new_name = (string) $instance->getTemplateParameters()[1];
-		if ($new_name !== "GETPOSTINT") {
-			return null;
-		}
-
-		$function_repr = (string) $instance->getTemplateParameters()[0];
-		if (!preg_match('{\\\\(\w+)}', $function_repr, $match)) {
-			return null;
-		}
-		$expected_name = $match[1];
+		// print flags\TYPE_NULL;
+		$expected_name = 'urlencode';
 		$edits = [];
 		foreach ($contents->getNodesAtLine($line) as $node) {
 			if (!$node instanceof ArgumentExpressionList) {
 				continue;
 			}
 			$arguments = $node->children;
-			if (count($arguments) != 3) {
-				print "Arg Count is ".count($arguments)." - Skip $instance".PHP_EOL;
+			if (count($arguments) < 1) {
+				// print "Arg Count is ".count($arguments)." - Skip $instance".PHP_EOL;
 				continue;
 			}
 
@@ -56,6 +51,7 @@ call_user_func(static function (): void {
 				print "Not actual call - Skip $instance".PHP_EOL;
 				continue;
 			}
+			print "Actual call - $instance".PHP_EOL;
 			$callable = $node->parent;
 
 			$callableExpression = $callable->callableExpression;
@@ -73,43 +69,30 @@ call_user_func(static function (): void {
 			}
 
 			foreach ($arguments as $i => $argument) {
-				print "Type$i: ".get_class($argument).PHP_EOL;
+				if ($argument instanceof ArgumentExpression) {
+					print "Type$i: ".get_class($argument->expression).PHP_EOL;
+				}
 			}
 
-			$arg2 = $arguments[2];
+			$arg = $arguments[0];
 
-			if ($arg2 instanceof ArgumentExpression && $arg2->expression instanceof StringLiteral) {
-				// Get the string value of the StringLiteral
-				$stringValue = $arg2->expression->getStringContentsText();
-			} else {
-				print "Expression is not string ".get_class($arg2)."/".get_class($arg2->expression)."- Skip $instance".PHP_EOL;
-				continue;
-			}
-			print "Fixture elem on $line - $new_name - $function_repr - arg: $stringValue".PHP_EOL;
+			// Reached end of switch case without "continue" -> replace
+			$replacement = 0;
+
+			print "Fixture elem on $line - $actual_name() - $instance".PHP_EOL;
+
+			// Determine replacement
+			$replacement = '0';
 
 			// Get the first argument (delimiter)
-			$delimiter = $arguments[1];
-			// Get the second argument
-			$secondArgument = $arguments[2];
+			$argument_to_replace = $arg;
 
-			// Get the start position of the delimiter
-			$arg_start_pos = $delimiter->getStartPosition();
+			$arg_start_pos = $argument_to_replace->getStartPosition();
+			$arg_end_pos = $argument_to_replace->getEndPosition();
 
-			// Get the end position of the second argument
-			$arg_end_pos = $secondArgument->getEndPosition();
-
-
-
-			// @phan-suppress-next-line PhanThrowTypeAbsentForCall
-			$start = $callableExpression->getStartPosition();
-			// @phan-suppress-next-line PhanThrowTypeAbsentForCall
-			$end = $callableExpression->getEndPosition();
-
-			// Remove second argument
-			$edits[] = new FileEdit($arg_start_pos, $arg_end_pos, "");
-
-			// Replace call with GETPOSTINT
-			$edits[] = new FileEdit($start, $end, (($file_contents[$start] ?? '') === '\\' ? '\\' : '') . $new_name);
+			// Remove deprecated module name
+			$edits[] = new FileEdit($arg_start_pos, $arg_start_pos, "(string) (");
+			$edits[] = new FileEdit($arg_end_pos, $arg_end_pos, ")");
 		}
 		if ($edits) {
 			return new FileEditSet($edits);
@@ -117,7 +100,7 @@ call_user_func(static function (): void {
 		return null;
 	};
 	IssueFixer::registerFixerClosure(
-		'GetPostShouldBeGetPostInt',
+		'PhanTypeMismatchArgumentInternal',
 		$fix
 	);
 });

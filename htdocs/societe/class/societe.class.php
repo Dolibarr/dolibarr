@@ -15,11 +15,12 @@
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018	    Philippe Grand	        <philippe.grand@atoo-net.com>
  * Copyright (C) 2019-2020  Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
  * Copyright (C) 2022		ButterflyOfFire         <butterflyoffire+dolibarr@protonmail.com>
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +83,7 @@ class Societe extends CommonObject
 	public $fieldsforcombobox = 'nom,name_alias';
 
 	/**
-	 * @var array	List of child tables. To test if we can delete object.
+	 * @var array<string, array<string>>	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
 		'supplier_proposal' => array('name' => 'SupplierProposal'),
@@ -100,7 +101,7 @@ class Societe extends CommonObject
 	);
 
 	/**
-	 * @var array    List of child tables. To know object to delete on cascade.
+	 * @var string[]	List of child tables. To know object to delete on cascade.
 	 *               if name like with @ClassName:FilePathClass:ParentFkFieldName' it will call method deleteByParentField (with parentId as parameters) and FieldName to fetch and delete child object
 	 */
 	protected $childtablesoncascade = array(
@@ -187,7 +188,7 @@ class Societe extends CommonObject
 	 */
 
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
@@ -196,7 +197,7 @@ class Societe extends CommonObject
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 30),
 		'nom' => array('type' => 'varchar(128)', 'label' => 'Nom', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'showoncombobox' => 1),
 		'name_alias' => array('type' => 'varchar(128)', 'label' => 'Name alias', 'enabled' => 1, 'visible' => -1, 'position' => 36, 'showoncombobox' => 2),
-		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 40, 'index' => 1),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 40, 'index' => 1),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 45),
 		'code_client' => array('type' => 'varchar(24)', 'label' => 'CustomerCode', 'enabled' => 1, 'visible' => -1, 'position' => 55),
 		'code_fournisseur' => array('type' => 'varchar(24)', 'label' => 'SupplierCode', 'enabled' => 1, 'visible' => -1, 'position' => 60),
@@ -328,21 +329,21 @@ class Societe extends CommonObject
 
 	/**
 	 * @var string State code
-	 * @deprecated Use state_code instead
+	 * @deprecated Use $state_code instead
 	 * @see $state_code
 	 */
 	public $departement_code;
 
 	/**
 	 * @var string
-	 * @deprecated Use state instead
+	 * @deprecated Use $state instead
 	 * @see $state
 	 */
 	public $departement;
 
 	/**
 	 * @var string
-	 * @deprecated Use country instead
+	 * @deprecated Use $country instead
 	 * @see $country
 	 */
 	public $pays;
@@ -425,7 +426,7 @@ class Societe extends CommonObject
 
 	/**
 	 * @var string Professional ID 1
-	 * @deprecated
+	 * @deprecated Use $idprof1 instead
 	 * @see $idprof1
 	 */
 	public $siren;
@@ -439,7 +440,7 @@ class Societe extends CommonObject
 
 	/**
 	 * @var string Professional ID 2
-	 * @deprecated
+	 * @deprecated Use $idprof2 instead
 	 * @see $idprof2
 	 */
 	public $siret;
@@ -452,7 +453,7 @@ class Societe extends CommonObject
 
 	/**
 	 * @var string Professional ID 3
-	 * @deprecated
+	 * @deprecated Use $idprof3 instead
 	 * @see $idprof3
 	 */
 	public $ape;
@@ -638,7 +639,7 @@ class Societe extends CommonObject
 	/**
 	 * Duplicate of code_compta_client (for backward compatibility)
 	 * @var string
-	 * @deprecated
+	 * @deprecated  Use $code_compta_client
 	 * @see $code_compta_client
 	 */
 	public $code_compta;
@@ -662,14 +663,14 @@ class Societe extends CommonObject
 	public $accountancy_code_supplier;
 
 	/**
-	 * Accounting code for product (for level 3 of suggestion of prouct accounting account)
+	 * Accounting code for product (for level 3 of suggestion of product accounting account)
 	 * @var string
 	 */
 	public $code_compta_product;
 
 	/**
 	 * @var string
-	 * @deprecated Note is split in public and private notes
+	 * @deprecated Use $note_public, $note_private - Note is split in public and private notes
 	 * @see $note_public, $note_private
 	 */
 	public $note;
@@ -1346,7 +1347,7 @@ class Societe extends CommonObject
 	 *		@param	int		$nosyncmember				Do not synchronize info of linked member
 	 *      @return int  			           			Return integer <0 if KO, >=0 if OK
 	 */
-	public function update($id, $user = '', $call_trigger = 1, $allowmodcodeclient = 0, $allowmodcodefournisseur = 0, $action = 'update', $nosyncmember = 1)
+	public function update($id, User $user, $call_trigger = 1, $allowmodcodeclient = 0, $allowmodcodefournisseur = 0, $action = 'update', $nosyncmember = 1)
 	{
 		global $langs, $conf, $hookmanager;
 
@@ -1796,9 +1797,11 @@ class Societe extends CommonObject
 	 *    @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
 	 *    @param    string	$email   		Email of third party (Warning, this can return several records)
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
+	 * 	  @param	bool	$is_client		Is the thirdparty a client ?
+	 *    @param	bool	$is_supplier	Is the thirdparty a supplier ?
 	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
+	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = false, $is_supplier = false)
 	{
 		global $langs;
 		global $conf;
@@ -1868,6 +1871,15 @@ class Societe extends CommonObject
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise_supplier as sr2 ON sr2.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise_supplier WHERE fk_soc = s.rowid AND entity IN ('.getEntity('discount').'))';
 		}
 		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
+
+		// Filter on client or supplier, for Client::fetch() and Fournisseur::fetch()
+		if ($is_client) {
+			$sql .= ' AND s.client > 0';
+		}
+		if ($is_supplier) {
+			$sql .= ' AND s.fournisseur > 0';
+		} // if both false, no test (the thirdparty can be client and/or supplier)
+
 		if ($rowid) {
 			$sql .= ' AND s.rowid = '.((int) $rowid);
 		}
@@ -2099,7 +2111,7 @@ class Societe extends CommonObject
 	 */
 	public function delete($id, User $fuser = null, $call_trigger = 1)
 	{
-		global $langs, $conf, $user;
+		global $conf, $user;
 
 		if (empty($fuser)) {
 			$fuser = $user;
@@ -2150,7 +2162,7 @@ class Societe extends CommonObject
 
 			if (!$error) {
 				foreach ($this->childtablesoncascade as $tabletodelete) {
-					$deleteFromObject = explode(':', $tabletodelete);
+					$deleteFromObject = explode(':', $tabletodelete, 4);
 					if (count($deleteFromObject) >= 2) {
 						$className = str_replace('@', '', $deleteFromObject[0]);
 						$filepath = $deleteFromObject[1];
@@ -2247,7 +2259,7 @@ class Societe extends CommonObject
 	 *  Define third party as a customer
 	 *
 	 *	@return		int		Return integer <0 if KO, >0 if OK
-	 *  @deprecated
+	 *  @deprecated Use setAsCustomer() instead
 	 *  @see setAsCustomer()
 	 */
 	public function set_as_client()
@@ -2489,9 +2501,9 @@ class Societe extends CommonObject
 	 * 	@param	string	$filter			Other filter
 	 * 	@param	integer	$maxvalue		Filter on max value for discount
 	 * 	@param	int		$discount_type	0 => customer discount, 1 => supplier discount
-	 *	@return	int					Return integer <0 if KO, Credit note amount otherwise
+	 *	@return	int						Return integer <0 if KO, Credit note amount otherwise
 	 */
-	public function getAvailableDiscounts($user = '', $filter = '', $maxvalue = 0, $discount_type = 0)
+	public function getAvailableDiscounts($user = null, $filter = '', $maxvalue = 0, $discount_type = 0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
@@ -3328,6 +3340,7 @@ class Societe extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 
 		$bac = new CompanyBankAccount($this->db);
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$bac->fetch(0, $this->id);
 
 		if ($bac->id > 0) {		// If a bank account has been found for company $this->id
@@ -3390,7 +3403,7 @@ class Societe extends CommonObject
 	 *	@param	int			$type		Should be 0 to say customer
 	 *  @return void
 	 */
-	public function get_codeclient($objsoc = 0, $type = 0)
+	public function get_codeclient($objsoc = null, $type = 0)
 	{
 		// phpcs:enable
 		global $conf;
@@ -3404,6 +3417,7 @@ class Societe extends CommonObject
 					break;
 				}
 			}
+			/** @var ModeleThirdPartyCode $mod */
 			$mod = new $module($this->db);
 
 			$this->code_client = $mod->getNextValue($objsoc, $type);
@@ -3422,7 +3436,7 @@ class Societe extends CommonObject
 	 *	@param	int			$type		Should be 1 to say supplier
 	 *  @return void
 	 */
-	public function get_codefournisseur($objsoc = 0, $type = 1)
+	public function get_codefournisseur($objsoc = null, $type = 1)
 	{
 		// phpcs:enable
 		global $conf;
@@ -3436,6 +3450,7 @@ class Societe extends CommonObject
 					break;
 				}
 			}
+			/** @var ModeleThirdPartyCode $mod */
 			$mod = new $module($this->db);
 
 			$this->code_fournisseur = $mod->getNextValue($objsoc, $type);
@@ -4513,6 +4528,7 @@ class Societe extends CommonObject
 		$this->idprof4 = 'idprof4';
 		$this->idprof5 = 'idprof5';
 		$this->idprof6 = 'idprof6';
+
 		return 1;
 	}
 
@@ -4935,7 +4951,7 @@ class Societe extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $user, $langs;
+		global $langs;
 
 		if (!empty($moreparams) && !empty($moreparams['use_companybankid'])) {
 			$modelpath = "core/modules/bank/doc/";
@@ -4962,6 +4978,7 @@ class Societe extends CommonObject
 			if (!isset($this->bank_account)) {
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 				$bac = new CompanyBankAccount($this->db);
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$result = $bac->fetch(0, $this->id);
 				if ($result > 0) {
 					$this->bank_account = $bac;
@@ -5137,7 +5154,6 @@ class Societe extends CommonObject
 
 		$this->db->begin();
 
-		$field = 'accountancy_code_sell';
 		if ($type == 'buy') {
 			$field = 'accountancy_code_buy';
 		} elseif ($type == 'sell') {

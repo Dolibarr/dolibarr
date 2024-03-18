@@ -1,6 +1,15 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  */
+
+// Uncomment require_once to enable corresponding fixer
+
+//require_once __DIR__.'/plugins/DeprecatedModuleNameFixer.php';
+//require_once __DIR__.'/plugins/PriceFormFixer.php';
+//require_once __DIR__.'/plugins/UrlEncodeStringifyFixer.php';
+require_once __DIR__.'/plugins/SelectDateFixer.php';
+
 define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
 define('DOL_DOCUMENT_ROOT', DOL_PROJECT_ROOT.'/htdocs');
 define('PHAN_DIR', __DIR__);
@@ -14,7 +23,7 @@ $DEPRECATED_MODULE_MAPPING = array(
 	'commande' => 'order',
 	'contrat' => 'contract',
 	'entrepot' => 'stock',
-	'expedition' => 'delivery_note',
+	'expedition' => 'shipping',
 	'facture' => 'invoice',
 	'ficheinter' => 'intervention',
 	'product_fournisseur_price' => 'productsupplierprice',
@@ -95,6 +104,7 @@ return [
 		.'|htdocs/includes/restler/.*'  // @phpstan-ignore-line
 		// Included as stub (did not seem properly analysed by phan without it)
 		.'|htdocs/includes/stripe/.*'  // @phpstan-ignore-line
+		.'|htdocs/conf/conf.php'  // @phpstan-ignore-line
 		//.'|htdocs/[^c][^o][^r][^e][^/].*'  // For testing @phpstan-ignore-line
 		//.'|htdocs/[^h].*' // For testing on restricted set @phpstan-ignore-line
 		.')@',  // @phpstan-ignore-line
@@ -113,9 +123,9 @@ return [
 	],
 	'plugins' => [
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
-		//'DeprecateAliasPlugin',
+		'DeprecateAliasPlugin',
 		// __DIR__.'/plugins/NoVarDumpPlugin.php',
-		__DIR__.'/plugins/GetPostFixerPlugin.php',
+		//__DIR__.'/plugins/GetPostFixerPlugin.php',
 		//'PHPDocToRealTypesPlugin',
 
 	/*
@@ -169,6 +179,8 @@ return [
 	// Add any issue types (such as 'PhanUndeclaredMethod')
 	// here to inhibit them from being reported
 	'suppress_issue_types' => [
+		'PhanCompatibleNegativeStringOffset',	// return false positive
+
 		'PhanPluginWhitespaceTab',		// Dolibarr used tabs
 		'PhanPluginCanUsePHP71Void',	// Dolibarr is maintaining 7.0 compatibility
 		'PhanPluginShortArray',			// Dolibarr uses array()
@@ -185,9 +197,10 @@ return [
 		'PhanTypeMismatchArgument',			// Not essential - 12300+ occurrences
 		'PhanPluginNonBoolInLogicalArith',	// Not essential - 11040+ occurrences
 		'PhanPluginConstantVariableScalar',	// Not essential - 5180+ occurrences
+		'PhanPluginDuplicateAdjacentStatement',
 		'PhanPluginDuplicateConditionalTernaryDuplication',		// 2750+ occurrences
 		'PhanPluginDuplicateConditionalNullCoalescing',	// Not essential - 990+ occurrences
-
+		'PhanPluginRedundantAssignmentInGlobalScope',	// Not essential, a lot of false warning
 	],
 	// You can put relative paths to internal stubs in this config option.
 	// Phan will continue using its detailed type annotations,

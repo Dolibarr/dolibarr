@@ -58,7 +58,7 @@ $entitytoicon = array(
 	'other'        => 'generic',
 	'account'      => 'account',
 	'product'      => 'product',
-	'virtualproduct'=>'product',
+	'virtualproduct' => 'product',
 	'subproduct'   => 'product',
 	'product_supplier_ref'      => 'product',
 	'stock'        => 'stock',
@@ -67,11 +67,11 @@ $entitytoicon = array(
 	'stockbatch'   => 'stock',
 	'category'     => 'category',
 	'shipment'     => 'sending',
-	'shipment_line'=> 'sending',
-	'reception'=> 'sending',
-	'reception_line'=> 'sending',
-	'expensereport'=> 'trip',
-	'expensereport_line'=> 'trip',
+	'shipment_line' => 'sending',
+	'reception' => 'sending',
+	'reception_line' => 'sending',
+	'expensereport' => 'trip',
+	'expensereport_line' => 'trip',
 	'holiday'      => 'holiday',
 	'contract_line' => 'contract',
 	'translation'  => 'generic',
@@ -114,16 +114,16 @@ $entitytolang = array(
 	'other'        => 'Other',
 	'trip'         => 'TripsAndExpenses',
 	'shipment'     => 'Shipments',
-	'shipment_line'=> 'ShipmentLine',
+	'shipment_line' => 'ShipmentLine',
 	'project'      => 'Projects',
 	'projecttask'  => 'Tasks',
 	'task_time'    => 'TaskTimeSpent',
 	'action'       => 'Event',
-	'expensereport'=> 'ExpenseReport',
-	'expensereport_line'=> 'ExpenseReportLine',
+	'expensereport' => 'ExpenseReport',
+	'expensereport_line' => 'ExpenseReportLine',
 	'holiday'      => 'TitreRequestCP',
 	'contract'     => 'Contract',
-	'contract_line'=> 'ContractLine',
+	'contract_line' => 'ContractLine',
 	'translation'  => 'Translation',
 	'bom'          => 'BOM',
 	'bomline'      => 'BOMLine',
@@ -1020,7 +1020,7 @@ if ($step == 4 && $datatoexport) {
 		print '<tr class="oddeven">';
 		print '<td><input name="export_name" value=""></td>';
 		print '<td>';
-		$arrayvisibility = array('private'=>$langs->trans("Private"), 'all'=>$langs->trans("Everybody"));
+		$arrayvisibility = array('private' => $langs->trans("Private"), 'all' => $langs->trans("Everybody"));
 		print $form->selectarray('visibility', $arrayvisibility, 'private');
 		print '</td>';
 		print '<td class="right">';
@@ -1203,6 +1203,7 @@ if ($step == 5 && $datatoexport) {
 		$htmltabloflibs .= '<td>'.img_picto_common($key, $objmodelexport->getPictoForKey($key)).' ';
 		$text = $objmodelexport->getDriverDescForKey($key);
 		$label = $listeall[$key];
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$htmltabloflibs .= $form->textwithpicto($label, $text).'</td>';
 		$htmltabloflibs .= '<td>'.$objmodelexport->getLibLabelForKey($key).'</td>';
 		$htmltabloflibs .= '<td class="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';

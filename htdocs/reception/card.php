@@ -12,6 +12,7 @@
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
  * Copyright (C) 2018	    Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -391,7 +392,7 @@ if (empty($reshook)) {
 					$ent = "entl".$i;
 					$idl = "idl".$i;
 
-					$entrepot_id = is_numeric(GETPOSTINT($ent)) ? GETPOSTINT($ent) : GETPOSTINT('entrepot_id');
+					$entrepot_id = is_numeric(GETPOST($ent)) ? GETPOSTINT($ent) : GETPOSTINT('entrepot_id');
 
 					/*
 					if (!empty($lineToTest)) {
@@ -520,24 +521,24 @@ if (empty($reshook)) {
 			$object->tracking_number = trim(GETPOST('tracking_number', 'alpha'));
 		}
 		if ($action == 'settracking_url') {
-			$object->tracking_url = trim(GETPOSTINT('tracking_url'));
+			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
 		if ($action == 'settrueWeight') {
-			$object->trueWeight = trim(GETPOSTINT('trueWeight'));
+			$object->trueWeight = GETPOSTINT('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
 		}
 		if ($action == 'settrueWidth') {
-			$object->trueWidth = trim(GETPOSTINT('trueWidth'));
+			$object->trueWidth = GETPOSTINT('trueWidth');
 		}
 		if ($action == 'settrueHeight') {
-			$object->trueHeight = trim(GETPOSTINT('trueHeight'));
+			$object->trueHeight = GETPOSTINT('trueHeight');
 			$object->size_units = GETPOSTINT('size_units');
 		}
 		if ($action == 'settrueDepth') {
-			$object->trueDepth = trim(GETPOSTINT('trueDepth'));
+			$object->trueDepth = GETPOSTINT('trueDepth');
 		}
 		if ($action == 'setshipping_method_id') {
-			$object->shipping_method_id = trim(GETPOSTINT('shipping_method_id'));
+			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 		}
 
 		if (!$error) {
@@ -919,7 +920,7 @@ if ($action == 'create') {
 			print "</td></tr>\n";
 
 			// Other attributes
-			$parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"', 'cols' => '3', 'socid'=>$socid);
+			$parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"', 'cols' => '3', 'socid' => $socid);
 			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $recept, $action); // Note that $action and $objectsrc may have been modified by hook
 			print $hookmanager->resPrint;
 
@@ -985,7 +986,7 @@ if ($action == 'create') {
 					$ent = "entrepot_" . $paramSuffix;
 					$pu = "pu_" . $paramSuffix; // This is unit price including discount
 					$fk_commandefourndet = "fk_commandefourndet_" . $paramSuffix;
-					$dispatchLines[$numAsked] = array('paramSuffix'=>$paramSuffix, 'prod' => GETPOSTINT($prod), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' => GETPOSTINT($ent), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' => GETPOST('comment'), 'fk_commandefourndet' => GETPOSTINT($fk_commandefourndet));
+					$dispatchLines[$numAsked] = array('paramSuffix' => $paramSuffix, 'prod' => GETPOSTINT($prod), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' => GETPOSTINT($ent), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' => GETPOST('comment'), 'fk_commandefourndet' => GETPOSTINT($fk_commandefourndet));
 				}
 
 				// with batch module enabled and product with lot/serial
@@ -1006,7 +1007,7 @@ if ($action == 'create') {
 					$dDLUO = dol_mktime(12, 0, 0, GETPOSTINT('dluo_'.$paramSuffix.'month'), GETPOSTINT('dluo_'.$paramSuffix.'day'), GETPOSTINT('dluo_'.$paramSuffix.'year'));
 					$dDLC = dol_mktime(12, 0, 0, GETPOSTINT('dlc_'.$paramSuffix.'month'), GETPOSTINT('dlc_'.$paramSuffix.'day'), GETPOSTINT('dlc_'.$paramSuffix.'year'));
 					$fk_commandefourndet = 'fk_commandefourndet_'.$paramSuffix;
-					$dispatchLines[$numAsked] = array('paramSuffix'=>$paramSuffix, 'prod' => GETPOSTINT($prod), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' => GETPOSTINT($ent), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' => GETPOST('comment'), 'fk_commandefourndet' => GETPOSTINT($fk_commandefourndet), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> GETPOSTINT($lot));
+					$dispatchLines[$numAsked] = array('paramSuffix' => $paramSuffix, 'prod' => GETPOSTINT($prod), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' => GETPOSTINT($ent), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' => GETPOST('comment'), 'fk_commandefourndet' => GETPOSTINT($fk_commandefourndet), 'DLC' => $dDLC, 'DLUO' => $dDLUO, 'lot' => GETPOSTINT($lot));
 				}
 
 				// If create form is coming from same page, it means that post was sent but an error occurred
@@ -1028,7 +1029,7 @@ if ($action == 'create') {
 					$dDLUO = dol_mktime(12, 0, 0, GETPOSTINT('dluo'.$paramSuffix.'month'), GETPOSTINT('dluo'.$paramSuffix.'day'), GETPOSTINT('dluo'.$paramSuffix.'year'));
 					$dDLC = dol_mktime(12, 0, 0, GETPOSTINT('dlc'.$paramSuffix.'month'), GETPOSTINT('dlc'.$paramSuffix.'day'), GETPOSTINT('dlc'.$paramSuffix.'year'));
 					$fk_commandefourndet = 'fk_commandefournisseurdet'.$paramSuffix;
-					$dispatchLines[$numAsked] = array('prod' => GETPOSTINT($prod), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' =>GETPOSTINT($ent), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' =>GETPOST($comment), 'fk_commandefourndet' => GETPOSTINT($fk_commandefourndet), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> GETPOSTINT($lot));
+					$dispatchLines[$numAsked] = array('prod' => GETPOSTINT($prod), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' => GETPOSTINT($ent), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' => GETPOST($comment), 'fk_commandefourndet' => GETPOSTINT($fk_commandefourndet), 'DLC' => $dDLC, 'DLUO' => $dDLUO, 'lot' => GETPOSTINT($lot));
 				}
 			}
 
@@ -1036,7 +1037,7 @@ if ($action == 'create') {
 			// Note that if an extrafield with the same name exists in the origin supplier order line, the value
 			// from the HTTP query will be ignored
 			foreach ($suffix2numAsked as $suffix => $n) {
-				$dispatchLines[$n]['array_options'] = $extrafields->getOptionalsFromPost('commande_fournisseur_dispatch', '_' . $suffix, '');
+				$dispatchLines[$n]['array_options'] = $extrafields->getOptionalsFromPost('receptiondet_batch', '_' . $suffix, '');
 			}
 
 			print '<script type="text/javascript">
@@ -1100,7 +1101,7 @@ if ($action == 'create') {
 			// $objectsrc->lines contains the line of the purchase order
 			// $dispatchLines is list of lines with dispatching detail (with product, qty and warehouse). One purchase order line may have n of this dispatch lines.
 
-			$arrayofpurchaselinealreadyoutput= array();
+			$arrayofpurchaselinealreadyoutput = array();
 
 			// $_POST contains fk_commandefourndet_X_Y    where Y is num of product line and X is number of split lines
 			$indiceAsked = 1;
@@ -1255,7 +1256,7 @@ if ($action == 'create') {
 							// Show warehouse combo list
 							$ent = "entl".$indiceAsked;
 							$idl = "idl".$indiceAsked;
-							$tmpentrepot_id = is_numeric(GETPOSTINT($ent)) ? GETPOSTINT($ent) : $warehouse_id;
+							$tmpentrepot_id = is_numeric(GETPOST($ent)) ? GETPOSTINT($ent) : $warehouse_id;
 							if ($line->fk_product > 0) {
 								print '<!-- Show warehouse selection -->';
 								print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 0, 0, $line->fk_product, '', 1);
@@ -1271,12 +1272,12 @@ if ($action == 'create') {
 							print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
 							if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 								print '<td class="nowraponall">';
-								print $form->selectDate($dispatchLines[$indiceAsked]['DLC'], 'dlc'.$indiceAsked, '', '', 1, "");
+								print $form->selectDate($dispatchLines[$indiceAsked]['DLC'], 'dlc'.$indiceAsked, 0, 0, 1, "");
 								print '</td>';
 							}
 							if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 								print '<td class="nowraponall">';
-								print $form->selectDate($dispatchLines[$indiceAsked]['DLUO'], 'dluo'.$indiceAsked, '', '', 1, "");
+								print $form->selectDate($dispatchLines[$indiceAsked]['DLUO'], 'dluo'.$indiceAsked, 0, 0, 1, "");
 								print '</td>';
 							}
 						} else {
@@ -1313,7 +1314,7 @@ if ($action == 'create') {
 					}
 					$recLine->array_options = array_merge($recLine->array_options, $srcLine->array_options);
 
-					print $recLine->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), $indiceAsked, '', 1);
+					print $recLine->showOptionals($extrafields, 'edit', array('style' => 'class="oddeven"', 'colspan' => $colspan), $indiceAsked, '', 1);
 				}
 
 				$indiceAsked++;
@@ -1524,7 +1525,7 @@ if ($action == 'create') {
 		print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="setdate_livraison">';
-		print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
+		print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, 0, "setdate_livraison", 1, 0);
 		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	} else {
@@ -1817,7 +1818,7 @@ if ($action == 'create') {
 		//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received";
 		$sql .= ', p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch';
 		$sql .= ', p.description as product_desc';
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+		$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as ed";
 		$sql .= ", ".MAIN_DB_PREFIX."reception as e";
 		$sql .= ", ".MAIN_DB_PREFIX.$origin."det as obj";
 		//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_reception = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
@@ -1840,7 +1841,7 @@ if ($action == 'create') {
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
 					// $obj->rowid is rowid in $origin."det" table
-					$alreadysent[$obj->rowid][$obj->receptionline_id] = array('reception_ref'=>$obj->reception_ref, 'reception_id'=>$obj->reception_id, 'warehouse'=>$obj->fk_entrepot, 'qty'=>$obj->qty, 'date_valid'=>$obj->date_valid, 'date_delivery'=>$obj->date_delivery);
+					$alreadysent[$obj->rowid][$obj->receptionline_id] = array('reception_ref' => $obj->reception_ref, 'reception_id' => $obj->reception_id, 'warehouse' => $obj->fk_entrepot, 'qty' => $obj->qty, 'date_valid' => $obj->date_valid, 'date_delivery' => $obj->date_delivery);
 				}
 				$i++;
 			}
@@ -1976,11 +1977,11 @@ if ($action == 'create') {
 						print '<td class="nowraponall left"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"><br>';
 						if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 							print $langs->trans('SellByDate').' : ';
-							print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, '', '', 1, "").'</br>';
+							print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, 0, 0, 1, "").'</br>';
 						}
 						if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 							print $langs->trans('EatByDate').' : ';
-							print $form->selectDate($lines[$i]->eatby, 'dluo'.$line_id, '', '', 1, "");
+							print $form->selectDate($lines[$i]->eatby, 'dluo'.$line_id, 0, 0, 1, "");
 						}
 						print '</td>';
 					}
@@ -2107,9 +2108,9 @@ if ($action == 'create') {
 			$line->fetch_optionals();
 
 			if ($action == 'editline' && $lines[$i]->id == $line_id) {
-				print $line->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), '');
+				print $line->showOptionals($extrafields, 'edit', array('colspan' => $colspan), '');
 			} else {
-				print $line->showOptionals($extrafields, 'view', array('colspan'=>$colspan), '');
+				print $line->showOptionals($extrafields, 'view', array('colspan' => $colspan), '');
 			}
 		}
 	}

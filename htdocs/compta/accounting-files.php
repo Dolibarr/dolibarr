@@ -5,6 +5,7 @@
  * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2024  Alexandre Spangaro   <aspangaro@easya.solutions>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +81,7 @@ $hookmanager->initHooks(array('comptafileslist', 'globallist'));
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -96,15 +97,15 @@ if (!$sortorder) {
 
 
 $arrayfields = array(
-	'type'=>array('label'=>"Type", 'checked'=>1),
-	'date'=>array('label'=>"Date", 'checked'=>1),
-	'date_due'=>array('label'=>"DateDue", 'checked'=>1),
-	'ref'=>array('label'=>"Ref", 'checked'=>1),
-	'documents'=>array('label'=>"Documents", 'checked'=>1),
-	'paid'=>array('label'=>"Paid", 'checked'=>1),
-	'total_ht'=>array('label'=>"TotalHT", 'checked'=>1),
-	'total_ttc'=>array('label'=>"TotalTTC", 'checked'=>1),
-	'total_vat'=>array('label'=>"TotalVAT", 'checked'=>1),
+	'type' => array('label' => "Type", 'checked' => 1),
+	'date' => array('label' => "Date", 'checked' => 1),
+	'date_due' => array('label' => "DateDue", 'checked' => 1),
+	'ref' => array('label' => "Ref", 'checked' => 1),
+	'documents' => array('label' => "Documents", 'checked' => 1),
+	'paid' => array('label' => "Paid", 'checked' => 1),
+	'total_ht' => array('label' => "TotalHT", 'checked' => 1),
+	'total_ttc' => array('label' => "TotalTTC", 'checked' => 1),
+	'total_vat' => array('label' => "TotalVAT", 'checked' => 1),
 	//...
 );
 
@@ -135,14 +136,14 @@ if (empty($entity)) {
 $error = 0;
 
 $listofchoices = array(
-	'selectinvoices'=>array('label'=>'Invoices', 'picto'=>'bill', 'lang'=>'bills', 'enabled' => isModEnabled('invoice'), 'perms' => $user->hasRight('facture', 'lire')),
-	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'picto'=>'supplier_invoice', 'lang'=>'bills', 'enabled' => isModEnabled('supplier_invoice'), 'perms' => $user->hasRight('fournisseur', 'facture', 'lire')),
-	'selectexpensereports'=>array('label'=>'ExpenseReports', 'picto'=>'expensereport', 'lang'=>'trips', 'enabled' => isModEnabled('expensereport'), 'perms' => $user->hasRight('expensereport', 'lire')),
-	'selectdonations'=>array('label'=>'Donations', 'picto'=>'donation', 'lang'=>'donation', 'enabled' => isModEnabled('don'), 'perms' => $user->hasRight('don', 'lire')),
-	'selectsocialcontributions'=>array('label'=>'SocialContributions', 'picto'=>'bill', 'enabled' => isModEnabled('tax'), 'perms' => $user->hasRight('tax', 'charges', 'lire')),
-	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'picto'=>'salary', 'lang'=>'salaries', 'enabled' => isModEnabled('salaries'), 'perms' => $user->hasRight('salaries', 'read')),
-	'selectvariouspayment'=>array('label'=>'VariousPayment', 'picto'=>'payment', 'enabled' => isModEnabled('bank'), 'perms' => $user->hasRight('banque', 'lire')),
-	'selectloanspayment'=>array('label'=>'PaymentLoan','picto'=>'loan', 'enabled' => isModEnabled('don'), 'perms' => $user->hasRight('loan', 'read')),
+	'selectinvoices' => array('label' => 'Invoices', 'picto' => 'bill', 'lang' => 'bills', 'enabled' => isModEnabled('invoice'), 'perms' => $user->hasRight('facture', 'lire')),
+	'selectsupplierinvoices' => array('label' => 'BillsSuppliers', 'picto' => 'supplier_invoice', 'lang' => 'bills', 'enabled' => isModEnabled('supplier_invoice'), 'perms' => $user->hasRight('fournisseur', 'facture', 'lire')),
+	'selectexpensereports' => array('label' => 'ExpenseReports', 'picto' => 'expensereport', 'lang' => 'trips', 'enabled' => isModEnabled('expensereport'), 'perms' => $user->hasRight('expensereport', 'lire')),
+	'selectdonations' => array('label' => 'Donations', 'picto' => 'donation', 'lang' => 'donation', 'enabled' => isModEnabled('don'), 'perms' => $user->hasRight('don', 'lire')),
+	'selectsocialcontributions' => array('label' => 'SocialContributions', 'picto' => 'bill', 'enabled' => isModEnabled('tax'), 'perms' => $user->hasRight('tax', 'charges', 'lire')),
+	'selectpaymentsofsalaries' => array('label' => 'SalariesPayments', 'picto' => 'salary', 'lang' => 'salaries', 'enabled' => isModEnabled('salaries'), 'perms' => $user->hasRight('salaries', 'read')),
+	'selectvariouspayment' => array('label' => 'VariousPayment', 'picto' => 'payment', 'enabled' => isModEnabled('bank'), 'perms' => $user->hasRight('banque', 'lire')),
+	'selectloanspayment' => array('label' => 'PaymentLoan','picto' => 'loan', 'enabled' => isModEnabled('don'), 'perms' => $user->hasRight('loan', 'read')),
 );
 
 
@@ -157,6 +158,9 @@ $listofchoices = array(
 //if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 $filesarray = array();
+
+'@phan-var-force array<string,array{id:string,entity:string,date:string,date_due:string,paid:float|int,amount_ht:float|int,amount_ttc:float|int,amount_vat:float|int,amount_localtax1:float|int,amount_localtax2:float|int,amount_revenuestamp:float|int,ref:string,fk:string,item:string,thirdparty_name:string,thirdparty_code:string,country_code:string,vatnum:string,sens:string,currency:string,line?:string,name?:string,files?:mixed}> $filesarray';
+
 $result = false;
 if (($action == 'searchfiles' || $action == 'dl')) {
 	if (empty($date_start)) {
@@ -411,6 +415,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 							$nofile['link'] = '';
 							$nofile['name'] = '';
 
+
 							$filesarray[$nofile['item'].'_'.$nofile['id']] = $nofile;
 						} else {
 							foreach ($files as $key => $file) {
@@ -446,8 +451,8 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 								}
 								$filesarray[$file['item'].'_'.$file['id']]['files'][] = array(
 									'link' => $link.urlencode($file['name']),
-									'name'=>$file['name'],
-									'ref'=>$file['ref'],
+									'name' => $file['name'],
+									'ref' => $file['ref'],
 									'fullname' => $file['fullname'],
 									'relpath' => '/'.$file['name'],
 									'relpathnamelang' => $langs->trans($file['item']).'/'.$file['name'],
@@ -522,7 +527,7 @@ if ($result && $action == "dl" && !$error) {
 				$zipname .= '_'.$project->ref;
 			}
 		}
-		$zipname .='_export.zip';
+		$zipname .= '_export.zip';
 
 		dol_delete_file($zipname);
 
@@ -689,6 +694,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 	}
 
 	$TData = dol_sort_array($filesarray, $sortfield, $sortorder);
+	'@phan-var-force array<string,array{id:string,entity:string,date:string,date_due:string,paid:float|int,amount_ht:float|int,amount_ttc:float|int,amount_vat:float|int,amount_localtax1:float|int,amount_localtax2:float|int,amount_revenuestamp:float|int,ref:string,fk:string,item:string,thirdparty_name:string,thirdparty_code:string,country_code:string,vatnum:string,sens:string,currency:string,line?:string,name?:string,files?:mixed}> $TData';
 
 
 	$filename = dol_print_date($date_start, 'dayrfc', 'tzuserrel')."-".dol_print_date($date_stop, 'dayrfc', 'tzuserrel').'_export.zip';

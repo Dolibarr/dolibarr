@@ -73,7 +73,7 @@ class modFacture extends DolibarrModules
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='text')
 
 		// Config pages
-		$this->config_page_url = array("facture.php");
+		$this->config_page_url = array("invoice.php");
 
 		// Constants
 		$this->const = array();
@@ -368,7 +368,7 @@ class modFacture extends DolibarrModules
 			'fd.remise_percent' => 'Reduc. (%)',
 			// remise
 			// fk_remise_except
-			// subprice
+			'fd.subprice' => 'UnitPriceHT',
 			// price
 			'fd.total_ht' => 'LineTotalHT',
 			'fd.total_tva' => 'LineTotalVAT',
@@ -433,7 +433,7 @@ class modFacture extends DolibarrModules
 			'fd.remise_percent' => '0',
 			// remise
 			// fk_remise_except
-			// subprice
+			'fd.subprice' => '100',
 			// price
 			'fd.total_ht' => '100',
 			'fd.total_tva' => '21',

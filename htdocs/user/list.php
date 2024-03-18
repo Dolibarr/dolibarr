@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +57,7 @@ if ($user->socid > 0) {
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -102,15 +103,15 @@ $form = new Form($db);
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'u.login'=>"Login",
-	'u.lastname'=>"Lastname",
-	'u.firstname'=>"Firstname",
-	'u.accountancy_code'=>"AccountancyCode",
-	'u.office_phone'=>"PhonePro",
-	'u.user_mobile'=>"PhoneMobile",
-	'u.email'=>"EMail",
-	'u.note_public'=>"NotePublic",
-	'u.note_private'=>"NotePrivate"
+	'u.login' => "Login",
+	'u.lastname' => "Lastname",
+	'u.firstname' => "Firstname",
+	'u.accountancy_code' => "AccountancyCode",
+	'u.office_phone' => "PhonePro",
+	'u.user_mobile' => "PhoneMobile",
+	'u.email' => "EMail",
+	'u.note_public' => "NotePublic",
+	'u.note_private' => "NotePrivate"
 );
 if (isModEnabled('api')) {
 	$fieldstosearchall['u.api_key'] = "ApiKey";
@@ -121,29 +122,29 @@ $permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'wri
 
 // Definition of fields for list
 $arrayfields = array(
-	'u.rowid'=>array('label'=>"TechnicalID", 'checked'=>-1, 'position'=>5),
-	'u.login'=>array('label'=>"Login", 'checked'=>1, 'position'=>10),
-	'u.lastname'=>array('label'=>"Lastname", 'checked'=>1, 'position'=>15),
-	'u.firstname'=>array('label'=>"Firstname", 'checked'=>1, 'position'=>20),
-	'u.entity'=>array('label'=>"Entity", 'checked'=>1, 'position'=>50, 'enabled'=>(isModEnabled('multicompany') && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE'))),
-	'u.gender'=>array('label'=>"Gender", 'checked'=>0, 'position'=>22),
-	'u.employee'=>array('label'=>"Employee", 'checked'=>($contextpage == 'employeelist' ? 1 : 0), 'position'=>25),
-	'u.fk_user'=>array('label'=>"HierarchicalResponsible", 'checked'=>1, 'position'=>27, 'csslist'=>'maxwidth150'),
-	'u.accountancy_code'=>array('label'=>"AccountancyCode", 'checked'=>0, 'position'=>30),
-	'u.office_phone'=>array('label'=>"PhonePro", 'checked'=>1, 'position'=>31),
-	'u.user_mobile'=>array('label'=>"PhoneMobile", 'checked'=>1, 'position'=>32),
-	'u.email'=>array('label'=>"EMail", 'checked'=>1, 'position'=>35),
-	'u.api_key'=>array('label'=>"ApiKey", 'checked'=>0, 'position'=>40, "enabled"=>(isModEnabled('api') && $user->admin)),
-	'u.fk_soc'=>array('label'=>"Company", 'checked'=>($contextpage == 'employeelist' ? 0 : 1), 'position'=>45),
-	'u.ref_employee'=>array('label'=>"RefEmployee", 'checked'=>-1, 'position'=>60, 'enabled'=>(isModEnabled('hrm') && $permissiontoreadhr)),
-	'u.national_registration_number'=>array('label'=>"NationalRegistrationNumber", 'checked'=>-1, 'position'=>61, 'enabled'=>(isModEnabled('hrm') && $permissiontoreadhr)),
-	'u.job'=>array('label'=>"PostOrFunction", 'checked'=>-1, 'position'=>50),
-	'u.salary'=>array('label'=>"Salary", 'checked'=>-1, 'position'=>80, 'enabled'=>(isModEnabled('salaries') && $user->hasRight("salaries", "readall")), 'isameasure'=>1),
-	'u.datelastlogin'=>array('label'=>"LastConnexion", 'checked'=>1, 'position'=>100),
-	'u.datepreviouslogin'=>array('label'=>"PreviousConnexion", 'checked'=>0, 'position'=>110),
-	'u.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	'u.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
-	'u.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
+	'u.rowid' => array('label' => "TechnicalID", 'checked' => -1, 'position' => 5),
+	'u.login' => array('label' => "Login", 'checked' => 1, 'position' => 10),
+	'u.lastname' => array('label' => "Lastname", 'checked' => 1, 'position' => 15),
+	'u.firstname' => array('label' => "Firstname", 'checked' => 1, 'position' => 20),
+	'u.entity' => array('label' => "Entity", 'checked' => 1, 'position' => 50, 'enabled' => (isModEnabled('multicompany') && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE'))),
+	'u.gender' => array('label' => "Gender", 'checked' => 0, 'position' => 22),
+	'u.employee' => array('label' => "Employee", 'checked' => ($contextpage == 'employeelist' ? 1 : 0), 'position' => 25),
+	'u.fk_user' => array('label' => "HierarchicalResponsible", 'checked' => 1, 'position' => 27, 'csslist' => 'maxwidth150'),
+	'u.accountancy_code' => array('label' => "AccountancyCode", 'checked' => 0, 'position' => 30),
+	'u.office_phone' => array('label' => "PhonePro", 'checked' => 1, 'position' => 31),
+	'u.user_mobile' => array('label' => "PhoneMobile", 'checked' => 1, 'position' => 32),
+	'u.email' => array('label' => "EMail", 'checked' => 1, 'position' => 35),
+	'u.api_key' => array('label' => "ApiKey", 'checked' => 0, 'position' => 40, "enabled" => (isModEnabled('api') && $user->admin)),
+	'u.fk_soc' => array('label' => "Company", 'checked' => ($contextpage == 'employeelist' ? 0 : 1), 'position' => 45),
+	'u.ref_employee' => array('label' => "RefEmployee", 'checked' => -1, 'position' => 60, 'enabled' => (isModEnabled('hrm') && $permissiontoreadhr)),
+	'u.national_registration_number' => array('label' => "NationalRegistrationNumber", 'checked' => -1, 'position' => 61, 'enabled' => (isModEnabled('hrm') && $permissiontoreadhr)),
+	'u.job' => array('label' => "PostOrFunction", 'checked' => -1, 'position' => 50),
+	'u.salary' => array('label' => "Salary", 'checked' => -1, 'position' => 80, 'enabled' => (isModEnabled('salaries') && $user->hasRight("salaries", "readall")), 'isameasure' => 1),
+	'u.datelastlogin' => array('label' => "LastConnexion", 'checked' => 1, 'position' => 100),
+	'u.datepreviouslogin' => array('label' => "PreviousConnexion", 'checked' => 0, 'position' => 110),
+	'u.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
+	'u.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
+	'u.statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -165,7 +166,7 @@ $search_phonepro = GETPOST('search_phonepro', 'alpha');
 $search_phonemobile = GETPOST('search_phonemobile', 'alpha');
 $search_email = GETPOST('search_email', 'alpha');
 $search_api_key = GETPOST('search_api_key', 'alphanohtml');
-$search_statut = GETPOST('search_statut', 'intcomma');
+$search_status = GETPOST('search_status', 'intcomma');
 $search_thirdparty = GETPOST('search_thirdparty', 'alpha');
 $search_job = GETPOST('search_job', 'alpha');
 $search_warehouse = GETPOST('search_warehouse', 'alpha');
@@ -188,8 +189,8 @@ if (!empty($catid) && empty($search_categ)) {
 }
 
 // Default search
-if ($search_statut == '') {
-	$search_statut = '1';
+if ($search_status == '') {
+	$search_status = '1';
 }
 if ($contextpage == 'employeelist' && !GETPOSTISSET('search_employee')) {
 	$search_employee = 1;
@@ -258,7 +259,7 @@ if (empty($reshook)) {
 		$search_phonepro = "";
 		$search_phonemobile = "";
 		$search_email = "";
-		$search_statut = "";
+		$search_status = "";
 		$search_thirdparty = "";
 		$search_job = "";
 		$search_warehouse = "";
@@ -332,11 +333,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				if ($nbok > 1) {
-					setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-				} else {
-					setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-				}
+				setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
 				$db->commit();
 			} else {
 				$db->rollback();
@@ -452,8 +449,8 @@ if ($search_api_key != '') {
 if ($search_job != '') {
 	$sql .= natural_search(array('u.job'), $search_job);
 }
-if ($search_statut != '' && $search_statut >= 0) {
-	$sql .= " AND u.statut IN (".$db->sanitize($search_statut).")";
+if ($search_status != '' && $search_status >= 0) {
+	$sql .= " AND u.statut IN (".$db->sanitize($search_status).")";
 }
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
@@ -602,14 +599,14 @@ if ($search_api_key != '') {
 if ($search_supervisor > 0) {
 	$param .= "&amp;search_supervisor=".urlencode($search_supervisor);
 }
-if ($search_statut != '') {
-	$param .= "&amp;search_statut=".urlencode($search_statut);
+if ($search_status != '') {
+	$param .= "&amp;search_status=".urlencode($search_status);
 }
 if ($optioncss != '') {
 	$param .= '&amp;optioncss='.urlencode($optioncss);
 }
 if ($search_categ > 0) {
-	$param .= '&amp;search_categ='.urlencode($search_categ);
+	$param .= '&amp;search_categ='.urlencode((string) ($search_categ));
 }
 if ($search_warehouse > 0) {
 	$param .= '&amp;search_warehouse='.urlencode($search_warehouse);
@@ -653,20 +650,20 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $url = DOL_URL_ROOT.'/user/card.php?action=create'.($contextpage == 'employeelist' ? '&search_employee=1' : '').'&leftmenu=';
 if (!empty($socid)) {
-	$url .= '&socid='.urlencode($socid);
+	$url .= '&socid='.urlencode((string) ($socid));
 }
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php?mode=hierarchy'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php?mode=hierarchy'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
 /*$moreparam = array('morecss'=>'btnTitleSelected');
-$morehtmlright = dolGetButtonTitle($langs->trans("List"), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''), '', 1, $moreparam);
+$morehtmlright = dolGetButtonTitle($langs->trans("List"), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php'.(($search_status != '' && $search_status >= 0) ? '?search_status='.$search_status : ''), '', 1, $moreparam);
 $moreparam = array('morecss'=>'marginleftonly');
-$morehtmlright .= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''), '', 1, $moreparam);
+$morehtmlright .= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php'.(($search_status != '' && $search_status >= 0) ? '?search_status='.$search_status : ''), '', 1, $moreparam);
 */
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'user', 0, $morehtmlright.' '.$newcardbutton, '', $limit, 0, 0, 1);
 
@@ -732,7 +729,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -762,7 +759,7 @@ if (!empty($arrayfields['u.firstname']['checked'])) {
 }
 if (!empty($arrayfields['u.gender']['checked'])) {
 	print '<td class="liste_titre center">';
-	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
+	$arraygender = array('man' => $langs->trans("Genderman"), 'woman' => $langs->trans("Genderwoman"), 'other' => $langs->trans("Genderother"));
 	print $form->selectarray('search_gender', $arraygender, $search_gender, 1);
 	print '</td>';
 }
@@ -819,7 +816,7 @@ if (!empty($arrayfields['u.datepreviouslogin']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['u.datec']['checked'])) {
@@ -835,7 +832,7 @@ if (!empty($arrayfields['u.tms']['checked'])) {
 if (!empty($arrayfields['u.statut']['checked'])) {
 	// Status
 	print '<td class="liste_titre center parentonrightofpage">';
-	print $form->selectarray('search_statut', array('-1'=>'', '0'=>$langs->trans('Disabled'), '1'=>$langs->trans('Enabled')), $search_statut, 0, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
+	print $form->selectarray('search_status', array('-1' => '', '0' => $langs->trans('Disabled'), '1' => $langs->trans('Enabled')), $search_status, 0, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Action column
@@ -940,7 +937,7 @@ if (!empty($arrayfields['u.datepreviouslogin']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray'=>&$totalarray);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['u.datec']['checked'])) {
@@ -978,7 +975,7 @@ if (isset($extrafields->attributes[$object->table_element]['computed']) && is_ar
 // --------------------------------------------------------------------
 $i = 0;
 $savnbfield = $totalarray['nbfield'];
-$totalarray = array('val'=>array('u.salary'=>0));
+$totalarray = array('val' => array('u.salary' => 0));
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
@@ -1309,7 +1306,7 @@ while ($i < $imaxinloop) {
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
@@ -1376,7 +1373,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

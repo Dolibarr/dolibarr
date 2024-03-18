@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017 	Laurent Destailleur <eldy@stocks.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -178,7 +179,7 @@ class pdf_standard extends ModelePDFMovement
 		$search_type_mouvement = GETPOSTINT('search_type_mouvement');
 
 		$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
-		$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+		$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 		$sortfield = GETPOST('sortfield', 'aZ09comma');
 		$sortorder = GETPOST('sortorder', 'aZ09comma');
 		if (empty($page) || $page == -1) {
@@ -291,7 +292,7 @@ class pdf_standard extends ModelePDFMovement
 		// Add where from extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 		// Add where from hooks
-		$parameters = array();
+		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -374,7 +375,7 @@ class pdf_standard extends ModelePDFMovement
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -411,6 +412,7 @@ class pdf_standard extends ModelePDFMovement
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 
@@ -445,7 +447,6 @@ class pdf_standard extends ModelePDFMovement
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$num = $this->db->num_rows($resql);
-					$i = 0;
 					$nblines = $num;
 					for ($i = 0; $i < $nblines; $i++) {
 						$objp = $this->db->fetch_object($resql);
@@ -611,10 +612,10 @@ class pdf_standard extends ModelePDFMovement
 						// Add line
 						if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 							$pdf->setPage($pageposafter);
-							$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
+							$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 							//$pdf->SetDrawColor(190,190,200);
 							$pdf->line($this->marge_gauche, $nexY + 1, $this->page_largeur - $this->marge_droite, $nexY + 1);
-							$pdf->SetLineStyle(array('dash'=>0));
+							$pdf->SetLineStyle(array('dash' => 0));
 						}
 
 						$nexY += 2; // Add space between lines
@@ -666,9 +667,9 @@ class pdf_standard extends ModelePDFMovement
 					$nexY += 5;
 					$curY = $nexY;
 
-					$pdf->SetLineStyle(array('dash'=>'0', 'color'=>array(220, 26, 26)));
+					$pdf->SetLineStyle(array('dash' => '0', 'color' => array(220, 26, 26)));
 					$pdf->line($this->marge_gauche, $curY - 1, $this->page_largeur - $this->marge_droite, $curY - 1);
-					$pdf->SetLineStyle(array('dash'=>0));
+					$pdf->SetLineStyle(array('dash' => 0));
 
 					$pdf->SetFont('', 'B', $default_font_size - 1);
 					$pdf->SetTextColor(0, 0, 120);
@@ -750,7 +751,7 @@ class pdf_standard extends ModelePDFMovement
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -760,7 +761,7 @@ class pdf_standard extends ModelePDFMovement
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {
@@ -821,10 +822,10 @@ class pdf_standard extends ModelePDFMovement
 		// Output Rect
 		//$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect takes a length in 3rd parameter and 4th parameter
 
-		$pdf->SetLineStyle(array('dash'=>'0', 'color'=>array(220, 26, 26)));
+		$pdf->SetLineStyle(array('dash' => '0', 'color' => array(220, 26, 26)));
 		$pdf->SetDrawColor(220, 26, 26);
 		$pdf->line($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite, $tab_top);
-		$pdf->SetLineStyle(array('dash'=>0));
+		$pdf->SetLineStyle(array('dash' => 0));
 		$pdf->SetDrawColor(128, 128, 128);
 		$pdf->SetTextColor(0, 0, 120);
 
@@ -892,9 +893,9 @@ class pdf_standard extends ModelePDFMovement
 		}
 
 		$pdf->SetDrawColor(220, 26, 26);
-		$pdf->SetLineStyle(array('dash'=>'0', 'color'=>array(220, 26, 26)));
+		$pdf->SetLineStyle(array('dash' => '0', 'color' => array(220, 26, 26)));
 		$pdf->line($this->marge_gauche, $tab_top + 11, $this->page_largeur - $this->marge_droite, $tab_top + 11);
-		$pdf->SetLineStyle(array('dash'=>0));
+		$pdf->SetLineStyle(array('dash' => 0));
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

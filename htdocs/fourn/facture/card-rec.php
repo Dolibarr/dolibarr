@@ -58,7 +58,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'su
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 
 // Security check
 $id = (GETPOSTINT('facid') ? GETPOSTINT('facid') : GETPOSTINT('id'));
@@ -1044,7 +1044,7 @@ if ($action == 'create') {
 		// Date next run
 		print "<tr><td>" . $langs->trans('NextDateToExecution') . "</td><td>";
 		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
-		print $form->selectDate($date_next_execution, '', 1, 1, '', "add", 1, 1);
+		print $form->selectDate($date_next_execution, '', 1, 1, 0, "add", 1, 1);
 		print "</td></tr>";
 
 		// Number max of generation
@@ -1184,9 +1184,9 @@ if ($action == 'create') {
 		}
 		$morehtmlref .= '</div>';
 
-		$morehtmlright = '';
+		$morehtmlstatus = '';
 
-		dol_banner_tab($object, 'ref', $linkback, 1, 'title', 'none', $morehtmlref, '', 0, '', $morehtmlright);
+		dol_banner_tab($object, 'ref', $linkback, 1, 'title', 'none', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
@@ -1205,10 +1205,10 @@ if ($action == 'create') {
 		print '</tr>';
 
 		print '<tr><td>' . $langs->trans('AmountHT') . '</td>';
-		print '<td>' . price($object->total_ht, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
+		print '<td>' . price($object->total_ht, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 		print '</tr>';
 
-		print '<tr><td>' . $langs->trans("AmountVAT") . '</td><td>' . price($object->total_tva, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
+		print '<tr><td>' . $langs->trans("AmountVAT") . '</td><td>' . price($object->total_tva, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 		print '</tr>';
 
 		// Amount Local Taxes
@@ -1221,7 +1221,7 @@ if ($action == 'create') {
 			print '<td class=nowrap">' . price($object->total_localtax2, 1, '', 1, -1, -1, $conf->currency) . '</td></tr>';
 		}
 
-		print '<tr><td>' . $langs->trans("AmountTTC") . '</td><td colspan="3">' . price($object->total_ttc, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
+		print '<tr><td>' . $langs->trans("AmountTTC") . '</td><td colspan="3">' . price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 		print '</tr>';
 
 		// Payment term

@@ -52,7 +52,7 @@ $search_stock_physique = GETPOST('search_stock_physique', 'alpha');
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0) {
 	$page = 0;
 }
@@ -360,10 +360,10 @@ if ($resql) {
 		$param .= "&tobuy=".urlencode($tobuy);
 	}
 	if ($type != '') {
-		$param .= "&type=".urlencode($type);
+		$param .= "&type=".urlencode((string) ($type));
 	}
 	if ($fourn_id) {
-		$param .= "&fourn_id=".urlencode($fourn_id);
+		$param .= "&fourn_id=".urlencode((string) ($fourn_id));
 	}
 	if ($snom) {
 		$param .= "&snom=".urlencode($snom);
@@ -375,13 +375,13 @@ if ($resql) {
 		$param .= "&search_sale=".urlencode($search_sale);
 	}
 	if ($search_categ > 0) {
-		$param .= "&search_categ=".urlencode($search_categ);
+		$param .= "&search_categ=".urlencode((string) ($search_categ));
 	}
 	if ($search_toolowstock) {
 		$param .= "&search_toolowstock=".urlencode($search_toolowstock);
 	}
 	if ($sbarcode) {
-		$param .= "&sbarcode=".urlencode($sbarcode);
+		$param .= "&sbarcode=".urlencode((string) ($sbarcode));
 	}
 	if ($search_stock_physique) {
 		$param .= '&search_stock_physique=' . urlencode($search_stock_physique);
@@ -519,7 +519,7 @@ if ($resql) {
 	print_liste_field_titre("ProductStatusOnSell", $_SERVER["PHP_SELF"], "p.tosell", '', $param, "", $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", '', $param, "", $sortfield, $sortorder, 'right ');
 	// Hook fields
-	$parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
@@ -617,7 +617,7 @@ if ($resql) {
 		print '<td class="right nowrap">'.$product->LibStatut($objp->statut, 5, 0).'</td>';
 		print '<td class="right nowrap">'.$product->LibStatut($objp->tobuy, 5, 1).'</td>';
 		// Fields from hook
-		$parameters = array('obj'=>$objp);
+		$parameters = array('obj' => $objp);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $product); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Action column

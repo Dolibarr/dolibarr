@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2016 Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2004-2010 Folke Ashberg: Some lines of code were inspired from work
  *                         of Folke Ashberg into PHP-Barcode 0.3pl2, available as GPL
  *                         source code at http://www.ashberg.de/bar.
@@ -407,7 +408,7 @@ function barcode_encode_genbarcode($code, $encoding)
  * @param	array	$space		default:  $space[top]   = 2 * $scale; $space[bottom]= 2 * $scale;  $space[left]  = 2 * $scale;  $space[right] = 2 * $scale;
  * @return	string|void
  */
-function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0, $space = '')
+function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0, $space = [])
 {
 	global $bar_color, $bg_color, $text_color;
 	global $font_loc, $filebarcode;

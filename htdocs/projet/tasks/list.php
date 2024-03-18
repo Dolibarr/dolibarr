@@ -49,16 +49,7 @@ $id = GETPOSTINT('id');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_categ = GETPOSTINT("search_categ");
-
-$search_projectstatus = GETPOST('search_projectstatus');
-if (!isset($search_projectstatus) || $search_projectstatus === '') {
-	if ($search_all != '') {
-		$search_projectstatus = -1;
-	} else {
-		$search_projectstatus = 1;
-	}
-}
-
+$search_projectstatus = GETPOST('search_projectstatus', 'intcomma');
 $search_project_ref = GETPOST('search_project_ref');
 $search_project_title = GETPOST('search_project_title');
 $search_task_ref = GETPOST('search_task_ref');
@@ -79,6 +70,14 @@ if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
 $searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
+
+if (!isset($search_projectstatus) || $search_projectstatus === '') {
+	if ($search_all != '') {
+		$search_projectstatus = -1;
+	} else {
+		$search_projectstatus = 1;
+	}
+}
 
 $mine = GETPOST('mode', 'alpha') == 'mine' ? 1 : 0;
 if ($mine) {
@@ -128,7 +127,7 @@ $diroutputmassaction = $conf->project->dir_output.'/tasks/temp/massgeneration/'.
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -145,37 +144,37 @@ if (!$sortorder) {
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	't.ref'=>"Ref",
-	't.label'=>"Label",
-	't.description'=>"Description",
-	't.note_public'=>"NotePublic",
+	't.ref' => "Ref",
+	't.label' => "Label",
+	't.description' => "Description",
+	't.note_public' => "NotePublic",
 );
 if (empty($user->socid)) {
 	$fieldstosearchall['t.note_private'] = "NotePrivate";
 }
 
 $arrayfields = array(
-	't.fk_task_parent'=>array('label'=>"RefTaskParent", 'checked'=>0, 'position'=>70),
-	't.ref'=>array('label'=>"RefTask", 'checked'=>1, 'position'=>80),
-	't.label'=>array('label'=>"LabelTask", 'checked'=>1, 'position'=>80),
-	't.description'=>array('label'=>"Description", 'checked'=>0, 'position'=>80),
-	't.dateo'=>array('label'=>"DateStart", 'checked'=>1, 'position'=>100),
-	't.datee'=>array('label'=>"Deadline", 'checked'=>1, 'position'=>101),
-	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>151),
-	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'position'=>152),
-	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'csslist'=>'tdoverflowmax125', 'position'=>200),
-	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>0, 'csslist'=>'tdoverflowmax125', 'position'=>201),
-	'p.fk_statut'=>array('label'=>"ProjectStatus", 'checked'=>1, 'position'=>205),
-	't.planned_workload'=>array('label'=>"PlannedWorkload", 'checked'=>1, 'position'=>302),
-	't.duration_effective'=>array('label'=>"TimeSpent", 'checked'=>1, 'position'=>303),
-	't.progress_calculated'=>array('label'=>"ProgressCalculated", 'checked'=>1, 'position'=>304),
-	't.progress'=>array('label'=>"ProgressDeclared", 'checked'=>1, 'position'=>305),
-	't.progress_summary'=>array('label'=>"TaskProgressSummary", 'checked'=>1, 'position'=>306),
-	't.budget_amount'=>array('label'=>"Budget", 'checked'=>0, 'position'=>307),
-	't.tobill'=>array('label'=>"TimeToBill", 'checked'=>0, 'position'=>310),
-	't.billed'=>array('label'=>"TimeBilled", 'checked'=>0, 'position'=>311),
-	't.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	't.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>501),
+	't.fk_task_parent' => array('label' => "RefTaskParent", 'checked' => 0, 'position' => 70),
+	't.ref' => array('label' => "RefTask", 'checked' => 1, 'position' => 80),
+	't.label' => array('label' => "LabelTask", 'checked' => 1, 'position' => 80),
+	't.description' => array('label' => "Description", 'checked' => 0, 'position' => 80),
+	't.dateo' => array('label' => "DateStart", 'checked' => 1, 'position' => 100),
+	't.datee' => array('label' => "Deadline", 'checked' => 1, 'position' => 101),
+	'p.ref' => array('label' => "ProjectRef", 'checked' => 1, 'position' => 151),
+	'p.title' => array('label' => "ProjectLabel", 'checked' => 0, 'position' => 152),
+	's.nom' => array('label' => "ThirdParty", 'checked' => 1, 'csslist' => 'tdoverflowmax125', 'position' => 200),
+	's.name_alias' => array('label' => "AliasNameShort", 'checked' => 0, 'csslist' => 'tdoverflowmax125', 'position' => 201),
+	'p.fk_statut' => array('label' => "ProjectStatus", 'checked' => 1, 'position' => 205),
+	't.planned_workload' => array('label' => "PlannedWorkload", 'checked' => 1, 'position' => 302),
+	't.duration_effective' => array('label' => "TimeSpent", 'checked' => 1, 'position' => 303),
+	't.progress_calculated' => array('label' => "ProgressCalculated", 'checked' => 1, 'position' => 304),
+	't.progress' => array('label' => "ProgressDeclared", 'checked' => 1, 'position' => 305),
+	't.progress_summary' => array('label' => "TaskProgressSummary", 'checked' => 1, 'position' => 306),
+	't.budget_amount' => array('label' => "Budget", 'checked' => 0, 'position' => 307),
+	't.tobill' => array('label' => "TimeToBill", 'checked' => 0, 'position' => 310),
+	't.billed' => array('label' => "TimeBilled", 'checked' => 0, 'position' => 311),
+	't.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
+	't.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 501),
 	//'t.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
@@ -205,7 +204,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -294,7 +293,7 @@ if ($search_task_user > 0) {
 
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 
 
 if ($id) {
@@ -612,40 +611,40 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
 if ($search_date_startday) {
-	$param .= '&search_date_startday='.urlencode($search_date_startday);
+	$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
 }
 if ($search_date_startmonth) {
-	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+	$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
 }
 if ($search_date_startyear) {
-	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+	$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
 }
 if ($search_date_endday) {
-	$param .= '&search_date_endday='.urlencode($search_date_endday);
+	$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
 }
 if ($search_date_endmonth) {
-	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
 }
 if ($search_date_endyear) {
-	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
 }
 if ($search_datelimit_startday) {
-	$param .= '&search_datelimit_startday='.urlencode($search_datelimit_startday);
+	$param .= '&search_datelimit_startday='.urlencode((string) ($search_datelimit_startday));
 }
 if ($search_datelimit_startmonth) {
-	$param .= '&search_datelimit_startmonth='.urlencode($search_datelimit_startmonth);
+	$param .= '&search_datelimit_startmonth='.urlencode((string) ($search_datelimit_startmonth));
 }
 if ($search_datelimit_startyear) {
-	$param .= '&search_datelimit_startyear='.urlencode($search_datelimit_startyear);
+	$param .= '&search_datelimit_startyear='.urlencode((string) ($search_datelimit_startyear));
 }
 if ($search_datelimit_endday) {
-	$param .= '&search_datelimit_endday='.urlencode($search_datelimit_endday);
+	$param .= '&search_datelimit_endday='.urlencode((string) ($search_datelimit_endday));
 }
 if ($search_datelimit_endmonth) {
-	$param .= '&search_datelimit_endmonth='.urlencode($search_datelimit_endmonth);
+	$param .= '&search_datelimit_endmonth='.urlencode((string) ($search_datelimit_endmonth));
 }
 if ($search_datelimit_endyear) {
-	$param .= '&search_datelimit_endyear='.urlencode($search_datelimit_endyear);
+	$param .= '&search_datelimit_endyear='.urlencode((string) ($search_datelimit_endyear));
 }
 if ($search_task_budget_amount) {
 	$param .= '&search_task_budget_amount='.urlencode($search_task_budget_amount);
@@ -690,7 +689,7 @@ if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($sea
 	$param .= '&search_opp_status='.urlencode($search_opp_status);
 }
 if ($search_project_user != '') {
-	$param .= '&search_project_user='.urlencode($search_project_user);
+	$param .= '&search_project_user='.urlencode((string) ($search_project_user));
 }
 if ($search_task_user > 0) {
 	$param .= '&search_task_user='.urlencode($search_task_user);
@@ -742,8 +741,8 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $newcardbutton = '';
 
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create', '', $permissiontocreate);
 
@@ -836,7 +835,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -961,7 +960,7 @@ if (!empty($arrayfields['t.billed']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['t.datec']['checked'])) {
@@ -1522,7 +1521,7 @@ while ($i < $imaxinloop) {
 			// Extra fields
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 			// Fields from hook
-			$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+			$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			// Date creation
@@ -1623,7 +1622,7 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql' => $sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

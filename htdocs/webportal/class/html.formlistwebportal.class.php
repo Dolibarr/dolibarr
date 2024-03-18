@@ -2,6 +2,8 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -189,7 +191,7 @@ class FormListWebPortal
 				$arrayfields['t.' . $key] = array(
 					'label' => $val['label'],
 					'checked' => (($visible < 0) ? 0 : 1),
-					'enabled' => (abs($visible) != 3 && dol_eval($val['enabled'], 1)),
+					'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
 					'position' => $val['position'],
 					'help' => isset($val['help']) ? $val['help'] : ''
 				);
@@ -299,7 +301,7 @@ class FormListWebPortal
 
 		$sql .= " FROM " . $this->db->prefix() . $object->table_element . " as t";
 		// Add table from hooks
-		$parameters = array();
+		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		if ($object->ismultientitymanaged == 1) {
@@ -342,7 +344,7 @@ class FormListWebPortal
 		//    $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 		//}
 		// Add where from hooks
-		$parameters = array();
+		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 
@@ -421,7 +423,7 @@ class FormListWebPortal
 			}
 		}
 		// Add $param from hooks
-		$parameters = array();
+		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$param .= $hookmanager->resPrint;
 
@@ -539,14 +541,14 @@ class FormListWebPortal
 		// Remain to pay
 		if (!empty($arrayfields['remain_to_pay']['checked'])) {
 			$html .= '<th scope="col">';
-			$html .= $langs->trans($arrayfields['remain_to_pay']['label']);;
+			$html .= $langs->trans($arrayfields['remain_to_pay']['label']);
 			$html .= '</th>';
 			$totalarray['nbfield']++;
 		}
 		// Download link
 		if (!empty($arrayfields['download_link']['checked'])) {
 			$html .= '<th scope="col">';
-			$html .= $langs->trans($arrayfields['download_link']['label']);;
+			$html .= $langs->trans($arrayfields['download_link']['label']);
 			$html .= '</th>';
 			$totalarray['nbfield']++;
 		}
@@ -580,12 +582,12 @@ class FormListWebPortal
 			if ($elementEn == 'invoice') {
 				// store company
 				$idCompany = (int) $obj->fk_soc;
-				if (!isset($companyStaticList[$obj->fk_soc])) {
+				if (!isset($this->companyStaticList[$obj->fk_soc])) {
 					$companyStatic = new Societe($this->db);
 					$companyStatic->fetch($idCompany);
-					$companyStaticList[$idCompany] = $companyStatic;
+					$this->companyStaticList[$idCompany] = $companyStatic;
 				}
-				$companyStatic = $companyStaticList[$obj->fk_soc];
+				$companyStatic = $this->companyStaticList[$obj->fk_soc];
 
 				// paid sum
 				$payment = $object->getSommePaiement();

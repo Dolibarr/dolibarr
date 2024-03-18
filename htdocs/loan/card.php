@@ -258,7 +258,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
-$morehtmlright = '';
+$morehtmlstatus = '';
 $outputlangs = $langs;
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
@@ -306,13 +306,13 @@ if ($action == 'create') {
 	// Date Start
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
-	print $form->selectDate(!empty($datestart) ? $datestart : -1, 'start', '', '', '', 'add', 1, 1);
+	print $form->selectDate(!empty($datestart) ? $datestart : -1, 'start', 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// Date End
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
-	print $form->selectDate(!empty($dateend) ? $dateend : -1, 'end', '', '', '', 'add', 1, 1);
+	print $form->selectDate(!empty($dateend) ? $dateend : -1, 'end', 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// Number of terms
@@ -474,7 +474,7 @@ if ($id > 0) {
 
 		$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';

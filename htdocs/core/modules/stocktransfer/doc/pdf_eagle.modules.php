@@ -323,6 +323,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// New page
@@ -1222,7 +1223,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 	/**
 	 *  Show footer of page. Need this->emetteur object
 	 *
-	 *  @param	PDF				$pdf     			PDF
+	 *  @param	TCPDF			$pdf     			PDF
 	 *  @param	StockTransfer	$object				Object to show
 	 *  @param	Translate		$outputlangs		Object lang for output
 	 *  @param	int				$hidefreetext		1=Hide free text

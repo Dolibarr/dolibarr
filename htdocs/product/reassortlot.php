@@ -66,7 +66,7 @@ $search_stock_physique = GETPOST('search_stock_physique', 'alpha');
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -139,15 +139,15 @@ $result = restrictedArea($user, 'produit|service', 0, 'product&product');
 
 // Definition of array of fields for columns
 $arrayfields = array(
-	array('type'=>'varchar', 'label'=>'Ref', 'checked'=>1, 'enabled'=>1, 'position'=>1),
-	array('type'=>'varchar', 'label'=>'Label', 'checked'=>1, 'enabled'=>1, 'position'=>1),
-	array('type'=>'int', 'label'=>'Warehouse', 'checked'=>1, 'enabled'=>1, 'position'=>1),
-	array('type'=>'varchar', 'label'=>'Lot', 'checked'=>1, 'enabled'=>1, 'position'=>1),
-	array('type'=>'varchar', 'label'=>'DLC', 'checked'=>1, 'enabled'=>1, 'position'=>1),
-	array('type'=>'varchar', 'label'=>'DLUO', 'checked'=>1, 'enabled'=>1, 'position'=>1),
-	array('type'=>'int', 'label'=>'Stock', 'checked'=>1, 'enabled'=>1, 'position'=>1),
-	array('type'=>'int', 'label'=>'StatusSell', 'checked'=>1, 'enabled'=>1, 'position'=>1),
-	array('type'=>'int', 'label'=>'StatusBuy', 'checked'=>1, 'enabled'=>1, 'position'=>1),
+	array('type' => 'varchar', 'label' => 'Ref', 'checked' => 1, 'enabled' => 1, 'position' => 1),
+	array('type' => 'varchar', 'label' => 'Label', 'checked' => 1, 'enabled' => 1, 'position' => 1),
+	array('type' => 'int', 'label' => 'Warehouse', 'checked' => 1, 'enabled' => 1, 'position' => 1),
+	array('type' => 'varchar', 'label' => 'Lot', 'checked' => 1, 'enabled' => 1, 'position' => 1),
+	array('type' => 'varchar', 'label' => 'DLC', 'checked' => 1, 'enabled' => 1, 'position' => 1),
+	array('type' => 'varchar', 'label' => 'DLUO', 'checked' => 1, 'enabled' => 1, 'position' => 1),
+	array('type' => 'int', 'label' => 'Stock', 'checked' => 1, 'enabled' => 1, 'position' => 1),
+	array('type' => 'int', 'label' => 'StatusSell', 'checked' => 1, 'enabled' => 1, 'position' => 1),
+	array('type' => 'int', 'label' => 'StatusBuy', 'checked' => 1, 'enabled' => 1, 'position' => 1),
 );
 
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
@@ -214,11 +214,11 @@ if (empty($reshook)) {
 	}
 
 	// Mass actions
-		/*$objectclass = 'MyObject';
-		$objectlabel = 'MyObject';
-		$uploaddir = $conf->mymodule->dir_output;
-		include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-		*/
+	/*$objectclass = 'MyObject';
+	$objectlabel = 'MyObject';
+	$uploaddir = $conf->mymodule->dir_output;
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	*/
 }
 
 
@@ -489,10 +489,10 @@ if ($tobuy) {
 	$param .= "&tobuy=".urlencode($tobuy);
 }
 if ($type != '') {
-	$param .= "&type=".urlencode($type);
+	$param .= "&type=".urlencode((string) ($type));
 }
 if ($fourn_id) {
-	$param .= "&fourn_id=".urlencode($fourn_id);
+	$param .= "&fourn_id=".urlencode((string) ($fourn_id));
 }
 if ($snom) {
 	$param .= "&snom=".urlencode($snom);
@@ -504,7 +504,7 @@ if ($search_batch) {
 	$param .= "&search_batch=".urlencode($search_batch);
 }
 if ($sbarcode) {
-	$param .= "&sbarcode=".urlencode($sbarcode);
+	$param .= "&sbarcode=".urlencode((string) ($sbarcode));
 }
 if ($search_warehouse) {
 	$param .= "&search_warehouse=".urlencode($search_warehouse);
@@ -519,10 +519,10 @@ if ($search_sale) {
 	$param .= "&search_sale=".urlencode($search_sale);
 }
 if (!empty($search_categ) && $search_categ != '-1') {
-	$param .= "&search_categ=".urlencode($search_categ);
+	$param .= "&search_categ=".urlencode((string) ($search_categ));
 }
 if (!empty($search_warehouse_categ) && $search_warehouse_categ != '-1') {
-	$param .= "&search_warehouse_categ=".urlencode($search_warehouse_categ);
+	$param .= "&search_warehouse_categ=".urlencode((string) ($search_warehouse_categ));
 }
 if ($search_stock_physique) {
 	$param .= '&search_stock_physique=' . urlencode($search_stock_physique);
@@ -574,7 +574,7 @@ if (isModEnabled('category')) {
 	$moreforfilter .= '</div>';
 }
 
-$moreforfilter.='<label for="search_subjecttolotserial">'.$langs->trans("SubjectToLotSerialOnly").' </label><input type="checkbox" id="search_subjecttolotserial" name="search_subjecttolotserial" value="1"'.($search_subjecttolotserial ? ' checked' : '').'>';
+$moreforfilter .= '<label for="search_subjecttolotserial">'.$langs->trans("SubjectToLotSerialOnly").' </label><input type="checkbox" id="search_subjecttolotserial" name="search_subjecttolotserial" value="1"'.($search_subjecttolotserial ? ' checked' : '').'>';
 
 
 if (!empty($moreforfilter)) {
@@ -686,7 +686,7 @@ print_liste_field_titre('');
 print_liste_field_titre("ProductStatusOnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, '', $sortfield, $sortorder, 'right ');
 print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'right ');
 // Hook fields
-$parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -875,7 +875,7 @@ while ($i < $imaxinloop) {
 	}
 
 	// Fields values from hook
-	$parameters = array('obj'=>$objp);
+	$parameters = array('obj' => $objp);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $product); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 

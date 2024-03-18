@@ -45,7 +45,7 @@ $sref = GETPOST('search_ref', 'alpha');
 $snom = GETPOST('search_nom', 'alpha');
 $suser = GETPOST('search_user', 'alpha');
 $sttc = GETPOST('search_ttc', 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 $search_product = GETPOSTINT('search_product');
 $search_dateyear = GETPOSTINT('search_dateyear');
 $search_datemonth = GETPOSTINT('search_datemonth');
@@ -202,13 +202,13 @@ if ($resql) {
 		$param .= '&search_ttc='.urlencode($sttc);
 	}
 	if ($search_dateyear) {
-		$param .= '&search_dateyear='.urlencode($search_dateyear);
+		$param .= '&search_dateyear='.urlencode((string) ($search_dateyear));
 	}
 	if ($search_datemonth) {
-		$param .= '&search_datemonth='.urlencode($search_datemonth);
+		$param .= '&search_datemonth='.urlencode((string) ($search_datemonth));
 	}
 	if ($search_dateday) {
-		$param .= '&search_dateday='.urlencode($search_dateday);
+		$param .= '&search_dateday='.urlencode((string) ($search_dateday));
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);

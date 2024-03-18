@@ -9,6 +9,7 @@
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2023 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019	   Ferran Marcet	    <fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,13 +146,13 @@ if ($reshook < 0) {
 
 $TRemindTypes = array();
 if (getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
-	$TRemindTypes['browser'] = array('label'=>$langs->trans('BrowserPush'), 'disabled'=>(!getDolGlobalString('AGENDA_REMINDER_BROWSER') ? 1 : 0));
+	$TRemindTypes['browser'] = array('label' => $langs->trans('BrowserPush'), 'disabled' => (!getDolGlobalString('AGENDA_REMINDER_BROWSER') ? 1 : 0));
 }
 if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
-	$TRemindTypes['email'] = array('label'=>$langs->trans('EMail'), 'disabled'=>(!getDolGlobalString('AGENDA_REMINDER_EMAIL') ? 1 : 0));
+	$TRemindTypes['email'] = array('label' => $langs->trans('EMail'), 'disabled' => (!getDolGlobalString('AGENDA_REMINDER_EMAIL') ? 1 : 0));
 }
 
-$TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
+$TDurationTypes = array('y' => $langs->trans('Years'), 'm' => $langs->trans('Month'), 'w' => $langs->trans('Weeks'), 'd' => $langs->trans('Days'), 'h' => $langs->trans('Hours'), 'i' => $langs->trans('Minutes'));
 
 $result = restrictedArea($user, 'agenda', $object, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 
@@ -229,7 +230,7 @@ if (empty($reshook) && (GETPOST('addassignedtouser') || GETPOST('updateassignedt
 		if (!empty($_SESSION['assignedtouser'])) {
 			$assignedtouser = json_decode($_SESSION['assignedtouser'], true);
 		}
-		$assignedtouser[GETPOST('assignedtouser')] = array('id'=>GETPOSTINT('assignedtouser'), 'transparency'=>GETPOST('transparency'), 'mandatory'=>1);
+		$assignedtouser[GETPOST('assignedtouser')] = array('id' => GETPOSTINT('assignedtouser'), 'transparency' => GETPOST('transparency'), 'mandatory' => 1);
 		$_SESSION['assignedtouser'] = json_encode($assignedtouser);
 	}
 	$donotclearsession = 1;
@@ -251,7 +252,7 @@ if (empty($reshook) && (GETPOST('addassignedtoresource') || GETPOST('updateassig
 		if (!empty($_SESSION['assignedtoresource'])) {
 			$assignedtoresource = json_decode($_SESSION['assignedtoresource'], true);
 		}
-		$assignedtoresource[GETPOST('assignedtoresource')] = array('id'=>GETPOSTINT('assignedtoresource'), 'transparency'=>GETPOST('transparency'), 'mandatory'=>1);
+		$assignedtoresource[GETPOST('assignedtoresource')] = array('id' => GETPOSTINT('assignedtoresource'), 'transparency' => GETPOST('transparency'), 'mandatory' => 1);
 		$_SESSION['assignedtoresource'] = json_encode($assignedtoresource);
 	}
 	$donotclearsession = 1;
@@ -419,15 +420,9 @@ if (empty($reshook) && $action == 'add') {
 				$object->transparency = $transparency;
 			}
 
-			$object->userassigned[$value['id']] = array('id'=>$value['id'], 'transparency'=>$transparency);
+			$object->userassigned[$value['id']] = array('id' => $value['id'], 'transparency' => $transparency);
 
 			$i++;
-		}
-	}
-
-	if (!$error && getDolGlobalString('AGENDA_ENABLE_DONEBY')) {
-		if (GETPOST("doneby") > 0) {
-			$object->userdoneid = GETPOSTINT("doneby");
 		}
 	}
 
@@ -476,7 +471,8 @@ if (empty($reshook) && $action == 'add') {
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object);
 	if ($ret < 0) {
-		$error++; $donotclearsession = 1;
+		$error++;
+		$donotclearsession = 1;
 		$action = 'create';
 	}
 
@@ -627,6 +623,7 @@ if (empty($reshook) && $action == 'add') {
 			$repeateventlimitdate = dol_mktime(23, 59, 59, GETPOSTISSET("limitmonth") ? GETPOSTINT("limitmonth") : 1, GETPOSTISSET("limitday") ? GETPOSTINT("limitday") : 1, GETPOSTISSET("limityear") && GETPOSTINT("limityear") < 2100 ? GETPOSTINT("limityear") : 2100, $tzforfullday ? $tzforfullday : 'tzuserrel');
 			// Set date of end of event
 			$deltatime = num_between_day($object->datep, $datep);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$datef = dol_time_plus_duree($datef, $deltatime, 'd');
 
 			while ($datep <= $repeateventlimitdate && !$error) {
@@ -857,7 +854,7 @@ if (empty($reshook) && $action == 'update') {
 		} else {
 			$assignedtouser = (!empty($object->userownerid) && $object->userownerid > 0 ? $object->userownerid : 0);
 			if ($assignedtouser) {
-				$listofuserid[$assignedtouser] = array('id'=>$assignedtouser, 'mandatory'=>0, 'transparency'=>($user->id == $assignedtouser ? $transparency : '')); // Owner first
+				$listofuserid[$assignedtouser] = array('id' => $assignedtouser, 'mandatory' => 0, 'transparency' => ($user->id == $assignedtouser ? $transparency : '')); // Owner first
 			}
 		}
 		$object->userassigned = array();
@@ -867,18 +864,12 @@ if (empty($reshook) && $action == 'update') {
 			if ($i == 0) {
 				$object->userownerid = $val['id'];
 			}
-			$object->userassigned[$val['id']] = array('id'=>$val['id'], 'mandatory'=>0, 'transparency'=>($user->id == $val['id'] ? $transparency : ''));
+			$object->userassigned[$val['id']] = array('id' => $val['id'], 'mandatory' => 0, 'transparency' => ($user->id == $val['id'] ? $transparency : ''));
 			$i++;
 		}
 
 		$object->transparency = $transparency; // We set transparency on event (even if we can also store it on each user, standard says this property is for event)
 		// TODO store also transparency on owner user
-
-		if (getDolGlobalString('AGENDA_ENABLE_DONEBY')) {
-			if (GETPOST("doneby")) {
-				$object->userdoneid = GETPOSTINT("doneby");
-			}
-		}
 
 		// Check parameters
 		if (GETPOSTISSET('actioncode') && !GETPOST('actioncode', 'aZ09')) {	// actioncode is '0'
@@ -1049,7 +1040,7 @@ if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes
 
 	if ($user->hasRight('agenda', 'myactions', 'delete')
 		|| $user->hasRight('agenda', 'allactions', 'delete')) {
-		$result = $object->delete();
+		$result = $object->delete($user);
 
 		if ($result >= 0) {
 			header("Location: index.php");
@@ -1180,9 +1171,9 @@ $form = new Form($db);
 $formproject = new FormProjets($db);
 
 $arrayrecurrulefreq = array(
-	'no'=>$langs->trans("OnceOnly"),
-	'MONTHLY'=>$langs->trans("EveryMonth"),
-	'WEEKLY'=>$langs->trans("EveryWeek")
+	'no' => $langs->trans("OnceOnly"),
+	'MONTHLY' => $langs->trans("EveryMonth"),
+	'WEEKLY' => $langs->trans("EveryWeek")
 	// 'DAILY'=>$langs->trans("EveryDay")
 );
 
@@ -1225,16 +1216,6 @@ if ($action == 'create') {
                     $("#fullday").change(function() {
 						console.log("setdatefields");
                         setdatefields();
-                    });
-
-                    $("#selectcomplete").change(function() {
-						console.log("we change the complete status - set the doneby");
-                        if ($("#selectcomplete").val() == 100) {
-                            if ($("#doneby").val() <= 0) $("#doneby").val(\''.((int) $user->id).'\');
-                        }
-                        if ($("#selectcomplete").val() == 0) {
-                            $("#doneby").val(-1);
-                        }
                     });
 
                     $("#actioncode").change(function() {
@@ -1386,12 +1367,12 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	$datep = ($datep ? $datep : (is_null($object->datep) ? '' : $object->datep));
-	if (GETPOST('datep', 'int', 1)) {
-		$datep = dol_stringtotime(GETPOST('datep', 'int', 1), 'tzuserrel');
+	if (GETPOSTINT('datep', 1)) {
+		$datep = dol_stringtotime(GETPOSTINT('datep', 1), 'tzuserrel');
 	}
 	$datef = ($datef ? $datef : $object->datef);
-	if (GETPOST('datef', 'int', 1)) {
-		$datef = dol_stringtotime(GETPOST('datef', 'int', 1), 'tzuserrel');
+	if (GETPOSTINT('datef', 1)) {
+		$datef = dol_stringtotime(GETPOSTINT('datef', 1), 'tzuserrel');
 	}
 	if (empty($datef) && !empty($datep)) {
 		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || !getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT')) {
@@ -1408,11 +1389,7 @@ if ($action == 'create') {
 		print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel');
 	}
 	print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span> ';
-	if (GETPOST("afaire") == 1) {
-		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
-	} else {
-		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
-	}
+	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
 	print '</td></tr>';
 
 	print '<tr><td class="">&nbsp;</td><td></td></tr>';
@@ -1426,7 +1403,7 @@ if ($action == 'create') {
 	if (empty($donotclearsession)) {
 		$assignedtouser = GETPOST("assignedtouser") ? GETPOST("assignedtouser") : (!empty($object->userownerid) && $object->userownerid > 0 ? $object->userownerid : $user->id);
 		if ($assignedtouser) {
-			$listofuserid[$assignedtouser] = array('id'=>$assignedtouser, 'mandatory'=>0); // Owner first
+			$listofuserid[$assignedtouser] = array('id' => $assignedtouser, 'mandatory' => 0); // Owner first
 		}
 		//$listofuserid[$user->id] = array('id'=>$user->id, 'mandatory'=>0, 'transparency'=>(GETPOSTISSET('transparency') ? GETPOST('transparency', 'alpha') : 1)); // 1 by default at first init
 		$listofuserid[$assignedtouser]['transparency'] = (GETPOSTISSET('transparency') ? GETPOST('transparency', 'alpha') : 1); // 1 by default at first init
@@ -1444,13 +1421,6 @@ if ($action == 'create') {
 	print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0', 1, $listofuserid, $listofcontactid, $listofotherid);
 	print '</div>';
 	print '</td></tr>';
-
-	// Done by
-	if (getDolGlobalString('AGENDA_ENABLE_DONEBY')) {
-		print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td>';
-		print $form->select_dolusers(GETPOSTISSET("doneby") ? GETPOSTINT("doneby") : (!empty($object->userdoneid) && $percent == 100 ? $object->userdoneid : 0), 'doneby', 1);
-		print '</td></tr>';
-	}
 
 	// Location
 	if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
@@ -1473,7 +1443,7 @@ if ($action == 'create') {
 		if (empty($donotclearsession)) {
 			$assignedtoresource = GETPOST("assignedtoresource");
 			if ($assignedtoresource) {
-				$listofresourceid[$assignedtoresource] = array('id'=>$assignedtoresource, 'mandatory'=>0); // Owner first
+				$listofresourceid[$assignedtoresource] = array('id' => $assignedtoresource, 'mandatory' => 0); // Owner first
 			}
 			$_SESSION['assignedtoresource'] = json_encode($listofresourceid);
 		} else {
@@ -1494,7 +1464,7 @@ if ($action == 'create') {
 	// Status
 	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
-	$percent = $complete !=='' ? $complete : -1;
+	$percent = $complete !== '' ? $complete : -1;
 	if (GETPOSTISSET('status')) {
 		$percent = GETPOST('status');
 	} elseif (GETPOSTISSET('percentage')) {
@@ -1543,7 +1513,7 @@ if ($action == 'create') {
 		if (GETPOSTINT('contactid')) {
 			$preselectedids[GETPOSTINT('contactid')] = GETPOSTINT('contactid');
 		}
-		if ($origin=='contact') {
+		if ($origin == 'contact') {
 			$preselectedids[GETPOSTINT('originid')] = GETPOSTINT('originid');
 		}
 		// select "all" or "none" contact by default
@@ -1797,7 +1767,7 @@ if ($id > 0) {
 
 	// Confirmation suppression action
 	if ($action == 'delete') {
-		print $form->formconfirm("card.php?id=".urlencode($id), $langs->trans("DeleteAction"), $langs->trans("ConfirmDeleteAction"), "confirm_delete", '', '', 1);
+		print $form->formconfirm("card.php?id=".urlencode((string) ($id)), $langs->trans("DeleteAction"), $langs->trans("ConfirmDeleteAction"), "confirm_delete", '', '', 1);
 	}
 
 	if ($action == 'edit') {
@@ -1946,21 +1916,9 @@ if ($id > 0) {
 		*/
 		print '</td><td td colspan="3">';
 		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
-		if (GETPOST("afaire") == 1) {
-			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
-		} elseif (GETPOST("afaire") == 2) {
-			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
-		} else {
-			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
-		}
+		print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span> ';
-		if (GETPOST("afaire") == 1) {
-			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
-		} elseif (GETPOST("afaire") == 2) {
-			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
-		} else {
-			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
-		}
+		print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		print '</td></tr>';
 
 		print '<tr><td class="">&nbsp;</td><td></td></tr>';
@@ -1970,12 +1928,12 @@ if ($id > 0) {
 		if (empty($donotclearsession)) {
 			if ($object->userownerid > 0) {
 				$listofuserid[$object->userownerid] = array(
-					'id'=>$object->userownerid,
-					'type'=>'user',
+					'id' => $object->userownerid,
+					'type' => 'user',
 					//'transparency'=>$object->userassigned[$user->id]['transparency'],
-					'transparency'=>$object->transparency, // Force transparency on ownerfrom event
-					'answer_status'=>$object->userassigned[$object->userownerid]['answer_status'],
-					'mandatory'=>$object->userassigned[$object->userownerid]['mandatory']
+					'transparency' => $object->transparency, // Force transparency on ownerfrom event
+					'answer_status' => $object->userassigned[$object->userownerid]['answer_status'],
+					'mandatory' => $object->userassigned[$object->userownerid]['mandatory']
 				);
 			}
 			if (!empty($object->userassigned)) {	// Now concat assigned users
@@ -2007,13 +1965,6 @@ if ($id > 0) {
 			print '</div>';
 		}*/
 		print '</td></tr>';
-
-		// Realised by
-		if (getDolGlobalString('AGENDA_ENABLE_DONEBY')) {
-			print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
-			print $form->select_dolusers($object->userdoneid > 0 ? $object->userdoneid : -1, 'doneby', 1);
-			print '</td></tr>';
-		}
 
 		// Location
 		if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
@@ -2253,9 +2204,9 @@ if ($id > 0) {
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
-			$formconfirm.=$hookmanager->resPrint;
+			$formconfirm .= $hookmanager->resPrint;
 		} elseif ($reshook > 0) {
-			$formconfirm=$hookmanager->resPrint;
+			$formconfirm = $hookmanager->resPrint;
 		}
 
 		// Print form confirm
@@ -2403,10 +2354,10 @@ if ($id > 0) {
 		if (empty($donotclearsession)) {
 			if ($object->userownerid > 0) {
 				$listofuserid[$object->userownerid] = array(
-					'id'=>$object->userownerid,
-					'transparency'=>$object->transparency, // Force transparency on owner from property of event
-					'answer_status'=>$object->userassigned[$object->userownerid]['answer_status'],
-					'mandatory'=>$object->userassigned[$object->userownerid]['mandatory']
+					'id' => $object->userownerid,
+					'transparency' => $object->transparency, // Force transparency on owner from property of event
+					'answer_status' => $object->userassigned[$object->userownerid]['answer_status'],
+					'mandatory' => $object->userassigned[$object->userownerid]['mandatory']
 				);
 			}
 			if (!empty($object->userassigned)) {	// Now concat assigned users
@@ -2439,17 +2390,6 @@ if ($id > 0) {
 		}
 		*/
 		print '	</td></tr>';
-
-		// Done by
-		if (getDolGlobalString('AGENDA_ENABLE_DONEBY')) {
-			print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td>';
-			if ($object->userdoneid > 0) {
-				$tmpuser = new User($db);
-				$tmpuser->fetch($object->userdoneid);
-				print $tmpuser->getNomUrl(1);
-			}
-			print '</td></tr>';
-		}
 
 		// Categories
 		if (isModEnabled('category')) {

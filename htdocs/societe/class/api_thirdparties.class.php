@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2018   Pierre Chéné            <pierre.chene44@gmail.com>
- * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
- * Copyright (C) 2020-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2023       Alexandre Janniaux  <alexandre.janniaux@gmail.com>
+/* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2018   	Pierre Chéné            <pierre.chene44@gmail.com>
+ * Copyright (C) 2019   	Cedric Ancelin          <icedo.anc@gmail.com>
+ * Copyright (C) 2020-2024  Frédéric France     	<frederic.france@free.fr>
+ * Copyright (C) 2023       Alexandre Janniaux  	<alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +49,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -257,7 +258,7 @@ class Thirdparties extends DolibarrApi
 				continue;
 			}
 
-			$this->company->$field = $value;
+			$this->company->$field = $this->_checkValForAPI($field, $value, $this->company);
 		}
 
 		if ($this->company->create(DolibarrApiAccess::$user) < 0) {
@@ -302,7 +303,7 @@ class Thirdparties extends DolibarrApi
 				continue;
 			}
 
-			$this->company->$field = $value;
+			$this->company->$field = $this->_checkValForAPI($field, $value, $this->company);
 		}
 
 		if (isModEnabled('mailing') && !empty($this->company->email) && isset($this->company->no_email)) {
@@ -317,25 +318,21 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Merge a thirdparty into another one.
+	 * Merge a third party into another one.
 	 *
-	 * Merge content (properties, notes) and objects (like invoices, events, orders, proposals, ...) of a thirdparty into a target thirdparty,
-	 * then delete the merged thirdparty.
-	 * If a property has a defined value both in thirdparty to delete and thirdparty to keep, the value into the thirdparty to
+	 * Merge content (properties, notes) and objects (like invoices, events, orders, proposals, ...) of a thirdparty into a target third party,
+	 * then delete the merged third party.
+	 * If a property has a defined value both in third party to delete and third party to keep, the value into the third party to
 	 * delete will be ignored, the value of target thirdparty will remain, except for notes (content is concatenated).
 	 *
-	 * @param int   $id             ID of thirdparty to keep (the target thirdparty)
-	 * @param int   $idtodelete     ID of thirdparty to remove (the thirdparty to delete), once data has been merged into the target thirdparty.
-	 * @return int
+	 * @param int   $id             ID of thirdparty to keep (the target third party)
+	 * @param int   $idtodelete     ID of thirdparty to remove (the thirdparty to delete), once data has been merged into the target third party.
+	 * @return Object				Return the resulted third party.
 	 *
 	 * @url PUT {id}/merge/{idtodelete}
 	 */
 	public function merge($id, $idtodelete)
 	{
-		global $user;
-
-		$error = 0;
-
 		if ($id == $idtodelete) {
 			throw new RestException(400, 'Try to merge a thirdparty into itself');
 		}
@@ -412,7 +409,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @param	int		$id				ID of thirdparty
 	 * @param	int		$priceLevel		Price level to apply to thirdparty
-	 * @return	object					Thirdparty data without useless information
+	 * @return	Object					Thirdparty data without useless information
 	 *
 	 * @url PUT {id}/setpricelevel/{priceLevel}
 	 *
@@ -1220,6 +1217,7 @@ class Thirdparties extends DolibarrApi
 		}
 		$account = new CompanyBankAccount($this->db);
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$account->fetch($bankaccount_id, $id, -1, '');
 
 		if ($account->socid != $id) {
@@ -1271,11 +1269,13 @@ class Thirdparties extends DolibarrApi
 
 		$account->fetch($bankaccount_id);
 
-		if (!$account->socid == $id) {
-			throw new RestException(403);
-		}
+		$socid = (int) $account->socid;
 
-		return $account->delete(DolibarrApiAccess::$user);
+		if ($socid == $id) {
+			return $account->delete(DolibarrApiAccess::$user);
+		} else {
+			throw new RestException(403, "Not allowed due to bad consistency of input data");
+		}
 	}
 
 	/**
@@ -1305,7 +1305,7 @@ class Thirdparties extends DolibarrApi
 		$this->company->setDocModel(DolibarrApiAccess::$user, $model);
 
 		$this->company->fk_bank = $this->company->fk_account;
-		$this->company->fk_account = $this->company->fk_account;
+		// $this->company->fk_account = $this->company->fk_account;
 
 		$outputlangs = $langs;
 		$newlang = '';
@@ -1370,7 +1370,7 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get a specific gateway attached to a thirdparty (by specifying the site key)
+	 * Get a specific account attached to a thirdparty (by specifying the site key)
 	 *
 	 * @param int $id ID of thirdparty
 	 * @param string $site Site key
@@ -1379,7 +1379,7 @@ class Thirdparties extends DolibarrApi
 	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
 	 * @throws RestException 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
 	 *
-	 * @url GET {id}/gateways/
+	 * @url GET {id}/accounts/
 	 */
 	public function getSocieteAccounts($id, $site = null)
 	{
@@ -1403,7 +1403,7 @@ class Thirdparties extends DolibarrApi
 		$result = $this->db->query($sql);
 
 		if ($result && $this->db->num_rows($result) == 0) {
-			throw new RestException(404, 'This thirdparty does not have any gateway attached or does not exist.');
+			throw new RestException(404, 'This thirdparty does not have any account attached or does not exist.');
 		}
 
 		$i = 0;
@@ -1439,7 +1439,7 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Create and attach a new gateway to an existing thirdparty
+	 * Create and attach a new account to an existing thirdparty
 	 *
 	 * Possible fields for request_data (request body) are specified in <code>llx_societe_account</code> table.<br>
 	 * See <a href="https://wiki.dolibarr.org/index.php/Table_llx_societe_account">Table llx_societe_account</a> wiki page for more information<br><br>
@@ -1451,11 +1451,11 @@ class Thirdparties extends DolibarrApi
 	 * @return array|mixed
 	 *
 	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
-	 * @throws RestException 409 Conflict: A SocieteAccount entity (gateway) already exists for this company and site.
+	 * @throws RestException 409 Conflict: An Account already exists for this company and site.
 	 * @throws RestException 422 Unprocessable Entity: You must pass the site attribute in your request data !
 	 * @throws RestException 500 Internal Server Error: Error creating SocieteAccount account
 	 *
-	 * @url POST {id}/gateways
+	 * @url POST {id}/accounts
 	 */
 	public function createSocieteAccount($id, $request_data = null)
 	{
@@ -1500,10 +1500,10 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Create and attach a new (or replace an existing) specific site gateway to a thirdparty
+	 * Create and attach a new (or replace an existing) specific site account to a thirdparty
 	 *
 	 * You <strong>MUST</strong> pass all values to keep (otherwise, they will be deleted) !<br>
-	 * If you just need to update specific fields prefer <code>PATCH /thirdparties/{id}/gateways/{site}</code> endpoint.<br><br>
+	 * If you just need to update specific fields prefer <code>PATCH /thirdparties/{id}/accounts/{site}</code> endpoint.<br><br>
 	 * When a <strong>SocieteAccount</strong> entity does not exist for the <code>id</code> and <code>site</code>
 	 * supplied, a new one will be created. In that case <code>fk_soc</code> and <code>site</code> members form
 	 * request body payload will be ignored and <code>id</code> and <code>site</code> query strings parameters
@@ -1519,7 +1519,7 @@ class Thirdparties extends DolibarrApi
 	 * @throws RestException 422 Unprocessable Entity: You must pass the site attribute in your request data !
 	 * @throws RestException 500 Internal Server Error: Error updating SocieteAccount entity
 	 *
-	 * @url PUT {id}/gateways/{site}
+	 * @url PUT {id}/accounts/{site}
 	 */
 	public function putSocieteAccount($id, $site, $request_data = null)
 	{
@@ -1563,7 +1563,7 @@ class Thirdparties extends DolibarrApi
 				$result = $this->db->query($sql);
 
 				if ($result && $this->db->num_rows($result) !== 0) {
-					throw new RestException(409, "You are trying to update this thirdparty SocieteAccount (gateway record) from $site to ".$request_data['site']." but another SocieteAccount entity already exists with this site key.");
+					throw new RestException(409, "You are trying to update this thirdparty Account for $site to ".$request_data['site']." but another Account already exists with this site key.");
 				}
 			}
 
@@ -1600,7 +1600,7 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Update specified values of a specific gateway attached to a thirdparty
+	 * Update specified values of a specific account attached to a thirdparty
 	 *
 	 * @param int		$id				Id of thirdparty
 	 * @param string	$site			Site key
@@ -1613,7 +1613,7 @@ class Thirdparties extends DolibarrApi
 	 * @throws RestException 409 Conflict: Another SocieteAccount entity already exists for this thirdparty with this site key.
 	 * @throws RestException 500 Internal Server Error: Error updating SocieteAccount entity
 	 *
-	 * @url PATCH {id}/gateways/{site}
+	 * @url PATCH {id}/accounts/{site}
 	 */
 	public function patchSocieteAccount($id, $site, $request_data = null)
 	{
@@ -1625,7 +1625,7 @@ class Thirdparties extends DolibarrApi
 		$result = $this->db->query($sql);
 
 		if ($result && $this->db->num_rows($result) == 0) {
-			throw new RestException(404, "This thirdparty does not have $site gateway attached or does not exist.");
+			throw new RestException(404, "This thirdparty does not have $site account attached or does not exist.");
 		} else {
 			// If the user tries to edit the site member, we check first if
 			if (isset($request_data['site']) && $request_data['site'] !== $site) {
@@ -1633,7 +1633,7 @@ class Thirdparties extends DolibarrApi
 				$result = $this->db->query($sql);
 
 				if ($result && $this->db->num_rows($result) !== 0) {
-					throw new RestException(409, "You are trying to update this thirdparty SocieteAccount (gateway record) site member from ".$site." to ".$request_data['site']." but another SocieteAccount entity already exists for this thirdparty with this site key.");
+					throw new RestException(409, "You are trying to update this thirdparty Account for ".$site." to ".$request_data['site']." but another Account already exists for this thirdparty with this site key.");
 				}
 			}
 
@@ -1662,17 +1662,17 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Delete a specific site gateway attached to a thirdparty (by gateway id)
+	 * Delete a specific site account attached to a thirdparty (by account id)
 	 *
 	 * @param int $id ID of thirdparty
 	 * @param int $site Site key
 	 *
 	 * @return void
-	 * @throws RestException 401 Unauthorized: User does not have permission to delete thirdparties gateways
+	 * @throws RestException 401 Unauthorized: User does not have permission to delete thirdparties accounts
 	 * @throws RestException 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
 	 * @throws RestException 500 Internal Server Error: Error deleting SocieteAccount entity
 	 *
-	 * @url DELETE {id}/gateways/{site}
+	 * @url DELETE {id}/accounts/{site}
 	 */
 	public function deleteSocieteAccount($id, $site)
 	{
@@ -1691,22 +1691,22 @@ class Thirdparties extends DolibarrApi
 			$account->fetch($obj->rowid);
 
 			if ($account->delete(DolibarrApiAccess::$user) < 0) {
-				throw new RestException(500, "Error while deleting $site gateway attached to this third party");
+				throw new RestException(500, "Error while deleting $site account attached to this third party");
 			}
 		}
 	}
 
 	/**
-	 * Delete all gateways attached to a thirdparty
+	 * Delete all accounts attached to a thirdparty
 	 *
 	 * @param int $id ID of thirdparty
 	 *
 	 * @return void
-	 * @throws RestException 401 Unauthorized: User does not have permission to delete thirdparties gateways
+	 * @throws RestException 401 Unauthorized: User does not have permission to delete thirdparties accounts
 	 * @throws RestException 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
 	 * @throws RestException 500 Internal Server Error: Error deleting SocieteAccount entity
 	 *
-	 * @url DELETE {id}/gateways
+	 * @url DELETE {id}/accounts
 	 */
 	public function deleteSocieteAccounts($id)
 	{
@@ -1724,7 +1724,7 @@ class Thirdparties extends DolibarrApi
 		$result = $this->db->query($sql);
 
 		if ($result && $this->db->num_rows($result) == 0) {
-			throw new RestException(404, 'This third party does not have any gateway attached or does not exist.');
+			throw new RestException(404, 'This third party does not have any account attached or does not exist.');
 		} else {
 			$i = 0;
 
@@ -1735,7 +1735,7 @@ class Thirdparties extends DolibarrApi
 				$account->fetch($obj->rowid);
 
 				if ($account->delete(DolibarrApiAccess::$user) < 0) {
-					throw new RestException(500, 'Error while deleting gateways attached to this third party');
+					throw new RestException(500, 'Error while deleting account attached to this third party');
 				}
 				$i++;
 			}

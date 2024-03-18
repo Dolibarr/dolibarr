@@ -48,7 +48,7 @@ $date_trans = dol_mktime(GETPOSTINT('date_transhour'), GETPOSTINT('date_transmin
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -236,7 +236,7 @@ if ($id > 0 || $ref) {
 			print '<form name="setdate_trans" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_trans">';
-			print $form->selectDate($object->date_trans ? $object->date_trans : -1, 'date_trans', 0, '', "setdate_trans");
+			print $form->selectDate($object->date_trans ? $object->date_trans : -1, 'date_trans', 0, 0, "setdate_trans");
 			print '<input type="submit" class="button button-edit smallpaddingimp valign middle" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
@@ -383,7 +383,7 @@ if ($id > 0 || $ref) {
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyTransmision").'</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans("TransData").'</td><td>';
-		print $form->selectDate('', '', '', '', '', "userfile", 1, 1);
+		print $form->selectDate('', '', 0, 0, 0, "userfile", 1, 1);
 		print '</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $form->selectarray("methode", $object->methodes_trans);
@@ -403,7 +403,7 @@ if ($id > 0 || $ref) {
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyCredit").'</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans('CreditDate').'</td><td>';
-		print $form->selectDate(-1, '', '', '', '', "infocredit", 1, 1);
+		print $form->selectDate(-1, '', 0, 0, 0, "infocredit", 1, 1);
 		print '</td></tr>';
 		print '</table>';
 		print '<br><div class="center"><span class="opacitymedium">'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice").'</span></div>';
@@ -460,7 +460,7 @@ if ($id > 0 || $ref) {
 	if ($salaryBonPl) {
 		$sql = "SELECT pl.rowid, pl.statut, pl.amount, pl.fk_user,";
 		$sql .= " u.rowid as socid, u.login as name";
-		$sql .=" FROM llx_prelevement_lignes as pl";
+		$sql .= " FROM llx_prelevement_lignes as pl";
 		$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
 		$sql .= ", ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $id);
@@ -506,7 +506,7 @@ if ($id > 0 || $ref) {
 		$num = $db->num_rows($result);
 		$i = 0;
 
-		$urladd = "&id=".urlencode($id);
+		$urladd = "&id=".urlencode((string) ($id));
 		if ($limit > 0 && $limit != $conf->liste_limit) {
 			$urladd .= '&limit='.((int) $limit);
 		}
@@ -527,6 +527,7 @@ if ($id > 0 || $ref) {
 		if (!empty($sortorder)) {
 			print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 		}
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($langs->trans("Lines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table

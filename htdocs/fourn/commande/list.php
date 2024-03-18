@@ -109,8 +109,6 @@ $search_country = GETPOSTINT("search_country");
 $search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
 $search_user = GETPOSTINT('search_user');
 $search_request_author = GETPOST('search_request_author', 'alpha');
-$search_ht = GETPOST('search_ht', 'alpha');
-$search_ttc = GETPOST('search_ttc', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $socid = GETPOSTINT('socid');
 $search_sale = GETPOSTINT('search_sale');
@@ -123,7 +121,7 @@ $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'a
 $search_multicurrency_montant_tva = GETPOST('search_multicurrency_montant_tva', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
-$search_billed = GETPOSTINT('search_billed');
+$search_billed = GETPOST('search_billed', 'intcomma');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
@@ -139,7 +137,7 @@ $diroutputmassaction = $conf->fournisseur->commande->dir_output.'/temp/massgener
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -183,28 +181,28 @@ $checkedtypetiers = 0;
 
 // Definition of array of fields for columns
 $arrayfields = array(
-	'u.login'=>array('label'=>"AuthorRequest", 'enabled'=>1, 'position'=>41),
-	's.name_alias'=>array('label'=>"AliasNameShort", 'position'=>51, 'checked'=>0),
-	's.town'=>array('label'=>"Town", 'enabled'=>1, 'position'=>55, 'checked'=>1),
-	's.zip'=>array('label'=>"Zip", 'enabled'=>1, 'position'=>56, 'checked'=>1),
-	'state.nom'=>array('label'=>"StateShort", 'enabled'=>1, 'position'=>57),
-	'country.code_iso'=>array('label'=>"Country", 'enabled'=>1, 'position'=>58),
-	'typent.code'=>array('label'=>"ThirdPartyType", 'enabled'=>$checkedtypetiers, 'position'=>59),
-	'cf.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax1_assuj == "1"), 'position'=>140),
-	'cf.total_localtax2'=>array('label'=>$langs->transcountry("AmountLT2", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax2_assuj == "1"), 'position'=>145),
-	'cf.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position'=>750),
-	'cf.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position'=>760),
+	'u.login' => array('label' => "AuthorRequest", 'enabled' => 1, 'position' => 41),
+	's.name_alias' => array('label' => "AliasNameShort", 'position' => 51, 'checked' => 0),
+	's.town' => array('label' => "Town", 'enabled' => 1, 'position' => 55, 'checked' => 1),
+	's.zip' => array('label' => "Zip", 'enabled' => 1, 'position' => 56, 'checked' => 1),
+	'state.nom' => array('label' => "StateShort", 'enabled' => 1, 'position' => 57),
+	'country.code_iso' => array('label' => "Country", 'enabled' => 1, 'position' => 58),
+	'typent.code' => array('label' => "ThirdPartyType", 'enabled' => $checkedtypetiers, 'position' => 59),
+	'cf.total_localtax1' => array('label' => $langs->transcountry("AmountLT1", $mysoc->country_code), 'checked' => 0, 'enabled' => ($mysoc->localtax1_assuj == "1"), 'position' => 140),
+	'cf.total_localtax2' => array('label' => $langs->transcountry("AmountLT2", $mysoc->country_code), 'checked' => 0, 'enabled' => ($mysoc->localtax2_assuj == "1"), 'position' => 145),
+	'cf.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position' => 750),
+	'cf.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position' => 760),
 );
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
 		$visible = (int) dol_eval($val['visible'], 1);
 		$arrayfields['cf.'.$key] = array(
-			'label'=>$val['label'],
-			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && dol_eval($val['enabled'], 1)),
-			'position'=>$val['position'],
-			'help'=> isset($val['help']) ? $val['help'] : ''
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? 0 : 1),
+			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
@@ -246,7 +244,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid'=>$socid, 'arrayfields'=>&$arrayfields);
+$parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -382,7 +380,7 @@ if (empty($reshook)) {
 
 		$db->begin();
 
-		$default_ref_supplier=dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		$default_ref_supplier = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 
 		foreach ($orders as $id_order) {
 			$cmd = new CommandeFournisseur($db);
@@ -407,7 +405,7 @@ if (empty($reshook)) {
 				$objecttmp->fk_project = $cmd->fk_project;
 				$objecttmp->multicurrency_code = $cmd->multicurrency_code;
 				$objecttmp->ref_supplier = !empty($cmd->ref_supplier) ? $cmd->ref_supplier : $default_ref_supplier;
-				$default_ref_supplier+=1;
+				$default_ref_supplier += 1;
 
 				$datefacture = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 				if (empty($datefacture)) {
@@ -588,7 +586,7 @@ if (empty($reshook)) {
 
 			if ($nb_bills_created == 1) {
 				$texttoshow = $langs->trans('BillXCreated', '{s1}');
-				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?id='.urlencode($lastid).'">'.$lastref.'</a>', $texttoshow);
+				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?id='.urlencode((string) ($lastid)).'">'.$lastref.'</a>', $texttoshow);
 				setEventMessages($texttoshow, null, 'mesgs');
 			} else {
 				setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
@@ -609,82 +607,82 @@ if (empty($reshook)) {
 				$param .= '&sall='.urlencode($sall);
 			}
 			if ($socid > 0) {
-				$param .= '&socid='.urlencode($socid);
+				$param .= '&socid='.urlencode((string) ($socid));
 			}
 			if ($search_status != '') {
 				$param .= '&search_status='.urlencode($search_status);
 			}
 			if ($search_date_order_startday) {
-				$param .= '&search_date_order_startday='.urlencode($search_date_order_startday);
+				$param .= '&search_date_order_startday='.urlencode((string) ($search_date_order_startday));
 			}
 			if ($search_date_order_startmonth) {
-				$param .= '&search_date_order_startmonth='.urlencode($search_date_order_startmonth);
+				$param .= '&search_date_order_startmonth='.urlencode((string) ($search_date_order_startmonth));
 			}
 			if ($search_date_order_startyear) {
-				$param .= '&search_date_order_startyear='.urlencode($search_date_order_startyear);
+				$param .= '&search_date_order_startyear='.urlencode((string) ($search_date_order_startyear));
 			}
 			if ($search_date_order_endday) {
-				$param .= '&search_date_order_endday='.urlencode($search_date_order_endday);
+				$param .= '&search_date_order_endday='.urlencode((string) ($search_date_order_endday));
 			}
 			if ($search_date_order_endmonth) {
-				$param .= '&search_date_order_endmonth='.urlencode($search_date_order_endmonth);
+				$param .= '&search_date_order_endmonth='.urlencode((string) ($search_date_order_endmonth));
 			}
 			if ($search_date_order_endyear) {
-				$param .= '&search_date_order_endyear='.urlencode($search_date_order_endyear);
+				$param .= '&search_date_order_endyear='.urlencode((string) ($search_date_order_endyear));
 			}
 			if ($search_date_delivery_startday) {
-				$param .= '&search_date_delivery_startday='.urlencode($search_date_delivery_startday);
+				$param .= '&search_date_delivery_startday='.urlencode((string) ($search_date_delivery_startday));
 			}
 			if ($search_date_delivery_startmonth) {
-				$param .= '&search_date_delivery_startmonth='.urlencode($search_date_delivery_startmonth);
+				$param .= '&search_date_delivery_startmonth='.urlencode((string) ($search_date_delivery_startmonth));
 			}
 			if ($search_date_delivery_startyear) {
-				$param .= '&search_date_delivery_startyear='.urlencode($search_date_delivery_startyear);
+				$param .= '&search_date_delivery_startyear='.urlencode((string) ($search_date_delivery_startyear));
 			}
 			if ($search_date_delivery_endday) {
-				$param .= '&search_date_delivery_endday='.urlencode($search_date_delivery_endday);
+				$param .= '&search_date_delivery_endday='.urlencode((string) ($search_date_delivery_endday));
 			}
 			if ($search_date_delivery_endmonth) {
-				$param .= '&search_date_delivery_endmonth='.urlencode($search_date_delivery_endmonth);
+				$param .= '&search_date_delivery_endmonth='.urlencode((string) ($search_date_delivery_endmonth));
 			}
 			if ($search_date_delivery_endyear) {
-				$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
+				$param .= '&search_date_delivery_endyear='.urlencode((string) ($search_date_delivery_endyear));
 			}
 			if ($search_date_valid_startday) {
-				$param .= '&search_date_valid_startday='.urlencode($search_date_valid_startday);
+				$param .= '&search_date_valid_startday='.urlencode((string) ($search_date_valid_startday));
 			}
 			if ($search_date_valid_startmonth) {
-				$param .= '&search_date_valid_startmonth='.urlencode($search_date_valid_startmonth);
+				$param .= '&search_date_valid_startmonth='.urlencode((string) ($search_date_valid_startmonth));
 			}
 			if ($search_date_valid_startyear) {
-				$param .= '&search_date_valid_startyear='.urlencode($search_date_valid_startyear);
+				$param .= '&search_date_valid_startyear='.urlencode((string) ($search_date_valid_startyear));
 			}
 			if ($search_date_valid_endday) {
-				$param .= '&search_date_valid_endday='.urlencode($search_date_valid_endday);
+				$param .= '&search_date_valid_endday='.urlencode((string) ($search_date_valid_endday));
 			}
 			if ($search_date_valid_endmonth) {
-				$param .= '&search_date_valid_endmonth='.urlencode($search_date_valid_endmonth);
+				$param .= '&search_date_valid_endmonth='.urlencode((string) ($search_date_valid_endmonth));
 			}
 			if ($search_date_valid_endyear) {
-				$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
+				$param .= '&search_date_valid_endyear='.urlencode((string) ($search_date_valid_endyear));
 			}
 			if ($search_date_approve_startday) {
-				$param .= '&search_date_approve_startday='.urlencode($search_date_approve_startday);
+				$param .= '&search_date_approve_startday='.urlencode((string) ($search_date_approve_startday));
 			}
 			if ($search_date_approve_startmonth) {
-				$param .= '&search_date_approve_startmonth='.urlencode($search_date_approve_startmonth);
+				$param .= '&search_date_approve_startmonth='.urlencode((string) ($search_date_approve_startmonth));
 			}
 			if ($search_date_approve_startyear) {
-				$param .= '&search_date_approve_startyear='.urlencode($search_date_approve_startyear);
+				$param .= '&search_date_approve_startyear='.urlencode((string) ($search_date_approve_startyear));
 			}
 			if ($search_date_approve_endday) {
-				$param .= '&search_date_approve_endday='.urlencode($search_date_approve_endday);
+				$param .= '&search_date_approve_endday='.urlencode((string) ($search_date_approve_endday));
 			}
 			if ($search_date_approve_endmonth) {
-				$param .= '&search_date_approve_endmonth='.urlencode($search_date_approve_endmonth);
+				$param .= '&search_date_approve_endmonth='.urlencode((string) ($search_date_approve_endmonth));
 			}
 			if ($search_date_approve_endyear) {
-				$param .= '&search_date_approve_endyear='.urlencode($search_date_approve_endyear);
+				$param .= '&search_date_approve_endyear='.urlencode((string) ($search_date_approve_endyear));
 			}
 			if ($search_ref) {
 				$param .= '&search_ref='.urlencode($search_ref);
@@ -697,7 +695,7 @@ if (empty($reshook)) {
 			}
 			//if ($search_ref_customer)	$param .= '&search_ref_customer='.urlencode($search_ref_customer);
 			if ($search_user > 0) {
-				$param .= '&search_user='.urlencode($search_user);
+				$param .= '&search_user='.urlencode((string) ($search_user));
 			}
 			if ($search_sale > 0) {
 				$param .= '&search_sale='.urlencode($search_sale);
@@ -715,7 +713,7 @@ if (empty($reshook)) {
 				$param .= "&search_project_ref=".urlencode($search_project_ref);
 			}
 			if ($show_files) {
-				$param .= '&show_files='.urlencode($show_files);
+				$param .= '&show_files='.urlencode((string) ($show_files));
 			}
 			if ($optioncss != '') {
 				$param .= '&optioncss='.urlencode($optioncss);
@@ -1036,82 +1034,82 @@ if ($resql) {
 		$param .= '&sall='.urlencode($sall);
 	}
 	if ($socid > 0) {
-		$param .= '&socid='.urlencode($socid);
+		$param .= '&socid='.urlencode((string) ($socid));
 	}
 	if ($sall) {
 		$param .= "&search_all=".urlencode($sall);
 	}
 	if ($search_date_order_startday) {
-		$param .= '&search_date_order_startday='.urlencode($search_date_order_startday);
+		$param .= '&search_date_order_startday='.urlencode((string) ($search_date_order_startday));
 	}
 	if ($search_date_order_startmonth) {
-		$param .= '&search_date_order_startmonth='.urlencode($search_date_order_startmonth);
+		$param .= '&search_date_order_startmonth='.urlencode((string) ($search_date_order_startmonth));
 	}
 	if ($search_date_order_startyear) {
-		$param .= '&search_date_order_startyear='.urlencode($search_date_order_startyear);
+		$param .= '&search_date_order_startyear='.urlencode((string) ($search_date_order_startyear));
 	}
 	if ($search_date_order_endday) {
-		$param .= '&search_date_order_endday='.urlencode($search_date_order_endday);
+		$param .= '&search_date_order_endday='.urlencode((string) ($search_date_order_endday));
 	}
 	if ($search_date_order_endmonth) {
-		$param .= '&search_date_order_endmonth='.urlencode($search_date_order_endmonth);
+		$param .= '&search_date_order_endmonth='.urlencode((string) ($search_date_order_endmonth));
 	}
 	if ($search_date_order_endyear) {
-		$param .= '&search_date_order_endyear='.urlencode($search_date_order_endyear);
+		$param .= '&search_date_order_endyear='.urlencode((string) ($search_date_order_endyear));
 	}
 	if ($search_date_delivery_startday) {
-		$param .= '&search_date_delivery_startday='.urlencode($search_date_delivery_startday);
+		$param .= '&search_date_delivery_startday='.urlencode((string) ($search_date_delivery_startday));
 	}
 	if ($search_date_delivery_startmonth) {
-		$param .= '&search_date_delivery_startmonth='.urlencode($search_date_delivery_startmonth);
+		$param .= '&search_date_delivery_startmonth='.urlencode((string) ($search_date_delivery_startmonth));
 	}
 	if ($search_date_delivery_startyear) {
-		$param .= '&search_date_delivery_startyear='.urlencode($search_date_delivery_startyear);
+		$param .= '&search_date_delivery_startyear='.urlencode((string) ($search_date_delivery_startyear));
 	}
 	if ($search_date_delivery_endday) {
-		$param .= '&search_date_delivery_endday='.urlencode($search_date_delivery_endday);
+		$param .= '&search_date_delivery_endday='.urlencode((string) ($search_date_delivery_endday));
 	}
 	if ($search_date_delivery_endmonth) {
-		$param .= '&search_date_delivery_endmonth='.urlencode($search_date_delivery_endmonth);
+		$param .= '&search_date_delivery_endmonth='.urlencode((string) ($search_date_delivery_endmonth));
 	}
 	if ($search_date_delivery_endyear) {
-		$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
+		$param .= '&search_date_delivery_endyear='.urlencode((string) ($search_date_delivery_endyear));
 	}
 	if ($search_date_valid_startday) {
-		$param .= '&search_date_valid_startday='.urlencode($search_date_valid_startday);
+		$param .= '&search_date_valid_startday='.urlencode((string) ($search_date_valid_startday));
 	}
 	if ($search_date_valid_startmonth) {
-		$param .= '&search_date_valid_startmonth='.urlencode($search_date_valid_startmonth);
+		$param .= '&search_date_valid_startmonth='.urlencode((string) ($search_date_valid_startmonth));
 	}
 	if ($search_date_valid_startyear) {
-		$param .= '&search_date_valid_startyear='.urlencode($search_date_valid_startyear);
+		$param .= '&search_date_valid_startyear='.urlencode((string) ($search_date_valid_startyear));
 	}
 	if ($search_date_valid_endday) {
-		$param .= '&search_date_valid_endday='.urlencode($search_date_valid_endday);
+		$param .= '&search_date_valid_endday='.urlencode((string) ($search_date_valid_endday));
 	}
 	if ($search_date_valid_endmonth) {
-		$param .= '&search_date_valid_endmonth='.urlencode($search_date_valid_endmonth);
+		$param .= '&search_date_valid_endmonth='.urlencode((string) ($search_date_valid_endmonth));
 	}
 	if ($search_date_valid_endyear) {
-		$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
+		$param .= '&search_date_valid_endyear='.urlencode((string) ($search_date_valid_endyear));
 	}
 	if ($search_date_approve_startday) {
-		$param .= '&search_date_approve_startday='.urlencode($search_date_approve_startday);
+		$param .= '&search_date_approve_startday='.urlencode((string) ($search_date_approve_startday));
 	}
 	if ($search_date_approve_startmonth) {
-		$param .= '&search_date_approve_startmonth='.urlencode($search_date_approve_startmonth);
+		$param .= '&search_date_approve_startmonth='.urlencode((string) ($search_date_approve_startmonth));
 	}
 	if ($search_date_approve_startyear) {
-		$param .= '&search_date_approve_startyear='.urlencode($search_date_approve_startyear);
+		$param .= '&search_date_approve_startyear='.urlencode((string) ($search_date_approve_startyear));
 	}
 	if ($search_date_approve_endday) {
-		$param .= '&search_date_approve_endday='.urlencode($search_date_approve_endday);
+		$param .= '&search_date_approve_endday='.urlencode((string) ($search_date_approve_endday));
 	}
 	if ($search_date_approve_endmonth) {
-		$param .= '&search_date_approve_endmonth='.urlencode($search_date_approve_endmonth);
+		$param .= '&search_date_approve_endmonth='.urlencode((string) ($search_date_approve_endmonth));
 	}
 	if ($search_date_approve_endyear) {
-		$param .= '&search_date_approve_endyear='.urlencode($search_date_approve_endyear);
+		$param .= '&search_date_approve_endyear='.urlencode((string) ($search_date_approve_endyear));
 	}
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
@@ -1123,7 +1121,7 @@ if ($resql) {
 		$param .= '&search_company_alias='.urlencode($search_company_alias);
 	}
 	if ($search_user > 0) {
-		$param .= '&search_user='.urlencode($search_user);
+		$param .= '&search_user='.urlencode((string) ($search_user));
 	}
 	if ($search_request_author) {
 		$param .= '&search_request_author='.urlencode($search_request_author);
@@ -1165,13 +1163,13 @@ if ($resql) {
 		$param .= "&search_billed=".urlencode($search_billed);
 	}
 	if ($show_files) {
-		$param .= '&show_files='.urlencode($show_files);
+		$param .= '&show_files='.urlencode((string) ($show_files));
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
 	if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
-		$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
+		$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
 	}
 
 	// Add $param from extra fields
@@ -1183,9 +1181,9 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
-		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-		'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+		'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+		'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+		'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
 
 	if ($permissiontovalidate) {
@@ -1213,8 +1211,8 @@ if ($resql) {
 		$url .= '&backtopage='.urlencode(DOL_URL_ROOT.'/fourn/commande/list.php?socid='.((int) $socid));
 	}
 	$newcardbutton = '';
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewSupplierOrderShort'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
@@ -1254,7 +1252,7 @@ if ($resql) {
 		print $langs->trans('DateInvoice');
 		print '</td>';
 		print '<td>';
-		print $form->selectDate('', '', '', '', '', '', 1, 1);
+		print $form->selectDate('', '', 0, 0, 0, '', 1, 1);
 		print '</td>';
 		print '</tr>';
 		print '<tr>';
@@ -1481,7 +1479,7 @@ if ($resql) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields);
+	$parameters = array('arrayfields' => $arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
@@ -1648,7 +1646,7 @@ if ($resql) {
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
-	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (!empty($arrayfields['cf.date_creation']['checked'])) {
@@ -1740,7 +1738,7 @@ if ($resql) {
 			$thirdpartytmp->client = $obj->client;
 			$thirdpartytmp->fournisseur = $obj->fournisseur;
 			// Output Kanban
-			print $objectstatic->getKanbanView('', array('thirdparty'=>$thirdpartytmp->getNomUrl('supplier', 0, 0, -1), 'selected' => in_array($objectstatic->id, $arrayofselected)));
+			print $objectstatic->getKanbanView('', array('thirdparty' => $thirdpartytmp->getNomUrl('supplier', 0, 0, -1), 'selected' => in_array($objectstatic->id, $arrayofselected)));
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';
@@ -1990,7 +1988,7 @@ if ($resql) {
 			// Extra fields
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 			// Fields from hook
-			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+			$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			// Date creation
@@ -2104,7 +2102,7 @@ if ($resql) {
 
 	$db->free($resql);
 
-	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 

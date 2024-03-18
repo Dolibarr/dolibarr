@@ -259,7 +259,8 @@ if (empty($reshook)) {
 		$originalId = $object->id;
 
 		if ($object->id > 0) {
-			$object->id = $object->ref = null;
+			$object->id = 0;
+			$object->ref = '';
 			$object->paye = 0;
 			if (GETPOST('amount', 'alphanohtml')) {
 				$object->amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT', 2);

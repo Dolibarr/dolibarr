@@ -5,6 +5,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -259,7 +260,7 @@ class DoliDBSqlite3 extends DoliDB
 				}
 
 				//if (preg_match('/rowid\s+.*\s+PRIMARY\s+KEY,/i', $line)) {
-					//preg_replace('/(rowid\s+.*\s+PRIMARY\s+KEY\s*,)/i', '/* \\1 */', $line);
+				//preg_replace('/(rowid\s+.*\s+PRIMARY\s+KEY\s*,)/i', '/* \\1 */', $line);
 				//}
 			}
 
@@ -971,6 +972,10 @@ class DoliDBSqlite3 extends DoliDB
 		// phpcs:enable
 		// FIXME: $fulltext_keys parameter is unused
 
+		$sqlfields = array();
+		$sqlk = array();
+		$sqluq = array();
+
 		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "create table ".$table."(";
@@ -1415,7 +1420,7 @@ class DoliDBSqlite3 extends DoliDB
 			$num -= floor(($month * 4 + 23) / 10);
 		}
 		$temp = floor(($y / 100 + 1) * 3 / 4);
-		return $num + floor($y / 4) - $temp;
+		return (int) ($num + floor($y / 4) - $temp);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1429,7 +1434,7 @@ class DoliDBSqlite3 extends DoliDB
 	private static function calc_weekday($daynr, $sunday_first_day_of_week)
 	{
 		// phpcs:enable
-		$ret = floor(($daynr + 5 + ($sunday_first_day_of_week ? 1 : 0)) % 7);
+		$ret = (int) floor(($daynr + 5 + ($sunday_first_day_of_week ? 1 : 0)) % 7);
 		return $ret;
 	}
 
@@ -1437,7 +1442,7 @@ class DoliDBSqlite3 extends DoliDB
 	/**
 	 * calc_days_in_year
 	 *
-	 * @param 	string	$year		Year
+	 * @param 	int		$year		Year
 	 * @return	int					Nb of days in year
 	 */
 	private static function calc_days_in_year($year)
@@ -1450,12 +1455,12 @@ class DoliDBSqlite3 extends DoliDB
 	/**
 	 * calc_week
 	 *
-	 * @param 	string	$year				Year
-	 * @param 	string	$month				Month
-	 * @param 	string	$day				Day
-	 * @param 	string	$week_behaviour		Week behaviour
-	 * @param 	string	$calc_year			???
-	 * @return	string						???
+	 * @param 	int		$year				Year
+	 * @param 	int		$month				Month
+	 * @param 	int		$day				Day
+	 * @param 	int		$week_behaviour		Week behaviour, bit masks: WEEK_MONDAY_FIRST, WEEK_YEAR, WEEK_FIRST_WEEKDEAY
+	 * @param 	int		$calc_year			??? Year where the week started
+	 * @return	int							??? Week number in year
 	 */
 	private static function calc_week($year, $month, $day, $week_behaviour, &$calc_year)
 	{
@@ -1492,6 +1497,6 @@ class DoliDBSqlite3 extends DoliDB
 				return 1;
 			}
 		}
-		return floor($days / 7 + 1);
+		return (int) floor($days / 7 + 1);
 	}
 }

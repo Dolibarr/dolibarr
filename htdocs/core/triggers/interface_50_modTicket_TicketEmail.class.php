@@ -3,6 +3,7 @@
  * Copyright (C) 2014-2016  Jean-François Ferry	<hello@librethic.io>
  * 				 2016       Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2023		Benjamin Falière	<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +49,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	}
 
 	/**
-	 *      Function called when a Dolibarrr business event is done.
+	 *      Function called when a Dolibarr business event is done.
 	 *      All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers
 	 *
 	 *      @param  string    $action Event action code
@@ -250,20 +251,22 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					$linked_contacts = array_merge($linked_contacts, $object->listeContact(-1, 'internal'));
 					if (empty($linked_contacts) && getDolGlobalString('TICKET_NOTIFY_AT_CLOSING') && !empty($object->fk_soc)) {
 						$object->fetch_thirdparty();
-						$linked_contacts[] = $object->thirdparty->email;
+						$linked_contacts[]['email'] = $object->thirdparty->email;
 					}
 
 					$contactid = empty($object->context['contactid']) ? 0 : $object->context['contactid'];
 					$res = 0;
 
 					if ($contactid > 0) {
+						// TODO This security test has no sens. We must check that $contactid is inside $linked_contacts[]['id'] when $linked_contacts[]['source'] = 'external' or 'thirdparty'
+						// Refuse email if not
 						$contact = new Contact($this->db);
 						$res = $contact->fetch($contactid);
 						if (! in_array($contact, $linked_contacts)) {
 							$error_msg = $langs->trans('Error'). ': ';
 							$error_msg .= $langs->transnoentities('TicketWrongContact');
 							setEventMessages($error_msg, [], 'errors');
-							$ok = 0;
+							$ok = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 							break;
 						}
 					}
@@ -397,11 +400,11 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $value) {
 				$enabled = 1;
 				if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key])) {
-					$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
+					$enabled = (int) dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
 				}
 				$perms = 1;
 				if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key])) {
-					$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$key], 1);
+					$perms = (int) dol_eval($extrafields->attributes[$object->table_element]['perms'][$key], 1);
 				}
 
 				$qualified = true;

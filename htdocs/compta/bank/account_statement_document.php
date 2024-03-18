@@ -54,7 +54,7 @@ if ($user->socid) {
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }
@@ -130,7 +130,7 @@ if (!empty($numref)) {
 	$object->fetch_thirdparty();
 	$upload_dir = $conf->bank->dir_output."/".$id."/statement/".dol_sanitizeFileName($numref);
 }
-$backtopage = $_SERVER['PHP_SELF']."?account=".urlencode($id)."&num=".urlencode($numref);
+$backtopage = $_SERVER['PHP_SELF']."?account=".urlencode((string) ($id))."&num=".urlencode((string) ($numref));
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 

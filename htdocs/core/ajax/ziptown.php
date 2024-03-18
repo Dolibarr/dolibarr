@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2023 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,6 +111,7 @@ if (GETPOST('zipcode') || GETPOST('town')) {
 	//var_dump($db);
 	if ($resql) {
 		while ($row = $db->fetch_array($resql)) {
+			$row_array = [];
 			$country = $row['country_id'] ? ($langs->transnoentitiesnoconv('Country'.$row['country_code']) != 'Country'.$row['country_code'] ? $langs->transnoentitiesnoconv('Country'.$row['country_code']) : $row['country_label']) : '';
 			$county = $row['state_id'] ? ($langs->transnoentitiesnoconv($row['state_code']) != $row['state_code'] ? $langs->transnoentitiesnoconv($row['state_code']) : ($row['state_label'] != '-' ? $row['state_label'] : '')) : '';
 
@@ -142,7 +144,7 @@ if (GETPOST('zipcode') || GETPOST('town')) {
 	top_httphead('text/html');
 
 	$formcompany = new FormCompany($db);
-	print $formcompany->select_state(GETPOST('selected', 'int', 1), GETPOST('country_codeid', 'int', 1), GETPOST('htmlname', 'alpha', 1), GETPOST('morecss', 'alpha', 1));
+	print $formcompany->select_state(GETPOSTINT('selected', 1), GETPOSTINT('country_codeid', 1), GETPOSTINT('htmlname', 1), GETPOSTINT('morecss', 1));
 }
 
 $db->close();

@@ -2,6 +2,7 @@
 /* Copyright (C) 2003	   Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003	   Jean-Louis Bergamo	<jlb@j1b.org>
  * Copyright (C) 2006-2017 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -222,6 +223,7 @@ if (empty($reshook)) {
 			);
 			complete_substitutions_array($substitutionarray, $langs);
 
+			$arrayofrecords = array();
 			// For labels
 			if ($mode == 'label') {
 				$txtforsticker = "%PHOTO%"; // Photo will be barcode image, %BARCODE% possible when using TCPDF generator
@@ -236,14 +238,14 @@ if (empty($reshook)) {
 				if ($numberofsticker <= $MAXSTICKERS) {
 					for ($i = 0; $i < $numberofsticker; $i++) {
 						$arrayofrecords[] = array(
-							'textleft'=>$textleft,
-							'textheader'=>$textheader,
-							'textfooter'=>$textfooter,
-							'textright'=>$textright,
-							'code'=>$code,
-							'encoding'=>$encoding,
-							'is2d'=>$is2d,
-							'photo'=>!empty($barcodeimage) ? $barcodeimage : ''	// Photo must be a file that exists with format supported by TCPDF
+							'textleft' => $textleft,
+							'textheader' => $textheader,
+							'textfooter' => $textfooter,
+							'textright' => $textright,
+							'code' => $code,
+							'encoding' => $encoding,
+							'is2d' => $is2d,
+							'photo' => !empty($barcodeimage) ? $barcodeimage : ''	// Photo must be a file that exists with format supported by TCPDF
 						);
 					}
 				} else {
@@ -251,8 +253,6 @@ if (empty($reshook)) {
 					$error++;
 				}
 			}
-
-			$i++;
 
 			// Build and output PDF
 			if (!$error && $mode == 'label') {

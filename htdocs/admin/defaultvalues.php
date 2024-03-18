@@ -49,7 +49,7 @@ $mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'createform'; // 'cr
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -356,7 +356,7 @@ print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("
 print '</td>'."\n";
 print '</tr>'."\n";
 
-$result = $object->fetchAll($sortorder, $sortfield, 0, 0, array('t.type'=>$mode,'t.entity'=>array($user->entity,$conf->entity)));
+$result = $object->fetchAll($sortorder, $sortfield, 0, 0, array('t.type'=>$mode, 't.entity'=>array($user->entity,$conf->entity)));
 
 if (!is_array($result) && $result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
