@@ -11763,12 +11763,14 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param string    	$label      	Label or tooltip of button if $text is provided. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
  * @param string    	$text       	Optional : short label on button. Can be escaped HTML content or full simple text.
  * @param string 		$actionType 	'default', 'danger', 'email', 'clone', 'cancel', 'delete', ...
- * @param string|array<int,array{lang:string,enabled:bool,perm:bool,label:string,url:string}> 	$url        	Url for link or array of subbutton description ('label'=>, 'url'=>, 'lang'=>, 'perm'=> )
- * 										Example when an array is used: $arrayforbutaction = array(
- *                                      10 => array('lang'=>'propal', 'enabled'=>isModEnabled("propal"), 'perm'=>$user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
- *                                      20 => array('lang'=>'orders', 'enabled'=>isModEnabled("order"), 'perm'=>$user->hasRight('commande', 'creer'), 'label' => 'CreateOrder', 'url'=>'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
- *                                      30 => array('lang'=>'bills', 'enabled'=>isModEnabled("invoice"), 'perm'=>$user->hasRight('facture', 'creer'), 'label' => 'CreateBill', 'url'=>'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
- *										);
+ *
+ * @param string|array<int,array{lang:string,enabled:bool,perm:bool,label:string,url:string}> 	$url        	Url for link or array of subbutton description
+ *
+ *                                                                                                              Example when an array is used: $arrayforbutaction = array(
+ *                                                                                                              10 => array('lang'=>'propal', 'enabled'=>isModEnabled("propal"), 'perm'=>$user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+ *                                                                                                              20 => array('lang'=>'orders', 'enabled'=>isModEnabled("order"), 'perm'=>$user->hasRight('commande', 'creer'), 'label' => 'CreateOrder', 'url'=>'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+ *                                                                                                              30 => array('lang'=>'bills', 'enabled'=>isModEnabled("invoice"), 'perm'=>$user->hasRight('facture', 'creer'), 'label' => 'CreateBill', 'url'=>'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+ *                                                                                                              );
  * @param string    	$id         	Attribute id of action button. Example 'action-delete'. This can be used for full ajax confirm if this code is reused into the ->formconfirm() method.
  * @param int|boolean	$userRight  	User action right
  * // phpcs:disable
@@ -13989,7 +13991,7 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 			$hookmanager->initHooks(array('main'));
 		}
 
-		$parameters = array('message'=>$message, 'params'=>$params);
+		$parameters = array('message' => $message, 'params' => $params);
 		$reshook = $hookmanager->executeHooks('getErrorRecordNotFound', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		print $hookmanager->resPrint;
 	}
