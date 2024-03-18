@@ -89,6 +89,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
 
 $logouttext = '';
 $logouthtmltext = '';
+$toprightmenu = '';
 if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	//$logouthtmltext=$appli.'<br>';
 	if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http') {
