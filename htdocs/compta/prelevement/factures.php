@@ -274,7 +274,7 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$param = "&id=".$id;
+	$param = "&id=".((int) $id);
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.((int) $limit);
 	}
