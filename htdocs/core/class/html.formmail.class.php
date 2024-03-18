@@ -7,6 +7,7 @@
  * Copyright (C) 2018-2022	Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -350,7 +351,7 @@ class FormMail extends Form
 		if (!empty($_SESSION["listofmimes".$keytoavoidconflict])) {
 			$listofmimes = explode(';', $_SESSION["listofmimes".$keytoavoidconflict]);
 		}
-		return array('paths'=>$listofpaths, 'names'=>$listofnames, 'mimes'=>$listofmimes);
+		return array('paths' => $listofpaths, 'names' => $listofnames, 'mimes' => $listofmimes);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -407,8 +408,8 @@ class FormMail extends Form
 
 		$parameters = array(
 			'addfileaction' => $addfileaction,
-			'removefileaction'=> $removefileaction,
-			'trackid'=> $this->trackid
+			'removefileaction' => $removefileaction,
+			'trackid' => $this->trackid
 		);
 		$reshook = $hookmanager->executeHooks('getFormMail', $parameters, $this);
 
@@ -599,7 +600,7 @@ class FormMail extends Form
 						&& !preg_match('/user_aliases/', $this->fromtype)
 						&& !preg_match('/global_aliases/', $this->fromtype)
 						&& !preg_match('/senderprofile/', $this->fromtype)
-						) {
+					) {
 						// Use this->fromname and this->frommail or error if not defined
 						$out .= $this->fromname;
 						if ($this->frommail) {
@@ -646,7 +647,7 @@ class FormMail extends Form
 								if ($this->frommail) {
 									$s .= ' &lt;' . getDolGlobalString('MAIN_MAIL_EMAIL_FROM').'&gt;';
 								}
-								array('label' => $s, 'data-html' => $s);
+								$liste['main_from'] = array('label' => $s, 'data-html' => $s);
 							}
 						}
 
@@ -910,7 +911,6 @@ class FormMail extends Form
 				}
 
 				// Complete substitution array with the url to make online payment
-				$paymenturl = '';
 				$validpaymentmethod = array();
 				if (empty($this->substit['__REF__'])) {
 					$paymenturl = '';
@@ -1187,7 +1187,7 @@ class FormMail extends Form
 					$tmparray[$key]['label'] = $label;
 					$tmparray[$key]['label'] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]['label']);
 					// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
-					$tmparray[$key]['label'] = dol_htmlentities($tmparray[$key]['label'], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8', true);
+					$tmparray[$key]['label'] = dol_htmlentities($tmparray[$key]['label'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', true);
 
 					$tmparray[$key]['labelhtml'] = $label;
 					$tmparray[$key]['labelhtml'] = str_replace(array('&lt;', '<', '&gt;', '>'), array('__LTCHAR__', '__LTCHAR__', '__GTCHAR__', '__GTCHAR__'), $tmparray[$key]['labelhtml']);
@@ -1240,7 +1240,7 @@ class FormMail extends Form
 					$tmparray[$key]['label'] = $label;
 					$tmparray[$key]['label'] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]['label']);
 					// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
-					$tmparray[$key]['label'] = dol_htmlentities($tmparray[$key]['label'], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8', true);
+					$tmparray[$key]['label'] = dol_htmlentities($tmparray[$key]['label'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', true);
 
 					$tmparray[$key]['labelhtml'] = $label;
 					$tmparray[$key]['labelhtml'] = str_replace(array('&lt;', '<', '&gt;', '>'), array('__LTCHAR__', '__LTCHAR__', '__GTCHAR__', '__GTCHAR__'), $tmparray[$key]['labelhtml']);
@@ -1289,7 +1289,7 @@ class FormMail extends Form
 					$tmparray[$key]['label'] = $label;
 					$tmparray[$key]['label'] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]['label']);
 					// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
-					$tmparray[$key]['label'] = dol_htmlentities($tmparray[$key]['label'], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8', true);
+					$tmparray[$key]['label'] = dol_htmlentities($tmparray[$key]['label'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', true);
 
 					$tmparray[$key]['labelhtml'] = $label;
 					$tmparray[$key]['labelhtml'] = str_replace(array('&lt;', '<', '&gt;', '>'), array('__LTCHAR__', '__LTCHAR__', '__GTCHAR__', '__GTCHAR__'), $tmparray[$key]['labelhtml']);
@@ -1440,9 +1440,10 @@ class FormMail extends Form
 	 * Return Html code for AI instruction of message and autofill result
 	 *
 	 * @param	string		$format			Format for output ('', 'html', ...)
+	 * @param   string      $htmlContent    HTML name of WYSIWIG field
 	 * @return 	string      				HTML code to ask AI instruction and autofill result
 	 */
-	public function getSectionForAIPrompt($format = '')
+	public function getSectionForAIPrompt($format = '', $htmlContent = 'message')
 	{
 		global $langs;
 
@@ -1454,6 +1455,9 @@ class FormMail extends Form
 		$out .= '<td>';
 		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." />';
 		$out .= '<input id="generate_button" type="button" class="button smallpaddingimp"  value="'.$langs->trans('Generate').'"/>';
+		$out .= '<div id="ai_status_message" class="fieldrequired hideobject marginrightonly">';
+		$out .= '<i class="fa fa-spinner fa-spin fa-2x fa-fw"></i>'.$langs->trans("AIProcessingPleaseWait");
+		$out .= '</div>';
 		$out .= "</td></tr>\n";
 
 		$out .= "<script type='text/javascript'>
@@ -1468,11 +1472,23 @@ class FormMail extends Form
 
 				$('#generate_button').click(function() {
 					var instructions = $('#ai_instructions').val();
+					var timeoutfinished = 0;
+					var apicallfinished = 0;
+
+					$('#ai_status_message').show();
+					$('.icon-container .loader').show();
+					setTimeout(function() {
+						timeoutfinished = 1;
+						if (apicallfinished) {
+							$('#ai_status_message').hide();
+						}
+					}, 2000);
 
 					//editor on readonly
-        			if (CKEDITOR.instances.message) {
-						CKEDITOR.instances.message.setReadOnly(1);
+        			if (CKEDITOR.instances.".$htmlContent.") {
+						CKEDITOR.instances.".$htmlContent.".setReadOnly(1);
 					}
+
 
 					$.ajax({
 						url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".currentToken()."',
@@ -1483,21 +1499,27 @@ class FormMail extends Form
 							'instructions': instructions,
 						}),
 						success: function(response) {
-							console.log('Add response into field message: '+response);
+							console.log('Add response into field ".$htmlContent.": '+response);
 
-							jQuery('#message').val(response);
+							jQuery('#".$htmlContent."').val(response);
 
-							if (CKEDITOR.instances && CKEDITOR.instances.message && ".getDolGlobalInt('FCKEDITOR_ENABLE_MAIL', 0).") {
-								CKEDITOR.instances.message.setReadOnly(0);
-								CKEDITOR.instances.message.setData(response);
+							if (CKEDITOR.instances && CKEDITOR.instances.".$htmlContent." && ".getDolGlobalInt('FCKEDITOR_ENABLE_MAIL', 0).") {
+								CKEDITOR.instances.".$htmlContent.".setReadOnly(0);
+								CKEDITOR.instances.".$htmlContent.".setData(response);
 							}
 
 							// remove readonly
 							$('#ai_instructions').val('');
+
+							apicallfinished = 1;
+							if (timeoutfinished) {
+								$('#ai_status_message').hide();
+							}
 						},
 						error: function(xhr, status, error) {
 							alert(error);
 							console.error('error ajax', status, error);
+							$('#ai_status_message').hide();
 						}
 
 					});
@@ -1510,10 +1532,10 @@ class FormMail extends Form
 
 	/**
 	 * Return HTML code for selection of email layout
-	 *
+	 * @param   string      $htmlContent    HTML name of WYSIWIG field
 	 * @return 	string      HTML for model email boxes
 	 */
-	public function getModelEmailTemplate()
+	public function getModelEmailTemplate($htmlContent = 'message')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
 
@@ -1545,7 +1567,7 @@ class FormMail extends Form
 						var template = $(this).data('template');
 						var contentHtml = $(this).data('content');
 
-						var editorInstance = CKEDITOR.instances.message;
+						var editorInstance = CKEDITOR.instances.".$htmlContent.";
 						if (editorInstance) {
 							editorInstance.setData(contentHtml);
 						}
@@ -1873,7 +1895,7 @@ class FormMail extends Form
 
 		$tmparray = array();
 		if ($mode == 'formemail' || $mode == 'formemailwithlines' || $mode == 'formemailforlines') {
-			$parameters = array('mode'=>$mode);
+			$parameters = array('mode' => $mode);
 			$tmparray = getCommonSubstitutionArray($langs, 2, null, $object); // Note: On email templated edition, this is null because it is related to all type of objects
 			complete_substitutions_array($tmparray, $langs, null, $parameters);
 
@@ -1886,7 +1908,7 @@ class FormMail extends Form
 		}
 
 		if ($mode == 'emailing') {
-			$parameters = array('mode'=>$mode);
+			$parameters = array('mode' => $mode);
 			$tmparray = getCommonSubstitutionArray($langs, 2, array('object', 'objectamount'), $object); // Note: On email templated edition, this is null because it is related to all type of objects
 			complete_substitutions_array($tmparray, $langs, null, $parameters);
 

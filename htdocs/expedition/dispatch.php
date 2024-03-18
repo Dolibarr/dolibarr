@@ -774,7 +774,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 						print '<td></td>'; // Warehouse column
 
 						/*$sql = "SELECT cfd.rowid, cfd.qty, cfd.fk_entrepot, cfd.batch, cfd.eatby, cfd.sellby, cfd.fk_product";
-						$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
+						$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as cfd";
 						$sql .= " WHERE cfd.fk_commandefourndet = ".(int) $objp->rowid;*/
 
 						$sql = "SELECT ed.rowid, ed.qty, ed.fk_entrepot,";

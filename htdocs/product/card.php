@@ -807,7 +807,7 @@ if (empty($reshook)) {
 				if ($fk_default_bom >= 0) {
 					$object->fk_default_bom = $fk_default_bom;
 				} else {
-					$object->fk_default_bom = null;
+					$object->fk_default_bom = 0;
 				}
 
 				$units = GETPOSTINT('units');
@@ -972,13 +972,7 @@ if (empty($reshook)) {
 							$mesg .= ' <a href="' . $_SERVER["PHP_SELF"] . '?ref=' . $clone->ref . '">' . $langs->trans("ShowCardHere") . '</a>.';
 							setEventMessages($mesg, null, 'errors');
 						} else {
-							if (count($clone->errors)) {
-								setEventMessages($clone->error, $clone->errors, 'errors');
-								dol_print_error($db, $clone->errors);
-							} else {
-								setEventMessages($langs->trans($clone->error), null, 'errors');
-								dol_print_error($db, $clone->error);
-							}
+							setEventMessages(empty($clone->error) ? '' : $langs->trans($clone->error), $clone->errors, 'errors');
 						}
 						$error++;
 					}
@@ -997,7 +991,7 @@ if (empty($reshook)) {
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NewRefForClone")), null, 'errors');
 				}
 			} else {
-				dol_print_error($db, $object->error);
+				dol_print_error($db, $object->error, $object->errors);
 			}
 		}
 		$action = 'clone';

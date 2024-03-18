@@ -9,6 +9,7 @@
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
  * Copyright (C) 2021-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1253,36 +1254,36 @@ if ($mode == 'deploy') {
 			$maxphp = @ini_get('upload_max_filesize'); // In unknown
 			if (preg_match('/k$/i', $maxphp)) {
 				$maxphp = preg_replace('/k$/i', '', $maxphp);
-				$maxphp = $maxphp * 1;
+				$maxphp *= 1;
 			}
 			if (preg_match('/m$/i', $maxphp)) {
 				$maxphp = preg_replace('/m$/i', '', $maxphp);
-				$maxphp = $maxphp * 1024;
+				$maxphp *= 1024;
 			}
 			if (preg_match('/g$/i', $maxphp)) {
 				$maxphp = preg_replace('/g$/i', '', $maxphp);
-				$maxphp = $maxphp * 1024 * 1024;
+				$maxphp *= 1024 * 1024;
 			}
 			if (preg_match('/t$/i', $maxphp)) {
 				$maxphp = preg_replace('/t$/i', '', $maxphp);
-				$maxphp = $maxphp * 1024 * 1024 * 1024;
+				$maxphp *= 1024 * 1024 * 1024;
 			}
 			$maxphp2 = @ini_get('post_max_size'); // In unknown
 			if (preg_match('/k$/i', $maxphp2)) {
 				$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
-				$maxphp2 = $maxphp2 * 1;
+				$maxphp2 *= 1;
 			}
 			if (preg_match('/m$/i', $maxphp2)) {
 				$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
-				$maxphp2 = $maxphp2 * 1024;
+				$maxphp2 *= 1024;
 			}
 			if (preg_match('/g$/i', $maxphp2)) {
 				$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
-				$maxphp2 = $maxphp2 * 1024 * 1024;
+				$maxphp2 *= 1024 * 1024;
 			}
 			if (preg_match('/t$/i', $maxphp2)) {
 				$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
-				$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+				$maxphp2 *= 1024 * 1024 * 1024;
 			}
 			// Now $max and $maxphp and $maxphp2 are in Kb
 			$maxmin = $max;
@@ -1317,7 +1318,7 @@ if ($mode == 'deploy') {
 
 			print '<input class="flat minwidth400" type="file" name="fileinstall" id="fileinstall"> ';
 
-			print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Upload")).'" class="button">';
+			print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Upload")).'" class="button small">';
 
 			if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
 				if ($user->admin) {

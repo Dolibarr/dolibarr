@@ -138,7 +138,6 @@ class MenuManager
 				}
 			}
 
-			$showmode = 1;
 			if (empty($noout) && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				print_start_menu_entry_empty('', 'class="tmenuend"', $showmode);
 			}
@@ -288,6 +287,7 @@ class MenuManager
 								$disabled = " vsmenudisabled";
 							}
 
+							// @phan-suppress-next-line PhanParamSuspiciousOrder
 							print str_pad('', $val2['level'] + 1);
 							print '<li class="lilevel'.($val2['level'] + 1);
 							if ($val2['level'] == 0) {

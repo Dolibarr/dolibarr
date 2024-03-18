@@ -129,8 +129,8 @@ if ($dateselect > 0) {
 $tmp = !getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS') ? '9-18' : $conf->global->MAIN_DEFAULT_WORKING_HOURS;
 $tmp = str_replace(' ', '', $tmp); // FIX 7533
 $tmparray = explode('-', $tmp);
-$begin_h = GETPOSTINT('begin_h') != '' ? GETPOSTINT('begin_h') : ($tmparray[0] != '' ? $tmparray[0] : 9);
-$end_h   = GETPOSTINT('end_h') ? GETPOSTINT('end_h') : ($tmparray[1] != '' ? $tmparray[1] : 18);
+$begin_h = GETPOSTISSET('begin_h') ? GETPOSTINT('begin_h') : ($tmparray[0] != '' ? $tmparray[0] : 9);
+$end_h   = GETPOSTISSET('end_h') ? GETPOSTINT('end_h') : ($tmparray[1] != '' ? $tmparray[1] : 18);
 if ($begin_h < 0 || $begin_h > 23) {
 	$begin_h = 9;
 }
@@ -144,8 +144,8 @@ if ($end_h <= $begin_h) {
 $tmp = !getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS') ? '1-5' : $conf->global->MAIN_DEFAULT_WORKING_DAYS;
 $tmp = str_replace(' ', '', $tmp); // FIX 7533
 $tmparray = explode('-', $tmp);
-$begin_d = GETPOSTINT('begin_d') ? GETPOSTINT('begin_d') : ($tmparray[0] != '' ? $tmparray[0] : 1);
-$end_d   = GETPOSTINT('end_d') ? GETPOSTINT('end_d') : ($tmparray[1] != '' ? $tmparray[1] : 5);
+$begin_d = GETPOSTISSET('begin_d') ? GETPOSTINT('begin_d') : ($tmparray[0] != '' ? $tmparray[0] : 1);
+$end_d   = GETPOSTISSET('end_d') ? GETPOSTINT('end_d') : ($tmparray[1] != '' ? $tmparray[1] : 5);
 if ($begin_d < 1 || $begin_d > 7) {
 	$begin_d = 1;
 }
@@ -496,9 +496,11 @@ if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda'
 		$newparam .= '&end_d='.urlencode($end_d);
 	}
 
-	//$param='month='.$monthshown.'&year='.$year;
-	$hourminsec = '100000';
-	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : '')));
+	$urltocreateaction = DOL_URL_ROOT.'/comm/action/card.php?action=create';
+	$urltocreateaction .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'].'&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
+	$urltocreateaction .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
+
+	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', $urltocreateaction);
 }
 
 $num = '';

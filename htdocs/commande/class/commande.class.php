@@ -253,20 +253,6 @@ class Commande extends CommonOrder
 	 */
 	public $lines = array();
 
-	// Multicurrency
-	/**
-	 * @var int Currency ID
-	 */
-	public $fk_multicurrency;
-
-	/**
-	 * @var string multicurrency code
-	 */
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 
 	//! key of module source when order generated from a dedicated module ('cashdesk', 'takepos', ...)
 	public $module_source;
@@ -311,11 +297,11 @@ class Commande extends CommonOrder
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
-		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 20, 'index' => 1),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 20, 'index' => 1),
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 25),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 26),
 		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 28),
@@ -1317,8 +1303,8 @@ class Commande extends CommonOrder
 	{
 		global $conf, $hookmanager;
 
-		dol_include_once('/multicurrency/class/multicurrency.class.php');
-		dol_include_once('/core/class/extrafields.class.php');
+		require_once DOL_DOCUMENT_ROOT . '/multicurrency/class/multicurrency.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
 		$error = 0;
 
@@ -2438,7 +2424,7 @@ class Commande extends CommonOrder
 	/**
 	 * 	Applique une remise relative
 	 *
-	 *  @deprecated
+	 *  @deprecated Use setDiscount() instead.
 	 *  @see setDiscount()
 	 * 	@param     	User		$user		User qui positionne la remise
 	 * 	@param     	float		$remise		Discount (percent)
@@ -2449,6 +2435,7 @@ class Commande extends CommonOrder
 	{
 		// phpcs:enable
 		dol_syslog(get_class($this)."::set_remise is deprecated, use setDiscount instead", LOG_NOTICE);
+		// @phan-suppress-next-line PhanDeprecatedFunction
 		return $this->setDiscount($user, $remise, $notrigger);
 	}
 
@@ -2459,7 +2446,6 @@ class Commande extends CommonOrder
 	 * 	@param     	float		$remise		Discount (percent)
 	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 					Return integer <0 if KO, >0 if OK
-	 *	@deprecated remise_percent is a deprecated field for object parent
 	 */
 	public function setDiscount($user, $remise, $notrigger = 0)
 	{

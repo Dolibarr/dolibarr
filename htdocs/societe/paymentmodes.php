@@ -778,6 +778,7 @@ if (empty($reshook)) {
 				} else {
 					$cu->default_source = (string) $source; // Old
 				}
+				// @phan-suppress-next-line PhanDeprecatedFunction
 				$result = $cu->save();
 
 				$url = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;

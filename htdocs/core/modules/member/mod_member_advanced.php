@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021		Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2022-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_member.class.php';
  */
 class mod_member_advanced extends ModeleNumRefMembers
 {
-
 	// variables inherited from ModeleNumRefMembers class
 	public $name = 'Advanced';
 	public $version = 'dolibarr';
@@ -150,7 +150,7 @@ class mod_member_advanced extends ModeleNumRefMembers
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 		} else {
-			$num = sprintf("%04s", $max + 1);
+			$num = sprintf("%04d", $max + 1);
 		}
 
 		dol_syslog("mod_member_advanced::getNextValue return ".$this->prefix.$yymm."-".$num, LOG_INFO);

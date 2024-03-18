@@ -170,6 +170,7 @@ $VALID_MODULE_MAPPING = array(
 	'syslog' => 'Syslog',
 	'takepos' => 'TakePos',
 	'tax' => 'Tax',
+	'theme_datacolor' => 'array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int},3:array{0:int,1:int,2:int}}',
 	'ticket' => 'Ticket',
 	'user' => 'User',
 	'variants' => 'Variants',
@@ -368,6 +369,7 @@ return [
 		'PhanPluginDuplicateConditionalTernaryDuplication',		// 2750+ occurrences
 		'PhanPluginDuplicateConditionalNullCoalescing',	// Not essential - 990+ occurrences
 		'PhanPluginRedundantAssignmentInGlobalScope',	// Not essential, a lot of false warning
+		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
 	],
 	// You can put relative paths to internal stubs in this config option.
 	// Phan will continue using its detailed type annotations,

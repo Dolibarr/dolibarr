@@ -194,6 +194,7 @@ class Facture extends CommonInvoice
 
 	public $date_pointoftax;
 
+
 	/**
 	 * @var int Situation cycle reference number
 	 */
@@ -290,12 +291,12 @@ class Facture extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 1),
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 5),
-		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 20, 'index' => 1),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 20, 'index' => 1),
 		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 10),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 12),
 		'type' => array('type' => 'smallint(6)', 'label' => 'Type', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 15),
@@ -458,8 +459,8 @@ class Facture extends CommonInvoice
 
 		$this->ref_client = trim($this->ref_client);
 
-		$this->note = (isset($this->note) ? trim($this->note) : trim($this->note_private)); // deprecated
-		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : trim($this->note_private));
+		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : '');
+		$this->note = (isset($this->note) ? trim($this->note) : $this->note_private); // deprecated
 		$this->note_public = trim($this->note_public);
 		if (!$this->cond_reglement_id) {
 			$this->cond_reglement_id = 0;
@@ -524,8 +525,8 @@ class Facture extends CommonInvoice
 
 			// Define some dates
 			$originaldatewhen = $_facrec->date_when;
-			$nextdatewhen = null;
-			$previousdaynextdatewhen = null;
+			$nextdatewhen = null;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$previousdaynextdatewhen = null;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 			if ($originaldatewhen) {
 				$nextdatewhen = dol_time_plus_duree($originaldatewhen, $_facrec->frequency, $_facrec->unit_frequency);
 				$previousdaynextdatewhen = dol_time_plus_duree($nextdatewhen, -1, 'd');
@@ -4413,6 +4414,7 @@ class Facture extends CommonInvoice
 	{
 		// phpcs:enable
 		dol_syslog(get_class($this)."::set_remise is deprecated, use setDiscount instead", LOG_NOTICE);
+		// @phan-suppress-next-line PhanDeprecatedFunction
 		return $this->setDiscount($user, $remise, $notrigger);
 	}
 
@@ -4423,7 +4425,6 @@ class Facture extends CommonInvoice
 	 *	@param     	float	$remise		Discount
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 				Return integer <0 if KO, >0 if OK
-	 *	@deprecated remise_percent is a deprecated field for object parent
 	 */
 	public function setDiscount($user, $remise, $notrigger = 0)
 	{

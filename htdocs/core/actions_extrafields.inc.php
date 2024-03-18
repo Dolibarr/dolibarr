@@ -172,19 +172,19 @@ if ($action == 'add') {
 				//In sellist we have only one line and it can have come to do SQL expression
 				if ($type == 'sellist' || $type == 'chkbxlst') {
 					foreach ($parameters_array as $param_ligne) {
-						$params['options'] = array($parameters=>null);
+						$params['options'] = array($parameters => null);
 					}
 				} else {
 					// Else it's separated key/value and coma list
 					foreach ($parameters_array as $param_ligne) {
-						if (strpos($param_ligne, ',')!==false) {
+						if (strpos($param_ligne, ',') !== false) {
 							list($key, $value) = explode(',', $param_ligne);
 							if (!array_key_exists('options', $params)) {
 								$params['options'] = array();
 							}
 						} else {
-							$key=$param_ligne;
-							$value=null;
+							$key = $param_ligne;
+							$value = null;
 						}
 						$params['options'][$key] = $value;
 					}
@@ -345,7 +345,7 @@ if ($action == 'update') {
 				//In sellist we have only one line and it can have come to do SQL expression
 				if ($type == 'sellist' || $type == 'chkbxlst') {
 					foreach ($parameters_array as $param_ligne) {
-						$params['options'] = array($parameters=>null);
+						$params['options'] = array($parameters => null);
 					}
 				} else {
 					//Else it's separated key/value and coma list
@@ -447,7 +447,7 @@ if ($action == 'encrypt') {
 					if ($extrafields->attributes[$elementtype]['entityid'][$attributekey] == $conf->entity || empty($extrafields->attributes[$elementtype]['entityid'][$attributekey])) {
 						dol_syslog("Loop on each extafields of table ".$arrayofelement['table_element']);
 
-						$sql .= "SELECT te.rowid, te.".$attributekey;
+						$sql  = "SELECT te.rowid, te.".$attributekey;
 						$sql .= " FROM ".MAIN_DB_PREFIX.$arrayofelement['table_element']." as t, ".MAIN_DB_PREFIX.$arrayofelement['table_element'].'_extrafields as te';
 						$sql .= " WHERE te.fk_object = t.rowid";
 						$sql .= " AND te.".$attributekey." NOT LIKE 'dolcrypt:%'";
@@ -462,7 +462,7 @@ if ($action == 'encrypt') {
 						$resql = $db->query($sql);
 						if ($resql) {
 							$num_rows = $db->num_rows($resql);
-							$i=0;
+							$i = 0;
 							while ($i < $num_rows) {
 								$objtmp = $db->fetch_object($resql);
 								$id = $objtmp->rowid;

@@ -101,10 +101,18 @@ function testSqlAndScriptInject($val, $type)
 		$oldval = $val;
 		$val = html_entity_decode($val, ENT_QUOTES | ENT_HTML5);	// Decode '&colon;', '&apos;', '&Tab;', '&NewLine', ...
 		// Sometimes we have entities without the ; at end so html_entity_decode does not work but entities is still interpreted by browser.
-		$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
-			// Decode '&#110;', ...
-			return realCharForNumericEntities($m);
-		}, $val);
+		$val = preg_replace_callback(
+			'/&#(x?[0-9][0-9a-f]+;?)/i',
+			/**
+			 * @param string $m
+			 * @return string
+			 */
+			static function ($m) {
+				// Decode '&#110;', ...
+				return realCharForNumericEntities($m);
+			},
+			$val
+		);
 
 		// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
 		$val = preg_replace('/<!--[^>]*-->/', '', $val);
@@ -334,7 +342,7 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"])) {
 	$cookievalue = json_encode($cookiearrayvalue);
 	//var_dump('setcookie cookiename='.$cookiename.' cookievalue='.$cookievalue);
 	if (PHP_VERSION_ID < 70300) {
-		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', null, ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // keep cookie 1 year and add tag httponly
+		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', '', ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // keep cookie 1 year and add tag httponly
 	} else {
 		// Only available for php >= 7.3
 		$cookieparams = array(
@@ -386,7 +394,7 @@ if (!defined('NOSESSION')) {
 		session_set_cookie_params($sessioncookieparams);
 	}
 	session_name($sessionname);
-	session_start();	// This call the open and read of session handler
+	dol_session_start();	// This call the open and read of session handler
 	//exit;	// this exist generates a call to write and close
 }
 
@@ -972,7 +980,7 @@ if (!defined('NOLOGIN')) {
 			session_destroy();
 			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
 			session_name($sessionname);
-			session_start();
+			dol_session_start();
 
 			if ($resultFetchUser == 0) {
 				// Load translation files required by page
@@ -1059,7 +1067,7 @@ if (!defined('NOLOGIN')) {
 			session_destroy();
 			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
 			session_name($sessionname);
-			session_start();
+			dol_session_start();
 
 			if ($resultFetchUser == 0) {
 				$langs->loadLangs(array('main', 'errors'));
@@ -2324,8 +2332,10 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				}
 				$text .= '<a class="help" target="_blank" rel="noopener noreferrer" href="';
 				if ($mode == 'wiki') {
+					// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 					$text .= sprintf($helpbaseurl, urlencode(html_entity_decode($helppage)));
 				} else {
+					// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 					$text .= sprintf($helpbaseurl, $helppage);
 				}
 				$text .= '">';
@@ -3453,7 +3463,7 @@ function main_area($title = '')
 
 	// Permit to add user company information on each printed document by setting SHOW_SOCINFO_ON_PRINT
 	if (getDolGlobalString('SHOW_SOCINFO_ON_PRINT') && GETPOST('optioncss', 'aZ09') == 'print' && empty(GETPOST('disable_show_socinfo_on_print', 'aZ09'))) {
-		$parameters = array();
+		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$reshook = $hookmanager->executeHooks('showSocinfoOnPrint', $parameters);
 		if (empty($reshook)) {
 			print '<!-- Begin show mysoc info header -->'."\n";
@@ -3839,7 +3849,7 @@ if (!function_exists("llxFooter")) {
 			}
 		}
 
-		$parameters = array();
+		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$reshook = $hookmanager->executeHooks('beforeBodyClose', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			print $hookmanager->resPrint;

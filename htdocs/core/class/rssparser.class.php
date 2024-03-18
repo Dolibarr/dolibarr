@@ -22,6 +22,8 @@
  *      \brief      File of class to parse RSS feeds
  */
 
+// @phan-file-suppress PhanPluginPHPDocInWrongComment
+
 /**
  * 	Class to parse RSS files
  */
@@ -174,7 +176,7 @@ class RssParser
 	/**
 	 * getLastFetchDate
 	 *
-	 * @return string
+	 * @return int
 	 */
 	public function getLastFetchDate()
 	{
@@ -217,7 +219,7 @@ class RssParser
 		$newpathofdestfile = $cachedir.'/'.dol_hash($this->_urlRSS, 3); // Force md5 hash (does not contain special chars)
 		$newmask = '0644';
 
-		//dol_syslog("RssPArser::parser parse url=".$urlRSS." => cache file=".$newpathofdestfile);
+		//dol_syslog("RssParser::parser parse url=".$urlRSS." => cache file=".$newpathofdestfile);
 		$nowgmt = dol_now();
 
 		// Search into cache
@@ -287,7 +289,9 @@ class RssParser
 					}
 
 					xml_set_object($xmlparser, $this);
+					// @phan-suppress-next-line PhanUndeclaredFunctionInCallable
 					xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element');
+					// @phan-suppress-next-line PhanUndeclaredFunctionInCallable
 					xml_set_character_data_handler($xmlparser, 'feed_cdata');
 
 					$status = xml_parse($xmlparser, $str, false);
@@ -587,7 +591,7 @@ class RssParser
 		} elseif ($this->_format == 'atom' && $this->incontent) {
 			// if inside an Atom content construct (e.g. content or summary) field treat tags as text
 			// if tags are inlined, then flatten
-			$attrs_str = implode(' ', array_map('map_attrs', array_keys($attrs), array_values($attrs)));
+			$attrs_str = implode(' ', array_map('rss_map_attrs', array_keys($attrs), array_values($attrs)));
 
 			$this->append_content("<$element $attrs_str>");
 
@@ -805,7 +809,6 @@ class RssParser
 	}
 }
 
-// @phan-suppress PhanPluginPHPDocInWrongComment
 /*
  * A method for the xml_set_external_entity_ref_handler()
  *
@@ -821,6 +824,17 @@ function extEntHandler($parser, $ent, $base, $sysID, $pubID)  {
 }
 */
 
+/**
+ * Function to convert an XML object into an array
+ *
+ * @param	string 	$k		Key
+ * @param	string 	$v		Value
+ * @return	string
+ */
+function rss_map_attrs($k, $v)
+{
+	return "$k=\"$v\"";
+}
 
 /**
  * Function to convert an XML object into an array

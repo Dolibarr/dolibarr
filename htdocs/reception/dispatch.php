@@ -9,6 +9,7 @@
  * Copyright (C) 2017-2022 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2022 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2020 Christophe Battarel	<christophe@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -304,6 +305,7 @@ $supplierorderdispatch = new CommandeFournisseurDispatch($db);
 $title = $object->ref." - ".$langs->trans('ReceptionDistribution');
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 $morejs = array('/fourn/js/lib_dispatch.js.php');
+$numline = 0;
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs);
 
@@ -459,7 +461,7 @@ if ($id > 0 || !empty($ref)) {
 		// Get list of lines from the original Order into $products_dispatched with qty dispatched for each product id
 		$products_dispatched = array();
 		$sql = "SELECT l.rowid, cfd.fk_product, sum(cfd.qty) as qty";
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
+		$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as cfd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as l on l.rowid = cfd.fk_commandefourndet";
 		$sql .= " WHERE cfd.fk_reception = ".((int) $object->id);
 		$sql .= " GROUP BY l.rowid, cfd.fk_product";
@@ -686,7 +688,7 @@ if ($id > 0 || !empty($ref)) {
 						print '<td></td>'; // Warehouse column
 
 						$sql = "SELECT cfd.rowid, cfd.qty, cfd.fk_entrepot, cfd.batch, cfd.eatby, cfd.sellby, cfd.fk_product";
-						$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";	// commande_fournisseur_dispatch should be named receptiondet_batch
+						$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as cfd";	// commande_fournisseur_dispatch should be named receptiondet_batch
 						$sql .= " WHERE cfd.fk_reception = ".((int) $object->id);
 						$sql .= " AND cfd.fk_commande = ".((int) $objectsrc->id);
 						$sql .= " AND cfd.fk_commandefourndet = ".(int) $objp->rowid;

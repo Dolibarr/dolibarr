@@ -12,6 +12,7 @@
  * Copyright (C) 2018-2021	Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2021		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -517,9 +518,9 @@ while ($i < $imaxinloop) {
 
 	if ($objp->bid) {
 		$accountstatic->fetch($objp->bid);
-		$paymentexpensereportstatic->fk_bank = $accountstatic->getNomUrl(1);
+		$paymentexpensereportstatic->fk_bank = $accountstatic->id;
 	} else {
-		$paymentexpensereportstatic->fk_bank = null;
+		$paymentexpensereportstatic->fk_bank = 0;
 	}
 
 	$userstatic->id = $objp->userid;

@@ -120,7 +120,7 @@ class EmailCollector extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'         => array('type' => 'integer', 'label' => 'TechnicalID', 'visible' => 2, 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'index' => 1),
@@ -2385,7 +2385,7 @@ class EmailCollector extends CommonObject
 									$operationslog .= '<br>We have this data to search thirdparty: id='.$idtouseforthirdparty.', email='.$emailtouseforthirdparty.', name='.$nametouseforthirdparty.', name_alias='.$namealiastouseforthirdparty;
 
 									$tmpobject = new stdClass();
-									$tmpobject->element == 'generic';
+									$tmpobject->element = 'generic';
 									$tmpobject->id = $idtouseforthirdparty;
 									$tmpobject->name = $nametouseforthirdparty;
 									$tmpobject->name_alias = $namealiastouseforthirdparty;
@@ -2618,7 +2618,7 @@ class EmailCollector extends CommonObject
 								$actioncomm->percentage  = -1; // Not applicable
 								$actioncomm->socid       = $thirdpartystatic->id;
 								$actioncomm->contact_id = $contactstatic->id;
-								$actioncomm->socpeopleassigned = (!empty($contactstatic->id) ? array($contactstatic->id => '') : array());
+								$actioncomm->socpeopleassigned = (!empty($contactstatic->id) ? array($contactstatic->id) : array());
 								$actioncomm->authorid    = $user->id; // User saving action
 								$actioncomm->userownerid = $user->id; // Owner of action
 								// Fields when action is an email (content should be added into note)
@@ -2645,14 +2645,6 @@ class EmailCollector extends CommonObject
 								// Overwrite values with values extracted from source email
 								$errorforthisaction = $this->overwritePropertiesOfObject($actioncomm, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
 
-								//var_dump($fk_element_id);
-								//var_dump($fk_element_type);
-								//var_dump($alreadycreated);
-								//var_dump($operation['type']);
-								//var_dump($actioncomm);
-								//var_dump($objectemail);
-								//exit;
-
 								if ($errorforthisaction) {
 									$errorforactions++;
 								} else {
@@ -2661,7 +2653,7 @@ class EmailCollector extends CommonObject
 										$errorforactions++;
 										$this->errors = $actioncomm->errors;
 									} else {
-										if ($fk_element_type == "ticket") {
+										if ($fk_element_type == "ticket" && is_object($objectemail)) {
 											if ($objectemail->status == Ticket::STATUS_CLOSED || $objectemail->status == Ticket::STATUS_CANCELED) {
 												if ($objectemail->fk_user_assign != null) {
 													$res = $objectemail->setStatut(Ticket::STATUS_ASSIGNED);
@@ -3075,19 +3067,17 @@ class EmailCollector extends CommonObject
 									// Search template files
 									$file = '';
 									$classname = '';
-									$filefound = 0;
 									$reldir = '';
 									$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 									foreach ($dirmodels as $reldir) {
 										$file = dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
 										if (file_exists($file)) {
-											$filefound = 1;
 											$classname = $modele;
 											break;
 										}
 									}
 
-									if ($filefound) {
+									if ($classname !== '') {
 										if ($savesocid > 0) {
 											if ($savesocid != $tickettocreate->socid) {
 												$errorforactions++;
@@ -3363,7 +3353,7 @@ class EmailCollector extends CommonObject
 				if (empty($mode) && empty($error)) {
 					$res = imap_mail_move($connection, $imapemail, $targetdir, CP_UID);
 					if ($res == false) {
-						$errorforemail++;
+						// $errorforemail++;  // Not in loop, not needed, not initialised
 						$this->error = imap_last_error();
 						$this->errors[] = $this->error;
 
@@ -3521,7 +3511,7 @@ class EmailCollector extends CommonObject
 				}
 
 				// Get file name (with extension)
-				$file_name_complete = $params['filename'];
+				$file_name_complete = $filename;
 				$destination = $destdir.$file_name_complete;
 
 				// Extract file extension

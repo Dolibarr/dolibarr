@@ -11,6 +11,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht             <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +74,7 @@ function societe_prepare_head(Societe $object)
 				$sql .= " WHERE p.fk_soc = ".((int) $object->id);
 				$sql .= " AND p.entity IN (".getEntity($object->element).")";
 				// Add where from hooks
-				$parameters = array('contacttab' => true);
+				$parameters = array('contacttab' => true);  // @phan-suppress-current-line PhanPluginRedundantAssignment
 				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 				$sql .= $hookmanager->resPrint;
 				$resql = $db->query($sql);
@@ -523,7 +524,7 @@ function societe_admin_prepare_head()
  *    @param	Translate	$outputlangs	Langs object for output translation
  *    @param	int			$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
  *    @param	string		$searchlabel    Label of country to search (warning: searching on label is not reliable)
- *    @return	mixed       				Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
+ *    @return	int|string|array{id:int,code:string,label:string}	Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
  */
 function getCountry($searchkey, $withcode = '', $dbtouse = null, $outputlangs = null, $entconv = 1, $searchlabel = '')
 {
@@ -534,7 +535,7 @@ function getCountry($searchkey, $withcode = '', $dbtouse = null, $outputlangs = 
 	// Check parameters
 	if (empty($searchkey) && empty($searchlabel)) {
 		if ($withcode === 'all') {
-			return array('id' => '', 'code' => '', 'label' => '');
+			return array('id' => 0, 'code' => '', 'label' => '');
 		} else {
 			return '';
 		}
@@ -957,6 +958,104 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 			$db->free($result);
 		} else {
 			dol_print_error($db);
+		}
+
+		//projects linked to that thirdpart because of a people of that company is linked to a project
+		if (getDolGlobalString('PROJECT_DISPLAY_LINKED_BY_CONTACT')) {
+			print "\n";
+			print load_fiche_titre($langs->trans("ProjectsLinkedToThisThirdParty"), '', '');
+
+
+			print '<div class="div-table-responsive">'."\n";
+			print '<table class="noborder centpercent">';
+
+			$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
+			$sql .= ", cls.code as opp_status_code";
+			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec on p.rowid = ec.element_id";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sc on ec.fk_socpeople = sc.rowid";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as tc on ec.fk_c_type_contact = tc.rowid";
+			$sql .= " WHERE sc.fk_soc = ".((int) $object->id);
+			$sql .= " AND p.entity IN (".getEntity('project').")";
+			$sql .= " AND tc.element = 'project'";
+			$sql .= " ORDER BY p.dateo DESC";
+
+			$result = $db->query($sql);
+			if ($result) {
+				$num = $db->num_rows($result);
+
+				print '<tr class="liste_titre">';
+				print '<td>'.$langs->trans("Ref").'</td>';
+				print '<td>'.$langs->trans("Name").'</td>';
+				print '<td class="center">'.$langs->trans("DateStart").'</td>';
+				print '<td class="center">'.$langs->trans("DateEnd").'</td>';
+				print '<td class="right">'.$langs->trans("OpportunityAmountShort").'</td>';
+				print '<td class="center">'.$langs->trans("OpportunityStatusShort").'</td>';
+				print '<td class="right">'.$langs->trans("OpportunityProbabilityShort").'</td>';
+				print '<td class="right">'.$langs->trans("Status").'</td>';
+				print '</tr>';
+
+				if ($num > 0) {
+					require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+					$projecttmp = new Project($db);
+
+					$i = 0;
+
+					while ($i < $num) {
+						$obj = $db->fetch_object($result);
+						$projecttmp->fetch($obj->id);
+
+						// To verify role of users
+						$userAccess = $projecttmp->restrictedProjectArea($user);
+
+						if ($user->rights->projet->lire && $userAccess > 0) {
+							print '<tr class="oddeven">';
+
+							// Ref
+							print '<td class="nowraponall">';
+							print $projecttmp->getNomUrl(1, '', 0, '', '-', 0, 1, '', 'project:'.$_SERVER["PHP_SELF"].'?socid=__SOCID__');
+							print '</td>';
+
+							// Label
+							print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'">'.dol_escape_htmltag($obj->title).'</td>';
+							// Date start
+							print '<td class="center">'.dol_print_date($db->jdate($obj->do), "day").'</td>';
+							// Date end
+							print '<td class="center">'.dol_print_date($db->jdate($obj->de), "day").'</td>';
+							// Opp amount
+							print '<td class="right">';
+							if ($obj->opp_status_code) {
+								print '<span class="amount">'.price($obj->opp_amount, 1, '', 1, -1, -1, '').'</span>';
+							}
+							print '</td>';
+							// Opp status
+							print '<td class="center">';
+							if ($obj->opp_status_code) {
+								print $langs->trans("OppStatus".$obj->opp_status_code);
+							}
+							print '</td>';
+							// Opp percent
+							print '<td class="right">';
+							if ($obj->opp_percent) {
+								print price($obj->opp_percent, 1, '', 1, 0).'%';
+							}
+							print '</td>';
+							// Status
+							print '<td class="right">'.$projecttmp->getLibStatut(5).'</td>';
+
+							print '</tr>';
+						}
+						$i++;
+					}
+				} else {
+					print '<tr class="oddeven"><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+				}
+				$db->free($result);
+			} else {
+				dol_print_error($db);
+			}
 		}
 
 		$parameters = array('sql' => $sql, 'function' => 'show_projects');
@@ -1416,6 +1515,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 					print '</a>';
 				}
 
+				// Delete
+				if ($user->hasRight('societe', 'contact', 'delete')) {
+					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
+					print img_delete();
+					print '</a>';
+				}
+
 				print '</td>';
 			}
 
@@ -1509,6 +1615,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 				if ($user->hasRight('societe', 'contact', 'creer')) {
 					print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
 					print img_edit();
+					print '</a>';
+				}
+
+				// Delete
+				if ($user->hasRight('societe', 'contact', 'delete')) {
+					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&socid='.urlencode($obj->fk_soc).'">';
+					print img_delete();
 					print '</a>';
 				}
 
@@ -1614,7 +1727,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$tms_start = '';
 		$tms_end = '';
 	}
-	dol_include_once('/comm/action/class/actioncomm.class.php');
+	require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 
 	// Check parameters
 	if (!is_object($filterobj) && !is_object($objcon)) {
@@ -1944,6 +2057,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 	}
 
+	'@phan-var-force array<int,array{userid:int,type:string,tododone:string,apicto:string,acode:string,alabel:string,note:string,id:int,percent:int<0,100>,datestart:int,dateend:int,fk_element:string,elementtype:string,contact_id:string,lastname:string,firstname:string,contact_photo:string,socpeaopleassigned:int[],login:string,userfirstname:string,userlastname:string,userphoto:string}> $histo';
+
 	if (isModEnabled('agenda') || (isModEnabled('mailing') && !empty($objcon->email))) {
 		$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
@@ -2229,7 +2344,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			}
 
 			$out .= "</tr>\n";
-			$i++;
 		}
 		if (empty($histo)) {
 			$colspan = 9;

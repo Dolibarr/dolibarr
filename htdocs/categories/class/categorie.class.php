@@ -12,6 +12,7 @@
  * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -255,7 +256,7 @@ class Categorie extends CommonObject
 	public $type;
 
 	/**
-	 * @var array Categories table in memory
+	 * @var array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>  Categories table in memory
 	 */
 	public $cats = array();
 
@@ -969,7 +970,7 @@ class Categorie extends CommonObject
 	 * @param	string	$sortorder	Sort order
 	 * @param	int		$limit		Limit for list
 	 * @param	int		$page		Page number
-	 * @return	array|int			Array of categories, 0 if no cat, -1 on error
+	 * @return  int<-1,0>|array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:string,socid:int,type:string,entity:string,array_options:array<string,mixed>,visible:int,ref_ext:string,picto:string,multilangs?:string}> Array of categories, 0 if no cat, -1 on error
 	 */
 	public function getListForItem($id, $type = 'customer', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
@@ -1009,7 +1010,7 @@ class Categorie extends CommonObject
 			$nbtotalofrecords = $this->db->num_rows($result);
 			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 				$page = 0;
-				$offset = 0;
+				$offset = 0; // @phan-suppress-current-line PhanPluginRedundantAssignment
 			}
 		}
 
@@ -1138,7 +1139,7 @@ class Categorie extends CommonObject
 	 *                                                  - string (categories ids separated by comma)
 	 *                                                  - array (list of categories ids)
 	 * @param   int                 $include            [=0] Removed or 1=Keep only
-	 * @return  array|int              					Array of categories. this->cats and this->motherof are set, -1 on error
+	 * @return  int<-1,-1>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>              					Array of categories. this->cats and this->motherof are set, -1 on error
 	 */
 	public function get_full_arbo($type, $markafterid = 0, $include = 0)
 	{
@@ -1221,9 +1222,10 @@ class Categorie extends CommonObject
 			$keyfilter2 = '_'.$keyfiltercatid.'$';
 			$keyfilter3 = '^'.$keyfiltercatid.'_';
 			$keyfilter4 = '_'.$keyfiltercatid.'_';
-			foreach ($this->cats as $key => $val) {
-				$test = (preg_match('/'.$keyfilter1.'/', $val['fullpath']) || preg_match('/'.$keyfilter2.'/', $val['fullpath'])
-					|| preg_match('/'.$keyfilter3.'/', $val['fullpath']) || preg_match('/'.$keyfilter4.'/', $val['fullpath']));
+			foreach (array_keys($this->cats) as $key) {
+				$fullpath = $this->cats[$key]['fullpath'];
+				$test = (preg_match('/'.$keyfilter1.'/', $fullpath) || preg_match('/'.$keyfilter2.'/', $fullpath)
+					|| preg_match('/'.$keyfilter3.'/', $fullpath) || preg_match('/'.$keyfilter4.'/', $fullpath));
 
 				if (($test && !$include) || (!$test && $include)) {
 					unset($this->cats[$key]);
@@ -1244,7 +1246,7 @@ class Categorie extends CommonObject
 	 *
 	 * 	@param		int		$id_categ		id_categ entry to update
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop
-	 *	@return		int						Return integer <0 if KO, >0 if OK
+	 *	@return		int<-1,1>				Return integer <0 if KO, >0 if OK
 	 *  @see get_full_arbo()
 	 */
 	private function buildPathFromId($id_categ, $protection = 1000)

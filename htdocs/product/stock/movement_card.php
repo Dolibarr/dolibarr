@@ -5,6 +5,7 @@
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -249,6 +250,7 @@ if ($action == "correct_stock") {
 
 // Transfer stock from a warehouse to another warehouse
 if ($action == "transfert_stock" && !$cancel) {
+	$error = 0;
 	$product = new Product($db);
 	if (!empty($product_id)) {
 		$result = $product->fetch($product_id);

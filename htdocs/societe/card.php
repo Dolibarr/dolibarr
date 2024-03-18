@@ -16,6 +16,7 @@
  * Copyright (C) 2022-2023  George Gkantinas	    <info@geowv.eu>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,9 +142,7 @@ if ($socid > 0) {
 }
 
 if (!($object->id > 0) && $action == 'view') {
-	$langs->load("errors");
-	print($langs->trans('ErrorRecordNotFound'));
-	exit;
+	recordNotFound();
 }
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
@@ -561,12 +560,12 @@ if (empty($reshook)) {
 				} else {
 					if ($result == -3 && in_array('ErrorCustomerCodeAlreadyUsed', $object->errors)) {
 						$duplicate_code_error = true;
-						$object->code_client = null;
+						$object->code_client = '';
 					}
 
 					if ($result == -3 && in_array('ErrorSupplierCodeAlreadyUsed', $object->errors)) {
 						$duplicate_code_error = true;
-						$object->code_fournisseur = null;
+						$object->code_fournisseur = '';
 					}
 
 					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {	// TODO Sometime errors on duplicate on profid and not on code, so we must manage this case
@@ -1568,7 +1567,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// Vat is used
 			print '<tr><td>'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</td>';
 			print '<td>';
-			print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . (GETPOSTISSET('assujtva_value') ? 'checked="checked"' : 'checked="checked"') . ' value="1">'; // Assujeti par default en creation
+			print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . (GETPOSTISSET('assujtva_value') ? (GETPOST('assujtva', 'alpha') != '' ? ' checked="checked"' : '') : 'checked="checked"') . ' value="1">'; // Assujeti par default en creation
 			print '</td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';

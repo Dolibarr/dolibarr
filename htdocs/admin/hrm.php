@@ -66,6 +66,16 @@ $setupnotempty = 0;
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
+$moduledir = 'hrm';
+$myTmpObjects = array();
+// TODO Scan list of objects to fill this array
+$myTmpObjects['evaluation'] = array('label' => 'Evaluation', 'includerefgeneration' => 1, 'includedocgeneration' => 0, 'class' => 'Evaluation');
+
+$tmpobjectkey = GETPOST('object', 'aZ09');
+if ($tmpobjectkey && !array_key_exists($tmpobjectkey, $myTmpObjects)) {
+	accessforbidden('Bad value for object. Hack attempt ?');
+}
+
 
 /*
  * Actions
@@ -107,11 +117,11 @@ if ($action == 'update') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'specimen') {
+} elseif ($action == 'specimen' && $tmpobjectkey) {
 	$modele = GETPOST('module', 'alpha');
-	$tmpobjectkey = GETPOST('object');
 
-	$tmpobject = new $tmpobjectkey($db);
+	$className = $myTmpObjects[$tmpobjectkey]['class'];
+	$tmpobject = new $className($db);
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
@@ -144,7 +154,6 @@ if ($action == 'update') {
 	}
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
-	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'HRMTEST_'.strtoupper($tmpobjectkey)."_ADDON";
 		dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
@@ -155,7 +164,6 @@ if ($action == 'update') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		$tmpobjectkey = GETPOST('object');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'HRMTEST_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 			if (getDolGlobalString($constforval) == "$value") {
@@ -165,7 +173,6 @@ if ($action == 'update') {
 	}
 } elseif ($action == 'setdoc') {
 	// Set or unset default model
-	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'HRMTEST_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
@@ -181,7 +188,6 @@ if ($action == 'update') {
 		}
 	}
 } elseif ($action == 'unsetdoc') {
-	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'HRMTEST_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		dolibarr_del_const($db, $constforval, $conf->entity);
@@ -209,9 +215,6 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 $head = hrmAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "hrm");
 
-$moduledir = 'hrm';
-$myTmpObjects = array();
-$myTmpObjects['evaluation'] = array('label' => 'Evaluation', 'includerefgeneration' => 1, 'includedocgeneration' => 0);
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	if ($myTmpObjectKey != $type) {
@@ -291,6 +294,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 								$nameofclass = ucfirst($myTmpObjectKey);
 								$mytmpinstance = new $nameofclass($db);
+								'@phan-var-force Evaluation $mytmpinstance';
 								$mytmpinstance->initAsSpecimen();
 
 								// Info

@@ -429,6 +429,7 @@ if ($action == "correct_stock") {
 
 // Transfer stock from a warehouse to another warehouse
 if ($action == "transfert_stock" && !$cancel) {
+	$error = 0;
 	$product = new Product($db);
 	if (!empty($product_id)) {
 		$result = $product->fetch($product_id);

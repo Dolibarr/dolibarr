@@ -2813,7 +2813,7 @@ class Form
 
 		$sql .= " FROM ".$this->db->prefix()."product as p";
 		// Add from (left join) from hooks
-		$parameters = array();
+		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$reshook = $hookmanager->executeHooks('selectProductsListFrom', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 
@@ -2883,7 +2883,7 @@ class Form
 			$sql .= " AND p.fk_product_type = 0";
 		}
 		// Add where from hooks
-		$parameters = array();
+		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$reshook = $hookmanager->executeHooks('selectProductsListWhere', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		// Add criteria on ref/label
@@ -4321,7 +4321,7 @@ class Form
 	 *                                > 0 : force deposit percentage (for example, from company object)
 	 * @param int $noprint if set to one we return the html to print, if 0 (default) we print it
 	 * @return    void|string
-	 * @deprecated
+	 * @deprecated Use getSelectConditionsPaiements() instead and handle noprint locally.
 	 */
 	public function select_conditions_paiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '', $deposit_percent = -1, $noprint = 0)
 	{
@@ -6009,7 +6009,7 @@ class Form
 			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
 			print '</form>';
 		} else {
-			dol_include_once('/core/lib/company.lib.php');
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 			print !empty($selected) ? currency_name($selected, 1) : '&nbsp;';
 		}
 	}
@@ -7060,7 +7060,7 @@ class Form
 				if (strlen($min) < 2) {
 					$min = "0" . $min;
 				}
-				$retstring .= '<option value="' . $min . '"' . (($min == $smin) ? ' selected' : '') . '>' . $min . (empty($conf->dol_optimize_smallscreen) ? '' : '') . '</option>';
+				$retstring .= '<option value="' . $min . '"' . (($min == $smin) ? ' selected' : '') . '>' . $min . '</option>';
 			}
 			$retstring .= '</select>';
 
@@ -7843,7 +7843,6 @@ class Form
 
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('TICKET_USE_SEARCH_TO_SELECT')) {
 			$placeholder = '';
-			$urloption = '';
 
 			if ($selected && empty($selected_input_value)) {
 				require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
@@ -9492,7 +9491,7 @@ class Form
     		</dd>
     		</dl>';
 		} else {
-			$linktoelem = '';
+			$linktoelem = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		}
 
 		if (!empty($conf->use_javascript_ajax)) {

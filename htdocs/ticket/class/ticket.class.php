@@ -76,7 +76,7 @@ class Ticket extends CommonObject
 
 
 	/**
-	 * @var string Hash to identify ticket publicly
+	 * @var ?string Hash to identify ticket publicly
 	 */
 	public $track_id;
 
@@ -97,17 +97,17 @@ class Ticket extends CommonObject
 	public $fk_contract;
 
 	/**
-	 * @var string Person email who have create ticket
+	 * @var ?string Email of person who created the ticket
 	 */
 	public $origin_email;
 
 	/**
-	 * @var int User id who have create ticket
+	 * @var int User id who created the ticket
 	 */
 	public $fk_user_create;
 
 	/**
-	 * @var int User id who have ticket assigned
+	 * @var int User id who the ticket is assigned to
 	 */
 	public $fk_user_assign;
 
@@ -3008,10 +3008,24 @@ class Ticket extends CommonObject
 
 				$moreinheader = 'X-Dolibarr-Info: sendTicketMessageByEmail'."\r\n";
 				if (!empty($this->email_msgid)) {
-					$moreinheader .= 'References: <'.$this->email_msgid.'>'."\r\n";
+					// We must also add 1 entry In-Reply-To: <$this->email_msgid> with Message-ID we respond from (See RFC5322).
+					$moreinheader .= 'In-Reply-To: <'.$this->email_msgid.'>'."\r\n";
+				}
+
+				// We should add here also a header 'References:'
+				// According to RFC5322, we should add here all the References fields of the initial message concatenated with
+				// the Message-ID of the message we respond from (but each ID must be once).
+				$references = '';
+				// @TODO
+				// Retrieve source References to do  				$references .= (empty($references) ? '' : ' ').Source References
+				// If No References is set, use the In-Reply-To for $references .= (empty($references) ? '' : ' ').Source In-reply-To
+				$references .= (empty($references) ? '' : ' ').'<'.$this->email_msgid.'>';
+				if ($references) {
+					$moreinheader .= 'References: '.$references."\r\n";
 				}
 
 				$mailfile = new CMailFile($subject, $receiver, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid, $moreinheader, 'ticket', '', $upload_dir_tmp);
+
 				if ($mailfile->error) {
 					setEventMessages($mailfile->error, null, 'errors');
 				} else {
@@ -3082,7 +3096,7 @@ class Ticket extends CommonObject
 			if ($mode == 'opened') {
 				$status = 'openall';
 				//$delay_warning = $conf->ticket->warning_delay;
-				$delay_warning = 0;
+				$delay_warning = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 				$label = $langs->trans("MenuListNonClosed");
 				$labelShort = $langs->trans("MenuListNonClosed");
 			}

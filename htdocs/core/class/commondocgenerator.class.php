@@ -5,8 +5,9 @@
  * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016-2023  Charlene Benke           <charlene@patas-monkey.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -232,6 +233,9 @@ abstract class CommonDocGenerator
 		);
 		// Retrieve extrafields
 		if (is_array($user->array_options) && count($user->array_options)) {
+			if (empty($extrafields->attributes[$user->table_element])) {
+				$extrafields->fetch_name_optionals_label($user->table_element);
+			}
 			$array_user = $this->fill_substitutionarray_with_extrafields($user, $array_user, $extrafields, 'myuser', $outputlangs);
 		}
 		return $array_user;
@@ -1488,9 +1492,17 @@ abstract class CommonDocGenerator
 
 		if (!empty($fields)) {
 			// Sort extrafields by rank
-			uasort($fields, function ($a, $b) {
-				return  ($a->rank > $b->rank) ? 1 : -1;
-			});
+			uasort(
+				$fields,
+				/**
+				 * @param stdClass $a
+				 * @param stdClass $b
+				 * @return int<-1,1>
+				 */
+				static function ($a, $b) {
+					return  ($a->rank > $b->rank) ? 1 : -1;
+				}
+			);
 
 			// define some HTML content with style
 			$html .= !empty($params['style']) ? '<style>'.$params['style'].'</style>' : '';

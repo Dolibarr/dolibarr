@@ -145,7 +145,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	$object->note_public = trim($comment);
 	$object->note_private = '';
 	$object->mail_valid = trim($mail_valid);
-	$object->vote = (int) $vote;
+	$object->vote = $vote;  // $vote is already int
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -201,7 +201,7 @@ if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 	$object->note_public = trim($comment);
 	$object->note_private = '';
 	$object->mail_valid = trim($mail_valid);
-	$object->vote = (bool) trim($vote);
+	$object->vote = $vote;  // $vote is already int.
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');

@@ -161,7 +161,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 *
 	 * @param	?CommonObject	$objproduct 	Object product (not used)
 	 * @param	string			$type    		Type of barcode (EAN, ISBN, ...)
-	 * @return 	string      					Value if OK, '' if module not configured, <0 if KO
+	 * @return 	string|int<-1,-1> 				Value if OK, '' if module not configured, <0 if KO
 	 */
 	public function getNextValue($objproduct = null, $type = '')
 	{
@@ -243,7 +243,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$code = strtoupper(trim($code));
 
 		if (empty($code) && $this->code_null && !getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK')) {
-			$result = 0;
+			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK'))) {
 			$result = -2;
 		} else {
@@ -252,7 +252,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 				if ($is_dispo != 0) {
 					$result = -3;
 				} else {
-					$result = 0;
+					$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 				}
 			} else {
 				if (dol_strlen($code) == 0) {

@@ -293,14 +293,14 @@ class Project extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'fk_project' => array('type' => 'integer', 'label' => 'Parent', 'enabled' => 1, 'visible' => 1, 'notnull' => 0, 'position' => 12),
 		'ref' => array('type' => 'varchar(50)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'showoncombobox' => 1, 'position' => 15, 'searchall' => 1),
 		'title' => array('type' => 'varchar(255)', 'label' => 'ProjectLabel', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 17, 'showoncombobox' => 2, 'searchall' => 1),
-		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => 3, 'notnull' => 1, 'position' => 19),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 3, 'notnull' => 1, 'position' => 19),
 		'fk_soc' => array('type' => 'integer', 'label' => 'Thirdparty', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'dateo' => array('type' => 'date', 'label' => 'DateStart', 'enabled' => 1, 'visible' => 1, 'position' => 30),
 		'datee' => array('type' => 'date', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => 1, 'position' => 35),
@@ -2566,6 +2566,8 @@ class Project extends CommonObject
 
 		$now = dol_now();
 		$nowDate = dol_getdate($now, true);
+
+		$errormesg = '';
 		$errorsMsg = array();
 
 		$firstDayOfWeekTS = dol_get_first_day_week($nowDate['mday'], $nowDate['mon'], $nowDate['year']);
@@ -2607,7 +2609,7 @@ class Project extends CommonObject
 			$to = '';
 			$nbMailSend = 0;
 			$error = 0;
-			$errors_to = 0;
+			$errors_to = '';
 			while ($obj = $this->db->fetch_object($resql)) {
 				$to = $obj->email;
 				$numHolidays = num_public_holiday($lastWeekStartTS, $lastWeekEndTS, $mysoc->country_code, 1);
@@ -2673,7 +2675,7 @@ class Project extends CommonObject
 					$actioncomm->errors_to = $errors_to;
 
 					$actioncomm->elementtype = 'project_task';
-					$actioncomm->fk_element = $this->element;
+					$actioncomm->fk_element = (int) $this->element;
 
 					$actioncomm->create($user);
 				} else {
@@ -2707,14 +2709,14 @@ class Project extends CommonObject
 					$actioncomm->errors_to = $errors_to;
 
 					$actioncomm->elementtype = 'project_task';
-					$actioncomm->fk_element = $this->element;
+					$actioncomm->fk_element = (int) $this->element;
 
 					$actioncomm->create($user);
 				}
 				$this->db->commit();
 			}
 		}
-		if ($errormesg) {
+		if (!empty($errormesg)) {
 			$errorsMsg[] = $errormesg;
 		}
 
@@ -2723,7 +2725,7 @@ class Project extends CommonObject
 			dol_syslog(__METHOD__." end - ".$this->output, LOG_INFO);
 			return 0;
 		} else {
-			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? implode(', ', $errorsMsg) : $error;
+			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(empty($errorsMsg) ? $error : implode(', ', $errorsMsg));
 			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
 			return $error;
 		}
