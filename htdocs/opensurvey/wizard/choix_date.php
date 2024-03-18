@@ -38,6 +38,7 @@ $_SESSION["formatsondage"] = "D";
 
 $erreur = false;
 $erreurNbchoice = 0;
+$choixdate = '';
 
 /*
  * Actions
@@ -178,7 +179,7 @@ if (GETPOST('confirmation')) {
 
 	// Add survey into database
 	if (!$erreur && $erreurNb == 0) {
-		$_SESSION["toutchoix"] = substr("$choixdate", 1);
+		$_SESSION["toutchoix"] = substr($choixdate, 1);
 		unset($_SESSION["nbrecaseshoraires"]);
 
 		ajouter_sondage();
