@@ -3156,7 +3156,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * Get info line of the last situation
 	 *
-	 * @param  Facture	$object
+	 * @param  Facture	$object			Object
 	 * @param  int		$current_line	Id of the current line
 	 * @return bool
 	 */
@@ -3378,19 +3378,19 @@ class pdf_octopus extends ModelePDFFactures
 			$total_ht = ($conf->multicurrency->enabled && $propal->mylticurrency_tx != 1) ? $propal->multicurrency_total_ht : $propal->total_ht;
 			$remain_to_pay = $total_ht;
 
-			$pdf->SetTextColor(0,0,60);
-			$pdf->SetFont('','', $default_font_size - 1);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->SetFont('', '', $default_font_size - 1);
 
 			$label = $outputlangs->transnoentities("BtpTotalPropal");
-			$pdf->MultiCell($this->page_largeur-($this->marge_droite+$this->marge_gauche), 3, $label, 0, 'L', 0,1,$posx, $posy+1);
+			$pdf->MultiCell($this->page_largeur-($this->marge_droite+$this->marge_gauche), 3, $label, 0, 'L', 0, 1, $posx, $posy+1);
 
 			$amount = price($sign * ($total_ht + (! empty($propal->remise)?$propal->remise:0)));
-			$pdf->MultiCell($width2, 3, $amount, 0, 'R', 0,1,$posx+$width, $posy+1);
+			$pdf->MultiCell($width2, 3, $amount, 0, 'R', 0, 1, $posx+$width, $posy+1);
 
-			$pdf->SetFont('','', $default_font_size - 1);
+			$pdf->SetFont('', '', $default_font_size - 1);
 
 			// Output Rect
-			$pdf->SetDrawColor(128,128,128);
+			$pdf->SetDrawColor(128, 128, 128);
 			$this->printRect($pdf, $posx, $posy, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 6);	// Rect prend une longueur en 3eme param et 4eme param
 
 			$posy += 4;
@@ -3409,11 +3409,11 @@ class pdf_octopus extends ModelePDFFactures
 		$sign=1;
 		if ($object->type == 2 && ! empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign=-1;
 
-		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFont('','B', $default_font_size + 3);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->SetFont('', 'B', $default_font_size + 3);
 
 
-		$pdf->SetXY($posx,$posy);
+		$pdf->SetXY($posx, $posy);
 
 
 		$depositsamount=$object->getSumDepositsUsed();
@@ -3432,13 +3432,13 @@ class pdf_octopus extends ModelePDFFactures
 			$posy += 7;
 			$index = 0;
 
-			$pdf->SetTextColor(0,0,60);
-			$pdf->SetFont('','B', $default_font_size + 3);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->SetFont('', 'B', $default_font_size + 3);
 
-			$pageposbefore=$pdf->getPage();
+			$pageposbefore = $pdf->getPage();
 			$pdf->startTransaction();
 
-			$pdf->SetXY($posx,$posy);
+			$pdf->SetXY($posx, $posy);
 
 			$ref = $outputlangs->transnoentities("InvoiceSituation").$outputlangs->convToOutputCharset(" n°".$invoice->situation_counter);
 
@@ -3457,7 +3457,7 @@ class pdf_octopus extends ModelePDFFactures
 
 			$posy += 7;
 			// Total HT
-			$pdf->SetFillColor(255,255,255);
+			$pdf->SetFillColor(255, 255, 255);
 			$pdf->SetXY($posx, $posy);
 			$pdf->MultiCell($width, $height, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
@@ -3487,8 +3487,8 @@ class pdf_octopus extends ModelePDFFactures
 					$pdf->SetXY($posx, $posy + $height * $index);
 
 					$tvacompl='';
-					if (preg_match('/\*/',$tvakey)) {
-						$tvakey = str_replace('*', '', $tvakey);
+					if (preg_match('/\*/', $tvakey)) {
+						$tvakey = str_replace('*' , '', $tvakey);
 						$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 					}
 					$totalvat = $outputlangs->transcountrynoentities("TotalVAT", $mysoc->country_code).' ';
@@ -3541,7 +3541,7 @@ class pdf_octopus extends ModelePDFFactures
 				$pdf->SetXY($posx+$width, $posy + $height * $index);
 				if ($basePrice == 'HT') {
 					$pdf->MultiCell($width2, $height, price(-$sign * $total_ht_rg, 0, $outputlangs), $useborder, 'R', 1);
-				} else if ($basePrice == 'TTC') {
+				} elseif ($basePrice == 'TTC') {
 					$pdf->MultiCell($width2, $height, price(-$sign * $total_ttc_rg, 0, $outputlangs), $useborder, 'R', 1);
 				}
 
@@ -3556,14 +3556,14 @@ class pdf_octopus extends ModelePDFFactures
 				$pdf->SetFillColor(224, 224, 224);
 				if ($basePrice == 'HT') {
 					$pdf->MultiCell($width, $height, $outputlangs->transnoentities("TotalWithRgHT"), $useborder, 'L', 1);
-				} else if ($basePrice == 'TTC') {
+				} elseif ($basePrice == 'TTC') {
 					$pdf->MultiCell($width, $height, $outputlangs->transnoentities("TotalWithRgTTC"), $useborder, 'L', 1);
 				}
 
 				$pdf->SetXY($posx+$width, $posy + $height * $index);
 				if ($basePrice == 'HT') {
 					$pdf->MultiCell($width2, $height, price($sign * $total_ht_with_rg, 0, $outputlangs), $useborder, 'R', 1);
-				} else if ($basePrice == 'TTC') {
+				} elseif ($basePrice == 'TTC') {
 					$pdf->MultiCell($width2, $height, price($sign * $total_ttc_with_rg, 0, $outputlangs), $useborder, 'R', 1);
 				}
 			}
@@ -3581,7 +3581,7 @@ class pdf_octopus extends ModelePDFFactures
 			$resteapayer = 0;
 			if ($basePrice == 'HT') {
 				$resteapayer = price2num($invoice->total_ht - $deja_regle - $total_ht_rg - $creditnoteamount - $depositsamount, 'MT');
-			} else if ($basePrice == 'TTC') {
+			} elseif ($basePrice == 'TTC') {
 				$resteapayer = price2num($invoice->total_ttc - $deja_regle - $total_ttc_rg - $creditnoteamount - $depositsamount, 'MT');
 			}
 			if ($invoice->paye) $resteapayer=0;
@@ -3627,7 +3627,7 @@ class pdf_octopus extends ModelePDFFactures
 			$pdf->SetXY($posx+$width, $posy + $height * $index);
 			$pdf->MultiCell($width2, $height, price($resteapayer, 0, $outputlangs), $useborder, 'R', 1);
 
-			$pdf->SetFont('','', $default_font_size - 1);
+			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetTextColor(0, 0, 0);
 
 			$index++;
@@ -3636,7 +3636,7 @@ class pdf_octopus extends ModelePDFFactures
 				$title=$outputlangs->transnoentities("PaymentsAlreadyDone");
 				if ($invoice->type == 2) $title=$outputlangs->transnoentities("PaymentsBackAlreadyDone");
 
-				$pdf->SetFont('','', $default_font_size - 3);
+				$pdf->SetFont('', '', $default_font_size - 3);
 				$pdf->SetXY($posx, $posy + $height * $index);
 				$pdf->MultiCell($width, $height, $title, 0, 'L', 0);
 
@@ -3646,7 +3646,7 @@ class pdf_octopus extends ModelePDFFactures
 
 				$width4 = ($this->page_largeur - $this->marge_droite - $posx)/4;
 
-				$pdf->SetFont('','', $default_font_size - 4);
+				$pdf->SetFont('', '', $default_font_size - 4);
 				$pdf->SetXY($posx, $posy + $height * $index);
 				$pdf->MultiCell($width4, $height-1, $outputlangs->transnoentities("Payment"), 0, 'L', 0);
 				$pdf->SetXY($posx+$width4, $posy + $height * $index);
@@ -3660,15 +3660,14 @@ class pdf_octopus extends ModelePDFFactures
 
 				$y=$height-1;
 
-				$pdf->SetFont('','', $default_font_size - 4);
+				$pdf->SetFont('', '', $default_font_size - 4);
 
 				$payments = $invoice->getListOfPayments();
 
 				if (count($payments)) {
 					foreach ($payments as $payment) {
-
 						$pdf->SetXY($posx, $posy + $height * $index + $y);
-						$pdf->MultiCell($width4, $height-1, dol_print_date($this->db->jdate($payment['date']),'day',false,$outputlangs,true), 0, 'L', 0);
+						$pdf->MultiCell($width4, $height-1, dol_print_date($this->db->jdate($payment['date']), 'day', false, $outputlangs,true), 0, 'L', 0);
 						$pdf->SetXY($posx+$width4, $posy + $height * $index + $y);
 						$pdf->MultiCell($width4, $height-1, price($sign * $payment['amount'], 0, $outputlangs), 0, 'L', 0);
 						$pdf->SetXY($posx+$width4*2, $posy + $height * $index + $y);
@@ -3679,14 +3678,13 @@ class pdf_octopus extends ModelePDFFactures
 						$pdf->MultiCell($width4, $height-1, $payment['num'], 0, 'L', 0);
 
 						//$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3);
-						$y+=($height-1);
-
+						$y += ($height - 1);
 					}
 				}
 			}
 
 			// Output Rect
-			$pdf->SetDrawColor(128,128,128);
+			$pdf->SetDrawColor(128, 128, 128);
 			$this->printRect($pdf, $this->marge_gauche, $posy, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height * $index + $y);
 			$posy += $height * $index + $y;
 
@@ -3695,7 +3693,7 @@ class pdf_octopus extends ModelePDFFactures
 				$pdf->rollbackTransaction(true);
 
 				$pageposafter=$pageposbefore;
-				$pdf->AddPage('','',true);
+				$pdf->AddPage('', '', true);
 				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 				if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 				$pdf->setPage($pageposafter+1);
@@ -3733,16 +3731,16 @@ class pdf_octopus extends ModelePDFFactures
 
 		$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
-		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFont('','', $default_font_size - 1);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->SetFont('', '', $default_font_size - 1);
 		$pdf->SetXY($this->marge_gauche, $posy + 1);
 		$label = $outputlangs->transnoentities("RemainToBillHT");
 		$pdf->MultiCell($this->page_largeur-($this->marge_droite+$this->marge_gauche), 3, $label, 0, 'L', 0);
 
 		$amount = price($remain_to_pay);
-		$pdf->MultiCell($width2, 3, $amount, 0, 'R', 0,1,$posx+$width, $posy+1);
+		$pdf->MultiCell($width2, 3, $amount, 0, 'R', 0, 1, $posx+$width, $posy+1);
 
-		$pdf->SetDrawColor(128,128,128);
+		$pdf->SetDrawColor(128, 128, 128);
 		$this->printRect($pdf, $this->marge_gauche, $posy, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 7);
 	}
 }
