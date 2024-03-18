@@ -93,6 +93,24 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('DE-WEIHNACHTSTAG1',       0, 5,                '', 0, 12, 25, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('DE-WEIHNACHTSTAG2',       0, 5,                '', 0, 12, 26, 1);
 
+-- Switzerland (6)
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('CH-NEUJAHR',              0, 6,                '', 0,  1,  1, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('CH-BERCHTOLDSTAG--TLW',   0, 6,                '', 0,  1,  2, 0);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('CH-HL3KOEN--TLW',         0, 6,                '', 0,  1,  6, 0);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('CH-JOSEFSTAG--TLW',       0, 6,                '', 0,  3, 19, 0);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('CH-KARFREITAG--TLW',      0, 6,      'goodfriday', 0,  0,  0, 0);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('CH-OSTERMONTAG--TLW',     0, 6,    'eastermonday', 0,  0,  0, 0);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('CH-TAGDERARBEIT--TLW',    0, 6,                '', 0,  5,  1, 0);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('CH-AUFFAHRT',             0, 6,       'ascension', 0,  0,  0, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('CH-PFINGSTMONTAG--TLW',   0, 6, 'pentecotemonday', 0,  0,  0, 0);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('CH-FRONLEICHNAM--TLW',    0, 6,    'fronleichnam', 0,  0,  0, 0);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('CH-BUNDESFEIER',          0, 6,                '', 0,  8,  1, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('CH-MARIAEHIMMEL--TLW',    0, 6,                '', 0,  8, 15, 0);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('CH-ALLERHEILIGEN--TLW',   0, 6,                '', 0, 11,  1, 0);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('CH-MARIAEMPFAENGNIS--TLW',0, 6,                '', 0, 12,  8, 0);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('CH-WEIHNACHTSTAG',        0, 6,                '', 0, 12, 25, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('CH-STEPHANSTAG--TLw',     0, 6,                '', 0, 12, 26, 0);
+
 -- Austria (41)
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('AT-EASTER',       0, 41, 'eastermonday', 0, 0, 0, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('AT-ASCENSION',    0, 41,    'ascension', 0, 0, 0, 1);

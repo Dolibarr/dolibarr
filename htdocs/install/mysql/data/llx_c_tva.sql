@@ -315,10 +315,17 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 204,  20,  '25','0','VAT rate - standard',1);
 
 -- SWITZERLAND (id country=6)
+--fr
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (  61,   6,   '0','0','VAT rate 0',  1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (  62,   6, '3.8','0','VAT rate - reduced',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (  63,   6, '2.6','0','VAT rate - super-reduced',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (  64,   6, '8.1','0','VAT rate - standard',1);
+--de
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (  65,   6,   '0','0','MWST - 0',  1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (  66,   6,   '0','0','MWST - Bildung',  1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (  67,   6, '3.8','0','MWST - Sondersatz für Beherbergung',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (  68,   6, '2.6','0','MWST - Reduzierter Satz',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (  69,   6, '8.1','0','MWST - Normalsatz',1);
 
 -- SRI LANKA (id country=207)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2071, 207,   '0','0','VAT 0', 1);

@@ -226,6 +226,7 @@ INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VA
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('325',3,'Studio associato',0,1);
 
 -- Switzerland
+-- fr
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '600', 'Raison Individuelle');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '601', 'Société Simple');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '602', 'Société en nom collectif');
@@ -236,6 +237,17 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '606', 'So
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '607', 'Société coopérative');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '608', 'Association');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '609', 'Fondation');
+-- de
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '610', 'Einzelbesitzer-Geschäft');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '611', 'Allgemeine Partnerschaft');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '612', 'Offene Handelsgesellschaft');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '613', 'Einfache Kommanditgesellschaft');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '614', 'Aktiengesellschaft');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '615', 'Kommanditgesellschaft auf Aktien');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '616', 'Gesellschaft mit beschränkter Haftung');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '617', 'Genossenschaft');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '618', 'Verein');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '619', 'Stiftung');
 
 -- United Kingdom
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '700', 'Sole Trader');

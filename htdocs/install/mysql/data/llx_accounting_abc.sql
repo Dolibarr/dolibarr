@@ -87,7 +87,12 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5, 'SKR04', 'Standardkontenrahmen SKR 04', 1);
 
 -- Description of chart of account CH PCG_SUISSE
+-- gemäss BANANA: https://www.banana.ch/apps/de/node/8017
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  6, 'PCG_SUISSE', 'Switzerland plan', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  6, 'CH_KR_KMU_DE', 'Schweizer Kontenrahmen KMU_DE', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  6, 'CH_KR_KMU_FR', 'Schweizer Kontenrahmen KMU_FR', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  6, 'CH_KR_KMU_IT', 'Schweizer Kontenrahmen KMU_IT', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  6, 'CH_KR_KMU_EN', 'Schweizer Kontenrahmen KMU_EN', 1);
 
 -- Description of chart of account GB ENG-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  7, 'ENG-BASE', 'England plan', 1);

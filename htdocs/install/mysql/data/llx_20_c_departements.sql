@@ -1254,6 +1254,7 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 
 
 -- Switzerland Cantons (id country=6)
+--fr
 INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'AG','ARGOVIE','Argovie'); 
 INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'AI','APPENZELL RHODES INTERIEURES','Appenzell Rhodes intérieures'); 
 INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'AR','APPENZELL RHODES EXTERIEURES','Appenzell Rhodes extérieures'); 
@@ -1280,7 +1281,33 @@ INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (6
 INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'VS','VALAIS','Valais'); 
 INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'ZG','ZUG','Zug'); 
 INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'ZH','ZURICH','Zürich');
-
+--de
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'AG','AARGAU','Aargau'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'AI','APPENZELL INNERRHODEN','Appenzell Innerrhoden'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'AR','APPENZELL AUSSERRHODEN','Appenzell Ausserrhoden'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'BE','BERN','Bern'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'BL','BASEL-LANDSCHAFT','Basel-Landschaft'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'BS','BASEL-STADT','Basel-Stadt'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'FR','FREIBURG','Freiburg'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'GE','GENF','Genf'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'GL','GLARUS','Glarus'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'GR','GRAUBÜNDEN','Graubünden'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'JU','JURA','Jura'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'LU','LUZERN','Luzern'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'NE','NEUENBURG','Neuenburg'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'NW','NIDWALDEN','Nidwalden'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'OW','OBWALDEN','Obwalden'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'SG','ST. GALLEN','St. Gallen'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'SH','SCHAFFHAUSEN','Schaffhausen'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'SO','SOLOTHURN','Solothurn'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'SZ','SCHWYZ','Schwyz'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'TG','THURGAU','Thurgau'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'TI','TESSIN','Tessin'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'UR','URI','Uri'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'VD','WAADT','Waadt'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'VS','WALLIS','Wallis'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'ZG','ZUG','Zug'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (602, 'ZH','ZURICH','Zürich');
 
 -- Taiwan Divisions / Provinces / Counties (id country=213)
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (21301, 'TW-KLU', 'KLU', NULL, '基隆市');
