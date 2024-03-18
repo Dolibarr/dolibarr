@@ -3442,18 +3442,19 @@ class pdf_octopus extends ModelePDFFactures
 
 			$ref = $outputlangs->transnoentities("InvoiceSituation").$outputlangs->convToOutputCharset(" n°".$invoice->situation_counter);
 
-			if ($invoice->situation_final)
-			{
+			if ($invoice->situation_final) {
 				$ref.= ' - DGD';
 				$force_to_zero = true;
 			}
 
 			$pdf->MultiCell($this->page_largeur-($this->marge_droite+$this->marge_gauche), 3, $ref. ' '.$invoice->ref. ' '. $outputlangs->transnoentities("InvoiceOfDate", dol_print_date($invoice->date, "%d/%m/%Y", false, $outputlangs)), 0, 'L', 0);
 
-			$pdf->SetFont('','', $default_font_size - 1);
+			$pdf->SetFont('', '', $default_font_size - 1);
 
 			$sign = 1;
-			if ($invoice->type == 2 && ! empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign = -1;
+			if ($invoice->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
+				$sign = -1;
+			}
 
 			$posy += 7;
 			// Total HT
@@ -3486,7 +3487,7 @@ class pdf_octopus extends ModelePDFFactures
 					$index++;
 					$pdf->SetXY($posx, $posy + $height * $index);
 
-					$tvacompl='';
+					$tvacompl = '';
 					if (preg_match('/\*/', $tvakey)) {
 						$tvakey = str_replace('*' , '', $tvakey);
 						$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
@@ -3667,7 +3668,7 @@ class pdf_octopus extends ModelePDFFactures
 				if (count($payments)) {
 					foreach ($payments as $payment) {
 						$pdf->SetXY($posx, $posy + $height * $index + $y);
-						$pdf->MultiCell($width4, $height-1, dol_print_date($this->db->jdate($payment['date']), 'day', false, $outputlangs,true), 0, 'L', 0);
+						$pdf->MultiCell($width4, $height-1, dol_print_date($this->db->jdate($payment['date']), 'day', false, $outputlangs, true), 0, 'L', 0);
 						$pdf->SetXY($posx+$width4, $posy + $height * $index + $y);
 						$pdf->MultiCell($width4, $height-1, price($sign * $payment['amount'], 0, $outputlangs), 0, 'L', 0);
 						$pdf->SetXY($posx+$width4*2, $posy + $height * $index + $y);
