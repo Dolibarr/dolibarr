@@ -370,7 +370,7 @@ class CodingPhpTest extends CommonClassTest
 		$ok = true;
 		$matches = array();
 		$found = "";
-		preg_match_all('/(sql|SET|WHERE|INSERT|VALUES|LIKE).+\s*\'"\s*\.\s*\$(.......)/', $filecontent, $matches, PREG_SET_ORDER);
+		preg_match_all('/(sql|SET|WHERE|where|INSERT|insert|VALUES|LIKE).+\s*\'"\s*\.\s*\$(.......)/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			if (! in_array($val[2], array('this->d', 'this->e', 'db->esc', 'dbs->es', 'dbs->id', 'mydb->e', 'dbsessi', 'db->ida', 'escaped', 'exclude', 'include'))) {
 				$found = $val[0];
@@ -400,6 +400,52 @@ class CodingPhpTest extends CommonClassTest
 		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
 		$this->assertTrue($ok, 'Found non escaped string in building of a sql request (case 3) in '.$file['relativename'].': '.$found.' - Bad.');
 		//exit;
+
+		// Check string sql|set...=".... without (int). It means we forget a cast (int) when forging sql request.
+		$ok = true;
+		$matches = array();
+		$found = "";
+		// $sql .= " field = ".(isset($this->field) ? $this->escape($this->field) : "null")... is KO
+		// $sql .= " field = ".(isset($this->field) ? "'".$this->escape($this->field)."'" : "null")... is OK
+		/*
+		preg_match_all('/(\$sql|VALUES\()[^\'\n]*[^\'\n]"\s*\.\s*([^\n]+)\n/m', $filecontent, $matches, PREG_SET_ORDER);
+		foreach ($matches as $key => $val) {
+			if (! preg_match('/^(implode\(\' OR \', \$search|implode\(\' AND \', \$search|MAIN_DB_PREFIX|accountancy_code|\w+::|\$key|\$db->prefix|\$this->db->prefix|\$predefinedgroupwhere|\$db->sanitize|\$this->db->sanitize|\$db->ifsql|\$db->decrypt|\(int\)|\(float\)|\(\(int\)|\(\(float\)|\$conf->entity|getEntity|\$this->from)/', $val[2])) {
+				//print "Found a suspicious string: ".$val[2]."\n";
+				if (preg_match('/.+\?.+:.+/', $val[2])) {
+					// We found a string that follow the " in $sql .= " "..... and does not contains simple quote for escapement nor casting
+					// May be it is later, into the b or c in case of  a ? b : c
+					// Example:
+					// $val[2] is (isset($this->field) ? $this->escape($this->field) : "null")... is KO
+					// $val[2] is (isset($this->field) ? "'".$this->escape($this->field)."'" : "null")... is OK
+					$tmps = $val[2];
+					$tmps = preg_replace('/^[^\?]+\?/', '', $tmps);
+					$tmps2 = explode(':', $tmps, 2);
+					$tmps2a = trim($tmps2[0]);
+					if (!empty($tmps2[1])) {
+						$tmps2b = trim($tmps2[1]);
+					} else {
+						$tmps2b = '';
+					}
+				} else {
+					$tmps2a = $val[2];
+					$tmps2b = '';
+				}
+				if (preg_match('/^(\(*["\']|\(+int\)|\(+float\)|\(*\d|GETPOSTINT|getDolGlobalInt|dolSqlDateFilter|\$user->id|\$conf->entity|\$this->entity|\$this->where|\(?\$this->societe|str_pad\(\(int)/', $tmps2a)
+					&& (empty($tmps2b) || preg_match('/^(\(*["\']|\(+int\)|\(+float\)|\(*\d|GETPOSTINT|getDolGlobalInt|dolSqlDateFilter|\$user->id|\$conf->entity|\$this->entity|\$this->where|\(?\$this->societe|str_pad\(\(int)/', $tmps2b))) {
+					continue;	// No problem
+				}
+
+				var_dump($val);
+
+				$found = $val[0];
+				$ok = false;
+				break;
+			}
+		}
+		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+		$this->assertTrue($ok, 'Found non escaped or non casted string in building of a sql request (case 4) in '.$file['relativename'].': '.$found.' - Bad.');
+		*/
 
 		// Checks with IN
 

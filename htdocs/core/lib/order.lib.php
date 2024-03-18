@@ -34,7 +34,7 @@
 function commande_prepare_head(Commande $object)
 {
 	global $db, $langs, $conf, $user;
-	if (isModEnabled("delivery_note")) {
+	if (isModEnabled("shipping")) {
 		$langs->load("sendings");
 	}
 	$langs->load("orders");

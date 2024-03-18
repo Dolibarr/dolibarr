@@ -2,6 +2,7 @@
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +26,17 @@
  *      \remarks    Class that extends all PHPunit tests. To share similare code between each test.
  */
 
+// Workaround for false security issue with main.inc.php on Windows in tests:
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+	$_SERVER['PHP_SELF'] = "phpunit";
+}
+
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+
+
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -59,6 +67,16 @@ abstract class CommonClassTest extends TestCase
 	 * @var integer
 	 */
 	public $nbLinesToShow = 100;
+
+	/**
+	 * Log file from which to extract lines in case of failing test
+	 */
+	public $logfile = DOL_DATA_ROOT.'/dolibarr.log';
+
+	/**
+	 * Log file size before a test started (=in setUp() call)
+	 */
+	public $logSizeAtSetup = 0;
 
 	/**
 	 * Constructor
@@ -108,19 +126,25 @@ abstract class CommonClassTest extends TestCase
 	 */
 	protected function onNotSuccessfulTest(Throwable $t): void
 	{
-		$logfile = DOL_DATA_ROOT.'/dolibarr.log';
 
-		$lines = file($logfile);
+		// Get the lines that were added since the start of the test
+
+		$filecontent = (string) @file_get_contents($this->logfile);
+		$currentSize = strlen($filecontent);
+		if ($currentSize >= $this->logSizeAtSetup) {
+			$filecontent = substr($filecontent, $this->logSizeAtSetup);
+		}
+		$lines = preg_split("/\r?\n/", $filecontent, -1, PREG_SPLIT_NO_EMPTY);
+
+
+		// Determine the number of lines to show
 
 		$nbLinesToShow = $this->nbLinesToShow;
 		if ($t instanceof PHPUnit\Framework\Error\Notice) {
 			$nbLinesToShow = 3;
 		}
-		$totalLines = count($lines);
-		$first_line = max(0, $totalLines - $nbLinesToShow);
 
-		// Get the last line of the log
-		$last_lines = array_slice($lines, $first_line, $nbLinesToShow);
+		// Determine test information to show
 
 		$failedTestMethod = $this->getName(false);
 		$className = get_called_class();
@@ -131,14 +155,33 @@ abstract class CommonClassTest extends TestCase
 		// Get the test method's data set
 		$argsText = $this->getDataSetAsString(true);
 
-		// Show log file
+		$totalLines = count($lines);
+		$first_line = max(0, $totalLines - $nbLinesToShow);
+		// Get the last line of the log
+		$last_lines = array_slice($lines, $first_line, $nbLinesToShow);
+
+
+		// Show log information
+
 		print PHP_EOL;
-		print "----- $className::$failedTestMethod failed - $argsText.".PHP_EOL;
-		print "Show last ".$nbLinesToShow." lines of dolibarr.log file -----".PHP_EOL;
-		foreach ($last_lines as $line) {
-			print $line.PHP_EOL;
+		// Use GitHub Action compatible group output (:warning: arguments not encoded)
+		print "##[group]$className::$failedTestMethod failed - $argsText.".PHP_EOL;
+		print "## ".get_class($t).": {$t->getMessage()}".PHP_EOL;
+
+		if ($nbLinesToShow) {
+			$newLines = count($last_lines);
+			if ($newLines > 0) {
+				// Show partial log file contents when requested.
+				print "## Show last ".count($last_lines)." lines of dolibarr.log file -----".PHP_EOL;
+				foreach ($last_lines as $line) {
+					print $line.PHP_EOL;
+				}
+				print "## end of dolibarr.log for $className::$failedTestMethod".PHP_EOL;
+			} else {
+				print "## No new lines in 'dolibarr.log' since start of this test.".PHP_EOL;
+			}
 		}
-		print "----- end of dolibarr.log for $className::$failedTestMethod".PHP_EOL;
+		print "##[endgroup]".PHP_EOL;
 
 		parent::onNotSuccessfulTest($t);
 	}
@@ -156,6 +199,9 @@ abstract class CommonClassTest extends TestCase
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+
+		// Record the filesize to determine which part of the log to show on error
+		$this->logSizeAtSetup = (int) filesize($this->logfile);
 
 		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
 			print get_called_class().'::'.$this->getName(false)."::".__FUNCTION__.PHP_EOL;
@@ -201,7 +247,7 @@ abstract class CommonClassTest extends TestCase
 		'commande' => 'order',
 		'contrat' => 'contract',
 		'entrepot' => 'stock',
-		'expedition' => 'delivery_note',
+		'expedition' => 'shipping',
 		'facture' => 'invoice',
 		'fichinter' => 'intervention',
 		'product_fournisseur_price' => 'productsupplierprice',
@@ -250,7 +296,7 @@ abstract class CommonClassTest extends TestCase
 		'datapolicy' => 'DataPolicy',
 		'dav' => 'Dav',
 		'debugbar' => 'DebugBar',
-		'delivery_note' => 'Expedition',
+		'shipping' => 'Expedition',
 		'deplacement' => 'Deplacement',
 		"documentgeneration" => 'DocumentGeneration',  // TODO: fill in proper name
 		'don' => 'Don',
@@ -340,6 +386,30 @@ abstract class CommonClassTest extends TestCase
 		'zapier' => 'Zapier',
 	);
 
+
+	/**
+	 * Run php script (file) using the php binary used for running phpunit.
+	 *
+	 * The PHP executable may not be in the path, or refer to an uncontrolled
+	 * version.
+	 * This ensures that the php script is properly run on multiple platforms.
+	 *
+	 * @param string $phpScriptCommand The command and arguments are run by the php binary.
+	 * @param array  $output           The output returned by the command
+	 * @param int   $exitCode The exit code returned for the execution.
+	 * @return false|string  False on failure, else last line if the output from the command
+	 */
+	protected function runPhpScript($phpScriptCommand, &$output, &$exitCode)
+	{
+		$phpExecutable = PHP_BINARY;
+
+		// Build the command to execute the PHP script
+		$command = "$phpExecutable $phpScriptCommand";
+
+		// Execute the command
+		return exec($command, $output, $exitCode);
+	}
+
 	/**
 	 * Assert that a directory does not exist without triggering deprecation
 	 *
@@ -358,5 +428,43 @@ abstract class CommonClassTest extends TestCase
 		} else {
 			$this->assertDirectoryDoesNotExist($directory, $message);
 		}
+	}
+
+	/**
+	 * Assert that a file does not exist without triggering deprecation
+	 *
+	 * @param string $file      The file to test
+	 * @param string $message   The message to show if the directory exists
+	 *
+	 * @return void
+	 */
+	protected function assertFileNotExistsCompat($file, $message = '')
+	{
+		$phpunitVersion = \PHPUnit\Runner\Version::id();
+
+		// Check if PHPUnit version is less than 9.0.0
+		if (version_compare($phpunitVersion, '9.0.0', '<')) {
+			$this->assertFileNotExists($file, $message);
+		} else {
+			$this->assertFileDoesNotExist($file, $message);
+		}
+	}
+
+
+	/**
+	 * Skip test if test is not running on "Unix"
+	 *
+	 * @param string $message Message to indicate which test requires "Unix"
+	 *
+	 * @return bool True if this is not *nix, and fake assert generated
+	 */
+	protected function fakeAssertIfNotUnix($message)
+	{
+		if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+			$this->assertTrue(true, "Dummy test to not mark the test as risky");
+			// $this->markTestSkipped("PHPUNIT is running on windows.  $message");
+			return true;
+		}
+		return false;
 	}
 }

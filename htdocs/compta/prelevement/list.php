@@ -415,13 +415,14 @@ while ($i < $imaxinloop) {
 
 	$object = $bon;
 	if ($object->checkIfSalaryBonPrelevement()) {
+		$fullname = explode(' ', $obj->name);
+
 		$userstatic->id = $obj->socid;
 		$userstatic->email = $obj->email;
-
-		$fullname = explode(' ', $obj->name);
 		$userstatic->firstname = $fullname[0];
 		$userstatic->lastname = isset($fullname[1]) ? $fullname[1] : '';
 	}
+
 	$company->id = $obj->socid;
 	$company->name = $obj->name;
 	$company->email = $obj->email;
@@ -476,7 +477,8 @@ while ($i < $imaxinloop) {
 		print substr('000000'.$obj->rowid_ligne, -6);
 		print '</a></td>';
 
-		print '<td>';
+		// Ref invoice or salary
+		print '<td class="nowraponall">';
 		$link_to_bill = '/compta/facture/card.php?facid=';
 		$link_title = 'Invoice';
 		$link_picto = 'bill';
@@ -501,11 +503,10 @@ while ($i < $imaxinloop) {
 		print '</a>';
 		print '</td>';
 
-		print '<td>';
-
-		print(!$bon->checkIfSalaryBonPrelevement() ? $company->getNomUrl(1) : $userstatic->getNomUrl(1));
+		// Thirdparty (company or user)
+		print '<td class="tdoverflowmax150">';
+		print(!$bon->checkIfSalaryBonPrelevement() ? $company->getNomUrl(1) : $userstatic->getNomUrl(-1));
 		print "</td>\n";
-
 
 		print '<td class="center">';
 		$link_to_tab = '/comm/card.php?socid=';
@@ -514,11 +515,12 @@ while ($i < $imaxinloop) {
 			$link_to_tab = '/fourn/card.php?socid=';
 			$link_code = $obj->code_fournisseur;
 		}
-		print '<a href="'.DOL_URL_ROOT.$link_to_tab.$company->id.'">'.$link_code."</a></td>\n";
+		print '<a href="'.DOL_URL_ROOT.$link_to_tab.$company->id.'">'.$link_code."</a>";
+		print "</td>\n";
 
 		print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
-		print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
+		print '<td class="nowraponall right"><span class="amount">'.price($obj->amount)."</span></td>\n";
 
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

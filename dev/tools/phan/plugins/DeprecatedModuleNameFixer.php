@@ -18,8 +18,6 @@ use Microsoft\PhpParser\Node\DelimitedList\ArgumentExpressionList;
 use Microsoft\PhpParser\Node\StringLiteral;
 
 /**
- * Implements --automatic-fix for GetPostFixerPlugin
- *
  * This is a prototype, there are various features it does not implement.
  */
 
@@ -38,7 +36,7 @@ call_user_func(static function (): void {
 		'commande' => 'order',
 		'contrat' => 'contract',
 		'entrepot' => 'stock',
-		'expedition' => 'delivery_note',
+		'expedition' => 'shipping',
 		'facture' => 'invoice',
 		'ficheinter' => 'intervention',
 		'product_fournisseur_price' => 'productsupplierprice',

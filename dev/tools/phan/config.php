@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  */
 define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
 define('DOL_DOCUMENT_ROOT', DOL_PROJECT_ROOT.'/htdocs');
@@ -54,7 +55,7 @@ $DEPRECATED_MODULE_MAPPING = array(
 	'commande' => 'order',
 	'contrat' => 'contract',
 	'entrepot' => 'stock',
-	'expedition' => 'delivery_note',
+	'expedition' => 'shipping',
 	'facture' => 'invoice',
 	'ficheinter' => 'intervention',
 	'product_fournisseur_price' => 'productsupplierprice',
@@ -93,7 +94,7 @@ $VALID_MODULE_MAPPING = array(
 	'datapolicy' => 'DataPolicy',
 	'dav' => 'Dav',
 	'debugbar' => 'DebugBar',
-	'delivery_note' => 'Expedition',
+	'shipping' => 'Expedition',
 	'deplacement' => 'Deplacement',
 	"documentgeneration" => 'DocumentGeneration',
 	'don' => 'Don',
@@ -170,6 +171,7 @@ $VALID_MODULE_MAPPING = array(
 	'syslog' => 'Syslog',
 	'takepos' => 'TakePos',
 	'tax' => 'Tax',
+	'theme_datacolor' => 'array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int},3:array{0:int,1:int,2:int}}',
 	'ticket' => 'Ticket',
 	'user' => 'User',
 	'variants' => 'Variants',
@@ -183,8 +185,39 @@ $VALID_MODULE_MAPPING = array(
 	'zapier' => 'Zapier',
 );
 
+// From ExtraFields class
+$EXTRAFIELDS_TYPE2LABEL = array(
+		'varchar' => 'String1Line',
+		'text' => 'TextLongNLines',
+		'html' => 'HtmlText',
+		'int' => 'Int',
+		'double' => 'Float',
+		'date' => 'Date',
+		'datetime' => 'DateAndTime',
+		//'datetimegmt'=>'DateAndTimeUTC',
+		'boolean' => 'Boolean', // Remove as test
+		'price' => 'ExtrafieldPrice',
+		'pricecy' => 'ExtrafieldPriceWithCurrency',
+		'phone' => 'ExtrafieldPhone',
+		'mail' => 'ExtrafieldMail',
+		'url' => 'ExtrafieldUrl',
+		'ip' => 'ExtrafieldIP',
+		'icon' => 'Icon',
+		'password' => 'ExtrafieldPassword',
+		'select' => 'ExtrafieldSelect',
+		'sellist' => 'ExtrafieldSelectList',
+		'radio' => 'ExtrafieldRadio',
+		'checkbox' => 'ExtrafieldCheckBox',
+		'chkbxlst' => 'ExtrafieldCheckBoxFromList',
+		'link' => 'ExtrafieldLink',
+		'separate' => 'ExtrafieldSeparator',
+	);
+
+
 $moduleNameRegex = '/^(?:'.implode('|', array_merge(array_keys($DEPRECATED_MODULE_MAPPING), array_keys($VALID_MODULE_MAPPING), array('\$modulename'))).')$/';
 $deprecatedModuleNameRegex = '/^(?!(?:'.implode('|', array_keys($DEPRECATED_MODULE_MAPPING)).')$).*/';
+
+$extraFieldTypeRegex = '/^(?:'.implode('|', array_keys($EXTRAFIELDS_TYPE2LABEL)).')$/';
 
 /**
  * This configuration will be read and overlaid on top of the
@@ -197,14 +230,58 @@ return [
 	'simplify_ast' => true,
 	'analyzed_file_extensions' => ['php','inc'],
 	'globals_type_map' => [
+		'action' => 'string',
+		'actioncode' => 'string',
+		'badgeStatus0' => 'string',
+		'badgeStatus1' => 'string',
+		'badgeStatus11' => 'string',
+		'badgeStatus3' => 'string',
+		'badgeStatus4' => 'string',
+		'badgeStatus6' => 'string',
+		'badgeStatus8' => 'string',
+		'badgeStatus9' => 'string',
+		'classname' => 'string',
 		'conf' => '\Conf',
+		'conffile' => 'string',
+		'conffiletoshow' => 'string',
+		'conffiletoshowshort' => 'string',
+		'dateSelector' => 'int<0,1>',
 		'db' => '\DoliDB',
+		'disableedit' => 'int<0,1>',
+		'disablemove' => 'int<0,1>',
+		'disableremove' => 'int<0,1>',
+		'dolibarr_main_authentication' => 'string',
+		'dolibarr_main_data_root' => 'string',
+		'dolibarr_main_data_root' => 'string',
+		'dolibarr_main_db_encrypted_pass' => 'string',
+		'dolibarr_main_db_host' => 'string',
+		'dolibarr_main_db_pass' => 'string',
+		'dolibarr_main_demo' => 'string',
+		'dolibarr_main_document_root' => 'string',
+		'dolibarr_main_url_root' => 'string',
+		'errormsg' => 'string',
 		'extrafields' => '\ExtraFields',
+		'filter' => 'string',
+		'filtert' => 'int',
+		'forceall' => 'int<0,1>',
+		'form' => '\Form',
 		'hookmanager' => '\HookManager',
+		'inputalsopricewithtax' => 'int<0,1>',
 		'langs' => '\Translate',
+		'leftmenu' => 'string',
+		'mainmenu' => 'string',
+		'menumanager' => 'string',
 		'mysoc' => '\Societe',
 		'nblines' => '\int',
+		'obj' => '\CommonObject',     // Deprecated
+		'object_rights' => 'int|stdClass',
+		'objectoffield' => '\CommonObject',
+		'senderissupplier' => 'int<0,1,2>',
 		'user' => '\User',
+		'website' => '\WebSite',
+		'websitepage' => '\WebSitePage',
+		'websitepagefile' => 'string',
+		// 'object' => '\CommonObject',  // Deprecated, not enabled because conflicts with $object assignments
 	],
 
 	// Supported values: `'5.6'`, `'7.0'`, `'7.1'`, `'7.2'`, `'7.3'`, `'7.4'`, `null`.
@@ -253,6 +330,7 @@ return [
 		.'|htdocs/includes/restler/.*'  // @phpstan-ignore-line
 		// Included as stub (did not seem properly analysed by phan without it)
 		.'|htdocs/includes/stripe/.*'  // @phpstan-ignore-line
+		.'|htdocs/conf/conf.php'  // @phpstan-ignore-line
 		// .'|htdocs/[^h].*/.*'  // For testing @phpstan-ignore-line
 		.')@',  // @phpstan-ignore-line
 
@@ -266,19 +344,19 @@ return [
 	// Alternately, you can pass in the full path to a PHP file
 	// with the plugin's implementation (e.g. 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php')
 	'ParamMatchRegexPlugin' => [
-		'/^GETPOST$/' => [1, $sanitizeRegex],
+		'/^GETPOST$/' => [1, $sanitizeRegex, 'GetPostUnknownSanitizeType'],
 		'/^isModEnabled$/' => [0, $moduleNameRegex, 'UnknownModuleName'],
 		// Note: trick to have different key for same regex:
 		'/^isModEnable[d]$/' => [0, $deprecatedModuleNameRegex, "DeprecatedModuleName"],
-		'/^sanitizeVal$/' => [1, $sanitizeRegex],
+		'/^sanitizeVal$/' => [1, $sanitizeRegex,"UnknownSanitizeType"],
+		'/^\\\\ExtraFields::addExtraField$/' => [2, $extraFieldTypeRegex,"UnknownExtrafieldTypeBack"],
 	],
 	'plugins' => [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
-		__DIR__.'/plugins/GetPostFixerPlugin.php',   // Only detects without --automatic-fix
 		// checks if a function, closure or method unconditionally returns.
 		// can also be written as 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php'
-		//'DeprecateAliasPlugin',
+		'DeprecateAliasPlugin',
 		//'EmptyMethodAndFunctionPlugin',
 		'InvalidVariableIssetPlugin',
 		//'MoreSpecificElementTypePlugin',
@@ -293,7 +371,7 @@ return [
 
 		'ConstantVariablePlugin', // Warns about values that are actually constant
 		//'HasPHPDocPlugin', // Requires PHPDoc
-		'InlineHTMLPlugin', // html in PHP file, or at end of file
+		// 'InlineHTMLPlugin', // html in PHP file, or at end of file
 		//'NonBoolBranchPlugin', // Requires test on bool, nont on ints
 		//'NonBoolInLogicalArithPlugin',
 		'NumericalComparisonPlugin',
@@ -331,9 +409,9 @@ return [
 	'suppress_issue_types' => [
 		// Dolibarr uses a lot of internal deprecated stuff, not reporting
 		'PhanDeprecatedProperty',
-		'PhanDeprecatedFunction',
-		// Dolibarr has quite a few strange noop assignments like $abc=$abc;
-		'PhanPluginDuplicateExpressionAssignment',
+		// 'PhanDeprecatedFunction',
+		//'PhanCompatibleNegativeStringOffset',
+		// 'PhanPluginDuplicateExpressionAssignment',
 		// Nulls are likely mostly false positives
 		'PhanPluginConstantVariableNull',
 		'PhanTypeObjectUnsetDeclaredProperty',
@@ -369,18 +447,18 @@ return [
 		'PhanRedefinedClassReference',
 		// 'PhanPluginNoCommentOnClass',
 		// 'PhanPluginNotFullyQualifiedGlobalConstant',
-		'PhanTypeMismatchDefault',
+		// 'PhanTypeMismatchDefault',
 		// 'PhanPluginPHPDocHashComment',
 		'PhanPluginShortArrayList',
 		'PhanPluginUnknownArrayPropertyType',
 		'PhanTypeInvalidDimOffset',
 		// 'PhanPluginNoCommentOnProtectedProperty',
 		// 'PhanPluginDescriptionlessCommentOnPublicMethod',
-		'PhanPluginUnknownClosureParamType',
-		'PhanPluginUnknownClosureReturnType',
+		// 'PhanPluginUnknownClosureParamType',
+		// 'PhanPluginUnknownClosureReturnType',
 		// 'PhanPluginNoCommentOnProtectedMethod',
-		'PhanTypeArraySuspicious',
-		'PhanTypeMismatchPropertyProbablyReal',
+		// 'PhanTypeArraySuspicious',
+		// 'PhanTypeMismatchPropertyProbablyReal',
 		// 'PhanPluginNoCommentOnPrivateMethod',
 		'PhanPluginUnknownArrayFunctionReturnType',
 		'PhanTypeInvalidLeftOperandOfAdd',
@@ -388,77 +466,78 @@ return [
 		// 'PhanPluginNoCommentOnFunction',
 		'PhanPluginUnknownArrayFunctionParamType',
 		// 'PhanPluginDescriptionlessCommentOnPublicProperty',
-		'PhanPluginUnknownFunctionParamType',
+		// 'PhanPluginUnknownFunctionParamType',  // Finds certain errors in PHPdoc typing
 		'PhanTypeSuspiciousStringExpression',
-		'PhanPluginRedundantAssignment',
+		// 'PhanPluginRedundantAssignment',
 
 		'PhanTypeExpectedObjectPropAccess',
 		'PhanTypeInvalidRightOperandOfNumericOp',
-		'PhanPluginInlineHTML',
+		// 'PhanPluginInlineHTML',
+		// 'PhanPluginInlineHTMLTrailing',
 		// 'PhanPluginUnknownFunctionReturnType',
 		// 'PhanPluginDescriptionlessCommentOnProtectedProperty',
 		'PhanPluginRedundantAssignmentInGlobalScope',
-		'PhanTypeMismatchDeclaredParamNullable',
+		// 'PhanTypeMismatchDeclaredParamNullable',
 		'PhanTypeInvalidRightOperandOfAdd',
 		// 'PhanPluginDescriptionlessCommentOnPrivateProperty',
-		'PhanUndeclaredVariableDim',  // Array initialisation on undeclared var: $abc['x']='ab'
+		// 'PhanUndeclaredVariableDim',  // Array initialisation on undeclared var: $abc['x']='ab'
 		'PhanTypeInvalidPropertyName',
 		'PhanPluginDuplicateCatchStatementBody',
 		'PhanPluginUndeclaredVariableIsset',
-		'PhanTypeInvalidUnaryOperandIncOrDec',
+		// 'PhanTypeInvalidUnaryOperandIncOrDec',
 		// 'PhanPluginDescriptionlessCommentOnClass',
 		'PhanPluginEmptyStatementIf',
-		'PhanPluginInlineHTMLTrailing',
 		// 'PhanUndeclaredStaticMethod',
 		// 'PhanPluginDescriptionlessCommentOnPrivateMethod',
-		'PhanPluginPrintfIncompatibleArgumentType',
+		// 'PhanPluginPrintfIncompatibleArgumentType',
 		'PhanPossiblyNullTypeMismatchProperty',
 		'PhanRedefineClass',
 		'PhanRedefineFunction',
 		'PhanTypeInvalidLeftOperandOfBitwiseOp',
-		'PhanTypeMismatchDimAssignment',
+		// 'PhanTypeMismatchDimAssignment',
 		// 'PhanPluginDescriptionlessCommentOnProtectedMethod',
-		'PhanPluginPrintfIncompatibleArgumentTypeWeak',
+		// 'PhanPluginPrintfIncompatibleArgumentTypeWeak',
 		'PhanUndeclaredVariableAssignOp',
-		'PhanTypeExpectedObjectOrClassName',
+		// 'PhanTypeExpectedObjectOrClassName',
 		'PhanEmptyFQSENInClasslike',
-		'PhanTypeMismatchArgumentInternalReal',
+		// 'PhanTypeMismatchArgumentInternalReal',
 		// 'PhanUnextractableAnnotationElementName',
 		// 'PhanCommentParamWithoutRealParam',
 		// 'PhanRedefinedExtendedClass',
 		'PhanTypeComparisonFromArray',
 		'PhanPluginConstantVariableBool',
-		'PhanPluginPrintfVariableFormatString',
+		// 'PhanPluginPrintfVariableFormatString',
 		'PhanTypeMismatchDimFetch',
 		'PhanTypeMismatchDimFetchNullable',
 		'PhanTypeSuspiciousNonTraversableForeach',
 		'PhanEmptyForeach',
 		'PhanTypeInvalidRightOperandOfBitwiseOp',
-		'PhanPluginDuplicateConditionalUnnecessary',
+		// 'PhanPluginDuplicateConditionalUnnecessary',
 		// 'PhanTraitParentReference',
 		'PhanPluginBothLiteralsBinaryOp',
 		// 'PhanTypeMismatchDeclaredParam',
 		// 'PhanCommentDuplicateMagicMethod',
-		'PhanParamSpecial1',
-		'PhanPluginInlineHTMLLeading',
-		'PhanPluginUseReturnValueInternalKnown',
-		'PhanRedefinedInheritedInterface',
-		'PhanTypeComparisonToArray',
+		// 'PhanParamSpecial1',
+		// 'PhanPluginInlineHTMLLeading',
+		// 'PhanPluginUseReturnValueInternalKnown',
+		// 'PhanRedefinedInheritedInterface',
+		// 'PhanTypeComparisonToArray',
 		'PhanTypeConversionFromArray',
 		// 'PhanTypeInvalidLeftOperandOfIntegerOp',
-		'PhanTypeMismatchArgumentInternalProbablyReal',
-		'PhanTypeMismatchBitwiseBinaryOperands',
+		// 'PhanTypeMismatchArgumentInternalProbablyReal',
+		// 'PhanTypeMismatchBitwiseBinaryOperands',
 		'PhanTypeMismatchDimEmpty',
-		'PhanTypeSuspiciousEcho',
-		'PhanNoopBinaryOperator',
+		// 'PhanTypeSuspiciousEcho',
+		// 'PhanNoopBinaryOperator',
 		// 'PhanTypeInvalidBitwiseBinaryOperator',
 		// 'PhanPluginDescriptionlessCommentOnFunction',
-		'PhanPluginPHPDocInWrongComment',
+		// 'PhanPluginPHPDocInWrongComment',
 		'PhanRedefineClassInternal',
 		// 'PhanTypeInvalidThrowsIsInterface',
-		'PhanPluginRedundantAssignmentInLoop',
+		// 'PhanPluginRedundantAssignmentInLoop',
 		// 'PhanInvalidCommentForDeclarationType',
-		'PhanParamSignatureMismatchInternal',
+		// 'PhanParamSignatureMismatchInternal',
+		// 'PhanParamSignatureMismatch',
 		// 'PhanPluginEmptyStatementForeachLoop',
 		// 'PhanCompatibleDimAlternativeSyntax',
 		'PhanInvalidFQSENInClasslike',
@@ -471,15 +550,15 @@ return [
 		// 'PhanSyntaxReturnValueInVoid',
 		// 'PhanTypeInstantiateTraitStaticOrSelf',
 		// 'PhanUndeclaredInvokeInCallable',
-		'PhanNoopProperty',
-		'PhanNoopVariable',
+		// 'PhanNoopProperty',
+		// 'PhanNoopVariable',
 		// 'PhanPluginPrintfUnusedArgument',
 		// 'PhanSyntaxReturnExpectedValue',
 		// 'PhanAccessClassInternal',
 		// 'PhanCompatibleAccessMethodOnTraitDefinition',
 		// 'PhanNoopSwitchCases',
 		// 'PhanNoopTernary',
-		'PhanNoopUnaryOperator',
+		// 'PhanNoopUnaryOperator',
 		// 'PhanParamNameIndicatingUnusedInClosure',
 		// 'PhanParamSignatureRealMismatchTooFewParametersInternal',
 		// 'PhanPluginEmptyStatementSwitch',
@@ -491,7 +570,7 @@ return [
 		// 'PhanTypeMismatchDeclaredReturnNullable',
 
 		// 'PhanUndeclaredThis',
-		'PhanPluginMixedKeyNoKey',
+		// 'PhanPluginMixedKeyNoKey',
 		'PhanPluginDuplicateConditionalNullCoalescing', // Suggests to optimize to ??
 		//'PhanUnreferencedClosure',  // False positives seen with closures in arrays, TODO: move closure checks closer to what is done by unused variable plugin
 		//'PhanPluginNoCommentOnProtectedMethod',
@@ -508,25 +587,25 @@ return [
 		'PhanTypePossiblyInvalidDimOffset', // Also checks optional array keys and requires that they are checked for existence.
 		'PhanUndeclaredGlobalVariable',
 		'PhanUndeclaredProperty',
-		'PhanPluginPrintfNotPercent',
+		// 'PhanPluginPrintfNotPercent',  // Detects fishy stuff with '%' format and suggests %%
 		'PhanPossiblyUndeclaredGlobalVariable',
 		// 'PhanPluginPossiblyStaticProtectedMethod',
-		'PhanTypeMismatchReturn',
+		// 'PhanTypeMismatchReturn',
 		// 'PhanPluginMoreSpecificActualReturnType',
-		'PhanTypeMismatchReturnProbablyReal',
+		// 'PhanTypeMismatchReturnProbablyReal',
 		'PhanPossiblyUndeclaredVariable',
 		'PhanTypeMismatchArgument',
-		//'PhanPluginUnreachableCode',
-		//'PhanTypeMismatchArgumentInternal',
-		//'PhanPluginAlwaysReturnMethod',
+		// 'PhanPluginUnreachableCode',
+		// 'PhanTypeMismatchArgumentInternal',
+		// 'PhanPluginAlwaysReturnMethod',
 		'PhanUndeclaredClassMethod',
 		'PhanUndeclaredMethod',
 		'PhanTypeMismatchArgumentProbablyReal',
-		'PhanPluginDuplicateExpressionAssignmentOperation',
-		'PhanTypeMismatchPropertyDefault',
+		'PhanPluginDuplicateExpressionAssignmentOperation',  // Suggestions for optimisation
+		// 'PhanTypeMismatchPropertyDefault',
 		// 'PhanPluginAlwaysReturnMethod',
 		// 'PhanPluginMissingReturnMethod',
-		'PhanUndeclaredTypeReturnType',
+		// 'PhanUndeclaredTypeReturnType',
 		'PhanUndeclaredClassProperty',
 		'PhanTypeArraySuspiciousNullable',
 		// 'PhanPluginInconsistentReturnMethod',
@@ -534,7 +613,7 @@ return [
 		// 'PhanUndeclaredClassAttribute',
 		'PhanNonClassMethodCall',
 		// 'PhanPluginNoAssert',
-		'PhanTypeMismatchReturnSuperType',
+		// 'PhanTypeMismatchReturnSuperType',
 		'PhanTypeMismatchArgumentSuperType',
 		'PhanPluginDuplicateConditionalTernaryDuplication',
 	],
@@ -579,5 +658,4 @@ return [
 		'sockets'  => PHAN_DIR . '/stubs/sockets.phan_php',
 		'zip'  => PHAN_DIR . '/stubs/zip.phan_php',
 	],
-
 ];

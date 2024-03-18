@@ -9,6 +9,7 @@
  * Copyright (C) 2018       Frédéric France         <frederic.francenetlogic.fr>
  * Copyright (C) 2023      Joachim Kueter		  <git-jk@bloxera.com>
  * Copyright (C) 2023      Sylvain Legrand		  <technique@infras.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -427,13 +428,15 @@ class PaiementFourn extends Paiement
 	 *	Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
 	 *	Si le paiement porte sur au moins une facture a "payee", on refuse
 	 *	@TODO Add User $user as first param
-	 *
+	 *  @param		User	$user			User making the deletion
 	 *	@param		int		$notrigger		No trigger
-	 *	@return     int     Return integer <0 si ko, >0 si ok
+	 *	@return     int     				Return integer <0 si ko, >0 si ok
 	 */
-	public function delete($notrigger = 0)
+	public function delete($user = null, $notrigger = 0)
 	{
-		global $user;
+		if (empty($user)) {
+			global $user;
+		}
 
 		$bank_line_id = $this->bank_line;
 
@@ -725,7 +728,7 @@ class PaiementFourn extends Paiement
 	 *	id must be 0 if object instance is a specimen.
 	 *
 	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen($option = '')
 	{
@@ -740,6 +743,8 @@ class PaiementFourn extends Paiement
 		$this->facid = 1;
 		$this->socid = 1;
 		$this->datepaye = $nownotime;
+
+		return 1;
 	}
 
 	/**

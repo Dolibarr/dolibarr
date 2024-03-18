@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,5 +205,43 @@ class Functions2LibTest extends CommonClassTest
 		$result = is_ip($ip);
 		print __METHOD__." for ".$ip." result=".$result."\n";
 		$this->assertEquals(2, $result, $ip);
+	}
+
+
+	/**
+	 * Dataprovider for testGetStringBetween
+	 *
+	 * @return array<string,string[]}
+	 */
+	public function stringBetweenDataProvider()
+	{
+		return [
+			// string, start, end, expected
+			'matches' => [ "STARTcontentEND", "START", "END", "content"],
+			'start does not match' => [ "ScontentEND", "START", "END", ""],
+			'end does not match' => [ "STARTcontentN", "START", "END", ""],
+			'no match' => [ "content", "START", "END", ""],
+			'end before start' => [ "ENDcontentSTART", "START", "END", ""],
+			'end inside start' => [ "BAB", "BA", "AB", ""],
+			'multiple matches' => [ "BAcontentABBAdoneAB", "BA", "AB", "content"],
+		];
+	}
+
+
+	/**
+	 * Test get_string_between()
+	 *
+	 * @param string $string String to search in.
+	 * @param string $start String indicating start
+	 * @param string $end String indicating end
+	 * @param string $expected Expected result
+	 *
+	 * @return void
+	 *
+	 * @dataProvider stringBetweenDataProvider
+	 */
+	public function testGetStringBetween($string, $start, $end, $expected)
+	{
+		$this->assertEquals($expected, get_string_between($string, $start, $end));
 	}
 }

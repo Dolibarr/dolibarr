@@ -27,7 +27,9 @@ create table llx_socpeople
   fk_soc			integer,									-- lien vers la societe
   entity			integer DEFAULT 1 NOT NULL,					-- multi company id
   ref_ext           varchar(255),                               -- reference into an external system (not used by dolibarr)
-  name_alias           varchar(255),
+  name_alias        varchar(255),
+  fk_parent         integer NULL,
+
   civility			varchar(6),
   lastname			varchar(50),
   firstname			varchar(50),

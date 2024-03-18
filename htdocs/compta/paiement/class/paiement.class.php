@@ -7,9 +7,9 @@
  * Copyright (C) 2014       Marcos García 		 <marcosgdf@gmail.com>
  * Copyright (C) 2015       Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet		 <fmarcet@2byte.es>
- * Copyright (C) 2018       Thibault FOUCART		 <support@ptibogxiv.net>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2020       Andreu Bisquerra Gaya <jove@bisquerra.com>
+ * Copyright (C) 2018       Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2020       Andreu Bisquerra Gaya 	<jove@bisquerra.com>
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  * Copyright (C) 2023       Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2023       Sylvain Legrand			<technique@infras.fr>
@@ -68,12 +68,12 @@ class Paiement extends CommonObject
 	public $socid;
 
 	/**
-	 * @var int
+	 * @var int|string
 	 */
 	public $datepaye;
 
 	/**
-	 * @var int							same than $datepaye
+	 * @var int|string					same than $datepaye
 	 */
 	public $date;
 
@@ -100,22 +100,22 @@ class Paiement extends CommonObject
 	public $multicurrency_amount;
 
 	/**
-	 * @var array<int,float>				array: invoice ID => amount for that invoice (in the main currency)
+	 * @var float[] array: invoice ID => amount for that invoice (in the main currency)
 	 */
 	public $amounts = array();
 
 	/**
-	 * @var array<int,float>				array: invoice ID => amount for that invoice (in the invoice's currency)
+	 * @var float[] array: invoice ID => amount for that invoice (in the invoice's currency)
 	 */
 	public $multicurrency_amounts = array();
 
 	/**
-	 * @var array<int,float>				Multicurrency rate (array: invoice ID => currency rate ("taux" in French) for that invoice)
+	 * @var float[] Multicurrency rate (array: invoice ID => currency rate ("taux" in French) for that invoice)
 	 */
 	public $multicurrency_tx = array();
 
 	/**
-	 * @var array<int,string>				Multicurrency code (array: invoice ID => currency code for that invoice)
+	 * @var string[] Multicurrency code (array: invoice ID => currency code for that invoice)
 	 */
 	public $multicurrency_code = array();
 
@@ -594,15 +594,13 @@ class Paiement extends CommonObject
 	 * Delete a payment and generated links into account
 	 *  - Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
 	 *  - Si le paiement porte sur au moins une facture a "payee", on refuse
-	 * @TODO Add first param User $user
 	 *
+	 * @param	User	$user			User making the deletion
 	 * @param	int		$notrigger		No trigger
 	 * @return 	int     				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
-		global $user;
-
 		$error = 0;
 
 		$bank_line_id = $this->bank_line;
@@ -1258,7 +1256,7 @@ class Paiement extends CommonObject
 	 *	id must be 0 if object instance is a specimen.
 	 *
 	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
-	 *  @return	void
+	 *  @return	int
 	 */
 	public function initAsSpecimen($option = '')
 	{
@@ -1274,6 +1272,8 @@ class Paiement extends CommonObject
 		$this->specimen = 1;
 		$this->facid = 1;
 		$this->datepaye = $nownotime;
+
+		return 1;
 	}
 
 

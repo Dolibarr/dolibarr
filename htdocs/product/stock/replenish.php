@@ -425,7 +425,7 @@ if ($usevirtualstock) {
 		$sqlCommandesCli = '0';
 	}
 
-	if (isModEnabled("delivery_note")) {
+	if (isModEnabled("shipping")) {
 		$sqlExpeditionsCli = "(SELECT ".$db->ifsql("SUM(ed2.qty) IS NULL", "0", "SUM(ed2.qty)")." as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlExpeditionsCli .= " FROM ".MAIN_DB_PREFIX."expedition as e2,";
 		$sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."expeditiondet as ed2,";
@@ -451,7 +451,7 @@ if ($usevirtualstock) {
 
 		$sqlReceptionFourn = "(SELECT ".$db->ifsql("SUM(fd4.qty) IS NULL", "0", "SUM(fd4.qty)")." as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlReceptionFourn .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf4,";
-		$sqlReceptionFourn .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as fd4";
+		$sqlReceptionFourn .= " ".MAIN_DB_PREFIX."receptiondet_batch as fd4";
 		$sqlReceptionFourn .= " WHERE fd4.fk_commande = cf4.rowid AND cf4.entity IN (".getEntity(getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'supplier_order').")";
 		$sqlReceptionFourn .= " AND fd4.fk_product = p.rowid";
 		$sqlReceptionFourn .= " AND cf4.fk_statut IN (3,4))";
@@ -650,23 +650,23 @@ if ($search_ref || $search_label || $sall || $salert || $draftorder || GETPOST('
 	$filters .= '&draftorder='.urlencode($draftorder);
 	$filters .= '&mode='.urlencode($mode);
 	if ($fk_supplier > 0) {
-		$filters .= '&fk_supplier='.urlencode($fk_supplier);
+		$filters .= '&fk_supplier='.urlencode((string) ($fk_supplier));
 	}
 	if ($fk_entrepot > 0) {
-		$filters .= '&fk_entrepot='.urlencode($fk_entrepot);
+		$filters .= '&fk_entrepot='.urlencode((string) ($fk_entrepot));
 	}
 } else {
 	$filters = '&search_ref='.urlencode($search_ref).'&search_label='.urlencode($search_label);
-	$filters .= '&fourn_id='.urlencode($fourn_id);
-	$filters .= (isset($type) ? '&type='.urlencode($type) : '');
+	$filters .= '&fourn_id='.urlencode((string) ($fourn_id));
+	$filters .= (isset($type) ? '&type='.urlencode((string) ($type)) : '');
 	$filters .= '&='.urlencode($salert);
 	$filters .= '&draftorder='.urlencode($draftorder);
 	$filters .= '&mode='.urlencode($mode);
 	if ($fk_supplier > 0) {
-		$filters .= '&fk_supplier='.urlencode($fk_supplier);
+		$filters .= '&fk_supplier='.urlencode((string) ($fk_supplier));
 	}
 	if ($fk_entrepot > 0) {
-		$filters .= '&fk_entrepot='.urlencode($fk_entrepot);
+		$filters .= '&fk_entrepot='.urlencode((string) ($fk_entrepot));
 	}
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
@@ -679,12 +679,12 @@ if (!empty($salert)) {
 	$filters .= '&salert='.urlencode($salert);
 }
 
-$param = (isset($type) ? '&type='.urlencode($type) : '');
-$param .= '&fourn_id='.urlencode($fourn_id).'&search_label='.urlencode($search_label).'&includeproductswithoutdesiredqty='.urlencode($includeproductswithoutdesiredqty).'&salert='.urlencode($salert).'&draftorder='.urlencode($draftorder);
+$param = (isset($type) ? '&type='.urlencode((string) ($type)) : '');
+$param .= '&fourn_id='.urlencode((string) ($fourn_id)).'&search_label='.urlencode((string) ($search_label)).'&includeproductswithoutdesiredqty='.urlencode((string) ($includeproductswithoutdesiredqty)).'&salert='.urlencode((string) ($salert)).'&draftorder='.urlencode((string) ($draftorder));
 $param .= '&search_ref='.urlencode($search_ref);
 $param .= '&mode='.urlencode($mode);
-$param .= '&fk_supplier='.urlencode($fk_supplier);
-$param .= '&fk_entrepot='.urlencode($fk_entrepot);
+$param .= '&fk_supplier='.urlencode((string) ($fk_supplier));
+$param .= '&fk_entrepot='.urlencode((string) ($fk_entrepot));
 if (!empty($includeproductswithoutdesiredqty)) {
 	$param .= '&includeproductswithoutdesiredqty='.urlencode($includeproductswithoutdesiredqty);
 }
@@ -768,7 +768,7 @@ if (getDolGlobalString('STOCK_REPLENISH_ADD_CHECKBOX_INCLUDE_DRAFT_ORDER')) {
 print '</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 // Fields from hook
-$parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -797,7 +797,7 @@ print_liste_field_titre('StockToBuy', $_SERVER["PHP_SELF"], '', $param, '', '', 
 print_liste_field_titre('SupplierRef', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 
 // Hook fields
-$parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -959,7 +959,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		print '</td>';
 
 		// Fields from hook
-		$parameters = array('objp'=>$objp, 'i'=>$i, 'tobuy'=>$tobuy);
+		$parameters = array('objp' => $objp, 'i' => $i, 'tobuy' => $tobuy);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
@@ -983,7 +983,7 @@ if ($num == 0) {
 	print '</td></tr>';
 }
 
-$parameters = array('sql'=>$sql);
+$parameters = array('sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

@@ -668,7 +668,7 @@ if ($id > 0 || !empty($ref)) {
 		// Set $products_dispatched with qty dispatched for each product id
 		$products_dispatched = array();
 		$sql = "SELECT l.rowid, cfd.fk_product, sum(cfd.qty) as qty";
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
+		$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as cfd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as l on l.rowid = cfd.fk_commandefourndet";
 		$sql .= " WHERE cfd.fk_commande = ".((int) $object->id);
 		$sql .= " GROUP BY l.rowid, cfd.fk_product";
@@ -794,7 +794,7 @@ if ($id > 0 || !empty($ref)) {
 
 			$nbfreeproduct = 0; // Nb of lins of free products/services
 			$nbproduct = 0; // Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
-									// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
+			// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
 
 			$conf->cache['product'] = array();
 
@@ -937,13 +937,13 @@ if ($id > 0 || !empty($ref)) {
 							if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 								print '<td class="nowraponall">';
 								$dlcdatesuffix = dol_mktime(0, 0, 0, GETPOST('dlc'.$suffix.'month'), GETPOST('dlc'.$suffix.'day'), GETPOST('dlc'.$suffix.'year'));
-								print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, '', '', 1, '');
+								print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, 0, 0, 1, '');
 								print '</td>';
 							}
 							if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 								print '<td class="nowraponall">';
 								$dluodatesuffix = dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
-								print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, '', '', 1, '');
+								print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, 0, 0, 1, '');
 								print '</td>';
 							}
 							print '<td colspan="3">&nbsp;</td>'; // Supplier ref + Qty ordered + qty already dispatched
@@ -1171,7 +1171,7 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= " ,cfd.fk_reception, r.date_delivery";
 	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p,";
-	$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
+	$sql .= " ".MAIN_DB_PREFIX."receptiondet_batch as cfd";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cd ON cd.rowid = cfd.fk_commandefourndet";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e ON cfd.fk_entrepot = e.rowid";
 	if ($conf->reception->enabled) {

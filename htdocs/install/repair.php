@@ -1484,10 +1484,10 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 	$repair_link_dispatch_lines_supplier_order_lines = GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha');
 
 
-	echo '<tr><th>Repair llx_commande_fournisseur_dispatch.fk_commandefourndet</th></tr>';
+	echo '<tr><th>Repair llx_receptiondet_batch.fk_commandefourndet</th></tr>';
 	echo '<tr><td>Repair in progress. This may take a while.</td></tr>';
 
-	$sql_dispatch = 'SELECT * FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch WHERE COALESCE(fk_commandefourndet, 0) = 0';
+	$sql_dispatch = 'SELECT * FROM '.MAIN_DB_PREFIX.'receptiondet_batch WHERE COALESCE(fk_commandefourndet, 0) = 0';
 	$db->begin();
 	$resql_dispatch = $db->query($sql_dispatch);
 	$n_processed_rows = 0;
@@ -1527,7 +1527,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 				}
 				$qty_for_line = min($remaining_qty, $obj_line->qty);
 				if ($first_iteration) {
-					$sql_attach = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
+					$sql_attach = 'UPDATE '.MAIN_DB_PREFIX.'receptiondet_batch';
 					$sql_attach .= ' SET fk_commandefourndet = '.((int) $obj_line->rowid).', qty = '.((float) $qty_for_line);
 					$sql_attach .= ' WHERE rowid = '.((int) $obj_dispatch->rowid);
 					$first_iteration = false;
@@ -1549,7 +1549,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 					);
 					$sql_attach_values = implode(', ', $sql_attach_values);
 
-					$sql_attach = 'INSERT INTO '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
+					$sql_attach = 'INSERT INTO '.MAIN_DB_PREFIX.'receptiondet_batch';
 					$sql_attach .= ' (fk_commande, fk_product, fk_commandefourndet, qty, fk_entrepot, fk_user, datec, comment, status, tms, batch, eatby, sellby)';
 					$sql_attach .= " VALUES (".$sql_attach_values.")";
 				}

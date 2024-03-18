@@ -352,7 +352,7 @@ if ($result) {
 
 		// Confirmations
 		if ($action == 'delete_categ') {
-			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".urlencode($rowid)."&cat1=".urlencode(GETPOSTINT("fk_categ"))."&orig_account=".urlencode($orig_account), $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
+			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".urlencode((string) ($rowid))."&cat1=".urlencode((string) (GETPOSTINT("fk_categ")))."&orig_account=".urlencode((string) ($orig_account)), $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
 		}
 
 		print '<form name="update" method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$rowid.'">';
@@ -546,7 +546,7 @@ if ($result) {
 		print '<tr><td>'.$langs->trans("DateOperation").'</td>';
 		if ($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) {
 			print '<td>';
-			print $form->selectDate($db->jdate($objp->do), 'dateo', '', '', '', 'update', 1, 0, $objp->rappro);
+			print $form->selectDate($db->jdate($objp->do), 'dateo', 0, 0, 0, 'update', 1, 0, $objp->rappro);
 			if (!$objp->rappro) {
 				print ' &nbsp; ';
 				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=doprev&id='.$objp->fk_account.'&rowid='.$objp->rowid.'&token='.newToken().'">';
@@ -566,7 +566,7 @@ if ($result) {
 		print "<tr><td>".$langs->trans("DateValue")."</td>";
 		if ($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) {
 			print '<td>';
-			print $form->selectDate($db->jdate($objp->dv), 'datev', '', '', '', 'update', 1, 0, $objp->rappro);
+			print $form->selectDate($db->jdate($objp->dv), 'datev', 0, 0, 0, 'update', 1, 0, $objp->rappro);
 			if (!$objp->rappro) {
 				print ' &nbsp; ';
 				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&id='.$objp->fk_account.'&rowid='.$objp->rowid.'&token='.newToken().'">';

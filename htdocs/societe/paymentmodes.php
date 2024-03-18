@@ -119,7 +119,7 @@ if ($cancel) {
 }
 
 $morehtmlright = '';
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -518,8 +518,8 @@ if (empty($reshook)) {
 	if ($action == 'builddocrib') {
 		$action = 'builddoc';
 		$moreparams = array(
-			'use_companybankid'=>GETPOST('companybankid'),
-			'force_dir_output'=>$conf->societe->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->id)
+			'use_companybankid' => GETPOST('companybankid'),
+			'force_dir_output' => $conf->societe->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->id)
 		);
 		$_POST['lang_id'] = GETPOSTINT('lang_idrib'.GETPOSTINT('companybankid'));
 		$_POST['model'] = GETPOSTINT('modelrib'.GETPOSTINT('companybankid'));
@@ -718,6 +718,7 @@ if (empty($reshook)) {
 			} else {
 				try {
 					$stripesup = \Stripe\Account::retrieve($newsup);
+					$tokenstring = array();
 					$tokenstring['stripe_user_id'] = $stripesup->id;
 					$tokenstring['type'] = $stripesup->type;
 					$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
@@ -777,6 +778,7 @@ if (empty($reshook)) {
 				} else {
 					$cu->default_source = (string) $source; // Old
 				}
+				// @phan-suppress-next-line PhanDeprecatedFunction
 				$result = $cu->save();
 
 				$url = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
@@ -806,7 +808,7 @@ if (empty($reshook)) {
 							$sql .= " WHERE sr.stripe_card_ref = '".$db->escape($source)."'";
 							$resql = $db->query($sql);
 						} else {
-							$card->delete();
+							$card->delete($user);
 						}
 					}
 				}
@@ -836,9 +838,10 @@ if (empty($reshook)) {
 							$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib as sr ";
 							$sql .= " SET stripe_card_ref = null";
 							$sql .= " WHERE sr.stripe_card_ref = '".$db->escape($source)."'";
+
 							$resql = $db->query($sql);
 						} else {
-							$card->delete();
+							$card->delete($user);
 						}
 					}
 				}
@@ -889,7 +892,9 @@ if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('fo
 
 // Load Bank account
 if (!$id) {
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$companybankaccount->fetch(0, $object->id);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$companypaymentmode->fetch(0, null, $object->id, 'card');
 } else {
 	$companybankaccount->fetch($id);
@@ -968,6 +973,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		$obj = $db->fetch_object($resql);
 		$nbFactsClient = $obj->nb;
+		$thirdTypeArray = array();
+		$elementTypeArray = array();
 		$thirdTypeArray['customer'] = $langs->trans("customer");
 		if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 			$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
@@ -1194,7 +1201,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '<td>'.$langs->trans('Note').'</td>';
 		print '<td>'.$langs->trans('DateModification').'</td>';
 		// Hook fields
-		$parameters = array('arrayfields'=>array(), 'param'=>'', 'sortfield'=>'', 'sortorder'=>'', 'linetype'=>'stripetitle');
+		$parameters = array('arrayfields' => array(), 'param' => '', 'sortfield' => '', 'sortorder' => '', 'linetype' => 'stripetitle');
 		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Action column
@@ -1301,7 +1308,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print dol_print_date($companypaymentmodetemp->tms, 'dayhour');
 							print '</td>';
 							// Fields from hook
-							$parameters = array('arrayfields'=>array(), 'obj'=>$obj, 'linetype'=>'stripecard');
+							$parameters = array('arrayfields' => array(), 'obj' => $obj, 'linetype' => 'stripecard');
 							$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 							print $hookmanager->resPrint;
 							// Action column
@@ -1452,7 +1459,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '</td>';
 
 				// Fields from hook
-				$parameters = array('arrayfields'=>array(), 'stripesource'=>$src, 'linetype'=>'stripecardremoteonly');
+				$parameters = array('arrayfields' => array(), 'stripesource' => $src, 'linetype' => 'stripecardremoteonly');
 				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 
@@ -1559,7 +1566,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 		print_liste_field_titre('', '', '', '', '', '', '', '', 'center ');
 		// Fields from hook
-		$parameters = array('arrayfields'=>array(), 'linetype'=>'stripebantitle');
+		$parameters = array('arrayfields' => array(), 'linetype' => 'stripebantitle');
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', '', '', 'maxwidthsearch ');
@@ -1715,7 +1722,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '</td>';
 
 			// Fields from hook
-			$parameters = array('arrayfields'=>array(), 'stripe_card_ref'=>$rib->stripe_card_ref, 'stripe_account'=>$rib->stripe_account, 'linetype'=>'stripeban');
+			$parameters = array('arrayfields' => array(), 'stripe_card_ref' => $rib->stripe_card_ref, 'stripe_account' => $rib->stripe_account, 'linetype' => 'stripeban');
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
@@ -1849,7 +1856,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '</td>';
 
 			// Fields from hook
-			$parameters = array('arrayfields'=>array(), 'stripe_card_ref'=>$rib->stripe_card_ref, 'stripe_account'=>$rib->stripe_account, 'linetype'=>'stripebanremoteonly');
+			$parameters = array('arrayfields' => array(), 'stripe_card_ref' => $rib->stripe_card_ref, 'stripe_account' => $rib->stripe_account, 'linetype' => 'stripebanremoteonly');
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
@@ -1880,7 +1887,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	}
 
 	//Hook to display your print listing (list of CB card from Stancer Plugin for example)
-	$parameters = array('arrayfields'=>array(), 'param'=>'', 'sortfield'=>'', 'sortorder'=>'', 'linetype'=>'');
+	$parameters = array('arrayfields' => array(), 'param' => '', 'sortfield' => '', 'sortorder' => '', 'linetype' => '');
 	$reshook = $hookmanager->executeHooks('printNewTable', $parameters, $object);
 	print $hookmanager->resPrint;
 
@@ -1902,10 +1909,12 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		if (getDolGlobalString('BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD')) {
 			$companybankaccounttemp = new CompanyBankAccount($db);
 			$companypaymentmodetemp = new CompanyPaymentMode($db);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$result = $companypaymentmodetemp->fetch(0, null, $object->id, 'ban');
 
 			include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 			$ecmfile = new EcmFiles($db);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$result = $ecmfile->fetch(0, '', '', '', '', $companybankaccounttemp->table_element, $companypaymentmodetemp->id);
 			if ($result > 0) {
 				$companybankaccounttemp->last_main_doc = $ecmfile->filepath.'/'.$ecmfile->filename;

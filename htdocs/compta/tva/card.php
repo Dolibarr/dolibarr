@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -179,7 +179,7 @@ if (empty($reshook)) {
 		$object->datev = $datev;
 		$object->datep = $datep;
 
-		$amount = price2num(GETPOST("amount", 'alpha'));
+		$amount = (float) price2num(GETPOST("amount", 'alpha'));
 		if ($refund == 1) {
 			$amount = price2num(-1 * $amount);
 		}
@@ -223,7 +223,7 @@ if (empty($reshook)) {
 				$paiement = new PaymentVAT($db);
 				$paiement->chid         = $object->id;
 				$paiement->datepaye     = $datep;
-				$paiement->amounts      = array($object->id=>$amount); // Tableau de montant
+				$paiement->amounts      = array($object->id => $amount); // Tableau de montant
 				$paiement->paiementtype = GETPOST("type_payment", 'alphanohtml');
 				$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
 				$paiement->note = GETPOST("note", 'restricthtml');
@@ -460,7 +460,7 @@ if ($action == 'create') {
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input class="minwidth300" name="label" id="label" value="'.(GETPOSTISSET("label") ? GETPOST("label", '', 2) : $label).'" autofocus></td></tr>';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
-	print $form->selectDate((GETPOSTINT("datevmonth") ? $datev : -1), "datev", '', '', '', 'add', 1, 1);
+	print $form->selectDate((GETPOSTINT("datevmonth") ? $datev : -1), "datev", 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// Amount
@@ -474,7 +474,7 @@ if ($action == 'create') {
 
 	print '<tr class="hide_if_no_auto_create_payment">';
 	print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-	print $form->selectDate($datep, "datep", '', '', '', 'add', 1, 1);
+	print $form->selectDate($datep, "datep", 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// Type payment

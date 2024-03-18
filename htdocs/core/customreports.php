@@ -22,6 +22,11 @@
  *
  * To include this tool into another PHP page:
  * define('USE_CUSTOM_REPORT_AS_INCLUDE', 1);
+ * define('MAIN_DO_NOT_USE_JQUERY_MULTISELECT', 1);
+ * define('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY', 1);	// TODO Use a variable
+ * $SHOWLEGEND = 0;
+ * $search_xaxis = array('t.column');
+ * $customreportkey='abc';
  * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
 
@@ -724,18 +729,20 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 			$sql .= $val." as x_".$key.", ";
 		}
 	}
-	foreach ($search_groupby as $key => $val) {
-		if (preg_match('/\-year$/', $val)) {
-			$tmpval = preg_replace('/\-year$/', '', $val);
-			$sql .= "DATE_FORMAT(".$tmpval.", '%Y') as g_".$key.', ';
-		} elseif (preg_match('/\-month$/', $val)) {
-			$tmpval = preg_replace('/\-month$/', '', $val);
-			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m') as g_".$key.', ';
-		} elseif (preg_match('/\-day$/', $val)) {
-			$tmpval = preg_replace('/\-day$/', '', $val);
-			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m-%d') as g_".$key.', ';
-		} else {
-			$sql .= $val." as g_".$key.", ";
+	if (!empty($search_groupby)) {
+		foreach ($search_groupby as $key => $val) {
+			if (preg_match('/\-year$/', $val)) {
+				$tmpval = preg_replace('/\-year$/', '', $val);
+				$sql .= "DATE_FORMAT(".$tmpval.", '%Y') as g_".$key.', ';
+			} elseif (preg_match('/\-month$/', $val)) {
+				$tmpval = preg_replace('/\-month$/', '', $val);
+				$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m') as g_".$key.', ';
+			} elseif (preg_match('/\-day$/', $val)) {
+				$tmpval = preg_replace('/\-day$/', '', $val);
+				$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m-%d') as g_".$key.', ';
+			} else {
+				$sql .= $val." as g_".$key.", ";
+			}
 		}
 	}
 	foreach ($search_measures as $key => $val) {
@@ -880,18 +887,20 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 			$sql .= $val.", ";
 		}
 	}
-	foreach ($search_groupby as $key => $val) {
-		if (preg_match('/\-year$/', $val)) {
-			$tmpval = preg_replace('/\-year$/', '', $val);
-			$sql .= "DATE_FORMAT(".$tmpval.", '%Y'), ";
-		} elseif (preg_match('/\-month$/', $val)) {
-			$tmpval = preg_replace('/\-month$/', '', $val);
-			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m'), ";
-		} elseif (preg_match('/\-day$/', $val)) {
-			$tmpval = preg_replace('/\-day$/', '', $val);
-			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m-%d'), ";
-		} else {
-			$sql .= $val.', ';
+	if (!empty($search_groupby)) {
+		foreach ($search_groupby as $key => $val) {
+			if (preg_match('/\-year$/', $val)) {
+				$tmpval = preg_replace('/\-year$/', '', $val);
+				$sql .= "DATE_FORMAT(".$tmpval.", '%Y'), ";
+			} elseif (preg_match('/\-month$/', $val)) {
+				$tmpval = preg_replace('/\-month$/', '', $val);
+				$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m'), ";
+			} elseif (preg_match('/\-day$/', $val)) {
+				$tmpval = preg_replace('/\-day$/', '', $val);
+				$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m-%d'), ";
+			} else {
+				$sql .= $val.', ';
+			}
 		}
 	}
 	$sql = preg_replace('/,\s*$/', '', $sql);
@@ -910,21 +919,28 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 			$sql .= $val.', ';
 		}
 	}
-	foreach ($search_groupby as $key => $val) {
-		if (preg_match('/\-year$/', $val)) {
-			$tmpval = preg_replace('/\-year$/', '', $val);
-			$sql .= "DATE_FORMAT(".$tmpval.", '%Y'), ";
-		} elseif (preg_match('/\-month$/', $val)) {
-			$tmpval = preg_replace('/\-month$/', '', $val);
-			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m'), ";
-		} elseif (preg_match('/\-day$/', $val)) {
-			$tmpval = preg_replace('/\-day$/', '', $val);
-			$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m-%d'), ";
-		} else {
-			$sql .= $val.', ';
+	if (!empty($search_groupby)) {
+		foreach ($search_groupby as $key => $val) {
+			if (preg_match('/\-year$/', $val)) {
+				$tmpval = preg_replace('/\-year$/', '', $val);
+				$sql .= "DATE_FORMAT(".$tmpval.", '%Y'), ";
+			} elseif (preg_match('/\-month$/', $val)) {
+				$tmpval = preg_replace('/\-month$/', '', $val);
+				$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m'), ";
+			} elseif (preg_match('/\-day$/', $val)) {
+				$tmpval = preg_replace('/\-day$/', '', $val);
+				$sql .= "DATE_FORMAT(".$tmpval.", '%Y-%m-%d'), ";
+			} else {
+				$sql .= $val.', ';
+			}
 		}
 	}
 	$sql = preg_replace('/,\s*$/', '', $sql);
+
+	// Can overwrite the SQL with a custom SQL string (when used as an include)
+	if (!empty($customsql)) {
+		$sql = $customsql;
+	}
 }
 //print $sql;
 
@@ -1112,10 +1128,11 @@ if ($mode == 'graph') {
 
 		$dir = $conf->user->dir_temp;
 		dol_mkdir($dir);
-		$filenamenb = $dir.'/customreport_'.$object->element.'.png';
-		$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=user&file=customreport_'.$object->element.'.png';
+		// $customreportkey may be defined when using customreports.php as an include
+		$filenamekey = $dir.'/customreport_'.$object->element.(empty($customreportkey) ? '' : $customreportkey).'.png';
+		$fileurlkey = DOL_URL_ROOT.'/viewimage.php?modulepart=user&file=customreport_'.$object->element.(empty($customreportkey) ? '' : $customreportkey).'.png';
 
-		$px1->draw($filenamenb, $fileurlnb);
+		$px1->draw($filenamekey, $fileurlkey);
 
 		$texttoshow = $langs->trans("NoRecordFound");
 		if (!GETPOSTISSET('search_measures') || !GETPOSTISSET('search_xaxis')) {

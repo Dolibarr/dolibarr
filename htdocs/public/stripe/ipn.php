@@ -2,6 +2,7 @@
 /* Copyright (C) 2018-2020  Thibault FOUCART       <support@ptibogxiv.net>
  * Copyright (C) 2018       Fédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023       Laurent Destailleur    <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -404,6 +405,8 @@ if ($event->type == 'payout.created') {
 		$payment_amount = $payment_amountInDolibarr;
 		// TODO Check payment_amount in Stripe (received) is same than the one in Dolibarr
 
+		$postactionmessages = array();
+
 		if ($paymentTypeId == "CB" && ($paymentTypeIdInDolibarr == 'card' || empty($paymentTypeIdInDolibarr))) {
 			// Case payment type in Stripe and into prelevement_demande are both CARD.
 			// For this case, payment should already have been recorded so we just update flag of payment request if not yet 1
@@ -422,7 +425,7 @@ if ($event->type == 'payout.created') {
 			} else {
 				$paiement->multicurrency_amounts = [$invoice_id => $payment_amount];   // Array with all payments dispatching
 
-				$postactionmessages[] = 'Payment was done in a different currency than currency expected of company';
+				$postactionmessages[] = 'Payment was done in a currency ('.$currencyCodeType.') other than the expected currency of company ('.$conf->currency.')';
 				$ispostactionok = -1;
 				// Not yet supported, so error
 				$error++;
@@ -687,7 +690,7 @@ if ($event->type == 'payout.created') {
 		$companypaymentmode->stripe_card_ref = $db->escape($event->data->object->id);
 		$companypaymentmode->fk_soc          = $idthirdparty;
 		$companypaymentmode->bank            = null;
-		$companypaymentmode->label           = null;
+		$companypaymentmode->label           = '';
 		$companypaymentmode->number          = $db->escape($event->data->object->id);
 		$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
 		$companypaymentmode->card_type       = $db->escape($event->data->object->card->branding);
@@ -723,7 +726,7 @@ if ($event->type == 'payout.created') {
 	if ($companypaymentmode->id > 0) {
 		// If we found a payment mode with the ID
 		$companypaymentmode->bank            = null;
-		$companypaymentmode->label           = null;
+		$companypaymentmode->label           = '';
 		$companypaymentmode->number          = $db->escape($event->data->object->id);
 		$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
 		$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);

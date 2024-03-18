@@ -4,6 +4,7 @@
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2014	   Cedric GROSS	        <c.gross@kreiz-it.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -182,7 +183,7 @@ class MouvementStock extends CommonObject
 	 *  @param		int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (useful only if product is a subproduct)
 	 *  @param		int				$donotcleanemptylines				Do not clean lines in stock table with qty=0 (because we want to have this done by the caller)
 	 * 	@param		boolean			$force_update_batch	Allows to add batch stock movement even if $product doesn't use batch anymore
-	 *	@return		int									Return integer <0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK
+	 *	@return		int|string							Return integer <0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK, or printabl result of hook
 	 */
 	public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0, $disablestockchangeforsubproduct = 0, $donotcleanemptylines = 0, $force_update_batch = false)
 	{
@@ -812,9 +813,9 @@ class MouvementStock extends CommonObject
 	 * 	@param		int				$qty			    	Quantity
 	 * 	@param		int				$price			    	Price
 	 * 	@param		string			$label			    	Label of stock movement
-	 * 	@param		integer|string	$datem			    	Force date of movement
-	 *	@param		integer			$eatby			    	eat-by date
-	 *	@param		integer			$sellby			    	sell-by date
+	 * 	@param		int|string		$datem			    	Force date of movement
+	 *	@param		int|string		$eatby			    	eat-by date
+	 *	@param		int|string		$sellby			    	sell-by date
 	 *	@param		string			$batch			    	batch number
 	 * 	@param		int				$id_product_batch		Id product_batch
 	 *  @param      string  		$inventorycode      	Inventory code
@@ -1066,16 +1067,16 @@ class MouvementStock extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf, $mysoc;
-
 		// Initialize parameters
 		$this->id = 0;
 
 		// There is no specific properties. All data into insert are provided as method parameter.
+
+		return 1;
 	}
 
 	/**

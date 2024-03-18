@@ -170,8 +170,8 @@ $term = empty($_SESSION["takeposterminal"]) ? 1 : $_SESSION["takeposterminal"];
  * Actions
  */
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -447,7 +447,7 @@ if (empty($reshook)) {
 			$line->fk_parent_line = $fk_parent_line;
 
 			$line->subprice = -$line->subprice; // invert price for object
-			$line->pa_ht = $line->pa_ht; // we chose to have the buy/cost price always positive, so no inversion of the sign here
+			// $line->pa_ht = $line->pa_ht; // we chose to have the buy/cost price always positive, so no inversion of the sign here
 			$line->total_ht = -$line->total_ht;
 			$line->total_tva = -$line->total_tva;
 			$line->total_ttc = -$line->total_ttc;
@@ -546,7 +546,7 @@ if (empty($reshook)) {
 			$batch = GETPOST('batch', 'alpha');
 
 			if (!empty($batch)) {
-				$action="setbatch";
+				$action = "setbatch";
 			} else {
 				// Set nb of suggested with nb of batch into the warehouse of the terminal
 				$nbofsuggested = 0;
@@ -566,7 +566,7 @@ if (empty($reshook)) {
 				echo "}";
 				echo "</script>";
 
-				if ($nbofsuggested>0) {
+				if ($nbofsuggested > 0) {
 					echo "<center>".$langs->trans("SearchIntoBatch").": <b> $nbofsuggested </b></center><br><table>";
 					foreach ($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch as $dbatch) {	// $dbatch is instance of Productbatch
 						$batchStock = + $dbatch->qty; // To get a numeric
@@ -628,7 +628,7 @@ if (empty($reshook)) {
 		if (getDolGlobalString('TAKEPOS_GROUP_SAME_PRODUCT')) {
 			foreach ($invoice->lines as $line) {
 				if ($line->product_ref == $prod->ref) {
-					if ($line->special_code==4) {
+					if ($line->special_code == 4) {
 						continue;
 					} // If this line is sended to printer create new line
 					// check if qty in stock
@@ -678,7 +678,7 @@ if (empty($reshook)) {
 
 			// complete line by hook
 			$parameters = array('prod' => $prod, 'line' => $line);
-			$reshook=$hookmanager->executeHooks('completeTakePosAddLine', $parameters, $invoice, $action);    // Note that $action and $line may have been modified by some hooks
+			$reshook = $hookmanager->executeHooks('completeTakePosAddLine', $parameters, $invoice, $action);    // Note that $action and $line may have been modified by some hooks
 			if ($reshook < 0) {
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			}
@@ -733,7 +733,7 @@ if (empty($reshook)) {
 
 	if ($action == "addnote" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		$desc = GETPOST('addnote', 'alpha');
-		if ($idline==0) {
+		if ($idline == 0) {
 			$invoice->update_note($desc, '_public');
 		} else {
 			foreach ($invoice->lines as $line) {
@@ -791,6 +791,7 @@ if (empty($reshook)) {
 				// We delete the lines
 				$resdeletelines = 1;
 				foreach ($invoice->lines as $line) {
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$tmpres = $invoice->deleteLine($line->id);
 					if ($tmpres < 0) {
 						$resdeletelines = 0;
@@ -928,7 +929,7 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
-	if ($action=="setbatch" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
+	if ($action == "setbatch" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set batch=".$db->escape($batch).", fk_warehouse=".getDolGlobalString($constantforkey)." where rowid=".((int) $idoflineadded);
 		$db->query($sql);
@@ -1139,7 +1140,7 @@ if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->la
 <script type="text/javascript">
 var selectedline=0;
 var selectedtext="";
-<?php if ($action=="valid") {
+<?php if ($action == "valid") {
 	echo "var place=0;";
 }?> // Set to default place after close sale
 var placeid=<?php echo($placeid > 0 ? $placeid : 0); ?>;
@@ -1551,8 +1552,8 @@ if (!$usediv) {
 }
 
 // Complete header by hook
-$parameters=array();
-$reshook=$hookmanager->executeHooks('completeTakePosInvoiceHeader', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('completeTakePosInvoiceHeader', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -1713,8 +1714,8 @@ if ($placeid > 0) {
 				$htmlsupplements[$line->fk_parent_line] .= '</td>';
 
 				// complete line by hook
-				$parameters=array('line' => $line);
-				$reshook=$hookmanager->executeHooks('completeTakePosInvoiceParentLine', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
+				$parameters = array('line' => $line);
+				$reshook = $hookmanager->executeHooks('completeTakePosInvoiceParentLine', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
@@ -1809,8 +1810,8 @@ if ($placeid > 0) {
 				$htmlforlines .= '</td>';
 
 				// complete line by hook
-				$parameters=array('line' => $line);
-				$reshook=$hookmanager->executeHooks('completeTakePosInvoiceLine', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
+				$parameters = array('line' => $line);
+				$reshook = $hookmanager->executeHooks('completeTakePosInvoiceLine', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}

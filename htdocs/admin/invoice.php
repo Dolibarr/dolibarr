@@ -7,6 +7,7 @@
  * Copyright (C) 2012-2013  Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2014		Teddy Andreotti				<125155@supinfo.com>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
  */
 
 /**
- *      \file       htdocs/admin/facture.php
+ *      \file       htdocs/admin/invoice.php
  *		\ingroup    facture
  *		\brief      Page to setup invoice module
  */
@@ -49,6 +50,8 @@ $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'invoice';
+
+$error = 0;
 
 
 /*
@@ -97,18 +100,16 @@ if ($action == 'updateMask') {
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/facture/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
@@ -148,8 +149,7 @@ if ($action == 'updateMask') {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 } elseif ($action == 'setmod') {
-	// TODO Verifier si module numerotation choisi peut etre active
-	// par appel method canBeActivated
+	// TODO Check if numbering module chosen can ba activated by calling method canBeActivated()
 
 	dolibarr_set_const($db, "FACTURE_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'setribchq') {
@@ -507,6 +507,7 @@ foreach ($dirmodels as $reldir) {
 		if (is_dir($dir)) {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
+				$filelist = array();
 				while (($file = readdir($handle)) !== false) {
 					$filelist[] = $file;
 				}
@@ -616,20 +617,21 @@ if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) { // Hidden conf
 	print '<form action="'.$_SERVER["PHP_SELF"].'#default-pdf-modules-by-type-table" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'" />';
 	print '<input type="hidden" name="action" value="setDefaultPDFModulesByType" >';
+	print '<input type="hidden" name="page_y" value="" />';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table id="default-pdf-modules-by-type-table" class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Type").'</td>';
 	print '<td>'.$langs->trans("Name").'</td>';
-	print '<td class="right"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
+	print '<td class="right"><input type="submit" class="button button-edit reposition" value="'.$langs->trans("Modify").'"></td>';
 	print "</tr>\n";
 
 	$listtype = array(
-		Facture::TYPE_STANDARD=>$langs->trans("InvoiceStandard"),
-		Facture::TYPE_REPLACEMENT=>$langs->trans("InvoiceReplacement"),
-		Facture::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
-		Facture::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
+		Facture::TYPE_STANDARD => $langs->trans("InvoiceStandard"),
+		Facture::TYPE_REPLACEMENT => $langs->trans("InvoiceReplacement"),
+		Facture::TYPE_CREDIT_NOTE => $langs->trans("InvoiceAvoir"),
+		Facture::TYPE_DEPOSIT => $langs->trans("InvoiceDeposit"),
 	);
 	if (getDolGlobalInt('INVOICE_USE_SITUATION')) {
 		$listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
@@ -658,6 +660,7 @@ print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
+print '<input type="hidden" name="page_y" value="" />';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
@@ -666,17 +669,16 @@ print '<tr class="liste_titre">';
 print '<td>';
 print '<input type="hidden" name="action" value="setribchq">';
 print $langs->trans("PaymentMode").'</td>';
-print '<td class="right"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right"><input type="submit" class="button button-edit reposition" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
 print "<td>";
 if (isModEnabled('bank')) {
-	$sql = "SELECT rowid, label";
+	$sql = "SELECT rowid, label, clos";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
-	$sql .= " WHERE clos = 0";
-	$sql .= " AND courant = 1";
+	$sql .= " WHERE courant = 1";
 	$sql .= " AND entity IN (".getEntity('bank_account').")";
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -686,15 +688,19 @@ if (isModEnabled('bank')) {
 			print '<select name="rib" class="flat" id="rib">';
 			print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
 			while ($i < $num) {
-				$row = $db->fetch_row($resql);
+				$obj = $db->fetch_object($resql);
 
-				print '<option value="'.$row[0].'"';
-				print $conf->global->FACTURE_RIB_NUMBER == $row[0] ? ' selected' : '';
-				print '>'.$row[1].'</option>';
+				print '<option value="'.$obj->rowid.'"';
+				print getDolGlobalString('FACTURE_RIB_NUMBER') == $obj->rowid ? ' selected' : '';
+				if (!empty($obj->clos)) {
+					print ' disabled';
+				}
+				print '>'.dol_escape_htmltag($obj->label).'</option>';
 
 				$i++;
 			}
 			print "</select>";
+			print ajax_combobox("rib");
 		} else {
 			print '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
 		}
@@ -734,6 +740,8 @@ if ($resql) {
 	}
 }
 print "</select>";
+print ajax_combobox("chq", array(), 0, 0, 'resolve', -2);
+
 print "</td></tr>";
 print "</table>";
 print '</div>';
@@ -756,12 +764,13 @@ print "</tr>\n";
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="setforcedate" />';
+print '<input type="hidden" name="page_y" value="" />';
 print '<tr class="oddeven"><td>';
 print $langs->trans("ForceInvoiceDate");
 print '</td><td width="60" class="center">';
 print $form->selectyesno("forcedate", getDolGlobalInt('FAC_FORCE_DATE_VALIDATION', 0), 1);
 print '</td><td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
+print '<input type="submit" class="button button-edit reposition" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
 print '</form>';
 
@@ -776,6 +785,7 @@ $htmltext .= '</i>';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="set_INVOICE_FREE_TEXT" />';
+print '<input type="hidden" name="page_y" value="" />';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'INVOICE_FREE_TEXT';
@@ -787,7 +797,7 @@ if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 	print $doleditor->Create();
 }
 print '</td><td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
+print '<input type="submit" class="button button-edit reposition" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
 print '</form>';
 
@@ -795,12 +805,13 @@ print '</form>';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="set_FACTURE_DRAFT_WATERMARK" />';
+print '<input type="hidden" name="page_y" value="" />';
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftBill"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td>';
 print '<td><input class="flat minwidth200imp" type="text" name="FACTURE_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('FACTURE_DRAFT_WATERMARK')).'">';
 print '</td><td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
+print '<input type="submit" class="button button-edit reposition" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
 print '</form>';
 

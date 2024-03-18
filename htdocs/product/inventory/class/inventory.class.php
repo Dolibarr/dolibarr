@@ -3,6 +3,8 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,25 +96,25 @@ class Inventory extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid'              => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
-		'ref'                => array('type'=>'varchar(64)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Reference of object', 'css'=>'maxwidth150'),
-		'entity'             => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
-		'title'              => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>25, 'css'=>'minwidth300', 'csslist'=>'tdoverflowmax150', 'alwayseditable'=>1),
-		'fk_warehouse'       => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Warehouse', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'index'=>1, 'help'=>'InventoryForASpecificWarehouse', 'picto'=>'stock', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax150'),
-		'fk_product'         => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'get_name_url_params' => '0::0:-1:0::1', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'InventoryForASpecificProduct', 'picto'=>'product', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax150'),
-		'categories_product' => array('type'=>'chkbxlst:categorie:label:rowid::type=0:0:', 'label'=>'OrProductsWithCategories', 'visible'=>3, 'enabled'=>1, 'position'=>33, 'help'=>'', 'picto'=>'category', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx'),
-		'date_inventory'     => array('type'=>'date', 'label'=>'DateValue', 'visible'=>1, 'enabled'=>'$conf->global->STOCK_INVENTORY_ADD_A_VALUE_DATE', 'position'=>35, 'csslist'=>'nowraponall'),	// This date is not used so disabled by default.
-		'date_creation'      => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500, 'csslist'=>'nowraponall'),
-		'tms'                => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501, 'csslist'=>'nowraponall'),
-		'date_validation'    => array('type'=>'datetime', 'label'=>'DateValidation', 'visible'=>-2, 'enabled'=>1, 'position'=>502, 'csslist'=>'nowraponall'),
-		'fk_user_creat'      => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>510, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax150'),
-		'fk_user_modif'      => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511, 'csslist'=>'tdoverflowmax150'),
-		'fk_user_valid'      => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'visible'=>-2, 'enabled'=>1, 'position'=>512, 'csslist'=>'tdoverflowmax150'),
-		'import_key'         => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
-		'status'             => array('type'=>'integer', 'label'=>'Status', 'visible'=>4, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Closed', 9=>'Canceled'))
+		'rowid'              => array('type' => 'integer', 'label' => 'TechnicalID', 'visible' => -1, 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => 'Id',),
+		'ref'                => array('type' => 'varchar(64)', 'label' => 'Ref', 'visible' => 1, 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'index' => 1, 'searchall' => 1, 'comment' => 'Reference of object', 'css' => 'maxwidth150'),
+		'entity'             => array('type' => 'integer', 'label' => 'Entity', 'visible' => 0, 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'index' => 1,),
+		'title'              => array('type' => 'varchar(255)', 'label' => 'Label', 'visible' => 1, 'enabled' => 1, 'position' => 25, 'css' => 'minwidth300', 'csslist' => 'tdoverflowmax150', 'alwayseditable' => 1),
+		'fk_warehouse'       => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Warehouse', 'visible' => 1, 'enabled' => 1, 'position' => 30, 'index' => 1, 'help' => 'InventoryForASpecificWarehouse', 'picto' => 'stock', 'css' => 'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist' => 'tdoverflowmax150'),
+		'fk_product'         => array('type' => 'integer:Product:product/class/product.class.php', 'label' => 'Product', 'get_name_url_params' => '0::0:-1:0::1', 'visible' => 1, 'enabled' => 1, 'position' => 32, 'index' => 1, 'help' => 'InventoryForASpecificProduct', 'picto' => 'product', 'css' => 'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist' => 'tdoverflowmax150'),
+		'categories_product' => array('type' => 'chkbxlst:categorie:label:rowid::type=0:0:', 'label' => 'OrProductsWithCategories', 'visible' => 3, 'enabled' => 1, 'position' => 33, 'help' => '', 'picto' => 'category', 'css' => 'minwidth300 maxwidth500 widthcentpercentminusx'),
+		'date_inventory'     => array('type' => 'date', 'label' => 'DateValue', 'visible' => 1, 'enabled' => '$conf->global->STOCK_INVENTORY_ADD_A_VALUE_DATE', 'position' => 35, 'csslist' => 'nowraponall'),	// This date is not used so disabled by default.
+		'date_creation'      => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 500, 'csslist' => 'nowraponall'),
+		'tms'                => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 501, 'csslist' => 'nowraponall'),
+		'date_validation'    => array('type' => 'datetime', 'label' => 'DateValidation', 'visible' => -2, 'enabled' => 1, 'position' => 502, 'csslist' => 'nowraponall'),
+		'fk_user_creat'      => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 510, 'foreignkey' => 'user.rowid', 'csslist' => 'tdoverflowmax150'),
+		'fk_user_modif'      => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 511, 'csslist' => 'tdoverflowmax150'),
+		'fk_user_valid'      => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'visible' => -2, 'enabled' => 1, 'position' => 512, 'csslist' => 'tdoverflowmax150'),
+		'import_key'         => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'index' => 0, 'position' => 1000),
+		'status'             => array('type' => 'integer', 'label' => 'Status', 'visible' => 4, 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', 2 => 'Closed', 9 => 'Canceled'))
 	);
 
 	/**
@@ -203,11 +205,11 @@ class Inventory extends CommonObject
 	public $class_element_line = 'Inventoryline';
 
 	/**
-	 * @var array	List of child tables. To test if we can delete object.
+	 * @var array<string, array<string>>	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array();
 	/**
-	 * @var array	List of child tables. To know object to delete on cascade.
+	 * @var string[]	List of child tables. To know object to delete on cascade.
 	 */
 	protected $childtablesoncascade = array('inventorydet');
 
@@ -262,7 +264,6 @@ class Inventory extends CommonObject
 	 */
 	public function validate(User $user, $notrigger = 0, $include_sub_warehouse = 0)
 	{
-		global $conf;
 		$this->db->begin();
 
 		$result = 0;
@@ -279,10 +280,17 @@ class Inventory extends CommonObject
 
 			// Scan existing stock to prefill the inventory
 			$sql = "SELECT ps.rowid, ps.fk_entrepot as fk_warehouse, ps.fk_product, ps.reel,";
-			$sql .= " pb.batch, pb.qty";
+			if (isModEnabled('productbatch')) {
+				$sql .= " pb.batch as batch, pb.qty as qty,";
+			} else {
+				$sql .= " '' as batch, 0 as qty,";
+			}
+			$sql .= " p.ref, p.tobatch";
 			$sql .= " FROM ".$this->db->prefix()."product_stock as ps";
-			$sql .= " LEFT JOIN ".$this->db->prefix()."product_batch as pb ON pb.fk_product_stock = ps.rowid,";
-			$sql .= " ".$this->db->prefix()."product as p, ".$this->db->prefix()."entrepot as e";
+			if (isModEnabled('productbatch')) {
+				$sql .= " LEFT JOIN ".$this->db->prefix()."product_batch as pb ON pb.fk_product_stock = ps.rowid";
+			}
+			$sql .= ", ".$this->db->prefix()."product as p, ".$this->db->prefix()."entrepot as e";
 			$sql .= " WHERE p.entity IN (".getEntity('product').")";
 			$sql .= " AND ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid";
 			if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
@@ -315,6 +323,7 @@ class Inventory extends CommonObject
 				$sql .= " WHERE pa.fk_product_pere = ps.fk_product";
 				$sql .= ")";
 			}
+			$sql .= " ORDER BY p.rowid";
 
 			$inventoryline = new InventoryLine($this->db);
 
@@ -333,10 +342,18 @@ class Inventory extends CommonObject
 					$inventoryline->datec = dol_now();
 
 					if (isModEnabled('productbatch')) {
+						if ($obj->batch && empty($obj->tobatch)) {
+							// Bad consistency of data. The product is not a product with lot/serial but we found a stock for some lot/serial.
+							$result = -2;
+							$this->error = 'The product ID='.$obj->ref." has stock with lot/serial but is configured to not manage lot/serial. You must first fix this, this way: Set the product to have 'Management of Lot/Serial' to Yes, then set it back to 'Management of Lot/Serial to No";
+							break;
+						}
+
 						$inventoryline->qty_stock = ($obj->batch ? $obj->qty : $obj->reel); // If there is batch detail, we take qty for batch, else global qty
 					} else {
 						$inventoryline->qty_stock = $obj->reel;
 					}
+					//var_dump($obj->batch.' '.$obj->qty.' '.$obj->reel.' '.$this->error);exit;
 
 					$resultline = $inventoryline->create($user);
 					if ($resultline <= 0) {
@@ -644,6 +661,7 @@ class Inventory extends CommonObject
 		global $langs;
 
 		$labelStatus = array();
+		$labelStatusShort = array();
 		$labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 		$labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated').' ('.$langs->transnoentitiesnoconv('InventoryStartedShort').')';
 		$labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
@@ -739,12 +757,14 @@ class Inventory extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
-		$this->initAsSpecimenCommon();
+		$ret = $this->initAsSpecimenCommon();
 		$this->title = '';
+
+		return $ret;
 	}
 
 	/**
@@ -757,10 +777,10 @@ class Inventory extends CommonObject
 	public function getChildWarehouse($id, &$TChildWarehouse)
 	{
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'entrepot';
-		$sql.= ' WHERE fk_parent='.(int) $id;
-		$sql.= ' ORDER BY rowid';
+		$sql .= ' WHERE fk_parent='.(int) $id;
+		$sql .= ' ORDER BY rowid';
 		$resql = $this->db->query($sql);
-		if ($resql && $this->db->num_rows($resql)>0) {
+		if ($resql && $this->db->num_rows($resql) > 0) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				$TChildWarehouse[] = $obj->rowid;
 				$this->getChildWarehouse($obj->rowid, $TChildWarehouse);
@@ -821,21 +841,21 @@ class InventoryLine extends CommonObjectLine
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid'         => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
-		'fk_inventory'  => array('type'=>'integer:Inventory:product/inventory/class/inventory.class.php', 'label'=>'Inventory', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'index'=>1, 'help'=>'LinkToInventory'),
-		'fk_warehouse'  => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Warehouse', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'index'=>1, 'help'=>'LinkToThirdparty'),
-		'fk_product'    => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'LinkToProduct'),
-		'batch'         => array('type'=>'string', 'label'=>'Batch', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'LinkToProduct'),
-		'datec'         => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500),
-		'tms'           => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
-		'qty_stock'     => array('type'=>'double', 'label'=>'QtyFound', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'Qty we found/want (to define during draft edition)'),
-		'qty_view'      => array('type'=>'double', 'label'=>'QtyBefore', 'visible'=>1, 'enabled'=>1, 'position'=>33, 'index'=>1, 'help'=>'Qty before (filled once movements are validated)'),
-		'qty_regulated' => array('type'=>'double', 'label'=>'QtyDelta', 'visible'=>1, 'enabled'=>1, 'position'=>34, 'index'=>1, 'help'=>'Qty added or removed (filled once movements are validated)'),
-		'pmp_real'      => array('type'=>'double', 'label'=>'PMPReal', 'visible'=>1, 'enabled'=>1, 'position'=>35),
-		'pmp_expected'  => array('type'=>'double', 'label'=>'PMPExpected', 'visible'=>1, 'enabled'=>1, 'position'=>36),
+		'rowid'         => array('type' => 'integer', 'label' => 'TechnicalID', 'visible' => -1, 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => 'Id',),
+		'fk_inventory'  => array('type' => 'integer:Inventory:product/inventory/class/inventory.class.php', 'label' => 'Inventory', 'visible' => 1, 'enabled' => 1, 'position' => 30, 'index' => 1, 'help' => 'LinkToInventory'),
+		'fk_warehouse'  => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Warehouse', 'visible' => 1, 'enabled' => 1, 'position' => 30, 'index' => 1, 'help' => 'LinkToThirdparty'),
+		'fk_product'    => array('type' => 'integer:Product:product/class/product.class.php', 'label' => 'Product', 'visible' => 1, 'enabled' => 1, 'position' => 32, 'index' => 1, 'help' => 'LinkToProduct'),
+		'batch'         => array('type' => 'string', 'label' => 'Batch', 'visible' => 1, 'enabled' => 1, 'position' => 32, 'index' => 1, 'help' => 'LinkToProduct'),
+		'datec'         => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 500),
+		'tms'           => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 501),
+		'qty_stock'     => array('type' => 'double', 'label' => 'QtyFound', 'visible' => 1, 'enabled' => 1, 'position' => 32, 'index' => 1, 'help' => 'Qty we found/want (to define during draft edition)'),
+		'qty_view'      => array('type' => 'double', 'label' => 'QtyBefore', 'visible' => 1, 'enabled' => 1, 'position' => 33, 'index' => 1, 'help' => 'Qty before (filled once movements are validated)'),
+		'qty_regulated' => array('type' => 'double', 'label' => 'QtyDelta', 'visible' => 1, 'enabled' => 1, 'position' => 34, 'index' => 1, 'help' => 'Qty added or removed (filled once movements are validated)'),
+		'pmp_real'      => array('type' => 'double', 'label' => 'PMPReal', 'visible' => 1, 'enabled' => 1, 'position' => 35),
+		'pmp_expected'  => array('type' => 'double', 'label' => 'PMPExpected', 'visible' => 1, 'enabled' => 1, 'position' => 36),
 	);
 
 	/**

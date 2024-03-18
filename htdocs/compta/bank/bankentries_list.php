@@ -150,21 +150,21 @@ $extrafields->fetch_name_optionals_label('banktransaction');
 $search_array_options = $extrafields->getOptionalsFromPost('banktransaction', '', 'search_');
 
 $arrayfields = array(
-	'b.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1,'position'=>10),
-	'b.label'=>array('label'=>$langs->trans("Description"), 'checked'=>1,'position'=>20),
-	'b.dateo'=>array('label'=>$langs->trans("DateOperationShort"), 'checked'=>1,'position'=>30),
-	'b.datev'=>array('label'=>$langs->trans("DateValueShort"), 'checked'=>1,'position'=>40),
-	'type'=>array('label'=>$langs->trans("Type"), 'checked'=>1,'position'=>50),
-	'b.num_chq'=>array('label'=>$langs->trans("Numero"), 'checked'=>1,'position'=>60),
-	'bu.label'=>array('label'=>$langs->trans("ThirdParty").'/'.$langs->trans("User"), 'checked'=>1, 'position'=>70),
-	'ba.ref'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>(($id > 0 || !empty($ref)) ? 0 : 1), 'position'=>80),
-	'b.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1, 'position'=>90),
-	'b.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1, 'position'=>100),
-	'balancebefore'=>array('label'=>$langs->trans("BalanceBefore"), 'checked'=>0, 'position'=>110),
-	'balance'=>array('label'=>$langs->trans("Balance"), 'checked'=>1, 'position'=>120),
-	'b.num_releve'=>array('label'=>$langs->trans("AccountStatement"), 'checked'=>1, 'position'=>130),
-	'b.conciliated'=>array('label'=>$langs->trans("BankLineReconciled"), 'enabled'=> $object->rappro, 'checked'=>($action == 'reconcile' ? 1 : 0), 'position'=>140),
-	'b.fk_bordereau'=>array('label'=>$langs->trans("ChequeNumber"), 'checked'=>0, 'position'=>150),
+	'b.rowid' => array('label' => $langs->trans("Ref"), 'checked' => 1,'position' => 10),
+	'b.label' => array('label' => $langs->trans("Description"), 'checked' => 1,'position' => 20),
+	'b.dateo' => array('label' => $langs->trans("DateOperationShort"), 'checked' => 1,'position' => 30),
+	'b.datev' => array('label' => $langs->trans("DateValueShort"), 'checked' => 1,'position' => 40),
+	'type' => array('label' => $langs->trans("Type"), 'checked' => 1,'position' => 50),
+	'b.num_chq' => array('label' => $langs->trans("Numero"), 'checked' => 1,'position' => 60),
+	'bu.label' => array('label' => $langs->trans("ThirdParty").'/'.$langs->trans("User"), 'checked' => 1, 'position' => 70),
+	'ba.ref' => array('label' => $langs->trans("BankAccount"), 'checked' => (($id > 0 || !empty($ref)) ? 0 : 1), 'position' => 80),
+	'b.debit' => array('label' => $langs->trans("Debit"), 'checked' => 1, 'position' => 90),
+	'b.credit' => array('label' => $langs->trans("Credit"), 'checked' => 1, 'position' => 100),
+	'balancebefore' => array('label' => $langs->trans("BalanceBefore"), 'checked' => 0, 'position' => 110),
+	'balance' => array('label' => $langs->trans("Balance"), 'checked' => 1, 'position' => 120),
+	'b.num_releve' => array('label' => $langs->trans("AccountStatement"), 'checked' => 1, 'position' => 130),
+	'b.conciliated' => array('label' => $langs->trans("BankLineReconciled"), 'enabled' => $object->rappro, 'checked' => ($action == 'reconcile' ? 1 : 0), 'position' => 140),
+	'b.fk_bordereau' => array('label' => $langs->trans("ChequeNumber"), 'checked' => 0, 'position' => 150),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -288,16 +288,16 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 	if (!$error) {
 		$param = 'action=reconcile&contextpage=banktransactionlist&id='.((int) $object->id).'&search_account='.((int) $object->id);
 		if ($page) {
-			$param .= '&page='.urlencode($page);
+			$param .= '&page='.urlencode((string) ($page));
 		}
 		if ($offset) {
-			$param .= '&offset='.urlencode($offset);
+			$param .= '&offset='.urlencode((string) ($offset));
 		}
 		if ($limit) {
 			$param .= '&limit='.((int) $limit);
 		}
 		if ($search_conciliated != '' && $search_conciliated != '-1') {
-			$param .= '&search_conciliated='.urlencode($search_conciliated);
+			$param .= '&search_conciliated='.urlencode((string) ($search_conciliated));
 		}
 		if ($search_thirdparty_user) {
 			$param .= '&search_thirdparty='.urlencode($search_thirdparty_user);
@@ -417,7 +417,7 @@ $formaccounting = new FormAccounting($db);
 
 $companystatic = new Societe($db);
 $bankaccountstatic = new Account($db);
-$userstatic= new User($db);
+$userstatic = new User($db);
 
 $banktransferstatic = new BonPrelevement($db);
 $societestatic = new Societe($db);
@@ -449,7 +449,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
 if ($id > 0) {
-	$param .= '&id='.urlencode($id);
+	$param .= '&id='.urlencode((string) ($id));
 }
 if (!empty($ref)) {
 	$param .= '&ref='.urlencode($ref);
@@ -473,19 +473,19 @@ if (!empty($search_credit)) {
 	$param .= '&search_credit='.urlencode($search_credit);
 }
 if ($search_account > 0) {
-	$param .= '&search_account='.urlencode($search_account);
+	$param .= '&search_account='.urlencode((string) ($search_account));
 }
 if (!empty($search_num_releve)) {
 	$param .= '&search_num_releve='.urlencode($search_num_releve);
 }
 if ($search_conciliated != '' && $search_conciliated != '-1') {
-	$param .= '&search_conciliated='.urlencode($search_conciliated);
+	$param .= '&search_conciliated='.urlencode((string) ($search_conciliated));
 }
 if ($search_fk_bordereau > 0) {
-	$param .= '$&search_fk_bordereau='.urlencode($search_fk_bordereau);
+	$param .= '$&search_fk_bordereau='.urlencode((string) ($search_fk_bordereau));
 }
 if ($search_bid > 0) {
-	$param .= '&search_bid='.urlencode($search_bid);
+	$param .= '&search_bid='.urlencode((string) ($search_bid));
 }
 if (dol_strlen($search_dt_start) > 0) {
 	$param .= '&search_start_dtmonth='.GETPOSTINT('search_start_dtmonth').'&search_start_dtday='.GETPOSTINT('search_start_dtday').'&search_start_dtyear='.GETPOSTINT('search_start_dtyear');
@@ -503,7 +503,7 @@ if ($search_req_nb) {
 	$param .= '&req_nb='.urlencode($search_req_nb);
 }
 if (GETPOSTINT("search_thirdparty")) {
-	$param .= '&thirdparty='.urlencode(GETPOSTINT("search_thirdparty"));
+	$param .= '&thirdparty='.urlencode((string) (GETPOSTINT("search_thirdparty")));
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -539,7 +539,8 @@ if ($id > 0 || !empty($ref)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 	$bankcateg = new BankCateg($db);
 
-	foreach ($bankcateg->fetchAll() as $bankcategory) {
+	$arrayofbankcateg = $bankcateg->fetchAll();
+	foreach ($arrayofbankcateg as $bankcategory) {
 		$options[$bankcategory->id] = $bankcategory->label;
 	}
 
@@ -654,18 +655,18 @@ if ($search_fk_bordereau > 0) {
 	$sql .= " AND b.fk_bordereau = " . ((int) $search_fk_bordereau);
 }
 if ($search_thirdparty_user) {
-	$sql.= " AND (b.rowid IN ";
-	$sql.= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
-	$sql.= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
-	$sql.= "	 JOIN ".MAIN_DB_PREFIX."user AS subUser ON (bu.type = 'user' AND bu.url_id = subUser.rowid)";
-	$sql.= "	  WHERE ". natural_search(array("subUser.firstname", "subUser.lastname"), $search_thirdparty_user, '', 1).")";
+	$sql .= " AND (b.rowid IN ";
+	$sql .= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
+	$sql .= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
+	$sql .= "	 JOIN ".MAIN_DB_PREFIX."user AS subUser ON (bu.type = 'user' AND bu.url_id = subUser.rowid)";
+	$sql .= "	  WHERE ". natural_search(array("subUser.firstname", "subUser.lastname"), $search_thirdparty_user, '', 1).")";
 
-	$sql.= " OR b.rowid IN ";
-	$sql.= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
-	$sql.= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
-	$sql.= "	 JOIN ".MAIN_DB_PREFIX."societe AS subSoc ON (bu.type = 'company' AND bu.url_id = subSoc.rowid)";
-	$sql.= "	  WHERE ". natural_search(array("subSoc.nom"), $search_thirdparty_user, '', 1);
-	$sql.= "))";
+	$sql .= " OR b.rowid IN ";
+	$sql .= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
+	$sql .= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
+	$sql .= "	 JOIN ".MAIN_DB_PREFIX."societe AS subSoc ON (bu.type = 'company' AND bu.url_id = subSoc.rowid)";
+	$sql .= "	  WHERE ". natural_search(array("subSoc.nom"), $search_thirdparty_user, '', 1);
+	$sql .= "))";
 }
 if ($search_description) {
 	$search_description_to_use = $search_description;
@@ -1016,11 +1017,12 @@ if ($resql) {
 		$picto = '';
 	}
 
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $morehtml, '', $limit, 0, 0, 1);
 
 	// We can add page now to param
 	if ($page != '') {
-		$param .= '&page='.urlencode($page);
+		$param .= '&page='.urlencode((string) ($page));
 	}
 
 	$moreforfilter = '';
@@ -1262,7 +1264,7 @@ if ($resql) {
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
-	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray'=>&$totalarray);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action edit/delete and select
@@ -1826,8 +1828,8 @@ if ($resql) {
 		}
 
 		// Fields from hook
-		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$objp, 'i'=>$i, 'totalarray'=>&$totalarray);
-		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $objecttmp);    // Note that $action and $objecttmpect may have been modified by hook
+		$parameters = array('arrayfields' => $arrayfields, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objecttmp);    // Note that $action and $objecttmpect may have been modified by hook
 		print $hookmanager->resPrint;
 
 		// Action edit/delete and select

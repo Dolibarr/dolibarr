@@ -8,6 +8,7 @@
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2019-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -260,7 +261,7 @@ class FormFile
 				$out .= "\n</div><!-- End form link new url -->\n";
 			}
 
-			$parameters = array('socid'=>(isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id'=>(isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'url'=>$url, 'perm'=>$perm, 'options'=>$options);
+			$parameters = array('socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'url' => $url, 'perm' => $perm, 'options' => $options);
 			$res = $hookmanager->executeHooks('formattachOptions', $parameters, $object);
 			if (empty($res)) {
 				$out = '<div class="'.($usewithoutform ? 'inline-block valignmiddle' : 'attacharea attacharea'.$htmlname).'">'.$out.'</div>';
@@ -349,23 +350,23 @@ class FormFile
 		$reshook = 0;
 		if (is_object($hookmanager)) {
 			$parameters = array(
-				'modulepart'=>&$modulepart,
-				'modulesubdir'=>&$modulesubdir,
-				'filedir'=>&$filedir,
-				'urlsource'=>&$urlsource,
-				'genallowed'=>&$genallowed,
-				'delallowed'=>&$delallowed,
-				'modelselected'=>&$modelselected,
-				'allowgenifempty'=>&$allowgenifempty,
-				'forcenomultilang'=>&$forcenomultilang,
-				'noform'=>&$noform,
-				'param'=>&$param,
-				'title'=>&$title,
-				'buttonlabel'=>&$buttonlabel,
-				'codelang'=>&$codelang,
-				'morepicto'=>&$morepicto,
-				'hideifempty'=>&$hideifempty,
-				'removeaction'=>&$removeaction
+				'modulepart' => &$modulepart,
+				'modulesubdir' => &$modulesubdir,
+				'filedir' => &$filedir,
+				'urlsource' => &$urlsource,
+				'genallowed' => &$genallowed,
+				'delallowed' => &$delallowed,
+				'modelselected' => &$modelselected,
+				'allowgenifempty' => &$allowgenifempty,
+				'forcenomultilang' => &$forcenomultilang,
+				'noform' => &$noform,
+				'param' => &$param,
+				'title' => &$title,
+				'buttonlabel' => &$buttonlabel,
+				'codelang' => &$codelang,
+				'morepicto' => &$morepicto,
+				'hideifempty' => &$hideifempty,
+				'removeaction' => &$removeaction
 			);
 			$reshook = $hookmanager->executeHooks('showDocuments', $parameters, $object); // Note that parameters may have been updated by hook
 			// May report error
@@ -593,7 +594,7 @@ class FormFile
 				} else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 					//$modellist = ModeleExports::liste_modeles($this->db);		// liste_modeles() does not exists. We are using listOfAvailableExportFormat() method instead that return a different array format.
-					$modellist = array();
+					$modellist = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 				}
 			} elseif ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order') {
 				if (is_array($genallowed)) {
@@ -713,7 +714,7 @@ class FormFile
 			$out .= '<tr class="liste_titre">';
 			$addcolumforpicto = ($delallowed || $printer || $morepicto);
 			$colspan = (4 + ($addcolumforpicto ? 1 : 0));
-			$colspanmore = 0;
+			$colspanmore = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 
 			$out .= '<th colspan="'.$colspan.'" class="formdoc liste_titre maxwidthonsmartphone center">';
 
@@ -816,7 +817,7 @@ class FormFile
 			$out .= '</tr>';
 
 			// Execute hooks
-			$parameters = array('colspan'=>($colspan + $colspanmore), 'socid'=>(isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id'=>(isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart'=>$modulepart);
+			$parameters = array('colspan' => ($colspan + $colspanmore), 'socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart' => $modulepart);
 			if (is_object($hookmanager)) {
 				$reshook = $hookmanager->executeHooks('formBuilddocOptions', $parameters, $GLOBALS['object']);
 				$out .= $hookmanager->resPrint;
@@ -967,7 +968,7 @@ class FormFile
 						$addcolumforpicto = ($delallowed || $printer || $morepicto);
 						$colspan = (4 + ($addcolumforpicto ? 1 : 0));
 						$colspanmore = 0;
-						$parameters = array('colspan'=>($colspan + $colspanmore), 'socid'=>(isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id'=>(isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart'=>$modulepart, 'relativepath'=>$relativepath);
+						$parameters = array('colspan' => ($colspan + $colspanmore), 'socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart' => $modulepart, 'relativepath' => $relativepath);
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions', $parameters, $file);
 						if (empty($res)) {
 							$out .= $hookmanager->resPrint; // Complete line
@@ -1056,7 +1057,7 @@ class FormFile
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$out = '';
-		$this->infofiles = array('nboffiles'=>0, 'extensions'=>array(), 'files'=>array());
+		$this->infofiles = array('nboffiles' => 0, 'extensions' => array(), 'files' => array());
 
 		$entity = 1; // Without multicompany
 
@@ -1230,7 +1231,7 @@ class FormFile
 		$hookmanager->initHooks(array('formfile'));
 		$parameters = array(
 				'filearray' => $filearray,
-				'modulepart'=> $modulepart,
+				'modulepart' => $modulepart,
 				'param' => $param,
 				'forcedownload' => $forcedownload,
 				'relativepath' => $relativepath, // relative filename to module dir
@@ -1791,7 +1792,7 @@ class FormFile
 			include_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 			$object_instance = new Mo($this->db);
 		} else {
-			$parameters = array('modulepart'=>$modulepart);
+			$parameters = array('modulepart' => $modulepart);
 			$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
 			if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
 				if (array_key_exists('classpath', $hookmanager->resArray) && !empty($hookmanager->resArray['classpath'])) {
@@ -1875,7 +1876,7 @@ class FormFile
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
 					$ref = (isset($reg[1]) ? $reg[1] : '');
 				} else {
-					$parameters = array('modulepart'=>$modulepart, 'fileinfo'=>$file);
+					$parameters = array('modulepart' => $modulepart, 'fileinfo' => $file);
 					$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
 					if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
 						if (array_key_exists('ref', $hookmanager->resArray) && !empty($hookmanager->resArray['ref'])) {

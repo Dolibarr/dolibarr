@@ -1,4 +1,26 @@
 <?php
+/*
+/* Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *		\file       htdocs/theme/eldy/global.inc.php
+ *		\brief      File for CSS style sheet Eldy
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
@@ -8131,8 +8153,6 @@ table.jPicker {
 		margin-top: 30px;
 	}
 }
-
-
 @media only screen and (max-width: 320px)
 {
 	.dropdown dd ul {
@@ -8152,8 +8172,17 @@ table.jPicker {
 	}
 }
 
-
 <?php
+if (getDolUserString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+	// Set a max height on multiselect when using multiselect
+	?>
+	select[multiple] {
+		height: 42px;
+	}
+	<?php
+}
+
+
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/emaillayout.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
@@ -8175,3 +8204,5 @@ div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
 
 }
+
+

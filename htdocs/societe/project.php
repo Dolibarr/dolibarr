@@ -124,9 +124,6 @@ if ($socid) {
 	}
 	llxHeader('', $title);
 
-	if (isModEnabled('notification')) {
-		$langs->load("mails");
-	}
 	$head = societe_prepare_head($object);
 
 	print dol_get_fiche_head($head, 'project', $langs->trans("ThirdParty"), -1, 'company');

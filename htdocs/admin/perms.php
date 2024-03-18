@@ -262,7 +262,7 @@ if ($result) {
 		if ($user->admin) {
 			print '<td class="right">';
 			$htmltext = $langs->trans("ID").': '.$obj->id;
-			$htmltext .= '<br>'.$langs->trans("Permission").': user->hasRight(\''.$obj->module.'\', \''.$obj->perms.'\''.($obj->subperms ? ', \''.$obj->subperms.'\'' : '').')';
+			$htmltext .= '<br>'.$langs->trans("Permission").': user->hasRight(\''.dol_escape_htmltag($obj->module).'\', \''.dol_escape_htmltag($obj->perms).'\''.($obj->subperms ? ', \''.dol_escape_htmltag($obj->subperms).'\'' : '').')';
 			print $form->textwithpicto('', $htmltext);
 			//print '<span class="opacitymedium">'.$obj->id.'</span>';
 			print '</td>';

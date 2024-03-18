@@ -3,6 +3,7 @@
  * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2021 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2019-2024 Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +62,7 @@ if (!$sortorder) {
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'aZ09');
 //Search criteria
-$search_status = (GETPOSTISSET('search_status') ? GETPOSTINT('search_status') : GETPOSTINT('status'));
+$search_status = GETPOST('search_status', 'intcomma');
 $search_label = GETPOST("search_label", 'alpha');
 $search_module_name = GETPOST("search_module_name", 'alpha');
 $search_lastresult = GETPOST("search_lastresult", "alphawithlgt");
@@ -379,8 +380,8 @@ if ($action == 'delete' && empty($toselect)) {	// Used when we make a delete on 
 $arrayofmassactions = array(
 //'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 //'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-	'enable'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("CronStatusActiveBtn"),
-	'disable'=>img_picto('', 'uncheck', 'class="pictofixedwidth"').$langs->trans("CronStatusInactiveBtn"),
+	'enable' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("CronStatusActiveBtn"),
+	'disable' => img_picto('', 'uncheck', 'class="pictofixedwidth"').$langs->trans("CronStatusInactiveBtn"),
 );
 if ($user->hasRight('cron', 'delete')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -471,7 +472,7 @@ print '<td class="liste_titre center"><input type="text" class="width50" name="s
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre center">';
-print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Scheduled")), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
+print $form->selectarray('search_status', array('0' => $langs->trans("Disabled"), '1' => $langs->trans("Scheduled")), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 print '</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 // Action column
@@ -607,9 +608,9 @@ if ($num > 0) {
 
 		$s = '';
 		if ($obj->unitfrequency == "60") {
-			$s = ($obj->frequency)." ".($obj->frequency > 1 ? $langs->trans('MinuteShort') : $langs->trans('MinuteShort'));
+			$s = ($obj->frequency)." ".$langs->trans('MinuteShort');
 		} elseif ($obj->unitfrequency == "3600") {
-			$s = ($obj->frequency)." ".($obj->frequency > 1 ? $langs->trans('HourShort') : $langs->trans('HourShort'));
+			$s = ($obj->frequency)." ".$langs->trans('HourShort');
 		} elseif ($obj->unitfrequency == "86400") {
 			$s = ($obj->frequency)." ".($obj->frequency > 1 ? $langs->trans('DurationDays') : $langs->trans('DurationDay'));
 		} elseif ($obj->unitfrequency == "604800") {
@@ -659,7 +660,7 @@ if ($num > 0) {
 		print '<td class="center nowraponall" title="'.dol_escape_htmltag($datefromto).'">';
 		if (!empty($datelastresult) && ($datelastresult >= $datelastrun)) {
 			$nbseconds = max($datelastresult - $datelastrun, 1);
-			print $nbseconds.' '.($nbseconds > 1 ? $langs->trans("SecondShort") : $langs->trans("SecondShort"));
+			print $nbseconds.' '.$langs->trans("SecondShort");
 		}
 		print '</td>';
 

@@ -67,8 +67,6 @@ ALTER TABLE llx_categories_extrafields DROP INDEX idx_categories_extrafields;
 ALTER TABLE llx_categories_extrafields ADD UNIQUE INDEX uk_categories_extrafields (fk_object);
 ALTER TABLE llx_commande_extrafields DROP INDEX idx_commande_extrafields;
 ALTER TABLE llx_commande_extrafields ADD UNIQUE INDEX uk_commande_extrafields (fk_object);
-ALTER TABLE llx_commande_fournisseur_dispatch_extrafields DROP INDEX idx_commande_fournisseur_dispatch_extrafields;
-ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD UNIQUE INDEX uk_commande_fournisseur_dispatch_extrafields (fk_object);
 ALTER TABLE llx_commande_fournisseur_extrafields DROP INDEX idx_commande_fournisseur_extrafields;
 ALTER TABLE llx_commande_fournisseur_extrafields ADD UNIQUE INDEX uk_commande_fournisseur_extrafields (fk_object);
 ALTER TABLE llx_commande_fournisseurdet_extrafields DROP INDEX idx_commande_fournisseurdet_extrafields;
@@ -229,11 +227,14 @@ ALTER TABLE llx_product ADD COLUMN last_main_doc varchar(255);
 
 ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtext;
 
+ALTER TABLE llx_commande_fournisseur_dispatch_extrafields RENAME llx_receptiondet_batch_extrafields;
+ALTER TABLE llx_commande_fournisseur_dispatch RENAME llx_receptiondet_batch;
+
 -- Rename const to add customer categories on not customer/prospect third-party if enabled
 UPDATE llx_const SET name = 'THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT' WHERE name = 'THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER';
 
-ALTER TABLE llx_fichinter ADD COLUMN signed_status integer DEFAULT NULL AFTER duree;
-ALTER TABLE llx_contrat ADD COLUMN signed_status integer DEFAULT NULL AFTER date_contrat;
+ALTER TABLE llx_fichinter ADD COLUMN signed_status smallint DEFAULT NULL AFTER duree;
+ALTER TABLE llx_contrat ADD COLUMN signed_status smallint DEFAULT NULL AFTER date_contrat;
 
 ALTER TABLE llx_mailing ADD COLUMN messtype	varchar(16) DEFAULT 'email' after rowid;
 
@@ -264,3 +265,17 @@ ALTER TABLE llx_societe ADD COLUMN phone_mobile varchar(20) after phone;
 
 ALTER TABLE llx_facture ADD INDEX idx_facture_tms (tms);
 ALTER TABLE llx_facture_fourn ADD INDEX idx_facture_fourn_tms (tms);
+
+ALTER TABLE llx_element_element MODIFY COLUMN sourcetype VARCHAR(64) NOT NULL;
+ALTER TABLE llx_element_element MODIFY COLUMN targettype VARCHAR(64) NOT NULL;
+ALTER TABLE llx_c_type_contact MODIFY COLUMN element VARCHAR(64) NOT NULL;
+
+ALTER TABLE llx_product_association ADD COLUMN import_key varchar(14) DEFAULT NULL;
+
+ALTER TABLE llx_ticket ADD COLUMN barcode varchar(255) DEFAULT NULL after extraparams;
+ALTER TABLE llx_ticket ADD COLUMN fk_barcode_type integer DEFAULT NULL after barcode;
+
+ALTER TABLE llx_ticket ADD UNIQUE INDEX uk_ticket_barcode_barcode_type (barcode, fk_barcode_type, entity);
+ALTER TABLE llx_ticket ADD CONSTRAINT llx_ticket_fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES  llx_c_barcode_type (rowid);
+
+ALTER TABLE llx_societe ADD COLUMN fk_parent integer NULL;

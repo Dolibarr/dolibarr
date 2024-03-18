@@ -356,6 +356,11 @@ while ($i < min($num, $limit)) {
 	$i++;
 }
 
+// If no record found
+if ($num == 0) {
+	print '<tr><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+}
+
 print "</table>";
 print "</div>";
 print "<br>";

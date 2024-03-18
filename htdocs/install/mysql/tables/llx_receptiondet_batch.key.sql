@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2015      Claudio Aschieri	<c.aschieri@19.coop>
+-- Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,5 +16,8 @@
 --
 -- ===================================================================
 
-
-ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD UNIQUE INDEX uk_commande_fournisseur_dispatch_extrafields (fk_object);
+ALTER TABLE llx_receptiondet_batch ADD INDEX idx_receptiondet_batch_fk_commande (fk_commande);
+ALTER TABLE llx_receptiondet_batch ADD INDEX idx_receptiondet_batch_fk_reception (fk_reception);
+ALTER TABLE llx_receptiondet_batch ADD CONSTRAINT fk_receptiondet_batch_fk_reception FOREIGN KEY (fk_reception) REFERENCES llx_reception (rowid);
+ALTER TABLE llx_receptiondet_batch ADD INDEX idx_receptiondet_batch_fk_product (fk_product);
+ALTER TABLE llx_receptiondet_batch ADD INDEX idx_receptiondet_batch_fk_commandefourndet (fk_commandefourndet);

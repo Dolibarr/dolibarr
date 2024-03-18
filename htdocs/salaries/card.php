@@ -302,7 +302,7 @@ if ($action == 'add' && empty($cancel)) {
 			$paiement->chid         = $object->id;	// deprecated
 			$paiement->datep        = $datep;
 			$paiement->datev		= $datev;
-			$paiement->amounts      = array($object->id=>$amount); // Tableau de montant
+			$paiement->amounts      = array($object->id => $amount); // Tableau de montant
 			$paiement->fk_typepayment = $type_payment;
 			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
 			$paiement->note_private = GETPOST("note", 'restricthtml');
@@ -330,7 +330,7 @@ if ($action == 'add' && empty($cancel)) {
 
 			if (GETPOST('saveandnew', 'alpha')) {
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-				header("Location: card.php?action=create&fk_project=" . urlencode($projectid) . "&accountid=" . urlencode($accountid) . '&paymenttype=' . urlencode(GETPOSTINT('paymenttype')) . '&datepday=' . GETPOSTINT("datepday") . '&datepmonth=' . GETPOSTINT("datepmonth") . '&datepyear=' . GETPOSTINT("datepyear"));
+				header("Location: card.php?action=create&fk_project=" . urlencode((string) ($projectid)) . "&accountid=" . urlencode((string) ($accountid)) . '&paymenttype=' . urlencode((string) (GETPOSTINT('paymenttype'))) . '&datepday=' . GETPOSTINT("datepday") . '&datepmonth=' . GETPOSTINT("datepmonth") . '&datepyear=' . GETPOSTINT("datepyear"));
 				exit;
 			} else {
 				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $object->id);
@@ -402,7 +402,8 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 
 	if ($object->id > 0) {
 		$object->paye = 0;
-		$object->id = $object->ref = null;
+		$object->id = 0;
+		$object->ref = '';
 
 		if (GETPOST('amount', 'alphanohtml')) {
 			$object->amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT', 2);
@@ -580,13 +581,13 @@ if ($action == 'create' && $permissiontoadd) {
 	// Date start period
 	print '<tr><td>';
 	print $form->editfieldkey('DateStartPeriod', 'datesp', '', $object, 0, 'string', '', 1).'</td><td>';
-	print $form->selectDate($datesp, "datesp", '', '', '', 'add');
+	print $form->selectDate($datesp, "datesp", 0, 0, 0, 'add');
 	print '</td></tr>';
 
 	// Date end period
 	print '<tr><td>';
 	print $form->editfieldkey('DateEndPeriod', 'dateep', '', $object, 0, 'string', '', 1).'</td><td>';
-	print $form->selectDate($dateep, "dateep", '', '', '', 'add');
+	print $form->selectDate($dateep, "dateep", 0, 0, 0, 'add');
 	print '</td></tr>';
 
 	// Amount
@@ -646,7 +647,7 @@ if ($action == 'create' && $permissiontoadd) {
 	// Date value for bank
 	print '<tr class="hide_if_no_auto_create_payment"><td>';
 	print $form->editfieldkey('DateValue', 'datev', '', $object, 0).'</td><td>';
-	print $form->selectDate((empty($datev) ? -1 : $datev), "datev", '', '', '', 'add', 1, 1);
+	print $form->selectDate((empty($datev) ? -1 : $datev), "datev", 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// Number

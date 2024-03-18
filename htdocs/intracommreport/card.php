@@ -108,7 +108,7 @@ if ($reshook < 0) {
 }
 
 if ($permissiontodelete && $action == 'confirm_delete' && $confirm == 'yes') {
-	$result = $object->delete($id, $user);
+	$result = $object->delete($user);
 	if ($result > 0) {
 		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
@@ -247,7 +247,7 @@ if ($id > 0 && $action != 'edit') {
 			);
 		}
 		print $form->formconfirm(
-			"card.php?rowid=".urlencode($id),
+			"card.php?rowid=".urlencode((string) ($id)),
 			$langs->trans("DeleteReport"),
 			$langs->trans("ConfirmDeleteReport"),
 			"confirm_delete",

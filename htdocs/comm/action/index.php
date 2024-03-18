@@ -276,6 +276,7 @@ if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 				'name' => dol_string_nohtmltag(getDolGlobalString($name)),
 				'offsettz' => (int) getDolGlobalInt($offsettz, 0),
 				'color' => dol_string_nohtmltag(getDolGlobalString($color)),
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				'default' => dol_string_nohtmltag(getDolGlobalString($default)),
 				'buggedfile' => dol_string_nohtmltag(getDolGlobalString('buggedfile', ''))
 			);
@@ -302,6 +303,7 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 				'name' => dol_string_nohtmltag(getDolUserString($name)),
 				'offsettz' => (int) (empty($user->conf->$offsettz) ? 0 : $user->conf->$offsettz),
 				'color' => dol_string_nohtmltag(getDolUserString($color)),
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				'default' => dol_string_nohtmltag(getDolUserString($default)),
 				'buggedfile' => dol_string_nohtmltag(isset($user->conf->buggedfile) ? $user->conf->buggedfile : '')
 			);
@@ -317,10 +319,10 @@ if (empty($mode) || $mode == 'show_month') {
 	$next_year  = $next['year'];
 	$next_month = $next['month'];
 
-	$max_day_in_prev_month = date("t", dol_mktime(12, 0, 0, $prev_month, 1, $prev_year, 'gmt')); // Nb of days in previous month
-	$max_day_in_month = date("t", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')); // Nb of days in next month
+	$max_day_in_prev_month = (int) date("t", dol_mktime(12, 0, 0, $prev_month, 1, $prev_year, 'gmt')); // Nb of days in previous month
+	$max_day_in_month = (int) date("t", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')); // Nb of days in next month
 	// tmpday is a negative or null cursor to know how many days before the 1st to show on month view (if tmpday=0, 1st is monday)
-	$tmpday = -date("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // date('w') is 0 for sunday
+	$tmpday = - (int) date("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // date('w') is 0 for sunday
 	$tmpday += ((isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1) - 1);
 	if ($tmpday >= 1) {
 		$tmpday -= 7; // If tmpday is 0 we start with sunday, if -6, we start with monday of previous week.
@@ -391,7 +393,7 @@ if ($actioncode || GETPOSTISSET('search_actioncode')) {
 	}
 }
 if ($resourceid > 0) {
-	$param .= "&search_resourceid=".urlencode($resourceid);
+	$param .= "&search_resourceid=".urlencode((string) ($resourceid));
 }
 if ($status || GETPOSTISSET('status') || GETPOSTISSET('search_status')) {
 	$param .= "&search_status=".urlencode($status);
@@ -403,26 +405,26 @@ if ($filtert) {
 	$param .= "&search_filtert=".urlencode($filtert);
 }
 if ($usergroup > 0) {
-	$param .= "&search_usergroup=".urlencode($usergroup);
+	$param .= "&search_usergroup=".urlencode((string) ($usergroup));
 }
 if ($socid > 0) {
-	$param .= "&search_socid=".urlencode($socid);
+	$param .= "&search_socid=".urlencode((string) ($socid));
 }
 if ($showbirthday) {
 	$param .= "&search_showbirthday=1";
 }
 if ($pid) {
-	$param .= "&search_projectid=".urlencode($pid);
+	$param .= "&search_projectid=".urlencode((string) ($pid));
 }
 if ($type) {
 	$param .= "&search_type=".urlencode($type);
 }
-$param .= "&maxprint=".urlencode($maxprint);
+$param .= "&maxprint=".urlencode((string) ($maxprint));
 if ($mode == 'show_day' || $mode == 'show_week' || $mode == 'show_month') {
 	$param .= '&mode='.urlencode($mode);
 }
 if ($search_categ_cus != 0) {
-	$param .= '&search_categ_cus='.urlencode($search_categ_cus);
+	$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
 }
 
 // Show navigation bar
@@ -548,7 +550,11 @@ if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda'
 	//$param='month='.$monthshown.'&year='.$year;
 	$hourminsec = dol_print_date(dol_mktime(10, 0, 0, 1, 1, 1970, 'gmt'), '%H', 'gmt').'0000';	// Set $hourminsec to '100000' to auto set hour to 10:00 at creation
 
-	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : '')));
+	$urltocreateaction = DOL_URL_ROOT.'/comm/action/card.php?action=create';
+	$urltocreateaction .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'].'&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
+	$urltocreateaction .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
+
+	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', $urltocreateaction);
 }
 
 // Define the legend/list of calendard to show
@@ -1487,7 +1493,7 @@ if (is_readable($color_file)) {
 	include $color_file;
 }
 if (!is_array($theme_datacolor)) {
-	$theme_datacolor = array(array(120, 130, 150), array(200, 160, 180), array(190, 190, 220));
+	$theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(250, 190, 80), array(80, 166, 90), array(190, 190, 100), array(91, 115, 247), array(140, 140, 220), array(190, 120, 120), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
 }
 
 $massactionbutton = '';
@@ -1562,6 +1568,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 					$style .= ' cal_other_month_right';
 				}
 				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				show_day_events($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
 				echo "  </td>\n";
 			} elseif ($tmpday <= $max_day_in_month) {
@@ -1583,6 +1590,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 				}
 				//var_dump($todayarray['mday']."==".$tmpday." && ".$todayarray['mon']."==".$month." && ".$todayarray['year']."==".$year.' -> '.$style);
 				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam, 0, 60, 0, $bookcalcalendars);
 				echo "</td>\n";
 			} else {
@@ -1592,6 +1600,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 					$style .= ' cal_other_month_right';
 				}
 				echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
 				echo "</td>\n";
 			}
@@ -1656,6 +1665,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		}
 
 		echo '  <td class="'.$style.'" width="14%" valign="top">';
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		show_day_events($db, $tmpday, $tmpmonth, $tmpyear, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars);
 		echo "  </td>\n";
 	}
@@ -1746,12 +1756,14 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 
 		echo '</div></div>';
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 1, $bookcalcalendars);
 
 		print '</div>';
 	} else {
 		print '<div class="div-table-responsive-no-min borderbottom">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars);
 
 		print '</div>';
@@ -1781,7 +1793,7 @@ $db->close();
  * @param   int		$showinfo        Add extended information (used by day and week view)
  * @param   int		$minheight       Minimum height for each event. 60px by default.
  * @param	int		$nonew			 0=Add "new entry button", 1=No "new entry button", -1=Only "new entry button"
- * @param	array	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
+ * @param	array{}|array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int}}	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
  * @return	void
  */
 function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $nonew = 0, $bookcalcalendarsarray = array())
@@ -1791,6 +1803,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	global $theme_datacolor;
 	global $cachethirdparties, $cachecontacts, $cacheusers, $colorindexused;
 	global $hookmanager;
+
+	'@phan-var-force array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int},3:array{0:int,1:int,2:int}} $theme_datacolor
+	 @phan-var-force User[] $cacheusers
+	 @phan-var-force array<int<0,3>> $colorindexused';
 
 	if ($conf->use_javascript_ajax) {	// Enable the "Show more button..."
 		$conf->global->MAIN_JS_SWITCH_AGENDA = 1;
@@ -1942,7 +1958,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							}
 						}
 						//print '|'.($color).'='.($idusertouse?$idusertouse:0).'='.$colorindex.'<br>';
-						// Define color
+						// Define color  // @suppress-next-line PhanPluginPrintfIncompatibleArgumentType
 						$color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
 					}
 					$cssclass = $cssclass.' eventday_'.$ymd;
@@ -2061,12 +2077,13 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						//print img_picto($langs->trans("Birthday"), 'birthday-cake').' ';
 
 						$tmpid = $event->id;
+
 						if (empty($cachecontacts[$tmpid])) {
 							$newcontact = new Contact($db);
 							$newcontact->fetch($tmpid);
-							$cachecontact[$tmpid] = $newcontact;
+							$cachecontacts[$tmpid] = $newcontact;
 						}
-						print $cachecontact[$tmpid]->getNomUrl(1, '', 0, '', -1, 0, 'valignmiddle inline-block');
+						print $cachecontacts[$tmpid]->getNomUrl(1, '', 0, '', -1, 0, 'valignmiddle inline-block');
 
 						//$event->picto = 'birthday-cake';
 						//print $event->getNomUrl(1, $maxnbofchar, 'cal_event', 'birthday', 'contact');
