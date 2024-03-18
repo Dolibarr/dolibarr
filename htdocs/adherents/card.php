@@ -593,7 +593,7 @@ if (empty($reshook)) {
 				$rowid = $object->id;
 				$id = $object->id;
 
-				$backtopage = preg_replace('/__ID__/', $id, $backtopage);
+				$backtopage = preg_replace('/__ID__/', (string) $id, $backtopage);
 			} else {
 				$db->rollback();
 

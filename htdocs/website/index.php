@@ -683,7 +683,7 @@ if ($action == 'adddir' && $permtouploadfile)
 }
 */
 
-// Add site
+// Add a website
 if ($action == 'addsite' && $usercanedit) {
 	$db->begin();
 

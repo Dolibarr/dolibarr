@@ -59,6 +59,7 @@ $langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
 
+$errmsg = '';
 $action = GETPOST('action', 'aZ09');
 $id = GETPOSTINT('id');
 $securekeyreceived = GETPOST("securekey", 'alpha');

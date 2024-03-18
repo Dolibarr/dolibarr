@@ -244,4 +244,45 @@ class Functions2LibTest extends CommonClassTest
 	{
 		$this->assertEquals($expected, get_string_between($string, $start, $end));
 	}
+
+
+	/**
+	 * Dataprovider for numero_semaine
+	 *
+	 * @return array<string,array{0:string,1:string}
+	 */
+	public function numeroSemaineDataProvider()
+	{
+		return [
+			// time_str, expected week
+			'day 1 - 1977' => [ "1977/1/1 10:10:10", '53'],
+			'day 2 - 1977' => [ "1977/1/1 10:10:10", '53'],
+			'last day - 1977' => [ "1977/12/31 10:10:10", '52'],
+			'day 1 - 1978' => [ "1978/1/1 10:10:10", '52'],
+			'day 2 - 1978' => [ "1978/1/2 10:10:10", '01'],
+			'day 1 - 1981' => [ "1981/1/1 10:10:10", '01'],
+			'last day - 1981' => [ "1981/12/31 10:10:10", '53'],
+			'day 1 - 1982' => [ "1982/1/1 10:10:10", '53'],
+			'day 3 - 1982' => [ "1982/1/3 10:10:10", '53'],
+			'day 4 - 1982' => [ "1982/1/4 10:10:10", '01'],
+		];
+	}
+
+
+	/**
+	 * Test numero_semaine()
+	 *
+	 * @param string $time_str Time (string) to test
+	 * @param int    $expected_week Week expected
+	 *
+	 * @return void
+	 *
+	 * @dataProvider numeroSemaineDataProvider
+	 */
+	public function testNumeroSemaine($time_str, $expected_week)
+	{
+		$time = strtotime($time_str);
+		$str = date(DATE_ATOM, $time).PHP_EOL;
+		$this->assertEquals($expected_week, numero_semaine($time), "Computed week incorrect for $str");
+	}
 }
