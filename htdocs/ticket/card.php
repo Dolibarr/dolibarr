@@ -6,6 +6,7 @@
  * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2022-2023 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -438,7 +439,7 @@ if (empty($reshook)) {
 				foreach ($internal_contacts as $key => $contact) {
 					if ($contact['id'] !== $usertoassign) {
 						$result = $object->delete_contact($contact['rowid']);
-						if ($result<0) {
+						if ($result < 0) {
 							$error++;
 							setEventMessages($object->error, $object->errors, 'errors');
 						}
@@ -446,9 +447,9 @@ if (empty($reshook)) {
 				}
 			}
 
-			if ($usertoassign > 0 && $usertoassign!==$useroriginassign) {
+			if ($usertoassign > 0 && $usertoassign !== $useroriginassign) {
 				$result = $object->add_contact($usertoassign, "SUPPORTTEC", 'internal', $notrigger = 0);
-				if ($result<0) {
+				if ($result < 0) {
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -1349,9 +1350,10 @@ if ($action == 'create' || $action == 'presend') {
 			foreach (array('internal', 'external') as $source) {
 				$tmpobject = $object;
 				$tab = $tmpobject->listeContact(-1, $source);
-				$num = count($tab);
+				'@phan-var-force array<array{source:string,id:int,rowid:int,email:string,civility:string,firstname:string,lastname:string,labeltype:string,libelle:string,socid:int,code:string,status:int,statuscontact:string,fk_c_typecontact:string,phone:string,phone_mobile:string,nom:string}> $tab';
+				$num = is_array($tab) ? 0 : count($tab);
 				$i = 0;
-				while ($i < $num) {
+				foreach (array_keys($tab) as $i) {
 					$var = !$var;
 					print '<div class="tagtr '.($var ? 'pair' : 'impair').'">';
 
