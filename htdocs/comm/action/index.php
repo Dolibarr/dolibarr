@@ -662,7 +662,9 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 				$default = '';
 			}
 
-			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'> <label for="check_ext'.$htmlname.'" title="'.dol_escape_htmltag($langs->trans("Cache").' '.round($DELAYFORCACHE / 60).'mn').'">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
+			$tooltip = $langs->trans("Cache").' '.round($DELAYFORCACHE / 60).'mn';
+
+			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'> <label for="check_ext'.$htmlname.'" title="'.dol_escape_htmltag($tooltip).'">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
 		}
 	}
 
@@ -1177,7 +1179,7 @@ if ($user->hasRight("holiday", "read")) {
 // Complete $eventarray with external import Ical
 if (count($listofextcals)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/ical.class.php';
-	foreach ($listofextcals as $extcal) {
+	foreach ($listofextcals as $key => $extcal) {
 		$url = $extcal['src']; // Example: https://www.google.com/calendar/ical/eldy10%40gmail.com/private-cde92aa7d7e0ef6110010a821a2aaeb/basic.ics
 		$namecal = $extcal['name'];
 		$offsettz = $extcal['offsettz'];
@@ -1189,6 +1191,11 @@ if (count($listofextcals)) {
 
 		$ical = new ICal();
 		$ical->parse($url, $pathforcachefile, $DELAYFORCACHE);
+		if ($ical->error) {
+			// Save error message for extcal
+			$listofextcals[$key]['error'] = $ical->error;
+			$s .= '<br><font class="warning">'.$listofextcals[$key]['name'].': '.$ical->error.'</font>';
+		}
 
 		// After this $ical->cal['VEVENT'] contains array of events, $ical->cal['DAYLIGHT'] contains daylight info, $ical->cal['STANDARD'] contains non daylight info, ...
 		//var_dump($ical->cal); exit;
@@ -1461,7 +1468,6 @@ if (count($listofextcals)) {
 		}
 	}
 }
-
 
 // Complete $eventarray with events coming from external module
 $parameters = array();
