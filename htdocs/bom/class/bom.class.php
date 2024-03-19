@@ -580,7 +580,7 @@ class BOM extends CommonObject
 	 *
 	 * @param	int		$fk_product				Id of product
 	 * @param	float	$qty					Quantity
-	 * @param	float	$qty_frozen				Frozen quantity
+	 * @param	int<0,1> $qty_frozen			If the qty is Frozen
 	 * @param 	int		$disable_stock_change	Disable stock change on using in MO
 	 * @param	float	$efficiency				Efficiency in MO
 	 * @param	int		$position				Position of BOM-Line in BOM-Lines
