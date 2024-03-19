@@ -1749,9 +1749,9 @@ if ($ispaymentok) {
 	$onlinetoken        = empty($PAYPALTOKEN) ? $_SESSION['onlinetoken'] : $PAYPALTOKEN;
 	$payerID            = empty($PAYPALPAYERID) ? $_SESSION['payerID'] : $PAYPALPAYERID;
 	// Set by newpayment.php
-	$currencyCodeType   = $_SESSION['currencyCodeType'];
-	$FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
-	$paymentType        = $_SESSION['PaymentType'];	// Seems used by paypal only
+	$currencyCodeType   = empty($_SESSION['currencyCodeType']) ? '' : $_SESSION['currencyCodeType'];
+	$FinalPaymentAmt    = empty($_SESSION["FinalPaymentAmt"]) ? '': $_SESSION["FinalPaymentAmt"];
+	$paymentType        = empty($_SESSION['PaymentType']) ? '' : $_SESSION['PaymentType'];	// Seems used by paypal only
 
 	if (is_object($object) && method_exists($object, 'call_trigger')) {
 		// Call trigger
