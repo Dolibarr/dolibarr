@@ -325,10 +325,8 @@ function societe_prepare_head(Societe $object)
 				$sql = "SELECT COUNT(n.rowid) as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
 				$sql .= " ".MAIN_DB_PREFIX."notify_def as n,";
-				$sql .= " ".MAIN_DB_PREFIX."socpeople as c";
 				$sql .= " WHERE a.rowid = n.fk_action";
-				$sql .= " AND c.rowid = n.fk_contact";
-				$sql .= " AND c.fk_soc = ".((int) $object->id);
+				$sql .= " AND n.fk_soc = ".((int) $object->id);
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
