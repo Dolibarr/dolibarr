@@ -441,6 +441,7 @@ return [
 		// 'PhanPluginCanUsePHP71Void',
 		'PhanPluginUnknownArrayMethodReturnType',
 		// 'PhanTypeMismatchArgumentInternal',
+		'PhanTypeMismatchArgumentNullableInternal',
 		'PhanPluginDuplicateAdjacentStatement',
 		'PhanTypeInvalidLeftOperandOfNumericOp',
 		'PhanTypeMismatchProperty',
