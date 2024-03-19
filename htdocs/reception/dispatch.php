@@ -690,7 +690,7 @@ if ($id > 0 || !empty($ref)) {
 						$sql = "SELECT cfd.rowid, cfd.qty, cfd.fk_entrepot, cfd.batch, cfd.eatby, cfd.sellby, cfd.fk_product";
 						$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as cfd";	// commande_fournisseur_dispatch should be named receptiondet_batch
 						$sql .= " WHERE cfd.fk_reception = ".((int) $object->id);
-						$sql .= " AND cfd.fk_commande = ".((int) $objectsrc->id);
+						$sql .= " AND cfd.fk_element = ".((int) $objectsrc->id);
 						$sql .= " AND cfd.fk_elementdet = ".(int) $objp->rowid;
 
 						//print $sql;

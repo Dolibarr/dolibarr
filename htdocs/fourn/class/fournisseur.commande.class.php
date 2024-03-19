@@ -3534,7 +3534,7 @@ class CommandeFournisseur extends CommonOrder
 
 			$supplierorderdispatch = new CommandeFournisseurDispatch($this->db);
 
-			$filter = array('t.fk_commande' => $this->id);
+			$filter = array('t.fk_element' => $this->id);
 			if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS')) {
 				$filter['t.status'] = 1; // Restrict to lines with status validated
 			}

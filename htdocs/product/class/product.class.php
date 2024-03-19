@@ -3501,7 +3501,7 @@ class Product extends CommonObject
 		if (!$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
-		$sql .= " WHERE cf.rowid = fd.fk_commande";
+		$sql .= " WHERE cf.rowid = fd.fk_element";
 		$sql .= " AND cf.fk_soc = s.rowid";
 		$sql .= " AND cf.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'supplier_order').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);

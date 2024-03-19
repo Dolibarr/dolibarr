@@ -747,7 +747,7 @@ class Reception extends CommonObject
 			$qty_wished = array();
 
 			$supplierorderdispatch = new CommandeFournisseurDispatch($this->db);
-			$filter = array('t.fk_commande' => $this->origin_id);
+			$filter = array('t.fk_element' => $this->origin_id);
 			if (getDolGlobalInt('SUPPLIER_ORDER_USE_DISPATCH_STATUS')) {
 				$filter['t.status'] = 1; // Restrict to lines with status validated
 			}
