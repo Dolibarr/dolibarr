@@ -659,7 +659,7 @@ class ExpenseReports extends DolibarrApi
 	 */
 	public function updatePayment($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRights('expensereport', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
 			throw new RestException(403);
 		}
 
