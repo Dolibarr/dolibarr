@@ -19,7 +19,7 @@ jobs:
       # This is faster for a big repo.
       - name: Get all changed php files (if PR)
         id: changed-php
-        uses: tj-actions/changed-files@v42
+        uses: tj-actions/changed-files@v43
         if: github.event_name == 'pull_request'
         with:
           files: |
@@ -57,7 +57,7 @@ jobs:
       # The next uses git, which is slow for a bit repo.
       # - name: Get all changed php files (if PR)
       #   id: changed-php
-      #   uses: tj-actions/changed-files@v42
+      #   uses: tj-actions/changed-files@v43
       #   if: github.event_name == 'pull_request'
       #   with:
       #     files: |
@@ -67,13 +67,16 @@ jobs:
         uses: shivammathur/setup-php@v2
         # Install when we're going to run phpcs
         if: |
-          steps.changed-php.outputs.any_changed == 'true'
-          ||
+          ! cancelled() &&
           (
-            github.event_name == 'push'
-            && (
-                 github.event.ref == 'refs/heads/develop'
-               || endsWith(github.event.ref, '.0')
+            steps.changed-php.outputs.any_changed == 'true'
+            ||
+            (
+              github.event_name == 'push'
+              && (
+                   github.event.ref == 'refs/heads/develop'
+                 || endsWith(github.event.ref, '.0')
+              )
             )
           )
         with:
@@ -82,7 +85,7 @@ jobs:
           tools: phpcs
 
       - name: Run some pre-commit hooks on selected changed files only
-        if: steps.changed-php.outputs.any_changed == 'true'
+        if: "! cancelled() && steps.changed-php.outputs.any_changed == 'true'"
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
         run: |

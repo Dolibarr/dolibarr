@@ -253,6 +253,7 @@ if ($action == 'create') {
 
 	$total = 0;
 	$totalrecu = 0;
+	$total_ttc = 0.;
 
 	while ($i < $num) {
 		$objp = $tva;

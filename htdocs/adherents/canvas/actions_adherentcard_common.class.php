@@ -148,7 +148,7 @@ abstract class ActionsAdherentCardCommon
 			// Town
 			$this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 
-			if (dol_strlen(trim($this->object->country_id)) == 0) {
+			if ($this->object->country_id == 0) {
 				$this->object->country_id = $objsoc->country_id;
 			}
 
@@ -168,7 +168,7 @@ abstract class ActionsAdherentCardCommon
 			}
 
 			// Physical or Moral
-			$selectarray = array('0'=>$langs->trans("Physical"), '1'=>$langs->trans("Moral"));
+			$selectarray = array('0' => $langs->trans("Physical"), '1' => $langs->trans("Moral"));
 			$this->tpl['select_morphy'] = $form->selectarray('morphy', $selectarray, $this->object->morphy, 0);
 		}
 

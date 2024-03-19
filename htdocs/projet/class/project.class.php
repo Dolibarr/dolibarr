@@ -293,7 +293,7 @@ class Project extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -2587,9 +2587,9 @@ class Project extends CommonObject
 		u.email,u.weeklyhours,
 		SUM(et.element_duration) AS total_seconds
 		FROM
-			llx_element_time AS et
+			".MAIN_DB_PREFIX."element_time AS et
 		JOIN
-			llx_user AS u ON et.fk_user = u.rowid
+			".MAIN_DB_PREFIX."user AS u ON et.fk_user = u.rowid
 		WHERE
 			et.element_date BETWEEN '".$this->db->escape($startDate)."' AND '".$this->db->escape($endDate)."'
 			AND et.elementtype = 'task'
