@@ -2501,7 +2501,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " FROM ".$this->db->prefix()."product as p,";
 		$sql .= " ".$this->db->prefix()."receptiondet_batch as cfd";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."entrepot as e ON cfd.fk_entrepot = e.rowid";
-		$sql .= " WHERE cfd.fk_commande = ".((int) $this->id);
+		$sql .= " WHERE cfd.fk_element = ".((int) $this->id);
 		$sql .= " AND cfd.fk_product = p.rowid";
 		if ($status >= 0) {
 			$sql .= " AND cfd.status = ".((int) $status);
