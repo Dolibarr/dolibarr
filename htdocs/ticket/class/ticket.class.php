@@ -3029,9 +3029,11 @@ class Ticket extends CommonObject
 				// According to RFC5322, we should add here all the References fields of the initial message concatenated with
 				// the Message-ID of the message we respond from (but each ID must be once).
 				$references = '';
-				// @TODO
-				// Retrieve source References to do  				$references .= (empty($references) ? '' : ' ').Source References
-				// If No References is set, use the In-Reply-To for $references .= (empty($references) ? '' : ' ').Source In-reply-To
+				if (empty($this->origin_references)) {
+					// TODO If No References is set, use the In-Reply-To for $references .= (empty($references) ? '' : ' ').Source In-reply-To
+				} else {
+					$references .= (empty($references) ? '' : ' ').$this->origin_references;
+				}
 				$references .= (empty($references) ? '' : ' ').'<'.$this->email_msgid.'>';
 				if ($references) {
 					$moreinheader .= 'References: '.$references."\r\n";
