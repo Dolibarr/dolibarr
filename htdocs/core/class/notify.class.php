@@ -28,8 +28,9 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 
+
 /**
- *      Class to manage notifications
+ *      Class to manage the table of subscription to notifications
  */
 class Notify
 {
@@ -113,7 +114,7 @@ class Notify
 	 */
 	public function confirmMessage($action, $socid, $object)
 	{
-		global $conf, $langs;
+		global $langs;
 		$langs->load("mails");
 
 		// Get full list of all notifications subscribed for $action, $socid and $object
@@ -183,7 +184,7 @@ class Notify
 	}
 
 	/**
-	 * Return number of notifications activated for action code (and third party)
+	 * Return number of notifications activated, for all or a given action code (and third party)
 	 *
 	 * @param	string	$notifcode		Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
 	 * @param	int		$socid			Id of third party or 0 for all thirdparties or -1 for no thirdparties
@@ -213,6 +214,7 @@ class Notify
 			}
 		}
 
+		// Subscription per contact
 		if (!$error) {
 			if ($socid >= 0 && in_array('thirdparty', $scope)) {
 				$sql = "SELECT a.code, c.email, c.rowid";
@@ -253,6 +255,7 @@ class Notify
 			}
 		}
 
+		// Subscription per user
 		if (!$error) {
 			if ($userid >= 0 && in_array('user', $scope)) {
 				$sql = "SELECT a.code, c.email, c.rowid";
@@ -291,6 +294,7 @@ class Notify
 			}
 		}
 
+		// Subscription global
 		if (!$error) {
 			if (in_array('global', $scope)) {
 				// List of notifications enabled for fixed email
