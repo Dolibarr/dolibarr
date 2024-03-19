@@ -1044,13 +1044,13 @@ abstract class CommonDocGenerator
 	/**
 	 * Rect pdf
 	 *
-	 * @param	TCPDF	$pdf			Object PDF
-	 * @param	float	$x				Abscissa of first point
-	 * @param	float	$y		        Ordinate of first point
-	 * @param	float	$l				??
-	 * @param	float	$h				??
-	 * @param	int		$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
-	 * @param	int		$hidebottom		Hide bottom
+	 * @param	TCPDI|TCPDF	$pdf            Pdf object
+	 * @param	float		$x				Abscissa of first point
+	 * @param	float		$y		        Ordinate of first point
+	 * @param	float		$l				??
+	 * @param	float		$h				??
+	 * @param	int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 * @param	int			$hidebottom		Hide bottom
 	 * @return	void
 	 */
 	public function printRect($pdf, $x, $y, $l, $h, $hidetop = 0, $hidebottom = 0)
@@ -1248,7 +1248,7 @@ abstract class CommonDocGenerator
 	/**
 	 *  print standard column content
 	 *
-	 *  @param	TCPDF		$pdf    		pdf object
+	 *	@param	TCPDI|TCPDF	$pdf            Pdf object
 	 *  @param	float		$curY    		current Y position
 	 *  @param	string		$colKey    		the column key
 	 *  @param	string		$columnText   	column text
@@ -1291,7 +1291,7 @@ abstract class CommonDocGenerator
 	/**
 	 *  print description column content
 	 *
-	 *  @param	TCPDF		$pdf    		pdf object
+	 *	@param	TCPDI|TCPDF	$pdf            Pdf object
 	 *  @param	float		$curY    		current Y position
 	 *  @param	string		$colKey    		the column key
 	 *  @param  object      $object 		CommonObject
@@ -1600,12 +1600,12 @@ abstract class CommonDocGenerator
 	/**
 	 * Print standard column content
 	 *
-	 * @param TCPDI	    $pdf            Pdf object
-	 * @param float     $tab_top        Tab top position
-	 * @param float     $tab_height     Default tab height
-	 * @param Translate $outputlangs    Output language
-	 * @param int       $hidetop        Hide top
-	 * @return float                    Height of col tab titles
+	 * @param TCPDI|TCPDF	$pdf            Pdf object
+	 * @param float			$tab_top        Tab top position
+	 * @param float			$tab_height     Default tab height
+	 * @param Translate		$outputlangs    Output language
+	 * @param int			$hidetop        Hide top
+	 * @return float						Height of col tab titles
 	 */
 	public function pdfTabTitles(&$pdf, $tab_top, $tab_height, $outputlangs, $hidetop = 0)
 	{
