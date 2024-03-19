@@ -147,6 +147,7 @@ ShowProductReference=Show reference or label of products
 UsePriceHT=Use price excl. taxes and not price incl. taxes when modifying a price
 TerminalName=Terminal %s
 TerminalNameDesc=Terminal name
+TakePosCustomerMandatory=You must choose a customer
 DefaultPOSThirdLabel=TakePOS generic customer
 DefaultPOSCatLabel=Point Of Sale (POS) products
 DefaultPOSProductLabel=Product example for TakePOS

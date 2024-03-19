@@ -189,7 +189,7 @@ class PaymentVAT extends CommonObject
 			$this->fk_tva = (int) $this->fk_tva;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->fk_typepaiement)) {
 			$this->fk_typepaiement = (int) $this->fk_typepaiement;
@@ -215,11 +215,11 @@ class PaymentVAT extends CommonObject
 
 		$totalamount = 0;
 		foreach ($this->amounts as $key => $value) {  // How payment is dispatch
-			$newvalue = price2num($value, 'MT');
+			$newvalue = (float) price2num($value, 'MT');
 			$this->amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
 		}
-		$totalamount = price2num($totalamount);
+		// $totalamount = price2num($totalamount);
 
 		// Check parameters
 		if ($totalamount == 0) {
@@ -246,7 +246,7 @@ class PaymentVAT extends CommonObject
 				foreach ($this->amounts as $key => $amount) {
 					$contribid = $key;
 					if (is_numeric($amount) && $amount != 0) {
-						$amount = price2num($amount);
+						$amount = (float) price2num($amount);
 
 						// If we want to closed paid invoices
 						if ($closepaidvat) {
@@ -257,8 +257,8 @@ class PaymentVAT extends CommonObject
 							$creditnotes = 0;
 							//$deposits=$contrib->getSumDepositsUsed();
 							$deposits = 0;
-							$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
-							$remaintopay = price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
+							$alreadypayed = (float) price2num($paiement + $creditnotes + $deposits, 'MT');
+							$remaintopay = (float) price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
 							if ($remaintopay == 0) {
 								$result = $contrib->setPaid($user);
 							} else {
@@ -374,7 +374,7 @@ class PaymentVAT extends CommonObject
 			$this->fk_tva = (int) $this->fk_tva;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->fk_typepaiement)) {
 			$this->fk_typepaiement = (int) $this->fk_typepaiement;

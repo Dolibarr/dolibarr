@@ -113,14 +113,32 @@ class ExpenseReport extends CommonObject
 	 */
 	public $fk_statut;
 
+	/**
+	 * @var int ID
+	 */
 	public $fk_c_paiement;
+
+	/**
+	 * @var int ID
+	 */
 	public $modepaymentid;
 
 	public $paid;
+
 	// Paiement
+	/**
+	 * @var string Firstname Lastname
+	 */
 	public $user_paid_infos;
 
+	/**
+	 * @var string Firstname Lastname
+	 */
 	public $user_author_infos;
+
+	/**
+	 * @var string Firstname Lastname
+	 */
 	public $user_validator_infos;
 
 	public $rule_warning_message;
@@ -211,7 +229,7 @@ class ExpenseReport extends CommonObject
 	public $fk_user_valid;
 
 	/**
-	 * @var int ID
+	 * @var string Firstname Lastname
 	 */
 	public $user_valid_infos;
 
@@ -2328,7 +2346,7 @@ class ExpenseReport extends CommonObject
 	 * @param   int			$rowid      	Row id
 	 * @param   User|string	$fuser      	User
 	 * @param   int<0,1>	$notrigger      1=No trigger
-	 * @return  int<0,1>                 	Return integer <0 if KO, >0 if OK
+	 * @return  int<-1,1>                 	Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteLine($rowid, $fuser = '', $notrigger = 0)
 	{

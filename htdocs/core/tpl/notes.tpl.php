@@ -20,7 +20,7 @@
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 // $permissionnote 	must be defined by caller. For example $permissionnote=$user->rights->module->create

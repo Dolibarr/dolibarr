@@ -186,7 +186,7 @@ class PaymentSocialContribution extends CommonObject
 			$this->fk_charge = (int) $this->fk_charge;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->fk_typepaiement)) {
 			$this->fk_typepaiement = (int) $this->fk_typepaiement;
@@ -209,11 +209,11 @@ class PaymentSocialContribution extends CommonObject
 
 		$totalamount = 0;
 		foreach ($this->amounts as $key => $value) {  // How payment is dispatch
-			$newvalue = price2num($value, 'MT');
+			$newvalue = (float) price2num($value, 'MT');
 			$this->amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
 		}
-		$totalamount = price2num($totalamount);
+		$totalamount = (float) price2num($totalamount);
 
 		// Check parameters
 		if ($totalamount == 0) {
@@ -240,7 +240,7 @@ class PaymentSocialContribution extends CommonObject
 				foreach ($this->amounts as $key => $amount) {
 					$contribid = $key;
 					if (is_numeric($amount) && $amount != 0) {
-						$amount = price2num($amount);
+						$amount = (float) price2num($amount);
 
 						// If we want to closed paid invoices
 						if ($closepaidcontrib) {
@@ -251,8 +251,8 @@ class PaymentSocialContribution extends CommonObject
 							$creditnotes = 0;
 							//$deposits=$contrib->getSumDepositsUsed();
 							$deposits = 0;
-							$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
-							$remaintopay = price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
+							$alreadypayed = (float) price2num($paiement + $creditnotes + $deposits, 'MT');
+							$remaintopay = (float) price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
 							if ($remaintopay == 0) {
 								$result = $contrib->setPaid($user);
 							} else {
@@ -369,7 +369,7 @@ class PaymentSocialContribution extends CommonObject
 			$this->fk_charge = (int) $this->fk_charge;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->fk_typepaiement)) {
 			$this->fk_typepaiement = (int) $this->fk_typepaiement;

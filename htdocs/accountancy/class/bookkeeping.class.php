@@ -721,16 +721,6 @@ class BookKeeping extends CommonObject
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element.$mode);
-
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action to call a trigger.
-			//if (! $notrigger) {
-
-			// // Call triggers
-			// $result=$this->call_trigger('MYOBJECT_CREATE',$user);
-			// if ($result < 0) $error++;
-			// // End call triggers
-			//}
 		}
 
 		// Commit or rollback
@@ -748,11 +738,10 @@ class BookKeeping extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int $id Id object
-	 * @param string $ref Ref
-	 * @param string $mode 	Mode
-	 *
-	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param int 		$id 	Id object
+	 * @param string 	$ref 	Ref
+	 * @param string 	$mode 	Mode ('' or 'tmp_')
+	 * @return int 				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $mode = '')
 	{
@@ -1555,15 +1544,16 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param User 		$user 		User that deletes
 	 * @param int 		$notrigger 	false=launch triggers after, true=disable triggers
-	 * @param string 	$mode 		Mode
+	 * @param string 	$mode 		Mode ('' or 'tmp_')
 	 * @return int 					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0, $mode = '')
 	{
 		global $langs;
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$result = $this->canModifyBookkeeping($this->id);
+		$result = $this->canModifyBookkeeping($this->id, $mode);
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
@@ -2065,6 +2055,7 @@ class BookKeeping extends CommonObject
 		$error = 0;
 
 		$sql_filter = $this->getCanModifyBookkeepingSQL();
+
 		if (!isset($sql_filter)) {
 			return -1;
 		}
@@ -2354,10 +2345,11 @@ class BookKeeping extends CommonObject
 			$sql_list = array();
 			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
-					$sql_list[] = "('" . $this->db->idate($fiscal_period['date_start']) . "' <= {$alias}doc_date AND {$alias}doc_date <= '" . $this->db->idate($fiscal_period['date_end']) . "')";
+					$sql_list[] = "('" . $this->db->idate($fiscal_period['date_start']) . "' <= ".$this->db->sanitize($alias)."doc_date AND ".$this->db->sanitize($alias)."doc_date <= '" . $this->db->idate($fiscal_period['date_end']) . "')";
 				}
 			}
-			self::$can_modify_bookkeeping_sql_cached[$alias] = !empty($sql_list) ? ' AND (' . $this->db->sanitize(implode(' OR ', $sql_list), 1, 1, 1) . ')' : '';
+			$sqlsanitized = implode(' OR ', $sql_list);
+			self::$can_modify_bookkeeping_sql_cached[$alias] = !empty($sql_list) ? " AND (".$sqlsanitized.")" : "";
 		}
 
 		return self::$can_modify_bookkeeping_sql_cached[$alias];
@@ -2367,9 +2359,10 @@ class BookKeeping extends CommonObject
 	 * Is the bookkeeping can be modified or deleted ?
 	 *
 	 * @param 	int		$id		Bookkeeping ID
+	 * @param 	string 	$mode 	Mode ('' or 'tmp_')
 	 * @return 	int				Return integer <0 if KO, == 0 if No, == 1 if Yes
 	 */
-	public function canModifyBookkeeping($id)
+	public function canModifyBookkeeping($id, $mode = '')
 	{
 		global $conf;
 
@@ -2381,7 +2374,7 @@ class BookKeeping extends CommonObject
 			}
 
 			$bookkeeping = new BookKeeping($this->db);
-			$result = $bookkeeping->fetch($id);
+			$result = $bookkeeping->fetch($id, null, $mode);
 			if ($result <= 0) {
 				return $result;
 			}
@@ -2402,7 +2395,7 @@ class BookKeeping extends CommonObject
 			}
 
 			$bookkeeping = new BookKeeping($this->db);
-			$result = $bookkeeping->fetch($id);
+			$result = $bookkeeping->fetch($id, null, $mode);
 			if ($result <= 0) {
 				return $result;
 			}

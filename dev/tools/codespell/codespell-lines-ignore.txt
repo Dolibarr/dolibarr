@@ -326,6 +326,7 @@ $usercanread = (($user->hasRight('stock', 'mouvement', 'lire')));
 * The hook contaxt thirdpartycard has been renamed thirdpartycontact
 * The private array ->status_short, ->statuts and ->status_long are now array ->labelStatusShort and ->labelStatus everywhere.
 - New: Add proposals into referer page of thirdparty.
+AmountIn
 NEW: ModuleBuilder: Checkin comments begin and end before each actions
 for /F "tokens=2 delims=," %%i in ('tasklist /FI "IMAGENAME eq php.exe" /FO CSV /NH') do (
 foreach ($TWeek as $week_number) {

@@ -49,7 +49,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	}
 
 	/**
-	 *      Function called when a Dolibarrr business event is done.
+	 *      Function called when a Dolibarr business event is done.
 	 *      All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers
 	 *
 	 *      @param  string    $action Event action code
@@ -59,7 +59,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 *      @param  conf      $conf   Object conf
 	 *      @return int                     Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		global $mysoc;
 

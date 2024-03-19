@@ -3149,7 +3149,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$dtts = new DateTime();
 		$dtts->setTimestamp($timetouse);
 		$dtts->setTimezone($tzo);
-		$month = $dtts->format("m");
+		$month = (int) $dtts->format("m");
 		$month = sprintf("%02d", $month); // $month may be return with format '06' on some installation and '6' on other, so we force it to '06'.
 		if ($encodetooutput) {
 			$monthtext = $outputlangs->transnoentities('Month'.$month);
@@ -3306,7 +3306,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 		try {
 			$localtz = new DateTimeZone($default_timezone);
 		} catch (Exception $e) {
-			dol_syslog("Warning dol_tz_string contains an invalid value ".$_SESSION["dol_tz_string"], LOG_WARNING);
+			dol_syslog("Warning dol_tz_string contains an invalid value ".json_encode($_SESSION["dol_tz_string"] ?? null), LOG_WARNING);
 			$default_timezone = @date_default_timezone_get();
 		}
 	} elseif (strrpos($gm, "tz,") !== false) {
@@ -3946,7 +3946,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	$newphoneastart = $newphoneaend = '';
 	if (!empty($addlink)) {	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
 		if ($addlink == 'tel' || $conf->browser->layout == 'phone' || (isModEnabled('clicktodial') && getDolGlobalString('CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS'))) {	// If phone or option for, we use link of phone
-			$newphoneastart = '<a href="tel:'.$phone.'">';
+			$newphoneastart = '<a href="tel:'.urlencode($phone).'">';
 			$newphoneaend .= '</a>';
 		} elseif (isModEnabled('clicktodial') && $addlink == 'AC_TEL') {		// If click to dial, we use click to dial url
 			if (empty($user->clicktodial_loaded)) {
@@ -3962,9 +3962,9 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			$clicktodial_poste = (!empty($user->clicktodial_poste) ? urlencode($user->clicktodial_poste) : '');
 			$clicktodial_login = (!empty($user->clicktodial_login) ? urlencode($user->clicktodial_login) : '');
 			$clicktodial_password = (!empty($user->clicktodial_password) ? urlencode($user->clicktodial_password) : '');
-			// This line is for backward compatibility
+			// This line is for backward compatibility  @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 			$url = sprintf($urlmask, urlencode($phone), $clicktodial_poste, $clicktodial_login, $clicktodial_password);
-			// Thoose lines are for substitution
+			// Those lines are for substitution
 			$substitarray = array('__PHONEFROM__' => $clicktodial_poste,
 								'__PHONETO__' => urlencode($phone),
 								'__LOGIN__' => $clicktodial_login,
@@ -5442,7 +5442,7 @@ function img_mime($file, $titlealt = '', $morecss = '')
  */
 function img_search($titlealt = 'default', $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') {
 		$titlealt = $langs->trans('Search');
@@ -5465,7 +5465,7 @@ function img_search($titlealt = 'default', $other = '')
  */
 function img_searchclear($titlealt = 'default', $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') {
 		$titlealt = $langs->trans('Search');
@@ -5687,7 +5687,7 @@ function dol_print_error($db = null, $error = '', $errors = null)
  */
 function dol_print_error_email($prefixcode, $errormessage = '', $errormessages = array(), $morecss = 'error', $email = '')
 {
-	global $langs, $conf;
+	global $langs;
 
 	if (empty($email)) {
 		$email = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
@@ -5750,7 +5750,7 @@ function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $m
  */
 function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $disablesortlink = 0, $tooltip = '', $forcenowrapcolumntitle = 0)
 {
-	global $conf, $langs, $form;
+	global $langs, $form;
 	//print "$name, $file, $field, $begin, $options, $moreattrib, $sortfield, $sortorder<br>\n";
 
 	if ($moreattrib == 'class="right"') {
@@ -7079,7 +7079,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	$buyer_country_code = $thirdparty_buyer->country_code;
 	$buyer_in_cee = isInEEC($thirdparty_buyer);
 
-	dol_syslog("get_default_tva: seller use vat=".$seller_use_vat.", seller country=".$seller_country_code.", seller in cee=".$seller_in_cee.", buyer vat number=".$thirdparty_buyer->tva_intra." buyer country=".$buyer_country_code.", buyer in cee=".$buyer_in_cee.", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".(getDolGlobalString('SERVICES_ARE_ECOMMERCE_200238EC') ? $conf->global->SERVICES_ARE_ECOMMERCE_200238EC : ''));
+	dol_syslog("get_default_tva: seller use vat=".$seller_use_vat.", seller country=".$seller_country_code.", seller in cee=".((string) (int) $seller_in_cee).", buyer vat number=".$thirdparty_buyer->tva_intra." buyer country=".$buyer_country_code.", buyer in cee=".((string) (int) $buyer_in_cee).", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".(getDolGlobalString('SERVICES_ARE_ECOMMERCE_200238EC') ? $conf->global->SERVICES_ARE_ECOMMERCE_200238EC : ''));
 
 	// If services are eServices according to EU Council Directive 2002/38/EC (http://ec.europa.eu/taxation_customs/taxation/vat/traders/e-commerce/article_1610_en.htm)
 	// we use the buyer VAT.
@@ -7651,7 +7651,7 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 		$stringtoclean = '<?xml encoding="UTF-8"><html><body>'.$stringtoclean.'</body></html>';
 
 		// Warning: loadHTML does not support HTML5 on old libxml versions.
-		$dom = new DOMDocument(null, 'UTF-8');
+		$dom = new DOMDocument('', 'UTF-8');
 		$dom->loadHTML($stringtoclean, LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOXMLDECL);
 
 		if ($dom instanceof DOMDocument) {
@@ -7902,7 +7902,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 							'show-body-only' => true,
 							"indent-attributes" => false,
 							"vertical-space" => false,
-							'ident' => false,
+							//'ident' => false,			// Not always supported
 							"wrap" => 0
 							// HTML5 tags
 							//'new-blocklevel-tags' => 'article aside audio bdi canvas details dialog figcaption figure footer header hgroup main menu menuitem nav section source summary template track video',
@@ -9854,6 +9854,7 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
  * 										'2' (used for example for the compute property of extrafields)=Accept also '[]'
  * @return	mixed						Nothing or return result of eval
  * @see verifCond()
+ * @phan-suppress PhanPluginUnsafeEval
  */
 function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1')
 {
@@ -10013,6 +10014,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 			} else {
 				eval($s);
 			}
+			return '';
 		}
 	} catch (Error $e) {
 		if ($isObBufferActive) {
@@ -11766,12 +11768,14 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param string    	$label      	Label or tooltip of button if $text is provided. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
  * @param string    	$text       	Optional : short label on button. Can be escaped HTML content or full simple text.
  * @param string 		$actionType 	'default', 'danger', 'email', 'clone', 'cancel', 'delete', ...
- * @param string|array 	$url        	Url for link or array of subbutton description ('label'=>, 'url'=>, 'lang'=>, 'perm'=> )
- * 										Example when an array is used: $arrayforbutaction = array(
- *                                      10 => array('lang'=>'propal', 'enabled'=>isModEnabled("propal"), 'perm'=>$user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
- *                                      20 => array('lang'=>'orders', 'enabled'=>isModEnabled("commande"), 'perm'=>$user->hasRight('commande', 'creer'), 'label' => 'CreateOrder', 'url'=>'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
- *                                      30 => array('lang'=>'bills', 'enabled'=>isModEnabled("facture"), 'perm'=>$user->hasRight('facture', 'creer'), 'label' => 'CreateBill', 'url'=>'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
- *										);
+ *
+ * @param string|array<int,array{lang:string,enabled:bool,perm:bool,label:string,url:string}> 	$url        	Url for link or array of subbutton description
+ *
+ *                                                                                                              Example when an array is used: $arrayforbutaction = array(
+ *                                                                                                              10 => array('lang'=>'propal', 'enabled'=>isModEnabled("propal"), 'perm'=>$user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+ *                                                                                                              20 => array('lang'=>'orders', 'enabled'=>isModEnabled("order"), 'perm'=>$user->hasRight('commande', 'creer'), 'label' => 'CreateOrder', 'url'=>'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+ *                                                                                                              30 => array('lang'=>'bills', 'enabled'=>isModEnabled("invoice"), 'perm'=>$user->hasRight('facture', 'creer'), 'label' => 'CreateBill', 'url'=>'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+ *                                                                                                              );
  * @param string    	$id         	Attribute id of action button. Example 'action-delete'. This can be used for full ajax confirm if this code is reused into the ->formconfirm() method.
  * @param int|boolean	$userRight  	User action right
  * // phpcs:disable
@@ -12417,12 +12421,14 @@ function getElementProperties($elementType)
  * @param	int     	$element_id 	Element id (Use this or element_id but not both)
  * @param	string  	$element_type 	Element type ('module' or 'myobject@mymodule' or 'mymodule_myobject')
  * @param	string     	$element_ref 	Element ref (Use this or element_id but not both)
+ * @param	int			$useCache 	if you want to store object in cache or get it from cache 0 => no use cache , 1 use cache, 2 force reload  cache
+ * @param	int			$maxCacheByType number of object in cache for this element type
  * @return 	int|object 					object || 0 || <0 if error
  * @see getElementProperties()
  */
-function fetchObjectByElement($element_id, $element_type, $element_ref = '')
+function fetchObjectByElement($element_id, $element_type, $element_ref = '', $useCache = 0, $maxCacheByType = 10)
 {
-	global $db;
+	global $db, $globalCacheForGetObjectFromCache;
 
 	$ret = 0;
 
@@ -12441,11 +12447,19 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 	}
 
 	if (is_array($element_prop) && (empty($element_prop['module']) || $ismodenabled)) {
+		if ($useCache === 1
+			&& !empty($globalCacheForGetObjectFromCache[$element_type])
+			&& !empty($globalCacheForGetObjectFromCache[$element_type][$element_id])
+			&& is_object($globalCacheForGetObjectFromCache[$element_type][$element_id])
+		) {
+			return $globalCacheForGetObjectFromCache[$element_type][$element_id];
+		}
+
 		dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
 
 		if (class_exists($element_prop['classname'])) {
-			$classname = $element_prop['classname'];
-			$objecttmp = new $classname($db);
+			$className = $element_prop['classname'];
+			$objecttmp = new $className($db);
 
 			if ($element_id > 0 || !empty($element_ref)) {
 				$ret = $objecttmp->fetch($element_id, $element_ref);
@@ -12453,6 +12467,20 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 					if (empty($objecttmp->module)) {
 						$objecttmp->module = $element_prop['module'];
 					}
+
+					if ($useCache > 0) {
+						if (!isset($globalCacheForGetObjectFromCache[$element_type])) {
+							$globalCacheForGetObjectFromCache[$element_type] = [];
+						}
+
+						// Manage cache limit
+						if (! empty($globalCacheForGetObjectFromCache[$element_type]) && is_array($globalCacheForGetObjectFromCache[$element_type]) && count($globalCacheForGetObjectFromCache[$element_type]) >= $maxCacheByType) {
+							array_shift($globalCacheForGetObjectFromCache[$element_type]);
+						}
+
+						$globalCacheForGetObjectFromCache[$element_type][$element_id] = $objecttmp;
+					}
+
 					return $objecttmp;
 				}
 			} else {
@@ -13909,4 +13937,72 @@ function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto'
 	}
 
 	return '&' . http_build_query($TParam);
+}
+
+/**
+ * Displays an error page when a record is not found. It allows customization of the message,
+ * whether to include the header and footer, and if only the message should be shown without additional details.
+ * The function also supports executing additional hooks for customized handling of error pages.
+ *
+ * @param string $message Custom error message to display. If empty, a default "Record Not Found" message is shown.
+ * @param int $printheader Determines if the page header should be printed (1 = yes, 0 = no).
+ * @param int $printfooter Determines if the page footer should be printed (1 = yes, 0 = no).
+ * @param int $showonlymessage If set to 1, only the error message is displayed without any additional information or hooks.
+ * @param mixed $params Optional parameters to pass to hooks for further processing or customization.
+ * @global object $conf Dolibarr configuration object (global)
+ * @global object $db Database connection object (global)
+ * @global object $user Current user object (global)
+ * @global Translate $langs Language translation object, initialized within the function if not already.
+ * @global object $hookmanager Hook manager object, initialized within the function if not already for executing hooks.
+ * @global string $action Current action, can be modified by hooks.
+ * @global object $object Current object, can be modified by hooks.
+ * @return void This function terminates script execution after outputting the error page.
+ */
+function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
+{
+	global $conf, $db, $user, $langs, $hookmanager;
+	global $action, $object;
+
+	if (!is_object($langs)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+		$langs = new Translate('', $conf);
+		$langs->setDefaultLang();
+	}
+
+	$langs->load("errors");
+
+	if ($printheader) {
+		if (function_exists("llxHeader")) {
+			llxHeader('');
+		} elseif (function_exists("llxHeaderVierge")) {
+			llxHeaderVierge('');
+		}
+	}
+
+	print '<div class="error">';
+	if (empty($message)) {
+		print $langs->trans("ErrorRecordNotFound");
+	} else {
+		print $langs->trans($message);
+	}
+	print '</div>';
+	print '<br>';
+
+	if (empty($showonlymessage)) {
+		if (empty($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($db);
+			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+			$hookmanager->initHooks(array('main'));
+		}
+
+		$parameters = array('message' => $message, 'params' => $params);
+		$reshook = $hookmanager->executeHooks('getErrorRecordNotFound', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		print $hookmanager->resPrint;
+	}
+
+	if ($printfooter && function_exists("llxFooter")) {
+		llxFooter();
+	}
+	exit(0);
 }

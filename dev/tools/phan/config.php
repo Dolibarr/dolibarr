@@ -171,6 +171,7 @@ $VALID_MODULE_MAPPING = array(
 	'syslog' => 'Syslog',
 	'takepos' => 'TakePos',
 	'tax' => 'Tax',
+	'theme_datacolor' => 'array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int},3:array{0:int,1:int,2:int}}',
 	'ticket' => 'Ticket',
 	'user' => 'User',
 	'variants' => 'Variants',
@@ -277,7 +278,7 @@ return [
 		'objectoffield' => '\CommonObject',
 		'senderissupplier' => 'int<0,1,2>',
 		'user' => '\User',
-		'website' => '\WebSite',
+		'website' => 'string',  // See discussion https://github.com/Dolibarr/dolibarr/pull/28891#issuecomment-2002268334  // Disable because Phan infers Website type
 		'websitepage' => '\WebSitePage',
 		'websitepagefile' => 'string',
 		// 'object' => '\CommonObject',  // Deprecated, not enabled because conflicts with $object assignments
@@ -317,6 +318,7 @@ return [
 	//	to `exclude_analysis_directory_list`.
 	"exclude_analysis_directory_list" => [
 		'htdocs/includes/',
+		'htdocs/install/doctemplates/websites/',
 		'htdocs/core/class/lessc.class.php', // External library
 		PHAN_DIR . '/stubs/',
 	],
@@ -370,7 +372,7 @@ return [
 
 		'ConstantVariablePlugin', // Warns about values that are actually constant
 		//'HasPHPDocPlugin', // Requires PHPDoc
-		'InlineHTMLPlugin', // html in PHP file, or at end of file
+		// 'InlineHTMLPlugin', // html in PHP file, or at end of file
 		//'NonBoolBranchPlugin', // Requires test on bool, nont on ints
 		//'NonBoolInLogicalArithPlugin',
 		'NumericalComparisonPlugin',
@@ -408,7 +410,7 @@ return [
 	'suppress_issue_types' => [
 		// Dolibarr uses a lot of internal deprecated stuff, not reporting
 		'PhanDeprecatedProperty',
-		'PhanDeprecatedFunction',
+		// 'PhanDeprecatedFunction',
 		//'PhanCompatibleNegativeStringOffset',
 		// 'PhanPluginDuplicateExpressionAssignment',
 		// Nulls are likely mostly false positives
@@ -435,7 +437,7 @@ return [
 		// 'PhanPluginUnknownMethodReturnType',
 		'PhanPluginUnknownArrayMethodParamType',
 		'PhanPluginWhitespaceTab',   // Dolibarr uses tabs
-		'PhanPluginWhitespaceTrailing',   // Should be handled by other tools
+		// 'PhanPluginWhitespaceTrailing',
 		// 'PhanPluginCanUsePHP71Void',
 		'PhanPluginUnknownArrayMethodReturnType',
 		'PhanTypeMismatchArgumentInternal',
@@ -454,7 +456,7 @@ return [
 		// 'PhanPluginNoCommentOnProtectedProperty',
 		// 'PhanPluginDescriptionlessCommentOnPublicMethod',
 		// 'PhanPluginUnknownClosureParamType',
-		'PhanPluginUnknownClosureReturnType',
+		// 'PhanPluginUnknownClosureReturnType',
 		// 'PhanPluginNoCommentOnProtectedMethod',
 		// 'PhanTypeArraySuspicious',
 		// 'PhanTypeMismatchPropertyProbablyReal',
@@ -466,12 +468,13 @@ return [
 		'PhanPluginUnknownArrayFunctionParamType',
 		// 'PhanPluginDescriptionlessCommentOnPublicProperty',
 		// 'PhanPluginUnknownFunctionParamType',  // Finds certain errors in PHPdoc typing
-		'PhanTypeSuspiciousStringExpression',
+		// 'PhanTypeSuspiciousStringExpression',
 		// 'PhanPluginRedundantAssignment',
 
 		'PhanTypeExpectedObjectPropAccess',
 		'PhanTypeInvalidRightOperandOfNumericOp',
-		'PhanPluginInlineHTML',
+		// 'PhanPluginInlineHTML',
+		// 'PhanPluginInlineHTMLTrailing',
 		// 'PhanPluginUnknownFunctionReturnType',
 		// 'PhanPluginDescriptionlessCommentOnProtectedProperty',
 		'PhanPluginRedundantAssignmentInGlobalScope',
@@ -485,10 +488,9 @@ return [
 		// 'PhanTypeInvalidUnaryOperandIncOrDec',
 		// 'PhanPluginDescriptionlessCommentOnClass',
 		'PhanPluginEmptyStatementIf',
-		'PhanPluginInlineHTMLTrailing',
 		// 'PhanUndeclaredStaticMethod',
 		// 'PhanPluginDescriptionlessCommentOnPrivateMethod',
-		'PhanPluginPrintfIncompatibleArgumentType',
+		// 'PhanPluginPrintfIncompatibleArgumentType',
 		'PhanPossiblyNullTypeMismatchProperty',
 		'PhanRedefineClass',
 		'PhanRedefineFunction',
@@ -496,16 +498,16 @@ return [
 		// 'PhanTypeMismatchDimAssignment',
 		// 'PhanPluginDescriptionlessCommentOnProtectedMethod',
 		// 'PhanPluginPrintfIncompatibleArgumentTypeWeak',
-		'PhanUndeclaredVariableAssignOp',
-		'PhanTypeExpectedObjectOrClassName',
+		// 'PhanUndeclaredVariableAssignOp',
+		// 'PhanTypeExpectedObjectOrClassName',
 		'PhanEmptyFQSENInClasslike',
-		'PhanTypeMismatchArgumentInternalReal',
+		// 'PhanTypeMismatchArgumentInternalReal',
 		// 'PhanUnextractableAnnotationElementName',
 		// 'PhanCommentParamWithoutRealParam',
 		// 'PhanRedefinedExtendedClass',
 		'PhanTypeComparisonFromArray',
 		'PhanPluginConstantVariableBool',
-		'PhanPluginPrintfVariableFormatString',
+		// 'PhanPluginPrintfVariableFormatString',
 		'PhanTypeMismatchDimFetch',
 		'PhanTypeMismatchDimFetchNullable',
 		'PhanTypeSuspiciousNonTraversableForeach',
@@ -517,14 +519,14 @@ return [
 		// 'PhanTypeMismatchDeclaredParam',
 		// 'PhanCommentDuplicateMagicMethod',
 		// 'PhanParamSpecial1',
-		'PhanPluginInlineHTMLLeading',
-		'PhanPluginUseReturnValueInternalKnown',
+		// 'PhanPluginInlineHTMLLeading',
+		// 'PhanPluginUseReturnValueInternalKnown',
 		// 'PhanRedefinedInheritedInterface',
 		// 'PhanTypeComparisonToArray',
 		'PhanTypeConversionFromArray',
 		// 'PhanTypeInvalidLeftOperandOfIntegerOp',
 		// 'PhanTypeMismatchArgumentInternalProbablyReal',
-		'PhanTypeMismatchBitwiseBinaryOperands',
+		// 'PhanTypeMismatchBitwiseBinaryOperands',
 		'PhanTypeMismatchDimEmpty',
 		// 'PhanTypeSuspiciousEcho',
 		// 'PhanNoopBinaryOperator',
@@ -550,14 +552,14 @@ return [
 		// 'PhanTypeInstantiateTraitStaticOrSelf',
 		// 'PhanUndeclaredInvokeInCallable',
 		// 'PhanNoopProperty',
-		'PhanNoopVariable',
+		// 'PhanNoopVariable',
 		// 'PhanPluginPrintfUnusedArgument',
 		// 'PhanSyntaxReturnExpectedValue',
 		// 'PhanAccessClassInternal',
 		// 'PhanCompatibleAccessMethodOnTraitDefinition',
 		// 'PhanNoopSwitchCases',
 		// 'PhanNoopTernary',
-		'PhanNoopUnaryOperator',
+		// 'PhanNoopUnaryOperator',
 		// 'PhanParamNameIndicatingUnusedInClosure',
 		// 'PhanParamSignatureRealMismatchTooFewParametersInternal',
 		// 'PhanPluginEmptyStatementSwitch',
@@ -589,7 +591,7 @@ return [
 		// 'PhanPluginPrintfNotPercent',  // Detects fishy stuff with '%' format and suggests %%
 		'PhanPossiblyUndeclaredGlobalVariable',
 		// 'PhanPluginPossiblyStaticProtectedMethod',
-		'PhanTypeMismatchReturn',
+		// 'PhanTypeMismatchReturn',
 		// 'PhanPluginMoreSpecificActualReturnType',
 		// 'PhanTypeMismatchReturnProbablyReal',
 		'PhanPossiblyUndeclaredVariable',

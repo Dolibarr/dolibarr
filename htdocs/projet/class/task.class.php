@@ -1060,11 +1060,13 @@ class Task extends CommonObjectLine
 		if ($morewherefilter) {
 			$sql .= $morewherefilter;
 		}
+
 		// Add where from extra fields
 		$extrafieldsobjectkey = 'projet_task';
 		$extrafieldsobjectprefix = 'efpt.';
-		global $db; // needed for extrafields_list_search_sql.tpl
+		global $db, $conf; // needed for extrafields_list_search_sql.tpl
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+
 		// Add where from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
@@ -1205,7 +1207,7 @@ class Task extends CommonObjectLine
 	{
 		$arrayroles = array();
 
-		dol_syslog(get_class($this)."::getUserRolesForProjectsOrTasks userp=".is_object($userp)." usert=".is_object($usert)." projectid=".$projectid." taskid=".$taskid);
+		dol_syslog(get_class($this)."::getUserRolesForProjectsOrTasks userp=".json_encode(is_object($userp))." usert=".json_encode(is_object($usert))." projectid=".$projectid." taskid=".$taskid);
 
 		// We want role of user for a projet or role of user for a task. Both are not possible.
 		if (empty($userp) && empty($usert)) {

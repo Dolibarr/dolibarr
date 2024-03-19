@@ -9,27 +9,25 @@
  */
 return [
     // # Issue statistics:
-    // PhanPluginDuplicateIfStatements : 30+ occurrences
     // PhanParamSignatureMismatch : 25+ occurrences
+    // PhanTypeMismatchReturnNullable : 20+ occurrences
     // PhanPluginSuspiciousParamPosition : 15+ occurrences
     // PhanUndeclaredConstant : 15+ occurrences
     // PhanPluginDuplicateExpressionBinaryOp : 10+ occurrences
     // PhanTypeArraySuspiciousNull : 10+ occurrences
+    // PhanTypeMismatchReturn : 10+ occurrences
     // PhanRedefineFunctionInternal : 6 occurrences
-    // PhanPluginUnsafeEval : 5 occurrences
-    // PhanParamSuspiciousOrder : 4 occurrences
     // PhanParamTooMany : 4 occurrences
-    // PhanPluginSuspiciousParamOrder : 4 occurrences
-    // PhanUndeclaredFunctionInCallable : 4 occurrences
+    // PhanTypeMismatchPropertyProbablyReal : 2 occurrences
     // PhanAccessMethodProtected : 1 occurrence
     // PhanAccessPropertyStaticAsNonStatic : 1 occurrence
-    // PhanNoopArray : 1 occurrence
-    // PhanNoopArrayAccess : 1 occurrence
     // PhanNoopStringLiteral : 1 occurrence
     // PhanPluginAlwaysReturnFunction : 1 occurrence
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
+        'htdocs/adherents/class/adherent.class.php' => ['PhanTypeMismatchReturnNullable'],
+        'htdocs/adherents/class/adherentstats.class.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/adherents/stats/geo.php' => ['PhanTypeArraySuspiciousNull'],
         'htdocs/adherents/type.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/admin/receiptprinter.php' => ['PhanRedefineFunctionInternal'],
@@ -38,54 +36,57 @@ return [
         'htdocs/categories/class/api_categories.class.php' => ['PhanAccessMethodProtected'],
         'htdocs/categories/viewcat.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/collab/index.php' => ['PhanParamTooMany'],
+        'htdocs/comm/action/class/actioncomm.class.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/comm/action/index.php' => ['PhanTypeArraySuspiciousNull'],
         'htdocs/comm/mailing/card.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/compta/accounting-files.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
+        'htdocs/comm/propal/class/api_proposals.class.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/compta/cashcontrol/cashcontrol_card.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/compta/prelevement/class/bonprelevement.class.php' => ['PhanParamTooMany'],
         'htdocs/compta/prelevement/create.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/compta/sociales/class/paymentsocialcontribution.class.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
-        'htdocs/compta/tva/class/paymentvat.class.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
-        'htdocs/core/actions_massactions.inc.php' => ['PhanPluginSuspiciousParamOrder'],
         'htdocs/core/class/commondocgenerator.class.php' => ['PhanTypeArraySuspiciousNull'],
-        'htdocs/core/class/evalmath.class.php' => ['PhanPluginUnsafeEval'],
+        'htdocs/core/class/commonobject.class.php' => ['PhanTypeMismatchReturnNullable'],
+        'htdocs/core/class/extrafields.class.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/core/class/html.form.class.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/core/class/html.formmail.class.php' => ['PhanNoopArray'],
-        'htdocs/core/class/rssparser.class.php' => ['PhanUndeclaredFunctionInCallable'],
+        'htdocs/core/class/html.formprojet.class.php' => ['PhanTypeMismatchReturnNullable'],
+        'htdocs/core/class/smtps.class.php' => ['PhanTypeMismatchReturnNullable'],
+        'htdocs/core/class/stats.class.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/core/db/mysqli.class.php' => ['PhanParamSignatureMismatch'],
         'htdocs/core/db/pgsql.class.php' => ['PhanParamSignatureMismatch'],
-        'htdocs/core/db/sqlite3.class.php' => ['PhanParamSignatureMismatch'],
+        'htdocs/core/db/sqlite3.class.php' => ['PhanParamSignatureMismatch', 'PhanTypeMismatchReturnNullable'],
         'htdocs/core/get_info.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/core/lib/date.lib.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/core/lib/files.lib.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
-        'htdocs/core/lib/functions.lib.php' => ['PhanParamTooMany', 'PhanPluginAlwaysReturnFunction', 'PhanPluginUnsafeEval', 'PhanRedefineFunctionInternal'],
+        'htdocs/core/lib/functions.lib.php' => ['PhanParamTooMany', 'PhanPluginAlwaysReturnFunction', 'PhanRedefineFunctionInternal'],
+        'htdocs/core/lib/functions2.lib.php' => ['PhanTypeMismatchReturnNullable'],
+        'htdocs/core/lib/pdf.lib.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/core/lib/price.lib.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/core/lib/usergroups.lib.php' => ['PhanNoopArrayAccess'],
-        'htdocs/core/menus/standard/auguria_menu.php' => ['PhanParamSuspiciousOrder'],
-        'htdocs/core/menus/standard/eldy_menu.php' => ['PhanParamSuspiciousOrder'],
-        'htdocs/core/menus/standard/empty.php' => ['PhanParamSuspiciousOrder'],
-        'htdocs/core/modules/barcode/mod_barcode_thirdparty_standard.php' => ['PhanParamSignatureMismatch'],
-        'htdocs/core/modules/member/doc/pdf_standard.class.php' => ['PhanParamSignatureMismatch'],
+        'htdocs/core/lib/website.lib.php' => ['PhanTypeMismatchReturnNullable'],
+        'htdocs/core/modules/DolibarrModules.class.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/core/modules/movement/doc/pdf_standard.modules.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/core/modules/mrp/doc/pdf_vinci.modules.php' => ['PhanTypeArraySuspiciousNull'],
-        'htdocs/core/modules/syslog/mod_syslog_file.php' => ['PhanParamSignatureMismatch', 'PhanParamSuspiciousOrder'],
+        'htdocs/core/modules/societe/modules_societe.class.php' => ['PhanTypeMismatchReturn'],
+        'htdocs/core/modules/syslog/mod_syslog_file.php' => ['PhanParamSignatureMismatch'],
         'htdocs/core/modules/syslog/mod_syslog_syslog.php' => ['PhanParamSignatureMismatch'],
-        'htdocs/core/triggers/interface_80_modStripe_Stripe.class.php' => ['PhanTypeMismatchPropertyProbablyReal'],
         'htdocs/don/class/don.class.php' => ['PhanParamTooMany'],
-        'htdocs/fourn/class/api_supplier_invoices.class.php' => ['PhanPluginSuspiciousParamOrder'],
+        'htdocs/expedition/class/api_shipments.class.php' => ['PhanTypeMismatchReturn'],
+        'htdocs/expensereport/class/api_expensereports.class.php' => ['PhanTypeMismatchReturn'],
+        'htdocs/fourn/class/fournisseur.commande.class.php' => ['PhanTypeMismatchReturn'],
+        'htdocs/fourn/class/fournisseur.facture.class.php' => ['PhanTypeMismatchReturn'],
         'htdocs/intracommreport/list.php' => ['PhanAccessPropertyStaticAsNonStatic'],
-        'htdocs/loan/class/paymentloan.class.php' => ['PhanTypeInvalidUnaryOperandNumeric'],
         'htdocs/mrp/class/mo.class.php' => ['PhanParamSignatureMismatch'],
         'htdocs/product/admin/product_tools.php' => ['PhanNoopStringLiteral'],
+        'htdocs/product/class/product.class.php' => ['PhanTypeMismatchReturn'],
+        'htdocs/projet/class/project.class.php' => ['PhanTypeMismatchReturnNullable'],
+        'htdocs/projet/class/projectstats.class.php' => ['PhanTypeMismatchReturnNullable'],
+        'htdocs/projet/class/task.class.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/projet/tasks/list.php' => ['PhanTypeArraySuspiciousNull'],
-        'htdocs/public/opensurvey/index.php' => ['PhanPluginSuspiciousParamOrder'],
         'htdocs/public/payment/paymentok.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/public/recruitment/index.php' => ['PhanPluginSuspiciousParamOrder'],
-        'htdocs/societe/paymentmodes.php' => ['PhanTypeMismatchPropertyProbablyReal'],
         'htdocs/societe/class/companybankaccount.class.php' => ['PhanParamSignatureMismatch'],
+        'htdocs/stripe/admin/stripe.php' => ['PhanDeprecatedFunction'],
         'htdocs/stripe/class/actions_stripe.class.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/takepos/invoice.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/user/class/user.class.php' => ['PhanParamSignatureMismatch'],
         'htdocs/variants/class/ProductCombination.class.php' => ['PhanPluginSuspiciousParamPosition'],
+        'htdocs/website/class/website.class.php' => ['PhanTypeMismatchReturnNullable'],
         'internal' => ['PhanUndeclaredConstant'],
     ],
     // 'directory_suppressions' => ['src/directory_name' => ['PhanIssueName1', 'PhanIssueName2']] can be manually added if needed.
