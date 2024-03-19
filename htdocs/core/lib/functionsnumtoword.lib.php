@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Víctor Ortiz Pérez   <victor@accett.com.mx>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +57,7 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 		$concatWords = $langs->getLabelFromNumber($num, $type);
 		return $concatWords;
 	} else {
-		$TNum = explode('.', $num);
+		$TNum = explode('.', (string) $num);
 
 		$num = (int) $TNum[0];
 		$words = array();

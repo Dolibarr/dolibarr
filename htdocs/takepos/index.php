@@ -66,7 +66,7 @@ if (empty($_SESSION["takeposterminal"])) {
 
 if ($setterminal > 0) {
 	$_SESSION["takeposterminal"] = $setterminal;
-	setcookie("takeposterminal", $setterminal, (time() + (86400 * 354)), '/', '', (empty($dolibarr_main_force_https) ? false : true), true); // Permanent takeposterminal var in a cookie
+	setcookie("takeposterminal", (string) $setterminal, (time() + (86400 * 354)), '/', '', (empty($dolibarr_main_force_https) ? false : true), true); // Permanent takeposterminal var in a cookie
 }
 
 if ($setcurrency != "") {
@@ -1547,21 +1547,21 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 	$count = 0;
 	while ($count < $MAXPRODUCT) {
 		print '<div class="wrapper2 arrow" id="prodiv'.$count.'"  '; ?>
-						<?php if ($count == ($MAXPRODUCT - 2)) {
-							?> onclick="MoreProducts('less')" <?php
-						}
-						if ($count == ($MAXPRODUCT - 1)) {
-							?> onclick="MoreProducts('more')" <?php
-						} else {
-							echo 'onclick="ClickProduct('.$count.')"';
-						} ?>>
+								<?php if ($count == ($MAXPRODUCT - 2)) {
+									?> onclick="MoreProducts('less')" <?php
+								}
+								if ($count == ($MAXPRODUCT - 1)) {
+									?> onclick="MoreProducts('more')" <?php
+								} else {
+									echo 'onclick="ClickProduct('.$count.')"';
+								} ?>>
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {
-								//echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';
-								print '<span class="fa fa-chevron-left centerinmiddle" style="font-size: 5em; cursor: pointer;"></span>';
+						//echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';
+						print '<span class="fa fa-chevron-left centerinmiddle" style="font-size: 5em; cursor: pointer;"></span>';
 					} elseif ($count == ($MAXPRODUCT - 1)) {
-							//echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="proimg'.$count.'" />';
-							print '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em; cursor: pointer;"></span>';
+						//echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="proimg'.$count.'" />';
+						print '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em; cursor: pointer;"></span>';
 					} else {
 						if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_PRICES')) {
 							print '<div class="" id="proprice'.$count.'"></div>';
@@ -1572,15 +1572,15 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 							print '<img class="imgwrapper" title="" id="proimg'.$count.'">';
 						}
 					} ?>
-					<?php if ($count != $MAXPRODUCT - 2 && $count != $MAXPRODUCT - 1 && !getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) { ?>
+						<?php if ($count != $MAXPRODUCT - 2 && $count != $MAXPRODUCT - 1 && !getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) { ?>
 					<div class="description" id="prodivdesc<?php echo $count; ?>">
 						<div class="description_content" id="prodesc<?php echo $count; ?>"></div>
 					</div>
-					<?php } ?>
+						<?php } ?>
 					<div class="catwatermark" id='prowatermark<?php echo $count; ?>'>...</div>
 				</div>
-			<?php
-			$count++;
+					<?php
+					$count++;
 	}
 	?>
 				<input type="hidden" id="search_start_less" value="0">

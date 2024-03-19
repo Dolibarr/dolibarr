@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005	   Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015	   Francis Appels		<francis.appels@yahoo.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,7 +191,7 @@ class modTcpdfbarcode extends ModeleBarCode
 			}
 
 			dol_syslog("writeBarCode::TCPDF.getBarcodePngData");
-			if ($imageData = $barcodeobj->getBarcodePngData($width, $height, $color)) {
+			if ($imageData = (string) $barcodeobj->getBarcodePngData($width, $height, $color)) {
 				if (function_exists('imagecreate')) {
 					$imageData = imagecreatefromstring($imageData);
 				}

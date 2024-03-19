@@ -400,7 +400,7 @@ if (empty($reshook)) {
 						$action = '';
 					} else {
 						$tmpvatratetoshow = explode('_', $vatrate);
-						$tmpvatratetoshow[0] = round($tmpvatratetoshow[0], 2);
+						$tmpvatratetoshow[0] = round((float) $tmpvatratetoshow[0], 2);
 
 						if ($tmpvatratetoshow[0] != 0) {
 							$langs->load("errors");

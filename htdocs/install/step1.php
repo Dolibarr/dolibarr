@@ -264,8 +264,7 @@ if (!$error) {
 
 			$db = getDoliDBInstance($db_type, $db_host, $userroot, $passroot, $databasefortest, (int) $db_port);
 
-			dol_syslog("databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected, LOG_DEBUG);
-			//print "databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected;
+			dol_syslog("databasefortest=".$databasefortest." connected=".json_encode($db->connected)." database_selected=".json_encode($db->database_selected), LOG_DEBUG);
 
 			if (empty($db_create_database) && $db->connected && !$db->database_selected) {
 				print '<div class="error">'.$langs->trans("ErrorConnectedButDatabaseNotFound", $db_name).'</div>';
@@ -860,7 +859,7 @@ function write_conf_file($conffile)
 
 	$error = 0;
 
-	$key = md5(uniqid(mt_rand(), true)); // Generate random hash
+	$key = md5(uniqid((string) mt_rand(), true)); // Generate random hash
 
 	$fp = fopen("$conffile", "w");
 	if ($fp) {

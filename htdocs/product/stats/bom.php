@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020 Floiran Henry <florian.henry@scopen.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -265,10 +266,10 @@ if ($id > 0 || !empty($ref)) {
 			$option .= '&limit='.((int) $limit);
 		}
 		if (!empty($search_month)) {
-			$option .= '&search_month='.urlencode($search_month);
+			$option .= '&search_month='.urlencode((string) $search_month);
 		}
 		if (!empty($search_year)) {
-			$option .= '&search_year='.urlencode($search_year);
+			$option .= '&search_year='.urlencode((string) $search_year);
 		}
 
 		print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";

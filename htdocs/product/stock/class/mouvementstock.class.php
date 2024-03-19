@@ -194,7 +194,7 @@ class MouvementStock extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 		$error = 0;
-		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse_id=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode, datem=".$datem.", eatby=".$eatby.", sellby=".$sellby.", batch=".$batch.", skip_batch=".$skip_batch);
+		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse_id=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode, datem=".$datem.", eatby=".$eatby.", sellby=".$sellby.", batch=".$batch.", skip_batch=".json_encode($skip_batch));
 
 		// Call hook at beginning
 		global $action, $hookmanager;
@@ -962,8 +962,8 @@ class MouvementStock extends CommonObject
 	/**
 	 * Return Url link of origin object
 	 *
-	 * @param  int     $origin_id      Id origin
-	 * @param  int     $origin_type     Type origin
+	 * @param  int		$origin_id		Id origin
+	 * @param  string	$origin_type	Type origin ('project', 'xxx@MODULENAME', etc)
 	 * @return string
 	 */
 	public function get_origin($origin_id, $origin_type)
@@ -1014,7 +1014,7 @@ class MouvementStock extends CommonObject
 				break;
 			default:
 				if ($origin_type) {
-					// Separate originetype with "@" : left part is class name, right part is module name
+					// Separate origin_type with "@" : left part is class name, right part is module name
 					$origin_type_array = explode('@', $origin_type);
 					$classname = $origin_type_array[0];
 					$modulename = empty($origin_type_array[1]) ? strtolower($classname) : $origin_type_array[1];

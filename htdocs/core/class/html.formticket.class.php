@@ -135,7 +135,7 @@ class FormTicket
 
 		$this->action = 'add';
 
-		$this->withcompany = isModEnabled("societe");
+		$this->withcompany = !getDolGlobalInt("TICKETS_NO_COMPANY_ON_FORM") && isModEnabled("societe");
 		$this->withfromsocid = 0;
 		$this->withfromcontactid = 0;
 		$this->withreadid=0;
@@ -546,7 +546,7 @@ class FormTicket
 
 		// Customer or supplier
 		if ($this->withcompany) {
-			// altairis: force company and contact id for external user
+			// force company and contact id for external user
 			if (empty($user->socid)) {
 				// Company
 				print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';

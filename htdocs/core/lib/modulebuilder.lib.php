@@ -547,12 +547,12 @@ function compareFirstValue($a, $b)
 /**
  * Rewriting all permissions after any actions
  * @param string      $file            filename or path
- * @param array       $permissions     permissions existing in file
+ * @param array<int,string[]> $permissions permissions existing in file
  * @param int|null    $key             key for permission needed
  * @param array|null  $right           $right to update or add
  * @param string|null $objectname      name of object
  * @param string|null $module          name of module
- * @param int         $action          0 for delete, 1 for add, 2 for update, -1 when delete object completely, -2 for generate rights after add
+ * @param int<-2,2>   $action          0 for delete, 1 for add, 2 for update, -1 when delete object completely, -2 for generate rights after add
  * @return int                         1 if OK,-1 if KO
  */
 function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $module, $action)
@@ -606,10 +606,11 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 	} else {
 		$error++;
 	}
+	'@phan-var-force array<int,string[]> $permissions';
 	if (!$error) {
 		// prepare permissions array
 		$count_perms = count($permissions);
-		for ($i = 0;$i < $count_perms;$i++) {
+		foreach (array_keys($permissions) as $i) {
 			$permissions[$i][0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1)";
 			$permissions[$i][1] = "\$this->rights[\$r][1] = '".$permissions[$i][1]."'";
 			$permissions[$i][4] = "\$this->rights[\$r][4] = '".$permissions[$i][4]."'";
