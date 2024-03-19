@@ -1338,15 +1338,15 @@ $( document ).ready(function() {
 		$s = $soc->name;
 	} elseif (getDolGlobalInt("TAKEPOS_NO_GENERIC_THIRDPARTY")) {
 		print '$("#idcustomer").val("");';
+	}
 
-		if (getDolGlobalInt('TAKEPOS_CHOOSE_CONTACT')) {
-			$contactids = $invoice->getIdContact('external', 'BILLING');
-			$contactid = $contactids[0];
-			if ($contactid > 0) {
-				$contact = new Contact($db);
-				$contact->fetch($contactid);
-				$s .= " - " . $contact->getFullName($langs);
-			}
+	if (getDolGlobalInt('TAKEPOS_CHOOSE_CONTACT')) {
+		$contactids = $invoice->getIdContact('external', 'BILLING');
+		$contactid = $contactids[0];
+		if ($contactid > 0) {
+			$contact = new Contact($db);
+			$contact->fetch($contactid);
+			$s .= " - " . $contact->getFullName($langs);
 		}
 	}
 	?>
