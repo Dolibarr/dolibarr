@@ -10135,7 +10135,7 @@ abstract class CommonObject
 							}
 						} else {
 							$error++;
-							$this->errors[] = "You defined a cascade delete on an object $childObject but there is no method deleteByParentField for it";
+							$this->errors[] = "You defined a cascade delete on an object $className/$this->id but there is no method deleteByParentField for it";
 							break;
 						}
 					} else {
