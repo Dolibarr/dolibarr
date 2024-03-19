@@ -73,7 +73,8 @@ if ($setcurrency != "") {
 	// We will recalculate amount for foreign currency at next call of invoice.php when $_SESSION["takeposcustomercurrency"] differs from invoice->multicurrency_code.
 }
 
-$_SESSION["urlfrom"] = '/takepos/index.php';
+// TODO it creates side effects
+//$_SESSION["urlfrom"] = '/takepos/index.php';
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter", "banks"));
 
