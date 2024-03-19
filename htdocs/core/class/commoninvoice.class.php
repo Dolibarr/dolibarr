@@ -1909,7 +1909,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 
 	/**
 	 * VAT %  Vat rate can be like "21.30 (CODE)"
-	 * @var string
+	 * @var string|float
 	 */
 	public $tva_tx;
 
