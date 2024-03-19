@@ -1286,9 +1286,10 @@ if ($ispaymentok) {
 						}
 					}
 
+					$attendeetovalidate = new ConferenceOrBoothAttendee($db);
+
 					if (!$error) {
 						// Validating the attendee
-						$attendeetovalidate = new ConferenceOrBoothAttendee($db);
 						$resultattendee = $attendeetovalidate->fetch((int) $tmptag['ATT']);
 						if ($resultattendee < 0) {
 							$error++;
