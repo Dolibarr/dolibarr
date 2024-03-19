@@ -616,7 +616,7 @@ return [
 		'PhanNonClassMethodCall',
 		// 'PhanPluginNoAssert',
 		// 'PhanTypeMismatchReturnSuperType',
-		'PhanTypeMismatchArgumentSuperType',
+		// 'PhanTypeMismatchArgumentSuperType',
 		'PhanPluginDuplicateConditionalTernaryDuplication',
 	],
 	// You can put relative paths to internal stubs in this config option.
