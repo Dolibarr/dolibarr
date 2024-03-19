@@ -84,14 +84,14 @@ if (isModEnabled('paypal')) {
 	if (getDolGlobalString('PAYPAL_API_SANDBOX')) {
 		$PAYPAL_API_SANDBOX = $conf->global->PAYPAL_API_SANDBOX;
 	}
-	$PAYPAL_API_OK = "";
+	/*$PAYPAL_API_OK = "";
 	if ($urlok) {
 		$PAYPAL_API_OK = $urlok;
 	}
 	$PAYPAL_API_KO = "";
 	if ($urlko) {
 		$PAYPAL_API_KO = $urlko;
-	}
+	}*/
 
 	$PAYPALTOKEN = GETPOST('TOKEN');
 	if (empty($PAYPALTOKEN)) {
