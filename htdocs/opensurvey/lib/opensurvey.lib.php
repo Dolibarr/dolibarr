@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014 Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -217,7 +218,7 @@ function dol_survey_random($car)
 {
 	$string = "";
 	$chaine = "abcdefghijklmnopqrstuvwxyz123456789";
-	mt_srand((float) microtime() * 1000000);
+	mt_srand((int) ((float) microtime() * 1000000));
 	for ($i = 0; $i < $car; $i++) {
 		$string .= $chaine[mt_rand() % strlen($chaine)];
 	}

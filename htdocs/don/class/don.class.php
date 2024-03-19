@@ -336,9 +336,9 @@ class Don extends CommonObject
 		$this->amount = (float) $this->amount;
 
 		$map = range(0, 9);
-		$len = dol_strlen($this->amount);
+		$len = dol_strlen((string) $this->amount);
 		for ($i = 0; $i < $len; $i++) {
-			if (!isset($map[substr($this->amount, $i, 1)])) {
+			if (!isset($map[substr((string) $this->amount, $i, 1)])) {
 				$error_string[] = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Amount'));
 				$err++;
 				$amount_invalid = 1;
