@@ -33,6 +33,7 @@
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 
+
 /**
  *	Class to send emails (with attachments or not)
  *  Usage: $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to,$css,$trackid,$moreinheader,$sendcontext,$replyto);
@@ -1902,6 +1903,8 @@ class CMailFile
 	private function findHtmlImagesIsSrcData($images_dir)
 	{
 		global $conf;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		// Build the array of image extensions
 		$extensions = array_keys($this->image_types);
