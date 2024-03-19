@@ -546,7 +546,7 @@ if (empty($reshook)) {
 				}
 
 				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
-				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', (string) $prod->tva_tx));
 
 				// Set unit price to use
 				if (!empty($price_ht) || $price_ht === '0') {
