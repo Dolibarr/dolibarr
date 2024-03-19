@@ -3445,7 +3445,7 @@ class EmailCollector extends CommonObject
 		//$h = imap_header($mbox,$mid);
 		// add code here to get date, from, to, cc, subject...
 
-		// BODY
+		// BODY @phan-suppress-next-line PhanTypeMismatchArgumentInternal
 		$s = imap_fetchstructure($mbox, $mid, FT_UID);
 
 
@@ -3493,8 +3493,8 @@ class EmailCollector extends CommonObject
 
 		// DECODE DATA
 		$data = ($partno) ?
-		imap_fetchbody($mbox, $mid, $partno, FT_UID) : // multipart
-		imap_body($mbox, $mid, FT_UID); // simple
+		imap_fetchbody($mbox, $mid, $partno, FT_UID) : // multipart @phan-suppress-current-line PhanTypeMismatchArgumentInternal
+		imap_body($mbox, $mid, FT_UID); // simple @phan-suppress-current-line PhanTypeMismatchArgumentInternal
 		// Any part may be encoded, even plain text messages, so check everything.
 		if ($p->encoding == 4) {
 			$data = quoted_printable_decode($data);
