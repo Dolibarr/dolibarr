@@ -37,7 +37,7 @@ $langs->loadLangs(array('commande', 'propal', 'bills', 'other', 'products'));
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-$type = GETPOSTINT("type");
+$type = GETPOST('type', 'intcomma');
 $mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : '';
 
 // Security check

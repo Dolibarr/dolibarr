@@ -6,6 +6,7 @@
  * Copyright (C) 2021 	   Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
  * Copyright (C) 2023      William Mead         <william.mead@manchenumerique.fr>
+ * Copyright (C) 2024      Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,62 @@ class Notify
 	 * @var DoliDB Database handler.
 	 */
 	public $db;
+
+	/**
+	 * @var string type
+	 */
+	public $type;
+
+	/**
+	 * @var string threshold
+	 */
+	public $threshold;
+
+	/**
+	 * @var string context
+	 */
+	public $context;
+
+
+	/**
+	 * @var int		ID of event action that trigger the notification
+	 */
+	public $event;
+
+	/**
+	 * @var int		Third-party ID
+	 */
+	public $socid;
+
+	/**
+	 * @var int		(Third-party) Contact ID
+	 */
+	public $contact_id;
+
+	/**
+	 * @var string fk_user
+	 */
+	public $fk_user;
+
+	/**
+	 * @var string email
+	 */
+	public $email;
+
+
+	/**
+	 * Date creation record (datec)
+	 *
+	 * @var integer
+	 */
+	public $datec;
+
+	/**
+	 * Date modified record (datem)
+	 *
+	 * @var integer
+	 */
+	public $datem;
 
 	/**
 	 * @var string Error code (or message)
@@ -181,6 +238,191 @@ class Notify
 		}
 
 		return $texte;
+	}
+
+	/**
+	 *  Delete a notification from database
+	 *
+	 *	@param		User|null	$user		User deleting
+	 *  @return		int		    	        Return integer <0 if KO, >0 if OK
+	 */
+	public function delete(User $user = null)
+	{
+		$error = 0;
+
+		dol_syslog(get_class($this)."::delete ".$this->id, LOG_DEBUG);
+
+		$this->db->begin();
+
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
+			$sql .= " WHERE rowid = ".((int) $this->id);
+
+			if (!$this->db->query($sql)) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			return -1 * $error;
+		}
+	}
+
+	/**
+	 * Create notification information record.
+	 *
+	 * @param   User|null   $user		User
+	 * @param   int    		$notrigger  1=Disable triggers
+	 * @return	int						Return integer <0 if KO, > 0 if OK (ID of newly created company notification information)
+	 */
+	public function create(User $user = null, $notrigger = 0)
+	{
+		$now = dol_now();
+
+		$error = 0;
+
+		// Check parameters
+		if (empty($this->socid)) {
+			$this->error = 'BadValueForParameter';
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
+		if (empty($this->datec)) {
+			$this->datec = $now;
+		}
+
+		$this->db->begin();
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (fk_soc, fk_action, fk_contact, type, datec)";
+		$sql .= " VALUES (".((int) $this->socid).", ".((int) $this->event).", ".((int) $this->contact_id).",";
+		$sql .= "'".$this->db->escape($this->type)."', '".$this->db->idate($this->datec)."')";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->affected_rows($resql)) {
+				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."notify_def");
+			}
+		} else {
+			$error++;
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return $this->id;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 * 	Load record from database
+	 *
+	 *	@param	int		$id			Id of record
+	 * 	@param	int		$socid		Id of company. If this is filled, function will return only records belonging to this thirdparty
+	 *  @param	string	$type		If id of company filled, we say if we want record of this type only
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
+	 */
+	public function fetch($id, $socid = 0, $type = 'email')
+	{
+		if (empty($id) && empty($socid)) {
+			return -1;
+		}
+
+		$sql = "SELECT rowid, fk_action as event, fk_soc as socid, fk_contact as contact_id, type, datec, tms as datem";
+		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
+
+		if ($id) {
+			$sql .= " WHERE rowid = ".((int) $id);
+		} elseif ($socid > 0) {
+			$sql .= " WHERE fk_soc  = ".((int) $socid);
+			if ($type) {
+				$sql .= " AND type = '".$this->db->escape($type)."'";
+			}
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);
+
+				$this->id = $obj->rowid;
+				$this->type = $obj->type;
+				$this->event = $obj->event;
+				$this->socid = $obj->socid;
+				$this->contact_id = $obj->contact_id;
+				$this->fk_user = $obj->fk_user;
+				$this->email = $obj->email;
+				$this->threshold = $obj->threshold;
+				$this->context  = $obj->context;
+				$this->datec = $this->db->jdate($obj->datec);
+				$this->datem = $this->db->jdate($obj->datem);
+			}
+			$this->db->free($resql);
+
+			return 1;
+		} else {
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+	/**
+	 *	Update record in database
+	 *
+	 *	@param	User|null	$user	     Object user
+	 *  @param  int     	$notrigger   1=Disable triggers
+	 *	@return	int					     Return integer <=0 if KO, >0 if OK
+	 */
+	public function update(User $user = null, $notrigger = -1)
+	{
+		global $langs;
+
+		$error = 0;
+
+		if (!$this->id) {
+			return -1;
+		}
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."notify_def SET";
+		$sql .= " type = '".$this->db->escape($this->type)."'";
+		// $sql .= ",fk_user = ".((int) $this->fk_user);
+		// $sql .= ",email = '".$this->db->escape($this->email)."'";
+		// $sql .= ",threshold = '".$this->db->escape($this->threshold)."'";
+		// $sql .= ",context = '".$this->db->escape($this->context)."'";
+		$sql .= ",fk_soc = ".((int) $this->socid);
+		$sql .= ",fk_action = ".((int) $this->event);
+		$sql .= ",fk_contact = ".((int) $this->contact_id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		$result = $this->db->query($sql);
+		if (!$result) {
+			$error++;
+			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$this->error = $langs->trans('ErrorDuplicateField');
+			} else {
+				$this->error = $this->db->lasterror();
+			}
+			$this->errors[] = $this->error;
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 	/**

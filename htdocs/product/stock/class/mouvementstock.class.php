@@ -962,8 +962,8 @@ class MouvementStock extends CommonObject
 	/**
 	 * Return Url link of origin object
 	 *
-	 * @param  int     $origin_id      Id origin
-	 * @param  int     $origin_type     Type origin
+	 * @param  int		$origin_id		Id origin
+	 * @param  string	$origin_type	Type origin ('project', 'xxx@MODULENAME', etc)
 	 * @return string
 	 */
 	public function get_origin($origin_id, $origin_type)
@@ -1014,7 +1014,7 @@ class MouvementStock extends CommonObject
 				break;
 			default:
 				if ($origin_type) {
-					// Separate originetype with "@" : left part is class name, right part is module name
+					// Separate origin_type with "@" : left part is class name, right part is module name
 					$origin_type_array = explode('@', $origin_type);
 					$classname = $origin_type_array[0];
 					$modulename = empty($origin_type_array[1]) ? strtolower($classname) : $origin_type_array[1];

@@ -1534,15 +1534,15 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 					$first_iteration = false;
 				} else {
 					$sql_attach_values = array(
-						((int) $obj_dispatch->fk_commande),
-						((int) $obj_dispatch->fk_product),
-						((int) $obj_line->rowid),
-						((float) $qty_for_line),
-						((int) $obj_dispatch->fk_entrepot),
-						((int) $obj_dispatch->fk_user),
+						(string) ((int) $obj_dispatch->fk_commande),
+						(string) ((int) $obj_dispatch->fk_product),
+						(string) ((int) $obj_line->rowid),
+						(string) ((float) $qty_for_line),
+						(string) ((int) $obj_dispatch->fk_entrepot),
+						(string) ((int) $obj_dispatch->fk_user),
 						$obj_dispatch->datec ? "'".$db->idate($db->jdate($obj_dispatch->datec))."'" : 'NULL',
 						$obj_dispatch->comment ? "'".$db->escape($obj_dispatch->comment)."'" : 'NULL',
-						$obj_dispatch->status ? ((int) $obj_dispatch->status) : 'NULL',
+						$obj_dispatch->status ? (string) ((int) $obj_dispatch->status) : 'NULL',
 						$obj_dispatch->tms ? "'".$db->idate($db->jdate($obj_dispatch->tms))."'" : 'NULL',
 						$obj_dispatch->batch ? "'".$db->escape($obj_dispatch->batch)."'" : 'NULL',
 						$obj_dispatch->eatby ? "'".$db->escape($obj_dispatch->eatby)."'" : 'NULL',
