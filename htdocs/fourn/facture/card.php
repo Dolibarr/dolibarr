@@ -697,12 +697,12 @@ if (empty($reshook)) {
 			}
 			if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT) {
 				foreach ($amount_ht as $tva_tx => $xxx) {
-					$discount->amount_ht = abs($amount_ht[$tva_tx]);
-					$discount->amount_tva = abs($amount_tva[$tva_tx]);
-					$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
-					$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
-					$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
-					$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+					$discount->amount_ht = abs((float) $amount_ht[$tva_tx]);
+					$discount->amount_tva = abs((float) $amount_tva[$tva_tx]);
+					$discount->amount_ttc = abs((float) $amount_ttc[$tva_tx]);
+					$discount->multicurrency_amount_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
+					$discount->multicurrency_amount_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
+					$discount->multicurrency_amount_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
 
 					// Clean vat code
 					$reg = array();
