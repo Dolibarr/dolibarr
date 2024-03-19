@@ -603,7 +603,7 @@ function CloseBill() {
 	<?php if (getDolGlobalInt("TAKEPOS_NO_GENERIC_THIRDPARTY")) { ?>
 		if ($("#idcustomer").val() == "") {
 			alert("<?php echo $langs->trans('TakePosCustomerMandatory'); ?>");
-			<?php if ($conf->global->TAKEPOS_CHOOSE_CONTACT) { ?>
+			<?php if (getDolGlobalString('TAKEPOS_CHOOSE_CONTACT')) { ?>
 				Contact();
 			<?php } else { ?>
 				Customer();
