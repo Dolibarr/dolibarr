@@ -440,7 +440,7 @@ return [
 		// 'PhanPluginWhitespaceTrailing',
 		// 'PhanPluginCanUsePHP71Void',
 		'PhanPluginUnknownArrayMethodReturnType',
-		'PhanTypeMismatchArgumentInternal',
+		// 'PhanTypeMismatchArgumentInternal',
 		'PhanPluginDuplicateAdjacentStatement',
 		'PhanTypeInvalidLeftOperandOfNumericOp',
 		'PhanTypeMismatchProperty',
