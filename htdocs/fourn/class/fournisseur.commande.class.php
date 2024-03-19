@@ -1974,7 +1974,7 @@ class CommandeFournisseur extends CommonOrder
 			$pu_ht = price2num($pu_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
 			$pu_ttc = price2num($pu_ttc);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
 			$txlocaltax1 = price2num($txlocaltax1);
@@ -2934,7 +2934,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 			$pu = price2num($pu);
 			$pu_ht_devise = price2num($pu_ht_devise);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
 			$txlocaltax1 = (float) price2num($txlocaltax1);
