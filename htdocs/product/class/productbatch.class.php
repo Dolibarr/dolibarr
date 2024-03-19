@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -367,7 +368,7 @@ class Productbatch extends CommonObject
 			$this->batch = trim($this->batch);
 		}
 		if (isset($this->qty)) {
-			$this->qty = (float) trim($this->qty);
+			$this->qty = (float) trim((string) $this->qty);
 		}
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
