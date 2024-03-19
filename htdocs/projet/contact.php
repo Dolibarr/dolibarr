@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +35,9 @@ if (isModEnabled('category')) {
 }
 
 // Load translation files required by the page
-$langsLoad=array('projects', 'companies');
+$langsLoad = array('projects', 'companies');
 if (isModEnabled('eventorganization')) {
-	$langsLoad[]='eventorganization';
+	$langsLoad[] = 'eventorganization';
 }
 
 $langs->loadLangs($langsLoad);
@@ -69,7 +70,7 @@ $hookmanager->initHooks(array('projectcontactcard', 'globalcard'));
  * Actions
  */
 
-$parameters = array('id'=>$id);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -81,7 +82,7 @@ if (empty($reshook)) {
 	if ($action == 'addcontact') {
 		$form = new Form($db);
 
-		$source=GETPOST("source", 'aZ09');
+		$source = GETPOST("source", 'aZ09');
 
 		$taskstatic = new Task($db);
 		$task_array = $taskstatic->getTasksArray(0, 0, $object->id, 0, 0);
@@ -91,7 +92,7 @@ if (empty($reshook)) {
 		$type_to = (GETPOST('typecontact') ? 'typecontact='.GETPOST('typecontact') : 'type='.GETPOST('type'));
 		$personToAffect = (GETPOST('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 		$affect_to = (GETPOST('userid') ? 'userid='.$personToAffect : 'contactid='.$personToAffect);
-		$url_redirect='?id='.$object->id.'&'.$affect_to.'&'.$type_to.'&source='.$source;
+		$url_redirect = '?id='.$object->id.'&'.$affect_to.'&'.$type_to.'&source='.$source;
 
 		if ($personToAffect > 0 && (!getDolGlobalString('PROJECT_HIDE_TASKS') || $nbTasks > 0)) {
 			$text = $langs->trans('AddPersonToTask');
@@ -100,13 +101,13 @@ if (empty($reshook)) {
 
 			$task_to_affect = array();
 			foreach ($task_array as $task) {
-				$task_already_affected=false;
+				$task_already_affected = false;
 				$personsLinked = $task->liste_contact(-1, $source);
 				if (!is_array($personsLinked) && count($personsLinked) < 0) {
 					setEventMessage($object->error, 'errors');
 				} else {
 					foreach ($personsLinked as $person) {
-						if ($person['id']==$personToAffect) {
+						if ($person['id'] == $personToAffect) {
 							$task_already_affected = true;
 							break;
 						}
@@ -131,11 +132,11 @@ if (empty($reshook)) {
 						'value' => $formcompany->selectTypeContact($taskstatic, '', 'person_role_'.$key, $source, 'position', 0, 'minwidth100imp', 0, 1)
 					);
 				}
-				$formquestion[] = array('type'=> 'other', 'name'=>'tasksavailable', 'label'=>'', 'value' => '<input type="hidden" id="tasksavailable" name="tasksavailable" value="'.implode(',', array_keys($task_to_affect)).'">');
+				$formquestion[] = array('type' => 'other', 'name' => 'tasksavailable', 'label' => '', 'value' => '<input type="hidden" id="tasksavailable" name="tasksavailable" value="'.implode(',', array_keys($task_to_affect)).'">');
 			}
 
 			$formconfirmtoaddtasks = $form->formconfirm($_SERVER['PHP_SELF'] . $url_redirect, $text, '', 'addcontact_confirm', $formquestion, '', 1, 300, 590);
-			$formconfirmtoaddtasks .='
+			$formconfirmtoaddtasks .= '
 			 <script>
 			 $(document).ready(function() {
 				var saveprop = false;
@@ -222,7 +223,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				$affecttotask=GETPOST('tasksavailable', 'intcomma');
+				$affecttotask = GETPOST('tasksavailable', 'intcomma');
 				if (!empty($affecttotask)) {
 					require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 					$task_to_affect = explode(',', $affecttotask);
@@ -230,7 +231,7 @@ if (empty($reshook)) {
 						foreach ($task_to_affect as $task_id) {
 							if (GETPOSTISSET('person_'.$task_id) && GETPOST('person_'.$task_id, 'san_alpha')) {
 								$tasksToAffect = new Task($db);
-								$result=$tasksToAffect->fetch($task_id);
+								$result = $tasksToAffect->fetch($task_id);
 								if ($result < 0) {
 									setEventMessages($tasksToAffect->error, null, 'errors');
 								} else {
@@ -346,7 +347,7 @@ if ($id > 0 || !empty($ref)) {
 
 	if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
 		$tmpurl = $_SESSION['pageforbacktolist']['project'];
-		$tmpurl = preg_replace('/__SOCID__/', $object->socid, $tmpurl);
+		$tmpurl = preg_replace('/__SOCID__/', (string) $object->socid, $tmpurl);
 		$linkback = '<a href="'.$tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	} else {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
