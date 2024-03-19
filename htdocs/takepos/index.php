@@ -600,6 +600,17 @@ function CloseBill() {
 	?>
 	invoiceid = $("#invoiceid").val();
 	console.log("Open popup to enter payment on invoiceid="+invoiceid);
+	<?php if (getDolGlobalInt("TAKEPOS_NO_GENERIC_THIRDPARTY")) { ?>
+		if ($("#idcustomer").val() == "") {
+			alert("<?php echo $langs->trans('TakePosCustomerMandatory'); ?>");
+			<?php if (getDolGlobalString('TAKEPOS_CHOOSE_CONTACT')) { ?>
+				Contact();
+			<?php } else { ?>
+				Customer();
+			<?php } ?>
+			return;
+		}
+	<?php }	?>
 	<?php
 	$alternative_payurl = getDolGlobalString('TAKEPOS_ALTERNATIVE_PAYMENT_SCREEN');
 	if (empty($alternative_payurl)) {
@@ -660,7 +671,9 @@ function New() {
 			$("#poslines").load("invoice.php?action=delete&token=<?php echo newToken(); ?>&place=" + place, function () {
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 			});
+
 			ClearSearch(false);
+			$("#idcustomer").val("");
 		}
 	});
 }
@@ -1135,6 +1148,7 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 				</div>
 				<!-- section for customer -->
 				<div class="inline-block valignmiddle" id="customerandsales"></div>
+				<input type="hidden" id="idcustomer" value="">
 				<!-- section for shopping carts -->
 				<div class="inline-block valignmiddle" id="shoppingcart"></div>
 				<!-- More info about customer -->

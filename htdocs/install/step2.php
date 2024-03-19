@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,7 +172,7 @@ if ($action == "set") {
 
 		$ok = 0;
 		$handle = opendir($dir);
-		dolibarr_install_syslog("step2: open tables directory ".$dir." handle=".$handle);
+		dolibarr_install_syslog("step2: open tables directory ".$dir." handle=".(is_bool($handle) ? json_encode($handle) : $handle));
 		$tablefound = 0;
 		$tabledata = array();
 		if (is_resource($handle)) {
@@ -269,7 +270,7 @@ if ($action == "set") {
 
 		$okkeys = 0;
 		$handle = opendir($dir);
-		dolibarr_install_syslog("step2: open keys directory ".$dir." handle=".$handle);
+		dolibarr_install_syslog("step2: open keys directory ".$dir." handle=".(is_bool($handle) ? json_encode($handle) : $handle));
 		$tablefound = 0;
 		$tabledata = array();
 		if (is_resource($handle)) {
@@ -400,7 +401,7 @@ if ($action == "set") {
 		$file = "functions.sql";
 		if (file_exists($dir.$file)) {
 			$fp = fopen($dir.$file, "r");
-			dolibarr_install_syslog("step2: open function file ".$dir.$file." handle=".$fp);
+			dolibarr_install_syslog("step2: open function file ".$dir.$file." handle=".(is_bool($fp) ? json_encode($fp) : $fp));
 			if ($fp) {
 				$buffer = '';
 				while (!feof($fp)) {
@@ -467,7 +468,7 @@ if ($action == "set") {
 
 		// Insert data
 		$handle = opendir($dir);
-		dolibarr_install_syslog("step2: open directory data ".$dir." handle=".$handle);
+		dolibarr_install_syslog("step2: open directory data ".$dir." handle=".(is_bool($handle) ? json_encode($handle) : $handle));
 		$tablefound = 0;
 		$tabledata = array();
 		if (is_resource($handle)) {
@@ -492,7 +493,7 @@ if ($action == "set") {
 		foreach ($tabledata as $file) {
 			$name = substr($file, 0, dol_strlen($file) - 4);
 			$fp = fopen($dir.$file, "r");
-			dolibarr_install_syslog("step2: open data file ".$dir.$file." handle=".$fp);
+			dolibarr_install_syslog("step2: open data file ".$dir.$file." handle=".(is_bool($fp) ? json_encode($fp) : $fp));
 			if ($fp) {
 				$arrayofrequests = array();
 				$linefound = 0;

@@ -309,7 +309,7 @@ if (isset($current_fiscal_period)) {
 	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
 	$head[0][1] = $langs->trans("AccountancyClosureStep1");
 	$head[0][2] = 'step1';
-	print dol_get_fiche_head($head, 'step1', '', -1, 'title_accountancy');
+	print dol_get_fiche_head($head, 'step1', '', -1, '');
 
 	print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep1Desc") . '</span><br>';
 
@@ -355,12 +355,14 @@ if (isset($current_fiscal_period)) {
 	print "</table>\n";
 	print '</div>';
 
+	print '<br>';
+
 	// Step 2
 	$head = array();
 	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
 	$head[0][1] = $langs->trans("AccountancyClosureStep2");
 	$head[0][2] = 'step2';
-	print dol_get_fiche_head($head, 'step2', '', -1, 'title_accountancy');
+	print dol_get_fiche_head($head, 'step2', '', -1, '');
 
 	// print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep2Desc") . '</span><br>';
 
@@ -371,12 +373,14 @@ if (isset($current_fiscal_period)) {
 	}
 	print_barre_liste('', '', '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
 
+	print '<br>';
+
 	// Step 3
 	$head = array();
 	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
 	$head[0][1] = $langs->trans("AccountancyClosureStep3");
 	$head[0][2] = 'step3';
-	print dol_get_fiche_head($head, 'step3', '', -1, 'title_accountancy');
+	print dol_get_fiche_head($head, 'step3', '', -1, '');
 
 	// print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep3Desc") . '</span><br>';
 

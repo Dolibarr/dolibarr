@@ -3,6 +3,7 @@
  * Copyright (C) 2009		Meos
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -581,7 +582,7 @@ if (!empty($conf->use_javascript_ajax)) {
 		      <input type="hidden" id="file" name="file" value="'.dol_escape_htmltag($original_file).'" />
 		      <input type="hidden" id="action" name="action" value="confirm_crop" />
 		      <input type="hidden" id="product" name="product" value="'.dol_escape_htmltag($id).'" />
-		      <input type="hidden" id="dol_screenwidth" name="dol_screenwidth" value="'.$_SESSION['dol_screenwidth'].'" />
+		      <input type="hidden" id="dol_screenwidth" name="dol_screenwidth" value="'.($_SESSION['dol_screenwidth'] ?? 'null').'" />
 		      <input type="hidden" id="refsizeforcrop" name="refsizeforcrop" value="'.$refsizeforcrop.'" />
 		      <input type="hidden" id="ratioforcrop" name="ratioforcrop" value="'.$ratioforcrop.'" /><!-- value in field used by js/lib/lib_photoresize.js -->
 		      <input type="hidden" id="imagewidth" name="imagewidth" value="'.$width.'" /><!-- value in field used by js/lib/lib_photoresize.js -->
