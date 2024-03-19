@@ -2252,7 +2252,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->db->begin();
 
 			$sql = "INSERT INTO ".$this->db->prefix()."receptiondet_batch";
-			$sql .= " (fk_commande, fk_product, qty, fk_entrepot, fk_user, datec, fk_commandefourndet, status, comment, eatby, sellby, batch, fk_reception) VALUES";
+			$sql .= " (fk_element, fk_product, qty, fk_entrepot, fk_user, datec, fk_elementdet, status, comment, eatby, sellby, batch, fk_reception) VALUES";
 			$sql .= " ('".$this->id."','".$product."','".$qty."',".($entrepot > 0 ? "'".$entrepot."'" : "null").",'".$user->id."','".$this->db->idate($now)."','".$fk_commandefourndet."', ".$dispatchstatus.", '".$this->db->escape($comment)."', ";
 			$sql .= ($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ".($batch ? "'".$this->db->escape($batch)."'" : "null").", ".($fk_reception > 0 ? "'".$this->db->escape($fk_reception)."'" : "null");
 			$sql .= ")";
@@ -2497,7 +2497,7 @@ class CommandeFournisseur extends CommonOrder
 		// List of already dispatched lines
 		$sql = "SELECT p.ref, p.label,";
 		$sql .= " e.rowid as warehouse_id, e.ref as entrepot,";
-		$sql .= " cfd.rowid as dispatchedlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status, cfd.fk_commandefourndet";
+		$sql .= " cfd.rowid as dispatchedlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status, cfd.fk_elementdet";
 		$sql .= " FROM ".$this->db->prefix()."product as p,";
 		$sql .= " ".$this->db->prefix()."receptiondet_batch as cfd";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."entrepot as e ON cfd.fk_entrepot = e.rowid";
@@ -2521,7 +2521,7 @@ class CommandeFournisseur extends CommonOrder
 						'productid' => $objp->fk_product,
 						'warehouseid' => $objp->warehouse_id,
 						'qty' => $objp->qty,
-						'orderlineid' => $objp->fk_commandefourndet
+						'orderlineid' => $objp->fk_elementdet
 					);
 				}
 
@@ -3670,7 +3670,7 @@ class CommandeFournisseur extends CommonOrder
 		if ($filtre_statut >= 0) {
 			$sql .= ' cfd.fk_reception = e.rowid AND';
 		}
-		$sql .= ' cfd.fk_commandefourndet = cd.rowid';
+		$sql .= ' cfd.fk_elementdet = cd.rowid';
 		$sql .= ' AND cd.fk_commande ='.((int) $this->id);
 		if (isset($this->fk_product) && !empty($this->fk_product) > 0) {
 			$sql .= ' AND cd.fk_product = '.((int) $this->fk_product);

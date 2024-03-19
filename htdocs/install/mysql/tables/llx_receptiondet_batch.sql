@@ -28,8 +28,8 @@ create table llx_receptiondet_batch
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   fk_product     integer,
-  fk_commande    integer,                       -- should be renamed into fk_element
-  fk_commandefourndet integer,                  -- should be renamed into fk_elementdet
+  fk_element    integer,                       -- should be renamed into fk_element
+  fk_elementdet integer,                  -- should be renamed into fk_elementdet
   element_type   varchar(50) DEFAULT 'supplier_order' NOT NULL,   -- Type of source ('supplier_order', ...)
   fk_projet  	 integer  DEFAULT NULL,
   fk_reception 	 integer  DEFAULT NULL,
