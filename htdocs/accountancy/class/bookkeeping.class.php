@@ -2055,6 +2055,7 @@ class BookKeeping extends CommonObject
 		$error = 0;
 
 		$sql_filter = $this->getCanModifyBookkeepingSQL();
+
 		if (!isset($sql_filter)) {
 			return -1;
 		}
@@ -2344,10 +2345,11 @@ class BookKeeping extends CommonObject
 			$sql_list = array();
 			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
-					$sql_list[] = "('" . $this->db->idate($fiscal_period['date_start']) . "' <= {$alias}doc_date AND {$alias}doc_date <= '" . $this->db->idate($fiscal_period['date_end']) . "')";
+					$sql_list[] = "('" . $this->db->idate($fiscal_period['date_start']) . "' <= ".$this->db->sanitize($alias)."doc_date AND ".$this->db->sanitize($alias)."doc_date <= '" . $this->db->idate($fiscal_period['date_end']) . "')";
 				}
 			}
-			self::$can_modify_bookkeeping_sql_cached[$alias] = !empty($sql_list) ? ' AND (' . $this->db->sanitize(implode(' OR ', $sql_list), 1, 1, 1) . ')' : '';
+			$sqlsanitized = implode(' OR ', $sql_list);
+			self::$can_modify_bookkeeping_sql_cached[$alias] = !empty($sql_list) ? " AND (".$sqlsanitized.")" : "";
 		}
 
 		return self::$can_modify_bookkeeping_sql_cached[$alias];
