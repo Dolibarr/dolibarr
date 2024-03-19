@@ -101,17 +101,17 @@ if (GETPOST("type", 'alpha')) {
 }
 
 $filters = array();
-if (GETPOST("year", 'int')) {
-	$filters['year'] = GETPOST("year", 'int');
+if (GETPOSTINT("year")) {
+	$filters['year'] = GETPOSTINT("year");
 }
-if (GETPOST("id", 'int')) {
-	$filters['id'] = GETPOST("id", 'int');
+if (GETPOSTINT("id")) {
+	$filters['id'] = GETPOSTINT("id");
 }
-if (GETPOST("idfrom", 'int')) {
-	$filters['idfrom'] = GETPOST("idfrom", 'int');
+if (GETPOSTINT("idfrom")) {
+	$filters['idfrom'] = GETPOSTINT("idfrom");
 }
-if (GETPOST("idto", 'int')) {
-	$filters['idto'] = GETPOST("idto", 'int');
+if (GETPOSTINT("idto")) {
+	$filters['idto'] = GETPOSTINT("idto");
 }
 if (GETPOST("project", 'alpha')) {
 	$filters['project'] = GETPOST("project", 'alpha');
@@ -128,16 +128,16 @@ if (GETPOST("notactiontype", 'alpha')) {
 if (GETPOST("actiontype", 'alpha')) {
 	$filters['actiontype'] = GETPOST("actiontype", 'alpha');
 }
-if (GETPOST("notolderthan", 'int')) {
-	$filters['notolderthan'] = GETPOST("notolderthan", "int");
+if (GETPOSTINT("notolderthan")) {
+	$filters['notolderthan'] = GETPOSTINT("notolderthan");
 } else {
 	$filters['notolderthan'] = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY');
 }
 if (GETPOST("module", 'alpha')) {
 	$filters['module'] = GETPOST("module", 'alpha');
 }
-if (GETPOST("status", 'int')) {
-	$filters['status'] = GETPOST("status", 'int');
+if (GETPOSTINT("status")) {
+	$filters['status'] = GETPOSTINT("status");
 }
 
 // Security check
@@ -268,7 +268,7 @@ if (getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE')) {
 	$cachedelay = getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE');
 }
 
-$exportholidays = GETPOST('includeholidays', 'int');
+$exportholidays = GETPOSTINT('includeholidays');
 
 // Build file
 if ($format == 'ical' || $format == 'vcal') {

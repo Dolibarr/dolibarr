@@ -3,6 +3,7 @@
 /*
  * Copyright (C) 2023 	   	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -650,7 +651,8 @@ $html .= '</div>';
 
 $html .= '</section>'."\n";
 
-$tmp = '';
+
+$tmpstan = '';
 $nblines = 0;
 if (!empty($output_arrtd)) {
 	foreach ($output_arrtd as $line) {
@@ -659,22 +661,23 @@ if (!empty($output_arrtd)) {
 		preg_match('/^::error file=(.*),line=(\d+),col=(\d+)::(.*)$/', $line, $reg);
 		if (!empty($reg[1])) {
 			if ($nblines < 20) {
-				$tmp .= '<tr class="nohidden">';
+				$tmpstan .= '<tr class="nohidden">';
 			} else {
-				$tmp .= '<tr class="hidden sourcephpstan">';
+				$tmpstan .= '<tr class="hidden sourcephpstan">';
 			}
-			$tmp .= '<td>'.dolPrintLabel($reg[1]).'</td>';
-			$tmp .= '<td class="">';
-			$tmp .= '<a href="'.dol_escape_htmltag($urlgit.$reg[1].'#L'.$reg[2]).'" target="_blank">'.dolPrintLabel($reg[2]).'</a>';
-			$tmp .= '</td>';
-			$tmp .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($reg[4]).'">'.dolPrintLabel($reg[4]).'</td>';
-			$tmp .= '</tr>'."\n";
+			$tmpstan .= '<td>'.dolPrintLabel($reg[1]).'</td>';
+			$tmpstan .= '<td class="">';
+			$tmpstan .= '<a href="'.($urlgit.$reg[1].'#L'.$reg[2]).'" target="_blank">'.dolPrintLabel($reg[2]).'</a>';
+			$tmpstan .= '</td>';
+			$tmpstan .= '<td class="tdoverflowmax300" title="'.dolPrintHTMLForAttribute($reg[4]).'">'.dolPrintLabel($reg[4]).'</td>';
+			$tmpstan .= '</tr>'."\n";
+
 			$nblines++;
 		}
 	}
 }
 
-
+$tmpphan = '';
 $phan_nblines = 0;
 if (count($output_phan_json) != 0) {
 	$phan_notices = json_decode($output_phan_json[count($output_phan_json) - 1], true);
@@ -684,6 +687,9 @@ if (count($output_phan_json) != 0) {
 	foreach ($phan_notices as $notice) {
 		if (!empty($notice['location'])) {
 			$path = $notice['location']['path'];
+			if ($path == 'internal') {
+				continue;
+			}
 			$line_start = $notice['location']['lines']['begin'];
 			$line_end = $notice['location']['lines']['end'];
 			if ($line_start == $line_end) {
@@ -695,18 +701,18 @@ if (count($output_phan_json) != 0) {
 			}
 			$code_url_attr = dol_escape_htmltag($urlgit.$path.$line_range);
 			if ($phan_nblines < 20) {
-				$tmp = '<tr class="nohidden">';
+				$tmpphan .= '<tr class="nohidden">';
 			} else {
-				$tmp = '<tr class="hidden sourcephan">';
+				$tmpphan .= '<tr class="hidden sourcephan">';
 			}
-			$tmp .= '<td>'.dolPrintLabel($path).'</td>';
-			$tmp .= '<td class="">';
-			$tmp .= '<a href="'.$code_url_attr.'" target="_blank">'.$line_range_txt.'</a>';
-			$tmp .= '</td>';
-			$tmp .= '<td class="tdoverflowmax300">'.dolPrintLabel($notice['description']).'</td>';
-			$tmp .= '</tr>';
+			$tmpphan .= '<td>'.dolPrintLabel($path).'</td>';
+			$tmpphan .= '<td class="">';
+			$tmpphan .= '<a href="'.$code_url_attr.'" target="_blank">'.$line_range_txt.'</a>';
+			$tmpphan .= '</td>';
+			$tmpphan .= '<td class="tdoverflowmax300" title="'.dolPrintHTMLForAttribute($notice['description']).'">'.dolPrintLabel($notice['description']).'</td>';
+			$tmpphan .= '</tr>';
+			$tmpphan .= "\n";
 
-			$phan_items[] = $tmp;
 			$phan_nblines++;
 		}
 	}
@@ -769,10 +775,15 @@ $html .= '</section>';
 
 
 // Technical debt PHPstan
-if ($nblines != 0) {
+
+if ($dirphpstan != 'disabled') {
 	$datatable_script .= '
  if (typeof(DataTable)==="function") {jQuery(".sourcephpstan").toggle(true);}
- let phpstantable = new DataTable("#technicaldebt table");
+ let phpstantable = new DataTable("#technicaldebt table", {
+    lengthMenu: [
+        [10, 25, 50, 100, -1],
+        [10, 25, 50, 100, \'All\']
+    ]});
 ';
 	$html .= '<section class="chapter" id="technicaldebt">'."\n";
 	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' -> '.$nblines.' warnings)</span></h2>'."\n";
@@ -781,9 +792,10 @@ if ($nblines != 0) {
 	$html .= '<div class="div-table-responsive">'."\n";
 	$html .= '<table class="list_technical_debt centpercent">'."\n";
 	$html .= '<thead><tr class="trgroup"><td>File</td><td>Line</td><td>Type</td></tr></thead><tbody>'."\n";
-	$html .= $tmp;
+	$html .= $tmpstan;
 	$html .= '<tbody></table>';
-	$html .= '<div><span class="seedetail" data-source="phpstan" id="sourcephpstan">Show all...</span></div>';
+	// Disabled, no more required as list is managed with datatable
+	//$html .= '<div><span class="seedetail" data-source="phpstan" id="sourcephpstan">Show all...</span></div>';
 	$html .= '</div></div>';
 
 	$html .= '</section>'."\n";
@@ -792,7 +804,7 @@ if ($nblines != 0) {
 
 // Technical debt Phan
 
-if ($phan_nblines != 0) {
+if ($dir_phan != 'disabled') {
 	$datatable_script .= '
  if (typeof(DataTable)==="function") {jQuery(".sourcephan").toggle(true);}
  let phantable = new DataTable("#technicaldebtphan table", {
@@ -808,7 +820,7 @@ if ($phan_nblines != 0) {
 	$html .= '<div class="div-table-responsive">'."\n";
 	$html .= '<table class="list_technical_debt centpercent">'."\n";
 	$html .= '<thead><tr class="trgroup"><td>File</td><td>Line</td><td>Detail</td></tr></thead><tbody>'."\n";
-	$html .= implode("\n", $phan_items);
+	$html .= $tmpphan;
 	$html .= '</tbody></table>';
 	// Disabled, no more required as list is managed with datatable
 	//$html .= '<div><span class="seedetail" data-source="phan" id="sourcephan">Show all...</span></div>';

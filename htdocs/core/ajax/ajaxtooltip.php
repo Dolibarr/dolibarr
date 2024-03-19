@@ -47,7 +47,7 @@ $objecttype = GETPOST('objecttype', 'aZ09arobase');	// 'module' or 'myobject@mym
 
 $params = array('fromajaxtooltip' => 1);
 if (GETPOSTISSET('infologin')) {
-	$params['infologin'] = GETPOST('infologin', 'int');
+	$params['infologin'] = GETPOSTINT('infologin');
 }
 if (GETPOSTISSET('option')) {
 	$params['option'] = GETPOST('option', 'restricthtml');

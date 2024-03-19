@@ -31,13 +31,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 
-$loanid = GETPOST('loanid', 'int');
+$loanid = GETPOSTINT('loanid');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
 $socid = 0;
 if (GETPOSTISSET('socid')) {
-	$socid = GETPOST('socid', 'int');
+	$socid = GETPOSTINT('socid');
 }
 if ($user->socid) {
 	$socid = $user->socid;
@@ -69,7 +69,7 @@ if ($action == 'createecheancier' && empty($pay_without_schedule)) {
 	$db->begin();
 	$i = 1;
 	while ($i < $object->nbterm + 1) {
-		$date = GETPOST('hi_date'.$i, 'int');
+		$date = GETPOSTINT('hi_date'.$i);
 		$mens = price2num(GETPOST('mens'.$i));
 		$int = price2num(GETPOST('hi_interets'.$i));
 		$insurance = price2num(GETPOST('hi_insurance'.$i));
@@ -185,9 +185,9 @@ if (isModEnabled('project')) {
 }
 $morehtmlref .= '</div>';
 
-$morehtmlright = '';
+$morehtmlstatus = '';
 
-dol_banner_tab($object, 'loanid', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+dol_banner_tab($object, 'loanid', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 ?>
 <script type="text/javascript">

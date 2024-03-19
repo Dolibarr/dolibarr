@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 $langs->loadLangs(['bills', 'boxes']);
 
 // Filter to show only result of one supplier
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;

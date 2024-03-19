@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2021  Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2015-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Andreu Bisquerra    <jove@bisquerra.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -129,10 +129,14 @@ class dolReceiptPrinter extends Printer
 	 */
 	public $db;
 
-	/*
+	/**
 	 * @var string[] array of tags
 	 */
 	public $tags;
+
+	/**
+	 * @var \Mike42\Escpos\Printer
+	 */
 	public $printer;
 	public $template;
 
@@ -695,6 +699,7 @@ class dolReceiptPrinter extends Printer
 		if (LIBXML_VERSION < 20900) {
 			// Avoid load of external entities (security problem).
 			// Required only if LIBXML_VERSION < 20900
+			// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 			libxml_disable_entity_loader(true);
 		}
 
@@ -795,7 +800,7 @@ class dolReceiptPrinter extends Printer
 						$this->printer->text($title.$spaces.str_pad(price($object->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 						break;
 					case 'DOL_PRINT_CURR_DATE':
-						if (strlen($vals[$tplline]['value'])<2) {
+						if (strlen($vals[$tplline]['value']) < 2) {
 							$this->printer->text(date('d/m/Y H:i:s')."\n");
 						} else {
 							$this->printer->text(date($vals[$tplline]['value'])."\n");
@@ -1027,8 +1032,12 @@ class dolReceiptPrinter extends Printer
 			}
 			if (!$error) {
 				$parameter = (isset($obj['parameter']) ? $obj['parameter'] : '');
+
+				dol_syslog("initPrinter printerid=".$printerid." parameter=".$parameter);
+
 				try {
 					$type = $obj['fk_type'];
+					$found = true;
 					switch ($type) {
 						case 1:
 							$this->connector = new DummyPrintConnector();
@@ -1047,10 +1056,15 @@ class dolReceiptPrinter extends Printer
 							$this->connector = new CupsPrintConnector($parameter);
 							break;
 						default:
-							$this->connector = 'CONNECTOR_UNKNOWN';
+							$found = false;
 							break;
 					}
-					$this->printer = new Printer($this->connector, $this->profile);
+					if ($found) {
+						$this->printer = new Printer($this->connector, $this->profile);
+					} else {
+						$error++;
+						$this->errors[] = 'CONNECTOR_UNKNOWN';
+					}
 				} catch (Exception $e) {
 					$this->errors[] = $e->getMessage();
 					$error++;

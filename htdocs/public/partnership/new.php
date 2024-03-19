@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  *
@@ -185,7 +185,7 @@ if (empty($reshook) && $action == 'add') {
 
 	$db->begin();
 
-	if (GETPOST('partnershiptype', 'int') <= 0) {
+	if (GETPOSTINT('partnershiptype') <= 0) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"))."<br>\n";
 	}
@@ -228,7 +228,7 @@ if (empty($reshook) && $action == 'add') {
 		$partnership->date_creation 		 = dol_now();
 		$partnership->date_partnership_start = dol_now();
 		$partnership->fk_user_creat          = 0;
-		$partnership->fk_type                = GETPOST('partnershiptype', 'int');
+		$partnership->fk_type                = GETPOSTINT('partnershiptype');
 		$partnership->url                    = GETPOST('url');
 		//$partnership->typeid               = $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE ? $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
 		$partnership->ip = getUserRemoteIP();
@@ -315,7 +315,10 @@ if (empty($reshook) && $action == 'add') {
 				$company->name_alias = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
 			}
 
-			$company->update(0);
+			$res = $company->update(0, $user);
+			if ($res < 0) {
+				setEventMessages($company->error, $company->errors, 'errors');
+			}
 		}
 
 		// Fill array 'array_options' with data from add form
@@ -594,7 +597,7 @@ jQuery(document).ready(function () {
 
 // Type
 $partnershiptype = new PartnershipType($db);
-$listofpartnershipobj = $partnershiptype->fetchAll('', '', 1000, 0, array('active'=>1));
+$listofpartnershipobj = $partnershiptype->fetchAll('', '', 1000, 0, '(active:=:1)');
 $listofpartnership = array();
 foreach ($listofpartnershipobj as $partnershipobj) {
 	$listofpartnership[$partnershipobj->id] = $partnershipobj->label;
@@ -608,7 +611,7 @@ if (getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')) {
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 if (!getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')) {
 	print '<tr class="morphy"><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans('PartnershipType').' <span class="star">*</span></td><td>'."\n";
-	print $form->selectarray("partnershiptype", $listofpartnership, GETPOSTISSET('partnershiptype') ? GETPOST('partnershiptype', 'int') : 'ifone', 1);
+	print $form->selectarray("partnershiptype", $listofpartnership, GETPOSTISSET('partnershiptype') ? GETPOSTINT('partnershiptype') : 'ifone', 1);
 	print '</td></tr>'."\n";
 }
 // Company
@@ -649,7 +652,7 @@ print '</td></tr>';
 // Country
 print '<tr><td>'.$langs->trans('Country').'</td><td>';
 print img_picto('', 'country', 'class="pictofixedwidth"');
-$country_id = GETPOST('country_id', 'int');
+$country_id = GETPOSTINT('country_id');
 if (!$country_id && getDolGlobalString('PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE')) {
 	$country_id = getCountry($conf->global->PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
 }

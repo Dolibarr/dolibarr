@@ -3,6 +3,7 @@
  * Copyright (C) 2017	Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2020	Thibault FOUCART<support@ptibogxiv.net>
  * Copyright (C) 2020	Frédéric France	<frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,8 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+
 
 /**
  * API class for members
@@ -313,9 +316,9 @@ class Members extends DolibarrApi
 	/**
 	 * Update member
 	 *
-	 * @param int   $id             ID of member to update
-	 * @param array $request_data   Datas
-	 * @return Object				Updated object
+	 * @param 	int   		$id             ID of member to update
+	 * @param 	array 		$request_data   Datas
+	 * @return 	Object						Updated object
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Member not found
@@ -406,7 +409,7 @@ class Members extends DolibarrApi
 		}
 
 
-		$res = $member->delete($member->id, DolibarrApiAccess::$user);
+		$res = $member->delete(DolibarrApiAccess::$user);
 		if ($res < 0) {
 			throw new RestException(500, "Can't delete, error occurs");
 		}
@@ -430,7 +433,12 @@ class Members extends DolibarrApi
 	private function _validate($data)
 	{
 		$member = array();
-		foreach (Members::$FIELDS as $field) {
+
+		$mandatoryfields = array(
+			'morphy',
+			'typeid'
+		);
+		foreach ($mandatoryfields as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
@@ -452,18 +460,63 @@ class Members extends DolibarrApi
 		$object = parent::_cleanObjectDatas($object);
 
 		// Remove the subscriptions because they are handled as a subresource.
-		unset($object->subscriptions);
-		unset($object->fk_incoterms);
-		unset($object->label_incoterms);
-		unset($object->location_incoterms);
-		unset($object->fk_delivery_address);
-		unset($object->shipping_method_id);
+		if ($object instanceof Adherent) {
+			unset($object->subscriptions);
+			unset($object->fk_incoterms);
+			unset($object->label_incoterms);
+			unset($object->location_incoterms);
+			unset($object->fk_delivery_address);
+			unset($object->shipping_method_id);
 
-		unset($object->total_ht);
-		unset($object->total_ttc);
-		unset($object->total_tva);
-		unset($object->total_localtax1);
-		unset($object->total_localtax2);
+			unset($object->total_ht);
+			unset($object->total_ttc);
+			unset($object->total_tva);
+			unset($object->total_localtax1);
+			unset($object->total_localtax2);
+		}
+
+		if ($object instanceof AdherentType) {
+			unset($object->array_options);
+			unset($object->linkedObjectsIds);
+			unset($object->context);
+			unset($object->canvas);
+			unset($object->fk_project);
+			unset($object->contact);
+			unset($object->contact_id);
+			unset($object->thirdparty);
+			unset($object->user);
+			unset($object->origin);
+			unset($object->origin_id);
+			unset($object->ref_ext);
+			unset($object->country);
+			unset($object->country_id);
+			unset($object->country_code);
+			unset($object->barcode_type);
+			unset($object->barcode_type_code);
+			unset($object->barcode_type_label);
+			unset($object->barcode_type_coder);
+			unset($object->mode_reglement_id);
+			unset($object->cond_reglement_id);
+			unset($object->cond_reglement);
+			unset($object->fk_delivery_address);
+			unset($object->shipping_method_id);
+			unset($object->model_pdf);
+			unset($object->fk_account);
+			unset($object->note_public);
+			unset($object->note_private);
+			unset($object->fk_incoterms);
+			unset($object->label_incoterms);
+			unset($object->location_incoterms);
+			unset($object->name);
+			unset($object->lastname);
+			unset($object->firstname);
+			unset($object->civility_id);
+			unset($object->total_ht);
+			unset($object->total_tva);
+			unset($object->total_localtax1);
+			unset($object->total_localtax2);
+			unset($object->total_ttc);
+		}
 
 		return $object;
 	}
@@ -483,8 +536,6 @@ class Members extends DolibarrApi
 	 */
 	public function getSubscriptions($id)
 	{
-		$obj_ret = array();
-
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'lire')) {
 			throw new RestException(403);
 		}
@@ -564,5 +615,261 @@ class Members extends DolibarrApi
 		}
 
 		return $result;
+	}
+
+
+
+
+	/**
+	 * Get properties of a member type object
+	 *
+	 * Return an array with member type information
+	 *
+	 * @param   int     $id				ID of member type
+	 * @return  Object					Object with cleaned properties
+	 *
+	 * @url GET /types/{id}
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		No Member Type found
+	 */
+	public function getType($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$membertype = new AdherentType($this->db);
+		$result = $membertype->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'member type not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('member', $membertype->id, 'adherent_type')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		return $this->_cleanObjectDatas($membertype);
+	}
+
+	/**
+	 * List members types
+	 *
+	 * Get a list of members types
+	 *
+	 * @param string    $sortfield  Sort field
+	 * @param string    $sortorder  Sort order
+	 * @param int       $limit      Limit for list
+	 * @param int       $page       Page number
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.libelle:like:'SO-%') and (t.subscription:=:'1')"
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @return array                Array of member type objects
+	 *
+	 * @url GET /types/
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		No Member Type found
+	 * @throws	RestException	503		Error when retrieving Member list
+	 */
+	public function indexType($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	{
+		$obj_ret = array();
+
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$sql = "SELECT t.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type AS t LEFT JOIN ".MAIN_DB_PREFIX."adherent_type_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+		$sql .= ' WHERE t.entity IN ('.getEntity('member_type').')';
+
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$i = 0;
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			while ($i < $min) {
+				$obj = $this->db->fetch_object($result);
+				$membertype = new AdherentType($this->db);
+				if ($membertype->fetch($obj->rowid)) {
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($membertype), $properties);
+				}
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieve member type list : '.$this->db->lasterror());
+		}
+
+		return $obj_ret;
+	}
+
+	/**
+	 * Create member type object
+	 *
+	 * @param array $request_data   Request data
+	 * @return int  ID of member type
+	 *
+	 * @url POST /types/
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	500		Error when creating Member Type
+	 */
+	public function postType($request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'configurer')) {
+			throw new RestException(403);
+		}
+		// Check mandatory fields
+		$result = $this->_validateType($request_data);
+
+		$membertype = new AdherentType($this->db);
+		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$membertype->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
+			$membertype->$field = $value;
+		}
+		if ($membertype->create(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, 'Error creating member type', array_merge(array($membertype->error), $membertype->errors));
+		}
+		return $membertype->id;
+	}
+
+	/**
+	 * Update member type
+	 *
+	 * @param 	int   		$id             ID of member type to update
+	 * @param 	array 		$request_data   Datas
+	 * @return 	Object						Updated object
+	 *
+	 * @url PUT /types/{id}
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		No Member Type found
+	 * @throws	RestException	500		Error when updating Member Type
+	 */
+	public function putType($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'configurer')) {
+			throw new RestException(403);
+		}
+
+		$membertype = new AdherentType($this->db);
+		$result = $membertype->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'member type not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('member', $membertype->id, 'adherent_type')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') {
+				continue;
+			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$membertype->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
+			// Process the status separately because it must be updated using
+			// the validate(), resiliate() and exclude() methods of the class AdherentType.
+			$membertype->$field = $value;
+		}
+
+		// If there is no error, update() returns the number of affected rows
+		// so if the update is a no op, the return value is zero.
+		if ($membertype->update(DolibarrApiAccess::$user) >= 0) {
+			return $this->get($id);
+		} else {
+			throw new RestException(500, 'Error when updating member type: '.$membertype->error);
+		}
+	}
+
+	/**
+	 * Delete member type
+	 *
+	 * @param int $id   member type ID
+	 * @return array
+	 *
+	 * @url GET /types/{id}
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		No Member Type found
+	 * @throws	RestException	500		Error when deleting Member Type
+	 */
+	public function deleteType($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'configurer')) {
+			throw new RestException(403);
+		}
+		$membertype = new AdherentType($this->db);
+		$result = $membertype->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'member type not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('member', $membertype->id, 'adherent_type')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$res = $membertype->delete(DolibarrApiAccess::$user);
+		if ($res < 0) {
+			throw new RestException(500, "Can't delete, error occurs");
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Member type deleted'
+			)
+		);
+	}
+
+	/**
+	 * Validate fields before creating an object
+	 *
+	 * @param array|null    $data   Data to validate
+	 * @return array
+	 *
+	 * @throws RestException
+	 */
+	private function _validateType($data)
+	{
+		$membertype = array();
+
+		$mandatoryfields = array('label');
+
+		foreach ($mandatoryfields as $field) {
+			if (!isset($data[$field])) {
+				throw new RestException(400, "$field field missing");
+			}
+			$membertype[$field] = $data[$field];
+		}
+		return $membertype;
 	}
 }

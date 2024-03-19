@@ -257,9 +257,9 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Update supplier order
 	 *
-	 * @param int   $id             Id of supplier order to update
-	 * @param array $request_data   Datas
-	 * @return int
+	 * @param 	int   	$id             	Id of supplier order to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object|false				Updated object
 	 */
 	public function put($id, $request_data = null)
 	{

@@ -180,7 +180,7 @@ class Boms extends DolibarrApi
 	 * Create bom object
 	 *
 	 * @param array $request_data   Request datas
-	 * @return int  ID of bom
+	 * @return int  				ID of bom
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	500		Error retrieving list of boms
@@ -214,10 +214,9 @@ class Boms extends DolibarrApi
 	/**
 	 * Update bom
 	 *
-	 * @param int   $id             Id of bom to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   		$id             Id of bom to update
+	 * @param 	array 		$request_data   Datas
+	 * @return 	Object						Object after update
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		BOM not found
@@ -439,7 +438,7 @@ class Boms extends DolibarrApi
 	 *
 	 * @url	DELETE {id}/lines/{lineid}
 	 *
-	 * @return int
+	 * @return array
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		BOM not found
@@ -474,7 +473,12 @@ class Boms extends DolibarrApi
 
 		$updateRes = $this->bom->deleteLine(DolibarrApiAccess::$user, $lineid);
 		if ($updateRes > 0) {
-			return $this->get($id);
+			return array(
+				'success' => array(
+					'code' => 200,
+					'message' => 'line ' .$lineid. ' deleted'
+				)
+			);
 		} else {
 			throw new RestException(500, $this->bom->error);
 		}

@@ -166,7 +166,7 @@ if (empty($reshook)) {
 
 	// Delete comment
 	if ($action == 'deletecomment') {
-		$idcomment = GETPOST('idcomment', 'int');
+		$idcomment = GETPOSTINT('idcomment');
 		if ($idcomment > 0) {
 			// Security check
 			if (!$user->hasRight('opensurvey', 'write')) {

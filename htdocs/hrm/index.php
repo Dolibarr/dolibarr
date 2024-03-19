@@ -61,7 +61,7 @@ $hookmanager->initHooks('hrmindex');
 $langs->loadLangs(array('users', 'holiday', 'trips', 'boxes'));
 
 // Get Parameters
-$socid = GETPOST("socid", "int");
+$socid = GETPOSTINT("socid");
 
 // Protection if external user
 if ($user->socid > 0) {

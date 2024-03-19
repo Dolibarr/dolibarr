@@ -26,7 +26,7 @@ ConfirmDeleteUser=আপনি কি নিশ্চিত যে আপনি 
 ConfirmDeleteGroup=আপনি কি <b>%s</b> গোষ্ঠী মুছে ফেলার বিষয়ে নিশ্চিত?
 ConfirmEnableUser=আপনি কি ব্যবহারকারী <b>%s</b> সক্ষম করার বিষয়ে নিশ্চিত?
 ConfirmReinitPassword=আপনি কি নিশ্চিত যে আপনি ব্যবহারকারীর জন্য একটি নতুন পাসওয়ার্ড তৈরি করতে চান <b>%s</b>?
-ConfirmSendNewPassword=আপনি কি নিশ্চিত যে আপনি ব্যবহারকারীর জন্য নতুন পাসওয়ার্ড তৈরি এবং পাঠাতে চান <b>%s<span class='notranslate'></b></span span>?
+ConfirmSendNewPassword=Are you sure you want to generate and send new password for user <b>%s</b>?
 NewUser=নতুন ব্যবহারকারী
 CreateUser=ব্যবহারকারী তৈরি করুন
 LoginNotDefined=লগইন সংজ্ঞায়িত করা হয় না.
@@ -45,7 +45,7 @@ CreateGroup=গ্রুপ তৈরি করুন
 RemoveFromGroup=দল থেকে বহিষ্কার করা
 PasswordChangedAndSentTo=পাসওয়ার্ড পরিবর্তন করে <b>%s</b>-এ পাঠানো হয়েছে।
 PasswordChangeRequest=<b>%s</b>-এর পাসওয়ার্ড পরিবর্তন করার অনুরোধ করুন
-PasswordChangeRequestSent=<b>%s</b> এর পাসওয়ার্ড পরিবর্তন করার অনুরোধ <span class= এ পাঠানো হয়েছে 'notranslate'><b></span>%s</b>।
+PasswordChangeRequestSent=Request to change password for <b>%s</b> sent to <b>%s</b>.
 IfLoginExistPasswordRequestSent=যদি এই লগইনটি একটি বৈধ অ্যাকাউন্ট হয় (একটি বৈধ ইমেল সহ), পাসওয়ার্ড পুনরায় সেট করার জন্য একটি ইমেল পাঠানো হয়েছে৷
 IfEmailExistPasswordRequestSent=যদি এই ইমেলটি একটি বৈধ অ্যাকাউন্ট হয়, তাহলে পাসওয়ার্ড রিসেট করার জন্য একটি ইমেল পাঠানো হয়েছে (আপনি কিছু না পেলে আপনার স্প্যাম ফোল্ডার চেক করতে ভুলবেন না)
 ConfirmPasswordReset=পাসওয়ার্ড রিসেট নিশ্চিত করুন
@@ -133,4 +133,4 @@ HideAllPerms=সমস্ত অনুমতি সারি লুকান
 UserPublicPageDesc=আপনি এই ব্যবহারকারীর জন্য একটি ভার্চুয়াল কার্ড সক্ষম করতে পারেন৷ ব্যবহারকারীর প্রোফাইল এবং একটি বারকোড সহ একটি ইউআরএল উপলব্ধ থাকবে যাতে স্মার্টফোন সহ যে কেউ এটিকে স্ক্যান করতে এবং আপনার পরিচিতিকে এর ঠিকানা বইতে যুক্ত করতে দেয়৷
 EnablePublicVirtualCard=ব্যবহারকারীর ভার্চুয়াল ব্যবসা কার্ড সক্রিয় করুন
 UserEnabledDisabled=ব্যবহারকারীর স্থিতি পরিবর্তিত হয়েছে: %s
-AlternativeEmailForOAuth2=Alternative Email for OAuth2 login
+AlternativeEmailForOAuth2=OAuth2 লগইনের জন্য বিকল্প ইমেল

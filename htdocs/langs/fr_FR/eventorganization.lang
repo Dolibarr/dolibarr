@@ -88,6 +88,7 @@ PriceOfRegistration=Prix de l'inscription
 PriceOfRegistrationHelp=Montant à payer pour l'enregistrement d'un participant à l'événement
 PriceOfBooth=Prix d’inscription pour un stand
 PriceOfBoothHelp=Prix d’inscription pour un stand
+EventOrganizationICSLinkProject=Lien ICS pour l'événement
 EventOrganizationICSLink=Lien ICS pour les conférences
 ConferenceOrBoothInformation=Informations sur la conférence ou sur le stand
 Attendees=Participants

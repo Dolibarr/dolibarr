@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - ldap
-YouMustChangePassNextLogon=סיסמה למשתמש <b>%s</b> בדומיין <span class=' יש לשנות notranslate'><b></span>%s</b>.
+YouMustChangePassNextLogon=Password for user <b>%s</b> on the domain <b>%s</b> must be changed.
 UserMustChangePassNextLogon=על המשתמש לשנות סיסמה בדומיין %s
 LDAPInformationsForThisContact=מידע במסד הנתונים של LDAP עבור איש קשר זה
 LDAPInformationsForThisUser=מידע במסד הנתונים של LDAP עבור משתמש זה

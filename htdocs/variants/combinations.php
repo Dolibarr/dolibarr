@@ -29,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.cla
 
 $langs->loadLangs(array("products", "other"));
 
-$id = GETPOST('id', 'int');
-$valueid = GETPOST('valueid', 'int');
+$id = GETPOSTINT('id');
+$valueid = GETPOSTINT('valueid');
 $ref = GETPOST('ref', 'alpha');
 $weight_impact = price2num(GETPOST('weight_impact', 'alpha'), 2);
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
@@ -47,7 +47,7 @@ $form = new Form($db);
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $cancel = GETPOST('cancel', 'alpha');
@@ -115,9 +115,9 @@ if ($action == 'add') {
 }
 if ($action == 'create' && GETPOST('selectvariant', 'alpha')) {	// We click on select combination
 	$action = 'add';
-	$attribute_id = GETPOST('attribute', 'int');
-	$attribute_value_id = GETPOST('value', 'int');
-	if ($attribute_id> 0 && $attribute_value_id > 0) {
+	$attribute_id = GETPOSTINT('attribute');
+	$attribute_value_id = GETPOSTINT('value');
+	if ($attribute_id > 0 && $attribute_value_id > 0) {
 		$feature = $attribute_id . '-' . $attribute_value_id;
 		$selectedvariant[$feature] = $feature;
 		$_SESSION['addvariant_'.$object->id] = $selectedvariant;
@@ -792,11 +792,11 @@ if (!empty($id) || !empty($ref)) {
 				$prodstatic->fetch($prodcomb->fk_product_child);
 
 				print $form->formconfirm(
-					"combinations.php?id=".urlencode($id)."&valueid=".urlencode($valueid),
+					"combinations.php?id=".urlencode((string) ($id))."&valueid=".urlencode((string) ($valueid)),
 					$langs->trans('Delete'),
 					$langs->trans('ProductCombinationDeleteDialog', $prodstatic->ref),
 					"confirm_deletecombination",
-					array(array('label'=> $langs->trans('DeleteLinkedProduct'), 'type'=> 'checkbox', 'name' => 'delete_product', 'value' => false)),
+					array(array('label' => $langs->trans('DeleteLinkedProduct'), 'type' => 'checkbox', 'name' => 'delete_product', 'value' => false)),
 					0,
 					1
 				);

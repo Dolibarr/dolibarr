@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011       Juanjo Menent	        <jmenent@2byte.es>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,14 @@ class mod_contract_magre extends ModelNumRefContracts
 	public $name = 'Magre';
 	public $version = 'dolibarr';
 	public $error = '';
-	public $code_auto = 1;
 
+	/**
+	 *	Constructor
+	 */
+	public function __construct()
+	{
+		$this->code_auto = 1;
+	}
 
 	/**
 	 *	Return default description of numbering model
@@ -99,7 +105,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	 *	Return next value
 	 *
 	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$contract	contract object
+	 *	@param	Contrat		$contract	contract object
 	 *	@return string|0      			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $contract)
@@ -118,19 +124,5 @@ class mod_contract_magre extends ModelNumRefContracts
 		$numFinal = get_next_value($db, $mask, 'contrat', 'ref', '', $objsoc, $contract->date_contrat);
 
 		return  $numFinal;
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next value
-	 *
-	 *  @param	Societe		$objsoc     third party object
-	 *  @param	Object		$objforref	contract object
-	 *  @return string|0      			Value if OK, 0 if KO
-	 */
-	public function contract_get_num($objsoc, $objforref)
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $objforref);
 	}
 }

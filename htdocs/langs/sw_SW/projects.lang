@@ -244,12 +244,12 @@ OppStatusPENDING=Inasubiri
 OppStatusWON=Ameshinda
 OppStatusLOST=Potea
 Budget=Bajeti
-AllowToLinkFromOtherCompany=Ruhusu kuunganisha kipengele na mradi wa kampuni nyingine <br>  <br>  <u> Thamani zinazotumika: </u>  <br> - Weka bila kitu: Inaweza kuunganisha vipengele na miradi yoyote katika kampuni moja (chaguo-msingi) <br> - "yote": Inaweza kuunganisha vipengele na miradi yoyote, hata miradi ya makampuni mengine <br> - Orodha ya vitambulisho vya watu wengine ikitenganishwa kwa koma: inaweza kuunganisha vipengele na miradi yoyote ya wahusika wengine (Mfano: 123,4795,53) <br> 
+AllowToLinkFromOtherCompany=Ruhusu kuunganisha kipengele na mradi wa kampuni nyingine <br>  <br>  <u> Thamani zinazotumika: </u>  <br> - Weka bila kitu: Inaweza kuunganisha vipengele na miradi yoyote katika kampuni moja (chaguo-msingi) <br> - "yote": Inaweza kuunganisha vipengele na miradi yoyote, hata miradi ya makampuni mengine <br> - Orodha ya vitambulisho vya watu wengine ikitenganishwa kwa koma: inaweza kuunganisha vipengele na miradi yoyote ya wahusika wengine (Mfano: 123,4795,53) <br>
 LatestProjects=Hivi karibuni %s miradi
 LatestModifiedProjects=Hivi karibuni %s miradi iliyorekebishwa
 OtherFilteredTasks=Kazi zingine zilizochujwa
 NoAssignedTasks=Hakuna kazi zilizokabidhiwa zilizopatikana (peana mradi/kazi kwa mtumiaji wa sasa kutoka kwenye kisanduku teule cha juu ili kuweka muda juu yake)
-ThirdPartyRequiredToGenerateInvoice=Mtu wa tatu lazima afafanuliwe kwenye mradi ili aweze kuuweka ankara.
+ThirdPartyRequiredToGenerateIntervention=A third party must be defined on project to be able to create intervention.
 ThirdPartyRequiredToGenerateInvoice=Mtu wa tatu lazima afafanuliwe kwenye mradi ili aweze kuuweka ankara.
 ChooseANotYetAssignedTask=Chagua kazi ambayo bado haujakabidhiwa
 # Comments trans

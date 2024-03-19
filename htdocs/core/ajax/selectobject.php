@@ -45,7 +45,7 @@ $extrafields = new ExtraFields($db);
 
 $objectdesc = GETPOST('objectdesc', 'alphanohtml', 0, null, null, 1);
 $htmlname = GETPOST('htmlname', 'aZ09');
-$outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
+$outjson = (GETPOSTINT('outjson') ? GETPOSTINT('outjson') : 0);
 $id = GETPOSTINT('id');
 $objectfield = GETPOST('objectfield', 'alpha');	// 'MyObject:field' or 'MyModule_MyObject:field' or 'MyObject:option_field' or 'MyModule_MyObject:option_field'
 

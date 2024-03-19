@@ -3,6 +3,7 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concpt.pro>
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@ require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-// librairie jobs
+// Cron job libraries
 require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/html.formcron.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
@@ -73,11 +74,10 @@ if (!empty($cancel)) {
 	} else {
 		if ($backtopage) {
 			header("Location: ".$backtopage);
-			exit;
 		} else {
 			header("Location: ".DOL_URL_ROOT.'/cron/list.php');
-			exit;
 		}
+		exit;
 	}
 }
 
@@ -98,7 +98,6 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodelete) {
 if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
 	if (getDolGlobalString('CRON_KEY') && $conf->global->CRON_KEY != $securitykey) {
 		setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
-		$action = '';
 	} else {
 		$now = dol_now(); // Date we start
 
@@ -106,7 +105,6 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
 
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
-			$action = '';
 		} else {
 			$res = $object->reprogram_jobs($user->login, $now);
 			if ($res > 0) {
@@ -115,13 +113,12 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
 				} else {
 					setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
 				}
-				$action = '';
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
-				$action = '';
 			}
 		}
 	}
+	$action = '';
 }
 
 
@@ -136,11 +133,11 @@ if ($action == 'add' && $permissiontoadd) {
 	$object->md5params = GETPOST('md5params');
 	$object->module_name = GETPOST('module_name');
 	$object->note_private = GETPOST('note', 'restricthtml');
-	$object->datestart = dol_mktime(GETPOST('datestarthour', 'int'), GETPOST('datestartmin', 'int'), 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'));
-	$object->dateend = dol_mktime(GETPOST('dateendhour', 'int'), GETPOST('dateendmin', 'int'), 0, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'));
-	$object->priority = GETPOST('priority', 'int');
-	$object->datenextrun = dol_mktime(GETPOST('datenextrunhour', 'int'), GETPOST('datenextrunmin', 'int'), 0, GETPOST('datenextrunmonth', 'int'), GETPOST('datenextrunday', 'int'), GETPOST('datenextrunyear', 'int'));
-	$object->unitfrequency = GETPOST('unitfrequency', 'int');
+	$object->datestart = dol_mktime(GETPOSTINT('datestarthour'), GETPOSTINT('datestartmin'), 0, GETPOSTINT('datestartmonth'), GETPOSTINT('datestartday'), GETPOSTINT('datestartyear'));
+	$object->dateend = dol_mktime(GETPOSTINT('dateendhour'), GETPOSTINT('dateendmin'), 0, GETPOSTINT('dateendmonth'), GETPOSTINT('dateendday'), GETPOSTINT('dateendyear'));
+	$object->priority = GETPOSTINT('priority');
+	$object->datenextrun = dol_mktime(GETPOSTINT('datenextrunhour'), GETPOSTINT('datenextrunmin'), 0, GETPOSTINT('datenextrunmonth'), GETPOSTINT('datenextrunday'), GETPOSTINT('datenextrunyear'));
+	$object->unitfrequency = GETPOST('unitfrequency', 'alpha');
 	$object->frequency = GETPOSTINT('nbfrequency');
 	$object->maxrun = GETPOSTINT('maxrun');
 	$object->email_alert = GETPOST('email_alert');
@@ -150,7 +147,7 @@ if ($action == 'add' && $permissiontoadd) {
 	// Add cron task
 	$result = $object->create($user);
 
-	// test du Resultat de la requete
+	// Test request result
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'create';
@@ -173,11 +170,11 @@ if ($action == 'update' && $permissiontoadd) {
 	$object->md5params = GETPOST('md5params');
 	$object->module_name = GETPOST('module_name');
 	$object->note_private = GETPOST('note', 'restricthtml');
-	$object->datestart = dol_mktime(GETPOST('datestarthour', 'int'), GETPOST('datestartmin', 'int'), 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'));
-	$object->dateend = dol_mktime(GETPOST('dateendhour', 'int'), GETPOST('dateendmin', 'int'), 0, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'));
-	$object->priority = GETPOST('priority', 'int');
-	$object->datenextrun = dol_mktime(GETPOST('datenextrunhour', 'int'), GETPOST('datenextrunmin', 'int'), 0, GETPOST('datenextrunmonth', 'int'), GETPOST('datenextrunday', 'int'), GETPOST('datenextrunyear', 'int'));
-	$object->unitfrequency = GETPOST('unitfrequency', 'int');
+	$object->datestart = dol_mktime(GETPOSTINT('datestarthour'), GETPOSTINT('datestartmin'), 0, GETPOSTINT('datestartmonth'), GETPOSTINT('datestartday'), GETPOSTINT('datestartyear'));
+	$object->dateend = dol_mktime(GETPOSTINT('dateendhour'), GETPOSTINT('dateendmin'), 0, GETPOSTINT('dateendmonth'), GETPOSTINT('dateendday'), GETPOSTINT('dateendyear'));
+	$object->priority = GETPOSTINT('priority');
+	$object->datenextrun = dol_mktime(GETPOSTINT('datenextrunhour'), GETPOSTINT('datenextrunmin'), 0, GETPOSTINT('datenextrunmonth'), GETPOSTINT('datenextrunday'), GETPOSTINT('datenextrunyear'));
+	$object->unitfrequency = GETPOST('unitfrequency', 'alpha');
 	$object->frequency = GETPOSTINT('nbfrequency');
 	$object->maxrun = GETPOSTINT('maxrun');
 	$object->email_alert = GETPOST('email_alert');
@@ -185,7 +182,7 @@ if ($action == 'update' && $permissiontoadd) {
 	// Add cron task
 	$result = $object->update($user);
 
-	// test du Resultat de la requete
+	// Test request result
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'edit';
@@ -201,7 +198,7 @@ if ($action == 'activate' && $permissiontoadd) {
 	// Add cron task
 	$result = $object->update($user);
 
-	// test du Resultat de la requete
+	// Test request result
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'edit';
@@ -218,7 +215,7 @@ if ($action == 'inactive' && $permissiontoadd) {
 	// Add cron task
 	$result = $object->update($user);
 
-	// test du Resultat de la requete
+	// Test request result
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'edit';
@@ -495,7 +492,7 @@ if (($action == "create") || ($action == "edit")) {
 	print "<tr><td>";
 	print $langs->trans('CronDtStart')."</td><td>";
 	if (!empty($object->datestart)) {
-		print $form->selectDate($object->datestart, 'datestart', 1, 1, '', "cronform");
+		print $form->selectDate($object->datestart, 'datestart', 1, 1, 0, "cronform");
 	} else {
 		print $form->selectDate(-1, 'datestart', 1, 1, 1, "cronform");
 	}
@@ -507,7 +504,7 @@ if (($action == "create") || ($action == "edit")) {
 	print "<tr><td>";
 	print $langs->trans('CronDtEnd')."</td><td>";
 	if (!empty($object->dateend)) {
-		print $form->selectDate($object->dateend, 'dateend', 1, 1, '', "cronform");
+		print $form->selectDate($object->dateend, 'dateend', 1, 1, 0, "cronform");
 	} else {
 		print $form->selectDate(-1, 'dateend', 1, 1, 1, "cronform");
 	}
@@ -545,9 +542,9 @@ if (($action == "create") || ($action == "edit")) {
 	//print ' ('.$langs->trans('CronFrom').')';
 	print "</td><td>";
 	if (!empty($object->datenextrun)) {
-		print $form->selectDate($object->datenextrun, 'datenextrun', 1, 1, '', "cronform");
+		print $form->selectDate($object->datenextrun, 'datenextrun', 1, 1, 0, "cronform");
 	} else {
-		print $form->selectDate(-1, 'datenextrun', 1, 1, '', "cronform", 1, 1);
+		print $form->selectDate(-1, 'datenextrun', 1, 1, 0, "cronform", 1, 1);
 	}
 	print "</td>";
 	print "<td>";
@@ -679,7 +676,7 @@ if (($action == "create") || ($action == "edit")) {
 		print $langs->trans('CronEach')." ".($object->frequency)." ".$langs->trans('Weeks');
 	}
 	if ($object->unitfrequency == "2678400") {
-		print $langs->trans('CronEach')." ".($object->frequency)." ".$langs->trans('Month');
+		print $langs->trans('CronEach')." ".($object->frequency)." ".$langs->trans('Months');
 	}
 	print "</td></tr>";
 

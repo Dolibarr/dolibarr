@@ -36,7 +36,7 @@ EventOrganizationSetup=ການຕັ້ງອົງການຈັດຕັ້
 EventOrganization=ອົງການຈັດຕັ້ງເຫດການ
 EventOrganizationSetupPage = ໜ້າ ການຕັ້ງອົງການຈັດຕັ້ງເຫດການ
 EVENTORGANIZATION_TASK_LABEL = ປ້າຍ ກຳ ກັບ ໜ້າ ວຽກເພື່ອສ້າງອັດຕະໂນມັດເມື່ອໂຄງການໄດ້ຮັບການກວດສອບ
-EVENTORGANIZATION_TASK_LABELTooltip = ເມື່ອທ່ານກວດສອບເຫດການເພື່ອຈັດຕັ້ງ, ບາງໜ້າວຽກສາມາດຖືກສ້າງໂດຍອັດຕະໂນມັດໃນໂຄງການ<br><br>ຕົວຢ່າງ: <br>ສົ່ງການໂທເຂົ້າປະຊຸມ<br>ສົ່ງການໂທສຳລັບບູດ<br>ກວດສອບການແນະນຳການຈັດກອງປະຊຸມ ='notranslate'><br></span>ກວດສອບການສະໝັກສຳລັບ Booths<br>ເປີດການສະໝັກສະມາຊິກເຂົ້າຮ່ວມງານ<br>Send ຂອງເຫດການເຖິງລໍາໂພງ<br>ສົ່ງການເຕືອນເຫດການໃຫ້ຜູ້ຈັດບູດ<br>ສົ່ງຄໍາເຕືອນເຫດການໃຫ້ຜູ້ເຂົ້າຮ່ວມ
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
 EVENTORGANIZATION_TASK_LABELTooltip2=ເກັບໄວ້ຫວ່າງເປົ່າຖ້າທ່ານບໍ່ຈໍາເປັນຕ້ອງສ້າງຫນ້າວຽກໂດຍອັດຕະໂນມັດ.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Categoryວດtoູ່ເພື່ອເພີ່ມໃສ່ພາກສ່ວນທີສາມສ້າງໂດຍອັດຕະໂນມັດເມື່ອມີຄົນແນະ ນຳ ການປະຊຸມ
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Categoryວດtoູ່ເພື່ອເພີ່ມໃສ່ພາກສ່ວນທີສາມສ້າງໂດຍອັດຕະໂນມັດເມື່ອພວກເຂົາແນະ ນຳ ບູດ
@@ -88,6 +88,7 @@ PriceOfRegistration=ລາຄາການລົງທະບຽນ
 PriceOfRegistrationHelp=ລາຄາເພື່ອລົງທະບຽນຫຼືເຂົ້າຮ່ວມກິດຈະກໍາ
 PriceOfBooth=ລາຄາຈອງເພື່ອຢືນບູດ
 PriceOfBoothHelp=ລາຄາຈອງເພື່ອຢືນບູດ
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=ເຊື່ອມຕໍ່ ICS ສໍາລັບກອງປະຊຸມ
 ConferenceOrBoothInformation=ຂໍ້ມູນກອງປະຊຸມ ຫຼື Booth
 Attendees=ຜູ້ເຂົ້າຮ່ວມ

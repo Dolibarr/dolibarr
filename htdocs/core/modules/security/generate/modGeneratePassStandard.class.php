@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2011 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,20 +39,6 @@ class modGeneratePassStandard extends ModeleGenPassword
 	public $picto = 'fa-shield-alt';
 
 	/**
-	 * Minimum length (text visible by end user)
-	 *
-	 * @var int
-	 */
-	public $length;
-
-	/**
-	 * Minimum length in number of characters
-	 *
-	 * @var integer
-	 */
-	public $length2;
-
-	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db			Database handler
@@ -62,7 +49,7 @@ class modGeneratePassStandard extends ModeleGenPassword
 	public function __construct($db, $conf, $langs, $user)
 	{
 		$this->id = "standard";
-		$this->length = 12;
+		$this->length = '12';
 		$this->length2 = 12;
 
 		$this->db = $db;

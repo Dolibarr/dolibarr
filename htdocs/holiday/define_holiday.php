@@ -3,6 +3,7 @@
  * Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,16 +42,16 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('optioncss', 'aZ');
 
 $search_name = GETPOST('search_name', 'alpha');
-$search_supervisor = GETPOST('search_supervisor', 'int');
+$search_supervisor = GETPOSTINT('search_supervisor');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $confirm = GETPOST('confirm', 'alpha');
 
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -87,10 +88,10 @@ if (!$user->hasRight('holiday', 'read')) {
 }
 
 $arrayfields = array(
-	'cp.rowid'=>array('label'=>$langs->trans("Employee"), 'checked'=>1, 'position'=>20),
-	'cp.fk_user'=>array('label'=>$langs->trans("Supervisor"), 'checked'=>1, 'position'=>30),
-	'cp.nbHoliday'=>array('label'=>$langs->trans("MenuConfCP"), 'checked'=>1, 'position'=>40),
-	'cp.note_public'=>array('label'=>$langs->trans("Note"), 'checked'=>1, 'position'=>50),
+	'cp.rowid' => array('label' => $langs->trans("Employee"), 'checked' => 1, 'position' => 20),
+	'cp.fk_user' => array('label' => $langs->trans("Supervisor"), 'checked' => 1, 'position' => 30),
+	'cp.nbHoliday' => array('label' => $langs->trans("MenuConfCP"), 'checked' => 1, 'position' => 40),
+	'cp.note_public' => array('label' => $langs->trans("Note"), 'checked' => 1, 'position' => 50),
 );
 
 
@@ -260,7 +261,7 @@ if ($massaction == 'preincreaseholiday') {
 	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 	$staticholiday = new Holiday($db);
 	$arraytypeholidays = $staticholiday->getTypes(1, 1);
-	$formquestion[] = array();
+	$formquestion = array();
 	$labeltypes = array();
 	foreach ($typeleaves as $key => $val) {
 		$labeltypes[$val['id']] = ($langs->trans($val['code']) != $val['code']) ? $langs->trans($val['code']) : $langs->trans($val['label']);
@@ -273,7 +274,7 @@ if ($massaction == 'preincreaseholiday') {
 	$formquestion [] = array( 'type' => 'other',
 		'name' => 'nbdaysholydays',
 		'label' => $langs->trans("NumberDayAddMass"),
-		'value' => '<input name="nbdaysholidays" class="maxwidth75" id="nbdaysholidays" value="'.GETPOST('nbdaysholidays', 'int').'">'
+		'value' => '<input name="nbdaysholidays" class="maxwidth75" id="nbdaysholidays" value="'.GETPOSTINT('nbdaysholidays').'">'
 	);
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassIncreaseHoliday"), $langs->trans("ConfirmMassIncreaseHolidayQuestion", count($toselect)), "increaseholiday", $formquestion, 1, 0, 200, 500, 1);
 }
@@ -330,7 +331,7 @@ if (count($typeleaves) == 0) {
 	$selectedfields = '';
 	if ($massactionbutton) {
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-		$selectedfields .= ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+		$selectedfields .= ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 	}
 
@@ -431,7 +432,7 @@ if (count($typeleaves) == 0) {
 		$userstatic->firstname = $users['firstname'];
 		$userstatic->gender = $users['gender'];
 		$userstatic->photo = $users['photo'];
-		$userstatic->statut = $users['status'];
+		$userstatic->status = $users['status'];
 		$userstatic->employee = $users['employee'];
 		$userstatic->fk_user = $users['fk_user'];
 

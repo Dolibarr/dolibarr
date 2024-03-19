@@ -1,4 +1,5 @@
 <?php
+'@phan-var-force DolibarrModules $this';
 
 // $keyforselect = name of main table
 // keyforelement = name of picto

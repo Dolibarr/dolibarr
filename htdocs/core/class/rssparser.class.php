@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +21,8 @@
  *      \ingroup    core
  *      \brief      File of class to parse RSS feeds
  */
+
+// @phan-file-suppress PhanPluginPHPDocInWrongComment
 
 /**
  * 	Class to parse RSS files
@@ -173,7 +176,7 @@ class RssParser
 	/**
 	 * getLastFetchDate
 	 *
-	 * @return string
+	 * @return int
 	 */
 	public function getLastFetchDate()
 	{
@@ -216,7 +219,7 @@ class RssParser
 		$newpathofdestfile = $cachedir.'/'.dol_hash($this->_urlRSS, 3); // Force md5 hash (does not contain special chars)
 		$newmask = '0644';
 
-		//dol_syslog("RssPArser::parser parse url=".$urlRSS." => cache file=".$newpathofdestfile);
+		//dol_syslog("RssParser::parser parse url=".$urlRSS." => cache file=".$newpathofdestfile);
 		$nowgmt = dol_now();
 
 		// Search into cache
@@ -260,6 +263,7 @@ class RssParser
 				if (LIBXML_VERSION < 20900) {
 					// Avoid load of external entities (security problem).
 					// Required only if LIBXML_VERSION < 20900
+					// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 					libxml_disable_entity_loader(true);
 				}
 
@@ -271,6 +275,7 @@ class RssParser
 				}
 
 				try {
+					// @phan-suppress-next-line PhanTypeMismatchArgumentInternalProbablyReal
 					$xmlparser = xml_parser_create(null);
 
 					xml_parser_set_option($xmlparser, XML_OPTION_CASE_FOLDING, 0);
@@ -284,7 +289,9 @@ class RssParser
 					}
 
 					xml_set_object($xmlparser, $this);
+					// @phan-suppress-next-line PhanUndeclaredFunctionInCallable
 					xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element');
+					// @phan-suppress-next-line PhanUndeclaredFunctionInCallable
 					xml_set_character_data_handler($xmlparser, 'feed_cdata');
 
 					$status = xml_parse($xmlparser, $str, false);
@@ -473,42 +480,33 @@ class RssParser
 							}
 						}
 					} elseif ($rss->_format == 'atom') {
-						if (getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')) {
-							$itemLink = (isset($item['link']) ? sanitizeVal((string) $item['link']) : '');
-							$itemTitle = sanitizeVal((string) $item['title']);
-							$itemDescription = sanitizeVal($this->getAtomItemDescription($item));
-							$itemPubDate = sanitizeVal((string) $item['created']);
-							$itemId = sanitizeVal((string) $item['id']);
-							$itemAuthor = sanitizeVal((string) ($item['author'] ? $item['author'] : $item['author_name']));
-						} else {
-							$itemLink = (isset($item['link']) ? sanitizeVal((string) $item['link']) : '');
-							$itemTitle = sanitizeVal((string) $item['title']);
-							$itemDescription = sanitizeVal($this->getAtomItemDescription($item));
-							$itemPubDate = sanitizeVal((string) $item['created']);
-							$itemId = sanitizeVal((string) $item['id']);
-							$itemAuthor = sanitizeVal((string) ($item['author'] ? $item['author'] : $item['author_name']));
-						}
+						$itemLink = (isset($item['link']) ? sanitizeVal((string) $item['link']) : '');
+						$itemTitle = sanitizeVal((string) $item['title']);
+						$itemDescription = sanitizeVal($this->getAtomItemDescription($item));
+						$itemPubDate = sanitizeVal((string) $item['created']);
+						$itemId = sanitizeVal((string) $item['id']);
+						$itemAuthor = sanitizeVal((string) ($item['author'] ? $item['author'] : $item['author_name']));
 						$itemCategory = array();
 					} else {
-						$itemCategory = array();
 						$itemLink = '';
 						$itemTitle = '';
 						$itemDescription = '';
 						$itemPubDate = '';
 						$itemId = '';
 						$itemAuthor = '';
+						$itemCategory = array();
 						print 'ErrorBadFeedFormat';
 					}
 
 					// Add record to result array
 					$this->_rssarray[$i] = array(
-						'link'=>$itemLink,
-						'title'=>$itemTitle,
-						'description'=>$itemDescription,
-						'pubDate'=>$itemPubDate,
-						'category'=>$itemCategory,
-						'id'=>$itemId,
-						'author'=>$itemAuthor
+						'link' => $itemLink,
+						'title' => $itemTitle,
+						'description' => $itemDescription,
+						'pubDate' => $itemPubDate,
+						'category' => $itemCategory,
+						'id' => $itemId,
+						'author' => $itemAuthor
 					);
 					//var_dump($this->_rssarray);
 
@@ -593,7 +591,7 @@ class RssParser
 		} elseif ($this->_format == 'atom' && $this->incontent) {
 			// if inside an Atom content construct (e.g. content or summary) field treat tags as text
 			// if tags are inlined, then flatten
-			$attrs_str = implode(' ', array_map('map_attrs', array_keys($attrs), array_values($attrs)));
+			$attrs_str = implode(' ', array_map('rss_map_attrs', array_keys($attrs), array_values($attrs)));
 
 			$this->append_content("<$element $attrs_str>");
 
@@ -811,7 +809,6 @@ class RssParser
 	}
 }
 
-
 /*
  * A method for the xml_set_external_entity_ref_handler()
  *
@@ -827,6 +824,17 @@ function extEntHandler($parser, $ent, $base, $sysID, $pubID)  {
 }
 */
 
+/**
+ * Function to convert an XML object into an array
+ *
+ * @param	string 	$k		Key
+ * @param	string 	$v		Value
+ * @return	string
+ */
+function rss_map_attrs($k, $v)
+{
+	return "$k=\"$v\"";
+}
 
 /**
  * Function to convert an XML object into an array

@@ -34,4 +34,4 @@ ARollbackWasPerformedOnPostActions=Барлық Post әрекеттері бой
 ValidationOfPaymentFailed=Төлем расталмады
 CardOwner=Карточка ұстаушы
 PayPalBalance=Paypal несиесі
-OnlineSubscriptionPaymentLine=%s<br>жазылымында жазылған онлайн жазылым %s<span class=' арқылы төленді. notranslate'><br></span>Бастапқы IP мекенжайы: %s<br>Транзакция идентификаторы: <spanteec29bz4fb </span>
+OnlineSubscriptionPaymentLine=Online subscription recorded on %s<br>Paid via %s<br>Originating IP address: %s<br>Transaction ID: %s

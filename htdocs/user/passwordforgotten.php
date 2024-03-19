@@ -53,7 +53,7 @@ $username = GETPOST('username', 'alphanohtml');
 $passworduidhash = GETPOST('passworduidhash', 'alpha');
 $setnewpassword = GETPOST('setnewpassword', 'aZ09');
 
-$conf->entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : 1);
+$conf->entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : 1);
 
 // Instantiate hooks of thirdparty module only if not already define
 $hookmanager->initHooks(array('passwordforgottenpage'));
@@ -229,7 +229,7 @@ if (function_exists("imagecreatefrompng") && !$disabled) {
 }
 
 // Execute hook getPasswordForgottenPageOptions (for table)
-$parameters = array('entity' => GETPOST('entity', 'int'));
+$parameters = array('entity' => GETPOSTINT('entity'));
 $hookmanager->executeHooks('getPasswordForgottenPageOptions', $parameters); // Note that $action and $object may have been modified by some hooks
 if (is_array($hookmanager->resArray) && !empty($hookmanager->resArray)) {
 	$morelogincontent = $hookmanager->resArray; // (deprecated) For compatibility
@@ -238,7 +238,7 @@ if (is_array($hookmanager->resArray) && !empty($hookmanager->resArray)) {
 }
 
 // Execute hook getPasswordForgottenPageExtraOptions (eg for js)
-$parameters = array('entity' => GETPOST('entity', 'int'));
+$parameters = array('entity' => GETPOSTINT('entity'));
 $reshook = $hookmanager->executeHooks('getPasswordForgottenPageExtraOptions', $parameters); // Note that $action and $object may have been modified by some hooks.
 $moreloginextracontent = $hookmanager->resPrint;
 

@@ -556,18 +556,18 @@ after_failure:
     # Show upgrade log files
     #for ficlog in `ls $TRAVIS_BUILD_DIR/*.log`
     #do
-      #echo "Debugging informations for file $ficlog"
+      #echo "Debugging information for file $ficlog"
       #cat $ficlog
     #done
     # Show Apache log file
-    echo "Debugging informations for file apache error.log"
+    echo "Debugging information for file apache error.log"
     sudo tail -n 200 /var/log/apache2/travis_error_log
     if [ "$DEBUG" = true ]; then
       # Dolibarr log file
-      echo "Debugging informations for file dolibarr.log (latest 50 lines)"
+      echo "Debugging information for file dolibarr.log (latest 50 lines)"
       tail -n 200 $TRAVIS_BUILD_DIR/documents/dolibarr.log
       # Database log file
-      echo "Debugging informations for file mysql error.log"
+      echo "Debugging information for file mysql error.log"
       sudo tail -n 200 /var/log/mysql/error.log
       # TODO: PostgreSQL log file
       echo

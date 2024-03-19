@@ -23,23 +23,24 @@ the project: `pre-commit-config.yaml`.
 
 ### Installation in your git project
 
-1. Install `pre-commit` tool.\
+1. Install pre-commit tool.\
    If you do not have python installed, install [python](https://www.python.org) first.\
    If you do not have [`pip`](https://pypi.org/project/pip), install that as well.\\
 
-   Then you can install pre-commit tool: `python -m pip install pre-commit`.
+   Then you can install pre-commit tool: 
+   `python3 -m pip install pre-commit`
 
-2. In your local git clone of the project, run `pre-commit install` to add the hooks.\
-   or copy the file git/hooks/pre-commit manually. (recommended because this file differs
-   from the file installed with pre-commit install as it redirects output to the error
-   channel so your IDE will be able to catch the error.
+2. In your local git clone of the project, run `pre-commit install` to add the hooks 
+   or copy the file *dev/setup/git/hooks/pre-commit* manually into *.git/hooks/pre-commit*
+   (recommended because this file may differ from the file installed with the pre-commit install).
+   The good file redirects output to the error channel so your IDE will be able to catch the error.
 
 
 ### Tips
 
 After installing `pre-commit` onto your local git clone, pre-commit will run
-on every commit. The first time, all tools required by pre-commit will be installed 
-into ~/.cache/pre-commit 
+on every commit. The first time, all tools required by pre-commit will be installed
+into ~/.cache/pre-commit
 
 When it finds some issue, the git commit will be aborted, so you can fix it,
 or verify it.
@@ -87,3 +88,7 @@ There is much more you can do with pre-commit, check out its
 Now your commit is less likely to fail in the Continuous Intagration (CI) run
 on github.\
 CI also runs pre-commit to help maintain code quality.
+
+Note:
+Code for precommits are saved into:
+.cache/pre-commit/repoyXXXXX/py_env-python3/lib/pythonX.Y/site-packages/pre_commit_hooks/no_commit_to_branch.py
