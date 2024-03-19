@@ -3042,6 +3042,7 @@ class EmailCollector extends CommonObject
 								$tickettocreate->severity_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE') ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_severity', 'use_default', 'code', 1));
 								$tickettocreate->origin_email = $from;
 								$tickettocreate->origin_replyto = (!empty($replyto) ? $replyto : null);
+								$tickettocreate->origin_references = (!empty($headers['References']) ? $headers['References'] : null);
 								$tickettocreate->fk_user_create = $user->id;
 								$tickettocreate->datec = dol_now();
 								$tickettocreate->fk_project = $projectstatic->id;
