@@ -963,10 +963,10 @@ class Reception extends CommonObject
 			$this->size_units = trim((string) $this->size_units);
 		}
 		if (isset($this->weight_units)) {
-			$this->weight_units = trim($this->weight_units);
+			$this->weight_units = trim((string) $this->weight_units);
 		}
 		if (isset($this->trueWeight)) {
-			$this->weight = trim($this->trueWeight);
+			$this->weight = trim((string) $this->trueWeight);
 		}
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
