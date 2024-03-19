@@ -1085,15 +1085,14 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getCompanyNotification($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
-			throw new RestException(403);
-		}
 		if (empty($id)) {
 			throw new RestException(400, 'Thirdparty ID is mandatory');
 		}
-
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
+			throw new RestException(403);
+		}
 		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		/**
