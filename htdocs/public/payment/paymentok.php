@@ -370,14 +370,14 @@ if (empty($TRANSACTIONID)) {
 	}
 }
 if (empty($FinalPaymentAmt)) {
-	$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
+	$FinalPaymentAmt = empty($_SESSION["FinalPaymentAmt"]) ? '' : $_SESSION["FinalPaymentAmt"];
 }
 if (empty($currencyCodeType)) {
-	$currencyCodeType = $_SESSION['currencyCodeType'];
+	$currencyCodeType = empty($_SESSION['currencyCodeType']) ? '' : $_SESSION['currencyCodeType'];
 }
-// Seems used onyl by Paypal
+// Seems used only by Paypal
 if (empty($paymentType)) {
-	$paymentType = $_SESSION["paymentType"];
+	$paymentType = empty($_SESSION["paymentType"]) ? '' : $_SESSION["paymentType"];
 }
 
 $fulltag = $FULLTAG;
