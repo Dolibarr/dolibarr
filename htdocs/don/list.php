@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -465,10 +466,10 @@ while ($i < $imaxinloop) {
 			if (!empty($obj->socid) && $company->id > 0) {
 				print "<td>".$company->getNomUrl(1)."</td>";
 			} else {
-				print "<td>".$obj->societe."</td>";
+				print "<td>".((string) $obj->societe)."</td>";
 			}
 		} else {
-			print "<td>".$obj->societe."</td>";
+			print "<td>".((string) $obj->societe)."</td>";
 		}
 		print "<td>".$donationstatic->getFullName($langs)."</td>";
 		print '<td class="center">'.dol_print_date($db->jdate($obj->datedon), 'day').'</td>';

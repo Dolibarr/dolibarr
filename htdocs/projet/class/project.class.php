@@ -293,7 +293,7 @@ class Project extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -1688,7 +1688,7 @@ class Project extends CommonObject
 	 *  @param	bool	$clone_task_file	  Clone file of task (if task are copied)
 	 *  @param	bool	$clone_note		      Clone note of project
 	 *  @param	bool	$move_date		      Move task date on clone
-	 *  @param	integer	$notrigger		      No trigger flag
+	 *  @param	int    	$notrigger		      No trigger flag
 	 *  @param  int     $newthirdpartyid      New thirdparty id
 	 *  @return	int						      New id of clone
 	 */
@@ -1698,7 +1698,7 @@ class Project extends CommonObject
 
 		$error = 0;
 
-		dol_syslog("createFromClone clone_contact=".$clone_contact." clone_task=".$clone_task." clone_project_file=".$clone_project_file." clone_note=".$clone_note." move_date=".$move_date, LOG_DEBUG);
+		dol_syslog("createFromClone clone_contact=".json_encode($clone_contact)." clone_task=".json_encode($clone_task)." clone_project_file=".json_encode($clone_project_file)." clone_note=".json_encode($clone_note)." move_date=".json_encode($move_date), LOG_DEBUG);
 
 		$now = dol_mktime(0, 0, 0, idate('m', dol_now()), idate('d', dol_now()), idate('Y', dol_now()));
 
@@ -2587,9 +2587,9 @@ class Project extends CommonObject
 		u.email,u.weeklyhours,
 		SUM(et.element_duration) AS total_seconds
 		FROM
-			llx_element_time AS et
+			".MAIN_DB_PREFIX."element_time AS et
 		JOIN
-			llx_user AS u ON et.fk_user = u.rowid
+			".MAIN_DB_PREFIX."user AS u ON et.fk_user = u.rowid
 		WHERE
 			et.element_date BETWEEN '".$this->db->escape($startDate)."' AND '".$this->db->escape($endDate)."'
 			AND et.elementtype = 'task'
