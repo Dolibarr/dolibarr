@@ -74,8 +74,8 @@ if (getDolGlobalString('PAYPAL_API_SANDBOX')) {
 }
 
 // Proxy
-$PROXY_HOST = $conf->global->MAIN_PROXY_HOST;
-$PROXY_PORT = $conf->global->MAIN_PROXY_PORT;
-$PROXY_USER = $conf->global->MAIN_PROXY_USER;
-$PROXY_PASS = $conf->global->MAIN_PROXY_PASS;
+$PROXY_HOST = getDolGlobalString('MAIN_PROXY_HOST');
+$PROXY_PORT = getDolGlobalString('MAIN_PROXY_PORT');
+$PROXY_USER = getDolGlobalString('MAIN_PROXY_USER');
+$PROXY_PASS = getDolGlobalString('MAIN_PROXY_PASS');
 $USE_PROXY = !getDolGlobalString('MAIN_PROXY_USE') ? false : true;

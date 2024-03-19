@@ -360,10 +360,10 @@ if ($reshook >= 0) {
 
 // If data not provided into callback url, search them into the session env
 if (empty($ipaddress)) {
-	$ipaddress       = $_SESSION['ipaddress'];
+	$ipaddress = $_SESSION['ipaddress'];
 }
 if (empty($TRANSACTIONID)) {
-	$TRANSACTIONID   = $_SESSION['TRANSACTIONID'];	// pi_... or ch_...
+	$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' :$_SESSION['TRANSACTIONID'];	// pi_... or ch_...
 	if (empty($TRANSACTIONID) && GETPOST('payment_intent', 'alphanohtml')) {
 		// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2
 		$TRANSACTIONID   = GETPOST('payment_intent', 'alphanohtml');
@@ -377,7 +377,7 @@ if (empty($currencyCodeType)) {
 }
 // Seems used onyl by Paypal
 if (empty($paymentType)) {
-	$paymentType     = $_SESSION["paymentType"];
+	$paymentType = $_SESSION["paymentType"];
 }
 
 $fulltag = $FULLTAG;
