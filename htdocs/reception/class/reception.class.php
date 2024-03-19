@@ -960,7 +960,7 @@ class Reception extends CommonObject
 			$this->trueHeight = trim($this->trueHeight);
 		}
 		if (isset($this->size_units)) {
-			$this->size_units = trim($this->size_units);
+			$this->size_units = trim((string) $this->size_units);
 		}
 		if (isset($this->weight_units)) {
 			$this->weight_units = trim($this->weight_units);
