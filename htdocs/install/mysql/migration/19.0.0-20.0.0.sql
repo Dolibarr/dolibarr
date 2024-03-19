@@ -281,5 +281,5 @@ ALTER TABLE llx_ticket ADD CONSTRAINT llx_ticket_fk_product_barcode_type FOREIGN
 
 ALTER TABLE llx_societe ADD COLUMN fk_parent integer NULL;
 
-ALTER TABLE llx_receptiondet_batch RENAME COLUMN fk_commande TO fk_element;
-ALTER TABLE llx_receptiondet_batch RENAME COLUMN fk_commandefourndet TO fk_elementdet;
+ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commande fk_element integer;
+ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commandefourndet fk_elementdet integer;
