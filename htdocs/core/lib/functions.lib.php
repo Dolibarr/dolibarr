@@ -1635,7 +1635,7 @@ function dolPrintLabel($s)
 
 /**
  * Return a string ready to be output on HTML page
- * To use text inside an attribute, you can simply use dol_escape_htmltag()
+ * To use text inside an attribute, you can simply use dolPrintHTMLForAttribute() or dol_escape_htmltag()
  *
  * @param	string	$s				String to print
  * @param	int		$allowiframe	Allow iframe tags
