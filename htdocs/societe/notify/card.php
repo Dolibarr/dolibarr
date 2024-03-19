@@ -219,15 +219,15 @@ if ($result > 0) {
 	print '<div class="opacitymedium hideonsmartphone">';
 	print $langs->trans("NotificationsDesc");
 	print '<br>'.$langs->trans("NotificationsDescUser");
-	print '<br>'.$langs->trans("NotificationsDescContact");
+	print '<br>'.$langs->trans("NotificationsDescContact").' - '.$langs->trans("YouAreHere");
 	print '<br>'.$langs->trans("NotificationsDescGlobal");
 	print '<br>';
 	print '</div>';
 
-	print '<br>'."\n";
+	print '<br><br>'."\n";
 
 
-	// List of notifications enabled for contacts
+	// List of notifications enabled for contacts of the thirdparty
 	$sql = "SELECT n.rowid, n.type,";
 	$sql .= " a.code, a.label,";
 	$sql .= " c.rowid as contactid, c.lastname, c.firstname, c.email";
@@ -245,9 +245,14 @@ if ($result > 0) {
 		dol_print_error($db);
 	}
 
+	$param = '';
+	$newcardbutton = '';
+
+	$titlelist = $langs->trans("ListOfActiveNotifications");
 
 	// Add notification form
-	print load_fiche_titre($langs->trans("ListOfActiveNotifications").' <span class="opacitymedium colorblack paddingleft">('.$num.')</span>', '', '');
+	//print load_fiche_titre($titlelist.' <span class="opacitymedium colorblack paddingleft">('.$num.')</span>', '', '');
+	print_barre_liste($titlelist, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $num, 'email', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$socid.'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -278,18 +283,27 @@ if ($result > 0) {
 			$label = ($langs->trans("Notify_".$managedeventfornotification['code']) != "Notify_".$managedeventfornotification['code'] ? $langs->trans("Notify_".$managedeventfornotification['code']) : $managedeventfornotification['label']);
 			$actions[$managedeventfornotification['rowid']] = $label;
 		}
+
+		$newlistofemails = array();
+		foreach ($listofemails as $tmpkey => $tmpval) {
+			$labelhtml = str_replace(array('<', '>'), array(' - <span class="opacitymedium">', '</span>'), $tmpval);
+			$newlistofemails[$tmpkey] = array('label' => dol_string_nohtmltag($tmpval), 'id' => $tmpkey, 'data-html' => $labelhtml);
+		}
+
 		print '<tr class="oddeven nohover">';
 		print '<td class="nowraponall">';
-		print img_picto('', 'contact', '', false, 0, 0, '', 'paddingright').$form->selectarray("contactid", $listofemails, '', 1, 0, 0, '', 0, 0, 0, '', 'minwidth100imp maxwidthonsmartphone');
+		print img_picto('', 'contact', '', false, 0, 0, '', 'paddingright');
+		print $form->selectarray("contactid", $newlistofemails, '', 1, 0, 0, '', 0, 0, 0, '', 'minwidth100imp maxwidthonsmartphone');
 		print '</td>';
 		print '<td class="nowraponall">';
-		print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$form->selectarray("actionid", $actions, '', 1, 0, 0, '', 0, 0, 0, '', 'minwidth100imp maxwidthonsmartphone');
+		print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright');
+		print $form->selectarray("actionid", $actions, '', 1, 0, 0, '', 0, 0, 0, '', 'minwidth100imp maxwidthonsmartphone');
 		print '</td>';
 		print '<td>';
 		$type = array('email' => $langs->trans("EMail"));
 		print $form->selectarray("typeid", $type, '', 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 		print '</td>';
-		print '<td class="right"><input type="submit" class="button button-add" value="'.$langs->trans("Add").'"></td>';
+		print '<td class="right"><input type="submit" class="button button-add small" value="'.$langs->trans("Add").'"></td>';
 		print '</tr>';
 	} else {
 		print '<tr class="oddeven"><td colspan="4" class="opacitymedium">';
@@ -448,7 +462,7 @@ if ($result > 0) {
 	print '<input type="hidden" name="socid" value="'.$object->id.'">';
 
 	// List of active notifications  @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'email', 0, '', '', $limit);
 
 	// Line with titles
 	print '<div class="div-table-responsive-no-min">';
