@@ -280,3 +280,6 @@ ALTER TABLE llx_ticket ADD UNIQUE INDEX uk_ticket_barcode_barcode_type (barcode,
 ALTER TABLE llx_ticket ADD CONSTRAINT llx_ticket_fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES  llx_c_barcode_type (rowid);
 
 ALTER TABLE llx_societe ADD COLUMN fk_parent integer NULL;
+
+ALTER TABLE llx_receptiondet_batch RENAME COLUMN fk_commande TO fk_element;
+ALTER TABLE llx_receptiondet_batch RENAME COLUMN fk_commandefourndet TO fk_elementdet;

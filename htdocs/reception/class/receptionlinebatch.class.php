@@ -68,7 +68,7 @@ class ReceptionLineBatch extends CommonObjectLine
 	/**
 	 * @var int ID
 	 */
-	public $fk_commande;
+	public $fk_element;
 
 	/**
 	 * @var int ID
@@ -76,9 +76,9 @@ class ReceptionLineBatch extends CommonObjectLine
 	public $fk_product;
 
 	/**
-	 * @var int ID. Should be named fk_origin_line ?
+	 * @var int ID
 	 */
-	public $fk_commandefourndet;
+	public $fk_elementdet;
 
 	public $fk_reception;
 
@@ -152,14 +152,14 @@ class ReceptionLineBatch extends CommonObjectLine
 
 		// Clean parameters
 
-		if (isset($this->fk_commande)) {
-			$this->fk_commande = (int) $this->fk_commande;
+		if (isset($this->fk_element)) {
+			$this->fk_element = (int) $this->fk_element;
 		}
 		if (isset($this->fk_product)) {
 			$this->fk_product = (int) $this->fk_product;
 		}
-		if (isset($this->fk_commandefourndet)) {
-			$this->fk_commandefourndet = (int) $this->fk_commandefourndet;
+		if (isset($this->fk_elementdet)) {
+			$this->fk_elementdet = (int) $this->fk_elementdet;
 		}
 		if (isset($this->qty)) {
 			$this->qty = trim($this->qty);
@@ -189,9 +189,9 @@ class ReceptionLineBatch extends CommonObjectLine
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
-		$sql .= "fk_commande,";
+		$sql .= "fk_element,";
 		$sql .= "fk_product,";
-		$sql .= "fk_commandefourndet,";
+		$sql .= "fk_elementdet,";
 		$sql .= "qty,";
 		$sql .= "fk_entrepot,";
 		$sql .= "fk_user,";
@@ -206,9 +206,9 @@ class ReceptionLineBatch extends CommonObjectLine
 
 
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->fk_commande) ? 'NULL' : "'".$this->db->escape($this->fk_commande)."'").",";
+		$sql .= " ".(!isset($this->fk_element) ? 'NULL' : "'".$this->db->escape($this->fk_element)."'").",";
 		$sql .= " ".(!isset($this->fk_product) ? 'NULL' : "'".$this->db->escape($this->fk_product)."'").",";
-		$sql .= " ".(!isset($this->fk_commandefourndet) ? 'NULL' : "'".$this->db->escape($this->fk_commandefourndet)."'").",";
+		$sql .= " ".(!isset($this->fk_elementdet) ? 'NULL' : "'".$this->db->escape($this->fk_elementdet)."'").",";
 		$sql .= " ".(!isset($this->qty) ? 'NULL' : "'".$this->db->escape($this->qty)."'").",";
 		$sql .= " ".(!isset($this->fk_entrepot) ? 'NULL' : "'".$this->db->escape($this->fk_entrepot)."'").",";
 		$sql .= " ".(!isset($this->fk_user) ? 'NULL' : "'".$this->db->escape($this->fk_user)."'").",";
@@ -280,9 +280,9 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 
-		$sql .= " t.fk_commande,";
+		$sql .= " t.fk_element,";
 		$sql .= " t.fk_product,";
-		$sql .= " t.fk_commandefourndet,";
+		$sql .= " t.fk_elementdet,";
 		$sql .= " t.qty,";
 		$sql .= " t.fk_entrepot,";
 		$sql .= " t.fk_user,";
@@ -311,9 +311,9 @@ class ReceptionLineBatch extends CommonObjectLine
 
 				$this->id = $obj->rowid;
 
-				$this->fk_commande = $obj->fk_commande;
+				$this->fk_element = $obj->fk_element;
 				$this->fk_product = $obj->fk_product;
-				$this->fk_commandefourndet = $obj->fk_commandefourndet;
+				$this->fk_elementdet = $obj->fk_elementdet;
 				$this->qty = $obj->qty;
 				$this->fk_entrepot = $obj->fk_entrepot;
 				$this->fk_user = $obj->fk_user;
@@ -351,14 +351,14 @@ class ReceptionLineBatch extends CommonObjectLine
 
 		// Clean parameters
 
-		if (isset($this->fk_commande)) {
-			$this->fk_commande = (int) $this->fk_commande;
+		if (isset($this->fk_element)) {
+			$this->fk_element = (int) $this->fk_element;
 		}
 		if (isset($this->fk_product)) {
 			$this->fk_product = (int) $this->fk_product;
 		}
-		if (isset($this->fk_commandefourndet)) {
-			$this->fk_commandefourndet = (int) $this->fk_commandefourndet;
+		if (isset($this->fk_elementdet)) {
+			$this->fk_elementdet = (int) $this->fk_elementdet;
 		}
 		if (isset($this->qty)) {
 			$this->qty = trim($this->qty);
@@ -386,9 +386,9 @@ class ReceptionLineBatch extends CommonObjectLine
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql .= " fk_commande=".(isset($this->fk_commande) ? $this->fk_commande : "null").",";
+		$sql .= " fk_element=".(isset($this->fk_element) ? $this->fk_element : "null").",";
 		$sql .= " fk_product=".(isset($this->fk_product) ? $this->fk_product : "null").",";
-		$sql .= " fk_commandefourndet=".(isset($this->fk_commandefourndet) ? $this->fk_commandefourndet : "null").",";
+		$sql .= " fk_elementdet=".(isset($this->fk_elementdet) ? $this->fk_elementdet : "null").",";
 		$sql .= " qty=".(isset($this->qty) ? $this->qty : "null").",";
 		$sql .= " fk_entrepot=".(isset($this->fk_entrepot) ? $this->fk_entrepot : "null").",";
 		$sql .= " fk_user=".(isset($this->fk_user) ? $this->fk_user : "null").",";
@@ -517,7 +517,7 @@ class ReceptionLineBatch extends CommonObjectLine
 	{
 		$error = 0;
 
-		$object = new CommandeFournisseurDispatch($this->db);
+		$object = new ReceptionLineBatch($this->db);
 
 		$this->db->begin();
 
@@ -626,9 +626,9 @@ class ReceptionLineBatch extends CommonObjectLine
 	{
 		$this->id = 0;
 
-		$this->fk_commande = 0;
+		$this->fk_element = 0;
 		$this->fk_product = 0;
-		$this->fk_commandefourndet = 0;
+		$this->fk_elementdet = 0;
 		$this->qty = '';
 		$this->fk_entrepot = 0;
 		$this->fk_user = 0;
@@ -660,9 +660,9 @@ class ReceptionLineBatch extends CommonObjectLine
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-		$sql .= " t.fk_commande,";
+		$sql .= " t.fk_element,";
 		$sql .= " t.fk_product,";
-		$sql .= " t.fk_commandefourndet,";
+		$sql .= " t.fk_elementdet,";
 		$sql .= " t.qty,";
 		$sql .= " t.fk_entrepot,";
 		$sql .= " t.fk_user,";
@@ -724,9 +724,9 @@ class ReceptionLineBatch extends CommonObjectLine
 
 				$line->id = $obj->rowid;
 
-				$line->fk_commande = $obj->fk_commande;
+				$line->fk_element = $obj->fk_element;
 				$line->fk_product = $obj->fk_product;
-				$line->fk_commandefourndet = $obj->fk_commandefourndet;
+				$line->fk_elementdet = $obj->fk_elementdet;
 				$line->qty = $obj->qty;
 				$line->fk_entrepot = $obj->fk_entrepot;
 				$line->fk_user = $obj->fk_user;
