@@ -1818,7 +1818,7 @@ class Ticket extends CommonObject
 		$actioncomm->socid = $this->socid;
 		$actioncomm->label = $this->subject;
 		$actioncomm->note_private = $this->message;
-		$actioncomm->userassigned = array($user->id);
+		$actioncomm->userassigned = array($user->id => array('id' => $user->id,'transparency' => 0));
 		$actioncomm->userownerid = $user->id;
 		$actioncomm->datep = $now;
 		$actioncomm->percentage = -1; // percentage is not relevant for punctual events

@@ -5437,7 +5437,7 @@ function img_mime($file, $titlealt = '', $morecss = '')
  */
 function img_search($titlealt = 'default', $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') {
 		$titlealt = $langs->trans('Search');
@@ -5460,7 +5460,7 @@ function img_search($titlealt = 'default', $other = '')
  */
 function img_searchclear($titlealt = 'default', $other = '')
 {
-	global $conf, $langs;
+	global $langs;
 
 	if ($titlealt == 'default') {
 		$titlealt = $langs->trans('Search');
@@ -5682,7 +5682,7 @@ function dol_print_error($db = null, $error = '', $errors = null)
  */
 function dol_print_error_email($prefixcode, $errormessage = '', $errormessages = array(), $morecss = 'error', $email = '')
 {
-	global $langs, $conf;
+	global $langs;
 
 	if (empty($email)) {
 		$email = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
@@ -5745,7 +5745,7 @@ function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $m
  */
 function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $disablesortlink = 0, $tooltip = '', $forcenowrapcolumntitle = 0)
 {
-	global $conf, $langs, $form;
+	global $langs, $form;
 	//print "$name, $file, $field, $begin, $options, $moreattrib, $sortfield, $sortorder<br>\n";
 
 	if ($moreattrib == 'class="right"') {

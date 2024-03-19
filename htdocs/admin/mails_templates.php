@@ -681,7 +681,7 @@ if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu
 
 // Confirm deletion of record
 if ($action == 'delete') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.((int) $rowid).'&code='.urlencode($code).'&id='.((int) $id), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.((int) $rowid).'&id='.((int) $id), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
 
 
@@ -1101,7 +1101,7 @@ if ($num) {
 				}
 				print "</tr>\n";
 
-				print '<tr class="oddeven nohover'.(in_array($tmpfieldlist, array('topic', 'joinfiles')) ? ' nobottom' : '').'" id="tr-'.$tmpfieldlist.'-'.$rowid.'">';
+				print '<tr class="oddeven nohover" id="tr-aaa-'.$rowid.'">';
 				print '<td colspan="10">';
 
 				$fieldsforcontent = array('topic', 'email_from','joinfiles', 'content');
