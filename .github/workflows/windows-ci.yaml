@@ -152,7 +152,7 @@ jobs:
           echo "PHPUNIT seems to have completed with a test result, reuse the exit code"
           for /f "tokens=2 delims==" %%A in ('doskey /m:err') do EXIT /B %%A
       - name: Convert Raw Log to Annotations
-        uses: mdeweerd/logToCheckStyle@v2024.2.9
+        uses: mdeweerd/logToCheckStyle@v2024.3.2
         if: ${{ failure() }}
         with:
           in: ${{ env.PHPUNIT_LOG }}
