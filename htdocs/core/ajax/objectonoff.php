@@ -44,10 +44,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage');
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $element = GETPOST('element', 'alpha');	// 'myobject' (myobject=mymodule) or 'myobject@mymodule' or 'myobject_mysubobject' (myobject=mymodule)
 $field = GETPOST('field', 'alpha');
-$value = GETPOST('value', 'int');
+$value = GETPOSTINT('value');
 $format = 'int';
 
 // Load object according to $id and $element

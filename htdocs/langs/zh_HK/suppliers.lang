@@ -32,7 +32,7 @@ ConfirmDenyingThisOrder=您確定要拒絕此訂單<b> %s </b> ？
 ConfirmCancelThisOrder=您確定要取消此訂單<b> %s </b> ？
 AddSupplierOrder=創建採購訂單
 AddSupplierInvoice=創建供應商發票
-ListOfSupplierProductForSupplier=供應商 <span class='notranslate'><b></span> 的產品和價格列表\n %s </b> 
+ListOfSupplierProductForSupplier=List of products and prices for vendor <b>%s</b>
 SentToSuppliers=發送給供應商
 ListOfSupplierOrders=List of purchase orders
 MenuOrdersSupplierToBill=Purchase orders to invoice

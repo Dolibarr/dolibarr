@@ -38,13 +38,13 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
-$id = GETPOST('id', 'int');
-$idcomment = GETPOST('idcomment', 'int');
+$id = GETPOSTINT('id');
+$idcomment = GETPOSTINT('idcomment');
 $ref = GETPOST("ref", 'alpha', 1); // task ref
 $objectref = GETPOST("taskref", 'alpha'); // task ref
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$withproject = GETPOST('withproject', 'int');
+$withproject = GETPOSTINT('withproject');
 
 // Security check
 $socid = 0;
@@ -143,7 +143,7 @@ print '</td></tr>';
 // Budget
 print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
-	print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+	print price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
 }
 print '</td></tr>';
 
@@ -174,7 +174,7 @@ print nl2br($object->description);
 print '</td></tr>';
 
 // Categories
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 	print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 	print "</td></tr>";

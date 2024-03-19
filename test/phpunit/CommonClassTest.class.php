@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +26,17 @@
  *      \remarks    Class that extends all PHPunit tests. To share similare code between each test.
  */
 
+// Workaround for false security issue with main.inc.php on Windows in tests:
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+	$_SERVER['PHP_SELF'] = "phpunit";
+}
+
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+
+
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -36,6 +45,7 @@ if (empty($user->id)) {
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class for PHPUnit tests
@@ -44,7 +54,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CommonClassTest extends PHPUnit\Framework\TestCase
+abstract class CommonClassTest extends TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -52,14 +62,33 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 	protected $savdb;
 
 	/**
+	 * Number of Dolibarr log lines to show in case of error
+	 *
+	 * @var integer
+	 */
+	public $nbLinesToShow = 100;
+
+	/**
+	 * Log file from which to extract lines in case of failing test
+	 */
+	public $logfile = DOL_DATA_ROOT.'/dolibarr.log';
+
+	/**
+	 * Log file size before a test started (=in setUp() call)
+	 */
+	public $logSizeAtSetup = 0;
+
+	/**
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @param 	string	$name		Name
+	 * @param string       $name       Name
+	 * @param array        $data       Test data
+	 * @param string       $dataName   Test data name.
 	 */
-	public function __construct($name = '')
+	public function __construct($name = null, array $data = array(), $dataName = '')
 	{
-		parent::__construct($name);
+		parent::__construct($name, $data, $dataName);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -68,9 +97,10 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 		$this->savlangs = $langs;
 		$this->savdb = $db;
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
+			print get_called_class()." db->type=".$db->type." user->id=".$user->id.PHP_EOL;
+		}
 		//print " - db ".$db->db;
-		print "\n";
 	}
 
 	/**
@@ -83,12 +113,9 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-		if (!isModEnabled('agenda')) {
-			print __METHOD__." module agenda must be enabled.\n";
-			die(1);
+		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
+			print get_called_class()."::".__FUNCTION__.PHP_EOL;
 		}
-
-		print __METHOD__."\n";
 	}
 
 	/**
@@ -99,22 +126,62 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 	 */
 	protected function onNotSuccessfulTest(Throwable $t): void
 	{
-		$logfile = DOL_DATA_ROOT.'/dolibarr.log';
 
-		$lines = file($logfile);
+		// Get the lines that were added since the start of the test
 
-		$nbLinesToShow = 100;
-		$totalLines = count($lines);
-		$premiereLigne = max(0, $totalLines - $nbLinesToShow);
-
-		// Obtient les dernières lignes du tableau
-		$dernieresLignes = array_slice($lines, $premiereLigne, $nbLinesToShow);
-
-		// Show log file
-		print "\n----- Test fails. Show last ".$nbLinesToShow." lines of dolibarr.log file -----\n";
-		foreach ($dernieresLignes as $ligne) {
-			print $ligne . "<br>";
+		$filecontent = (string) @file_get_contents($this->logfile);
+		$currentSize = strlen($filecontent);
+		if ($currentSize >= $this->logSizeAtSetup) {
+			$filecontent = substr($filecontent, $this->logSizeAtSetup);
 		}
+		$lines = preg_split("/\r?\n/", $filecontent, -1, PREG_SPLIT_NO_EMPTY);
+
+
+		// Determine the number of lines to show
+
+		$nbLinesToShow = $this->nbLinesToShow;
+		if ($t instanceof PHPUnit\Framework\Error\Notice) {
+			$nbLinesToShow = 3;
+		}
+
+		// Determine test information to show
+
+		$failedTestMethod = $this->getName(false);
+		$className = get_called_class();
+
+		// Get the test method's reflection
+		$reflectionMethod = new ReflectionMethod($className, $failedTestMethod);
+
+		// Get the test method's data set
+		$argsText = $this->getDataSetAsString(true);
+
+		$totalLines = count($lines);
+		$first_line = max(0, $totalLines - $nbLinesToShow);
+		// Get the last line of the log
+		$last_lines = array_slice($lines, $first_line, $nbLinesToShow);
+
+
+		// Show log information
+
+		print PHP_EOL;
+		// Use GitHub Action compatible group output (:warning: arguments not encoded)
+		print "##[group]$className::$failedTestMethod failed - $argsText.".PHP_EOL;
+		print "## ".get_class($t).": {$t->getMessage()}".PHP_EOL;
+
+		if ($nbLinesToShow) {
+			$newLines = count($last_lines);
+			if ($newLines > 0) {
+				// Show partial log file contents when requested.
+				print "## Show last ".count($last_lines)." lines of dolibarr.log file -----".PHP_EOL;
+				foreach ($last_lines as $line) {
+					print $line.PHP_EOL;
+				}
+				print "## end of dolibarr.log for $className::$failedTestMethod".PHP_EOL;
+			} else {
+				print "## No new lines in 'dolibarr.log' since start of this test.".PHP_EOL;
+			}
+		}
+		print "##[endgroup]".PHP_EOL;
 
 		parent::onNotSuccessfulTest($t);
 	}
@@ -133,7 +200,12 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		print __METHOD__."\n";
+		// Record the filesize to determine which part of the log to show on error
+		$this->logSizeAtSetup = (int) filesize($this->logfile);
+
+		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
+			print get_called_class().'::'.$this->getName(false)."::".__FUNCTION__.PHP_EOL;
+		}
 		//print $db->getVersion()."\n";
 	}
 
@@ -144,7 +216,9 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 	 */
 	protected function tearDown(): void
 	{
-		print __METHOD__."\n";
+		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
+			print get_called_class().'::'.$this->getName(false)."::".__FUNCTION__.PHP_EOL;
+		}
 	}
 
 	/**
@@ -156,7 +230,241 @@ class CommonClassTest extends PHPUnit\Framework\TestCase
 	{
 		global $db;
 		$db->rollback();
+		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
+			print get_called_class()."::".__FUNCTION__.PHP_EOL;
+		}
+	}
 
-		print __METHOD__."\n";
+	/**
+	 * Map deprecated module names to new module names
+	 */
+	const DEPRECATED_MODULE_MAPPING = array(
+		'actioncomm' => 'agenda',
+		'adherent' => 'member',
+		'adherent_type' => 'member_type',
+		'banque' => 'bank',
+		'categorie' => 'category',
+		'commande' => 'order',
+		'contrat' => 'contract',
+		'entrepot' => 'stock',
+		'expedition' => 'shipping',
+		'facture' => 'invoice',
+		'fichinter' => 'intervention',
+		'product_fournisseur_price' => 'productsupplierprice',
+		'product_price' => 'productprice',
+		'projet'  => 'project',
+		'propale' => 'propal',
+		'socpeople' => 'contact',
+	);
+
+	const EFFECTIVE_DEPRECATED_MODULE_MAPPING = array(
+		'adherent' => 'member',
+		'adherent_type' => 'member_type',
+		'banque' => 'bank',
+		'contrat' => 'contract',
+		'entrepot' => 'stock',
+		'ficheinter' => 'fichinter',
+		'projet'  => 'project',
+	);
+
+	/**
+	 * Map module names to the 'class' name (the class is: mod<CLASSNAME>)
+	 * Value is null when the module is not internal to the default
+	 * Dolibarr setup.
+	 */
+	const VALID_MODULE_MAPPING = array(
+		'accounting' => 'Accounting',
+		'agenda' => 'Agenda',
+		'ai' => 'Ai',
+		'anothermodule' => null,  // Not used in code, used in translations.lang
+		'api' => 'Api',
+		'asset' => 'Asset',
+		'bank' => 'Banque',
+		'barcode' => 'Barcode',
+		'blockedlog' => 'BlockedLog',
+		'bom' => 'Bom',
+		'bookcal' => 'BookCal',
+		'bookmark' => 'Bookmark',
+		'cashdesk' => null,
+		'category' => 'Categorie',
+		'clicktodial' => 'ClickToDial',
+		'collab' => 'Collab',  // TODO: fill in proper name
+		'comptabilite' => 'Comptabilite',
+		'contact' => null,  // TODO: fill in proper class
+		'contract' => 'Contrat',
+		'cron' => 'Cron',
+		'datapolicy' => 'DataPolicy',
+		'dav' => 'Dav',
+		'debugbar' => 'DebugBar',
+		'shipping' => 'Expedition',
+		'deplacement' => 'Deplacement',
+		"documentgeneration" => 'DocumentGeneration',  // TODO: fill in proper name
+		'don' => 'Don',
+		'dynamicprices' => 'DynamicPrices',
+		'ecm' => 'ECM',
+		'ecotax' => null,  // TODO: External module ?
+		'emailcollector' => 'EmailCollector',
+		'eventorganization' => 'EventOrganization',
+		'expensereport' => 'ExpenseReport',
+		'export' => 'Export',
+		'externalrss' => 'ExternalRss',  // TODO: fill in proper name
+		'externalsite' => 'ExternalSite',
+		'fckeditor' => 'Fckeditor',
+		'fournisseur' => 'Fournisseur',
+		'ftp' => 'FTP',
+		'geoipmaxmind' => 'GeoIPMaxmind',  // TODO: fill in proper name
+		'google' => null,  // External ?
+		'gravatar' => 'Gravatar',
+		'holiday' => 'Holiday',
+		'hrm' => 'HRM',
+		'import' => 'Import',
+		'incoterm' => 'Incoterm',
+		'intervention' => 'Ficheinter',
+		'intracommreport' => 'Intracommreport',
+		'invoice' => 'Facture',
+		'knowledgemanagement' => 'KnowledgeManagement',
+		'label' => 'Label',
+		'ldap' => 'Ldap',
+		'loan' => 'Loan',
+		'mailing' => 'Mailing',
+		'mailman' => null,  // Same module as mailmanspip -> MailmanSpip ??
+		'mailmanspip' => 'MailmanSpip',
+		'margin' => 'Margin',
+		'member' => 'Adherent',
+		'memcached' => null, // TODO: External module?
+		'modulebuilder' => 'ModuleBuilder',
+		'mrp' => 'Mrp',
+		'multicompany' => null, // Not provided by default, no module tests
+		'multicurrency' => 'MultiCurrency',
+		'mymodule' => null, // modMyModule - Name used in module builder (avoid false positives)
+		'notification' => 'Notification',
+		'numberwords' => null, // Not provided by default, no module tests
+		'oauth' => 'Oauth',
+		'openstreetmap' => null,  // External module?
+		'opensurvey' => 'OpenSurvey',
+		'order' => 'Commande',
+		'partnership' => 'Partnership',
+		'paybox' => 'Paybox',
+		'paymentbybanktransfer' => 'PaymentByBankTransfer',
+		'paypal' => 'Paypal',
+		'paypalplus' => null,
+		'prelevement' => 'Prelevement',
+		'printing' => 'Printing', // TODO: set proper name
+		'product' => 'Product',
+		'productbatch' => 'ProductBatch',
+		'productprice' => null,
+		'productsupplierprice' => null,
+		'project' => 'Projet',
+		'propal' => 'Propale',
+		'receiptprinter' => 'ReceiptPrinter',
+		'reception' => 'Reception',
+		'recruitment' => 'Recruitment',
+		'resource' => 'Resource',
+		'salaries' => 'Salaries',
+		'service' => 'Service',
+		'socialnetworks' => 'SocialNetworks',
+		'societe' => 'Societe',
+		'stock' => 'Stock',
+		'stocktransfer' => 'StockTransfer',
+		'stripe' => 'Stripe',
+		'supplier_invoice' => null,  // Special case, uses invoice
+		'supplier_order' => null,  // Special case, uses invoice
+		'supplier_proposal' => 'SupplierProposal',
+		'syslog' => 'Syslog',
+		'takepos' => 'TakePos',
+		'tax' => 'Tax',
+		'ticket' => 'Ticket',
+		'user' => 'User',
+		'variants' => 'Variants',
+		'webhook' => 'Webhook',
+		'webportal' => 'WebPortal',
+		'webservices' => 'WebServices',
+		'webservicesclient' => 'WebServicesClient',  // TODO: set proper name
+		'website' => 'Website',
+		'workflow' => 'Workflow',
+		'workstation' => 'Workstation',
+		'zapier' => 'Zapier',
+	);
+
+
+	/**
+	 * Run php script (file) using the php binary used for running phpunit.
+	 *
+	 * The PHP executable may not be in the path, or refer to an uncontrolled
+	 * version.
+	 * This ensures that the php script is properly run on multiple platforms.
+	 *
+	 * @param string $phpScriptCommand The command and arguments are run by the php binary.
+	 * @param array  $output           The output returned by the command
+	 * @param int   $exitCode The exit code returned for the execution.
+	 * @return false|string  False on failure, else last line if the output from the command
+	 */
+	protected function runPhpScript($phpScriptCommand, &$output, &$exitCode)
+	{
+		$phpExecutable = PHP_BINARY;
+
+		// Build the command to execute the PHP script
+		$command = "$phpExecutable $phpScriptCommand";
+
+		// Execute the command
+		return exec($command, $output, $exitCode);
+	}
+
+	/**
+	 * Assert that a directory does not exist without triggering deprecation
+	 *
+	 * @param string $directory The directory to test
+	 * @param string $message   The message to show if the directory exists
+	 *
+	 * @return void
+	 */
+	protected function assertDirectoryNotExistsCompat($directory, $message = '')
+	{
+		$phpunitVersion = \PHPUnit\Runner\Version::id();
+
+		// Check if PHPUnit version is less than 9.0.0
+		if (version_compare($phpunitVersion, '9.0.0', '<')) {
+			$this->assertDirectoryNotExists($directory, $message);
+		} else {
+			$this->assertDirectoryDoesNotExist($directory, $message);
+		}
+	}
+
+	/**
+	 * Assert that a file does not exist without triggering deprecation
+	 *
+	 * @param string $file      The file to test
+	 * @param string $message   The message to show if the directory exists
+	 *
+	 * @return void
+	 */
+	protected function assertFileNotExistsCompat($file, $message = '')
+	{
+		$phpunitVersion = \PHPUnit\Runner\Version::id();
+
+		// Check if PHPUnit version is less than 9.0.0
+		if (version_compare($phpunitVersion, '9.0.0', '<')) {
+			$this->assertFileNotExists($file, $message);
+		} else {
+			$this->assertFileDoesNotExist($file, $message);
+		}
+	}
+
+
+	/**
+	 * Skip test if test is not running on "Unix"
+	 *
+	 * @param string $message Message to indicate which test requires "Unix"
+	 *
+	 * @return bool True if this is not *nix, and fake assert generated
+	 */
+	protected function fakeAssertIfNotUnix($message)
+	{
+		if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+			$this->assertTrue(true, "Dummy test to not mark the test as risky");
+			// $this->markTestSkipped("PHPUNIT is running on windows.  $message");
+			return true;
+		}
+		return false;
 	}
 }

@@ -287,7 +287,7 @@ TotalVente=Салыққа дейінгі жалпы айналым
 TotalMarge=Жалпы сату маржасы
 
 DescVentilCustomer=Шот жоспарынан өнім шотына байланыстырылған (немесе жоқ) тұтынушы шот-фактураларының тізімі осы жерден қараңыз.
-DescVentilMore=Көп жағдайда, егер сіз алдын ала анықталған өнімдерді немесе қызметтерді пайдалансаңыз және өнім/қызмет картасына есептік жазбаны (шот жоспарынан) орнатсаңыз, қолданба сіздің шот-фактура жолдары мен диаграммаңыздың есеп шоты арасындағы барлық байланыстыруды жасай алады. есептік жазбаларды бір рет басу арқылы <strong>"%s"b0a65d071f6fc90z >. Есептік жазба өнім/қызмет карталарында орнатылмаған болса немесе тіркелгіге байланыстырылмаған кейбір жолдарыңыз болса, "<span class='notranslate'><strong><span" мәзірінен қолмен байланыстыруды орындауыңыз керек. class='notranslate'>%s</span></strong>".
+DescVentilMore=In most cases, if you use predefined products or services and you set the account (from chart of account) on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneCustomer=Мұнда тұтынушылардың шот-фактураларының тізімі мен олардың өнім шоты шоттар жоспарынан қараңыз
 DescVentilTodoCustomer=Шот жоспарындағы өнім тіркелгісімен байланысы жоқ шот-фактура жолдарын байланыстырыңыз
 ChangeAccount=Таңдалған жолдар үшін өнім/қызмет шотын (шот жоспарынан) келесі есептік жазбамен өзгертіңіз:
@@ -352,7 +352,7 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Сату кезінде бухгалтерл
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Сатып алу кезінде бухгалтерлік есепте байланыстыруды және аударуды өшіру (жеткізушілердің шот -фактуралары бухгалтерлік есепке алынбайды)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Бухгалтерлік есепте міндеттемелер мен аударымдарды өшіру (шығындар туралы есептер бухгалтерлік есепке алынбайды)
 ACCOUNTING_ENABLE_LETTERING=Бухгалтерлік есепте әріптер функциясын қосыңыз
-ACCOUNTING_ENABLE_LETTERING_DESC=Бұл опциялар қосылғанда, әр есеп жазбасында кодты анықтауға болады, осылайша әртүрлі есеп қозғалыстарын бірге топтауға болады. Бұрын әртүрлі журналдар дербес басқарылатын кезде, бұл мүмкіндік әртүрлі журналдардың қозғалыс сызықтарын біріктіру үшін қажет болды. Дегенмен, Dolibarr бухгалтериясында мұндай бақылау коды "<b>%s<span class='notranslate'>b09a4b739fz01f деп аталады. span>" қазірдің өзінде автоматты түрде сақталған, сондықтан автоматты әріптер жасалып қойған, қате қаупі жоқ, сондықтан бұл мүмкіндік жалпы пайдалану үшін пайдасыз болып қалды. Қолмен әріптерді жазу мүмкіндігі бухгалтерлік есепте деректерді тасымалдауды жүзеге асыратын компьютер қозғалтқышына шынымен сенбейтін соңғы пайдаланушылар үшін қамтамасыз етілген.
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
 EnablingThisFeatureIsNotNecessary=Бұл мүмкіндікті қосу бухгалтерлік есепті қатаң басқару үшін қажет емес.
 ACCOUNTING_ENABLE_AUTOLETTERING=Бухгалтерлік есепке көшкен кезде автоматты әріптерді қосыңыз
 ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Әріптің коды автоматты түрде жасалады және көбейтіледі және соңғы пайдаланушы таңдамайды
@@ -360,7 +360,7 @@ ACCOUNTING_LETTERING_NBLETTERS=Әріптік кодты жасау кезінд
 ACCOUNTING_LETTERING_NBLETTERS_DESC=Кейбір бухгалтерлік бағдарламалық құрал тек екі әріптік кодты қабылдайды. Бұл параметр осы аспектіні орнатуға мүмкіндік береді. Әдепкі әріптер саны үш.
 OptionsAdvanced=Қосымша опциялар
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Жеткізушінің сатып алулары бойынша ҚҚС кері төлемін басқаруды белсендіріңіз
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Бұл опция қосылғанда, жеткізушінің немесе берілген жеткізушінің шот-фактурасын бухгалтерлік есепке басқаша аудару керектігін анықтауға болады: «<» шотында анықталған шот жоспарынан 2 берілген шот бойынша бухгалтерлік есепке қосымша дебет пен кредиттік желі жасалады. span class='notranslate'>%s</span>" орнату беті.
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
 ## Export
 NotExportLettering=Файлды жасау кезінде әріпті экспорттамаңыз

@@ -50,9 +50,9 @@ if (isModEnabled('salaries')) {
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alphanohtml');
-$bankid = GETPOST('bankid', 'int');
+$bankid = GETPOSTINT('bankid');
 $action = GETPOST("action", 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
@@ -74,6 +74,7 @@ if ($id > 0 || !empty($ref)) {
 
 $account = new UserBankAccount($db);
 if (!$bankid) {
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$account->fetch(0, '', $id);
 } else {
 	$account->fetch($bankid);
@@ -125,7 +126,8 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 	$account->cle_rib         = GETPOST('cle_rib', 'alpha');
 	$account->bic             = GETPOST('bic', 'alpha');
 	$account->iban            = GETPOST('iban', 'alpha');
-	$account->domiciliation   = GETPOST('domiciliation', 'alpha');
+	$account->domiciliation   = GETPOST('address', 'alpha');
+	$account->address         = GETPOST('address', 'alpha');
 	$account->proprio         = GETPOST('proprio', 'alpha');
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
@@ -156,7 +158,8 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 	$account->cle_rib         = GETPOST('cle_rib', 'alpha');
 	$account->bic             = GETPOST('bic', 'alpha');
 	$account->iban            = GETPOST('iban', 'alpha');
-	$account->domiciliation   = GETPOST('domiciliation', 'alpha');
+	$account->domiciliation   = GETPOST('address', 'alpha');
+	$account->address         = GETPOST('address', 'alpha');
 	$account->proprio         = GETPOST('proprio', 'alpha');
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
@@ -189,7 +192,7 @@ if ($action == 'delete_confirmed' && !$cancel && $permissiontoaddbankaccount) {
 
 // update birth
 if ($action == 'setbirth' && $canadduser && !$cancel) {
-	$object->birth = dol_mktime(0, 0, 0, GETPOST('birthmonth', 'int'), GETPOST('birthday', 'int'), GETPOST('birthyear', 'int'));
+	$object->birth = dol_mktime(0, 0, 0, GETPOSTINT('birthmonth'), GETPOSTINT('birthday'), GETPOSTINT('birthyear'));
 	$result = $object->update($user);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -244,7 +247,7 @@ if ($action == 'setnational_registration_number' && $canadduser && !$cancel) {
 if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 	// update default_c_exp_tax_cat
 	if ($action == 'setdefault_c_exp_tax_cat' && $canadduser) {
-		$object->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat', 'int');
+		$object->default_c_exp_tax_cat = GETPOSTINT('default_c_exp_tax_cat');
 		$result = $object->update($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -253,7 +256,7 @@ if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 
 	// update default range
 	if ($action == 'setdefault_range' && $canadduser) {
-		$object->default_range = GETPOST('default_range', 'int');
+		$object->default_range = GETPOSTINT('default_range');
 		$result = $object->update($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -296,7 +299,7 @@ if ($id && $bankid && $action == 'edit' && ($user->hasRight('user', 'user', 'cre
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" name="formbank" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">';
+	print '<input type="hidden" name="id" value="'.GETPOSTINT("id").'">';
 	print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
 if ($id && $action == 'create' && $user->hasRight('user', 'user', 'creer')) {
@@ -438,7 +441,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		// Salary
 		print '<tr><td>'.$langs->trans("Salary").'</td>';
 		print '<td>';
-		print($object->salary != '' ? img_picto('', 'salary', 'class="pictofixedwidth paddingright"').'<span class="amount">'.price($object->salary, '', $langs, 1, -1, -1, $conf->currency) : '').'</span>';
+		print($object->salary != '' ? img_picto('', 'salary', 'class="pictofixedwidth paddingright"').'<span class="amount">'.price($object->salary, 0, $langs, 1, -1, -1, $conf->currency) : '').'</span>';
 		print '</td>';
 		print "</tr>\n";
 
@@ -448,7 +451,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
 		print '</td>';
 		print '<td>';
-		print($object->thm != '' ? price($object->thm, '', $langs, 1, -1, -1, $conf->currency) : '');
+		print($object->thm != '' ? price($object->thm, 0, $langs, 1, -1, -1, $conf->currency) : '');
 		print '</td>';
 		print "</tr>\n";
 
@@ -458,7 +461,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classtjm');
 		print '</td>';
 		print '<td>';
-		print($object->tjm != '' ? price($object->tjm, '', $langs, 1, -1, -1, $conf->currency) : '');
+		print($object->tjm != '' ? price($object->tjm, 0, $langs, 1, -1, -1, $conf->currency) : '');
 		print '</td>';
 		print "</tr>\n";
 	}
@@ -601,7 +604,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	// Latest payments of salaries
 	if (isModEnabled('salaries') &&
 		(($user->hasRight('salaries', 'read') && (in_array($object->id, $childids) || $object->id == $user->id)) || ($user->hasRight('salaries', 'readall')))
-		) {
+	) {
 		$payment_salary = new PaymentSalary($db);
 		$salary = new Salary($db);
 
@@ -723,7 +726,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	// Latest expense report
 	if (isModEnabled('expensereport') &&
 		($user->hasRight('expensereport', 'readall') || ($user->hasRight('expensereport', 'lire') && $object->id == $user->id))
-		) {
+	) {
 		$exp = new ExpenseReport($db);
 
 		$sql = "SELECT e.rowid, e.ref, e.fk_statut as status, e.date_debut, e.total_ttc";
@@ -1004,8 +1007,8 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->hasRight('user',
 	}
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
-	print '<textarea name="domiciliation" rows="4" class="quatrevingtpercent">';
-	print dol_escape_htmltag($account->domiciliation);
+	print '<textarea name="address" rows="4" class="quatrevingtpercent">';
+	print dol_escape_htmltag($account->address);
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';

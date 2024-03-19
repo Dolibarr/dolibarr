@@ -195,15 +195,16 @@ if ($action == 'delete_section') {
 if ($action == 'confirmconvertimgwebp') {
 	$langs->load("ecm");
 
-	$section_dir=GETPOST('section_dir', 'alpha');
-	$section=GETPOST('section', 'alpha');
-	$file=GETPOST('filetoregenerate', 'alpha');
+	$section_dir = GETPOST('section_dir', 'alpha');
+	$section = GETPOST('section', 'alpha');
+	$file = GETPOST('filetoregenerate', 'alpha');
 	$form = new Form($db);
-	$formquestion['section_dir']=array('type'=>'hidden', 'value'=>$section_dir, 'name'=>'section_dir');
-	$formquestion['section']=array('type'=>'hidden', 'value'=>$section, 'name'=>'section');
-	$formquestion['filetoregenerate']=array('type'=>'hidden', 'value'=>$file, 'name'=>'filetoregenerate');
+	$formquestion = array();
+	$formquestion['section_dir'] = array('type' => 'hidden', 'value' => $section_dir, 'name' => 'section_dir');
+	$formquestion['section'] = array('type' => 'hidden', 'value' => $section, 'name' => 'section');
+	$formquestion['filetoregenerate'] = array('type' => 'hidden', 'value' => $file, 'name' => 'filetoregenerate');
 	if ($module == 'medias') {
-		$formquestion['website']=array('type'=>'hidden', 'value'=>$website->ref, 'name'=>'website');
+		$formquestion['website'] = array('type' => 'hidden', 'value' => $website->ref, 'name' => 'website');
 	}
 	$param = '';
 	if (!empty($sortfield)) {

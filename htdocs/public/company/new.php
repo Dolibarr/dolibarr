@@ -215,7 +215,7 @@ if (empty($reshook) && $action == 'add') {
 
 		$societe->name = GETPOST('name', 'alphanohtml');
 
-		$societe->client = GETPOST('client', 'int') ? GETPOST('client', 'int') : $societe->client;
+		$societe->client = GETPOSTINT('client') ? GETPOSTINT('client') : $societe->client;
 
 		$societe->address	= GETPOST('address', 'alphanohtml');
 

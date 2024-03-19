@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 $langs->loadLangs(array("admin", "compta"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
 $action = GETPOST('action', 'aZ09');
@@ -70,8 +70,8 @@ foreach ($tmpstatus2label as $key => $val) {
 	$status2label[$key] = $langs->trans($val);
 }
 
-$date_start = dol_mktime(0, 0, 0, GETPOST('fiscalyearmonth', 'int'), GETPOST('fiscalyearday', 'int'), GETPOST('fiscalyearyear', 'int'));
-$date_end = dol_mktime(0, 0, 0, GETPOST('fiscalyearendmonth', 'int'), GETPOST('fiscalyearendday', 'int'), GETPOST('fiscalyearendyear', 'int'));
+$date_start = dol_mktime(0, 0, 0, GETPOSTINT('fiscalyearmonth'), GETPOSTINT('fiscalyearday'), GETPOSTINT('fiscalyearyear'));
+$date_end = dol_mktime(0, 0, 0, GETPOSTINT('fiscalyearendmonth'), GETPOSTINT('fiscalyearendday'), GETPOSTINT('fiscalyearendyear'));
 
 $permissiontoadd = $user->hasRight('accounting', 'fiscalyear', 'write');
 
@@ -95,7 +95,7 @@ if ($reshook < 0) {
 }
 
 if ($action == 'confirm_delete' && $confirm == "yes") {
-	$result = $object->delete($id);
+	$result = $object->delete($user);
 	if ($result >= 0) {
 		header("Location: fiscalyear.php");
 		exit();
@@ -313,23 +313,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Label
 	print '<tr><td class="tdtop">';
-	print $form->editfieldkey("Label", 'label', $object->label, $object, 1, 'alpha:32');
+	print $form->editfieldkey("Label", 'label', $object->label, $object, 0, 'alpha:32');
 	print '</td><td colspan="2">';
-	print $form->editfieldval("Label", 'label', $object->label, $object, 1, 'alpha:32');
+	print $form->editfieldval("Label", 'label', $object->label, $object, 0, 'alpha:32');
 	print "</td></tr>";
 
 	// Date start
 	print '<tr><td>';
-	print $form->editfieldkey("DateStart", 'date_start', $object->date_start, $object, 1, 'datepicker');
+	print $form->editfieldkey("DateStart", 'date_start', $object->date_start, $object, 0, 'datepicker');
 	print '</td><td colspan="2">';
-	print $form->editfieldval("DateStart", 'date_start', $object->date_start, $object, 1, 'datepicker');
+	print $form->editfieldval("DateStart", 'date_start', $object->date_start, $object, 0, 'datepicker');
 	print '</td></tr>';
 
 	// Date end
 	print '<tr><td>';
-	print $form->editfieldkey("DateEnd", 'date_end', $object->date_end, $object, 1, 'datepicker');
+	print $form->editfieldkey("DateEnd", 'date_end', $object->date_end, $object, 0, 'datepicker');
 	print '</td><td colspan="2">';
-	print $form->editfieldval("DateEnd", 'date_end', $object->date_end, $object, 1, 'datepicker');
+	print $form->editfieldval("DateEnd", 'date_end', $object->date_end, $object, 0, 'datepicker');
 	print '</td></tr>';
 
 	// Status

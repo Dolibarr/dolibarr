@@ -69,7 +69,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $error = 0;
 $website = GETPOST('website', 'alpha');
-$websiteid = GETPOST('websiteid', 'int');
+$websiteid = GETPOSTINT('websiteid');
 $pageid = GETPOST('page', 'alpha') ? GETPOST('page', 'alpha') : GETPOST('pageid', 'alpha');
 
 $accessallowed = 1;

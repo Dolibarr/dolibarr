@@ -66,7 +66,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 	$listofobjectid = array();
 
 	$listofobjectref = array();
-	$oneemailperrecipient = (GETPOST('oneemailperrecipient', 'int') ? 1 : 0);
+	$oneemailperrecipient = (GETPOSTINT('oneemailperrecipient') ? 1 : 0);
 
 	if (!$error) {
 		require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';

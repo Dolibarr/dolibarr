@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - orders
-OrderExists=заказ уже открыть связан с этим предложение, поэтому никаких других < создан span class='notranslate'>заказ</span> автоматически
+OrderExists=An order was already open linked to this proposal, so no other order was created automatically
 OrdersArea=Раздел заказов клиентов
 SuppliersOrdersArea=Область заказов на закупку
 OrderCard=Карточка заказа

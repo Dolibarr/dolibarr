@@ -52,6 +52,7 @@ create table llx_societe
   georesultcode            varchar(16),
 
   phone                    varchar(20),                         		-- phone number
+  phone_mobile             varchar(20),                         		-- mobile phone number
   fax                      varchar(20),                         		-- fax number
   url                      varchar(255),                        		-- web site
   email                    varchar(128),                        		-- main email

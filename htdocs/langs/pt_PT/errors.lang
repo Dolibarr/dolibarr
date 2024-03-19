@@ -292,7 +292,7 @@ ErrorNotApproverForHoliday=Você não é o aprovador da licença %s
 ErrorAttributeIsUsedIntoProduct=Este atributo é usado em uma ou mais variantes de produto
 ErrorAttributeValueIsUsedIntoProduct=Este valor de atributo é usado em uma ou mais variantes de produto
 ErrorPaymentInBothCurrency=Erro, todos os valores devem ser inseridos na mesma coluna
-ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Você tenta pagar faturas na moeda %s de um conta com a moeda <span class='notranslate'>%s</ período>
+ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=You try to pay invoices in the currency %s from an account with the currency %s
 ErrorInvoiceLoadThirdParty=Não é possível carregar objeto de terceiros para fatura "%s"
 ErrorInvoiceLoadThirdPartyKey=Chave de terceiros "%s" não definida para fatura "%s"
 ErrorDeleteLineNotAllowedByObjectStatus=A linha eliminar, apagar não é permitida pelo status atual do objeto
@@ -313,7 +313,7 @@ ErrorTooMuchFileInForm=Muitos arquivos em formulário, o número máximo é %s f
 ErrorSessionInvalidatedAfterPasswordChange=A sessão foi invalidada após uma alteração de senha, e-mail, status ou datas de validade. Faça login novamente.
 ErrorExistingPermission = Permissão <b>%s</b> para o objeto  <b>%s</b> já existe
 ErrorFieldExist=O valor de <b>%s</b> já existe
-ErrorEqualModule=módulo inválido em <b>%s</b> 
+ErrorEqualModule=módulo inválido em <b>%s</b>
 ErrorFieldValue=O valor de <b>%s</b> está incorreto
 ErrorCoherenceMenu=<b>%s</b> é obrigatório quando  <b>%s</b> é 'esquerda'
 ErrorUploadFileDragDrop=Ocorreu um erro enquanto o(s) ficheiro(s) enviar

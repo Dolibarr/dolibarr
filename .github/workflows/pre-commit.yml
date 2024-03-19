@@ -7,7 +7,6 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     env:
-      LOG_TO_CS: .github/logToCs.py
       RAW_LOG: pre-commit.log
       CS_XML: pre-commit.xml
     steps:
@@ -20,7 +19,7 @@ jobs:
       # This is faster for a big repo.
       - name: Get all changed php files (if PR)
         id: changed-php
-        uses: tj-actions/changed-files@v42
+        uses: tj-actions/changed-files@v43
         if: github.event_name == 'pull_request'
         with:
           files: |
@@ -38,7 +37,7 @@ jobs:
         with:
           cache: pip
           python-version: "3.11"
-      - run: python -m pip install pre-commit regex
+      - run: python -m pip install pre-commit
       # Restore previous cache of precommit
       - uses: actions/cache/restore@v4
         with:
@@ -58,7 +57,7 @@ jobs:
       # The next uses git, which is slow for a bit repo.
       # - name: Get all changed php files (if PR)
       #   id: changed-php
-      #   uses: tj-actions/changed-files@v42
+      #   uses: tj-actions/changed-files@v43
       #   if: github.event_name == 'pull_request'
       #   with:
       #     files: |
@@ -68,13 +67,16 @@ jobs:
         uses: shivammathur/setup-php@v2
         # Install when we're going to run phpcs
         if: |
-          steps.changed-php.outputs.any_changed == 'true'
-          ||
+          ! cancelled() &&
           (
-            github.event_name == 'push'
-            && (
-                 github.event.ref == 'refs/heads/develop'
-               || endsWith(github.event.ref, '.0')
+            steps.changed-php.outputs.any_changed == 'true'
+            ||
+            (
+              github.event_name == 'push'
+              && (
+                   github.event.ref == 'refs/heads/develop'
+                 || endsWith(github.event.ref, '.0')
+              )
             )
           )
         with:
@@ -83,7 +85,7 @@ jobs:
           tools: phpcs
 
       - name: Run some pre-commit hooks on selected changed files only
-        if: steps.changed-php.outputs.any_changed == 'true'
+        if: "! cancelled() && steps.changed-php.outputs.any_changed == 'true'"
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
         run: |
@@ -103,19 +105,12 @@ jobs:
           pre-commit run --hook-stage manual -a php-cs-with-cache | tee -a ${RAW_LOG}
           ls -l ~/.cache/pre-commit/
 
-      # If error, we convert log in the checkstyle format
-      - name: Convert Raw Log to CheckStyle format
-        if: ${{ failure() }}
-        run: |
-          python ${LOG_TO_CS} ${RAW_LOG} ${CS_XML}
-      # Annotate the git sources with the log messages
-      - name: Annotate Source Code with Messages
-        uses: staabm/annotate-pull-request-from-checkstyle-action@v1
+      - name: Convert Raw Log to Annotations
+        uses: mdeweerd/logToCheckStyle@2024.3.2
         if: ${{ failure() }}
         with:
-          files: ${{ env.CS_XML }}
-          notices-as-warnings: true # optional
-          prepend-filename: true # optional
+          in: ${{ env.RAW_LOG }}
+
       # Save the precommit cache
       - uses: actions/cache/save@v4
         if: ${{ ! cancelled() }}

@@ -39,7 +39,7 @@ return (new PhpCsFixer\Config())
 
 		// Minimum version Dolibarr v18.0.0
 		// Compatibility with min 7.1 is announced with Dolibarr18.0 but
-		// app is still working with 7.0 so no reason to abandon compatiblity with this target for the moment.
+		// app is still working with 7.0 so no reason to abandon compatibility with this target for the moment.
 		// So we use target PHP70 for the moment.
 		'@PHP70Migration' => true,
 		//'@PHP71Migration' => true,

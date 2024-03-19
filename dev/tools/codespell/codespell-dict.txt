@@ -9,9 +9,13 @@ aploha->alpha
 aplohanothtml->alphanohtml
 aplphanothtml->alphanohtml
 choosed->chosen
+cumuled->cumulative
+dokument->document
 dolibar->dolibarr
+dolibarrr->dolibarr
 dollibar->dolibarr
 dollibarr->dolibarr
+thoose->those
 # fiche->card
 mot de passe->password
 not de passe->password

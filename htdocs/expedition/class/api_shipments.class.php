@@ -419,10 +419,9 @@ class Shipments extends DolibarrApi
 	/**
 	 * Update shipment general fields (won't touch lines of shipment)
 	 *
-	 * @param int   $id             Id of shipment to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   	$id             	Id of shipment to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{

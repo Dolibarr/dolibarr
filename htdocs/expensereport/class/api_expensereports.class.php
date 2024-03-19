@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ class ExpenseReports extends DolibarrApi
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of Expense Report objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'lire')) {
 			throw new RestException(403);
@@ -407,10 +407,9 @@ class ExpenseReports extends DolibarrApi
 	/**
 	 * Update Expense Report general fields (won't touch lines of expensereport)
 	 *
-	 * @param int   $id             Id of Expense Report to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   	$id             	Id of Expense Report to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 *
 	 * @throws	RestException	401		Not allowed
 	 * @throws  RestException	404		Expense report not found
@@ -632,10 +631,10 @@ class ExpenseReports extends DolibarrApi
 			$paymentExpenseReport->$field = $this->_checkValForAPI($field, $value, $paymentExpenseReport);
 		}
 
-		if ($paymentExpenseReport->create(DolibarrApiAccess::$user, 1) < 0) {
+		if ($paymentExpenseReport->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating paymentExpenseReport', array_merge(array($paymentExpenseReport->error), $paymentExpenseReport->errors));
 		}
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			$paymentExpenseReport->addPaymentToBank(
 				DolibarrApiAccess::$user,
 				'payment_expensereport',

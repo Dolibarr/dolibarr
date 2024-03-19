@@ -53,7 +53,7 @@ if (! defined("NOSESSION")) {
 	define("NOSESSION", '1');
 }
 
-require_once dirname(__FILE__).'/../../htdocs/main.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/main.inc.php';	// We force include of main.inc.php instead of master.inc.php even if we are in CLI mode because it contains a lot of security components we want to test.
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
@@ -839,7 +839,9 @@ class SecurityTest extends CommonClassTest
 		$url = 'ftp://mydomain.com';
 		$tmp = getURLContent($url);
 		print __METHOD__." url=".$url."\n";
-		$this->assertRegExp("/not supported/", $tmp['curl_error_msg'], "Should disable ftp connection");	// Test error if return does not contains 'not supported'
+
+		$tmpvar = preg_match('/not supported/', $tmp['curl_error_msg']);
+		$this->assertEquals(1, $tmpvar, "Did not find the /not supported/ in getURLContent error message. We should.");
 
 		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
 		$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
@@ -982,6 +984,10 @@ class SecurityTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
+		// Declare classes found into string to evaluate
+		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+
 		$result = dol_eval('1==1', 1, 0);
 		print "result1 = ".$result."\n";
 		$this->assertTrue($result);
@@ -990,11 +996,18 @@ class SecurityTest extends CommonClassTest
 		print "result2 = ".$result."\n";
 		$this->assertFalse($result);
 
-		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+		$s = '((($reloadedobj = new ClassThatDoesNotExists($db)) && ($reloadedobj->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
+		$result3a = dol_eval($s, 1, 1, '2');
+		print "result3a = ".$result3a."\n";
+		$this->assertEquals('Exception during evaluation: '.$s, $result3a);
+
+		$s = '((($reloadedobj = new Project($db)) && ($reloadedobj->fetchNoCompute($objectoffield->fk_product) > 0)) ? \'1\' : \'0\')';
+		$result3b = dol_eval($s, 1, 1, '2');
+		print "result3b = ".$result."\n";
+		$this->assertEquals('0', $result3b);
 
 		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"';
-		$result = dol_eval($s, 1, 1, '2');
+		$result = (string) dol_eval($s, 1, 1, '2');
 		print "result3 = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
 
@@ -1002,6 +1015,17 @@ class SecurityTest extends CommonClassTest
 		$result = (string) dol_eval($s, 1, 1, '2');
 		print "result4 = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
+
+		$s = 'new abc->invoke(\'whoami\')';
+		$result = (string) dol_eval($s, 1, 1, '2');
+		print "result = ".$result."\n";
+		$this->assertEquals('Bad string syntax to evaluate: new abc__forbiddenstring__(\'whoami\')', $result);
+
+		$s = 'new ReflectionFunction(\'abc\')';
+		$result = (string) dol_eval($s, 1, 1, '2');
+		print "result = ".$result."\n";
+		$this->assertEquals('Bad string syntax to evaluate: new __forbiddenstring__(\'abc\')', $result);
+
 
 		$result = (string) dol_eval('$a=function() { }; $a;', 1, 1, '0');
 		print "result5 = ".$result."\n";

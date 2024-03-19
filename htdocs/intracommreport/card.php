@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/intracommreport/class/intracommreport.class.php
 $langs->loadLangs(array("intracommreport"));
 
 // Get Parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action');
 $year = GETPOSTINT('year');
 $month = GETPOSTINT('month');
@@ -108,7 +108,7 @@ if ($reshook < 0) {
 }
 
 if ($permissiontodelete && $action == 'confirm_delete' && $confirm == 'yes') {
-	$result = $object->delete($id, $user);
+	$result = $object->delete($user);
 	if ($result > 0) {
 		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
@@ -247,7 +247,7 @@ if ($id > 0 && $action != 'edit') {
 			);
 		}
 		print $form->formconfirm(
-			"card.php?rowid=".urlencode($id),
+			"card.php?rowid=".urlencode((string) ($id)),
 			$langs->trans("DeleteReport"),
 			$langs->trans("ConfirmDeleteReport"),
 			"confirm_delete",

@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2022      Charlene Benke		<charlene@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +59,7 @@ $entitytoicon = array(
 	'other'        => 'generic',
 	'account'      => 'account',
 	'product'      => 'product',
-	'virtualproduct'=>'product',
+	'virtualproduct' => 'product',
 	'subproduct'   => 'product',
 	'product_supplier_ref'      => 'product',
 	'stock'        => 'stock',
@@ -67,11 +68,11 @@ $entitytoicon = array(
 	'stockbatch'   => 'stock',
 	'category'     => 'category',
 	'shipment'     => 'sending',
-	'shipment_line'=> 'sending',
-	'reception'=> 'sending',
-	'reception_line'=> 'sending',
-	'expensereport'=> 'trip',
-	'expensereport_line'=> 'trip',
+	'shipment_line' => 'sending',
+	'reception' => 'sending',
+	'reception_line' => 'sending',
+	'expensereport' => 'trip',
+	'expensereport_line' => 'trip',
 	'holiday'      => 'holiday',
 	'contract_line' => 'contract',
 	'translation'  => 'generic',
@@ -113,16 +114,16 @@ $entitytolang = array(
 	'other'        => 'Other',
 	'trip'         => 'TripsAndExpenses',
 	'shipment'     => 'Shipments',
-	'shipment_line'=> 'ShipmentLine',
+	'shipment_line' => 'ShipmentLine',
 	'project'      => 'Projects',
 	'projecttask'  => 'Tasks',
 	'task_time'    => 'TaskTimeSpent',
 	'action'       => 'Event',
-	'expensereport'=> 'ExpenseReport',
-	'expensereport_line'=> 'ExpenseReportLine',
+	'expensereport' => 'ExpenseReport',
+	'expensereport_line' => 'ExpenseReportLine',
 	'holiday'      => 'TitreRequestCP',
 	'contract'     => 'Contract',
-	'contract_line'=> 'ContractLine',
+	'contract_line' => 'ContractLine',
 	'translation'  => 'Translation',
 	'bom'          => 'BOM',
 	'bomline'      => 'BOMLine'
@@ -136,7 +137,7 @@ $confirm			= GETPOST('confirm', 'alpha');
 $step				= (GETPOST('step') ? GETPOST('step') : 1);
 $import_name = GETPOST('import_name');
 $hexa				= GETPOST('hexa');
-$importmodelid = GETPOST('importmodelid', 'int');
+$importmodelid = GETPOSTINT('importmodelid');
 $excludefirstline = (GETPOST('excludefirstline') ? GETPOST('excludefirstline') : 2);
 $endatlinenb		= (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
 $updatekeys			= (GETPOST('updatekeys', 'array') ? GETPOST('updatekeys', 'array') : array());
@@ -219,8 +220,8 @@ if ($action=='downfield' || $action=='upfield')
 // }
 
 if ($action == 'deleteprof') {
-	if (GETPOST("id", 'int')) {
-		$objimport->fetch(GETPOST("id", 'int'));
+	if (GETPOSTINT("id")) {
+		$objimport->fetch(GETPOSTINT("id"));
 		$result = $objimport->delete($user);
 	}
 }
@@ -500,6 +501,7 @@ if ($step == 2 && $datatoimport) {
 		print '<tr class="oddeven">';
 		print '<td width="16">'.img_picto_common($key, $objmodelimport->getPictoForKey($key)).'</td>';
 		$text = $objmodelimport->getDriverDescForKey($key);
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key), $text).'</td>';
 		print '<td style="text-align:center">';
 		$filename = $langs->trans("ExampleOfImportFile").'_'.$datatoimport.'.'.$key;
@@ -592,6 +594,7 @@ if ($step == 3 && $datatoimport) {
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td class="nowraponall">';
 	$text = $objmodelimport->getDriverDescForKey($format);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
 	print '</td><td style="text-align:right" class="nowrap">';
 	$filename = $langs->trans("ExampleOfImportFile").'_'.$datatoimport.'.'.$format;
@@ -895,21 +898,21 @@ if ($step == 4 && $datatoimport) {
 		$isrequired = preg_match('/\*$/', $label);
 		if (!empty($isrequired)) {
 			$newlabel = substr($label, 0, -1);
-			$fieldstarget_tmp[$key] = array("label"=>$newlabel, "required"=>true);
+			$fieldstarget_tmp[$key] = array("label" => $newlabel, "required" => true);
 		} else {
-			$fieldstarget_tmp[$key] = array("label"=>$label, "required"=>false);
+			$fieldstarget_tmp[$key] = array("label" => $label, "required" => false);
 		}
 		if (!empty($array_match_database_to_file[$key])) {
 			$fieldstarget_tmp[$key]["imported"] = true;
-			$fieldstarget_tmp[$key]["position"] = $array_match_database_to_file[$key]-1;
+			$fieldstarget_tmp[$key]["position"] = $array_match_database_to_file[$key] - 1;
 			$keytoswap = $key;
 			while (!empty($array_match_database_to_file[$keytoswap])) {
-				if ($position+1 > $array_match_database_to_file[$keytoswap]) {
-					$keytoswapwith = $array_match_database_to_file[$keytoswap]-1;
-					$tmp = [$keytoswap=>$fieldstarget_tmp[$keytoswap]];
+				if ($position + 1 > $array_match_database_to_file[$keytoswap]) {
+					$keytoswapwith = $array_match_database_to_file[$keytoswap] - 1;
+					$tmp = [$keytoswap => $fieldstarget_tmp[$keytoswap]];
 					unset($fieldstarget_tmp[$keytoswap]);
 					$fieldstarget_tmp = arrayInsert($fieldstarget_tmp, $keytoswapwith, $tmp);
-					$keytoswapwith = $arraykeysfieldtarget[$array_match_database_to_file[$keytoswap]-1];
+					$keytoswapwith = $arraykeysfieldtarget[$array_match_database_to_file[$keytoswap] - 1];
 					$tmp = $fieldstarget_tmp[$keytoswapwith];
 					unset($fieldstarget_tmp[$keytoswapwith]);
 					$fieldstarget_tmp[$keytoswapwith] = $tmp;
@@ -990,6 +993,7 @@ if ($step == 4 && $datatoimport) {
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
 	$text = $objmodelimport->getDriverDescForKey($format);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
 	print '</td></tr>';
 
@@ -1086,6 +1090,7 @@ if ($step == 4 && $datatoimport) {
 
 	$lefti = 1;
 	foreach ($fieldssource as $key => $val) {
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		show_elem($fieldssource, $key, $val); // key is field number in source file
 		$listofkeys[$key] = 1;
 		$fieldsplaced[$key] = 1;
@@ -1115,7 +1120,7 @@ if ($step == 4 && $datatoimport) {
 		foreach ($tmparray as $tmpkey => $tmpval) {
 			$labeltoshow .= ($labeltoshow ? ' '.$langs->trans('or').' ' : '').$langs->transnoentities($tmpval);
 		}
-		$optionsall[$code] = array('labelkey'=>$line['label'], 'labelkeyarray'=>$tmparray, 'label'=>$labeltoshow, 'required'=>(empty($line["required"]) ? 0 : 1), 'position'=>!empty($line['position']) ? $line['position'] : 0);
+		$optionsall[$code] = array('labelkey' => $line['label'], 'labelkeyarray' => $tmparray, 'label' => $labeltoshow, 'required' => (empty($line["required"]) ? 0 : 1), 'position' => !empty($line['position']) ? $line['position'] : 0);
 		// TODO Get type from a new array into module descriptor.
 		//$picto = 'email';
 		$picto = '';
@@ -1164,7 +1169,7 @@ if ($step == 4 && $datatoimport) {
 		//var_dump($_SESSION['dol_array_match_file_to_database']);
 
 		$selectforline = '';
-		$selectforline .= '<select id="selectorderimport_'.($i+1).'" class="targetselectchange minwidth300" name="select_'.($i+1).'">';
+		$selectforline .= '<select id="selectorderimport_'.($i + 1).'" class="targetselectchange minwidth300" name="select_'.($i + 1).'">';
 		if (!empty($line["imported"])) {
 			$selectforline .= '<option value="-1">&nbsp;</option>';
 		} else {
@@ -1268,10 +1273,10 @@ if ($step == 4 && $datatoimport) {
 			} elseif ($modetoautofillmapping == 'session' && !empty($_SESSION['dol_array_match_file_to_database_select'])) {
 				$tmpselectioninsession = dolExplodeIntoArray($_SESSION['dol_array_match_file_to_database_select'], ',', '=');
 				//var_dump($code);
-				if (!empty($tmpselectioninsession[($i+1)]) && $tmpselectioninsession[($i+1)] == $tmpcode) {
+				if (!empty($tmpselectioninsession[($i + 1)]) && $tmpselectioninsession[($i + 1)] == $tmpcode) {
 					$selectforline .= ' selected';
 				}
-				$selectforline .= ' data-debug="'.$tmpcode.'-'.$code.'-'.$j.'-'.(!empty($tmpselectioninsession[($i+1)]) ? $tmpselectioninsession[($i+1)] : "").'"';
+				$selectforline .= ' data-debug="'.$tmpcode.'-'.$code.'-'.$j.'-'.(!empty($tmpselectioninsession[($i + 1)]) ? $tmpselectioninsession[($i + 1)] : "").'"';
 			}
 			$selectforline .= ' data-html="'.dol_escape_htmltag($labelhtml).'"';
 			$selectforline .= '>';
@@ -1280,7 +1285,7 @@ if ($step == 4 && $datatoimport) {
 			$j++;
 		}
 		$selectforline .= '</select>';
-		$selectforline .= ajax_combobox('selectorderimport_'.($i+1));
+		$selectforline .= ajax_combobox('selectorderimport_'.($i + 1));
 
 		print $selectforline;
 
@@ -1496,7 +1501,7 @@ if ($step == 4 && $datatoimport) {
 		print '<tr class="oddeven">';
 		print '<td><input name="import_name" class="minwidth300" value="'.$nameofimportprofile.'"></td>';
 		print '<td>';
-		$arrayvisibility = array('private'=>$langs->trans("Private"), 'all'=>$langs->trans("Everybody"));
+		$arrayvisibility = array('private' => $langs->trans("Private"), 'all' => $langs->trans("Everybody"));
 		print $form->selectarray('visibility', $arrayvisibility, 'private');
 		print '</td>';
 		print '<td class="right">';
@@ -1654,6 +1659,7 @@ if ($step == 5 && $datatoimport) {
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
 	$text = $objmodelimport->getDriverDescForKey($format);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
 	print '</td></tr>';
 
@@ -1876,7 +1882,7 @@ if ($step == 5 && $datatoimport) {
 				//dol_syslog("line ".$sourcelinenb.' - '.$nboflines.' - '.$excludefirstline.' - '.$endatlinenb);
 				$arrayrecord = $obj->import_read_record();
 				if ($arrayrecord === false) {
-					$arrayofwarnings[$sourcelinenb][0] = array('lib'=>'File has '.$nboflines.' lines. However we reach the end of file or an empty line at record '.$sourcelinenb.'. This may occurs when some records are split onto several lines and not correctly delimited by the "Char delimiter", or if there is line with no data on all fields.', 'type'=>'EOF_RECORD_ON_SEVERAL_LINES');
+					$arrayofwarnings[$sourcelinenb][0] = array('lib' => 'File has '.$nboflines.' lines. However we reach the end of file or an empty line at record '.$sourcelinenb.'. This may occurs when some records are split onto several lines and not correctly delimited by the "Char delimiter", or if there is line with no data on all fields.', 'type' => 'EOF_RECORD_ON_SEVERAL_LINES');
 					$endoffile++;
 					continue;
 				}
@@ -1940,7 +1946,7 @@ if ($step == 5 && $datatoimport) {
 				$i++;
 				$resqlafterimport = $db->query($sqlafterimport);
 				if (!$resqlafterimport) {
-					$arrayoferrors['none'][] = array('lib'=>$langs->trans("Error running final request: ".$sqlafterimport));
+					$arrayoferrors['none'][] = array('lib' => $langs->trans("Error running final request: ".$sqlafterimport));
 					$error++;
 				}
 			}
@@ -2139,6 +2145,7 @@ if ($step == 6 && $datatoimport) {
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
 	$text = $objmodelimport->getDriverDescForKey($format);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
 	print '</td></tr>';
 
@@ -2286,7 +2293,7 @@ if ($step == 6 && $datatoimport) {
 			$sourcelinenb++;
 			$arrayrecord = $obj->import_read_record();
 			if ($arrayrecord === false) {
-				$arrayofwarnings[$sourcelinenb][0] = array('lib'=>'File has '.$nboflines.' lines. However we reach the end of file or an empty line at record '.$sourcelinenb.'. This may occurs when some records are split onto several lines and not correctly delimited by the "Char delimiter", or if there is line with no data on all fields.', 'type'=>'EOF_RECORD_ON_SEVERAL_LINES');
+				$arrayofwarnings[$sourcelinenb][0] = array('lib' => 'File has '.$nboflines.' lines. However we reach the end of file or an empty line at record '.$sourcelinenb.'. This may occurs when some records are split onto several lines and not correctly delimited by the "Char delimiter", or if there is line with no data on all fields.', 'type' => 'EOF_RECORD_ON_SEVERAL_LINES');
 				$endoffile++;
 				continue;
 			}
@@ -2361,7 +2368,7 @@ if ($step == 6 && $datatoimport) {
 				$i++;
 				$resqlafterimport = $db->query($sqlafterimport);
 				if (!$resqlafterimport) {
-					$arrayoferrors['none'][] = array('lib'=>$langs->trans("Error running final request: ".$sqlafterimport));
+					$arrayoferrors['none'][] = array('lib' => $langs->trans("Error running final request: ".$sqlafterimport));
 					$error++;
 				}
 			}
@@ -2467,12 +2474,8 @@ function show_elem($fieldssource, $pos, $key)
 			if (!utf8_check($example)) {
 				$example = mb_convert_encoding($example, 'UTF-8', 'ISO-8859-1');
 			}
-			if (!empty($conf->dol_optimize_smallscreen)) {
-				//print '<br>';
-				print ' - ';
-			} else {
-				print ' - ';
-			}
+			// if (!empty($conf->dol_optimize_smallscreen)) { //print '<br>'; }
+			print ' - ';
 			print '<i class="opacitymedium">'.dol_escape_htmltag($example).'</i>';
 		}
 		print '</td>';

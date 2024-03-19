@@ -64,7 +64,7 @@ class PropalListController extends Controller
 
 		// Load translation files required by the page
 		$langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'deliveries', 'categories'));
-		if (isModEnabled('expedition')) {
+		if (isModEnabled('shipping')) {
 			$langs->loadLangs(array('sendings'));
 		}
 

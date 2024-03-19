@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) - 2013-2015 Jean-François FERRY	<jfefe@aternatik.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
@@ -80,7 +80,7 @@ class FormResource
 	 * 	@param	bool	$multiple		add [] in the name of element and add 'multiple' attribute
 	 * 	@return	string|array			HTML string with
 	 */
-	public function select_resource_list($selected = 0, $htmlname = 'fk_resource', array $filter = [], $showempty = 0, $showtype = 0, $forcecombo = 0, $event = [], $filterkey = '', $outputmode = 0, $limit = 20, $morecss = '', $multiple = false)
+	public function select_resource_list($selected = 0, $htmlname = 'fk_resource', array $filter = [], $showempty = 0, $showtype = 0, $forcecombo = 0, $event = [], $filterkey = [], $outputmode = 0, $limit = 20, $morecss = '', $multiple = false)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;

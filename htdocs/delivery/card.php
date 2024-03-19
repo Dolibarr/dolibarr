@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
-if (isModEnabled('expedition')) {
+if (isModEnabled('shipping')) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
 if (isModEnabled('stock')) {
@@ -61,7 +61,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Security check
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -101,7 +101,7 @@ if ($action == 'add') {
 	$object->date_delivery = dol_now();
 	$object->note          = GETPOST("note", 'restricthtml');
 	$object->note_private  = GETPOST("note", 'restricthtml');
-	$object->commande_id   = GETPOST("commande_id", 'int');
+	$object->commande_id   = GETPOSTINT("commande_id");
 	$object->fk_incoterms  = GETPOSTINT('incoterm_id');
 
 	/* ->entrepot_id seems to not exists
@@ -182,14 +182,14 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expedit
 }
 
 if ($action == 'setdate_delivery' && $user->hasRight('expedition', 'delivery', 'creer')) {
-	$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
+	$datedelivery = dol_mktime(GETPOSTINT('liv_hour'), GETPOSTINT('liv_min'), 0, GETPOSTINT('liv_month'), GETPOSTINT('liv_day'), GETPOSTINT('liv_year'));
 	$result = $object->setDeliveryDate($user, $datedelivery);
 	if ($result < 0) {
 		$mesg = '<div class="error">'.$object->error.'</div>';
 	}
 } elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
 	// Set incoterm
-	$result = $object->setIncoterms((int) GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+	$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
 }
 
 // Update extrafields
@@ -311,7 +311,7 @@ if ($action == 'create') {
 			 *   Delivery
 			 */
 
-			if ($typeobject == 'commande' && $expedition->origin_id > 0 && isModEnabled('commande')) {
+			if ($typeobject == 'commande' && $expedition->origin_id > 0 && isModEnabled('order')) {
 				$objectsrc = new Commande($db);
 				$objectsrc->fetch($expedition->origin_id);
 			}
@@ -391,7 +391,7 @@ if ($action == 'create') {
 			*/
 
 			// Document origine
-			if ($typeobject == 'commande' && $expedition->origin_id && isModEnabled('commande')) {
+			if ($typeobject == 'commande' && $expedition->origin_id && isModEnabled('order')) {
 				print '<tr><td class="titlefield">'.$langs->trans("RefOrder").'</td>';
 				$order = new Commande($db);
 				$order->fetch($expedition->origin_id);
@@ -430,7 +430,7 @@ if ($action == 'create') {
 				print '<form name="setdate_delivery" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="setdate_delivery">';
-				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_delivery", 1, 1);
+				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, 0, "setdate_delivery", 1, 1);
 				print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			} else {

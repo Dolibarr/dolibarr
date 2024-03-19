@@ -435,10 +435,9 @@ class Tasks extends DolibarrApi
 	/**
 	 * Update task general fields (won't touch time spent of task)
 	 *
-	 * @param int   $id             Id of task to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   	$id             	Id of task to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{

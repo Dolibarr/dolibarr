@@ -111,7 +111,7 @@ $source = GETPOST('s', 'alpha') ? GETPOST('s', 'alpha') : GETPOST('source', 'alp
 $ref = GETPOST('ref');
 
 $suffix = GETPOST("suffix", 'aZ09');
-$membertypeid = GETPOST("membertypeid", 'int');
+$membertypeid = GETPOSTINT("membertypeid");
 
 
 // Detect $paymentmethod
@@ -591,11 +591,11 @@ if ($ispaymentok) {
 				$emetteur_banque = '';
 				// Define default choice for complementary actions
 				$option = '';
-				if (getDolGlobalString('ADHERENT_BANK_USE') == 'bankviainvoice' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
+				if (getDolGlobalString('ADHERENT_BANK_USE') == 'bankviainvoice' && isModEnabled("bank") && isModEnabled("societe") && isModEnabled('invoice')) {
 					$option = 'bankviainvoice';
-				} elseif (getDolGlobalString('ADHERENT_BANK_USE') == 'bankdirect' && isModEnabled("banque")) {
+				} elseif (getDolGlobalString('ADHERENT_BANK_USE') == 'bankdirect' && isModEnabled("bank")) {
 					$option = 'bankdirect';
-				} elseif (getDolGlobalString('ADHERENT_BANK_USE') == 'invoiceonly' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
+				} elseif (getDolGlobalString('ADHERENT_BANK_USE') == 'invoiceonly' && isModEnabled("bank") && isModEnabled("societe") && isModEnabled('invoice')) {
 					$option = 'invoiceonly';
 				}
 				if (empty($option)) {
@@ -882,7 +882,7 @@ if ($ispaymentok) {
 				} else {
 					$paiement->multicurrency_amounts = array($object->id => $FinalPaymentAmt); // Array with all payments dispatching
 
-					$postactionmessages[] = 'Payment was done in a different currency that currency expected of company';
+					$postactionmessages[] = 'Payment was done in a currency ('.$currencyCodeType.') other than the expected currency of company ('.$conf->currency.')';
 					$ispostactionok = -1;
 					$error++; // Not yet supported
 				}
@@ -905,7 +905,7 @@ if ($ispaymentok) {
 					}
 				}
 
-				if (!$error && isModEnabled("banque")) {
+				if (!$error && isModEnabled("bank")) {
 					$bankaccountid = 0;
 					if ($paymentmethod == 'paybox') {
 						$bankaccountid = getDolGlobalString('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS');
@@ -994,7 +994,7 @@ if ($ispaymentok) {
 			}
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
-			if (isModEnabled('facture')) {
+			if (isModEnabled('invoice')) {
 				if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
 					include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 					$invoice = new Facture($db);
@@ -1011,7 +1011,7 @@ if ($ispaymentok) {
 						} else {
 							$paiement->multicurrency_amounts = array($invoice->id => $FinalPaymentAmt); // Array with all payments dispatching
 
-							$postactionmessages[] = 'Payment was done in a different currency that currency expected of company';
+							$postactionmessages[] = 'Payment was done in a currency ('.$currencyCodeType.') other than the expected currency of company ('.$conf->currency.')';
 							$ispostactionok = -1;
 							$error++;
 						}
@@ -1033,7 +1033,7 @@ if ($ispaymentok) {
 							}
 						}
 
-						if (!$error && isModEnabled("banque")) {
+						if (!$error && isModEnabled("bank")) {
 							$bankaccountid = 0;
 							if ($paymentmethod == 'paybox') {
 								$bankaccountid = getDolGlobalString('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS');
@@ -1170,7 +1170,7 @@ if ($ispaymentok) {
 					}
 				}
 
-				if (!$error && isModEnabled("banque")) {
+				if (!$error && isModEnabled("bank")) {
 					$bankaccountid = 0;
 					if ($paymentmethod == 'paybox') {
 						$bankaccountid = getDolGlobalString('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS');
@@ -1278,7 +1278,7 @@ if ($ispaymentok) {
 					} else {
 						$paiement->multicurrency_amounts = array($object->id => $FinalPaymentAmt); // Array with all payments dispatching
 
-						$postactionmessages[] = 'Payment was done in a different currency that currency expected of company';
+						$postactionmessages[] = 'Payment was done in a currency ('.$currencyCodeType.') other than the expected currency of company ('.$conf->currency.')';
 						$ispostactionok = -1;
 						$error++; // Not yet supported
 					}
@@ -1300,7 +1300,7 @@ if ($ispaymentok) {
 						}
 					}
 
-					if (!$error && isModEnabled("banque")) {
+					if (!$error && isModEnabled("bank")) {
 						$bankaccountid = 0;
 						if ($paymentmethod == 'paybox') {
 							$bankaccountid = getDolGlobalString('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS');
@@ -1434,7 +1434,9 @@ if ($ispaymentok) {
 								$listofmimes = array(dol_mimetype($file));
 							}
 
-							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, $cc, '', 0, $ishtml);
+							$trackid = 'inv'.$object->id;
+
+							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, $cc, '', 0, $ishtml, '', '', $trackid, '', 'standard');
 
 							$result = $mailfile->sendfile();
 							if ($result) {
@@ -1508,7 +1510,7 @@ if ($ispaymentok) {
 					} else {
 						$paiement->multicurrency_amounts = array($object->id => $FinalPaymentAmt); // Array with all payments dispatching
 
-						$postactionmessages[] = 'Payment was done in a different currency that currency expected of company';
+						$postactionmessages[] = 'Payment was done in a currency ('.$currencyCodeType.') other than the expected currency of company ('.$conf->currency.')';
 						$ispostactionok = -1;
 						$error++; // Not yet supported
 					}
@@ -1530,7 +1532,7 @@ if ($ispaymentok) {
 						}
 					}
 
-					if (!$error && isModEnabled("banque")) {
+					if (!$error && isModEnabled("bank")) {
 						$bankaccountid = 0;
 						if ($paymentmethod == 'paybox') {
 							$bankaccountid = getDolGlobalString('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS');
@@ -1636,8 +1638,9 @@ if ($ispaymentok) {
 										$urlback = $_SERVER["REQUEST_URI"];
 
 										$ishtml = dol_textishtml($texttosend); // May contain urls
+										$trackid = 'inv'.$invoice->id;
 
-										$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
+										$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml, '', '', $trackid, '', 'standard');
 
 										$result = $mailfile->sendfile();
 										if ($result) {
@@ -1702,7 +1705,7 @@ if ($ispaymentok) {
 			$contract_lines = (array_key_exists('COL', $tmptag) && $tmptag['COL'] > 0) ? $tmptag['COL'] : null;
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
-			if (isModEnabled('facture')) {
+			if (isModEnabled('invoice')) {
 				if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
 					include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 					$invoice = new Facture($db);
@@ -1719,7 +1722,7 @@ if ($ispaymentok) {
 						} else {
 							$paiement->multicurrency_amounts = array($invoice->id => $FinalPaymentAmt); // Array with all payments dispatching
 
-							$postactionmessages[] = 'Payment was done in a different currency that currency expected of company';
+							$postactionmessages[] = 'Payment was done in a currency ('.$currencyCodeType.') other than the expected currency of company ('.$conf->currency.')';
 							$ispostactionok = -1;
 							$error++;
 						}
@@ -1741,7 +1744,7 @@ if ($ispaymentok) {
 							}
 						}
 
-						if (!$error && isModEnabled("banque")) {
+						if (!$error && isModEnabled("bank")) {
 							$bankaccountid = 0;
 							if ($paymentmethod == 'paybox') {
 								$bankaccountid = getDolGlobalString('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS');
@@ -1855,10 +1858,7 @@ if ($ispaymentok) {
 		print $conf->global->$key;
 	}
 
-	$sendemail = '';
-	if (getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL')) {
-		$sendemail = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL');
-	}
+	$sendemail = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL');
 
 	$tmptag = dolExplodeIntoArray($fulltag, '.', '=');
 
@@ -1938,9 +1938,10 @@ if ($ispaymentok) {
 
 
 		$ishtml = dol_textishtml($content); // May contain urls
+		$trackid = '';
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
+		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml, '', '', $trackid, '', 'standard');
 
 		$result = $mailfile->sendfile();
 		if ($result) {
@@ -2019,9 +2020,10 @@ if ($ispaymentok) {
 
 
 		$ishtml = dol_textishtml($content); // May contain urls
+		$trackid = '';
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
+		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml, '', '', $trackid, '', 'standard');
 
 		$result = $mailfile->sendfile();
 		if ($result) {

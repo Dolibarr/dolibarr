@@ -188,9 +188,9 @@ class Warehouses extends DolibarrApi
 	/**
 	 * Update warehouse
 	 *
-	 * @param int   $id             Id of warehouse to update
-	 * @param array $request_data   Datas
-	 * @return int
+	 * @param 	int   	$id             	Id of warehouse to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -222,9 +222,9 @@ class Warehouses extends DolibarrApi
 
 		if ($this->warehouse->update($id, DolibarrApiAccess::$user)) {
 			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->warehouse->error);
 		}
-
-		return false;
 	}
 
 	/**

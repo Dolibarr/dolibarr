@@ -47,14 +47,14 @@ if (!$sortfield) {
 }
 
 // Category
-$selected_cat = (int) GETPOST('search_categ', 'int');
-$selected_soc = (int) GETPOST('search_soc', 'int');
+$selected_cat = GETPOSTINT('search_categ');
+$selected_soc = GETPOSTINT('search_soc');
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
 	$subcat = true;
 }
 // product/service
-$selected_type = GETPOST('search_type', 'int');
+$selected_type = GETPOSTINT('search_type');
 if ($selected_type == '') {
 	$selected_type = -1;
 }
@@ -84,7 +84,7 @@ $date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_star
 $date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOST("q", "int");
+	$q = GETPOSTINT("q");
 	if (empty($q)) {
 		// We define date_start and date_end
 		$month_start = GETPOST("month") ? GETPOST("month") : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
@@ -194,7 +194,7 @@ foreach ($allparams as $key => $value) {
 }
 
 // Security pack (data & check)
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 
 if ($user->socid > 0) {
 	$socid = $user->socid;
@@ -263,6 +263,9 @@ if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 
 
 $name = array();
+$amount = array();
+$amount_ht = array();
+$qty = array();
 
 // SQL request
 $catotal = 0;

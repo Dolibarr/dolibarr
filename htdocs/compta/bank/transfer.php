@@ -78,13 +78,13 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 	$maxtab = 1;
 
 	while ($i < $MAXLINES) {
-		$dateo[$i] = dol_mktime(12, 0, 0, GETPOST($i.'_month', 'int'), GETPOST($i.'_day', 'int'), GETPOST($i.'_year', 'int'));
+		$dateo[$i] = dol_mktime(12, 0, 0, GETPOSTINT($i.'_month'), GETPOSTINT($i.'_day'), GETPOSTINT($i.'_year'));
 		$label[$i] = GETPOST($i.'_label', 'alpha');
 		$amount[$i] = price2num(GETPOST($i.'_amount', 'alpha'), 'MT', 2);
 		$amountto[$i] = price2num(GETPOST($i.'_amountto', 'alpha'), 'MT', 2);
-		$accountfrom[$i] = GETPOST($i.'_account_from', 'int');
-		$accountto[$i] = GETPOST($i.'_account_to', 'int');
-		$type[$i] = GETPOST($i.'_type', 'int');
+		$accountfrom[$i] = GETPOSTINT($i.'_account_from');
+		$accountto[$i] = GETPOSTINT($i.'_account_to');
+		$type[$i] = GETPOSTINT($i.'_type');
 
 		$tabnum[$i] = 0;
 		if (!empty($label[$i]) || !($amount[$i] <= 0) || !($accountfrom[$i] < 0) || !($accountto[$i]  < 0)) {
@@ -126,10 +126,10 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 			}
 
 			$tmpaccountfrom = new Account($db);
-			$tmpaccountfrom->fetch(GETPOST($n.'_account_from', 'int'));
+			$tmpaccountfrom->fetch(GETPOSTINT($n.'_account_from'));
 
 			$tmpaccountto = new Account($db);
-			$tmpaccountto->fetch(GETPOST($n.'_account_to', 'int'));
+			$tmpaccountto->fetch(GETPOSTINT($n.'_account_to'));
 
 			if ($tmpaccountto->currency_code == $tmpaccountfrom->currency_code) {
 				$amountto[$n] = $amount[$n];
@@ -319,12 +319,12 @@ for ($i = 1 ; $i < $MAXLINES; $i++) {
 
 	print '<tr class="oddeven nowraponall '.$classi.'"><td>';
 	print img_picto('', 'bank_account', 'class="paddingright"');
-	$form->select_comptes(($error ? GETPOST($i.'_account_from', 'int') : ''), $i.'_account_from', 0, '', 1, '', isModEnabled('multicurrency') ? 1 : 0, 'minwidth100');
+	$form->select_comptes(($error ? GETPOSTINT($i.'_account_from') : ''), $i.'_account_from', 0, '', 1, '', isModEnabled('multicurrency') ? 1 : 0, 'minwidth100');
 	print '</td>';
 
 	print '<td class="nowraponall">';
 	print img_picto('', 'bank_account', 'class="paddingright"');
-	$form->select_comptes(($error ? GETPOST($i.'_account_to', 'int') : ''), $i.'_account_to', 0, '', 1, '', isModEnabled('multicurrency') ? 1 : 0, 'minwidth100');
+	$form->select_comptes(($error ? GETPOSTINT($i.'_account_to') : ''), $i.'_account_to', 0, '', 1, '', isModEnabled('multicurrency') ? 1 : 0, 'minwidth100');
 	print "</td>\n";
 
 	// Payment mode
@@ -335,7 +335,7 @@ for ($i = 1 ; $i < $MAXLINES; $i++) {
 
 	// Date
 	print '<td class="nowraponall">';
-	print $form->selectDate((!empty($dateo[$i]) ? $dateo[$i] : ''), $i.'_', '', '', '', 'add');
+	print $form->selectDate((!empty($dateo[$i]) ? $dateo[$i] : ''), $i.'_', 0, 0, 0, 'add');
 	print "</td>\n";
 
 	// Description

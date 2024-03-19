@@ -15,10 +15,10 @@ $encoding = '';
 // Parameters to download files
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');
-$entity = GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity;
+$entity = GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity;
 $original_file = GETPOST("file", "alpha");
 $l = GETPOST('l', 'aZ09');
-$limit = GETPOST('limit', 'int');
+$limit = GETPOSTINT('limit');
 
 // Parameters for RSS
 $rss = GETPOST('rss', 'aZ09');

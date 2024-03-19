@@ -186,6 +186,7 @@ class pdf_standard_actions
 			$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 			$pdf->SetKeywords($outputlangs->convToOutputCharset($this->title." ".$this->subject));
 
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 			$nbpage = $this->_pages($pdf, $outputlangs); // Write content

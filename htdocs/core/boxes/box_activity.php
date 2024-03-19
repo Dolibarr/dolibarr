@@ -50,11 +50,11 @@ class box_activity extends ModeleBoxes
 		$this->db = $db;
 
 		// FIXME: Pb into some status
-		$this->enabled = (getDolGlobalString('MAIN_FEATURES_LEVEL')); // Not enabled by default due to bugs (see previous comments)
+		$this->enabled = getDolGlobalInt('MAIN_FEATURES_LEVEL'); // Not enabled by default due to bugs (see previous comments)
 
 		$this->hidden = !(
-			(isModEnabled('facture') && $user->hasRight('facture', 'read'))
-			|| (isModEnabled('commande') && $user->hasRight('commande', 'read'))
+			(isModEnabled('invoice') && $user->hasRight('facture', 'read'))
+			|| (isModEnabled('order') && $user->hasRight('commande', 'read'))
 			|| (isModEnabled('propal') && $user->hasRight('propal', 'read'))
 		);
 	}
@@ -183,7 +183,7 @@ class box_activity extends ModeleBoxes
 		}
 
 		// list the summary of the orders
-		if (isModEnabled('commande') && $user->hasRight("commande", "lire")) {
+		if (isModEnabled('order') && $user->hasRight("commande", "lire")) {
 			include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 			$commandestatic = new Commande($this->db);
 
@@ -270,7 +270,7 @@ class box_activity extends ModeleBoxes
 
 
 		// list the summary of the bills
-		if (isModEnabled('facture') && $user->hasRight("facture", "lire")) {
+		if (isModEnabled('invoice') && $user->hasRight("facture", "lire")) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$facturestatic = new Facture($this->db);
 

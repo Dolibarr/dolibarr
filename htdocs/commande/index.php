@@ -50,7 +50,7 @@ $hookmanager->initHooks(array('ordersindex'));
 
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
@@ -92,7 +92,7 @@ if ($tmp) {
 /*
  * Draft orders
  */
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";
@@ -244,7 +244,7 @@ $max = 10;
 /*
  * Orders to process
  */
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_commande as date, s.nom as name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";
@@ -333,7 +333,7 @@ if (isModEnabled('commande')) {
 /*
  * Orders that are in process
  */
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_commande as date, s.nom as name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";

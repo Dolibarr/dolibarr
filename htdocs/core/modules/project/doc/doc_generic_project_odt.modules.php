@@ -42,13 +42,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 if (isModEnabled("supplier_invoice")) {
@@ -57,10 +57,10 @@ if (isModEnabled("supplier_invoice")) {
 if (isModEnabled("supplier_order")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 }
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
-if (isModEnabled('ficheinter')) {
+if (isModEnabled('intervention')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
 if (isModEnabled('deplacement')) {
@@ -69,7 +69,7 @@ if (isModEnabled('deplacement')) {
 if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 }
-if (isModEnabled('expedition')) {
+if (isModEnabled('shipping')) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
 
@@ -223,7 +223,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 	public function get_substitutionarray_project_contacts($contact, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
 		$pc = 'projcontacts_'; // prefix to avoid typos
 
 		$ret = array(
@@ -281,8 +280,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 	public function get_substitutionarray_project_file($file, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
-
 		return array(
 			'projfile_name'=>$file['name'],
 			'projfile_date'=>dol_print_date($file['date'], 'day'),
@@ -318,23 +315,23 @@ class doc_generic_project_odt extends ModelePDFProjects
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$taskressource			Reference array
-	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array								Return a substitution array
+	 *	@param  array			$taskresource			Reference array
+	 *	@param  Translate		$outputlangs        	Lang object to use for output
+	 *  @return	array									Return a substitution array
 	 */
-	public function get_substitutionarray_tasksressource($taskressource, $outputlangs)
+	public function get_substitutionarray_tasksressource($taskresource, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
+
 		//dol_syslog(get_class($this).'::get_substitutionarray_tasksressource taskressource='.var_export($taskressource,true),LOG_DEBUG);
 		return array(
-		'taskressource_rowid'=>$taskressource['rowid'],
-		'taskressource_role'=>$taskressource['libelle'],
-		'taskressource_lastname'=>$taskressource['lastname'],
-		'taskressource_firstname'=>$taskressource['firstname'],
-		'taskressource_fullcivname'=>$taskressource['fullname'],
-		'taskressource_socname'=>$taskressource['socname'],
-		'taskressource_email'=>$taskressource['email']
+			'taskressource_rowid' => $taskresource['rowid'],
+			'taskressource_role' => $taskresource['libelle'],
+			'taskressource_lastname' => $taskresource['lastname'],
+			'taskressource_firstname' => $taskresource['firstname'],
+			'taskressource_fullcivname' => $taskresource['fullname'],
+			'taskressource_socname' => $taskresource['socname'],
+			'taskressource_email' => $taskresource['email']
 		);
 	}
 
@@ -342,28 +339,26 @@ class doc_generic_project_odt extends ModelePDFProjects
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  object			$tasktime			times object
+	 *	@param  array			$tasktime			Array of times object
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
 	public function get_substitutionarray_taskstime($tasktime, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
-
 		return array(
-		'tasktime_rowid'=>$tasktime['rowid'],
-		'tasktime_task_date'=>dol_print_date($tasktime['task_date'], 'day'),
-		'tasktime_task_duration_sec'=>$tasktime['task_duration'],
-		'tasktime_task_duration'=>convertSecondToTime($tasktime['task_duration'], 'all'),
-		'tasktime_note'=>$tasktime['note'],
-		'tasktime_fk_user'=>$tasktime['fk_user'],
-		'tasktime_user_name'=>$tasktime['name'],
-		'tasktime_user_first'=>$tasktime['firstname'],
-		'tasktime_fullcivname'=>$tasktime['fullcivname'],
-		'tasktime_amountht'=>$tasktime['amountht'],
-		'tasktime_amountttc'=>$tasktime['amountttc'],
-		'tasktime_thm'=>$tasktime['thm'],
+			'tasktime_rowid'=>$tasktime['rowid'],
+			'tasktime_task_date'=>dol_print_date($tasktime['task_date'], 'day'),
+			'tasktime_task_duration_sec'=>$tasktime['task_duration'],
+			'tasktime_task_duration'=>convertSecondToTime($tasktime['task_duration'], 'all'),
+			'tasktime_note'=>$tasktime['note'],
+			'tasktime_fk_user'=>$tasktime['fk_user'],
+			'tasktime_user_name'=>$tasktime['name'],
+			'tasktime_user_first'=>$tasktime['firstname'],
+			'tasktime_fullcivname'=>$tasktime['fullcivname'],
+			'tasktime_amountht'=>$tasktime['amountht'],
+			'tasktime_amountttc'=>$tasktime['amountttc'],
+			'tasktime_thm'=>$tasktime['thm'],
 		);
 	}
 
@@ -378,12 +373,10 @@ class doc_generic_project_odt extends ModelePDFProjects
 	public function get_substitutionarray_task_file($file, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
-
 		return array(
-		'tasksfile_name'=>$file['name'],
-		'tasksfile_date'=>dol_print_date($file['date'], 'day'),
-		'tasksfile_size'=>$file['size']
+			'tasksfile_name'=>$file['name'],
+			'tasksfile_date'=>dol_print_date($file['date'], 'day'),
+			'tasksfile_size'=>$file['size']
 		);
 	}
 
@@ -562,8 +555,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
-					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
+				if (getDolGlobalString('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalString('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
@@ -949,19 +942,19 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListOrdersAssociatedProject",
 						'class' => 'Commande',
 						'table' => 'commande',
-						'test' => isModEnabled('commande') && $user->hasRight('commande', 'lire')
+						'test' => isModEnabled('order') && $user->hasRight('commande', 'lire')
 					),
 					'invoice' => array(
 						'title' => "ListInvoicesAssociatedProject",
 						'class' => 'Facture',
 						'table' => 'facture',
-						'test' => isModEnabled('facture') && $user->hasRight('facture', 'lire')
+						'test' => isModEnabled('invoice') && $user->hasRight('facture', 'lire')
 					),
 					'invoice_predefined' => array(
 						'title' => "ListPredefinedInvoicesAssociatedProject",
 						'class' => 'FactureRec',
 						'table' => 'facture_rec',
-						'test' => isModEnabled('facture') && $user->hasRight('facture', 'lire')
+						'test' => isModEnabled('invoice') && $user->hasRight('facture', 'lire')
 					),
 					'proposal_supplier' => array(
 						'title' => "ListSupplierProposalsAssociatedProject",
@@ -985,21 +978,21 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListContractAssociatedProject",
 						'class' => 'Contrat',
 						'table' => 'contrat',
-						'test' => isModEnabled('contrat') && $user->hasRight('contrat', 'lire')
+						'test' => isModEnabled('contract') && $user->hasRight('contrat', 'lire')
 					),
 					'intervention' => array(
 						'title' => "ListFichinterAssociatedProject",
 						'class' => 'Fichinter',
 						'table' => 'fichinter',
 						'disableamount' => 1,
-						'test' => isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')
+						'test' => isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire')
 					),
 					'shipping' => array(
 						'title' => "ListShippingAssociatedProject",
 						'class' => 'Expedition',
 						'table' => 'expedition',
 						'disableamount' => 1,
-						'test' => isModEnabled('expedition') && $user->hasRight('expedition', 'lire')
+						'test' => isModEnabled('shipping') && $user->hasRight('expedition', 'lire')
 					),
 					'trip' => array(
 						'title' => "ListTripAssociatedProject",

@@ -36,7 +36,7 @@ EventOrganizationSetup=הגדרת ארגון אירועים
 EventOrganization=ארגון אירועים
 EventOrganizationSetupPage = דף הגדרות ארגון אירועים
 EVENTORGANIZATION_TASK_LABEL = תווית של משימות ליצירה אוטומטית כאשר הפרויקט מאומת
-EVENTORGANIZATION_TASK_LABELTooltip = כאשר אתה מאמת אירוע לארגון, ניתן ליצור כמה משימות באופן אוטומטי בפרויקט<br><br>לדוגמה: <br>שלח קול קורא לוועידות<br>שלח קול קורא לדוכנים<br>אמת הצעות של כנסים<span ='notranslate'><br></span>אמת את האפליקציה לדוכנים<br>פתוח מנויים לאירוע למשתתפים<br> של האירוע לרמקולים<span class='notranslate'><br>שלח תזכורת לאירוע למארחי ביתן<br>שלח תזכורת לאירוע למשתתפים
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
 EVENTORGANIZATION_TASK_LABELTooltip2=השאר ריק אם אינך צריך ליצור משימות באופן אוטומטי.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = קטגוריה להוספה לצדדים שלישיים נוצרת באופן אוטומטי כאשר מישהו מציע ועידה
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = קטגוריה להוספה לצדדים שלישיים נוצרה אוטומטית כאשר הם מציעים דוכן
@@ -88,6 +88,7 @@ PriceOfRegistration=מחיר הרשמה
 PriceOfRegistrationHelp=מחיר לתשלום עבור הרשמה או השתתפות באירוע
 PriceOfBooth=מחיר מנוי לעמוד דוכן
 PriceOfBoothHelp=מחיר מנוי לעמוד דוכן
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=קישור ICS לכנסים
 ConferenceOrBoothInformation=מידע על כנס או דוכן
 Attendees=משתתפים

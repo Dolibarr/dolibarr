@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2022 Alice Adminson <aadminson@example.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +103,7 @@ $item->helpText = $langs->transnoentities('AnHelpMessage');*/
 //$item->fieldOutputOverride = false; // set this var to override field output
 
 
-$setupnotempty =+ count($formSetup->items);
+$setupnotempty = + count($formSetup->items);
 
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -135,46 +136,9 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'specimen') {
-	$modele = GETPOST('module', 'alpha');
-	$tmpobjectkey = GETPOST('object');
-
-	$tmpobject = new $tmpobjectkey($db);
-	$tmpobject->initAsSpecimen();
-
-	// Search template files
-	$file = '';
-	$classname = '';
-	$filefound = 0;
-	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir) {
-		$file = dol_buildpath($reldir."core/modules/bookcal/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
-		if (file_exists($file)) {
-			$filefound = 1;
-			$classname = "pdf_".$modele."_".strtolower($tmpobjectkey);
-			break;
-		}
-	}
-
-	if ($filefound) {
-		require_once $file;
-
-		$module = new $classname($db);
-
-		if ($module->write_file($tmpobject, $langs) > 0) {
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=bookcal-".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
-			return;
-		} else {
-			setEventMessages($module->error, null, 'errors');
-			dol_syslog($module->error, LOG_ERR);
-		}
-	} else {
-		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
-		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
-	}
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
-	$tmpobjectkey = GETPOST('object');
+	$tmpobjectkey = GETPOST('object', 'aZ09');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'BOOKCAL_'.strtoupper($tmpobjectkey)."_ADDON";
 		dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
@@ -185,7 +149,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		$tmpobjectkey = GETPOST('object');
+		$tmpobjectkey = GETPOST('object', 'aZ09');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'BOOKCAL_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 			if (getDolGlobalString($constforval) == "$value") {
@@ -195,7 +159,7 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'setdoc') {
 	// Set or unset default model
-	$tmpobjectkey = GETPOST('object');
+	$tmpobjectkey = GETPOST('object', 'aZ09');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'BOOKCAL_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
@@ -211,7 +175,7 @@ if ($action == 'updateMask') {
 		}
 	}
 } elseif ($action == 'unsetdoc') {
-	$tmpobjectkey = GETPOST('object');
+	$tmpobjectkey = GETPOST('object', 'aZ09');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'BOOKCAL_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		dolibarr_del_const($db, $constforval, $conf->entity);
@@ -242,7 +206,6 @@ print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "fa-c
 
 // Setup page goes here
 //echo '<span class="opacitymedium">'.$langs->trans("BookCalSetupPage").'</span><br><br>';
-
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);

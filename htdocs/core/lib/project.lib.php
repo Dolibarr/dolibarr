@@ -5,6 +5,7 @@
  * Copyright (C) 2018-2024 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,9 +128,9 @@ function project_prepare_head(Project $project, $moreparam = '')
 	}
 
 	if (isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")
-		|| isModEnabled("propal") || isModEnabled('commande')
-		|| isModEnabled('facture') || isModEnabled('contrat')
-		|| isModEnabled('ficheinter') || isModEnabled('agenda') || isModEnabled('deplacement') || isModEnabled('stock')) {
+		|| isModEnabled("propal") || isModEnabled('order')
+		|| isModEnabled('invoice') || isModEnabled('contract')
+		|| isModEnabled('intervention') || isModEnabled('agenda') || isModEnabled('deplacement') || isModEnabled('stock')) {
 		$nbElements = 0;
 		// Enable caching of thirdrparty count Contacts
 		$cachekey = 'count_elements_project_'.$project->id;
@@ -143,13 +144,13 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled("propal")) {
 				$nbElements += $project->getElementCount('propal', 'propal');
 			}
-			if (isModEnabled('commande')) {
+			if (isModEnabled('order')) {
 				$nbElements += $project->getElementCount('order', 'commande');
 			}
-			if (isModEnabled('facture')) {
+			if (isModEnabled('invoice')) {
 				$nbElements += $project->getElementCount('invoice', 'facture');
 			}
-			if (isModEnabled('facture')) {
+			if (isModEnabled('invoice')) {
 				$nbElements += $project->getElementCount('invoice_predefined', 'facture_rec');
 			}
 			if (isModEnabled('supplier_proposal')) {
@@ -161,13 +162,13 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled("supplier_invoice")) {
 				$nbElements += $project->getElementCount('invoice_supplier', 'facture_fourn');
 			}
-			if (isModEnabled('contrat')) {
+			if (isModEnabled('contract')) {
 				$nbElements += $project->getElementCount('contract', 'contrat');
 			}
-			if (isModEnabled('ficheinter')) {
+			if (isModEnabled('intervention')) {
 				$nbElements += $project->getElementCount('intervention', 'fichinter');
 			}
-			if (isModEnabled("expedition")) {
+			if (isModEnabled("shipping")) {
 				$nbElements += $project->getElementCount('shipping', 'expedition');
 			}
 			if (isModEnabled('mrp')) {
@@ -197,7 +198,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled('salaries')) {
 				$nbElements += $project->getElementCount('salaries', 'payment_salary');
 			}
-			if (isModEnabled("banque")) {
+			if (isModEnabled("bank")) {
 				$nbElements += $project->getElementCount('variouspayment', 'payment_various');
 			}
 			dol_setcache($cachekey, $nbElements, 120);	// If setting cache fails, this is not a problem, so we do not test result.
@@ -239,10 +240,10 @@ function project_prepare_head(Project $project, $moreparam = '')
 			$nbConfOrBooth = $dataretrieved;
 		} else {
 			require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
-			$conforbooth=new ConferenceOrBooth($db);
-			$result = $conforbooth->fetchAll('', '', 0, 0, array('t.fk_project'=>$project->id));
+			$conforbooth = new ConferenceOrBooth($db);
+			$result = $conforbooth->fetchAll('', '', 0, 0, '(t.fk_project:=:'.((int) $project->id).")");
 			//,
-			if (!is_array($result) && $result<0) {
+			if (!is_array($result) && $result < 0) {
 				setEventMessages($conforbooth->error, $conforbooth->errors, 'errors');
 			} else {
 				$nbConfOrBooth = count($result);
@@ -255,10 +256,10 @@ function project_prepare_head(Project $project, $moreparam = '')
 			$nbAttendees = $dataretrieved;
 		} else {
 			require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
-			$conforboothattendee=new ConferenceOrBoothAttendee($db);
-			$result = $conforboothattendee->fetchAll('', '', 0, 0, array('t.fk_project'=>$project->id));
-			//,
-			if (!is_array($result) && $result<0) {
+			$conforboothattendee = new ConferenceOrBoothAttendee($db);
+			$result = $conforboothattendee->fetchAll('', '', 0, 0, '(t.fk_project:=:'.((int) $project->id).')');
+
+			if (!is_array($result) && $result < 0) {
 				setEventMessages($conforboothattendee->error, $conforboothattendee->errors, 'errors');
 			} else {
 				$nbAttendees = count($result);
@@ -484,8 +485,6 @@ function project_timesheet_prepare_head($mode, $fuser = null)
 	global $langs, $conf, $user;
 	$h = 0;
 	$head = array();
-
-	$h = 0;
 
 	$param = '';
 	$param .= ($mode ? '&mode='.$mode : '');
@@ -935,10 +934,10 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				// Extra fields
 				$extrafieldsobjectkey = $taskstatic->table_element;
 				$extrafieldsobjectprefix = 'efpt.';
-				$obj = $lines[$i]->obj;
+				$obj = $lines[$i];
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 				// Fields from hook
-				$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$lines[$i]);
+				$parameters = array('arrayfields' => $arrayfields, 'obj' => $lines[$i]);
 				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 
@@ -1353,7 +1352,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 		//}
 		//else
 		//{
-			//$level--;
+		//$level--;
 		//}
 	}
 
@@ -2449,9 +2448,9 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 /**
  * Search in task lines with a particular parent if there is a task for a particular user (in taskrole)
  *
- * @param 	string	$inc				Counter that count number of lines legitimate to show (for return)
+ * @param 	int		$inc				Counter that count number of lines legitimate to show (for return)
  * @param 	int		$parent				Id of parent task to start
- * @param 	array	$lines				Array of all tasks
+ * @param 	Task[]	$lines				Array of all tasks
  * @param	string	$taskrole			Array of task filtered on a particular user
  * @return	int							1 if there is
  */

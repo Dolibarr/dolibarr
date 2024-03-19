@@ -6,7 +6,7 @@
  * Copyright (C) 2005       Simon TOSSER            <simon@kornog-computing.com>
  * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,16 +40,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'holiday', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -167,8 +167,12 @@ if ($object->id) {
 	print '<td>'.$langs->trans("Type").'</td>';
 	print '<td>';
 	$typeleaves = $object->getTypes(1, -1);
-	$labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code']) != $typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
-	print empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $labeltoshow;
+	if (empty($typeleaves[$object->fk_type])) {
+		$labeltoshow = $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type);
+	} else {
+		$labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code']) != $typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
+	}
+	print $labeltoshow;
 	print '</td>';
 	print '</tr>';
 
@@ -212,7 +216,7 @@ if ($object->id) {
 	print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday).'</td>';
 	print '</tr>';
 
-	if ($object->statut == 5) {
+	if ($object->status == Holiday::STATUS_REFUSED) {
 		print '<tr>';
 		print '<td>'.$langs->trans('DetailRefusCP').'</td>';
 		print '<td>'.$object->detail_refuse.'</td>';
@@ -258,19 +262,19 @@ if ($object->id) {
 	print '<td>'.$langs->trans('DateCreation').'</td>';
 	print '<td>'.dol_print_date($object->date_create,'dayhour').'</td>';
 	print '</tr>';
-	if ($object->statut == 3) {
+	if ($object->status == 3) {
 		print '<tr>';
 		print '<td>'.$langs->trans('DateValidCP').'</td>';
 		print '<td>'.dol_print_date($object->date_valid,'dayhour').'</td>';
 		print '</tr>';
 	}
-	if ($object->statut == 4) {
+	if ($object->status == 4) {
 		print '<tr>';
 		print '<td>'.$langs->trans('DateCancelCP').'</td>';
 		print '<td>'.dol_print_date($object->date_cancel,'dayhour').'</td>';
 		print '</tr>';
 	}
-	if ($object->statut == 5) {
+	if ($object->status == 5) {
 		print '<tr>';
 		print '<td>'.$langs->trans('DateRefusCP').'</td>';
 		print '<td>'.dol_print_date($object->date_refuse,'dayhour').'</td>';

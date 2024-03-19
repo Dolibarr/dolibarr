@@ -104,7 +104,7 @@ if ($state) {
 
 // Add a test to check that the state parameter is provided into URL when we make the first call to ask the redirect or when we receive the callback
 // but not when callback was ok and we recall the page
-if ($action != 'delete' && !GETPOST('afteroauthloginreturn', 'int') && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
+if ($action != 'delete' && !GETPOSTINT('afteroauthloginreturn') && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
 	dol_syslog("state or statewithscopeonly and/or requestedpermissionsarray are empty");
 	setEventMessages($langs->trans('ScopeUndefined'), null, 'errors');
 	if (empty($backtourl)) {

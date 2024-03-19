@@ -8,6 +8,7 @@
  * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Andreu Bisquerra	 <jove@bisquerra.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->loadLangs(array("bills", "banks"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $object = new CashControl($db);
 $object->fetch($id);
@@ -59,13 +60,13 @@ $sortorder = 'ASC';
 $sortfield = 'b.datev,b.dateo,b.rowid';
 
 $arrayfields = array(
-	'b.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'b.dateo'=>array('label'=>$langs->trans("DateOperationShort"), 'checked'=>1),
-	'b.num_chq'=>array('label'=>$langs->trans("Number"), 'checked'=>1),
-	'ba.ref'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>1),
-	'cp.code'=>array('label'=>$langs->trans("PaymentMode"), 'checked'=>1),
-	'b.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1, 'position'=>600),
-	'b.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1, 'position'=>605),
+	'b.rowid' => array('label' => $langs->trans("Ref"), 'checked' => 1),
+	'b.dateo' => array('label' => $langs->trans("DateOperationShort"), 'checked' => 1),
+	'b.num_chq' => array('label' => $langs->trans("Number"), 'checked' => 1),
+	'ba.ref' => array('label' => $langs->trans("BankAccount"), 'checked' => 1),
+	'cp.code' => array('label' => $langs->trans("PaymentMode"), 'checked' => 1),
+	'b.debit' => array('label' => $langs->trans("Debit"), 'checked' => 1, 'position' => 600),
+	'b.credit' => array('label' => $langs->trans("Credit"), 'checked' => 1, 'position' => 605),
 );
 
 $syear  = $object->year_close;
@@ -209,7 +210,7 @@ if ($resql) {
 	$transactionspertype = array();
 	$amountpertype = array();
 
-	$totalarray = array();
+	$totalarray = array('nbfield' => 0, 'pos' => array());
 	while ($i < $num) {
 		$objp = $db->fetch_object($resql);
 

@@ -3,7 +3,6 @@ NoErrorCommitIsDone=No hay error, nos comprometemos
 ErrorButCommitIsDone=Errores encontrados pero validamos a pesar de esto
 ErrorBadEMail=Dirección de correo electrónico %s es incorrecto
 ErrorBadValueForParamNotAString=Valor incorrecto para su parámetro. Se anexa generalmente cuando falta la traducción.
-ErrorRefAlreadyExists=Reference <b>%s</b> used for creation already exists.
 ErrorLoginAlreadyExists=La conexión%s ya existe.
 ErrorGroupAlreadyExists=El grupo%s ya existe.
 ErrorRecordNotFound=Registro no encontrado.

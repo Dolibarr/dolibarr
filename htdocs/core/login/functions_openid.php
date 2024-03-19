@@ -52,7 +52,7 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 		$protocol = ($conf->file->main_force_https ? 'https://' : 'http://');
 		$openid->SetTrustRoot($protocol.$_SERVER["HTTP_HOST"]);
 		$openid->SetRequiredFields(array('email', 'fullname'));
-		$_SESSION['dol_entity'] = GETPOST("entity", 'int');
+		$_SESSION['dol_entity'] = GETPOSTINT("entity");
 		//$openid->SetOptionalFields(array('dob','gender','postcode','country','language','timezone'));
 		if ($openid->sendDiscoveryRequestToGetXRDS()) {
 			$openid->SetApprovedURL($protocol.$_SERVER["HTTP_HOST"].$_SERVER["SCRIPT_NAME"]); // Send Response from OpenID server to this script

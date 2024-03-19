@@ -13,7 +13,7 @@
  * Copyright (C) 2014      Marcos García            <marcosgdf@gmail.com>
  * Copyright (C) 2016      Ferran Marcet            <fmarcet@2byte.es>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2022      Gauthier VERDOL     		<gauthier.verdol@atm-consulting.fr>
  *
@@ -460,6 +460,7 @@ class SupplierProposal extends CommonObject
 
 						// We use 'none' instead of $ref_supplier, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
 						// If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
+						// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 						$result = $productsupplier->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', $this->socid); // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->socid
 						if ($result > 0) {
 							$pu = $productsupplier->fourn_pu; // Unit price supplier price set by get_buyprice
@@ -1124,9 +1125,9 @@ class SupplierProposal extends CommonObject
 		if (!empty($fromid) && $fromid != $this->socid) {
 			if ($objsoc->fetch($fromid) > 0) {
 				$this->socid = $objsoc->id;
-				$this->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-				$this->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-				$this->fk_project = '';
+				$this->cond_reglement_id = (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+				$this->mode_reglement_id = (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+				unset($this->fk_project);
 			}
 
 			// TODO Change product price if multi-prices
@@ -2288,7 +2289,7 @@ class SupplierProposal extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -2361,6 +2362,8 @@ class SupplierProposal extends CommonObject
 
 			$xnbp++;
 		}
+
+		return 1;
 	}
 
 	/**

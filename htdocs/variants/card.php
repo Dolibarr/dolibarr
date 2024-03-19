@@ -32,7 +32,7 @@ require 'lib/variants.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -309,7 +309,7 @@ if ($action == 'create') {
 
 		print load_fiche_titre($langs->trans("PossibleValues") . (!empty($object->lines) ? '<span class="opacitymedium colorblack paddingleft">(' . count($object->lines) . ')</span>' : ''));
 
-		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '#line_' . GETPOST('lineid', 'int')) . '" method="POST">
+		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '#line_' . GETPOSTINT('lineid')) . '" method="POST">
 		<input type="hidden" name="token" value="' . newToken() . '">
 		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
 		<input type="hidden" name="mode" value="">
@@ -332,7 +332,7 @@ if ($action == 'create') {
 			print '<table id="tablelines" class="noborder centpercent">';
 		}
 
-		$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1, '/variants/tpl', ($permissiontoedit ? 1 : 0));
+		$object->printObjectLines($action, $mysoc, null, GETPOSTINT('lineid'), 1, '/variants/tpl', ($permissiontoedit ? 1 : 0));
 
 		if (!empty($object->lines) || ($permissiontoedit && $action != 'selectlines' && $action != 'editline')) {
 			print '</table>';

@@ -2,6 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2020   Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2023	Joachim Kueter			<git-jk@bloxera.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -930,14 +931,15 @@ class Invoices extends DolibarrApi
 	 *   "notrigger": 0
 	 * }
 	 *
-	 * @param   int $id             Invoice ID
-	 * @param   int $idwarehouse    Warehouse ID
-	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
-	 * @return	Object|false		Object with cleaned properties
+	 * @param   int $id             	Invoice ID
+	 * @param   string $force_number   	force ref invoice
+	 * @param   int $idwarehouse    	Warehouse ID
+	 * @param   int $notrigger      	1=Does not execute triggers, 0= execute triggers
+	 * @return	Object|false			Object with cleaned properties
 	 *
 	 * @url POST    {id}/validate
 	 */
-	public function validate($id, $idwarehouse = 0, $notrigger = 0)
+	public function validate($id, $force_number = '', $idwarehouse = 0, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403);
@@ -951,7 +953,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->invoice->validate(DolibarrApiAccess::$user, '', $idwarehouse, $notrigger);
+		$result = $this->invoice->validate(DolibarrApiAccess::$user, $force_number, $idwarehouse, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
@@ -1448,7 +1450,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			if (empty($accountid)) {
 				throw new RestException(400, 'Account ID is mandatory');
 			}
@@ -1478,25 +1480,25 @@ class Invoices extends DolibarrApi
 		// Clean parameters amount if payment is for a credit note
 		if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
 			$resteapayer = price2num($resteapayer, 'MT');
-			$amounts[$id] = price2num(-1 * $resteapayer, 'MT');
+			$amounts[$id] = (float) price2num(-1 * $resteapayer, 'MT');
 			// Multicurrency
 			$newvalue = price2num($this->invoice->multicurrency_total_ttc, 'MT');
-			$multicurrency_amounts[$id] = price2num(-1 * $newvalue, 'MT');
+			$multicurrency_amounts[$id] = (float) price2num(-1 * $newvalue, 'MT');
 		} else {
 			$resteapayer = price2num($resteapayer, 'MT');
-			$amounts[$id] = $resteapayer;
+			$amounts[$id] = (float) $resteapayer;
 			// Multicurrency
 			$newvalue = price2num($this->invoice->multicurrency_total_ttc, 'MT');
-			$multicurrency_amounts[$id] = $newvalue;
+			$multicurrency_amounts[$id] = (float) $newvalue;
 		}
 
 		// Creation of payment line
 		$paymentobj = new Paiement($this->db);
-		$paymentobj->datepaye     = $datepaye;
+		$paymentobj->datepaye     = dol_stringtotime($datepaye);
 		$paymentobj->amounts      = $amounts; // Array with all payments dispatching with invoice id
 		$paymentobj->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paymentobj->paiementid = $paymentid;
-		$paymentobj->paiementcode = dol_getIdFromCode($this->db, $paymentid, 'c_paiement', 'id', 'code', 1);
+		$paymentobj->paiementcode = (string) dol_getIdFromCode($this->db, $paymentid, 'c_paiement', 'id', 'code', 1);
 		$paymentobj->num_payment = $num_payment;
 		$paymentobj->note_private = $comment;
 
@@ -1506,7 +1508,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(400, 'Payment error : '.$paymentobj->error);
 		}
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			$label = '(CustomerInvoicePayment)';
 
 			if ($paymentobj->paiementcode == 'CHQ' && empty($chqemetteur)) {
@@ -1569,7 +1571,7 @@ class Invoices extends DolibarrApi
 			}
 		}
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			if (empty($accountid)) {
 				throw new RestException(400, 'Account ID is mandatory');
 			}
@@ -1630,9 +1632,9 @@ class Invoices extends DolibarrApi
 			if ($is_multicurrency) {
 				$amounts[$id] = null;
 				// Multicurrency
-				$multicurrency_amounts[$id] = $amount;
+				$multicurrency_amounts[$id] = (float) $amount;
 			} else {
-				$amounts[$id] = $amount;
+				$amounts[$id] = (float) $amount;
 				// Multicurrency
 				$multicurrency_amounts[$id] = null;
 			}
@@ -1644,7 +1646,7 @@ class Invoices extends DolibarrApi
 		$paymentobj->amounts      = $amounts; // Array with all payments dispatching with invoice id
 		$paymentobj->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paymentobj->paiementid   = $paymentid;
-		$paymentobj->paiementcode = dol_getIdFromCode($this->db, $paymentid, 'c_paiement', 'id', 'code', 1);
+		$paymentobj->paiementcode = (string) dol_getIdFromCode($this->db, $paymentid, 'c_paiement', 'id', 'code', 1);
 		$paymentobj->num_payment  = $num_payment;
 		$paymentobj->note_private = $comment;
 		$paymentobj->ref_ext      = $ref_ext;
@@ -1653,7 +1655,7 @@ class Invoices extends DolibarrApi
 			$this->db->rollback();
 			throw new RestException(400, 'Payment error : '.$paymentobj->error);
 		}
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			$label = '(CustomerInvoicePayment)';
 			if ($paymentobj->paiementcode == 'CHQ' && empty($chqemetteur)) {
 				throw new RestException(400, 'Emetteur is mandatory when payment code is '.$paymentobj->paiementcode);
