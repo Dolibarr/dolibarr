@@ -2280,7 +2280,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 				} else {
 					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode='.$mode.'&maxprint=0&month='.((int) $monthshown).'&year='.((int) $year);
 					print($status ? '&status='.$status : '').($filter ? '&filter='.urlencode($filter) : '');
-					print($filtert ? '&search_filtert='.urlencode($filtert) : '');
+					print($filtert ? '&search_filtert='.urlencode((string) $filtert) : '');
 					print($usergroup ? '&search_usergroup='.urlencode($usergroup) : '');
 					print($actioncode != '' ? '&search_actioncode='.urlencode($actioncode) : '');
 					print '">'.img_picto("all", "1downarrow_selected.png").' ...';
