@@ -3,6 +3,7 @@
 /*
  * Copyright (C) 2023 	   	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -708,7 +709,7 @@ if (count($output_phan_json) != 0) {
 			$tmpphan .= '<td class="">';
 			$tmpphan .= '<a href="'.$code_url_attr.'" target="_blank">'.$line_range_txt.'</a>';
 			$tmpphan .= '</td>';
-			$tmpphan .= '<td class="tdoverflowmax300">'.dolPrintLabel($notice['description']).'</td>';
+			$tmpphan .= '<td class="tdoverflowmax300" title="'.dolPrintHTMLForAttribute($notice['description']).'">'.dolPrintLabel($notice['description']).'</td>';
 			$tmpphan .= '</tr>';
 			$tmpphan .= "\n";
 
