@@ -26,7 +26,7 @@ CREATE TABLE llx_ticket
 	fk_contract	integer DEFAULT 0,
 	origin_email   varchar(128),
 	origin_replyto   varchar(128),
-	origin_references   mediumtext,
+	origin_references   text,
 	fk_user_create	integer,
 	fk_user_assign	integer,
 	subject	varchar(255),
