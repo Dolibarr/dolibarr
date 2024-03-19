@@ -8,6 +8,7 @@
  * Copyright (C) 2012		Yann Droneaud			<yann@droneaud.fr>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -416,7 +417,7 @@ class DoliDBPgsql extends DoliDB
 		$login = str_replace(array("\\", "'"), array("\\\\", "\\'"), $login);
 		$passwd = str_replace(array("\\", "'"), array("\\\\", "\\'"), $passwd);
 		$name = str_replace(array("\\", "'"), array("\\\\", "\\'"), $name);
-		$port = str_replace(array("\\", "'"), array("\\\\", "\\'"), $port);
+		$port = str_replace(array("\\", "'"), array("\\\\", "\\'"), (string) $port);
 
 		if (!$name) {
 			$name = "postgres"; // When try to connect using admin user
