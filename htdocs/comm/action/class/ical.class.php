@@ -94,6 +94,7 @@ class ICal
 		$this->file = $file;
 		$file_text = '';
 
+		//$tmpresult = getURLContent($file, 'GET', '', 1, [], ['http', 'https'], 2, 0);	// To test with any URL
 		$tmpresult = getURLContent($file, 'GET');
 		if ($tmpresult['http_code'] != 200) {
 			$file_text = null;
@@ -158,7 +159,7 @@ class ICal
 		}
 
 		// read FILE text
-		if (is_null($this->file_text)) {
+		if (empty($this->file_text)) {
 			$this->file_text = $this->read_file($uri);
 
 			if ($usecachefile && !is_null($this->file_text)) {
