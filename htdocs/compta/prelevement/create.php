@@ -242,6 +242,7 @@ $sql = "SELECT f.ref, f.rowid, f.date_lim_reglement as datelimite, f.total_ttc, 
 $sql .= " s.nom as name, s.rowid as socid,";
 $sql .= " pfd.rowid as request_row_id, pfd.date_demande, pfd.amount"; //, pfd.fk_soc_rib";
 if ($type == 'bank-transfer') {
+	$sql .= " , ref_supplier";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 } else {
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
