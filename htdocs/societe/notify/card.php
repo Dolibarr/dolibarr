@@ -84,6 +84,10 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
+	if (GETPOST('cancel', 'alpha')) {
+		$action = '';
+	}
+
 	// Add a notification
 	if ($action == 'add') {
 		if (empty($contactid)) {
@@ -269,6 +273,8 @@ if ($result > 0) {
 	print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, 'width="35%"', $sortfield, $sortorder);
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, 'width="10%"', $sortfield, $sortorder);
 	print_liste_field_titre('');
+	print_liste_field_titre('');
+
 	print "</tr>\n";
 
 	// Line to add a new subscription
@@ -306,6 +312,7 @@ if ($result > 0) {
 			print $form->selectarray("typeid", $type, '', 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 			print '</td>';
 			print '<td class="right"><input type="submit" class="button button-add small" value="'.$langs->trans("Add").'"></td>';
+			print '<td class="right"><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 			print '</tr>';
 		} else {
 			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">';
