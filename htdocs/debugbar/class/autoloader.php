@@ -3,9 +3,10 @@
  */
 /**
  * Simple autoloader, so we don't need Composer just for this.
+ *
+ * @phan-file-suppress PhanTypeMismatchArgumentInternal
  */
 
-// @phan-suppress-next-line PhanTypeMismatchArgumentInternal  spl_autoload_register expects callable(string):void
 spl_autoload_register(
 	/**
 	 * @param string	$class	Class to load
