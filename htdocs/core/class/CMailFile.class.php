@@ -1907,7 +1907,8 @@ class CMailFile
 		$extensions = array_keys($this->image_types);
 
 		if (empty($images_dir)) {
-			$images_dir = $conf->admin->dir_output.'/temp/'.uniqid('cmailfile');
+			//$images_dir = $conf->admin->dir_output.'/temp/'.uniqid('cmailfile');
+			$images_dir = $conf->admin->dir_output.'/temp/cmailfile';
 		}
 
 		if ($images_dir && !dol_is_dir($images_dir)) {
