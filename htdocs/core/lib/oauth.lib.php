@@ -291,7 +291,7 @@ function getSupportedOauth2Array()
 			'picto' => 'stripe',
 			'urlforapp' => '',
 			'name' => 'StripeTest',
-			'urlforcredentials' => '',
+			'urlforcredentials' => 'https://dashboard.stripe.com/settings/connect',
 			'availablescopes' => 'read_write',
 			'returnurl' => '/core/modules/oauth/stripetest_oauthcallback.php'
 		);
@@ -300,7 +300,7 @@ function getSupportedOauth2Array()
 			'picto' => 'stripe',
 			'urlforapp' => '',
 			'name' => 'StripeLive',
-			'urlforcredentials' => '',
+			'urlforcredentials' => 'https://dashboard.stripe.com/settings/connect',
 			'availablescopes' => 'read_write',
 			'returnurl' => '/core/modules/oauth/stripelive_oauthcallback.php'
 		);

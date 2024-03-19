@@ -6,7 +6,8 @@
  * Copyright (C) 2011-2023 Philippe Grand	     <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry	     <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2023      Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024 Frédéric France       <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 
@@ -83,7 +84,7 @@ class Delivery extends CommonObject
 	public $socid;
 
 	/**
-	 * @var string ref custome
+	 * @var string ref customer
 	 */
 	public $ref_customer;
 
@@ -143,7 +144,7 @@ class Delivery extends CommonObject
 	/**
 	 *  Create delivery receipt in database
 	 *
-	 *  @param 	User	$user       Objet du user qui cree
+	 *  @param 	User	$user       Object du user qui cree
 	 *  @return int         		Return integer <0 si erreur, id delivery cree si ok
 	 */
 	public function create($user)
@@ -153,7 +154,7 @@ class Delivery extends CommonObject
 		dol_syslog("Delivery::create");
 
 		if (empty($this->model_pdf)) {
-			$this->model_pdf = $conf->global->DELIVERY_ADDON_PDF;
+			$this->model_pdf = getDolGlobalString('DELIVERY_ADDON_PDF');
 		}
 
 		$error = 0;
@@ -280,7 +281,7 @@ class Delivery extends CommonObject
 	 *  @param	array	$array_options			Array options
 	 *	@return	int								Return integer <0 if KO, >0 if OK
 	 */
-	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = null)
+	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = [])
 	{
 		// phpcs:enable
 		$error = 0;
@@ -413,7 +414,7 @@ class Delivery extends CommonObject
 			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery_advance', 'validate'))) {
 			if (getDolGlobalString('DELIVERY_ADDON_NUMBER')) {
 				// Setting the command numbering module name
-				$modName = $conf->global->DELIVERY_ADDON_NUMBER;
+				$modName = getDolGlobalString('DELIVERY_ADDON_NUMBER');
 
 				if (is_readable(DOL_DOCUMENT_ROOT.'/core/modules/delivery/'.$modName.'.php')) {
 					require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/'.$modName.'.php';
@@ -599,10 +600,10 @@ class Delivery extends CommonObject
 	 * Update a livraison line (only extrafields)
 	 *
 	 * @param 	int		$id					Id of line (livraison line)
-	 * @param	array		$array_options		extrafields array
+	 * @param	array	$array_options		extrafields array
 	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
-	public function update_line($id, $array_options = 0)
+	public function update_line($id, $array_options = [])
 	{
 		// phpcs:enable
 		global $conf;
@@ -615,7 +616,7 @@ class Delivery extends CommonObject
 			$result = $line->insertExtraFields();
 
 			if ($result < 0) {
-				$this->error[] = $line->error;
+				$this->errors[] = $line->error;
 				$error++;
 			}
 		}
@@ -636,7 +637,7 @@ class Delivery extends CommonObject
 	 *  @param	array	$array_options			Array options
 	 *	@return	void
 	 */
-	public function addline($origin_id, $qty, $array_options = null)
+	public function addline($origin_id, $qty, $array_options = [])
 	{
 		global $conf;
 
@@ -657,7 +658,7 @@ class Delivery extends CommonObject
 	 *	@param	int		$lineid		Line id
 	 *	@return	integer				Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
-	public function deleteline($lineid)
+	public function deleteLine($lineid)
 	{
 		if ($this->statut == 0) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
@@ -826,7 +827,7 @@ class Delivery extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -965,7 +966,7 @@ class Delivery extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -991,7 +992,7 @@ class Delivery extends CommonObject
 			}
 		}
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
@@ -1012,6 +1013,8 @@ class Delivery extends CommonObject
 		$line->total_ht       = 100;
 
 		$this->lines[$i] = $line;
+
+		return 1;
 	}
 
 	/**
@@ -1040,7 +1043,7 @@ class Delivery extends CommonObject
 			while ($i < $num_lines) {
 				$objSourceLine = $this->db->fetch_object($resultSourceLine);
 
-				// Get lines of sources alread delivered
+				// Get lines of sources already delivered
 				$sql = "SELECT ld.fk_origin_line, sum(ld.qty) as qty";
 				$sql .= " FROM ".MAIN_DB_PREFIX."deliverydet as ld, ".MAIN_DB_PREFIX."delivery as l,";
 				$sql .= " ".MAIN_DB_PREFIX.$this->linked_objects[0]['type']." as c";
@@ -1082,7 +1085,7 @@ class Delivery extends CommonObject
 	/**
 	 *	Set the planned delivery date
 	 *
-	 *	@param      User			$user        		Objet utilisateur qui modifie
+	 *	@param      User			$user        		Object utilisateur qui modifie
 	 *	@param      integer 		$delivery_date     Delivery date
 	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
@@ -1117,7 +1120,7 @@ class Delivery extends CommonObject
 	 *  @param     int			$hideref        Hide ref
 	 *  @return    int             				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		global $conf, $langs;
 
@@ -1130,7 +1133,7 @@ class Delivery extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('DELIVERY_ADDON_PDF')) {
-				$modele = $conf->global->DELIVERY_ADDON_PDF;
+				$modele = getDolGlobalString('DELIVERY_ADDON_PDF');
 			}
 		}
 

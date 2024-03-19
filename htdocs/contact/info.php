@@ -35,7 +35,7 @@ $langs->load("companies");
 
 
 // Security check
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 if ($user->socid) {
 	$socid = $user->socid;
 }

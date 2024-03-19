@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2019       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2019-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +101,11 @@ if ($action == 'update') {
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-llxHeader();
+$title = $langs->trans('Closure');
+
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
+
+llxHeader('', $title, $help_url);
 
 $linkback = '';
 print load_fiche_titre($langs->trans('MenuClosureAccounts'), $linkback, 'title_accountancy');

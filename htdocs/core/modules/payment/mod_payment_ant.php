@@ -120,7 +120,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 	 *
 	 *  @param	Societe		$objsoc     Object thirdparty
 	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @return string|0      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -148,7 +148,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 * 	@param	string		$objforref	Object for number to search
-	 *  @return string      			Next free value
+	 *  @return string|0      			Next free value, 0 if KO
 	 */
 	public function commande_get_num($objsoc, $objforref)
 	{

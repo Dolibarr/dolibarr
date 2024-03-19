@@ -51,14 +51,14 @@ $langs->loadLangs(array('products', 'stocks', 'companies', 'categories'));
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm');
-$projectid = GETPOST('projectid', 'int');
+$projectid = GETPOSTINT('projectid');
 
-$id = GETPOST('id', 'int');
-$socid = GETPOST('socid', 'int');
+$id = GETPOSTINT('id');
+$socid = GETPOSTINT('socid');
 $ref = GETPOST('ref', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 if (!$sortfield) {
@@ -92,9 +92,9 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-$usercanread = (($user->rights->stock->lire));
-$usercancreate = (($user->rights->stock->creer));
-$usercandelete = (($user->rights->stock->supprimer));
+$usercanread = (($user->hasRight('stock', 'lire')));
+$usercancreate = (($user->hasRight('stock', 'creer')));
+$usercandelete = (($user->hasRight('stock', 'supprimer')));
 
 
 /*
@@ -103,7 +103,7 @@ $usercandelete = (($user->rights->stock->supprimer));
 
 $error = 0;
 
-$parameters = array('id'=>$id, 'ref'=>$ref);
+$parameters = array('id' => $id, 'ref' => $ref);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -134,19 +134,19 @@ if (empty($reshook)) {
 
 	// Ajout entrepot
 	if ($action == 'add' && $user->hasRight('stock', 'creer')) {
-		$object->ref = (string) GETPOST("ref", "alpha");
-		$object->fk_parent = (int) GETPOST("fk_parent", "int");
-		$object->fk_project = GETPOST('projectid', 'int');
-		$object->label = (string) GETPOST("libelle", "alpha");
-		$object->description = (string) GETPOST("desc", "alpha");
-		$object->statut = GETPOST("statut", "int");
-		$object->lieu = (string) GETPOST("lieu", "alpha");
-		$object->address = (string) GETPOST("address", "alpha");
-		$object->zip = (string) GETPOST("zipcode", "alpha");
-		$object->town = (string) GETPOST("town", "alpha");
-		$object->country_id = GETPOST("country_id");
-		$object->phone = (string) GETPOST("phone", "alpha");
-		$object->fax = (string) GETPOST("fax", "alpha");
+		$object->ref          = (string) GETPOST("ref", "alpha");
+		$object->fk_parent    = GETPOSTINT("fk_parent");
+		$object->fk_project   = GETPOSTINT('projectid');
+		$object->label        = (string) GETPOST("libelle", "alpha");
+		$object->description  = (string) GETPOST("desc", "alpha");
+		$object->statut       = GETPOSTINT("statut");
+		$object->lieu         = (string) GETPOST("lieu", "alpha");
+		$object->address      = (string) GETPOST("address", "alpha");
+		$object->zip          = (string) GETPOST("zipcode", "alpha");
+		$object->town         = (string) GETPOST("town", "alpha");
+		$object->country_id   = GETPOSTINT("country_id");
+		$object->phone        = (string) GETPOST("phone", "alpha");
+		$object->fax          = (string) GETPOST("fax", "alpha");
 
 		if (!empty($object->label)) {
 			// Fill array 'array_options' with data from add form
@@ -168,7 +168,7 @@ if (empty($reshook)) {
 						header("Location: ".$backtopage);
 						exit;
 					} else {
-						header("Location: card.php?id=".urlencode($id));
+						header("Location: card.php?id=".urlencode((string) ($id)));
 						exit;
 					}
 				} else {
@@ -184,7 +184,7 @@ if (empty($reshook)) {
 
 	// Delete warehouse
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('stock', 'supprimer')) {
-		$object->fetch(GETPOST('id', 'int'));
+		$object->fetch(GETPOSTINT('id'));
 		$result = $object->delete($user);
 		if ($result > 0) {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
@@ -257,7 +257,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'classin' && $usercancreate) {
 		// Link to a project
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	if ($cancel == $langs->trans("Cancel")) {
@@ -267,7 +267,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->stock->dir_output;
-	$permissiontoadd = $user->rights->stock->creer;
+	$permissiontoadd = $user->hasRight('stock', 'creer');
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -315,7 +315,7 @@ if ($action == 'create') {
 
 	// Parent entrepot
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-	print img_picto('', 'stock').$formproduct->selectWarehouses((GETPOSTISSET('fk_parent') ? GETPOST('fk_parent', 'int') : 'ifone'), 'fk_parent', '', 1);
+	print img_picto('', 'stock').$formproduct->selectWarehouses((GETPOSTISSET('fk_parent') ? GETPOSTINT('fk_parent') : 'ifone'), 'fk_parent', '', 1);
 	print '</td></tr>';
 
 	// Project
@@ -382,7 +382,7 @@ if ($action == 'create') {
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
@@ -397,7 +397,7 @@ if ($action == 'create') {
 
 	print '</form>';
 } else {
-	$id = GETPOST("id", 'int');
+	$id = GETPOSTINT("id");
 	if ($id > 0 || $ref) {
 		$object = new Entrepot($db);
 		$result = $object->fetch($id, $ref);
@@ -417,7 +417,7 @@ if ($action == 'create') {
 			// Confirm delete warehouse
 			if ($action == 'delete') {
 				$formquestion = array(
-					array('type' => 'other', 'name' => 'info', 'label' => img_warning('').$langs->trans("WarningThisWIllAlsoDeleteStock"), 'morecss'=>'warning')
+					array('type' => 'other', 'name' => 'info', 'label' => img_warning('').$langs->trans("WarningThisWIllAlsoDeleteStock"), 'morecss' => 'warning')
 				);
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("DeleteAWarehouse"), $langs->trans("ConfirmDeleteWarehouse", $object->label), "confirm_delete", $formquestion, 0, 2);
 			}
@@ -555,7 +555,7 @@ if ($action == 'create') {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 			// Categories
-			if (isModEnabled('categorie')) {
+			if (isModEnabled('category')) {
 				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
 				print $form->showCategories($object->id, Categorie::TYPE_WAREHOUSE, 1);
 				print "</td></tr>";
@@ -659,7 +659,7 @@ if ($action == 'create') {
 				$totalarray['nbfield']++;
 			}
 			// Hook fields
-			$parameters = array('sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray' => &$totalarray);
+			$parameters = array('sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			print "</tr>\n";
@@ -744,7 +744,7 @@ if ($action == 'create') {
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
 					print '<tr class="oddeven">';
 
-					$parameters = array('obj'=>$objp, 'totalarray' => &$totalarray);
+					$parameters = array('obj' => $objp, 'totalarray' => &$totalarray);
 					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 					print $hookmanager->resPrint;
 
@@ -961,7 +961,7 @@ if ($action == 'create') {
 			}
 
 			// Tags-Categories
-			if (isModEnabled('categorie')) {
+			if (isModEnabled('category')) {
 				print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
 				$c = new Categorie($db);

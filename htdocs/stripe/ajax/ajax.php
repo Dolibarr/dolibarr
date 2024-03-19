@@ -51,8 +51,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 $action = GETPOST('action', 'aZ09');
 $location = GETPOST('location', 'alphanohtml');
 $stripeacc = GETPOST('stripeacc', 'alphanohtml');
-$servicestatus = GETPOST('servicestatus', 'int');
-$amount = GETPOST('amount', 'int');
+$servicestatus = GETPOSTINT('servicestatus');
+$amount = GETPOSTINT('amount');
 
 if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden('Not allowed to use TakePOS');

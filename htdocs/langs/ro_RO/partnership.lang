@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Parteneriat alocat acestui membru
 DatePartnershipStart=Dată începere
 DatePartnershipEnd=Dată încetare
 ReasonDecline=Motiv respingere
-ReasonDeclineOrCancel=Motiv respingere
+ReasonDeclineOrCancel=Motiv pentru refuz sau anulare
 PartnershipAlreadyExist=Parteneriatul există deja
 ManagePartnership=Administrare parteneriat
 BacklinkNotFoundOnPartnerWebsite=Backlink-ul nu a fost găsit pe site-ul partenerului
@@ -89,7 +89,6 @@ YourPartnershipCanceledContent=Dorim să te informăm că parteneriatul nostru a
 
 CountLastUrlCheckError=Număr de erori pentru ultima verficare URL
 LastCheckBacklink=Data ultimei verificări URL
-ReasonDeclineOrCancel=Motiv respingere
 
 NewPartnershipRequest=Solicitare nouă de parteneriat
 NewPartnershipRequestDesc=Acest formular îţi permite să soliciţi un parteneriat. Dacă ai nevoie de ajutor pentru a completa acest formular, contactează-ne pe email <b>%s</b>.

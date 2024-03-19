@@ -10516,9 +10516,9 @@ class TCPDF
 	/**
 	 * Output a string to the document.
 	 * @param $s (string) string to output.
-	 * @protected
+	 * @public
 	 */
-	protected function _out($s)
+	public function _out($s)
 	{
 		if ($this->state == 2) {
 			if ($this->inxobj) {

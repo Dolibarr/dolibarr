@@ -35,7 +35,7 @@ MINPHPVERSION="7.0"
 
 echo "***** run-php-cs-fixer.sh *****"
 
-if [ "x$1" = "x" ]; then
+if [ "$1" = "" ]; then
 	echo "Syntax: run-php-cs-fixer.sh check|fix  [path_from_root_project]"
 	exit 1;
 fi
@@ -58,23 +58,23 @@ fi
 echo Install php-cs-fixer
 PHP_CS_FIXER="${COMPOSER_VENDOR_DIR}/bin/php-cs-fixer"
 if [ ! -r "${PHP_CS_FIXER}" ] ; then
-  [[ ! -e "${COMPOSER_VENDOR_DIR}" ]] && ${COMPOSER_CMD} install
-  [[ -e "${COMPOSER_VENDOR_DIR}" ]] && ${COMPOSER_CMD} update
-  php${MINPHPVERSION} ${COMPOSER_CMD} require --dev friendsofphp/php-cs-fixer
-  echo
+	[[ ! -e "${COMPOSER_VENDOR_DIR}" ]] && ${COMPOSER_CMD} install
+	[[ -e "${COMPOSER_VENDOR_DIR}" ]] && ${COMPOSER_CMD} update
+	"php${MINPHPVERSION}" "${COMPOSER_CMD}" require --dev friendsofphp/php-cs-fixer
+	echo
 fi
 
 
 # With PHP 7.0, php-cs-fixer is V2 (command check not supported)
 # With PHP 8.2, php-cs-fixer is V3
- 
+
 (
-  echo cd "${MYDIR}/../../.."
-  cd "${MYDIR}/../../.." || exit
-  CMD=
-  # If no argument, run check by default
-  [[ "$1" == "" ]] && CMD=check
-  # shellcheck disable=SC2086
-  echo php${MINPHPVERSION} "${PHP_CS_FIXER}" $CMD "$@"
-  php${MINPHPVERSION} "${PHP_CS_FIXER}" $CMD "$@"
+	echo cd "${MYDIR}/../../.."
+	cd "${MYDIR}/../../.." || exit
+	CMD=
+	# If no argument, run check by default
+	[[ "$1" == "" ]] && CMD=check
+	# shellcheck disable=SC2086
+	echo php${MINPHPVERSION} "${PHP_CS_FIXER}" $CMD "$@"
+	php${MINPHPVERSION} "${PHP_CS_FIXER}" $CMD "$@"
 )

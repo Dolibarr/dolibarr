@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - mails
 AllEMailings=Alle EMailings
 MailCard=EMailings kaart
+MailTo=Geadresseerd aan
 MailCC=Kopiëren naar
 MailCCC=Gecachde kopie aan
 MailMessage=E-mailinhoud
@@ -19,6 +20,7 @@ MailingStatusNotContact=Niet meer contacten
 WarningNoEMailsAdded=Geen nieuw E-mailadres aan de lijst van ontvangers toe te voegen.
 YouCanAddYourOwnPredefindedListHere=Om uw e-mailselectormodule te creëren, zie htdocs/core/modules/mailings/README.
 XTargetsAdded=<b>%s</b> ontvangers toegevoegd in bestemming-lijst
+MailingModuleDescThirdPartiesByCategories=Klant
 MailingArea=EMailingsoverzicht
 TargetsStatistics=Geaddresseerdenstatistieken
 MailNoChangePossible=Ontvangers voor gevalideerde EMailings kunnen niet worden gewijzigd

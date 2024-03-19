@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=管理一个知识管理（KM）或服务台基础
 # Admin page
 #
 KnowledgeManagementSetup = 知识管理系统设置
-Settings = 设置
 KnowledgeManagementSetupPage = 知识管理系统设置页面
 
 
 #
 # About page
 #
-About = 关于
 KnowledgeManagementAbout = 关于知识管理
 KnowledgeManagementAboutPage = 知识管理简介页面
 
 KnowledgeManagementArea = 知识管理
 MenuKnowledgeRecord = 知识库
+MenuKnowledgeRecordShort = 知识库
 ListKnowledgeRecord = 文章清单
 NewKnowledgeRecord = 新文章
 ValidateReply = 验证方案

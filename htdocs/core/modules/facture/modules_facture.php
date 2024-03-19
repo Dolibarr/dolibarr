@@ -196,7 +196,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 * @param Translate $langs   	Translation object
 	 * @return int      			Height in mm of the bottom-page QR invoice. Can be zero if not on right page; not enabled
 	 */
-	protected function getHeightForQRInvoice(int $pagenbr, Facture $object, Translate $langs): int
+	protected function getHeightForQRInvoice(int $pagenbr, Facture $object, Translate $langs)
 	{
 		if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
 			// Keep it, to reset it after QRinvoice getter

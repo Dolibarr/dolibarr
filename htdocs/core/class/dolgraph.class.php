@@ -1,6 +1,7 @@
 <?php
 /* Copyright (c) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +77,7 @@ class DolGraph
 	public $showpointvalue = 1;
 	public $showpercent = 0;
 	public $combine = 0; // 0.05 if you want to combine records < 5% into "other"
-	public $graph; // Objet Graph (Artichow, Phplot...)
+	public $graph; // Object Graph (Artichow, Phplot...)
 	/**
 	 * @var boolean 					Mirrors graph values
 	 */
@@ -350,7 +351,7 @@ class DolGraph
 	/**
 	 * Set type
 	 *
-	 * @param 	array	$type		Array with type for each serie. Example: array('type1', 'type2', ...) where type can be:
+	 * @param 	array	$type		Array with type for each series. Example: array('type1', 'type2', ...) where type can be:
 	 * 								'pie', 'piesemicircle', 'polar', 'lines', 'linesnopoint', 'bars', 'horizontalbars'...
 	 * @return	void
 	 */
@@ -534,7 +535,7 @@ class DolGraph
 	/**
 	 * Show pointvalue or not
 	 *
-	 * @param	int		$showpointvalue		1=Show value for each point, as tooltip or inline (default), 0=Hide value, 2=Show values for each serie on same point
+	 * @param	int		$showpointvalue		1=Show value for each point, as tooltip or inline (default), 0=Hide value, 2=Show values for each series on same point
 	 * @return	void
 	 */
 	public function setShowPointValue($showpointvalue)
@@ -633,7 +634,7 @@ class DolGraph
 		$nbseries = (empty($this->data[0]) ? 0 : count($this->data[0]) - 1);
 
 		foreach ($this->data as $x) {	// Loop on each x
-			for ($i = 0; $i < $nbseries; $i++) {	// Loop on each serie
+			for ($i = 0; $i < $nbseries; $i++) {	// Loop on each series
 				if (is_null($max)) {
 					$max = $x[$i + 1];		// $i+1 because the index 0 is the legend
 				} elseif ($max < $x[$i + 1]) {
@@ -663,7 +664,7 @@ class DolGraph
 		$nbseries = (empty($this->data[0]) ? 0 : count($this->data[0]) - 1);
 
 		foreach ($this->data as $x) {	// Loop on each x
-			for ($i = 0; $i < $nbseries; $i++) {	// Loop on each serie
+			for ($i = 0; $i < $nbseries; $i++) {	// Loop on each series
 				if (is_null($min)) {
 					$min = $x[$i + 1];		// $i+1 because the index 0 is the legend
 				} elseif ($min > $x[$i + 1]) {
@@ -700,7 +701,7 @@ class DolGraph
 		}
 
 		//print "max=".$max." res=".$res;
-		return $res;
+		return (int) $res;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -781,7 +782,7 @@ class DolGraph
 		// phpcs:enable
 		global $langs;
 
-		dol_syslog(get_class($this) . "::draw_jflot this->type=" . join(',', $this->type) . " this->MaxValue=" . $this->MaxValue);
+		dol_syslog(get_class($this) . "::draw_jflot this->type=" . implode(',', $this->type) . " this->MaxValue=" . $this->MaxValue);
 
 		if (empty($this->width) && empty($this->height)) {
 			print 'Error width or height not set';
@@ -801,10 +802,10 @@ class DolGraph
 		//if ($nblot > 2) $firstlot = ($nblot - 2);        // We limit nblot to 2 because jflot can't manage more than 2 bars on same x
 
 		$i = $firstlot;
-		$serie = array();
-		while ($i < $nblot) {	// Loop on each serie
-			$values = array(); // Array with horizontal y values (specific values of a serie) for each abscisse x
-			$serie[$i] = "var d" . $i . " = [];\n";
+		$series = array();
+		while ($i < $nblot) {	// Loop on each series
+			$values = array(); // Array with horizontal y values (specific values of a series) for each abscisse x
+			$series[$i] = "var d" . $i . " = [];\n";
 
 			// Fill array $values
 			$x = 0;
@@ -817,13 +818,13 @@ class DolGraph
 			if (isset($this->type[$firstlot]) && in_array($this->type[$firstlot], array('pie', 'piesemicircle', 'polar'))) {
 				foreach ($values as $x => $y) {
 					if (isset($y)) {
-						$serie[$i] .= 'd' . $i . '.push({"label":"' . dol_escape_js($legends[$x]) . '", "data":' . $y . '});' . "\n";
+						$series[$i] .= 'd' . $i . '.push({"label":"' . dol_escape_js($legends[$x]) . '", "data":' . $y . '});' . "\n";
 					}
 				}
 			} else {
 				foreach ($values as $x => $y) {
 					if (isset($y)) {
-						$serie[$i] .= 'd' . $i . '.push([' . $x . ', ' . $y . ']);' . "\n";
+						$series[$i] .= 'd' . $i . '.push([' . $x . ', ' . $y . ']);' . "\n";
 					}
 				}
 			}
@@ -857,8 +858,8 @@ class DolGraph
 			$this->stringtoshow .= '<!-- No series of data -->' . "\n";
 		} else {
 			while ($i < $nblot) {
-				$this->stringtoshow .= '<!-- Serie ' . $i . ' -->' . "\n";
-				$this->stringtoshow .= $serie[$i] . "\n";
+				$this->stringtoshow .= '<!-- Series ' . $i . ' -->' . "\n";
+				$this->stringtoshow .= $series[$i] . "\n";
 				$i++;
 			}
 		}
@@ -1068,7 +1069,7 @@ class DolGraph
 		// phpcs:enable
 		global $langs;
 
-		dol_syslog(get_class($this) . "::draw_chart this->type=" . join(',', $this->type) . " this->MaxValue=" . $this->MaxValue);
+		dol_syslog(get_class($this) . "::draw_chart this->type=" . implode(',', $this->type) . " this->MaxValue=" . $this->MaxValue);
 
 		if (empty($this->width) && empty($this->height)) {
 			print 'Error width or height not set';
@@ -1093,14 +1094,14 @@ class DolGraph
 		// Works with line but not with bars
 		//if ($nblot > 2) $firstlot = ($nblot - 2);        // We limit nblot to 2 because jflot can't manage more than 2 bars on same x
 
-		$serie = array();
+		$series = array();
 		$arrayofgroupslegend = array();
 		//var_dump($this->data);
 
 		$i = $firstlot;
-		while ($i < $nblot) {	// Loop on each serie
-			$values = array(); // Array with horizontal y values (specific values of a serie) for each abscisse x (with x=0,1,2,...)
-			$serie[$i] = "";
+		while ($i < $nblot) {	// Loop on each series
+			$values = array(); // Array with horizontal y values (specific values of a series) for each abscisse x (with x=0,1,2,...)
+			$series[$i] = "";
 
 			// Fill array $values
 			$x = 0;
@@ -1128,9 +1129,9 @@ class DolGraph
 			$j = 0;
 			foreach ($values as $x => $y) {
 				if (isset($y)) {
-					$serie[$i] .= ($j > 0 ? ", " : "") . $y;
+					$series[$i] .= ($j > 0 ? ", " : "") . $y;
 				} else {
-					$serie[$i] .= ($j > 0 ? ", " : "") . 'null';
+					$series[$i] .= ($j > 0 ? ", " : "") . 'null';
 				}
 				$j++;
 			}
@@ -1138,7 +1139,7 @@ class DolGraph
 			$values = null; // Free mem
 			$i++;
 		}
-		//var_dump($serie);
+		//var_dump($series);
 		//var_dump($arrayofgroupslegend);
 
 		$tag = dol_escape_htmltag(dol_string_unaccent(dol_string_nospecial(basename($file), '_', array('-', '.'))));
@@ -1173,7 +1174,7 @@ class DolGraph
 		} else {
 			while ($i < $nblot) {
 				//$this->stringtoshow .= '<!-- Series '.$i.' -->'."\n";
-				//$this->stringtoshow .= $serie[$i]."\n";
+				//$this->stringtoshow .= $series[$i]."\n";
 				$i++;
 			}
 		}
@@ -1218,11 +1219,11 @@ class DolGraph
 				$this->stringtoshow .= 'rotation: -Math.PI,' . "\n";
 			}
 			$this->stringtoshow .= 'elements: { arc: {' . "\n";
-			// Color of earch arc
+			// Color of each arc
 			$this->stringtoshow .= 'backgroundColor: [';
 			$i = 0;
 			$foundnegativecolor = 0;
-			foreach ($legends as $val) {	// Loop on each serie
+			foreach ($legends as $val) {	// Loop on each series
 				if ($i > 0) {
 					$this->stringtoshow .= ', ' . "\n";
 				}
@@ -1245,7 +1246,7 @@ class DolGraph
 			if ($foundnegativecolor) {
 				$this->stringtoshow .= 'borderColor: [';
 				$i = 0;
-				foreach ($legends as $val) {	// Loop on each serie
+				foreach ($legends as $val) {	// Loop on each series
 					if ($i > 0) {
 						$this->stringtoshow .= ', ' . "\n";
 					}
@@ -1277,7 +1278,7 @@ class DolGraph
 					labels: [';
 
 			$i = 0;
-			foreach ($legends as $val) {	// Loop on each serie
+			foreach ($legends as $val) {	// Loop on each series
 				if ($i > 0) {
 					$this->stringtoshow .= ', ';
 				}
@@ -1288,8 +1289,7 @@ class DolGraph
 			$this->stringtoshow .= '],
 					datasets: [';
 			$i = 0;
-			$i = 0;
-			while ($i < $nblot) {	// Loop on each serie
+			while ($i < $nblot) {	// Loop on each series
 				$color = 'rgb(' . $this->datacolor[$i][0] . ', ' . $this->datacolor[$i][1] . ', ' . $this->datacolor[$i][2] . ')';
 
 				if ($i > 0) {
@@ -1298,7 +1298,7 @@ class DolGraph
 				$this->stringtoshow .= '{' . "\n";
 				//$this->stringtoshow .= 'borderColor: \''.$color.'\', ';
 				//$this->stringtoshow .= 'backgroundColor: \''.$color.'\', ';
-				$this->stringtoshow .= '  data: [' . $serie[$i] . ']';
+				$this->stringtoshow .= '  data: [' . $series[$i] . ']';
 				$this->stringtoshow .= '}' . "\n";
 				$i++;
 			}
@@ -1310,11 +1310,7 @@ class DolGraph
 			$type = 'bar';
 			$xaxis = '';
 
-			if (!isset($this->type[$firstlot]) || $this->type[$firstlot] == 'bars') {
-				$type = 'bar';
-			}
 			if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'horizontalbars') {
-				$type = 'bar';
 				$xaxis = "indexAxis: 'y', ";
 			}
 			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$firstlot] == 'linesnopoint')) {
@@ -1342,7 +1338,25 @@ class DolGraph
 			if (empty($showlegend)) {
 				$this->stringtoshow .= 'legend: { display: false }, '."\n";
 			} else {
-				$this->stringtoshow .= 'legend: { maxWidth: '.round(intVal($this->width) / 2).', labels: { boxWidth: 15 }, position: \'' . (($showlegend && $showlegend == 2) ? 'right' : 'top') . '\' },'."\n";
+				$this->stringtoshow .= 'legend: { maxWidth: '.round(intval($this->width) / 2).', labels: { boxWidth: 15 }, position: \'' . (($showlegend && $showlegend == 2) ? 'right' : 'top') . '\' },'."\n";
+			}
+			if (is_array($this->tooltipsLabels) || is_array($this->tooltipsTitles)) {
+				$this->stringtoshow .= 'tooltip: { mode: \'nearest\',
+					callbacks: {';
+				if (is_array($this->tooltipsTitles)) {
+					$this->stringtoshow .= '
+							title: function(tooltipItem, data) {
+								var tooltipsTitle ='.json_encode($this->tooltipsTitles).'
+								return tooltipsTitle[tooltipItem[0].datasetIndex];
+							},';
+				}
+				if (is_array($this->tooltipsLabels)) {
+					$this->stringtoshow .= 'label: function(tooltipItem, data) {
+								var tooltipslabels ='.json_encode($this->tooltipsLabels).'
+								return tooltipslabels[tooltipItem.datasetIndex]
+							}';
+				}
+				$this->stringtoshow .= '}},';
 			}
 			$this->stringtoshow .= "}, \n";
 
@@ -1370,7 +1384,7 @@ class DolGraph
 				$this->stringtoshow .= 'tooltips: { mode: \'nearest\',
 					callbacks: {';
 				if (is_array($this->tooltipsTitles)) {
-					$this->stringtoshow .='
+					$this->stringtoshow .= '
 							title: function(tooltipItem, data) {
 								var tooltipsTitle ='.json_encode($this->tooltipsTitles).'
 								return tooltipsTitle[tooltipItem[0].datasetIndex];
@@ -1382,7 +1396,7 @@ class DolGraph
 								return tooltipslabels[tooltipItem.datasetIndex]
 							}';
 				}
-				$this->stringtoshow .='}},';
+				$this->stringtoshow .= '}},';
 			}
 			$this->stringtoshow .= '};';
 			$this->stringtoshow .= '
@@ -1396,7 +1410,7 @@ class DolGraph
 					labels: [';
 
 			$i = 0;
-			foreach ($legends as $val) {	// Loop on each serie
+			foreach ($legends as $val) {	// Loop on each series
 				if ($i > 0) {
 					$this->stringtoshow .= ', ';
 				}
@@ -1414,7 +1428,7 @@ class DolGraph
 			$i = 0;
 			$iinstack = 0;
 			$oldstacknum = -1;
-			while ($i < $nblot) {	// Loop on each serie
+			while ($i < $nblot) {	// Loop on each series
 				$foundnegativecolor = 0;
 				$usecolorvariantforgroupby = 0;
 				// We used a 'group by' and we have too many colors so we generated color variants per
@@ -1441,10 +1455,10 @@ class DolGraph
 					if ($iinstack) {
 						// Change color with offset of $iinstack
 						//var_dump($newcolor);
-						if ($iinstack % 2) {	// We increase agressiveness of reference color for color 2, 4, 6, ...
+						if ($iinstack % 2) {	// We increase aggressiveness of reference color for color 2, 4, 6, ...
 							$ratio = min(95, 10 + 10 * $iinstack); // step of 20
 							$brightnessratio = min(90, 5 + 5 * $iinstack); // step of 10
-						} else {				// We decrease agressiveness of reference color for color 3, 5, 7, ..
+						} else {				// We decrease aggressiveness of reference color for color 3, 5, 7, ..
 							$ratio = max(-100, -15 * $iinstack + 10); // step of -20
 							$brightnessratio = min(90, 10 * $iinstack); // step of 20
 						}
@@ -1503,7 +1517,7 @@ class DolGraph
 				}
 				$this->stringtoshow .= 'data: [';
 
-				$this->stringtoshow .= $this->mirrorGraphValues ? '[-' . $serie[$i] . ',' . $serie[$i] . ']' : $serie[$i];
+				$this->stringtoshow .= $this->mirrorGraphValues ? '[-' . $series[$i] . ',' . $series[$i] . ']' : $series[$i];
 				$this->stringtoshow .= ']';
 				$this->stringtoshow .= '}' . "\n";
 
@@ -1522,7 +1536,7 @@ class DolGraph
 	/**
 	 * Output HTML string to total value
 	 *
-	 * @return	string							HTML string to total value
+	 * @return	float|int							HTML string to total value
 	 */
 	public function total()
 	{
@@ -1569,16 +1583,16 @@ class DolGraph
 	public static function getDefaultGraphSizeForStats($direction, $defaultsize = '')
 	{
 		global $conf;
+		$defaultsize = (int) $defaultsize;
 
 		if ($direction == 'width') {
 			if (empty($conf->dol_optimize_smallscreen)) {
-				return ($defaultsize ? $defaultsize : '500');
+				return ($defaultsize ? $defaultsize : 500);
 			} else {
-				return (empty($_SESSION['dol_screenwidth']) ? '280' : ($_SESSION['dol_screenwidth'] - 40));
+				return (empty($_SESSION['dol_screenwidth']) ? 280 : ($_SESSION['dol_screenwidth'] - 40));
 			}
-		}
-		if ($direction == 'height') {
-			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : '220') : '200');
+		} elseif ($direction == 'height') {
+			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : 220) : 200);
 		}
 		return 0;
 	}

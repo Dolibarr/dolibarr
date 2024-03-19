@@ -39,3 +39,4 @@ AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> om de uitvoer te beperken 
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> om automatische gebeurtenis uit te sluiten.
 AgendaHideBirthdayEvents=Verberg verjaardagen van contacten
 ConfirmCloneEvent=Weet u zeker als u event <b>%s</b> wilt klonen?
+BOOKCAL_PUBLIC_INTERFACE_TOPIC =Interface titel

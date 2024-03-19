@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ */
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +164,7 @@ if ($action == "importSignature") {
 						$param['online_sign_name'] = $online_sign_name;
 						$param['pathtoimage'] = $upload_dir . $filename;
 
-						$s = array();    // Array with size of each page. Exemple array(w'=>210, 'h'=>297);
+						$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
 						for ($i = 1; $i < ($pagecount + 1); $i++) {
 							try {
 								$tppl = $pdf->importPage($i);
@@ -319,7 +321,7 @@ if ($action == "importSignature") {
 						$param['online_sign_name'] = $online_sign_name;
 						$param['pathtoimage'] = $upload_dir . $filename;
 
-						$s = array();    // Array with size of each page. Exemple array(w'=>210, 'h'=>297);
+						$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
 						for ($i = 1; $i < ($pagecount + 1); $i++) {
 							try {
 								$tppl = $pdf->importPage($i);
@@ -432,7 +434,7 @@ if ($action == "importSignature") {
 						$param['online_sign_name'] = $online_sign_name;
 						$param['pathtoimage'] = $upload_dir . $filename;
 
-						$s = array();    // Array with size of each page. Exemple array(w'=>210, 'h'=>297);
+						$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
 						for ($i = 1; $i < ($pagecount + 1); $i++) {
 							try {
 								$tppl = $pdf->importPage($i);
@@ -548,7 +550,7 @@ if ($action == "importSignature") {
 							//$pdf->Open();
 							$pagecount = $pdf->setSourceFile($sourcefile);        // original PDF
 
-							$s = array();    // Array with size of each page. Exemple array(w'=>210, 'h'=>297);
+							$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
 							for ($i = 1; $i < ($pagecount + 1); $i++) {
 								try {
 									$tppl = $pdf->importPage($i);
@@ -580,18 +582,15 @@ if ($action == "importSignature") {
 									$classname = 'pdf_' . $last_modelpdf;
 									break;
 								}
-								if ($filefound) {
-									break;
-								}
 							}
 
-							if (!$filefound) {
+							if ($filefound === '') {
 								$response = $langs->trans("Error") . ' Failed to load doc generator with modelpaths=' . $modelpath . ' - modele=' . $last_modelpdf;
 								dol_syslog($response, LOG_ERR);
 								$error++;
 							}
 
-							if (!$error) {
+							if (!$error && $classname !== '') {
 								// If PDF template class  was found
 								require_once $file;
 

@@ -45,13 +45,12 @@ class Bookmark extends CommonObject
 	public $ismultientitymanaged = 1;
 
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string  String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'bookmark';
 
 	/**
-	 * Last error code on a local method
-	 * @var int		Error number
+	 * @var string  Last error number. For example: 'DB_ERROR_RECORD_ALREADY_EXISTS', '12345', ...
 	 */
 	public $errno;
 
@@ -61,7 +60,7 @@ class Bookmark extends CommonObject
 	public $id;
 
 	/**
-	 * @var int User ID. If > 0, bookmark of one user. If == 0, bookmark public (for everybody)
+	 * @var int   User ID. If > 0, bookmark of one user. If == 0, bookmark public (for everybody)
 	 */
 	public $fk_user;
 
@@ -280,7 +279,7 @@ class Bookmark extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *  @param  string  $option                     On what the link point to ('nolink', ...)

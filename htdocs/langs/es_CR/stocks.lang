@@ -121,6 +121,5 @@ StockDecrease=Disminución de existencias
 ForceTo=Forzar a
 DisableStockChangeOfSubProduct=Desactiva el cambio de stock para todos los productos de este Kit durante este movimiento.
 InventoryStartedShort=Iniciado
-ValidateInventory=Validación de inventario
 IncludeSubWarehouse=Incluir sub- almacén
 IncludeSubWarehouseExplanation=Revise esta caja si usted quiere incluir todos los sub-almacenes del almacén asociado en el inventario

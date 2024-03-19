@@ -6,6 +6,7 @@
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,7 +95,7 @@ if (@file_exists($forcedfile)) {
  *	View
  */
 
-session_start(); // To be able to keep info into session (used for not losing pass during navigation. pass must not transit through parmaeters)
+session_start(); // To be able to keep info into session (used for not losing pass during navigation. pass must not transit through parameters)
 
 pHeader($langs->trans("ConfigurationFile"), "step1", "set", "", (empty($force_dolibarr_js_JQUERY) ? '' : $force_dolibarr_js_JQUERY.'/'), 'main-inside-bis');
 
@@ -188,7 +189,7 @@ if (!empty($force_install_noedit)) {
 				   name="main_data_dir"
 				   value="<?php print $dolibarr_main_data_root ?>"
 <?php if (!empty($force_install_noedit)) {
-			print ' disabled';
+	print ' disabled';
 } ?>
 			>
 		</td>
@@ -220,7 +221,7 @@ if (!empty($force_install_noedit)) {
 				   name="main_url"
 				   value="<?php print $dolibarr_main_url_root; ?> "
 <?php if (!empty($force_install_noedit)) {
-		print ' disabled';
+	print ' disabled';
 }
 ?>
 			>
@@ -322,7 +323,6 @@ if (!empty($force_install_noedit)) {
 					}
 
 					// Version min of database
-					$versionbasemin = explode('.', $class::VERSIONMIN);
 					$note = '('.$class::LABEL.' >= '.$class::VERSIONMIN.')';
 
 					// Switch to mysql if mysqli is not present
@@ -494,6 +494,7 @@ if (!empty($force_install_noedit)) {
 				   name="db_pass"
 				   value="<?php
 					// If $force_install_databasepass is on, we don't want to set password, we just show '***'. Real value will be extracted from the forced install file at step1.
+					// @phan-suppress-next-line PhanParamSuspiciousOrder
 					$autofill = ((!empty($_SESSION['dol_save_pass'])) ? $_SESSION['dol_save_pass'] : str_pad('', strlen($force_install_databasepass), '*'));
 					if (!empty($dolibarr_main_prod) && empty($_SESSION['dol_save_pass'])) {    // So value can't be found if install page still accessible
 						$autofill = '';
@@ -501,7 +502,7 @@ if (!empty($force_install_noedit)) {
 					print dol_escape_htmltag($autofill);
 					?>"
 				<?php if ($force_install_noedit == 2 && $force_install_databasepass !== null) {
-						print ' disabled';
+					print ' disabled';
 				} ?>
 			>
 		</td>
@@ -577,14 +578,15 @@ if (!empty($force_install_noedit)) {
 				   class="needroot text-security"
 				   value="<?php
 					// If $force_install_databaserootpass is on, we don't want to set password here, we just show '***'. Real value will be extracted from the forced install file at step1.
+					// @phan-suppress-next-line PhanParamSuspiciousOrder
 					$autofill = ((!empty($force_install_databaserootpass)) ? str_pad('', strlen($force_install_databaserootpass), '*') : (isset($db_pass_root) ? $db_pass_root : ''));
 					if (!empty($dolibarr_main_prod)) {
 						$autofill = '';
 					}
 					// Do not autofill password if instance is a production instance
 					if (!empty($_SERVER["SERVER_NAME"]) && !in_array(
-						$_SERVER["SERVER_NAME"],
-						array('127.0.0.1', 'localhost', 'localhostgit')
+					$_SERVER["SERVER_NAME"],
+					array('127.0.0.1', 'localhost', 'localhostgit')
 					)
 					) {
 						$autofill = '';
@@ -592,7 +594,7 @@ if (!empty($force_install_noedit)) {
 					print dol_escape_htmltag($autofill);
 					?>"
 				<?php if ($force_install_noedit > 0 && !empty($force_install_databaserootpass)) {
-						print ' disabled'; /* May be removed by javascript*/
+					print ' disabled'; /* May be removed by javascript*/
 				} ?>
 			>
 		</td>
@@ -731,7 +733,7 @@ jQuery(document).ready(function() {	// TODO Test $( window ).load(function() to 
 
 <?php
 
-// $db->close();	Not database connexion yet
+// $db->close();	Not database connection yet
 
 dolibarr_install_syslog("- fileconf: end");
 pFooter($err, $setuplang, 'jscheckparam');

@@ -20,4 +20,4 @@ BackToHelpCenter=Përndryshe, <a href="%s">kthehu në faqen kryesore të qendrë
 LinkToGoldMember=Ju mund të telefononi një nga trajnerët e parazgjedhur nga Dolibarr për gjuhën tuaj (%s) duke klikuar Widget-in e tyre (statusi dhe çmimi maksimal përditësohen automatikisht):
 PossibleLanguages=Gjuhët e mbështetura
 SubscribeToFoundation=Ndihmoni projektin Dolibarr, regjistrohuni në fondacion
-SeeOfficalSupport=Për mbështetjen zyrtare të Dolibarr në gjuhën tuaj: <br><b><a href="%s" target="_blank" rel="noopener noreferrer"></span ='notranslate'>%s</a></b>
+SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

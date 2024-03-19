@@ -79,7 +79,15 @@ $manifest->short_name = $manifest->name;
 
 
 $manifest->theme_color = getDolGlobalString('MAIN_MANIFEST_APPLI_THEME_COLOR', getDolGlobalString('THEME_ELDY_TOPMENU_BACK1', '#F05F40'));
+if (!preg_match('/#[a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9]$/', $manifest->theme_color)) {
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+	$manifest->theme_color = '#'.colorArrayToHex(colorStringToArray($manifest->theme_color));
+}
 $manifest->background_color = getDolGlobalString('MAIN_MANIFEST_APPLI_BG_COLOR', "#ffffff");
+if (!preg_match('/#[a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9]$/', $manifest->background_color)) {
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+	$manifest->background_color = '#'.colorArrayToHex(colorStringToArray($manifest->background_color));
+}
 $manifest->display = getDolGlobalString('MAIN_MANIFEST_DISPLAY', "minimal-ui");
 $manifest->splash_pages = null;
 $manifest->icons = array();
@@ -88,7 +96,7 @@ $manifest->id = constant('DOL_MAIN_URL_ROOT');
 
 if (getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL')) {
 	$icon = new stdClass();
-	$icon->src = $conf->global->MAIN_MANIFEST_APPLI_LOGO_URL;
+	$icon->src = getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL');
 	if ($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL_SIZE) {
 		$icon->sizes = getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL_SIZE') . "x" . getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL_SIZE');
 	} else {

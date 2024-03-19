@@ -34,7 +34,6 @@ PaymentEvent=Plată eveniment
 NewRegistration=Înregistrare
 EventOrganizationSetup=Configurare Organizare evenimente
 EventOrganization=Organizare eveniment
-Settings=Configurări
 EventOrganizationSetupPage = Pagină de configurare Organizare evenimente
 EVENTORGANIZATION_TASK_LABEL = Etichetă task-uri de creat automat atunci când proiectul este validat 
 EVENTORGANIZATION_TASK_LABELTooltip = Când validați un eveniment de organizare, unele task-uri pot fi create automat în proiect.<br> <br> De exemplu: <br>Apelare telefonică pentru conferințe<br>Apelare telefonică pentru stand-uri<br> Validare propuneri pentru conferințe<br> Validare aplicare pentru stand-uri<br> Deschidere înscriere la la eveniment pentru participanți<br> Trimitere reminder eveniment pentru speaker-i <br>Trimitere reminder eveniment pentru găzduitorii de stand-uri<br> Trimitere reminder eveniment către participanți

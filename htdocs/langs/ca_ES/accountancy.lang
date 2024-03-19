@@ -90,13 +90,13 @@ AccountancyAreaDescProd=PAS %s: defineix els comptes de comptabilitat als teus p
 
 AccountancyAreaDescBind=PAS %s: Comproveu que els enllaços entre les línies %s existents i els comptes comptables és correcta, de manera que l'aplicació podrà registrar els assentaments al Llibre Major en un sol clic. Completa les unions que falten. Per això, utilitzeu l'entrada del menú %s.
 AccountancyAreaDescWriteRecords=PAS %s: Escriu els assentaments al Llibre Major. Per això, aneu al menú <strong>%s</strong>, i feu clic al botó <strong>%s</strong>.
-AccountancyAreaDescAnalyze=PAS %s: Afegir o editar transaccions existents i generar informes i exportacions.
-
-AccountancyAreaDescClosePeriod=PAS %s: Tancar el període de forma que no pot fer modificacions en un futur.
+AccountancyAreaDescAnalyze=PAS %s: llegiu informes o genereu fitxers d'exportació per a altres comptables.
+AccountancyAreaDescClosePeriod=PAS %s: tanca el període perquè no puguem transferir més dades en el mateix període en un futur.
 
 TheFiscalPeriodIsNotDefined=No s'ha completat un pas obligatori de configuració (el període fiscal no està definit)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=No s'ha completat un pas obligatori en la configuració (no s'ha definit el codi comptable diari per a tots els comptes bancaris)
 Selectchartofaccounts=Seleccionar el pla de comptes actiu
+CurrentChartOfAccount=Pla comptable actiu actual
 ChangeAndLoad=Canviar i carregar
 Addanaccount=Afegir un compte comptable
 AccountAccounting=Compte comptable
@@ -335,7 +335,6 @@ CategoryDeleted=S'ha eliminat la categoria per al compte comptable
 AccountingJournals=Diari de comptabilitat
 AccountingJournal=Diari comptable
 NewAccountingJournal=Diari comptable nou
-ShowAccountingJournal=Mostrar diari comptable
 NatureOfJournal=Naturalesa del diari
 AccountingJournalType1=Operacions diverses
 AccountingJournalType2=Vendes
@@ -343,7 +342,7 @@ AccountingJournalType3=Compres
 AccountingJournalType4=Banc
 AccountingJournalType5=Informes de despeses
 AccountingJournalType8=Inventari
-AccountingJournalType9=Retained earnings
+AccountingJournalType9=Beneficis retinguts
 GenerationOfAccountingEntries=Generació d'assentaments comptables
 ErrorAccountingJournalIsAlreadyUse=Aquest diari ja està en ús
 AccountingAccountForSalesTaxAreDefinedInto=Nota: El compte comptable per a l'impost de vendes es defineix al menú <b>%s</b> - <b>%s</b>
@@ -424,7 +423,7 @@ SaleLocal=Venda local
 SaleExport=Venda d’exportació
 SaleEEC=Venda en CEE
 SaleEECWithVAT=Venda a la CEE amb un IVA que no és nul, per la qual cosa suposem que NO es tracta d’una venda intracomunitària i el compte suggerit és el compte estàndard del producte.
-SaleEECWithoutVATNumber=sale a EEC sense VAT però el VAT ID de Third party no està definit. Recorrem a account per a standard sales. Podeu arreglar el VAT ID del Third party o canviar el Third party span class='notranslate'>product</span> account suggerit per a l'enllaç si cal.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of third party is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the third party, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Prohibit: la transacció ha estat validada i/o exportada.
 ForbiddenTransactionAlreadyValidated=Prohibit: la transacció s'ha validat.
 ## Dictionary
@@ -447,15 +446,15 @@ AccountancyUnletteringModifiedSuccessfully=%s conciliació desfeta correctament
 
 ## Closure
 AccountancyClosureStep1=Pas 1: validar i bloquejar els moviments
-AccountancyClosureStep2=Pas 2: Tancament de l'exercici fiscal
+AccountancyClosureStep2=Pas 2: tancar l'exercici fiscal
 AccountancyClosureStep3=Pas 3: extreu les entrades (opcional)
 AccountancyClosureClose=Tancament del període fiscal
-AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries
+AccountancyClosureAccountingReversal=Extraieu i registreu les entrades "Guanys retinguts".
 AccountancyClosureStep3NewFiscalPeriod=El proper període fiscal
-AccountancyClosureGenerateClosureBookkeepingRecords=Generate "Retained earnings" entries on the next fiscal period
-AccountancyClosureSeparateAuxiliaryAccounts=When generating the "Retained earnings" entries, detail the sub-ledger accounts
+AccountancyClosureGenerateClosureBookkeepingRecords=Genereu entrades de "Guanys retinguts" el proper període fiscal
+AccountancyClosureSeparateAuxiliaryAccounts=Quan genereu les entrades "Guanys retinguts", detalleu els comptes del llibre major
 AccountancyClosureCloseSuccessfully=El període fiscal s'ha tancat amb èxit
-AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping entries for "Retained earnings" has been inserted successfully
+AccountancyClosureInsertAccountingReversalSuccessfully=Les entrades de comptabilitat per a "Guanys retinguts" s'han inserit correctament
 
 ## Confirm box
 ConfirmMassUnletteringAuto=Confirmació de desconciliació automàtica massiva
@@ -464,7 +463,7 @@ ConfirmMassUnletteringQuestion=Esteu segur que voleu anul·lar la conciliació d
 ConfirmMassDeleteBookkeepingWriting=Confirmació d'esborrament massiu
 ConfirmMassDeleteBookkeepingWritingQuestion=Això suprimirà la transacció de la comptabilitat (s'eliminaran totes les entrades de línia relacionades amb la mateixa transacció). Esteu segur que voleu suprimir les %s entrades seleccionades?
 AccountancyClosureConfirmClose=Esteu segur que voleu tancar l'exercici fiscal actual? <span class="warning">Comprèn que tancar l'exercici fiscal és una acció irreversible i bloquejarà permanentment qualsevol modificació o supressió d'entrades durant aquest període</span> .
-AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
+AccountancyClosureConfirmAccountingReversal=Esteu segur que voleu registrar entrades per als "Guanys retinguts"?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=No s'han fet alguns passos obligatoris de configuració, si us plau, completeu-los

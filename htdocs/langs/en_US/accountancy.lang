@@ -335,7 +335,6 @@ CategoryDeleted=Category for the accounting account has been removed
 AccountingJournals=Accounting journals
 AccountingJournal=Accounting journal
 NewAccountingJournal=New accounting journal
-ShowAccountingJournal=Show accounting journal
 NatureOfJournal=Nature of Journal
 AccountingJournalType1=Miscellaneous operations
 AccountingJournalType2=Sales
@@ -446,8 +445,8 @@ AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modif
 AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
 
 ## Closure
-AccountancyClosureStep1=Step 1 : Validate and lock movements
-AccountancyClosureStep2=Step 2 : Close fiscal period
+AccountancyClosureStep1=Step 1 : Validate and lock the movements
+AccountancyClosureStep2=Step 2 : Close the fiscal period
 AccountancyClosureStep3=Step 3 : Extract entries (Optional)
 AccountancyClosureClose=Close fiscal period
 AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries

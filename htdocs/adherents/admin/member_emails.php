@@ -105,7 +105,7 @@ if ($action == 'updateall') {
 
 // Action to update or add a constant
 if ($action == 'update' || $action == 'add') {
-	$constlineid = GETPOST('rowid', 'int');
+	$constlineid = GETPOSTINT('rowid');
 	$constname = GETPOST('constname', 'alpha');
 
 	$constvalue = (GETPOSTISSET('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname, 'alphanohtml') : GETPOST('constvalue'));

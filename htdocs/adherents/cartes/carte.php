@@ -245,7 +245,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 		}
 
 		if ($result <= 0) {
-			dol_print_error('', $result);
+			dol_print_error(null, $result);
 		}
 	} else {
 		dol_print_error($db);

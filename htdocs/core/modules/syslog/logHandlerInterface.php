@@ -70,9 +70,9 @@ interface LogHandlerInterface
 	public function checkConfiguration();
 
 	/**
-	 * 	Return if logger active
+	 * 	Is the logger active ?
 	 *
-	 * 	@return	boolean		True if active
+	 * 	@return int		1 if logger enabled
 	 */
 	public function isActive();
 

@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Керуйте та слідкуйте за кампан
 # Admin page
 #
 RecruitmentSetup = Налаштування набору
-Settings = Налаштування
 RecruitmentSetupPage = Введіть тут налаштування основних параметрів для модуля найму
 RecruitmentArea=Зона набору
 PublicInterfaceRecruitmentDesc=Загальнодоступні сторінки вакансії – це загальнодоступні URL-адреси, які показують і відповідають на відкриті вакансії. Для кожного відкритого робочого місця є одне інше посилання, яке можна знайти в кожному записі про роботу.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Увімкнути загальнодоступні
 #
 # About page
 #
-About = Про
 RecruitmentAbout = Про найм
 RecruitmentAboutPage = Набір про сторінку
 NbOfEmployeesExpected=Очікувана кількість працівників
@@ -57,16 +55,16 @@ EmailRecruiter=Електронний рекрутер
 ToUseAGenericEmail=Щоб використовувати загальну електронну адресу. Якщо не визначено, використовуватиметься електронна адреса відповідального за підбір персоналу
 NewCandidature=Нова програма
 ListOfCandidatures=Список додатків
-Remuneration=Salary
-RequestedRemuneration=Requested salary
-ProposedRemuneration=Proposed salary
+Remuneration=Зарплата
+RequestedRemuneration=Запитана зарплата
+ProposedRemuneration=Запропонована зарплата
 ContractProposed=Запропоновано договір
 ContractSigned=Договір підписаний
 ContractRefused=Контракт відмовлено
 RecruitmentCandidature=Застосування
 JobPositions=Посади
 RecruitmentCandidatures=Додатки
-InterviewToDo=Contacts to follow
+InterviewToDo=Контакти для підключення
 AnswerCandidature=Відповідь на заявку
 YourCandidature=Ваша заявка
 YourCandidatureAnswerMessage=Дякую за вашу заявку. <br> ...
@@ -77,3 +75,6 @@ ExtrafieldsApplication=Додаткові атрибути (заявки на р
 MakeOffer=Зробити пропозицію
 WeAreRecruiting=Ми набираємо. Це список відкритих вакансій, які потрібно заповнити...
 NoPositionOpen=На даний момент немає відкритих позицій
+ConfirmClose=Підтвердити скасування
+ConfirmCloseAsk=Ви впевнені, що бажаєте скасувати цю кандидатуру на роботу?
+recruitment=вербування

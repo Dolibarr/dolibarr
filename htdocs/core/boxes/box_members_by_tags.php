@@ -38,17 +38,7 @@ class box_members_by_tags extends ModeleBoxes
 	public $boxlabel = "BoxTitleMembersByTags";
 	public $depends  = array("adherent", "categorie");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -68,7 +58,7 @@ class box_members_by_tags extends ModeleBoxes
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !(isModEnabled('adherent') && $user->rights->adherent->lire);
+		$this->hidden = !(isModEnabled('member') && $user->hasRight('adherent', 'lire'));
 	}
 
 	/**
@@ -99,7 +89,7 @@ class box_members_by_tags extends ModeleBoxes
 			$stats = new AdherentStats($this->db, $user->socid, $user->id);
 
 			// Show array
-			$sumMembers= $stats->countMembersByTagAndStatus($numberyears);
+			$sumMembers = $stats->countMembersByTagAndStatus($numberyears);
 			if ($sumMembers) {
 				$line = 0;
 				$this->info_box_contents[$line][] = array(
@@ -148,11 +138,12 @@ class box_members_by_tags extends ModeleBoxes
 					'text' => $langs->trans("Total")
 				);
 				$line++;
+				$AdherentTag = array();
 				foreach ($sumMembers as $key => $data) {
 					$adhtag = new Categorie($this->db);
 					$adhtag->id = $key;
 
-					if ($key=='total') {
+					if ($key == 'total') {
 						break;
 					}
 					$adhtag->label = $data['label'];

@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright (C) 2018  ptibogxiv	<support@ptibogxiv.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +21,12 @@
  *  \file       htdocs/core/triggers/interface_80_modStripe_Stripe.class.php
  *  \ingroup    core
  *  \brief      Fichier
- *  \remarks    Son propre fichier d'actions peut etre cree par recopie de celui-ci:
- *              - Le nom du fichier doit etre: interface_99_modMymodule_Mytrigger.class.php
- *                                           ou: interface_99_all_Mytrigger.class.php
- *              - Le fichier doit rester stocke dans core/triggers
- *              - Le nom de la classe doit etre InterfaceMytrigger
- *              - Le nom de la propriete name doit etre Mytrigger
+ *  \remarks    This file can be used as a template for creating your own action file:
+ *              - The file name must be: interface_99_modMymodule_Mytrigger.class.php
+ *                                   or: interface_99_all_Mytrigger.class.php
+ *              - The file must be located in core/triggers
+ *              - The class name must be InterfaceMytrigger
+ *              - The property name must be Mytrigger
  */
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 
@@ -47,12 +48,12 @@ class InterfaceStripe extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = 'stripe';
 		$this->description = "Triggers of the module Stripe";
-		$this->version = self::VERSION_DOLIBARR; // 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'stripe';
 	}
 
 	/**
-	 * Function called when a Dolibarrr business event is done.
+	 * Function called when a Dolibarr business event is done.
 	 * All functions "runTrigger" are triggered if file
 	 * is inside directory core/triggers
 	 *
@@ -157,12 +158,13 @@ class InterfaceStripe extends DolibarrTriggers
 									$isineec = isInEEC($object);
 									if ($object->country_code && $isineec) {
 										//$taxids = $customer->allTaxIds($customer->id);
-										$customer->createTaxId($customer->id, array('type'=>'eu_vat', 'value'=>$vatcleaned));
+										$customer->createTaxId($customer->id, array('type' => 'eu_vat', 'value' => $vatcleaned));
 									}
 								} else {
 									$taxids = $customer->allTaxIds($customer->id);
 									if (is_array($taxids->data)) {
 										foreach ($taxids->data as $taxidobj) {
+											// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 											$customer->deleteTaxId($customer->id, $taxidobj->id);
 										}
 									}
@@ -170,6 +172,7 @@ class InterfaceStripe extends DolibarrTriggers
 							}
 
 							// Update Customer on Stripe
+							// @phan-suppress-next-line PhanDeprecatedFunction
 							$customer->save();
 						} catch (Exception $e) {
 							//var_dump(\Stripe\Stripe::getApiVersion());
@@ -225,8 +228,10 @@ class InterfaceStripe extends DolibarrTriggers
 						dol_syslog("We got the customer, so now we update the credit card", LOG_DEBUG);
 						$card = $stripe->cardStripe($customer, $object, $stripeacc, $servicestatus);
 						if ($card) {
-							$card->metadata = array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']));
+							// @phan-suppress-next-line PhanTypeMismatchPropertyProbablyReal
+							$card->metadata = array('dol_id' => $object->id, 'dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']));
 							try {
+								// @phan-suppress-next-line PhanDeprecatedFunction
 								$card->save();
 							} catch (Exception $e) {
 								$ok = -1;

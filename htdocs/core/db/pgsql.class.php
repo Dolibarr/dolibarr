@@ -25,13 +25,13 @@
 
 /**
  *	\file       htdocs/core/db/pgsql.class.php
- *	\brief      Fichier de la classe permettant de gerer une base pgsql
+ *	\brief      Fichier de la class permettant de gerer une base pgsql
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/db/DoliDB.class.php';
 
 /**
- *	Class to drive a Postgresql database for Dolibarr
+ *	Class to drive a PostgreSQL database for Dolibarr
  */
 class DoliDBPgsql extends DoliDB
 {
@@ -51,11 +51,11 @@ class DoliDBPgsql extends DoliDB
 	const VERSIONMIN = '9.0.0'; // Version min database
 
 	/**
-	 * @var boolean $unescapeslashquot  			Set this to 1 when calling SQL queries, to say that SQL is not standard but already escaped for Mysql. Used by Postgresql driver
+	 * @var boolean $unescapeslashquot  			Set this to 1 when calling SQL queries, to say that SQL is not standard but already escaped for Mysql. Used by PostgreSQL driver
 	 */
 	public $unescapeslashquot = false;
 	/**
-	 * @var boolean $standard_conforming_string		Set this to true if postgres accept only standard encoding of sting using '' and not \'
+	 * @var boolean $standard_conforming_string		Set this to true if postgres accept only standard encoding of string using '' and not \'
 	 */
 	public $standard_conforming_strings = false;
 
@@ -67,12 +67,12 @@ class DoliDBPgsql extends DoliDB
 
 	/**
 	 *	Constructor.
-	 *	This create an opened connexion to a database server and eventually to a database
+	 *	This create an opened connection to a database server and eventually to a database
 	 *
 	 *	@param      string	$type		Type of database (mysql, pgsql...). Not used.
 	 *	@param	    string	$host		Address of database server
 	 *	@param	    string	$user		Nom de l'utilisateur autorise
-	 *	@param	    string	$pass		Mot de passe
+	 *	@param	    string	$pass		Password
 	 *	@param	    string	$name		Nom de la database
 	 *	@param	    int		$port		Port of database server
 	 */
@@ -112,7 +112,7 @@ class DoliDBPgsql extends DoliDB
 			return;
 		}
 
-		// Essai connexion serveur
+		// Essai connection serveur
 		//print "$host, $user, $pass, $name, $port";
 		$this->db = $this->connect($host, $user, $pass, $name, $port);
 
@@ -127,7 +127,7 @@ class DoliDBPgsql extends DoliDB
 			dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Connect ".$this->error.'. Failed to connect to host='.$host.' port='.$port.' user='.$user, LOG_ERR);
 		}
 
-		// Si connexion serveur ok et si connexion base demandee, on essaie connexion base
+		// If server connection serveur ok and DB connection is requested, try to connect to DB
 		if ($this->connected && $name) {
 			if ($this->select_db($name)) {
 				$this->database_selected = true;
@@ -241,7 +241,7 @@ class DoliDBPgsql extends DoliDB
 				$line = preg_replace('/^float/i', 'numeric', $line);
 				$line = preg_replace('/(\s*)float/i', '\\1numeric', $line);
 
-				//Check tms timestamp field case (in Mysql this field is defautled to now and
+				//Check tms timestamp field case (in Mysql this field is defaulted to now and
 				// on update defaulted by now
 				$line = preg_replace('/(\s*)tms(\s*)timestamp/i', '\\1tms timestamp without time zone DEFAULT now() NOT NULL', $line);
 
@@ -320,11 +320,11 @@ class DoliDBPgsql extends DoliDB
 				}
 			}
 
-			// To have postgresql case sensitive
+			// To have PostgreSQL case sensitive
 			$count_like = 0;
 			$line = str_replace(' LIKE \'', ' ILIKE \'', $line, $count_like);
 			if (getDolGlobalString('PSQL_USE_UNACCENT') && $count_like > 0) {
-				// @see https://docs.postgresql.fr/11/unaccent.html : 'unaccent()' function must be installed before
+				// @see https://docs.PostgreSQL.fr/11/unaccent.html : 'unaccent()' function must be installed before
 				$line = preg_replace('/\s+(\(+\s*)([a-zA-Z0-9\-\_\.]+) ILIKE /', ' \1unaccent(\2) ILIKE ', $line);
 			}
 
@@ -361,7 +361,7 @@ class DoliDBPgsql extends DoliDB
 			$line = preg_replace('/FROM\s*\(([a-z_]+\s+as\s+[a-z_]+)\s*,\s*([a-z_]+\s+as\s+[a-z_]+\s*),\s*([a-z_]+\s+as\s+[a-z_]+\s*),\s*([a-z_]+\s+as\s+[a-z_]+\s*),\s*([a-z_]+\s+as\s+[a-z_]+\s*)\)/i', 'FROM \\1, \\2, \\3, \\4, \\5', $line);
 			//print $line."\n";
 
-			// Replace espacing \' by ''.
+			// Replace spacing ' with ''.
 			// By default we do not (should be already done by db->escape function if required
 			// except for sql insert in data file that are mysql escaped so we removed them to
 			// be compatible with standard_conforming_strings=on that considers \ as ordinary character).
@@ -378,8 +378,8 @@ class DoliDBPgsql extends DoliDB
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Select a database
-	 *  Ici postgresql n'a aucune fonction equivalente de mysql_select_db
-	 *  On compare juste manuellement si la database choisie est bien celle activee par la connexion
+	 *  PostgreSQL does not have an equivalent for `mysql_select_db`
+	 *  Only compare if the chosen DB is the one active on the connection
 	 *
 	 *	@param	    string	$database	Name of database
 	 *	@return	    bool				true if OK, false if KO
@@ -395,7 +395,7 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
-	 *	Connexion to server
+	 *	Connection to server
 	 *
 	 *	@param	    string		$host		Database server host
 	 *	@param	    string		$login		Login
@@ -485,9 +485,9 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
-	 *  Close database connexion
+	 *  Close database connection
 	 *
-	 *  @return     boolean     True if disconnect successfull, false otherwise
+	 *  @return     boolean     True if disconnect successful, false otherwise
 	 *  @see        connect()
 	 */
 	public function close()
@@ -517,7 +517,7 @@ class DoliDBPgsql extends DoliDB
 
 		$query = trim($query);
 
-		// Convert MySQL syntax to PostgresSQL syntax
+		// Convert MySQL syntax to PostgreSQL syntax
 		$query = $this->convertSQLFromMysql($query, $type, ($this->unescapeslashquot && $this->standard_conforming_strings));
 		//print "After convertSQLFromMysql:\n".$query."<br>\n";
 
@@ -593,7 +593,7 @@ class DoliDBPgsql extends DoliDB
 	public function fetch_object($resultset)
 	{
 		// phpcs:enable
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -610,7 +610,7 @@ class DoliDBPgsql extends DoliDB
 	public function fetch_array($resultset)
 	{
 		// phpcs:enable
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -627,7 +627,7 @@ class DoliDBPgsql extends DoliDB
 	public function fetch_row($resultset)
 	{
 		// phpcs:enable
-		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connection
 		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -645,7 +645,7 @@ class DoliDBPgsql extends DoliDB
 	public function num_rows($resultset)
 	{
 		// phpcs:enable
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -663,7 +663,7 @@ class DoliDBPgsql extends DoliDB
 	public function affected_rows($resultset)
 	{
 		// phpcs:enable
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -674,14 +674,14 @@ class DoliDBPgsql extends DoliDB
 
 
 	/**
-	 * Libere le dernier resultset utilise sur cette connexion
+	 * Libere le dernier resultset utilise sur cette connection
 	 *
 	 * @param	resource	$resultset  Result set of request
 	 * @return	void
 	 */
 	public function free($resultset = null)
 	{
-		// If resultset not provided, we take the last used by connexion
+		// If resultset not provided, we take the last used by connection
 		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -724,7 +724,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function escape($stringtoencode)
 	{
-		return pg_escape_string($stringtoencode);
+		return pg_escape_string($this->db, $stringtoencode);
 	}
 
 	/**
@@ -741,10 +741,10 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 *  Format a SQL IF
 	 *
-	 *  @param	string	$test           Test string (example: 'cd.statut=0', 'field IS NULL')
-	 *  @param	string	$resok          resultat si test egal
-	 *  @param	string	$resko          resultat si test non egal
-	 *  @return	string          		chaine formate SQL
+	 *  @param	string	$test           Test expression (example: 'cd.statut=0', 'field IS NULL')
+	 *  @param	string	$resok          Result to generate when test is True
+	 *  @param	string	$resko          Result to generate when test is False
+	 *  @return	string          		chaine format SQL
 	 */
 	public function ifsql($test, $resok, $resko)
 	{
@@ -754,30 +754,30 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 *	Format a SQL REGEXP
 	 *
-	 *	@param	string	$subject        string tested
+	 *	@param	string	$subject        Field name to test
 	 *	@param	string  $pattern        SQL pattern to match
-	 *	@param	int		$sqlstring      whether or not the string being tested is an SQL expression
+	 *	@param	int		$sqlstring      0=the string being tested is a hard coded string, 1=the string is a field
 	 *	@return	string          		SQL string
 	 */
 	public function regexpsql($subject, $pattern, $sqlstring = 0)
 	{
 		if ($sqlstring) {
-			return "(". $subject ." ~ '" . $pattern . "')";
+			return "(". $subject ." ~ '" . $this->escape($pattern) . "')";
 		}
 
-		return "('". $subject ."' ~ '" . $pattern . "')";
+		return "('". $this->escape($subject) ."' ~ '" . $this->escape($pattern) . "')";
 	}
 
 
 	/**
 	 * Renvoie le code erreur generique de l'operation precedente.
 	 *
-	 * @return	string		Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
+	 * @return	string		Error code (Examples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
 	 */
 	public function errno()
 	{
 		if (!$this->connected) {
-			// Si il y a eu echec de connexion, $this->db n'est pas valide.
+			// Si il y a eu echec de connection, $this->db n'est pas valide.
 			return 'DB_ERROR_FAILED_TO_CONNECT';
 		} else {
 			// Constants to convert error code to a generic Dolibarr error code
@@ -794,7 +794,7 @@ class DoliDBPgsql extends DoliDB
 			'42P07' => 'DB_ERROR_TABLE_OR_KEY_ALREADY_EXISTS',
 			'42703' => 'DB_ERROR_NOSUCHFIELD',
 			1060 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
-			42701=> 'DB_ERROR_COLUMN_ALREADY_EXISTS',
+			42701 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
 			'42710' => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
 			'23505' => 'DB_ERROR_RECORD_ALREADY_EXISTS',
 			'42704' => 'DB_ERROR_NO_INDEX_TO_DROP', // May also be Type xxx does not exists
@@ -847,7 +847,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * Get last ID after an insert INSERT
 	 *
-	 * @param   string	$tab    	Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
+	 * @param   string	$tab    	Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec PostgreSQL
 	 * @param	string	$fieldid	Field name
 	 * @return  string     			Id of row
 	 */
@@ -891,7 +891,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 *	Decrypt sensitive data in database
 	 *
-	 *	@param	int		$value			Value to decrypt
+	 *	@param	string	$value			Value to decrypt
 	 * 	@return	string					Decrypted value if used
 	 */
 	public function decrypt($value)
@@ -911,9 +911,9 @@ class DoliDBPgsql extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return connexion ID
+	 * Return connection ID
 	 *
-	 * @return	        string      Id connexion
+	 * @return	        string      Id connection
 	 */
 	public function DDLGetConnectId()
 	{
@@ -1016,7 +1016,7 @@ class DoliDBPgsql extends DoliDB
 	 *	List information of columns into a table.
 	 *
 	 *	@param	string	$table		Name of table
-	 *	@return	array				Tableau des informations des champs de la table
+	 *	@return	array				Tableau des information des champs de la table
 	 *
 	 */
 	public function DDLInfoTable($table)
@@ -1068,6 +1068,10 @@ class DoliDBPgsql extends DoliDB
 	{
 		// phpcs:enable
 		// FIXME: $fulltext_keys parameter is unused
+
+		$sqlfields = array();
+		$sqlk = array();
+		$sqluq = array();
 
 		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
@@ -1205,7 +1209,7 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 *	@param	string	$table 				Name of table
 	 *	@param	string	$field_name 		Name of field to add
-	 *	@param	string	$field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
+	 *	@param	string	$field_desc 		Tableau associatif de description du champ a inserer[nom du parameter][valeur du parameter]
 	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
 	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
@@ -1332,7 +1336,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 *	Return list of available charset that can be used to store data in database
 	 *
-	 *	@return		array		List of Charset
+	 *	@return		array|null		List of Charset
 	 */
 	public function getListOfCharacterSet()
 	{
@@ -1371,7 +1375,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 *	Return list of available collation that can be used for database
 	 *
-	 *	@return		array		Liste of Collation
+	 *	@return		array|null		Liste of Collation
 	 */
 	public function getListOfCollation()
 	{

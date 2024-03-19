@@ -162,6 +162,7 @@ CalcModeVATDebt=Mod <b>%s TVA pe baza contabilității de angajament %s</b>.
 CalcModeVATEngagement=Mod <b>%s TVA pe bază venituri-cheltuieli%s.</b>
 CalcModeDebt=Analiza documentelor înregistrate cunoscute
 CalcModeEngagement=Analiză plăți înregistrate cunoscute
+CalcModePayment=Analiză plăți înregistrate cunoscute
 CalcModeBookkeeping=Analiza datelor publicate în Registrul Jurnal.
 CalcModeNoBookKeeping=Chiar dacă nu sunt încă contabilizate în Jurnal
 CalcModeLT1= Mod <b>%sRE pe facturi clienţi - facturi furnizori %s</b>

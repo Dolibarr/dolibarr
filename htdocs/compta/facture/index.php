@@ -35,7 +35,7 @@ restrictedArea($user, 'facture');
 $langs->load('bills');
 
 // Filter to show only result of one customer
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;

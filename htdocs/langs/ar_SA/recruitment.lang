@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = إدارة ومتابعة حملات التوظيف لش
 # Admin page
 #
 RecruitmentSetup = إعداد التوظيف
-Settings = إعدادات
 RecruitmentSetupPage = أدخل هنا إعداد الخيارات الرئيسية لوحدة التوظيف
 RecruitmentArea=منطقة التوظيف
 PublicInterfaceRecruitmentDesc=الصفحات العامة للوظائف هي عناوين URL عامة لإظهار الوظائف المفتوحة والإجابة عليها. يوجد رابط واحد مختلف لكل وظيفة متاحة في كل سجل وظيفة.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=تمكين الصفحات العامة للوظائ
 #
 # About page
 #
-About = حول
 RecruitmentAbout = حول التوظيف
 RecruitmentAboutPage = التوظيف حول الصفحة
 NbOfEmployeesExpected=ملحوظة من الموظفين المتوقع
@@ -79,3 +77,4 @@ WeAreRecruiting=نحن نوظف. هذه قائمة بالوظائف الشاغر
 NoPositionOpen=لا توجد وظائف مفتوحة في الوقت الحالي
 ConfirmClose=تأكيد الالغاء
 ConfirmCloseAsk=هل أنت متأكد أنك تريد إلغاء ترشيح التوظيف هذا
+recruitment=توظيف

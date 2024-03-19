@@ -19,7 +19,7 @@
 
 /**
  * \file       htdocs/core/lib/ldap.lib.php
- * \brief      Ensemble de fonctions de base pour le module LDAP
+ * \brief      Ensemble de functions de base pour le module LDAP
  * \ingroup    ldap
  */
 
@@ -64,14 +64,14 @@ function ldap_prepare_head()
 		$h++;
 	}
 
-	if (isModEnabled('adherent') && getDolGlobalString('LDAP_MEMBER_ACTIVE')) {
+	if (isModEnabled('member') && getDolGlobalString('LDAP_MEMBER_ACTIVE')) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members.php";
 		$head[$h][1] = $langs->trans("LDAPMembersSynchro");
 		$head[$h][2] = 'members';
 		$h++;
 	}
 
-	if (isModEnabled('adherent') && getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE')) {
+	if (isModEnabled('member') && getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE')) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members_types.php";
 		$head[$h][1] = $langs->trans("LDAPMembersTypesSynchro");
 		$head[$h][2] = 'memberstypes';
@@ -140,6 +140,8 @@ function show_ldap_content($result, $level, $count, $var, $hide = 0, $subcount =
 	if (!is_array($result)) {
 		return -1;
 	}
+
+	$lastkey = array();
 
 	foreach ($result as $key => $val) {
 		if ("$key" == "objectclass") {

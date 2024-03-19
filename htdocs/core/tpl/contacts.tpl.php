@@ -27,7 +27,7 @@
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 if (empty($preselectedtypeofcontact)) {
@@ -113,7 +113,28 @@ if ($permission) {
 
 		<div class="tagtd"><?php echo $conf->global->MAIN_INFO_SOCIETE_NOM; ?></div>
 		<!--  <div class="nowrap tagtd"><?php echo img_object('', 'user').' '.$langs->trans("Users"); ?></div> -->
-		<div class="tagtd maxwidthonsmartphone"><?php echo img_object('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($user->id, 'userid', 0, (!empty($userAlreadySelected) ? $userAlreadySelected : null), 0, null, null, 0, 56, 0, '', 0, '', 'minwidth100imp widthcentpercentminusxx maxwidth400'); ?></div>
+		<div class="tagtd maxwidthonsmartphone">
+		<?php echo img_object('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($user->id, 'userid', 1, (!empty($userAlreadySelected) ? $userAlreadySelected : null), 0, null, null, 0, 56, 0, '', 0, '', 'minwidth100imp widthcentpercentminusxx maxwidth400 userselectcontact');
+		if (empty($hideaddcontactforgroups) && $module == 'project') {
+			print '<span> '.$langs->trans("or").' </span>';
+			echo img_object('', 'group', 'class="pictofixedwidth"').$form->select_dolgroups(0, 'groupid', 1, '', 0, '', array(), '0', false, 'minwidth100imp widthcentpercentminusxx maxwidth400 groupselectcontact');
+		}
+		?>
+		<script>
+			jQuery(document).ready(function(){
+				$(".userselectcontact").on("change", function(){
+					if ($(this).val() != -1) {
+						$(".groupselectcontact").val(-1).change();
+					}
+				});
+				$(".groupselectcontact").on("change", function(){
+					if ($(this).val() != -1) {
+						$(".userselectcontact").val(-1).change();
+					}
+				});
+			});
+		</script>
+		</div>
 		<div class="tagtd maxwidthonsmartphone">
 		<?php
 		$tmpobject = $object;
@@ -124,7 +145,6 @@ if ($permission) {
 		<div class="tagtd">&nbsp;</div>
 		<div class="tagtd center"><input type="submit" class="button small" value="<?php echo $langs->trans("Add"); ?>"></div>
 	</form>
-
 		<?php
 	}
 
@@ -143,7 +163,7 @@ if ($permission) {
 
 		<div class="tagtd nowrap noborderbottom">
 			<?php
-			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOST("newcompany", 'int') : (empty($object->socid) ? 0 : $object->socid);
+			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOSTINT("newcompany") : (empty($object->socid) ? 0 : $object->socid);
 			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp');	// This also print the select component?>
 		</div>
 		<div class="tagtd noborderbottom minwidth500imp">
@@ -197,43 +217,54 @@ foreach (array('internal', 'external') as $source) {
 	foreach ($contactlist as $contact) {
 		$entry = new stdClass();
 		$entry->id   = $contact['rowid'];
+		$entry->type_id = $contact['fk_c_type_contact'];
 		$entry->type = $contact['libelle'];
 		$entry->nature = "";
+		$entry->nature_html = "";
+		$entry->thirdparty_id = 0;
 		$entry->thirdparty_html = "";
 		$entry->thirdparty_name = "";
 		$entry->contact_html = "";
 		$entry->contact_name = "";
-		$entry->status = "";
+		$entry->status = 0;
+		$entry->status_html = "";
 
 		if ($contact['source'] == 'internal') {
-			$entry->nature = $langs->trans("User");
+			$entry->nature = 'user';
+			$entry->nature_html = $langs->trans("User");
 		} elseif ($contact['source'] == 'external') {
-			$entry->nature = $langs->trans("ThirdPartyContact");
+			$entry->nature = 'thirdparty';
+			$entry->nature_html = $langs->trans("ThirdPartyContact");
 		}
 
 		if ($contact['socid'] > 0) {
 			$companystatic->fetch($contact['socid']);
+			$entry->thirdparty_id   = $companystatic->id;
 			$entry->thirdparty_html = $companystatic->getNomUrl(1);
 			$entry->thirdparty_name = strtolower($companystatic->getFullName($langs));
 		} elseif ($contact['socid'] < 0) {
-			$entry->thirdparty_html = $conf->global->MAIN_INFO_SOCIETE_NOM;
+			$entry->thirdparty_html = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 			$entry->thirdparty_name = strtolower($conf->global->MAIN_INFO_SOCIETE_NOM);
 		}
 
 		if ($contact['source'] == 'internal') {
 			$userstatic->fetch($contact['id']);
+			$entry->contact_id   = $userstatic->id;
 			$entry->contact_html = $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			$entry->contact_name = strtolower($userstatic->getFullName($langs));
 		} elseif ($contact['source'] == 'external') {
 			$contactstatic->fetch($contact['id']);
+			$entry->contact_id   = $contactstatic->id;
 			$entry->contact_html = $contactstatic->getNomUrl(1, '', 0, '', 0, 0);
 			$entry->contact_name = strtolower($contactstatic->getFullName($langs));
 		}
 
 		if ($contact['source'] == 'internal') {
-			$entry->status = $userstatic->LibStatut($contact['statuscontact'], 3);
+			$entry->status = $contact['statuscontact'];
+			$entry->status_html = $userstatic->LibStatut($contact['statuscontact'], 3);
 		} elseif ($contact['source'] == 'external') {
-			$entry->status = $contactstatic->LibStatut($contact['statuscontact'], 3);
+			$entry->status = $contact['statuscontact'];
+			$entry->status_html = $contactstatic->LibStatut($contact['statuscontact'], 3);
 		}
 
 		$list[] = $entry;
@@ -266,9 +297,9 @@ $arrayfields = array(
 
 $param = 'id='.$object->id.'&mainmenu=home';
 
-/**
- * Show list
- */
+
+// Show list of contact links
+
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -291,13 +322,13 @@ if ($permission) {
 print "</tr>";
 
 foreach ($list as $entry) {
-	print '<tr class="oddeven">';
+	print '<tr class="oddeven" data-rowid="' . $entry->id . '">';
 
-	print '<td class="tdoverflowmax200">'.$entry->thirdparty_html.'</td>';
-	print '<td class="tdoverflowmax200">'.$entry->contact_html.'</td>';
-	print '<td class="nowrap"><span class="opacitymedium">'.$entry->nature.'</span></td>';
-	print '<td class="tdoverflowmax200">'.$entry->type.'</td>';
-	print '<td class="tdoverflowmax200 center">'.$entry->status.'</td>';
+	print '<td class="tdoverflowmax200" data-thirdparty_id="' . ((int) $entry->thirdparty_id) . '" data-thirdparty_name="' . dol_escape_htmltag($entry->thirdparty_name) . '">'.$entry->thirdparty_html.'</td>';
+	print '<td class="tdoverflowmax200" data-contact_id="' . ((int) $entry->contact_id) . '">'.$entry->contact_html.'</td>';
+	print '<td class="nowrap" data-nature="' . dol_escape_htmltag($entry->nature) . '"><span class="opacitymedium">'.dol_escape_htmltag($entry->nature_html).'</span></td>';
+	print '<td class="tdoverflowmax200" data-type_id="' . ((int) $entry->type_id) . '" data-type="' . dol_escape_htmltag($entry->type) . '">'.dol_escape_htmltag($entry->type).'</td>';
+	print '<td class="tdoverflowmax200 center" data-status_id="' . ((int) $entry->status) . '">'.$entry->status_html.'</td>';
 
 	if ($permission) {
 		$href = $_SERVER["PHP_SELF"];

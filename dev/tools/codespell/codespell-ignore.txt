@@ -1,0 +1,60 @@
+# List of words codespell will ignore
+# one per line, case-sensitive (when not lowercase)
+# PROVid
+provid
+# PostgreSQL
+postgresql
+
+# Inside email
+ba
+blacklist
+bu
+categorie
+categories
+clos
+crypted
+errorstring
+exten
+falsy
+master
+medias
+projet
+ro
+slave
+te
+technic
+thead
+ue
+whitelist
+ws
+# Code string
+ect
+tempdate
+sav
+files'
+# Used as array key
+seeked
+# Used as key
+marge
+# moral (var name)
+mor
+# Strings used as keys for translation
+uptodate
+reenable
+# Function - rename to devalidate ?
+unvalidate
+# Some french strings
+somme
+caracteres
+cas
+sur
+Datas
+datas
+valide
+raison
+que
+dur
+fonction
+espace
+methode
+datee

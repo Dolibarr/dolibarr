@@ -2,7 +2,8 @@
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2010       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2019       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,8 +78,8 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		if (!isset($conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER) || trim($conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER) == '') {
 			$conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER = '401';
 		}
-		$this->prefixcustomeraccountancycode = $conf->global->COMPANY_DIGITARIA_MASK_CUSTOMER;
-		$this->prefixsupplieraccountancycode = $conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER;
+		$this->prefixcustomeraccountancycode = getDolGlobalString('COMPANY_DIGITARIA_MASK_CUSTOMER');
+		$this->prefixsupplieraccountancycode = getDolGlobalString('COMPANY_DIGITARIA_MASK_SUPPLIER');
 
 		if (!isset($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER) || trim($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER) == '') {
 			$conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER = '5';
@@ -86,8 +87,8 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		if (!isset($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER) || trim($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER) == '') {
 			$conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER = '5';
 		}
-		$this->customeraccountancycodecharacternumber = $conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER;
-		$this->supplieraccountancycodecharacternumber = $conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER;
+		$this->customeraccountancycodecharacternumber = getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER');
+		$this->supplieraccountancycodecharacternumber = getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER');
 	}
 
 	/**
@@ -160,12 +161,12 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	/**
 	 *  Return an example of result returned by getNextValue
 	 *
-	 *  @param	Translate	$langs		Object langs
-	 *  @param	Societe		$objsoc		Object thirdparty
-	 *  @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-	 *  @return	string					Example
+	 *  @param	Translate		$langs		Object langs
+	 *  @param	Societe|string	$objsoc		Object thirdparty
+	 *  @param	int				$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 *  @return	string						Example
 	 */
-	public function getExample($langs, $objsoc = 0, $type = -1)
+	public function getExample($langs, $objsoc = '', $type = -1)
 	{
 		global $conf, $mysoc;
 
@@ -188,7 +189,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	 *
 	 *  @param	DoliDB	$db              Database handler
 	 *  @param  Societe	$societe         Third party object
-	 *  @param  int		$type			'customer' or 'supplier'
+	 *  @param  string	$type			'customer' or 'supplier'
 	 *  @return	int						>=0 if OK, <0 if KO
 	 */
 	public function get_code($db, $societe, $type = '')
@@ -260,9 +261,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 
 					$i++;
 				}
-			} else {
-				$disponibility == 0;
-			}
+			} // else { $disponibility = 0; /* Already set */ }
 		}
 
 		if ($disponibility == 0) {
@@ -277,7 +276,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	 *
 	 *  @param	DoliDB	$db             Database handler
 	 *  @param  string	$code           Code of third party
-	 *  @param  int		$type			'customer' or 'supplier'
+	 *  @param  string	$type			'customer' or 'supplier'
 	 *  @return	int						>=0 if OK, <0 if KO
 	 */
 	public function checkIfAccountancyCodeIsAlreadyUsed($db, $code, $type = '')

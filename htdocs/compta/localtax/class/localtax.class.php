@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011-2014	Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@ class Localtax extends CommonObject
 	public $picto = 'payment';
 
 	public $ltt;
-	public $tms;
+
 	public $datep;
 	public $datev;
 	public $amount;
@@ -320,7 +321,7 @@ class Localtax extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return	int
 	 */
 	public function initAsSpecimen()
 	{
@@ -328,7 +329,7 @@ class Localtax extends CommonObject
 
 		$this->id = 0;
 
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->ltt = 0;
 		$this->datep = '';
 		$this->datev = '';
@@ -338,11 +339,13 @@ class Localtax extends CommonObject
 		$this->fk_bank = 0;
 		$this->fk_user_creat = $user->id;
 		$this->fk_user_modif = $user->id;
+
+		return 1;
 	}
 
 
 	/**
-	 *	Hum la fonction s'appelle 'Solde' elle doit a mon avis calcluer le solde de localtax, non ?
+	 *	Hum la function s'appelle 'Solde' elle doit a mon avis calcluer le solde de localtax, non ?
 	 *
 	 *	@param	int		$year		Year
 	 *	@return	int					???
@@ -485,11 +488,11 @@ class Localtax extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -4;
 		}
-		if (isModEnabled("banque") && (empty($this->accountid) || $this->accountid <= 0)) {
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
+		if (isModEnabled("bank") && (empty($this->accountid) || $this->accountid <= 0)) {
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("BankAccount"));
 			return -5;
 		}
-		if (isModEnabled("banque") && (empty($this->paymenttype) || $this->paymenttype <= 0)) {
+		if (isModEnabled("bank") && (empty($this->paymenttype) || $this->paymenttype <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -5;
 		}
@@ -521,7 +524,7 @@ class Localtax extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."localtax"); // TODO devrait s'appeler paiementlocaltax
 			if ($this->id > 0) {
 				$ok = 1;
-				if (isModEnabled("banque")) {
+				if (isModEnabled("bank")) {
 					// Insertion dans llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -570,7 +573,7 @@ class Localtax extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Update the link betwen localtax payment and the line into llx_bank
+	 *	Update the link between localtax payment and the line into llx_bank
 	 *
 	 *	@param		int		$id		Id bank account
 	 *	@return		int				Return integer <0 if KO, >0 if OK

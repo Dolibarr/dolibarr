@@ -49,8 +49,8 @@ foreach ($dirmenus as $dirmenu) {
 
 $error = 0;
 
-// Cette page peut etre longue. On augmente le delai autorise.
-// Ne fonctionne que si on est pas en safe_mode.
+// This can be a big page.  The execution time limit is increased.
+// This setting can only be changed when the 'safe_mode' is inactive.
 $err = error_reporting();
 error_reporting(0); // Disable all errors
 //error_reporting(E_ALL);
@@ -63,7 +63,7 @@ error_reporting($err);
  */
 
 if ($action == 'update' && !$cancel) {
-	$_SESSION["mainmenu"] = "home"; // Le gestionnaire de menu a pu changer
+	$_SESSION["mainmenu"] = "home"; // The menu manager may have changed
 
 	dolibarr_set_const($db, "MAIN_MENU_STANDARD", GETPOST('MAIN_MENU_STANDARD', 'alpha'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MENU_SMARTPHONE", GETPOST('MAIN_MENU_SMARTPHONE', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -131,6 +131,7 @@ print load_fiche_titre($langs->trans("Menus"), '', 'title_setup');
 
 $h = 0;
 
+$head = array();
 $head[$h][0] = DOL_URL_ROOT."/admin/menus.php";
 $head[$h][1] = $langs->trans("MenuHandlers");
 $head[$h][2] = 'handler';

@@ -105,11 +105,13 @@ if (empty($pageid)) {
 	$objectpage = new WebsitePage($db);
 
 	if ($pageref) {
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$result = $objectpage->fetch(0, $object->id, $pageref);
 		if ($result > 0) {
 			$pageid = $objectpage->id;
 		} elseif ($result == 0) {
 			// Page not found from ref=pageurl, we try using alternative alias
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$result = $objectpage->fetch(0, $object->id, null, $pageref);
 			if ($result > 0) {
 				$pageid = $objectpage->id;
@@ -148,7 +150,7 @@ if (empty($pageid)) {
 
 $appli = constant('DOL_APPLICATION_TITLE');
 if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$appli = $conf->global->MAIN_APPLICATION_TITLE;
+	$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 
 
@@ -178,7 +180,7 @@ if ($pageid == 'css') {   // No more used ?
 $refname = basename(dirname($original_file)."/");
 
 // Security:
-// Limite acces si droits non corrects
+// Limit access if permissions are insufficient
 if (!$accessallowed) {
 	accessforbidden();
 }

@@ -36,7 +36,7 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 require_once $path."../../htdocs/master.inc.php";
@@ -52,6 +52,9 @@ $version = DOL_VERSION;
 $error = 0;
 $forcecommit = 0;
 $confirmed = 0;
+
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -70,7 +73,7 @@ $required_fields = array_unique(array_values(array_filter($required_fields, "dol
 if (!isset($argv[1])) {
 	// print "Usage: $script_file (nocommitiferror|commitiferror) [id_group]\n";
 	print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...] [-y]\n";
-	exit(-1);
+	exit(1);
 }
 
 foreach ($argv as $key => $val) {
@@ -120,11 +123,11 @@ if (!$confirmed) {
 
 if (!getDolGlobalString('LDAP_GROUP_DN')) {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for groups not defined inside Dolibarr");
-	exit(-1);
+	exit(1);
 }
 
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result >= 0) {
 	$justthese = array();
 
@@ -172,8 +175,8 @@ if ($result >= 0) {
 
 			// print_r($group);
 
-			// Gestion des utilisateurs associés au groupe
-			// 1 - Association des utilisateurs du groupe LDAP au groupe Dolibarr
+			// Management of the users associated with the group
+			// 1 - Association of users in the LDAP group with the Dolibarr group
 			$userList = array();
 			$userIdList = array();
 			foreach ($ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS')] as $tmpkey => $userdn) {
@@ -184,7 +187,7 @@ if ($result >= 0) {
 					// Schéma rfc2307: les membres sont listés dans l'attribut memberUid sous form de login uniquement
 					if (getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS') === 'memberUid') {
 						$userKey = array($userdn);
-					} else { // Pour les autres schémas, les membres sont listés sous forme de DN complets
+					} else { // Pour les autres schémas, les membres sont listés sous forme de DN completes
 						$userFilter = explode(',', $userdn);
 						$userKey = $ldap->getAttributeValues('('.$userFilter[0].')', getDolGlobalString('LDAP_KEY_USERS'));
 					}
@@ -207,14 +210,14 @@ if ($result >= 0) {
 
 				$userIdList[$userdn] = $fuser->id;
 
-				// Ajout de l'utilisateur dans le groupe
+				// Add the user in the group
 				if (!in_array($fuser->id, array_keys($group->members))) {
 					$fuser->SetInGroup($group->id, $group->entity);
 					echo $fuser->login.' added'."\n";
 				}
 			}
 
-			// 2 - Suppression des utilisateurs du groupe Dolibarr qui ne sont plus dans le groupe LDAP
+			// 2 - Delete users from the Dolibarr group that are no longer in the LDAP group
 			foreach ($group->members as $guser) {
 				if (!in_array($guser->id, $userIdList)) {
 					$guser->RemoveFromGroup($group->id, $group->entity);
@@ -236,11 +239,11 @@ if ($result >= 0) {
 		}
 		print "\n";
 	} else {
-		dol_print_error('', $ldap->error);
+		dol_print_error(null, $ldap->error);
 		$error++;
 	}
 } else {
-	dol_print_error('', $ldap->error);
+	dol_print_error(null, $ldap->error);
 	$error++;
 }
 

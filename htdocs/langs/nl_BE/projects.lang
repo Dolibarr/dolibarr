@@ -12,6 +12,5 @@ BillTime=Factureer de tijd besteed
 AddTimeSpent=Maak de tijd besteed
 AddHereTimeSpentForDay=Voeg hier de besteedde tijd voor deze dag / taak toe
 MyProjectsArea=Mijn projectengebied
-CurentlyOpenedTasks=Actueel openstaande taken
 WhichIamLinkedToProject=waaraan ik ben gekoppeld aan het project
 ProjectModifiedInDolibarr=Project %s gewijzigd
