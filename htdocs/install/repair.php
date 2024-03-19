@@ -1542,7 +1542,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 						((int) $obj_dispatch->fk_user),
 						$obj_dispatch->datec ? "'".$db->idate($db->jdate($obj_dispatch->datec))."'" : 'NULL',
 						$obj_dispatch->comment ? "'".$db->escape($obj_dispatch->comment)."'" : 'NULL',
-						$obj_dispatch->status ? ((int) $obj_dispatch->status) : 'NULL',
+						$obj_dispatch->status ? (string) ((int) $obj_dispatch->status) : 'NULL',
 						$obj_dispatch->tms ? "'".$db->idate($db->jdate($obj_dispatch->tms))."'" : 'NULL',
 						$obj_dispatch->batch ? "'".$db->escape($obj_dispatch->batch)."'" : 'NULL',
 						$obj_dispatch->eatby ? "'".$db->escape($obj_dispatch->eatby)."'" : 'NULL',

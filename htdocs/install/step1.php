@@ -859,7 +859,7 @@ function write_conf_file($conffile)
 
 	$error = 0;
 
-	$key = md5(uniqid(mt_rand(), true)); // Generate random hash
+	$key = md5(uniqid((string) mt_rand(), true)); // Generate random hash
 
 	$fp = fopen("$conffile", "w");
 	if ($fp) {

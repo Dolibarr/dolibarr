@@ -2141,7 +2141,7 @@ class BonPrelevement extends CommonObject
 	 *	@param	string		$row_cb				pl.code_banque AS cb,		Not used for SEPA
 	 *	@param	string		$row_cg				pl.code_guichet AS cg,		Not used for SEPA
 	 *	@param	string		$row_cc				pl.number AS cc,			Not used for SEPA
-	 *	@param	string		$row_somme			pl.amount AS somme,
+	 *	@param	float		$row_somme			pl.amount AS somme,
 	 *	@param	string		$row_ref			Invoice ref (f.ref) or Salary ref
 	 *	@param	int			$row_idfac			p.fk_facture AS idfac or p.fk_facture_fourn or p.fk_salary,
 	 *	@param	string		$row_iban			rib.iban_prefix AS iban,
@@ -2179,7 +2179,7 @@ class BonPrelevement extends CommonObject
 			// Add EndToEndId. Must be a unique ID for each payment (for example by including bank, buyer or seller, date, checksum)
 			$XML_DEBITOR .= '					<EndToEndId>'.((getDolGlobalString('PRELEVEMENT_END_TO_END') != "") ? $conf->global->PRELEVEMENT_END_TO_END : ('DD-'.dol_trunc($row_idfac.'-'.$row_ref, 20, 'right', 'UTF-8', 1)).'-'.$Rowing).'</EndToEndId>'.$CrLf; // ISO20022 states that EndToEndId has a MaxLength of 35 characters
 			$XML_DEBITOR .= '				</PmtId>'.$CrLf;
-			$XML_DEBITOR .= '				<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
+			$XML_DEBITOR .= '				<InstdAmt Ccy="EUR">'.round((float) $row_somme, 2).'</InstdAmt>'.$CrLf;
 			$XML_DEBITOR .= '				<DrctDbtTx>'.$CrLf;
 			$XML_DEBITOR .= '					<MndtRltdInf>'.$CrLf;
 			$XML_DEBITOR .= '						<MndtId>'.$Rum.'</MndtId>'.$CrLf;
@@ -2244,7 +2244,7 @@ class BonPrelevement extends CommonObject
 				$XML_CREDITOR .= '				</PmtTpInf>' . $CrLf;
 			}
 			$XML_CREDITOR .= '				<Amt>'.$CrLf;
-			$XML_CREDITOR .= '					<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
+			$XML_CREDITOR .= '					<InstdAmt Ccy="EUR">'.round((float) $row_somme, 2).'</InstdAmt>'.$CrLf;
 			$XML_CREDITOR .= '				</Amt>'.$CrLf;
 			/*
 			 $XML_CREDITOR .= '				<DrctDbtTx>'.$CrLf;

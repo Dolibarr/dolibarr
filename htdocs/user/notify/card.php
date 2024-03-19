@@ -217,8 +217,10 @@ if ($result > 0) {
 	// Help
 	print '<span class="opacitymedium">';
 	print '<br>'.$langs->trans("NotificationsDesc");
-	print '<br>'.$langs->trans("NotificationsDescUser");
-	print '<br>'.$langs->trans("NotificationsDescContact");
+	print '<br>'.$langs->trans("NotificationsDescUser").' - '.$langs->trans("YouAreHere");
+	if (isModEnabled('societe')) {
+		print '<br>'.$langs->trans("NotificationsDescContact");
+	}
 	print '<br>'.$langs->trans("NotificationsDescGlobal");
 	print '</span>';
 
@@ -269,12 +271,11 @@ if ($result > 0) {
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
-	$title = $langs->trans("ListOfActiveNotifications");
+	$titlelist = $langs->trans("ListOfActiveNotifications");
 
 	// List of active notifications
-	//print load_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')', '', '');
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $num, 'email', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($titlelist, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $num, 'email', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	// Line with titles
 	print '<table width="100%" class="noborder">';

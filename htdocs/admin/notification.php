@@ -181,7 +181,7 @@ print $langs->trans("NotificationsDescUser").'<br>';
 if (isModEnabled("societe")) {
 	print $langs->trans("NotificationsDescContact").'<br>';
 }
-print $langs->trans("NotificationsDescGlobal").'<br>';
+print $langs->trans("NotificationsDescGlobal").' - '.$langs->trans("YouAreHere").'<br>';
 print '</span>';
 print '<br>';
 

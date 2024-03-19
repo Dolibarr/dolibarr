@@ -916,10 +916,10 @@ foreach ($searchCategorySupplierList as $searchCategorySupplier) {
 	$param .= "&search_category_supplier_list[]=".urlencode($searchCategorySupplier);
 }
 if ($search_sale > 0) {
-	$param .= '&search_sale='.urlencode((string) ($search_sale));
+	$param .= '&search_sale='.((int) $search_sale);
 }
 if ($search_id > 0) {
-	$param .= "&search_id=".urlencode($search_id);
+	$param .= "&search_id=".((int) $search_id);
 }
 if ($search_nom != '') {
 	$param .= "&search_nom=".urlencode($search_nom);

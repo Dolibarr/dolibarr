@@ -1731,8 +1731,8 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		$maxnbofchar = 80;
 
 		$tmp = explode('-', getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS'));
-		$minhour = round($tmp[0], 0);
-		$maxhour = round($tmp[1], 0);
+		$minhour = round((float) $tmp[0], 0);
+		$maxhour = round((float) $tmp[1], 0);
 		if ($minhour > 23) {
 			$minhour = 23;
 		}
@@ -1819,10 +1819,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	print "\n";
 
 	$curtime = dol_mktime(0, 0, 0, $month, $day, $year);
-	$urltoshow = DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year.$newparam;
+	$urltoshow = DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&day='.str_pad((string) $day, 2, "0", STR_PAD_LEFT).'&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$year.$newparam;
 	$urltocreate = '';
 	if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
-		$newparam .= '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
+		$newparam .= '&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$year;
 		$hourminsec = '100000';
 		$urltocreate = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $year, $month, $day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
 	}

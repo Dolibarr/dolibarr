@@ -177,9 +177,9 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 			$thirdpartylabelexample = preg_replace('/([^a-z0-9])/i', '', $mysoc->name);
 		}
 		$s .= "<br>\n";
-		$s .= $this->prefixcustomeraccountancycode.strtoupper(substr($thirdpartylabelexample, 0, $this->customeraccountancycodecharacternumber));
+		$s .= $this->prefixcustomeraccountancycode.strtoupper(substr($thirdpartylabelexample, 0, (int) $this->customeraccountancycodecharacternumber));
 		$s .= "<br>\n";
-		$s .= $this->prefixsupplieraccountancycode.strtoupper(substr($thirdpartylabelexample, 0, $this->supplieraccountancycodecharacternumber));
+		$s .= $this->prefixsupplieraccountancycode.strtoupper(substr($thirdpartylabelexample, 0, (int) $this->supplieraccountancycodecharacternumber));
 		return $s;
 	}
 
@@ -231,7 +231,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 				$codetouse = preg_replace('/' . getDolGlobalString('COMPANY_DIGITARIA_CLEAN_REGEX').'/', '\1\2\3', $codetouse);
 			}
 
-			$this->code = $prefix.strtoupper(substr($codetouse, 0, $width));
+			$this->code = $prefix.strtoupper(substr($codetouse, 0, (int) $width));
 			dol_syslog("mod_codecompta_digitaria::get_code search code proposed=".$this->code, LOG_DEBUG);
 
 			// Unique index on code if COMPANY_DIGITARIA_UNIQUE_CODE is set to 1 or not set (default)
