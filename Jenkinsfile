@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        node {
+            label 'Built-In Node'
+        }
+    }
     
     environment {
         // Define environment variables for Dockerfile and docker-compose file paths
