@@ -275,8 +275,6 @@ if ($result > 0) {
 	print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, 'width="35%"', $sortfield, $sortorder);
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, 'width="10%"', $sortfield, $sortorder);
 	print_liste_field_titre('');
-	print_liste_field_titre('');
-
 	print "</tr>\n";
 
 	// Line to add a new subscription
@@ -313,8 +311,10 @@ if ($result > 0) {
 			$type = array('email' => $langs->trans("EMail"));
 			print $form->selectarray("typeid", $type, '', 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 			print '</td>';
-			print '<td class="right"><input type="submit" class="button button-add small" value="'.$langs->trans("Add").'"></td>';
-			print '<td class="right"><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
+			print '<td class="right nowraponall">';
+			print '<input type="submit" class="button button-add small" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" class="button button-cancel small" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '</td>';
 			print '</tr>';
 		} else {
 			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">';
@@ -345,8 +345,9 @@ if ($result > 0) {
 					}
 				}
 				print '</td>';
-				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($label).'">';
+
 				$label = ($langs->trans("Notify_".$obj->code) != "Notify_".$obj->code ? $langs->trans("Notify_".$obj->code) : $obj->label);
+				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($label).'">';
 				print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$label;
 				print '</td>';
 				print '<td>';
@@ -362,57 +363,9 @@ if ($result > 0) {
 				$i++;
 			}
 			$db->free($resql);
+		} else {
+			print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
-
-		// List of notifications enabled for fixed email
-		/*
-		foreach($conf->global as $key => $val)
-		{
-			if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
-			print '<tr class="oddeven"><td>';
-			$listtmp=explode(',',$val);
-			$first=1;
-			foreach($listtmp as $keyemail => $valemail)
-			{
-				if (! $first) print ', ';
-				$first=0;
-				$valemail=trim($valemail);
-				//print $keyemail.' - '.$valemail.' - '.$reg[1].'<br>';
-				if (isValidEmail($valemail, 1))
-				{
-					if ($valemail == '__SUPERVISOREMAIL__') print $valemail;
-					else print ' &lt;'.$valemail.'&gt;';
-				}
-				else
-				{
-					$langs->load("errors");
-					print ' '.img_warning().' <span class="warning">'.$langs->trans("ErrorBadEMail",$valemail).'</span>;
-				}
-			}
-			print '</td>';
-			print '<td>';
-			$notifcode=preg_replace('/_THRESHOLD_.*$/','',$reg[1]);
-			$notifcodecond=preg_replace('/^.*_(THRESHOLD_)/','$1',$reg[1]);
-			$label=($langs->trans("Notify_".$notifcode)!="Notify_".$notifcode?$langs->trans("Notify_".$notifcode):$notifcode);
-			print $label;
-			if (preg_match('/^THRESHOLD_HIGHER_(.*)$/',$notifcodecond,$regcond) && ($regcond[1] > 0))
-			{
-				print ' - '.$langs->trans("IfAmountHigherThan",$regcond[1]);
-			}
-			print '</td>';
-			print '<td>';
-			print $langs->trans("Email");
-			print '</td>';
-			print '<td class="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
-			print '</tr>';
-		}*/
-
-		/*if ($user->admin)
-		{
-			print '<tr class="oddeven"><td colspan="4">';
-			print '+ <a href="'.DOL_URL_ROOT.'/admin/notification.php">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</a>';
-			print '</td></tr>';
-		}*/
 	}
 
 
