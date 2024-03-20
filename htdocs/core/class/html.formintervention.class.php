@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012-2013  Charles-Fr BENKE		<charles.fr@benke.fr>
+/* Copyright (C) 2012-2023  Charlene BENKE		<charlene.r@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,12 +74,10 @@ class FormIntervention
 		$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut";
 		$sql .= " FROM ".$this->db->prefix()."fichinter as f";
 		$sql .= " WHERE f.entity = ".$conf->entity;
-		if ($socid != '') {
-			if ($socid == '0') {
-				$sql .= " AND (f.fk_soc = 0 OR f.fk_soc IS NULL)";
-			} else {
+		if ($socid  > 0) {
 				$sql .= " AND f.fk_soc = ".((int) $socid);
-			}
+		} else {
+				$sql .= " AND (f.fk_soc = 0 OR f.fk_soc IS NULL)";
 		}
 		if ($draftonly) {
 			$sql .= " AND f.fk_statut = 0";
