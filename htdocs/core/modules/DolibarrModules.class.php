@@ -1126,7 +1126,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 *
 	 * @param  	string 	$reldir 			Relative directory where to scan files. Example: '/install/mysql/' or '/module/sql/'
 	 * @param	string	$onlywithsuffix		Only with the defined suffix
-	 * @return 	int             			Return integer <=0 if KO, >0 if OK
+	 * @return 	int<0,1>             			Return integer <=0 if KO, >0 if OK
 	 */
 	protected function _load_tables($reldir, $onlywithsuffix = '')
 	{
@@ -1135,6 +1135,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$error = 0;
 		$dirfound = 0;
+		$ok = 1;
 
 		if (empty($reldir)) {
 			return 1;
@@ -1142,9 +1143,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-		$ok = 1;
 		foreach ($conf->file->dol_document_root as $dirroot) {
-			if ($ok) {
+			if ($ok == 1) {
 				$dirsql = $dirroot.$reldir;
 				$ok = 0;
 
