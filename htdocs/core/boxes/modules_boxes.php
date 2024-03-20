@@ -295,7 +295,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 			if ($nblines) {
 				// Loop on each record
 				foreach (array_keys($contents) as $i) {
-					if (isset($contents[$i])) {
+					if (isset($contents[$i]) && is_array($contents[$i])) {
 						// TR
 						if (isset($contents[$i][0]['tr'])) {
 							$out .= '<tr '.$contents[$i][0]['tr'].'>';
