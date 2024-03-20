@@ -23,7 +23,7 @@ create table llx_expeditiondet
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   fk_expedition     integer NOT NULL,
-  fk_origin_line    integer,           -- should be renamed into fk_elementdet. The ID of line of source object (proposal, sale order)
+  fk_elementdet    integer,           -- should be renamed into fk_elementdet. The ID of line of source object (proposal, sale order)
   element_type   	varchar(50) DEFAULT 'order' NOT NULL,
   fk_entrepot       integer,           -- Entrepot de depart du produit
   qty               real,              -- Quantity
