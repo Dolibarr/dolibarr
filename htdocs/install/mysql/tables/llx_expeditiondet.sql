@@ -15,15 +15,15 @@
 --
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
---
--- doe not contains the batch
 -- ===================================================================
+
+-- Note: does not contains the batch, the table on supplier side llx_receptiondet_batch does.
 
 create table llx_expeditiondet
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   fk_expedition     integer NOT NULL,
-  fk_origin_line    integer,           -- Correspondance de la ligne avec le document d'origine (propal, commande)
+  fk_origin_line    integer,           -- should be renamed into fk_elementdet. The ID of line of source object (proposal, sale order)
   fk_entrepot       integer,           -- Entrepot de depart du produit
   qty               real,              -- Quantity
   rang              integer  DEFAULT 0
