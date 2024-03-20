@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=貝寶模塊設置
-PaypalDesc=此模塊允許客戶通過 <span class='notranslate'><a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"></span> 付款\n 貝寶 </a> 。這可用於臨時付款或與 Dolibarr 對象（發票、訂單等）相關的付款
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for a ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=使用 PayPal 付款（銀行卡或 PayPal）
 PaypalDoPayment=使用貝寶支付
 PAYPAL_API_SANDBOX=模式測試/沙箱
@@ -12,7 +12,7 @@ PAYPAL_API_INTEGRAL_OR_PAYPALONLY=提供“積分”付款（信用卡+PayPal）
 PaypalModeIntegral=不可缺少的
 PaypalModeOnlyPaypal=僅限貝寶
 ONLINE_PAYMENT_CSS_URL=Optional URL of CSS stylesheet on online payment page
-ThisIsTransactionId=這是交易 ID：<b> %s </b> 
+ThisIsTransactionId=這是交易 ID：<b> %s </b>
 PAYPAL_ADD_PAYMENT_URL=通過電子郵件發送文檔時包含 PayPal 付款網址
 NewOnlinePaymentReceived=New online payment received
 NewOnlinePaymentFailed=New online payment tried but failed

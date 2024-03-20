@@ -77,7 +77,7 @@ function tax_prepare_head(ChargeSociales $object)
 	$head[$h][0] = DOL_URL_ROOT.'/compta/sociales/note.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Notes');
 	if ($nbNote > 0) {
-		$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
+		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
 	}
 	$head[$h][2] = 'note';
 	$h++;
@@ -107,7 +107,7 @@ function tax_prepare_head(ChargeSociales $object)
  *  @param  string	$direction   	'sell' or 'buy'
  *  @param  int		$m				Month
  *  @param  int		$q           	Quarter
- *  @return array|int               Array with details of VATs (per third parties), -1 if no accountancy module, -2 if not yet developped, -3 if error
+ *  @return array|int               Array with details of VATs (per third parties), -1 if no accountancy module, -2 if not yet developed, -3 if error
  */
 function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $direction, $m = 0, $q = 0)
 {
@@ -115,7 +115,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 
 	// If we use date_start and date_end, we must not use $y, $m, $q
 	if (($date_start || $date_end) && (!empty($y) || !empty($m) || !empty($q))) {
-		dol_print_error('', 'Bad value of input parameter for tax_by_rate');
+		dol_print_error(null, 'Bad value of input parameter for tax_by_rate');
 	}
 
 	$list = array();
@@ -176,13 +176,13 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
 		if ($direction == 'buy') {
-			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$sql .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3,5)";
 			}
 		} else {
-			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$sql .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3,5)";
@@ -206,7 +206,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		}
 		$sql .= " AND (d.product_type = 0"; // Limit to products
 		$sql .= " AND d.date_start is null AND d.date_end IS NULL)"; // enhance detection of products
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
+		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		}
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture;
@@ -232,13 +232,13 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
 		if ($direction == 'buy') {
-			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$sql .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3,5)";
 			}
 		} else {
-			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$sql .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3,5)";
@@ -264,7 +264,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		}
 		$sql .= " AND (d.product_type = 0"; // Limit to products
 		$sql .= " AND d.date_start is null AND d.date_end IS NULL)"; // enhance detection of products
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
+		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		}
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
@@ -378,13 +378,13 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
 		if ($direction == 'buy') {
-			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$sql .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3,5)";
 			}
 		} else {
-			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$sql .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3,5)";
@@ -408,7 +408,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		}
 		$sql .= " AND (d.product_type = 1"; // Limit to services
 		$sql .= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)"; // enhance detection of service
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
+		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		}
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture;
@@ -434,13 +434,13 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
 		if ($direction == 'buy') {
-			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$sql .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3,5)";
 			}
 		} else {
-			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$sql .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3,5)";
@@ -466,7 +466,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		}
 		$sql .= " AND (d.product_type = 1"; // Limit to services
 		$sql .= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)"; // enhance detection of service
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
+		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		}
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
@@ -589,7 +589,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		}
 		$sql .= " AND (d.product_type = -1";
 		$sql .= " OR e.date_debut is NOT null OR e.date_fin IS NOT NULL)"; // enhance detection of service
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
+		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$f_rate." <> 0 OR d.total_tva <> 0)";
 		}
 		$sql .= " ORDER BY e.rowid";
@@ -696,7 +696,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
  *  @param  int		$modetax     	Not used
  *  @param  int		$direction   	'sell' (customer invoice) or 'buy' (supplier invoices)
  *  @param  int		$m           	Month
- *  @return array|int               Array with details of VATs (per rate), -1 if no accountancy module, -2 if not yet developped, -3 if error
+ *  @return array|int               Array with details of VATs (per rate), -1 if no accountancy module, -2 if not yet developed, -3 if error
  */
 function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $direction, $m = 0)
 {
@@ -704,7 +704,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 
 	// If we use date_start and date_end, we must not use $y, $m, $q
 	if (($date_start || $date_end) && (!empty($y) || !empty($m) || !empty($q))) {
-		dol_print_error('', 'Bad value of input parameter for tax_by_rate');
+		dol_print_error(null, 'Bad value of input parameter for tax_by_rate');
 	}
 
 	$list = array();
@@ -766,13 +766,13 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
 		if ($direction == 'buy') {
-			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$sql .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3,5)";
 			}
 		} else {
-			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$sql .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3,5)";
@@ -794,7 +794,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		}
 		$sql .= " AND (d.product_type = 0"; // Limit to products
 		$sql .= " AND d.date_start is null AND d.date_end IS NULL)"; // enhance detection of products
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
+		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		}
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture;
@@ -820,13 +820,13 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
 		if ($direction == 'buy') {
-			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$sql .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3,5)";
 			}
 		} else {
-			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$sql .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3,5)";
@@ -848,7 +848,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		}
 		$sql .= " AND (d.product_type = 0"; // Limit to products
 		$sql .= " AND d.date_start is null AND d.date_end IS NULL)"; // enhance detection of products
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
+		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		}
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
@@ -967,13 +967,13 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
 		if ($direction == 'buy') {
-			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$sql .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3,5)";
 			}
 		} else {
-			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$sql .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3,5)";
@@ -995,7 +995,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		}
 		$sql .= " AND (d.product_type = 1"; // Limit to services
 		$sql .= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)"; // enhance detection of service
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
+		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		}
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture;
@@ -1021,13 +1021,13 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
 		if ($direction == 'buy') {
-			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$sql .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3,5)";
 			}
 		} else {
-			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$sql .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3,5)";
@@ -1049,7 +1049,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		}
 		$sql .= " AND (d.product_type = 1"; // Limit to services
 		$sql .= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)"; // enhance detection of service
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
+		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		}
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
@@ -1177,7 +1177,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		}
 		$sql .= " AND (d.product_type = -1";
 		$sql .= " OR e.date_debut is NOT null OR e.date_fin IS NOT NULL)"; // enhance detection of service
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
+		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$f_rate." <> 0 OR d.total_tva <> 0)";
 		}
 		$sql .= " ORDER BY e.rowid";

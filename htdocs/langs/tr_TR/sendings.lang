@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Doğrulanmış
 StatusSendingProcessedShort=İşlenmiş
 SendingSheet=Sevkiyat tablosu
 ConfirmDeleteSending=Bu sevkiyatı silmek istediğinizden emin misiniz?
-ConfirmValidateSending=<b>%s</b> referanslı bu gönderiyi doğrulamak istediğiniz emin misiniz?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=Bu gönderiyi iptal etmek istediğinizden emin misiniz?
 DocumentModelMerou=Merou A5 modeli
 WarningNoQtyLeftToSend=Uyarı, sevkiyat için bekleyen herhangi bir ürün yok.
@@ -48,7 +48,7 @@ DateDeliveryPlanned=Teslimat için planlanan tarih
 RefDeliveryReceipt=Teslimat makbuzu referansı
 StatusReceipt=Status delivery receipt
 DateReceived=Teslim alınan tarih
-ClassifyReception=Classify reception
+ClassifyReception=Classify Received
 SendShippingByEMail=Sevkiyatı  e-posta ile gönder
 SendShippingRef=% Nakliyatının yapılması
 ActionsOnShipping=Sevkiyattaki etkinlikler
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open purchase
 NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
 WeightVolShort=Ağırlık/Hac.
 ValidateOrderFirstBeforeShipment=Sevkiyatları yapabilmek için önce siparişi doğrulamlısınız.
+NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
 
 # Sending methods
 # ModelDocument
@@ -74,3 +75,12 @@ SumOfProductWeights=Ürün ağırlıkları toplamı
 # warehouse details
 DetailWarehouseNumber= Depo ayrıntıları
 DetailWarehouseFormat= W:%s (Qty: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

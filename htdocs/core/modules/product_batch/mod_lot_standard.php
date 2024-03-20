@@ -2,6 +2,8 @@
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2021       Christophe Battarel			<christophe@altairis.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,9 +54,10 @@ class mod_lot_standard extends ModeleNumRefBatch
 	/**
 	 *  Return description of numbering module
 	 *
-	 *  @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -76,13 +79,15 @@ class mod_lot_standard extends ModeleNumRefBatch
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @return     boolean     false if conflict, true if ok
+	 *	@param	CommonObject	$object	Object we need next value for
+	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
-		$coyymm = ''; $max = '';
+		$coyymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(batch FROM ".$posindice.") AS SIGNED)) as max";
@@ -99,7 +104,7 @@ class mod_lot_standard extends ModeleNumRefBatch
 				$max = 0;
 			}
 		}
-		if ($max && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $max)) {
+		if ($max && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', (string) $max)) {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
@@ -113,7 +118,7 @@ class mod_lot_standard extends ModeleNumRefBatch
 	 *
 	 *  @param	Societe		$objsoc	    Object thirdparty
 	 *  @param  Productlot	$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @return string|-1      			Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -127,7 +132,7 @@ class mod_lot_standard extends ModeleNumRefBatch
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)	{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
 				$max = intval($obj->max);
@@ -141,10 +146,13 @@ class mod_lot_standard extends ModeleNumRefBatch
 
 		//$date=time();
 		$date = dol_now();
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
-		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s", $max + 1);
+		if ($max >= (pow(10, 4) - 1)) {
+			$num = $max + 1;
+		} else { // If counter > 9999, we do not format on 4 chars, we take number as it is
+			$num = sprintf("%04d", $max + 1);
+		}
 
 		dol_syslog("mod_lot_standard::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;

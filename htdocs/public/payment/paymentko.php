@@ -22,7 +22,7 @@
  *		\ingroup    core
  *		\brief      File to show page after a failed payment.
  *                  This page is called by payment system with url provided to it competed with parameter TOKEN=xxx
- *                  This token can be used to get more informations.
+ *                  This token can be used to get more information.
  */
 
 if (!defined('NOLOGIN')) {
@@ -166,8 +166,8 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 
 	// Send an email
 	$sendemail = '';
-	if (!empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) {
-		$sendemail = $conf->global->ONLINE_PAYMENT_SENDEMAIL;
+	if (getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL')) {
+		$sendemail = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL');
 	}
 
 	// Send warning of error to administrator
@@ -176,7 +176,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 		$companylangs->setDefaultLang($mysoc->default_lang);
 		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox'));
 
-		$from = !empty($conf->global->MAILING_EMAIL_FROM) ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
+		$from = getDolGlobalString('MAILING_EMAIL_FROM') ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
 		$sendto = $sendemail;
 
 		$urlback = $_SERVER["REQUEST_URI"];
@@ -209,8 +209,8 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 }
 
 $head = '';
-if (!empty($conf->global->ONLINE_PAYMENT_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (getDolGlobalString('ONLINE_PAYMENT_CSS_URL')) {
+	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;
@@ -230,9 +230,9 @@ $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
 if (!empty($conf->global->$paramlogo)) {
-	$logosmall = $conf->global->$paramlogo;
-} elseif (!empty($conf->global->ONLINE_PAYMENT_LOGO)) {
-	$logosmall = $conf->global->ONLINE_PAYMENT_LOGO;
+	$logosmall = getDolGlobalString($paramlogo);
+} elseif (getDolGlobalString('ONLINE_PAYMENT_LOGO')) {
+	$logosmall = getDolGlobalString('ONLINE_PAYMENT_LOGO');
 }
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
@@ -253,14 +253,14 @@ if ($urllogo) {
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
 	print '>';
 	print '</div>';
-	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+	if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
 		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
 	print '</div>';
 }
-if (!empty($conf->global->MAIN_IMAGE_PUBLIC_PAYMENT)) {
+if (getDolGlobalString('MAIN_IMAGE_PUBLIC_PAYMENT')) {
 	print '<div class="backimagepublicpayment">';
-	print '<img id="idMAIN_IMAGE_PUBLIC_PAYMENT" src="'.$conf->global->MAIN_IMAGE_PUBLIC_PAYMENT.'">';
+	print '<img id="idMAIN_IMAGE_PUBLIC_PAYMENT" src="' . getDolGlobalString('MAIN_IMAGE_PUBLIC_PAYMENT').'">';
 	print '</div>';
 }
 

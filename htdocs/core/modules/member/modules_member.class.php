@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,19 +28,15 @@
  *  \brief      File with parent class for generating members to PDF
  */
 
- require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
+
 
 /**
  *	Parent class to manage intervention document templates
  */
 abstract class ModelePDFMember extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of active generation modules
@@ -63,115 +60,10 @@ abstract class ModelePDFMember extends CommonDocGenerator
 
 
 /**
- *  Classe mere des modeles de numerotation des references de members
+ *  Class mere des modeles de numerotation des references de members
  */
-abstract class ModeleNumRefMembers
+abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 {
-
-	public $code_modifiable; // Editable code
-
-	public $code_modifiable_invalide; // Modified code if it is invalid
-
-	public $code_modifiable_null; // Modified code if it is null
-
-	public $code_null; //
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 *  Return if a module can be used or not
-	 *
-	 *  @return		boolean     true if module can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**
-	 *  Returns the default description of the numbering pattern
-	 *
-	 *  @return     string      Descriptive text
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("members");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 * Return name of module
-	 *
-	 *  @return string Module name
-	 */
-	public function getName()
-	{
-		return $this->name;
-	}
-
-	/**
-	 *  Return an example of numbering
-	 *
-	 *  @return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("members");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *  Checks if the numbers already in the database do not
-	 *  cause conflicts that would prevent this numbering working.
-	 *
-	 *  @return     boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 *  Renvoi prochaine valeur attribuee
-	 *
-	 *	@param	Societe		$objsoc		Object third party
-	 *  @param  Object		$object		Object we need next value for
-	 *	@return	string					Valeur
-	 */
-	public function getNextValue($objsoc, $object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 *  Renvoi version du module numerotation
-	 *
-	 *  @return     string      Valeur
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		} elseif ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		} elseif ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		} else {
-			return $langs->trans("NotAvailable");
-		}
-	}
-
 	/**
 	 *  Return description of module parameters
 	 *
@@ -187,16 +79,16 @@ abstract class ModeleNumRefMembers
 
 		$strikestart = '';
 		$strikeend = '';
-		if (!empty($conf->global->MAIN_MEMBER_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+		if (getDolGlobalString('MAIN_MEMBER_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 			$strikestart = '<strike>';
 			$strikeend = '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 		}
 
 		$s = '';
-		$s .= $langs->trans("Name").': <b>'.$this->getName().'</b><br>';
+		$s .= $langs->trans("Name").': <b>'.$this->getName($langs).'</b><br>';
 		$s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
 		$s .= $langs->trans("MemberCodeDesc").'<br>';
-		$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getName().'</b><br>';
+		$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getName($langs).'</b><br>';
 		$s .= '<br>';
 		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
 
@@ -216,5 +108,17 @@ abstract class ModeleNumRefMembers
 		$s .= $langs->trans("NextValue").' ('.$langs->trans("Member").'): <b>'.$nextval.'</b><br>';
 
 		return $s;
+	}
+
+	/**
+	 *  Return next value
+	 *
+	 *  @param  Societe		$objsoc		Object third party
+	 *  @param  Adherent	$object		Object we need next value for
+	 *  @return	string					next value
+	 */
+	public function getNextValue($objsoc, $object)
+	{
+		return '';
 	}
 }

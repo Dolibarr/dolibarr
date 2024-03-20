@@ -152,19 +152,19 @@ if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice') {
 if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 	$description .= '<br>'.$langs->trans("RulesVATInServices");
 }
-if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$description .= '<br>'.$langs->trans("DepositsAreNotIncluded");
 }
-if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$description .= $langs->trans("SupplierDepositsAreNotIncluded");
 }
-if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
+if (isModEnabled('accounting')) {
 	$description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
 }
 
 //$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
 $description .= ($description ? '<br>' : '').$fsearch;
-if (!empty($conf->global->TAX_REPORT_EXTRA_REPORT)) {
+if (getDolGlobalString('TAX_REPORT_EXTRA_REPORT')) {
 	$description .= '<br>';
 	$description .= '<input type="radio" name="extra_report" value="0" '.($special_report ? '' : 'checked="checked"').'> ';
 	$description .= $langs->trans('SimpleReport');
@@ -244,7 +244,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$company_static->name = $x_coll[$my_coll_thirdpartyid]['company_name'][$id];
 			$company_static->name_alias = $x_coll[$my_coll_thirdpartyid]['company_alias'][$id];
 			$company_static->email = $x_coll[$my_coll_thirdpartyid]['company_email'][$id];
-			$company_static->tva_intra = isset($x_coll[$my_coll_thirdpartyid]['tva_intra'][$id])?$x_coll[$my_coll_thirdpartyid]['tva_intra'][$id]:0;
+			$company_static->tva_intra = isset($x_coll[$my_coll_thirdpartyid]['tva_intra'][$id]) ? $x_coll[$my_coll_thirdpartyid]['tva_intra'][$id] : 0;
 			$company_static->client = $x_coll[$my_coll_thirdpartyid]['company_client'][$id];
 			$company_static->fournisseur = $x_coll[$my_coll_thirdpartyid]['company_fournisseur'][$id];
 			$company_static->status = $x_coll[$my_coll_thirdpartyid]['company_status'][$id];
@@ -258,13 +258,13 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				'descr'     =>$x_coll[$my_coll_thirdpartyid]['descr'][$id],
 
 				'pid'       =>$x_coll[$my_coll_thirdpartyid]['pid'][$id],
-				'pref'      =>isset($x_coll[$my_coll_thirdpartyid]['pref'][$id])?$x_coll[$my_coll_thirdpartyid]['pref'][$id]:'',
+				'pref'      =>isset($x_coll[$my_coll_thirdpartyid]['pref'][$id]) ? $x_coll[$my_coll_thirdpartyid]['pref'][$id] : '',
 				'ptype'     =>$x_coll[$my_coll_thirdpartyid]['ptype'][$id],
-				'pstatus'   =>isset($x_paye[$my_coll_thirdpartyid]['pstatus'][$id])?$x_paye[$my_coll_thirdpartyid]['pstatus'][$id]:'',
-				'pstatusbuy'=>isset($x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id])?$x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id]:'',
+				'pstatus'   =>isset($x_paye[$my_coll_thirdpartyid]['pstatus'][$id]) ? $x_paye[$my_coll_thirdpartyid]['pstatus'][$id] : '',
+				'pstatusbuy'=>isset($x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id]) ? $x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id] : '',
 
 				'payment_id'=>$x_coll[$my_coll_thirdpartyid]['payment_id'][$id],
-				'payment_ref'=>isset($x_coll[$my_coll_thirdpartyid]['payment_ref'][$id])?$x_coll[$my_coll_thirdpartyid]['payment_ref'][$id]:'',
+				'payment_ref'=>isset($x_coll[$my_coll_thirdpartyid]['payment_ref'][$id]) ? $x_coll[$my_coll_thirdpartyid]['payment_ref'][$id] : '',
 				'payment_amount'=>$x_coll[$my_coll_thirdpartyid]['payment_amount'][$id],
 				'ftotal_ttc'=>$x_coll[$my_coll_thirdpartyid]['ftotal_ttc'][$id],
 				'dtotal_ttc'=>$x_coll[$my_coll_thirdpartyid]['dtotal_ttc'][$id],
@@ -526,7 +526,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 						}
 						if (($type == 0 && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
 							|| ($type == 1 && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')) {
-								print $langs->trans("NA");
+							print $langs->trans("NA");
 						} else {
 							if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
 								$ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);

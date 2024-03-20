@@ -46,8 +46,12 @@ $arrayofparameters = array(
 //	'ZAPIERFORDOLIBARR_MYPARAM2'=>array('css'=>'minwidth500', 'enabled'=>1)
 );
 
-if (!isModEnabled('zapier')) accessforbidden();
-if (empty($user->admin)) accessforbidden();
+if (!isModEnabled('zapier')) {
+	accessforbidden();
+}
+if (empty($user->admin)) {
+	accessforbidden();
+}
 
 
 /*

@@ -34,7 +34,6 @@ PaymentEvent=Pagamento do evento
 NewRegistration=Rexistro
 EventOrganizationSetup=Configuración da Organización de Eventos
 EventOrganization=Organización de eventos
-Settings=Configuracións
 EventOrganizationSetupPage = Páxina de configuración da Organización de Eventos
 EVENTORGANIZATION_TASK_LABEL = Etiqueta de tarefas para crear automaticamente cando o proxecto é validado 
 EVENTORGANIZATION_TASK_LABELTooltip = Cando valida un evento organizado, pódense crear automaticamente algunhas tarefas no proxecto<br><br>Por exemplo<br>Enviar Chamada para Conferencias<br>Enviar Chamada para Stand<br>validar suxerencias para Conferencias<br>Validar aplicacións para Stand<br>Abrir subscricións a eventos para os participantes<br>Enviar lembranza do evento aos ponentes<br>Enviar lembranza do evento aos anfitrións do Stand<br>Enviar lembranza do evento aos asistentes
@@ -98,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = Semente para asegurar a chave da páxina pública 
 SERVICE_BOOTH_LOCATION = Servizo empregado para a fila de facturas sobre a situación do stand
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Servizo utilizado para a fila da factura sobre a subscrición dun asistente a un evento
 NbVotes=Número de votos 
+
 #
 # Status
 #
@@ -106,9 +106,10 @@ EvntOrgSuggested = Suxerido
 EvntOrgConfirmed = Confirmado 
 EvntOrgNotQualified = Non cualificado 
 EvntOrgDone = Realizados
-EvntOrgCancelled = Cancelado 
+EvntOrgCancelled = Anulado
+
 #
-# Public page
+# Other
 #
 SuggestForm = Páxina de suxestións
 SuggestOrVoteForConfOrBooth = Páxina para suxestión ou voto 
@@ -144,13 +145,8 @@ OrganizationEventBulkMailToAttendees=Esta é unha lembranza da súa participaci�
 OrganizationEventBulkMailToSpeakers=Esta é unha lembranza da súa participación no evento como ponente 
 OrganizationEventLinkToThirdParty=Ligazón a terceiros (cliente, provedor ou asociado) 
 OrganizationEvenLabelName=Nome público da conferencia ou posto
-
 NewSuggestionOfBooth=Solicitude de stand
 NewSuggestionOfConference=Solicitude para realizar unha conferencia
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = Benvido á páxina de suxestións de conferencias ou stands. 
 EvntOrgRegistrationConfWelcomeMessage = Benvida á páxina de suxestións de conferencia
 EvntOrgRegistrationBoothWelcomeMessage = Benvida á páxina de suxestións de stands
@@ -158,8 +154,8 @@ EvntOrgVoteHelpMessage = Aquí pode ver e votar os eventos suxeridos para o prox
 VoteOk = O seu voto foi aceptado
 AlreadyVoted = Xa votou para este evento
 VoteError = Produciuse un erro durante a votación, ténteo de novo. 
-
 SubscriptionOk=O seu rexistro foi gravado
+AmountOfRegistrationPaid=Importe da subscrición pagada
 ConfAttendeeSubscriptionConfirmation = Confirmación da súa subscrición ao evento
 Attendee = Asistente
 PaymentConferenceAttendee = Pagamento de asistente á conferencia

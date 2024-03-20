@@ -20,7 +20,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
@@ -42,7 +42,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	<td></td>
 	<td class="center"><?php echo dol_print_date($objectlink->date_debut, 'day'); ?></td>
 	<td class="right"><?php
-	if ($user->rights->expensereport->lire) {
+	if ($user->hasRight('expensereport', 'lire')) {
 		$total = $total + $objectlink->total_ht;
 		echo price($objectlink->total_ht);
 	} ?></td>

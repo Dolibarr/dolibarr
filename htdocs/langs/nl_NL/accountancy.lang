@@ -16,8 +16,8 @@ ThisService=Deze dienst
 ThisProduct=Dit product
 DefaultForService=Standaard voor services
 DefaultForProduct=Standaard voor producten
-ProductForThisThirdparty=Product voor deze relatie
-ServiceForThisThirdparty=Service voor deze relatie
+ProductForThisThirdparty=Product voor deze derde partij
+ServiceForThisThirdparty=Service voor deze derde partij
 CantSuggest=Geen suggestie
 AccountancySetupDoneFromAccountancyMenu=De meeste instellingen boekhouding worden gedaan vanuit menu %s
 ConfigAccountingExpert=Configuratie van boekhoud-module (dubbel boekhouden)
@@ -38,7 +38,7 @@ DeleteCptCategory=Verwijder grootboekrekening uit groep
 ConfirmDeleteCptCategory=Weet u zeker dat u deze grootboekrekening wilt verwijderen uit de grootboekrekening-groep?
 JournalizationInLedgerStatus=Journaal-status
 AlreadyInGeneralLedger=Reeds overgezet naar boekhoudkundige dagboeken en grootboek
-NotYetInGeneralLedger=Nog niet overgezet naar boekhoudkundige dagboeken en grootboek
+NotYetInGeneralLedger=Nog niet overgedragen naar boekhoudkundige dagboeken en grootboek
 GroupIsEmptyCheckSetup=Groep is leeg. Controleer instellingen bij gepersonaliseerde rekeninggroep
 DetailByAccount=Details grootboekrekening
 DetailBy=Gedetailleerd door
@@ -53,30 +53,29 @@ ExportAccountingSourceDocHelp=Met deze tool kunt u de brongebeurtenissen zoeken 
 ExportAccountingSourceDocHelp2=Gebruik het menu-item %s - %s om uw dagboeken te exporteren.
 ExportAccountingProjectHelp=Specificeer een project als u alleen een boekhoudkundig rapport nodig heeft voor een specifiek project. Onkostendeclaraties en afbetalingen van leningen zijn niet opgenomen in projectrapporten.
 ExportAccountancy=Boekhouding exporteren
-WarningDataDisappearsWhenDataIsExported=Let op, deze lijst bevat alleen de boekingen die nog niet zijn geëxporteerd (exportdatum is leeg). Als u de reeds geëxporteerde boekingen wilt opnemen om ze opnieuw te exporteren, klikt u op de bovenstaande knop.
+WarningDataDisappearsWhenDataIsExported=Waarschuwing: deze lijst bevat alleen de boekhoudgegevens die nog niet zijn geëxporteerd (exportdatum is leeg). Als u de reeds geëxporteerde boekhoudgegevens wilt meenemen, klikt u op de knop hierboven.
 VueByAccountAccounting=Overzicht per grootboekrekening
 VueBySubAccountAccounting=Overzicht op volgorde subrekening
 
-MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
-MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
-MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
-MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
-MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
-MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
-MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
-MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
+MainAccountForCustomersNotDefined=Hoofdrekening (uit het rekeningschema) voor klanten die niet zijn gedefinieerd in de configuratie
+MainAccountForSuppliersNotDefined=Hoofdrekening (uit het rekeningschema) voor leveranciers die niet zijn gedefinieerd in de instellingen
+MainAccountForUsersNotDefined=Hoofdrekening (uit het rekeningschema) voor gebruikers die niet zijn gedefinieerd in de instellingen
+MainAccountForVatPaymentNotDefined=Rekening (uit het rekeningschema) voor btw-betaling niet gedefinieerd in de instellingen
+MainAccountForSubscriptionPaymentNotDefined=Rekening (uit het rekeningschema) voor lidmaatschapsbetaling is niet gedefinieerd in de configuratie
+MainAccountForRetainedWarrantyNotDefined=Rekening (uit het rekeningschema) voor de behouden garantie, niet gedefinieerd tijdens de installatie
 UserAccountNotDefined=Grootboekrekening voor gebruiker niet gedefinieerd in setup
 
 AccountancyArea=Boekhouding
 AccountancyAreaDescIntro=Het gebruiken van de boekhoudmodule gaat met verschillende stappen
 AccountancyAreaDescActionOnce=De volgende werkzaamheden worden maar één keer uitgevoerd of jaarlijks
-AccountancyAreaDescActionOnceBis=De volgende stappen moeten worden gedaan om u in de toekomst tijd te besparen door u automatisch het juiste standaard accounting account voor te stellen bij het overdragen van gegevens in de boekhouding
+AccountancyAreaDescActionOnceBis=De volgende stappen moeten worden uitgevoerd om u in de toekomst tijd te besparen door u automatisch het juiste standaardboekhoudingsaccount voor te stellen bij het overbrengen van gegevens in de boekhouding
 AccountancyAreaDescActionFreq=De volgende werkzaamheden worden meestal elke maand, week of dagelijks uitgevoerd bij grote bedrijven....
 
 AccountancyAreaDescJournalSetup=STAP %s: Controleer de inhoud van uw dagboeklijst vanuit het menu %s
 AccountancyAreaDescChartModel=STAP %s: Controleer of er een rekeningschema bestaat of maak er een vanuit het menu %s
 AccountancyAreaDescChart=STAP %s: Selecteer en/of voltooi uw rekeningoverzicht vanuit menu %s
 
+AccountancyAreaDescFiscalPeriod=STAP %s: Definieer standaard een boekjaar waarin u uw boekhoudgegevens wilt integreren. Gebruik hiervoor het menu-item %s.
 AccountancyAreaDescVat=STAP %s: Vastleggen grootboekrekeningen voor BTW registratie. Gebruik hiervoor menukeuze %s. 
 AccountancyAreaDescDefault=STAP %s: standaard grootboekrekeningen vastleggen. Gebruik hiervoor het menu-item %s.
 AccountancyAreaDescExpenseReport=STAP %s: Definieer standaard boekhoudkundige rekeningen voor elk type onkostenrapport. Gebruik hiervoor het menu-item  %s.
@@ -84,19 +83,20 @@ AccountancyAreaDescSal=STAP %s: Vastleggen grootboekrekeningen voor salarisbetal
 AccountancyAreaDescContrib=STAP %s: Definieer standaard boekhoudkundige rekeningen voor belastingen (speciale uitgaven). Gebruik hiervoor het menu-item %s.
 AccountancyAreaDescDonation=STAP %s : Vastleggen grootboekrekeningen voor donaties. Gebruik hiervoor menukeuze %s.
 AccountancyAreaDescSubscription=STAP %s : Vastleggen grootboekrekeningen voor abonnementen. Gebruik hiervoor menukeuze %s.
-AccountancyAreaDescMisc=STAP %s: Vastleggen standaard grootboekrekeningen voor overige transacties. Gebruik hiervoor menukeuze %s.
+AccountancyAreaDescMisc=STAP %s: Definieer verplichte standaardrekeningen en standaard boekhoudrekeningen voor diverse transacties. Gebruik hiervoor het menu-item %s.
 AccountancyAreaDescLoan=STAP %s: Vastleggen grootboekrekeningen voor salarisbetalingen. Gebruik hiervoor menukeuze %s.
 AccountancyAreaDescBank=STAP %s: Vastleggen dagboeken en balansrekeningen. Gebruik hiervoor menukeuze %s.
 AccountancyAreaDescProd=STAP %s: Definieer boekhoudaccounts op uw Producten/Diensten. Gebruik hiervoor het menu-item %s.
 
 AccountancyAreaDescBind=STAP %s: Als de koppeling tussen bestaande %s  boekingsregels en grootboekrekening is gecontroleerd, kunnen deze in de boekhouding worden weggeschreven met één muis-klik. Vul de eventuele ontbrekende koppelingen aan. Gebruik hiervoor menukeuze %s.
 AccountancyAreaDescWriteRecords=STAP %s: Wegschrijven transacties in boekhouding. Gebruik hiervoor menukeuze <strong>%s</strong> en klik op <strong>%s</strong>.
-AccountancyAreaDescAnalyze=STAP %s: Maak boekingen aan of wijzigingen toe en maak rapporten of exportbestanden aan.
+AccountancyAreaDescAnalyze=STAP %s: Lees rapportages of genereer exportbestanden voor andere boekhouders.
+AccountancyAreaDescClosePeriod=STAP %s: Sluit de periode zodat we in de toekomst in dezelfde periode geen gegevens meer kunnen overdragen.
 
-AccountancyAreaDescClosePeriod=STAP %s: Sluit periode af zodat er geen wijzigingen meer kunnen worden aangebracht.
-
+TheFiscalPeriodIsNotDefined=Een verplichte stap in het instellen is niet voltooid (boekperiode is niet gedefinieerd)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Een verplichte stap in de installatie is niet voltooid (journaal met boekhoudcode niet gedefinieerd voor alle bankrekeningen)
 Selectchartofaccounts=Selecteer actief rekeningschema
+CurrentChartOfAccount=Huidig actief rekeningschema
 ChangeAndLoad=Wijzigen en inlezen
 Addanaccount=Nieuwe grootboekrekening
 AccountAccounting=Grootboekrekening
@@ -171,8 +171,8 @@ ACCOUNTING_MANAGE_ZERO=Sta toe om een verschillend aantal nullen aan het einde v
 BANK_DISABLE_DIRECT_INPUT=Rechtstreeks boeken van transactie in bankboek uitzetten
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Schakel concept export van het journaal in
 ACCOUNTANCY_COMBO_FOR_AUX=Schakel combolijst in voor dochteronderneming-account (kan traag zijn als je veel derden hebt, verbreek de mogelijkheid om op een deel van de waarde te zoeken)
-ACCOUNTING_DATE_START_BINDING=Definieer een startdatum voor het koppelen en doorboeken naar de boekhouding. Transacties voor deze datum worden niet doorgeboekt naar de boekhouding.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Wat is de standaard geselecteerde periode bij overdracht van boekhouding?
+ACCOUNTING_DATE_START_BINDING=Schakel binding & overdracht uit in de boekhouding wanneer de datum lager is dan deze datum (de transacties vóór deze datum worden standaard uitgesloten)
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Op de pagina om gegevens over te zetten naar de boekhouding, wat is de periode die standaard is geselecteerd
 
 ACCOUNTING_SELL_JOURNAL=Verkoopjournaal - verkoop en retouren
 ACCOUNTING_PURCHASE_JOURNAL=Aankoopjournaal - aankoop en retouren
@@ -186,6 +186,8 @@ ACCOUNTING_SOCIAL_JOURNAL=Social journal
 ACCOUNTING_RESULT_PROFIT=Resultaat grootboekrekening (winst)
 ACCOUNTING_RESULT_LOSS=Resultaat grootboekrekening (Verlies)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Afsluiten journaal
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Boekhoudgroepen gebruikt voor de balansrekening (gescheiden door komma's)
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Boekhoudgroepen gebruikt voor de winst-en-verliesrekening (gescheiden door komma's)
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Rekening (uit het rekeningschema) die moet worden gebruikt als rekening voor tijdelijke bankoverschrijvingen
 TransitionalAccount=Overgangsrekening
@@ -290,7 +292,7 @@ DescVentilDoneCustomer=Raadpleeg hier de lijst met factuurregels van klanten en 
 DescVentilTodoCustomer=Bind factuurregels die nog niet zijn gebonden met een productrekening vanuit het rekeningschema
 ChangeAccount=Wijzig de product-/dienstrekening (uit rekeningschema) voor de geselecteerde regels met de volgende rekening:
 Vide=-
-DescVentilSupplier=Raadpleeg hier de lijst met leveranciersfactuurregels die al dan niet gebonden zijn aan een productrekening uit het rekeningschema (alleen records die nog niet in de boekhouding zijn overgezet zijn zichtbaar)
+DescVentilSupplier=Raadpleeg hier de lijst met Factuur regels van de leverancier die wel of nog niet gebonden zijn aan een productrekening vanuit het rekeningschema (alleen de records die nog niet zijn overgedragen in de boekhouding zijn zichtbaar)
 DescVentilDoneSupplier=Raadpleeg hier de regels van de leveranciers facturen en hun tegenrekening
 DescVentilTodoExpenseReport=Koppel kosten-boekregels aan grootboekrekeningen welke nog niet zijn vastgelegd
 DescVentilExpenseReport=Hier kunt u de lijst raadplegen van kostenregels om te koppelen aan een grootboekrekening (of niet).
@@ -298,8 +300,8 @@ DescVentilExpenseReportMore=Als u een account instelt op het type onkostendeclar
 DescVentilDoneExpenseReport=Hier kunt u de lijst raadplegen van kostenregels met hun tegenrekening
 
 Closure=Jaarafsluiting
-DescClosure=Raadpleeg hier het aantal bewegingen per maand nog niet gevalideerd & vergrendeld
-OverviewOfMovementsNotValidated=Overzicht van bewegingen niet gevalideerd en vergrendeld
+AccountancyClosureStep1Desc=Raadpleeg hier het aantal bewegingen per maand die nog niet gevalideerd en vergrendeld zijn
+OverviewOfMovementsNotValidated=Overzicht van bewegingen die niet gevalideerd en vergrendeld zijn
 AllMovementsWereRecordedAsValidated=Alle bewegingen werden geregistreerd als gevalideerd en vergrendeld
 NotAllMovementsCouldBeRecordedAsValidated=Niet alle bewegingen konden als gevalideerd en vergrendeld worden geregistreerd
 ValidateMovements=Valideer en vergrendel wijzigingen
@@ -321,7 +323,7 @@ ChangeBinding=Wijzig koppeling
 Accounted=Geboekt in grootboek
 NotYetAccounted=Nog niet overgezet naar boekhouding
 ShowTutorial=Handleiding weergeven
-NotReconciled=Niet afgestemd
+NotReconciled=Niet afgeletterd
 WarningRecordWithoutSubledgerAreExcluded=Pas op, alle bewerkingen zonder gedefinieerde sub grootboekrekening worden gefilterd en uitgesloten van deze weergave
 AccountRemovedFromCurrentChartOfAccount=Boekhoudrekening die niet bestaat in het huidige rekeningschema
 
@@ -333,7 +335,6 @@ CategoryDeleted=Categorie van deze grootboekrekening is verwijderd
 AccountingJournals=Dagboeken
 AccountingJournal=Dagboek
 NewAccountingJournal=Nieuw dagboek
-ShowAccountingJournal=Toon dagboek
 NatureOfJournal=Journaaltype
 AccountingJournalType1=Overige bewerkingen
 AccountingJournalType2=Verkopen
@@ -341,7 +342,7 @@ AccountingJournalType3=Aankopen
 AccountingJournalType4=Bank
 AccountingJournalType5=Declaraties
 AccountingJournalType8=Voorraad
-AccountingJournalType9=HAS-nieuw
+AccountingJournalType9=Ingehouden inkomsten
 GenerationOfAccountingEntries=Genereren van boekhoudkundige boekingen
 ErrorAccountingJournalIsAlreadyUse=Dit dagboek is al in gebruik
 AccountingAccountForSalesTaxAreDefinedInto=Opmerking: Grootboekrekeningen voor BTW worden vastgelegd in menukeuze <b>%s</b>-<b>%s</b>
@@ -352,12 +353,14 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Schakel het koppelen en doorboeken naar 
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Schakel het koppelen en doorboeken naar de boekhouding van onkostendeclaraties uit (met onkostendeclaraties wordt geen rekening gehouden in de boekhouding)
 ACCOUNTING_ENABLE_LETTERING=Schakel de afletteren functie in de boekhouding in
 ACCOUNTING_ENABLE_LETTERING_DESC=Als deze optie is ingeschakeld, kunt u op elke boeking een code definiëren, zodat u verschillende boekingen kunt groeperen. In het verleden, toen verschillende dagboeken onafhankelijk van elkaar werden beheerd, was deze functie nodig om bewegingslijnen van verschillende dagboeken samen te groeperen. Met Dolibarr accountancy wordt een dergelijke trackingcode, genaamd " <b> %s </b> " echter al automatisch opgeslagen, dus een automatische belettering is al gedaan, zonder risico op fouten, dus deze functie is nutteloos geworden voor algemeen gebruik. Handmatige letterfunctie is beschikbaar voor eindgebruikers die de computermotor die de gegevensoverdracht in de boekhouding uitvoert echt niet vertrouwen.
-EnablingThisFeatureIsNotNecessary=Het inschakelen van deze functie is niet meer nodig voor een rigoureus boekhoudkundig beheer.
+EnablingThisFeatureIsNotNecessary=Het inschakelen van deze functie is niet langer nodig voor een rigoureus boekhoudbeheer.
 ACCOUNTING_ENABLE_AUTOLETTERING=Schakel de automatische belettering in bij het overstappen naar de boekhouding
-ACCOUNTING_ENABLE_AUTOLETTERING_DESC=De code voor de belettering wordt automatisch gegenereerd en opgehoogd en niet gekozen door de eindgebruiker
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=De code voor de belettering wordt automatisch gegenereerd en opgehoogd en niet door de eindgebruiker gekozen
+ACCOUNTING_LETTERING_NBLETTERS=Aantal letters bij het genereren van lettercode (standaard 3)
+ACCOUNTING_LETTERING_NBLETTERS_DESC=Sommige boekhoudsoftware accepteert alleen een code van twee letters. Met deze parameter kunt u dit aspect instellen. Het standaardaantal letters is drie.
 OptionsAdvanced=Geavanceerde mogelijkheden
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activeer het beheer van btw-verlegging op leveranciersaankopen
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Wanneer deze optie is ingeschakeld, kunt u definiëren dat een leveranciersfactuur of een bepaalde leveranciersfactuur op een andere manier naar de boekhouding moet worden overgeboekt: Er wordt een extra debet- en een kredietlijn gegenereerd in de boekhouding op 2 bepaalde rekeningen vanuit het rekeningschema dat is gedefinieerd in de "%s " instellingenpagina.
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Wanneer deze optie is ingeschakeld, kunt u definiëren dat een Leverancier of een bepaalde leverancier Factuur op een andere manier naar de boekhouding moet worden overgezet: Een extra er wordt een debet- en een kredietlimiet gegenereerd in de boekhouding op 2 bepaalde rekeningen uit het rekeningschema dat is gedefinieerd op de instellingenpagina "%s".
 
 ## Export
 NotExportLettering=Exporteer het afletteren niet bij het genereren van het bestand
@@ -420,7 +423,7 @@ SaleLocal=Lokale verkoop
 SaleExport=Verkoop buitenland
 SaleEEC=Verkoop binnen de EU
 SaleEECWithVAT=Verkoop binnen de EU met een btw die niet nul is, dus we veronderstellen dat dit GEEN intracommunautaire verkoop is en de voorgestelde grootboekrekening het standaardproductaccount is.
-SaleEECWithoutVATNumber=Verkoop in de EEG zonder btw, maar het btw-nummer van de derde partij is niet gedefinieerd. Voor standaardverkopen vallen we terug op de rekening. U kunt indien nodig het btw-nummer van de derde partij corrigeren of het productaccount wijzigen dat wordt voorgesteld om te binden.
+SaleEECWithoutVATNumber=Verkoop in de EEG zonder BTW, maar het BTW-nummer van een derde partij is niet gedefinieerd. Wij vallen terug op de rekening voor standaardverkopen. U kunt indien nodig het btw-nummer van de derde partij corrigeren of het voorgestelde productaccount voor binding wijzigen.
 ForbiddenTransactionAlreadyExported=Niet toegestaan: De transactie is gevalideerd en/of geëxporteerd.
 ForbiddenTransactionAlreadyValidated=Niet toegestaan: De transactie is gevalideerd.
 ## Dictionary
@@ -430,10 +433,10 @@ Formula=Formule
 
 ## Reconcile
 LetteringAuto=Automatisch afstemmen
-LetteringManual=Handboek afstemmen
+LetteringManual=Handmatig afletteren
 Unlettering=niet afstemmen
 UnletteringAuto=Auto niet afstemmen
-UnletteringManual=niet-afstemmen handleiding
+UnletteringManual=handmatig afletteren verwijderen
 AccountancyNoLetteringModified=Geen afstemming gewijzigd
 AccountancyOneLetteringModifiedSuccessfully=Eén afstemming succesvol gewijzigd
 AccountancyLetteringModifiedSuccessfully=%s afstemming succesvol gewijzigd
@@ -441,16 +444,30 @@ AccountancyNoUnletteringModified=Geen verzoening gewijzigd
 AccountancyOneUnletteringModifiedSuccessfully=Eén onafstemming succesvol gewijzigd
 AccountancyUnletteringModifiedSuccessfully=%s afstemmen succesvol gewijzigd
 
+## Closure
+AccountancyClosureStep1=Stap 1: Valideer en vergrendel de bewegingen
+AccountancyClosureStep2=Stap 2: Sluit de fiscale periode af
+AccountancyClosureStep3=Stap 3: Gegevens extraheren (optioneel)
+AccountancyClosureClose=Sluit de fiscale periode af
+AccountancyClosureAccountingReversal=Extraheer de vermeldingen 'Ingehouden winsten' en registreer deze
+AccountancyClosureStep3NewFiscalPeriod=Volgende fiscale periode
+AccountancyClosureGenerateClosureBookkeepingRecords=Genereer posten voor "Ingehouden winsten" voor de volgende boekperiode
+AccountancyClosureSeparateAuxiliaryAccounts=Geef bij het genereren van de posten 'Ingehouden winsten' een gedetailleerd overzicht van de subgrootboekrekeningen
+AccountancyClosureCloseSuccessfully=De begrotingsperiode is met succes afgesloten
+AccountancyClosureInsertAccountingReversalSuccessfully=Boekhoudgegevens voor 'Ingehouden winsten' zijn met succes ingevoegd
+
 ## Confirm box
 ConfirmMassUnletteringAuto=Bulk automatische afstemming ongedaan maken bevestiging
 ConfirmMassUnletteringManual=Bulk handmatige afstemming ongedaan maken bevestiging
 ConfirmMassUnletteringQuestion=Weet u zeker dat u de %s geselecteerde record(s) wilt ontkoppelen?
 ConfirmMassDeleteBookkeepingWriting=Bevestiging bulk verwijdering
 ConfirmMassDeleteBookkeepingWritingQuestion=Hiermee wordt de transactie uit de boekhouding verwijderd (alle regelitems die betrekking hebben op dezelfde transactie worden verwijderd). Weet u zeker dat u de %s geselecteerde vermeldingen wilt verwijderen?
+AccountancyClosureConfirmClose=Weet u zeker dat u de huidige fiscale periode wilt afsluiten? <span class="warning">U begrijpt dat het sluiten van de fiscale periode een onomkeerbare actie is en dat u elke wijziging of verwijdering van invoer gedurende deze periode permanent zult blokkeren</span> .
+AccountancyClosureConfirmAccountingReversal=Weet u zeker dat u boekingen voor de "Ingehouden winsten" wilt vastleggen?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Sommige verplichte stappen zijn nog niet volledig uitgevoerd. Maak deze alsnog.
-ErrorNoAccountingCategoryForThisCountry=Geen rekeningschema beschikbaar voor land %s (zie Home - Setup - Woordenboeken)
+ErrorNoAccountingCategoryForThisCountry=Er is geen boekhoudaccountgroep beschikbaar voor het land %s (zie %s - %s - %s)
 ErrorInvoiceContainsLinesNotYetBounded=U probeert regels van factuur <strong>%s</strong> door te boeken, maar er zijn regels die nog niet verbonden zijn aan een grootboekrekening. Het doorboeken is daarom geannuleerd.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Sommige regels op de factuur zijn niet gekoppeld aan een grootboekrekening.
 ExportNotSupported=Het ingestelde exportformaat wordt niet ondersteund op deze pagina
@@ -465,6 +482,9 @@ AccountancyErrorMismatchBalanceAmount=Het saldo (%s) is niet gelijk aan 0
 AccountancyErrorLetteringBookkeeping=Er zijn fouten opgetreden met betrekking tot de transacties: %s
 ErrorAccountNumberAlreadyExists=Het boekhoudnummer %s bestaat al
 ErrorArchiveAddFile=Kan het bestand "%s" niet in het archief plaatsen
+ErrorNoFiscalPeriodActiveFound=Geen actieve fiscale periode gevonden
+ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=De datum van het boekhouddocument valt niet binnen de actieve fiscale periode
+ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=De datum van het boekhouddocument valt binnen een gesloten fiscale periode
 
 ## Import
 ImportAccountingEntries=Boekingen

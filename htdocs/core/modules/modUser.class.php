@@ -18,11 +18,12 @@
  */
 
 /**
- *	\defgroup   user  Module user management
- *	\brief      Module pour gerer les utilisateurs
- *	\file       htdocs/core/modules/modUser.class.php
- *	\ingroup    user
- *	\brief      Description and activation file for the module users
+ *  \defgroup   user  Module user management
+ *  \brief      Module to manage users and usergroups
+ *
+ *  \file       htdocs/core/modules/modUser.class.php
+ *  \ingroup    user
+ *  \brief      Description and activation file for the module users
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -274,7 +275,7 @@ class modUser extends DolibarrModules
 		$keyforelement = 'user';
 		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		if (!isModEnabled('adherent')) {
+		if (!isModEnabled('member')) {
 			unset($this->export_fields_array[$r]['u.fk_member']);
 			unset($this->export_entities_array[$r]['u.fk_member']);
 		}

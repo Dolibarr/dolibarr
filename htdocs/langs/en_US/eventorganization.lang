@@ -27,6 +27,7 @@ EventOrganizationMenuLeft = Organized events
 EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
 
 PaymentEvent=Payment of event
+EventFee=Event fee
 
 #
 # Admin page
@@ -34,7 +35,6 @@ PaymentEvent=Payment of event
 NewRegistration=Registration
 EventOrganizationSetup=Event Organization setup
 EventOrganization=Event organization
-Settings=Settings
 EventOrganizationSetupPage = Event Organization setup page
 EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
 EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
@@ -89,8 +89,9 @@ PriceOfRegistration=Price of registration
 PriceOfRegistrationHelp=Price to pay to register or participate in the event
 PriceOfBooth=Subscription price to stand a booth
 PriceOfBoothHelp=Subscription price to stand a booth
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=Link ICS for conferences
-ConferenceOrBoothInformation=Conference Or Booth informations
+ConferenceOrBoothInformation=Conference Or Booth information
 Attendees=Attendees
 ListOfAttendeesOfEvent=List of attendees of the event project
 DownloadICSLink = Download ICS link
@@ -107,7 +108,7 @@ EvntOrgSuggested = Suggested
 EvntOrgConfirmed = Confirmed
 EvntOrgNotQualified = Not Qualified
 EvntOrgDone = Done
-EvntOrgCancelled = Cancelled
+EvntOrgCancelled = Canceled
 
 #
 # Other
@@ -156,7 +157,7 @@ VoteOk = Your vote has been accepted.
 AlreadyVoted = You have already voted for this event.
 VoteError = An error has occurred during the vote, please try again.
 SubscriptionOk=Your registration has been recorded
-AmountOfRegistrationPaid=Amount of resitration paid
+AmountOfRegistrationPaid=Amount of registration paid
 ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
 Attendee = Attendee
 PaymentConferenceAttendee = Conference attendee payment
@@ -166,9 +167,15 @@ RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were alre
 EmailAttendee=Attendee email
 EmailCompany=Company email
 EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
-ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
 NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
 MaxNbOfAttendees=Max number of attendees
 DateStartEvent=Event start date
 DateEndEvent=Event end date
+ModifyStatus=Modify status
+ConfirmModifyStatus=Confirm status modification
+ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
+RecordsUpdated = %s Records updated
+RecordUpdated = Record updated
+NoRecordUpdated = No Record updated

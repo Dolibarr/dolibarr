@@ -19,7 +19,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 $contact = $GLOBALS['objcanvas']->control->object;
@@ -53,7 +53,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 	<td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="<?php echo $this->control->tpl['nom']; ?>"></td>
 </tr>
 
-<?php if (!empty($conf->global->SOCIETE_USEPREFIX)) { ?>
+<?php if (getDolGlobalString('SOCIETE_USEPREFIX')) { ?>
 <tr>
 	<td><?php echo $langs->trans("Prefix"); ?></td>
 	<td colspan="3">
@@ -129,7 +129,7 @@ if (isModEnabled('barcode')) { ?>
 
 <tr>
 	<td class="tdtop"><?php echo $langs->trans('Address'); ?></td>
-	<td colspan="3"><textarea name="adress" cols="40" rows="3"><?php echo $this->control->tpl['address']; ?></textarea></td>
+	<td colspan="3"><textarea name="address" cols="40" rows="3"><?php echo $this->control->tpl['address']; ?></textarea></td>
 </tr>
 
 <tr>
@@ -152,6 +152,8 @@ if (isModEnabled('barcode')) { ?>
 <tr>
 	<td><?php echo $langs->trans('Phone'); ?></td>
 	<td><input type="text" name="phone" value="<?php echo $this->control->tpl['phone']; ?>"></td>
+	<td><?php echo $langs->trans('PhoneMobile'); ?></td>
+	<td><input type="text" name="phone_mobile" value="<?php echo $this->control->tpl['phone_mobile']; ?>"></td>
 	<td><?php echo $langs->trans('Fax'); ?></td>
 	<td><input type="text" name="fax" value="<?php echo $this->control->tpl['fax']; ?>"></td>
 </tr>

@@ -58,7 +58,7 @@ $entitytoicon = array(
 	'other'        => 'generic',
 	'account'      => 'account',
 	'product'      => 'product',
-	'virtualproduct'=>'product',
+	'virtualproduct' => 'product',
 	'subproduct'   => 'product',
 	'product_supplier_ref'      => 'product',
 	'stock'        => 'stock',
@@ -67,11 +67,11 @@ $entitytoicon = array(
 	'stockbatch'   => 'stock',
 	'category'     => 'category',
 	'shipment'     => 'sending',
-	'shipment_line'=> 'sending',
-	'reception'=> 'sending',
-	'reception_line'=> 'sending',
-	'expensereport'=> 'trip',
-	'expensereport_line'=> 'trip',
+	'shipment_line' => 'sending',
+	'reception' => 'sending',
+	'reception_line' => 'sending',
+	'expensereport' => 'trip',
+	'expensereport_line' => 'trip',
 	'holiday'      => 'holiday',
 	'contract_line' => 'contract',
 	'translation'  => 'generic',
@@ -114,16 +114,16 @@ $entitytolang = array(
 	'other'        => 'Other',
 	'trip'         => 'TripsAndExpenses',
 	'shipment'     => 'Shipments',
-	'shipment_line'=> 'ShipmentLine',
+	'shipment_line' => 'ShipmentLine',
 	'project'      => 'Projects',
 	'projecttask'  => 'Tasks',
 	'task_time'    => 'TaskTimeSpent',
 	'action'       => 'Event',
-	'expensereport'=> 'ExpenseReport',
-	'expensereport_line'=> 'ExpenseReportLine',
+	'expensereport' => 'ExpenseReport',
+	'expensereport_line' => 'ExpenseReportLine',
 	'holiday'      => 'TitreRequestCP',
 	'contract'     => 'Contract',
-	'contract_line'=> 'ContractLine',
+	'contract_line' => 'ContractLine',
 	'translation'  => 'Translation',
 	'bom'          => 'BOM',
 	'bomline'      => 'BOMLine',
@@ -135,11 +135,11 @@ $array_filtervalue = isset($_SESSION["export_filtered_fields"]) ? $_SESSION["exp
 $datatoexport = GETPOST("datatoexport", "aZ09");
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$step = GETPOST("step", "int") ?GETPOST("step", "int") : 1;
+$step = GETPOSTINT("step") ? GETPOSTINT("step") : 1;
 $export_name = GETPOST("export_name", "alphanohtml");
 $hexa = GETPOST("hexa", "alpha");
-$exportmodelid = GETPOST("exportmodelid", "int");
-$field = GETPOST("field", "alpa");
+$exportmodelid = GETPOSTINT("exportmodelid");
+$field = GETPOST("field", "alpha");
 
 $objexport = new Export($db);
 $objexport->load_arrays($user, $datatoexport);
@@ -269,7 +269,8 @@ if ($step == 1 || $action == 'cleanselect') {
 }
 
 if ($action == 'builddoc') {
-	$max_execution_time_for_importexport = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+	$separator = GETPOST('delimiter', 'alpha');
+	$max_execution_time_for_importexport = (!getDolGlobalString('EXPORT_MAX_EXECUTION_TIME') ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
 	$max_time = @ini_get("max_execution_time");
 	if ($max_time && $max_time < $max_execution_time_for_importexport) {
 		dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
@@ -277,7 +278,7 @@ if ($action == 'builddoc') {
 	}
 
 	// Build export file
-	$result = $objexport->build_file($user, GETPOST('model', 'alpha'), $datatoexport, $array_selected, $array_filtervalue);
+	$result = $objexport->build_file($user, GETPOST('model', 'alpha'), $datatoexport, $array_selected, $array_filtervalue, '', $separator);
 	if ($result < 0) {
 		setEventMessages($objexport->error, $objexport->errors, 'errors');
 		$sqlusedforexport = $objexport->sqlusedforexport;
@@ -302,8 +303,8 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes') {
 }
 
 if ($action == 'deleteprof') {
-	if (GETPOST("id", 'int')) {
-		$objexport->fetch(GETPOST('id', 'int'));
+	if (GETPOSTINT("id")) {
+		$objexport->fetch(GETPOSTINT('id'));
 		$result = $objexport->delete($user);
 	}
 }
@@ -428,7 +429,7 @@ if ($step == 1 || !$datatoexport) {
 	print '<div class="opacitymedium">'.$langs->trans("SelectExportDataSet").'</div><br>';
 
 	// Affiche les modules d'exports
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Module").'</td>';
@@ -526,7 +527,7 @@ if ($step == 2 && $datatoexport) {
 	print '</form>';
 
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Object").'</td>';
@@ -707,7 +708,7 @@ if ($step == 3 && $datatoexport) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'?step=4&action=submitFormField&datatoexport='.$datatoexport.'" name="FilterField" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -906,7 +907,7 @@ if ($step == 4 && $datatoexport) {
 
 	print '<div class="marginbottomonly"><span class="opacitymedium">'.$langs->trans("ChooseFieldsOrdersAndTitle").'</span></div>';
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Entities").'</td>';
@@ -1008,7 +1009,7 @@ if ($step == 4 && $datatoexport) {
 		print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
 		print '<input type="hidden" name="hexa" value="'.$hexa.'">';
 
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ExportModelName").'</td>';
@@ -1019,7 +1020,7 @@ if ($step == 4 && $datatoexport) {
 		print '<tr class="oddeven">';
 		print '<td><input name="export_name" value=""></td>';
 		print '<td>';
-		$arrayvisibility = array('private'=>$langs->trans("Private"), 'all'=>$langs->trans("Everybody"));
+		$arrayvisibility = array('private' => $langs->trans("Private"), 'all' => $langs->trans("Everybody"));
 		print $form->selectarray('visibility', $arrayvisibility, 'private');
 		print '</td>';
 		print '<td class="right">';
@@ -1032,7 +1033,7 @@ if ($step == 4 && $datatoexport) {
 		$sql = "SELECT rowid, label, fk_user, entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."export_model";
 		$sql .= " WHERE type = '".$db->escape($datatoexport)."'";
-		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
+		if (!getDolGlobalString('EXPORTS_SHARE_MODELS')) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
 			$sql .= " AND fk_user IN (0, ".((int) $user->id).")";
 		}
 		$sql .= " ORDER BY rowid";
@@ -1073,7 +1074,7 @@ if ($step == 4 && $datatoexport) {
 }
 
 if ($step == 5 && $datatoexport) {
-	if (count($array_selected) < 1) {      // This occurs when going back to page after sessecion expired
+	if (count($array_selected) < 1) {      // This occurs when going back to page after session expired
 		// Switch to step 2
 		header("Location: ".DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport);
 		exit;
@@ -1094,7 +1095,7 @@ if ($step == 5 && $datatoexport) {
 	$head[$h][1] = $langs->trans("Step")." 2";
 	$h++;
 
-	// si le filtrage est parametre pour l'export ou pas
+	// si le filtrage est parameter pour l'export ou pas
 	if ($usefilters && isset($objexport->array_export_TypeFields[0]) && is_array($objexport->array_export_TypeFields[0])) {
 		$head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=3&datatoexport='.$datatoexport;
 		$head[$h][1] = $langs->trans("Step")." 3";
@@ -1123,7 +1124,7 @@ if ($step == 5 && $datatoexport) {
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table width="100%" class="border tableforfield">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
@@ -1202,6 +1203,7 @@ if ($step == 5 && $datatoexport) {
 		$htmltabloflibs .= '<td>'.img_picto_common($key, $objmodelexport->getPictoForKey($key)).' ';
 		$text = $objmodelexport->getDriverDescForKey($key);
 		$label = $listeall[$key];
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$htmltabloflibs .= $form->textwithpicto($label, $text).'</td>';
 		$htmltabloflibs .= '<td>'.$objmodelexport->getLibLabelForKey($key).'</td>';
 		$htmltabloflibs .= '<td class="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';

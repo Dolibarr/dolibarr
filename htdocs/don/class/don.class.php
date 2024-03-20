@@ -6,8 +6,9 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
- * Copyright (C) 2019-2020 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021      Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +68,7 @@ class Don extends CommonObject
 	public $picto = 'donation';
 
 	/**
-	 * @var string Date of the donation
+	 * @var int|string Date of the donation
 	 */
 	public $date;
 
@@ -113,6 +114,17 @@ class Don extends CommonObject
 	public $phone;
 	public $phone_mobile;
 
+
+	/**
+	 * @var string
+	 */
+	public $mode_reglement;
+
+	/**
+	 * @var string
+	 */
+	public $mode_reglement_code;
+
 	/**
 	 * @var int 0 or 1
 	 */
@@ -128,6 +140,10 @@ class Don extends CommonObject
 	 */
 	public $fk_typepayment;
 
+	/**
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
+	 */
 	public $num_payment;
 	public $date_valid;
 
@@ -163,7 +179,7 @@ class Don extends CommonObject
 	 */
 	public function __construct($db)
 	{
-		 $this->db = $db;
+		$this->db = $db;
 	}
 
 
@@ -219,7 +235,7 @@ class Don extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -248,7 +264,7 @@ class Don extends CommonObject
 			}
 		}
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
@@ -268,7 +284,9 @@ class Don extends CommonObject
 		$this->email = 'email@email.com';
 		$this->phone = '0123456789';
 		$this->phone_mobile = '0606060606';
-		$this->statut = 1;
+		$this->status = 1;
+
+		return 1;
 	}
 
 
@@ -315,12 +333,12 @@ class Don extends CommonObject
 			$err++;
 		}
 
-		$this->amount = trim($this->amount);
+		$this->amount = (float) $this->amount;
 
 		$map = range(0, 9);
-		$len = dol_strlen($this->amount);
+		$len = dol_strlen((string) $this->amount);
 		for ($i = 0; $i < $len; $i++) {
-			if (!isset($map[substr($this->amount, $i, 1)])) {
+			if (!isset($map[substr((string) $this->amount, $i, 1)])) {
 				$error_string[] = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Amount'));
 				$err++;
 				$amount_invalid = 1;
@@ -353,7 +371,7 @@ class Don extends CommonObject
 	 *
 	 * @param	User	$user		User who created the donation
 	 * @param	int		$notrigger	Disable triggers
-	 * @return  int  		        <0 if KO, id of created donation if OK
+	 * @return  int  		        Return integer <0 if KO, id of created donation if OK
 	 * TODO    add numbering module for Ref
 	 */
 	public function create($user, $notrigger = 0)
@@ -365,12 +383,12 @@ class Don extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->address = ($this->address > 0 ? $this->address : $this->address);
-		$this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
-		$this->town = ($this->town > 0 ? $this->town : $this->town);
-		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
-		$this->country = ($this->country ? $this->country : $this->country);
-		$this->amount = price2num($this->amount);
+		// $this->address = ($this->address > 0 ? $this->address : $this->address);
+		// $this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
+		// $this->town = ($this->town > 0 ? $this->town : $this->town);
+		// $this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
+		// $this->country = ($this->country ? $this->country : $this->country);
+		$this->amount = (float) price2num($this->amount);
 
 		// Check parameters
 		if ($this->amount < 0) {
@@ -443,7 +461,6 @@ class Don extends CommonObject
 			}
 		} else {
 			$this->error = $this->db->lasterror();
-			$this->errno = $this->db->lasterrno();
 			$error++;
 		}
 
@@ -472,7 +489,7 @@ class Don extends CommonObject
 	/**
 	 *  Update a donation record
 	 *
-	 *  @param 		User	$user   Objet utilisateur qui met a jour le don
+	 *  @param 		User	$user   Object utilisateur qui met a jour le don
 	 *  @param      int		$notrigger	Disable triggers
 	 *  @return     int      		>0 if OK, <0 if KO
 	 */
@@ -483,12 +500,12 @@ class Don extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->address = ($this->address > 0 ? $this->address : $this->address);
-		$this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
-		$this->town = ($this->town > 0 ? $this->town : $this->town);
-		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
-		$this->country = ($this->country ? $this->country : $this->country);
-		$this->amount = price2num($this->amount);
+		// $this->address = ($this->address > 0 ? $this->address : $this->address);
+		// $this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
+		// $this->town = ($this->town > 0 ? $this->town : $this->town);
+		// $this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
+		// $this->country = ($this->country ? $this->country : $this->country);
+		$this->amount = (float) price2num($this->amount);
 
 		// Check parameters
 		if ($this->amount < 0) {
@@ -562,7 +579,7 @@ class Don extends CommonObject
 	 *
 	 *    @param       User		$user            User
 	 *    @param       int		$notrigger       Disable triggers
-	 *    @return      int       			      <0 if KO, 0 if not possible, >0 if OK
+	 *    @return      int       			      Return integer <0 if KO, 0 if not possible, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -624,13 +641,13 @@ class Don extends CommonObject
 	 *
 	 *      @param      int		$id      Id of donation to load
 	 *      @param      string	$ref        Ref of donation to load
-	 *      @return     int      			<0 if KO, >0 if OK
+	 *      @return     int      			Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
 		$sql = "SELECT d.rowid, d.datec, d.date_valid, d.tms as datem, d.datedon,";
-		$sql .= " d.fk_soc as socid,d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
-		$sql .= " d.fk_country, d.country as country_olddata, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, d.email, d.phone, ";
+		$sql .= " d.fk_soc as socid, d.firstname, d.lastname, d.societe, d.amount, d.fk_statut as status, d.address, d.zip, d.town, ";
+		$sql .= " d.fk_country, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, d.email, d.phone, ";
 		$sql .= " d.phone_mobile, d.fk_projet as fk_project, d.model_pdf,";
 		$sql .= " p.ref as project_ref,";
 		$sql .= " cp.libelle as payment_label, cp.code as payment_code,";
@@ -665,14 +682,14 @@ class Don extends CommonObject
 				$this->firstname          = $obj->firstname;
 				$this->lastname           = $obj->lastname;
 				$this->societe            = $obj->societe;
-				$this->statut             = $obj->fk_statut;
+				$this->status             = $obj->status;
+				$this->statut             = $obj->status;
 				$this->address            = $obj->address;
 				$this->zip                = $obj->zip;
 				$this->town               = $obj->town;
 				$this->country_id         = $obj->fk_country;
 				$this->country_code       = $obj->country_code;
 				$this->country            = $obj->country;
-				$this->country_olddata    = $obj->country_olddata; // deprecated
 				$this->email              = $obj->email;
 				$this->phone              = $obj->phone;
 				$this->phone_mobile       = $obj->phone_mobile;
@@ -688,7 +705,6 @@ class Don extends CommonObject
 				$this->note_private	      = $obj->note_private;
 				$this->note_public = $obj->note_public;
 				$this->model_pdf          = $obj->model_pdf;
-				$this->modelpdf           = $obj->model_pdf; // deprecated
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -706,10 +722,11 @@ class Don extends CommonObject
 	 *
 	 *	@param		User		$user		User that validate
 	 *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setValid($user, $notrigger = 0)
 	{
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		return $this->valid_promesse($this->id, $user->id, $notrigger);
 	}
 
@@ -720,7 +737,7 @@ class Don extends CommonObject
 	 *    @param	int		$id   		id of donation
 	 *    @param  	int		$userid  	User who validate the donation/promise
 	 *    @param	int		$notrigger	Disable triggers
-	 *    @return   int     			<0 if KO, >0 if OK
+	 *    @return   int     			Return integer <0 if KO, >0 if OK
 	 */
 	public function valid_promesse($id, $userid, $notrigger = 0)
 	{
@@ -765,7 +782,7 @@ class Don extends CommonObject
 	 *
 	 *    @param	int		$id           	    id of donation
 	 *    @param    int		$modepayment   	    mode of payment
-	 *    @return   int      					<0 if KO, >0 if OK
+	 *    @return   int      					Return integer <0 if KO, >0 if OK
 	 */
 	public function setPaid($id, $modepayment = 0)
 	{
@@ -795,7 +812,7 @@ class Don extends CommonObject
 	 *    Set donation to status cancelled
 	 *
 	 *    @param	int		$id   	    id of donation
-	 *    @return   int     			<0 if KO, >0 if OK
+	 *    @return   int     			Return integer <0 if KO, >0 if OK
 	 */
 	public function set_cancel($id)
 	{
@@ -821,7 +838,7 @@ class Don extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -829,13 +846,6 @@ class Don extends CommonObject
 		if ($this->statut != self::STATUS_CANCELED) {
 			return 0;
 		}
-
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->write))
-		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->bom_advance->validate))))
-		 {
-		 $this->error='Permission denied';
-		 return -1;
-		 }*/
 
 		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'DON_REOPEN');
 	}
@@ -868,15 +878,13 @@ class Don extends CommonObject
 		return $result;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Charge indicateurs this->nb pour le tableau de bord
+	 *	Load the indicators this->nb for the state board
 	 *
-	 *	@return     int         <0 if KO, >0 if OK
+	 *	@return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		$this->nb = array();
 
 		$sql = "SELECT count(d.rowid) as nb";
@@ -931,7 +939,7 @@ class Don extends CommonObject
 		$url = DOL_URL_ROOT.'/don/card.php?id='.$this->id;
 
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
@@ -951,7 +959,7 @@ class Don extends CommonObject
 		$result .= $linkend;
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -998,7 +1006,7 @@ class Don extends CommonObject
 	 *  Create a document onto disk according to template module.
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
@@ -1015,8 +1023,8 @@ class Don extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->DON_ADDON_MODEL)) {
-				$modele = $conf->global->DON_ADDON_MODEL;
+			} elseif (getDolGlobalString('DON_ADDON_MODEL')) {
+				$modele = getDolGlobalString('DON_ADDON_MODEL');
 			}
 		}
 
@@ -1041,7 +1049,9 @@ class Don extends CommonObject
 		}
 
 		// Search template files
-		$file = ''; $classname = ''; $filefound = 0;
+		$file = '';
+		$classname = '';
+		$filefound = 0;
 		$dirmodels = array('/');
 		if (is_array($conf->modules_parts['models'])) {
 			$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
@@ -1050,7 +1060,7 @@ class Don extends CommonObject
 			foreach (array('html', 'doc', 'pdf') as $prefix) {
 				$file = $prefix."_".preg_replace('/^html_/', '', $modele).".modules.php";
 
-				// On verifie l'emplacement du modele
+				// Verify the path for the module
 				$file = dol_buildpath($reldir."core/modules/dons/".$file, 0);
 				if (file_exists($file)) {
 					$filefound = 1;
@@ -1112,9 +1122,9 @@ class Don extends CommonObject
 	}
 
 	/**
-	 * Function to get reamain to pay for a donation
+	 * Function to get remaining amount to pay for a donation
 	 *
-	 * @return   int      					<0 if KO, > reamain to pay if  OK
+	 * @return   float|int<-2,-1>      					Return integer <0 if KO, > remaining amount to pay if  OK
 	 */
 	public function getRemainToPay()
 	{
@@ -1134,11 +1144,11 @@ class Don extends CommonObject
 			return -2;
 		} else {
 			$sum_amount = (float) $this->db->fetch_object($resql)->sum_amount;
-			return (float) $this->amount - $sum_amount;
+			return (float) ($this->amount - $sum_amount);
 		}
 	}
 
-		/**
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
@@ -1158,7 +1168,9 @@ class Don extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'date')) {
 			$return .= ' | <span class="opacitymedium" >'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->date).'</span>';
 		}

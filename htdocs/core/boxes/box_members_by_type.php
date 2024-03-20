@@ -38,17 +38,7 @@ class box_members_by_type extends ModeleBoxes
 	public $boxlabel = "BoxTitleMembersByType";
 	public $depends = array("adherent");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -63,12 +53,12 @@ class box_members_by_type extends ModeleBoxes
 		$this->db = $db;
 
 		// disable module for such cases
-		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+		$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 		if (!in_array('adherent', $listofmodulesforexternal) && !empty($user->socid)) {
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !(isModEnabled('adherent') && $user->hasRight('adherent', 'lire'));
+		$this->hidden = !(isModEnabled('member') && $user->hasRight('adherent', 'lire'));
 	}
 
 	/**
@@ -92,7 +82,7 @@ class box_members_by_type extends ModeleBoxes
 		$year = date('Y');
 		$numberyears = getDolGlobalInt("MAIN_NB_OF_YEAR_IN_MEMBERSHIP_WIDGET_GRAPH");
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByType").($numberyears ? ' ('.($year-$numberyears).' - '.$year.')' : ''));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByType").($numberyears ? ' ('.($year - $numberyears).' - '.$year.')' : ''));
 
 		if ($user->hasRight('adherent', 'lire')) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
@@ -148,11 +138,12 @@ class box_members_by_type extends ModeleBoxes
 					'text' => $langs->trans("Total")
 				);
 				$line++;
+				$AdherentType = array();
 				foreach ($sumMembers as $key => $data) {
 					$adhtype = new AdherentType($this->db);
 					$adhtype->id = $key;
 
-					if ($key=='total') {
+					if ($key == 'total') {
 						break;
 					}
 					$adhtype->label = $data['label'];
@@ -252,13 +243,13 @@ class box_members_by_type extends ModeleBoxes
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
 					'maxlength' => 500,
-					'text' => ($this->db->error() . ' sql=' . $sql)
+					'text' => ($this->db->lasterror())
 				);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

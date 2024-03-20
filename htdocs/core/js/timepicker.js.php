@@ -76,7 +76,7 @@ jQuery(function($){
 		timeFormat: 'HH:mm',
 		amNames: ['AM', 'A'],
 		pmNames: ['PM', 'P'],
-		isRTL: <?php echo ($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>
+		isRTL: <?php echo($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>
 	};
 	$.timepicker.setDefaults($.timepicker.regional['<?php echo $langs->defaultlang ?>']);
 });

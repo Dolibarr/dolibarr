@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "members", "ldap", "admin"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alphanohtml');
 $action = GETPOST('action', 'aZ09');
 
@@ -79,7 +79,7 @@ $result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid
 
 if ($action == 'dolibarr2ldap') {
 	$ldap = new Ldap();
-	$result = $ldap->connect_bind();
+	$result = $ldap->connectBind();
 
 	if ($result > 0) {
 		$info = $object->_load_ldap_info();
@@ -120,12 +120,13 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent tableforfield">';
 
 // Login
-print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'&nbsp;</td></tr>';
 
-// If there is a link to password not crypted, we show value in database here so we can compare because it is shown nowhere else
-if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD)) {
+// If there is a link to the unencrypted password, we show the value in database here so we can compare because it is shown nowhere else
+// This is for very old situation. Password are now encrypted and $object->pass is empty.
+if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')) {
 	print '<tr><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td>';
-	print '<td class="valeur">'.$object->pass.'</td>';
+	print '<td class="valeur">'.dol_escape_htmltag($object->pass).'</td>';
 	print "</tr>\n";
 }
 
@@ -159,19 +160,19 @@ print dol_get_fiche_end();
  */
 print '<div class="tabsAction">';
 
-if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && getDolGlobalString('LDAP_MEMBER_ACTIVE') != Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
+if (getDolGlobalString('LDAP_MEMBER_ACTIVE') && getDolGlobalString('LDAP_MEMBER_ACTIVE') != Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
 	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a></div>';
 }
 
 print "</div>\n";
 
-if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && getDolGlobalString('LDAP_MEMBER_ACTIVE') != Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
+if (getDolGlobalString('LDAP_MEMBER_ACTIVE') && getDolGlobalString('LDAP_MEMBER_ACTIVE') != Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
 	print "<br>\n";
 }
 
 
 
-// Affichage attributs LDAP
+// Affichage attributes LDAP
 print load_fiche_titre($langs->trans("LDAPInformationsForThisMember"));
 
 print '<table width="100%" class="noborder">';
@@ -183,7 +184,7 @@ print '</tr>';
 
 // Lecture LDAP
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result > 0) {
 	$info = $object->_load_ldap_info();
 	$dn = $object->_load_ldap_dn($info, 1);

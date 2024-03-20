@@ -103,7 +103,7 @@ foreach ($arrayofpaymentmodetomanage as $val) {
 		if ($val == 'CHQ') {
 			print $langs->trans("BankChecks");
 		} else {
-			print ($langs->trans("PaymentType".$val) != "PaymentType".$val ? $langs->trans("PaymentType".$val) : $langs->trans("PaymentMode").' '.$val);
+			print($langs->trans("PaymentType".$val) != "PaymentType".$val ? $langs->trans("PaymentType".$val) : $langs->trans("PaymentMode").' '.$val);
 		}
 		print '</td>';
 		print '<td class="right">';
@@ -136,7 +136,7 @@ foreach ($arrayofpaymentmodetomanage as $val) {
 
 	$resql = $db->query($sql);
 	if ($resql) {
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th>';
@@ -148,7 +148,7 @@ foreach ($arrayofpaymentmodetomanage as $val) {
 		}
 		print '</th>';
 		print '<th>'.$langs->trans("Date")."</th>";
-		print '<th>'.$langs->trans("Account").'</th>';
+		print '<th>'.$langs->trans("BankAccount").'</th>';
 		print '<th class="right">'.$langs->trans("NbOfCheques").'</th>';
 		print '<th class="right">'.$langs->trans("Amount").'</th>';
 		print '<th class="right">'.$langs->trans("Status").'</th>';

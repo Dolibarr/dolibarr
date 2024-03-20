@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017      Franck Moreau        <franck.moreau@theobald.com>
- * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2018-2023 Alexandre Spangaro   <aspangaro@easya.solutions>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,18 +31,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 
-$loanid = GETPOST('loanid', 'int');
+$loanid = GETPOSTINT('loanid');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
 $socid = 0;
 if (GETPOSTISSET('socid')) {
-	$socid = GETPOST('socid', 'int');
+	$socid = GETPOSTINT('socid');
 }
 if ($user->socid) {
 	$socid = $user->socid;
 }
-if (empty($user->rights->loan->calc)) {
+if (!$user->hasRight('loan', 'calc')) {
 	accessforbidden();
 }
 
@@ -69,7 +69,7 @@ if ($action == 'createecheancier' && empty($pay_without_schedule)) {
 	$db->begin();
 	$i = 1;
 	while ($i < $object->nbterm + 1) {
-		$date = GETPOST('hi_date'.$i, 'int');
+		$date = GETPOSTINT('hi_date'.$i);
 		$mens = price2num(GETPOST('mens'.$i));
 		$int = price2num(GETPOST('hi_interets'.$i));
 		$insurance = price2num(GETPOST('hi_insurance'.$i));
@@ -143,7 +143,7 @@ $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
 llxHeader("", $title, $help_url);
 
 $head = loan_prepare_head($object);
-print dol_get_fiche_head($head, 'FinancialCommitment', $langs->trans("Loan"), -1, 'bill');
+print dol_get_fiche_head($head, 'FinancialCommitment', $langs->trans("Loan"), -1, 'money-bill-alt');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/loan/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -155,7 +155,7 @@ $morehtmlref .= $form->editfieldval("Label", 'label', $object->label, $object, 0
 if (isModEnabled('project')) {
 	$langs->loadLangs(array("projects"));
 	$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
-	if ($user->rights->loan->write) {
+	if ($user->hasRight('loan', 'write')) {
 		if ($action != 'classify') {
 			//$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			if ($action == 'classify') {
@@ -185,9 +185,9 @@ if (isModEnabled('project')) {
 }
 $morehtmlref .= '</div>';
 
-$morehtmlright = '';
+$morehtmlstatus = '';
 
-dol_banner_tab($object, 'loanid', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+dol_banner_tab($object, 'loanid', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 ?>
 <script type="text/javascript">
@@ -198,7 +198,7 @@ $(document).ready(function() {
 		var idcap=echeance-1;
 		idcap = '#hi_capital'+idcap;
 		var capital=price2numjs($(idcap).val());
-		console.log("Change montly amount echeance="+echeance+" idcap="+idcap+" capital="+capital);
+		console.log("Change monthly amount echeance="+echeance+" idcap="+idcap+" capital="+capital);
 		$.ajax({
 			  method: "GET",
 			  dataType: 'json',

@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005	   Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015	   Francis Appels		<francis.appels@yahoo.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,12 +48,11 @@ class modTcpdfbarcode extends ModeleBarCode
 	/**
 	 *	Return description of numbering model
 	 *
-	 *	@return		string		Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $langs;
-
 		return 'TCPDF-barcode';
 	}
 
@@ -70,12 +70,11 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@return		boolean		false if conflict, true if ok
+	 *	@param	Object		$object		Object we need next value for
+	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
-		global $langs;
-
 		return true;
 	}
 
@@ -103,7 +102,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *	@param	   string	    $readable	      Code can be read (What is this ? is this used ?)
 	 *	@param	   integer		$scale			  Scale (not used with this engine)
 	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
-	 *	@return	   int			                  <0 if KO, >0 if OK
+	 *	@return	   int			                  Return integer <0 if KO, >0 if OK
 	 */
 	public function buildBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
@@ -151,7 +150,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *	@param	   string	    $readable	      Code can be read
 	 *	@param	   integer		$scale			  Scale (not used with this engine)
 	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
-	 *	@return	   int			                  <0 if KO, >0 if OK
+	 *	@return	   int			                  Return integer <0 if KO, >0 if OK
 	 */
 	public function writeBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
@@ -192,7 +191,7 @@ class modTcpdfbarcode extends ModeleBarCode
 			}
 
 			dol_syslog("writeBarCode::TCPDF.getBarcodePngData");
-			if ($imageData = $barcodeobj->getBarcodePngData($width, $height, $color)) {
+			if ($imageData = (string) $barcodeobj->getBarcodePngData($width, $height, $color)) {
 				if (function_exists('imagecreate')) {
 					$imageData = imagecreatefromstring($imageData);
 				}
@@ -210,7 +209,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	}
 
 	/**
-	 *	get available output_modes for tcpdf class wth its translated description
+	 *	get available output_modes for tcpdf class with its translated description
 	 *
 	 * @param	string $dolEncodingType dolibarr barcode encoding type
 	 * @return	string tcpdf encoding type

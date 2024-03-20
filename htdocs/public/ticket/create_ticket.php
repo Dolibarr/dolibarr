@@ -67,13 +67,14 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 $langs->loadLangs(array('companies', 'other', 'mails', 'ticket'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$msg_id = GETPOST('msg_id', 'int');
-$socid = GETPOST('socid', 'int');
+$id = GETPOSTINT('id');
+$msg_id = GETPOSTINT('msg_id');
+$socid = GETPOSTINT('socid');
 $suffix = "";
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
+
 
 $backtopage = '';
 
@@ -84,7 +85,7 @@ $object = new Ticket($db);
 $extrafields = new ExtraFields($db);
 $contacts = array();
 $with_contact = null;
-if (!empty($conf->global->TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST)) {
+if (getDolGlobalInt('TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST')) {
 	$with_contact = new Contact($db);
 }
 
@@ -156,7 +157,7 @@ if (empty($reshook)) {
 			// Search company saved with email
 			$searched_companies = $object->searchSocidByEmail($origin_email, '0');
 
-			// Chercher un contact existant avec cette adresse email
+			// Chercher un contact existent avec cette address email
 			// Le premier contact trouvé est utilisé pour déterminer le contact suivi
 			$contacts = $object->searchContactByEmail($origin_email);
 
@@ -170,7 +171,7 @@ if (empty($reshook)) {
 			}
 
 			// Option to require email exists to create ticket
-			if (!empty($conf->global->TICKET_EMAIL_MUST_EXISTS) && ($cid < 0 || empty($contacts[$cid]->socid))) {
+			if (getDolGlobalInt('TICKET_EMAIL_MUST_EXISTS') && ($cid < 0 || empty($contacts[$cid]->socid))) {
 				$error++;
 				array_push($object->errors, $langs->trans("ErrorEmailMustExistToCreateTicket"));
 				$action = '';
@@ -227,7 +228,7 @@ if (empty($reshook)) {
 		}
 
 		// Check Captcha code if is enabled
-		if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA_TICKET)) {
+		if (getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
 			$sessionkey = 'dol_antispam_value';
 			$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
 			if (!$ok) {
@@ -334,10 +335,12 @@ if (empty($reshook)) {
 			$object->ref = $object->getDefaultRef();
 
 			$object->context['disableticketemail'] = 1; // Disable emails sent by ticket trigger when creation is done from this page, emails are already sent later
+			$object->context['contactid'] = GETPOSTINT('contactid'); // Disable emails sent by ticket trigger when creation is done from this page, emails are already sent later
+
+			$object->context['createdfrompublicinterface'] = 1; // To make a difference between a ticket created from the public interface and a ticket directly created from dolibarr
 
 			if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
 				$error++;
-				$errors = array($langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
 				array_push($object->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
 				$action = 'create_ticket';
 			}
@@ -386,9 +389,10 @@ if (empty($reshook)) {
 						$mimetype = $attachedfiles['mimes'];
 
 						// Send email to customer
+						$appli = $mysoc->name;
 
-						$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubject', $object->ref, $object->track_id);
-						$message  = ($conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->transnoentities('TicketNewEmailBody')).'<br><br>';
+						$subject = '['.$appli.'] '.$langs->transnoentities('TicketNewEmailSubject', $object->ref, $object->track_id);
+						$message  = (getDolGlobalString('TICKET_MESSAGE_MAIL_NEW') !== '' ? getDolGlobalString('TICKET_MESSAGE_MAIL_NEW') : $langs->transnoentities('TicketNewEmailBody')).'<br><br>';
 						$message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket').'<br>';
 
 						$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.$object->track_id;
@@ -400,13 +404,13 @@ if (empty($reshook)) {
 
 						$sendto = GETPOST('email', 'alpha');
 
-						$from = $conf->global->MAIN_INFO_SOCIETE_NOM.' <'.getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
+						$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <'.getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 						$replyto = $from;
 						$sendtocc = '';
 						$deliveryreceipt = 0;
 
-						if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
-							$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+						if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO') !== '') {
+							$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO');
 							$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 						}
 						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -416,14 +420,16 @@ if (empty($reshook)) {
 						} else {
 							$result = $mailfile->sendfile();
 						}
-						if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
+						if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO') !== '') {
 							$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 						}
 
 						// Send email to TICKET_NOTIFICATION_EMAIL_TO
-						$sendto = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+						$sendto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 						if ($sendto) {
-							$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref, $object->track_id);
+							$appli = $mysoc->name;
+
+							$subject = '['.$appli.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref, $object->track_id);
 							$message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id).'<br><br>';
 							$message_admin .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
 							$message_admin .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
@@ -443,11 +449,11 @@ if (empty($reshook)) {
 							$message_admin .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
 							$message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'" rel="nofollow noopener">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
-							$from = $conf->global->MAIN_INFO_SOCIETE_NOM.' <'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
+							$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 							$replyto = $from;
 
-							if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
-								$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+							if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO') !== '') {
+								$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO');
 								$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 							}
 							include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -457,7 +463,7 @@ if (empty($reshook)) {
 							} else {
 								$result = $mailfile->sendfile();
 							}
-							if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
+							if ((getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO') !== '')) {
 								$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 							}
 						}
@@ -474,7 +480,7 @@ if (empty($reshook)) {
 					setEventMessages($messagetoshow, null, 'warnings');
 					setEventMessages($langs->trans('PleaseRememberThisId'), null, 'warnings');
 
-					header("Location: index.php".(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:''));
+					header("Location: index.php".(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : ''));
 					exit;
 				}
 			} else {
@@ -482,6 +488,9 @@ if (empty($reshook)) {
 			}
 		}
 	}
+}
+if (!empty($object->errors) || !empty($object->error)) {
+	setEventMessages($object->error, $object->errors, 'errors');
 }
 
 
@@ -492,7 +501,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formticket = new FormTicket($db);
 
-if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
+if (!getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print '<div class="error">'.$langs->trans('TicketPublicInterfaceForbidden').'</div>';
 	$db->close();
 	exit();
@@ -523,7 +532,7 @@ if ($action != "infos_success") {
 
 	print load_fiche_titre($langs->trans('NewTicket'), '', '', 0, 0, 'marginleftonly');
 
-	if (empty($conf->global->TICKET_NOTIFICATION_EMAIL_FROM)) {
+	if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM')=='') {
 		$langs->load("errors");
 		print '<div class="error">';
 		print $langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketEmailNotificationFrom")).'<br>';
@@ -537,8 +546,10 @@ if ($action != "infos_success") {
 
 print '</div>';
 
-// End of page
-htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
+if (getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER')) {
+	// End of page
+	htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+}
 
 llxFooter('', 'public');
 

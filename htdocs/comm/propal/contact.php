@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2016 Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2022 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 /**
  *       \file       htdocs/comm/propal/contact.php
  *       \ingroup    propal
- *       \brief      Tab to manage contacts/adresses of proposal
+ *       \brief      Tab to manage contacts/addresses of proposal
  */
 
 // Load Dolibarr environment
@@ -36,9 +37,9 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('facture', 'propal', 'orders', 'sendings', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$lineid = GETPOST('lineid', 'int');
+$lineid = GETPOSTINT('lineid');
 $action = GETPOST('action', 'aZ09');
 
 $object = new Propal($db);
@@ -67,50 +68,58 @@ $socid = '';
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-restrictedArea($user, 'propal', $object->id);
+$result = restrictedArea($user, 'propal', $object->id);
+$hookmanager->initHooks(array('proposalcontactcard', 'globalcard'));
 
 $usercancreate = $user->hasRight("propal", "creer");
 
-
 /*
- * Add a new contact
+ * Actions
  */
 
-if ($action == 'addcontact' && $user->hasRight('propal', 'creer')) {
-	if ($object->id > 0) {
-		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
-	}
-
-	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	} else {
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
-	}
-} elseif ($action == 'swapstatut' && $user->hasRight('propal', 'creer')) {
-	// Toggle the status of a contact
-	if ($object->id > 0) {
-		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-	}
-} elseif ($action == 'deletecontact' && $user->hasRight('propal', 'creer')) {
-	// Deletes a contact
-	$result = $object->delete_contact($lineid);
-
-	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	} else {
-		dol_print_error($db);
-	}
+$parameters = array('id'=>$id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+if (empty($reshook)) {
+	// Add new contact
+	if ($action == 'addcontact' && $user->hasRight('propal', 'creer')) {
+		if ($object->id > 0) {
+			$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
+			$typeid    = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+			$result    = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
+		}
+
+		if ($result >= 0) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		} else {
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+	} elseif ($action == 'swapstatut' && $user->hasRight('propal', 'creer')) {
+		// Toggle the status of a contact
+		if ($object->id > 0) {
+			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
+		}
+	} elseif ($action == 'deletecontact' && $user->hasRight('propal', 'creer')) {
+		// Delete contact
+		$result = $object->delete_contact($lineid);
+
+		if ($result >= 0) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		} else {
+			dol_print_error($db);
+		}
+	}
+}
 
 /*
  * View

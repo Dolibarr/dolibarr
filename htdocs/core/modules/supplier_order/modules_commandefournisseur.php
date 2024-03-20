@@ -29,6 +29,7 @@
  *                  and parent class for supplier orders numbering models
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // required for use by classes that inherit
 
 
@@ -53,12 +54,6 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 
 	public $atleastoneratenotnull = 0;
 	public $atleastonediscount = 0;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -86,89 +81,7 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 /**
  *	Parent Class of numbering models of suppliers orders references
  */
-abstract class ModeleNumRefSuppliersOrders
+abstract class ModeleNumRefSuppliersOrders extends CommonNumRefGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	public $version;
-
-
-	/**  Return if a model can be used or not
-	 *
-	 *   @return	boolean     true if model can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**  Returns default description of numbering model
-	 *
-	 *   @return    string      Description Text
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("orders");
-		return $langs->trans("NoDescription");
-	}
-
-	/**   Returns a numbering example
-	 *
-	 *    @return   string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("orders");
-		return $langs->trans("NoExample");
-	}
-
-	/**  Tests if existing numbers make problems with numbering
-	 *
-	 *   @return	boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**  Returns next value assigned
-	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param  Object	    $object		Object
-	 *  @return string      			Valeur
-	 */
-	public function getNextValue($objsoc = 0, $object = '')
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**   Returns version of the numbering model
-	 *
-	 *    @return     string      Value
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		}
-		if ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		}
-		if ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		}
-		if ($this->version) {
-			return $this->version;
-		}
-		return $langs->trans("NotAvailable");
-	}
+	// No overload code
 }

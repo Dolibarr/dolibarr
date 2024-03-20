@@ -21,32 +21,23 @@
 /**
  *	\file       htdocs/core/boxes/box_birthdays_members.php
  *	\ingroup    member
- *	\brief      Box for member birthdays
+ *	\brief      Box for members birthdays
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show user birthdays
+ * Class to manage the box to show members birthdays
  */
 class box_birthdays_members extends ModeleBoxes
 {
-	public $boxcode = "birthdays_members";
-	public $boximg = "object_user";
+	public $boxcode  = "birthdays_members";
+	public $boximg   = "object_user";
 	public $boxlabel = "BoxTitleMemberNextBirthdays";
-	public $depends = array("adherent");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
+	public $depends  = array("adherent");
 
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor

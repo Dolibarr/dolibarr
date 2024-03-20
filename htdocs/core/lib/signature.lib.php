@@ -22,7 +22,7 @@
  *
  * @param   string			$type		Type of URL ('proposal', ...)
  * @param	string			$ref		Ref of object
- * @param   Object  		$obj  		object (needed to make multicompany good links)
+ * @param   CommonObject 	$obj  		object (needed to make multicompany good links)
  * @return	string						Url string
  */
 function showOnlineSignatureUrl($type, $ref, $obj = null)
@@ -52,11 +52,11 @@ function showOnlineSignatureUrl($type, $ref, $obj = null)
 /**
  * Return string with full Url
  *
- * @param   int				$mode				0=True url, 1=Url formated with colors
+ * @param   int				$mode				0=True url, 1=Url formatted with colors
  * @param   string			$type				Type of URL ('proposal', ...)
  * @param	string			$ref				Ref of object
- * @param   string  		$localorexternal  	0=Url for browser, 1=Url for external access
- * @param   Object  		$obj  				object (needed to make multicompany good links)
+ * @param   int     		$localorexternal  	0=Url for browser, 1=Url for external access
+ * @param   CommonObject  	$obj  				object (needed to make multicompany good links)
  * @return	string								Url string
  */
 function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $obj = null)
@@ -69,12 +69,11 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		if (empty($object)) {
 			$obj = new stdClass();
 		} else {
-			dol_syslog(__METHOD__." using global object is deprecated, please give obj as argument", LOG_WARNING);
+			dol_syslog(__FUNCTION__." using global object is deprecated, please give obj as argument", LOG_WARNING);
 			$obj = $object;
 		}
 	}
 
-	$ref = str_replace(' ', '', $ref);
 	$out = '';
 
 	// Define $urlwithroot
@@ -130,7 +129,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 			}
 		}*/
 	} elseif ($type == 'contract') {
-		$securekeyseed = isset($conf->global->CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN) ? $conf->global->CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN : '';
+		$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN');
 		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=contract&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'contract_ref';
@@ -145,7 +144,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), '0');
 		}
 	} elseif ($type == 'fichinter') {
-		$securekeyseed = isset($conf->global->FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN) ? $conf->global->FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN : '';
+		$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN');
 		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=fichinter&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'fichinter_ref';
@@ -158,6 +157,21 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 			$out .= "hash('".$securekeyseed."' + '".$type."' + fichinter_ref)";
 		} else {
 			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), '0');
+		}
+	} else {	// For example $type = 'societe_rib'
+		$securekeyseed = getDolGlobalString(dol_strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN');
+		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source='.$type.'&ref='.($mode ? '<span style="color: #666666">' : '');
+		if ($mode == 1) {
+			$out .= $type.'_ref';
+		}
+		if ($mode == 0) {
+			$out .= urlencode($ref);
+		}
+		$out .= ($mode ? '</span>' : '');
+		if ($mode == 1) {
+			$out .= "hash('".$securekeyseed."' + '".$type."' + $type + '_ref)";
+		} else {
+			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $object->entity), '0');
 		}
 	}
 

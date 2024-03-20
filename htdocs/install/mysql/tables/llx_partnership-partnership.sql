@@ -16,8 +16,10 @@
 --
 -- ===================================================================
 
-CREATE TABLE llx_partnership(
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+CREATE TABLE llx_partnership
+(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	entity integer DEFAULT 1 NOT NULL,	-- multi company id, 0 = all
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
 	status smallint DEFAULT 0 NOT NULL, 
 	fk_type integer DEFAULT 0 NOT NULL,
@@ -26,7 +28,6 @@ CREATE TABLE llx_partnership(
 	email_partnership varchar(64),      -- if different than email of thirdparty or member 
 	date_partnership_start date NOT NULL, 
 	date_partnership_end date NULL, 
-	entity integer DEFAULT 1 NOT NULL,	-- multi company id, 0 = all
 	reason_decline_or_cancel text NULL,
 	date_creation datetime NOT NULL, 
 	fk_user_creat integer NULL,			-- can be null if created from public page 
@@ -41,4 +42,5 @@ CREATE TABLE llx_partnership(
 	ip varchar(250),
 	import_key varchar(14),
 	model_pdf varchar(255)
+	
 ) ENGINE=innodb;

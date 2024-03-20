@@ -70,20 +70,22 @@ jQuery(document).ready(function () {\n";
 
 if (empty($conf->dol_no_mouse_hover)) {
 	print '
+    /* for standard tooltip */
 	jQuery(".classfortooltip").tooltip({
+		tooltipClass: "mytooltip",
 		show: { collision: "flipfit", effect:"toggle", delay:50, duration: 20 },
 		hide: { delay: 250, duration: 20 },
-		tooltipClass: "mytooltip",
 		content: function () {
 			console.log("Return title for popup");
 			return $(this).prop("title");		/* To force to get title as is */
 		}
 	});
 
-	var opendelay = 80;
+	var opendelay = 100;
 	var elemtostoretooltiptimer = jQuery("#dialogforpopup");
 	var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
 
+	/* for ajax tooltip */
 	target = jQuery(".classforajaxtooltip");
 	target.tooltip({
 		tooltipClass: "mytooltip",
@@ -94,12 +96,13 @@ if (empty($conf->dol_no_mouse_hover)) {
 	target.off("mouseover mouseout");
 	target.on("mouseover", function(event) {
 		console.log("we will create timer for ajax call");
+	    event.stopImmediatePropagation();
+		clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
+
 		var params = JSON.parse($(this).attr("data-params"));
 		params.token = currenttoken;
 		var elemfortooltip = $(this);
 
-	    event.stopImmediatePropagation();
-		clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
 	    elemtostoretooltiptimer.data("openTimeoutId", setTimeout(function() {
 			target.tooltip("close");
 			$.ajax({
@@ -117,7 +120,7 @@ if (empty($conf->dol_no_mouse_hover)) {
 			 }, opendelay));
 	});
 	target.on("mouseout", function(event) {
-		console.log("mouse out");
+		console.log("mouse out of a .classforajaxtooltip");
 	    event.stopImmediatePropagation();
 	    clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
 	    target.tooltip("close");
@@ -230,7 +233,7 @@ if ($conf->browser->layout != 'phone') {
 print "\n/* JS CODE TO ENABLE reposition management (does not work if a redirect is done after action of submission) */\n";
 print '
 	jQuery(document).ready(function() {
-				/* If page_y set, we set scollbar with it */
+				/* If page_y set, we set scrollbar with it */
 				page_y=getParameterByName(\'page_y\', 0);				/* search in GET parameter */
 				if (page_y == 0) page_y = jQuery("#page_y").text();		/* search in POST parameter that is filed at bottom of page */
 				if (page_y > 0)

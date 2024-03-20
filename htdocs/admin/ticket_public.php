@@ -163,7 +163,7 @@ if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 	}
 } elseif (preg_match('/set_(.*)/', $action, $reg)) {
 	$code = $reg[1];
-	$value = GETPOSTISSET($code) ? GETPOST($code, 'int') : 1;
+	$value = GETPOSTISSET($code) ? GETPOSTINT($code) : 1;
 	if ($code == 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS' && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		$param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
@@ -379,6 +379,21 @@ if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print '</td>';
 	print '</tr>';
 
+	// show footer for company
+	print '<tr class="oddeven"><td>'.$langs->trans("TicketsShowCompanyFooter").'</td>';
+	print '<td class="left">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('TICKET_SHOW_COMPANY_FOOTER');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("TICKET_SHOW_COMPANY_FOOTER", $arrval, $conf->global->TICKET_SHOW_COMPANY_FOOTER);
+	}
+	print '</td>';
+	print '<td class="center width75">';
+	print $form->textwithpicto('', $langs->trans("TicketsShowCompanyFooterHelp"), 1, 'help');
+	print '</td>';
+	print '</tr>';
+
 	// Show progression
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketsShowProgression").'</td>';
 	print '<td class="left">';
@@ -461,12 +476,12 @@ if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 
 	// Url public interface
 	$url_interface = getDolGlobalString("TICKET_URL_PUBLIC_INTERFACE");
-	print '<tr><td>'.$langs->trans("TicketUrlPublicInterfaceLabelAdmin").'</label>';
+	print '<tr><td>'.$langs->trans("UrlPublicInterfaceLabelAdmin").'</label>';
 	print '</td><td>';
-	print '<input type="text" class="minwidth500" name="TICKET_URL_PUBLIC_INTERFACE" value="'.$url_interface.'"></td>';
+	print '<input type="text" class="minwidth500" name="TICKET_URL_PUBLIC_INTERFACE" value="'.$url_interface.'" placeholder="https://..."></td>';
 	print '</td>';
 	print '<td class="center">';
-	print $form->textwithpicto('', $langs->trans("TicketUrlPublicInterfaceHelpAdmin"), 1, 'help');
+	print $form->textwithpicto('', $langs->trans("UrlPublicInterfaceHelpAdmin"), 1, 'help');
 	print '</td></tr>';
 
 	print '</table>';

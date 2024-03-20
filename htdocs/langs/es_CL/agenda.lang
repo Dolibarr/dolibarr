@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - agenda
 IdAgenda=Evento de identificación
 ActionsOwnedBy=Evento propiedad de
-Event=Evento
 EventsNb=Cantidad de eventos
 ListOfActions=Lista de eventos
 EventOnFullDay=Evento todo el día (s)
@@ -69,6 +68,7 @@ BOM_DELETEInDolibarr=Lista de Materiales borrada
 MRP_MO_VALIDATEInDolibarr=Orden de Fabricación validada
 MRP_MO_PRODUCEDInDolibarr=Orden de Fabricación producida
 MRP_MO_DELETEInDolibarr=Orden de Fabricación borrada
+CANCELInDolibarr=Cancelado
 DateActionEnd=Fecha final
 AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar la salida:
 AgendaUrlOptions3=<b>logina =%s</b> para restringir la salida a acciones propiedad de un usuario<b>%s</b>.

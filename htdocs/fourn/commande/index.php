@@ -55,7 +55,7 @@ $hookmanager->initHooks(array('orderssuppliersindex'));
  * 	View
  */
 
-llxHeader('', $langs->trans("SuppliersOrdersArea"));
+llxHeader('', $langs->trans("SuppliersOrdersArea"), '', '', 0, 0, '', '', '', 'mod-supplier-order page-stats');
 
 $commandestatic = new CommandeFournisseur($db);
 $userstatic = new User($db);
@@ -92,9 +92,10 @@ if ($resql) {
 
 	$total = 0;
 	$dataseries = array();
+	$colorseries = array();
 	$vals = array();
-	//	0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
-	//	-> 7=Canceled/Never received -> (reopen) 3=Process runing
+	//	0=Draft -> 1=Validated -> 2=Approved -> 3=Process running -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
+	//	-> 7=Canceled/Never received -> (reopen) 3=Process running
 	//	-> 6=Canceled -> (reopen) 2=Approved
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
@@ -224,12 +225,12 @@ if (isModEnabled("supplier_order")) {
  */
 
 $sql = "SELECT";
-if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	$sql .= " DISTINCT";
 }
 $sql .= " u.rowid, u.lastname, u.firstname, u.email, u.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 	$sql .= " WHERE ((ug.fk_user = u.rowid";
 	$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
@@ -256,7 +257,7 @@ if ($resql) {
 		$userstatic->id = $obj->rowid;
 		$userstatic->getrights('fournisseur');
 
-		if (!empty($userstatic->rights->fournisseur->commande->approuver)) {
+		if ($userstatic->hasRight('fournisseur', 'commande', 'approuver')) {
 			print '<tr class="oddeven">';
 			print '<td>';
 			$userstatic->lastname = $obj->lastname;

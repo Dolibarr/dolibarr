@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 $langs->load('projects');
 
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
 $mine = (isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'mine') ? 1 : 0;
@@ -40,13 +40,13 @@ $mine = (isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'mine') ? 1 : 0;
 $object = new Project($db);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
-if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) {
+if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 	$object->fetchComments();
 }
 
 // Security check
 $socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $hookmanager->initHooks(array('projetnote'));
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
@@ -72,7 +72,7 @@ if (empty($reshook)) {
  */
 
 $title = $langs->trans("Notes").' - '.$object->ref.' '.$object->name;
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Note");
 }
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
@@ -114,9 +114,9 @@ if ($id > 0 || !empty($ref)) {
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (empty($user->rights->projet->all->lire)) {
+	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

@@ -23,7 +23,7 @@ Module4100Desc = Mòdul de gestió de la privadesa de dades (conformitat amb el 
 #
 datapolicySetup = Configuració de la política de privadesa de dades del mòdul
 Deletion = Supressió de dades
-datapolicySetupPage = Depenent de les lleis dels vostres països (Exemple <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> Article 5 </a> del GDPR), les dades personals s'han de conservar durant un període no superior al necessari per a les finalitats per a les quals van ser recollides, excepte per a finalitats d'arxiu. <br> L'eliminació es farà automàticament després d'un temps determinat sense esdeveniment (la durada que hauràs indicat a continuació).
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
 NB_MONTHS = %s mesos
 ONE_YEAR = 1 any
 NB_YEARS = %s anys
@@ -40,16 +40,16 @@ DATAPOLICY_CONTACT_FOURNISSEUR = Proveïdor
 DATAPOLICY_ADHERENT = Soci
 DATAPOLICY_Tooltip_SETUP = Tipus de contacte: indiqueu les vostres opcions per a cada tipus.
 DATAPOLICYMail = Configuració de correus electrònics
-DATAPOLICYSUBJECTMAIL = Assumpte del correu electrònic
+DATAPOLICYSUBJECTMAIL = Subject of the email
 DATAPOLICYCONTENTMAIL = Contingut del correu electrònic
 DATAPOLICYSUBSITUTION = Pots utilitzar les variables següents al teu correu electrònic (LINKACCEPT permet crear un enllaç registrant l'acord de la persona, LINKREFUSED permet registrar la negativa de la persona):
 DATAPOLICYACCEPT = Missatge després de l'acord
-DATAPOLICYREFUSE = Missatge després del desacord
+DATAPOLICYREFUSE = Message after disagreement
 SendAgreementText = Podeu enviar un correu electrònic de GDPR a tots els vostres contactes rellevants (que encara no han rebut cap correu electrònic i per als quals no heu registrat res sobre el seu acord de GDPR). Per a fer-ho, utilitzeu el botó següent.
 SendAgreement = Envieu correus electrònics
 AllAgreementSend = S'han enviat tots els correus electrònics
 TXTLINKDATAPOLICYACCEPT = Text per a l'enllaç "acord"
-TXTLINKDATAPOLICYREFUSE = Text per a l'enllaç "desacord"
+TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
 
 
 #
@@ -57,13 +57,13 @@ TXTLINKDATAPOLICYREFUSE = Text per a l'enllaç "desacord"
 #
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Tractament de dades personals
 DATAPOLICY_consentement = Consentiment obtingut per al tractament de dades personals
-DATAPOLICY_opposition_traitement = S'oposa al tractament de les seves dades personals
-DATAPOLICY_opposition_prospection = S'oposa al tractament de les seves dades personals amb finalitats de prospecció
+DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
+DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
 
 #
 # Popup
 #
-DATAPOLICY_POPUP_ANONYME_TITLE = Anònim a un tercer
+DATAPOLICY_POPUP_ANONYME_TITLE = Anònim un Third party
 DATAPOLICY_POPUP_ANONYME_TEXTE = No podeu eliminar aquest contacte de Dolibarr perquè hi ha elements relacionats. D'acord amb el GDPR, farà que totes aquestes dades siguin anònimes per a respectar les seves obligacions. T'agradaria continuar?
 
 #
@@ -78,15 +78,11 @@ DATAPOLICY_PORTABILITE_CONFIRMATION = Voleu exportar les dades personals d'aques
 #
 ANONYMISER_AT = S'ha anonimitzat l'%s
 
-# V2
-DATAPOLICYReturn = Validació GDPR
-DATAPOLICY_date = Data de l'acord/desacord GDPR
-DATAPOLICY_send = Data d'enviament del correu electrònic de l'acord
-DATAPOLICYReturn = Validació GDPR
+DATAPOLICY_date = Date of agreement/disagreement GDPR
+DATAPOLICY_send = Date agreement email sent
 DATAPOLICY_SEND = Envieu un correu electrònic GDPR
 MailSent = Email ha estat enviat
 
 # ERROR
-ErrorSubjectIsRequired = Error: l'assumpte del correu electrònic és obligatori. Indiqueu-ho a la configuració del mòdul
-=A causa d'un problema tècnic, no hem pogut registrar la vostra elecció. Demanem disculpes per això. Contacta amb nosaltres per a enviar-nos la teva elecció.
-NUMBER_MONTH_BEFORE_DELETION = Nombre de mes abans de la supressió
+=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
+NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

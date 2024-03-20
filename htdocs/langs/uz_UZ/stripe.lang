@@ -41,8 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook jonli kaliti
 ONLINE_PAYMENT_WAREHOUSE=Onlayn to'lov amalga oshirilganda aktsiyalarni pasaytirish uchun foydalaniladigan zaxiralar
 StripeLiveEnabled=Stripe jonli yoqilgan (aks holda sinov / sandbox rejimi)
 StripeImportPayment=Stripe to'lovlarini import qilish
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
-ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
+ExampleOfTestCreditCard=Sinov toʻlovi uchun kredit karta misoli: %s => toʻgʻri, %s => xato CVC, %s => muddati tugadi, %s => to‘lov amalga oshmadi
+ExampleOfTestBankAcountForSEPA=To'g'ridan-to'g'ri debet testi uchun bank hisobining BANiga misol: %s
 StripeGateways=Stripe shlyuzlari
 OAUTH_STRIPE_TEST_ID=Stripe Connect mijoz identifikatori (taxminan _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect mijoz identifikatori (taxminan _...)
@@ -51,6 +51,7 @@ StripeAccount=Stripe hisob qaydnomasi
 StripeChargeList=Stripe to'lovlari ro'yxati
 StripeTransactionList=Stripe operatsiyalari ro'yxati
 StripeCustomerId=Stripe mijoz identifikatori
+StripePaymentId=Stripe toʻlov identifikatori
 StripePaymentModes=Stripe to'lov rejimlari
 LocalID=Mahalliy identifikator
 StripeID=Stripe ID
@@ -62,7 +63,7 @@ DeleteACard=Kartani o'chirish
 ConfirmDeleteCard=Ushbu Kredit yoki Debet kartani o'chirishni xohlaysizmi?
 CreateCustomerOnStripe=Stripe-da mijoz yarating
 CreateCardOnStripe=Stripe-da karta yarating
-CreateBANOnStripe=Create bank on Stripe
+CreateBANOnStripe=Stripe-da bank yarating
 ShowInStripe=Stripe-da ko'rsatish
 StripeUserAccountForActions=Stripe voqealari (Stripe to'lovlari) haqida elektron pochta orqali xabar berish uchun foydalanuvchi hisob qaydnomasi
 StripePayoutList=Stripe to'lovlari ro'yxati
@@ -70,9 +71,10 @@ ToOfferALinkForTestWebhook=IPH-ga qo'ng'iroq qilish uchun Stripe WebHook-ni o'rn
 ToOfferALinkForLiveWebhook=IPH-ga qo'ng'iroq qilish uchun Stripe WebHook-ni sozlash uchun havola (jonli rejim)
 PaymentWillBeRecordedForNextPeriod=To'lov keyingi davr uchun qayd etiladi.
 ClickHereToTryAgain= <a href="%s"> Qayta urinish uchun shu erni bosing ... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Mijozlarni kuchli autentifikatsiya qilish qoidalari tufayli kartani yaratish Stripe backoffice-da amalga oshirilishi kerak. Stripe mijozlar yozuvini yoqish uchun bu erni bosishingiz mumkin: %s
-STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
-TERMINAL_LOCATION=Location (address) for Stripe Terminals
-RequestDirectDebitWithStripe=Request Direct Debit with Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
-
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Kuchli mijozlarni autentifikatsiya qilish qoidalariga ko'ra, kartani yaratish Stripe orqa ofisidan amalga oshirilishi kerak. Stripe mijozlar rekordini yoqish uchun shu yerni bosing: %s
+STRIPE_CARD_PRESENT=Stripe terminallari uchun karta sovg'asi
+TERMINAL_LOCATION=Stripe terminallari uchun joy (manzil).
+RequestDirectDebitWithStripe=Stripe bilan to'g'ridan-to'g'ri debetni talab qiling
+RequesCreditTransferWithStripe=Stripe bilan kredit o'tkazmasini talab qiling
+STRIPE_SEPA_DIRECT_DEBIT=Stripe orqali to'g'ridan-to'g'ri debet to'lovlarini yoqing
+StripeConnect_Mode=Stripe Connect rejimi

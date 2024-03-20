@@ -7,6 +7,7 @@
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
  * Copyright (C) 2020       Marc Guenneugues        <marc.guenneugues@simicar.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,9 +45,9 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
  */
 class pdf_standard extends ModeleExpenseReport
 {
-	 /**
-	  * @var DoliDb Database handler
-	  */
+	/**
+	 * @var DoliDB Database handler
+	 */
 	public $db;
 
 	/**
@@ -75,18 +76,17 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	public $version = 'dolibarr';
 
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
 	public $posxpiece;
 	public $posxcomment;
 	public $posxtva;
 	public $posxup;
 	public $posxqty;
 	public $posxtype;
+
+	/**
+	 * @var int posx date
+	 */
+	public $posxdate;
 	public $posxprojet;
 	public $postotalht;
 	public $postotalttc;
@@ -194,7 +194,7 @@ class pdf_standard extends ModeleExpenseReport
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -228,7 +228,7 @@ class pdf_standard extends ModeleExpenseReport
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -238,7 +238,7 @@ class pdf_standard extends ModeleExpenseReport
 				$heightforinfotot = 40; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 12; // Height reserved to output the footer (value include bottom margin)
-				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
+				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
 				}
 
@@ -250,8 +250,8 @@ class pdf_standard extends ModeleExpenseReport
 				}
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
-				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -268,6 +268,7 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// New page
@@ -288,7 +289,7 @@ class pdf_standard extends ModeleExpenseReport
 
 				// Show notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
-				if (!empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE)) {
+				if (getDolGlobalString('MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE')) {
 					// Get first sale rep
 					if (is_object($object->thirdparty)) {
 						$salereparray = $object->thirdparty->getSalesRepresentatives($user);
@@ -305,7 +306,7 @@ class pdf_standard extends ModeleExpenseReport
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
 
-					$tab_top = 95;
+					$tab_top = 95;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 
 					$pdf->SetFont('', '', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxpiece - 1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
@@ -323,7 +324,6 @@ class pdf_standard extends ModeleExpenseReport
 				}
 
 				$iniY = $tab_top + 7;
-				$initialY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
 				$showpricebeforepagebreak = 1;
@@ -358,7 +358,7 @@ class pdf_standard extends ModeleExpenseReport
 								$pdf->useTemplate($tplidx);
 							}
 							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-								 $this->_pagehead($pdf, $object, 0, $outputlangs);
+								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 							$pdf->setPage($pageposafter + 1);
 							$showpricebeforepagebreak = 1;
@@ -394,14 +394,13 @@ class pdf_standard extends ModeleExpenseReport
 						} else {
 							// We found a page break
 							// Allows data in the first page if description is long enough to break in multiples pages
-							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE)) {
+							if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
 								$showpricebeforepagebreak = 1;
 							} else {
 								$showpricebeforepagebreak = 0;
 							}
 						}
-					} else // No pagebreak
-					{
+					} else { // No pagebreak
 						$pdf->commitTransaction();
 					}
 					$i++;
@@ -489,8 +488,8 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 180, 5, price($object->total_ht), 1, 'R');
 				$pdf->SetFillColor(248, 248, 248);
 
-				if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
-					// TODO Show vat amout per tax level
+				if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
+					// TODO Show vat amount per tax level
 					$posy += 5;
 					$pdf->SetXY(130, $posy);
 					$pdf->SetTextColor(0, 0, 60);
@@ -509,7 +508,7 @@ class pdf_standard extends ModeleExpenseReport
 
 				// show payments zone
 				$sumPayments = $object->getSumPayments();
-				if ($sumPayments > 0 && empty($conf->global->PDF_EXPENSEREPORT_NO_PAYMENT_DETAILS)) {
+				if ($sumPayments > 0 && !getDolGlobalString('PDF_EXPENSEREPORT_NO_PAYMENT_DETAILS')) {
 					$posy = $this->tablePayments($pdf, $object, $posy_start_of_totals, $outputlangs);
 				}
 
@@ -525,7 +524,7 @@ class pdf_standard extends ModeleExpenseReport
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -535,7 +534,7 @@ class pdf_standard extends ModeleExpenseReport
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {
@@ -553,7 +552,7 @@ class pdf_standard extends ModeleExpenseReport
 	 * @param   ExpenseReport	$object             Object to show
 	 * @param   int         	$linenumber         line number
 	 * @param   int         	$curY               current y position
-	 * @param   int         	$default_font_size  default siez of font
+	 * @param   int         	$default_font_size  default font size
 	 * @param   Translate   	$outputlangs        Object lang for output
 	 * @param	int				$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
 	 * @return  void
@@ -575,7 +574,7 @@ class pdf_standard extends ModeleExpenseReport
 		// Type
 		$pdf->SetXY($this->posxtype - 1, $curY);
 		$nextColumnPosX = $this->posxup;
-		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
+		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
 			$nextColumnPosX = $this->posxtva;
 		}
 		if (isModEnabled('project')) {
@@ -602,7 +601,7 @@ class pdf_standard extends ModeleExpenseReport
 		//}
 
 		// VAT Rate
-		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
+		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
 			$vat_rate = pdf_getlinevatrate($object, $linenumber, $outputlangs, $hidedetails);
 			$pdf->SetXY($this->posxtva, $curY);
 			$pdf->MultiCell($this->posxup - $this->posxtva - 0.8, 4, $vat_rate, 0, 'R');
@@ -643,7 +642,7 @@ class pdf_standard extends ModeleExpenseReport
 	 *  @param  ExpenseReport	$object     	Object to show
 	 *  @param  int	    		$showaddress    0=no, 1=yes
 	 *  @param  Translate		$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   	Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -664,7 +663,7 @@ class pdf_standard extends ModeleExpenseReport
 		*/
 
 		// Draft watermark
-		if ($object->fk_statut == 0 && !empty($conf->global->EXPENSEREPORT_DRAFT_WATERMARK)) {
+		if ($object->fk_statut == 0 && getDolGlobalString('EXPENSEREPORT_DRAFT_WATERMARK')) {
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->EXPENSEREPORT_DRAFT_WATERMARK);
 		}
 
@@ -710,20 +709,20 @@ class pdf_standard extends ModeleExpenseReport
 		$posy += 5;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities("DateStart")." : ".($object->date_debut > 0 ?dol_print_date($object->date_debut, "day", false, $outputlangs) : ''), '', 'R');
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities("DateStart")." : ".($object->date_debut > 0 ? dol_print_date($object->date_debut, "day", false, $outputlangs) : ''), '', 'R');
 
 		// Date end period
 		$posy += 5;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities("DateEnd")." : ".($object->date_fin > 0 ?dol_print_date($object->date_fin, "day", false, $outputlangs) : ''), '', 'R');
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities("DateEnd")." : ".($object->date_fin > 0 ? dol_print_date($object->date_fin, "day", false, $outputlangs) : ''), '', 'R');
 
 		// Status Expense Report
 		$posy += 6;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetFont('', 'B', $default_font_size + 2);
 		$pdf->SetTextColor(111, 81, 124);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities($object->statuts_short[$object->status]), '', 'R');
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities($object->labelStatusShort[$object->status]), '', 'R');
 
 		if ($showaddress) {
 			// Sender properties
@@ -764,7 +763,7 @@ class pdf_standard extends ModeleExpenseReport
 			$posy = 50;
 			$posx = $this->marge_gauche;
 			$hautcadre = 40;
-			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = 118;
 			}
 
@@ -779,7 +778,7 @@ class pdf_standard extends ModeleExpenseReport
 			$pdf->SetTextColor(0, 0, 60);
 
 			// Show sender information
-			if (empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+			if (!getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$pdf->SetXY($posx + 2, $posy + 3);
 				$pdf->SetFont('', 'B', $default_font_size);
 				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
@@ -796,9 +795,9 @@ class pdf_standard extends ModeleExpenseReport
 			}
 
 			// Show recipient
-			$posy = 50;
+			$posy = 50;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 			$posx = 100;
-			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;
 			}
 
@@ -809,7 +808,7 @@ class pdf_standard extends ModeleExpenseReport
 			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("TripNDF")." :", 0, 'L');
 			$pdf->rect($posx, $posy, $this->page_largeur - $this->marge_gauche - $posx, $hautcadre);
 
-			// Informations for expense report (dates and users workflow)
+			// Information for expense report (dates and users workflow)
 			if ($object->fk_user_author > 0) {
 				$userfee = new User($this->db);
 				$userfee->fetch($object->fk_user_author);
@@ -876,6 +875,8 @@ class pdf_standard extends ModeleExpenseReport
 				}
 			}
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -963,7 +964,7 @@ class pdf_standard extends ModeleExpenseReport
 		//}
 
 		// VAT
-		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
+		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
 			$pdf->line($this->posxtva - 1, $tab_top, $this->posxtva - 1, $tab_top + $tab_height);
 			if (empty($hidetop)) {
 				$pdf->SetXY($this->posxtva - 0.8, $tab_top + 1);
@@ -1009,7 +1010,7 @@ class pdf_standard extends ModeleExpenseReport
 	 *  @param  ExpenseReport	$object         Object expensereport
 	 *  @param  int				$posy           Position y in PDF
 	 *  @param  Translate		$outputlangs    Object langs for output
-	 *  @return int             				<0 if KO, >0 if OK
+	 *  @return int             				Return integer <0 if KO, >0 if OK
 	 */
 	protected function tablePayments(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -1037,7 +1038,7 @@ class pdf_standard extends ModeleExpenseReport
 		$pdf->MultiCell(15, 3, $outputlangs->transnoentities("Amount"), 0, 'C', 0);
 		$pdf->SetXY($tab3_posx + 35, $tab3_top + 1);
 		$pdf->MultiCell(30, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			$pdf->SetXY($tab3_posx + 65, $tab3_top + 1);
 			$pdf->MultiCell(25, 3, $outputlangs->transnoentities("BankAccount"), 0, 'L', 0);
 		}
@@ -1077,7 +1078,7 @@ class pdf_standard extends ModeleExpenseReport
 				$oper = $outputlangs->transnoentitiesnoconv("PaymentTypeShort".$row->p_code);
 
 				$pdf->MultiCell(40, 3, $oper, 0, 'L', 0);
-				if (isModEnabled("banque")) {
+				if (isModEnabled("bank")) {
 					$pdf->SetXY($tab3_posx + 65, $tab3_top + $y + 1);
 					$pdf->MultiCell(30, 3, $row->baref, 0, 'L', 0);
 				}

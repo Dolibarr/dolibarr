@@ -34,7 +34,6 @@ PaymentEvent=Pagamento dell'evento
 NewRegistration=Registrazione
 EventOrganizationSetup=Allestimento organizzazione eventi
 EventOrganization=Organizzazione di eventi
-Settings=Impostazioni
 EventOrganizationSetupPage = Pagina di configurazione dell'organizzazione dell'evento
 EVENTORGANIZATION_TASK_LABEL = Etichetta delle attività da creare automaticamente quando il progetto viene convalidato
 EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project <br>  <br> For example:  <br> Send Call for Conferences <br> Send Call for Booths <br> Validate suggestions of Conferences <br> Validate application for Booths <br> Open subscriptions to the event for attendees <br> Invia un promemoria dell'evento ai relatori <br> Invia un promemoria dell'evento agli host dello stand <br> Invia un promemoria dell'evento ai partecipanti
@@ -90,7 +89,7 @@ PriceOfRegistrationHelp=Prezzo da pagare per iscriversi o partecipare all'evento
 PriceOfBooth=Prezzo di abbonamento per stare in uno stand
 PriceOfBoothHelp=Prezzo di abbonamento per stare in uno stand
 EventOrganizationICSLink=Collegamento ICS per conferenze
-ConferenceOrBoothInformation=Informazioni sulla conferenza o sullo stand
+ConferenceOrBoothInformation=Conference Or Booth information
 Attendees=Partecipanti
 ListOfAttendeesOfEvent=Elenco dei partecipanti al progetto dell'evento
 DownloadICSLink = Scarica il collegamento ICS
@@ -98,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = Seme per proteggere la chiave per la pagina di reg
 SERVICE_BOOTH_LOCATION = Servizio utilizzato per la riga della fattura relativa all'ubicazione di uno stand
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Servizio utilizzato per la riga della fattura relativa all'iscrizione di un partecipante a un evento
 NbVotes=Numero di voti
+
 #
 # Status
 #
@@ -106,9 +106,10 @@ EvntOrgSuggested = Suggerito
 EvntOrgConfirmed = Confermato
 EvntOrgNotQualified = Non qualificato
 EvntOrgDone = Fatte
-EvntOrgCancelled = Annullato
+EvntOrgCancelled = Annullata
+
 #
-# Public page
+# Other
 #
 SuggestForm = Pagina dei suggerimenti
 SuggestOrVoteForConfOrBooth = Pagina per suggerimenti o votazioni
@@ -144,13 +145,8 @@ OrganizationEventBulkMailToAttendees=Questo è un promemoria della tua partecipa
 OrganizationEventBulkMailToSpeakers=Questo è un promemoria sulla tua partecipazione all'evento come relatore
 OrganizationEventLinkToThirdParty=Collegamento a terzi (cliente, fornitore o partner)
 OrganizationEvenLabelName=Public name of the conference or booth
-
 NewSuggestionOfBooth=Domanda per uno stand
 NewSuggestionOfConference=Application to hold a conference
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = Benvenuto nella pagina dei suggerimenti per la conferenza o lo stand.
 EvntOrgRegistrationConfWelcomeMessage = Benvenuto nella pagina dei suggerimenti per la conferenza.
 EvntOrgRegistrationBoothWelcomeMessage = Benvenuto nella pagina dei suggerimenti per lo stand.
@@ -158,8 +154,8 @@ EvntOrgVoteHelpMessage = Qui puoi visualizzare e votare gli eventi suggeriti per
 VoteOk = Il tuo voto è stato accettato.
 AlreadyVoted = Hai già votato per questo evento.
 VoteError = Si è verificato un errore durante la votazione, riprova.
-
 SubscriptionOk=Your registration has been recorded
+AmountOfRegistrationPaid=Amount of registration paid
 ConfAttendeeSubscriptionConfirmation = Conferma della tua iscrizione a un evento
 Attendee = Partecipante
 PaymentConferenceAttendee = Pagamento dei partecipanti alla conferenza
@@ -169,9 +165,15 @@ RegistrationAndPaymentWereAlreadyRecorder=Per la mail <b> %s </b> sono già stat
 EmailAttendee=E-mail del partecipante
 EmailCompany=Company email
 EmailCompanyForInvoice=Email aziendale (per fattura, se diversa dall'email del partecipante)
-ErrorSeveralCompaniesWithEmailContactUs=Sono state trovate diverse aziende con questa e-mail, quindi non possiamo convalidare automaticamente la tua registrazione. Vi preghiamo di contattarci all'indirizzo %s per una convalida manuale
-ErrorSeveralCompaniesWithNameContactUs=Sono state trovate diverse aziende con questo nome, quindi non possiamo convalidare automaticamente la tua registrazione. Si prega di contattarci all'indirizzo %s per una convalida manuale
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
 NoPublicActionsAllowedForThisEvent=Nessuna azione pubblica è aperta al pubblico per questo evento
 MaxNbOfAttendees=Numero massimo di partecipanti
 DateStartEvent=Event start date
 DateEndEvent=Event end date
+ModifyStatus=Modify status
+ConfirmModifyStatus=Confirm status modification
+ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
+RecordsUpdated = %s Records updated
+RecordUpdated = Record updated
+NoRecordUpdated = No Record updated

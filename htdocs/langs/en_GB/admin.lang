@@ -38,7 +38,6 @@ FollowingSubstitutionKeysCanBeUsed=<br>To learn how to create your .odt document
 Module50200Name=PayPal
 DictionaryAccountancyJournal=Finance journals
 CompanyZip=Postcode
-AdherentLoginRequired=Manage a Login for each member
 LDAPFieldZip=Postcode
 GenbarcodeLocation=Barcode generation command line tool (used by internal engine for some bar code types). Must be compatible with "genbarcode".<br>For example: /usr/local/bin/genbarcode
 FormatZip=Postcode

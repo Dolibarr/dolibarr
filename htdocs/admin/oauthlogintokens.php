@@ -26,9 +26,12 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // This define $list and $supportedoauth2array
+require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+
 use OAuth\Common\Storage\DoliStorage;
+
+$supportedoauth2array = getSupportedOauth2Array();
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'printing', 'oauth'));
@@ -140,6 +143,7 @@ if ($mode == 'setup' && $user->admin) {
 	print '<span class="opacitymedium">'.$langs->trans("OAuthSetupForLogin")."</span><br><br>\n";
 
 	// Define $listinsetup
+	$listinsetup = array();
 	foreach ($conf->global as $key => $val) {
 		if (!empty($val) && preg_match('/^OAUTH_.*_ID$/', $key)) {
 			$provider = preg_replace('/_ID$/', '', $key);
@@ -153,7 +157,7 @@ if ($mode == 'setup' && $user->admin) {
 		}
 	}
 
-	$oauthstateanticsrf = bin2hex(random_bytes(128/8));
+	$oauthstateanticsrf = bin2hex(random_bytes(128 / 8));
 
 	// $list is defined into oauth.lib.php to the list of supporter OAuth providers.
 	if (!empty($listinsetup)) {

@@ -42,8 +42,8 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "ticket", "mails"));
 
-$id       = GETPOST('id', 'int');
-$socid = GETPOST('socid', 'int');
+$id       = GETPOSTINT('id');
+$socid = GETPOSTINT('socid');
 $ref      = GETPOST('ref', 'alpha');
 $track_id = GETPOST('track_id', 'alpha');
 $action   = GETPOST('action', 'alpha');
@@ -53,10 +53,10 @@ $confirm  = GETPOST('confirm', 'alpha');
 $url_page_current = DOL_URL_ROOT.'/ticket/document.php';
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -87,11 +87,11 @@ if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
 	accessforbidden();
 }
 // or for unauthorized internals users
-if (!$user->socid && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id && empty($user->rights->ticket->manage)) {
+if (!$user->socid && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id && !$user->hasRight('ticket', 'manage')) {
 	accessforbidden();
 }
 
-$permissiontoadd = $user->rights->ticket->write;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+$permissiontoadd = $user->hasRight('ticket', 'write');	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 
 
 /*
@@ -101,9 +101,9 @@ $permissiontoadd = $user->rights->ticket->write;	// Used by the include of actio
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 // Set parent company
-if ($action == 'set_thirdparty' && $user->rights->ticket->write) {
-	if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
-		$result = $object->setCustomer(GETPOST('editcustomer', 'int'));
+if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
+	if ($object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id')) >= 0) {
+		$result = $object->setCustomer(GETPOSTINT('editcustomer'));
 		$url = $_SERVER["PHP_SELF"].'?track_id='.GETPOST('track_id', 'alpha');
 		header("Location: ".$url);
 		exit();
@@ -211,8 +211,8 @@ if ($object->id) {
 
 	//$object->ref = $object->track_id;	// For compatibility we use track ID for directory
 	$modulepart = 'ticket';
-	$permissiontoadd = $user->rights->ticket->write;
-	$permtoedit = $user->rights->ticket->write;
+	$permissiontoadd = $user->hasRight('ticket', 'write');
+	$permtoedit = $user->hasRight('ticket', 'write');
 	$param = '&id='.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

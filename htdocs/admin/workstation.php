@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,15 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
+$moduledir = 'workstation';
+$myTmpObjects = array();
+$myTmpObjects['workstation'] = array('label' => 'Workstation', 'includerefgeneration' => 1, 'includedocgeneration' => 0, 'class' => 'Workstation');
+
+$tmpobjectkey = GETPOST('object', 'aZ09');
+if ($tmpobjectkey && !array_key_exists($tmpobjectkey, $myTmpObjects)) {
+	accessforbidden('Bad value for object. Hack attempt ?');
+}
+
 
 /*
  * Actions
@@ -76,24 +86,24 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
-	$tmpobjectkey = GETPOST('object');
 
-	$tmpobject = new $tmpobjectkey($db);
+	$nameofclass = ucfirst($tmpobjectkey);
+	$tmpobject = new $nameofclass($db);
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/workstation/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
@@ -113,18 +123,15 @@ if ($action == 'updateMask') {
 	// Activate a model
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 } elseif ($action == 'del') {
-	$tmpobjectkey = GETPOST('object');
-
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
 		$constforval = strtoupper($tmpobjectkey).'_ADDON_PDF';
-		if ($conf->global->$constforval == "$value") {
+		if (getDolGlobalString($constforval) == "$value") {
 			dolibarr_del_const($db, $constforval, $conf->entity);
 		}
 	}
 } elseif ($action == 'setdoc') {
 	// Set default model
-	$tmpobjectkey = GETPOST('object');
 	$constforval = strtoupper($tmpobjectkey).'_ADDON_PDF';
 	if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
 		// The constant that was read before the new set
@@ -140,7 +147,6 @@ if ($action == 'updateMask') {
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated
 	// by calling method canBeActivated
-	$tmpobjectkey = GETPOST('object');
 	$constforval = 'WORKSTATION_'.strtoupper($tmpobjectkey)."_ADDON";
 	dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
 }
@@ -218,11 +224,6 @@ if ($action == 'edit') {
 }
 
 
-$moduledir = 'workstation';
-$myTmpObjects = array();
-$myTmpObjects['workstation'] = array('includerefgeneration'=>1, 'includedocgeneration'=>0);
-
-
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	if ($myTmpObjectKey == 'MyObject') {
 		continue;
@@ -261,10 +262,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							$module = new $file($db);
 
 							// Show modules according to features level
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								continue;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								continue;
 							}
 
@@ -272,7 +273,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
 
 								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-								print $module->info();
+								print $module->info($langs);
 								print '</td>';
 
 								// Show example of numbering model
@@ -314,7 +315,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
 											$nextval = $langs->trans($nextval);
 										}
-											$htmltooltip .= $nextval.'<br>';
+										$htmltooltip .= $nextval.'<br>';
 									} else {
 										$htmltooltip .= $langs->trans($module->error).'<br>';
 									}
@@ -383,6 +384,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 				if (is_dir($dir)) {
 					$handle = opendir($dir);
 					if (is_resource($handle)) {
+						$filelist = array();
 						while (($file = readdir($handle)) !== false) {
 							$filelist[] = $file;
 						}
@@ -399,16 +401,16 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									$module = new $classname($db);
 
 									$modulequalified = 1;
-									if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 										$modulequalified = 0;
 									}
-									if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+									if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 										$modulequalified = 0;
 									}
 
 									if ($modulequalified) {
 										print '<tr class="oddeven"><td width="100">';
-										print (empty($module->name) ? $name : $module->name);
+										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
 											print $module->info($langs);

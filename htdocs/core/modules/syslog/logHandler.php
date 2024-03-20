@@ -56,13 +56,13 @@ class LogHandler
 	}
 
 	/**
-	 * Is the module active ?
+	 * Is the logger active ?
 	 *
-	 * @return boolean
+	 * @return int		1 if logger enabled
 	 */
 	public function isActive()
 	{
-		return false;
+		return 0;
 	}
 
 	/**

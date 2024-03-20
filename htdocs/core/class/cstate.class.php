@@ -21,44 +21,28 @@
  *      \brief      This file is a CRUD class file (Create/Read/Update/Delete) for c_departements dictionary
  */
 
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
+
+
 /**
  *  Class to manage dictionary States (used by imports)
  */
-class Cstate // extends CommonObject
+class Cstate extends CommonDict
 {
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
-	//var $element='cstate';			//!< Id that identify managed objects
-	//var $table_element='cstate';	    //!< Name of table without prefix where object is stored
-
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	/**
-	 * @var int ID
+	 * @var int         The ID of the state
 	 */
 	public $rowid;
 
+	/**
+	 * @var string      The code of the state
+	 *                  (ex: LU0011, MA12, 07, 0801, etc.)
+	 */
 	public $code_departement;
-	public $code;
 
 	/**
-	 * @var string name
+	 * @var string      The name of the state
 	 */
 	public $name = '';
 
@@ -69,17 +53,11 @@ class Cstate // extends CommonObject
 	 */
 	public $nom = '';
 
-	public $label;
-
-	public $active;
-
-
-
 
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb		$db      Database handler
+	 *  @param      DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -92,7 +70,7 @@ class Cstate // extends CommonObject
 	 *
 	 *  @param      User	$user        User that create
 	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return     int      		   	 <0 if KO, Id of created object if OK
+	 *  @return     int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -106,7 +84,7 @@ class Cstate // extends CommonObject
 			$this->nom = trim($this->nom);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Check parameters
@@ -156,9 +134,9 @@ class Cstate // extends CommonObject
 	/**
 	 *  Load object in memory from database
 	 *
-	 *  @param      int		$id    	Id object
-	 *  @param		string	$code	Code
-	 *  @return     int          	<0 if KO, >0 if OK
+	 *  @param      int		$id    	State ID
+	 *  @param		string	$code	State code
+	 *  @return     int          	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $code = '')
 	{
@@ -200,13 +178,12 @@ class Cstate // extends CommonObject
 	/**
 	 *  Update object into database
 	 *
-	 *  @param      User	$user        User that modify
+	 *  @param      User	$user        User who updates
 	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return     int     		   	 <0 if KO, >0 if OK
+	 *  @return     int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -217,7 +194,7 @@ class Cstate // extends CommonObject
 			$this->name = trim($this->name);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 
 		// Check parameters
@@ -260,11 +237,10 @@ class Cstate // extends CommonObject
 	 *
 	 *	@param  User	$user        User that delete
 	 *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$sql = "DELETE FROM ".$this->db->prefix()."c_departements";
@@ -294,7 +270,7 @@ class Cstate // extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option						On what the link point to ('nolink', ...)

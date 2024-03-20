@@ -16,10 +16,10 @@
 #
 # Generic
 #
-ModulePartnershipName=Gestión Asociaciones
-PartnershipDescription=Gestión Módulo Asociaciones
-PartnershipDescriptionLong= Gestión Módulo Asociaciones
-Partnership=Partner
+ModulePartnershipName=Gestión de asociaciones
+PartnershipDescription=Módulo Gestión asociaciones
+PartnershipDescriptionLong= Gestión Módulo Partners
+Partnership=Socio
 Partnerships=Asociaciones
 AddPartnership=Agregar asociación
 CancelPartnershipForExpiredMembers=Asociación: cancelar la asociación de miembros con suscripciones caducadas
@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Asociación dedicada a este miembro
 DatePartnershipStart=Fecha de inicio
 DatePartnershipEnd=Fecha de fin
 ReasonDecline=Razón de rechazo
-ReasonDeclineOrCancel=Razón de rechazo
+ReasonDeclineOrCancel=Motivo del rechazo o cancelación
 PartnershipAlreadyExist=La asociación ya existe
 ManagePartnership=Gestionar la asociación
 BacklinkNotFoundOnPartnerWebsite=Vínculo de retroceso no encontrado en el sitio web del socio
@@ -82,16 +82,17 @@ YourPartnershipRefusedTopic=Asociación rechazada
 YourPartnershipAcceptedTopic=Asociación aceptada
 YourPartnershipCanceledTopic=Asociación cancelada
 
-YourPartnershipWillSoonBeCanceledContent=Le informamos que su asociación se cancelará pronto (no se encontró el vínculo de retroceso)
-YourPartnershipRefusedContent=Le informamos que su solicitud de asociación ha sido rechazada.
-YourPartnershipAcceptedContent=Le informamos que su solicitud de asociación ha sido aceptada.
-YourPartnershipCanceledContent=Le informamos que su asociación ha sido cancelada.
+YourPartnershipWillSoonBeCanceledContent=Nos gustaría informarle que nuestra asociación pronto se cancelará (no obtuvimos la renovación o no se cumplió un requisito previo para nuestra asociación). Comuníquese con nosotros si recibió esto debido a un error.
+YourPartnershipRefusedContent=Nos gustaría informarle que su solicitud de asociación ha sido rechazada. No se han cumplido los requisitos previos. Por favor contactenos si necesita mas informacion.
+YourPartnershipAcceptedContent=Nos gustaría informarle que su solicitud de asociación ha sido aceptada.
+YourPartnershipCanceledContent=Nos gustaría informarle que nuestra asociación ha sido cancelada. Por favor contactenos si necesita mas informacion.
 
 CountLastUrlCheckError=Número de errores para la última verificación de URL
 LastCheckBacklink=Fecha de la última verificación de URL
-ReasonDeclineOrCancel=Razón de rechazo
 
 NewPartnershipRequest=Nueva solicitud de asociación
 NewPartnershipRequestDesc=Este formulario le permite solicitar ser parte de uno de nuestros programas de asociación. Si necesita ayuda para completar este formulario, comuníquese por correo electrónico <b> %s </b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Esta página debe contener al menos un enlace a uno de los siguientes dominios: %s
+
+IPOfApplicant=IP del solicitante
 

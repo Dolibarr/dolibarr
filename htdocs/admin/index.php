@@ -51,9 +51,9 @@ llxHeader('', $langs->trans("Setup"), $wikihelp);
 print load_fiche_titre($langs->trans("SetupArea"), '', 'tools');
 
 
-if (!empty($conf->global->MAIN_MOTD_SETUPPAGE)) {
+if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 	$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $conf->global->MAIN_MOTD_SETUPPAGE);
-	if (!empty($conf->global->MAIN_MOTD_SETUPPAGE)) {
+	if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 		$i = 0;
 		$reg = array();
 		while (preg_match('/__\(([a-zA-Z|@]+)\)__/i', $conf->global->MAIN_MOTD_SETUPPAGE, $reg) && $i < 100) {
@@ -83,7 +83,7 @@ print '</span>';
 print '<br>';
 
 // Show info setup company
-if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY) || !empty($conf->global->MAIN_INFO_SOCIETE_SETUP_TODO_WARNING)) {
+if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
 	$setupcompanynotcomplete = 1;
 }
 
@@ -106,9 +106,15 @@ print '<br>';
 print '<section class="setupsection">';
 
 $nbmodulesnotautoenabled = count($conf->modules);
-if (in_array('fckeditor', $conf->modules)) $nbmodulesnotautoenabled--;
-if (in_array('export', $conf->modules)) $nbmodulesnotautoenabled--;
-if (in_array('import', $conf->modules)) $nbmodulesnotautoenabled--;
+if (in_array('fckeditor', $conf->modules)) {
+	$nbmodulesnotautoenabled--;
+}
+if (in_array('export', $conf->modules)) {
+	$nbmodulesnotautoenabled--;
+}
+if (in_array('import', $conf->modules)) {
+	$nbmodulesnotautoenabled--;
+}
 
 // Show info setup module
 print img_picto('', 'cog', 'class="paddingright valignmiddle double"').' '.$langs->trans("SetupDescriptionLink", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentities("Setup"), $langs->transnoentities("Modules"));

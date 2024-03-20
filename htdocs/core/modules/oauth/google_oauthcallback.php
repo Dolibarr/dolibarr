@@ -42,7 +42,6 @@ require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
-use OAuth\OAuth2\Service\Google;
 
 // Define $urlwithroot
 global $dolibarr_main_url_root;
@@ -74,7 +73,7 @@ $currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/
  * Load the credential for the service
  */
 
-/** @var $serviceFactory \OAuth\ServiceFactory An OAuth service factory. */
+/** @var \OAuth\ServiceFactory $serviceFactory An OAuth service factory. */
 $serviceFactory = new \OAuth\ServiceFactory();
 $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 // TODO Set options for proxy and timeout
@@ -105,7 +104,7 @@ if ($state) {
 
 // Add a test to check that the state parameter is provided into URL when we make the first call to ask the redirect or when we receive the callback
 // but not when callback was ok and we recall the page
-if ($action != 'delete' && !GETPOST('afteroauthloginreturn', 'int') && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
+if ($action != 'delete' && !GETPOSTINT('afteroauthloginreturn') && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
 	dol_syslog("state or statewithscopeonly and/or requestedpermissionsarray are empty");
 	setEventMessages($langs->trans('ScopeUndefined'), null, 'errors');
 	if (empty($backtourl)) {
@@ -163,7 +162,7 @@ if (!GETPOST('code')) {
 
 	// Save more data into session
 	// Not required. All data are saved into $_SESSION['datafromloginform'] when form is posted with a click on Login with
-	// Google with param actionlogin=login and beforeoauthloginredirect=1, by the functions_googleoauth.php.
+	// Google with param actionlogin=login and beforeoauthloginredirect=google, by the functions_googleoauth.php.
 	/*
 	if (!empty($_POST["tz"])) {
 		$_SESSION["tz"] = $_POST["tz"];
@@ -203,7 +202,7 @@ if (!GETPOST('code')) {
 			$url .= '&login_hint='.urlencode(GETPOST('username'));
 		}
 
-		// Check that the redirect_uri that wil be used is same than url of current domain
+		// Check that the redirect_uri that will be used is same than url of current domain
 
 		// Define $urlwithroot
 		global $dolibarr_main_url_root;
@@ -263,6 +262,7 @@ if (!GETPOST('code')) {
 				dol_syslog("userinfo=".var_export($userinfo, true));
 
 				$useremail = $userinfo['email'];
+
 				/*
 				 $useremailverified = $userinfo['email_verified'];
 				 $useremailuniq = $userinfo['sub'];
@@ -279,6 +279,12 @@ if (!GETPOST('code')) {
 
 				// Verify that the ID token is properly signed by the issuer. Google-issued tokens are signed using one of the certificates found at the URI specified in the jwks_uri metadata value of the Discovery document.
 				// TODO
+
+				// Verify that email is a verified email
+				/*if (empty($userinfo['email_verified'])) {
+					setEventMessages($langs->trans('Bad value for email, email lwas not verified by Google'), null, 'errors');
+					$errorincheck++;
+				}*/
 
 				// Verify that the value of the iss claim in the ID token is equal to https://accounts.google.com or accounts.google.com.
 				if ($userinfo['iss'] != 'accounts.google.com' && $userinfo['iss'] != 'https://accounts.google.com') {
@@ -315,7 +321,7 @@ if (!GETPOST('code')) {
 					$storage->clearToken('Google');
 
 					$tmpuser = new User($db);
-					$res = $tmpuser->fetch(0, '', '', 0, $entitytosearchuser, $useremail);
+					$res = $tmpuser->fetch(0, '', '', 0, $entitytosearchuser, $useremail, 0, 1);	// Load user. Can load with email_oauth2.
 
 					if ($res > 0) {
 						$username = $tmpuser->login;
@@ -336,7 +342,7 @@ if (!GETPOST('code')) {
 			} else {
 				// If call back to url for a OAUTH2 login
 				if ($forlogin) {
-					$_SESSION["dol_loginmesg"] = "Failed to login using Google. OAuth callback URL retreives a token with non valid data";
+					$_SESSION["dol_loginmesg"] = "Failed to login using Google. OAuth callback URL retrieves a token with non valid data";
 					$errorincheck++;
 				}
 			}

@@ -27,8 +27,7 @@ ModuleBuilderDeschooks=Această filă este dedicată cârligelor hooks.
 ModuleBuilderDescwidgets=Această filă este dedicată administrării/construirii de widget-uri.
 ModuleBuilderDescbuildpackage=Puteți genera aici un fișier pachet "pregătit pentru distribuire" (un fișier .zip) al modulului tău și un fișier de documentație "gata de distribuire". Doar fă clic pe buton pentru a construi pachetul sau documentația.
 EnterNameOfModuleToDeleteDesc= Puteți șterge modulul pe care l-aţi creat. ATENŢIE: Toate fișierele de cod ale modulului (generate sau create manual) ȘI datele și documentația de structură vor fi șterse!
-EnterNameOfObjectToDeleteDesc=Puteți șterge un obiect. ATENŢIE: Toate fișierele de cod (generate sau create manual) legate de obiect vor fi șterse!
-EnterNameOfObjectToDeleteDesc=Puteți șterge un obiect. ATENŢIE: Toate fișierele de cod (generate sau create manual) legate de obiect vor fi șterse!
+EnterNameOfObjectToDeleteDesc=Poți șterge un obiect. ATENȚIE: Toate fișierele de cod (generate sau create manual) asociate de obiect vor fi șterse!
 DangerZone=Zona periculoasă
 BuildPackage=Construiți pachetul
 BuildPackageDesc=Puteți genera un pachet zip al aplicației dvs., pentru a-l putea distribui in orice implementare de Dolibarr. Puteți, de asemenea, să-l distribuiți sau să-l vindeţi în marketplace, de exemplu pe <a href="https://www.dolistore.com">DoliStore.com</a>.
@@ -40,7 +39,7 @@ EditorName=Numele editorului
 EditorUrl=Adresa URL a editorului
 DescriptorFile=Fișier descriptor al modulului
 ClassFile=Fișier pentru clasa PHP DAO CRUD
-ApiClassFile=Fișier pentru clasa PHP API
+ApiClassFile=Fișier API al modulului
 PageForList=Pagina PHP pentru lista de înregistrări
 PageForCreateEditView=Pagina PHP pentru creare/editare/vizualizare înregistrare
 PageForAgendaTab=Pagina PHP pentru fila eveniment
@@ -71,7 +70,7 @@ ArrayOfKeyValues=Mulțime de cheie-valoare
 ArrayOfKeyValuesDesc=Mulțimea de chei și valori dacă câmpul este o listă combo cu valori fixe
 WidgetFile=Fișier widget
 CSSFile=Fişier CSS
-JSFile=Fişier Javascript
+JSFile=Fișier JavaScript
 ReadmeFile=Fișierul Readme
 ChangeLog=Fișierul ChangeLog
 TestClassFile=Fișier clasă pentru PHP Unit Test
@@ -92,8 +91,8 @@ ListOfMenusEntries=Lista intrărilor din meniu
 ListOfDictionariesEntries=Listă înregistrări dicţionare
 ListOfPermissionsDefined=Lista permisiunilor definite
 SeeExamples=Vedeți aici exemple
-EnabledDesc=Condiție pentru a avea acest câmp activ.<br><br>Exemple:<br>1<br>isModEnabled('MAIN_MODULE_MYMODULE')<br>getDolGlobalString('MYMODULE_OPTION')==2
-VisibleDesc=Este câmpul vizibil? (Exemple: 0=Niciodată vizibil, 1=Vizibil în listă și în formularele de creare/actualizare/vizualizare, 2=Vizibil doar în listă, 3=Vizibil doar pe formularul de creare/actualizare/vizualizare (nu în listă), 4=Vizibil în listă și numai în formularul de actualizare/vizualizare (nu de creare), 5=Vizibil numai în formularul de vizualizare finală a listei (nu de creare, nu de actualizare). <br><br>Folosirea unei valori negative înseamnă că câmpul nu este afișat implicit în listă, dar poate fi selectat pentru vizualizare).
+EnabledDesc=Condiție pentru a avea acest câmp activ.<br><br>Exemple:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
+VisibleDesc=Este câmpul vizibil? (Exemple: 0=Niciodată vizibil, 1=Vizibil pe listă și formulare de creare/actualizare/vizualizare, 2=Vizibil doar în listă, 3=Vizibil doar pe formularul de creare/actualizare/vizualizare (nu în liste), 4=Vizibil în liste și numai pe formularul de actualizare/vizualizare (nu de creare), 5=Vizibil în listă și numai pe formularul de vizualizare (nu de creare , nu de actualizare). <br><br>Folosirea unei valori negative înseamnă că câmpul nu este afișat implicit în listă, dar poate fi selectat pentru vizualizare).
 ItCanBeAnExpression=Poate fi o expresie. Exemplu:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user->hasRight('holiday', 'define_holiday')?1:5
 DisplayOnPdfDesc=Afișați acest câmp pe documente PDF compatibile, poți gestiona poziția cu câmpul "Poziție". <br><strong>Pentru document :</strong><br>0 = nu este afișat <br>1 = afișat<br> 2 = afișat numai dacă nu este gol<br><br><strong>Pentru liniile documentului :</strong><br>0 = neafișat <br>1 = afișat într-o coloană<br>3 = afișat în coloana descriere a rândului după descriere<br>4 = afișare în coloana descriere după descriere numai dacă nu este goală
 DisplayOnPdf=În PDF
@@ -107,7 +106,7 @@ PermissionsDefDesc=Defineşte aici noile permisiuni furnizate de modulul tău
 MenusDefDescTooltip=Meniurile furnizate de modul/aplicație sunt definite în matricea <strong>$this->menus</strong> în fișierul descriptor al modulului. Poți edita manual acest fișier sau utiliza editorul încorporat. <br><br>Notă: Odată definite (și modulul reactivat), meniurile sunt vizibile și în editorul de meniu disponibil utilizatorilor administratori în %s.
 DictionariesDefDescTooltip=Dicționarele furnizate de modulul/aplicația dvs. sunt definite în tabloul <strong>$ this->dictionaries</strong> în fișierul de descriere al modulului. Puteți edita manual acest fișier sau puteți utiliza editorul încorporat.<br><br> Notă: Modulul o dată definit (și reactivat), dicționarele lui sunt vizibile și în zona de configurare pentru administratori la %s.
 PermissionsDefDescTooltip= Permisiunile furnizate de modulul/aplicația dvs. sunt definite în matricea <strong>$ this->rights</strong> în fișierul de descriere al modulului. Puteți edita manual acest fișier sau puteți utiliza editorul încorporat. <br><br>Notă: Modulul o dată definit (și reactivat), permisiunile sunt vizibile în configurarea de bază a permisiunilor %s.
-HooksDefDesc=Definiți în proprietatea <b>module_parts['hooks'] </b>, în descriptorul modulului, contextul de cârlige pe care doreşti să îl gestionezi (lista de contexte poate fi găsită printr-o căutare după '<b>initHooks(</b>' în codul nucleu) <br> Editează fișierul cârlig hook pentru a adăuga cod cu funcțiile tale (funcțiile care pot fi legate pot fi găsite printr-o căutare după '<b>executeHooks</b>' în codul nucleu).
+HooksDefDesc=Definește în proprietatea <b>module_parts['hooks']</b>, în fișierul descriptor al modulului, lista de contexte în care hook-ul tău trebuie să fie executat (lista de contexte posibile poate fi găsită printr-o căutare după '<b>initHooks(</b>' în codul de bază). <br>Apoi editează fișierul cu codul hooks cu codul funcțiilor hooked (lista de funcții hookable poate fi găsită printr-o căutare după '<b>executeHooks</b>' în codul de bază).
 TriggerDefDesc=Defineşte în fișierul trigger codul pe care vrei să-l execuți atunci când este executat un eveniment de afaceri extern modulului tău(evenimente declanșate de alte module).
 SeeIDsInUse=Vezi ID-urile utilizate în instalarea ta.
 SeeReservedIDsRangeHere=Vezi gama de ID-uri rezervate
@@ -128,7 +127,7 @@ RealPathOfModule=Calea reală a modulului
 ContentCantBeEmpty=Conținutul fișierului nu poate fi gol
 WidgetDesc=Puteți genera și edita aici widgeturile care vor fi încorporate în modulul dvs.
 CSSDesc=Poţi genera şi edita aici un fişier personalizat CSS care va fi încorporat în modulul tău. 
-JSDesc=Puteți genera și edita aici un fișier Javascript personalizat care va fi încorporat în modulul dvs.
+JSDesc=Poți genera și edita aici un fișier cu JavaScript personalizat încorporat în modulul tău.
 CLIDesc=Poţi genera aici spript-uri în linie comandă pe care să le furnizezi cu modulul tău.
 CLIFile=Fişier CLI
 NoCLIFile=Nici un fişier CLI
@@ -149,7 +148,7 @@ CSSListClass=CSS pentru listă
 NotEditable=Needitabil
 ForeignKey=Cheie străină
 ForeignKeyDesc=Dacă valoarea acestui câmp trebuie garantată să existe într-un alt tabel. Introdu aici o sintaxă care să corespundă valorii: tablename.parentfieldtocheck
-TypeOfFieldsHelp=Exemplu:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' înseamnă că adăugăm un buton + după combo pentru a crea înregistrarea<br> 'filter' este o condiție sql, exemplu: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+TypeOfFieldsHelp=Exemplu:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' înseamnă că adăugăm un buton + după combo pentru a crea înregistrarea <br>'filter' este o condiție de sintaxă a Filtrului Universal, exemplu: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Acesta este tipul câmpului/atributului.
 AsciiToHtmlConverter=Convertor ASCII la HTML
 AsciiToPdfConverter=Convertor ASCII la PDF
@@ -181,3 +180,9 @@ FailedToAddCodeIntoDescriptor=Nu s-a putut adăuga codul în descriptor. Verific
 DictionariesCreated=Dicționarul <b>%s</b> a fost creat cu succes
 DictionaryDeleted=Dicționarul <b>%s</b> a șters cu succes
 PropertyModuleUpdated=Proprietatea <b>%s</b> a fost actualizată cu succes
+InfoForApiFile=* Când generezi fișierul pentru prima dată, atunci toate metodele vor fi create <strong>pentru fiecare obiect.</strong><br>* Când faci clic pe <strong>eliminare</strong>, elimini toate metodele pentru doar <strong>obiectul selectat</strong>.
+SetupFile=Pagina pentru configurarea modulului
+EmailingSelectors=Selectori email-uri
+EmailingSelectorDesc=Poți genera și edita aici fișierele de clasă pentru a oferi noi selectori de destinatari de email pentru modulul de Email-uri în masă
+EmailingSelectorFile=Fișier selector email-uri
+NoEmailingSelector=Niciun fișier selector email-uri

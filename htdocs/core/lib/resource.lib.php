@@ -41,7 +41,7 @@ function resource_prepare_head($object)
 	$head[$h][2] = 'resource';
 	$h++;
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && (empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_USER) || empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_THIPARTY))) {
+	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && (!getDolGlobalString('RESOURCE_HIDE_ADD_CONTACT_USER') || !getDolGlobalString('RESOURCE_HIDE_ADD_CONTACT_THIPARTY'))) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][0] = DOL_URL_ROOT.'/resource/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
@@ -58,7 +58,7 @@ function resource_prepare_head($object)
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'resource', 'add', 'core');
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = 0;
 		if (!empty($object->note_private)) {
 			$nbNote++;
@@ -114,7 +114,6 @@ function resource_prepare_head($object)
  */
 function resource_admin_prepare_head()
 {
-
 	global $conf, $db, $langs, $user;
 
 	$extrafields = new ExtraFields($db);

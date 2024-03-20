@@ -26,7 +26,7 @@
  *
  * @param	string	  $content			    MD content
  * @param   string    $parser               'parsedown' or 'nl2br'
- * @param   string    $replaceimagepath     Replace path to image with another path. Exemple: ('doc/'=>'xxx/aaa/')
+ * @param   string    $replaceimagepath     Replace path to image with another path. Example: ('doc/'=>'xxx/aaa/')
  * @return	string                          Parsed content
  */
 function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
@@ -36,8 +36,8 @@ function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
 	//$content = preg_replace('/<a href="([^"]+)" target="([^"]+)">([^<]+)<\/a>/', '[\3](\1){:target="\2"}', $content);
 	$content = preg_replace('/<a href="([^"]+)" target="([^"]+)">([^<]+)<\/a>/', '[\3](\1)', $content);
 
-	// Replace HTML coments
-	$content = preg_replace('/<!--.*-->/ms', '', $content);	// We remove HTML comment that are not MD comment because they will be escaped and output when setSafeMode is set to true.
+	// Replace HTML comments
+	$content = preg_replace('/<!--.*-->/Ums', '', $content);	// We remove HTML comment that are not MD comment because they will be escaped and output when setSafeMode is set to true.
 
 	if (is_array($replaceimagepath)) {
 		foreach ($replaceimagepath as $key => $val) {
@@ -64,7 +64,7 @@ function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
  *
  * @param	string	  $content			    MD content
  * @param   string    $parser               'dolibarr'
- * @param   string    $replaceimagepath     Replace path to image with another path. Exemple: ('doc/'=>'xxx/aaa/')
+ * @param   string    $replaceimagepath     Replace path to image with another path. Example: ('doc/'=>'xxx/aaa/')
  * @return	string                          Parsed content
  */
 function dolMd2Asciidoc($content, $parser = 'dolibarr', $replaceimagepath = null)
@@ -78,7 +78,7 @@ function dolMd2Asciidoc($content, $parser = 'dolibarr', $replaceimagepath = null
 	}
 	//if ($parser == 'dolibarr')
 	//{
-		$content = preg_replace('/<!--.*-->/msU', '', $content);
+	$content = preg_replace('/<!--.*-->/msU', '', $content);
 	//}
 	//else
 	//{

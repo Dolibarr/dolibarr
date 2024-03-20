@@ -3,7 +3,7 @@
  * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	   Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,13 +33,44 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
  */
 class ICal
 {
-	// Text in file
+	/**
+	 * @var string	Name of remote HTTP file to read
+	 */
+	public $file;
+
+	/**
+	 * @var string  Text in file
+	 */
 	public $file_text;
-	public $cal; // Array to save iCalendar parse data
-	public $event_count; // Number of Events
-	public $todo_count; // Number of Todos
-	public $freebusy_count; // Number of Freebusy
-	public $last_key; //Help variable save last key (multiline string)
+
+	/**
+	 * @var array Array to save iCalendar parse data
+	 */
+	public $cal;
+
+	/**
+	 * @var int Number of Events
+	 */
+	public $event_count;
+
+	/**
+	 * @var int Number of Todos
+	 */
+	public $todo_count;
+
+	/**
+	 * @var int Number of Freebusy
+	 */
+	public $freebusy_count;
+
+	/**
+	 * @var string Help variable save last key (multiline string)
+	 */
+	public $last_key;
+
+	/**
+	 * @var string error message
+	 */
 	public $error;
 
 
@@ -63,6 +94,7 @@ class ICal
 		$this->file = $file;
 		$file_text = '';
 
+		//$tmpresult = getURLContent($file, 'GET', '', 1, [], ['http', 'https'], 2, 0);	// To test with any URL
 		$tmpresult = getURLContent($file, 'GET');
 		if ($tmpresult['http_code'] != 200) {
 			$file_text = null;
@@ -104,7 +136,7 @@ class ICal
 	 *
 	 * @param	string	 	$uri			Url
 	 * @param	string		$usecachefile	Full path of a cache file to use a cache file
-	 * @param	string		$delaycache		Delay in seconds for cache (by default 3600 secondes)
+	 * @param	int			$delaycache		Delay in seconds for cache (by default 3600 secondes)
 	 * @return	array|string
 	 */
 	public function parse($uri, $usecachefile = '', $delaycache = 3600)
@@ -112,7 +144,7 @@ class ICal
 		$this->cal = array(); // new empty array
 
 		$this->event_count = -1;
-		$this->file_text = null;
+		$this->file_text = '';
 
 		// Save file into a cache
 		if ($usecachefile) {
@@ -127,7 +159,7 @@ class ICal
 		}
 
 		// read FILE text
-		if (is_null($this->file_text)) {
+		if (empty($this->file_text)) {
 			$this->file_text = $this->read_file($uri);
 
 			if ($usecachefile && !is_null($this->file_text)) {
@@ -137,16 +169,18 @@ class ICal
 			}
 		}
 
-		$this->file_text = preg_split("[\n]", $this->file_text);
+		$file_text_array = preg_split("[\n]", $this->file_text);
 
 		// is this text vcalendar standard text ? on line 1 is BEGIN:VCALENDAR
-		if (!stristr($this->file_text[0], 'BEGIN:VCALENDAR')) {
+		if (!stristr($file_text_array[0], 'BEGIN:VCALENDAR')) {
 			return 'error not VCALENDAR';
 		}
 
 		$insidealarm = 0;
-		$tmpkey = ''; $tmpvalue = ''; $type = '';
-		foreach ($this->file_text as $text) {
+		$tmpkey = '';
+		$tmpvalue = '';
+		$type = '';
+		foreach ($file_text_array as $text) {
 			$text = trim($text); // trim one line
 			if (!empty($text)) {
 				// get Key and Value VCALENDAR:Begin -> Key = VCALENDAR, Value = begin
@@ -332,7 +366,7 @@ class ICal
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return Unix time from ical date time fomrat (YYYYMMDD[T]HHMMSS[Z] or YYYYMMDD[T]HHMMSS)
+	 * Return Unix time from ical date time format (YYYYMMDD[T]HHMMSS[Z] or YYYYMMDD[T]HHMMSS)
 	 *
 	 * @param 	string		$ical_date		String date
 	 * @return 	int
@@ -345,6 +379,7 @@ class ICal
 
 		$ntime = 0;
 		// TIME LIMITED EVENT
+		$date = array();
 		if (preg_match('/([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{0,2})([0-9]{0,2})([0-9]{0,2})/', $ical_date, $date)) {
 			$ntime = dol_mktime($date[4], $date[5], $date[6], $date[2], $date[3], $date[1], true);
 		}
@@ -358,23 +393,24 @@ class ICal
 	/**
 	 * Return unix date from iCal date format
 	 *
-	 * @param 	string 		$key			Key
-	 * @param 	string 		$value			Value
+	 * @param 	string 		$key			Key. Example: 'DTSTART', 'DTSTART;TZID=US-Eastern'
+	 * @param 	string 		$value			Value. Example: '19970714T133000', '19970714T173000Z', '19970714T133000'
 	 * @return 	array
 	 */
 	public function ical_dt_date($key, $value)
 	{
 		// phpcs:enable
 		$return_value = array();
-		$value = $this->ical_date_to_unix($value);
 
 		// Analyse TZID
 		$temp = explode(";", $key);
 
-		if (empty($temp[1])) { // not TZID
-			$value = str_replace('T', '', $value);
+		if (empty($temp[1])) { // not TZID in key
+			$value = $this->ical_date_to_unix($value);
 			return array($key, $value);
 		}
+
+		$value = str_replace('T', '', $value);
 
 		$key = $temp[0];
 		$temp = explode("=", $temp[1]);

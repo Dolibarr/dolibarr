@@ -38,7 +38,7 @@ if (isModEnabled('project')) {
 $langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
 
 // Get Parameters
-$id = GETPOST('facid', 'int') ?GETPOST('facid', 'int') : GETPOST('id', 'int');
+$id = GETPOSTINT('facid') ? GETPOSTINT('facid') : GETPOSTINT('id');
 $ref = GETPOST('ref');
 $action = GETPOST('action', 'aZ09');
 
@@ -79,13 +79,13 @@ if (empty($reshook)) {
 
 $title = $object->ref." - ".$langs->trans('Notes');
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplier-order page-notes');
 
 $form = new Form($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* Card view and edit mode                                                       */
 /*                                                                             */
 /* *************************************************************************** */
 
@@ -122,7 +122,7 @@ if ($id > 0 || !empty($ref)) {
 				if ($action != 'classify' && $caneditproject) {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);

@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("bills");
 
-$chid = GETPOST("rowid", 'int');
+$chid = GETPOSTINT("rowid");
 $action = GETPOST('action', 'aZ09');
 $amounts = array();
 $cancel = GETPOST('cancel');
@@ -67,7 +67,7 @@ if ($action == 'add_payment') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
 	}
-	if (isModEnabled("banque") && !(GETPOST("accountid", 'int') > 0)) {
+	if (isModEnabled("bank") && !(GETPOSTINT("accountid") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
 		$error++;
 	}
@@ -97,7 +97,7 @@ if ($action == 'add_payment') {
 			$payment->chid         = $chid;
 			$payment->datep     = $datepaid;
 			$payment->amounts      = $amounts; // Tableau de montant
-			$payment->paymenttype  = GETPOST("paymenttype", 'int');
+			$payment->paymenttype  = GETPOSTINT("paymenttype");
 			$payment->num_payment  = GETPOST("num_payment", 'alphanohtml');
 			$payment->note_public  = GETPOST("note_public", 'restricthtml');
 
@@ -111,7 +111,7 @@ if ($action == 'add_payment') {
 			}
 
 			if (!$error) {
-				$result = $payment->addPaymentToBank($user, 'payment_donation', '(DonationPayment)', GETPOST('accountid', 'int'), '', '');
+				$result = $payment->addPaymentToBank($user, 'payment_donation', '(DonationPayment)', GETPOSTINT('accountid'), '', '');
 				if (!($result > 0)) {
 					$errmsg = $payment->error;
 					setEventMessages($errmsg, null, 'errors');
@@ -139,8 +139,8 @@ if ($action == 'add_payment') {
  */
 
 $form = new Form($db);
-
-llxHeader();
+$title = $langs->trans("Payment");
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-donation page-payment');
 
 
 $sql = "SELECT sum(p.amount) as total";
@@ -186,7 +186,7 @@ if ($action == 'create') {
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
-	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (GETPOST("remonth") ? $datepaid : -1) : 0;
+	$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? (GETPOST("remonth") ? $datepaid : -1) : 0;
 	print $form->selectDate($datepayment, '', 0, 0, 0, "add_payment", 1, 1, 0, '', '', $object->date, '', 1, $langs->trans("DonationDate"));
 	print "</td>";
 	print '</tr>';
@@ -264,7 +264,7 @@ if ($action == 'create') {
 		print "</tr>\n";
 		/*$total+=$objp->total;
 		$total_ttc+=$objp->total_ttc;
-		$totalrecu+=$objp->am;*/    //Useless code ?
+		$totalrecu+=$objp->am;*/	//Useless code ?
 		$i++;
 	}
 	/*if ($i > 1)
@@ -277,7 +277,7 @@ if ($action == 'create') {
 		print "<td class=\"right\"><b>".price($total_ttc - $totalrecu)."</b></td>";
 		print '<td class="center">&nbsp;</td>';
 		print "</tr>\n";
-	}*/    //Useless code ?
+	}*/	//Useless code ?
 
 	print "</table>";
 

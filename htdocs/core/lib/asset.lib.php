@@ -88,7 +88,7 @@ function assetPrepareHead(Asset $object)
 {
 	global $db, $langs, $conf;
 
-	$langs->load("assets", "admin");
+	$langs->loadLangs(array("assets", "admin"));
 
 	$h = 0;
 	$head = array();
@@ -135,7 +135,7 @@ function assetPrepareHead(Asset $object)
 		$head[$h][0] = DOL_URL_ROOT . '/asset/note.php?id=' . $object->id;
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
-			$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">' . $nbNote . '</span>' : '');
+			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">' . $nbNote . '</span>' : '');
 		}
 		$head[$h][2] = 'note';
 		$h++;
@@ -184,7 +184,7 @@ function assetModelPrepareHead($object)
 {
 	global $langs, $conf;
 
-	$langs->load("assets", "admin");
+	$langs->loadLangs(array("assets", "admin"));
 
 	$h = 0;
 	$head = array();
@@ -192,16 +192,6 @@ function assetModelPrepareHead($object)
 	$head[$h][0] = DOL_URL_ROOT . '/asset/model/card.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT . '/asset/model/depreciation_options.php?id=' . $object->id;
-	$head[$h][1] = $langs->trans("AssetDepreciationOptions");
-	$head[$h][2] = 'depreciation_options';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT . '/asset/model/accountancy_codes.php?id=' . $object->id;
-	$head[$h][1] = $langs->trans("AssetAccountancyCodes");
-	$head[$h][2] = 'accountancy_codes';
 	$h++;
 
 	if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
@@ -215,7 +205,7 @@ function assetModelPrepareHead($object)
 		$head[$h][0] = DOL_URL_ROOT . '/asset/model/note.php?id=' . $object->id;
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
-			$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">' . $nbNote . '</span>' : '');
+			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">' . $nbNote . '</span>' : '');
 		}
 		$head[$h][2] = 'note';
 		$h++;

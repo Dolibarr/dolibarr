@@ -4,8 +4,9 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
- * Copyright (C) 2016-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2017       Ferran Marcet       	 <fmarcet@2byte.es>
+ * Copyright (C) 2016-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ $action = GETPOST('action', 'aZ09');
 $langs->loadLangs(array("loan"));
 
 // Security check
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $hookmanager->initHooks(array('loannote'));
 $result = restrictedArea($user, 'loan', $id, '&loan');
@@ -51,7 +52,7 @@ if ($id > 0) {
 	$object->fetch($id);
 }
 
-$permissionnote = $user->rights->loan->write; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('loan', 'write'); // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -86,7 +87,7 @@ if ($id > 0) {
 
 	$head = loan_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'note', $langs->trans("Loan"), -1, 'bill');
+	print dol_get_fiche_head($head, 'note', $langs->trans("Loan"), -1, 'money-bill-alt');
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref loan
@@ -96,7 +97,7 @@ if ($id > 0) {
 	if (isModEnabled('project')) {
 		$langs->loadLangs(array("projects"));
 		$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
-		if ($user->rights->loan->write) {
+		if ($user->hasRight('loan', 'write')) {
 			//if ($action != 'classify')
 			//	$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			if ($action == 'classify') {
@@ -129,13 +130,14 @@ if ($id > 0) {
 
 	$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+	$morehtmlstatus = $morehtmlright;
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
 	$cssclass = 'titlefield';
-	$permission = $user->rights->loan->write; // Used by the include of notes.tpl.php
+	$permission = $user->hasRight('loan', 'write'); // Used by the include of notes.tpl.php
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	print dol_get_fiche_end();

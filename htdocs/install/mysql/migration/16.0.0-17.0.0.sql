@@ -102,6 +102,7 @@ UPDATE llx_holiday SET fk_user_approve = fk_user_valid WHERE statut = 3 AND fk_u
 ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
 
 ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
+ALTER TABLE llx_user ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
 
 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN lastresult text;
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN port varchar(10) DEFAULT '993';

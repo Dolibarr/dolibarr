@@ -41,7 +41,7 @@ if ($user->socid > 0) {
 $result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 $year = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
+$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
 // Load translation files required by the page
@@ -150,7 +150,7 @@ if (!count($data)) {
 }
 
 // Print array
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="liste centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("MemberNature").'</td>';

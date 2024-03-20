@@ -10,6 +10,7 @@
 -- Copyright (C) 2018      Abbes bahfir         <dolipar@dolipar.org>
 -- Copyright (C) 2020      Udo Tamm             <dev@dolibit.de>
 -- Copyright (C) 2023      Nick Fragoulis
+-- Copyright (C) 2023      Santiago Payà        <santiagopim@gmail.com>
 --
 --
 --------------------------------------------------------------------------------------
@@ -71,9 +72,14 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- Description of chart of account BE PCMN-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  2, 'PCMN-BASE', 'The base accountancy belgium plan', 1);
+-- Description of chart of account BE PCMN-BASE
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  2, 'MAR-VERKORT', 'The base accountancy belgium plan Dutch', 1);
 
 -- Description of chart of account ES PCG08-PYME
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  4, 'PCG08-PYME', 'The PYME accountancy spanish plan', 1);
+
+-- Description of chart of account ES PCG08-PYME-CAT
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  4, 'PCG08-PYME-CAT', 'The PYME accountancy spanish plan in catalan language', 1);
 
 -- Description of chart of account DE SKR-03
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5, 'SKR03', 'Standardkontenrahmen SKR 03', 1);

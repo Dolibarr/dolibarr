@@ -41,7 +41,7 @@ $hookmanager->initHooks(array('projectsindex'));
 $langs->loadLangs(array('projects', 'companies'));
 
 $action = GETPOST('action', 'aZ09');
-$search_project_user = GETPOST('search_project_user', 'int');
+$search_project_user = GETPOSTINT('search_project_user');
 $mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
 if ($mine == 0 && $search_project_user === '') {
 	$search_project_user = (empty($user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX) ? '' : $user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX);
@@ -52,7 +52,7 @@ if ($search_project_user == $user->id) {
 
 // Security check
 $socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
@@ -60,7 +60,7 @@ if (!$user->hasRight('projet', 'lire')) {
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 
-$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 
 
 /*
@@ -74,7 +74,7 @@ if ($reshook < 0) {
 }
 if (empty($reshook)) {
 	if ($action == 'refresh_search_project_user') {
-		$search_project_user = GETPOST('search_project_user', 'int');
+		$search_project_user = GETPOSTINT('search_project_user');
 		$tabparam = array("MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX" => $search_project_user);
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -92,7 +92,7 @@ $projectstatic = new Project($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-$projectset = ($mine ? $mine : (empty($user->rights->projet->all->lire) ? 0 : 2));
+$projectset = ($mine ? $mine : (!$user->hasRight('projet', 'all', 'lire') ? 0 : 2));
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projectset, 1);
 //var_dump($projectsListId);
 
@@ -109,7 +109,7 @@ llxHeader('', $title, $help_url);
 
 // Title for combo list see all projects
 $titleall = $langs->trans("AllAllowedProjects");
-if (!empty($user->rights->projet->all->lire) && !$socid) {
+if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 	$titleall = $langs->trans("AllProjects");
 } else {
 	$titleall = $langs->trans("AllAllowedProjects").'<br><br>';
@@ -130,7 +130,7 @@ $morehtml .= '</form>';
 if ($mine) {
 	$tooltiphelp = $langs->trans("MyProjectsDesc");
 } else {
-	if (!empty($user->rights->projet->all->lire) && !$socid) {
+	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 		$tooltiphelp = $langs->trans("ProjectsDesc");
 	} else {
 		$tooltiphelp = $langs->trans("ProjectsPublicDesc");
@@ -200,7 +200,7 @@ print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppst
 print '</div><div class="fichetwothirdright">';
 
 // Latest modified projects
-$sql = "SELECT p.rowid, p.ref, p.title, p.dateo, p.datee, p.fk_statut as status, p.tms as datem";
+$sql = "SELECT p.rowid, p.ref, p.title, p.dateo as date_start, p.datee as date_end, p.fk_statut as status, p.tms as datem";
 $sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 $sql .= ", s.code_client, s.code_compta, s.client";
 $sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
@@ -209,7 +209,7 @@ $sql .= ", s.canvas, s.status as thirdpartystatus";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
-if ($mine || empty($user->rights->projet->all->lire)) {
+if ($mine || !$user->hasRight('projet', 'all', 'lire')) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // If we have this test true, it also means projectset is not 2
 }
 if ($socid) {
@@ -241,6 +241,8 @@ if ($resql) {
 			$projectstatic->title = $obj->title;
 			$projectstatic->thirdparty_name = $obj->name;
 			$projectstatic->status = $obj->status;
+			$projectstatic->date_start = $db->jdate($obj->date_start);
+			$projectstatic->date_end = $db->jdate($obj->date_end);
 
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
@@ -277,11 +279,11 @@ if ($resql) {
 
 			// Label
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->title).'">';
-			print $projectstatic->title;
+			print dol_escape_htmltag($projectstatic->title);
 			print '</td>';
 
 			// Thirdparty
-			print '<td class="nowrap">';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name).'">';
 			if ($companystatic->id > 0) {
 				print $companystatic->getNomUrl(1, 'company', 16);
 			}
@@ -320,7 +322,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
 $sql .= " AND p.fk_statut = 1";
-if ($mine || empty($user->rights->projet->all->lire)) {
+if ($mine || !$user->hasRight('projet', 'all', 'lire')) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // If we have this test true, it also means projectset is not 2
 }
 if ($socid > 0) {
@@ -344,7 +346,7 @@ if ($resql) {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("OpenedProjectsByThirdparties", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder);
-		print_liste_field_titre("NbOfProjects", $_SERVER["PHP_SELF"], "nb", "", "", '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre("Number", $_SERVER["PHP_SELF"], "nb", "", "", '', $sortfield, $sortorder, 'right ');
 		print "</tr>\n";
 	}
 
@@ -412,7 +414,7 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-if (!getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') || getDolGlobalInt('PROJECT_SHOW_OPEN_PROJECTS_LIST_ON_PROJECT_AREA')) {
+if ((!getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') || getDolGlobalInt('PROJECT_SHOW_OPEN_PROJECTS_LIST_ON_PROJECT_AREA')) && !getDolGlobalInt('PROJECT_HIDE_OPEN_PROJECTS_LIST_ON_PROJECT_AREA')) {
 	// This list is surely very long and useless when we are using opportunities, so we hide it for this use case, but we allow to show it if
 	// we really want it and to allow interface backward compatibility.
 	print '<br>';

@@ -30,6 +30,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -67,7 +68,7 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -77,88 +78,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class LangTest extends PHPUnit\Framework\TestCase
+class LangTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return SecurityTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
-
 	/**
 	 * testLang
 	 *
@@ -167,10 +88,10 @@ class LangTest extends PHPUnit\Framework\TestCase
 	public function testLang()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 
@@ -181,34 +102,37 @@ class LangTest extends PHPUnit\Framework\TestCase
 			}
 
 			print 'Check language file for lang code='.$code."\n";
-			$tmplangs=new Translate('', $conf);
-			$langcode=$code;
+			$tmplangs = new Translate('', $conf);
+			$langcode = $code;
 			$tmplangs->setDefaultLang($langcode);
 			$tmplangs->load("main");
 
-			$result=$tmplangs->transnoentitiesnoconv("FONTFORPDF");
+			$result = $tmplangs->transnoentitiesnoconv("FONTFORPDF");
 			print __METHOD__." FONTFORPDF=".$result."\n";
 			$this->assertTrue(in_array($result, array('msungstdlight', 'stsongstdlight', 'helvetica', 'DejaVuSans', 'cid0jp', 'cid0kr', 'freemono', 'freeserif')), 'Error bad value '.$result.' for FONTFORPDF in main.lang file '.$code);
 
-			$result=$tmplangs->transnoentitiesnoconv("DIRECTION");
+			$result = $tmplangs->transnoentitiesnoconv("DIRECTION");
 			print __METHOD__." DIRECTION=".$result."\n";
 			$this->assertTrue(in_array($result, array('rtl', 'ltr')), 'Error bad value for DIRECTION in main.lang file '.$code);
 
-			$result=$tmplangs->transnoentitiesnoconv("SeparatorDecimal");
+			$result = $tmplangs->transnoentitiesnoconv("SeparatorDecimal");
 			print __METHOD__." SeparatorDecimal=".$result."\n";
-			$this->assertContains($result, array('.',',','/',' ','','None'), 'Error on decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+			$this->assertTrue(in_array($result, array('.',',','/','。',' ','','None')), 'Error on decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
 
-			$result=$tmplangs->transnoentitiesnoconv("SeparatorThousand");
+			$result = $tmplangs->transnoentitiesnoconv("SeparatorThousand");
 			print __METHOD__." SeparatorThousand=".$result."\n";
-			$this->assertContains($result, array('.',',','/',' ','','\'','None','Space'), 'Error on thousand separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+			$this->assertTrue(in_array($result, array('.',',','/',' ','','\'','None','Space')), 'Error on thousand separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
 
 			// Test java string contains only d,M,y,/,-,. and not m,...
-			$result=$tmplangs->transnoentitiesnoconv("FormatDateShortJava");
+			$result = $tmplangs->transnoentitiesnoconv("FormatDateShortJava");
 			print __METHOD__." FormatDateShortJava=".$result."\n";
-			$this->assertRegExp('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJava KO for lang code '.$code);
-			$result=$tmplangs->trans("FormatDateShortJavaInput");
+			$tmpvar = preg_match('/^[dMy\/\-\.]+$/', $result);
+			$this->assertEquals(1, $tmpvar, 'FormatDateShortJava KO for lang code '.$code.'. Does not match /[dMy\/\-\.]+/');
+
+			$result = $tmplangs->trans("FormatDateShortJavaInput");
 			print __METHOD__." FormatDateShortJavaInput=".$result."\n";
-			$this->assertRegExp('/^[dMy\/\-\.]+$/', $result, 'FormatDateShortJavaInput KO for lang code '.$code);
+			$tmpvar = preg_match('/^[dMy\/\-\.]+$/', $result);
+			$this->assertEquals(1, $tmpvar, 'FormatDateShortJavaInput KO for lang code '.$code.'. Does not match /^[dMy\/\-\.]+$/');
 
 			unset($tmplangs);
 
@@ -220,23 +144,35 @@ class LangTest extends PHPUnit\Framework\TestCase
 				}
 
 				//print 'Check lang file '.$file."\n";
-				$filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/langs/'.$code.'/'.$file);
+				$filecontent = file_get_contents(DOL_DOCUMENT_ROOT.'/langs/'.$code.'/'.$file);
 
-				$result=preg_match('/=--$/m', $filecontent);	// A special % char we don't want. We want the common one.
+				$result = preg_match('/=--$/m', $filecontent);	// A special % char we don't want. We want the common one.
 				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
 				$this->assertTrue($result == 0, 'Found a translation KEY=-- into file '.$code.'/'.$file.'. We probably want Key=- instead.');
 
-				$result=strpos($filecontent, '％');	// A special % char we don't want. We want the common one.
+				$result = strpos($filecontent, '％');	// A special % char we don't want. We want the common one.
 				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
 				$this->assertTrue($result === false, 'Found a bad percent char ％ instead of % into file '.$code.'/'.$file);
 
-				$result=preg_match('/%n/m', $filecontent);	// A sequence of char we don't want
+				$result = preg_match('/%n/m', $filecontent);	// A sequence of char we don't want
 				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
 				$this->assertTrue($result == 0, 'Found a sequence %n into the translation file '.$code.'/'.$file.'. We probably want %s');
 
-				$result=preg_match('/<<<<</m', $filecontent);	// A sequence of char we don't want
+				$result = preg_match('/<<<<</m', $filecontent);	// A sequence of char we don't want
 				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
 				$this->assertTrue($result == 0, 'Found a sequence <<<<< into the translation file '.$code.'/'.$file.'. Probably a bad merge of code were done.');
+
+				$reg = array();
+				$result = preg_match('/(.*)\'notranslate\'/im', $filecontent, $reg);	// A sequence of char we don't want
+				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
+				$this->assertTrue($result == 0, 'Found a sequence tag \'notranslate\' into the translation file '.$code.'/'.$file.' in line '.empty($reg[1]) ? '' : $reg[1]);
+
+				if (!in_array($code, array('ar_SA'))) {
+					$reg = array();
+					$result = preg_match('/(.*)<([^a-z\/\s,=\(]1)/im', $filecontent, $reg);	// A sequence of char we don't want
+					//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
+					$this->assertTrue($result == 0, 'Found a sequence tag <'.(empty($reg[2]) ? '': $reg[2]).' into the translation file '.$code.'/'.$file.' in line '.empty($reg[1]) ? '' : $reg[1]);
+				}
 			}
 		}
 
@@ -251,13 +187,13 @@ class LangTest extends PHPUnit\Framework\TestCase
 	public function testTrans()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$tmplangs=new Translate('', $conf);
-		$langcode='en_US';
+		$tmplangs = new Translate('', $conf);
+		$langcode = 'en_US';
 		$tmplangs->setDefaultLang($langcode);
 		$tmplangs->load("main");
 

@@ -16,6 +16,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 
 /**
@@ -23,47 +24,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModeleExpenseReport extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active models generation
@@ -104,96 +64,9 @@ function expensereport_pdf_create(DoliDB $db, ExpenseReport $object, $message, $
 }
 
 /**
- *  \class      ModeleNumRefExpenseReport
- *  \brief      Parent class for numbering masks of expense reports
+ *  Parent class for numbering masks of expense reports
  */
-
-abstract class ModeleNumRefExpenseReport
+abstract class ModeleNumRefExpenseReport extends CommonNumRefGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	public $version;
-
-
-	/**
-	 *	Return if a model can be used or not
-	 *
-	 *	@return		boolean     true if model can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**
-	 *	Returns the default description of the numbering model
-	 *
-	 *	@return     string      Descriptive text
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("orders");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 *	Returns an example of numbering
-	 *
-	 *	@return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("trips");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *	Test whether the numbers already in force in the base do not cause conflicts that would prevent this numbering working.
-	 *
-	 *	@return     boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 *	Returns next assigned value
-	 *
-	 *	@param	Object		$object		Object we need next value for
-	 *	@return	string      Value
-	 */
-	public function getNextValue($object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 *  Returns the version of the numbering module
-	 *
-	 *  @return     string      Value
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		} elseif ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		} elseif ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		} else {
-			return $langs->trans("NotAvailable");
-		}
-	}
+	// No overload code
 }

@@ -137,6 +137,7 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'62','Group
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'63','Société coopérative agricole');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'64','Société d''assurance mutuelle');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'65','Société civile');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'66','Société publiques locales');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'69','Autre personne morale de droit privé inscrite au RCS');
 
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'71','Administration de l état');
@@ -167,7 +168,7 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '506', 'KG
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '507', 'Ltd. - Limited Company');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '508', 'OHG - Offene Handelsgesellschaft');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '509', 'eG - eingetragene Genossenschaft');
-
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '510', 'e.V. - eingetragener Verein');
 
 -- Denmark
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8001', 'Aktieselvskab A/S');
@@ -179,6 +180,12 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8006', '
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8007', 'Selskab Med Begrænset Hæftelse SMBA');
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8008', 'Kommanditselskab K/S');
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8009', 'SPE-selskab');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8010', 'Forening med begrænset ansvar (f.m.b.a.)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8011', 'Frivillig forening');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8012', 'Almindelig forening');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8013', 'Andelsboligforening');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8014', 'Særlig forening');
+
 
 -- Greece
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('10201',102,'Ατομική επιχείρηση',0,1);

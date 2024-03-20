@@ -19,7 +19,7 @@
 
 /**
  *      \file       htdocs/core/class/html.formcron.class.php
- *      \brief      Fichier de la classe des fonctions predefinie de composants html cron
+ *      \brief      Fichier de la class des functions predefinie de composants html cron
  */
 
 

@@ -1,26 +1,38 @@
 # Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=เวิร์กโฟลว์การติดตั้งโมดูล
-WorkflowDesc=This module provides some automatic actions. By default, the workflow is open (you can do things in the order you want) but here you can activate some automatic actions.
+WorkflowDesc=โมดูลนี้มีการดำเนินการอัตโนมัติบางอย่าง ตามค่าเริ่มต้น เวิร์กโฟลว์จะเปิดอยู่ (คุณสามารถทำสิ่งต่างๆ ตามลำดับที่คุณต้องการได้) แต่ที่นี่คุณสามารถเปิดใช้งานการดำเนินการอัตโนมัติบางอย่างได้
 ThereIsNoWorkflowToModify=ไม่มีการปรับเปลี่ยนขั้นตอนการทำงานที่มีอยู่กับโมดูลเปิดใช้งานคือ
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a sales order after a commercial proposal is signed (the new order will have same amount as the proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (the new invoice will have same amount as the proposal)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a sales order is closed (the new invoice will have same amount as the order)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=สร้างใบสั่งขายโดยอัตโนมัติหลังจากลงนามข้อเสนอเชิงพาณิชย์ (คำสั่งซื้อใหม่จะมีจำนวนเท่ากับข้อเสนอ)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=สร้างใบแจ้งหนี้ของลูกค้าโดยอัตโนมัติหลังจากลงนามข้อเสนอทางการค้าแล้ว (ใบแจ้งหนี้ใหม่จะมีจำนวนเงินเท่ากับข้อเสนอ)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=สร้างใบแจ้งหนี้ของลูกค้าโดยอัตโนมัติหลังจากตรวจสอบสัญญาแล้ว
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=สร้างใบแจ้งหนี้ของลูกค้าโดยอัตโนมัติหลังจากปิดใบสั่งขาย (ใบแจ้งหนี้ใหม่จะมีจำนวนเงินเท่ากับใบสั่ง)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=ในการสร้างตั๋ว ให้สร้างการแทรกแซงโดยอัตโนมัติ
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales order as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you have 1 invoice validated for n orders, this may set all orders to billed too.
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales orders as billed when a customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you have 1 invoice set billed for n orders, this may set all orders to billed too.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=จัดประเภทใบสั่งขายแหล่งที่มาที่เชื่อมโยงเป็นจัดส่งเมื่อมีการตรวจสอบการจัดส่ง (และถ้าปริมาณที่จัดส่งโดยการจัดส่งทั้งหมดเหมือนกันกับในใบสั่งที่จะอัพเดต)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=จัดประเภทใบสั่งขายแหล่งที่มาที่เชื่อมโยงเป็นจัดส่งเมื่อมีการปิดการจัดส่ง (และถ้าปริมาณที่จัดส่งโดยการจัดส่งทั้งหมดเหมือนกันกับในใบสั่งที่จะอัพเดต)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposals)
 # Autoclassify purchase order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
-# Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
-AutomaticCreation=Automatic creation
-AutomaticClassification=Automatic classification
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked orders)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=จัดประเภทใบสั่งซื้อแหล่งที่มาที่เชื่อมโยงเป็นที่ได้รับเมื่อมีการตรวจสอบการรับ (และถ้าปริมาณที่ได้รับจากการรับทั้งหมดจะเหมือนกับในใบสั่งซื้อที่จะอัพเดต)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=จัดประเภทใบสั่งซื้อแหล่งที่มาที่เชื่อมโยงเป็นที่ได้รับเมื่อมีการปิดการรับ (และถ้าปริมาณที่ได้รับจากการรับทั้งหมดจะเหมือนกับในใบสั่งซื้อที่จะอัพเดต)
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=จัดประเภทการจัดส่งแหล่งที่มาที่เชื่อมโยงเป็นปิดเมื่อมีการตรวจสอบใบแจ้งหนี้ของลูกค้า (และถ้ายอดเงินของใบแจ้งหนี้เท่ากับยอดรวมของการจัดส่งที่เชื่อมโยง)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=จัดประเภทการจัดส่งต้นทางที่เชื่อมโยงเป็นเรียกเก็บเงินเมื่อมีการตรวจสอบใบแจ้งหนี้ของลูกค้า (และหากจำนวนเงินของใบแจ้งหนี้เท่ากับยอดรวมของการจัดส่งที่เชื่อมโยง)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=จัดประเภทการรับแหล่งที่มาที่เชื่อมโยงเป็นเรียกเก็บเงินเมื่อมีการตรวจสอบใบแจ้งหนี้การซื้อ (และถ้ายอดเงินของใบแจ้งหนี้เท่ากับยอดรวมของการรับที่เชื่อมโยง)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=จัดประเภทการรับแหล่งที่มาที่เชื่อมโยงเป็นเรียกเก็บเงินเมื่อมีการตรวจสอบใบแจ้งหนี้การซื้อ (และถ้ายอดเงินของใบแจ้งหนี้เท่ากับยอดรวมของการรับที่เชื่อมโยง)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=เมื่อสร้างตั๋ว ให้เชื่อมโยงสัญญาที่มีอยู่ทั้งหมดของบุคคลที่สามที่ตรงกัน
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=เมื่อเชื่อมโยงสัญญา ให้ค้นหาระหว่างบริษัทแม่
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=ปิดการแทรกแซงทั้งหมดที่เชื่อมโยงกับตั๋วเมื่อปิดตั๋ว
+AutomaticCreation=การสร้างอัตโนมัติ
+AutomaticClassification=การจำแนกประเภทอัตโนมัติ
+AutomaticClosing=ปิดอัตโนมัติ
+AutomaticLinking=การเชื่อมโยงอัตโนมัติ

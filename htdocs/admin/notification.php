@@ -181,7 +181,7 @@ print $langs->trans("NotificationsDescUser").'<br>';
 if (isModEnabled("societe")) {
 	print $langs->trans("NotificationsDescContact").'<br>';
 }
-print $langs->trans("NotificationsDescGlobal").'<br>';
+print $langs->trans("NotificationsDescGlobal").' - '.$langs->trans("YouAreHere").'<br>';
 print '</span>';
 print '<br>';
 
@@ -201,7 +201,7 @@ print $langs->trans("NotificationEMailFrom").'</td>';
 print '<td>';
 print img_picto('', 'email', 'class="pictofixedwidth"');
 print '<input class="width150 quatrevingtpercentminusx" type="email" name="email_from" value="'.getDolGlobalString('NOTIFICATION_EMAIL_FROM').'">';
-if (!empty($conf->global->NOTIFICATION_EMAIL_FROM) && !isValidEmail($conf->global->NOTIFICATION_EMAIL_FROM)) {
+if (getDolGlobalString('NOTIFICATION_EMAIL_FROM') && !isValidEmail($conf->global->NOTIFICATION_EMAIL_FROM)) {
 	print ' '.img_warning($langs->trans("ErrorBadEMail"));
 }
 print '</td>';
@@ -448,12 +448,12 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	$inputfieldalreadyshown = 0;
 	// Notification with threshold
 	foreach ($conf->global as $key => $val) {
-		if ($val == '' || !preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifiedevent['code'].'_THRESHOLD_HIGHER_(.*)/', $key, $reg)) {
+		if ($val == '' || !preg_match('/^NOTIFICATION_FIXEDEMAIL_'.preg_quote($notifiedevent['code'], '/').'_THRESHOLD_HIGHER_(.*)/', $key, $reg)) {
 			continue;
 		}
 
 		$param = 'NOTIFICATION_FIXEDEMAIL_'.$notifiedevent['code'].'_THRESHOLD_HIGHER_'.$reg[1];
-		$value = GETPOST('NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_key') ?GETPOST('NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_key', 'alpha') : $conf->global->$param;
+		$value = GETPOST('NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_key') ? GETPOST('NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_key', 'alpha') : getDolGlobalString($param);
 
 		$s = '<input type="text" class="minwidth200" name="NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_key" value="'.dol_escape_htmltag($value).'">'; // Do not use type="email" here, we must be able to enter a list of email with , separator.
 		$arrayemail = explode(',', $value);
@@ -464,7 +464,7 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 				$showwarning++;
 			}
 		}
-		if ((!empty($conf->global->$param)) && $showwarning) {
+		if (getDolGlobalString($param) && $showwarning) {
 			$s .= ' '.img_warning($langs->trans("ErrorBadEMail"));
 		}
 		print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"), 1, 'help', '', 0, 2);

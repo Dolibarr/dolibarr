@@ -67,7 +67,7 @@ if (!is_object($weblangs)) {
 if (!is_object($pagelangs)) {
 	$pagelangs = new Translate('', $conf);
 }
-if ($pageid > 0) {
+if (!empty($pageid) && $pageid > 0) {
 	$websitepage->fetch($pageid);
 
 	$weblangs->setDefaultLang(GETPOSTISSET('lang') ? GETPOST('lang', 'aZ09') : (empty($_COOKIE['weblangs-shortcode']) ? 'auto' : preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['weblangs-shortcode'])));
@@ -82,7 +82,7 @@ if ($pageid > 0) {
 		header("X-Content-Type-Options: nosniff");
 
 		// X-Frame-Options
-		if (empty($websitepage->allowed_in_frames) && empty($conf->global->WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES)) {
+		if (empty($websitepage->allowed_in_frames) && !getDolGlobalString('WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES')) {
 			header("X-Frame-Options: SAMEORIGIN");
 		}
 
@@ -100,7 +100,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	header("X-Content-Type-Options: nosniff");
 
 	// X-Frame-Options
-	if (empty($websitepage->allowed_in_frames) && empty($conf->global->WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES)) {
+	if (empty($websitepage->allowed_in_frames) && !getDolGlobalString('WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES')) {
 		header("X-Frame-Options: SAMEORIGIN");
 	}
 
@@ -252,7 +252,7 @@ if (!defined('USEDOLIBARREDITOR') && empty($website->status)) {
 	header("X-Content-Type-Options: nosniff");
 
 	// X-Frame-Options
-	if (empty($websitepage->allowed_in_frames) && empty($conf->global->WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES)) {
+	if (empty($websitepage->allowed_in_frames) && !getDolGlobalString('WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES')) {
 		header("X-Frame-Options: SAMEORIGIN");
 	}
 
@@ -263,3 +263,22 @@ if (!defined('USEDOLIBARREDITOR') && empty($website->status)) {
 	print '<center><br><br>'.$weblangs->trans("SorryWebsiteIsCurrentlyOffLine").'</center>';
 	exit;
 }
+
+
+// Get session info and obfuscate session cookie and other variables
+$prefix = dol_getprefix('');
+$sessionname = 'DOLSESSID_'.$prefix;
+//$savsessionid = $_COOKIE[$sessionname];
+
+$_COOKIE[$sessionname] = 'obfuscatedcookie';
+unset($conf->file->instance_unique_id);
+
+unset($dolibarr_main_instance_unique_id);
+unset($dolibarr_main_db_host);
+unset($dolibarr_main_db_port);
+unset($dolibarr_main_db_name);
+unset($dolibarr_main_db_user);
+unset($dolibarr_main_db_pass);
+unset($$dolibarr_main_db_type);
+unset($dolibarr_main_document_root);
+unset($dolibarr_main_document_root_alt);

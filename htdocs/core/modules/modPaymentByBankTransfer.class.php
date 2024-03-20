@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent 		<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modPaymentByBankTransfer extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -91,7 +91,7 @@ class modPaymentByBankTransfer extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'paymentbybanktransfer';
-		$r = 0;
+		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$r++;
 		$this->rights[$r][0] = 561;
 		$this->rights[$r][1] = 'Read bank transfer payment orders';

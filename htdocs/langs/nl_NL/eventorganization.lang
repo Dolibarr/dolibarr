@@ -34,7 +34,6 @@ PaymentEvent=Betaling van evenement
 NewRegistration=Registratie
 EventOrganizationSetup=Evenementorganisatie instellen
 EventOrganization=Evenementenorganisatie
-Settings=Instellingen
 EventOrganizationSetupPage = Instellingenpagina voor evenementorganisatie
 EVENTORGANIZATION_TASK_LABEL = Label van taken om automatisch te maken wanneer het project is gevalideerd
 EVENTORGANIZATION_TASK_LABELTooltip = Wanneer u een evenement valideert om te organiseren, kunnen sommige taken automatisch worden aangemaakt in het project <br> <br> Bijvoorbeeld: <br> Stuur oproep voor conferenties <br> Stuur oproep voor standen <br> Valideer suggesties van Openen voor conferenties a0342fz <br> Stuur een herinnering aan het evenement naar sprekers <br> Stuur een herinnering aan het evenement naar standhosters <br> Stuur een herinnering aan het evenement naar deelnemers
@@ -89,8 +88,9 @@ PriceOfRegistration=Prijs van registratie
 PriceOfRegistrationHelp=Prijs te betalen om te registreren of deel te nemen aan het evenement
 PriceOfBooth=Abonnementsprijs om een stand te staan
 PriceOfBoothHelp=Abonnementsprijs om een stand te staan
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=Koppel ICS voor conferenties
-ConferenceOrBoothInformation=Informatie over conferentie of stand Or
+ConferenceOrBoothInformation=Conferentie- of standinformatie
 Attendees=deelnemers
 ListOfAttendeesOfEvent=Lijst met deelnemers van het evenementproject
 DownloadICSLink = ICS-link downloaden
@@ -98,6 +98,7 @@ EVENTORGANIZATION_SECUREKEY = Seed om de sleutel voor de openbare registratiepag
 SERVICE_BOOTH_LOCATION = Service gebruikt voor de factuurregel over een standlocatie
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service die wordt gebruikt voor de factuurrij over een deelnemersabonnement op een evenement
 NbVotes=Aantal stemmen
+
 #
 # Status
 #
@@ -107,8 +108,9 @@ EvntOrgConfirmed = bevestigd
 EvntOrgNotQualified = Niet gekwalificeerd
 EvntOrgDone = Uitgevoerd
 EvntOrgCancelled = Geannuleerd
+
 #
-# Public page
+# Other
 #
 SuggestForm = Suggestie pagina
 SuggestOrVoteForConfOrBooth = Pagina voor suggestie of stem
@@ -144,13 +146,8 @@ OrganizationEventBulkMailToAttendees=Dit is een herinnering aan uw deelname aan 
 OrganizationEventBulkMailToSpeakers=Dit is een herinnering aan je deelname aan het evenement als spreker
 OrganizationEventLinkToThirdParty=Link naar derde partij (klant, leverancier of partner)
 OrganizationEvenLabelName=Openbare naam van de conferentie of stand
-
 NewSuggestionOfBooth=Aanvraag voor een stand
 NewSuggestionOfConference=Aanvraag om een conferentie te houden
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = Welkom op de congres- of standsuggestiepagina.
 EvntOrgRegistrationConfWelcomeMessage = Welkom op de pagina met congressuggesties.
 EvntOrgRegistrationBoothWelcomeMessage = Welkom op de stand suggestie pagina.
@@ -158,8 +155,8 @@ EvntOrgVoteHelpMessage = Hier kunt u de voorgestelde evenementen voor het projec
 VoteOk = Uw stem is geaccepteerd.
 AlreadyVoted = Je hebt al op dit evenement gestemd.
 VoteError = Er is een fout opgetreden tijdens het stemmen, probeer het opnieuw.
-
 SubscriptionOk=Uw aanmelding is geregistreerd
+AmountOfRegistrationPaid=Bedrag van de betaalde inschrijving
 ConfAttendeeSubscriptionConfirmation = Bevestiging van uw inschrijving op een evenement
 Attendee = deelnemer
 PaymentConferenceAttendee = Conferentie deelnemer betaling
@@ -169,15 +166,15 @@ RegistrationAndPaymentWereAlreadyRecorder=Een registratie en een betaling waren 
 EmailAttendee=E-mailadres van deelnemer
 EmailCompany=Bedrijfs e-mail
 EmailCompanyForInvoice=Bedrijfse-mail (voor factuur, indien anders dan e-mailadres van deelnemer)
-ErrorSeveralCompaniesWithEmailContactUs=Er zijn verschillende bedrijven met dit e-mailadres gevonden, dus we kunnen uw registratie niet automatisch valideren. Neem contact met ons op via %s voor een handmatige validatie
-ErrorSeveralCompaniesWithNameContactUs=Er zijn verschillende bedrijven met deze naam gevonden, dus we kunnen uw registratie niet automatisch valideren. Neem contact met ons op via %s voor een handmatige validatie
+ErrorSeveralCompaniesWithEmailContactUs=Er zijn meerdere bedrijven met dit e-mailadres gevonden, dus we kunnen uw registratie niet automatisch valideren. Neem contact met ons op via %s voor een handmatige validatie
+ErrorSeveralCompaniesWithNameContactUs=Er zijn meerdere bedrijven met deze naam gevonden, dus we kunnen uw registratie niet automatisch valideren. Neem contact met ons op via %s voor een handmatige validatie
 NoPublicActionsAllowedForThisEvent=Er zijn geen openbare acties voor dit evenement toegankelijk
 MaxNbOfAttendees=Max aantal deelnemers
 DateStartEvent=Startdatum evenement
 DateEndEvent=Einddatum evenement
 ModifyStatus=Status wijzigen
 ConfirmModifyStatus=Bevestig statuswijziging
-ConfirmModifyStatusQuestion=Weet u zeker dat u de <span class='notranslate'>%s</span>\n geselecteerde record(s) wilt wijzigen?
+ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
 RecordsUpdated = %s Records bijgewerkt
 RecordUpdated = Record bijgewerkt
 NoRecordUpdated = Geen record bijgewerkt

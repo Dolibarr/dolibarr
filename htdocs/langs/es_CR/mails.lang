@@ -22,7 +22,6 @@ DeleteMailing=Eliminar correo electrónico
 DeleteAMailing=Eliminar un correo electrónico
 PreviewMailing=Previsualizar correo
 CreateMailing=Crear correo
-TestMailing=Probar correo
 ValidMailing=Validar correo
 MailingStatusValidated=Validada
 MailSuccessfulySent=Correo (de %s a %s) aceptado correctamente para entregar

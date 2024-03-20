@@ -48,7 +48,7 @@ trait CommonIncoterm
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Return incoterms informations
+	 *    Return incoterms information
 	 *    TODO Use a cache for label get
 	 *
 	 *    @return	string	incoterms info
@@ -76,7 +76,7 @@ trait CommonIncoterm
 	}
 
 	/**
-	 *    Return incoterms informations for pdf display
+	 *    Return incoterms information for pdf display
 	 *
 	 *    @return	string|boolean			Incoterms info or false
 	 */
@@ -107,7 +107,7 @@ trait CommonIncoterm
 	 *
 	 *    @param	int		$id_incoterm     Id of incoterm to set or '' to remove
 	 * 	  @param 	string  $location		 location of incoterm
-	 *    @return	int     				<0 if KO, >0 if OK
+	 *    @return	int     				Return integer <0 if KO, >0 if OK
 	 */
 	public function setIncoterms($id_incoterm, $location)
 	{
