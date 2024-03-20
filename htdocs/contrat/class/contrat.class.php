@@ -3473,7 +3473,7 @@ class ContratLigne extends CommonObjectLine
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
 		$this->vat_src_code = trim($this->vat_src_code);
-		$this->tva_tx = trim($this->tva_tx);
+		$this->tva_tx = trim((string) $this->tva_tx);
 		$this->localtax1_tx = trim($this->localtax1_tx);
 		$this->localtax2_tx = trim($this->localtax2_tx);
 		$this->qty = trim($this->qty);

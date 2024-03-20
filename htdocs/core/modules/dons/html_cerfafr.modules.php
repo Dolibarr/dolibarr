@@ -5,6 +5,7 @@
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,7 +152,7 @@ class html_cerfafr extends ModeleDon
 				// Define contents
 				$donmodel = DOL_DOCUMENT_ROOT."/core/modules/dons/html_cerfafr.html";
 				$form = implode('', file($donmodel));
-				$form = str_replace('__REF__', $don->id, $form);
+				$form = str_replace('__REF__', (string) $don->id, $form);
 				$form = str_replace('__DATE__', dol_print_date($don->date, 'day', false, $outputlangs), $form);
 				//$form = str_replace('__IP__',$user->ip,$form); // TODO $user->ip not exist
 				$form = str_replace('__AMOUNT__', price($don->amount), $form);
@@ -166,7 +167,7 @@ class html_cerfafr extends ModeleDon
 				$form = str_replace('__DONATOR_FIRSTNAME__', $don->firstname, $form);
 				$form = str_replace('__DONATOR_LASTNAME__', $don->lastname, $form);
 				$form = str_replace('__DONATOR_SOCIETE__', $don->societe, $form);
-				$form = str_replace('__DONATOR_STATUT__', $don->statut, $form);
+				$form = str_replace('__DONATOR_STATUT__', (string) $don->statut, $form);
 				$form = str_replace('__DONATOR_ADDRESS__', $don->address, $form);
 				$form = str_replace('__DONATOR_ZIP__', $don->zip, $form);
 				$form = str_replace('__DONATOR_TOWN__', $don->town, $form);
