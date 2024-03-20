@@ -11,7 +11,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 // Clone the Dolibarr repository from GitHub
-                git credentialsId: '10', url: 'https://github.com/iyedben/Dolibarr.gitt'
+                git credentialsId: '10', url: 'https://github.com/iyedben/Dolibarr.git'
             }
         }
         stage('Build Docker Image') {
