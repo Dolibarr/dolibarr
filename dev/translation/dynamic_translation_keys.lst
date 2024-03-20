@@ -3662,6 +3662,10 @@ EditWithEditor
 ElementId
 ElementType
 ErrorABatchShouldNotContainsSpaces
+ExtrafieldLinestringGeo
+ExtrafieldMultiPointGeo
+ExtrafieldPointGeo
+ExtrafieldPolygonGeo
 ImageGeneration
 ModelTemplate
 ModuleWebPortalDesc
