@@ -17,13 +17,13 @@ pipeline {
                     sh 'echo "https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com" > ~/.git-credentials'
                 }
             }
-        }*/
+        }
         stage('Clone Repository') {
             steps {
                 // Clone the Dolibarr repository from GitHub
                 git url: 'https://github.com/iyedben/Dolibarr.git'
             }
-        }
+        }*/
         stage('Build Docker Image') {
             steps {
                 // Build the Docker image using Dockerfile
