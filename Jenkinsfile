@@ -38,7 +38,7 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+      /*  stage('Deploy') {
             steps {
                 // Deploy the application stack using docker-compose
                 script {
@@ -57,6 +57,6 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
     }
 }
