@@ -21,24 +21,5 @@ pipeline {
                     docker.build('-f ${dockerfilePath} -t dolibarr-app .')
                 }
             }
-        }
-        stage('Run Tests') {
-            steps {
-                // Run tests (replace with your actual test commands)
-                sh 'echo "Running tests..."'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                // Deploy the application stack using docker-compose
-                script {
-                    // Pull the latest Docker image
-                    docker.image('dolibarr-app').pull()
-
-                    // Start the application stack using docker-compose
-                    sh "docker-compose -f ${dockerComposeFilePath} up -d"
-                }
-            }
-        }
     }
 }
