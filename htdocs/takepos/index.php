@@ -959,11 +959,11 @@ function OpenDrawer(){
 }
 
 function DolibarrOpenDrawer() {
-	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&token=<?php echo newToken();?>&term=<?php print urlencode($_SESSION["takeposterminal"]); ?>");
+	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&token=<?php echo newToken();?>&term=<?php print urlencode(empty($_SESSION["takeposterminal"]) ? '' : $_SESSION["takeposterminal"]); ?>");
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
-		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=opendrawer&token='.newToken().'&term='.urlencode($_SESSION["takeposterminal"]); ?>",
+		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=opendrawer&token='.newToken().'&term='.urlencode(empty($_SESSION["takeposterminal"]) ? '' : $_SESSION["takeposterminal"]); ?>",
 	});
 }
 
@@ -1037,8 +1037,8 @@ $( document ).ready(function() {
 	LoadProducts(0);
 	Refresh();
 	<?php
-	//IF NO TERMINAL SELECTED
-	if ($_SESSION["takeposterminal"] == "") {
+	// IF NO TERMINAL SELECTED
+	if (empty($_SESSION["takeposterminal"]) || $_SESSION["takeposterminal"] == "") {
 		print "ModalBox('ModalTerminal');";
 	}
 
@@ -1120,7 +1120,10 @@ $( document ).ready(function() {
 </script>
 
 <?php
-$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) > 0 ? getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) : '';
+$keyCodeForEnter = '';
+if (!empty($_SESSION['takeposterminal'])) {
+	$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) > 0 ? getDolGlobalString('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) : '';
+}
 ?>
 <div class="container">
 
@@ -1134,7 +1137,11 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 				<a class="topnav-terminalhour" onclick="ModalBox('ModalTerminal')">
 				<span class="fa fa-cash-register"></span>
 				<span class="hideonsmartphone">
-				<?php echo getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$_SESSION["takeposterminal"], $langs->trans("TerminalName", $_SESSION["takeposterminal"])); ?>
+				<?php
+				if (!empty($_SESSION["takeposterminal"])) {
+					echo getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$_SESSION["takeposterminal"], $langs->trans("TerminalName", $_SESSION["takeposterminal"]));
+				}
+				?>
 				</span>
 				<?php
 				echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "day").'</span>'; ?>
@@ -1416,7 +1423,7 @@ if (getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0 || getDolGlobalString('T
 
 $sql = "SELECT rowid, status, entity FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
 $sql .= " entity = ".((int) $conf->entity)." AND ";
-$sql .= " posnumber = ".((int) $_SESSION["takeposterminal"])." AND ";
+$sql .= " posnumber = ".((int) empty($_SESSION["takeposterminal"]) ? 0 : $_SESSION["takeposterminal"])." AND ";
 $sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
 
 $resql = $db->query($sql);
