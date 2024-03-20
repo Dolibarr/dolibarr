@@ -507,6 +507,7 @@ class Expedition extends CommonObject
 		$expeditionline->fk_expedition = $this->id;
 		$expeditionline->entrepot_id = $entrepot_id;
 		$expeditionline->fk_origin_line = $origin_line_id;
+		$expeditionline->element_type = $this->origin;
 		$expeditionline->qty = $qty;
 		$expeditionline->rang = $rang;
 		$expeditionline->array_options = $array_options;
@@ -637,7 +638,7 @@ class Expedition extends CommonObject
 				$this->shipping_method_id   = $obj->fk_shipping_method;
 				$this->shipping_method = $obj->shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
-				$this->origin               = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
+				$this->origin               = ($obj->origin ? $obj->origin : 'order'); // For compatibility
 				$this->origin_id            = $obj->origin_id;
 				$this->billed               = $obj->billed;
 				$this->fk_project = $obj->fk_project;
