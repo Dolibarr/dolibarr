@@ -2881,7 +2881,7 @@ class ExpeditionLigne extends CommonObjectLine
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expeditiondet (";
 		$sql .= "fk_expedition";
 		$sql .= ", fk_entrepot";
-		$sql .= ", fk_origin_line";
+		$sql .= ", fk_elementdet";
 		$sql .= ", qty";
 		$sql .= ", rang";
 		$sql .= ") VALUES (";
