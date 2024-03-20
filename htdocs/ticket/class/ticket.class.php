@@ -2430,7 +2430,7 @@ class Ticket extends CommonObject
 			}
 		}
 
-		if ($filefound) {
+		if ($classname !== '') {
 			$result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
 			$modTicket = new $classname();
 
@@ -2992,7 +2992,6 @@ class Ticket extends CommonObject
 			$array_receiver = array_merge($array_receiver, $this->getInfosTicketExternalContact(1));
 		}
 
-		$sendtocc = "";
 		if ($send_internal_cc) {
 			$sendtocc = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
 		} else {
