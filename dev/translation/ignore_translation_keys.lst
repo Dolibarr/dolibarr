@@ -1025,15 +1025,10 @@ VideoGeneration
 ## pass - this list needs to be cleaned up
 #####################################################################
 #####################################################################
-$minimum
-AI_KEY_API_
 AddService
 AnHelpMessage
 Analytic
 AnalyticLabel
-BOOKCAL_MYPARAM10
-BOOKCAL_MYPARAM8
-BOOKCAL_MYPARAM9
 BankId
 Bcc
 Birthdate
@@ -1061,9 +1056,6 @@ Facture
 FailedToConnectToSFTPAfterSSHAuthentication
 FailedToLogin
 First
-France
-Germany
-Greece
 GroupCreate
 GroupUpdate
 INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION
@@ -1078,7 +1070,6 @@ InputValueIsNotAnNumber
 InterDate
 Inventory Code
 InvoiceReplace
-Italy
 ItemID
 JobApplications
 JobPosition
@@ -1092,7 +1083,6 @@ LocalTax1IsUsedExample
 LocalTax2IsNotUsedExample
 LocalTax2IsUsedExample
 Logs
-Lot/Série
 MAIN_IMAP_USE_PHPIMAPDesc
 MYMODULE_CATEGORY_ID_XXX
 MYMODULE_MYPARAM1
@@ -1138,7 +1128,6 @@ Recruited
 Ref. Product
 RefNewContract
 Societe
-Spain
 Stable
 Suggested
 TaskModifieddInDolibarr
