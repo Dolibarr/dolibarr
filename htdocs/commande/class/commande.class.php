@@ -1008,7 +1008,7 @@ class Commande extends CommonOrder
 
 					// Complete vat rate with code
 					$vatrate = $line->tva_tx;
-					if ($line->vat_src_code && !preg_match('/\(.*\)/', $vatrate)) {
+					if ($line->vat_src_code && !preg_match('/\(.*\)/', (string) $vatrate)) {
 						$vatrate .= ' ('.$line->vat_src_code.')';
 					}
 
@@ -1543,7 +1543,7 @@ class Commande extends CommonOrder
 			$pu_ht_devise = price2num($pu_ht_devise);
 			$pu_ttc = price2num($pu_ttc);
 			$pa_ht = (float) price2num($pa_ht);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
 			}
 			$txlocaltax1 = price2num($txlocaltax1);
@@ -2443,13 +2443,13 @@ class Commande extends CommonOrder
 	 * 	Set a percentage discount
 	 *
 	 * 	@param     	User		$user		User setting the discount
-	 * 	@param     	float		$remise		Discount (percent)
-	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int 					Return integer <0 if KO, >0 if OK
+	 * 	@param     	float|string	$remise		Discount (percent)
+	 * 	@param     	int<0,1>	$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@return		int<-1,1> 					Return integer <0 if KO, >0 if OK
 	 */
 	public function setDiscount($user, $remise, $notrigger = 0)
 	{
-		$remise = trim($remise) ? trim($remise) : 0;
+		$remise = trim((string) $remise) ? trim((string) $remise) : 0;
 
 		if ($user->hasRight('commande', 'creer')) {
 			$error = 0;
@@ -3138,7 +3138,7 @@ class Commande extends CommonOrder
 			$pu = price2num($pu);
 			$pa_ht = (float) price2num($pa_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
 			$txlocaltax1 = (float) price2num($txlocaltax1);

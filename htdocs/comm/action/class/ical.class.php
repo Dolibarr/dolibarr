@@ -4,6 +4,7 @@
  * Copyright (C) 2013-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	   Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -220,7 +221,7 @@ class ICal
 						$type = "VCALENDAR";
 						break;
 
-					// Manage VALARM that are inside a VEVENT to avoid fields of VALARM to overwrites fields of VEVENT
+						// Manage VALARM that are inside a VEVENT to avoid fields of VALARM to overwrites fields of VEVENT
 					case "BEGIN:VALARM":
 						$insidealarm = 1;
 						break;
@@ -395,7 +396,7 @@ class ICal
 	 *
 	 * @param 	string 		$key			Key. Example: 'DTSTART', 'DTSTART;TZID=US-Eastern'
 	 * @param 	string 		$value			Value. Example: '19970714T133000', '19970714T173000Z', '19970714T133000'
-	 * @return 	array
+	 * @return 	array{0:string,1:int}|array{0:string,1:array<string,int|string>}
 	 */
 	public function ical_dt_date($key, $value)
 	{

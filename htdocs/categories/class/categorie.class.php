@@ -1223,7 +1223,7 @@ class Categorie extends CommonObject
 			$keyfilter3 = '^'.$keyfiltercatid.'_';
 			$keyfilter4 = '_'.$keyfiltercatid.'_';
 			foreach (array_keys($this->cats) as $key) {
-				$fullpath = $this->cats[$key]['fullpath'];
+				$fullpath = (string) $this->cats[$key]['fullpath'];
 				$test = (preg_match('/'.$keyfilter1.'/', $fullpath) || preg_match('/'.$keyfilter2.'/', $fullpath)
 					|| preg_match('/'.$keyfilter3.'/', $fullpath) || preg_match('/'.$keyfilter4.'/', $fullpath));
 
