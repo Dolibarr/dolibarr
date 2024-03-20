@@ -129,6 +129,7 @@ abstract class Stats
 		if ($foundintocache) {    // Cache file found and is not too old
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
+			'@phan-var-force array<int<0,11>,array{0:int<1,12>,1:int}> $data';
 		} else {
 			$year = $startyear;
 			$sm = $startmonth - 1;
@@ -188,7 +189,7 @@ abstract class Stats
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
 	 * @param	int		$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 * @param   int 	$startmonth		month of the fiscal year start min 1 max 12 ; if 1 = january
-	 * @return 	array 					Array of values
+	 * @return	array<int<0,11>,array<string|int|float>>	Array of values
 	 */
 	public function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $format = 0, $startmonth = 1)
 	{
@@ -199,6 +200,7 @@ abstract class Stats
 		}
 
 		$datay = array();
+		$data = array();  // Return value
 
 		// Search into cache
 		if (!empty($cachedelay)) {
@@ -238,7 +240,6 @@ abstract class Stats
 				$year++;
 			}
 
-			$data = array();
 			// $data = array('xval'=>array(0=>xlabel,1=>yval1,2=>yval2...),...)
 			for ($i = 0; $i < 12; $i++) {
 				$data[$i][] = isset($datay[$endyear][($i + $sm) % 12]['label']) ? $datay[$endyear][($i + $sm) % 12]['label'] : $datay[$endyear][($i + $sm) % 12][0]; // set label
@@ -272,17 +273,17 @@ abstract class Stats
 	}
 
 	/**
-	 * @param	int     $year           year number
-	 * @return 	array					array of values
+	 *	@param	int     $year           year number
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values
 	 */
 	abstract protected function getAverageByMonth($year);
 
 	/**
-	 * Return average of entity by month for several years
+	 *	Return average of entity by month for several years
 	 *
 	 *	@param	int		$endyear		Start year
 	 *	@param	int		$startyear		End year
-	 *	@return array{int<0,11>,array<int|float>}	Array of values
+	 *	@return array<array<int|float>>	Array of values
 	 */
 	public function getAverageByMonthWithPrevYear($endyear, $startyear)
 	{
@@ -291,14 +292,13 @@ abstract class Stats
 		}
 
 		$datay = array();
+		$data = array();
 
 		$year = $startyear;
 		while ($year <= $endyear) {
 			$datay[$year] = $this->getAverageByMonth($year);
 			$year++;
 		}
-
-		$data = array();
 
 		for ($i = 0; $i < 12; $i++) {
 			$data[$i][] = $datay[$endyear][$i][0];
@@ -353,6 +353,7 @@ abstract class Stats
 		if ($foundintocache) {    // Cache file found and is not too old
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
+			'@phan-var-force array<int<0,11>,array{0:int<1,12>,1:int|float}> $data';  // Phan can't decode json_decode's return value
 		} else {
 			// This method is defined in parent object only, not into abstract, so we disable phpstan warning
 			/** @phpstan-ignore-next-line */
