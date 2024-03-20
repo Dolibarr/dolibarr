@@ -3355,9 +3355,7 @@ class SupplierProposalLine extends CommonObjectLine
 		}
 		$sql .= " , fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
 		$sql .= " , buy_price_ht=".price2num($this->pa_ht);
-		if (strlen((string) $this->special_code)) {   // FIXME: Suspicious as special_code is supposedly int
-			$sql .= " , special_code=".((int) $this->special_code);
-		}
+		$sql .= " , special_code=".((int) $this->special_code);
 		$sql .= " , fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
 		if (!empty($this->rang)) {
 			$sql .= ", rang=".((int) $this->rang);
