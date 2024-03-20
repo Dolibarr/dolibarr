@@ -31,9 +31,6 @@ CodePaymentTerm
 IdPaymentTerm
 LabelPaymentTerm
 
-# ticket
-TicketAnswered
-
 # website_template
 Message
 Map
@@ -3685,8 +3682,3 @@ WebPortalSetupPage
 XSubsriptionErrors
 YouCanChooseAModelForYouMailContent
 YouCanMakeSomeInstructionForEmail
-helpWithAi
-ExtrafieldLinestringGeo
-ExtrafieldMultiPointGeo
-ExtrafieldPointGeo
-ExtrafieldPolygonGeo
