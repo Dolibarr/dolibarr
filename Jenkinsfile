@@ -2,39 +2,45 @@ pipeline {
     agent any
 
     environment {
-        // Define environment variables for Dockerfile and docker-compose file paths
         dockerfilePath = 'build/docker/Dockerfile'
         dockerComposeFilePath = 'build/docker/docker-compose.yml'
+        IMAGE_NAME = 'iyedbnaissa/dolibarr_app' // Remplacez `monusername` par votre nom d'utilisateur Docker Hub
+        IMAGE_TAG = 'latest' // Vous pouvez dynamiser ce tag si nécessaire, par exemple, en utilisant une variable d'environnement ou un numéro de build
     }
 
     stages {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("-f ${dockerfilePath} -t dolibarr-app .")
-                    echo 'Image Docker construite avec succès.'
+                    def dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}", "-f ${dockerfilePath} .")
                 }
             }
         }
+      /*  stage('Push Docker Image') {
+            steps {
+                script {
+                    // Authentification à Docker Hub
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+                        sh 'echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin'
+                    }
+                    // Pousser l'image sur Docker Hub
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
+                        dockerImage.push("${IMAGE_TAG}")
+                        dockerImage.push("latest") // Pousser également comme latest si désiré
+                    }
+                }
+            }
+        }*/
         stage('Run Tests') {
             steps {
-                // Supposez que vos tests réels sont exécutés ici
                 sh 'echo "Running tests..."'
-                echo 'Tests exécutés avec succès.'
             }
         }
         stage('Deploy') {
             steps {
                 script {
-                    // Supposons que vous ayez déjà configuré l'authentification Docker Hub
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub_credentials') {
-                        docker.image('dolibarr-app').push("latest")
-                    }
-                    echo 'Image Docker poussée sur Docker Hub avec succès.'
-
-                    // Démarrez la pile d'applications à l'aide de docker-compose
+                    docker.image("${IMAGE_NAME}:${IMAGE_TAG}").pull()
                     sh "docker-compose -f ${dockerComposeFilePath} up -d"
-                    echo 'Déploiement effectué avec succès.'
                 }
             }
         }
