@@ -910,6 +910,7 @@ class Expedition extends CommonObject
 		$line->entrepot_id = $entrepot_id;
 		$line->origin_line_id = $id;
 		$line->fk_origin_line = $id;
+		$line->element_type = 'order';
 		$line->qty = $qty;
 
 		$orderline = new OrderLine($this->db);
