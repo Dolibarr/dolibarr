@@ -410,7 +410,12 @@ class Shipments extends DolibarrApi
 
 		$updateRes = $this->shipment->deleteLine(DolibarrApiAccess::$user, $lineid);
 		if ($updateRes > 0) {
-			return $this->get($id);
+			return array(
+				'success' => array(
+					'code' => 200,
+					'message' => 'line ' .$lineid. ' deleted'
+				)
+			);
 		} else {
 			throw new RestException(405, $this->shipment->error);
 		}
