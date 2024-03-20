@@ -20,7 +20,7 @@ pipeline {
                   path: /var/run/docker.sock
             '''
         }
-
+    }
     environment {
         // Define environment variables for Dockerfile and docker-compose file paths
         dockerfilePath = 'build/docker/Dockerfile'
