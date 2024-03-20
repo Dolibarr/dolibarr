@@ -52,6 +52,10 @@ $list_account_main = array(
 	'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
 );
 
+if (isModEnabled('expensereport')) {
+	$list_account_main[] = 'ACCOUNTING_ACCOUNT_EXPENSEREPORT';
+}
+
 $list_account = array();
 
 $list_account[] = '---Product---';
