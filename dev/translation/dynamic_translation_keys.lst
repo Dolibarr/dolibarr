@@ -1963,6 +1963,7 @@ NewStripePaymentFailed
 NewStripePaymentReceived
 NewSupplier
 NewUserPassword
+NewWorkstation
 NextDateToExecutionShort
 NextDateToIntervention
 NoAccount
@@ -3685,3 +3686,7 @@ XSubsriptionErrors
 YouCanChooseAModelForYouMailContent
 YouCanMakeSomeInstructionForEmail
 helpWithAi
+ExtrafieldLinestringGeo
+ExtrafieldMultiPointGeo
+ExtrafieldPointGeo
+ExtrafieldPolygonGeo

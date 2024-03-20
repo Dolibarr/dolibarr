@@ -3780,7 +3780,7 @@ class User extends CommonObject
 			$keyfilter3 = '^'.$deleteafterid.'_';
 			$keyfilter4 = '_'.$deleteafterid.'_';
 			foreach (array_keys($this->users) as $key) {
-				$fullpath = $this->users[$key]['fullpath'];
+				$fullpath = (string) $this->users[$key]['fullpath'];
 				if (preg_match('/'.$keyfilter1.'/', $fullpath) || preg_match('/'.$keyfilter2.'/', $fullpath)
 					|| preg_match('/'.$keyfilter3.'/', $fullpath) || preg_match('/'.$keyfilter4.'/', $fullpath)) {
 					unset($this->users[$key]);

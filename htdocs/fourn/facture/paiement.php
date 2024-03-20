@@ -13,6 +13,7 @@
  * Copyright (C) 2021       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2022       Udo Tamm				<dev@dolibit.de>
  * Copyright (C) 2023       Sylvain Legrand			<technique@infras.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -178,7 +179,7 @@ if (empty($reshook)) {
 				$amountsresttopay[$cursorfacid] = price2num($tmpinvoice->total_ttc - $tmpinvoice->getSommePaiement());
 				if ($amounts[$cursorfacid]) {
 					// Check amount
-					if ($amounts[$cursorfacid] && (abs($amounts[$cursorfacid]) > abs($amountsresttopay[$cursorfacid]))) {
+					if ($amounts[$cursorfacid] && (abs((float) $amounts[$cursorfacid]) > abs((float) $amountsresttopay[$cursorfacid]))) {
 						$addwarning = 1;
 						$formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPaySupplier")).' '.$langs->trans("HelpPaymentHigherThanReminderToPaySupplier");
 					}
@@ -205,7 +206,7 @@ if (empty($reshook)) {
 				$multicurrency_amountsresttopay[$cursorfacid] = price2num($tmpinvoice->multicurrency_total_ttc - $tmpinvoice->getSommePaiement(1));
 				if ($multicurrency_amounts[$cursorfacid]) {
 					// Check amount
-					if ($multicurrency_amounts[$cursorfacid] && (abs($multicurrency_amounts[$cursorfacid]) > abs($multicurrency_amountsresttopay[$cursorfacid]))) {
+					if ($multicurrency_amounts[$cursorfacid] && (abs((float) $multicurrency_amounts[$cursorfacid]) > abs((float) $multicurrency_amountsresttopay[$cursorfacid]))) {
 						$addwarning = 1;
 						$formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPaySupplier")).' '.$langs->trans("HelpPaymentHigherThanReminderToPaySupplier");
 					}
@@ -280,7 +281,7 @@ if (empty($reshook)) {
 			$tmpinvoice->fetch($key);
 			if ($tmpinvoice->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 				$newvalue = price2num($value, 'MT');
-				$amounts[$key] = - abs($newvalue);
+				$amounts[$key] = - abs((float) $newvalue);
 			}
 			$multicurrency_code[$key] = $tmpinvoice->multicurrency_code;
 			$multicurrency_tx[$key] = $tmpinvoice->multicurrency_tx;
@@ -291,7 +292,7 @@ if (empty($reshook)) {
 			$tmpinvoice->fetch($key);
 			if ($tmpinvoice->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 				$newvalue = price2num($value, 'MT');
-				$multicurrency_amounts[$key] = - abs($newvalue);
+				$multicurrency_amounts[$key] = - abs((float) $newvalue);
 			}
 			$multicurrency_code[$key] = $tmpinvoice->multicurrency_code;
 			$multicurrency_tx[$key] = $tmpinvoice->multicurrency_tx;

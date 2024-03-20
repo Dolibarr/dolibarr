@@ -1299,6 +1299,18 @@ class Contact extends CommonObject
 		}
 
 		if (!$error) {
+			// Remove Notifications
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def WHERE fk_contact = ".((int) $this->id);
+			dol_syslog(__METHOD__, LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->error .= $this->db->lasterror();
+				$errorflag = -1;
+			}
+		}
+
+		if (!$error) {
 			// Remove category
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact WHERE fk_socpeople = ".((int) $this->id);
 			dol_syslog(__METHOD__, LOG_DEBUG);

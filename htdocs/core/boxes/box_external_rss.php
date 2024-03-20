@@ -158,7 +158,6 @@ class box_external_rss extends ModeleBoxes
 
 			$title = preg_replace("/([[:alnum:]])\?([[:alnum:]])/", "\\1'\\2", $title); // Manage issue of quotes improperly (de)coded in utf-8
 			$title = preg_replace("/^\s+/", "", $title); // Remove leading whitespace
-			$this->info_box_contents["$href"] = "$title";
 
 			$tooltip = $title;
 			$description = !empty($item['description']) ? $item['description'] : '';

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,7 +113,7 @@ function dol_setcache($memoryid, $data, $expire = 0)
 
 		$memoryid = session_name().'_'.$memoryid;
 		//$dolmemcache->setOption(Memcached::OPT_COMPRESSION, false);
-		$result = $dolmemcache->add($memoryid, $data, false, $expire); // This fails if key already exists
+		$result = $dolmemcache->add($memoryid, $data, 0, $expire); // This fails if key already exists
 		if ($result) {
 			return is_array($data) ? count($data) : (is_scalar($data) ? strlen($data) : 0);
 		} else {
@@ -270,7 +271,7 @@ function dol_setshmop($memoryid, $data, $expire)
 	//print 'dol_setshmop memoryid='.$memoryid." shmkey=".$shmkey." newdata=".$size."bytes<br>\n";
 	$handle = shmop_open($shmkey, 'c', 0644, 6 + $size);
 	if ($handle) {
-		$shm_bytes_written1 = shmop_write($handle, str_pad($size, 6), 0);
+		$shm_bytes_written1 = shmop_write($handle, str_pad((string) $size, 6), 0);
 		$shm_bytes_written2 = shmop_write($handle, $newdata, 6);
 		if ($shm_bytes_written1 + $shm_bytes_written2 != 6 + dol_strlen($newdata)) {
 			print "Couldn't write the entire length of data\n";
@@ -307,7 +308,7 @@ function dol_getshmop($memoryid)
 	//print 'dol_getshmop memoryid='.$memoryid." shmkey=".$shmkey."<br>\n";
 	$handle = @shmop_open($shmkey, 'a', 0, 0);
 	if ($handle) {
-		$size = trim(shmop_read($handle, 0, 6));
+		$size = (int) trim(shmop_read($handle, 0, 6));
 		if ($size) {
 			$data = unserialize(shmop_read($handle, 6, $size));
 		} else {

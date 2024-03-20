@@ -1373,7 +1373,7 @@ class Societe extends CommonObject
 		$this->address		= trim((string) $this->address);
 		$this->zip 			= trim((string) $this->zip);
 		$this->town 		= trim((string) $this->town);
-		$this->state_id 	= (is_numeric($this->state_id)) ? (int) trim($this->state_id) : 0;
+		$this->state_id 	= (is_numeric($this->state_id)) ? (int) trim((string) $this->state_id) : 0;
 		$this->country_id 	= ($this->country_id > 0) ? $this->country_id : 0;
 		$this->phone		= trim((string) $this->phone);
 		$this->phone		= preg_replace("/\s/", "", $this->phone);
@@ -1399,7 +1399,7 @@ class Societe extends CommonObject
 		$this->order_min_amount = price2num($this->order_min_amount);
 		$this->supplier_order_min_amount = price2num($this->supplier_order_min_amount);
 
-		$this->tva_assuj			= (is_numeric($this->tva_assuj)) ? (int) trim($this->tva_assuj) : 0;
+		$this->tva_assuj			= (is_numeric($this->tva_assuj)) ? (int) trim((string) $this->tva_assuj) : 0;
 		$this->tva_intra			= dol_sanitizeFileName($this->tva_intra, '');
 		$this->vat_reverse_charge	= empty($this->vat_reverse_charge) ? 0 : 1;
 		if (empty($this->status)) {
@@ -1421,10 +1421,10 @@ class Societe extends CommonObject
 		$this->localtax1_value = trim($this->localtax1_value);
 		$this->localtax2_value = trim($this->localtax2_value);
 
-		$this->capital = ($this->capital != '') ? (float) price2num(trim($this->capital)) : null;
+		$this->capital = ($this->capital != '') ? (float) price2num(trim((string) $this->capital)) : null;
 
-		$this->effectif_id = trim($this->effectif_id);
-		$this->forme_juridique_code = trim($this->forme_juridique_code);
+		$this->effectif_id = trim((string) $this->effectif_id);
+		$this->forme_juridique_code = trim((string) $this->forme_juridique_code);
 
 		//Gencod
 		$this->barcode = trim($this->barcode);
@@ -3111,8 +3111,8 @@ class Societe extends CommonObject
 	/**
 	 *    Return list of contacts emails existing for third party
 	 *
-	 *	  @param	  int		$addthirdparty		1=Add also a record for thirdparty email, 2=Same than 1 but add text ThirdParty in grey
-	 *    @return     array       					Array of contacts emails
+	 *	  @param	int		$addthirdparty		1=Add also a record for thirdparty email, 2=Same than 1 but add text ThirdParty in grey
+	 *    @return   array  	    				Array of contacts emails
 	 */
 	public function thirdparty_and_contact_email_array($addthirdparty = 0)
 	{
@@ -3120,12 +3120,14 @@ class Societe extends CommonObject
 		global $langs;
 
 		$contact_emails = $this->contact_property_array('email', 1);
+
 		if ($this->email && $addthirdparty) {
 			if (empty($this->name)) {
 				$this->name = $this->nom;
 			}
 			$contact_emails['thirdparty'] = ($addthirdparty == 2 ? '<span class="opacitymedium">' : '').$langs->transnoentitiesnoconv("ThirdParty").($addthirdparty == 2 ? '</span>' : '').': '.dol_trunc($this->name, 16)." <".$this->email.">";
 		}
+
 		//var_dump($contact_emails)
 		return $contact_emails;
 	}

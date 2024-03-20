@@ -3,6 +3,7 @@
  * Copyright (C) 2016       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2016-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -692,7 +693,7 @@ if ($action != 'export_csv') {
 
 		$accountingResult = $object->accountingResult($search_date_start, $search_date_end);
 		if ($accountingResult < 0) {
-			$accountingResultDebit = price(abs(price2num($accountingResult, 'MT')));
+			$accountingResultDebit = price(abs((float) price2num($accountingResult, 'MT')));
 			$accountingResultClassCSS = ' error';
 		} else {
 			$accountingResultCredit = price(price2num($accountingResult, 'MT'));

@@ -302,7 +302,7 @@ class Ticket extends CommonObject
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString('MY_SETUP_PARAM'))
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -2200,8 +2200,8 @@ class Ticket extends CommonObject
 	/**
 	 *  Retrieve information about internal contacts
 	 *
-	 *  @param    int     $status     Status of user or company
-	 *  @return array                 Array with datas : firstname, lastname, socid (-1 for internal users), email, code, libelle, status
+	 *  @param    int     $status     Status of user or company                                array<array{id:int,email:string,firstname:string,lastname:string,libelle:string}>
+	 *  @return array<array{id:int,email:string,firstname:string,lastname:string,libelle:string,socid:int,code:string,status:int}>             Array with datas : firstname, lastname, socid (-1 for internal users), email, code, libelle, status
 	 */
 	public function getInfosTicketInternalContact($status = -1)
 	{
@@ -2295,7 +2295,7 @@ class Ticket extends CommonObject
 	 *    @param    int     $list           0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string  $code           Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @param    int     $status         Status of user or company
-	 *    @return   array|int               Array of array('email'=>..., 'lastname'=>...)
+	 *    @return   array<int|array{source:string,id:int,rowid:int,email:string,civility:string,firstname:string,lastname:string,labeltype:string,libelle:string,socid:int,code:string,status:int,statuscontact:string,fk_c_typecontact:string,phone:string,phone_mobile:string,nom:string}>|int<-1,-1>      Array of array('email'=>..., 'lastname'=>...)
 	 */
 	public function listeContact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1)
 	{
@@ -2414,23 +2414,21 @@ class Ticket extends CommonObject
 		global $conf;
 
 		$defaultref = '';
-		$modele = !getDolGlobalString('TICKET_ADDON') ? 'mod_ticket_simple' : $conf->global->TICKET_ADDON;
+		$modele = getDolGlobalString('TICKET_ADDON', 'mod_ticket_simple');
 
 		// Search template files
 		$file = '';
 		$classname = '';
-		$filefound = 0;
 		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
 			$file = dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
 			if (file_exists($file)) {
-				$filefound = 1;
 				$classname = $modele;
 				break;
 			}
 		}
 
-		if ($filefound) {
+		if ($classname !== '') {
 			$result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
 			$modTicket = new $classname();
 
@@ -2718,7 +2716,7 @@ class Ticket extends CommonObject
 
 						// Add global email address recipient
 						if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') &&
-							getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && !array_key_exists($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)
+							getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && !array_key_exists(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO'), $sendto)
 						) {
 							$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 						}
@@ -2821,8 +2819,8 @@ class Ticket extends CommonObject
 							$message .= '<br>'.$langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$object->track_id.'</a><br>';
 
 							// Add global email address recipient
-							if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') !== '' && !array_key_exists(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO'), $sendto)) {
-								if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') !== '') {
+							if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') && !array_key_exists(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO'), $sendto)) {
+								if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')) {
 									$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 								}
 							}
@@ -2880,7 +2878,7 @@ class Ticket extends CommonObject
 								$message .= '<br><br>';
 
 								foreach ($external_contacts as $key => $info_sendto) {
-									// altairis: avoid duplicate emails to external contacts
+									// avoid duplicate emails to external contacts
 									if ($info_sendto['id'] == $user->contact_id) {
 										continue;
 									}
@@ -2898,6 +2896,7 @@ class Ticket extends CommonObject
 								// If public interface is not enable, use link to internal page into mail
 								$url_public_ticket = (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE') ?
 										(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') !== '' ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) : dol_buildpath('/ticket/card.php', 2)).'?track_id='.$object->track_id;
+
 								$message .= '<br>'.$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$object->track_id.'</a><br>';
 
 								// Build final message
@@ -2919,8 +2918,8 @@ class Ticket extends CommonObject
 								}
 
 								// Add global email address recipient
-								if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') !== '' && !array_key_exists(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO'), $sendto)) {
-									if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') !== '') {
+								if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') && !array_key_exists(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO'), $sendto)) {
+									if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')) {
 										$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 									}
 								}
@@ -2964,8 +2963,8 @@ class Ticket extends CommonObject
 	 *
 	 * @param string $subject          	  Email subject
 	 * @param string $message          	  Email message
-	 * @param int    $send_internal_cc 	  Receive a copy on internal email ($conf->global->TICKET_NOTIFICATION_EMAIL_FROM)
-	 * @param array  $array_receiver   	  Array of receiver. example array('name' => 'John Doe', 'email' => 'john@doe.com', etc...)
+	 * @param int    $send_internal_cc 	  Receive a copy on internal email (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM')
+	 * @param array  $array_receiver   	  Array of receiver. Example array('name' => 'John Doe', 'email' => 'john@doe.com', etc...)
 	 * @param array	 $filename_list       List of files to attach (full path of filename on file system)
 	 * @param array	 $mimetype_list       List of MIME type of attached files
 	 * @param array	 $mimefilename_list   List of attached file name in message
@@ -2975,7 +2974,7 @@ class Ticket extends CommonObject
 	{
 		global $conf, $langs, $user;
 
-		if (getDolGlobalInt('TICKET_DISABLE_ALL_MAILS')) {
+		if (getDolGlobalString('TICKET_DISABLE_ALL_MAILS')) {
 			dol_syslog(get_class($this).'::sendTicketMessageByEmail: Emails are disable into ticket setup by option TICKET_DISABLE_ALL_MAILS', LOG_WARNING);
 			return false;
 		}
@@ -2991,10 +2990,9 @@ class Ticket extends CommonObject
 			$array_receiver = array_merge($array_receiver, $this->getInfosTicketExternalContact(1));
 		}
 
+		$sendtocc = '';
 		if ($send_internal_cc) {
 			$sendtocc = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
-		} else {
-			$sendtocc = '';
 		}
 
 		$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
@@ -3009,8 +3007,7 @@ class Ticket extends CommonObject
 				// Send email
 
 				$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
-
-				if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO') !== '') {
+				if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 					$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 				}
 
@@ -3029,9 +3026,11 @@ class Ticket extends CommonObject
 				// According to RFC5322, we should add here all the References fields of the initial message concatenated with
 				// the Message-ID of the message we respond from (but each ID must be once).
 				$references = '';
-				// @TODO
-				// Retrieve source References to do  				$references .= (empty($references) ? '' : ' ').Source References
-				// If No References is set, use the In-Reply-To for $references .= (empty($references) ? '' : ' ').Source In-reply-To
+				if (empty($this->origin_references)) {
+					// TODO If No References is set, use the In-Reply-To for $references .= (empty($references) ? '' : ' ').Source In-reply-To
+				} else {
+					$references .= (empty($references) ? '' : ' ').$this->origin_references;
+				}
 				$references .= (empty($references) ? '' : ' ').'<'.$this->email_msgid.'>';
 				if ($references) {
 					$moreinheader .= 'References: '.$references."\r\n";
@@ -3057,7 +3056,7 @@ class Ticket extends CommonObject
 					}
 				}
 
-				if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO') !== '') {
+				if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 					$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 				}
 			}

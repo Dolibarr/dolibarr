@@ -210,7 +210,7 @@ function dolDecrypt($chain, $key = '')
 			if (!empty($tmpexplode[1]) && is_string($tmpexplode[0])) {
 				$newchain = openssl_decrypt($tmpexplode[1], $ciphering, $key, 0, $tmpexplode[0]);
 			} else {
-				$newchain = openssl_decrypt($tmpexplode[0], $ciphering, $key, 0, '');
+				$newchain = openssl_decrypt((string) $tmpexplode[0], $ciphering, $key, 0, '');
 			}
 		} else {
 			dol_syslog("Error dolDecrypt openssl_decrypt is not available", LOG_ERR);
@@ -310,7 +310,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
 		$type = 'md5';
 	}
 
-	$salt = substr(sha1(time()), 0, 8);
+	$salt = substr(sha1((string) time()), 0, 8);
 
 	if ($type === 'md5') {
 		return '{MD5}' . base64_encode(hash("md5", $password, true)); //For OpenLdap with md5 (based on an unencrypted password in base)
@@ -376,7 +376,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$objectid = 0;
 	}
 	if ($objectid) {
-		$objectid = preg_replace('/[^0-9\.\,]/', '', $objectid);	// For the case value is coming from a non sanitized user input
+		$objectid = preg_replace('/[^0-9\.\,]/', '', (string) $objectid);	// For the case value is coming from a non sanitized user input
 	}
 
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");

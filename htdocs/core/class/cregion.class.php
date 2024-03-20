@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) Richard Rondu  <rondu.richard@lainwir3d.net>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +110,7 @@ class Cregion extends CommonDict
 		$sql .= "cheflieu,";
 		$sql .= "active";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->rowid) ? 'NULL' : (int) $this->rowid).",";
+		$sql .= " ".(!isset($this->id) ? 'NULL' : (int) $this->id).",";
 		$sql .= " ".(!isset($this->code_region) ? 'NULL' : (int) $this->code_region).",";
 		$sql .= " ".(!isset($this->fk_pays) ? 'NULL' : (int) $this->fk_pays).",";
 		$sql .= " ".(!isset($this->name) ? 'NULL' : "'".$this->db->escape($this->name)."'").",";
@@ -149,11 +150,11 @@ class Cregion extends CommonDict
 	 *  Load object in memory from database
 	 *
 	 *  @param      int		        $id           Id object
-	 *  @param      string	        $code_region  Code
+	 *  @param      int		        $code_region  Code
 	 *  @param      int	            $fk_pays      Country Id
 	 *  @return     int          	>0 if OK, 0 if not found, <0 if KO
 	 */
-	public function fetch($id, $code_region = '', $fk_pays = 0)
+	public function fetch($id, $code_region = 0, $fk_pays = 0)
 	{
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -166,9 +167,9 @@ class Cregion extends CommonDict
 		if ($id) {
 			$sql .= " WHERE t.rowid = ".((int) $id);
 		} elseif ($code_region) {
-			$sql .= " WHERE t.code_region = '".$this->db->escape(strtoupper($code_region))."'";
+			$sql .= " WHERE t.code_region = ".((int) $code_region);
 		} elseif ($fk_pays) {
-			$sql .= " WHERE t.fk_pays = '".$this->db->escape(strtoupper($fk_pays))."'";
+			$sql .= " WHERE t.fk_pays = ".((int) $fk_pays);
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -179,8 +180,8 @@ class Cregion extends CommonDict
 
 				if ($obj) {
 					$this->id = $obj->rowid;
-					$this->code_region = $obj->code_region;
-					$this->fk_pays = $obj->fk_pays;
+					$this->code_region = (int) $obj->code_region;
+					$this->fk_pays = (int) $obj->fk_pays;
 					$this->name = $obj->nom;
 					$this->cheflieu = $obj->cheflieu;
 					$this->active = $obj->active;
@@ -233,8 +234,8 @@ class Cregion extends CommonDict
 
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix()."c_regions SET";
-		$sql .= " code_region=".(isset($this->code_region) ? "'".$this->db->escape($this->code_region)."'" : "null").",";
-		$sql .= " fk_pays=".(isset($this->fk_pays) ? "'".$this->db->escape($this->fk_pays)."'" : "null").",";
+		$sql .= " code_region=".(isset($this->code_region) ? ((int) $this->code_region) : "null").",";
+		$sql .= " fk_pays=".(isset($this->fk_pays) ? ((int) $this->fk_pays) : "null").",";
 		$sql .= " nom=".(isset($this->name) ? "'".$this->db->escape($this->name)."'" : "null").",";
 		$sql .= " cheflieu=".(isset($this->cheflieu) ? "'".$this->db->escape($this->cheflieu)."'" : "null").",";
 		$sql .= " active=".(isset($this->active) ? $this->active : "null");

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2011 Regis Houssin
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,8 +54,10 @@ class SMTPs
 	/**
 	 * SMTP Server Port definition. 25 is default value
 	 * This can be defined via a INI file or via a setter method
+	 *
+	 * @var int
 	 */
-	private $_smtpsPort = '25';
+	private $_smtpsPort = 25;
 
 	/**
 	 * Secure SMTP Server access ID
@@ -892,17 +895,17 @@ class SMTPs
 
 	/**
 	 * Defines the Port Number of the Mail Server to use
-	 * This is defaulted to '25'
+	 * The default is 25
 	 * This is  used only with 'socket' based mail transmission
 	 *
-	 * @param 	int 	$_intPort 		Port Number of the Mail Server to use
+	 * @param 	int|string 	$_intPort 		Port Number of the Mail Server to use
 	 * @return 	void
 	 */
 	public function setPort($_intPort)
 	{
 		if ((is_numeric($_intPort)) &&
 		(($_intPort >= 1) && ($_intPort <= 65536))) {
-			$this->_smtpsPort = $_intPort;
+			$this->_smtpsPort = (int) $_intPort;
 		}
 	}
 
@@ -910,11 +913,11 @@ class SMTPs
 	 * Retrieves the Port Number of the Mail Server to use
 	 * This is  used only with 'socket' based mail transmission
 	 *
-	 * @return 	string 		Port Number of the Mail Server to use
+	 * @return 	int 		Port Number of the Mail Server to use
 	 */
 	public function getPort()
 	{
-		return $this->_smtpsPort;
+		return (int) $this->_smtpsPort;
 	}
 
 	/**

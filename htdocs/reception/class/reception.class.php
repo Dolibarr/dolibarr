@@ -817,7 +817,7 @@ class Reception extends CommonObject
 	 *
 	 * @param 	int			$entrepot_id		Id of warehouse
 	 * @param 	int			$id					Id of source line (supplier order line)
-	 * @param 	int			$qty				Quantity
+	 * @param 	float		$qty				Quantity
 	 * @param	array		$array_options		extrafields array
 	 * @param	string		$comment			Comment for stock movement
 	 * @param	int			$eatby				eat-by date
@@ -960,13 +960,13 @@ class Reception extends CommonObject
 			$this->trueHeight = trim($this->trueHeight);
 		}
 		if (isset($this->size_units)) {
-			$this->size_units = trim($this->size_units);
+			$this->size_units = trim((string) $this->size_units);
 		}
 		if (isset($this->weight_units)) {
-			$this->weight_units = trim($this->weight_units);
+			$this->weight_units = trim((string) $this->weight_units);
 		}
 		if (isset($this->trueWeight)) {
-			$this->weight = trim($this->trueWeight);
+			$this->weight = trim((string) $this->trueWeight);
 		}
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);

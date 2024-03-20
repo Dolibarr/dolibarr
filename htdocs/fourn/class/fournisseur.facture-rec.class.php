@@ -373,7 +373,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$num = count($facfourn_src->lines);
 				for ($i = 0; $i < $num; $i++) {
 					$tva_tx = $facfourn_src->lines[$i]->tva_tx;
-					if (!empty($facfourn_src->lines[$i]->vat_src_code) && !preg_match('/\(/', $tva_tx)) {
+					if (!empty($facfourn_src->lines[$i]->vat_src_code) && !preg_match('/\(/', (string) $tva_tx)) {
 						$tva_tx .= ' ('.$facfourn_src->lines[$i]->vat_src_code.')';
 					}
 
@@ -910,9 +910,9 @@ class FactureFournisseurRec extends CommonInvoice
 			// Clean vat code
 			$reg = array();
 			$vat_src_code = '';
-			if (preg_match('/\((.*)\)/', $txtva, $reg)) {
+			if (preg_match('/\((.*)\)/', (string) $txtva, $reg)) {
 				$vat_src_code = $reg[1];
-				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
+				$txtva = preg_replace('/\s*\(.*\)/', '', (string) $txtva); // Remove code into vatrate.
 			}
 
 			// Clean parameters
@@ -1107,7 +1107,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$pu_ttc         = price2num($pu_ttc);
 			$pu_ht_devise = price2num($pu_ht_devise);
 
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
 
