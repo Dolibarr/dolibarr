@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clone') {
             steps {
-                git branch: 'main', changelog: false, poll: false, url: 'https://github.com/iyedben/Dolibarr.git'
+                git branch: 'develop', changelog: false, poll: false, url: 'https://github.com/iyedben/Dolibarr.git'
             }
         }
         
