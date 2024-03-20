@@ -744,7 +744,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withfromsocid = $socid ? $socid : $user->socid;
 	$formticket->withfromcontactid = $contactid ? $contactid : '';
 	$formticket->withtitletopic = 1;
-	$formticket->withnotifytiersatcreate = ($notifyTiers ? 1 : (!getDolGlobalString('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION') ? 0 : 1));
+	$formticket->withnotifytiersatcreate = ($notifyTiers ? 1 : (getDolGlobalString('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION') ? 1 : 0));
 	$formticket->withusercreate = 0;
 	$formticket->withref = 1;
 	$formticket->fk_user_create = $user->id;
@@ -826,7 +826,7 @@ if ($action == 'create' || $action == 'presend') {
 			}
 
 			// Default select all or no contact
-			$default = (getDolGlobalString('TICKET_NOTIFY_AT_CLOSING')) ? -2 : -3;
+			$default = (getDolGlobalString('TICKET_NOTIFY_AT_CLOSING') ? -2 : -3);
 			$formquestion = array(
 				array(
 					'name' => 'contactid',
@@ -1171,7 +1171,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<tr><td>';
 			print $form->textwithpicto($langs->trans("TicketDurationAuto"), $langs->trans("TicketDurationAutoInfos"), 1);
 			print '</td><td>';
-			print $foundinter ? convertSecondToTime($timing, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY) : '';
+			print $foundinter ? convertSecondToTime($timing, 'all', getDolGlobalString('MAIN_DURATION_OF_WORKDAY')) : '';
 			print '</td></tr>';
 		}
 
@@ -1363,7 +1363,7 @@ if ($action == 'create' || $action == 'presend') {
 						echo $companystatic->getNomUrl(-1);
 					}
 					if ($tab[$i]['socid'] < 0) {
-						echo $conf->global->MAIN_INFO_SOCIETE_NOM;
+						echo getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 					}
 					if (!$tab[$i]['socid']) {
 						echo '&nbsp;';
@@ -1618,7 +1618,7 @@ if ($action == 'create' || $action == 'presend') {
 			print showDirectPublicLink($object).'<br>';
 			print '</div>';
 
-			if (!getDolGlobalString('TICKET_SHOW_MESSAGES_ON_CARD')) {
+			if (getDolGlobalString('TICKET_SHOW_MESSAGES_ON_CARD')) {
 				print '<div class="fichehalfright">';
 
 				$MAXEVENT = 10;
