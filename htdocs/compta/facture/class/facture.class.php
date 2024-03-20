@@ -262,6 +262,8 @@ class Facture extends CommonInvoice
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
+	public $multicurrency_total_localtax1;	// not in database
+	public $multicurrency_total_localtax2;	// not in database
 
 	/**
 	 * @var int Situation cycle reference number
