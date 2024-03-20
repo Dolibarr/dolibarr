@@ -3524,11 +3524,15 @@ if ($action == 'create') {
 						setRadioForTypeOfInvoice();
 					});
 					function setRadioForTypeOfInvoice() {
-						console.log("Change radio");
+						console.log("Change radio for type of invoice");
 						if (jQuery("#radio_deposit").prop("checked") && (jQuery("#typedeposit").val() == \'amount\' || jQuery("#typedeposit").val() == \'variable\')) {
+							jQuery("#checkforselects").prop("disabled", true);
+							jQuery("#checkforselects").prop("checked", false);
 							jQuery(".checkforselect").prop("disabled", true);
 							jQuery(".checkforselect").prop("checked", false);
 						} else {
+							jQuery("#checkforselects").prop("disabled", false);
+							jQuery("#checkforselects").prop("checked", true);
 							jQuery(".checkforselect").prop("disabled", false);
 							jQuery(".checkforselect").prop("checked", true);
 						}
