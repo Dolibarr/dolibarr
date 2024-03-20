@@ -1,43 +1,44 @@
 pipeline {
     agent any
-    
+
+    environment {
+        // Define environment variables for Dockerfile and docker-compose file paths
+        dockerfilePath = 'build/docker/Dockerfile'
+        dockerComposeFilePath = 'build/docker/docker-compose.yml'
+    }
+
     stages {
-        stage('Clone') {
+        stage('Clone Repository') {
             steps {
-                 git credentialsId: '10', url: 'https://github.com/iyedben/Dolibarr.git'
+                // Clone the Dolibarr repository from GitHub
+                git credentialsId: '10', url: 'https://github.com/iyedben/Dolibarr.gitt'
             }
         }
-        
-        stage('Build-Docker-Image') {
-            agent {
-                docker {
-                    image 'docker:latest'
-                    args '-v /var/run/docker.sock:/var/run/docker.sock'
-                }
-            }
+        stage('Build Docker Image') {
             steps {
-                sh 'docker build -t iyedbnaissa/dolibarr-image:latest -f build/docker/Dockerfile .'
-            }
-        }
-        
-        stage('Push-Images-Docker-to-DockerHub') {
-            environment {
-                DOCKER_HUB_CREDENTIALS = credentials('20')
-            }
-            steps {
+                // Build the Docker image using Dockerfile
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_HUB_CREDENTIALS) {
-                        sh 'docker push iyedbnaissa/dolibarr-image:latest'
-                    }
+                    docker.build('-f ${dockerfilePath} -t dolibarr-app .')
+                }
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                // Run tests (replace with your actual test commands)
+                sh 'echo "Running tests..."'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                // Deploy the application stack using docker-compose
+                script {
+                    // Pull the latest Docker image
+                    docker.image('dolibarr-app').pull()
+
+                    // Start the application stack using docker-compose
+                    sh "docker-compose -f ${dockerComposeFilePath} up -d"
                 }
             }
         }
     }
-    
-    post {
-        always {
-            cleanup()
-        }
-    }
-    
 }
