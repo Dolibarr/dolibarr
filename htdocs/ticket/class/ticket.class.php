@@ -2419,18 +2419,16 @@ class Ticket extends CommonObject
 		// Search template files
 		$file = '';
 		$classname = '';
-		$filefound = 0;
 		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
 			$file = dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
 			if (file_exists($file)) {
-				$filefound = 1;
 				$classname = $modele;
 				break;
 			}
 		}
 
-		if ($filefound) {
+		if ($classname !== '') {
 			$result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
 			$modTicket = new $classname();
 
@@ -2992,11 +2990,9 @@ class Ticket extends CommonObject
 			$array_receiver = array_merge($array_receiver, $this->getInfosTicketExternalContact(1));
 		}
 
-		$sendtocc = "";
+		$sendtocc = '';
 		if ($send_internal_cc) {
 			$sendtocc = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
-		} else {
-			$sendtocc = '';
 		}
 
 		$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
