@@ -8,27 +8,11 @@ pipeline {
     }
 
     stages {
-    /*    stage('Set GitHub Credentials') {
-            steps {
-                // Configure GitHub credentials with your Personal Access Token
-                withCredentials([usernamePassword(credentialsId: 'YOUR_CREDENTIALS_ID', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-                    // Set git config with token
-                    sh 'git config --global credential.helper "store --file ~/.git-credentials"'
-                    sh 'echo "https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com" > ~/.git-credentials'
-                }
-            }
-        }
-        stage('Clone Repository') {
-            steps {
-                // Clone the Dolibarr repository from GitHub
-                git url: 'https://github.com/iyedben/Dolibarr.git'
-            }
-        }*/
         stage('Build Docker Image') {
             steps {
                 // Build the Docker image using Dockerfile
                 script {
-                    docker.build('-f ${dockerfilePath} -t dolibarrapp .')
+                    docker.build("-f ${dockerfilePath} -t dolibarr-app .")
                 }
             }
         }
