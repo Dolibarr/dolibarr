@@ -1290,6 +1290,8 @@ class EmailCollector extends CommonObject
 				if (strpos($rule['rulevalue'], '!') === 0) {
 					// The value start with !, so we exclude the criteria
 					$not = 'NOT ';
+					// Then remove the ! from the string for next filters
+					$rule['rulevalue'] = substr($rule['rulevalue'], 1);
 				}
 
 				if ($rule['type'] == 'from') {
@@ -1428,6 +1430,8 @@ class EmailCollector extends CommonObject
 				if (strpos($rule['rulevalue'], '!') === 0) {
 					// The value start with !, so we exclude the criteria
 					$not = 'NOT ';
+					// Then remove the ! from the string for next filters
+					$rule['rulevalue'] = substr($rule['rulevalue'], 1);
 				}
 
 				if ($rule['type'] == 'from') {
@@ -2410,10 +2414,25 @@ class EmailCollector extends CommonObject
 										if ($operation['type'] == 'loadthirdparty') {
 											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found");
 
-											$errorforactions++;
-											$langs->load("errors");
-											$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, $emailtouseforthirdparty, $nametouseforthirdparty, $namealiastouseforthirdparty);
-											$this->errors[] = $this->error;
+											//search into contacts of thirdparty
+											$resultContact = $contactstatic->fetch('', '', '', $emailtouseforthirdparty);
+											if ($resultContact > 0) {
+												$idtouseforthirdparty = $contactstatic->socid;
+												$result = $thirdpartystatic->fetch($idtouseforthirdparty);
+												if ($result > 0) {
+													dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was found thanks to linked contact search");
+												} else {
+													$errorforactions++;
+													$langs->load("errors");
+													$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, $emailtouseforthirdparty, $nametouseforthirdparty, $namealiastouseforthirdparty);
+													$this->errors[] = $this->error;
+												}
+											} else {
+												$errorforactions++;
+												$langs->load("errors");
+												$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, $emailtouseforthirdparty, $nametouseforthirdparty, $namealiastouseforthirdparty);
+												$this->errors[] = $this->error;
+											}
 										} elseif ($operation['type'] == 'loadandcreatethirdparty') {
 											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found. We try to create it.");
 
