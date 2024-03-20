@@ -13,6 +13,7 @@ pipeline {
             steps {
                 script {
                     def dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}", "-f ${dockerfilePath} .")
+                    echo 'Image Docker construite avec succès.'
                 }
             }
         }
