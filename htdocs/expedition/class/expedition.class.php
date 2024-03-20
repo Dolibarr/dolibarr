@@ -2645,7 +2645,6 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public $element_type;		// Example: 'order'
 
-	
 	/**
 	 * @var int ID
 	 */
