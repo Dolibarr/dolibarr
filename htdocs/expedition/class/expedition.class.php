@@ -1657,8 +1657,9 @@ class Expedition extends CommonObject
 				$line->id               = $obj->line_id;
 
 				$line->fk_origin = 'orderline';
-				$line->fk_origin_line 	= $obj->fk_origin_line;
-				$line->origin_line_id 	= $obj->fk_origin_line; // TODO deprecated
+				$line->fk_origin_line 	= $obj->fk_elementdet;
+				$line->origin_line_id 	= $obj->fk_elementdet; // TODO deprecated
+				$line->element_type 	= $obj->element_type;
 
 				$line->fk_expedition    = $this->id; // id of parent
 
