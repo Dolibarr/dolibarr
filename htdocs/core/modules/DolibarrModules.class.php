@@ -806,6 +806,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			} else {
 				$content = nl2br($content);
 			}
+		} else {
+			$content = '';
 		}
 
 		return $content;
