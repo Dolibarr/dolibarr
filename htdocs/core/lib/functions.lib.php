@@ -1445,7 +1445,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 
 
 /**
- *	Clean a string to use it as a path name. Similare to dol_sanitizeFileName but accept / and \ chars.
+ *	Clean a string to use it as a path name. Similar to dol_sanitizeFileName but accept / and \ chars.
  *  Replace also '--' and ' -' strings, they are used for parameters separation (Note: ' - ' is allowed).
  *
  *	@param	string	$str            String to clean
@@ -7928,7 +7928,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 			// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step (preg_replace).
 			// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
-			// using a non coventionnel way to be encoded, to not have them sanitized just after)
+			// using a non conventionnel way to be encoded, to not have them sanitized just after)
 			$out = preg_replace_callback(
 				'/&#(x?[0-9][0-9a-f]+;?)/i',
 				/**
