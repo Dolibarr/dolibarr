@@ -1,19 +1,6 @@
 pipeline {
-    agent {
-       kubernetes {
-            label 'my-kubernetes-label'
-            containerTemplate {
-                name 'docker'
-                image 'docker:latest'
-                command 'cat'
-                ttyEnabled true
-                volumeMounts {
-                    mountPath '/var/run/docker.sock'
-                    name 'docker-sock'
-                }
-            }
-        }
-    }
+    agent any
+    
     environment {
         // Define environment variables for Dockerfile and docker-compose file paths
         dockerfilePath = 'build/docker/Dockerfile'
