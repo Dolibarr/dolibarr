@@ -40,10 +40,4 @@ pipeline {
         }
     }
     
-    // Cleanup function to logout from Docker after pipeline execution
-    def cleanup() {
-        script {
-            sh 'docker logout'
-        }
-    }
 }
