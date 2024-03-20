@@ -17,15 +17,16 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 -- ===================================================================
 
--- Note: does not contains the batch, the table on supplier side llx_receptiondet_batch does.
+-- Note: does not contains the product and batch, the table on supplier side llx_receptiondet_batch does.
 
 create table llx_expeditiondet
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
-  fk_expedition     integer NOT NULL,
-  fk_origin_line    integer,           -- The ID of line of source object (proposal, sale order). TODO should be renamed into fk_elementdet in SQL files and code in same PR.
-  element_type   	varchar(50) DEFAULT 'order' NOT NULL,
-  fk_entrepot       integer,           -- Entrepot de depart du produit
-  qty               real,              -- Quantity
+  fk_expedition     integer NOT NULL,  						-- ID of parent object
+  fk_element        integer,           						-- ID of main source object
+  fk_origin_line    integer,           						-- ID of line of source object (proposal, sale order). TODO should be renamed into fk_elementdet in SQL files and code in same PR
+  element_type   	varchar(50) DEFAULT 'order' NOT NULL,	-- Type of source object ('order', ...)
+  qty               real,              						-- Quantity
+  fk_entrepot       integer,           						-- Warehouse for departure of product
   rang              integer  DEFAULT 0
 )ENGINE=innodb;
