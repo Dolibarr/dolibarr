@@ -2130,7 +2130,7 @@ if ($id > 0) {
 				if ($tabname[$id] == "c_actioncomm") {
 					$canbemodified = 1;
 				}
-				
+
 				if ($tabname[$id] == "c_product_nature" && in_array($obj->code, array(0, 1))) {
 					$canbedisabled = 0;
 					$canbemodified = 0;
