@@ -13,6 +13,7 @@
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020-2022  Open-Dsi                <support@open-dsi.fr>
+ * Copyright (C) 2024       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2129,7 +2130,12 @@ if ($id > 0) {
 				if ($tabname[$id] == "c_actioncomm") {
 					$canbemodified = 1;
 				}
-
+				
+				if ($tabname[$id] == "c_product_nature" && in_array($obj->code, array(0, 1))) {
+					$canbedisabled = 0;
+					$canbemodified = 0;
+					$iserasable = 0;
+				}
 				// Build Url. The table is id=, the id of line is rowid=
 				$rowidcol = empty($tabrowid[$id]) ? 'rowid' : $tabrowid[$id];
 				// If rowidcol not defined
