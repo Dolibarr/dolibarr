@@ -8,7 +8,7 @@ pipeline {
     }
 
     stages {
-        stage('Clone Repository') {
+        stage('Checkout Source Code') {
             steps {
                 // Clone the Dolibarr repository from GitHub
                 git credentialsId: '10', url: 'https://github.com/iyedben/Dolibarr.git'
@@ -18,8 +18,9 @@ pipeline {
             steps {
                 // Build the Docker image using Dockerfile
                 script {
-                    docker.build('-f ${dockerfilePath} -t dolibarr-app .')
+                    docker.build("-f ${dockerfilePath} -t dolibarr-app .")
                 }
             }
+        } 
     }
 }
