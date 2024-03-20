@@ -111,7 +111,7 @@ class BOM extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
@@ -580,7 +580,7 @@ class BOM extends CommonObject
 	 *
 	 * @param	int		$fk_product				Id of product
 	 * @param	float	$qty					Quantity
-	 * @param	int		$qty_frozen				Frozen quantity
+	 * @param	int<0,1> $qty_frozen			If the qty is Frozen
 	 * @param 	int		$disable_stock_change	Disable stock change on using in MO
 	 * @param	float	$efficiency				Efficiency in MO
 	 * @param	int		$position				Position of BOM-Line in BOM-Lines
@@ -689,7 +689,7 @@ class BOM extends CommonObject
 	 *
 	 * @param 	int		$rowid					Id of line to update
 	 * @param	float	$qty					Quantity
-	 * @param	int		$qty_frozen				Frozen quantity
+	 * @param	float	$qty_frozen				Frozen quantity
 	 * @param 	int		$disable_stock_change	Disable stock change on using in MO
 	 * @param	float	$efficiency				Efficiency in MO
 	 * @param	int		$position				Position of BOM-Line in BOM-Lines
@@ -1404,7 +1404,7 @@ class BOM extends CommonObject
 	 * BOM costs calculation based on cost_price or pmp of each BOM line.
 	 * Set the property ->total_cost and ->unit_cost of BOM.
 	 *
-	 * @return int			Return integer <0 if KO, >0 if OK
+	 * @return int|string	Return integer <0 if KO, >0 if OK, or printable error result from hook
 	 */
 	public function calculateCosts()
 	{
@@ -1531,8 +1531,8 @@ class BOM extends CommonObject
 	/**
 	 * Get Net needs by product
 	 *
-	 * @param array $TNetNeeds Array of ChildBom and infos linked to
-	 * @param int   $qty       qty needed
+	 * @param array	$TNetNeeds Array of ChildBom and infos linked to
+	 * @param float	$qty       qty needed
 	 * @return void
 	 */
 	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0)
@@ -1557,7 +1557,7 @@ class BOM extends CommonObject
 	 * Get Net needs Tree by product or bom
 	 *
 	 * @param array $TNetNeeds Array of ChildBom and infos linked to
-	 * @param int   $qty       qty needed
+	 * @param float	$qty       qty needed
 	 * @param int   $level     level of recursivity
 	 * @return void
 	 */
@@ -1714,7 +1714,7 @@ class BOMLine extends CommonObjectLine
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'LineID', 'enabled' => 1, 'visible' => -1, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
@@ -1763,7 +1763,7 @@ class BOMLine extends CommonObjectLine
 	public $qty;
 
 	/**
-	 * @var int qty frozen
+	 * @var float qty frozen
 	 */
 	public $qty_frozen;
 

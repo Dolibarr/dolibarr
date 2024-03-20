@@ -584,7 +584,7 @@ class Product extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -2143,7 +2143,7 @@ class Product extends CommonObject
 	 * @param  int    $product_id     Filter on a particular product id
 	 * @param  string $fourn_ref      Filter on a supplier price ref. 'none' to exclude ref in search.
 	 * @param  int    $fk_soc         If of supplier
-	 * @return int                    Return integer <-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
+	 * @return int|string             Return integer <-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...), or printable result of hook
 	 * @see getSellPrice(), find_min_price_product_fournisseur()
 	 */
 	public function get_buyprice($prodfournprice, $qty, $product_id = 0, $fourn_ref = '', $fk_soc = 0)
@@ -3495,7 +3495,7 @@ class Product extends CommonObject
 
 		$sql = "SELECT COUNT(DISTINCT cf.fk_soc) as nb_suppliers, COUNT(DISTINCT cf.rowid) as nb,";
 		$sql .= " COUNT(fd.rowid) as nb_rows, SUM(fd.qty) as qty";
-		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur_dispatch as fd";
+		$sql .= " FROM ".$this->db->prefix()."receptiondet_batch as fd";
 		$sql .= ", ".$this->db->prefix()."commande_fournisseur as cf";
 		$sql .= ", ".$this->db->prefix()."societe as s";
 		if (!$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {
@@ -4447,7 +4447,7 @@ class Product extends CommonObject
 	 *
 	 * @param  int $id_pere Id of parent product/service
 	 * @param  int $id_fils Id of child product/service
-	 * @param  int $qty     Quantity
+	 * @param  float $qty     Quantity
 	 * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
 	 * @param  int $notrigger	Disable triggers
 	 * @return int                Return integer < 0 if KO, > 0 if OK
@@ -4520,7 +4520,7 @@ class Product extends CommonObject
 	 *
 	 * @param  int $id_pere Id of parent product/service
 	 * @param  int $id_fils Id of child product/service
-	 * @param  int $qty     Quantity
+	 * @param  float $qty     Quantity
 	 * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
 	 * @param  int $notrigger	Disable triggers
 	 * @return int                Return integer < 0 if KO, > 0 if OK
@@ -5700,8 +5700,8 @@ class Product extends CommonObject
 				$nbpiece = abs($nbpiece);
 			}
 			$op = array();
-			$op[0] = "+".trim($nbpiece);
-			$op[1] = "-".trim($nbpiece);
+			$op[0] = "+".trim((string) $nbpiece);
+			$op[1] = "-".trim((string) $nbpiece);
 
 			$movementstock = new MouvementStock($this->db);
 			$movementstock->setOrigin($origin_element, $origin_id); // Set ->origin_type and ->origin_id
@@ -5764,8 +5764,8 @@ class Product extends CommonObject
 			}
 
 			$op = array();
-			$op[0] = "+".trim($nbpiece);
-			$op[1] = "-".trim($nbpiece);
+			$op[0] = "+".trim((string) $nbpiece);
+			$op[1] = "-".trim((string) $nbpiece);
 
 			$movementstock = new MouvementStock($this->db);
 			$movementstock->setOrigin($origin_element, $origin_id); // Set ->origin_type and ->fk_origin

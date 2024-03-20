@@ -67,7 +67,7 @@ class Reception extends CommonObject
 	 */
 	public $fk_element = "fk_reception";
 	public $table_element = "reception";
-	public $table_element_line = "commande_fournisseur_dispatch";
+	public $table_element_line = "receptiondet_batch";
 	public $ismultientitymanaged = 1; // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	/**
@@ -136,7 +136,7 @@ class Reception extends CommonObject
 	public $lines = array();
 
 
-	// detail of lot and qty = array(id in llx_commande_fournisseur_dispatch, batch, qty)
+	// detail of lot and qty = array(id in receptiondet_batch, batch, qty)
 	// We can use this to know warehouse planned to be used for each lot.
 	public $detail_batch;
 
@@ -560,7 +560,7 @@ class Reception extends CommonObject
 			$sql .= " ed.eatby, ed.sellby, ed.batch,";
 			$sql .= " ed.cost_price";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
-			$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+			$sql .= " ".MAIN_DB_PREFIX."receptiondet_batch as ed";
 			$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
 			$sql .= " AND cd.rowid = ed.fk_commandefourndet";
 
@@ -817,7 +817,7 @@ class Reception extends CommonObject
 	 *
 	 * @param 	int			$entrepot_id		Id of warehouse
 	 * @param 	int			$id					Id of source line (supplier order line)
-	 * @param 	int			$qty				Quantity
+	 * @param 	float		$qty				Quantity
 	 * @param	array		$array_options		extrafields array
 	 * @param	string		$comment			Comment for stock movement
 	 * @param	int			$eatby				eat-by date
@@ -960,13 +960,13 @@ class Reception extends CommonObject
 			$this->trueHeight = trim($this->trueHeight);
 		}
 		if (isset($this->size_units)) {
-			$this->size_units = trim($this->size_units);
+			$this->size_units = trim((string) $this->size_units);
 		}
 		if (isset($this->weight_units)) {
-			$this->weight_units = trim($this->weight_units);
+			$this->weight_units = trim((string) $this->weight_units);
 		}
 		if (isset($this->trueWeight)) {
-			$this->weight = trim($this->trueWeight);
+			$this->weight = trim((string) $this->trueWeight);
 		}
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
@@ -1067,9 +1067,9 @@ class Reception extends CommonObject
 			$langs->load("agenda");
 
 			// Loop on each product line to add a stock movement
-			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.eatby, ed.sellby, ed.batch, ed.rowid as commande_fournisseur_dispatch_id";
+			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.eatby, ed.sellby, ed.batch, ed.rowid as receptiondet_batch_id";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
-			$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+			$sql .= " ".MAIN_DB_PREFIX."receptiondet_batch as ed";
 			$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
 			$sql .= " AND cd.rowid = ed.fk_commandefourndet";
 
@@ -1094,12 +1094,12 @@ class Reception extends CommonObject
 		}
 
 		if (!$error) {
-			$main = MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
+			$main = MAIN_DB_PREFIX.'receptiondet_batch';
 			$ef = $main."_extrafields";
 
 			$sqlef = "DELETE FROM ".$ef." WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_reception = ".((int) $this->id).")";
 
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."receptiondet_batch";
 			$sql .= " WHERE fk_reception = ".((int) $this->id);
 
 			if ($this->db->query($sqlef) && $this->db->query($sql)) {
@@ -1194,7 +1194,7 @@ class Reception extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch WHERE fk_reception = ".((int) $this->id);
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."receptiondet_batch WHERE fk_reception = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 
 		if (!empty($resql)) {
@@ -1588,14 +1588,14 @@ class Reception extends CommonObject
 
 		if (!empty($tracking) && !empty($value)) {
 			$url = str_replace('{TRACKID}', $value, $tracking);
-			$this->tracking_url = sprintf('<a target="_blank" rel="noopener noreferrer" href="%s">'.($value ? $value : 'url').'</a>', $url, $url);
+			$this->tracking_url = sprintf('<a target="_blank" rel="noopener noreferrer" href="%s">%s</a>', $url, ($value ? $value : 'url'));
 		} else {
 			$this->tracking_url = $value;
 		}
 	}
 
 	/**
-	 *	Classify the reception as closed (this record also the stock movement)
+	 *	Classify the reception as closed (this records also the stock movement)
 	 *
 	 *	@return     int     Return integer <0 if KO, >0 if OK
 	 */
@@ -1658,7 +1658,7 @@ class Reception extends CommonObject
 				$sql .= " ed.eatby, ed.sellby, ed.batch,";
 				$sql .= " ed.cost_price";
 				$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
-				$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+				$sql .= " ".MAIN_DB_PREFIX."receptiondet_batch as ed";
 				$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
 				$sql .= " AND cd.rowid = ed.fk_commandefourndet";
 
@@ -1816,7 +1816,7 @@ class Reception extends CommonObject
 				$sql .= " ed.eatby, ed.sellby, ed.batch,";
 				$sql .= " ed.cost_price";
 				$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
-				$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+				$sql .= " ".MAIN_DB_PREFIX."receptiondet_batch as ed";
 				$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
 				$sql .= " AND cd.rowid = ed.fk_commandefourndet";
 
@@ -1950,7 +1950,7 @@ class Reception extends CommonObject
 				$sql .= " ed.eatby, ed.sellby, ed.batch,";
 				$sql .= " ed.cost_price";
 				$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
-				$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+				$sql .= " ".MAIN_DB_PREFIX."receptiondet_batch as ed";
 				$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
 				$sql .= " AND cd.rowid = ed.fk_commandefourndet";
 
@@ -2112,7 +2112,7 @@ class Reception extends CommonObject
 	public static function replaceProduct(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
-			'commande_fournisseur_dispatch'
+			'receptiondet_batch'
 		);
 
 		return CommonObject::commonReplaceProduct($dbs, $origin_id, $dest_id, $tables);

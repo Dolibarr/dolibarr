@@ -92,7 +92,7 @@ class Expedition extends CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -493,7 +493,7 @@ class Expedition extends CommonObject
 	 *
 	 * @param 	int		$entrepot_id		Id of warehouse
 	 * @param 	int		$origin_line_id		Id of source line
-	 * @param 	int		$qty				Quantity
+	 * @param 	float	$qty				Quantity
 	 * @param 	int		$rang				Rang
 	 * @param	array	$array_options		extrafields array
 	 * @return	int							Return integer <0 if KO, line_id if OK
@@ -895,7 +895,7 @@ class Expedition extends CommonObject
 	 *
 	 * @param 	int		$entrepot_id		Id of warehouse
 	 * @param 	int		$id					Id of source line (order line)
-	 * @param 	int		$qty				Quantity
+	 * @param 	float	$qty				Quantity
 	 * @param	array	$array_options		extrafields array
 	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
@@ -1104,7 +1104,7 @@ class Expedition extends CommonObject
 			$this->weight_units = trim($this->weight_units);
 		}
 		if (isset($this->trueWeight)) {
-			$this->weight = trim($this->trueWeight);
+			$this->weight = trim((string) $this->trueWeight);
 		}
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
@@ -2193,14 +2193,14 @@ class Expedition extends CommonObject
 
 		if (!empty($tracking) && !empty($value)) {
 			$url = str_replace('{TRACKID}', $value, $tracking);
-			$this->tracking_url = sprintf('<a target="_blank" rel="noopener noreferrer" href="%s">'.($value ? $value : 'url').'</a>', $url, $url);
+			$this->tracking_url = sprintf('<a target="_blank" rel="noopener noreferrer" href="%s">%s</a>', $url, ($value ? $value : 'url'));
 		} else {
 			$this->tracking_url = $value;
 		}
 	}
 
 	/**
-	 *	Classify the shipping as closed (this record also the stock movement)
+	 *	Classify the shipping as closed (this records also the stock movement)
 	 *
 	 *	@return     int     Return integer <0 if KO, >0 if OK
 	 */
@@ -3050,7 +3050,8 @@ class ExpeditionLigne extends CommonObjectLine
 		// update lot
 
 		if (!empty($batch) && isModEnabled('productbatch')) {
-			dol_syslog(get_class($this)."::update expedition batch id=$expedition_batch_id, batch_id=$batch_id, batch=$batch");
+			$batch_id_str = $batch_id ?? 'null';
+			dol_syslog(get_class($this)."::update expedition batch id=$expedition_batch_id, batch_id=$batch_id_str, batch=$batch");
 
 			if (empty($batch_id) || empty($this->fk_product)) {
 				dol_syslog(get_class($this).'::update missing fk_origin_stock (batch_id) and/or fk_product', LOG_ERR);

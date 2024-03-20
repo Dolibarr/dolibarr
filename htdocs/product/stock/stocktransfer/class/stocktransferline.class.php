@@ -94,7 +94,7 @@ class StockTransferLine extends CommonObjectLine
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'comment' => "Id"),
@@ -429,8 +429,8 @@ class StockTransferLine extends CommonObjectLine
 		$p->fetch($this->fk_product);
 
 		$op = array();
-		$op[0] = "+".trim($this->qty);
-		$op[1] = "-".trim($this->qty);
+		$op[0] = "+".trim((string) $this->qty);
+		$op[1] = "-".trim((string) $this->qty);
 		$movementstock = new MouvementStock($this->db);
 		$st = new StockTransfer($this->db);
 		$movementstock->origin_type = $st->origin_type;

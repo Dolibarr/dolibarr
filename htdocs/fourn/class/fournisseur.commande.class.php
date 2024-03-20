@@ -1974,7 +1974,7 @@ class CommandeFournisseur extends CommonOrder
 			$pu_ht = price2num($pu_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
 			$pu_ttc = price2num($pu_ttc);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
 			$txlocaltax1 = price2num($txlocaltax1);
@@ -2206,7 +2206,7 @@ class CommandeFournisseur extends CommonOrder
 
 
 	/**
-	 * Save a receiving into the tracking table of receiving (commande_fournisseur_dispatch) and add product into stock warehouse.
+	 * Save a receiving into the tracking table of receiving (receptiondet_batch) and add product into stock warehouse.
 	 *
 	 * @param 	User		$user					User object making change
 	 * @param 	int			$product				Id of product to dispatch
@@ -2251,7 +2251,7 @@ class CommandeFournisseur extends CommonOrder
 		if (($this->statut == self::STATUS_ORDERSENT || $this->statut == self::STATUS_RECEIVED_PARTIALLY || $this->statut == self::STATUS_RECEIVED_COMPLETELY)) {
 			$this->db->begin();
 
-			$sql = "INSERT INTO ".$this->db->prefix()."commande_fournisseur_dispatch";
+			$sql = "INSERT INTO ".$this->db->prefix()."receptiondet_batch";
 			$sql .= " (fk_commande, fk_product, qty, fk_entrepot, fk_user, datec, fk_commandefourndet, status, comment, eatby, sellby, batch, fk_reception) VALUES";
 			$sql .= " ('".$this->id."','".$product."','".$qty."',".($entrepot > 0 ? "'".$entrepot."'" : "null").",'".$user->id."','".$this->db->idate($now)."','".$fk_commandefourndet."', ".$dispatchstatus.", '".$this->db->escape($comment)."', ";
 			$sql .= ($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ".($batch ? "'".$this->db->escape($batch)."'" : "null").", ".($fk_reception > 0 ? "'".$this->db->escape($fk_reception)."'" : "null");
@@ -2499,7 +2499,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " e.rowid as warehouse_id, e.ref as entrepot,";
 		$sql .= " cfd.rowid as dispatchedlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status, cfd.fk_commandefourndet";
 		$sql .= " FROM ".$this->db->prefix()."product as p,";
-		$sql .= " ".$this->db->prefix()."commande_fournisseur_dispatch as cfd";
+		$sql .= " ".$this->db->prefix()."receptiondet_batch as cfd";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."entrepot as e ON cfd.fk_entrepot = e.rowid";
 		$sql .= " WHERE cfd.fk_commande = ".((int) $this->id);
 		$sql .= " AND cfd.fk_product = p.rowid";
@@ -2934,7 +2934,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 			$pu = price2num($pu);
 			$pu_ht_devise = price2num($pu_ht_devise);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
 			$txlocaltax1 = (float) price2num($txlocaltax1);
@@ -3661,7 +3661,7 @@ class CommandeFournisseur extends CommonOrder
 
 		$sql = 'SELECT cd.rowid, cd.fk_product,';
 		$sql .= ' sum(cfd.qty) as qty';
-		$sql .= ' FROM '.$this->db->prefix().'commande_fournisseur_dispatch as cfd,';
+		$sql .= ' FROM '.$this->db->prefix().'receptiondet_batch as cfd,';
 		if ($filtre_statut >= 0) {
 			$sql .= ' '.$this->db->prefix().'reception as e,';
 		}

@@ -308,7 +308,7 @@ class Propal extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -413,8 +413,8 @@ class Propal extends CommonObject
 	 *  $this->thirdparty should be loaded
 	 *
 	 * 	@param  int		$idproduct       	Product Id to add
-	 * 	@param  int		$qty             	Quantity
-	 * 	@param  int		$remise_percent  	Discount effected on Product
+	 * 	@param  float	$qty             	Quantity
+	 * 	@param  float	$remise_percent  	Discount effected on Product
 	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 *
 	 *	TODO	Replace calls to this function by generation object Ligne
@@ -554,7 +554,7 @@ class Propal extends CommonObject
 	 * 		@param    	string		$desc				Description of line
 	 * 		@param    	float		$pu_ht				Unit price
 	 * 		@param    	float		$qty             	Quantity
-	 * 		@param    	float		$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
+	 * 		@param    	float|string	$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
 	 * 		@param		float		$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
 	 *  	@param		float		$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *		@param    	int			$fk_product      	Product/Service ID predefined
@@ -612,7 +612,7 @@ class Propal extends CommonObject
 			$pu_ht = price2num($pu_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
 			$pu_ttc = price2num($pu_ttc);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
 			}
 			$txlocaltax1 = price2num($txlocaltax1);
@@ -805,7 +805,7 @@ class Propal extends CommonObject
 	 *  @param      float		$pu		     	  	Unit price (HT or TTC depending on price_base_type)
 	 *  @param      float		$qty            	Quantity
 	 *  @param      float		$remise_percent  	Discount on line
-	 *  @param      float		$txtva	          	VAT Rate (Can be '1.23' or '1.23 (ABC)')
+	 *  @param      float|string	$txtva	          	VAT Rate (Can be '1.23' or '1.23 (ABC)')
 	 * 	@param	  	float		$txlocaltax1		Local tax 1 rate
 	 *  @param	  	float		$txlocaltax2		Local tax 2 rate
 	 *  @param      string		$desc            	Description
@@ -840,7 +840,7 @@ class Propal extends CommonObject
 		$qty = price2num($qty);
 		$pu = price2num($pu);
 		$pu_ht_devise = price2num($pu_ht_devise);
-		if (!preg_match('/\((.*)\)/', $txtva)) {
+		if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 			$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 		}
 		$txlocaltax1 = price2num($txlocaltax1);
@@ -2460,136 +2460,6 @@ class Propal extends CommonObject
 
 		return -1;
 	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Set an overall discount on the proposal
-	 *
-	 *	@param      User	$user       Object user that modify
-	 *	@param      double	$remise     Amount discount
-	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         		Return integer <0 if ko, >0 if ok
-	 *	@deprecated remise_percent is a deprecated field for object parent
-	 */
-	/*
-	public function set_remise_percent($user, $remise, $notrigger = 0)
-	{
-		// phpcs:enable
-		$remise = trim($remise) ?trim($remise) : 0;
-
-		if ($user->hasRight('propal', 'creer')) {
-			$remise = price2num($remise, 2);
-
-			$error = 0;
-
-			$this->db->begin();
-
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET remise_percent = ".((float) $remise);
-			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = ".self::STATUS_DRAFT;
-
-			dol_syslog(__METHOD__, LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$this->errors[] = $this->db->error();
-				$error++;
-			}
-
-			if (!$error) {
-				$this->oldcopy = clone $this;
-				$this->remise_percent = $remise;
-				$this->update_price(1);
-			}
-
-			if (!$notrigger && empty($error)) {
-				// Call trigger
-				$result = $this->call_trigger('PROPAL_MODIFY', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
-			}
-
-			if (!$error) {
-				$this->db->commit();
-				return 1;
-			} else {
-				foreach ($this->errors as $errmsg) {
-					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
-					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-				}
-				$this->db->rollback();
-				return -1 * $error;
-			}
-		}
-
-		return -1;
-	}
-	*/
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Set an absolute overall discount on the proposal
-	 *
-	 *	@param      User	$user       Object user that modify
-	 *	@param      double	$remise     Amount discount
-	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         		Return integer <0 if ko, >0 if ok
-	 */
-	/*
-	public function set_remise_absolue($user, $remise, $notrigger = 0)
-	{
-		// phpcs:enable
-		if (empty($remise)) {
-			$remise = 0;
-		}
-		$remise = price2num($remise);
-
-		if ($user->hasRight('propal', 'creer')) {
-			$error = 0;
-
-			$this->db->begin();
-
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-			$sql .= " SET remise_absolue = ".((float) $remise);
-			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = ".self::STATUS_DRAFT;
-
-			dol_syslog(__METHOD__, LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$this->errors[] = $this->db->error();
-				$error++;
-			}
-
-			if (!$error) {
-				$this->oldcopy = clone $this;
-				$this->update_price(1);
-			}
-
-			if (!$notrigger && empty($error)) {
-				// Call trigger
-				$result = $this->call_trigger('PROPAL_MODIFY', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
-			}
-
-			if (!$error) {
-				$this->db->commit();
-				return 1;
-			} else {
-				foreach ($this->errors as $errmsg) {
-					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
-					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-				}
-				$this->db->rollback();
-				return -1 * $error;
-			}
-		}
-
-		return -1;
-	}
-	*/
 
 
 	/**
@@ -4658,10 +4528,8 @@ class PropaleLigne extends CommonObjectLine
 		}
 		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
 		$sql .= ", buy_price_ht=".price2num($this->pa_ht);
-		if (strlen($this->special_code)) {
-			$sql .= ", special_code=".$this->special_code;
-		}
-		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
+		$sql .= ", special_code=".((int) $this->special_code);
+		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? (int) $this->fk_parent_line : "null");
 		if (!empty($this->rang)) {
 			$sql .= ", rang=".((int) $this->rang);
 		}

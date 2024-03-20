@@ -113,20 +113,20 @@ else $result=restrictedArea($user, 'produit|service', '', '', '', '', '', $objca
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'i.ref'=>"Ref",
-	'pfi.ref_fourn'=>"RefSupplier",
-	'i.label'=>"ProductLabel",
-	'i.description'=>"Description",
-	"i.note"=>"Note",
+	'i.ref' => "Ref",
+	'pfi.ref_fourn' => "RefSupplier",
+	'i.label' => "ProductLabel",
+	'i.description' => "Description",
+	"i.note" => "Note",
 );
 
 $isInEEC = isInEEC($mysoc);
 
 // Definition of fields for lists
 $arrayfields = array(
-	'i.ref' => array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'i.label' => array('label'=>$langs->trans("Label"), 'checked'=>1),
-	'i.fk_product_type'=>array('label'=>$langs->trans("Type"), 'checked'=>0, 'enabled'=>(isModEnabled("product") && isModEnabled("service"))),
+	'i.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1),
+	'i.label' => array('label' => $langs->trans("Label"), 'checked' => 1),
+	'i.fk_product_type' => array('label' => $langs->trans("Type"), 'checked' => 0, 'enabled' => (isModEnabled("product") && isModEnabled("service"))),
 );
 
 /*
@@ -360,7 +360,7 @@ $param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
-	'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	//'builddoc'=>$langs->trans("PDFMerge"),
 	//'presend'=>$langs->trans("SendByMail"),
 );
@@ -415,6 +415,9 @@ if ($search_all) {
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+if (!isset($moreforfilter)) {
+	$moreforfilter = '';
+}
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {
@@ -470,7 +473,7 @@ if (!empty($arrayfields['customerorsupplier']['checked'])) {
 
 if (!empty($arrayfields['i.fk_product_type']['checked'])) {
 	print '<td class="liste_titre left">';
-	$array = array('-1'=>'&nbsp;', '0'=>$langs->trans('Product'), '1'=>$langs->trans('Service'));
+	$array = array('-1' => '&nbsp;', '0' => $langs->trans('Product'), '1' => $langs->trans('Service'));
 	print $form->selectarray('search_type', $array, $search_type);
 	print '</td>';
 }
@@ -480,7 +483,7 @@ if (!empty($arrayfields['i.fk_product_type']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 */
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Date creation
@@ -532,7 +535,7 @@ if (!empty($arrayfields['i.fk_product_type']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 */
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['i.datec']['checked'])) {

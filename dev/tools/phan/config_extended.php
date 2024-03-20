@@ -170,6 +170,7 @@ $VALID_MODULE_MAPPING = array(
 	'syslog' => 'Syslog',
 	'takepos' => 'TakePos',
 	'tax' => 'Tax',
+	'theme_datacolor' => 'array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int},3:array{0:int,1:int,2:int}}',
 	'ticket' => 'Ticket',
 	'user' => 'User',
 	'variants' => 'Variants',
@@ -217,7 +218,7 @@ return [
 		'disablemove' => 'int<0,1>',
 		'disableremove' => 'int<0,1>',
 		// Found in dol_eval
-		'website' => '\WebSite',
+		'website' => 'string',  // See discussion https://github.com/Dolibarr/dolibarr/pull/28891#issuecomment-2002268334  // Disable because Phan infers Website type
 		'websitepage' => '\WebSitePage',
 		'websitepagefile' => 'string',
 		'action' => 'string',
@@ -262,6 +263,7 @@ return [
 	//	to `exclude_analysis_directory_list`.
 	"exclude_analysis_directory_list" => [
 		'htdocs/includes/',
+		'htdocs/install/doctemplates/websites/',
 		'htdocs/core/class/lessc.class.php', // External library
 		PHAN_DIR . '/stubs/',
 	],
@@ -311,7 +313,7 @@ return [
 
 		'ConstantVariablePlugin', // Warns about values that are actually constant
 		//'HasPHPDocPlugin', // Requires PHPDoc
-		'InlineHTMLPlugin', // html in PHP file, or at end of file
+		// 'InlineHTMLPlugin', // html in PHP file, or at end of file
 		'NonBoolBranchPlugin', // Requires test on bool, nont on ints
 		'NonBoolInLogicalArithPlugin',
 		'NumericalComparisonPlugin',

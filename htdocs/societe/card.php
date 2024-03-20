@@ -142,9 +142,7 @@ if ($socid > 0) {
 }
 
 if (!($object->id > 0) && $action == 'view') {
-	$langs->load("errors");
-	print($langs->trans('ErrorRecordNotFound'));
-	exit;
+	recordNotFound();
 }
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
@@ -600,7 +598,7 @@ if (empty($reshook)) {
 					}
 
 					if (!empty($backtopage)) {
-						$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
+						$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
 						if (preg_match('/\?/', $backtopage)) {
 							$backtopage .= '&socid='.$object->id; // Old method
 						}

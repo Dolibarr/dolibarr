@@ -90,7 +90,7 @@ abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 		$s .= $langs->trans("Name").': <b>'.$this->name.'</b><br>';
 		$s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
 		if ($type != -1) {
-			$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
+			$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getName($langs).'</b><br>';
 		}
 		$s .= '<br>';
 		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';

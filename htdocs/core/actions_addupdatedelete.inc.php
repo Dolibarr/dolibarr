@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -195,7 +196,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			}
 
 			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
-			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
 
 			$db->commit();
 
@@ -233,7 +234,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 				continue;
 			}
 		} else {
-			if (!GETPOSTISSET($key) && !preg_match('/^chkbxlst:/', $object->fields[$key]['type']) && $object->fields[$key]['type']!=='checkbox') {
+			if (!GETPOSTISSET($key) && !preg_match('/^chkbxlst:/', $object->fields[$key]['type']) && $object->fields[$key]['type'] !== 'checkbox') {
 				continue; // The field was not submitted to be saved
 			}
 		}
@@ -334,8 +335,8 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		$result = $object->update($user);
 		if ($result > 0) {
 			$action = 'view';
-			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
-			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
+			$urltogo = $backtopage ? str_replace('__ID__', (string) $result, $backtopage) : $backurlforlist;
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
 			if ($urltogo && empty($noback)) {
 				header("Location: " . $urltogo);
 				exit;

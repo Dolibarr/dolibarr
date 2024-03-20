@@ -249,7 +249,7 @@ class Contrat extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -1488,7 +1488,7 @@ class Contrat extends CommonObject
 	 *
 	 *  @param	string		$desc            	Description of line
 	 *  @param  float		$pu_ht              Unit price net
-	 *  @param  int			$qty             	Quantity
+	 *  @param  float	 	$qty             	Quantity
 	 *  @param  float		$txtva           	Vat rate
 	 *  @param  float		$txlocaltax1        Local tax 1 rate
 	 *  @param  float		$txlocaltax2        Local tax 2 rate
@@ -1528,9 +1528,9 @@ class Contrat extends CommonObject
 			// Clean vat code
 			$reg = array();
 			$vat_src_code = '';
-			if (preg_match('/\((.*)\)/', $txtva, $reg)) {
+			if (preg_match('/\((.*)\)/', (string) $txtva, $reg)) {
 				$vat_src_code = $reg[1];
-				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
+				$txtva = preg_replace('/\s*\(.*\)/', '', (string) $txtva); // Remove code into vatrate.
 			}
 			$txtva = price2num($txtva);
 			$txlocaltax1 = price2num($txlocaltax1);
@@ -1721,7 +1721,7 @@ class Contrat extends CommonObject
 	 *  @param	int			$rowid            	Id de la ligne de facture
 	 *  @param  string		$desc             	Description de la ligne
 	 *  @param  float		$pu               	Prix unitaire
-	 *  @param  int			$qty              	Quantite
+	 *  @param  float		$qty              	Quantite
 	 *  @param  float		$remise_percent   	Percentage discount of the line
 	 *  @param  int			$date_start       	Date de debut prevue
 	 *  @param  int			$date_end         	Date de fin prevue
@@ -1746,7 +1746,7 @@ class Contrat extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$qty = trim($qty);
+		$qty = trim((string) $qty);
 		$desc = trim($desc);
 		$desc = trim($desc);
 		$price = price2num($pu);
@@ -3148,7 +3148,7 @@ class ContratLigne extends CommonObjectLine
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -3473,11 +3473,11 @@ class ContratLigne extends CommonObjectLine
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
 		$this->vat_src_code = trim($this->vat_src_code);
-		$this->tva_tx = trim($this->tva_tx);
+		$this->tva_tx = trim((string) $this->tva_tx);
 		$this->localtax1_tx = trim($this->localtax1_tx);
 		$this->localtax2_tx = trim($this->localtax2_tx);
-		$this->qty = trim($this->qty);
-		$this->remise_percent = trim($this->remise_percent);
+		$this->qty = trim((string) $this->qty);
+		$this->remise_percent = trim((string) $this->remise_percent);
 		$this->fk_remise_except = (int) $this->fk_remise_except;
 		$this->subprice = price2num($this->subprice);
 		$this->price_ht = price2num($this->price_ht);

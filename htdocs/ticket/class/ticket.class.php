@@ -194,6 +194,11 @@ class Ticket extends CommonObject
 	public $origin_replyto;
 
 	/**
+	 * References from origin email
+	 */
+	public $origin_references;
+
+	/**
 	 * @var int Creation date
 	 */
 	public $datec;
@@ -297,7 +302,7 @@ class Ticket extends CommonObject
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString('MY_SETUP_PARAM'))
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -327,7 +332,8 @@ class Ticket extends CommonObject
 		'fk_user_create' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Author', 'visible' => 1, 'enabled' => 1, 'position' => 15, 'notnull' => 1, 'csslist' => 'tdoverflowmax100 maxwidth150onsmartphone'),
 		'origin_email' => array('type' => 'mail', 'label' => 'OriginEmail', 'visible' => -2, 'enabled' => 1, 'position' => 16, 'notnull' => 1, 'index' => 1, 'searchall' => 1, 'comment' => "Reference of object", 'csslist' => 'tdoverflowmax150'),
 		'origin_replyto' => array('type' => 'mail', 'label' => 'EmailReplyto', 'visible' => -2, 'enabled' => 1, 'position' => 17, 'notnull' => 1, 'index' => 1, 'searchall' => 1, 'comment' => "Email to reply to", 'csslist' => 'tdoverflowmax150'),
-		'subject' => array('type' => 'varchar(255)', 'label' => 'Subject', 'visible' => 1, 'enabled' => 1, 'position' => 18, 'notnull' => -1, 'searchall' => 1, 'help' => "", 'css' => 'maxwidth200 tdoverflowmax200', 'autofocusoncreate' => 1),
+		'origin_references' => array('type' => 'text', 'label' => 'EmailReferences', 'visible' => -2, 'enabled' => 1, 'position' => 18, 'notnull' => 1, 'index' => 1, 'searchall' => 1, 'comment' => "References from origin email", 'csslist' => 'tdoverflowmax150'),
+		'subject' => array('type' => 'varchar(255)', 'label' => 'Subject', 'visible' => 1, 'enabled' => 1, 'position' => 19, 'notnull' => -1, 'searchall' => 1, 'help' => "", 'css' => 'maxwidth200 tdoverflowmax200', 'autofocusoncreate' => 1),
 		'type_code' => array('type' => 'varchar(32)', 'label' => 'Type', 'visible' => 1, 'enabled' => 1, 'position' => 20, 'notnull' => -1, 'help' => "", 'csslist' => 'maxwidth125 tdoverflowmax50'),
 		'category_code' => array('type' => 'varchar(32)', 'label' => 'TicketCategory', 'visible' => -1, 'enabled' => 1, 'position' => 21, 'notnull' => -1, 'help' => "", 'css' => 'maxwidth100 tdoverflowmax200'),
 		'severity_code' => array('type' => 'varchar(32)', 'label' => 'Severity', 'visible' => 1, 'enabled' => 1, 'position' => 22, 'notnull' => -1, 'help' => "", 'css' => 'maxwidth100'),
@@ -518,6 +524,7 @@ class Ticket extends CommonObject
 			$sql .= "fk_contract,";
 			$sql .= "origin_email,";
 			$sql .= "origin_replyto,";
+			$sql .= "origin_references,";
 			$sql .= "fk_user_create,";
 			$sql .= "fk_user_assign,";
 			$sql .= "email_msgid,";
@@ -546,6 +553,7 @@ class Ticket extends CommonObject
 			$sql .= " ".($this->fk_contract > 0 ? $this->db->escape($this->fk_contract) : "null").",";
 			$sql .= " ".(!isset($this->origin_email) ? 'NULL' : "'".$this->db->escape($this->origin_email)."'").",";
 			$sql .= " ".(!isset($this->origin_replyto) ? 'NULL' : "'".$this->db->escape($this->origin_replyto)."'").",";
+			$sql .= " ".(!isset($this->origin_references) ? 'NULL' : "'".$this->db->escape($this->origin_references)."'").",";
 			$sql .= " ".(!isset($this->fk_user_create) ? ($user->id > 0 ? $user->id : 'NULL') : ($this->fk_user_create > 0 ? $this->fk_user_create : 'NULL')).",";
 			$sql .= " ".($this->fk_user_assign > 0 ? $this->fk_user_assign : 'NULL').",";
 			$sql .= " ".(empty($this->email_msgid) ? 'NULL' : "'".$this->db->escape($this->email_msgid)."'").",";
@@ -672,6 +680,7 @@ class Ticket extends CommonObject
 		$sql .= " t.fk_contract,";
 		$sql .= " t.origin_email,";
 		$sql .= " t.origin_replyto,";
+		$sql .= " t.origin_references,";
 		$sql .= " t.fk_user_create,";
 		$sql .= " t.fk_user_assign,";
 		$sql .= " t.email_msgid,";
@@ -728,6 +737,7 @@ class Ticket extends CommonObject
 				$this->fk_contract = $obj->fk_contract;
 				$this->origin_email = $obj->origin_email;
 				$this->origin_replyto = $obj->origin_replyto;
+				$this->origin_references = $obj->origin_references;
 				$this->fk_user_create = $obj->fk_user_create;
 				$this->fk_user_assign = $obj->fk_user_assign;
 				$this->email_msgid = $obj->email_msgid;
@@ -808,6 +818,7 @@ class Ticket extends CommonObject
 		$sql .= " t.fk_contract,";
 		$sql .= " t.origin_email,";
 		$sql .= " t.origin_replyto,";
+		$sql .= " t.origin_references,";
 		$sql .= " t.fk_user_create, uc.lastname as user_create_lastname, uc.firstname as user_create_firstname,";
 		$sql .= " t.fk_user_assign, ua.lastname as user_assign_lastname, ua.firstname as user_assign_firstname,";
 		$sql .= " t.subject,";
@@ -926,6 +937,7 @@ class Ticket extends CommonObject
 					$line->fk_contract = $obj->fk_contract;
 					$line->origin_email = $obj->origin_email;
 					$line->origin_replyto = $obj->origin_replyto;
+					$line->origin_references = $obj->origin_references;
 
 					$line->fk_user_create = $obj->fk_user_create;
 					$line->fk_user_assign = $obj->fk_user_assign;
@@ -1079,6 +1091,7 @@ class Ticket extends CommonObject
 		$sql .= " fk_contract=".(isset($this->fk_contract) ? (int) $this->fk_contract : "null").",";
 		$sql .= " origin_email=".(isset($this->origin_email) ? "'".$this->db->escape($this->origin_email)."'" : "null").",";
 		$sql .= " origin_replyto=".(isset($this->origin_replyto) ? "'".$this->db->escape($this->origin_replyto)."'" : "null").",";
+		$sql .= " origin_references=".(isset($this->origin_references) ? "'".$this->db->escape($this->origin_references)."'" : "null").",";
 		$sql .= " fk_user_create=".(isset($this->fk_user_create) ? (int) $this->fk_user_create : "null").",";
 		$sql .= " fk_user_assign=".(isset($this->fk_user_assign) ? (int) $this->fk_user_assign : "null").",";
 		$sql .= " subject=".(isset($this->subject) ? "'".$this->db->escape($this->subject)."'" : "null").",";
@@ -1818,7 +1831,7 @@ class Ticket extends CommonObject
 		$actioncomm->socid = $this->socid;
 		$actioncomm->label = $this->subject;
 		$actioncomm->note_private = $this->message;
-		$actioncomm->userassigned = array($user->id);
+		$actioncomm->userassigned = array($user->id => array('id' => $user->id,'transparency' => 0));
 		$actioncomm->userownerid = $user->id;
 		$actioncomm->datep = $now;
 		$actioncomm->percentage = -1; // percentage is not relevant for punctual events
@@ -2187,8 +2200,8 @@ class Ticket extends CommonObject
 	/**
 	 *  Retrieve information about internal contacts
 	 *
-	 *  @param    int     $status     Status of user or company
-	 *  @return array                 Array with datas : firstname, lastname, socid (-1 for internal users), email, code, libelle, status
+	 *  @param    int     $status     Status of user or company                                array<array{id:int,email:string,firstname:string,lastname:string,libelle:string}>
+	 *  @return array<array{id:int,email:string,firstname:string,lastname:string,libelle:string,socid:int,code:string,status:int}>             Array with datas : firstname, lastname, socid (-1 for internal users), email, code, libelle, status
 	 */
 	public function getInfosTicketInternalContact($status = -1)
 	{
@@ -2282,7 +2295,7 @@ class Ticket extends CommonObject
 	 *    @param    int     $list           0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string  $code           Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @param    int     $status         Status of user or company
-	 *    @return   array|int               Array of array('email'=>..., 'lastname'=>...)
+	 *    @return   array<int|array{source:string,id:int,rowid:int,email:string,civility:string,firstname:string,lastname:string,labeltype:string,libelle:string,socid:int,code:string,status:int,statuscontact:string,fk_c_typecontact:string,phone:string,phone_mobile:string,nom:string}>|int<-1,-1>      Array of array('email'=>..., 'lastname'=>...)
 	 */
 	public function listeContact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1)
 	{
@@ -2401,23 +2414,21 @@ class Ticket extends CommonObject
 		global $conf;
 
 		$defaultref = '';
-		$modele = !getDolGlobalString('TICKET_ADDON') ? 'mod_ticket_simple' : $conf->global->TICKET_ADDON;
+		$modele = getDolGlobalString('TICKET_ADDON', 'mod_ticket_simple');
 
 		// Search template files
 		$file = '';
 		$classname = '';
-		$filefound = 0;
 		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
 			$file = dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
 			if (file_exists($file)) {
-				$filefound = 1;
 				$classname = $modele;
 				break;
 			}
 		}
 
-		if ($filefound) {
+		if ($classname !== '') {
 			$result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
 			$modTicket = new $classname();
 
@@ -2705,7 +2716,7 @@ class Ticket extends CommonObject
 
 						// Add global email address recipient
 						if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') &&
-							getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && !array_key_exists($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)
+							getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && !array_key_exists(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO'), $sendto)
 						) {
 							$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 						}
@@ -2808,8 +2819,8 @@ class Ticket extends CommonObject
 							$message .= '<br>'.$langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$object->track_id.'</a><br>';
 
 							// Add global email address recipient
-							if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') !== '' && !array_key_exists(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO'), $sendto)) {
-								if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') !== '') {
+							if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') && !array_key_exists(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO'), $sendto)) {
+								if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')) {
 									$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 								}
 							}
@@ -2867,7 +2878,7 @@ class Ticket extends CommonObject
 								$message .= '<br><br>';
 
 								foreach ($external_contacts as $key => $info_sendto) {
-									// altairis: avoid duplicate emails to external contacts
+									// avoid duplicate emails to external contacts
 									if ($info_sendto['id'] == $user->contact_id) {
 										continue;
 									}
@@ -2885,6 +2896,7 @@ class Ticket extends CommonObject
 								// If public interface is not enable, use link to internal page into mail
 								$url_public_ticket = (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE') ?
 										(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') !== '' ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) : dol_buildpath('/ticket/card.php', 2)).'?track_id='.$object->track_id;
+
 								$message .= '<br>'.$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$object->track_id.'</a><br>';
 
 								// Build final message
@@ -2906,8 +2918,8 @@ class Ticket extends CommonObject
 								}
 
 								// Add global email address recipient
-								if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') !== '' && !array_key_exists(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO'), $sendto)) {
-									if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') !== '') {
+								if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') && !array_key_exists(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO'), $sendto)) {
+									if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')) {
 										$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 									}
 								}
@@ -2951,8 +2963,8 @@ class Ticket extends CommonObject
 	 *
 	 * @param string $subject          	  Email subject
 	 * @param string $message          	  Email message
-	 * @param int    $send_internal_cc 	  Receive a copy on internal email ($conf->global->TICKET_NOTIFICATION_EMAIL_FROM)
-	 * @param array  $array_receiver   	  Array of receiver. example array('name' => 'John Doe', 'email' => 'john@doe.com', etc...)
+	 * @param int    $send_internal_cc 	  Receive a copy on internal email (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM')
+	 * @param array  $array_receiver   	  Array of receiver. Example array('name' => 'John Doe', 'email' => 'john@doe.com', etc...)
 	 * @param array	 $filename_list       List of files to attach (full path of filename on file system)
 	 * @param array	 $mimetype_list       List of MIME type of attached files
 	 * @param array	 $mimefilename_list   List of attached file name in message
@@ -2962,7 +2974,7 @@ class Ticket extends CommonObject
 	{
 		global $conf, $langs, $user;
 
-		if (getDolGlobalInt('TICKET_DISABLE_ALL_MAILS')) {
+		if (getDolGlobalString('TICKET_DISABLE_ALL_MAILS')) {
 			dol_syslog(get_class($this).'::sendTicketMessageByEmail: Emails are disable into ticket setup by option TICKET_DISABLE_ALL_MAILS', LOG_WARNING);
 			return false;
 		}
@@ -2978,10 +2990,9 @@ class Ticket extends CommonObject
 			$array_receiver = array_merge($array_receiver, $this->getInfosTicketExternalContact(1));
 		}
 
+		$sendtocc = '';
 		if ($send_internal_cc) {
 			$sendtocc = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
-		} else {
-			$sendtocc = '';
 		}
 
 		$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
@@ -2996,8 +3007,7 @@ class Ticket extends CommonObject
 				// Send email
 
 				$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
-
-				if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO') !== '') {
+				if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 					$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 				}
 
@@ -3016,9 +3026,11 @@ class Ticket extends CommonObject
 				// According to RFC5322, we should add here all the References fields of the initial message concatenated with
 				// the Message-ID of the message we respond from (but each ID must be once).
 				$references = '';
-				// @TODO
-				// Retrieve source References to do  				$references .= (empty($references) ? '' : ' ').Source References
-				// If No References is set, use the In-Reply-To for $references .= (empty($references) ? '' : ' ').Source In-reply-To
+				if (empty($this->origin_references)) {
+					// TODO If No References is set, use the In-Reply-To for $references .= (empty($references) ? '' : ' ').Source In-reply-To
+				} else {
+					$references .= (empty($references) ? '' : ' ').$this->origin_references;
+				}
 				$references .= (empty($references) ? '' : ' ').'<'.$this->email_msgid.'>';
 				if ($references) {
 					$moreinheader .= 'References: '.$references."\r\n";
@@ -3044,7 +3056,7 @@ class Ticket extends CommonObject
 					}
 				}
 
-				if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO') !== '') {
+				if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 					$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 				}
 			}

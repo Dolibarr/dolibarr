@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -182,7 +183,7 @@ if (!empty($websitekey)) {
 	$param .= '&website='.urlencode($websitekey);
 }
 if (!empty($pageid)) {
-	$param .= '&pageid='.urlencode($pageid);
+	$param .= '&pageid='.((int) $pageid);
 }
 
 
@@ -321,7 +322,7 @@ if ($type == 'directory') {
 					$param .= '&website='.urlencode(GETPOST('website', 'alpha'));
 				}
 				if (!preg_match('/pageid=/', $param)) {
-					$param .= '&pageid='.urlencode((string) (GETPOSTINT('pageid')));
+					$param .= '&pageid='.GETPOSTINT('pageid');
 				}
 				//if (!preg_match('/backtopage=/',$param)) $param.='&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid);
 			}

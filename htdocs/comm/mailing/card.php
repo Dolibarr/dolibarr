@@ -411,7 +411,7 @@ if (empty($reshook)) {
 
 							if (getDolGlobalString('MAILING_DELAY')) {
 								dol_syslog("Wait a delay of MAILING_DELAY=".((float) $conf->global->MAILING_DELAY));
-								usleep((float) $conf->global->MAILING_DELAY * 1000000);
+								usleep((int) ((float) $conf->global->MAILING_DELAY * 1000000));
 							}
 
 							//test if CHECK READ change statut prospect contact
@@ -895,10 +895,10 @@ if ($action == 'create') {
 				</script>';
 	}
 	if ($formmail->withfckeditor) {
-		$out .= $formmail->getModelEmailTemplate();
+		$out .= $formmail->getModelEmailTemplate('bodyemail');
 	}
 	if ($formmail->withaiprompt && isModEnabled('ai')) {
-		$out .= $formmail->getSectionForAIPrompt();
+		$out .= $formmail->getSectionForAIPrompt('', 'bodyemail');
 	}
 	print $out;
 	print '</td></tr>';
@@ -1491,6 +1491,7 @@ if ($action == 'create') {
 				print '<td colspan="3">';
 				// List of files
 				$listofpaths = dol_dir_list($upload_dir, 'all', 0, '', '', 'name', SORT_ASC, 0);
+				$out = '';
 
 				// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 				$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";

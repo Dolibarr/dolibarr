@@ -140,7 +140,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -786,7 +786,7 @@ abstract class CommonObject
 	public $extraparams = array();
 
 	/**
-	 * @var array<string,string[]|array{parent:string,parentkey:string}>	List of child tables. To test if we can delete object.
+	 * @var string[]|array<string,string[]|array{parent:string,parentkey:string}>	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array();
 
@@ -3864,7 +3864,7 @@ abstract class CommonObject
 					$diff = price2num($total_tva_by_vats[$obj->vatrate] - $tmpvat, 'MT', 1);
 					//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
 					if ($diff) {
-						if (abs($diff) > (10 * pow(10, -1 * getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 0)))) {
+						if (abs((float) $diff) > (10 * pow(10, -1 * getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 0)))) {
 							// If error is more than 10 times the accuracy of rounding. This should not happen.
 							$errmsg = 'A rounding difference was detected into TOTAL but is too high to be corrected. Some data in your lines may be corrupted. Try to edit each line manually to fix this before restarting.';
 							dol_syslog($errmsg, LOG_WARNING);
@@ -4529,7 +4529,7 @@ abstract class CommonObject
 		if ($elementTable == 'expensereport') {
 			$fieldstatus = "fk_statut";
 		}
-		if ($elementTable == 'commande_fournisseur_dispatch') {
+		if ($elementTable == 'receptiondet_batch') {
 			$fieldstatus = "status";
 		}
 		if ($elementTable == 'prelevement_bons') {
@@ -5502,7 +5502,7 @@ abstract class CommonObject
 	 *    Delete a link to resource line
 	 *
 	 *    @param	int		$rowid			Id of resource line to delete
-	 *    @param	int		$element		element name (for trigger) TODO: use $this->element into commonobject class
+	 *    @param	string	$element		element name (for trigger) TODO: use $this->element into commonobject class
 	 *    @param	int		$notrigger		Disable all triggers
 	 *    @return   int						>0 if OK, <0 if KO
 	 */
@@ -5646,7 +5646,7 @@ abstract class CommonObject
 		$filefound = dol_sanitizePathName($filefound);
 
 		// If generator was found
-		global $db; // Required to solve a conception default making an include of some code that uses $db instead of $this->db just after.
+		global $db; // Required to solve a conception error making an include of some code that uses $db instead of $this->db just after.
 
 		require_once $filefound;
 
@@ -7454,7 +7454,7 @@ abstract class CommonObject
 
 						// current object id can be use into filter
 						if (strpos($InfoFieldList[4], '$ID$') !== false && !empty($objectid)) {
-							$InfoFieldList[4] = str_replace('$ID$', $objectid, $InfoFieldList[4]);
+							$InfoFieldList[4] = str_replace('$ID$', (string) $objectid, $InfoFieldList[4]);
 						} else {
 							$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 						}
@@ -7633,7 +7633,7 @@ abstract class CommonObject
 
 						// current object id can be use into filter
 						if (strpos($InfoFieldList[4], '$ID$') !== false && !empty($objectid)) {
-							$InfoFieldList[4] = str_replace('$ID$', $objectid, $InfoFieldList[4]);
+							$InfoFieldList[4] = str_replace('$ID$', (string) $objectid, $InfoFieldList[4]);
 						} else {
 							$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 						}
@@ -10176,7 +10176,7 @@ abstract class CommonObject
 							}
 						} else {
 							$error++;
-							$this->errors[] = "You defined a cascade delete on an object $childObject but there is no method deleteByParentField for it";
+							$this->errors[] = "You defined a cascade delete on an object $className/$this->id but there is no method deleteByParentField for it";
 							break;
 						}
 					} else {

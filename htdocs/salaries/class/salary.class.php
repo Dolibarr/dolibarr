@@ -128,6 +128,7 @@ class Salary extends CommonObject
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
 
+	public $resteapayer;
 
 	/**
 	 *	Constructor

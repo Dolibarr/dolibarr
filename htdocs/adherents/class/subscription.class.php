@@ -104,7 +104,7 @@ class Subscription extends CommonObject
 	public $fk_bank;
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -185,6 +185,32 @@ class Subscription extends CommonObject
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 			$this->fk_type = $type;
+		}
+
+		if (!empty($this->linkedObjectsIds) && empty($this->linked_objects)) {	// To use new linkedObjectsIds instead of old linked_objects
+			$this->linked_objects = $this->linkedObjectsIds; // TODO Replace linked_objects with linkedObjectsIds
+		}
+
+		// Add object linked
+		if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects)) {
+			foreach ($this->linked_objects as $origin => $tmp_origin_id) {
+				if (is_array($tmp_origin_id)) {       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+					foreach ($tmp_origin_id as $origin_id) {
+						$ret = $this->add_object_linked($origin, $origin_id);
+						if (!$ret) {
+							$this->error = $this->db->lasterror();
+							$error++;
+						}
+					}
+				} else { // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+					$origin_id = $tmp_origin_id;
+					$ret = $this->add_object_linked($origin, $origin_id);
+					if (!$ret) {
+						$this->error = $this->db->lasterror();
+						$error++;
+					}
+				}
+			}
 		}
 
 		if (!$error && !$notrigger) {

@@ -1008,7 +1008,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	while (preg_match('/\{([A-Z]+)\-([1-9])\}/', $tmpmask, $regKey)) {
 		$maskperso[$regKey[1]] = '{'.$regKey[1].'-'.$regKey[2].'}';
 		// @phan-suppress-next-line PhanParamSuspiciousOrder
-		$maskpersonew[$regKey[1]] = str_pad('', $regKey[2], '_', STR_PAD_RIGHT);
+		$maskpersonew[$regKey[1]] = str_pad('', (int) $regKey[2], '_', STR_PAD_RIGHT);
 		$tmpmask = preg_replace('/\{'.$regKey[1].'\-'.$regKey[2].'\}/i', $maskpersonew[$regKey[1]], $tmpmask);
 	}
 
@@ -1070,7 +1070,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
 	if ($maskraz > 0) {   // A reset is required
 		if ($maskraz == 99) {
-			$maskraz = date('m', $date);
+			$maskraz = (int) date('m', $date);
 			$resetEveryMonth = true;
 		}
 		if ($maskraz > 12) {
@@ -1123,7 +1123,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$yearcomp = 0;
 
 		if (!empty($yearoffsettype) && !is_numeric($yearoffsettype) && $yearoffsettype != '=') {	// $yearoffsettype is - or +
-			$currentyear = date("Y", $date);
+			$currentyear = (int) date("Y", $date);
 			$fiscaldate = dol_mktime('0', '0', '0', $maskraz, '1', $currentyear);
 			$newyeardate = dol_mktime('0', '0', '0', '1', '1', $currentyear);
 			$nextnewyeardate = dol_mktime('0', '0', '0', '1', '1', $currentyear + 1);
@@ -1139,23 +1139,23 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 				// If after or equal of current new year date
 				$yearoffset = -1;
 			}
-		} elseif (date("m", $date) < $maskraz && empty($resetEveryMonth)) {
+		} elseif ((int) date("m", $date) < $maskraz && empty($resetEveryMonth)) {
 			// For backward compatibility
 			$yearoffset = -1;
 		}	// If current month lower that month of return to zero, year is previous year
 
 		if ($yearlen == 4) {
-			$yearcomp = sprintf("%04d", date("Y", $date) + $yearoffset);
+			$yearcomp = sprintf("%04d", (int) date("Y", $date) + $yearoffset);
 		} elseif ($yearlen == 2) {
-			$yearcomp = sprintf("%02d", date("y", $date) + $yearoffset);
+			$yearcomp = sprintf("%02d", (int) date("y", $date) + $yearoffset);
 		} elseif ($yearlen == 1) {
 			$yearcomp = substr(date('y', $date), 1, 1) + $yearoffset;
 		}
 		if ($monthcomp > 1 && empty($resetEveryMonth)) {	// Test with month is useless if monthcomp = 0 or 1 (0 is same as 1) (regis: $monthcomp can't equal 0)
 			if ($yearlen == 4) {
-				$yearcomp1 = sprintf("%04d", date("Y", $date) + $yearoffset + 1);
+				$yearcomp1 = sprintf("%04d", (int) date("Y", $date) + $yearoffset + 1);
 			} elseif ($yearlen == 2) {
-				$yearcomp1 = sprintf("%02d", date("y", $date) + $yearoffset + 1);
+				$yearcomp1 = sprintf("%02d", (int) date("y", $date) + $yearoffset + 1);
 			}
 
 			$sqlwhere .= "(";
@@ -1383,9 +1383,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
 		// We replace special codes except refclient
 		if (!empty($yearoffsettype) && !is_numeric($yearoffsettype) && $yearoffsettype != '=') {	// yearoffsettype is - or +, so we don't want current year
-			$numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date) + $yearoffset, $numFinal);
-			$numFinal = preg_replace('/\{yy\}/i', date("y", $date) + $yearoffset, $numFinal);
-			$numFinal = preg_replace('/\{y\}/i', substr(date("y", $date), 1, 1) + $yearoffset, $numFinal);
+			$numFinal = preg_replace('/\{yyyy\}/i', (string) ((int) date("Y", $date) + $yearoffset), $numFinal);
+			$numFinal = preg_replace('/\{yy\}/i', (string) ((int) date("y", $date) + $yearoffset), $numFinal);
+			$numFinal = preg_replace('/\{y\}/i', (string) ((int) substr((string) date("y", $date), 1, 1) + $yearoffset), $numFinal);
 		} else { // we want yyyy to be current year
 			$numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date), $numFinal);
 			$numFinal = preg_replace('/\{yy\}/i', date("y", $date), $numFinal);
@@ -1538,7 +1538,7 @@ function check_value($mask, $value)
 	}
 	if ($maskraz >= 0) {
 		if ($maskraz == 99) {
-			$maskraz = date('m');
+			$maskraz = (int) date('m');
 			$resetEveryMonth = true;
 		}
 		if ($maskraz > 12) {
@@ -1589,8 +1589,9 @@ function check_value($mask, $value)
 function binhex($bin, $pad = false, $upper = false)
 {
 	$last = dol_strlen($bin) - 1;
+	$x = 0;
 	for ($i = 0; $i <= $last; $i++) {
-		$x += $bin[$last - $i] * pow(2, $i);
+		$x += ($bin[$last - $i] ? 1 : 0) << $i;
 	}
 	$x = dechex($x);
 	if ($pad) {
@@ -1632,9 +1633,9 @@ function numero_semaine($time)
 
 	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/i', $stime, $reg)) {
 		// Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
-		$annee = $reg[1];
-		$mois = $reg[2];
-		$jour = $reg[3];
+		$annee = (int) $reg[1];
+		$mois = (int) $reg[2];
+		$jour = (int) $reg[3];
 	}
 
 	/*
@@ -1645,40 +1646,46 @@ function numero_semaine($time)
 	 */
 
 	// Definition du Jeudi de la semaine
-	if (date("w", mktime(12, 0, 0, $mois, $jour, $annee)) == 0) { // Dimanche
+	if ((int) date("w", mktime(12, 0, 0, $mois, $jour, $annee)) == 0) { // Dimanche
 		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) - 3 * 24 * 60 * 60;
 	} elseif (date("w", mktime(12, 0, 0, $mois, $jour, $annee)) < 4) { // du Lundi au Mercredi
-		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) + (4 - date("w", mktime(12, 0, 0, $mois, $jour, $annee))) * 24 * 60 * 60;
-	} elseif (date("w", mktime(12, 0, 0, $mois, $jour, $annee)) > 4) { // du Vendredi au Samedi
-		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) - (date("w", mktime(12, 0, 0, $mois, $jour, $annee)) - 4) * 24 * 60 * 60;
+		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) + (4 - (int) date("w", mktime(12, 0, 0, $mois, $jour, $annee))) * 24 * 60 * 60;
+	} elseif ((int) date("w", mktime(12, 0, 0, $mois, $jour, $annee)) > 4) { // du Vendredi au Samedi
+		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) - ((int) date("w", mktime(12, 0, 0, $mois, $jour, $annee)) - 4) * 24 * 60 * 60;
 	} else { // Jeudi
 		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee);
 	}
 
 	// Definition du premier Jeudi de l'annee
-	if (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) == 0) { // Dimanche
-		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)) + 4 * 24 * 60 * 60;
-	} elseif (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) < 4) { // du Lundi au Mercredi
-		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)) + (4 - date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))) * 24 * 60 * 60;
-	} elseif (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) > 4) { // du Vendredi au Samedi
-		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)) + (7 - (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) - 4)) * 24 * 60 * 60;
+	if ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) == 0) { // Dimanche
+		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine)) + 4 * 24 * 60 * 60;
+	} elseif ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) < 4) { // du Lundi au Mercredi
+		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine)) + (4 - (int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine)))) * 24 * 60 * 60;
+	} elseif ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) > 4) { // du Vendredi au Samedi
+		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine)) + (7 - ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) - 4)) * 24 * 60 * 60;
 	} else { // Jeudi
-		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine));
+		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine));
 	}
 
 	// Definition du numero de semaine: nb de jours entre "premier Jeudi de l'annee" et "Jeudi de la semaine";
 	$numeroSemaine = (
 		(
-			date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
+			(int) date("z", mktime(12, 0, 0, (int) date("m", $jeudiSemaine), (int) date("d", $jeudiSemaine), (int) date("Y", $jeudiSemaine)))
 		-
-		date("z", mktime(12, 0, 0, date("m", $premierJeudiAnnee), date("d", $premierJeudiAnnee), date("Y", $premierJeudiAnnee)))
+		(int) date("z", mktime(12, 0, 0, (int) date("m", $premierJeudiAnnee), (int) date("d", $premierJeudiAnnee), (int) date("Y", $premierJeudiAnnee)))
 		) / 7
 	) + 1;
 
 	// Cas particulier de la semaine 53
 	if ($numeroSemaine == 53) {
-		// Les annees qui commence un Jeudi et les annees bissextiles commencant un Mercredi en possede 53
-		if (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) == 4 || (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) == 3 && date("z", mktime(12, 0, 0, 12, 31, date("Y", $jeudiSemaine))) == 365)) {
+		// Les annees qui commencent un Jeudi et les annees bissextiles commencant un Mercredi en possedent 53
+		if (
+			((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) == 4)
+			|| (
+				((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) == 3)
+				&& ((int) date("z", mktime(12, 0, 0, 12, 31, (int) date("Y", $jeudiSemaine))) == 365)
+			)
+		) {
 			$numeroSemaine = 53;
 		} else {
 			$numeroSemaine = 1;
@@ -2533,9 +2540,9 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 	$rgb['b'] = hexdec($length == 6 ? substr($hex, 4, 2) : ($length == 3 ? str_repeat(substr($hex, 2, 1), 2) : 0));
 	if ($alpha !== false) {
 		$rgb['a'] = (float) $alpha;
-		$string = 'rgba('.implode(',', $rgb).')';
+		$string = 'rgba('.implode(',', array_map('strval', $rgb)).')';
 	} else {
-		$string = 'rgb('.implode(',', $rgb).')';
+		$string = 'rgb('.implode(',', array_map('strval', $rgb)).')';
 	}
 
 	if ($returnArray) {

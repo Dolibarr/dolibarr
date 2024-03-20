@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,7 +113,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 
 	if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
 		$tmpurl = $_SESSION['pageforbacktolist']['project'];
-		$tmpurl = preg_replace('/__SOCID__/', $object->socid, $tmpurl);
+		$tmpurl = preg_replace('/__SOCID__/', (string) $object->socid, $tmpurl);
 		$linkback = '<a href="'.$tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	} else {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -253,8 +254,8 @@ if ($user->hasRight('projet', 'all', 'creer') || $user->hasRight('projet', 'cree
 
 $linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
 
-$linktotasks = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss'=>'reposition'));
-$linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss'=>'reposition marginleftonly btnTitleSelected'));
+$linktotasks = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss' => 'reposition'));
+$linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss' => 'reposition marginleftonly btnTitleSelected'));
 
 //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
 print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'projecttask');

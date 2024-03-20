@@ -17,6 +17,7 @@
  * Copyright (C) 2022	   Gauthier VERDOL       <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023	   Lenin Rivas       	 <lenin.rivas777@gmail.com>
  * Copyright (C) 2023	   William Mead			 <william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1200,7 +1201,7 @@ if (empty($reshook)) {
 				}
 
 				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
-				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', (string) $prod->tva_tx));
 
 				// Set unit price to use
 				if (!empty($price_ht) || (string) $price_ht === '0') {

@@ -9,6 +9,7 @@
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,11 +76,11 @@ function dol_session_start()
 /**
  * Replace session_regenerate_id()
  *
- * @return void
+ * @return bool True if success, false if failed
  */
 function dol_session_regenerate_id()
 {
-	session_regenerate_id();
+	return session_regenerate_id();
 }
 
 /**
@@ -296,7 +297,7 @@ if (!defined('NOCSRFCHECK') && isset($dolibarr_nocsrfcheck) && $dolibarr_nocsrfc
 		if ($csrfattack) {
 			//print 'NOCSRFCHECK='.defined('NOCSRFCHECK').' REQUEST_METHOD='.$_SERVER['REQUEST_METHOD'].' HTTP_HOST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
 			// Note: We can't use dol_escape_htmltag here to escape output because lib functions.lib.ph is not yet loaded.
-			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"])?'':$_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (Bad referrer).", LOG_WARNING);
+			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (Bad referrer).", LOG_WARNING);
 			print "Access refused by CSRF protection in main.inc.php. Referrer of form (".htmlentities($_SERVER['HTTP_REFERER'], ENT_COMPAT, 'UTF-8').") is outside the server that serve this page (with method = ".htmlentities($_SERVER['REQUEST_METHOD'], ENT_COMPAT, 'UTF-8').").\n";
 			print "If you access your server behind a proxy using url rewriting, you might check that all HTTP headers are propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file to remove this security check).\n";
 			die;
@@ -389,22 +390,22 @@ define('MAIN_DB_PREFIX', $dolibarr_main_db_prefix);
  */
 // Path to root libraries
 if (!defined('TCPDF_PATH')) {
-	define('TCPDF_PATH', (empty($dolibarr_lib_TCPDF_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/tecnickcom/tcpdf/' : $dolibarr_lib_TCPDF_PATH.'/');
+	define('TCPDF_PATH', (empty($dolibarr_lib_TCPDF_PATH)) ? DOL_DOCUMENT_ROOT.'/includes/tecnickcom/tcpdf/' : $dolibarr_lib_TCPDF_PATH.'/');
 }
 if (!defined('TCPDI_PATH')) {
-	define('TCPDI_PATH', (empty($dolibarr_lib_TCPDI_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/tcpdi/' : $dolibarr_lib_TCPDI_PATH.'/');
+	define('TCPDI_PATH', (empty($dolibarr_lib_TCPDI_PATH)) ? DOL_DOCUMENT_ROOT.'/includes/tcpdi/' : $dolibarr_lib_TCPDI_PATH.'/');
 }
 if (!defined('NUSOAP_PATH')) {
-	define('NUSOAP_PATH', (!isset($dolibarr_lib_NUSOAP_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/nusoap/lib/' : (empty($dolibarr_lib_NUSOAP_PATH) ? '' : $dolibarr_lib_NUSOAP_PATH.'/'));
+	define('NUSOAP_PATH', (!isset($dolibarr_lib_NUSOAP_PATH)) ? DOL_DOCUMENT_ROOT.'/includes/nusoap/lib/' : (empty($dolibarr_lib_NUSOAP_PATH) ? '' : $dolibarr_lib_NUSOAP_PATH.'/'));
 }
 if (!defined('PHPEXCELNEW_PATH')) {
-	define('PHPEXCELNEW_PATH', (!isset($dolibarr_lib_PHPEXCELNEW_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpspreadsheet/src/PhpSpreadsheet/' : (empty($dolibarr_lib_PHPEXCELNEW_PATH) ? '' : $dolibarr_lib_PHPEXCELNEW_PATH.'/'));
+	define('PHPEXCELNEW_PATH', (!isset($dolibarr_lib_PHPEXCELNEW_PATH)) ? DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpspreadsheet/src/PhpSpreadsheet/' : (empty($dolibarr_lib_PHPEXCELNEW_PATH) ? '' : $dolibarr_lib_PHPEXCELNEW_PATH.'/'));
 }
 if (!defined('ODTPHP_PATH')) {
-	define('ODTPHP_PATH', (!isset($dolibarr_lib_ODTPHP_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/odtphp/' : (empty($dolibarr_lib_ODTPHP_PATH) ? '' : $dolibarr_lib_ODTPHP_PATH.'/'));
+	define('ODTPHP_PATH', (!isset($dolibarr_lib_ODTPHP_PATH)) ? DOL_DOCUMENT_ROOT.'/includes/odtphp/' : (empty($dolibarr_lib_ODTPHP_PATH) ? '' : $dolibarr_lib_ODTPHP_PATH.'/'));
 }
 if (!defined('ODTPHP_PATHTOPCLZIP')) {
-	define('ODTPHP_PATHTOPCLZIP', (!isset($dolibarr_lib_ODTPHP_PATHTOPCLZIP)) ?DOL_DOCUMENT_ROOT.'/includes/odtphp/zip/pclzip/' : (empty($dolibarr_lib_ODTPHP_PATHTOPCLZIP) ? '' : $dolibarr_lib_ODTPHP_PATHTOPCLZIP.'/'));
+	define('ODTPHP_PATHTOPCLZIP', (!isset($dolibarr_lib_ODTPHP_PATHTOPCLZIP)) ? DOL_DOCUMENT_ROOT.'/includes/odtphp/zip/pclzip/' : (empty($dolibarr_lib_ODTPHP_PATHTOPCLZIP) ? '' : $dolibarr_lib_ODTPHP_PATHTOPCLZIP.'/'));
 }
 if (!defined('JS_CKEDITOR')) {
 	define('JS_CKEDITOR', (!isset($dolibarr_js_CKEDITOR)) ? '' : (empty($dolibarr_js_CKEDITOR) ? '' : $dolibarr_js_CKEDITOR.'/'));
@@ -417,10 +418,10 @@ if (!defined('JS_JQUERY_UI')) {
 }
 // Other required path
 if (!defined('DOL_DEFAULT_TTF')) {
-	define('DOL_DEFAULT_TTF', (!isset($dolibarr_font_DOL_DEFAULT_TTF)) ?DOL_DOCUMENT_ROOT.'/includes/fonts/Aerial.ttf' : (empty($dolibarr_font_DOL_DEFAULT_TTF) ? '' : $dolibarr_font_DOL_DEFAULT_TTF));
+	define('DOL_DEFAULT_TTF', (!isset($dolibarr_font_DOL_DEFAULT_TTF)) ? DOL_DOCUMENT_ROOT.'/includes/fonts/Aerial.ttf' : (empty($dolibarr_font_DOL_DEFAULT_TTF) ? '' : $dolibarr_font_DOL_DEFAULT_TTF));
 }
 if (!defined('DOL_DEFAULT_TTF_BOLD')) {
-	define('DOL_DEFAULT_TTF_BOLD', (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD)) ?DOL_DOCUMENT_ROOT.'/includes/fonts/AerialBd.ttf' : (empty($dolibarr_font_DOL_DEFAULT_TTF_BOLD) ? '' : $dolibarr_font_DOL_DEFAULT_TTF_BOLD));
+	define('DOL_DEFAULT_TTF_BOLD', (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD)) ? DOL_DOCUMENT_ROOT.'/includes/fonts/AerialBd.ttf' : (empty($dolibarr_font_DOL_DEFAULT_TTF_BOLD) ? '' : $dolibarr_font_DOL_DEFAULT_TTF_BOLD));
 }
 
 
