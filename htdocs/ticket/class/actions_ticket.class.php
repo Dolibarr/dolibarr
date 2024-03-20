@@ -216,8 +216,8 @@ class ActionsTicket extends CommonHookActions
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$uselocalbrowser = true;
 			$ckeditorenabledforticket = getDolGlobalString('FCKEDITOR_ENABLE_TICKET');
-			if(!$ckeditorenabledforticket){
-				$msg = dol_string_nohtmltag($msg,2);
+			if (!$ckeditorenabledforticket) {
+				$msg = dol_string_nohtmltag($msg, 2);
 			}
 			$doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser, $ckeditorenabledforticket, ROWS_9, '95%');
 			$doleditor->Create();
