@@ -3686,3 +3686,7 @@ XSubsriptionErrors
 YouCanChooseAModelForYouMailContent
 YouCanMakeSomeInstructionForEmail
 helpWithAi
+ExtrafieldLinestringGeo
+ExtrafieldMultiPointGeo
+ExtrafieldPointGeo
+ExtrafieldPolygonGeo
