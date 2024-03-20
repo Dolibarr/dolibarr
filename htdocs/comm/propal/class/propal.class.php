@@ -413,8 +413,8 @@ class Propal extends CommonObject
 	 *  $this->thirdparty should be loaded
 	 *
 	 * 	@param  int		$idproduct       	Product Id to add
-	 * 	@param  int		$qty             	Quantity
-	 * 	@param  int		$remise_percent  	Discount effected on Product
+	 * 	@param  float	$qty             	Quantity
+	 * 	@param  float	$remise_percent  	Discount effected on Product
 	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 *
 	 *	TODO	Replace calls to this function by generation object Ligne

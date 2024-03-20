@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2014 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -244,7 +245,7 @@ if ($result > 0) {
 
 	$resql = $db->query($sql);
 	if ($resql) {
-		$num = $db->num_rows($resql);
+		$totalnboflines = $db->num_rows($resql);
 	} else {
 		dol_print_error($db);
 	}
@@ -257,7 +258,8 @@ if ($result > 0) {
 
 	// Add notification form
 	//print load_fiche_titre($titlelist.' <span class="opacitymedium colorblack paddingleft">('.$num.')</span>', '', '');
-	print_barre_liste($titlelist, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $num, 'email', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	$num = $totalnboflines;
+	print_barre_liste($titlelist, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'email', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$socid.'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';

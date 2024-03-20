@@ -6,6 +6,7 @@
  * Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@
  *										'5' : local tax apply on services without vat (localtax is calculated on amount without tax)
  *										'6' : local tax apply on services including vat (localtax is calculated on amount + tax)
  *
- *		@param	int		$qty						Quantity
+ *		@param	float	$qty						Quantity
  * 		@param 	float	$pu                         Unit price (HT or TTC depending on price_base_type. TODO Add also mode 'INCT' when pu is price HT+VAT+LT1+LT2)
  *		@param 	float	$remise_percent_ligne       Discount for line
  *		@param 	float	$txtva                      0=do not apply VAT tax, VAT rate=apply (this is VAT rate only without text code, we don't need text code because we alreaydy have all tax info into $localtaxes_array)

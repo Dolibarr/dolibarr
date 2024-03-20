@@ -313,7 +313,7 @@ return [
 
 		'ConstantVariablePlugin', // Warns about values that are actually constant
 		//'HasPHPDocPlugin', // Requires PHPDoc
-		'InlineHTMLPlugin', // html in PHP file, or at end of file
+		// 'InlineHTMLPlugin', // html in PHP file, or at end of file
 		'NonBoolBranchPlugin', // Requires test on bool, nont on ints
 		'NonBoolInLogicalArithPlugin',
 		'NumericalComparisonPlugin',

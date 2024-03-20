@@ -1963,6 +1963,7 @@ NewStripePaymentFailed
 NewStripePaymentReceived
 NewSupplier
 NewUserPassword
+NewWorkstation
 NextDateToExecutionShort
 NextDateToIntervention
 NoAccount

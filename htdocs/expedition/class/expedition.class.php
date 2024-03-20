@@ -493,7 +493,7 @@ class Expedition extends CommonObject
 	 *
 	 * @param 	int		$entrepot_id		Id of warehouse
 	 * @param 	int		$origin_line_id		Id of source line
-	 * @param 	int		$qty				Quantity
+	 * @param 	float	$qty				Quantity
 	 * @param 	int		$rang				Rang
 	 * @param	array	$array_options		extrafields array
 	 * @return	int							Return integer <0 if KO, line_id if OK
@@ -895,7 +895,7 @@ class Expedition extends CommonObject
 	 *
 	 * @param 	int		$entrepot_id		Id of warehouse
 	 * @param 	int		$id					Id of source line (order line)
-	 * @param 	int		$qty				Quantity
+	 * @param 	float	$qty				Quantity
 	 * @param	array	$array_options		extrafields array
 	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */

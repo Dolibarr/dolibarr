@@ -817,7 +817,7 @@ class Reception extends CommonObject
 	 *
 	 * @param 	int			$entrepot_id		Id of warehouse
 	 * @param 	int			$id					Id of source line (supplier order line)
-	 * @param 	int			$qty				Quantity
+	 * @param 	float		$qty				Quantity
 	 * @param	array		$array_options		extrafields array
 	 * @param	string		$comment			Comment for stock movement
 	 * @param	int			$eatby				eat-by date

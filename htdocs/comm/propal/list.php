@@ -2313,8 +2313,8 @@ while ($i < $imaxinloop) {
 		}
 		// Note public
 		if (!empty($arrayfields['p.note_public']['checked'])) {
-			print '<td class="center">';
-			print dol_string_nohtmltag($obj->note_public);
+			print '<td class="sensiblehtmlcontent center">';
+			print dolPrintHTML($obj->note_public);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2322,8 +2322,8 @@ while ($i < $imaxinloop) {
 		}
 		// Note private
 		if (!empty($arrayfields['p.note_private']['checked'])) {
-			print '<td class="center">';
-			print dol_string_nohtmltag($obj->note_private);
+			print '<td class="sensiblehtmlcontent center">';
+			print dolPrintHTML($obj->note_private);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

@@ -1097,7 +1097,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		// Budget task
 		if (count($arrayfields) > 0 && !empty($arrayfields['t.budget_amount']['checked'])) {
 			print '<td class="nowrap liste_total center">';
-			if (strcmp($total_budget_amount, '')) {
+			if (strcmp((string) $total_budget_amount, '')) {
 				print price($total_budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
 			}
 			print '</td>';
@@ -2527,7 +2527,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	$project_year_filter = 0;
 
 	$title = $langs->trans("Projects");
-	if (strcmp($status, '') && $status >= 0) {
+	if (!strcmp((string) $status, '') && $status >= 0) {
 		$title = $langs->trans("Projects").' '.$langs->trans($projectstatic->labelStatus[$status]);
 	}
 
