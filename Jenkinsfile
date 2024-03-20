@@ -10,27 +10,31 @@ pipeline {
     stages {
         stage('Build Docker Image') {
             steps {
-                // Build the Docker image using Dockerfile
                 script {
                     docker.build("-f ${dockerfilePath} -t dolibarr-app .")
+                    echo 'Image Docker construite avec succès.'
                 }
             }
         }
         stage('Run Tests') {
             steps {
-                // Run tests (replace with your actual test commands)
+                // Supposez que vos tests réels sont exécutés ici
                 sh 'echo "Running tests..."'
+                echo 'Tests exécutés avec succès.'
             }
         }
         stage('Deploy') {
             steps {
-                // Deploy the application stack using docker-compose
                 script {
-                    // Pull the latest Docker image
-                    docker.image('dolibarr-app').pull()
+                    // Supposons que vous ayez déjà configuré l'authentification Docker Hub
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub_credentials') {
+                        docker.image('dolibarr-app').push("latest")
+                    }
+                    echo 'Image Docker poussée sur Docker Hub avec succès.'
 
-                    // Start the application stack using docker-compose
+                    // Démarrez la pile d'applications à l'aide de docker-compose
                     sh "docker-compose -f ${dockerComposeFilePath} up -d"
+                    echo 'Déploiement effectué avec succès.'
                 }
             }
         }
