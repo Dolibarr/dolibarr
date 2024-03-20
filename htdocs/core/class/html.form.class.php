@@ -1302,7 +1302,7 @@ class Form
 	 *
 	 * @param string 	$selected 			Preselected type
 	 * @param string 	$htmlname 			Name of field in form
-	 * @param string 	$filter 			Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here (example: 's.rowid <> x', 's.client IN (1,3)'). Do not use a filter coming from input of users.
+	 * @param string 	$filter 			Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here. Example: ((s.client:IN:1,3) AND (s.status:=:1)). Do not use a filter coming from input of users.
 	 * @param string 	$showempty 			Add an empty field (Can be '1' or text key to use on empty line like 'SelectThirdParty')
 	 * @param int 		$showtype 			Show third party type in combolist (customer, prospect or supplier)
 	 * @param int 		$forcecombo 		Force to load all values and output a standard combobox (with no beautification)
