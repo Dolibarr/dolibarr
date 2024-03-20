@@ -2428,7 +2428,7 @@ class Ticket extends CommonObject
 			}
 		}
 
-		if ($classname) {
+		if ($classname !== '') {
 			$result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
 			$modTicket = new $classname();
 
