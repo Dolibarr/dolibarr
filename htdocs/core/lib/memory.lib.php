@@ -113,7 +113,7 @@ function dol_setcache($memoryid, $data, $expire = 0)
 
 		$memoryid = session_name().'_'.$memoryid;
 		//$dolmemcache->setOption(Memcached::OPT_COMPRESSION, false);
-		$result = $dolmemcache->add($memoryid, $data, false, $expire); // This fails if key already exists
+		$result = $dolmemcache->add($memoryid, $data, 0, $expire); // This fails if key already exists
 		if ($result) {
 			return is_array($data) ? count($data) : (is_scalar($data) ? strlen($data) : 0);
 		} else {

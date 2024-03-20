@@ -2242,9 +2242,9 @@ class ExpenseReport extends CommonObject
 			// Clean vat code
 			$reg = array();
 			$vat_src_code = '';
-			if (preg_match('/\((.*)\)/', $vatrate, $reg)) {
+			if (preg_match('/\((.*)\)/', (string) $vatrate, $reg)) {
 				$vat_src_code = $reg[1];
-				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate); // Remove code into vatrate.
+				$vatrate = preg_replace('/\s*\(.*\)/', '', (string) $vatrate); // Remove code into vatrate.
 			}
 			$vatrate = preg_replace('/\*/', '', $vatrate);
 
