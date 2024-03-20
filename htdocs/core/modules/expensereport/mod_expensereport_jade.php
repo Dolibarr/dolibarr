@@ -152,12 +152,12 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 				}
 			} else {
 				$newref = 1;
-				while (strlen($newref) < $num_car) {
+				while (strlen((string) $newref) < $num_car) {
 					$newref = "0".$newref;
 				}
 			}
 
-			$ref_number_int = ($newref + 1) - 1;
+			$ref_number_int = (int) $newref;
 
 			$user_author_infos = dolGetFirstLastname($fuser->firstname, $fuser->lastname);
 

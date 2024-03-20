@@ -633,7 +633,7 @@ class Delivery extends CommonObject
 	 * 	Add line
 	 *
 	 *	@param	int		$origin_id				Origin id
-	 *	@param	int		$qty					Qty
+	 *	@param	float	$qty					Qty
 	 *  @param	array	$array_options			Array options
 	 *	@return	void
 	 */

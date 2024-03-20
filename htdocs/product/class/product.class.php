@@ -4447,7 +4447,7 @@ class Product extends CommonObject
 	 *
 	 * @param  int $id_pere Id of parent product/service
 	 * @param  int $id_fils Id of child product/service
-	 * @param  int $qty     Quantity
+	 * @param  float $qty     Quantity
 	 * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
 	 * @param  int $notrigger	Disable triggers
 	 * @return int                Return integer < 0 if KO, > 0 if OK
@@ -4520,7 +4520,7 @@ class Product extends CommonObject
 	 *
 	 * @param  int $id_pere Id of parent product/service
 	 * @param  int $id_fils Id of child product/service
-	 * @param  int $qty     Quantity
+	 * @param  float $qty     Quantity
 	 * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
 	 * @param  int $notrigger	Disable triggers
 	 * @return int                Return integer < 0 if KO, > 0 if OK

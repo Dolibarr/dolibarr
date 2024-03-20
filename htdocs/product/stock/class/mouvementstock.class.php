@@ -166,7 +166,7 @@ class MouvementStock extends CommonObject
 	 *	@param		User			$user				User object
 	 *	@param		int				$fk_product			Id of product
 	 *	@param		int				$entrepot_id		Id of warehouse
-	 *	@param		int				$qty				Qty of movement (can be <0 or >0 depending on parameter type)
+	 *	@param		float			$qty				Qty of movement (can be <0 or >0 depending on parameter type)
 	 *	@param		int				$type				Direction of movement:
 	 *													0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer),
 	 *													2=output (stock decrease), 3=input (stock increase)
@@ -747,7 +747,7 @@ class MouvementStock extends CommonObject
 	 * 	@param 		User			$user			Object user
 	 * 	@param		int				$idProduct		Id product
 	 * 	@param		int				$entrepot_id	Warehouse id
-	 * 	@param		int				$qty			Quantity
+	 * 	@param		float			$qty			Quantity
 	 * 	@param		int				$type			Type
 	 * 	@param		int				$price			Price
 	 * 	@param		string			$label			Label of movement
@@ -810,7 +810,7 @@ class MouvementStock extends CommonObject
 	 * 	@param 		User			$user			    	Object user
 	 * 	@param		int				$fk_product		    	Id product
 	 * 	@param		int				$entrepot_id	    	Warehouse id
-	 * 	@param		int				$qty			    	Quantity
+	 * 	@param		float			$qty			    	Quantity
 	 * 	@param		int				$price			    	Price
 	 * 	@param		string			$label			    	Label of stock movement
 	 * 	@param		int|string		$datem			    	Force date of movement
@@ -837,7 +837,7 @@ class MouvementStock extends CommonObject
 	 * 	@param 		User			$user			     	Object user
 	 * 	@param		int				$fk_product		     	Id product
 	 * 	@param		int				$entrepot_id	     	Warehouse id
-	 * 	@param		int				$qty			     	Quantity
+	 * 	@param		float			$qty			     	Quantity
 	 * 	@param		int				$price			     	Price
 	 * 	@param		string			$label			     	Label of stock movement
 	 *	@param		integer|string	$eatby			     	eat-by date
@@ -893,7 +893,7 @@ class MouvementStock extends CommonObject
 	 * @param	array|int	$dluo	      Could be either
 	 *                                    - int if row id of product_batch table (for update)
 	 *                                    - or complete array('fk_product_stock'=>, 'batchnumber'=>)
-	 * @param	int			$qty	      Quantity of product with batch number. May be a negative amount.
+	 * @param	float		$qty	      Quantity of product with batch number. May be a negative amount.
 	 * @return 	int   				      Return integer <0 if KO, -2 if we try to update a product_batchid that does not exist, else return productbatch id
 	 */
 	private function createBatch($dluo, $qty)
