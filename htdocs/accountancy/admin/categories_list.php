@@ -328,6 +328,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 
 // activate
 if ($action == $acts[0]) {
+	$sql = '';
 	$rowidcol = "rowid";
 
 	if ($rowid) {
@@ -346,6 +347,7 @@ if ($action == $acts[0]) {
 
 // disable
 if ($action == $acts[1]) {
+	$sql = '';
 	$rowidcol = "rowid";
 
 	if ($rowid) {
@@ -364,6 +366,7 @@ if ($action == $acts[1]) {
 
 // favorite
 if ($action == 'activate_favorite') {
+	$sql = '';
 	$rowidcol = "rowid";
 
 	if ($rowid) {
@@ -382,6 +385,7 @@ if ($action == 'activate_favorite') {
 
 // disable favorite
 if ($action == 'disable_favorite') {
+	$sql = '';
 	$rowidcol = "rowid";
 
 	if ($rowid) {
