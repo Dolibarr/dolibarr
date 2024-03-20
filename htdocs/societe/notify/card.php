@@ -231,6 +231,7 @@ if ($result > 0) {
 
 	print '<br><br>'."\n";
 
+	$nbtotalofrecords = '';
 
 	// List of notifications enabled for contacts of the thirdparty
 	$sql = "SELECT n.rowid, n.type,";
@@ -245,21 +246,21 @@ if ($result > 0) {
 
 	$resql = $db->query($sql);
 	if ($resql) {
-		$totalnboflines = $db->num_rows($resql);
+		$nbtotalofrecords = $db->num_rows($resql);
 	} else {
 		dol_print_error($db);
 	}
 
 	$param = '';
 	$newcardbutton = '';
-	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->rights->societe->creer);
+	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->hasRight("societe", "creer"));
 
 	$titlelist = $langs->trans("ListOfActiveNotifications");
 
 	// Add notification form
 	//print load_fiche_titre($titlelist.' <span class="opacitymedium colorblack paddingleft">('.$num.')</span>', '', '');
-	$num = $totalnboflines;
-	print_barre_liste($titlelist, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'email', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	$num = $nbtotalofrecords;
+	print_barre_liste($titlelist, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, empty($nbtotalofrecords) ? -1 : $nbtotalofrecords, 'email', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$socid.'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -428,7 +429,7 @@ if ($result > 0) {
 	print '<input type="hidden" name="socid" value="'.$object->id.'">';
 
 	// List of active notifications  @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'email', 0, '', '', $limit);
+	print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, empty($nbtotalofrecords) ? -1 : $nbtotalofrecords, 'email', 0, '', '', $limit);
 
 	// Line with titles
 	print '<div class="div-table-responsive-no-min">';
