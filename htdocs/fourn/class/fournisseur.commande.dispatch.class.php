@@ -2,6 +2,7 @@
 /* Copyright (C) 2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014 Juanjo Menent	      <jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +163,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 			$this->fk_commandefourndet = (int) $this->fk_commandefourndet;
 		}
 		if (isset($this->qty)) {
-			$this->qty = trim($this->qty);
+			$this->qty = trim((string) $this->qty);
 		}
 		if (isset($this->fk_entrepot)) {
 			$this->fk_entrepot = (int) $this->fk_entrepot;
