@@ -1,26 +1,49 @@
 pipeline {
     agent any
-
-    environment {
-        // Define environment variables for Dockerfile and docker-compose file paths
-        dockerfilePath = 'build/docker/Dockerfile'
-        dockerComposeFilePath = 'build/docker/docker-compose.yml'
-    }
-
+    
     stages {
-        stage('Checkout Source Code') {
+        stage('Clone') {
             steps {
-                // Clone the Dolibarr repository from GitHub
-                git credentialsId: '10', url: 'https://github.com/iyedben/Dolibarr.git'
+                git branch: 'main', changelog: false, poll: false, url: 'https://github.com/iyedben/Dolibarr.git'
             }
         }
-        stage('Build Docker Image') {
-            steps {
-                // Build the Docker image using Dockerfile
-                script {
-                    docker.build("-f ${dockerfilePath} -t dolibarr-app .")
+        
+        stage('Build-Docker-Image') {
+            agent {
+                docker {
+                    image 'docker:latest'
+                    args '-v /var/run/docker.sock:/var/run/docker.sock'
                 }
             }
-        } 
+            steps {
+                sh 'docker build -t iyedbnaissa/dolibarr-image:latest -f build/docker/Dockerfile .'
+            }
+        }
+        
+        stage('Push-Images-Docker-to-DockerHub') {
+            environment {
+                DOCKER_HUB_CREDENTIALS = credentials('20')
+            }
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_HUB_CREDENTIALS) {
+                        sh 'docker push iyedbnaissa/dolibarr-image:latest'
+                    }
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            cleanup()
+        }
+    }
+    
+    // Cleanup function to logout from Docker after pipeline execution
+    def cleanup() {
+        script {
+            sh 'docker logout'
+        }
     }
 }
