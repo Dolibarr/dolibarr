@@ -2639,6 +2639,14 @@ class ExpeditionLigne extends CommonObjectLine
 	public $fk_origin;			// Example: 'orderline'
 
 	/**
+	 * Type of source object
+	 *
+	 * @var string
+	 */
+	public $element_type;		// Example: 'order'
+
+	
+	/**
 	 * @var int ID
 	 */
 	public $fk_origin_line;
