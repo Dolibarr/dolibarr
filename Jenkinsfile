@@ -28,7 +28,7 @@ pipeline {
             steps {
                 // Build the Docker image using Dockerfile
                 script {
-                    docker.build('-f ${dockerfilePath} -t dolibarr-app .')
+                    docker.build('-f ${dockerfilePath} -t dolibarrapp .')
                 }
             }
         }
