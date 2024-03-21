@@ -1070,7 +1070,6 @@ class DoliDBPgsql extends DoliDB
 		// phpcs:enable
 		// @TODO: $fulltext_keys parameter is unused
 
-		$sqlfields = array();
 		$sqlk = array();
 		$sqluq = array();
 

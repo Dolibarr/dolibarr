@@ -972,7 +972,6 @@ class DoliDBSqlite3 extends DoliDB
 		// phpcs:enable
 		// @TODO: $fulltext_keys parameter is unused
 
-		$sqlfields = array();
 		$sqlk = array();
 		$sqluq = array();
 
@@ -1008,7 +1007,7 @@ class DoliDBSqlite3 extends DoliDB
 				$sqlfields[$i] .= " ".$this->sanitize($field_desc['null'], 0, 0, 1);
 			}
 			if (!is_null($field_desc['extra']) && $field_desc['extra'] !== '') {
-				$sqlfields[$i] .= " ".$this->sanitize($field_desc['extra']);
+				$sqlfields[$i] .= " ".$this->sanitize($field_desc['extra'], 0, 0, 1);
 			}
 			$i++;
 		}
@@ -1106,18 +1105,18 @@ class DoliDBSqlite3 extends DoliDB
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "ALTER TABLE ".$table." ADD ".$field_name." ";
 		$sql .= $field_desc['type'];
-		if (preg_match("/^[^\s]/i", $field_desc['value'])) {
+		if (isset($field_desc['value']) && preg_match("/^[^\s]/i", $field_desc['value'])) {
 			if (!in_array($field_desc['type'], array('date', 'datetime'))) {
 				$sql .= "(".$field_desc['value'].")";
 			}
 		}
-		if (preg_match("/^[^\s]/i", $field_desc['attribute'])) {
-			$sql .= " ".$field_desc['attribute'];
+		if (isset($field_desc['attribute']) && preg_match("/^[^\s]/i", $field_desc['attribute'])) {
+			$sql .= " ".$this->sanitize($field_desc['attribute']);
 		}
-		if (preg_match("/^[^\s]/i", $field_desc['null'])) {
-			$sql .= " ".$field_desc['null'];
+		if (isset($field_desc['null']) && preg_match("/^[^\s]/i", $field_desc['null'])) {
+			$sql .= " ".$this->sanitize($field_desc['null'], 0, 0, 1);
 		}
-		if (preg_match("/^[^\s]/i", $field_desc['default'])) {
+		if (isset($field_desc['default']) && preg_match("/^[^\s]/i", $field_desc['default'])) {
 			if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
 				$sql .= " DEFAULT ".((float) $field_desc['default']);
 			} elseif ($field_desc['default'] == 'null' || $field_desc['default'] == 'CURRENT_TIMESTAMP') {
@@ -1127,9 +1126,9 @@ class DoliDBSqlite3 extends DoliDB
 			}
 		}
 		if (isset($field_desc['extra']) && preg_match("/^[^\s]/i", $field_desc['extra'])) {
-			$sql .= " ".$this->escape($field_desc['extra'], 0, 0, 1);
+			$sql .= " ".$this->sanitize($field_desc['extra'], 0, 0, 1);
 		}
-		$sql .= " ".$this->escape($field_position, 0, 0, 1);
+		$sql .= " ".$this->sanitize($field_position, 0, 0, 1);
 
 		dol_syslog(get_class($this)."::DDLAddField ".$sql, LOG_DEBUG);
 		if (!$this->query($sql)) {
