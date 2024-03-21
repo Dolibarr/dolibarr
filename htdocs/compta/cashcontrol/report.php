@@ -356,7 +356,7 @@ if ($resql) {
 	print "</div>";
 
 	//$cash = $amountpertype['LIQ'] + $object->opening;
-	$cash = price2num($cash + $object->opening, 'MT');
+	$cash = price2num($cash + (float) $object->opening, 'MT');
 
 	print '<div style="text-align: right">';
 	print '<h2>';
