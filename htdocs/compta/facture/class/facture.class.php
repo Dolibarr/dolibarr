@@ -4609,7 +4609,7 @@ class Facture extends CommonInvoice
 
 				// Load file with numbering class (if found)
 				if (is_file($dir.$file) && is_readable($dir.$file)) {
-					$mybool |= include_once $dir.$file;
+					$mybool = ((bool) include_once $dir.$file) || $mybool;
 				}
 			}
 
@@ -4624,7 +4624,7 @@ class Facture extends CommonInvoice
 
 					// Load file with numbering class (if found)
 					if (is_file($dir.$file) && is_readable($dir.$file)) {
-						$mybool |= include_once $dir.$file;
+						$mybool = (include_once $dir.$file) || $mybool;
 					}
 				}
 			}
