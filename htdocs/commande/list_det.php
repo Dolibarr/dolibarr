@@ -231,6 +231,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
@@ -1295,6 +1296,7 @@ if ($resql) {
 	// Détail commande
 	if (!empty($arrayfields['rowid']['checked'])) {
 		print_liste_field_titre($arrayfields['rowid']['label'], $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder);
+		'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 	}
 	if (!empty($arrayfields['pr.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['pr.ref']['label'], $_SERVER["PHP_SELF"], 'pr.ref', '', $param, '', $sortfield, $sortorder);
