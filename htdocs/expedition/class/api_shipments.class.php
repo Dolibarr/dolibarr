@@ -386,7 +386,7 @@ class Shipments extends DolibarrApi
 	 *
 	 * @url	DELETE {id}/lines/{lineid}
 	 *
-	 * @return int
+	 * @return array
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
