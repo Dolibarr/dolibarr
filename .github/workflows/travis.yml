@@ -1,7 +1,6 @@
+---
 # This is a basic workflow to check code with PHPSTAN tool
-
-name: "PHPStan"
-
+name: Travis
 # Controls when the workflow will run
 on:
   # push:
@@ -9,14 +8,13 @@ on:
   workflow_run:
     workflows: [pre-commit, phan, windows-ci]
     types: [completed]
-
 concurrency:
-    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-    cancel-in-progress: true
-
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref
+    }}
+  cancel-in-progress: true
 env:
   CACHE_KEY_PART: ${{ github.event_name == 'pull_request' && format('{0}-{1}', github.base_ref, github.head_ref) || github.ref_name }}
-  GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
+  GITHUB_JSON: ${{ toJSON(github) }}  # Helps in debugging Github Action
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job
@@ -25,16 +23,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      #matrix:
+      # matrix:
       #   php-version:
-      #    # PHPStan requires PHP >= 7.2.
+      #  # PHPStan requires PHP >= 7.2.
       #    #- "7.2"
       #    - "8.2"
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Wait until all workflow_runs defined workflows are successful
         uses: ahmadnassri/action-workflow-run-wait@v1.4.4
-
       - name: Run .travis.yml build script
         uses: ktomk/run-travis-yml@v1
         with:
@@ -46,4 +43,3 @@ jobs:
           #  script
         # env:
         #  TRAVIS_PHP_VERSION: ${{ matrix.php-version }}
-
