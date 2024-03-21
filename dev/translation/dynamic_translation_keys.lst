@@ -31,9 +31,6 @@ CodePaymentTerm
 IdPaymentTerm
 LabelPaymentTerm
 
-# ticket
-TicketAnswered
-
 # website_template
 Message
 Map
@@ -43,6 +40,7 @@ Reservation
 ACCOUNTING_ACCOUNT_CUSTOMER
 ACCOUNTING_ACCOUNT_CUSTOMER_Desc
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY
+ACCOUNTING_ACCOUNT_EXPENSEREPORT
 ACCOUNTING_ACCOUNT_SUPPLIER
 ACCOUNTING_ACCOUNT_SUPPLIER_Desc
 ACCOUNTING_ACCOUNT_SUSPENSE
@@ -3685,8 +3683,3 @@ WebPortalSetupPage
 XSubsriptionErrors
 YouCanChooseAModelForYouMailContent
 YouCanMakeSomeInstructionForEmail
-helpWithAi
-ExtrafieldLinestringGeo
-ExtrafieldMultiPointGeo
-ExtrafieldPointGeo
-ExtrafieldPolygonGeo

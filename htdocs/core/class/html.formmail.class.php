@@ -1452,7 +1452,7 @@ class FormMail extends Form
 
 		$out = '<tr id="ai_input" class="hidden">';
 		$out .= '<td>';
-		//$out .= $form->textwithpicto($langs->trans('helpWithAi'), $langs->trans("YouCanMakeSomeInstructionForEmail"));
+		//$out .= $form->textwithpicto($langs->trans('HelpWithAI'), $langs->trans("YouCanMakeSomeInstructionForEmail"));
 		$out .= '</td>';
 
 		$out .= '<td>';

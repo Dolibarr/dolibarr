@@ -1697,6 +1697,7 @@ class Project extends CommonObject
 		global $langs, $conf;
 
 		$error = 0;
+		$clone_project_id = 0;   // For static toolcheck
 
 		dol_syslog("createFromClone clone_contact=".json_encode($clone_contact)." clone_task=".json_encode($clone_task)." clone_project_file=".json_encode($clone_project_file)." clone_note=".json_encode($clone_note)." move_date=".json_encode($move_date), LOG_DEBUG);
 
@@ -1900,7 +1901,7 @@ class Project extends CommonObject
 
 		unset($clone_project->context['createfromclone']);
 
-		if (!$error) {
+		if (!$error && $clone_project_id != 0) {
 			$this->db->commit();
 			return $clone_project_id;
 		} else {

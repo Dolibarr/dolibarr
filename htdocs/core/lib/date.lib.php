@@ -1005,7 +1005,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
  *	@param	   int			$timestampEnd       Timestamp end UTC
  *	@param     int			$lastday            Last day is included, 0: no, 1:yes
  *	@return    int								Number of days
- *  @seealso num_public_holiday(), num_open_day()
+ *  @see also num_public_holiday(), num_open_day()
  */
 function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 {
@@ -1016,6 +1016,8 @@ function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 			$bit = 1;
 		}
 		$nbjours = (int) floor(($timestampEnd - $timestampStart) / (60 * 60 * 24)) + 1 - $bit;
+	} else {
+		$nbjours = 0;
 	}
 	//print ($timestampEnd - $timestampStart) - $lastday;
 	return $nbjours;

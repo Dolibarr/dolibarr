@@ -1686,6 +1686,8 @@ class SMTPs
 			}
 
 			$content .= "--".$this->_getBoundary('mixed').'--'."\r\n";
+		} else {
+			die("Sorry, no content");
 		}
 
 		return $content;

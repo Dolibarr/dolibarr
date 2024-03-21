@@ -2051,9 +2051,10 @@ class Task extends CommonObjectLine
 			$this->error = $clone_task->error;
 			$error++;
 		}
-
 		// End
-		if (!$error) {
+		if ($error) {
+			$clone_task_id = 0;  // For static tool check
+		} else {
 			$clone_task_id = $clone_task->id;
 			$clone_task_ref = $clone_task->ref;
 
