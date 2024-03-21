@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,7 +178,7 @@ if ($action == 'switch') {
 		$newsecond = $objfrom->box_order;
 		if ($newfirst == $newsecond) {
 			$newsecondchar = preg_replace('/[0-9]+/', '', $newsecond);
-			$newsecondnum = preg_replace('/[a-zA-Z]+/', '', $newsecond);
+			$newsecondnum = (int) preg_replace('/[a-zA-Z]+/', '', $newsecond);
 			$newsecond = sprintf("%s%02d", $newsecondchar ? $newsecondchar : 'A', $newsecondnum + 1);
 		}
 
