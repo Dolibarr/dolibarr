@@ -127,11 +127,10 @@ if ($resql) {
 			dol_syslog("Process mailing with id ".$obj->rowid);
 			print "Process mailing with id ".$obj->rowid."\n";
 
-			if ($obj->status==1)
-			{
-				  $sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=2 WHERE rowid=".$obj->rowid;
-				  $result_sql = $db->query($sql);
-					dol_syslog("Started mailing campaign ".$obj->rowid, LOG_DEBUG);
+			if ($obj->status==1) {
+				$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=2 WHERE rowid=".$obj->rowid;
+				$result_sql = $db->query($sql);
+				dol_syslog("Started mailing campaign ".$obj->rowid, LOG_DEBUG);
 			}
 
 			$emailing = new Mailing($db);
@@ -419,12 +418,12 @@ if ($resql) {
 					print $mesg."\n";
 					dol_syslog($mesg, LOG_ERR);
 
-				  // Loop finished, set global statut of mail
-				  $sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=3 WHERE rowid=".$obj->rowid;
-				  $result_sql = $db->query($sql);
+					// Loop finished, set global statut of mail
+					$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=3 WHERE rowid=".$obj->rowid;
+					$result_sql = $db->query($sql);
 
-				  dol_syslog("update global status", LOG_DEBUG);
-				  print "Update status of emailing id ".$id." to ".$statut."\n";
+					dol_syslog("update global status", LOG_DEBUG);
+					print "Update status of emailing id ".$id." to ".$statut."\n";
 				}
 			} else {
 				dol_print_error($db);
