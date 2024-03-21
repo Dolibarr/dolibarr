@@ -1129,7 +1129,7 @@ class CommandeFournisseur extends CommonOrder
 				$dir = dol_buildpath($reldir."core/modules/supplier_order/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if ($mybool === false) {
