@@ -118,10 +118,8 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	$j = 0;
 
-	if ($num)
-	{
-		for ($j = 0; $j < $num && $max!=0; $j++)
-		{
+	if ($num) {
+		for ($j = 0; $j < $num && $max!=0; $j++) {
 			$obj = $db->fetch_object($resql);
 
 			dol_syslog("Process mailing with id ".$obj->rowid);
