@@ -283,3 +283,6 @@ ALTER TABLE llx_societe ADD COLUMN fk_parent integer NULL;
 
 ALTER TABLE llx_expeditiondet ADD COLUMN fk_element integer;
 ALTER TABLE llx_expeditiondet ADD COLUMN element_type varchar(50) DEFAULT 'order' NOT NULL;
+
+ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commande fk_element integer;
+ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commandefourndet fk_elementdet integer;
