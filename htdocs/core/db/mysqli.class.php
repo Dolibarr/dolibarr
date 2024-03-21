@@ -985,9 +985,9 @@ class DoliDBMysqli extends DoliDB
 			}
 		}
 		if (isset($field_desc['extra']) && preg_match("/^[^\s]/i", $field_desc['extra'])) {
-			$sql .= " ".$this->escape($field_desc['extra'], 0, 0, 1);
+			$sql .= " ".$this->sanitize($field_desc['extra'], 0, 0, 1);
 		}
-		$sql .= " ".$this->escape($field_position, 0, 0, 1);
+		$sql .= " ".$this->sanitize($field_position, 0, 0, 1);
 
 		dol_syslog(get_class($this)."::DDLAddField ".$sql, LOG_DEBUG);
 		if ($this->query($sql)) {
@@ -1013,7 +1013,7 @@ class DoliDBMysqli extends DoliDB
 		if (in_array($field_desc['type'], array('double', 'tinyint', 'int', 'varchar')) && $field_desc['value']) {
 			$sql .= "(".$this->sanitize($field_desc['value']).")";
 		}
-		if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL') {
+		if (isset($field_desc['value']) && ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')) {
 			// We will try to change format of column to NOT NULL. To be sure the ALTER works, we try to update fields that are NULL
 			if ($field_desc['type'] == 'varchar' || $field_desc['type'] == 'text') {
 				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->sanitize($field_name)." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$this->sanitize($field_name)." IS NULL";

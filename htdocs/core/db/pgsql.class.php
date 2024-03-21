@@ -1106,7 +1106,7 @@ class DoliDBPgsql extends DoliDB
 				$sqlfields[$i] .= " ".$this->sanitize($field_desc['null'], 0, 0, 1);
 			}
 			if (!is_null($field_desc['extra']) && $field_desc['extra'] !== '') {
-				$sqlfields[$i] .= " ".$this->sanitize($field_desc['extra']);
+				$sqlfields[$i] .= " ".$this->sanitize($field_desc['extra'], 0, 0, 1);
 			}
 			$i++;
 		}
@@ -1229,9 +1229,9 @@ class DoliDBPgsql extends DoliDB
 			}
 		}
 		if (isset($field_desc['extra']) && preg_match("/^[^\s]/i", $field_desc['extra'])) {
-			$sql .= " ".$this->escape($field_desc['extra'], 0, 0, 1);
+			$sql .= " ".$this->sanitize($field_desc['extra'], 0, 0, 1);
 		}
-		$sql .= " ".$this->escape($field_position, 0, 0, 1);
+		$sql .= " ".$this->sanitize($field_position, 0, 0, 1);
 
 		dol_syslog($sql, LOG_DEBUG);
 		if (!$this -> query($sql)) {
@@ -1254,13 +1254,13 @@ class DoliDBPgsql extends DoliDB
 		// phpcs:enable
 		$sql = "ALTER TABLE ".$this->sanitize($table);
 		$sql .= " ALTER COLUMN ".$this->sanitize($field_name)." TYPE ".$this->sanitize($field_desc['type']);
-		if (preg_match("/^[^\s]/i", $field_desc['value'])) {
+		if (isset($field_desc['value']) && preg_match("/^[^\s]/i", $field_desc['value'])) {
 			if (!in_array($field_desc['type'], array('smallint', 'int', 'date', 'datetime')) && $field_desc['value']) {
 				$sql .= "(".$this->sanitize($field_desc['value']).")";
 			}
 		}
 
-		if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL') {
+		if (isset($field_desc['value']) && ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')) {
 			// We will try to change format of column to NOT NULL. To be sure the ALTER works, we try to update fields that are NULL
 			if ($field_desc['type'] == 'varchar' || $field_desc['type'] == 'text') {
 				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->escape($field_name)." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$this->escape($field_name)." IS NULL";

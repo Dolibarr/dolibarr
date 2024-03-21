@@ -1308,8 +1308,10 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 			break;
 		}
 	}
+
 	// check if tablename exist in Database and create it if not
-	$query = "SHOW TABLES LIKE '" . $db->sanitize(MAIN_DB_PREFIX.strtolower($namedic)) . "'";
+	// @FIXME We must use $db->DDLDescTable($table) to know if a table exists.
+	$query = "SHOW TABLES LIKE '" . $db->escape(MAIN_DB_PREFIX.strtolower($namedic)) . "'";
 	$checkTable = $db->query($query);
 	if ($checkTable && $db->num_rows($checkTable) > 0) {
 		setEventMessages($langs->trans("ErrorTableExist", $namedic), null, 'errors');
