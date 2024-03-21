@@ -873,7 +873,7 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 
 $title = $langs->trans("ThirdParty");
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name." - ".$langs->trans('PaymentInformation');
 }
 $help_url = '';
