@@ -128,8 +128,8 @@ if ($resql) {
 			dol_syslog("Process mailing with id ".$obj->rowid);
 			print "Process mailing with id ".$obj->rowid."\n";
 
-			if ($obj->status==1) {
-				$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=2 WHERE rowid=".$obj->rowid;
+			if ($obj->status == 1) {
+				$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut = 2 WHERE rowid = ".((int) $obj->rowid);
 				$result_sql = $db->query($sql);
 				dol_syslog("Started mailing campaign ".$obj->rowid, LOG_DEBUG);
 			}
