@@ -53,8 +53,8 @@ if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 }
 $action = GETPOST('action', 'aZ09');
-$setterminal = GETPOST('setterminal', 'int');
-$idproduct = GETPOST('idproduct', 'int');
+$setterminal = GETPOSTINT('setterminal');
+$idproduct = GETPOSTINT('idproduct');
 $mobilepage = GETPOST('mobilepage', 'alphanohtml');	// Set when page is loaded by a js .load()
 
 if ($setterminal > 0) {
@@ -150,8 +150,8 @@ if ($action == "productinfo") {
 		print '<br>';
 	}
 } elseif ($action == "editline") {
-	$placeid = GETPOST('placeid', 'int');
-	$selectedline = GETPOST('selectedline', 'int');
+	$placeid = GETPOSTINT('placeid');
+	$selectedline = GETPOSTINT('selectedline');
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
 	foreach ($invoice->lines as $line) {

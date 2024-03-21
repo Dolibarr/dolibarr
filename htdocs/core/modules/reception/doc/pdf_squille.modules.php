@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/core/modules/reception/doc/pdf_squille.modules.php
  *	\ingroup    reception
- *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au modele Squille
+ *	\brief      Fichier de la class permettant de generer les bordereaux envoi au modele Squille
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Classe permettant de generer les borderaux envoi au modele Squille
+ *	Class permettant de generer les borderaux envoi au modele Squille
  */
 class pdf_squille extends ModelePdfReception
 {
@@ -154,7 +154,7 @@ class pdf_squille extends ModelePdfReception
 
 		// Show Draft Watermark
 		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('RECEPTION_DRAFT_WATERMARK'))) {
-			$this->watermark = $conf->global->RECEPTION_DRAFT_WATERMARK;
+			$this->watermark = getDolGlobalString('RECEPTION_DRAFT_WATERMARK');
 		}
 
 		$nblines = count($object->lines);
@@ -233,7 +233,7 @@ class pdf_squille extends ModelePdfReception
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -275,6 +275,7 @@ class pdf_squille extends ModelePdfReception
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// New page
@@ -498,7 +499,7 @@ class pdf_squille extends ModelePdfReception
 						$curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 					// Description
 					$pdf->SetXY($this->posxweightvol, $curY);
@@ -548,10 +549,10 @@ class pdf_squille extends ModelePdfReception
 					// Add line
 					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);
-						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
+						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY - 1, $this->page_largeur - $this->marge_droite, $nexY - 1);
-						$pdf->SetLineStyle(array('dash'=>0));
+						$pdf->SetLineStyle(array('dash' => 0));
 					}
 
 					// Detect if some page were added automatically and output _tableau for past pages
@@ -610,7 +611,7 @@ class pdf_squille extends ModelePdfReception
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -640,7 +641,7 @@ class pdf_squille extends ModelePdfReception
 	 *	@param  Reception	$object         Object reception
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
-	 *	@param	Translate	$outputlangs	Objet langs
+	 *	@param	Translate	$outputlangs	Object langs
 	 *  @param	int			$totalOrdered	Total ordered
 	 *  @param	int			$totalAmount	Total amount
 	 *	@return int							Position pour suite
@@ -852,7 +853,7 @@ class pdf_squille extends ModelePdfReception
 	 *  @param  Reception	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -1088,6 +1089,8 @@ class pdf_squille extends ModelePdfReception
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

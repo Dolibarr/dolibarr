@@ -7,12 +7,12 @@ multicurrency_syncronize_error=Chyba synchronizácie: %s
 MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Na nájdenie kurzu meny použite dátum dokumentu, namiesto použitia posledného známeho kurzu
 multicurrency_useOriginTx=Keď je objekt vytvorený z iného objektu, ponechajte pôvodnú sadzbu zo zdrojového objektu (inak použite poslednú známu sadzbu)
 CurrencyLayerAccount=CurrencyLayer API
-CurrencyLayerAccount_help_to_synchronize=Ak chcete používať túto funkciu, musíte si vytvoriť účet na webovej stránke %s.<br>Získajte <b> /span>Kľúč API<span class='notranslate'></b>.<br>Ak používate bezplatný účet, nemôžete zmeniť <b>zdrojová mena</b> (predvolene USD).<br>Ak vaša hlavná mena nie je USD aplikácia to automaticky prepočíta.<br><br>Máte obmedzený počet 1000 synchronizácií za mesiac.
+CurrencyLayerAccount_help_to_synchronize=You must create an account on website %s to use this functionality.<br>Get your <b>API key</b>.<br>If you use a free account, you can't change the <b>source currency</b> (USD by default).<br>If your main currency is not USD, the application will automatically recalculate it.<br><br>You are limited to 1000 synchronizations per month.
 multicurrency_appId=API kľúč
 multicurrency_appCurrencySource=Zdrojová mena
 multicurrency_alternateCurrencySource=Alternatívna zdrojová mena
 CurrenciesUsed=Použité meny
-CurrenciesUsed_help_to_add=Pridajte rôzne meny a sadzby, ktoré musíte použiť vo svojich <b>ponukách</b>, b0aeee383 /span>objednávky<span class='notranslate'></b> atď.
+CurrenciesUsed_help_to_add=Add the different currencies and rates you need to use on your <b>proposals</b>, <b>orders</b> etc.
 rate=sadzba
 MulticurrencyReceived=Prijaté, pôvodná mena
 MulticurrencyRemainderToTake=Zostávajúca suma, pôvodná mena

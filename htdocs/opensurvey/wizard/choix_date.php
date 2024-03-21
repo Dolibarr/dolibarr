@@ -38,6 +38,7 @@ $_SESSION["formatsondage"] = "D";
 
 $erreur = false;
 $erreurNbchoice = 0;
+$choixdate = '';
 
 /*
  * Actions
@@ -76,8 +77,8 @@ if (GETPOST('confirmation')) {
 						$debutcreneau = explode(":", $creneaux[1]);
 						$fincreneau = explode(":", $creneaux[2]);
 
-						//comparaison des heures de fin et de debut
-						//si correctes, on entre les données dans la variables de session
+						// Compare hours for start and end
+						// If correct, add the data in the session variables
 						if ($debutcreneau[0] < 24 && $fincreneau[0] < 24 && $debutcreneau[1] < 60 && $fincreneau[1] < 60 && ($debutcreneau[0] < $fincreneau[0] || ($debutcreneau[0] == $fincreneau[0] && $debutcreneau[1] < $fincreneau[1]))) {
 							$_SESSION["horaires$i"][$j] = $creneaux[1].'-'.$creneaux[2];
 						} else { //sinon message d'erreur et nettoyage de la case
@@ -89,8 +90,8 @@ if (GETPOST('confirmation')) {
 						$debutcreneau = preg_split("/h/i", $creneaux[1]);
 						$fincreneau = preg_split("/h/i", $creneaux[2]);
 
-						//comparaison des heures de fin et de debut
-						//si correctes, on entre les données dans la variables de session
+						// Compare hours for start and end
+						// If correct, add the data in the session variables
 						if ($debutcreneau[0] < 24 && $fincreneau[0] < 24 && $debutcreneau[1] < 60 && $fincreneau[1] < 60 && ($debutcreneau[0] < $fincreneau[0] || ($debutcreneau[0] == $fincreneau[0] && $debutcreneau[1] < $fincreneau[1]))) {
 							$_SESSION["horaires$i"][$j] = $creneaux[1].'-'.$creneaux[2];
 						} else { //sinon message d'erreur et nettoyage de la case
@@ -155,7 +156,7 @@ if (GETPOST('confirmation')) {
 							$choixdate .= ",";
 							$choixdate .= $_SESSION["totalchoixjour"][$i];
 							$choixdate .= "@";
-							// On remplace la virgule et l'arobase pour ne pas avoir de problème par la suite
+							// Replace the comma and the '@' token to avoid issues
 							$choixdate .= str_replace(array(',', '@'), array('&#44;', '&#64;'), $_SESSION["horaires$i"][$j]);
 						}
 					}
@@ -178,7 +179,7 @@ if (GETPOST('confirmation')) {
 
 	// Add survey into database
 	if (!$erreur && $erreurNb == 0) {
-		$_SESSION["toutchoix"] = substr("$choixdate", 1);
+		$_SESSION["toutchoix"] = substr($choixdate, 1);
 		unset($_SESSION["nbrecaseshoraires"]);
 
 		ajouter_sondage();
@@ -205,7 +206,7 @@ if (GETPOST('reset')) {
  */
 
 if (!isset($_SESSION['description']) && !isset($_SESSION['mail'])) {
-	dol_print_error('', $langs->trans('ErrorOpenSurveyFillFirstSection'));
+	dol_print_error(null, $langs->trans('ErrorOpenSurveyFillFirstSection'));
 	exit;
 }
 
@@ -338,7 +339,7 @@ $nbrejourmois = date("t", mktime(0, 0, 0, $_SESSION["mois"], 1, $_SESSION["annee
 $premierjourmois = date("N", mktime(0, 0, 0, $_SESSION["mois"], 1, $_SESSION["annee"])) - 1;
 
 //traduction de la valeur du mois
-if (is_integer($_SESSION["mois"]) && $_SESSION["mois"] > 0 && $_SESSION["mois"] < 13) {
+if (is_int($_SESSION["mois"]) && $_SESSION["mois"] > 0 && $_SESSION["mois"] < 13) {
 	$motmois = dol_print_date(mktime(0, 0, 0, $_SESSION["mois"], 10), '%B');
 } else {
 	$motmois = dol_print_date(dol_now(), '%B');
@@ -536,11 +537,11 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur) {
 
 	for ($i = 0; $i < $_SESSION["nbrecaseshoraires"]; $i++) {
 		$j = $i + 1;
-		print '<td classe="somme"><div class="center">'.$langs->trans("Time").' '.$j.'</div></td>'."\n";
+		print '<td class="somme"><div class="center">'.$langs->trans("Time").' '.$j.'</div></td>'."\n";
 	}
 
 	if ($_SESSION["nbrecaseshoraires"] < 10) {
-		print '<td classe="somme"><input type="image" name="ajoutcases" src="../img/add-16.png"></td>'."\n";
+		print '<td class="somme"><input type="image" name="ajoutcases" src="../img/add-16.png"></td>'."\n";
 	}
 
 	print '</tr>'."\n";
@@ -555,11 +556,11 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur) {
 
 		//affichage des cases d'horaires
 		for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-			//si on voit une erreur, le fond de la case est rouge
 			if (isset($errheure[$i][$j]) && $errheure[$i][$j]) {
+				// When an error is found, the checkbox background is red
 				print '<td><input type=text size="10" maxlength="11" name=horaires'.$i.'[] value="'.$_SESSION["horaires$i"][$j].'" style="background-color:#FF6666;"></td>'."\n";
 			} else {
-				//sinon la case est vide normalement
+				// Else the color is empty (in principle)
 				print '<td><input type=text size="10" maxlength="11" name=horaires'.$i.'[] value="'.$_SESSION["horaires$i"][$j].'"></td>'."\n";
 			}
 		}
@@ -581,7 +582,7 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur) {
 
 print '</tr>'."\n";
 print '</table>'."\n";
-print '<a name=bas></a>'."\n";
+print '<a name="bas"></a>'."\n";
 //fin du formulaire et bandeau de pied
 print '</form>'."\n";
 //bandeau de pied

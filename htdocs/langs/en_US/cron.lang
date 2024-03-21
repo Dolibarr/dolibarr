@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Read Scheduled job
 Permission23102 = Create/update Scheduled job
 Permission23103 = Delete Scheduled job

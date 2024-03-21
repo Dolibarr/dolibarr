@@ -194,16 +194,6 @@ function assetModelPrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/asset/model/depreciation_options.php?id=' . $object->id;
-	$head[$h][1] = $langs->trans("AssetDepreciationOptions");
-	$head[$h][2] = 'depreciation_options';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT . '/asset/model/accountancy_codes.php?id=' . $object->id;
-	$head[$h][1] = $langs->trans("AssetAccountancyCodes");
-	$head[$h][2] = 'accountancy_codes';
-	$h++;
-
 	if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
 		$nbNote = 0;
 		if (!empty($object->note_private)) {

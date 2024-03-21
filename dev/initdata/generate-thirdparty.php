@@ -50,7 +50,7 @@ $listoflastname = array("Joe","Marc","Steve","Laurent","Nico","Isabelle","Doroth
 
 
 /*
- * Parametre
+ * Parameter
  */
 
 define('GEN_NUMBER_SOCIETE', $argv[1] ?? 10);

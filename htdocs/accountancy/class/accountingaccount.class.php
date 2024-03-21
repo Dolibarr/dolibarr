@@ -5,6 +5,7 @@
  * Copyright (C) 2014       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015       Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2018       Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -173,13 +174,13 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Load record in memory
 	 *
-	 * @param 	int 	       $rowid 				    Id
-	 * @param 	string 	       $account_number 	        Account number
-	 * @param 	int|boolean    $limittocurrentchart     1 or true=Load record only if it is into current active chart of account
-	 * @param   string         $limittoachartaccount    'ABC'=Load record only if it is into chart account with code 'ABC' (better and faster than previous parameter if you have chart of account code).
-	 * @return 	int                                     Return integer <0 if KO, 0 if not found, Id of record if OK and found
+	 * @param 	int       		$rowid 				    	Id
+	 * @param 	string|null    	$account_number 	        Account number
+	 * @param 	int|boolean    	$limittocurrentchart     	1 or true=Load record only if it is into current active chart of account
+	 * @param   string         	$limittoachartaccount    	'ABC'=Load record only if it is into chart account with code 'ABC' (better and faster than previous parameter if you have chart of account code).
+	 * @return 	int                                     	Return integer <0 if KO, 0 if not found, Id of record if OK and found
 	 */
-	public function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0, $limittoachartaccount = '')
+	public function fetch($rowid = 0, $account_number = null, $limittocurrentchart = 0, $limittoachartaccount = '')
 	{
 		global $conf;
 
@@ -501,7 +502,7 @@ class AccountingAccount extends CommonObject
 			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/list.php?search_accountancy_code_start=' . urlencode($this->account_number) . '&search_accountancy_code_end=' . urlencode($this->account_number);
 			$labelurl = $langs->trans("ShowAccountingAccountInJournals");
 		} elseif ($option == 'accountcard') {
-			$url = DOL_URL_ROOT . '/accountancy/admin/card.php?id=' . urlencode($this->id);
+			$url = DOL_URL_ROOT . '/accountancy/admin/card.php?id=' . urlencode((string) ($this->id));
 			$labelurl = $langs->trans("ShowAccountingAccount");
 		}
 
@@ -570,7 +571,7 @@ class AccountingAccount extends CommonObject
 		}
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -632,7 +633,7 @@ class AccountingAccount extends CommonObject
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account ";
-			$sql .= "SET ".$fieldtouse." = '0'";
+			$sql .= "SET ".$this->db->sanitize($fieldtouse)." = 0";
 			$sql .= " WHERE rowid = ".((int) $id);
 
 			dol_syslog(get_class($this)."::accountDeactivate ".$fieldtouse, LOG_DEBUG);
@@ -670,7 +671,7 @@ class AccountingAccount extends CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account";
-		$sql .= " SET ".$fieldtouse." = '1'";
+		$sql .= " SET ".$this->db->sanitize($fieldtouse)." = 1";
 		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::account_activate ".$fieldtouse, LOG_DEBUG);
@@ -740,14 +741,12 @@ class AccountingAccount extends CommonObject
 	 */
 	public function getAccountingCodeToBind(Societe $buyer, Societe $seller, Product $product, $facture, $factureDet, $accountingAccount = array(), $type = '')
 	{
-		global $conf;
 		global $hookmanager;
-
 		// Instantiate hooks for external modules
 		$hookmanager->initHooks(array('accountancyBindingCalculation'));
 
 		// Execute hook accountancyBindingCalculation
-		$parameters = array('buyer' => $buyer, 'seller' => $seller, 'product' => $product, 'facture' => $facture, 'factureDet' => $factureDet ,'accountingAccount'=>$accountingAccount, $type);
+		$parameters = array('buyer' => $buyer, 'seller' => $seller, 'product' => $product, 'facture' => $facture, 'factureDet' => $factureDet ,'accountingAccount' => $accountingAccount, 0 => $type);
 		$reshook = $hookmanager->executeHooks('accountancyBindingCalculation', $parameters); // Note that $action and $object may have been modified by some hooks
 
 		if (empty($reshook)) {
@@ -771,11 +770,11 @@ class AccountingAccount extends CommonObject
 			if ($factureDet->product_type == 1) {
 				if ($buyer->country_code == $seller->country_code || empty($buyer->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
 					$code_l = getDolGlobalString('ACCOUNTING_SERVICE_' . $const_name . '_ACCOUNT');
+					// @phan-suppress-next-line PhanPluginRedundantAssignment
 					$suggestedaccountingaccountbydefaultfor = '';
 				} else {
 					if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0) {    // European intravat sale, but with a VAT
 						$code_l = getDolGlobalString('ACCOUNTING_SERVICE_' . $const_name . '_ACCOUNT');
-						$suggestedaccountingaccountbydefaultfor = 'eecwithvat';
 					} elseif ($isSellerInEEC && $isBuyerInEEC && empty($buyer->tva_intra)) {    // European intravat sale, without VAT intra community number
 						$code_l = getDolGlobalString('ACCOUNTING_SERVICE_' . $const_name . '_ACCOUNT');
 						$suggestedaccountingaccountbydefaultfor = 'eecwithoutvatnumber';
@@ -790,6 +789,7 @@ class AccountingAccount extends CommonObject
 			} elseif ($factureDet->product_type == 0) {
 				if ($buyer->country_code == $seller->country_code || empty($buyer->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
 					$code_l = getDolGlobalString('ACCOUNTING_PRODUCT_' . $const_name . '_ACCOUNT');
+					// @phan-suppress-next-line PhanPluginRedundantAssignment
 					$suggestedaccountingaccountbydefaultfor = '';
 				} else {
 					if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0) {    // European intravat sale, but with a VAT
@@ -880,9 +880,9 @@ class AccountingAccount extends CommonObject
 				if ($factureDet->desc == "(DEPOSIT)" || $facture->type == $facture::TYPE_DEPOSIT) {
 					$accountdeposittoventilated = new self($this->db);
 					if ($type == 'customer') {
-						$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+						$result = $accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 1);
 					} elseif ($type == 'supplier') {
-						$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT, 1);
+						$result = $accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 1);
 					}
 					if (isset($result) && $result < 0) {
 						return -1;
@@ -903,9 +903,9 @@ class AccountingAccount extends CommonObject
 					if ($facture->type == $facture::TYPE_CREDIT_NOTE && $invoiceSource->type == $facture::TYPE_DEPOSIT) {
 						$accountdeposittoventilated = new self($this->db);
 						if ($type == 'customer') {
-							$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+							$accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 1);
 						} elseif ($type == 'supplier') {
-							$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT, 1);
+							$accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 1);
 						}
 						$code_l = $accountdeposittoventilated->ref;
 						$code_p = '';

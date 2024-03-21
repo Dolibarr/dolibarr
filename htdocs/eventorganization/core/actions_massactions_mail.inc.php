@@ -66,7 +66,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 	$listofobjectid = array();
 
 	$listofobjectref = array();
-	$oneemailperrecipient = (GETPOST('oneemailperrecipient', 'int') ? 1 : 0);
+	$oneemailperrecipient = (GETPOSTINT('oneemailperrecipient') ? 1 : 0);
 
 	if (!$error) {
 		require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
@@ -185,7 +185,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 				$urlwithouturlroot = preg_replace('/' . preg_quote(DOL_URL_ROOT, '/') . '$/i', '', trim($dolibarr_main_url_root));
 				$urlwithroot = $urlwithouturlroot . DOL_URL_ROOT;
 				$url_link = $urlwithroot . '/public/agenda/agendaexport.php?format=ical' . ($conf->entity > 1 ? "&entity=" . $conf->entity : "");
-				$url_link .= '&exportkey=' . ($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ? urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...');
+				$url_link .= '&exportkey=' . ($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ? urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) : '...');
 				$url_link .= "&project=" . $listofselectedref[$email]->fk_project . '&module=' . urlencode('@eventorganization') . '&status=' . ConferenceOrBooth::STATUS_CONFIRMED;
 				$html_link = '<a href="' . $url_link . '">' . $langs->trans('DownloadICSLink') . '</a>';
 			}
@@ -276,7 +276,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 	$resaction .= $langs->trans("NbSent") . ': ' . ($nbsent ? $nbsent : 0) . "\n<br>";
 
 	if ($nbsent) {
-		$action = ''; // Do not show form post if there was at least one successfull sent
+		$action = ''; // Do not show form post if there was at least one successful sent
 		//setEventMessages($langs->trans("EMailSentToNRecipients", $nbsent.'/'.count($toselect)), null, 'mesgs');
 		setEventMessages($langs->trans("EMailSentForNElements", $nbsent . '/' . count($toselect)), null, 'mesgs');
 		setEventMessages($resaction, null, 'mesgs');

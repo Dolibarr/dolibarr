@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018 Nicolas ZABOURI <info@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -188,10 +189,10 @@ class DataPolicy
 		$la = 'TXTLINKDATAPOLICYACCEPT_'.$l;
 		$lr = 'TXTLINKDATAPOLICYREFUSE_'.$l;
 
-		$subject = $conf->global->$s;
-		$message = $conf->global->$ma;
-		$linka = $conf->global->$la;
-		$linkr = $conf->global->$lr;
+		$subject = getDolGlobalString($s);
+		$message = getDolGlobalString($ma);
+		$linka = getDolGlobalString($la);
+		$linkr = getDolGlobalString($lr);
 		$sendtocc = $sendtobcc = '';
 		$filepath = $mimetype = $filename = array();
 		$deliveryreceipt = 0;
@@ -267,10 +268,10 @@ class DataPolicy
 		$la = 'TXTLINKDATAPOLICYACCEPT_'.$l;
 		$lr = 'TXTLINKDATAPOLICYREFUSE_'.$l;
 
-		$subject = $conf->global->$s;
-		$message = $conf->global->$ma;
-		$linka = $conf->global->$la;
-		$linkr = $conf->global->$lr;
+		$subject = getDolGlobalString($s);
+		$message = getDolGlobalString($ma);
+		$linka = getDolGlobalString($la);
+		$linkr = getDolGlobalString($lr);
 		$sendtocc = $sendtobcc = '';
 		$filepath = $mimetype = $filename = array();
 		$deliveryreceipt = 0;
@@ -306,7 +307,7 @@ class DataPolicy
 			if ($resultmail) {
 				$resultmasssend .= $langs->trans("MailSent").': '.$sendto."<br>";
 				$societe->array_options['options_datapolicy_send'] = date('Y-m-d', time());
-				$societe->update($societe->id);
+				$societe->update($societe->id, $user);
 			} else {
 				dol_print_error($db);
 			}
@@ -342,10 +343,10 @@ class DataPolicy
 		$la = 'TXTLINKDATAPOLICYACCEPT_'.$l;
 		$lr = 'TXTLINKDATAPOLICYREFUSE_'.$l;
 
-		$subject = $conf->global->$s;
-		$message = $conf->global->$ma;
-		$linka = $conf->global->$la;
-		$linkr = $conf->global->$lr;
+		$subject = getDolGlobalString($s);
+		$message = getDolGlobalString($ma);
+		$linka = getDolGlobalString($la);
+		$linkr = getDolGlobalString($lr);
 		$sendtocc = $sendtobcc = '';
 		$filepath = $mimetype = $filename = array();
 		$deliveryreceipt = 0;

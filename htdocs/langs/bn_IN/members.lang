@@ -13,7 +13,7 @@ MembersTickets=সদস্যপদ ঠিকানা শীট
 FundationMembers=ফাউন্ডেশনের সদস্যরা
 ListOfValidatedPublicMembers=বৈধ পাবলিক সদস্যদের তালিকা
 ErrorThisMemberIsNotPublic=এই সদস্য সর্বজনীন নয়
-ErrorMemberIsAlreadyLinkedToThisThirdParty=অন্য সদস্য (নাম: <b>%s</b>, লগইন: <b>%s</b>) ইতিমধ্যেই একটি তৃতীয় পক্ষের সাথে লিঙ্ক করা আছে <span class='notranslate' '><b></span>%s</b>। প্রথমে এই লিঙ্কটি সরান কারণ একটি তৃতীয় পক্ষ শুধুমাত্র একজন সদস্যের সাথে লিঙ্ক করা যাবে না (এবং এর বিপরীতে)।
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Another member (name: <b>%s</b>, login: <b>%s</b>) is already linked to a third party <b>%s</b>. Remove this link first because a third party can't be linked to only a member (and vice versa).
 ErrorUserPermissionAllowsToLinksToItselfOnly=নিরাপত্তার কারণে, আপনার নয় এমন ব্যবহারকারীর সাথে সদস্যকে লিঙ্ক করতে সক্ষম হওয়ার জন্য আপনাকে অবশ্যই সমস্ত ব্যবহারকারীকে সম্পাদনা করার অনুমতি দিতে হবে।
 SetLinkToUser=একটি Dolibarr ব্যবহারকারী লিঙ্ক
 SetLinkToThirdParty=একটি Dolibarr তৃতীয় পক্ষের লিঙ্ক

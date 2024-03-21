@@ -20,7 +20,7 @@
 
 /**
  * \file       htdocs/core/lib/contract.lib.php
- * \brief      Ensemble de fonctions de base pour le module contrat
+ * \brief      Ensemble de functions de base pour le module contrat
  */
 
 /**
@@ -139,7 +139,7 @@ function contract_prepare_head(Contrat $object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	        head array with tabs
  */

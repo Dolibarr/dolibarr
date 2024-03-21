@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,8 +48,8 @@ $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'asset';
 
 $arrayofparameters = array(
-	'ASSET_ACCOUNTANCY_CATEGORY'=>array('type'=>'accountancy_category', 'enabled'=>1),
-	'ASSET_DEPRECIATION_DURATION_PER_YEAR'=>array('type'=>'string', 'css'=>'minwidth200', 'enabled'=>1),
+	'ASSET_ACCOUNTANCY_CATEGORY' => array('type' => 'accountancy_category', 'enabled' => 1),
+	'ASSET_DEPRECIATION_DURATION_PER_YEAR' => array('type' => 'string', 'css' => 'minwidth200', 'enabled' => 1),
 	//'ASSET_MYPARAM2'=>array('type'=>'textarea','enabled'=>1),
 	//'ASSET_MYPARAM3'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
 	//'ASSET_MYPARAM4'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
@@ -62,6 +63,15 @@ $error = 0;
 $setupnotempty = 0;
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+$moduledir = 'asset';
+$myTmpObjects = array();
+$myTmpObjects['asset'] = array('label' => 'Asset', 'includerefgeneration' => 1, 'includedocgeneration' => 0, 'class' => 'Asset');
+
+$tmpobjectkey = GETPOST('object', 'aZ09');
+if ($tmpobjectkey && !array_key_exists($tmpobjectkey, $myTmpObjects)) {
+	accessforbidden('Bad value for object. Hack attempt ?');
+}
 
 
 /*
@@ -86,28 +96,26 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'specimen') {
+} elseif ($action == 'specimen' && $tmpobjectkey) {
 	$modele = GETPOST('module', 'alpha');
-	$tmpobjectkey = GETPOST('object');
 
-	$tmpobject = new $tmpobjectkey($db);
+	$className = $myTmpObjects[$tmpobjectkey]['class'];
+	$tmpobject = new $className($db);
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/asset/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
@@ -125,7 +133,6 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
-	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'ASSET_'.strtoupper($tmpobjectkey)."_ADDON";
 		dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
@@ -136,7 +143,6 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		$tmpobjectkey = GETPOST('object');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'ASSET_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 			if (getDolGlobalString($constforval) == "$value") {
@@ -146,7 +152,6 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'setdoc') {
 	// Set or unset default model
-	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'ASSET_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
@@ -162,7 +167,6 @@ if ($action == 'updateMask') {
 		}
 	}
 } elseif ($action == 'unsetdoc') {
-	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'ASSET_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		dolibarr_del_const($db, $constforval, $conf->entity);
@@ -195,15 +199,7 @@ print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "asse
 echo '<span class="opacitymedium">'.$langs->trans("AssetSetupPage").'</span>';
 
 
-$moduledir = 'asset';
-$myTmpObjects = array();
-$myTmpObjects['Asset'] = array('includerefgeneration'=>1, 'includedocgeneration'=>0);
-
-
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-	if ($myTmpObjectKey == 'MyObject') {
-		continue;
-	}
 	if ($myTmpObjectArray['includerefgeneration']) {
 		/*
 		 * Assets Numbering model
@@ -276,7 +272,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 								print '</td>';
 
-								$mytmpinstance = new $myTmpObjectKey($db);
+								$className = $myTmpObjectArray['class'];
+								$mytmpinstance = new $className($db);
 								$mytmpinstance->initAsSpecimen();
 
 								// Info
@@ -359,6 +356,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 				if (is_dir($dir)) {
 					$handle = opendir($dir);
 					if (is_resource($handle)) {
+						$filelist = array();
 						while (($file = readdir($handle)) !== false) {
 							$filelist[] = $file;
 						}
@@ -466,7 +464,7 @@ if ($action == 'edit') {
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($arrayofparameters as $constname => $val) {
-		if ($val['enabled']==1) {
+		if ($val['enabled'] == 1) {
 			$setupnotempty++;
 			print '<tr class="oddeven"><td>';
 			$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
@@ -477,7 +475,7 @@ if ($action == 'edit') {
 				print '<textarea class="flat" name="'.$constname.'" id="'.$constname.'" cols="50" rows="5" wrap="soft">' . "\n";
 				print getDolGlobalString($constname);
 				print "</textarea>\n";
-			} elseif ($val['type']== 'html') {
+			} elseif ($val['type'] == 'html') {
 				require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($constname, getDolGlobalString($constname), '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 				$doleditor->Create();
@@ -581,7 +579,7 @@ if ($action == 'edit') {
 		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 		foreach ($arrayofparameters as $constname => $val) {
-			if ($val['enabled']==1) {
+			if ($val['enabled'] == 1) {
 				$setupnotempty++;
 				print '<tr class="oddeven"><td>';
 				$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
@@ -590,7 +588,7 @@ if ($action == 'edit') {
 
 				if ($val['type'] == 'textarea') {
 					print dol_nl2br(getDolGlobalString($constname));
-				} elseif ($val['type']== 'html') {
+				} elseif ($val['type'] == 'html') {
 					print getDolGlobalString($constname);
 				} elseif ($val['type'] == 'yesno') {
 					print ajax_constantonoff($constname);
@@ -601,7 +599,7 @@ if ($action == 'edit') {
 					$tmp = explode(':', $val['type']);
 
 					$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, getDolGlobalString($constname));
-					if ($template<0) {
+					if ($template < 0) {
 						setEventMessages(null, $formmail->errors, 'errors');
 					}
 					print $langs->trans($template->label);
@@ -611,7 +609,7 @@ if ($action == 'edit') {
 					if ($result < 0) {
 						setEventMessages(null, $c->errors, 'errors');
 					} elseif ($result > 0) {
-						$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
+						$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 						$toprint = array();
 						foreach ($ways as $way) {
 							$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
@@ -619,13 +617,13 @@ if ($action == 'edit') {
 						print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 					}
 				} elseif (preg_match('/thirdparty_type/', $val['type'])) {
-					if (getDolGlobalInt($constname)==2) {
+					if (getDolGlobalInt($constname) == 2) {
 						print $langs->trans("Prospect");
-					} elseif (getDolGlobalInt($constname)==3) {
+					} elseif (getDolGlobalInt($constname) == 3) {
 						print $langs->trans("ProspectCustomer");
-					} elseif (getDolGlobalInt($constname)==1) {
+					} elseif (getDolGlobalInt($constname) == 1) {
 						print $langs->trans("Customer");
-					} elseif (getDolGlobalInt($constname)==0) {
+					} elseif (getDolGlobalInt($constname) == 0) {
 						print $langs->trans("NorProspectNorCustomer");
 					}
 				} elseif ($val['type'] == 'product') {

@@ -96,6 +96,7 @@ if (GETPOST('location_incoterms')) {
 	$resql = $db->query($sql);
 	//var_dump($db);
 	if ($resql) {
+		$row_array = array();
 		while ($row = $db->fetch_array($resql)) {
 			$row_array['label'] = $row['location_incoterms'].($row['label'] ? ' - '.$row['label'] : '');
 			if ($location_incoterms) {

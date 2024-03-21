@@ -164,14 +164,14 @@ InventoryCode=קוד תנועה או מלאי
 IsInPackage=כלול בחבילה
 WarehouseAllowNegativeTransfer=מלאי יכול להיות שלילי
 qtyToTranferIsNotEnough=אין לך מספיק מלאי ממחסן המקור שלך וההגדרה שלך לא מאפשרת מלאי שלילי.
-qtyToTranferLotIsNotEnough=אין לך מספיק מלאי, עבור מספר מגרש זה, ממחסן המקור שלך וההגדרה שלך לא מאפשרת מלאי שלילי (כמות עבור מוצר '%s' עם מגרש '<span class' ='notranslate'>%s</span>' הוא %s במחסן '%s').
+qtyToTranferLotIsNotEnough=You don't have enough stock, for this lot number, from your source warehouse and your setup does not allow negative stocks (Qty for product '%s' with lot '%s' is %s in warehouse '%s').
 ShowWarehouse=הצג מחסן
 MovementCorrectStock=תיקון מלאי עבור מוצר %s
 MovementTransferStock=העברת מלאי של מוצר %s למחסן אחר
 BatchStockMouvementAddInGlobal=מלאי אצווה עובר למלאי גלובלי (המוצר לא משתמש יותר באצווה)
 InventoryCodeShort=Inv./Mov. קוד
 NoPendingReceptionOnSupplierOrder=אין קבלה בהמתנה עקב הזמנת רכש פתוחה
-ThisSerialAlreadyExistWithDifferentDate=מגרש/מספר סידורי זה (<strong>%s</strong>) כבר קיים אבל עם תאריך אחר לאכול עד או למכור (נמצא <strong>%s</strong> < אבל אתה מזין span class='notranslate'><strong></span>%s</strong>).
+ThisSerialAlreadyExistWithDifferentDate=This lot/serial number (<strong>%s</strong>) already exists but with different eatby or sellby date (found <strong>%s</strong> but you enter <strong>%s</strong>).
 OpenAnyMovement=פתוח (כל תנועה)
 OpenInternal=פתוח (רק תנועה פנימית)
 UseDispatchStatus=השתמש בסטטוס שליחה (אישור/סירוב) עבור קווי מוצרים בקבלת הזמנת רכש

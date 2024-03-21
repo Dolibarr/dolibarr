@@ -8,20 +8,20 @@
 #------------------------------------------------------
 
 # Syntax
-if [ "x$1" != "xlist" -a "x$1" != "xfix" ]
+if [ "$1" != "list" ] && [ "$1" != "fix" ]
 then
-	echo "Detect .sh and .spec files that does not contains any tab inside"
+	echo "Detect .sh and .spec files that does not contain any tab"
 	echo "Usage: fixnotabfiles.sh [list|fix]"
 fi
 
-# To detec
-if [ "x$1" = "xlist" ]
+# List/Detect files
+if [ "$1" = "list" ]
 then
-	find build \( -iname "*.sh" -o -iname "*.spec" \) -exec grep -l -P '\t' {} \;
+	find build \( -iname "*.sh" -o -iname "*.spec" \) -exec grep -L -P '\t' {} \;
 fi
 
-# To convert
-if [ "x$1" = "xfix" ]
+# Fix/convert files
+if [ "$1" = "fix" ]
 then
 	echo Feature not implemented. Please fix files manually.
 fi

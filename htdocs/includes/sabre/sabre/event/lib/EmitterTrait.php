@@ -1,9 +1,11 @@
-<?php declare (strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Sabre\Event;
 
 /**
- * Event Emitter Trait
+ * Event Emitter Trait.
  *
  * This trait contains all the basic functions to implement an
  * EventEmitterInterface.
@@ -15,53 +17,45 @@ namespace Sabre\Event;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-trait EmitterTrait {
-
-
+trait EmitterTrait
+{
     /**
      * Subscribe to an event.
-     *
-     * @return void
      */
-    function on(string $eventName, callable $callBack, int $priority = 100) {
-
+    public function on(string $eventName, callable $callBack, int $priority = 100)
+    {
         if (!isset($this->listeners[$eventName])) {
             $this->listeners[$eventName] = [
                 true,  // If there's only one item, it's sorted
                 [$priority],
-                [$callBack]
+                [$callBack],
             ];
         } else {
             $this->listeners[$eventName][0] = false; // marked as unsorted
             $this->listeners[$eventName][1][] = $priority;
             $this->listeners[$eventName][2][] = $callBack;
         }
-
     }
 
     /**
      * Subscribe to an event exactly once.
-     *
-     * @return void
      */
-    function once(string $eventName, callable $callBack, int $priority = 100) {
-
+    public function once(string $eventName, callable $callBack, int $priority = 100)
+    {
         $wrapper = null;
-        $wrapper = function() use ($eventName, $callBack, &$wrapper) {
-
+        $wrapper = function () use ($eventName, $callBack, &$wrapper) {
             $this->removeListener($eventName, $wrapper);
-            return call_user_func_array($callBack, func_get_args());
 
+            return \call_user_func_array($callBack, \func_get_args());
         };
 
         $this->on($eventName, $wrapper, $priority);
-
     }
 
     /**
      * Emits an event.
      *
-     * This method will return true if 0 or more listeners were succesfully
+     * This method will return true if 0 or more listeners were successfully
      * handled. false is returned if one of the events broke the event chain.
      *
      * If the continueCallBack is specified, this callback will be called every
@@ -79,41 +73,35 @@ trait EmitterTrait {
      * Lastly, if there are 5 event handlers for an event. The continueCallback
      * will be called at most 4 times.
      */
-    function emit(string $eventName, array $arguments = [], callable $continueCallBack = null) : bool {
-
-        if (is_null($continueCallBack)) {
-
+    public function emit(string $eventName, array $arguments = [], callable $continueCallBack = null): bool
+    {
+        if (\is_null($continueCallBack)) {
             foreach ($this->listeners($eventName) as $listener) {
-
-                $result = call_user_func_array($listener, $arguments);
-                if ($result === false) {
+                $result = \call_user_func_array($listener, $arguments);
+                if (false === $result) {
                     return false;
                 }
             }
-
         } else {
-
             $listeners = $this->listeners($eventName);
-            $counter = count($listeners);
+            $counter = \count($listeners);
 
             foreach ($listeners as $listener) {
-
-                $counter--;
-                $result = call_user_func_array($listener, $arguments);
-                if ($result === false) {
+                --$counter;
+                $result = \call_user_func_array($listener, $arguments);
+                if (false === $result) {
                     return false;
                 }
 
                 if ($counter > 0) {
-                    if (!$continueCallBack()) break;
+                    if (!$continueCallBack()) {
+                        break;
+                    }
                 }
-
             }
-
         }
 
         return true;
-
     }
 
     /**
@@ -124,24 +112,22 @@ trait EmitterTrait {
      *
      * @return callable[]
      */
-    function listeners(string $eventName) : array {
-
+    public function listeners(string $eventName): array
+    {
         if (!isset($this->listeners[$eventName])) {
             return [];
         }
 
         // The list is not sorted
         if (!$this->listeners[$eventName][0]) {
-
             // Sorting
-            array_multisort($this->listeners[$eventName][1], SORT_NUMERIC, $this->listeners[$eventName][2]);
+            \array_multisort($this->listeners[$eventName][1], SORT_NUMERIC, $this->listeners[$eventName][2]);
 
             // Marking the listeners as sorted
             $this->listeners[$eventName][0] = true;
         }
 
         return $this->listeners[$eventName][2];
-
     }
 
     /**
@@ -150,8 +136,8 @@ trait EmitterTrait {
      * If the listener could not be found, this method will return false. If it
      * was removed it will return true.
      */
-    function removeListener(string $eventName, callable $listener) : bool {
-
+    public function removeListener(string $eventName, callable $listener): bool
+    {
         if (!isset($this->listeners[$eventName])) {
             return false;
         }
@@ -159,11 +145,12 @@ trait EmitterTrait {
             if ($check === $listener) {
                 unset($this->listeners[$eventName][1][$index]);
                 unset($this->listeners[$eventName][2][$index]);
+
                 return true;
             }
         }
-        return false;
 
+        return false;
     }
 
     /**
@@ -172,24 +159,20 @@ trait EmitterTrait {
      * If the eventName argument is specified, all listeners for that event are
      * removed. If it is not specified, every listener for every event is
      * removed.
-     *
-     * @return void
      */
-    function removeAllListeners(string $eventName = null) {
-
-        if (!is_null($eventName)) {
+    public function removeAllListeners(string $eventName = null)
+    {
+        if (!\is_null($eventName)) {
             unset($this->listeners[$eventName]);
         } else {
             $this->listeners = [];
         }
-
     }
 
     /**
-     * The list of listeners
+     * The list of listeners.
      *
      * @var array
      */
     protected $listeners = [];
-
 }

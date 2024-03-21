@@ -130,8 +130,8 @@ $dolibarr_main_db_user='';
 // dolibarr_main_db_pass
 // =====================
 // This parameter contains password used to read and write into Dolibarr database.
-// If content is 'crypted:...', the password is encrypted/decrypted with dol_encode/dol_decode.  
-// If content is 'dolcrypt:...', the password is encrypted/decrypted with dolEncrypt/dolDecrypt.  
+// If content is 'crypted:...', the password is encrypted/decrypted with dol_encode/dol_decode.
+// If content is 'dolcrypt:...', the password is encrypted/decrypted with dolEncrypt/dolDecrypt.
 //
 // Examples:
 // $dolibarr_main_db_pass='myadminpass';
@@ -160,6 +160,7 @@ $dolibarr_main_db_type='';
 // Default value: depends on database driver
 // Examples:
 // dolibarr_main_db_character_set='utf8';
+// dolibarr_main_db_character_set='utf8mb4';
 //
 $dolibarr_main_db_character_set='utf8';
 
@@ -319,7 +320,7 @@ $dolibarr_main_restrict_ip='';
 // This might be required if you access Dolibarr behind a proxy that make bad URL rewriting, to avoid false alarms.
 // In most cases, you should always keep this to 0.
 // Default value: 0
-// Possible values: 0 or 1 (no strict CSRF test, only test on referer) or 2 (no CSRF test at all)
+// Possible values: 0 or 1 (no strict CSRF test, only test on referrer) or 2 (no CSRF test at all)
 // Examples:
 // $dolibarr_nocsrfcheck='0';
 //
@@ -455,5 +456,3 @@ $dolibarr_cron_allow_cli='0';
 //##############################
 // External modules
 //##############################
-
-

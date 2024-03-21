@@ -37,8 +37,11 @@
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
+
+'@phan-var-force CommonObject $this
+ @phan-var-force CommonObject $object';
 
 print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
 
@@ -68,6 +71,7 @@ if (getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') || getDolGlobalString('FACTU
 	print $langs->trans('VAT');
 }
 
+// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 if (in_array($object->element, array('propal', 'commande', 'facture', 'supplier_proposal', 'order_supplier', 'invoice_supplier')) && $object->status == $object::STATUS_DRAFT) {
 	global $mysoc;
 
@@ -108,6 +112,7 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 print '<th class="linecoldiscount right nowraponall">';
 print $langs->trans('ReductionShort');
 
+// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT) {
 	global $mysoc;
 

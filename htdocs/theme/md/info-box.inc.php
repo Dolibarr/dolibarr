@@ -22,7 +22,7 @@ if (!isset($conf->global->THEME_SATURATE_RATIO)) {
 	$conf->global->THEME_SATURATE_RATIO = 0.7;
 }
 if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
-	$conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
+	$conf->global->THEME_SATURATE_RATIO = GETPOSTINT('THEME_SATURATE_RATIO');
 }
 
 ?>
@@ -417,7 +417,7 @@ if (!isset($conf->global->THEME_SATURATE_RATIO)) {
 	$conf->global->THEME_SATURATE_RATIO = 0.7;
 }
 if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
-	$conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
+	$conf->global->THEME_SATURATE_RATIO = GETPOSTINT('THEME_SATURATE_RATIO');
 }
 ?>
 .bg-infobox-project i.fa{
@@ -517,7 +517,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 
-/* USING IMAGES FOR WEATHER INTEAD OF FONT AWESOME */
+/* USING IMAGES FOR WEATHER INSTEAD OF FONT AWESOME */
 /* For other themes just uncomment this part */
 /*.info-box-weather-level0,
 .info-box-weather-level1,

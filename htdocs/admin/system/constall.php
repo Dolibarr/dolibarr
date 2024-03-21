@@ -158,7 +158,7 @@ foreach ($configfileparameters as $key) {
 
 		if (preg_match('/^\?/', $key) && empty(${$newkey})) {
 			$i++;
-			continue; // We discard parametes starting with ?
+			continue; // We discard parameters starting with ?
 		}
 
 		if ($newkey == 'separator' && $lastkeyshown == 'separator') {

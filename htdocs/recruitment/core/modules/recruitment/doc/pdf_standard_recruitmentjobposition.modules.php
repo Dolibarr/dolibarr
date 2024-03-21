@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPosition
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -157,7 +157,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		}
 
 		// Define position of columns
-		$this->posxdesc = $this->marge_gauche + 1; // used for notes ans other stuff
+		$this->posxdesc = $this->marge_gauche + 1; // used for notes and other stuff
 
 
 		$this->tabTitleHeight = 5; // default height
@@ -177,7 +177,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		Object		$object				Object to generate
+	 *  @param		RecruitmentJobPosition		$object				RecruitmentJobPosition to generate
 	 *  @param		Translate	$outputlangs		Lang output object
 	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -215,7 +215,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 
 		$hidetop = 0;
 		if (getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE')) {
-			$hidetop = $conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE;
+			$hidetop = getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE');
 		}
 
 		// Loop on each lines to detect if there is at least one image to show
@@ -297,7 +297,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 			if (file_exists($dir)) {
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Set nblines with the new facture lines content after hook
@@ -358,6 +358,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 					$pdf->setSignature($cert, $cert, $this->emetteur->name, '', 2, $info);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// New page
@@ -620,16 +621,16 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 						$curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 
 
 					$parameters = array(
 						'object' => $object,
 						'i' => $i,
-						'pdf' =>& $pdf,
-						'curY' =>& $curY,
-						'nexY' =>& $nexY,
+						'pdf' => & $pdf,
+						'curY' => & $curY,
+						'nexY' => & $nexY,
 						'outputlangs' => $outputlangs,
 						'hidedetails' => $hidedetails
 					);
@@ -711,7 +712,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -721,7 +722,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {
@@ -806,15 +807,15 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
+	 *  @param  RecruitmentJobPosition		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	float|int
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "propal", "companies"));
@@ -1043,6 +1044,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
 		return $top_shift;
 	}
 
@@ -1051,7 +1053,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	 *   	Show footer of page. Need this->emetteur object
 	 *
 	 *   	@param	TCPDF		$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
+	 * 		@param	RecruitmentJobPosition		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
@@ -1090,18 +1092,18 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		);
 
 		/*
-		 * For exemple
+		 * For example
 		$this->cols['theColKey'] = array(
 			'rank' => $rank, // int : use for ordering columns
 			'width' => 20, // the column width in mm
 			'title' => array(
 				'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				'label' => ' ', // the final label : used fore final generated text
-				'align' => 'L', // text alignement :  R,C,L
+				'align' => 'L', // text alignment :  R,C,L
 				'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'content' => array(
-				'align' => 'L', // text alignement :  R,C,L
+				'align' => 'L', // text alignment :  R,C,L
 				'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 		);
@@ -1114,7 +1116,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is usefull in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in somme case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -1260,6 +1262,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		} elseif (empty($reshook)) {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrderInternal
 			$this->cols = array_replace($this->cols, $hookmanager->resArray); // array_replace is used to preserve keys
 		} else {
 			$this->cols = $hookmanager->resArray;

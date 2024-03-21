@@ -25,6 +25,7 @@
  * \ingroup mailing
  * \brief 	Script to send a prepared and validated emaling from command line
  */
+
 if (!defined('NOSESSION')) {
 	define('NOSESSION', '1');
 }
@@ -36,12 +37,12 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 if (!isset($argv[1]) || !$argv[1]) {
 	print "Usage: ".$script_file." (ID_MAILING|all) [userloginforsignature] [maxnbofemails]\n";
-	exit(-1);
+	exit(1);
 }
 
 $id = $argv[1];
@@ -75,8 +76,10 @@ $langs->loadLangs(array("main", "mails"));
 
 if (!isModEnabled('mailing')) {
 	print 'Module Emailing not enabled';
-	exit(-1);
+	exit(1);
 }
+
+$hookmanager->initHooks(array('cli'));
 
 
 /*
@@ -95,7 +98,7 @@ if (getDolGlobalString('MAILING_LIMIT_SENDBYCLI') == '-1') {
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-only mode\n";
-	exit(-1);
+	exit(1);
 }
 
 $user = new User($db);

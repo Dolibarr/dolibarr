@@ -10,6 +10,7 @@
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +29,12 @@
 /**
  *	\file       htdocs/core/class/html.formother.class.php
  *  \ingroup    core
- *	\brief      Fichier de la classe des fonctions predefinie de composants html autre
+ *	\brief      Fichier de la class des functions predefinie de composants html autre
  */
 
 
 /**
- *	Classe permettant la generation de composants html autre
+ *	Class permettant la generation de composants html autre
  *	Only common components are here.
  */
 class FormOther
@@ -522,8 +523,17 @@ class FormOther
 		if (!empty($user->socid)) {
 			$sql_usr .= " AND u.fk_soc = ".((int) $user->socid);
 		}
+		if (getDolGlobalString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX')) {
+			$sql_usr .= " AND u.employee <> 0";
+		}
+		if (getDolGlobalString('USER_HIDE_EXTERNAL_IN_COMBOBOX')) {
+			$sql_usr .= " AND u.fk_soc IS NULL";
+		}
+		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX')) {
+			$sql_usr .= " AND u.statut <> 0";
+		}
 
-		//Add hook to filter on user (for exemple on usergroup define in custom modules)
+		//Add hook to filter on user (for example on usergroup define in custom modules)
 		if (!empty($reshook)) {
 			$sql_usr .= $hookmanager->resArray[0];
 		}
@@ -546,7 +556,7 @@ class FormOther
 
 			$sql_usr .= " AND u2.rowid = sc.fk_user AND sc.fk_soc = ".((int) $user->socid);
 
-			//Add hook to filter on user (for exemple on usergroup define in custom modules)
+			//Add hook to filter on user (for example on usergroup define in custom modules)
 			if (!empty($reshook)) {
 				$sql_usr .= $hookmanager->resArray[1];
 			}
@@ -653,7 +663,7 @@ class FormOther
 	 *  @param	string	$morecss				More css
 	 *  @return	void
 	 */
-	public function selectProjectTasks($selectedtask = '', $projectid = 0, $htmlname = 'task_parent', $modeproject = 0, $modetask = 0, $mode = 0, $useempty = 0, $disablechildoftaskid = 0, $filteronprojstatus = '', $morecss = '')
+	public function selectProjectTasks($selectedtask = 0, $projectid = 0, $htmlname = 'task_parent', $modeproject = 0, $modetask = 0, $mode = 0, $useempty = 0, $disablechildoftaskid = 0, $filteronprojstatus = '', $morecss = '')
 	{
 		global $user, $langs;
 
@@ -825,7 +835,7 @@ class FormOther
 	 *  @deprecated Use instead selectColor
 	 *  @see selectColor()
 	 */
-	public function select_color($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '')
+	public function select_color($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = [])
 	{
 		// phpcs:enable
 		print $this->selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
@@ -840,12 +850,12 @@ class FormOther
 	 *  @param	int			$showcolorbox			1=Show color code and color box, 0=Show only color code
 	 *  @param 	array		$arrayofcolors			Array of possible colors to choose in the selector. All colors are possible if empty. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
 	 *  @param	string		$morecss				Add css style into input field
-	 *  @param	string		$setpropertyonselect	Set this property after selecting a color
+	 *  @param	string		$setpropertyonselect	Set this CSS property after selecting a color
 	 *  @param	string		$default				Default color
 	 *  @return	string
 	 *  @see showColor()
 	 */
-	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '', $morecss = '', $setpropertyonselect = '', $default = '')
+	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = [], $morecss = '', $setpropertyonselect = '', $default = '')
 	{
 		// Deprecation warning
 		if ($form_name) {
@@ -980,7 +990,7 @@ class FormOther
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Creae an image for color
+	 *	Create an image for color
 	 *
 	 *	@param	string	$color		Color of image
 	 *	@param	string	$module 	Name of module
@@ -989,7 +999,7 @@ class FormOther
 	 *	@param	int		$y      	Hauteur de l'image en pixels
 	 *	@return	void
 	 */
-	public function CreateColorIcon($color, $module, $name, $x = '12', $y = '12')
+	public function CreateColorIcon($color, $module, $name, $x = 12, $y = 12)
 	{
 		// phpcs:enable
 		global $conf;
@@ -1006,16 +1016,16 @@ class FormOther
 
 		$color = substr($color, 1, 6);
 
-		$rouge = hexdec(substr($color, 0, 2)); //conversion du canal rouge
-		$vert  = hexdec(substr($color, 2, 2)); //conversion du canal vert
-		$bleu  = hexdec(substr($color, 4, 2)); //conversion du canal bleu
+		$red = hexdec(substr($color, 0, 2));    // Red channel conversion
+		$green  = hexdec(substr($color, 2, 2)); // Green channel conversion
+		$blue  = hexdec(substr($color, 4, 2));  // Blue channel conversion
 
-		$couleur = imagecolorallocate($image, $rouge, $vert, $bleu);
-		//print $rouge.$vert.$bleu;
-		imagefill($image, 0, 0, $couleur); //on remplit l'image
-		// On cree la couleur et on l'attribue a une variable pour ne pas la perdre
-		ImagePng($image, $file); //renvoie une image sous format png
-		ImageDestroy($image);
+		$couleur = imagecolorallocate($image, $red, $green, $blue);
+		//print $red.$green.$blue;
+		imagefill($image, 0, 0, $couleur); // Fill the image
+		// Create the colr and store it in a variable to maintain it
+		imagepng($image, $file); // Returns an image in PNG format
+		imagedestroy($image);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1204,7 +1214,7 @@ class FormOther
 	 *  Class 'Form' must be known.
 	 *
 	 * 	@param	   User         $user		 Object User
-	 * 	@param	   String       $areacode    Code of area for pages - 0 = Home page ... See getListOfPagesForBoxes()
+	 * 	@param	   string       $areacode    Code of area for pages - 0 = Home page ... See getListOfPagesForBoxes()
 	 *	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
 	 */
 	public static function getBoxesArea($user, $areacode)
@@ -1216,7 +1226,7 @@ class FormOther
 		$confuserzone = 'MAIN_BOXES_'.$areacode;
 
 		// $boxactivated will be array of boxes enabled into global setup
-		// $boxidactivatedforuser will be array of boxes choosed by user
+		// $boxidactivatedforuser will be array of boxes chose by user
 
 		$selectboxlist = '';
 		$boxactivated = InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone) ? null : $user), array(), 0); // Search boxes of common+user (or common only if user has no specific setup)
@@ -1364,7 +1374,7 @@ class FormOther
 			// Define $box_max_lines
 			$box_max_lines = 5;
 			if (getDolGlobalString('MAIN_BOXES_MAXLINES')) {
-				$box_max_lines = $conf->global->MAIN_BOXES_MAXLINES;
+				$box_max_lines = getDolGlobalString('MAIN_BOXES_MAXLINES');
 			}
 
 			$ii = 0;

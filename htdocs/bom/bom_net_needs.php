@@ -33,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
 $langs->loadLangs(array("mrp", "other", "stocks"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$lineid = GETPOST('lineid', 'int');
+$id = GETPOSTINT('id');
+$lineid = GETPOSTINT('lineid');
 $ref    = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm  = GETPOST('confirm', 'alpha');
@@ -57,7 +57,7 @@ $diroutputmassaction = $conf->bom->dir_output.'/temp/massgeneration/'.$user->id;
 $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {

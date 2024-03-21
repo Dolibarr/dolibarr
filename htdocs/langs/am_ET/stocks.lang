@@ -114,7 +114,7 @@ EstimatedStockValueSell=የሚሸጥ ዋጋ
 EstimatedStockValueShort=የግቤት ክምችት ዋጋ
 EstimatedStockValue=የግቤት ክምችት ዋጋ
 DeleteAWarehouse=መጋዘን ሰርዝ
-ConfirmDeleteWarehouse=እርግጠኛ ነዎት መጋዘኑን መሰረዝ ይፈልጋሉ <b>%s<span class='notranslate'></b>?
+ConfirmDeleteWarehouse=Are you sure you want to delete the warehouse <b>%s</b>?
 PersonalStock=የግል ክምችት %s
 ThisWarehouseIsPersonalStock=ይህ መጋዘን የግል የ%s %sን ይወክላል
 SelectWarehouseForStockDecrease=ለክምችት ቅነሳ የሚጠቀሙበትን መጋዘን ይምረጡ
@@ -145,8 +145,8 @@ ReplenishmentStatusDesc=ይህ ከተፈለገው አክሲዮን ያነሰ አ�
 ReplenishmentStatusDescPerWarehouse=በአንድ መጋዘን በተገለፀው በተፈለገው መጠን መሰረት መሙላት ከፈለጉ በመጋዘኑ ላይ ማጣሪያ ማከል አለብዎት።
 ReplenishmentOrdersDesc=ይህ አስቀድሞ የተገለጹ ምርቶችን ጨምሮ የሁሉም ክፍት የግዢ ትዕዛዞች ዝርዝር ነው። አስቀድመው ከተገለጹ ምርቶች ጋር ክፍት ትዕዛዞች ብቻ ናቸው፣ ስለዚህ አክሲዮኖችን ሊነኩ የሚችሉ ትዕዛዞች እዚህ ይታያሉ።
 Replenishments=መሙላት
-NbOfProductBeforePeriod=ከተመረጠው ጊዜ በፊት ያለው የምርት መጠን %s (<%s)
-NbOfProductAfterPeriod=ከተመረጠው ጊዜ በኋላ (> %s ላይ ያለው የምርት መጠን %s
+NbOfProductBeforePeriod=Quantity of product %s in stock before selected period (< %s)
+NbOfProductAfterPeriod=Quantity of product %s in stock after selected period (> %s)
 MassMovement=የጅምላ እንቅስቃሴ
 SelectProductInAndOutWareHouse=የምንጭ መጋዘን (አማራጭ)፣ የታለመ መጋዘን፣ ምርት እና መጠን ይምረጡ ከዚያ «%sን ጠቅ ያድርጉ። አንዴ ይህ ለሁሉም አስፈላጊ እንቅስቃሴዎች ከተሰራ በኋላ "%s ላይ ጠቅ ያድርጉ።
 RecordMovement=ማስተላለፍን ይመዝግቡ
@@ -171,7 +171,7 @@ MovementTransferStock=የምርት ክምችት %s ወደ ሌላ መጋዘን �
 BatchStockMouvementAddInGlobal=ባች ክምችት ወደ አለምአቀፍ ክምችት ይሸጋገራል (ምርት ባች አይጠቀምም)
 InventoryCodeShort=ኢንቭ./Mov. ኮድ
 NoPendingReceptionOnSupplierOrder=በግዢ ትእዛዝ ምክንያት ምንም በመጠባበቅ ላይ ያለ አቀባበል የለም።
-ThisSerialAlreadyExistWithDifferentDate=ይህ ዕጣ/ተከታታይ ቁጥር (<strong>%s</strong></span ጋር ግን አስቀድሞ አለ) የተለየ የሚበላ ወይም የሚሸጥበት ቀን (የተገኘ <span class='notranslate'><strong>%s</strong> ግን ገባህ span class='notranslate'><strong>%s</strong>)።
+ThisSerialAlreadyExistWithDifferentDate=This lot/serial number (<strong>%s</strong>) already exists but with different eatby or sellby date (found <strong>%s</strong> but you enter <strong>%s</strong>).
 OpenAnyMovement=ክፍት (ሁሉም እንቅስቃሴዎች)
 OpenInternal=ክፍት (የውስጥ እንቅስቃሴ ብቻ)
 UseDispatchStatus=በግዢ ማዘዣ መቀበያ ላይ ለምርት መስመሮች የመላኪያ ሁኔታን (አጽድቅ/እምቢ) ተጠቀም
@@ -253,7 +253,7 @@ DisableStockChangeOfSubProduct=በዚህ እንቅስቃሴ ወቅት ለሁሉ�
 ImportFromCSV=የእንቅስቃሴ ዝርዝር CSV አስመጣ
 ChooseFileToImport=ፋይሉን ስቀል ከዚያም የ%s አዶን ጠቅ በማድረግ ፋይሉን እንደ ምንጭ አስመጪ ፋይል ለመምረጥ...
 SelectAStockMovementFileToImport=ለማስመጣት የአክሲዮን እንቅስቃሴ ፋይል ይምረጡ
-InfoTemplateImport=የተሰቀለው ፋይል ይህ ቅርጸት ሊኖረው ይገባል (* የግዴታ መስኮች ናቸው)፡<br>ምንጭ ማከማቻ* | ዒላማ መጋዘን* | ምርት* | ብዛት* | ሎት/ተከታታይ ቁጥር<br>CSV ቁምፊ መለያያ "<b>b0ecb><2ec87f49f0 መሆን አለበት span class='notranslate'></b>"
+InfoTemplateImport=Uploaded file needs to have this format (* are mandatory fields):<br>Source Warehouse* | Target Warehouse* | Product* | Quantity* | Lot/serial number<br>CSV character separator must be "<b>%s</b>"
 LabelOfInventoryMovemement=ክምችት %s
 ReOpen=እንደገና ክፈት
 ConfirmFinish=የእቃው መዘጋቱን አረጋግጠዋል? ይህ አክሲዮንዎን ወደ እቃው ያስገባዎትን ትክክለኛ ኪቲ ለማዘመን ሁሉንም የአክሲዮን እንቅስቃሴዎች ያመነጫል።
@@ -282,7 +282,7 @@ ModuleStockTransferName=የላቀ የአክሲዮን ማስተላለፍ
 ModuleStockTransferDesc=የላቀ የአክሲዮን ማስተላለፍ አስተዳደር፣ የማስተላለፊያ ወረቀት በማመንጨት
 StockTransferNew=አዲስ የአክሲዮን ዝውውር
 StockTransferList=የአክሲዮን ዝውውሮች ዝርዝር
-ConfirmValidateStockTransfer=እርግጠኛ ነዎት ይህንን የአክሲዮን ዝውውር በማጣቀሻ <b>%s<span class='notranslate'>b09a4b739f17f span >?
+ConfirmValidateStockTransfer=Are you sure you want to validate this stocks transfer with the reference <b>%s</b> ?
 ConfirmDestock=ከዝውውር ጋር የአክሲዮን ቅነሳ %s
 ConfirmDestockCancel=የአክሲዮን ቅነሳን በማስተላለፍ ይሰርዙ %s
 DestockAllProduct=የአክሲዮኖች ቅነሳ

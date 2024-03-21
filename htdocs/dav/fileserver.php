@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018	Destailleur Laurent	<eldy@users.sourceforge.net>
  * Copyright (C) 2019	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +50,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/dav/dav.class.php';
 require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
+
 require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
+//require_once DOL_DOCUMENT_ROOT.'/includes/autoload.php';
 
 
 $user = new User($db);
@@ -74,13 +77,12 @@ if (getDolGlobalString('DAV_RESTRICT_ON_IP')) {
 		dol_syslog('Remote ip is '.$ipremote.', not into list ' . getDolGlobalString('DAV_RESTRICT_ON_IP'));
 		print 'DAV not allowed from the IP '.$ipremote;
 		header('HTTP/1.1 503 DAV not allowed from your IP '.$ipremote);
-		//print $conf->global->DAV_RESTRICT_ON_IP;
 		exit(0);
 	}
 }
 
 
-$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
+$entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : (!empty($conf->entity) ? $conf->entity : 1));
 
 // settings
 $publicDir = $conf->dav->multidir_output[$entity].'/public';
@@ -91,69 +93,76 @@ $tmpDir = $conf->dav->multidir_output[$entity]; // We need root dir, not a dir t
 
 
 // Authentication callback function
-$authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $password) {
-	global $user, $conf;
-	global $dolibarr_main_authentication, $dolibarr_auto_user;
+$authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(
+	/**
+	 * @param string	$username	Username to validate as a login
+	 * @param string	$password	Password to validate for $username
+	 * @return bool					True if login ok, false if not
+	 */
+	static function ($username, $password) {
+		global $user, $conf;
+		global $dolibarr_main_authentication, $dolibarr_auto_user;
 
-	if (empty($user->login)) {
-		dol_syslog("Failed to authenticate to DAV, login is not provided", LOG_WARNING);
-		return false;
-	}
-	if ($user->socid > 0) {
-		dol_syslog("Failed to authenticate to DAV, user is an external user", LOG_WARNING);
-		return false;
-	}
-	if ($user->login != $username) {
-		dol_syslog("Failed to authenticate to DAV, login does not match the login of loaded user", LOG_WARNING);
-		return false;
-	}
-
-	// Authentication mode
-	if (empty($dolibarr_main_authentication)) {
-		$dolibarr_main_authentication = 'dolibarr';
-	}
-
-	// Authentication mode: forceuser
-	if ($dolibarr_main_authentication == 'forceuser') {
-		if (empty($dolibarr_auto_user)) {
-			$dolibarr_auto_user = 'auto';
-		}
-		if ($dolibarr_auto_user != $username) {
-			dol_syslog("Warning: your instance is set to use the automatic forced login '".$dolibarr_auto_user."' that is not the requested login. DAV usage is forbidden in this mode.");
+		if (empty($user->login)) {
+			dol_syslog("Failed to authenticate to DAV, login is not provided", LOG_WARNING);
 			return false;
 		}
+		if ($user->socid > 0) {
+			dol_syslog("Failed to authenticate to DAV, user is an external user", LOG_WARNING);
+			return false;
+		}
+		if ($user->login != $username) {
+			dol_syslog("Failed to authenticate to DAV, login does not match the login of loaded user", LOG_WARNING);
+			return false;
+		}
+
+		// Authentication mode
+		if (empty($dolibarr_main_authentication)) {
+			$dolibarr_main_authentication = 'dolibarr';
+		}
+
+		// Authentication mode: forceuser
+		if ($dolibarr_main_authentication == 'forceuser') {
+			if (empty($dolibarr_auto_user)) {
+				$dolibarr_auto_user = 'auto';
+			}
+			if ($dolibarr_auto_user != $username) {
+				dol_syslog("Warning: your instance is set to use the automatic forced login '".$dolibarr_auto_user."' that is not the requested login. DAV usage is forbidden in this mode.");
+				return false;
+			}
+		}
+
+		$authmode = explode(',', $dolibarr_main_authentication);
+		$entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : (!empty($conf->entity) ? $conf->entity : 1));
+
+		if (checkLoginPassEntity($username, $password, $entity, $authmode, 'dav') != $username) {
+			return false;
+		}
+
+		// Check if user status is enabled
+		if ($user->statut != $user::STATUS_ENABLED) {
+			// Status is disabled
+			dol_syslog("The user has been disabled.");
+			return false;
+		}
+
+		// Check if session was unvalidated by a password change
+		if (($user->flagdelsessionsbefore && !empty($_SESSION["dol_logindate"]) && $user->flagdelsessionsbefore > $_SESSION["dol_logindate"])) {
+			// Session is no more valid
+			dol_syslog("The user has a date for session invalidation = ".$user->flagdelsessionsbefore." and a session date = ".$_SESSION["dol_logindate"].". We must invalidate its sessions.");
+			return false;
+		}
+
+		// Check date validity
+		if ($user->isNotIntoValidityDateRange()) {
+			// User validity dates are no more valid
+			dol_syslog("The user login has a validity between [".$user->datestartvalidity." and ".$user->dateendvalidity."], current date is ".dol_now());
+			return false;
+		}
+
+		return true;
 	}
-
-	$authmode = explode(',', $dolibarr_main_authentication);
-	$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
-
-	if (checkLoginPassEntity($username, $password, $entity, $authmode, 'dav') != $username) {
-		return false;
-	}
-
-	// Check if user status is enabled
-	if ($user->statut != $user::STATUS_ENABLED) {
-		// Status is disabled
-		dol_syslog("The user has been disabled.");
-		return false;
-	}
-
-	// Check if session was unvalidated by a password change
-	if (($user->flagdelsessionsbefore && !empty($_SESSION["dol_logindate"]) && $user->flagdelsessionsbefore > $_SESSION["dol_logindate"])) {
-		// Session is no more valid
-		dol_syslog("The user has a date for session invalidation = ".$user->flagdelsessionsbefore." and a session date = ".$_SESSION["dol_logindate"].". We must invalidate its sessions.");
-		return false;
-	}
-
-	// Check date validity
-	if ($user->isNotIntoValidityDateRange()) {
-		// User validity dates are no more valid
-		dol_syslog("The user login has a validity between [".$user->datestartvalidity." and ".$user->dateendvalidity."], curren date is ".dol_now());
-		return false;
-	}
-
-	return true;
-});
+);
 
 $authBackend->setRealm(constant('DOL_APPLICATION_TITLE').' - WebDAV');
 
@@ -210,7 +219,7 @@ if (isset($baseUri)) {
 if ((!getDolGlobalString('DAV_ALLOW_PUBLIC_DIR')
 	|| !preg_match('/'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php/public', '/').'/', $_SERVER["PHP_SELF"]))
 	&& !preg_match('/^sabreAction=asset&assetName=[a-zA-Z0-9%\-\/]+\.(png|css|woff|ico|ttf)$/', $_SERVER["QUERY_STRING"])	// URL for Sabre browser resources
-	) {
+) {
 	//var_dump($_SERVER["QUERY_STRING"]);exit;
 	$server->addPlugin(new \Sabre\DAV\Auth\Plugin($authBackend));
 }
@@ -238,7 +247,7 @@ $server->addPlugin($tempFF);
 */
 
 // And off we go!
-$server->exec();
+$server->start();
 
 if (is_object($db)) {
 	$db->close();

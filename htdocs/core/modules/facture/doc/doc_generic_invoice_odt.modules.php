@@ -86,7 +86,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		// Recupere emetteur
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // Par defaut, si n'etait pas defini
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // Par default, si n'etait pas defini
 		}
 	}
 
@@ -243,7 +243,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 			$object->fetch_thirdparty();
 
-			$dir = $conf->facture->dir_output;
+			$dir = empty($conf->facture->multidir_output[$object->entity]) ? $conf->facture->dir_output : $conf->facture->multidir_output[$object->entity];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
@@ -268,8 +268,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
-					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
+				if (getDolGlobalString('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalString('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
@@ -309,7 +309,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 						$contactobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;
-						// if we have a BILLING contact and we dont use it as thirdparty recipient we store the contact object for later use
+						// if we have a BILLING contact and we don't use it as thirdparty recipient we store the contact object for later use
 						$contactobject = $object->contact;
 					}
 				} else {

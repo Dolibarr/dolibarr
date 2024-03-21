@@ -39,7 +39,7 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -55,7 +55,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
+	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('order')) {
 		$objectsrc = new Commande($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
@@ -85,7 +85,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	if ($action == 'addcontact' && $user->hasRight('expedition', 'creer')) {
 		if ($result > 0 && $id > 0) {
-			$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+			$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 			$typeid    = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 			$result    = $objectsrc->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 		}
@@ -105,10 +105,10 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'swapstatut' && $user->hasRight('expedition', 'creer')) {
 		// bascule du statut d'un contact
-		$result = $objectsrc->swapContactStatus(GETPOST('ligne', 'int'));
+		$result = $objectsrc->swapContactStatus(GETPOSTINT('ligne'));
 	} elseif ($action == 'deletecontact' && $user->hasRight('expedition', 'creer')) {
 		// Efface un contact
-		$result = $objectsrc->delete_contact(GETPOST("lineid", 'int'));
+		$result = $objectsrc->delete_contact(GETPOSTINT("lineid"));
 
 		if ($result >= 0) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -137,7 +137,7 @@ $userstatic = new User($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* Card view and edit mode                                                       */
 /*                                                                             */
 /* *************************************************************************** */
 
@@ -191,7 +191,7 @@ if ($id > 0 || !empty($ref)) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
+	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('order')) {
 		print '<tr><td class="titlefield">';
 		$objectsrc = new Commande($db);
 		$objectsrc->fetch($object->$typeobject->id);

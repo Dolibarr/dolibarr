@@ -38,7 +38,7 @@ $action = GETPOST('action', 'aZ09');
 $max = 5;
 $now = dol_now();
 
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
@@ -329,7 +329,7 @@ END MODULEBUILDER DRAFT MYOBJECT */
 print '</div><div class="fichetwothirdright">';
 
 
-$NBMAX = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+$NBMAX = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
 $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 
 // Last modified job position

@@ -2,7 +2,8 @@
 /* Copyright (C) 2016       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2016       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2016-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +51,8 @@ if ($type == 'sub') {
 }
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : $context_default;
 $show_subgroup = GETPOST('show_subgroup', 'alpha');
-$search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
-$search_date_end = dol_mktime(23, 59, 59, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
+$search_date_start = dol_mktime(0, 0, 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
+$search_date_end = dol_mktime(23, 59, 59, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 $search_ledger_code = GETPOST('search_ledger_code', 'array');
 $search_accountancy_code_start = GETPOST('search_accountancy_code_start', 'alpha');
 if ($search_accountancy_code_start == - 1) {
@@ -64,10 +65,10 @@ if ($search_accountancy_code_end == - 1) {
 $search_not_reconciled = GETPOST('search_not_reconciled', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
@@ -161,15 +162,15 @@ if (empty($reshook)) {
 
 	if (!empty($search_date_start)) {
 		$filter['t.doc_date>='] = $search_date_start;
-		$param .= '&date_startmonth=' . GETPOST('date_startmonth', 'int') . '&date_startday=' . GETPOST('date_startday', 'int') . '&date_startyear=' . GETPOST('date_startyear', 'int');
+		$param .= '&date_startmonth=' . GETPOSTINT('date_startmonth') . '&date_startday=' . GETPOSTINT('date_startday') . '&date_startyear=' . GETPOSTINT('date_startyear');
 	}
 	if (!empty($search_date_end)) {
 		$filter['t.doc_date<='] = $search_date_end;
-		$param .= '&date_endmonth=' . GETPOST('date_endmonth', 'int') . '&date_endday=' . GETPOST('date_endday', 'int') . '&date_endyear=' . GETPOST('date_endyear', 'int');
+		$param .= '&date_endmonth=' . GETPOSTINT('date_endmonth') . '&date_endday=' . GETPOSTINT('date_endday') . '&date_endyear=' . GETPOSTINT('date_endyear');
 	}
 	if (!empty($search_doc_date)) {
 		$filter['t.doc_date'] = $search_doc_date;
-		$param .= '&doc_datemonth=' . GETPOST('doc_datemonth', 'int') . '&doc_dateday=' . GETPOST('doc_dateday', 'int') . '&doc_dateyear=' . GETPOST('doc_dateyear', 'int');
+		$param .= '&doc_datemonth=' . GETPOSTINT('doc_datemonth') . '&doc_dateday=' . GETPOSTINT('doc_dateday') . '&doc_dateyear=' . GETPOSTINT('doc_dateyear');
 	}
 	if (!empty($search_accountancy_code_start)) {
 		if ($type == 'sub') {
@@ -206,7 +207,7 @@ if (empty($reshook)) {
 }
 
 if ($action == 'export_csv') {
-	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+	$sep = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
 
 	$filename = 'balance';
 	$type_export = 'balance';
@@ -237,6 +238,7 @@ if ($action == 'export_csv') {
 
 	exit;
 }
+
 
 /*
  * View
@@ -442,7 +444,7 @@ if ($action != 'export_csv') {
 	print_liste_field_titre("Balance", $_SERVER["PHP_SELF"], "", $param, "", 'class="right"', $sortfield, $sortorder);
 
 	// Hook fields
-	$parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
@@ -471,11 +473,13 @@ if ($action != 'export_csv') {
 		$sql .= " GROUP BY t.numero_compte";
 
 		$resql = $db->query($sql);
-		$nrows = $resql->num_rows;
 		$opening_balances = array();
-		for ($i = 0; $i < $nrows; $i++) {
-			$arr = $resql->fetch_array();
-			$opening_balances["'" . $arr['numero_compte'] . "'"] = $arr['opening_balance'];
+		if ($resql) {
+			$nrows = $resql->num_rows;
+			for ($i = 0; $i < $nrows; $i++) {
+				$arr = $resql->fetch_array();
+				$opening_balances["'" . $arr['numero_compte'] . "'"] = $arr['opening_balance'];
+			}
 		}
 	}
 
@@ -546,7 +550,7 @@ if ($action != 'export_csv') {
 
 				// Show first line of a break
 				print '<tr class="trforbreak">';
-				print '<td colspan="'.($colspan+1).'" style="font-weight:bold; border-bottom: 1pt solid black;">'.$line->numero_compte.($root_account_description ? ' - '.$root_account_description : '').'</td>';
+				print '<td colspan="'.($colspan + 1).'" class="tdforbreak">'.$root_account_number.($root_account_description ? ' - '.$root_account_description : '').'</td>';
 				print '</tr>';
 
 				$displayed_account = $root_account_number;
@@ -587,20 +591,20 @@ if ($action != 'export_csv') {
 			if ($line->subledger_account) {
 				$urlzoom = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?type=sub&search_accountancy_code_start=' . urlencode($line->subledger_account) . '&search_accountancy_code_end=' . urlencode($line->subledger_account);
 				if (GETPOSTISSET('date_startmonth')) {
-					$urlzoom .= '&search_date_startmonth=' . GETPOST('date_startmonth', 'int') . '&search_date_startday=' . GETPOST('date_startday', 'int') . '&search_date_startyear=' . GETPOST('date_startyear', 'int');
+					$urlzoom .= '&search_date_startmonth=' . GETPOSTINT('date_startmonth') . '&search_date_startday=' . GETPOSTINT('date_startday') . '&search_date_startyear=' . GETPOSTINT('date_startyear');
 				}
 				if (GETPOSTISSET('date_endmonth')) {
-					$urlzoom .= '&search_date_endmonth=' . GETPOST('date_endmonth', 'int') . '&search_date_endday=' . GETPOST('date_endday', 'int') . '&search_date_endyear=' . GETPOST('date_endyear', 'int');
+					$urlzoom .= '&search_date_endmonth=' . GETPOSTINT('date_endmonth') . '&search_date_endday=' . GETPOSTINT('date_endday') . '&search_date_endyear=' . GETPOSTINT('date_endyear');
 				}
 			}
 		} else {
 			if ($line->numero_compte) {
 				$urlzoom = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start=' . urlencode($line->numero_compte) . '&search_accountancy_code_end=' . urlencode($line->numero_compte);
 				if (GETPOSTISSET('date_startmonth')) {
-					$urlzoom .= '&search_date_startmonth=' . GETPOST('date_startmonth', 'int') . '&search_date_startday=' . GETPOST('date_startday', 'int') . '&search_date_startyear=' . GETPOST('date_startyear', 'int');
+					$urlzoom .= '&search_date_startmonth=' . GETPOSTINT('date_startmonth') . '&search_date_startday=' . GETPOSTINT('date_startday') . '&search_date_startyear=' . GETPOSTINT('date_startyear');
 				}
 				if (GETPOSTISSET('date_endmonth')) {
-					$urlzoom .= '&search_date_endmonth=' . GETPOST('date_endmonth', 'int') . '&search_date_endday=' . GETPOST('date_endday', 'int') . '&search_date_endyear=' . GETPOST('date_endyear', 'int');
+					$urlzoom .= '&search_date_endmonth=' . GETPOSTINT('date_endmonth') . '&search_date_endday=' . GETPOSTINT('date_endday') . '&search_date_endyear=' . GETPOSTINT('date_endyear');
 				}
 			}
 		}
@@ -675,6 +679,35 @@ if ($action != 'export_csv') {
 		print "<td></td>\n";
 	}
 	print '</tr>';
+
+	// Accounting result
+	if (getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT')) {
+		print '<tr class="liste_total">';
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print "<td></td>\n";
+		}
+		print '<td class="right">' . $langs->trans("AccountingResult") . ':</td>';
+		if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
+			print '<td></td>';
+		}
+
+		$accountingResult = $object->accountingResult($search_date_start, $search_date_end);
+		if ($accountingResult < 0) {
+			$accountingResultDebit = price(abs((float) price2num($accountingResult, 'MT')));
+			$accountingResultClassCSS = ' error';
+		} else {
+			$accountingResultCredit = price(price2num($accountingResult, 'MT'));
+			$accountingResultClassCSS = ' green';
+		}
+		print '<td class="right nowraponall amount' . $accountingResultClassCSS . '">' . $accountingResultDebit . '</td>';
+		print '<td class="right nowraponall amount' . $accountingResultClassCSS . '">' . $accountingResultCredit . '</td>';
+
+		print '<td></td>';
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print "<td></td>\n";
+		}
+		print '</tr>';
+	}
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

@@ -62,7 +62,7 @@ UploadNewTemplate=Új sablon(ok) feltöltése
 FormToTestFileUploadForm=A fájlfeltöltés tesztelésének űrlapja (beállítás szerint)
 ModuleMustBeEnabled=A(z) <b>%s</b> modult/alkalmazást engedélyezni kell
 ModuleIsEnabled=A(z) <b>%s</b> modul/alkalmazás engedélyezve van
-IfModuleEnabled=Megjegyzés: az 'igen' csak akkor eredményes, ha a <b>%s</b> modul engedélyezve van 
+IfModuleEnabled=Megjegyzés: az 'igen' csak akkor eredményes, ha a <b>%s</b> modul engedélyezve van
 RemoveLock=Távolítsa el / nevezze át a(z) <b>%s</b> fájlt, ha létezik, hogy engedélyezze a Frissítés / Telepítés eszközt.
 RestoreLock=Állítsa vissza az <b>%s</b> fájlt, csak olvasási jogokat engedélyezzen, hogy le lehessen tiltani a Frissítés / Telepítés eszköz további használatát.
 SecuritySetup=Biztonsági beállítások
@@ -366,9 +366,9 @@ GenericMaskCodes2=<b>{cccc}</b> az n karakteres ügyfélkód<br><b>{cccc000}</b>
 GenericMaskCodes3=Az összes többi karakter a maszkban érintetlen marad. <br> A szóközök nem megengedettek. <br>
 GenericMaskCodes3EAN=A maszk összes többi karaktere érintetlen marad (kivéve a * vagy a ? jelet az EAN13 13. pozíciójában).<br>Szóközök nem megengedettek.<br>Az EAN13-ban a 13. pozícióban lévő utolsó } után az utolsó karakternek * vagy ? . Ezt a számított kulcs váltja fel.<br>
 GenericMaskCodes4a=<u>Példa a partner 99. %s-jára a következővel: The20202 -01-31:</u><br>
-GenericMaskCodes4b=<u>Példa a következőre: partner, létrehozva: 2023. 01. 31.:b0aaa878<b>4dz0 span class='notranslate'><br></span>
+GenericMaskCodes4b=<u>Example on third party created on 2023-01-31:</u><br>
 GenericMaskCodes4c=<u>Példa a 2023. 01. 31-én létrehozott termékre:</u><br>
-GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> a b0aee833650</837fz spanyol }-ZZZ/{dd}/XXX<span class='notranslate'></b> a következőt adja: <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> a következőt adja meg: <b>IN2301-0099-A</b>, ha a vállalat típusa „Responsable Inscripto” „A_RI” típusú kóddal
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=Vissza szabható számot a meghatározott maszkot.
 ServerAvailableOnIPOrPort=Kiszolgálóhoz elérhető a címen <b>%s %s</b> porton
 ServerNotAvailableOnIPOrPort=A kiszolgáló nem elérhető címen <b>%s %s</b> porton
@@ -464,7 +464,7 @@ ExtrafieldParamHelpPassword=Ha ezt a mezőt üresen hagyja, akkor ez az érték 
 ExtrafieldParamHelpselect=Az értékek listájának olyan sorokat kell tartalmaznia, amelyek formátuma kulcs,érték (ahol a kulcs nem lehet '0')<br><br> például: <br>1,érték1<br>2,érték2<br>kód3,érték3< br>...<br><br>Ahhoz, hogy a lista egy másik kiegészítő attribútumlistától függ:<br>1,érték1|opciók_<i>szülőlista_kódja</i>:szülőkulcs<br>2,érték2|opciók_ <i>parent_list_code</i>:parent_key <br><br>Ahhoz, hogy a lista egy másik listától függjön:<br>1,érték1|<i>szülőlista_kódja</i>:parent_key<br>2,value2 |<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelpcheckbox=Az értékek listájának soroknak kell lennie formátumkulccsal, értékkel (ahol a kulcs nem lehet „0”) <br> <br> például: <br>1,érték1<br>2,érték2<br>3, érték3<br> ...
 ExtrafieldParamHelpradio=Az értékek listájának soroknak kell lennie formátumkulccsal, értékkel (ahol a kulcs nem lehet „0”) <br> <br> például: <br>1,érték1<br>2,érték2<br>3, érték3<br> ...
-ExtrafieldParamHelpsellist=Az értékek listája egy táblázatból származik<br>Syntax: table_name:label_field:id_field::filtersql<br>Példa: c_idtypent:libelle ::filtersql<br><br> – az id_field szükségszerűen elsődleges int kulcs<br> - A filtersql egy SQL feltétel. Ez lehet egy egyszerű teszt (pl. active=1), hogy csak az aktív értéket jelenítse meg<span class='notranslate'><br>A $ID$ is használható a szűrőben, amely az aktuális objektum aktuális azonosítója<br>Ha SELECT-et szeretne használni a szűrőben, használja a $SEL$ kulcsszót a befecskendezés elleni védelem megkerüléséhez.<br>ha extra mezőkre szeretne szűrni használja a szintaxist extra.fieldcode=... (ahol a mezőkód az extramező kódja)<br><br>In megrendelés, hogy a lista egy másik kiegészítő attribútumlistától függ:<br>c_typent:libelle:id:options_b049271<08181fcze81 /span>parent_list_code<span class='notranslate'></i>|parent_column:filter <br><br> class='notranslate'>megrendelés, hogy a lista egy másik listától függjön:<br>c_typent:libelle:id:<i> span>parent_list_code<span class='notranslate'></i>|parent_column:filter
+ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a SQL condition. It can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>To use a SELECT into the filter use the keyword $SEL$ to bypass anti-injection protection.<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelpchkbxlst=Az értékek listája egy táblázatból származik.<br>Szintaxis: tábla_neve:címkemező:id_mező::filtersql<br>Példa: c_typent:libelle:id::filtersql<br><br>a szűrő egy egyszerű teszt is lehet (pl. active=1 ) csak az aktív érték megjelenítéséhez<br>Használhatja a $ID$-t is a szűrőben, ez az aktuális objektum aktuális azonosítója<br>A szűrőben történő KIVÁLASZTÁSHOZ használja a $SEL$<br>ha extramezőkre szeretne szűrni, használja szintaxis extra.fieldcode=... (ahol a mezőkód az extramező kódja)<br><br>Ahhoz, hogy a lista egy másik kiegészítő attribútumlistától függ:<br>c_typent:libelle:id:options_<i> parent_list_code</i>|parent_column:filter <br><br>Ahhoz, hogy a lista egy másik listától függjön:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=A paramétereknek ObjectName:Classpath típusúnak kell lennie <br> Szintaxis: ObjectName:Classpath
 ExtrafieldParamHelpSeparator=Hagyja üresen egyszerű elválasztó esetén<br>Állítsa ezt 1-re összecsukódó elválasztó esetén (alapértelmezés szerint nyitva van új munkamenethez, majd az állapot megmarad minden felhasználói munkamenethez)<br>Állítsa ezt 2-re összecsukódó elválasztó esetén (alapértelmezés szerint összecsukva új munkamenet, akkor az állapot minden felhasználói munkamenetre megmarad)
@@ -1197,6 +1197,7 @@ Skin=Bőr téma
 DefaultSkin=Alapértelmezett skin téma
 MaxSizeList=Maximális hossza lista
 DefaultMaxSizeList=A listák alapértelmezett maximális hossza
+DisplayGrandTotalInList=Display grand total (for all pages) in lists footer
 DefaultMaxSizeShortList=A rövid listák alapértelmezett maximális hossza (azaz az ügyfélkártyán)
 MessageOfDay=A nap üzenete
 MessageLogin=Belépés oldalra üzenet
@@ -1860,7 +1861,7 @@ PastDelayVCalExport=Ne exportáljon régebbi eseményt mint
 SecurityKey = Biztonsági kulcs
 ##### ClickToDial #####
 ClickToDialSetup=Kattintson a Tárcsázás modul beállítása
-ClickToDialUrlDesc=Az URL akkor hívható meg, amikor a telefon képére kattintanak. Az URL-ben használhat címkéket<br><b>__PHONETO__</b> lecserélve a hívni kívánt személy telefonszámára<br><b>__PHONEFROM__</b> helyére a hívó személy telefonszáma kerül (az Öné)<span class='notranslate'><br><b>__LOGIN__b09a4b739f1 span>, amelyet a clicktodial bejelentkezés váltja fel (a felhasználói kártyán meghatározott)<span class='notranslate'><br><b>__PASS__ </b>, amely a clicktodial jelszóra lesz cserélve (a felhasználói kártyán van meghatározva).
+ClickToDialUrlDesc=URL called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).
 ClickToDialDesc=Ez a modul megváltoztatja a telefonszámokat, amikor asztali számítógépet használ, kattintható hivatkozásokká. Egy kattintás hívja a számot. Ez használható a telefonhívás indítására, ha egy puha telefont használ az asztalon, vagy ha például SIP protokollon alapuló CTI rendszert használ. Megjegyzés: Okostelefon használatakor a telefonszámok mindig rákattinthatók.
 ClickToDialUseTelLink=Csak egy "tel:" hivatkozást használjon a telefonszámokon
 ClickToDialUseTelLinkDesc=Használja ezt a módszert, ha felhasználói szoftveres telefonnal vagy szoftveres interfésszel rendelkeznek, amely ugyanarra a számítógépre van telepítve, mint a böngésző, és akkor hívható meg, amikor a böngészőjében a „tel:” betűvel kezdődő hivatkozásra kattint. Ha olyan hivatkozásra van szüksége, amely "sip:"-vel kezdődik, vagy teljes szervermegoldásra (nincs szükség helyi szoftvertelepítésre), akkor ezt "Nem"-re kell állítania, és ki kell töltenie a következő mezőt.
@@ -2291,7 +2292,7 @@ APIsAreNotEnabled=Az API-modulok nincsenek engedélyezve
 YouShouldSetThisToOff=Állítsa ezt 0-ra vagy ki
 InstallAndUpgradeLockedBy=A telepítést és a frissítéseket a <b>%s</b> fájl zárolja
 InstallLockedBy=A telepítést/újratelepítést a következő fájl zárolja: <b>%s</b>
-InstallOfAddonIsNotBlocked=A kiegészítők telepítése nincs zárolva. Hozzon létre egy <b>installmodules.lock</b> fájlt a <b><span class= ='notranslate'>%s</span></b> a külső kiegészítők/modulok telepítésének blokkolásához.
+InstallOfAddonIsNotBlocked=Installations of addons are not locked. Create a file <b>installmodules.lock</b> into directory <b>%s</b> to block installations of external addons/modules.
 OldImplementation=Régi megvalósítás
 PDF_SHOW_LINK_TO_ONLINE_PAYMENT=Ha egyes online fizetési modulok engedélyezve vannak (Paypal, Stripe, ...), adjon hozzá egy hivatkozást a PDF-fájlhoz az online fizetéshez
 DashboardDisableGlobal=Globálisan letiltja a nyitott objektumok összes mutatóját
@@ -2405,8 +2406,8 @@ NotAvailableByDefaultEnabledOnModuleActivation=Alapértelmezés szerint nincs l�
 CSSPage=CSS stílus
 Defaultfortype=Alaptértelmezett
 DefaultForTypeDesc=Alapértelmezés szerint használt sablon új e-mail létrehozásakor a sablontípushoz
-OptionXShouldBeEnabledInModuleY=A "<b>%s</b>" opciót engedélyezni kell a <span class modulban ='notranslate'><b></span>%s</b>
-OptionXIsCorrectlyEnabledInModuleY=A "<b>%s</b>" opció engedélyezve van a <span class= modulban 'notranslate'><b></span>%s</b>
+OptionXShouldBeEnabledInModuleY=Option "<b>%s</b>" should be enabled into module <b>%s</b>
+OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
 AllowOnLineSign=On Line aláírás engedélyezése
 AtBottomOfPage=Az oldal alján
 FailedAuth=sikertelen hitelesítések
@@ -2433,3 +2434,12 @@ UrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server 
 ExportUseForce=Use the parameter -f
 ExportUseForceHelp=Force to continue the export even when an error is found (Backup may not be reliable)
 CustomPrompt=Custom prompts
+AiDescription=AI (Artificial Intelligence) features
+AiDescriptionLong=Provides AI (Artificial Intelligence) features in different part of the application. Need external AI API.
+AI_KEY_API_CHATGPT= Key for ChatGPT IA api
+AiSetup=AI module setup
+AiCustomPrompt=AI customs prompt
+AI_CONFIGURATIONS_PROMPT=Custom prompt
+ImageGeneration=Image generation
+AIPromptForFeatures=AI custom prompts for features
+EnterAnIP=Enter an IP address

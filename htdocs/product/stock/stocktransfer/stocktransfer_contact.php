@@ -22,7 +22,7 @@
 /**
  *       \file       htdocs/product/stock/stocktransfer/stocktransfer_contact.php
  *       \ingroup    propal
- *       \brief      Tab to manage contacts/adresses of proposal
+ *       \brief      Tab to manage contacts/addresses of proposal
  */
 
 // Load Dolibarr environment
@@ -37,9 +37,9 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/lib/stocktransfer_s
 // Load translation files required by the page
 $langs->loadLangs(array('facture', 'orders', 'sendings', 'companies', 'stocks'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$lineid = GETPOST('lineid', 'int');
+$lineid = GETPOSTINT('lineid');
 $action = GETPOST('action', 'alpha');
 
 $object = new StockTransfer($db);
@@ -77,7 +77,7 @@ $result = restrictedArea($user, 'stocktransfer', $id, '', 'stocktransfer');
 
 if ($action == 'addcontact' && $user->hasRight('stocktransfer', 'stocktransfer', 'write')) {
 	if ($object->id > 0) {
-		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 		$result = $object->add_contact($contactid, !empty($_POST["typecontact"]) ? $_POST["typecontact"] : $_POST["type"], $_POST["source"]);
 	}
 
@@ -159,7 +159,7 @@ if ($object->id > 0) {
 
 	print dol_get_fiche_end();
 
-	$user->rights->stocktransfer->write = $user->rights->stocktransfer->stocktransfer->write;
+	$user->rights->stocktransfer->write = $user->hasRight('stocktransfer', 'stocktransfer', 'write');
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	foreach ($dirtpls as $reldir) {

@@ -91,10 +91,10 @@ ListOfMenusEntries=የምናሌ ግቤቶች ዝርዝር
 ListOfDictionariesEntries=የመዝገበ-ቃላት ግቤቶች ዝርዝር
 ListOfPermissionsDefined=የተገለጹ ፈቃዶች ዝርዝር
 SeeExamples=ምሳሌዎችን እዚህ ይመልከቱ
-EnabledDesc=ይህ መስክ ገቢር ለማድረግ ሁኔታ።<br><br>ምሳሌዎች፡<br></span span class='notranslate'><br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
+EnabledDesc=Condition to have this field active.<br><br>Examples:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
 VisibleDesc=ሜዳው ይታያል? (ምሳሌዎች፡- 0=በፍፁም የማይታይ፣ 1=በዝርዝር ውስጥ የሚታይ እና ቅጾችን መፍጠር/ማዘመን/ዕይታ፣ 2=በዝርዝር ላይ ብቻ የሚታይ፣ 3=በፍጠር/ማዘመን/በእይታ ቅጽ ላይ ብቻ (በዝርዝሮች ላይ ያልሆነ)፣ 4=በዝርዝሮች ላይ የሚታየው እና ማዘመን/ዕይታ ቅጽ ብቻ (አይፈጠርም)፣ 5=በዝርዝር ላይ የሚታየው እና ቅጽ ብቻ (አይፈጥርም፣ አይዘምንም)።<br><br> አሉታዊ እሴትን መጠቀም ማለት መስክ በነባሪ ዝርዝር ውስጥ አይታይም ነገር ግን ለዕይታ ሊመረጥ ይችላል)።
 ItCanBeAnExpression=መግለጫ ሊሆን ይችላል። ምሳሌ፡<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user -> መብት አለው ('በዓል'፣ 'በዓልን_መግለፅ')?1፡5
-DisplayOnPdfDesc=ይህንን መስክ በተመጣጣኝ የፒዲኤፍ ሰነዶች ላይ አሳይ፣ ቦታን በ"Position" መስክ ማስተዳደር ይችላሉ።<br><strong>ለሰነድ፡</strong><br>0 = አልታየም <br>1 = ማሳያ<span'class=' ><br></span>2 = ማሳያ ባዶ ካልሆነ ብቻ ነው<br><br>40478</c040e span>ለሰነድ መስመሮች፡<span class='notranslate'></strong><br>0 = አልታየም <br> = በአምድ ውስጥ ይታያል<span class='notranslate'><br>3 = ከመግለጫው በኋላ በመስመር መግለጫ አምድ ላይ አሳይ<br>4 = ከማብራሪያው በኋላ በመግለጫ አምድ ውስጥ አሳይ ባዶ ካልሆነ ብቻ
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=በፒዲኤፍ ላይ
 IsAMeasureDesc=አጠቃላይ ወደ ዝርዝር ውስጥ ለመግባት የመስክ ዋጋ ሊጠራቀም ይችላል? (ምሳሌ፡ 1 ወይም 0)
 SearchAllDesc=መስኩ ከፈጣን መፈለጊያ መሳሪያ ለመፈለግ ጥቅም ላይ ይውላል? (ምሳሌ፡ 1 ወይም 0)
@@ -111,7 +111,7 @@ TriggerDefDesc=ከሞጁልዎ ውጪ የሆነ የንግድ ክስተት ሲፈ
 SeeIDsInUse=በእርስዎ ጭነት ላይ ጥቅም ላይ የዋሉ መታወቂያዎችን ይመልከቱ
 SeeReservedIDsRangeHere=የተያዙ መታወቂያዎችን ክልል ይመልከቱ
 ToolkitForDevelopers=ለ Dolibarr ገንቢዎች መሣሪያ ስብስብ
-TryToUseTheModuleBuilder=የSQL እና ፒኤችፒ እውቀት ካሎት ቤተኛ ሞጁል ገንቢ ዊዛርድን መጠቀም ይችላሉ።<br>ሞጁሉን <strong><span class ያንቁ ='notranslate'>%s</span></strong>እና <span class="fa fa-bug">='span><translate' class' የሚለውን በመጫን ጠንቋዩን ይጠቀሙ። ></span> በላይኛው ቀኝ ምናሌ ላይ።<br>ማስጠንቀቂያ፡ ይህ የላቀ የገንቢ ባህሪ ነው፣ b0aee83365837fz<0አይደረግም span class='notranslate'></b></span>በምርት ቦታህ ላይ ሙከራ አድርግ!
+TryToUseTheModuleBuilder=If you have knowledge of SQL and PHP, you may use the native module builder wizard.<br>Enable the module <strong>%s</strong> and use the wizard by clicking the <span class="fa fa-bug"></span> on the top right menu.<br>Warning: This is an advanced developer feature, do <b>not</b> experiment on your production site!
 SeeTopRightMenu=ከላይ በቀኝ ሜኑ ላይ <span class="fa fa-bug"></span>ን ይመልከቱ
 AddLanguageFile=የቋንቋ ፋይል ያክሉ
 YouCanUseTranslationKey=በቋንቋ ፋይል ውስጥ የሚገኘውን የትርጉም ቁልፍ የሆነውን ቁልፍ እዚህ መጠቀም ትችላለህ ("ቋንቋዎች" የሚለውን ትር ተመልከት)
@@ -148,7 +148,7 @@ CSSListClass=CSS ለዝርዝር
 NotEditable=ሊስተካከል የማይችል
 ForeignKey=የውጭ ቁልፍ
 ForeignKeyDesc=የዚህ መስክ ዋጋ ወደ ሌላ ሠንጠረዥ መኖሩን ማረጋገጥ ካለበት. እዚህ ጋር የሚዛመድ አገባብ ያስገቡ፡ tablename.parentfieldtocheck
-TypeOfFieldsHelp=ምሳሌ፡<br>varchar(99)<br>email<br>s ='notranslate'><br></span>ip<br>url<br>የይለፍ ቃል<span class='0349 span>ድርብ(24,8)<br>እውነተኛ<br>text<br>> <span class='notranslate'><br>ቀን<br>datetime<br>የጊዜ ማህተም<span> <br></span>ኢንቲጀር<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]b0341 /span><span class='notranslate'><br>'1' ማለት መዝገቡን ለመፍጠር ከተጣመሩ በኋላ የ+ አዝራር እንጨምራለን<br>'filter' is an ሁለንተናዊ የማጣሪያ አገባብ ሁኔታ፡ ለምሳሌ፡ '((ሁኔታ፡=፡1) እና (fk_user==__USER_ID__) እና (ህጋዊ አካል፡ ውስጥ፡(__SHARED_ENTITIES__)))'
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=ይህ የመስክ/የባህሪው አይነት ነው።
 AsciiToHtmlConverter=Ascii ወደ HTML መቀየሪያ
 AsciiToPdfConverter=Ascii ወደ ፒዲኤፍ መቀየሪያ
@@ -180,7 +180,7 @@ FailedToAddCodeIntoDescriptor=ኮድ ወደ ገላጭ ማከል አልተሳካ�
 DictionariesCreated=መዝገበ ቃላት <b>%s</b> በተሳካ ሁኔታ ተፈጥሯል
 DictionaryDeleted=መዝገበ ቃላት <b>%s</b> በተሳካ ሁኔታ ተወግዷል
 PropertyModuleUpdated=ንብረት <b>%s</b> በተሳካ ሁኔታ ተዘምኗል
-InfoForApiFile=* ለመጀመሪያ ጊዜ ፋይል ሲያመነጩ ሁሉም ዘዴዎች ይፈጠራሉ <strong> ለእያንዳንዱ ነገር።</strong><br>* <strong>ን ጠቅ ሲያደርጉ</strong> ሁሉንም ዘዴዎች ያስወግዳል ='notranslate'><strong></span>የተመረጠ ነገር</strong>።
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=ለሞጁል ማዋቀር ገጽ
 EmailingSelectors=Emails selectors
 EmailingSelectorDesc=ለጅምላ ኢሜል መላላኪያ ሞጁል አዲስ የኢሜል ኢላማ መራጮችን ለማቅረብ የክፍል ፋይሎችን እዚህ ማመንጨት እና ማርትዕ ይችላሉ።

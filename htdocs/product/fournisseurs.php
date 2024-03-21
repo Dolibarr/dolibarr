@@ -48,16 +48,16 @@ if (isModEnabled('barcode')) {
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'suppliers', 'bills', 'margins', 'stocks'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$rowid = GETPOST('rowid', 'int');
+$rowid = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'pricesuppliercard';
 
-$socid = GETPOST('socid', 'int');
-$cost_price = price2num(GETPOST('cost_price', 'alpha'), '', 2);
-$pmp = price2num(GETPOST('pmp', 'alpha'), '', 2);
+$socid = GETPOSTINT('socid');
+$cost_price = GETPOSTFLOAT('cost_price');
+$pmp = GETPOSTFLOAT('pmp');
 
 $backtopage = GETPOST('backtopage', 'alpha');
 $error = 0;
@@ -65,9 +65,9 @@ $error = 0;
 $extrafields = new ExtraFields($db);
 
 // If socid provided by ajax company selector
-if (GETPOST('search_fourn_id', 'int')) {
-	$_GET['id_fourn'] = GETPOST('search_fourn_id', 'int');
-	$_POST['id_fourn'] = GETPOST('search_fourn_id', 'int');
+if (GETPOSTINT('search_fourn_id')) {
+	$_GET['id_fourn'] = GETPOSTINT('search_fourn_id');
+	$_POST['id_fourn'] = GETPOSTINT('search_fourn_id');
 }
 
 // Security check
@@ -81,10 +81,10 @@ if (!$user->hasRight('fournisseur', 'lire') && (!isModEnabled('margin') && !$use
 	accessforbidden();
 }
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = (GETPOST("page", 'int') ? GETPOST("page", 'int') : 0);
+$page = GETPOSTINT("page") ? GETPOSTINT("page") : 0;
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -108,8 +108,8 @@ if ($id > 0 || $ref) {
 	$prod->fetch($id, $ref);
 }
 
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
 
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
@@ -138,12 +138,12 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == 'setcost_price') {
+	if ($action == 'setcost_price' && $usercancreate) {
 		if ($id) {
 			$result = $object->fetch($id);
 			//Need dol_clone methode 1 (same object class) because update product use hasbatch method on oldcopy
 			$object->oldcopy = dol_clone($object, 1);
-			$object->cost_price = price2num($cost_price);
+			$object->cost_price = $cost_price;
 			$result = $object->update($object->id, $user);
 			if ($result > 0) {
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
@@ -154,10 +154,10 @@ if (empty($reshook)) {
 			}
 		}
 	}
-	if ($action == 'setpmp') {
+	if ($action == 'setpmp' && $usercancreate) {
 		if ($id) {
 			$result = $object->fetch($id);
-			$object->pmp = price2num($pmp);
+			$object->pmp = $pmp;
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".((float) $object->pmp)." WHERE rowid = ".((int) $id);
 			$resql = $db->query($sql);
 			//$result = $object->update($object->id, $user);
@@ -171,7 +171,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_remove_pf') {
+	if ($action == 'confirm_remove_pf' && $usercancreate) {
 		if ($rowid) {	// id of product supplier price to remove
 			$action = '';
 			$result = $object->remove_product_fournisseur_price($rowid);
@@ -185,7 +185,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'save_price') {
+	if ($action == 'save_price' && $usercancreate) {
 		$id_fourn = GETPOST("id_fourn");
 		if (empty($id_fourn)) {
 			$id_fourn = GETPOST("search_id_fourn");
@@ -207,12 +207,12 @@ if (empty($reshook)) {
 			$tva_tx = price2num($tva_tx);
 		}
 
-		$price_expression = GETPOST('eid', 'int') ? GETPOST('eid', 'int') : ''; // Discard expression if not in expression mode
-		$delivery_time_days = GETPOST('delivery_time_days', 'int') ? GETPOST('delivery_time_days', 'int') : '';
+		$price_expression = GETPOSTINT('eid') ? GETPOSTINT('eid') : ''; // Discard expression if not in expression mode
+		$delivery_time_days = GETPOSTINT('delivery_time_days') ? GETPOSTINT('delivery_time_days') : '';
 		$supplier_reputation = GETPOST('supplier_reputation');
 		$supplier_description = GETPOST('supplier_description', 'restricthtml');
 		$barcode = GETPOST('barcode', 'alpha');
-		$fk_barcode_type = GETPOST('fk_barcode_type', 'int');
+		$fk_barcode_type = GETPOSTINT('fk_barcode_type');
 		$packaging = price2num(GETPOST("packaging", 'alphanohtml'), 'MS');
 
 		if ($tva_tx == '') {
@@ -292,25 +292,25 @@ if (empty($reshook)) {
 				$supplier = new Fournisseur($db);
 				$result = $supplier->fetch($id_fourn);
 				if (GETPOSTISSET('ref_fourn_price_id')) {
-					$object->fetch_product_fournisseur_price(GETPOST('ref_fourn_price_id', 'int'));
+					$object->fetch_product_fournisseur_price(GETPOSTINT('ref_fourn_price_id'));
 				}
 				$extralabels = $extrafields->fetch_name_optionals_label("product_fournisseur_price");
 				$extrafield_values = $extrafields->getOptionalsFromPost("product_fournisseur_price");
 
-				$newprice = price2num(GETPOST("price", "alpha"));
+				$newprice = GETPOSTFLOAT("price");
 
 				if (empty($packaging)) {
 					$packaging = 1;
 				}
-				/* We can have a puchase ref that need to buy 100 min for a given price and with a packaging of 50.
+				/* We can have a purchase ref that need to buy 100 min for a given price and with a packaging of 50.
 				if ($packaging < $quantity) {
 					$packaging = $quantity;
 				}*/
 				$object->packaging = $packaging;
 
 				if (isModEnabled("multicurrency")) {
-					$multicurrency_tx = price2num(GETPOST("multicurrency_tx", 'alpha'));
-					$multicurrency_price = price2num(GETPOST("multicurrency_price", 'alpha'));
+					$multicurrency_tx = GETPOSTFLOAT("multicurrency_tx");
+					$multicurrency_price = GETPOSTFLOAT("multicurrency_price");
 					$multicurrency_code = GETPOST("multicurrency_code", 'alpha');
 
 					$ret = $object->update_buyprice($quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOST("oselDispo"), $ref_fourn, $tva_tx, GETPOST("charges"), $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, GETPOST("multicurrency_price_base_type"), $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
@@ -471,7 +471,7 @@ if ($id > 0 || $ref) {
 
 
 			// Form to add or update a price
-			if (($action == 'create_price' || $action == 'update_price') && $usercancreate) {
+			if (($action == 'create_price' || $action == 'edit_price') && $usercancreate) {
 				$langs->load("suppliers");
 
 				print "<!-- form to add a supplier price -->\n";
@@ -505,10 +505,10 @@ if ($id > 0 || $ref) {
 				} else {
 					$events = array();
 					$events[] = array('method' => 'getVatRates', 'url' => dol_buildpath('/core/ajax/vatrates.php', 1), 'htmlname' => 'tva_tx', 'params' => array());
-					$filter = '(fournisseur:=:1)';
+					$filter = '(fournisseur:=:1) AND (status:=:1)';
 					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', $filter, 'SelectThirdParty', 0, 0, $events);
 
-					$parameters = array('filtre'=>"fournisseur=1", 'html_name'=>'id_fourn', 'selected'=>GETPOST("id_fourn"), 'showempty'=>1, 'prod_id'=>$object->id);
+					$parameters = array('filter'=>$filter, 'html_name'=>'id_fourn', 'selected'=>GETPOST("id_fourn"), 'showempty'=>1, 'prod_id'=>$object->id);
 					$reshook = $hookmanager->executeHooks('formCreateThirdpartyOptions', $parameters, $object, $action);
 					if (empty($reshook)) {
 						if (empty($form->result)) {
@@ -722,8 +722,8 @@ if ($id > 0 || $ref) {
 					$currencies = json_encode($currencies);
 					print "<!-- javascript to autocalculate the minimum price -->
 					<script type='text/javascript'>
-						function update_price_from_multicurrency() {
-							console.log('update_price_from_multicurrency');
+						function edit_price_from_multicurrency() {
+							console.log('edit_price_from_multicurrency');
 							var multicurrency_price = price2numjs($('input[name=\"multicurrency_price\"]').val());
 							var multicurrency_tx = price2numjs($('input[name=\"multicurrency_tx\"]').val());
 							if (multicurrency_tx != 0) {
@@ -738,16 +738,16 @@ if ($id > 0 || $ref) {
 						jQuery(document).ready(function () {
 							$('input[name=\"disabled_price\"]').prop('disabled', true);
 							$('select[name=\"disabled_price_base_type\"]').prop('disabled', true);
-							update_price_from_multicurrency();
+							edit_price_from_multicurrency();
 
 							$('input[name=\"multicurrency_price\"], input[name=\"multicurrency_tx\"]').keyup(function () {
-								update_price_from_multicurrency();
+								edit_price_from_multicurrency();
 							});
 							$('input[name=\"multicurrency_price\"], input[name=\"multicurrency_tx\"]').change(function () {
-								update_price_from_multicurrency();
+								edit_price_from_multicurrency();
 							});
 							$('input[name=\"multicurrency_price\"], input[name=\"multicurrency_tx\"]').on('paste', function () {
-								update_price_from_multicurrency();
+								edit_price_from_multicurrency();
 							});
 
 							$('select[name=\"multicurrency_price_base_type\"]').change(function () {
@@ -759,7 +759,7 @@ if ($id > 0 || $ref) {
 							$('select[name=\"multicurrency_code\"]').change(function () {
 								console.log(\"We change the currency\");
 								$('input[name=\"multicurrency_tx\"]').val(currencies_array[$(this).val()]);
-								update_price_from_multicurrency();
+								edit_price_from_multicurrency();
 							});
 						});
 					</script>";
@@ -807,7 +807,7 @@ if ($id > 0 || $ref) {
 					print '<td>'.$langs->trans('GencodBuyPrice').'</td>';
 					print '<td>';
 					print img_picto('', 'barcode', 'class="pictofixedwidth"');
-					print $formbarcode->selectBarcodeType((GETPOSTISSET('fk_barcode_type') ? GETPOST('fk_barcode_type', 'int') : ($rowid ? $object->supplier_fk_barcode_type : getDolGlobalint("PRODUIT_DEFAULT_BARCODE_TYPE"))), 'fk_barcode_type', 1);
+					print $formbarcode->selectBarcodeType((GETPOSTISSET('fk_barcode_type') ? GETPOSTINT('fk_barcode_type') : ($rowid ? $object->supplier_fk_barcode_type : getDolGlobalInt("PRODUIT_DEFAULT_BARCODE_TYPE"))), 'fk_barcode_type', 1);
 					print ' <input class="flat" name="barcode"  value="'.(GETPOSTISSET('barcode') ? GETPOST('barcode') : ($rowid ? $object->supplier_barcode : '')).'"></td>';
 					print '</tr>';
 				}
@@ -835,7 +835,7 @@ if ($id > 0 || $ref) {
 				if (!empty($extralabels)) {
 					if (empty($rowid)) {
 						foreach ($extralabels as $key => $value) {
-							if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && ($extrafields->attributes["product_fournisseur_price"]['list'][$key] == 1 || $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 3 || ($action == "update_price" && $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 4))) {
+							if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && ($extrafields->attributes["product_fournisseur_price"]['list'][$key] == 1 || $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 3 || ($action == "edit_price" && $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 4))) {
 								if (!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) {
 									$langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
 								}
@@ -861,7 +861,7 @@ if ($id > 0 || $ref) {
 						if ($resql) {
 							$obj = $db->fetch_object($resql);
 							foreach ($extralabels as $key => $value) {
-								if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && ($extrafields->attributes["product_fournisseur_price"]['list'][$key] == 1 || $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 3 || ($action == "update_price" && $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 4))) {
+								if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && ($extrafields->attributes["product_fournisseur_price"]['list'][$key] == 1 || $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 3 || ($action == "edit_price" && $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 4))) {
 									if (!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) {
 										$langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
 									}
@@ -906,7 +906,7 @@ if ($id > 0 || $ref) {
 
 			print '<div class="tabsAction">'."\n";
 
-			if ($action != 'create_price' && $action != 'update_price') {
+			if ($action != 'create_price' && $action != 'edit_price') {
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				if (empty($reshook)) {
@@ -1291,7 +1291,7 @@ if ($id > 0 || $ref) {
 						print '<td class="center nowraponall">';
 
 						if ($usercancreate) {
-							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=update_price&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_edit()."</a>";
+							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=edit_price&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_edit()."</a>";
 							print ' &nbsp; ';
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=ask_remove_pf&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_picto($langs->trans("Remove"), 'delete').'</a>';
 						}

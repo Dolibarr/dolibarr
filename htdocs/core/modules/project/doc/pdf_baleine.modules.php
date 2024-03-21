@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 class pdf_baleine extends ModelePDFProjects
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -183,7 +183,7 @@ class pdf_baleine extends ModelePDFProjects
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -210,7 +210,7 @@ class pdf_baleine extends ModelePDFProjects
 					$tplidx = $pdf->importPage(1);
 				}
 
-				// Complete object by loading several other informations
+				// Complete object by loading several other information
 				$task = new Task($this->db);
 				$tasksarray = $task->getTasksArray(0, 0, $object->id);
 
@@ -234,6 +234,7 @@ class pdf_baleine extends ModelePDFProjects
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// New page
@@ -353,7 +354,7 @@ class pdf_baleine extends ModelePDFProjects
 									$this->_pagehead($pdf, $object, 0, $outputlangs);
 								}
 								$pdf->setPage($pageposafter + 1);
-								$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+								$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 								$pdf->MultiCell(0, 3, ''); // Set interline to 3
 								$pdf->SetTextColor(0, 0, 0);
 
@@ -410,10 +411,10 @@ class pdf_baleine extends ModelePDFProjects
 					// Add line
 					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);
-						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
+						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY + 1, $this->page_largeur - $this->marge_droite, $nexY + 1);
-						$pdf->SetLineStyle(array('dash'=>0));
+						$pdf->SetLineStyle(array('dash' => 0));
 					}
 
 					$nexY += 2; // Add space between lines
@@ -476,7 +477,7 @@ class pdf_baleine extends ModelePDFProjects
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -486,7 +487,7 @@ class pdf_baleine extends ModelePDFProjects
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {
@@ -560,7 +561,7 @@ class pdf_baleine extends ModelePDFProjects
 	 *  @param  Project		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -642,6 +643,8 @@ class pdf_baleine extends ModelePDFProjects
 			}
 		}
 		*/
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

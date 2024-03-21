@@ -42,7 +42,7 @@ if (!defined('NOREQUIREMENU')) {
 require_once '../main.inc.php';
 
 $action = GETPOST('action', 'aZ');
-$entityid = GETPOST('entity', 'int');
+$entityid = GETPOSTINT('entity');
 $backtourl = GETPOST('backtourl');
 if (empty($backtourl)) {
 	$backtourl = DOL_URL_ROOT;
@@ -91,7 +91,9 @@ print '<body>'."\n";
 print '<div>';
 //print '<br>';
 
-
+if (!isset($bookmarkList)) {
+	$bookmarkList = '';
+}
 if (!isModEnabled('multicompany')) {
 	$langs->load("admin");
 	$bookmarkList .= '<br><span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("MultiCompany")).'</span>';
@@ -128,7 +130,7 @@ if (!isModEnabled('multicompany')) {
 
 
 	// Execute hook printBookmarks
-	$parameters = array('multicompany'=>$multicompanyList);
+	$parameters = array('multicompany' => $multicompanyList);
 	$reshook = $hookmanager->executeHooks('printMultiCompanyEntities', $parameters); // Note that $action and $object may have been modified by some hooks
 	if (empty($reshook)) {
 		$multicompanyList .= $hookmanager->resPrint;

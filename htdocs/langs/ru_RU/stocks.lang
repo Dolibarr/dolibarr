@@ -283,7 +283,7 @@ ModuleStockTransferDesc=Расширенное управление остато
 StockTransferNew=Новый остаток перевод
 StockTransferList=остаток передает Список
 ConfirmValidateStockTransfer=Вы действительно хотите на подтвердить этот Остатки перевод  со ссылкой <b>%s</b> ?
-ConfirmDestock=уменьшить из Остатки с перевод %s 
+ConfirmDestock=уменьшить из Остатки с перевод %s
 ConfirmDestockCancel=отменить уменьшить из Остатки с перевод  %s
 DestockAllProduct=уменьшить из Остатки
 DestockAllProductCancel=отменить уменьшить из Остатки
@@ -295,8 +295,8 @@ DatePrevueDepart=Предполагаемый дата отбытия
 DateReelleDepart=действительный дата отправления
 DatePrevueArrivee=Предполагаемое дата прибытия
 DateReelleArrivee=действительный дата прибытия
-HelpWarehouseStockTransferSource=Если этот склад установлен, только сам и его дочерние элементы будут доступны в качестве источника <span class='notranslate'>склад< /пролет>
-HelpWarehouseStockTransferDestination=Если этот склад установлен, только сам и его дочерние элементы будут доступны в качестве пункта назначения <span class='notranslate'>склад< /пролет>
+HelpWarehouseStockTransferSource=If this warehouse is set, only itself and its children will be available as source warehouse
+HelpWarehouseStockTransferDestination=If this warehouse is set, only itself and its children will be available as destination warehouse
 LeadTimeForWarning=лид время до оповещения (в днях)
 TypeContact_stocktransfer_internal_STFROM=Отправитель Остатки перевод
 TypeContact_stocktransfer_internal_STDEST=Получатель Остатки перевод
@@ -326,7 +326,7 @@ ReverseConfirmed=остаток движение было отменено ус�
 WarningThisWIllAlsoDeleteStock=Внимание! При этом также будут уничтожены все количества в остаток в склад.
 ValidateInventory=Инвентарь подтверждение
 IncludeSubWarehouse=Включить под-склад ?
-IncludeSubWarehouseExplanation=проверить в этом поле, если вы хотите включить все суб-Склады связанного <span class='notranslate'>склад</ пролет> в инвентаре
+IncludeSubWarehouseExplanation=Check this box if you want to include all sub-warehouses of the associated warehouse in the inventory
 DeleteBatch=удалить партия/serial
 ConfirmDeleteBatch=Вы действительно хотите до удалить партия/serial ?
 WarehouseUsage=склад использование

@@ -154,6 +154,7 @@ foreach ($dirmodels as $reldir) {
 		if (is_dir($dir)) {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
+				$filelist = array();
 				while (($file = readdir($handle)) !== false) {
 					$filelist[] = $file;
 				}
@@ -201,7 +202,7 @@ foreach ($dirmodels as $reldir) {
 									print "</td>";
 								}
 
-								// Defaut
+								// Default
 								print '<td class="center">';
 								if (getDolGlobalString('USERGROUP_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');

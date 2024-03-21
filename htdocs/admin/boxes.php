@@ -36,7 +36,7 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-$rowid = GETPOST('rowid', 'int');
+$rowid = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
 
 
@@ -50,7 +50,7 @@ $boxes = array();
  */
 
 if ($action == 'addconst') {
-	dolibarr_set_const($db, "MAIN_BOXES_MAXLINES", GETPOST("MAIN_BOXES_MAXLINES", 'int'), '', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_BOXES_MAXLINES", GETPOSTINT("MAIN_BOXES_MAXLINES"), '', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE", GETPOST("MAIN_ACTIVATE_FILECACHE", 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 
@@ -165,10 +165,10 @@ if ($action == 'switch') {
 	$db->begin();
 
 	$objfrom = new ModeleBoxes($db);
-	$objfrom->fetch(GETPOST("switchfrom", 'int'));
+	$objfrom->fetch(GETPOSTINT("switchfrom"));
 
 	$objto = new ModeleBoxes($db);
-	$objto->fetch(GETPOST('switchto', 'int'));
+	$objto->fetch(GETPOSTINT('switchto'));
 
 	$resultupdatefrom = 0;
 	$resultupdateto = 0;

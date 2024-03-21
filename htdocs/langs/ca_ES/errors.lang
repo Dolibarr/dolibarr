@@ -134,7 +134,7 @@ ErrorLoginDoesNotExists=El compte d'usuari de <b>%s</b> no s'ha trobat.
 ErrorLoginHasNoEmail=Aquest usuari no té e-mail. Impossible continuar.
 ErrorBadValueForCode=Valor incorrecte per codi de seguretat. Torna a intentar-ho amb un nou valor...
 ErrorBothFieldCantBeNegative=Els camps %s i %s no poden ser negatius
-ErrorFieldCantBeNegativeOnInvoice=Field <strong>%sb071%sb0a6fc0a65 span> <span class='notranslate'>Cannot sigui negatiu en aquest tipus de invoice. Si necessiteu afegir un descompte line, només cal create primer el descompte (de Field /span> '<span class='notranslate'>%s' a la targeta third-party) and aplica-la a el invoice.
+ErrorFieldCantBeNegativeOnInvoice=Field <strong>%s</strong> cannot be negative on this type of invoice. If you need to add a discount line, just create the discount first (from field '%s' in third-party card) and apply it to the invoice.
 ErrorLinesCantBeNegativeForOneVATRate=El total de línies (net d’impostos) no pot ser negatiu per a un tipus d’IVA determinat no nul (s’ha trobat un total negatiu per a l’IVA <b> %s </b> %%).
 ErrorLinesCantBeNegativeOnDeposits=Les línies no poden ser negatives en un dipòsit. Si ho feu, podreu tenir problemes quan necessiteu consumir el dipòsit a la factura final
 ErrorQtyForCustomerInvoiceCantBeNegative=La quantitat a les línies de factures a client no poden ser negatives
@@ -323,7 +323,7 @@ ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: l'URL de la vos
 ErrorMenuExistValue=Ja existeix un menú amb aquest títol o URL
 ErrorSVGFilesNotAllowedAsLinksWithout=Els fitxers SVG no es permeten com a enllaços externs sense l'opció %s
 ErrorTypeMenu=Impossible afegir un altre menú per al mateix mòdul a la barra de navegació, encara no es gestiona
-ErrorObjectNotFound = El object <b>%sb3z0<span class='notranslate'>%sb3z914b7 /span> no s'ha trobat, <span class='notranslate'>Check el vostre URL
+ErrorObjectNotFound = The object <b>%s</b> is not found, please check your url
 ErrorCountryCodeMustBe2Char=El codi del país ha de ser una cadena de 2 caràcters
 ErrorABatchShouldNotContainsSpaces=Un número de lot o de sèrie no hauria de contenir espais
 

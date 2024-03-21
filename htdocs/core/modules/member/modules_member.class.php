@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,21 +60,10 @@ abstract class ModelePDFMember extends CommonDocGenerator
 
 
 /**
- *  Classe mere des modeles de numerotation des references de members
+ *  Class mere des modeles de numerotation des references de members
  */
 abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 {
-	public $code_modifiable; // Editable code
-
-	public $code_modifiable_invalide; // Modified code if it is invalid
-
-	public $code_modifiable_null; // Modified code if it is null
-
-	public $code_null; //
-
-	public $code_auto;
-
-
 	/**
 	 *  Return description of module parameters
 	 *

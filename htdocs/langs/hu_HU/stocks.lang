@@ -282,7 +282,7 @@ ModuleStockTransferName=Speciális készlettranszfer
 ModuleStockTransferDesc=A készlettranszfer fejlett kezelése transzfer lap generálásával
 StockTransferNew=Új készlet átadása
 StockTransferList=Készlettranszferek listája
-ConfirmValidateStockTransfer=Biztosan érvényesíteni kívánja ezt a részvényátruházást a következő hivatkozással: <b>%s</b><span class='notranslate'> span> ?
+ConfirmValidateStockTransfer=Are you sure you want to validate this stocks transfer with the reference <b>%s</b> ?
 ConfirmDestock=Készletek csökkenése átutalással %s
 ConfirmDestockCancel=Törölje a készletcsökkentést %s átutalással
 DestockAllProduct=A készletek csökkenése

@@ -41,11 +41,11 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
 
 $object_status = GETPOST('object_status', 'intcomma');
-$typent_id = GETPOST('typent_id', 'int');
-$categ_id = GETPOST('categ_id', 'categ_id');
+$typent_id = GETPOSTINT('typent_id');
+$categ_id = GETPOSTINT('categ_id');
 
-$userid = GETPOST('userid', 'int');
-$socid = GETPOST('socid', 'int');
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
@@ -53,7 +53,7 @@ if ($user->socid > 0) {
 }
 
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
+$year = GETPOST('year') > 0 ? GETPOSTINT('year') : $nowyear;
 $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
@@ -112,7 +112,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filenamenb = $dir.'/proposalsnbinyear-'.$user->id.'-'.$year.'.png';
 	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsnbinyear-'.$user->id.'-'.$year.'.png';
 } else {
@@ -148,7 +148,7 @@ if (!$mesg) {
 $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, 0);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filenameamount = $dir.'/proposalsamountinyear-'.$user->id.'-'.$year.'.png';
 	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsamountinyear-'.$user->id.'-'.$year.'.png';
 } else {
@@ -183,7 +183,7 @@ if (!$mesg) {
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 $fileurl_avg = '';
-if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
 		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';

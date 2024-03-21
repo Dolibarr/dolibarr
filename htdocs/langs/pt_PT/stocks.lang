@@ -174,7 +174,7 @@ NoPendingReceptionOnSupplierOrder=Nenhum receção pendente devido à compra de 
 ThisSerialAlreadyExistWithDifferentDate=Este lote / número de série (<strong> %s </ strong>) já existe, mas com data diferente de eatby ou sellby (encontrado <strong> %s </ strong>, mas você insere <strong> %s </ strong>).
 OpenAnyMovement=abrir (todos movimento)
 OpenInternal=abrir (somente movimento interno)
-UseDispatchStatus=Use um status de envio (Aprovar/refuse) para linhas de produtos na compra encomenda <span class='notranslate'>receção</ período>
+UseDispatchStatus=Use a dispatch status (approve/refuse) for product lines on purchase order reception
 OptionMULTIPRICESIsOn=A opção "vários preços por segmento" está ativada. Isso significa que um produto tem vários preços de venda, portanto, o valor para venda não pode ser calculado
 ProductStockWarehouseCreated=Limite de estoque para estoque ideal de alerta e desejado criado corretamente
 ProductStockWarehouseUpdated=Limite de estoque para estoque ótimo de alerta e desejado atualizado corretamente

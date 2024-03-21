@@ -88,6 +88,7 @@ PriceOfRegistration=Prijs van registratie
 PriceOfRegistrationHelp=Prijs te betalen om te registreren of deel te nemen aan het evenement
 PriceOfBooth=Abonnementsprijs om een stand te staan
 PriceOfBoothHelp=Abonnementsprijs om een stand te staan
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=Koppel ICS voor conferenties
 ConferenceOrBoothInformation=Conferentie- of standinformatie
 Attendees=deelnemers
@@ -173,7 +174,7 @@ DateStartEvent=Startdatum evenement
 DateEndEvent=Einddatum evenement
 ModifyStatus=Status wijzigen
 ConfirmModifyStatus=Bevestig statuswijziging
-ConfirmModifyStatusQuestion=Weet u zeker dat u de <span class='notranslate'>%s</span>\n geselecteerde record(s) wilt wijzigen?
+ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
 RecordsUpdated = %s Records bijgewerkt
 RecordUpdated = Record bijgewerkt
 NoRecordUpdated = Geen record bijgewerkt

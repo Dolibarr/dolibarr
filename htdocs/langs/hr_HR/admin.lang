@@ -76,7 +76,7 @@ DictionarySetup=Podešavanje definicija
 Dictionary=Definicije
 ErrorReservedTypeSystemSystemAuto=Vrijednosti 'sistem' i 'sistemauto' za tipove je rezervirana. Možete koristiti 'korisnik' kao vrijednost za dodavanje vlastitog podatka
 ErrorCodeCantContainZero=Kod ne može sadržavati vrijednost 0
-DisableJavascript=Onemogući JavaScript i AJAX funkcije 
+DisableJavascript=Onemogući JavaScript i AJAX funkcije
 DisableJavascriptNote=Napomena: Samo u svrhu testiranja ili otklanjanja pogrešaka. Za optimizaciju za slijepe osobe ili tekstualne preglednike, možda ćete radije koristiti postavke na profilu korisnika
 UseSearchToSelectCompanyTooltip=Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant COMPANY_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
 UseSearchToSelectContactTooltip=Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant CONTACT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
@@ -213,7 +213,7 @@ BoxesDesc=Widgeti su komponente koje prikazuju neke informacije koje možete dod
 OnlyActiveElementsAreShown=Prikazani su samo elementi sa  <a href="%s">omogućenih modula</a>
 ModulesDesc=Moduli/aplikacije određuju koje su značajke dostupne u softveru. Neki moduli zahtijevaju da se dozvole dodijele korisnicima nakon aktivacije modula. Kliknite gumb za uključivanje/isključivanje <span class="small valignmiddle"> %s </span> svakog modula kako biste omogućili ili onemogućili modul/aplikaciju.
 ModulesDesc2=Kliknite gumb kotačića <span class="small valignmiddle"> %s </span> da biste konfigurirali modul/aplikaciju.
-ModulesMarketPlaceDesc=Možete pronaći više modula za download na vanjskim internet web lokacijama 
+ModulesMarketPlaceDesc=Možete pronaći više modula za download na vanjskim internet web lokacijama
 ModulesDeployDesc=Ako dozvole na vašem datotečnom sustavu to dopuštaju, možete koristiti ovaj alat za implementaciju vanjskog modula. Modul će tada biti vidljiv na kartici <strong> %s </strong>.
 ModulesMarketPlaces=Nađi vanjske aplikacije/module
 ModulesDevelopYourModule=Razvijte vlastitu aplikaciju/module
@@ -260,7 +260,7 @@ Developpers=Kreatori/suradnici
 OfficialWebSite=Dolibarr službena web stranica
 OfficialWebSiteLocal=Lokalna web lokacija (%s)
 OfficialWiki=Dolibarr dokumentacija / Wiki
-OfficialDemo=Dolibarr Online demo 
+OfficialDemo=Dolibarr Online demo
 OfficialMarketPlace=Ovlaštena trgovina za vanjske module/dodatke
 OfficialWebHostingService=Preporučeni web hosting servisi (Cloud hosting)
 ReferencedPreferredPartners=Preferirani partneri
@@ -402,7 +402,7 @@ TestSubmitForm=Unesite obrazac testiranja
 ThisForceAlsoTheme=Korištenje ovog upravitelja izbornika također će koristiti vlastitu temu bez obzira na odabir korisnika. Također ovaj upravitelj izbornika specijaliziran za pametne telefone ne radi na svim pametnim telefonima. Koristite drugi upravitelj izbornika ako imate problema sa svojim.
 ThemeDir=Mapa stilova
 ConnectionTimeout=Vrijeme povezanosti je isteklo
-ResponseTimeout=Odgovor 
+ResponseTimeout=Odgovor
 SmsTestMessage=Test poruka od __PHONEFROM__ za __PHONETO__
 ModuleMustBeEnabledFirst=Modul <b>%s</b> mora biti omogućen ako želite koristiti ovu mogučnost.
 SecurityToken=Ključ za sigurne URL-ove
@@ -766,7 +766,7 @@ Permission84=Ovjeri narudžbu kupca
 Permission85=Generirajte dokumente prodajnih naloga
 Permission86=Pošalji narudžbu kupca
 Permission87=Zatvori narudžbu kupca
-Permission88=Otkaži potvrdu 
+Permission88=Otkaži potvrdu
 Permission89=Obriši narudžbe kupaca
 Permission91=Čitaj društvene ili fiskalne poreze i PDV
 Permission92=Izradi/izmjeni društvene ili fiskalne poreze i PDV
@@ -1197,6 +1197,7 @@ Skin=Skin teme
 DefaultSkin=Zadani skin teme
 MaxSizeList=Maks. dužina za popis
 DefaultMaxSizeList=Zadana maks. dužina popisa
+DisplayGrandTotalInList=Display grand total (for all pages) in lists footer
 DefaultMaxSizeShortList=Zadana maksimalna duljina za kratke liste (tj. u kartici korisnika)
 MessageOfDay=Poruka dana
 MessageLogin=Poruka na stranici za prijavu
@@ -1777,7 +1778,7 @@ DeliveriesOrderAbility=Potvrde o isporuci proizvoda
 FreeLegalTextOnDeliveryReceipts=Slobodan unos teksta na primkama
 ##### FCKeditor #####
 AdvancedEditor=Napredni uređivač
-ActivateFCKeditor=Aktiviraj napredni uređivač za: 
+ActivateFCKeditor=Aktiviraj napredni uređivač za:
 FCKeditorForNotePublic=WYSIWYG kreiranje/izdanje polja "javne bilješke" elemenata
 FCKeditorForNotePrivate=WYSIWYG kreiranje/izdanje polja "privatne bilješke" elemenata
 FCKeditorForCompany=WYSIWYG izrada/izdanje polja opisa elemenata (osim proizvoda/usluga)
@@ -1860,7 +1861,7 @@ PastDelayVCalExport=Ne izvoziti događaj stariji od
 SecurityKey = Sigurnosni ključ
 ##### ClickToDial #####
 ClickToDialSetup=Podešavanje modula ClickToDial
-ClickToDialUrlDesc=URL koji se poziva kada se izvrši klik na sliku telefona. U URL-u možete koristiti oznake<br><b>__PHONETO__</b> koje će biti zamijenjen telefonskim brojem osobe koju treba nazvati<br><b>__PHONEFROM__</b> koji bit će zamijenjen telefonskim brojem osobe koja zove (vaš)<br><b>__LOGIN__</b></span span> koja će biti zamijenjena prijavom za biranje klika (definirana na korisničkoj kartici)<span class='notranslate'><br><b>__PASS__ </b> koja će biti zamijenjena lozinkom clicktodial (definirana na korisničkoj kartici).
+ClickToDialUrlDesc=URL called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).
 ClickToDialDesc=Ovaj modul mijenja telefonske brojeve, kada koristite stolno računalo, u veze na koje se može kliknuti. Klik će pozvati broj. Ovo se može koristiti za pokretanje telefonskog poziva kada koristite soft telefon na vašem stolnom računalu ili kada koristite CTI sustav koji se temelji na SIP protokolu, na primjer. Napomena: Kada koristite pametni telefon, telefonske brojeve uvijek možete kliknuti.
 ClickToDialUseTelLink=Koristi samo "tel:" kod telefona
 ClickToDialUseTelLinkDesc=Upotrijebite ovu metodu ako vaši korisnici imaju softphone ili softversko sučelje, instalirano na istom računalu kao i preglednik, i koji se poziva kada kliknete na vezu koja počinje s "tel:" u vaš preglednik. Ako trebate vezu koja počinje s "sip:" ili potpuno poslužiteljsko rješenje (nema potrebe za lokalnom instalacijom softvera), ovo morate postaviti na "Ne" i ispunite sljedeće polje.
@@ -2161,7 +2162,7 @@ NoNewEmailToProcess=Nema nove e-pošte (odgovarajući filteri) za obradu
 NothingProcessed=Ništa nije učinjeno
 RecordEvent=Zabilježite događaj u dnevnom redu (s vrstom Email poslana ili primljena)
 CreateLeadAndThirdParty=izradi potencijalni klijent (i treća strana ako je potrebno)
-CreateTicketAndThirdParty=izradi ulaznica (povezana s trećom stranom ako je treća strana učitana prethodnom operacijom ili je pogodena iz programa za praćenje u <span class='notranslate'>e-pošta</span) > zaglavlje, inače bez treće strane)
+CreateTicketAndThirdParty=Create a ticket (linked to a third party if the third party was loaded by a previous operation or was guessed from a tracker in email header, without third party otherwise)
 CodeLastResult=Najnoviji kod rezultata
 NbOfEmailsInInbox=Broj e-poruka u izvornom direktoriju
 LoadThirdPartyFromName=Učitaj traženje treće strane na %s (samo učitavanje)
@@ -2176,7 +2177,7 @@ CreateCandidature=Napravite prijavu za posao
 FormatZip=PBR
 MainMenuCode=Kôd za unos izbornika (glavni izbornik)
 ECMAutoTree=Prikaži automatsko ECM stablo
-OperationParamDesc=Definirajte pravila koja će se koristiti za izdvajanje nekih podataka ili postavite vrijednosti za upotrebu za operaciju.<br><br>Primjer za izdvajanje <span klase ='notranslate'>tvrtka</span> naziv iz e-pošta subjekta u privremenu varijablu:<br>tmp_var=EXTRACT:SUBJECT: Poruka od tvrtka ([^\n]*)<br><br>Primjeri za postavljanje svojstava objekta na izradi:<br>objproperty1=SET:tvrdo kodirana vrijednost<br>objproperty2=SET:__tmp_var__<br> objproperty3=SETIFEMPTY:vrijednost (vrijednost je postavljena samo ako svojstvo nije već definirano)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([ ^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>objekt .objproperty5=EXTRACT:BODY:Moje tvrtka ime je\\s([^\\s]*)<br><br>Upotrijebite novi redak za izdvajanje ili postavljanje nekoliko svojstava.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a company name from email subject into a temporary variable:<br>tmp_var=EXTRACT:SUBJECT:Message from company ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=Radno vrijeme
 OpeningHoursDesc=Ovdje unesite redovno radno vrijeme Vaše tvrtke.
 ResourceSetup=Konfiguracija modula resursa
@@ -2219,7 +2220,7 @@ ImportSetup=Postavljanje uvoza modula
 InstanceUniqueID=Jedinstveni ID instance
 SmallerThan=Manje od
 LargerThan=Veće od
-IfTrackingIDFoundEventWillBeLinked=Imajte na umu da ako se ID praćenja objekta pronađe u e-pošta ili ako je e-pošta odgovor <span klase ='notranslate'>e-pošta</span> već prikupljeni i povezan s objektom, stvoreni događaj automatski će se povezati s poznatim povezanim objektom.
+IfTrackingIDFoundEventWillBeLinked=Note that If a tracking ID of an object is found into email, or if the email is an answer of an email already collected and linked to an object, the created event will be automatically linked to the known related object.
 WithGMailYouCanCreateADedicatedPassword=S GMail računom, ako ste omogućili provjeru valjanosti u 2 koraka, preporučuje se izradi namjenska druga lozinka za aplikaciju umjesto korištenja vlastite lozinke računa s https://myaccount .google.com/.
 EmailCollectorTargetDir=Možda bi bilo poželjno premjestiti e-pošta u drugi oznaka/direktorij nakon što je uspješno obrađen. Ovdje samo postavite ime direktorija da biste koristili ovu značajku (NEMOJTE koristiti posebne znakove u imenu). Imajte na umu da također morate koristiti račun za prijavu za čitanje/pisanje.
 EmailCollectorLoadThirdPartyHelp=Ovu radnju možete upotrijebiti za korištenje sadržaja e-pošta za pronalaženje i učitavanja postojeće treće strane u vašoj bazi podataka (pretražit će se na definiranom svojstvu između 'id','name','name_alias','e-pošta'). Pronađena (ili stvorena) treća strana koristit će se za sljedeće radnje koje to trebaju.<br>Na primjer, ako želite izradi treća strana s imenom izdvojenim iz niza 'Ime: ime za pronalaženje' prisutna u tijelu, koristite pošiljatelja e-pošta kao e-pošta, polje parametra možete postaviti ovako:<br>'e-pošta=HEADER:^From:(.*) ;name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
@@ -2433,3 +2434,12 @@ UrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server 
 ExportUseForce=Use the parameter -f
 ExportUseForceHelp=Force to continue the export even when an error is found (Backup may not be reliable)
 CustomPrompt=Custom prompts
+AiDescription=AI (Artificial Intelligence) features
+AiDescriptionLong=Provides AI (Artificial Intelligence) features in different part of the application. Need external AI API.
+AI_KEY_API_CHATGPT= Key for ChatGPT IA api
+AiSetup=AI module setup
+AiCustomPrompt=AI customs prompt
+AI_CONFIGURATIONS_PROMPT=Custom prompt
+ImageGeneration=Image generation
+AIPromptForFeatures=AI custom prompts for features
+EnterAnIP=Enter an IP address

@@ -96,7 +96,7 @@ $manifest->id = constant('DOL_MAIN_URL_ROOT');
 
 if (getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL')) {
 	$icon = new stdClass();
-	$icon->src = $conf->global->MAIN_MANIFEST_APPLI_LOGO_URL;
+	$icon->src = getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL');
 	if ($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL_SIZE) {
 		$icon->sizes = getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL_SIZE') . "x" . getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL_SIZE');
 	} else {

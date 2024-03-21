@@ -36,16 +36,6 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 	public $depends  = array("fournisseur");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -91,14 +81,14 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 			$sql .= ", c.fk_statut as status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
-			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE c.fk_soc = s.rowid";
 			$sql .= " AND c.entity IN (".getEntity('supplier_order').")";
 			$sql .= " AND c.date_livraison IS NOT NULL";
 			$sql .= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.")";
-			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {

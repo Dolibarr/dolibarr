@@ -1,8 +1,12 @@
 <?php
 // BEGIN PHP File wrapper.php - DO NOT MODIFY - It is just a copy of file website/samples/wrapper.php
 $websitekey = basename(__DIR__);
-if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) die("Sample file for website module. Can be called directly.");
-if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded
+if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) {
+	die("Sample file for website module. Can't be called directly.");
+}
+if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
+	require_once './master.inc.php';
+} // Load master if not already loaded
 include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 $encoding = '';
@@ -10,10 +14,10 @@ $encoding = '';
 // Parameters to download files
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');
-$entity = GETPOST('entity', 'int') ?GETPOST('entity', 'int') : $conf->entity;
+$entity = GETPOSTINT('entity') ?GETPOSTINT('entity') : $conf->entity;
 $original_file = GETPOST("file", "alpha");
 $l = GETPOST('l', 'aZ09');
-$limit = GETPOST('limit', 'int');
+$limit = GETPOSTINT('limit');
 
 // Parameters for RSS
 $rss = GETPOST('rss', 'aZ09');
@@ -186,9 +190,8 @@ if ($rss) {
 		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
 	}
-}
-// Get logos
-elseif ($modulepart == "mycompany" && preg_match('/^\/?logos\//', $original_file)) {
+} elseif ($modulepart == "mycompany" && preg_match('/^\/?logos\//', $original_file)) {
+	// Get logos
 	readfile(dol_osencode($conf->mycompany->dir_output."/".$original_file));
 } else {
 	// Find the subdirectory name as the reference
@@ -219,7 +222,7 @@ elseif ($modulepart == "mycompany" && preg_match('/^\/?logos\//', $original_file
 
 	// This test if file exists should be useless. We keep it to find bug more easily
 	if (!file_exists($fullpath_original_file_osencoded)) {
-		print "ErrorFileDoesNotExists: ".$original_file;
+		print "ErrorFileDoesNotExists: ".dol_escape_htmltag($original_file);
 		exit;
 	}
 

@@ -3,6 +3,7 @@
  * Copyright (C) 2014-2016  Jean-François Ferry	<hello@librethic.io>
  * 				 2016       Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2023		Benjamin Falière	<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,12 +44,12 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "ticket";
 		$this->description = "Triggers of the module ticket to send notifications to internal users and to third-parties";
-		$this->version = self::VERSION_DOLIBARR; // 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'ticket';
 	}
 
 	/**
-	 *      Function called when a Dolibarrr business event is done.
+	 *      Function called when a Dolibarr business event is done.
 	 *      All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers
 	 *
 	 *      @param  string    $action Event action code
@@ -110,7 +111,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 								$message = dol_nl2br($message);
 
 								if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
-									$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+									$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 									$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 								}
 								include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -193,9 +194,9 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				if (!getDolGlobalString('TICKET_DISABLE_CUSTOMER_MAILS') && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
 					$sendto = '';
 
-					//if contact selected send to email's contact else send to email's thirdparty
+					// if contact selected send to email's contact else send to email's thirdparty
 
-					$contactid = GETPOST('contactid', 'alpha');
+					$contactid = empty($object->context['contactid']) ? 0 : $object->context['contactid'];
 					$res = 0;
 
 					if (!empty($contactid)) {
@@ -250,20 +251,22 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					$linked_contacts = array_merge($linked_contacts, $object->listeContact(-1, 'internal'));
 					if (empty($linked_contacts) && getDolGlobalString('TICKET_NOTIFY_AT_CLOSING') && !empty($object->fk_soc)) {
 						$object->fetch_thirdparty();
-						$linked_contacts[] = $object->thirdparty->email;
+						$linked_contacts[]['email'] = $object->thirdparty->email;
 					}
 
-					$contactid = GETPOST('contactid', 'int');
+					$contactid = empty($object->context['contactid']) ? 0 : $object->context['contactid'];
 					$res = 0;
 
 					if ($contactid > 0) {
+						// TODO This security test has no sens. We must check that $contactid is inside $linked_contacts[]['id'] when $linked_contacts[]['source'] = 'external' or 'thirdparty'
+						// Refuse email if not
 						$contact = new Contact($this->db);
 						$res = $contact->fetch($contactid);
 						if (! in_array($contact, $linked_contacts)) {
 							$error_msg = $langs->trans('Error'). ': ';
 							$error_msg .= $langs->transnoentities('TicketWrongContact');
 							setEventMessages($error_msg, [], 'errors');
-							$ok = 0;
+							$ok = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 							break;
 						}
 					}
@@ -348,7 +351,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$trackid = 'tic'.$object->id;
 
 		if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
-			$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+			$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 			$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -397,11 +400,11 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $value) {
 				$enabled = 1;
 				if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key])) {
-					$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
+					$enabled = (int) dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
 				}
 				$perms = 1;
 				if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key])) {
-					$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$key], 1);
+					$perms = (int) dol_eval($extrafields->attributes[$object->table_element]['perms'][$key], 1);
 				}
 
 				$qualified = true;
@@ -425,7 +428,9 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			$message = dol_nl2br($message);
 		}
 		$message_customer .= '<p>'.$langs->trans('Message').' : <br><br>'.$message.'</p><br>';
-		$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
+
+		$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.$object->track_id;
+
 		$message_customer .= '<p>'.$langs->trans($see_ticket).' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
 		$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
 
