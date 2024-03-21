@@ -1186,7 +1186,7 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 				?>
 				<div class="login_block_user">
 				<?php
-				print top_menu_user(1, DOL_URL_ROOT.'/user/logout.php?token='.newtoken().'&urlfrom='.urlencode('/takepos/?setterminal='.((int) $term)));
+				print top_menu_user(1, DOL_URL_ROOT.'/user/logout.php?token='.newToken().'&urlfrom='.urlencode('/takepos/?setterminal='.((int) $term)));
 				?>
 				</div>
 			</div>

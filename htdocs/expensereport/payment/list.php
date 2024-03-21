@@ -112,6 +112,7 @@ $arrayfields = array(
 	'pndf.amount'			=> array('label' => "Amount", 'checked' => 1, 'position' => 70),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('paymentexpensereportlist'));
