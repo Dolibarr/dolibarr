@@ -66,11 +66,11 @@ class DoliDBTest extends CommonClassTest
 		$res = $db->DDLDropTable($namedic);
 
 		$columns = array(
-			'rowid' => array('type' => 'integer', 'value' => 11, 'AUTO_INCREMENT PRIMARY KEY'),
+			'rowid' => array('type' => 'integer', 'AUTO_INCREMENT PRIMARY KEY'),
 			'code' => array('type' => 'varchar', 'value' => 255, 'null'=>'NOT NULL'),
 			'label' => array('type' => 'varchar', 'value' => 255, 'null'=>'NOT NULL'),
-			'position' => array('type' => 'integer', 'value' => 11, 'null'=>'NULL'),
-			'use_default' => array('type' => 'varchar', 'value' => 11, 'default'=>'1'),
+			'position' => array('type' => 'integer', 'null'=>'NULL'),
+			'use_default' => array('type' => 'varchar', 'value' => 1, 'default'=>'1'),
 			'active' => array('type' => 'integer', 'value' => 3)
 		);
 		$primaryKey = 'rowid';
