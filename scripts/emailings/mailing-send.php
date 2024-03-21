@@ -53,7 +53,7 @@ if (isset($argv[2]) || !empty($argv[2])) {
 	$login = '';
 }
 
-$max = 0;
+$max = -1;
 
 if (isset($argv[3]) || !empty($argv[3])) {
 	$max = $argv[3];
@@ -108,7 +108,7 @@ if (!empty($login)) {
 }
 
 // We get list of emailing id to process
-$sql = "SELECT m.rowid";
+$sql = "SELECT m.rowid, m.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql .= " WHERE m.statut IN (1,2)";
 if ($id != 'all') {
@@ -122,11 +122,17 @@ if ($resql) {
 	$j = 0;
 
 	if ($num) {
-		for ($j = 0; $j < $num; $j++) {
+		for ($j = 0; $j < $num && $max != 0; $j++) {
 			$obj = $db->fetch_object($resql);
 
 			dol_syslog("Process mailing with id ".$obj->rowid);
 			print "Process mailing with id ".$obj->rowid."\n";
+
+			if ($obj->status == 1) {
+				$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut = 2 WHERE rowid = ".((int) $obj->rowid);
+				$result_sql = $db->query($sql);
+				dol_syslog("Started mailing campaign ".$obj->rowid, LOG_DEBUG);
+			}
 
 			$emailing = new Mailing($db);
 			$emailing->fetch($obj->rowid);
@@ -188,6 +194,7 @@ if ($resql) {
 						$now = dol_now();
 
 						$obj = $db->fetch_object($resql2);
+						$max--;
 
 						// sendto en RFC2822
 						$sendto = str_replace(',', ' ', dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">");
@@ -408,25 +415,16 @@ if ($resql) {
 						$i++;
 					}
 				} else {
-					$mesg = "Emailing id ".$id." has no recipient to target";
+					//$mesg = "Emailing id ".$id." has no recipient to target";
 					print $mesg."\n";
 					dol_syslog($mesg, LOG_ERR);
-				}
 
-				// Loop finished, set global statut of mail
-				$statut = 2;
-				if (!$nbko) {
-					$statut = 3;
-				}
+					// Loop finished, set global statut of mail
+					$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=3 WHERE rowid=".$obj->rowid;
+					$result_sql = $db->query($sql);
 
-				$sqlenddate = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".((int) $statut)." WHERE rowid=".((int) $id);
-
-				dol_syslog("update global status", LOG_DEBUG);
-				print "Update status of emailing id ".$id." to ".$statut."\n";
-				$resqlenddate = $db->query($sqlenddate);
-				if (!$resqlenddate) {
-					dol_print_error($db);
-					$error++;
+					dol_syslog("update global status", LOG_DEBUG);
+					print "Update status of emailing id ".$id." to ".$statut."\n";
 				}
 			} else {
 				dol_print_error($db);
