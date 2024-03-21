@@ -353,7 +353,12 @@ if ($modecompta == 'CREANCES-DETTES') {
 						$r = 0;
 					}
 
-					print '<td class="liste_total right"><span class="amount">'.price($r, 0, '', 1, 0, 0).'</span></td>';
+					if (!empty(getDolGlobalInt('ACCOUNTANCY_TRUNC_DECIMAL_ON_BALANCE_REPORT'))) {
+						print '<td class="liste_total right"><span class="amount">'.price($r, 0, '', 1, 0, 0).'</span></td>';
+					} else {
+						print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
+					}
+
 				}
 
 				// Year N
