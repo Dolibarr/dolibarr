@@ -529,8 +529,12 @@ if (empty($numref)) {
 			print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&account='.$object->id.'">';
 			$reg = array();
 			preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthese on tente recherche de traduction
-			if ($reg[1] && $langs->trans($reg[1]) != $reg[1]) {
-				print $langs->trans($reg[1]);
+			if (!empty($reg[1])) {
+				if ($langs->trans($reg[1]) != $reg[1]) {
+					print $langs->trans($reg[1]);
+				} else {
+					print $objp->label;
+				}
 			} else {
 				print $objp->label;
 			}
