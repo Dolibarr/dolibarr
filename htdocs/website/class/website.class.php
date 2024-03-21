@@ -742,7 +742,7 @@ class Website extends CommonObject
 
 		if (!$error) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-			dolCopyDir($pathofwebsiteold, $pathofwebsitenew, getDolGlobalString('MAIN_UMASK'), 0, null, 2);
+			dolCopyDir($pathofwebsiteold, $pathofwebsitenew, getDolGlobalString('MAIN_UMASK'), 0, [], 2);
 
 			// Check symlink to medias and restore it if ko
 			$pathtomedias = DOL_DATA_ROOT.'/medias'; // Target
@@ -1314,8 +1314,8 @@ class Website extends CommonObject
 				// Scan the line
 				if (preg_match('/^-- Page ID (\d+)\s[^\s]+\s(\d+).*Aliases\s(.+)\s--;/i', $buf, $reg)) {
 					// Example of line: "-- Page ID 179 -> 1__+MAX_llx_website_page__ - Aliases about-us --;"
-					$oldid = $reg[1];
-					$newid = ($reg[2] + $maxrowid);
+					$oldid = (int) $reg[1];
+					$newid = ((int) $reg[2] + $maxrowid);
 					$aliasesarray = explode(',', $reg[3]);
 
 					dol_syslog("In sql source file, we have the page ID ".$oldid." to replace with the new ID ".$newid.", and we must create the shortcut aliases: ".$reg[3]);
@@ -1323,7 +1323,7 @@ class Website extends CommonObject
 					//dol_move($conf->website->dir_output.'/'.$object->ref.'/page'.$oldid.'.tpl.php', $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php', 0, 1, 0, 0);
 				} elseif (preg_match('/^-- Page ID (\d+).*Aliases\s(.*)\s--;/i', $buf, /** @var string[] $reg */ $reg)) {
 					// Example of line: "-- Page ID 1__+MAX_llx_website_page__ - Aliases about-us --;"
-					$newid = ($reg[1] + $maxrowid);
+					$newid = ((int) $reg[1] + $maxrowid);
 					$aliasesarray = explode(',', $reg[2]);
 
 					dol_syslog("In sql source file, we have the page with the new ID ".$newid.", and we must create the shortcut aliases: ".$reg[2]);
@@ -1482,7 +1482,7 @@ class Website extends CommonObject
 	 */
 	public function isMultiLang()
 	{
-		return (empty($this->otherlang) ? false : true);
+		return !empty($this->otherlang);
 	}
 
 	/**
@@ -1895,7 +1895,7 @@ class Website extends CommonObject
 	 * @param string  $str1   first string
 	 * @param string  $str2   second string
 	 * @param array  $exceptNumPge    num of page files we don't want to change
-	 * @return array|int      -1 if KO, array if OK
+	 * @return array|int<-1,-1>      -1 if KO, array if OK
 	 */
 	protected function showDifferences($str1, $str2, $exceptNumPge = array())
 	{
