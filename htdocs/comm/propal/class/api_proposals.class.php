@@ -4,6 +4,7 @@
  * Copyright (C) 2020       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -410,6 +411,7 @@ class Proposals extends DolibarrApi
 		}
 
 		$errors = [];
+		$updateRes = 0;
 		$this->db->begin();
 
 		foreach ($request_data as $TData) {

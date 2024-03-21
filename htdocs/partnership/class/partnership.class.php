@@ -104,7 +104,7 @@ class Partnership extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -205,7 +205,7 @@ class Partnership extends CommonObject
 	public function create(User $user, $notrigger = 0)
 	{
 		if ($this->fk_soc <= 0 && $this->fk_member <= 0) {
-			$this->error[] = "ErrorThirpdartyOrMemberidIsMandatory";
+			$this->errors[] = "ErrorThirpdartyOrMemberidIsMandatory";
 			return -1;
 		}
 
@@ -522,7 +522,7 @@ class Partnership extends CommonObject
 	public function update(User $user, $notrigger = 0)
 	{
 		if ($this->fk_soc <= 0 && $this->fk_member <= 0) {
-			$this->error[] = "ErrorThirpdartyOrMemberidIsMandatory";
+			$this->errors[] = "ErrorThirpdartyOrMemberidIsMandatory"; // Mistyping in key is in translations
 			return -1;
 		}
 		if (empty($this->fk_user_creat)) {	// For the case the object was created with empty user (from public page).
@@ -1230,7 +1230,7 @@ class Partnership extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/partnership/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if ($mybool === false) {

@@ -142,9 +142,7 @@ if ($socid > 0) {
 }
 
 if (!($object->id > 0) && $action == 'view') {
-	$langs->load("errors");
-	print($langs->trans('ErrorRecordNotFound'));
-	exit;
+	recordNotFound();
 }
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
@@ -562,12 +560,12 @@ if (empty($reshook)) {
 				} else {
 					if ($result == -3 && in_array('ErrorCustomerCodeAlreadyUsed', $object->errors)) {
 						$duplicate_code_error = true;
-						$object->code_client = null;
+						$object->code_client = '';
 					}
 
 					if ($result == -3 && in_array('ErrorSupplierCodeAlreadyUsed', $object->errors)) {
 						$duplicate_code_error = true;
-						$object->code_fournisseur = null;
+						$object->code_fournisseur = '';
 					}
 
 					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {	// TODO Sometime errors on duplicate on profid and not on code, so we must manage this case
@@ -600,7 +598,7 @@ if (empty($reshook)) {
 					}
 
 					if (!empty($backtopage)) {
-						$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
+						$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
 						if (preg_match('/\?/', $backtopage)) {
 							$backtopage .= '&socid='.$object->id; // Old method
 						}

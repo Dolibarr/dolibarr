@@ -9,6 +9,7 @@
  * Copyright (C) 2016-2018  Charlie Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -505,7 +506,7 @@ class FichinterRec extends Fichinter
 			}
 			$pu_ht = price2num($pu_ht);
 			$pu_ttc = price2num($pu_ttc);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
 
@@ -659,7 +660,7 @@ class FichinterRec extends Fichinter
 		}
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -868,7 +869,7 @@ class FichinterRec extends Fichinter
 		$sql .= ' SET nb_gen_done = nb_gen_done + 1';
 		$sql .= ' , date_last_gen = now()';
 		// si on et arrivé à la fin des génération
-		if ($this->nb_gen_max == $this->nb_gen_done + 1) {
+		if ($this->nb_gen_max <= $this->nb_gen_done + 1) {
 			$sql .= ' , statut = 1';
 		}
 

@@ -11,10 +11,11 @@
  * Copyright (C) 2015-2016	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2018-2022	Charlene Benke			<charlene@patas-monkey.com>
- * Copyright (C) 2018-2020	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2019-2023	Alexandre Spangaro		<aspangaro@easya.solutions>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2023		Joachim Kueter		    <git-jk@bloxera.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,7 +104,7 @@ $search_datelimit_endmonth = GETPOSTINT('search_datelimit_endmonth');
 $search_datelimit_endyear = GETPOSTINT('search_datelimit_endyear');
 $search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
 $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
-$search_categ_sup = trim(GETPOSTINT("search_categ_sup"));
+$search_categ_sup = GETPOSTINT("search_categ_sup");
 $search_product_category = GETPOSTINT('search_product_category');
 
 $option = GETPOST('search_option');
@@ -211,6 +212,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 if (!isModEnabled('supplier_invoice')) {
 	accessforbidden();
@@ -932,10 +934,10 @@ if ($option) {
 	$param .= "&search_option=".urlencode($option);
 }
 if ($search_categ_sup > 0) {
-	$param .= '&search_categ_sup='.urlencode($search_categ_sup);
+	$param .= '&search_categ_sup='.$search_categ_sup;
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
-	$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
+	$param .= '&search_type_thirdparty='.$search_type_thirdparty;
 }
 
 // Add $param from extra fields
@@ -1595,7 +1597,6 @@ while ($i < $imaxinloop) {
 	$facturestatic->alreadypaid = ($paiement ? $paiement : 0);
 
 	$facturestatic->paye = $obj->paye;
-	$facturestatic->socid = $thirdparty->getNomUrl(1, 'supplier', 3);
 
 	$facturestatic->date = $db->jdate($obj->datef);
 

@@ -943,7 +943,7 @@ class AccountancyExport
 			$tab['signe_montant'] = '+';
 
 			// The amount must be in centimes without decimal points.
-			$tab['montant'] = str_pad(abs(($line->debit - $line->credit) * 100), 12, '0', STR_PAD_LEFT);
+			$tab['montant'] = str_pad((string) abs(($line->debit - $line->credit) * 100), 12, '0', STR_PAD_LEFT);
 			$tab['contrepartie'] = str_repeat(' ', 8);
 
 			// Force date format : %d%m%y

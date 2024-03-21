@@ -172,7 +172,7 @@ class FactureRec extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -359,7 +359,7 @@ class FactureRec extends CommonInvoice
 					}
 
 					$tva_tx = $facsrc->lines[$i]->tva_tx;
-					if (!empty($facsrc->lines[$i]->vat_src_code) && !preg_match('/\(/', $tva_tx)) {
+					if (!empty($facsrc->lines[$i]->vat_src_code) && !preg_match('/\(/', (string) $tva_tx)) {
 						$tva_tx .= ' ('.$facsrc->lines[$i]->vat_src_code.')';
 					}
 
@@ -894,9 +894,9 @@ class FactureRec extends CommonInvoice
 		// Clean vat code
 		$reg = array();
 		$vat_src_code = '';
-		if (preg_match('/\((.*)\)/', $txtva, $reg)) {
+		if (preg_match('/\((.*)\)/', (string) $txtva, $reg)) {
 			$vat_src_code = $reg[1];
-			$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
+			$txtva = preg_replace('/\s*\(.*\)/', '', (string) $txtva); // Remove code from vatrate.
 		}
 
 
@@ -1110,7 +1110,7 @@ class FactureRec extends CommonInvoice
 		$pu_ht          = price2num($pu_ht);
 		$pu_ttc         = price2num($pu_ttc);
 		$pu_ht_devise = price2num($pu_ht_devise);
-		if (!preg_match('/\((.*)\)/', $txtva)) {
+		if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 			$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 		}
 		$txlocaltax1	= price2num($txlocaltax1);

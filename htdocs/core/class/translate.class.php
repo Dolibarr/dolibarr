@@ -701,6 +701,7 @@ class Translate
 
 			if (strpos($key, 'Format') !== 0) {
 				try {
+					// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 					$str = sprintf($str, $param1, $param2, $param3, $param4); // Replace %s and %d except for FormatXXX strings.
 				} catch (Exception $e) {
 					// No exception managed
@@ -786,6 +787,7 @@ class Translate
 
 			if (!preg_match('/^Format/', $key)) {
 				//print $str;
+				// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 				$str = sprintf($str, $param1, $param2, $param3, $param4, $param5); // Replace %s and %d except for FormatXXX strings.
 			}
 
@@ -810,7 +812,7 @@ class Translate
 	 */
 	public function transcountry($str, $countrycode)
 	{
-		$strLocaleKey=$str.$countrycode;
+		$strLocaleKey = $str.$countrycode;
 		if (!empty($this->tab_translate[$strLocaleKey])) {
 			return $this->trans($strLocaleKey);
 		} else {
@@ -829,7 +831,7 @@ class Translate
 	 */
 	public function transcountrynoentities($str, $countrycode)
 	{
-		$strLocaleKey=$str.$countrycode;
+		$strLocaleKey = $str.$countrycode;
 		if (!empty($this->tab_translate[$strLocaleKey])) {
 			return $this->transnoentities($strLocaleKey);
 		} else {

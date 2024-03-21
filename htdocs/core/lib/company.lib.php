@@ -321,9 +321,14 @@ function societe_prepare_head(Societe $object)
 			if (!is_null($dataretrieved)) {
 				$nbNotif = $dataretrieved;
 			} else {
+				// List of notifications enabled for contacts of the third party
 				$sql = "SELECT COUNT(n.rowid) as nb";
-				$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
-				$sql .= " WHERE fk_soc = ".((int) $object->id);
+				$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
+				$sql .= " ".MAIN_DB_PREFIX."notify_def as n,";
+				$sql .= " ".MAIN_DB_PREFIX."socpeople as c";
+				$sql .= " WHERE a.rowid = n.fk_action";
+				$sql .= " AND c.rowid = n.fk_contact";
+				$sql .= " AND c.fk_soc = ".((int) $object->id);
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -524,7 +529,7 @@ function societe_admin_prepare_head()
  *    @param	Translate	$outputlangs	Langs object for output translation
  *    @param	int			$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
  *    @param	string		$searchlabel    Label of country to search (warning: searching on label is not reliable)
- *    @return	mixed       				Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
+ *    @return	int|string|array{id:int,code:string,label:string}	Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
  */
 function getCountry($searchkey, $withcode = '', $dbtouse = null, $outputlangs = null, $entconv = 1, $searchlabel = '')
 {
@@ -535,7 +540,7 @@ function getCountry($searchkey, $withcode = '', $dbtouse = null, $outputlangs = 
 	// Check parameters
 	if (empty($searchkey) && empty($searchlabel)) {
 		if ($withcode === 'all') {
-			return array('id' => '', 'code' => '', 'label' => '');
+			return array('id' => 0, 'code' => '', 'label' => '');
 		} else {
 			return '';
 		}
@@ -1165,7 +1170,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'visible' => 3, 'position' => 35),
 		'role'      => array('type' => 'checkbox', 'label' => 'Role', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 4, 'index' => 1, 'position' => 40),
 		'birthday' 	=> array('type' => 'date', 'label' => 'Birthday', 'enabled' => 1, 'visible' => -1, 'notnull' => 0, 'position' => 45),
-		'statut'    => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'default' => 0, 'index' => 1, 'position' => 50, 'arrayofkeyval' => array(0 => $contactstatic->LibStatut(0, 1), 1 => $contactstatic->LibStatut(1, 1))),
+		'statut'    => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'default' => '0', 'index' => 1, 'position' => 50, 'arrayofkeyval' => array(0 => $contactstatic->LibStatut(0, 1), 1 => $contactstatic->LibStatut(1, 1))),
 	);
 
 	// Definition of fields for list
@@ -1515,6 +1520,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 					print '</a>';
 				}
 
+				// Delete
+				if ($user->hasRight('societe', 'contact', 'delete')) {
+					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
+					print img_delete();
+					print '</a>';
+				}
+
 				print '</td>';
 			}
 
@@ -1608,6 +1620,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 				if ($user->hasRight('societe', 'contact', 'creer')) {
 					print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
 					print img_edit();
+					print '</a>';
+				}
+
+				// Delete
+				if ($user->hasRight('societe', 'contact', 'delete')) {
+					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&socid='.urlencode($obj->fk_soc).'">';
+					print img_delete();
 					print '</a>';
 				}
 
@@ -2042,6 +2061,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			dol_print_error($db);
 		}
 	}
+
+	'@phan-var-force array<int,array{userid:int,type:string,tododone:string,apicto:string,acode:string,alabel:string,note:string,id:int,percent:int<0,100>,datestart:int,dateend:int,fk_element:string,elementtype:string,contact_id:string,lastname:string,firstname:string,contact_photo:string,socpeaopleassigned:int[],login:string,userfirstname:string,userlastname:string,userphoto:string}> $histo';
 
 	if (isModEnabled('agenda') || (isModEnabled('mailing') && !empty($objcon->email))) {
 		$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;

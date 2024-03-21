@@ -164,7 +164,7 @@ if (php_sapi_name() === "cli" && (float) PHP_VERSION > 7.0) {
 		/**
 		 * Previx option with '-' for single characters and -- for more than single characters
 		 * @param string $arg
-		 * @return straing
+		 * @return string
 		 */
 		static function ($arg) {
 			if (strlen($arg) > 1) {

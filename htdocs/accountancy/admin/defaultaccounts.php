@@ -6,6 +6,7 @@
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,10 @@ $list_account_main = array(
 	'ACCOUNTING_ACCOUNT_SUPPLIER',
 	'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
 );
+
+if (isModEnabled('expensereport')) {
+	$list_account_main[] = 'ACCOUNTING_ACCOUNT_EXPENSEREPORT';
+}
 
 $list_account = array();
 
@@ -239,7 +244,7 @@ foreach ($list_account_main as $key) {
 	// Value
 	print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
 	$key_value = getDolGlobalString($key);
-	print $formaccounting->select_account($key_value, $key, 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accountsmain');
+	print $formaccounting->select_account($key_value, $key, 1, [], 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accountsmain');
 	print '</td>';
 	print '</tr>';
 }
@@ -285,7 +290,7 @@ foreach ($list_account as $key) {
 		print '</td>';
 		// Value
 		print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
-		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
+		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, [], 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
 		print '</td>';
 		print '</tr>';
 	}
@@ -300,7 +305,7 @@ print img_picto('', 'bill', 'class="pictofixedwidth"') . $langs->trans('ACCOUNTI
 print '</td>';
 // Value
 print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
-print $formaccounting->select_account(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT', 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
+print $formaccounting->select_account(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT', 1, [], 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
 print '</td>';
 print '</tr>';
 
@@ -327,7 +332,7 @@ print img_picto('', 'supplier_invoice', 'class="pictofixedwidth"') . $langs->tra
 print '</td>';
 // Value
 print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
-print $formaccounting->select_account(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 'ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT', 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
+print $formaccounting->select_account(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 'ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT', 1, [], 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
 print '</td>';
 print '</tr>';
 

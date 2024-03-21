@@ -319,10 +319,10 @@ if (empty($mode) || $mode == 'show_month') {
 	$next_year  = $next['year'];
 	$next_month = $next['month'];
 
-	$max_day_in_prev_month = date("t", dol_mktime(12, 0, 0, $prev_month, 1, $prev_year, 'gmt')); // Nb of days in previous month
-	$max_day_in_month = date("t", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')); // Nb of days in next month
+	$max_day_in_prev_month = (int) date("t", dol_mktime(12, 0, 0, $prev_month, 1, $prev_year, 'gmt')); // Nb of days in previous month
+	$max_day_in_month = (int) date("t", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')); // Nb of days in next month
 	// tmpday is a negative or null cursor to know how many days before the 1st to show on month view (if tmpday=0, 1st is monday)
-	$tmpday = -date("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // date('w') is 0 for sunday
+	$tmpday = - (int) date("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // date('w') is 0 for sunday
 	$tmpday += ((isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1) - 1);
 	if ($tmpday >= 1) {
 		$tmpday -= 7; // If tmpday is 0 we start with sunday, if -6, we start with monday of previous week.
@@ -550,7 +550,11 @@ if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda'
 	//$param='month='.$monthshown.'&year='.$year;
 	$hourminsec = dol_print_date(dol_mktime(10, 0, 0, 1, 1, 1970, 'gmt'), '%H', 'gmt').'0000';	// Set $hourminsec to '100000' to auto set hour to 10:00 at creation
 
-	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : '')));
+	$urltocreateaction = DOL_URL_ROOT.'/comm/action/card.php?action=create';
+	$urltocreateaction .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'].'&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
+	$urltocreateaction .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
+
+	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', $urltocreateaction);
 }
 
 // Define the legend/list of calendard to show
@@ -658,7 +662,9 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 				$default = '';
 			}
 
-			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'> <label for="check_ext'.$htmlname.'" title="'.dol_escape_htmltag($langs->trans("Cache").' '.round($DELAYFORCACHE / 60).'mn').'">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
+			$tooltip = $langs->trans("Cache").' '.round($DELAYFORCACHE / 60).'mn';
+
+			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'> <label for="check_ext'.$htmlname.'" title="'.dol_escape_htmltag($tooltip).'">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
 		}
 	}
 
@@ -1173,7 +1179,7 @@ if ($user->hasRight("holiday", "read")) {
 // Complete $eventarray with external import Ical
 if (count($listofextcals)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/ical.class.php';
-	foreach ($listofextcals as $extcal) {
+	foreach ($listofextcals as $key => $extcal) {
 		$url = $extcal['src']; // Example: https://www.google.com/calendar/ical/eldy10%40gmail.com/private-cde92aa7d7e0ef6110010a821a2aaeb/basic.ics
 		$namecal = $extcal['name'];
 		$offsettz = $extcal['offsettz'];
@@ -1185,6 +1191,11 @@ if (count($listofextcals)) {
 
 		$ical = new ICal();
 		$ical->parse($url, $pathforcachefile, $DELAYFORCACHE);
+		if ($ical->error) {
+			// Save error message for extcal
+			$listofextcals[$key]['error'] = $ical->error;
+			$s .= '<br><font class="warning">'.$listofextcals[$key]['name'].': '.$ical->error.'</font>';
+		}
 
 		// After this $ical->cal['VEVENT'] contains array of events, $ical->cal['DAYLIGHT'] contains daylight info, $ical->cal['STANDARD'] contains non daylight info, ...
 		//var_dump($ical->cal); exit;
@@ -1458,7 +1469,6 @@ if (count($listofextcals)) {
 	}
 }
 
-
 // Complete $eventarray with events coming from external module
 $parameters = array();
 $object = null;
@@ -1489,7 +1499,7 @@ if (is_readable($color_file)) {
 	include $color_file;
 }
 if (!is_array($theme_datacolor)) {
-	$theme_datacolor = array(array(120, 130, 150), array(200, 160, 180), array(190, 190, 220));
+	$theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(250, 190, 80), array(80, 166, 90), array(190, 190, 100), array(91, 115, 247), array(140, 140, 220), array(190, 120, 120), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
 }
 
 $massactionbutton = '';
@@ -1727,8 +1737,8 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 		$maxnbofchar = 80;
 
 		$tmp = explode('-', getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS'));
-		$minhour = round($tmp[0], 0);
-		$maxhour = round($tmp[1], 0);
+		$minhour = round((float) $tmp[0], 0);
+		$maxhour = round((float) $tmp[1], 0);
 		if ($minhour > 23) {
 			$minhour = 23;
 		}
@@ -1789,7 +1799,7 @@ $db->close();
  * @param   int		$showinfo        Add extended information (used by day and week view)
  * @param   int		$minheight       Minimum height for each event. 60px by default.
  * @param	int		$nonew			 0=Add "new entry button", 1=No "new entry button", -1=Only "new entry button"
- * @param	array	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
+ * @param	array{}|array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int}}	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
  * @return	void
  */
 function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $nonew = 0, $bookcalcalendarsarray = array())
@@ -1799,6 +1809,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	global $theme_datacolor;
 	global $cachethirdparties, $cachecontacts, $cacheusers, $colorindexused;
 	global $hookmanager;
+
+	'@phan-var-force array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int},3:array{0:int,1:int,2:int}} $theme_datacolor
+	 @phan-var-force User[] $cacheusers
+	 @phan-var-force array<int<0,3>> $colorindexused';
 
 	if ($conf->use_javascript_ajax) {	// Enable the "Show more button..."
 		$conf->global->MAIN_JS_SWITCH_AGENDA = 1;
@@ -1811,10 +1825,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	print "\n";
 
 	$curtime = dol_mktime(0, 0, 0, $month, $day, $year);
-	$urltoshow = DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year.$newparam;
+	$urltoshow = DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&day='.str_pad((string) $day, 2, "0", STR_PAD_LEFT).'&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$year.$newparam;
 	$urltocreate = '';
 	if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
-		$newparam .= '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
+		$newparam .= '&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$year;
 		$hourminsec = '100000';
 		$urltocreate = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $year, $month, $day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
 	}
@@ -1950,7 +1964,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							}
 						}
 						//print '|'.($color).'='.($idusertouse?$idusertouse:0).'='.$colorindex.'<br>';
-						// Define color
+						// Define color  // @suppress-next-line PhanPluginPrintfIncompatibleArgumentType
 						$color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
 					}
 					$cssclass = $cssclass.' eventday_'.$ymd;
@@ -2160,7 +2174,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 								$event->libelle = $titletoshow;		// deprecatd
 								// Note: List of users are inside $event->userassigned. Link may be clickable depending on permissions of user.
 								$titletoshow = (($event->type_picto || $event->type_code) ? $event->getTypePicto() : '');
-								$titletoshow .= $event->getNomUrl(0, $maxnbofchar, 'cal_event cal_event_title valignmiddle inline-block', '', 0, 0);
+								$titletoshow .= $event->getNomUrl(0, $maxnbofchar, 'cal_event cal_event_title valignmiddle', '', 0, 0);	// do not add 'inline-block' in css here: it makes the title transformed completely into '...'
 								$event->label = $savlabel;
 								$event->libelle = $savlabel;
 							}
@@ -2266,7 +2280,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 				} else {
 					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode='.$mode.'&maxprint=0&month='.((int) $monthshown).'&year='.((int) $year);
 					print($status ? '&status='.$status : '').($filter ? '&filter='.urlencode($filter) : '');
-					print($filtert ? '&search_filtert='.urlencode($filtert) : '');
+					print($filtert ? '&search_filtert='.urlencode((string) $filtert) : '');
 					print($usergroup ? '&search_usergroup='.urlencode($usergroup) : '');
 					print($actioncode != '' ? '&search_actioncode='.urlencode($actioncode) : '');
 					print '">'.img_picto("all", "1downarrow_selected.png").' ...';

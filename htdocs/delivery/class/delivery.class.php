@@ -7,6 +7,7 @@
  * Copyright (C) 2013      Florian Henry	     <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2023-2024 Frédéric France       <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -615,7 +616,7 @@ class Delivery extends CommonObject
 			$result = $line->insertExtraFields();
 
 			if ($result < 0) {
-				$this->error[] = $line->error;
+				$this->errors[] = $line->error;
 				$error++;
 			}
 		}
@@ -632,7 +633,7 @@ class Delivery extends CommonObject
 	 * 	Add line
 	 *
 	 *	@param	int		$origin_id				Origin id
-	 *	@param	int		$qty					Qty
+	 *	@param	float	$qty					Qty
 	 *  @param	array	$array_options			Array options
 	 *	@return	void
 	 */
@@ -826,7 +827,7 @@ class Delivery extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

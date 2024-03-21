@@ -184,6 +184,7 @@ class Product extends CommonObject
 	 * @var string
 	 */
 	public $price_base_type;
+	public $price_label;
 
 	//! Arrays for multiprices
 	public $multiprices = array();
@@ -310,7 +311,7 @@ class Product extends CommonObject
 	/**
 	 * Status indicates whether the product is on sale '1' or not '0'
 	 * @var int
-	 * @deprecated
+	 * @deprecated  Use $status instead
 	 * @see $status
 	 */
 	public $tosell;
@@ -325,7 +326,7 @@ class Product extends CommonObject
 	/**
 	 * Status indicate whether the product is available for purchase '1' or not '0'
 	 * @var int
-	 * @deprecated
+	 * @deprecated Use $status_buy instead
 	 * @see $status_buy
 	 */
 	public $tobuy;
@@ -333,7 +334,7 @@ class Product extends CommonObject
 	/**
 	 * Status indicates whether the product is a finished product '1' or a raw material '0'
 	 *
-	 * @var int
+	 * @var ?int
 	 */
 	public $finished;
 
@@ -583,7 +584,7 @@ class Product extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -684,6 +685,7 @@ class Product extends CommonObject
 		$this->price = (float) price2num($this->price);
 		$this->price_min_ttc = (float) price2num($this->price_min_ttc);
 		$this->price_min = (float) price2num($this->price_min);
+		$this->price_label = trim($this->price_label);
 		if (empty($this->tva_tx)) {
 			$this->tva_tx = 0;
 		}
@@ -826,6 +828,7 @@ class Product extends CommonObject
 					$sql .= ", price";
 					$sql .= ", price_ttc";
 					$sql .= ", price_base_type";
+					$sql .= ", price_label";
 					$sql .= ", tobuy";
 					$sql .= ", tosell";
 					if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
@@ -853,6 +856,7 @@ class Product extends CommonObject
 					$sql .= ", ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
 					$sql .= ", ".((int) $user->id);
 					$sql .= ", ".((int) $this->type);
+					$sql .= ", ".(!empty($this->price_label) ? "'".$this->db->escape($this->price_label)."'" : "null");
 					$sql .= ", ".price2num($price_ht, 'MT');
 					$sql .= ", ".price2num($price_ttc, 'MT');
 					$sql .= ", '".$this->db->escape($this->price_base_type)."'";
@@ -1894,13 +1898,13 @@ class Product extends CommonObject
 			while ($obj = $this->db->fetch_object($result)) {
 				//print 'lang='.$obj->lang.' current='.$current_lang.'<br>';
 				if ($obj->lang == $current_lang) {  // si on a les traduct. dans la langue courante on les charge en infos principales.
-					$this->label        = $obj->label;
+					$this->label       = $obj->label;
 					$this->description = $obj->description;
-					$this->other        = $obj->other;
+					$this->other       = $obj->other;
 				}
-				$this->multilangs["$obj->lang"]["label"]        = $obj->label;
-				$this->multilangs["$obj->lang"]["description"] = $obj->description;
-				$this->multilangs["$obj->lang"]["other"]        = $obj->other;
+				$this->multilangs[(string) $obj->lang]["label"]       = $obj->label;
+				$this->multilangs[(string) $obj->lang]["description"] = $obj->description;
+				$this->multilangs[(string) $obj->lang]["other"]       = $obj->other;
 			}
 			return 1;
 		} else {
@@ -1965,9 +1969,9 @@ class Product extends CommonObject
 		}
 
 		// Add new price
-		$sql = "INSERT INTO ".$this->db->prefix()."product_price(price_level,date_price, fk_product, fk_user_author, price, price_ttc, price_base_type,tosell, tva_tx, default_vat_code, recuperableonly,";
+		$sql = "INSERT INTO ".$this->db->prefix()."product_price(price_level,date_price, fk_product, fk_user_author, price_label, price, price_ttc, price_base_type,tosell, tva_tx, default_vat_code, recuperableonly,";
 		$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, price_min,price_min_ttc,price_by_qty,entity,fk_price_expression) ";
-		$sql .= " VALUES(".($level ? ((int) $level) : 1).", '".$this->db->idate($now)."', ".((int) $this->id).", ".((int) $user->id).", ".((float) price2num($this->price)).", ".((float) price2num($this->price_ttc)).",'".$this->db->escape($this->price_base_type)."',".((int) $this->status).", ".((float) price2num($this->tva_tx)).", ".($this->default_vat_code ? ("'".$this->db->escape($this->default_vat_code)."'") : "null").", ".((int) $this->tva_npr).",";
+		$sql .= " VALUES(".($level ? ((int) $level) : 1).", '".$this->db->idate($now)."', ".((int) $this->id).", ".((int) $user->id).", ".(empty($this->price_label) ? "null" : "'".$this->db->escape($this->price_label)."'").", ".((float) price2num($this->price)).", ".((float) price2num($this->price_ttc)).",'".$this->db->escape($this->price_base_type)."',".((int) $this->status).", ".((float) price2num($this->tva_tx)).", ".($this->default_vat_code ? ("'".$this->db->escape($this->default_vat_code)."'") : "null").", ".((int) $this->tva_npr).",";
 		$sql .= " ".price2num($this->localtax1_tx).", ".price2num($this->localtax2_tx).", '".$this->db->escape($this->localtax1_type)."', '".$this->db->escape($this->localtax2_type)."', ".price2num($this->price_min).", ".price2num($this->price_min_ttc).", ".price2num($this->price_by_qty).", ".((int) $conf->entity).",".($this->fk_price_expression > 0 ? ((int) $this->fk_price_expression) : 'null');
 		$sql .= ")";
 
@@ -2139,7 +2143,7 @@ class Product extends CommonObject
 	 * @param  int    $product_id     Filter on a particular product id
 	 * @param  string $fourn_ref      Filter on a supplier price ref. 'none' to exclude ref in search.
 	 * @param  int    $fk_soc         If of supplier
-	 * @return int                    Return integer <-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
+	 * @return int|string             Return integer <-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...), or printable result of hook
 	 * @see getSellPrice(), find_min_price_product_fournisseur()
 	 */
 	public function get_buyprice($prodfournprice, $qty, $product_id = 0, $fourn_ref = '', $fk_soc = 0)
@@ -2304,7 +2308,7 @@ class Product extends CommonObject
 	 * @param  double $newprice          New price
 	 * @param  string $newpricebase      HT or TTC
 	 * @param  User   $user              Object user that make change
-	 * @param  double $newvat            New VAT Rate (For example 8.5. Should not be a string)
+	 * @param  ?double $newvat           New VAT Rate (For example 8.5. Should not be a string)
 	 * @param  double $newminprice       New price min
 	 * @param  int    $level             0=standard, >0 = level if multilevel prices
 	 * @param  int    $newnpr            0=Standard vat rate, 1=Special vat rate for French NPR VAT
@@ -2312,10 +2316,11 @@ class Product extends CommonObject
 	 * @param  int    $ignore_autogen    Used to avoid infinite loops
 	 * @param  array  $localtaxes_array  Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
 	 * @param  string $newdefaultvatcode Default vat code
+	 * @param  string $price_label       Price Label
 	 * @param  int    $notrigger         Disable triggers
 	 * @return int                            Return integer <0 if KO, >0 if OK
 	 */
-	public function updatePrice($newprice, $newpricebase, $user, $newvat = '', $newminprice = 0, $level = 0, $newnpr = 0, $newpbq = 0, $ignore_autogen = 0, $localtaxes_array = array(), $newdefaultvatcode = '', $notrigger = 0)
+	public function updatePrice($newprice, $newpricebase, $user, $newvat = null, $newminprice = 0, $level = 0, $newnpr = 0, $newpbq = 0, $ignore_autogen = 0, $localtaxes_array = array(), $newdefaultvatcode = '', $price_label = '', $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -2337,7 +2342,7 @@ class Product extends CommonObject
 		}
 
 		// Check parameters
-		if ($newvat == '') {
+		if ($newvat === null || $newvat == '') {  // Maintain '' for backwards compatibility
 			$newvat = $this->tva_tx;
 		}
 
@@ -2439,6 +2444,7 @@ class Product extends CommonObject
 			$sql .= " localtax1_type = ".($localtaxtype1 != '' ? "'".$this->db->escape($localtaxtype1)."'" : "'0'").",";
 			$sql .= " localtax2_type = ".($localtaxtype2 != '' ? "'".$this->db->escape($localtaxtype2)."'" : "'0'").",";
 			$sql .= " default_vat_code = ".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
+			$sql .= " price_label = ".(!empty($price_label) ? "'".$this->db->escape($price_label)."'" : "null").",";
 			$sql .= " tva_tx = ".(float) price2num($newvat).",";
 			$sql .= " recuperableonly = '".$this->db->escape($newnpr)."'";
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -2456,6 +2462,7 @@ class Product extends CommonObject
 				$this->multiprices_recuperableonly[$level] = $newnpr;
 
 				$this->price = $price;
+				$this->price_label = $price_label;
 				$this->price_ttc = $price_ttc;
 				$this->price_min = $price_min;
 				$this->price_min_ttc = $price_min_ttc;
@@ -2463,6 +2470,7 @@ class Product extends CommonObject
 				$this->default_vat_code = $newdefaultvatcode;
 				$this->tva_tx = $newvat;
 				$this->tva_npr = $newnpr;
+
 				//Local taxes
 				$this->localtax1_tx = $localtax1;
 				$this->localtax2_tx = $localtax2;
@@ -2580,6 +2588,7 @@ class Product extends CommonObject
 		}
 		$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
 		$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf,";
+		$sql .= " p.price_label,";
 		if ($separatedStock) {
 			$sql .= " SUM(sp.reel) as stock";
 		} else {
@@ -2623,6 +2632,7 @@ class Product extends CommonObject
 			}
 			$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
 			$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf";
+			$sql .= " ,p.price_label";
 			if (!$separatedStock) {
 				$sql .= ", p.stock";
 			}
@@ -2646,6 +2656,7 @@ class Product extends CommonObject
 				$this->note = $obj->note_private; // deprecated
 
 				$this->type = $obj->fk_product_type;
+				$this->price_label = $obj->price_label;
 				$this->status = $obj->tosell;
 				$this->status_buy = $obj->tobuy;
 				$this->status_batch = $obj->tobatch;
@@ -2742,6 +2753,7 @@ class Product extends CommonObject
 					for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 						$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
 						$sql .= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid, recuperableonly";
+						$sql .= " ,price_label";
 						$sql .= " FROM ".$this->db->prefix()."product_price";
 						$sql .= " WHERE entity IN (".getEntity('productprice').")";
 						$sql .= " AND price_level=".((int) $i);
@@ -3470,11 +3482,11 @@ class Product extends CommonObject
 	/**
 	 *  Charge tableau des stats réception fournisseur pour le produit/service
 	 *
-	 * @param  int    	$socid           Id societe pour filtrer sur une societe
-	 * @param  string 	$filtrestatut    Id statut pour filtrer sur un statut
-	 * @param  int    	$forVirtualStock Ignore rights filter for virtual stock calculation.
+	 * @param  int    	$socid           	Id societe pour filtrer sur une societe
+	 * @param  string 	$filtrestatut    	Id statut pour filtrer sur un statut
+	 * @param  int    	$forVirtualStock 	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
-	 * @return int                     Array of stats in $this->stats_reception, <0 if ko or >0 if ok
+	 * @return int                     		Array of stats in $this->stats_reception, <0 if ko or >0 if ok
 	 */
 	public function load_stats_reception($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null)
 	{
@@ -3483,13 +3495,13 @@ class Product extends CommonObject
 
 		$sql = "SELECT COUNT(DISTINCT cf.fk_soc) as nb_suppliers, COUNT(DISTINCT cf.rowid) as nb,";
 		$sql .= " COUNT(fd.rowid) as nb_rows, SUM(fd.qty) as qty";
-		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur_dispatch as fd";
+		$sql .= " FROM ".$this->db->prefix()."receptiondet_batch as fd";
 		$sql .= ", ".$this->db->prefix()."commande_fournisseur as cf";
 		$sql .= ", ".$this->db->prefix()."societe as s";
 		if (!$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
-		$sql .= " WHERE cf.rowid = fd.fk_commande";
+		$sql .= " WHERE cf.rowid = fd.fk_element";
 		$sql .= " AND cf.fk_soc = s.rowid";
 		$sql .= " AND cf.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'supplier_order').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
@@ -3531,12 +3543,12 @@ class Product extends CommonObject
 	/**
 	 *  Charge tableau des stats production pour le produit/service
 	 *
-	 * @param  int    	$socid           Id societe pour filtrer sur une societe
-	 * @param  string 	$filtrestatut    Id statut pour filtrer sur un statut
-	 * @param  int    	$forVirtualStock Ignore rights filter for virtual stock calculation.
+	 * @param	int    	$socid           	Id societe pour filtrer sur une societe
+	 * @param	string 	$filtrestatut    	Id statut pour filtrer sur un statut
+	 * @param	int    	$forVirtualStock 	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
-	 * @param   int $warehouseid Filter by a warehouse
-	 * @return integer                 Array of stats in $this->stats_mrptoproduce (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
+	 * @param   int 	$warehouseid 		Filter by a warehouse. Warning: When a filter on a warehous is set, it is not possible to calculate an accurate virtual stock because we can't knnow in which warehouse will be done virtual stock changes.
+	 * @return 	integer                 	Array of stats in $this->stats_mrptoproduce (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
 	 */
 	public function load_stats_inproduction($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null, $warehouseid = 0)
 	{
@@ -3593,13 +3605,13 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			while ($obj = $this->db->fetch_object($result)) {
-				if ($obj->role == 'toconsume') {
+				if ($obj->role == 'toconsume' && empty($warehouseid)) {
 					$this->stats_mrptoconsume['customers'] += $obj->nb_customers;
 					$this->stats_mrptoconsume['nb'] += $obj->nb;
 					$this->stats_mrptoconsume['rows'] += $obj->nb_rows;
 					$this->stats_mrptoconsume['qty'] += ($obj->qty ? $obj->qty : 0);
 				}
-				if ($obj->role == 'consumed') {
+				if ($obj->role == 'consumed' && empty($warehouseid)) {
 					//$this->stats_mrptoconsume['customers'] += $obj->nb_customers;
 					//$this->stats_mrptoconsume['nb'] += $obj->nb;
 					//$this->stats_mrptoconsume['rows'] += $obj->nb_rows;
@@ -4435,7 +4447,7 @@ class Product extends CommonObject
 	 *
 	 * @param  int $id_pere Id of parent product/service
 	 * @param  int $id_fils Id of child product/service
-	 * @param  int $qty     Quantity
+	 * @param  float $qty     Quantity
 	 * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
 	 * @param  int $notrigger	Disable triggers
 	 * @return int                Return integer < 0 if KO, > 0 if OK
@@ -4508,7 +4520,7 @@ class Product extends CommonObject
 	 *
 	 * @param  int $id_pere Id of parent product/service
 	 * @param  int $id_fils Id of child product/service
-	 * @param  int $qty     Quantity
+	 * @param  float $qty     Quantity
 	 * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
 	 * @param  int $notrigger	Disable triggers
 	 * @return int                Return integer < 0 if KO, > 0 if OK
@@ -4817,6 +4829,7 @@ class Product extends CommonObject
 		$sql .= ", price_min";
 		$sql .= ", price_min_ttc";
 		$sql .= ", price_base_type";
+		$sql .= ", price_label";
 		$sql .= ", default_vat_code";
 		$sql .= ", tva_tx";
 		$sql .= ", recuperableonly";
@@ -4844,6 +4857,7 @@ class Product extends CommonObject
 		$sql .= ", price_min";
 		$sql .= ", price_min_ttc";
 		$sql .= ", price_base_type";
+		$sql .= ", price_label";
 		$sql .= ", default_vat_code";
 		$sql .= ", tva_tx";
 		$sql .= ", recuperableonly";
@@ -5686,8 +5700,8 @@ class Product extends CommonObject
 				$nbpiece = abs($nbpiece);
 			}
 			$op = array();
-			$op[0] = "+".trim($nbpiece);
-			$op[1] = "-".trim($nbpiece);
+			$op[0] = "+".trim((string) $nbpiece);
+			$op[1] = "-".trim((string) $nbpiece);
 
 			$movementstock = new MouvementStock($this->db);
 			$movementstock->setOrigin($origin_element, $origin_id); // Set ->origin_type and ->origin_id
@@ -5750,8 +5764,8 @@ class Product extends CommonObject
 			}
 
 			$op = array();
-			$op[0] = "+".trim($nbpiece);
-			$op[1] = "-".trim($nbpiece);
+			$op[0] = "+".trim((string) $nbpiece);
+			$op[1] = "-".trim((string) $nbpiece);
 
 			$movementstock = new MouvementStock($this->db);
 			$movementstock->setOrigin($origin_element, $origin_id); // Set ->origin_type and ->fk_origin

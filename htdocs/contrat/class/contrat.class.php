@@ -184,6 +184,12 @@ class Contrat extends CommonObject
 	 */
 	public $date_contrat;
 
+	/**
+	 * Status of the contract (0=NoSignature, 1=SignedBySender, 2=SignedByReceiver, 9=SignedByAll)
+	 * @var int
+	 */
+	public $signed_status = 0;
+
 	public $commercial_signature_id;
 	public $fk_commercial_signature;
 	public $commercial_suivi_id;
@@ -243,7 +249,7 @@ class Contrat extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -255,6 +261,7 @@ class Contrat extends CommonObject
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 35),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 40),
 		'date_contrat' => array('type' => 'datetime', 'label' => 'Date contrat', 'enabled' => 1, 'visible' => -1, 'position' => 45),
+		'signed_status' => array('type' => 'smallint(6)', 'label' => 'SignedStatus', 'enabled' => 1, 'visible' => -1, 'position' => 50, 'arrayofkeyval' => array(0 => 'NoSignature', 1 => 'SignedSender', 2 => 'SignedReceiver', 9 => 'SignedAll')),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'notnull' => 1, 'position' => 70),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 75),
 		'fk_commercial_signature' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'SaleRepresentative Signature', 'enabled' => 1, 'visible' => -1, 'position' => 80),
@@ -275,6 +282,25 @@ class Contrat extends CommonObject
 	const STATUS_VALIDATED = 1;
 	const STATUS_CLOSED = 2;
 
+	/*
+	 * No signature
+	 */
+	const STATUS_NO_SIGNATURE    = 0;
+
+	/*
+	 * Signed by sender
+	 */
+	const STATUS_SIGNED_SENDER   = 1;
+
+	/*
+	 * Signed by receiver
+	 */
+	const STATUS_SIGNED_RECEIVER = 2;
+
+	/*
+	 * Signed by all
+	 */
+	const STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
 
 
 	/**
@@ -311,7 +337,7 @@ class Contrat extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/contract/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if (!$mybool) {
@@ -1462,7 +1488,7 @@ class Contrat extends CommonObject
 	 *
 	 *  @param	string		$desc            	Description of line
 	 *  @param  float		$pu_ht              Unit price net
-	 *  @param  int			$qty             	Quantity
+	 *  @param  float	 	$qty             	Quantity
 	 *  @param  float		$txtva           	Vat rate
 	 *  @param  float		$txlocaltax1        Local tax 1 rate
 	 *  @param  float		$txlocaltax2        Local tax 2 rate
@@ -1502,9 +1528,9 @@ class Contrat extends CommonObject
 			// Clean vat code
 			$reg = array();
 			$vat_src_code = '';
-			if (preg_match('/\((.*)\)/', $txtva, $reg)) {
+			if (preg_match('/\((.*)\)/', (string) $txtva, $reg)) {
 				$vat_src_code = $reg[1];
-				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
+				$txtva = preg_replace('/\s*\(.*\)/', '', (string) $txtva); // Remove code into vatrate.
 			}
 			$txtva = price2num($txtva);
 			$txlocaltax1 = price2num($txlocaltax1);
@@ -1657,7 +1683,7 @@ class Contrat extends CommonObject
 					$contractline->id = $contractlineid;
 					$result = $contractline->insertExtraFields();
 					if ($result < 0) {
-						$this->error[] = $contractline->error;
+						$this->errors[] = $contractline->error;
 						$error++;
 					}
 				}
@@ -1695,7 +1721,7 @@ class Contrat extends CommonObject
 	 *  @param	int			$rowid            	Id de la ligne de facture
 	 *  @param  string		$desc             	Description de la ligne
 	 *  @param  float		$pu               	Prix unitaire
-	 *  @param  int			$qty              	Quantite
+	 *  @param  float		$qty              	Quantite
 	 *  @param  float		$remise_percent   	Percentage discount of the line
 	 *  @param  int			$date_start       	Date de debut prevue
 	 *  @param  int			$date_end         	Date de fin prevue
@@ -1720,7 +1746,7 @@ class Contrat extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$qty = trim($qty);
+		$qty = trim((string) $qty);
 		$desc = trim($desc);
 		$desc = trim($desc);
 		$price = price2num($pu);
@@ -1851,7 +1877,7 @@ class Contrat extends CommonObject
 
 				$result = $contractline->insertExtraFields();
 				if ($result < 0) {
-					$this->error[] = $contractline->error;
+					$this->errors[] = $contractline->error;
 					$error++;
 				}
 			}
@@ -2953,6 +2979,22 @@ class Contrat extends CommonObject
 		$return .= '</div>';
 		return $return;
 	}
+
+	// @Todo getLibSignedStatus, LibSignedStatus
+
+	/**
+	 * Set signed status
+	 *
+	 * @param  User   $user        Object user that modify
+	 * @param  int    $status      Newsigned  status to set (often a constant like self::STATUS_XXX)
+	 * @param  int    $notrigger   1 = Does not execute triggers, 0 = Execute triggers
+	 * @param  string $triggercode Trigger code to use
+	 * @return int                 0 < if KO, > 0 if OK
+	 */
+	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, $triggercode = ''): int
+	{
+		return $this->setSignedStatusCommon($user, $status, $notrigger, $triggercode);
+	}
 }
 
 
@@ -3106,7 +3148,7 @@ class ContratLigne extends CommonObjectLine
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -3431,11 +3473,11 @@ class ContratLigne extends CommonObjectLine
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
 		$this->vat_src_code = trim($this->vat_src_code);
-		$this->tva_tx = trim($this->tva_tx);
+		$this->tva_tx = trim((string) $this->tva_tx);
 		$this->localtax1_tx = trim($this->localtax1_tx);
 		$this->localtax2_tx = trim($this->localtax2_tx);
-		$this->qty = trim($this->qty);
-		$this->remise_percent = trim($this->remise_percent);
+		$this->qty = trim((string) $this->qty);
+		$this->remise_percent = trim((string) $this->remise_percent);
 		$this->fk_remise_except = (int) $this->fk_remise_except;
 		$this->subprice = price2num($this->subprice);
 		$this->price_ht = price2num($this->price_ht);

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -699,8 +700,8 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		$thumbHeight = $maxHeight;
 		$thumbWidth  = $thumbHeight * $imgWhFact;
 	}
-	$thumbHeight = round($thumbHeight);
-	$thumbWidth = round($thumbWidth);
+	$thumbHeight = (int) round($thumbHeight);
+	$thumbWidth = (int) round($thumbWidth);
 
 	// Define target format
 	if (empty($targetformat)) {

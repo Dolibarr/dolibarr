@@ -297,7 +297,7 @@ class Commande extends CommonOrder
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -416,7 +416,7 @@ class Commande extends CommonOrder
 				$dir = dol_buildpath($reldir."core/modules/commande/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if ($mybool === false) {
@@ -1008,7 +1008,7 @@ class Commande extends CommonOrder
 
 					// Complete vat rate with code
 					$vatrate = $line->tva_tx;
-					if ($line->vat_src_code && !preg_match('/\(.*\)/', $vatrate)) {
+					if ($line->vat_src_code && !preg_match('/\(.*\)/', (string) $vatrate)) {
 						$vatrate .= ' ('.$line->vat_src_code.')';
 					}
 
@@ -1543,7 +1543,7 @@ class Commande extends CommonOrder
 			$pu_ht_devise = price2num($pu_ht_devise);
 			$pu_ttc = price2num($pu_ttc);
 			$pa_ht = (float) price2num($pa_ht);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
 			}
 			$txlocaltax1 = price2num($txlocaltax1);
@@ -2424,7 +2424,7 @@ class Commande extends CommonOrder
 	/**
 	 * 	Applique une remise relative
 	 *
-	 *  @deprecated
+	 *  @deprecated Use setDiscount() instead.
 	 *  @see setDiscount()
 	 * 	@param     	User		$user		User qui positionne la remise
 	 * 	@param     	float		$remise		Discount (percent)
@@ -2435,6 +2435,7 @@ class Commande extends CommonOrder
 	{
 		// phpcs:enable
 		dol_syslog(get_class($this)."::set_remise is deprecated, use setDiscount instead", LOG_NOTICE);
+		// @phan-suppress-next-line PhanDeprecatedFunction
 		return $this->setDiscount($user, $remise, $notrigger);
 	}
 
@@ -2442,14 +2443,13 @@ class Commande extends CommonOrder
 	 * 	Set a percentage discount
 	 *
 	 * 	@param     	User		$user		User setting the discount
-	 * 	@param     	float		$remise		Discount (percent)
-	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int 					Return integer <0 if KO, >0 if OK
-	 *	@deprecated remise_percent is a deprecated field for object parent
+	 * 	@param     	float|string	$remise		Discount (percent)
+	 * 	@param     	int<0,1>	$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@return		int<-1,1> 					Return integer <0 if KO, >0 if OK
 	 */
 	public function setDiscount($user, $remise, $notrigger = 0)
 	{
-		$remise = trim($remise) ? trim($remise) : 0;
+		$remise = trim((string) $remise) ? trim((string) $remise) : 0;
 
 		if ($user->hasRight('commande', 'creer')) {
 			$error = 0;
@@ -3138,7 +3138,7 @@ class Commande extends CommonOrder
 			$pu = price2num($pu);
 			$pa_ht = (float) price2num($pa_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
 			$txlocaltax1 = (float) price2num($txlocaltax1);
@@ -4381,20 +4381,20 @@ class OrderLine extends CommonOrderLine
 
 		$error = 0;
 
-		if (empty($this->id) && !empty($this->rowid)) {		// For backward compatibility
+		if (empty($this->id) && !empty($this->rowid)) {        // For backward compatibility
 			$this->id = $this->rowid;
 		}
 
 		// check if order line is not in a shipment line before deleting
-		$sqlCheckShipmentLine  = "SELECT";
+		$sqlCheckShipmentLine = "SELECT";
 		$sqlCheckShipmentLine .= " ed.rowid";
-		$sqlCheckShipmentLine .= " FROM ".MAIN_DB_PREFIX."expeditiondet ed";
-		$sqlCheckShipmentLine .= " WHERE ed.fk_origin_line = ".((int) $this->id);
+		$sqlCheckShipmentLine .= " FROM " . MAIN_DB_PREFIX . "expeditiondet ed";
+		$sqlCheckShipmentLine .= " WHERE ed.fk_origin_line = " . ((int) $this->id);
 
 		$resqlCheckShipmentLine = $this->db->query($sqlCheckShipmentLine);
 		if (!$resqlCheckShipmentLine) {
 			$error++;
-			$this->error    = $this->db->lasterror();
+			$this->error = $this->db->lasterror();
 			$this->errors[] = $this->error;
 		} else {
 			$langs->load('errors');
@@ -4402,56 +4402,58 @@ class OrderLine extends CommonOrderLine
 			if ($num > 0) {
 				$error++;
 				$objCheckShipmentLine = $this->db->fetch_object($resqlCheckShipmentLine);
-				$this->error = $langs->trans('ErrorRecordAlreadyExists').' : '.$langs->trans('ShipmentLine').' '.$objCheckShipmentLine->rowid;
+				$this->error = $langs->trans('ErrorRecordAlreadyExists') . ' : ' . $langs->trans('ShipmentLine') . ' ' . $objCheckShipmentLine->rowid;
 				$this->errors[] = $this->error;
 			}
 			$this->db->free($resqlCheckShipmentLine);
 		}
 		if ($error) {
-			dol_syslog(__METHOD__.'Error ; '.$this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . 'Error ; ' . $this->error, LOG_ERR);
 			return -1;
 		}
 
 		$this->db->begin();
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid = ".((int) $this->id);
-
-		dol_syslog("OrderLine::delete", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			if (!$error && !$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('LINEORDER_DELETE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('LINEORDER_DELETE', $user);
+			if ($result < 0) {
+				$error++;
 			}
-
-			// Remove extrafields
-			if (!$error) {
-				$result = $this->deleteExtraFields();
-				if ($result < 0) {
-					$error++;
-					dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
-				}
-			}
-
-			if (!$error) {
-				$this->db->commit();
-				return 1;
-			}
-
-			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
-			$this->db->rollback();
-			return -1 * $error;
-		} else {
-			$this->error = $this->db->lasterror();
-			return -1;
+			// End call triggers
 		}
+
+		if (!$error) {
+			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . "commandedet WHERE rowid = " . ((int) $this->id);
+
+			dol_syslog("OrderLine::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$this->error = $this->db->lasterror();
+				$error++;
+			}
+		}
+
+		// Remove extrafields
+		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$error++;
+				dol_syslog(get_class($this) . "::delete error -4 " . $this->error, LOG_ERR);
+			}
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 1;
+		}
+
+		foreach ($this->errors as $errmsg) {
+			dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+			$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+		}
+		$this->db->rollback();
+		return -1 * $error;
 	}
 
 	/**

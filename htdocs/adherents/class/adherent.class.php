@@ -316,7 +316,7 @@ class Adherent extends CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -560,12 +560,13 @@ class Adherent extends CommonObject
 	 *	Return translated label by the nature of a adherent (physical or moral)
 	 *
 	 *	@param	string		$morphy		Nature of the adherent (physical or moral)
-	 *  @param	int			$addbadge	Add badge (1=Full label, 2=First letters only)
+	 *  @param	int<0,2>	$addbadge	Add badge (1=Full label, 2=First letters only)
 	 *	@return	string					Label
 	 */
 	public function getmorphylib($morphy = '', $addbadge = 0)
 	{
 		global $langs;
+		$s = '';
 
 		// Clean var
 		if (!$morphy) {
@@ -573,7 +574,6 @@ class Adherent extends CommonObject
 		}
 
 		if ($addbadge) {
-			$s = '';
 			$labeltoshowm = $langs->trans("Moral");
 			$labeltoshowp = $langs->trans("Physical");
 			if ($morphy == 'phy') {

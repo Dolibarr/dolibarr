@@ -269,9 +269,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		if ($nbConfOrBooth > 0 || $nbAttendees > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">';
 			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("ConferenceOrBooth")).'">'.$nbConfOrBooth.'</span>';
-			if ($nbConfOrBooth > 0 && $nbAttendees > 0) {
-				$head[$h][1] .= ' + ';
-			}
+			$head[$h][1] .= ' + ';
 			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("Attendees")).'">'.$nbAttendees.'</span>';
 			$head[$h][1] .= '</span>';
 		}
@@ -1097,7 +1095,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		// Budget task
 		if (count($arrayfields) > 0 && !empty($arrayfields['t.budget_amount']['checked'])) {
 			print '<td class="nowrap liste_total center">';
-			if (strcmp($total_budget_amount, '')) {
+			if (strcmp((string) $total_budget_amount, '')) {
 				print price($total_budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
 			}
 			print '</td>';
@@ -2448,9 +2446,9 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 /**
  * Search in task lines with a particular parent if there is a task for a particular user (in taskrole)
  *
- * @param 	string	$inc				Counter that count number of lines legitimate to show (for return)
+ * @param 	int		$inc				Counter that count number of lines legitimate to show (for return)
  * @param 	int		$parent				Id of parent task to start
- * @param 	array	$lines				Array of all tasks
+ * @param 	Task[]	$lines				Array of all tasks
  * @param	string	$taskrole			Array of task filtered on a particular user
  * @return	int							1 if there is
  */
@@ -2527,7 +2525,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	$project_year_filter = 0;
 
 	$title = $langs->trans("Projects");
-	if (strcmp($status, '') && $status >= 0) {
+	if (strcmp((string) $status, '') && $status >= 0) {
 		$title = $langs->trans("Projects").' '.$langs->trans($projectstatic->labelStatus[$status]);
 	}
 

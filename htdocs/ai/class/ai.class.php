@@ -28,6 +28,7 @@ class Ai
 	 * @var DoliDB $db Database object
 	 */
 	protected $db;
+
 	/**
 	 * @var string $apiEndpoint
 	 */
@@ -131,9 +132,12 @@ class Ai
 				'Authorization: Bearer ' . $this->apiKey,
 				'Content-Type: application/json'
 			]);
-			$response = getURLContent($this->apiEndpoint, 'POST', $payload, $headers);
+			$response = getURLContent($this->apiEndpoint, 'POST', $payload, 1, $headers);
 
-			if ($response['http_code']  != 200) {
+			if (empty($response['http_code'])) {
+				throw new Exception('API request failed. No http received');
+			}
+			if (!empty($response['http_code']) && $response['http_code'] != 200) {
 				throw new Exception('API request failed with status code ' . $response['http_code']);
 			}
 			// Decode JSON response
@@ -149,7 +153,17 @@ class Ai
 
 			return $generatedEmailContent;
 		} catch (Exception $e) {
-			return array('error' => true, 'message' => $e->getMessage());
+			$errormessage = $e->getMessage();
+			if (!empty($response['content'])) {
+				$decodedResponse = json_decode($response['content'], true);
+
+				// With OpenAI, error is into an object error into the content
+				if (!empty($decodedResponse['error']['message'])) {
+					$errormessage .= ' - '.$decodedResponse['error']['message'];
+				}
+			}
+
+			return array('error' => true, 'message' => $errormessage, 'code' => (empty($response['http_code']) ? 0 : $response['http_code']), 'curl_error_no' => (empty($response['curl_error_no']) ? $response['curl_error_no'] : ''));
 		}
 	}
 }

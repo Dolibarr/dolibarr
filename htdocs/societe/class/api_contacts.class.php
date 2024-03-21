@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry         <jfefe@aternatik.fr>
  * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -167,7 +168,7 @@ class Contacts extends DolibarrApi
 	 * @param int       $includecount       Count and return also number of elements the contact is used as a link for
 	 * @param int		$includeroles        Includes roles of the contact
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @return array                        Array of contact objects
+	 * @return Contact[]                        Array of contact objects
 	 *
 	 * @throws RestException
 	 */
@@ -273,6 +274,8 @@ class Contacts extends DolibarrApi
 	 *
 	 * @param   array   $request_data   Request datas
 	 * @return  int     ID of contact
+	 *
+	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
 	 */
 	public function post($request_data = null)
 	{
@@ -311,7 +314,7 @@ class Contacts extends DolibarrApi
 	 *
 	 * @param 	int   	$id             	Id of contact to update
 	 * @param 	array 	$request_data   	Datas
-	 * @return 	Object						Updated object
+	 * @return 	Object|false				Updated object, false when issue toupdate
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -389,6 +392,7 @@ class Contacts extends DolibarrApi
 	 * @return  int     ID of user
 	 *
 	 * @url	POST {id}/createUser
+	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
 	 */
 	public function createUser($id, $request_data = null)
 	{
@@ -573,8 +577,8 @@ class Contacts extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array|null     $data   Data to validate
-	 * @return  array
+	 * @param   string[]|null     $data   Data to validate
+	 * @return  string[]
 	 * @throws  RestException
 	 */
 	private function _validate($data)

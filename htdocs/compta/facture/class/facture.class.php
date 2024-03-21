@@ -291,7 +291,7 @@ class Facture extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 1),
@@ -818,7 +818,7 @@ class Facture extends CommonInvoice
 
 						// Complete vat rate with code
 						$vatrate = $newinvoiceline->tva_tx;
-						if ($newinvoiceline->vat_src_code && ! preg_match('/\(.*\)/', $vatrate)) {
+						if ($newinvoiceline->vat_src_code && ! preg_match('/\(.*\)/', (string) $vatrate)) {
 							$vatrate .= ' ('.$newinvoiceline->vat_src_code.')';
 						}
 
@@ -900,7 +900,7 @@ class Facture extends CommonInvoice
 
 						// Complete vat rate with code
 						$vatrate = $line->tva_tx;
-						if ($line->vat_src_code && !preg_match('/\(.*\)/', $vatrate)) {
+						if ($line->vat_src_code && !preg_match('/\(.*\)/', (string) $vatrate)) {
 							$vatrate .= ' ('.$line->vat_src_code.')';
 						}
 
@@ -2450,7 +2450,7 @@ class Facture extends CommonInvoice
 			$this->type = self::TYPE_STANDARD;
 		}
 		if (isset($this->subtype)) {
-			$this->subtype = (int) trim($this->subtype);
+			$this->subtype = (int) trim((string) $this->subtype);
 		}
 		if (isset($this->ref)) {
 			$this->ref = trim($this->ref);
@@ -3859,7 +3859,7 @@ class Facture extends CommonInvoice
 			$pu_ht_devise = price2num($pu_ht_devise);
 			$pu_ttc = price2num($pu_ttc);
 			$pa_ht = price2num($pa_ht);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
 			$txlocaltax1 = price2num($txlocaltax1);
@@ -3945,7 +3945,7 @@ class Facture extends CommonInvoice
 			$this->line->desc = $desc;
 			$this->line->ref_ext = $ref_ext;
 
-			$this->line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs($qty) : $qty); // For credit note, quantity is always positive and unit price negative
+			$this->line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs((float) $qty) : $qty); // For credit note, quantity is always positive and unit price negative
 			$this->line->subprice = ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ht) : $pu_ht); // For credit note, unit price always negative, always positive otherwise
 
 			$this->line->vat_src_code = $vat_src_code;
@@ -4119,7 +4119,7 @@ class Facture extends CommonInvoice
 			$pu 			= price2num($pu);
 			$pu_ht_devise = price2num($pu_ht_devise);
 			$pa_ht = price2num($pa_ht);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
 			$txlocaltax1	= (float) price2num($txlocaltax1);
@@ -4206,7 +4206,7 @@ class Facture extends CommonInvoice
 			$this->line->label = $label;
 			$this->line->desc = $desc;
 			$this->line->ref_ext = $ref_ext;
-			$this->line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs($qty) : $qty); // For credit note, quantity is always positive and unit price negative
+			$this->line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs((float) $qty) : $qty); // For credit note, quantity is always positive and unit price negative
 
 			$this->line->vat_src_code = $vat_src_code;
 			$this->line->tva_tx = $txtva;
@@ -4414,6 +4414,7 @@ class Facture extends CommonInvoice
 	{
 		// phpcs:enable
 		dol_syslog(get_class($this)."::set_remise is deprecated, use setDiscount instead", LOG_NOTICE);
+		// @phan-suppress-next-line PhanDeprecatedFunction
 		return $this->setDiscount($user, $remise, $notrigger);
 	}
 
@@ -4424,7 +4425,6 @@ class Facture extends CommonInvoice
 	 *	@param     	float	$remise		Discount
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 				Return integer <0 if KO, >0 if OK
-	 *	@deprecated remise_percent is a deprecated field for object parent
 	 */
 	public function setDiscount($user, $remise, $notrigger = 0)
 	{
@@ -4609,7 +4609,7 @@ class Facture extends CommonInvoice
 
 				// Load file with numbering class (if found)
 				if (is_file($dir.$file) && is_readable($dir.$file)) {
-					$mybool |= include_once $dir.$file;
+					$mybool = ((bool) include_once $dir.$file) || $mybool;
 				}
 			}
 
@@ -4624,7 +4624,7 @@ class Facture extends CommonInvoice
 
 					// Load file with numbering class (if found)
 					if (is_file($dir.$file) && is_readable($dir.$file)) {
-						$mybool |= include_once $dir.$file;
+						$mybool = (include_once $dir.$file) || $mybool;
 					}
 				}
 			}

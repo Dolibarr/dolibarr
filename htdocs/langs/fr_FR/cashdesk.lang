@@ -146,6 +146,7 @@ ShowProductReference=Afficher la référence ou libellé des produits
 UsePriceHT=Utilisez le prix HT et non le prix TTC lors de la modification d'un prix.
 TerminalName=Terminal %s
 TerminalNameDesc=Nom du terminal
+TakePosCustomerMandatory=Vous devez choisir un client
 DefaultPOSThirdLabel=Client générique TakePOS
 DefaultPOSCatLabel=Produits du Point de Vente (PdV)
 DefaultPOSProductLabel=Exemple de produit pour TakePOS

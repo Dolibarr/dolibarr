@@ -400,7 +400,7 @@ if (empty($reshook)) {
 						$action = '';
 					} else {
 						$tmpvatratetoshow = explode('_', $vatrate);
-						$tmpvatratetoshow[0] = round($tmpvatratetoshow[0], 2);
+						$tmpvatratetoshow[0] = round((float) $tmpvatratetoshow[0], 2);
 
 						if ($tmpvatratetoshow[0] != 0) {
 							$langs->load("errors");
@@ -476,7 +476,7 @@ if (empty($reshook)) {
 
 		$object->date = $newdate;
 		$new_date_lim_reglement = $object->calculate_date_lim_reglement();
-		if ($new_date_lim_reglement > $old_date_lim_reglement) {
+		if ($new_date_lim_reglement) {
 			$object->date_lim_reglement = $new_date_lim_reglement;
 		}
 		if ($object->date_lim_reglement < $object->date) {
@@ -517,7 +517,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			$old_date_lim_reglement = $object->date_lim_reglement;
 			$new_date_lim_reglement = $object->calculate_date_lim_reglement();
-			if ($new_date_lim_reglement > $old_date_lim_reglement) {
+			if ($new_date_lim_reglement) {
 				$object->date_lim_reglement = $new_date_lim_reglement;
 			}
 			if ($object->date_lim_reglement < $object->date) {
@@ -959,12 +959,12 @@ if (empty($reshook)) {
 			}
 			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
 				foreach ($amount_ht as $tva_tx => $xxx) {
-					$discount->amount_ht = abs($amount_ht[$tva_tx]);
-					$discount->amount_tva = abs($amount_tva[$tva_tx]);
-					$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
-					$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
-					$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
-					$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+					$discount->amount_ht = abs((float) $amount_ht[$tva_tx]);
+					$discount->amount_tva = abs((float) $amount_tva[$tva_tx]);
+					$discount->amount_ttc = abs((float) $amount_ttc[$tva_tx]);
+					$discount->multicurrency_amount_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
+					$discount->multicurrency_amount_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
+					$discount->multicurrency_amount_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
 
 					// Clean vat code
 					$reg = array();
@@ -1573,6 +1573,7 @@ if (empty($reshook)) {
 									$TTotalByTva[$line->tva_tx] += $line->total_ttc;
 								}
 
+								$amount_ttc_diff = 0.;
 								foreach ($TTotalByTva as $tva => &$total) {
 									$coef = $total / $srcobject->total_ttc; // Calc coef
 									$am = $amount * $coef;
@@ -2246,7 +2247,7 @@ if (empty($reshook)) {
 				//$tva_tx = $datapriceofproduct['tva_tx'];
 				//$tva_npr = $datapriceofproduct['tva_npr'];
 				$tmpvat = (float) price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
-				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', (string) $prod->tva_tx));
 
 				// Set unit price to use
 				// TODO We should not have this
@@ -3523,11 +3524,15 @@ if ($action == 'create') {
 						setRadioForTypeOfInvoice();
 					});
 					function setRadioForTypeOfInvoice() {
-						console.log("Change radio");
+						console.log("Change radio for type of invoice");
 						if (jQuery("#radio_deposit").prop("checked") && (jQuery("#typedeposit").val() == \'amount\' || jQuery("#typedeposit").val() == \'variable\')) {
+							jQuery("#checkforselects").prop("disabled", true);
+							jQuery("#checkforselects").prop("checked", false);
 							jQuery(".checkforselect").prop("disabled", true);
 							jQuery(".checkforselect").prop("checked", false);
 						} else {
+							jQuery("#checkforselects").prop("disabled", false);
+							jQuery("#checkforselects").prop("checked", true);
 							jQuery(".checkforselect").prop("disabled", false);
 							jQuery(".checkforselect").prop("checked", true);
 						}

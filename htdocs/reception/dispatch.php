@@ -461,8 +461,8 @@ if ($id > 0 || !empty($ref)) {
 		// Get list of lines from the original Order into $products_dispatched with qty dispatched for each product id
 		$products_dispatched = array();
 		$sql = "SELECT l.rowid, cfd.fk_product, sum(cfd.qty) as qty";
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as l on l.rowid = cfd.fk_commandefourndet";
+		$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as cfd";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."receptiondet_batch as l on l.rowid = cfd.fk_elementdet";
 		$sql .= " WHERE cfd.fk_reception = ".((int) $object->id);
 		$sql .= " GROUP BY l.rowid, cfd.fk_product";
 
@@ -688,10 +688,10 @@ if ($id > 0 || !empty($ref)) {
 						print '<td></td>'; // Warehouse column
 
 						$sql = "SELECT cfd.rowid, cfd.qty, cfd.fk_entrepot, cfd.batch, cfd.eatby, cfd.sellby, cfd.fk_product";
-						$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";	// commande_fournisseur_dispatch should be named receptiondet_batch
+						$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as cfd";	// commande_fournisseur_dispatch should be named receptiondet_batch
 						$sql .= " WHERE cfd.fk_reception = ".((int) $object->id);
-						$sql .= " AND cfd.fk_commande = ".((int) $objectsrc->id);
-						$sql .= " AND cfd.fk_commandefourndet = ".(int) $objp->rowid;
+						$sql .= " AND cfd.fk_element = ".((int) $objectsrc->id);
+						$sql .= " AND cfd.fk_elementdet = ".(int) $objp->rowid;
 
 						//print $sql;
 						$resultsql = $db->query($sql);

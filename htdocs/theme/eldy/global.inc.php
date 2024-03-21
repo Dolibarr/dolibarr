@@ -2476,8 +2476,8 @@ span.widthpictotitle.pictotitle {
 	opacity: 0.4;
 }
 .pictofixedwidth {
-	text-align: <?php echo $left; ?>;
-	width: 20px;
+	text-align: start;
+	width: 21px;
 	/* padding-right: 0; */
 }
 
@@ -3137,8 +3137,8 @@ div.login a:hover {
 div.login_block_user {
 	display: inline-block;
 	vertical-align: middle;
-	line-height: <?php echo $disableimages ? '25' : '52'; ?>px;
-	height: <?php echo $disableimages ? '25' : '52'; ?>px;
+	line-height: <?php echo $disableimages ? '25' : '51'; ?>px;
+	height: <?php echo $disableimages ? '25' : '51'; ?>px;
 }
 div.login_block_other {
 	display: inline-block;
@@ -8153,8 +8153,6 @@ table.jPicker {
 		margin-top: 30px;
 	}
 }
-
-
 @media only screen and (max-width: 320px)
 {
 	.dropdown dd ul {

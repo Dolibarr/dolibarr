@@ -6,7 +6,7 @@
  * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Eric Seigne             <eric.seigne@cap-rel.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -367,7 +367,7 @@ SELECT
     fk_facture_fourn,
     COUNT(fd.rowid) as nb
 FROM
-    llx_facture_fourn_det as fd
+    " . MAIN_DB_PREFIX . "facture_fourn_det as fd
 WHERE
     fd.product_type <= 2
     AND fd.fk_code_ventilation <= 0

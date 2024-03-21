@@ -67,60 +67,12 @@ jobs:
             ${{ matrix.os }}-${{ env.ckey }}-${{ matrix.php_version }}-${{ github.head_ref }}-
             ${{ matrix.os }}-${{ env.ckey }}-${{ matrix.php_version }}-${{ github.base_ref }}-
             ${{ matrix.os }}-${{ env.ckey }}-${{ matrix.php_version }}-
-      - name: Create local php.ini
+
+      - name: Create local php.ini with open_basedir restrictions
         shell: cmd
-        if: false
-        # Note: Setting the basedir before initialising the database results in open_basedir errors
         # Objective: separate step, and before database initialisation to verify open_basedir restrictions
         run: |-
-          ECHO "==== Show INI file usage before our configuration ==="
-          php --ini
-          ECHO "==== Set PHP_INI_SCAN_DIR to include the INI File we create ==="
-          mkdir %PHP_INI_SCAN_DIR%
-          SET INIFILE="%PHP_INI_SCAN_DIR%\dolibarr.ini"
-          SET HTDOCS_DIR=%CD%\htdocs
-          SET DATA_DIR=%CD%\documents
-          SET TEST_DIR=%CD%\test
-          SET INITDEMO_DIR=%CD%\dev\initdemo
-          ECHO "==== Create INI file to set open_basedir ==="
-          echo [php] > %INIFILE%
-          echo open_basedir^="%HTDOCS_DIR%;%DATA_DIR%;%TEST_DIR%;%INITDEMO_DIR%;%PHPROOT%" >> %INIFILE%
-          ECHO "==== Show contents of INI file to set open_basedir ==="
-          type %INIFILE%
-          REM Next line disables open_basedir limitation (to limit errors)
-          SET PHP_INI_SCAN_DIR=
-          ECHO "==== Verify it is used by PHP ==="
-          php --ini
-      - name: Run Bash script
-        # Note this is bash (MSYS) on Windows
-        shell: bash
-        # Note: Initialise the database (possibly from cache) and set some variables.
-        run: |
-          # Check if database cache is present (visually, to remove once ok)
-          ls -l
-          # Run bash script to initialise database
-          ${SHELL} -xv dev/setup/phpunit/setup_conf.sh
-          sed -i -e 's/stopOnFailure="[^"]*"/stopOnFailure="false"/' test/phpunit/phpunittest.xml
-          # Check if database cache is present after the script (visually, to remove once ok)
-          ls -l
-          echo "TEE=$(cygpath -w "$(which tee)")" >> "$GITHUB_ENV"
-          echo "BASEDIR=$(realpath .)" >> "$GITHUB_ENV"
-      - name: Start web server
-        id: server
-        if: false
-        # Objective: Start php server in separate step (but after open_basedir restriction setup!)
-        run: |
-          Start-Process -FilePath "php.exe" -WindowStyle Hidden -ArgumentList "-S ${{ env.PHPSERVER_DOMAIN_PORT }} -t htdocs > ${{ env.PHPSERVER_LOG }}" -PassThru
-          curl "http://${{ env.PHPSERVER_DOMAIN_PORT }}"
-        shell: powershell
-      - name: Run PHPUnit tests
-        # continue-on-error: true
-        shell: cmd
-        # setting up php.ini, starting the php server are currently in this step
-        run: |-
           echo "BASEDIR=%CD%" >> %GITHUB_ENV%
-          start /B php -S %PHPSERVER_DOMAIN_PORT% -t htdocs >> %PHPSERVER_LOG% 2>&1
-          curl "http://${{ env.PHPSERVER_DOMAIN_PORT }}"
           ECHO "==== Show INI file usage before our configuration ==="
           php --ini
           ECHO "==== Set PHP_INI_SCAN_DIR to include the INI File we create ==="
@@ -139,17 +91,70 @@ jobs:
           type %INIFILE%
           ECHO "==== Verify it is used by PHP ==="
           php --ini
+          REM TEST OPEN_BASEDIR restriction is not limiting wrongly
+          REM THE DATA_DIR MUST BE CREATED HERE - open_base does not allow it's creation
+          mkdir "%DATA_DIR%"
+          mkdir "%DATA_DIR%\mytest"
+          php -r "$d=implode(DIRECTORY_SEPARATOR,[__DIR__,'documents','mytest']);echo 'IS_DIR '.$d.' '.((int) is_dir($d)).PHP_EOL;"
+          php -r "$d=__DIR__.'\documents/mytest';echo 'TEST PATH IS SHOWN: '.$d.PHP_EOL;"
+          php -r "$d=__DIR__.'\documents/mytest';echo 'IS_DIR '.$d.' '.((int) is_dir($d)).PHP_EOL;"
+          ECHO "The above should show 2 successful tests"
+
+      - name: Run Bash script that Initialises the database
+        # Note this is bash (MSYS) on Windows
+        shell: bash
+        run: |
+          ECHO "#[group]Directory contents to verify cache files, ..."
+          ls -l
+          ECHO "#[endgroup]"
+          ECHO "==== Verify openbase_dir restriction"
+          php --ini
+          # Run bash script to initialise database
+          ECHO "==== Start 'setup_conf.sh' to setup database"
+          ${SHELL} -xv dev/setup/phpunit/setup_conf.sh
+          ## Updating test configuration to not stop on first failure (to see all errors) - need sed
+          sed -i -e 's/stopOnFailure="[^"]*"/stopOnFailure="false"/' test/phpunit/phpunittest.xml
+          ECHO "#[group]Directory contents after database setup to verify cache files, ..."
+          ls -l
+          ECHO "#[endgroup]"
+          # Export some tool paths to reuse the from CMD shell.
+          echo "TAIL=$(cygpath -w "$(which tail)")" >> "$GITHUB_ENV"
+          echo "GREP=$(cygpath -w "$(which grep)")" >> "$GITHUB_ENV"
+          echo "TEE=$(cygpath -w "$(which tee)")" >> "$GITHUB_ENV"
+          echo "BASEDIR=$(realpath .)" >> "$GITHUB_ENV"
+
+      - name: Run PHPUnit tests
+        # continue-on-error: true
+        shell: cmd
+        # setting up php.ini, starting the php server are currently in this step
+        run: |-
+          ECHO "==== Visually verify our dolibarr.INI file usage ==="
+          php --ini
+          ECHO "==== Add our web server information to the config file ==="
           echo $dolibarr_main_url_root="http://${{ env.PHPSERVER_DOMAIN_PORT }}"; >> htdocs/conf/conf.php
+          ECHO "#[group]==== Dolibarr config file contents"
           cat htdocs/conf/conf.php
+          ECHO "#[endgroup]"
+          ECHO "==== START PHP server"
+          start /B php -S %PHPSERVER_DOMAIN_PORT% -t htdocs >> %PHPSERVER_LOG% 2>&1
+          ECHO "#[group]==== Output from curl on PHP server"
           curl "http://${{ env.PHPSERVER_DOMAIN_PORT }}"
+          ECHO "#[endgroup]"
+          ECHO "==== START PHPUNIT TESTS"
           REM 'DOSKEY' USED to recover error code (no pipefile equivalent in windows?)
           ( php "%PHPROOT%\phpunit" -d memory_limit=-1 -c %CD%\test\phpunit\phpunittest.xml "test\phpunit\AllTests.php" --exclude-group WindowsWaitingForFix & call doskey /exename=err err=%%^^errorlevel%% ) | "${{ env.TEE }}" "${{ env.PHPUNIT_LOG }}"
+          echo ""
+          echo "Ensure that PHPUNIT completed (no early exit from code)"
+          "${{ env.TAIL }}" -5 "${{ env.PHPUNIT_LOG }}" | "${{ env.GREP }}" -qE "(OK .*[0-9]+ tests.*[0-9]+ assertions|Tests: [0-9]+)"  || EXIT /B 1
+          echo "PHPUNIT seems to have completed with a test result, reuse the exit code"
           for /f "tokens=2 delims==" %%A in ('doskey /m:err') do EXIT /B %%A
+
       - name: Convert Raw Log to Annotations
-        uses: mdeweerd/logToCheckStyle@v2024.2.9
+        uses: mdeweerd/logToCheckStyle@v2024.3.4
         if: ${{ failure() }}
         with:
           in: ${{ env.PHPUNIT_LOG }}
+
       - name: Provide dolibarr and phpunit logs as artifact
         uses: actions/upload-artifact@v4
         if: ${{ ! cancelled() }}

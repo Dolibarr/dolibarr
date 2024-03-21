@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2022		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ function isValidLuhn($str)
 	$len = dol_strlen($str);
 	$parity = $len % 2;
 	$sum = 0;
-	for ($i = $len-1; $i >= 0; $i--) {
+	for ($i = $len - 1; $i >= 0; $i--) {
 		$d = (int) $str[$i];
 		if ($i % 2 == $parity) {
 			if (($d *= 2) > 9) {
@@ -86,7 +87,7 @@ function isValidSiret($siret)
 
 	if (isValidLuhn($siret)) {
 		return true;
-	} elseif ( (substr($siret, 0, 9) == "356000000") && (array_sum(str_split($siret)) %5 == 0) ) {
+	} elseif ((substr($siret, 0, 9) == "356000000") && (array_sum(str_split($siret)) % 5 == 0)) {
 		/**
 		 *  Specific case of "La Poste" businesses (SIRET such as "356 000 000 XXXXX"),
 		 *  for which the rule becomes: the sum of the 14 digits must be a multiple of 5.
@@ -201,9 +202,9 @@ function isValidTinForES($str)
 	//algorithm checking type code CIF
 	$sum = $num[2] + $num[4] + $num[6];
 	for ($i = 1; $i < 8; $i += 2) {
-		$sum += intval(substr((2 * $num[$i]), 0, 1)) + intval(substr((2 * $num[$i]), 1, 1));
+		$sum += intval(substr((string) (2 * $num[$i]), 0, 1)) + intval(substr((string) (2 * $num[$i]), 1, 1));
 	}
-	$n = 10 - substr($sum, strlen($sum) - 1, 1);
+	$n = 10 - substr((string) $sum, strlen((string) $sum) - 1, 1);
 
 	//Check special NIF
 	if (preg_match('/^[KLM]{1}/', $str)) {
@@ -216,7 +217,7 @@ function isValidTinForES($str)
 
 	//Check CIF
 	if (preg_match('/^[ABCDEFGHJNPQRSUVW]{1}/', $str)) {
-		if ($num[8] == chr(64 + $n) || $num[8] == substr($n, strlen($n) - 1, 1)) {
+		if ($num[8] == chr(64 + $n) || $num[8] == substr((string) $n, strlen((string) $n) - 1, 1)) {
 			return 2;
 		} else {
 			return -2;

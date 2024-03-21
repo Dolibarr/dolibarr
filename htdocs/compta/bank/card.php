@@ -8,6 +8,7 @@
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -221,8 +222,8 @@ if (empty($reshook)) {
 
 			$db->commit();
 
-			$urltogo = $backtopage ? str_replace('__ID__', $object->id, $backtopage) : $backurlforlist;
-			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
+			$urltogo = $backtopage ? str_replace('__ID__', (string) $object->id, $backtopage) : $backurlforlist;
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
 
 			if (empty($noback)) {
 				header("Location: " . $urltogo);

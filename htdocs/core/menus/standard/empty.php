@@ -287,6 +287,7 @@ class MenuManager
 								$disabled = " vsmenudisabled";
 							}
 
+							// @phan-suppress-next-line PhanParamSuspiciousOrder
 							print str_pad('', $val2['level'] + 1);
 							print '<li class="lilevel'.($val2['level'] + 1);
 							if ($val2['level'] == 0) {
@@ -369,12 +370,14 @@ class MenuManager
 				return 0;
 			}
 
+			'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}> $menu_array';
+
 			if (empty($noout)) {
 				$alt = 0;
 				$altok = 0;
 				$blockvmenuopened = false;
 				$num = count($menu_array);
-				for ($i = 0; $i < $num; $i++) {
+				foreach (array_keys($menu_array) as $i) {
 					$alt++;
 					if (empty($menu_array[$i]['level'])) {
 						$altok++;

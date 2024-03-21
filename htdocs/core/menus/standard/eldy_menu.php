@@ -192,9 +192,12 @@ class MenuManager
 
 					// Add font-awesome
 					if ($val['level'] == 0 && !empty($val['prefix'])) {
-						print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
+						if (preg_match('/^fa\-[a-zA-Z0-9\-_]+$/', $val['prefix'])) {
+							print '<span class="fas '.$val['prefix'].' paddingright pictofixedwidth"></span>';
+						} else {
+							print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
+						}
 					}
-
 					print $val['titre'];
 					print '</a>'."\n";
 
@@ -293,6 +296,7 @@ class MenuManager
 								$disabled = " vsmenudisabled";
 							}
 
+							// @phan-suppress-next-line PhanParamSuspiciousOrder
 							print str_pad('', $val2['level'] + 1);
 							print '<li class="lilevel'.($val2['level'] + 1);
 							if ($val2['level'] == 0) {

@@ -3,12 +3,14 @@
  */
 /**
  * Simple autoloader, so we don't need Composer just for this.
+ *
+ * @phan-file-suppress PhanTypeMismatchArgumentInternal
  */
 
 spl_autoload_register(
 	/**
 	 * @param string	$class	Class to load
-	 * @return true				If class could be loaded
+	 * @return bool				If class could be loaded
 	 */
 	static function ($class) {
 		if (preg_match('/^DebugBar/', $class)) {
