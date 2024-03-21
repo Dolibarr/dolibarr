@@ -188,7 +188,6 @@ class FormWebsite
 				$arrayofsamples[$key] = $labelkey;
 			}
 		}
-		var_dump($arrayofsamples);exit;
 
 		$out = '';
 		$out .= '<select id="select'.$htmlname.'" class="selectSampleOfContainer'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
