@@ -66,6 +66,7 @@ for ($i = 1; $i <= $numterminals; $i++) {
 		$nb_auth_terms++;
 	}
 }
+
 // TERMINAL SELECTION IF NOT SET
 if (empty($_SESSION["takeposterminal"])) {
 	if (empty($nb_auth_terms)) {
