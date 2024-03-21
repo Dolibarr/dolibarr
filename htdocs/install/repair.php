@@ -1534,12 +1534,12 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 					$first_iteration = false;
 				} else {
 					$sql_attach_values = array(
-						((int) $obj_dispatch->fk_element),
-						((int) $obj_dispatch->fk_product),
-						((int) $obj_line->rowid),
-						((float) $qty_for_line),
-						((int) $obj_dispatch->fk_entrepot),
-						((int) $obj_dispatch->fk_user),
+						(string) ((int) $obj_dispatch->fk_element),
+						(string) ((int) $obj_dispatch->fk_product),
+						(string) ((int) $obj_line->rowid),
+						(string) ((float) $qty_for_line),
+						(string) ((int) $obj_dispatch->fk_entrepot),
+						(string) ((int) $obj_dispatch->fk_user),
 						$obj_dispatch->datec ? "'".$db->idate($db->jdate($obj_dispatch->datec))."'" : 'NULL',
 						$obj_dispatch->comment ? "'".$db->escape($obj_dispatch->comment)."'" : 'NULL',
 						$obj_dispatch->status ? (string) ((int) $obj_dispatch->status) : 'NULL',
@@ -1552,7 +1552,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 
 					$sql_attach = 'INSERT INTO '.MAIN_DB_PREFIX.'receptiondet_batch';
 					$sql_attach .= ' (fk_element, fk_product, fk_elementdet, qty, fk_entrepot, fk_user, datec, comment, status, tms, batch, eatby, sellby)';
-					$sql_attach .= " VALUES (".$sql_attach_values.")";
+					$sql_attach .= " VALUES (".$sql_attach_values.")";	// The string is already sanitized
 				}
 
 				if ($repair_link_dispatch_lines_supplier_order_lines == 'confirmed') {
