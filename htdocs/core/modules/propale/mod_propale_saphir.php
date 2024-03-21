@@ -60,9 +60,10 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	/**
 	 *  Return description of module
 	 *
-	 *  @return     string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $conf, $langs, $db;
 
@@ -85,10 +86,10 @@ class mod_propale_saphir extends ModeleNumRefPropales
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$mask = empty($conf->global->PROPALE_SAPHIR_MASK) ? '' : $conf->global->PROPALE_SAPHIR_MASK;
+		$mask = !getDolGlobalString('PROPALE_SAPHIR_MASK') ? '' : $conf->global->PROPALE_SAPHIR_MASK;
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskpropal" value="'.$mask.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -126,7 +127,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 * 	@param	Propal		$propal		Object commercial proposal
-	 *  @return string      			Value if OK, 0 if KO
+	 *  @return string|0      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $propal)
 	{
@@ -135,7 +136,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
-		$mask = empty($conf->global->PROPALE_SAPHIR_MASK) ? '' : $conf->global->PROPALE_SAPHIR_MASK;
+		$mask = !getDolGlobalString('PROPALE_SAPHIR_MASK') ? '' : $conf->global->PROPALE_SAPHIR_MASK;
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

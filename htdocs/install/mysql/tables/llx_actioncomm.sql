@@ -17,7 +17,7 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 --
--- Table of events and actions (past and to do). 
+-- Table of events and actions (past and to do).
 -- This is also the table to track events on other Dolibarr objects.
 -- ========================================================================
 
@@ -31,7 +31,7 @@ create table llx_actioncomm
   datep2			datetime,						-- date end
 
   fk_action			integer,						-- type of action (optional link with id in llx_c_actioncomm or null)
-  code				varchar(50) NULL,				-- code of action for automatic action ('AC_OTH_AUTO' for automatic actions, 'AC_EMAILIN_AUTO' for email input, 'AC_xxx' for manual action...) 
+  code				varchar(50) NULL,				-- code of action for automatic action ('AC_OTH_AUTO' for automatic actions, 'AC_EMAILIN_AUTO' for email input, 'AC_xxx' for manual action...)
 
   datec				datetime,						-- date creation
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,						-- last modification date
@@ -43,7 +43,6 @@ create table llx_actioncomm
   fk_contact		integer,
   fk_parent			integer NOT NULL default 0,
   fk_user_action	integer,						-- user id of owner of action (note that users assigned to event are stored into table 'actioncomm_resources')
-  fk_user_done		integer,						-- user id of user that has made action (deprecated)
 
   transparency      integer,						-- transparency (ical standard). used to say if user assigned to event are busy or not by event. This field may be deprecated if we want to store transparency for each assigned user, moved into table llx_actioncomm_resources.
 
@@ -56,9 +55,9 @@ create table llx_actioncomm
 
   label				varchar(255) NOT NULL,			-- label/title of event or topic of email
   note				mediumtext,						-- private note of event or content of email
-  
+
   calling_duration  integer,                        -- when event is a phone call, duration of phone call
-  
+
   email_subject		varchar(255),					-- when event was an email, we store here the subject. content is stored into note.
   email_msgid		varchar(255),					-- when event was an email, we store here the msgid
   email_from		varchar(255),					-- when event was an email, we store here the from
@@ -68,7 +67,7 @@ create table llx_actioncomm
   email_tobcc		varchar(255),					-- when event was an email, we store here the email_tobcc
   errors_to			varchar(255),					-- when event was an email, we store here the erros_to
   reply_to			varchar(255),					-- when event was an email, we store here the reply_to
-  
+
   recurid           varchar(128),                   -- used to store event id to link each other all the repeating event record. It can be the 'iCalUID' as in RFC5545 (an id similar for all the same serie)
   recurrule         varchar(128),					-- contains string with ical format recurring rule like 'FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=19' or 'FREQ=WEEKLY;BYDAY=MO'
   recurdateend      datetime,						-- no more recurring event after this date
@@ -81,6 +80,8 @@ create table llx_actioncomm
   elementtype		varchar(255) DEFAULT NULL,		-- For link to an element (proposal, invoice, order, ...)
 
   ip            varchar(250),              --ip used to create record (for public submission page)
+
+  fk_bookcal_calendar integer DEFAULT NULL, --fk_bookcal_calendar used to link booking to bookcal calendar
 
   import_key		varchar(14),
   extraparams		varchar(255)					-- for other parameters with json format

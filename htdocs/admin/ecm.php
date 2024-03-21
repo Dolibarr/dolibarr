@@ -97,7 +97,7 @@ print '<td class="center">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('ECM_AUTO_TREE_HIDEN', null, null, 1);
 } else {
-	if (empty($conf->global->ECM_AUTO_TREE_HIDEN)) {
+	if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ECM_AUTO_TREE_HIDEN&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ECM_AUTO_TREE_HIDEN&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';

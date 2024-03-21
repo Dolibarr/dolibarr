@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 /**
  *		\file       htdocs/admin/security.php
  *      \ingroup    setup
- *      \brief      Page de configuration du module securite
+ *      \brief      Page of setup of security
  */
 
 // Load Dolibarr environment
@@ -37,7 +38,7 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-// Allow/Disallow change to clear passwords once passwords are crypted
+// Allow/Disallow change to clear passwords once passwords are encrypted
 $allow_disable_encryption = true;
 
 
@@ -130,7 +131,8 @@ if ($action == 'activate_encryptdbpassconf') {
 		header("Location: security.php");
 		exit;
 	} else {
-		setEventMessages($langs->trans('InstrucToClearPass', $dolibarr_main_db_pass), null, 'warnings');
+		//setEventMessages($langs->trans('InstrucToClearPass', $dolibarr_main_db_pass), null, 'warnings');
+		setEventMessages($langs->trans('InstrucToClearPass', $langs->transnoentitiesnoconv("DatabasePassword")), null, 'warnings');
 	}
 }
 
@@ -196,6 +198,7 @@ $dir = "../core/modules/security/generate";
 clearstatcache();
 $handle = opendir($dir);
 $i = 1;
+$arrayhandler = array();
 if (is_resource($handle)) {
 	while (($file = readdir($handle)) !== false) {
 		if (preg_match('/(modGeneratePass[a-z]+)\.class\.php$/i', $file, $reg)) {
@@ -224,10 +227,10 @@ $tabConf = explode(";", getDolGlobalString('USER_PASSWORD_PATTERN'));
 
 foreach ($arrayhandler as $key => $module) {
 	// Show modules according to features level
-	if (!empty($module->version) && $module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+	if (!empty($module->version) && $module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 		continue;
 	}
-	if (!empty($module->version) && $module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+	if (!empty($module->version) && $module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 		continue;
 	}
 
@@ -273,7 +276,7 @@ print '</form>';
 
 
 // Pattern for Password Perso
-if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
+if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';
@@ -483,11 +486,11 @@ print '</form>';
 
 print '<br>';
 
-if (GETPOST('info', 'int') > 0) {
+if (GETPOSTINT('info') > 0) {
 	if (function_exists('password_hash')) {
 		print $langs->trans("Note: The function password_hash exists on your PHP")."<br>\n";
 	} else {
-		print $langs->trans("Note: The function password_hash does not exists on your PHP")."<br>\n";
+		print $langs->trans("Note: The function password_hash does not exist on your PHP")."<br>\n";
 	}
 	print 'MAIN_SECURITY_HASH_ALGO = '.getDolGlobalString('MAIN_SECURITY_HASH_ALGO')."<br>\n";
 	print 'MAIN_SECURITY_SALT = '.getDolGlobalString('MAIN_SECURITY_SALT')."<br>\n";

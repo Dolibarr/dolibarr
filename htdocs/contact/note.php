@@ -35,7 +35,7 @@ $action = GETPOST('action', 'aZ09');
 // Load translation files required by the page
 $langs->load("companies");
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $object = new Contact($db);
 if ($id > 0) {
@@ -61,7 +61,9 @@ $hookmanager->initHooks(array('contactnote'));
 /*
  * Actions
  */
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -76,7 +78,7 @@ if (empty($reshook)) {
 
 $now = dol_now();
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
 $form = new Form($db);
 
@@ -102,7 +104,7 @@ if ($id > 0) {
 	$morehtmlref .= '</a>';
 
 	$morehtmlref .= '<div class="refidno">';
-	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 		$objsoc = new Societe($db);
 		$objsoc->fetch($object->socid);
 		// Thirdparty

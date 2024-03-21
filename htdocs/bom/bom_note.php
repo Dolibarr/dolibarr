@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
 $langs->loadLangs(array("mrp", "companies"));
 
 // Get parameters
-$id   = GETPOST('id', 'int');
+$id   = GETPOSTINT('id');
 $ref  = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
@@ -74,7 +74,8 @@ restrictedArea($user, 'bom', $object->id, $object->table_element, '', '', 'rowid
  * Actions
  */
 
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }

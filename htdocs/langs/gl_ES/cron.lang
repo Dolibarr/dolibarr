@@ -91,6 +91,7 @@ WarningCronDelayed=Atención, para fins de rendemento, calquera que sexa a próx
 DATAPOLICYJob=Limpar datos e anonimizar
 JobXMustBeEnabled=Tarefa %s debe ser activada
 EmailIfError=Correo electrónico para avisar de erros
+JobNotFound=Non se atopou o traballo %s na lista de traballos (tente desactivar/activar o módulo)
 ErrorInBatch=Erro ao executar o traballo %s
 
 # Cron Boxes

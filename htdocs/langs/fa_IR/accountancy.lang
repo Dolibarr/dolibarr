@@ -16,8 +16,8 @@ ThisService=این خدمت
 ThisProduct=این محصول
 DefaultForService=Default for services
 DefaultForProduct=Default for products
-ProductForThisThirdparty=Product for this thirdparty
-ServiceForThisThirdparty=Service for this thirdparty
+ProductForThisThirdparty=Product for this third party
+ServiceForThisThirdparty=Service for this third party
 CantSuggest=امکان پیش‌نهاد نیست
 AccountancySetupDoneFromAccountancyMenu=اکثر برپاسازی حساب‌داری برای فهرست %s انجام شده است
 ConfigAccountingExpert=Configuration of the module accounting (double entry)
@@ -38,9 +38,10 @@ DeleteCptCategory=حذف حساب حساب‌درای از گروه
 ConfirmDeleteCptCategory=اطمینان دارید که می‌خواهید این حساب حساب‌داری را از گروه حساب حساب‌داری حذف کنید؟
 JournalizationInLedgerStatus=وضعیت دفترنویسی
 AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
-NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
+NotYetInGeneralLedger=Not yet transferred to accounting journals and ledger
 GroupIsEmptyCheckSetup=گروه خالی است، برپاسازی گروه حساب‌داری انفرادی را بررسی کنید
 DetailByAccount=نمایش جزئیات مربوط به حساب
+DetailBy=Detail by
 AccountWithNonZeroValues=حساب‌هائی که صفر نیستند
 ListOfAccounts=فهرست حساب‌ها
 CountriesInEEC=کشورهائی که در اتحادیۀ اروپا هستند
@@ -51,26 +52,30 @@ AccountantFiles=Export source documents
 ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
+ExportAccountancy=Export accountancy
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported, click on the button above.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
 
-MainAccountForCustomersNotDefined=در برپاسازی برای مشتریان حساب حساب‌داری اصلی تعریف نشده است
-MainAccountForSuppliersNotDefined=در برپاسازی برای تامین کنندگان حساب حساب‌داری اصلی تعریف نشده است
-MainAccountForUsersNotDefined=در برپاسازی برای کاربران حساب حساب‌داری اصلی تعریف نشده است
-MainAccountForVatPaymentNotDefined=در برپاسازی برای مالیات بر ارزش افزوده حساب حساب‌داری اصلی تعریف نشده است
-MainAccountForSubscriptionPaymentNotDefined=در برپاسازی برای پرداخت اشتراک حساب حساب‌داری اصلی تعریف نشده است
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=بخش حساب‌داری
 AccountancyAreaDescIntro=استفاده از بخش حساب‌داری در گام‌های متعددی انجام می‌پذیرد:
 AccountancyAreaDescActionOnce=عملیات زیر معمولا فقط یک بار انجام می‌شود، یا یک بار در سال...
-AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automatically the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=عملیات زیر معمولا هر ماه یا هر هفته یا بار یا حتی هر روز یک بار برای شرکت‌های بسیار بزرگ انجام می‌پذیرد....
 
 AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
 AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries. For this, use the menu entry %s.
 AccountancyAreaDescVat=گام %s: تعریف حساب‌های حساب‌داری برای هر یک از انواع ضریب‌های مالیات بر ارزش افزوده. برای این کار از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescDefault=گام %s: تعریف حساب‌های حساب‌داری پیش‌فرض. برای این، از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
@@ -78,7 +83,7 @@ AccountancyAreaDescSal=گام %s: تعریف حساب‌های حساب‌دار
 AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=گام %s : تعریف حساب‌های حساب‌داری پیش‌فرض برای دریافت کمک‌. برای این، از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescSubscription=گام %s: تعریف حساب حساب‌داری پیش‌فرض برای اشتراک اعضاء. برای این، از گزینۀ %s استفاده نمائید.
-AccountancyAreaDescMisc=گام %s : تعریف حساب پیش‌فرض الزامی و حساب‌های حساب‌داری پیش‌فرض برای تراکنش‌های متفرقه. برای این، از گزینۀ %s استفاده نمائید.
+AccountancyAreaDescMisc=STEP %s: Define mandatory default accounts and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=گام %s: تعریف حساب‌‌های حساب‌داری پیش‌فرض برای وام‌ها. برای این از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescBank=گام %s: تعریف حساب‌های حساب‌داری و شمارۀ‌دفتر برای هر بانک و حساب‌های مالی. برای این‌کار از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
@@ -89,6 +94,7 @@ AccountancyAreaDescAnalyze=گام %s: تراکنش‌های موجود را اض
 
 AccountancyAreaDescClosePeriod=گام %s: بازۀ زمانی را ببندید تا دیگر در آینده قابل ویرایش نباشد.
 
+TheFiscalPeriodIsNotDefined=A mandatory step in setup has not been completed (Fiscal period is not defined)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup has not been completed (accounting code journal not defined for all bank accounts)
 Selectchartofaccounts=انتخاب نمودار فعالی از حساب‌ها
 ChangeAndLoad=تغییر و بارگذاری
@@ -112,6 +118,7 @@ MenuLoanAccounts=حساب‌های وام
 MenuProductsAccounts=حساب‌های محصولات
 MenuClosureAccounts=حساب‌های خاتمه
 MenuAccountancyClosure=Closure
+MenuExportAccountancy=Export accountancy
 MenuAccountancyValidationMovements=Validate movements
 ProductsBinding=حساب‌های محصولات
 TransferInAccounting=انتقال به‌داخل حساب‌داری
@@ -164,12 +171,12 @@ ACCOUNTING_MANAGE_ZERO=امکان تغییر تعداد دیگری از صفر �
 BANK_DISABLE_DIRECT_INPUT=غیرفعال کردن ثبت مستقیم تراکنش در حساب بانکی
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=فعال کردن خروجی پیش‌نویس از دفتر
 ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
-ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
+ACCOUNTING_DATE_START_BINDING=Disable binding & transfer in accountancy when date is below this date (the transactions before this date will be excluded by default)
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On the page to transfer data into accountancy, what is the period selected by default
 
-ACCOUNTING_SELL_JOURNAL=Sales journal (sales and returns)
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal (purchase and returns)
-ACCOUNTING_BANK_JOURNAL=Cash journal (receipts and disbursements)
+ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
+ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
+ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
 ACCOUNTING_EXPENSEREPORT_JOURNAL=دفتر گزارش هزینه‌ها
 ACCOUNTING_MISCELLANEOUS_JOURNAL=General journal
 ACCOUNTING_HAS_NEW_JOURNAL=دفتر جدید دارد
@@ -179,6 +186,8 @@ ACCOUNTING_SOCIAL_JOURNAL=دفتر اجتماعی
 ACCOUNTING_RESULT_PROFIT=نتیجۀ حساب حساب‌داری (سود)
 ACCOUNTING_RESULT_LOSS=نتیجۀ حساب حساب‌داری (ضرر)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=دفتر خاتمه
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Accounting groups used for the balance sheet account (separate by comma)
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Accounting groups used for the income statement (separate by comma)
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account (from the Chart Of Account) to be used as the account for transitional bank transfers
 TransitionalAccount=Transitional bank transfer account
@@ -238,6 +247,7 @@ ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month an
 ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=دفتر مالی
 ExpenseReportsJournal=دفتر گزارش هزینه
+InventoryJournal=Inventory journal
 DescFinanceJournal=دفتر مالی که شامل همۀ انواع پرداخت بواسطۀ حساب بانکی می‌شود
 DescJournalOnlyBindedVisible=This is a view of record that are bound to an accounting account and can be recorded into the Journals and Ledger.
 VATAccountNotDefined=حساب مالیات‌بر‌ارزش‌افزوده تعریف نشده است
@@ -282,7 +292,7 @@ DescVentilDoneCustomer=Consult here the list of the lines of invoices customers 
 DescVentilTodoCustomer=Bind invoice lines not already bound with a product account from chart of account
 ChangeAccount=Change the product/service account (from chart of account) for the selected lines with the following account:
 Vide=-
-DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product account from chart of account (only record not already transfered in accountancy are visible)
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product account from chart of account (only record not already transferred in accountancy are visible)
 DescVentilDoneSupplier=در این قسمت فهرستی از سطور صورت‌حساب‌های تامین کنندگان و حساب‌حساب‌داری آن‌ها ملاحظه کنید
 DescVentilTodoExpenseReport=بندکردن سطور گزارش هزینه‌هائی که قبلا به حساب‌حسابداری پرداختی بند نشده‌اند
 DescVentilExpenseReport=در این قسمت فهرستی از سطور گزارش هزینه‌هائی را که به یک حساب‌حساب‌داری پرداخت بندشده‌اند (یا نشده‌اند) را ملاحظه کنید
@@ -290,11 +300,11 @@ DescVentilExpenseReportMore=در صورتی‌که شما حساب‌حساب‌
 DescVentilDoneExpenseReport=در این قسمت فهرستی از سطور گزارشات هزینه و حساب‌حساب‌داری پرداخت آن‌ها را داشته باشید
 
 Closure=Annual closure
-DescClosure=Consult here the number of movements by month not yet validated & locked
+AccountancyClosureStep1Desc=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
-ValidateMovements=Validate and lock movements...
+ValidateMovements=Validate and lock movements
 DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
 
 ValidateHistory=بندکردن خودکار
@@ -333,7 +343,7 @@ AccountingJournalType3=خرید
 AccountingJournalType4=بانک
 AccountingJournalType5=گزارش‌هزینه‌ها
 AccountingJournalType8=انبار
-AccountingJournalType9=جدید-دارد
+AccountingJournalType9=Retained earnings
 GenerationOfAccountingEntries=Generation of accounting entries
 ErrorAccountingJournalIsAlreadyUse=این دفتر فعلا در حال استفاده است
 AccountingAccountForSalesTaxAreDefinedInto=نکته: حساب حساب‌داری برای مالیات بر فروش در گزینۀ <b>%s</b> - <b>%s</b> قابل تعریف است
@@ -343,12 +353,20 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Disable binding & transfer in accountancy on
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountancy on purchases (vendor invoices will not be taken into account in accounting)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
+EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigorous accounting management.
 ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not chosen by the end user
+ACCOUNTING_LETTERING_NBLETTERS=Number of letters when generating lettering code (default 3)
+ACCOUNTING_LETTERING_NBLETTERS_DESC=Some accounting software only accepts a two-letter code. This parameter allows you to set this aspect. The default number of letters is three.
+OptionsAdvanced=Advanced options
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
-NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries not yet already locked <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 NotifiedExportFull=Export documents ?
 DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
@@ -380,7 +398,7 @@ ChartofaccountsId=ساختار شناسۀ حساب‌‌ها
 ## Tools - Init accounting account on product / service
 InitAccountancy=حساب‌داری اولیه
 InitAccountancyDesc=این صفحه برای مقداردهی اولیۀ یک حساب حساب‌داری برای محصولات/خدماتی قابل استفاده است که حساب حساب‌داری تعریف‌شده‌ای برای خرید و فروش ندارند
-DefaultBindingDesc=این صفحه برای تنظیم یک حساب پیش‌فرض قابل استفاده از که برای وصل کردن ردیف تراکنش‌‌های مربوط به پرداخت حقوق، اعانه و کمک، مالیات و مالیت بر ارزش افزوده در حالتی که هیچ حساب حساب‌داری تنظیم نشده، قابل استفاده است .
+DefaultBindingDesc=This page can be used to set the default accounts (from the chart of account) to use to link business objects with an account, like payment salaries, donation, taxes and VAT, when no specific account were already set.
 DefaultClosureDesc=This page can be used to set parameters used for accounting closures.
 Options=گزینه‌ها
 OptionModeProductSell=حالت فروش
@@ -406,7 +424,7 @@ SaleLocal=Local sale
 SaleExport=Export sale
 SaleEEC=Sale in EEC
 SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
-SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of third party is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the third party, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
 ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
@@ -427,16 +445,30 @@ AccountancyNoUnletteringModified=No unreconcile modified
 AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
 AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
 
+## Closure
+AccountancyClosureStep1=Step 1 : Validate and lock movements
+AccountancyClosureStep2=Step 2 : Close fiscal period
+AccountancyClosureStep3=Step 3 : Extract entries (Optional)
+AccountancyClosureClose=Close fiscal period
+AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries
+AccountancyClosureStep3NewFiscalPeriod=Next fiscal period
+AccountancyClosureGenerateClosureBookkeepingRecords=Generate "Retained earnings" entries on the next fiscal period
+AccountancyClosureSeparateAuxiliaryAccounts=When generating the "Retained earnings" entries, detail the sub-ledger accounts
+AccountancyClosureCloseSuccessfully=Fiscal period has been closed successfully
+AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping entries for "Retained earnings" has been inserted successfully
+
 ## Confirm box
 ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
 ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
 ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=تائید حذف گروهی
-ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
+AccountancyClosureConfirmClose=Are you sure you want to close the current fiscal period ? <span class="warning">You understand that closing the fiscal period is an irreversible action and will permanently block any modification or deletion of entries over this period</span>.
+AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=برخی گام‌های اجباری برپاسازی انجام نشده است، لطفا تکمیل کنید
-ErrorNoAccountingCategoryForThisCountry=هیچ گروه حساب‌ حساب‌داری برای کشور %s وجود ندارد ( به بخش خانه - برپاسازی - واژه‌نامه‌ها ) مراجعه نمائید
+ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See %s - %s - %s)
 ErrorInvoiceContainsLinesNotYetBounded=شما سعی می‌کنید تعدادی از سطور صورت‌حساب <strong>%s</strong> را دفترنویسی کنید، اما برخی از سطور دیگر به یک حساب حساب‌داری بند نشده‌اند. دفترنویسی همۀ سطور این صورت‌حساب قابل قبول نیست.
 ErrorInvoiceContainsLinesNotYetBoundedShort=برخی از سطور این صورت‌حساب به حساب‌حساب‌داری بند نشده‌اند
 ExportNotSupported=حالت‌بندی خروجی تنظیم شده در این صفحه قابل پشتیبانی نیست
@@ -445,12 +477,15 @@ NoJournalDefined=دفتری تعریف نشده است
 Binded=سطور بندشده
 ToBind=سطوری که باید بند شوند
 UseMenuToSetBindindManualy=سطوری که هنوز بند نشده‌اند، گزینۀ <a href="%s">%s</a> را برای ایجاد دستی بندهای مورد استفاده قرار دهید.
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Note: this module or page is not completely compatible with the experimental feature of situation invoices. Some data may be wrong.
 AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 ErrorArchiveAddFile=Can't put "%s" file in archive
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found
+ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not inside the active fiscal period
+ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
 
 ## Import
 ImportAccountingEntries=ورودی‌های حساب‌داری
@@ -475,9 +510,9 @@ FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
 FECFormatMulticurrencyCode=Multicurrency code (Idevise)
 
 DateExport=Date export
-WarningReportNotReliable=هشدار! این گزارش بر مبنای دفتر کل نمی‌باشد، بنابراین دربردارندۀ تراکنش‌هائی که به شکل دستی در دفترکل ویرایش شده‌اند نیست. در صورتی که دفترنویسی شما روزآمد باشد، نمای «دفترنویسی» دقیق‌تر است.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=دفتر گزارش هزینه‌ها
-DocsAlreadyExportedAreExcluded=Docs already exported are excluded
-ClickToHideAlreadyExportedLines=Click to hide already exported lines
+DocsAlreadyExportedAreIncluded=Docs already exported are included
+ClickToShowAlreadyExportedLines=Click to show already exported lines
 
 NAccounts=%s accounts

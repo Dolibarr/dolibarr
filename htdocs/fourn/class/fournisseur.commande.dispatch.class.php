@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014 Juanjo Menent	      <jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +22,7 @@
  *  \file       htdocs/fourn/class/fournisseur.commande.dispatch.class.php
  *  \ingroup    fournisseur stock
  *  \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *              Initialy built by build_class_from_table on 2015-02-24 10:38
+ *              Initially built by build_class_from_table on 2015-02-24 10:38
  */
 
 // Put here all includes required by your class file
@@ -56,7 +58,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'commande_fournisseur_dispatch'; //!< Name of table without prefix where object is stored
+	public $table_element = 'receptiondet_batch'; //!< Name of table without prefix where object is stored
 	public $lines = array();
 
 	/**
@@ -110,7 +112,6 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	 */
 	public $status;
 
-	public $tms = '';
 	public $batch;
 	public $eatby = '';
 	public $sellby = '';
@@ -122,19 +123,19 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
 		$this->db = $db;
 
 		// List of language codes for status
-		$this->statuts[0] = 'Received';
-		$this->statuts[1] = 'Verified';
-		$this->statuts[2] = 'Denied';
-		$this->statuts_short[0] = 'Received';
-		$this->statuts_short[1] = 'Verified';
-		$this->statuts_short[2] = 'Denied';
+		$this->labelStatus[0] = 'Received';
+		$this->labelStatus[1] = 'Verified';
+		$this->labelStatus[2] = 'Denied';
+		$this->labelStatusShort[0] = 'Received';
+		$this->labelStatusShort[1] = 'Verified';
+		$this->labelStatusShort[2] = 'Denied';
 	}
 
 
@@ -143,7 +144,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	 *
 	 *  @param	User	$user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -153,28 +154,28 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		// Clean parameters
 
 		if (isset($this->fk_commande)) {
-			$this->fk_commande = trim($this->fk_commande);
+			$this->fk_commande = (int) $this->fk_commande;
 		}
 		if (isset($this->fk_product)) {
-			$this->fk_product = trim($this->fk_product);
+			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->fk_commandefourndet)) {
-			$this->fk_commandefourndet = trim($this->fk_commandefourndet);
+			$this->fk_commandefourndet = (int) $this->fk_commandefourndet;
 		}
 		if (isset($this->qty)) {
-			$this->qty = trim($this->qty);
+			$this->qty = trim((string) $this->qty);
 		}
 		if (isset($this->fk_entrepot)) {
-			$this->fk_entrepot = trim($this->fk_entrepot);
+			$this->fk_entrepot = (int) $this->fk_entrepot;
 		}
 		if (isset($this->fk_user)) {
-			$this->fk_user = trim($this->fk_user);
+			$this->fk_user = (int) $this->fk_user;
 		}
 		if (isset($this->comment)) {
 			$this->comment = trim($this->comment);
 		}
 		if (isset($this->status)) {
-			$this->status = trim($this->status);
+			$this->status = (int) $this->status;
 		}
 		if (isset($this->batch)) {
 			$this->batch = trim($this->batch);
@@ -227,7 +228,8 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -235,7 +237,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 
 			if (!$notrigger) {
 				// Call triggers
-				$result=$this->call_trigger('LINERECEPTION_CREATE', $user);
+				$result = $this->call_trigger('LINERECEPTION_CREATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -271,7 +273,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	 *
 	 *  @param	int		$id    	Id object
 	 *  @param	string	$ref	Ref
-	 *  @return int          	<0 if KO, >0 if OK
+	 *  @return int          	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -342,7 +344,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -351,28 +353,28 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		// Clean parameters
 
 		if (isset($this->fk_commande)) {
-			$this->fk_commande = trim($this->fk_commande);
+			$this->fk_commande = (int) $this->fk_commande;
 		}
 		if (isset($this->fk_product)) {
-			$this->fk_product = trim($this->fk_product);
+			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->fk_commandefourndet)) {
-			$this->fk_commandefourndet = trim($this->fk_commandefourndet);
+			$this->fk_commandefourndet = (int) $this->fk_commandefourndet;
 		}
 		if (isset($this->qty)) {
 			$this->qty = trim($this->qty);
 		}
 		if (isset($this->fk_entrepot)) {
-			$this->fk_entrepot = trim($this->fk_entrepot);
+			$this->fk_entrepot = (int) $this->fk_entrepot;
 		}
 		if (isset($this->fk_user)) {
-			$this->fk_user = trim($this->fk_user);
+			$this->fk_user = (int) $this->fk_user;
 		}
 		if (isset($this->comment)) {
 			$this->comment = trim($this->comment);
 		}
 		if (isset($this->status)) {
-			$this->status = trim($this->status);
+			$this->status = (int) $this->status;
 		}
 		if (isset($this->batch)) {
 			$this->batch = trim($this->batch);
@@ -405,7 +407,8 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -449,7 +452,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	 *
 	 *	@param  User	$user        User that deletes
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -484,7 +487,8 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 			dol_syslog(__METHOD__);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -514,7 +518,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	{
 		$error = 0;
 
-		$object = new Commandefournisseurdispatch($this->db);
+		$object = new CommandeFournisseurDispatch($this->db);
 
 		$this->db->begin();
 
@@ -579,36 +583,37 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$langs->load('orders');
 
 		if ($mode == 0) {
-			return $langs->trans($this->statuts[$status]);
+			return $langs->trans($this->labelStatus[$status]);
 		} elseif ($mode == 1) {
-			return $langs->trans($this->statuts_short[$status]);
+			return $langs->trans($this->labelStatusShort[$status]);
 		} elseif ($mode == 2) {
-			return $langs->trans($this->statuts[$status]);
+			return $langs->trans($this->labelStatus[$status]);
 		} elseif ($mode == 3) {
 			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts[$status]), 'statut0');
+				return img_picto($langs->trans($this->labelStatus[$status]), 'statut0');
 			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->statuts[$status]), 'statut4');
+				return img_picto($langs->trans($this->labelStatus[$status]), 'statut4');
 			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->statuts[$status]), 'statut8');
+				return img_picto($langs->trans($this->labelStatus[$status]), 'statut8');
 			}
 		} elseif ($mode == 4) {
 			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts[$status]), 'statut0').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatus[$status]), 'statut0').' '.$langs->trans($this->labelStatus[$status]);
 			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->statuts[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatus[$status]), 'statut4').' '.$langs->trans($this->labelStatus[$status]);
 			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->statuts[$status]), 'statut8').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatus[$status]), 'statut8').' '.$langs->trans($this->labelStatus[$status]);
 			}
 		} elseif ($mode == 5) {
 			if ($status == 0) {
-				return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut0');
+				return '<span class="hideonsmartphone">'.$langs->trans($this->labelStatusShort[$status]).' </span>'.img_picto($langs->trans($this->labelStatus[$status]), 'statut0');
 			} elseif ($status == 1) {
-				return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut4');
+				return '<span class="hideonsmartphone">'.$langs->trans($this->labelStatusShort[$status]).' </span>'.img_picto($langs->trans($this->labelStatus[$status]), 'statut4');
 			} elseif ($status == 2) {
-				return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut8');
+				return '<span class="hideonsmartphone">'.$langs->trans($this->labelStatusShort[$status]).' </span>'.img_picto($langs->trans($this->labelStatus[$status]), 'statut8');
 			}
 		}
+		return "";
 	}
 
 
@@ -616,46 +621,46 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	 *	Initialise object with example values
 	 *	Id must be 0 if object instance is a specimen
 	 *
-	 *	@return	void
+	 *	@return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 
-		$this->fk_commande = '';
-		$this->fk_product = '';
-		$this->fk_commandefourndet = '';
+		$this->fk_commande = 0;
+		$this->fk_product = 0;
+		$this->fk_commandefourndet = 0;
 		$this->qty = '';
-		$this->fk_entrepot = '';
-		$this->fk_user = '';
+		$this->fk_entrepot = 0;
+		$this->fk_user = 0;
 		$this->datec = '';
 		$this->comment = '';
-		$this->status = '';
-		$this->tms = '';
+		$this->status = 0;
+		$this->tms = dol_now();
 		$this->batch = '';
 		$this->eatby = '';
 		$this->sellby = '';
+
+		return 1;
 	}
 
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int    $limit     offset limit
-	 * @param int    $offset    offset limit
-	 * @param array  $filter    filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param string 		$sortorder 		Sort Order
+	 * @param string 		$sortfield 		Sort field
+	 * @param int    		$limit     		limit
+	 * @param int    		$offset    		offset limit
+	 * @param string|array  $filter    		filter array
+	 * @param string 		$filtermode 	filter mode (AND or OR)
+	 * @return 								int Return integer <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-
 		$sql .= " t.fk_commande,";
 		$sql .= " t.fk_product,";
 		$sql .= " t.fk_commandefourndet,";
@@ -669,26 +674,38 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$sql .= " t.batch,";
 		$sql .= " t.eatby,";
 		$sql .= " t.sellby";
-
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.comment') {
-					$sqlwhere [] = $key." LIKE '%".$this->db->escape($value)."%'";
-				} elseif ($key == 't.datec' || $key == 't.tms' || $key == 't.eatby' || $key == 't.sellby' || $key == 't.batch') {
-					$sqlwhere [] = $key." = '".$this->db->escape($value)."'";
-				} elseif ($key == 'qty') {
-					$sqlwhere [] = $key." = ".((float) $value);
-				} else {
-					$sqlwhere [] = $key." = ".((int) $value);
+		if (is_array($filter)) {
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.comment') {
+						$sqlwhere [] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+					} elseif ($key == 't.datec' || $key == 't.tms' || $key == 't.eatby' || $key == 't.sellby' || $key == 't.batch') {
+						$sqlwhere [] = $this->db->sanitize($key)." = '".$this->db->escape($value)."'";
+					} elseif ($key == 'qty') {
+						$sqlwhere [] = $this->db->sanitize($key)." = ".((float) $value);
+					} else {
+						$sqlwhere [] = $this->db->sanitize($key)." = ".((int) $value);
+					}
 				}
 			}
+			if (count($sqlwhere) > 0) {
+				$sql .= ' WHERE '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+			}
+
+			$filter = '';
 		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {
@@ -721,7 +738,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 				$line->batch = $obj->batch;
 				$line->eatby = $this->db->jdate($obj->eatby);
 				$line->sellby = $this->db->jdate($obj->sellby);
-								$line->fetch_optionals();
+				$line->fetch_optionals();
 
 				$this->lines[$line->id] = $line;
 			}

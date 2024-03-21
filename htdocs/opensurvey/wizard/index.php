@@ -2,7 +2,7 @@
 /* Copyright (C) 2013	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2014	Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019   Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/opensurvey/lib/opensurvey.lib.php';
 
 // Security check
-if (!$user->rights->opensurvey->write) {
+if (!$user->hasRight('opensurvey', 'write')) {
 	accessforbidden();
 }
 
@@ -55,13 +55,18 @@ print '<div class="corps">';
 print '<br>';
 print '<div class="index_date">';
 print '<div><img class="opacity imgopensurveywizard" src="../img/date.png" onclick="document.formulaire.date.click()"></div>';
-print '<button id="date" name="choix_sondage" value="date" type="submit" class="button orange bigrounded"><img src="../img/calendar-32.png" alt="'.dol_escape_htmltag($langs->trans("CreateSurveyDate")).'" style="padding-right: 4px">'.dol_escape_htmltag($langs->trans("CreateSurveyDate")).'</button>';
+print '<button id="date" name="choix_sondage" value="date" type="submit" class="button orange bigrounded">';
+print '<img src="../img/calendar-32.png" alt="'.dol_escape_htmltag($langs->trans("CreateSurveyDate")).'" style="padding-right: 4px" class="inline-block valignmiddle">';
+print '<div class="inline-block valignmiddle">'.dol_escape_htmltag($langs->trans("CreateSurveyDate")).'</div></button>';
 print '</div>';
 print '<div class="index_sondage">';
 print '<div><img class="opacity imgopensurveywizard" src="../img/sondage2.png" onclick="document.formulaire.autre.click()"></div>';
-print '<button id="autre" name="choix_sondage" value="autre" type="submit" class="button blue bigrounded"><img src="../img/chart-32.png" alt="'.dol_escape_htmltag($langs->trans("CreateSurveyStandard")).'" style="padding-right: 4px">'.dol_escape_htmltag($langs->trans("CreateSurveyStandard")).'</button>';
+print '<button id="autre" name="choix_sondage" value="autre" type="submit" class="button blue bigrounded">';
+print '<img src="../img/chart-32.png" alt="'.dol_escape_htmltag($langs->trans("CreateSurveyStandard")).'" style="padding-right: 4px" class="inline-block valignmiddle">';
+print '<div class="inline-block valignmiddle">'.dol_escape_htmltag($langs->trans("CreateSurveyStandard")).'</div></button>';
 print '</div>';
 print '<div class="clearboth"></div>';
+print '<br>';
 print '</div>';
 print '</div></form>';
 

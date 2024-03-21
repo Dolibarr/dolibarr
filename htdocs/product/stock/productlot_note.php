@@ -32,7 +32,7 @@ dol_include_once('/core/lib/product.lib.php');
 $langs->loadLangs(array('other', 'products'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -50,7 +50,7 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->productlot->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
 
-$permissionnote = $user->rights->produit->lire; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('produit', 'lire'); // Used by the include of actions_setnotes.inc.php
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
@@ -64,8 +64,8 @@ $permissionnote = $user->rights->produit->lire; // Used by the include of action
 /*
  * Actions
  */
-
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }

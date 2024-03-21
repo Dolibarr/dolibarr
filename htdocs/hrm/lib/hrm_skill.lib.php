@@ -55,7 +55,7 @@ function skillPrepareHead($object)
 		$head[$h][0] = dol_buildpath('/hrm/skill_note.php', 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
-			$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
+			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
 		}
 		$head[$h][2] = 'note';
 		$h++;

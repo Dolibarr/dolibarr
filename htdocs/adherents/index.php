@@ -53,11 +53,11 @@ $result = restrictedArea($user, 'adherent');
  * Actions
  */
 
-$userid = GETPOST('userid', 'int');
+$userid = GETPOSTINT('userid');
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'int');
+	$zone = GETPOSTINT('areacode');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
 	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
@@ -103,7 +103,16 @@ if ($conf->use_javascript_ajax) {
 
 	// Show array
 	$sumMembers = $stats->countMembersByTypeAndStatus($numberyears);
-	$total = $sumMembers['total']['members_draft'] + $sumMembers['total']['members_pending'] + $sumMembers['total']['members_uptodate'] + $sumMembers['total']['members_expired'] + $sumMembers['total']['members_excluded'] + $sumMembers['total']['members_resiliated'];
+	if (is_array($sumMembers) && !empty($sumMembers)) {
+		$total = $sumMembers['total']['members_draft'] + $sumMembers['total']['members_pending'] + $sumMembers['total']['members_uptodate'] + $sumMembers['total']['members_expired'] + $sumMembers['total']['members_excluded'] + $sumMembers['total']['members_resiliated'];
+	} else {
+		$total = 0;
+	}
+	foreach (array('members_draft', 'members_pending', 'members_uptodate', 'members_expired', 'members_excluded', 'members_resiliated') as $val) {
+		if (empty($sumMembers['total'][$val])) {
+			$sumMembers['total'][$val] = 0;
+		}
+	}
 
 	$dataseries = array();
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusToValid"), $sumMembers['total']['members_draft']);			// Draft, not yet validated

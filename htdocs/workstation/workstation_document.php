@@ -32,20 +32,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 
+global $conf, $db, $hookmanager, $langs, $user;
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'mails', 'other', 'mrp'));
 
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
-$id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
+$id = (GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id'));
 $ref = GETPOST('ref', 'alpha');
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -80,7 +82,7 @@ if ($id > 0 || !empty($ref)) {
 $isdraft = 0;
 restrictedArea($user, $object->element, $object->id, $object->table_element, 'workstation', 'fk_soc', 'rowid', $isdraft);
 
-$permissiontoadd = $user->rights->workstation->workstation->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+$permissiontoadd = $user->hasRight('workstation', 'workstation', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 
 
 /*
@@ -112,7 +114,7 @@ if ($object->id) {
 
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -130,7 +132,7 @@ if ($object->id) {
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->project->enabled))
+	 if (isModEnabled('project'))
 	 {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -182,12 +184,7 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'workstation';
-	//$permission = $user->rights->workstation->workstation->write;
-	$permission = 1;
-	//$permtoedit = $user->rights->workstation->workstation->write;
-	$permtoedit = 1;
 	$param = '&id='.$object->id;
-
 	//$relativepathwithnofile='workstation/' . dol_sanitizeFileName($object->id).'/';
 	$relativepathwithnofile = 'workstation/'.dol_sanitizeFileName($object->ref).'/';
 

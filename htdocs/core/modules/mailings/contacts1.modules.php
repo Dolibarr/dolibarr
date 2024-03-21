@@ -45,11 +45,6 @@ class mailing_contacts1 extends MailingTargets
 	 */
 	public $picto = 'contact';
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 
 	/**
 	 *  Constructor
@@ -72,7 +67,7 @@ class mailing_contacts1 extends MailingTargets
 	 */
 	public function getSqlArrayForStats()
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$langs->load("commercial");
 
@@ -98,6 +93,8 @@ class mailing_contacts1 extends MailingTargets
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
+		global $conf;
+
 		$sql = "SELECT count(distinct(c.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
@@ -219,7 +216,8 @@ class mailing_contacts1 extends MailingTargets
 				if ($level == $obj->code) {
 					$level = $langs->trans($obj->label);
 				}
-				$s .= '<option value="prospectslevel'.$obj->code.'">'.$langs->trans("ThirdPartyProspects").' ('.$langs->trans("ProspectLevelShort").'='.$level.')</option>';
+				$labeltoshow = $langs->trans("ThirdPartyProspects").' <span class="opacitymedium">('.$langs->trans("ProspectLevelShort").'='.$level.')</span>';
+				$s .= '<option value="prospectslevel'.$obj->code.'" data-html="'.dol_escape_htmltag($labeltoshow).'">'.$labeltoshow.'</option>';
 				$i++;
 			}
 		} else {
@@ -311,7 +309,7 @@ class mailing_contacts1 extends MailingTargets
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($this->db);
 			$s .= img_picto($langs->trans("DefaultLang"), 'language', 'class="pictofixedwidth"');
-			$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang', 0, null, $langs->trans("DefaultLang"), 0, 0, '', 0, 0, 0, null, 1);
+			$s .= $formadmin->select_language(GETPOST('filter_lang', 'aZ09'), 'filter_lang', 0, null, $langs->trans("DefaultLang"), 0, 0, '', 0, 0, 0, null, 1);
 		}
 
 		return $s;
@@ -335,7 +333,7 @@ class mailing_contacts1 extends MailingTargets
 	 *  Add some recipients into target table
 	 *
 	 *  @param  int		$mailing_id    	Id of emailing
-	 *  @return int           			<0 si erreur, nb ajout si ok
+	 *  @return int           			Return integer <0 si erreur, nb ajout si ok
 	 */
 	public function add_to_target($mailing_id)
 	{
@@ -393,7 +391,7 @@ class mailing_contacts1 extends MailingTargets
 		if (empty($this->evenunsubscribe)) {
 			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = sp.email and mu.entity = ".((int) $conf->entity).")";
 		}
-		// Exclude unsubscribed email adresses
+		// Exclude unsubscribed email addresses
 		$sql .= " AND sp.statut = 1";
 		$sql .= " AND sp.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 
@@ -412,7 +410,7 @@ class mailing_contacts1 extends MailingTargets
 		}
 
 		// Filter on language
-		if (!empty($filter_lang)) {
+		if (!empty($filter_lang) && $filter_lang != '-1') {
 			$sql .= " AND sp.default_lang LIKE '".$this->db->escape($filter_lang)."%'";
 		}
 
@@ -442,8 +440,9 @@ class mailing_contacts1 extends MailingTargets
 		}
 
 		$sql .= " ORDER BY sp.email";
-		// print "wwwwwwx".$sql;
-		// Stocke destinataires dans cibles
+		//print "wwwwwwx".$sql;
+
+		// Store recipients in target tables
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num = $this->db->num_rows($result);
@@ -455,7 +454,7 @@ class mailing_contacts1 extends MailingTargets
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old != $obj->email) {
 					$cibles[$j] = array(
 						'email' => $obj->email,
 						'fk_contact' => $obj->fk_contact,
@@ -481,6 +480,6 @@ class mailing_contacts1 extends MailingTargets
 			return -1;
 		}
 
-			return parent::addTargetsToDatabase($mailing_id, $cibles);
+		return parent::addTargetsToDatabase($mailing_id, $cibles);
 	}
 }

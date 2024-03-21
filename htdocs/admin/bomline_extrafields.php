@@ -65,11 +65,11 @@ require DOL_DOCUMENT_ROOT . '/core/actions_extrafields.inc.php';
  */
 
 $help_url = '';
-llxHeader('', $langs->trans("BOMLinesSetup"), $help_url);
+llxHeader('', $langs->trans("BOMsSetup"), $help_url);
 
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
-print load_fiche_titre($langs->trans("BOMLinesSetup"), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans("BOMsSetup"), $linkback, 'title_setup');
 
 
 $head = bomAdminPrepareHead();

@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 class pdf_standard extends ModelePDFProduct
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -58,22 +58,10 @@ class pdf_standard extends ModelePDFProduct
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
 	public $version = 'dolibarr';
-
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
 
 
 	/**
@@ -83,7 +71,7 @@ class pdf_standard extends ModelePDFProduct
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load traductions files required by page
 		$langs->loadLangs(array("main", "companies"));
@@ -136,7 +124,7 @@ class pdf_standard extends ModelePDFProduct
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -178,7 +166,7 @@ class pdf_standard extends ModelePDFProduct
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -190,7 +178,7 @@ class pdf_standard extends ModelePDFProduct
 				$heightforinfotot = 40; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
+				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
 				}
 
@@ -200,8 +188,8 @@ class pdf_standard extends ModelePDFProduct
 				}
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
-				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -218,6 +206,7 @@ class pdf_standard extends ModelePDFProduct
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 
@@ -244,6 +233,7 @@ class pdf_standard extends ModelePDFProduct
 				$nexY = $pdf->GetY();
 
 				// Show photo
+				$pdir = array();
 				if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 					$pdir[0] = get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id."/photos/";
 					$pdir[1] = get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref).'/';
@@ -418,7 +408,7 @@ class pdf_standard extends ModelePDFProduct
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('','',  $default_font_size - 1);   // On repositionne la police par defaut
+					$pdf->SetFont('','',  $default_font_size - 1);   // On repositionne la police par default
 
 					// VAT Rate
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN))
@@ -441,7 +431,7 @@ class pdf_standard extends ModelePDFProduct
 					// Unit
 					if($conf->global->PRODUCT_USE_UNITS)
 					{
-						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
+						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails);
 						$pdf->SetXY($this->posxunit, $curY);
 						$pdf->MultiCell($this->posxdiscount-$this->posxunit-0.8, 4, $unit, 0, 'L');
 					}
@@ -487,10 +477,20 @@ class pdf_standard extends ModelePDFProduct
 					}
 
 					// retrieve global local tax
-					if ($localtax1_type && $localtax1ligne != 0)
-						$this->localtax1[$localtax1_type][$localtax1_rate]+=$localtax1ligne;
-					if ($localtax2_type && $localtax2ligne != 0)
-						$this->localtax2[$localtax2_type][$localtax2_rate]+=$localtax2ligne;
+					if ($localtax1_type && $localtax1ligne != 0) {
+						if (empty($this->localtax1[$localtax1_type][$localtax1_rate])) {
+							$this->localtax1[$localtax1_type][$localtax1_rate] = $localtax1ligne;
+						} else {
+							$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
+						}
+					}
+					if ($localtax2_type && $localtax2ligne != 0) {
+						if (empty($this->localtax2[$localtax2_type][$localtax2_rate])) {
+							$this->localtax2[$localtax2_type][$localtax2_rate] = $localtax2ligne;
+						} else {
+							$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;
+						}
+					}
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 					if (! isset($this->tva[$vatrate])) 				$this->tva[$vatrate]=0;
@@ -573,7 +573,7 @@ class pdf_standard extends ModelePDFProduct
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -583,7 +583,7 @@ class pdf_standard extends ModelePDFProduct
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {
@@ -633,8 +633,8 @@ class pdf_standard extends ModelePDFProduct
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
-			if (!empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
+				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -651,7 +651,7 @@ class pdf_standard extends ModelePDFProduct
 			$pdf->MultiCell(108, 2, $outputlangs->transnoentities("Designation"), '', 'L');
 		}
 
-		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) {
+		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') && !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN')) {
 			$pdf->line($this->posxtva - 1, $tab_top, $this->posxtva - 1, $tab_top + $tab_height);
 			if (empty($hidetop)) {
 				$pdf->SetXY($this->posxtva - 3, $tab_top + 1);
@@ -671,7 +671,7 @@ class pdf_standard extends ModelePDFProduct
 			$pdf->MultiCell($this->posxunit - $this->posxqty - 1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
 		}
 
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 			$pdf->line($this->posxunit - 1, $tab_top, $this->posxunit - 1, $tab_top + $tab_height);
 			if (empty($hidetop)) {
 				$pdf->SetXY($this->posxunit - 1, $tab_top + 1);
@@ -705,14 +705,16 @@ class pdf_standard extends ModelePDFProduct
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param	string		$titlekey		Translation key to show as title of document
-	 *  @return	void
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf;
 
 		$ltrdirection = 'L';
-		if ($outputlangs->trans("DIRECTION") == 'rtl') $ltrdirection = 'R';
+		if ($outputlangs->trans("DIRECTION") == 'rtl') {
+			$ltrdirection = 'R';
+		}
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "propal", "companies", "bills", "orders"));
@@ -856,6 +858,8 @@ class pdf_standard extends ModelePDFProduct
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

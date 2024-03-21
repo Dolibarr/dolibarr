@@ -39,7 +39,7 @@ if (!defined('NOREQUIRESOC')) {
 
 include '../../main.inc.php';
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $element = GETPOST('element', 'aZ09arobase');
 $htmlelement = GETPOST('htmlelement', 'alpha');
 $type = GETPOST('type', 'alpha');
@@ -50,7 +50,7 @@ $object = fetchObjectByElement($id, $element);
 $module = $object->module;
 $element = $object->element;
 $usesublevelpermission = ($module != $element ? $element : '');
-if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is no permission on object defined, we will check permission on module directly
 	$usesublevelpermission = '';
 }
 

@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV;
 
 /**
- * This interface represents a file in the directory tree
+ * This interface represents a file in the directory tree.
  *
  * A file is a bit of a broad definition. In general it implies that on
  * this specific node a PUT or GET method may be performed, to either update,
@@ -13,8 +15,8 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IFile extends INode {
-
+interface IFile extends INode
+{
     /**
      * Replaces the contents of the file.
      *
@@ -33,30 +35,31 @@ interface IFile extends INode {
      * return an ETag, and just return null.
      *
      * @param resource|string $data
+     *
      * @return string|null
      */
-    function put($data);
+    public function put($data);
 
     /**
-     * Returns the data
+     * Returns the data.
      *
      * This method may either return a string or a readable stream resource
      *
      * @return mixed
      */
-    function get();
+    public function get();
 
     /**
-     * Returns the mime-type for a file
+     * Returns the mime-type for a file.
      *
      * If null is returned, we'll assume application/octet-stream
      *
      * @return string|null
      */
-    function getContentType();
+    public function getContentType();
 
     /**
-     * Returns the ETag for a file
+     * Returns the ETag for a file.
      *
      * An ETag is a unique identifier representing the current version of the file. If the file changes, the ETag MUST change.
      *
@@ -69,13 +72,12 @@ interface IFile extends INode {
      *
      * @return string|null
      */
-    function getETag();
+    public function getETag();
 
     /**
-     * Returns the size of the node, in bytes
+     * Returns the size of the node, in bytes.
      *
      * @return int
      */
-    function getSize();
-
+    public function getSize();
 }

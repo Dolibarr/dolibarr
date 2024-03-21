@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,9 +80,9 @@ if ($dolibarr_main_db_type == "mssql") {
 }
 
 
-dolibarr_install_syslog("--- upgrade: Entering upgrade.php page");
+dolibarr_install_syslog("--- upgrade: entering upgrade.php page ".$versionfrom." ".$versionto);
 if (!is_object($conf)) {
-	dolibarr_install_syslog("upgrade2: conf file not initialized", LOG_ERR);
+	dolibarr_install_syslog("upgrade: conf file not initialized", LOG_ERR);
 }
 
 
@@ -123,13 +124,13 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
+			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
 		} else {
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 		}
 	}
 
-	// $conf is already instancied inside inc.php
+	// $conf is already instantiated inside inc.php
 	$conf->db->type = $dolibarr_main_db_type;
 	$conf->db->host = $dolibarr_main_db_host;
 	$conf->db->port = $dolibarr_main_db_port;
@@ -147,7 +148,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	}
 	$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
-	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 	// Create the global $hookmanager object
 	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -200,8 +201,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		if (count($versionmindb) && count($versionarray)
 			&& versioncompare($versionarray, $versionmindb) < 0) {
 			// Warning: database version too low.
-			print "<tr><td>".$langs->trans("ErrorDatabaseVersionTooLow", join('.', $versionarray), join('.', $versionmindb)).'</td><td class="right"><span class="error">'.$langs->trans("Error")."</span></td></tr>\n";
-			dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorDatabaseVersionTooLow", join('.', $versionarray), join('.', $versionmindb)));
+			print "<tr><td>".$langs->trans("ErrorDatabaseVersionTooLow", implode('.', $versionarray), implode('.', $versionmindb)).'</td><td class="right"><span class="error">'.$langs->trans("Error")."</span></td></tr>\n";
+			dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorDatabaseVersionTooLow", implode('.', $versionarray), implode('.', $versionmindb)));
 			$ok = 0;
 		}
 
@@ -216,7 +217,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$listofforbiddenversion = '';
 			foreach ($dbversion_disallowed as $dbversion_totest) {
 				if ($dbversion_totest['type'] == $db->type) {
-					$listofforbiddenversion .= ($listofforbiddenversion ? ', ' : '').join('.', $dbversion_totest['version']);
+					$listofforbiddenversion .= ($listofforbiddenversion ? ', ' : '').implode('.', $dbversion_totest['version']);
 				}
 			}
 			foreach ($dbversion_disallowed as $dbversion_totest) {
@@ -225,8 +226,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 					&& (versioncompare($dbversion_totest['version'], $versionarray) == 0 || versioncompare($dbversion_totest['version'], $versionarray) <= -4 || versioncompare($dbversion_totest['version'], $versionarray) >= 4)
 				) {
 					// Warning: database version too low.
-					print '<tr><td><div class="warning">'.$langs->trans("ErrorDatabaseVersionForbiddenForMigration", join('.', $versionarray), $listofforbiddenversion)."</div></td><td class=\"right\">".$langs->trans("Error")."</td></tr>\n";
-					dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorDatabaseVersionForbiddenForMigration", join('.', $versionarray), $listofforbiddenversion));
+					print '<tr><td><div class="warning">'.$langs->trans("ErrorDatabaseVersionForbiddenForMigration", implode('.', $versionarray), $listofforbiddenversion)."</div></td><td class=\"right\">".$langs->trans("Error")."</td></tr>\n";
+					dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorDatabaseVersionForbiddenForMigration", implode('.', $versionarray), $listofforbiddenversion));
 					$ok = 0;
 					break;
 				}
@@ -255,7 +256,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			dolibarr_install_syslog("Clean database from bad named constraints");
 
 			// Suppression vieilles contraintes sans noms et en doubles
-			// Les contraintes indesirables ont un nom qui commence par 0_ ou se termine par ibfk_999
+			// Les contraintes indesirables ont un nom qui commence par 0_ ou se determine par ibfk_999
 			$listtables = array(
 								MAIN_DB_PREFIX.'adherent_options',
 								MAIN_DB_PREFIX.'bank_class',
@@ -355,7 +356,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").'</td><td class="right">'.$file.'</td></tr>'."\n";
 
 				// Run sql script
-				$ok = run_sql($dir.$file, 0, '', 1, '', 'default', 32768, 0, 0, 2);
+				$ok = run_sql($dir.$file, 0, '', 1, '', 'default', 32768, 0, 0, 2, 0, $db->database_name);
 				$listoffileprocessed[$dir.$file] = $dir.$file;
 
 
@@ -417,7 +418,8 @@ if (!$ok && isset($argv[1])) {
 }
 dolibarr_install_syslog("Exit ".$ret);
 
-dolibarr_install_syslog("--- upgrade: end ".((!$ok && empty($_GET["ignoreerrors"])) || $dirmodule));
+dolibarr_install_syslog("--- upgrade: end ".((int) (!$ok && empty($_GET["ignoreerrors"])))." dirmodule=".$dirmodule);
+
 $nonext = (!$ok && empty($_GET["ignoreerrors"])) ? 2 : 0;
 if ($dirmodule) {
 	$nonext = 1;

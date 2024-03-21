@@ -55,8 +55,8 @@ $mesg = ''; $error = 0; $errors = array();
 $action		= (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $confirm	= GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
-$id = GETPOST('id', 'int');
-$socid		= GETPOST('socid', 'int');
+$id = GETPOSTINT('id');
+$socid		= GETPOSTINT('socid');
 
 // Initialize objects
 $object = new Contact($db);
@@ -81,7 +81,7 @@ if (GETPOST('actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
@@ -92,10 +92,10 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -144,8 +144,8 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
+$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
 	$title = $object->lastname;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Partner';
@@ -165,7 +165,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object = new Contact($db);
 		$result = $object->fetch($id);
 		if ($result <= 0) {
-			dol_print_error('', $object->error);
+			dol_print_error(null, $object->error);
 		}
 	}
 	$objcanvas->assign_values($action, $object->id, $object->ref); // Set value for templates
@@ -176,7 +176,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// -----------------------------------------
 
 	// Confirm deleting contact
-	if ($user->rights->societe->contact->supprimer) {
+	if ($user->hasRight('societe', 'contact', 'supprimer')) {
 		if ($action == 'delete') {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id.($backtopage ? '&backtopage='.$backtopage : ''), $langs->trans("DeleteContact"), $langs->trans("ConfirmDeleteContact"), "confirm_delete", '', 0, 1);
 		}
@@ -187,28 +187,30 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	 */
 	$head = array();
 	if ($id > 0) {
-		// Si edition contact deja existant
+		// Si edition contact deja existent
 		$object = new Contact($db);
 		$res = $object->fetch($id, $user);
 		if ($res < 0) {
-			dol_print_error($db, $object->error); exit;
+			dol_print_error($db, $object->error);
+			exit;
 		}
 		$res = $object->fetch_optionals();
 		if ($res < 0) {
-			dol_print_error($db, $object->error); exit;
+			dol_print_error($db, $object->error);
+			exit;
 		}
 
 		// Show tabs
 		$head = contact_prepare_head($object);
 
-		$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+		$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 	}
 
 	if (!empty($id) && $action != 'edit' && $action != 'create') {
 		$objsoc = new Societe($db);
 
 		/*
-		 * Fiche en mode visualisation
+		 * Card in view mode
 		 */
 
 		dol_htmloutput_errors($error, $errors);
@@ -222,7 +224,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$morehtmlref .= '</a>';
 
 		$morehtmlref .= '<div class="refidno">';
-		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 			$objsoc = new Societe($db);
 			$objsoc->fetch($object->socid);
 			// Thirdparty
@@ -257,7 +259,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$out = '';
 		$newcardbutton = '';
 		if (isModEnabled('agenda')) {
-			$permok = $user->rights->agenda->myactions->create;
+			$permok = $user->hasRight('agenda', 'myactions', 'create');
 			if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 				if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
 					$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '');
@@ -266,12 +268,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$out .= '&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'));
 			}
 
-			if (!empty($user->rights->agenda->myactions->create) || $user->hasRight('agenda', 'allactions', 'create')) {
+			if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 				$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
 			}
 		}
 
-		if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+		if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 			print '<br>';
 
 			$param = '&id='.$id;

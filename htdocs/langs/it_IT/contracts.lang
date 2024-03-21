@@ -2,7 +2,7 @@
 ContractsArea=Area contratti
 ListOfContracts=Elenco dei contratti
 AllContracts=Tutti i contratti
-ContractCard=Scheda contratto
+ContractCard=Contratto
 ContractStatusNotRunning=Non in corso
 ContractStatusDraft=Bozza
 ContractStatusValidated=Convalidato
@@ -80,7 +80,7 @@ ConfirmDeleteContractLine=Vuoi davvero eliminare questa riga di contratto?
 MoveToAnotherContract=Sposta in un altro contratto
 ConfirmMoveToAnotherContract=Confermi di voler passare questo servizio al nuovo contratto scelto?
 ConfirmMoveToAnotherContractQuestion=Seleziona in quale contratto esistente (dello stesso soggetto terzo) vuoi spostare questi servizi?
-PaymentRenewContractId=Rinnova riga di contratto (numero %s)
+PaymentRenewContractId=Rinnovo contratto %s (servizio %s)
 ExpiredSince=Scaduto il
 NoExpiredServices=Non ci sono servizi scaduti attivi
 ListOfServicesToExpireWithDuration=Lista di servizi in scadenza entro %s giorni

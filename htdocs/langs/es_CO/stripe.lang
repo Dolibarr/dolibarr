@@ -37,4 +37,3 @@ ToOfferALinkForTestWebhook=Enlace para configurar Stripe WebHook para llamar al 
 ToOfferALinkForLiveWebhook=Enlace para configurar Stripe WebHook para llamar al IPN (modo en vivo)
 ClickHereToTryAgain=<a href="%s"> Haga clic aquí para volver a intentarlo ... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Debido a las reglas estrictas de autenticación de clientes, la creación de una tarjeta debe realizarse desde el backoffice de Stripe. Puede hacer clic aquí para activar el registro de cliente de Stripe: %s
-TERMINAL_LOCATION=Location (address) for Stripe Terminals

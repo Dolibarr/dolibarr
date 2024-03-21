@@ -3,7 +3,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 if (empty($extrafieldsobjectkey) && is_object($object)) {
@@ -12,7 +12,7 @@ if (empty($extrafieldsobjectkey) && is_object($object)) {
 
 // Loop to show all columns of extrafields from $obj, $extrafields and $db
 if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafieldsobjectkey])) {	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
-	if (key_exists('label', $extrafields->attributes[$extrafieldsobjectkey]) && is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
+	if (array_key_exists('label', $extrafields->attributes[$extrafieldsobjectkey]) && is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
 		if (empty($extrafieldsobjectprefix)) {
 			$extrafieldsobjectprefix = 'ef.';
 		}
@@ -34,11 +34,8 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 				}
 				// If field is a computed field, we make computation to get value
 				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]) {
-					//global $obj, $object;
-					//var_dump($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]);
-					//var_dump($obj);
-					//var_dump($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]);
-					$value = dol_eval($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '0');
+					$objectoffield = $object; //For compatibility with the computed formula
+					$value = dol_eval((int) $extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '2');
 					if (is_numeric(price2num($value)) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
 						$obj->$tmpkey = price2num($value);
 					}
@@ -50,7 +47,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 
 				print '<td'.($cssclass ? ' class="'.$cssclass.'"' : '');	// TODO Add 'css' and 'cssview' and 'csslist' for extrafields and use here 'csslist'
 				print ' data-key="'.$extrafieldsobjectkey.'.'.$key.'"';
-				print ($title ? ' title="'.dol_escape_htmltag($title).'"' : '');
+				print($title ? ' title="'.dol_escape_htmltag($title).'"' : '');
 				print '>';
 				print $valuetoshow;
 				print '</td>';
@@ -74,7 +71,8 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 						$totalarray['totalizable'][$key]['total'] += $obj->$tmpkey;
 					}
 				}
-				if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
+				// key 'totalizable' if in extrafields same as 'isameasure' into ->$fields
+				if (!empty($extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key] == 1) {
 					if (!$i) {
 						$totalarray['pos'][$totalarray['nbfield']] = $extrafieldsobjectprefix.$tmpkey;
 					}

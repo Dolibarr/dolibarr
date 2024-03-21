@@ -4,7 +4,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018-2019  Philippe Grand      <philippe.grand@atoo-net.com>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2019       Tim Otte		    <otte@meuser.it>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,12 +48,6 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 	public $issuer;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * @var string Dolibarr version of the loaded document
 	 */
 	public $version = 'dolibarr';
@@ -89,7 +83,6 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 		$this->option_tva = 0; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 0; // Display payment mode
 		$this->option_condreg = 0; // Display payment terms
-		$this->option_codeproduitservice = 0; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
@@ -130,7 +123,7 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 		// List of directories area
 		$texte .= '<tr><td>';
 		$texttitle = $langs->trans("ListOfDirectories");
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH)));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString('SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH'))));
 
 
 		$listoffiles = array();
@@ -152,22 +145,23 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 		}
 
 		$texthelp = $langs->trans("ListOfDirectoriesForModelGenODT");
+		$texthelp .= '<br><br><span class="opacitymedium">'.$langs->trans("ExampleOfDirectoriesForModelGen").'</span>';
 		// Add list of substitution keys
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= $conf->global->SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH;
+		$texte .= getDolGlobalString('SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH');
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small reposition" name="modify" value="'.$langs->trans("Modify").'">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (!empty($conf->global->SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH)) {
+		if (getDolGlobalString('SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH')) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
@@ -188,15 +182,10 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 		// Add input to upload a new template file.
 		$texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
 		$texte .= '<input type="hidden" value="SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
-		$texte .= '<input type="submit" class="button small" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '<input type="submit" class="button reposition smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
 		$texte .= '</div>';
 		$texte .= '</td>';
 
-		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
-		$texte .= '<span class="opacitymedium">';
-		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
-		$texte .= '</span>';
-		$texte .= '</td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
@@ -255,7 +244,7 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 				//$dir = $conf->fournisseur->facture->dir_output.'/'.$objectref;
 				$dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$objectref;
 				$file = $dir."/".$objectref.".pdf";
-				if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) {
+				if (getDolGlobalString('SUPPLIER_REF_IN_NAME')) {
 					$file = $dir."/".$objectref.($objectrefsupplier ? "_".$objectrefsupplier : "").".pdf";
 				}
 			}
@@ -277,8 +266,8 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (!empty($conf->global->MAIN_DOC_USE_TIMING)) {
-					$format = $conf->global->MAIN_DOC_USE_TIMING;
+				if (getDolGlobalString('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalString('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
@@ -311,13 +300,13 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 				$contactobject = null;
 				if (!empty($usecontact)) {
 					// We can use the company of contact instead of thirdparty company
-					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))) {
+					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
 						$object->contact->fetch_thirdparty();
 						$socobject = $object->contact->thirdparty;
 						$contactobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;
-						// if we have a CUSTOMER contact and we dont use it as thirdparty recipient we store the contact object for later use
+						// if we have a CUSTOMER contact and we don't use it as thirdparty recipient we store the contact object for later use
 						$contactobject = $object->contact;
 					}
 				} else {
@@ -341,13 +330,13 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 				$newfreetext = '';
 				$paramfreetext = 'INVOICE_FREE_TEXT';
 				if (!empty($conf->global->$paramfreetext)) {
-					$newfreetext = make_substitutions($conf->global->$paramfreetext, $substitutionarray);
+					$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 				}
 
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->fournisseur->dir_temp,
@@ -404,8 +393,7 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
-						} else // Text
-						{
+						} else { // Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
@@ -417,8 +405,11 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 					$foundtagforlines = 1;
 					try {
 						$listlines = $odfHandler->setSegment('lines');
-					} catch (OdfException $e) {
+					} catch (OdfExceptionSegmentNotFound $e) {
 						// We may arrive here if tags for lines not present into template
+						$foundtagforlines = 0;
+						dol_syslog($e->getMessage(), LOG_INFO);
+					} catch (OdfException $e) {
 						$foundtagforlines = 0;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
@@ -466,7 +457,7 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 				$reshook = $hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
-				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
+				if (getDolGlobalString('MAIN_ODT_AS_PDF')) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {

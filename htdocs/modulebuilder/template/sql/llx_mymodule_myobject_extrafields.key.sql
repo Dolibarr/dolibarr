@@ -15,5 +15,5 @@
 
 
 -- BEGIN MODULEBUILDER INDEXES
-ALTER TABLE llx_mymodule_myobject_extrafields ADD INDEX idx_myobject_fk_object(fk_object);
+ALTER TABLE llx_mymodule_myobject_extrafields ADD UNIQUE INDEX uk_myobject_fk_object(fk_object);
 -- END MODULEBUILDER INDEXES

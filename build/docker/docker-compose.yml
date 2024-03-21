@@ -10,7 +10,7 @@ services:
     mariadb:
         image: mariadb:latest
         environment:
-            MYSQL_ROOT_PASSWORD: root
+            MYSQL_ROOT_PASSWORD: rootpassfordev
             MYSQL_DATABASE: dolibarr
         ports:
             - "3306:3306"
@@ -55,8 +55,8 @@ services:
     mail:
         image: maildev/maildev
         ports:
-            - "8081:80"
-            - "25:25"
+            - "8081:1080"
+            - "25:1025"
         networks:
             - internal-pod
             - external-pod

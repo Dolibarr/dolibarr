@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\Event;
 
 use Generator;
-use Exception;
+use Throwable;
 
 /**
  * Turn asynchronous promise-based code into something that looks synchronous
@@ -34,18 +36,24 @@ use Exception;
  *     yield $httpClient->request('GET', '/foo');
  *     yield $httpClient->request('DELETE', /foo');
  *     yield $httpClient->request('PUT', '/foo');
- *   } catch(\Exception $reason) {
+ *   } catch(\Throwable $reason) {
  *     echo "Failed because: $reason\n";
  *   }
  *
  * });
  *
- * @copyright Copyright (C) 2013-2015 fruux GmbH. All rights reserved.
+ * @return \Sabre\Event\Promise
+ *
+ * @psalm-template TReturn
+ * @psalm-param callable():\Generator<mixed, mixed, mixed, TReturn> $gen
+ * @psalm-return Promise<TReturn>
+ *
+ * @copyright Copyright (C) fruux GmbH (https://fruux.com/)
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-function coroutine(callable $gen) {
-
+function coroutine(callable $gen): Promise
+{
     $generator = $gen();
     if (!$generator instanceof Generator) {
         throw new \InvalidArgumentException('You must pass a generator function');
@@ -54,36 +62,24 @@ function coroutine(callable $gen) {
     // This is the value we're returning.
     $promise = new Promise();
 
-    $lastYieldResult = null;
-
     /**
      * So tempted to use the mythical y-combinator here, but it's not needed in
      * PHP.
      */
-    $advanceGenerator = function() use (&$advanceGenerator, $generator, $promise, &$lastYieldResult) {
-
+    $advanceGenerator = function () use (&$advanceGenerator, $generator, $promise) {
         while ($generator->valid()) {
-
             $yieldedValue = $generator->current();
             if ($yieldedValue instanceof Promise) {
                 $yieldedValue->then(
-                    function($value) use ($generator, &$advanceGenerator, &$lastYieldResult) {
-                        $lastYieldResult = $value;
+                    function ($value) use ($generator, &$advanceGenerator) {
                         $generator->send($value);
                         $advanceGenerator();
                     },
-                    function($reason) use ($generator, $advanceGenerator) {
-                        if ($reason instanceof Exception) {
-                            $generator->throw($reason);
-                        } elseif (is_scalar($reason)) {
-                            $generator->throw(new Exception($reason));
-                        } else {
-                            $type = is_object($reason) ? get_class($reason) : gettype($reason);
-                            $generator->throw(new Exception('Promise was rejected with reason of type: ' . $type));
-                        }
+                    function (Throwable $reason) use ($generator, $advanceGenerator) {
+                        $generator->throw($reason);
                         $advanceGenerator();
                     }
-                )->error(function($reason) use ($promise) {
+                )->otherwise(function (Throwable $reason) use ($promise) {
                     // This error handler would be called, if something in the
                     // generator throws an exception, and it's not caught
                     // locally.
@@ -94,27 +90,34 @@ function coroutine(callable $gen) {
                 break;
             } else {
                 // If the value was not a promise, we'll just let it pass through.
-                $lastYieldResult = $yieldedValue;
                 $generator->send($yieldedValue);
             }
-
         }
 
         // If the generator is at the end, and we didn't run into an exception,
-        // we can fullfill the promise with the last thing that was yielded to
-        // us.
-        if (!$generator->valid() && $promise->state === Promise::PENDING) {
-            $promise->fulfill($lastYieldResult);
-        }
+        // We're grabbing the "return" value and fulfilling our top-level
+        // promise with its value.
+        if (!$generator->valid() && Promise::PENDING === $promise->state) {
+            $returnValue = $generator->getReturn();
 
+            // The return value is a promise.
+            if ($returnValue instanceof Promise) {
+                $returnValue->then(function ($value) use ($promise) {
+                    $promise->fulfill($value);
+                }, function (Throwable $reason) use ($promise) {
+                    $promise->reject($reason);
+                });
+            } else {
+                $promise->fulfill($returnValue);
+            }
+        }
     };
 
     try {
         $advanceGenerator();
-    } catch (Exception $e) {
+    } catch (Throwable $e) {
         $promise->reject($e);
     }
 
     return $promise;
-
 }

@@ -6,6 +6,7 @@ TotalMargin=Tổng biên
 MarginOnProducts=Tỷ suất biên lợi nhuận / Sản phẩm
 MarginOnServices=Tỷ suất biên lợi nhuận / Dịch vụ
 MarginRate=Tỷ lệ Biên lợi nhuận
+ModifyMarginRates=Sửa đổi tỷ lệ ký quỹ
 MarkRate=Đánh dấu tỷ lệ
 DisplayMarginRates=Tỷ lệ biên lợi nhuận hiển thị
 DisplayMarkRates=Giá đánh dấu hiển thị
@@ -22,7 +23,7 @@ ProductService=Sản phẩm hoặc dịch vụ
 AllProducts=Tất cả các sản phẩm và dịch vụ
 ChooseProduct/Service=Chọn sản phẩm hoặc dịch vụ
 ForceBuyingPriceIfNull=Ép buộc mua/giá thành giá bán nếu không được xác định
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+ForceBuyingPriceIfNullDetails=Nếu giá mua/giá vốn không được cung cấp khi chúng tôi thêm một dòng mới và tùy chọn này là "BẬT", biên độ sẽ là 0%% trên dòng mới (giá mua/giá vốn = gia ban). Nếu tùy chọn này là "TẮT" (được khuyến nghị), lề sẽ bằng giá trị được đề xuất theo mặc định (và có thể là 100%% nếu không tìm thấy giá trị mặc định nào).
 MARGIN_METHODE_FOR_DISCOUNT=Phương pháp biên giảm giá toàn cầu
 UseDiscountAsProduct=Là một sản phẩm
 UseDiscountAsService=Là một dịch vụ
@@ -37,7 +38,7 @@ CostPrice=Giá thành
 UnitCharges=Phí đơn vị
 Charges=Phí
 AgentContactType=Loại liên lạc là đại lý thương mại
-AgentContactTypeDetails=Xác định loại liên lạc nào (được liên kết trên hóa đơn) sẽ được sử dụng cho báo cáo lợi nhuận trên mỗi liên lạc/địa chỉ. Lưu ý rằng việc đọc số liệu thống kê về một liên lạc là không đáng tin cậy vì trong hầu hết các trường hợp, liên lạc có thể không được xác định rõ ràng trên hóa đơn.
+AgentContactTypeDetails=Xác định loại liên hệ nào (được liên kết trên hóa đơn) sẽ được sử dụng cho báo cáo lợi nhuận cho mỗi liên hệ/địa chỉ. Lưu ý rằng việc đọc số liệu thống kê về một người liên hệ là không đáng tin cậy vì trong hầu hết các trường hợp, người liên hệ đó có thể không được xác định rõ ràng trên hóa đơn.
 rateMustBeNumeric=Tỷ giá phải là một giá trị số
 markRateShouldBeLesserThan100=Đánh dấu suất phải thấp hơn 100
 ShowMarginInfos=Hiển thị thông tin lợi nhuận

@@ -34,4 +34,3 @@ ShowInStripe=Mostrar en raya
 StripeUserAccountForActions=Cuenta de usuario para usar para la notificación por correo electrónico de algunos eventos de Stripe (pagos de Stripe)
 StripePayoutList=Lista de pagos de la raya
 ToOfferALinkForLiveWebhook=Enlace para configurar Stripe WebHook para llamar a la IPN (modo en vivo)
-TERMINAL_LOCATION=Location (address) for Stripe Terminals

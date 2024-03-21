@@ -24,6 +24,8 @@ CREATE TABLE llx_emailcollector_emailcollector(
         host varchar(255),
         port varchar(10) DEFAULT '993',
         hostcharset varchar(16) DEFAULT 'UTF-8',
+        imap_encryption varchar(16) DEFAULT 'ssl',
+        norsh integer DEFAULT 0,
         login varchar(128),
         acces_type integer DEFAULT 0,
         oauth_service varchar(128),

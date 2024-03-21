@@ -37,7 +37,7 @@ $langs->loadLangs(array("companies", "members", "bills"));
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alphanohtml');
 
 
@@ -85,7 +85,8 @@ $result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid
 /*
  * Actions
  */
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -128,7 +129,7 @@ if ($id) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Login
-	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+	if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 		print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'</td></tr>';
 	}
 

@@ -39,12 +39,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $module = GETPOST('module', 'alpha');
-$rights = GETPOST('rights', 'int');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'groupperms'; // To manage different context of search
+$rights = GETPOSTINT('rights');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'groupperms'; // To manage different context of search
 
 if (!isset($id) || empty($id)) {
 	accessforbidden();
@@ -56,7 +56,7 @@ $canreadperms = ($user->admin || $user->hasRight("user", "user", "read"));
 $caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
 // Advanced permissions
 $advancedpermsactive = false;
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$advancedpermsactive = true;
 	$canreadperms = ($user->admin || ($user->hasRight("user", "group_advance", "read") && $user->hasRight("user", "group_advance", "readperms")));
 	$caneditperms = ($user->admin || $user->hasRight("user", "group_advance", "write"));
@@ -68,7 +68,7 @@ if (!$canreadperms) {
 	accessforbidden();
 }
 
-$object = new Usergroup($db);
+$object = new UserGroup($db);
 $object->fetch($id);
 $object->getrights();
 
@@ -90,7 +90,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($action == 'addrights' && $caneditperms) {
-		$editgroup = new Usergroup($db);
+		$editgroup = new UserGroup($db);
 		$result = $editgroup->fetch($object->id);
 		if ($result > 0) {
 			$result = $editgroup->addrights($rights, $module, '', $entity);
@@ -106,7 +106,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'delrights' && $caneditperms) {
-		$editgroup = new Usergroup($db);
+		$editgroup = new UserGroup($db);
 		$result = $editgroup->fetch($id);
 		if ($result > 0) {
 			$result = $editgroup->delrights($rights, $module, '', $entity);
@@ -193,8 +193,8 @@ if ($object->id > 0) {
 			if (!isset($permsgroupbyentity[$obj->entity])) {
 				$permsgroupbyentity[$obj->entity] = array();
 			}
-				array_push($permsgroupbyentity[$obj->entity], $obj->id);
-				$i++;
+			array_push($permsgroupbyentity[$obj->entity], $obj->id);
+			$i++;
 		}
 		$db->free($result);
 	} else {
@@ -210,6 +210,7 @@ if ($object->id > 0) {
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin);
 
 	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
 
@@ -218,21 +219,37 @@ if ($object->id > 0) {
 	// Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
 	if (!empty($conf->mutlicompany->enabled)) {
 		print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
-		print '<td colspan="2">'.$object->name;
-		if (!$object->entity) {
+		print '<td class="valeur">'.dol_escape_htmltag($object->name);
+		if (empty($object->entity)) {
 			print img_picto($langs->trans("GlobalGroup"), 'redstar');
 		}
 		print "</td></tr>\n";
 	}
 
-	// Note
-	print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td>';
-	print '<td class="valeur sensiblehtmlcontent">';
-	print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note));
-	print '</td>';
-	print "</tr>\n";
+	// Multicompany
+	if (isModEnabled('multicompany') && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity) {
+		$mc->getInfo($object->entity);
+		print "<tr>".'<td class="titlefield">'.$langs->trans("Entity").'</td>';
+		print '<td class="valeur">'.dol_escape_htmltag($mc->label);
+		print "</td></tr>\n";
+	}
 
-	print '</table><br>';
+	unset($object->fields['nom']); // Name already displayed in banner
+
+	// Common attributes
+	$keyforbreak = '';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+
+	// Other attributes
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
+	print '</table>';
+	print '</div>';
+	print '</div>';
+
+	print '<div class="clearboth"></div>';
+
+	print '<br>';
 
 	if ($user->admin) {
 		print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
@@ -273,7 +290,7 @@ if ($object->id > 0) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 	$sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
 	$sql .= " AND r.entity = ".((int) $entity);
-	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 		$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is disable
 	}
 	$sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
@@ -281,7 +298,8 @@ if ($object->id > 0) {
 	$result = $db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
-		$i = 0;$j = 0;
+		$i = 0;
+		$j = 0;
 		$oldmod = '';
 
 		$cookietohidegroup = (empty($_COOKIE["DOLUSER_PERMS_HIDE_GRP"]) ? '' : preg_replace('/^,/', '', $_COOKIE["DOLUSER_PERMS_HIDE_GRP"]));
@@ -299,7 +317,7 @@ if ($object->id > 0) {
 			$objMod = $modules[$obj->module];
 
 			if (GETPOSTISSET('forbreakperms_'.$obj->module)) {
-				$ishidden = GETPOST('forbreakperms_'.$obj->module, 'int');
+				$ishidden = GETPOSTINT('forbreakperms_'.$obj->module);
 			} elseif (in_array($j, $cookietohidegrouparray)) {	// If j is among list of hidden group
 				$ishidden = 1;
 			} else {
@@ -308,12 +326,12 @@ if ($object->id > 0) {
 			$isexpanded = ! $ishidden;
 
 			// Break found, it's a new module to catch
-			if (isset($obj->module) && ($oldmod <> $obj->module)) {
+			if (isset($obj->module) && ($oldmod != $obj->module)) {
 				$oldmod = $obj->module;
 
 				$j++;
 				if (GETPOSTISSET('forbreakperms_'.$obj->module)) {
-					$ishidden = GETPOST('forbreakperms_'.$obj->module, 'int');
+					$ishidden = GETPOSTINT('forbreakperms_'.$obj->module);
 				} elseif (in_array($j, $cookietohidegrouparray)) {	// If j is among list of hidden group
 					$ishidden = 1;
 				} else {
@@ -406,10 +424,10 @@ if ($object->id > 0) {
 			}
 
 			// Description of permission (2 columns)
-			$permlabel = (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
+			$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
 			print '<td>';
 			print $permlabel;
-			if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+			if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 				if (preg_match('/_advance$/', $obj->perms)) {
 					print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';
 				}
@@ -420,7 +438,7 @@ if ($object->id > 0) {
 			if ($user->admin) {
 				print '<td class="right">';
 				$htmltext = $langs->trans("ID").': '.$obj->id;
-				$htmltext .= '<br>'.$langs->trans("Permission").': user->rights->'.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '');
+				$htmltext .= '<br>'.$langs->trans("Permission").': user->hasRight(\''.$obj->module.'\', \''.$obj->perms.'\''.($obj->subperms ? ', \''.$obj->subperms.'\'' : '').')';
 				print $form->textwithpicto('', $htmltext);
 				//print '<span class="opacitymedium">'.$obj->id.'</span>';
 				print '</td>';
@@ -458,7 +476,7 @@ if ($object->id > 0) {
 			$(".permtohide_"+moduletohide).hide();
 			$("#idforbreakperms_"+moduletohide).val("1");
 		}
-	
+
 		// Now rebuild the value for cookie
 		var hideuserperm="";
 		$(".trforbreakperms").each(function(index) {

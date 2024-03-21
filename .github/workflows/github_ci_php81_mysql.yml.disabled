@@ -1,0 +1,334 @@
+name: GitHub CI PHP 8.1 MySQL
+
+on:
+  push:
+    branches:
+      - develop
+      - 1*
+      - 2*
+  pull_request:
+    types: [opened]
+
+permissions:
+  contents: read
+
+jobs:
+  github_ci_php81_mysql:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: password
+        ports:
+        - 32574:3306
+
+    steps:
+    # git clone dolibarr into GITHUB_WORKSPACE = /home/runner/work/dolibarr/dolibarr
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 1
+        
+    - name: Version PHP
+      run: |
+        php -i | head -
+
+    - name: Install packages for PHP 8.1
+      run: |
+        sudo composer self-update 2.2.18
+        sudo chmod -R a+rwx /home/runner
+        composer -n config -g vendor-dir htdocs/includes
+        
+        sudo add-apt-repository -y ppa:ondrej/php
+        sudo apt-get update
+        sudo apt-get install -y pgloader memcached
+        sudo apt install apache2 php8.1 php8.1-cli php8.1-curl php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
+        sudo update-alternatives --set php /usr/bin/php8.1
+        php -i | head -
+        
+        cd $GITHUB_WORKSPACE
+        ls $GITHUB_WORKSPACE
+        composer -n require --ignore-platform-reqs phpunit/phpunit ^8 \
+          php-parallel-lint/php-parallel-lint ^1.2 \
+          php-parallel-lint/php-console-highlighter ^0 \
+          php-parallel-lint/php-var-dump-check ~0.4 \
+          squizlabs/php_codesniffer ^3
+        sudo rm -fr htdocs/includes/phpunit/php-code-coverage/src/Report/Html
+
+    - name: Adding path of binaries tools installed by composer to the PATH
+      run: | 
+        export PATH="$GITHUB_WORKSPACE/htdocs/includes/bin:$PATH"
+        echo $PATH
+        # We must have a directory bin created by the previous composer call
+        ls $GITHUB_WORKSPACE/htdocs/includes/bin
+
+    - name: Version information
+      run: |
+        composer -V
+        # Check Parallel-lint version
+        echo "Parallel-lint version"
+        htdocs/includes/bin/parallel-lint -V
+        # Check PHP CodeSniffer version
+        echo "PHPCS version"
+        htdocs/includes/bin/phpcs --version | head -
+        htdocs/includes/bin/phpcs -i | head -
+        # Check PHP Vardump check version
+        echo "PHP Vardump check version"
+        htdocs/includes/bin/var-dump-check --version
+        # Check PHPUnit version
+        echo "PHPUnit version"
+        htdocs/includes/bin/phpunit --version | head -
+        # Check Apache version
+        echo "Apache version"
+        apache2 -v | head -
+        # Check Database
+        echo "Database version"
+        mysql --version | head -
+        psql --version
+        echo "Check pgloader version"
+        pgloader --version
+        
+    - name: Create database
+      run: |
+        pwd
+        echo GITHUB_WORKSPACE = $GITHUB_WORKSPACE 
+        sudo apt-get install -y mysql-client
+        mysql --version | head -
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SELECT VERSION();"  | head -
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SHOW DATABASES"
+        
+        echo "Drop and create database"
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'DROP DATABASE IF EXISTS travis;'
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';"
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'FLUSH PRIVILEGES;'
+        
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql  
+
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis -e "UPDATE llx_const set value = '0666' WHERE name = 'MAIN_UMASK';" 
+
+    - name: Generate Dolibarr conf file
+      run: |
+        export CONF_FILE=$GITHUB_WORKSPACE/htdocs/conf/conf.php
+        echo "Setting up Dolibarr $CONF_FILE"
+        echo '<?php' > $CONF_FILE
+        echo '$'dolibarr_main_url_root=\'http://127.0.0.1\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_document_root=\'/var/www/html\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_data_root=\'/var/www/html/documents\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_host=\'127.0.0.1\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_name=\'travis\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_user=\'root\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_pass=\'password\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_instance_unique_id=\'travis1234567890\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_type=\'mysqli\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_port=\'32574\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> $CONF_FILE
+        cat $CONF_FILE
+    - name: Generate install.forced.php file to test installation
+      run: |
+        export INSTALL_FORCED_FILE=$GITHUB_WORKSPACE/htdocs/install/install.forced.php
+        echo "Setting up Dolibarr $INSTALL_FORCED_FILE to test installation"
+        # Ensure we catch errors
+        set +e
+        echo '<?php' > $INSTALL_FORCED_FILE
+        echo '$'force_install_noedit=2';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_type=\'mysqli\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_dbserver=\'127.0.0.1\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_database=\'travis\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_databaselogin=\'root\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_databasepass=\'password\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_port=\'32574\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_prefix=\'llx_\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_createdatabase=false';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_createuser=false';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_mainforcehttps=false';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_main_data_root=\'/var/www/html\'';' >> $INSTALL_FORCED_FILE
+        cat $INSTALL_FORCED_FILE
+    
+    - name: Create document directory
+      run: |
+        echo "Create documents directory and set permissions"
+        # and admin/temp subdirectory needed for unit tests
+        sudo mkdir -p /var/www/html/documents/admin/temp
+        sudo chmod -R a+rwx /var/www/html/documents
+        sudo echo "***** First line of dolibarr.log" > /var/www/html/documents/dolibarr.log
+        sudo chmod a+rwx /var/www/html/documents/dolibarr.log
+  
+    - name: Copy app into /var/www
+      run: | 
+        sudo cp -r $GITHUB_WORKSPACE/htdocs/. /var/www/html
+        sudo mv /var/www/html/index.html /var/www/html/index.disabled.html
+        sudo ln -fs /var/www/html /var/www/htdocs
+        sudo cp -r $GITHUB_WORKSPACE/test/. /var/www/test
+        sudo cp -r $GITHUB_WORKSPACE/dev/. /var/www/dev
+        sudo cp -r $GITHUB_WORKSPACE/scripts/. /var/www/scripts
+
+    - name: Setup Apache
+      run: |
+        pwd
+        whoami
+        # install apache web server
+        a2query -s
+        a2query -m
+        ls /etc/apache2/sites-available
+        #sudo cp -f $GITHUB_WORKSPACE/build/travis-ci/apache-githubaction.conf /etc/apache2/sites-available/000-default.conf
+        #sudo sed -e "s?%GITHUB_WORKSPACE%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
+        a2ensite 000-default
+        a2enmod php8.1
+        ls /etc/apache2/sites-enabled
+        sudo adduser $(whoami) www-data
+        sudo adduser $(whoami) root
+        sudo adduser root www-data
+        sudo chown -R www-data:www-data /etc/apache2/sites-available/
+        sudo chmod -R 777 /etc/apache2/sites-available/
+        sudo chown -R www-data:www-data /var/www/html/
+        ls -l /var/www/html
+        #ls -l /var/www/html/conf
+        #ls -l /var/www/html/install/
+        set +e
+        sudo cat /etc/apache2/sites-enabled/000-default.conf
+        sudo service apache2 restart
+        curl -I localhost
+    - name: Check Apache availability
+      run: |
+        echo "Checking webserver availability by a wget -O - --debug http://127.0.0.1"
+        # Ensure we stop on error with set -e
+        set +e
+        ls /var/log/apache2
+        #wget -O - --debug http://127.0.0.1/robots.txt
+        # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
+        wget -O - --debug http://127.0.0.1 > $GITHUB_WORKSPACE/test.html 2>&1
+        head -n 200 $GITHUB_WORKSPACE/test.html
+        
+        echo Logs are...
+        #sudo cat /tmp/install.log
+        sudo cat /var/log/apache2/access.log
+        sudo cat /var/log/apache2/error.log
+        sudo cat /var/log/apache2/other_vhosts_access.log
+        set +e
+
+    - name: Upgrading Dolibarr
+      run: |
+        # Ensure we catch errors. Set this to +e if you want to go to the end to see log files.
+        set -e
+        sudo chmod -R a+rwx $GITHUB_WORKSPACE
+        sudo chmod -R a+rwx /var/www
+        ls -l /var/www
+        cd /var/www/html/install
+        echo Execute upgrade, upgrade2 and step5 for each major version
+        php upgrade.php 3.5.0 3.6.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade350360.log
+        php upgrade2.php 3.5.0 3.6.0 > $GITHUB_WORKSPACE/upgrade350360-2.log
+        php step5.php 3.5.0 3.6.0 > $GITHUB_WORKSPACE/upgrade350360-3.log
+        php upgrade.php 3.6.0 3.7.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade360370.log
+        php upgrade2.php 3.6.0 3.7.0 > $GITHUB_WORKSPACE/upgrade360370-2.log
+        php step5.php 3.6.0 3.7.0 > $GITHUB_WORKSPACE/upgrade360370-3.log
+        php upgrade.php 3.7.0 3.8.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade370380.log
+        php upgrade2.php 3.7.0 3.8.0 > $GITHUB_WORKSPACE/upgrade370380-2.log
+        php step5.php 3.7.0 3.8.0 > $GITHUB_WORKSPACE/upgrade370380-3.log
+        php upgrade.php 3.8.0 3.9.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade380390.log
+        php upgrade2.php 3.8.0 3.9.0 > $GITHUB_WORKSPACE/upgrade380390-2.log
+        php step5.php 3.8.0 3.9.0 > $GITHUB_WORKSPACE/upgrade380390-3.log
+        php upgrade.php 3.9.0 4.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade390400.log
+        php upgrade2.php 3.9.0 4.0.0 > $GITHUB_WORKSPACE/upgrade390400-2.log
+        php step5.php 3.9.0 4.0.0 > $GITHUB_WORKSPACE/upgrade390400-3.log
+        php upgrade.php 4.0.0 5.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade400500.log
+        php upgrade2.php 4.0.0 5.0.0 > $GITHUB_WORKSPACE/upgrade400500-2.log
+        php step5.php 4.0.0 5.0.0 > $GITHUB_WORKSPACE/upgrade400500-3.log
+        php upgrade.php 5.0.0 6.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade500600.log
+        php upgrade2.php 5.0.0 6.0.0 > $GITHUB_WORKSPACE/upgrade500600-2.log
+        php step5.php 5.0.0 6.0.0 > $GITHUB_WORKSPACE/upgrade500600-3.log
+        php upgrade.php 6.0.0 7.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade600700.log
+        php upgrade2.php 6.0.0 7.0.0 > $GITHUB_WORKSPACE/upgrade600700-2.log
+        php step5.php 6.0.0 7.0.0 > $GITHUB_WORKSPACE/upgrade600700-3.log
+        php upgrade.php 7.0.0 8.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade700800.log
+        php upgrade2.php 7.0.0 8.0.0 > $GITHUB_WORKSPACE/upgrade700800-2.log
+        php step5.php 7.0.0 8.0.0 > $GITHUB_WORKSPACE/upgrade700800-3.log
+        php upgrade.php 8.0.0 9.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade800900.log
+        php upgrade2.php 8.0.0 9.0.0 > $GITHUB_WORKSPACE/upgrade800900-2.log
+        php step5.php 8.0.0 9.0.0 > $GITHUB_WORKSPACE/upgrade800900-3.log
+        php upgrade.php 9.0.0 10.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade9001000.log
+        php upgrade2.php 9.0.0 10.0.0 > $GITHUB_WORKSPACE/upgrade9001000-2.log
+        php step5.php 9.0.0 10.0.0 > $GITHUB_WORKSPACE/upgrade9001000-3.log
+        php upgrade.php 10.0.0 11.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade10001100.log
+        php upgrade2.php 10.0.0 11.0.0 > $GITHUB_WORKSPACE/upgrade10001100-2.log
+        php step5.php 10.0.0 11.0.0 > $GITHUB_WORKSPACE/upgrade10001100-3.log
+        php upgrade.php 11.0.0 12.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade11001200.log
+        php upgrade2.php 11.0.0 12.0.0 > $GITHUB_WORKSPACE/upgrade11001200-2.log
+        php step5.php 11.0.0 12.0.0 > $GITHUB_WORKSPACE/upgrade11001200-3.log
+        php upgrade.php 12.0.0 13.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade12001300.log
+        php upgrade2.php 12.0.0 13.0.0 > $GITHUB_WORKSPACE/upgrade12001300-2.log
+        php step5.php 12.0.0 13.0.0 > $GITHUB_WORKSPACE/upgrade12001300-3.log
+        php upgrade.php 13.0.0 14.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade13001400.log
+        php upgrade2.php 13.0.0 14.0.0 > $GITHUB_WORKSPACE/upgrade13001400-2.log
+        php step5.php 13.0.0 14.0.0 > $GITHUB_WORKSPACE/upgrade13001400-3.log
+        php upgrade.php 14.0.0 15.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade14001500.log
+        php upgrade2.php 14.0.0 15.0.0 > $GITHUB_WORKSPACE/upgrade14001500-2.log
+        php step5.php 14.0.0 15.0.0 > $GITHUB_WORKSPACE/upgrade14001500-3.log
+        php upgrade.php 15.0.0 16.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade15001600.log
+        php upgrade2.php 15.0.0 16.0.0 > $GITHUB_WORKSPACE/upgrade15001600-2.log
+        php step5.php 15.0.0 16.0.0 > $GITHUB_WORKSPACE/upgrade15001600-3.log
+        php upgrade.php 16.0.0 17.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade16001700.log
+        php upgrade2.php 16.0.0 17.0.0 > $GITHUB_WORKSPACE/upgrade16001700-2.log
+        php step5.php 16.0.0 17.0.0 > $GITHUB_WORKSPACE/upgrade16001700-3.log
+        php upgrade.php 17.0.0 18.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade17001800.log
+        php upgrade2.php 17.0.0 18.0.0 > $GITHUB_WORKSPACE/upgrade17001800-2.log
+        php step5.php 17.0.0 18.0.0 > $GITHUB_WORKSPACE/upgrade17001800-3.log
+        
+    - name: Result of migration scripts
+      if: always()
+      run: |
+        ls -alrt $GITHUB_WORKSPACE/
+        
+        echo Show content of last file
+        cat "$(ls -rt $GITHUB_WORKSPACE/ | tail -n1)"
+
+    - name: Enabling new modules
+      run: | 
+        # Enable modules not enabled into original dump
+        set -e
+        cd /var/www/html/install
+        php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_ProductBatch,MAIN_MODULE_SupplierProposal,MAIN_MODULE_STRIPE,MAIN_MODULE_ExpenseReport > $GITHUB_WORKSPACE/enablemodule.log
+        php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP >> $GITHUB_WORKSPACE/enablemodule.log
+        php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_RECEPTION,MAIN_MODULE_RECRUITMENT >> $GITHUB_WORKSPACE/enablemodule.log
+        php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_KnowledgeManagement,MAIN_MODULE_EventOrganization,MAIN_MODULE_PARTNERSHIP >> $GITHUB_WORKSPACE/enablemodule.log
+        php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_EmailCollector >> $GITHUB_WORKSPACE/enablemodule.log
+        echo $?
+        cd -
+
+    - name: Result of enabling modules scripts
+      if: always()
+      run: |
+        echo Show content of enablemodule.log file
+        cat $GITHUB_WORKSPACE/enablemodule.log
+
+    - name: Unit testing
+      run: |
+        # Ensure we catch errors. Set this to +e instead of -e if you want to go to the end to see dolibarr.log file.
+        set -e
+        cd /var/www/html
+        sudo chmod -R a+rwx /var/www/html/documents
+        includes/bin/phpunit -d memory_limit=-1 -c /var/www/test/phpunit/phpunittest.xml /var/www/test/phpunit/AllTests.php
+        phpunitresult=$?
+        echo "Phpunit return code = $phpunitresult"
+        set +e     
+
+    - name: Code quality check - Lint
+      if: github.event_name == 'push'
+      run: |
+        htdocs/includes/bin/parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
+          --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
+          --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
+          --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
+          --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --exclude htdocs/includes/webklex --blame .
+
+    - name: Code quality check - phpcs
+      if: github.event_name == 'push'
+      run: |
+         htdocs/includes/bin/phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;     
+
+    - name: Code quality check - var-dump-check
+      if: github.event_name == 'push'
+      run: |
+        htdocs/includes/bin/var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
+

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal module setup
-PaypalDesc=Deze module maakt betaling door klanten via <a href="http://www.paypal.com" target="_blank">PayPal mogelijk</a> . Dit kan worden gebruikt voor een willekeurige betaling of voor een betaling gerelateerd aan een Dolibarr-object (factuur, bestelling, ...)
+PaypalDesc=Met deze module kunnen klanten betalen via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> . Dit kan gebruikt worden voor een ad-hoc betaling of voor een betaling gerelateerd aan een Dolibarr object (factuur, bestelling, ...)
 PaypalOrCBDoPayment=Betalen met PayPal (Creditcard of PayPal)
 PaypalDoPayment=Betaal met PayPal
 PAYPAL_API_SANDBOX=Mode test / zandbak
@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=Een terugdraaiing werd uitgevoerd op alle Pos
 ValidationOfPaymentFailed=Validatie van betaling is mislukt
 CardOwner=Kaarthouder
 PayPalBalance=Paypal-tegoed
+OnlineSubscriptionPaymentLine=Online abonnement geregistreerd op %s <br> Betaald via %s <br> Oorspronkelijk IP-adres: %s <br> Transactie-ID: %s

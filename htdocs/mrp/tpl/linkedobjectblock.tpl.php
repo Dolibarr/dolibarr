@@ -21,7 +21,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 print "<!-- BEGIN PHP TEMPLATE mrp/tpl/linkedobjectblock.tpl.php -->\n";
@@ -77,7 +77,9 @@ if ($object->element == 'mo') {
 			$k = 0;
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
-				if ($obj->rowid && $obj->rowid > 0) $k = $obj->rowid;
+				if ($obj->rowid && $obj->rowid > 0) {
+					$k = $obj->rowid;
+				}
 			}
 			echo '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=dellink&token=' . newToken() . '&dellinkid=' . $k . '">' . img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink') . '</a>';
 			echo '</td>';

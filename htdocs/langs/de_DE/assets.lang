@@ -20,14 +20,14 @@ NewAsset=Neues Anlagegut
 AccountancyCodeAsset=Buchungskonto (Anlagegut)
 AccountancyCodeDepreciationAsset=Buchungskonto (Abschreibung auf Anlagegut)
 AccountancyCodeDepreciationExpense=Buchungskonto (Aufwendungen für Abschreibungen)
-AssetsLines=Anlagen
+AssetsLines=Anlagegüter
 DeleteType=Lösche Gruppe
-DeleteAnAssetType=Löschen Sie ein Anlagegut-Modell
-ConfirmDeleteAssetType=Möchten Sie dieses Vermögenswert-Modell wirklich löschen?
-ShowTypeCard=Modell '%s' anzeigen
+DeleteAnAssetType=Vorlage für Anlagegüter löschen
+ConfirmDeleteAssetType=Möchten Sie diese Vorlage für Anlagegüter wirklich löschen?
+ShowTypeCard=Vorlage '%s' anzeigen
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName=Anlagen
+ModuleAssetsName=Anlagegüter
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=Resourcenbeschreibung
 
@@ -36,22 +36,22 @@ ModuleAssetsDesc=Resourcenbeschreibung
 #
 AssetSetup=Resourcensetup
 AssetSetupPage=Resourcen Setupseite
-ExtraFieldsAssetModel=Ergänzende Attribute (Vermögenswert-Modell)
+ExtraFieldsAssetModel=Ergänzende Attribute (Vorlage Anlagegüter)
 
 AssetsType=Vermögenswert-Modell
-AssetsTypeId=Vermögenswert-Modell-ID
+AssetsTypeId=ID der Vorlage für Anlagegüter
 AssetsTypeLabel=Bezeichnung des Vermögenswert-Modells
-AssetsTypes=Vermögenswert-Modelle
+AssetsTypes=Vorlagen für Anlagegüter
 ASSET_ACCOUNTANCY_CATEGORY=Kontengruppe für Anlagevermögen
 
 #
 # Menu
 #
-MenuAssets=Anlagen
+MenuAssets=Anlagegüter
 MenuNewAsset=Neues Anlagegut
-MenuAssetModels=Modell für Vermögenswerte
+MenuAssetModels=Vorlagen für Anlagegüter
 MenuListAssets=Liste
-MenuNewAssetModel=Neues Modell für Vermögenswerte
+MenuNewAssetModel=Neue Vorlage für Anlagegüter
 MenuListAssetModels=Liste
 
 #
@@ -70,7 +70,7 @@ AssetDepreciation=Abschreibung
 # Asset
 #
 Asset=Anlagegut
-Assets=Anlagen/Vermögenswerten
+Assets=Anlagegüter
 AssetReversalAmountHT=Stornobetrag (ohne Steuern)
 AssetAcquisitionValueHT=Anschaffungsbetrag (ohne Steuern)
 AssetRecoveredVAT=Zurückerstattete USt.
@@ -83,7 +83,7 @@ AssetAcquisitionTypeOccasion=Gebraucht
 AssetType=Art des Anlageguts
 AssetTypeIntangible=Immateriell
 AssetTypeTangible=Materiell
-AssetTypeInProgress=in Bearbeitung
+AssetTypeInProgress=In Verwendung
 AssetTypeFinancial=Finanziell
 AssetNotDepreciated=Nicht abgeschrieben
 AssetDisposal=Abgang
@@ -93,7 +93,7 @@ AssetConfirmReOpenAsk=Möchten Sie den Vermögenswert <b> %s </b> wirklich erneu
 #
 # Asset status
 #
-AssetInProgress=in Bearbeitung
+AssetInProgress=In Verwendung
 AssetDisposed=Abgang verbucht
 AssetRecorded=Abgerechnet
 
@@ -109,8 +109,8 @@ AssetDisposalSubjectToVat=Abgang USt.-pflichtig
 #
 # Asset model
 #
-AssetModel=Modell des Anlageguts
-AssetModels=Modelle der Anlagegüter
+AssetModel=Vorlage für das Anlagegut
+AssetModels=Vorlagen der Anlagegüter
 
 #
 # Asset depreciation options

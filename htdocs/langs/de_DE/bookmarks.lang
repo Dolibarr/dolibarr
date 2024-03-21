@@ -1,23 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Aktuelle Ansicht zu Lesezeichen hinzufügen
-Bookmark=Lesezeichen
-Bookmarks=Lesezeichen
-ListOfBookmarks=Liste der Lesezeichen
-EditBookmarks=Alle Lesezeichen anzeigen / ändern
-NewBookmark=Neues Lesezeichen
-ShowBookmark=Zeige Lesezeichen
-OpenANewWindow=In neuem Tab öffnen
-ReplaceWindow=Aktuellen Tab ersetzen
-BookmarkTargetNewWindowShort=Neuer Tab
-BookmarkTargetReplaceWindowShort=Aktueller Tab
-BookmarkTitle=Benennung des Lesezeichens
-UrlOrLink=Link
-BehaviourOnClick=Öffnungsverhalten
-CreateBookmark=Lesezeichen erstellen
-SetHereATitleForLink=Erfassen Sie hier einen Namen für das Lesezeichen
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Verwenden Sie einen externen/absoluten Link (https://externalurl.com) oder einen internen/relativen Link (/mypage.php). Sie können auch eine Telefonnummer wie tel:0123456 verwenden.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Wählen Sie aus, ob die verlinkte Seite auf der aktuellen Registerkarte oder auf einer neuen Registerkarte geöffnet werden soll.
-BookmarksManagement=Verwalten von Lesezeichen
-BookmarksMenuShortCut=STRG + Umschalt + m
-NoBookmarks=Keine Lesezeichen definiert
-NoBookmarkFound=Kein Lesezeichen gefunden
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Aktuelle Ansicht zu Lesezeichen hinzufügen
+BehaviourOnClick = Verhalten, wenn eine Lesezeichen-URL ausgewählt wird
+Bookmark = Lesezeichen
+Bookmarks = Lesezeichen
+BookmarkTargetNewWindowShort = Neuer Tab
+BookmarkTargetReplaceWindowShort = Aktueller Tab
+BookmarkTitle = Benennung des Lesezeichens
+BookmarksManagement = Verwalten von Lesezeichen
+BookmarksMenuShortCut = STRG + Umschalt + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Wählen Sie aus, ob die verlinkte Seite auf der aktuellen Registerkarte oder auf einer neuen Registerkarte geöffnet werden soll.
+CreateBookmark = Lesezeichen erstellen
+EditBookmarks = Alle Lesezeichen anzeigen / ändern
+ListOfBookmarks = Liste der Lesezeichen
+NewBookmark = Neues Lesezeichen
+NoBookmarkFound = Kein Lesezeichen gefunden
+NoBookmarks = Keine Lesezeichen definiert
+OpenANewWindow = In neuem Tab öffnen
+ReplaceWindow = Aktuellen Tab ersetzen
+SetHereATitleForLink = Erfassen Sie hier einen Namen für das Lesezeichen
+ShowBookmark = Zeige Lesezeichen
+UrlOrLink = Link
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Verwenden Sie einen externen/absoluten Link (https://externalurl.com) oder einen internen/relativen Link (/mypage.php). Sie können auch eine Telefonnummer wie tel:0123456 verwenden.

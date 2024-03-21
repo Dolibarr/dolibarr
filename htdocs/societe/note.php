@@ -37,7 +37,7 @@ $langs->load("companies");
 
 
 // Get parameters
-$id = GETPOST('id') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
+$id = GETPOST('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 
 
@@ -65,7 +65,9 @@ $result = restrictedArea($user, 'societe', $object->id, '&societe');
 /*
  * Actions
  */
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -81,7 +83,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Notes");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name.' - '.$langs->trans("Notes");
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -91,9 +93,6 @@ if ($object->id > 0) {
 	/*
 	 * Affichage onglets
 	 */
-	if (isModEnabled('notification')) {
-		$langs->load("mails");
-	}
 
 	$head = societe_prepare_head($object);
 
@@ -117,7 +116,7 @@ if ($object->id > 0) {
 	print $object->getTypeUrl(1);
 	print '</td></tr>';
 
-	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
 		print '<tr><td class="'.$cssclass.'">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 	}
 

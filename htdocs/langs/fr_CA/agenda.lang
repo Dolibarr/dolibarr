@@ -1,12 +1,10 @@
 # Dolibarr language file - Source file is en_US - agenda
 NewCompanyToDolibarr=Le tiers %s a été créé
-PropalClassifiedBilledInDolibarr=Proposition %s classée facturée
 InvoicePaidInDolibarr=La facture %s a changé en payé
 MemberValidatedInDolibarr=Membre %s validé
 MemberModifiedInDolibarr=Membre %s modifié
 MemberResiliatedInDolibarr=Membre %s terminé
 MemberDeletedInDolibarr=Membre %s supprimé
-ShipmentClassifyClosedInDolibarr=Expédition %s classé facturé
 ShipmentDeletedInDolibarr=Envoi %s supprimé
 OrderCreatedInDolibarr=L'ordre %s a été créé
 OrderDeliveredInDolibarr=Commande %s classée Délivrée

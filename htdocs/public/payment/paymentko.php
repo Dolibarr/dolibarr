@@ -22,7 +22,7 @@
  *		\ingroup    core
  *		\brief      File to show page after a failed payment.
  *                  This page is called by payment system with url provided to it competed with parameter TOKEN=xxx
- *                  This token can be used to get more informations.
+ *                  This token can be used to get more information.
  */
 
 if (!defined('NOLOGIN')) {
@@ -120,12 +120,17 @@ $object = new stdClass(); // For triggers
  * Actions
  */
 
+// None
 
 
 
 /*
  * View
  */
+
+// TODO check if we have redirtodomain to do.
+$doactionsthenrediret = 0;
+
 
 dol_syslog("Callback url when an online payment is refused or canceled. query_string=".(empty($_SERVER["QUERY_STRING"]) ? '' : $_SERVER["QUERY_STRING"])." script_uri=".(empty($_SERVER["SCRIPT_URI"]) ? '' : $_SERVER["SCRIPT_URI"]), LOG_DEBUG, 0, '_payment');
 
@@ -165,10 +170,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	}
 
 	// Send an email
-	$sendemail = '';
-	if (!empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) {
-		$sendemail = $conf->global->ONLINE_PAYMENT_SENDEMAIL;
-	}
+	$sendemail = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL');
 
 	// Send warning of error to administrator
 	if ($sendemail) {
@@ -176,7 +178,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 		$companylangs->setDefaultLang($mysoc->default_lang);
 		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox'));
 
-		$from = !empty($conf->global->MAILING_EMAIL_FROM) ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
+		$from = getDolGlobalString('MAILING_EMAIL_FROM') ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
 		$sendto = $sendemail;
 
 		$urlback = $_SERVER["REQUEST_URI"];
@@ -208,89 +210,99 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	unset($_SESSION['ipaddress']);
 }
 
-$head = '';
-if (!empty($conf->global->ONLINE_PAYMENT_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
-}
-
-$conf->dol_hide_topmenu = 1;
-$conf->dol_hide_leftmenu = 1;
-
-$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
-llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
-
-
-// Show ko message
-print '<span id="dolpaymentspan"></span>'."\n";
-print '<div id="dolpaymentdiv" align="center">'."\n";
-
-// Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
-// Define logo and logosmall
-$logosmall = $mysoc->logo_small;
-$logo = $mysoc->logo;
-$paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
-if (!empty($conf->global->$paramlogo)) {
-	$logosmall = $conf->global->$paramlogo;
-} elseif (!empty($conf->global->ONLINE_PAYMENT_LOGO)) {
-	$logosmall = $conf->global->ONLINE_PAYMENT_LOGO;
-}
-//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
-// Define urllogo
-$urllogo = '';
-$urllogofull = '';
-if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
-	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
-} elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
-	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
-}
-
-// Output html code for logo
-if ($urllogo) {
-	print '<div class="backgreypublicpayment">';
-	print '<div class="logopublicpayment">';
-	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-	print '>';
-	print '</div>';
-	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+// Show answer page
+if (empty($doactionsthenrediret)) {
+	$head = '';
+	if (getDolGlobalString('ONLINE_PAYMENT_CSS_URL')) {
+		$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
 	}
-	print '</div>';
+
+	$conf->dol_hide_topmenu = 1;
+	$conf->dol_hide_leftmenu = 1;
+
+	$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
+	llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
+
+
+	// Show ko message
+	print '<span id="dolpaymentspan"></span>'."\n";
+	print '<div id="dolpaymentdiv" align="center">'."\n";
+
+	// Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
+	// Define logo and logosmall
+	$logosmall = $mysoc->logo_small;
+	$logo = $mysoc->logo;
+	$paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
+	if (!empty($conf->global->$paramlogo)) {
+		$logosmall = getDolGlobalString($paramlogo);
+	} elseif (getDolGlobalString('ONLINE_PAYMENT_LOGO')) {
+		$logosmall = getDolGlobalString('ONLINE_PAYMENT_LOGO');
+	}
+	//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
+	// Define urllogo
+	$urllogo = '';
+	$urllogofull = '';
+	if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
+		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
+	} elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
+		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
+	}
+
+	// Output html code for logo
+	if ($urllogo) {
+		print '<div class="backgreypublicpayment">';
+		print '<div class="logopublicpayment">';
+		print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
+		print '>';
+		print '</div>';
+		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
+			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+		}
+		print '</div>';
+	}
+	if (getDolGlobalString('MAIN_IMAGE_PUBLIC_PAYMENT')) {
+		print '<div class="backimagepublicpayment">';
+		print '<img id="idMAIN_IMAGE_PUBLIC_PAYMENT" src="' . getDolGlobalString('MAIN_IMAGE_PUBLIC_PAYMENT').'">';
+		print '</div>';
+	}
+
+
+	print '<br><br>';
+
+
+	print $langs->trans("YourPaymentHasNotBeenRecorded")."<br><br>";
+
+	$key = 'ONLINE_PAYMENT_MESSAGE_KO';
+	if (!empty($conf->global->$key)) {
+		print $conf->global->$key;
+	}
+
+	$type = GETPOST('s', 'alpha');
+	$ref = GETPOST('ref', 'alphanohtml');
+	$tag = GETPOST('tag', 'alpha');
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+	if ($type || $tag) {
+		$urlsubscription = getOnlinePaymentUrl(0, ($type ? $type : 'free'), $ref, $FinalPaymentAmt, $tag);
+
+		print $langs->trans("ClickHereToTryAgain", $urlsubscription);
+	}
+
+	print "\n</div>\n";
+
+
+	htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix);
+
+	llxFooter('', 'public');
 }
-if (!empty($conf->global->MAIN_IMAGE_PUBLIC_PAYMENT)) {
-	print '<div class="backimagepublicpayment">';
-	print '<img id="idMAIN_IMAGE_PUBLIC_PAYMENT" src="'.$conf->global->MAIN_IMAGE_PUBLIC_PAYMENT.'">';
-	print '</div>';
-}
 
-
-print '<br><br>';
-
-
-print $langs->trans("YourPaymentHasNotBeenRecorded")."<br><br>";
-
-$key = 'ONLINE_PAYMENT_MESSAGE_KO';
-if (!empty($conf->global->$key)) {
-	print $conf->global->$key;
-}
-
-$type = GETPOST('s', 'alpha');
-$ref = GETPOST('ref', 'alphanohtml');
-$tag = GETPOST('tag', 'alpha');
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-if ($type || $tag) {
-	$urlsubscription = getOnlinePaymentUrl(0, ($type ? $type : 'free'), $ref, $FinalPaymentAmt, $tag);
-
-	print $langs->trans("ClickHereToTryAgain", $urlsubscription);
-}
-
-print "\n</div>\n";
-
-
-htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix);
-
-
-llxFooter('', 'public');
 
 $db->close();
+
+
+// If option to do a redirect somewhere else is defined.
+if (empty($doactionsthenrediret)) {
+	// Do the redirect to an error page
+	// TODO
+}

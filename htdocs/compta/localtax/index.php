@@ -35,10 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
-$localTaxType = GETPOST('localTaxType', 'int');
+$localTaxType = GETPOSTINT('localTaxType');
 
 // Date range
-$year = GETPOST("year", "int");
+$year = GETPOSTINT("year");
 if (empty($year)) {
 	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 	$year_start = $year_current;
@@ -49,11 +49,11 @@ if (empty($year)) {
 $date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
 $date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOST("q", "int");
+	$q = GETPOSTINT("q");
 	if (empty($q)) {
-		if (GETPOST("month", "int")) {
-			$date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false);
-			$date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false);
+		if (GETPOSTINT("month")) {
+			$date_start = dol_get_first_day($year_start, GETPOSTINT("month"), false);
+			$date_end = dol_get_last_day($year_start, GETPOSTINT("month"), false);
 		} else {
 			$date_start = dol_get_first_day($year_start, $conf->global->SOCIETE_FISCAL_MONTH_START, false);
 			$date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
@@ -80,16 +80,16 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
-$modetax = $conf->global->TAX_MODE;
+$modetax = getDolGlobalString('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
-	$modetax = GETPOST("modetax", 'int');
+	$modetax = GETPOSTINT("modetax");
 }
 if (empty($modetax)) {
 	$modetax = 0;
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -223,14 +223,14 @@ if ($localTaxType == 1) {
 	$LTPaid = 'LT1Paid';
 	$LTCustomer = 'LT1Customer';
 	$LTSupplier = 'LT1Supplier';
-	$CalcLT = $conf->global->MAIN_INFO_LOCALTAX_CALC1;
+	$CalcLT = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC1');
 } else {
 	$LT = 'LT2';
 	$LTSummary = 'LT2Summary';
 	$LTPaid = 'LT2Paid';
 	$LTCustomer = 'LT2Customer';
 	$LTSupplier = 'LT2Supplier';
-	$CalcLT = $conf->global->MAIN_INFO_LOCALTAX_CALC2;
+	$CalcLT = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC2');
 }
 
 $fsearch = '<!-- hidden fields for form -->';
@@ -245,8 +245,6 @@ $name = $langs->transcountry($localTaxType == 1 ? "LT1ReportByMonth" : "LT2Repor
 $description .= $langs->trans($LT);
 $calcmode = $langs->trans("LTReportBuildWithOptionDefinedInModule").' ';
 $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
-
-//if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description.='<br>'.$langs->trans("ThisIsAnEstimatedValue");
 
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 
@@ -471,8 +469,8 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 					$type = 1;
 				}
 
-				if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-					|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
+				if (($type == 0 && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
+					|| ($type == 1 && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')) {
 					//print $langs->trans("NA");
 				} else {
 					if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
@@ -511,8 +509,8 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 					$type = 1;
 				}
 
-				if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-					|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
+				if (($type == 0 && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
+					|| ($type == 1 && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')) {
 					//print $langs->trans("NA");
 				} else {
 					if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {

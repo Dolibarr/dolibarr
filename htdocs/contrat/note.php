@@ -37,8 +37,8 @@ $langs->loadLangs(array('companies', 'contracts'));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$socid = GETPOST('socid', 'int');
-$id = GETPOST('id', 'int');
+$socid = GETPOSTINT('socid');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
@@ -49,13 +49,13 @@ if ($user->socid) {
 //$hookmanager->initHooks(array('contractcard', 'globalcard'));  -> Conflict with contrat\card.php
 $hookmanager->initHooks(array('contractnote'));
 
-$result = restrictedArea($user, 'contrat', $id);
-
 $object = new Contrat($db);
 $object->fetch($id, $ref);
 
-$permissiontoadd   = $user->rights->contrat->creer;     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissionnote = $user->rights->contrat->creer; // Used by the include of actions_setnotes.inc.php
+$permissiontoadd   = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissionnote = $user->hasRight('contrat', 'creer'); // Used by the include of actions_setnotes.inc.php
+
+$result = restrictedArea($user, 'contrat', $object->id);
 
 
 /*
@@ -76,7 +76,10 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader('', $langs->trans("Contract"), "");
+$title = $langs->trans("Contract");
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 

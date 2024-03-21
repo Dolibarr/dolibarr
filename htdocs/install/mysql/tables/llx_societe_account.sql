@@ -27,7 +27,7 @@ CREATE TABLE llx_societe_account(
 	pass_temp         varchar(128),			    -- temporary password when asked for forget password
 	fk_soc            integer,                  -- if entry is linked to a thirdparty
 	fk_website        integer,					-- id of local web site (if dk_website is filled, site is empty)
-	site              varchar(128),				-- name of external web site (if site is filled, fk_website is empty)
+	site              varchar(128) NOT NULL,	-- name of external web site (if site is filled, fk_website is empty)
 	site_account      varchar(128),				-- a key to identify the account on external web site (for example: 'stripe', 'paypal', 'myextapp') 
 	key_account       varchar(128),				-- the id of an account in external web site (for site_account if site_account defined. some sites needs both an account name and a login that is different)
 	note_private      text,

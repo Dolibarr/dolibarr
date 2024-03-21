@@ -68,7 +68,7 @@ $facturestatic = new Facture($db);
 $facturefournstatic = new FactureFournisseur($db);
 $socialcontribstatic = new ChargeSociales($db);
 $salarystatic = new Salary($db);
-$vatstatic = new TVA($db);
+$vatstatic = new Tva($db);
 
 $form = new Form($db);
 
@@ -80,8 +80,8 @@ if (GETPOST("account") || GETPOST("ref")) {
 	}
 
 	$object = new Account($db);
-	if (GETPOST("account", 'int')) {
-		$result = $object->fetch(GETPOST("account", 'int'));
+	if (GETPOSTINT("account")) {
+		$result = $object->fetch(GETPOSTINT("account"));
 	}
 	if (GETPOST("ref")) {
 		$result = $object->fetch(0, GETPOST("ref"));

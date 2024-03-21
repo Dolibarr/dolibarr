@@ -1,5 +1,5 @@
 ﻿/*
- Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+ Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
  For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
 CKEDITOR.dialog.add("checkbox",function(d){return{title:d.lang.forms.checkboxAndRadio.checkboxTitle,minWidth:350,minHeight:140,getModel:function(a){return(a=a.getSelection().getSelectedElement())&&"checkbox"==a.getAttribute("type")?a:null},onShow:function(){var a=this.getModel(this.getParentEditor());a&&this.setupContent(a)},onOk:function(){var a=this.getParentEditor(),b=this.getModel(a);b||(b=a.document.createElement("input"),b.setAttribute("type","checkbox"),a.insertElement(b));this.commitContent({element:b})},

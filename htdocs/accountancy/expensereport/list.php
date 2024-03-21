@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2022	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024	Alexandre Spangaro		<aspangaro@easya.solutions>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>s
+ * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2016	  	Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,20 +58,25 @@ $search_desc = GETPOST('search_desc', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
 $search_vat = GETPOST('search_vat', 'alpha');
-$search_date_startday = GETPOST('search_date_startday', 'int');
-$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
-$search_date_startyear = GETPOST('search_date_startyear', 'int');
-$search_date_endday = GETPOST('search_date_endday', 'int');
-$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
-$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_startday = GETPOSTINT('search_date_startday');
+$search_date_startmonth = GETPOSTINT('search_date_startmonth');
+$search_date_startyear = GETPOSTINT('search_date_startyear');
+$search_date_endday = GETPOSTINT('search_date_endday');
+$search_date_endmonth = GETPOSTINT('search_date_endmonth');
+$search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 
+// Define begin binding date
+if (empty($search_date_start) && getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
+	$search_date_start = $db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'));
+}
+
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0) {
 	$page = 0;
 }
@@ -82,7 +87,7 @@ if (!$sortfield) {
 	$sortfield = "erd.date, erd.rowid";
 }
 if (!$sortorder) {
-	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) {
+	if (getDolGlobalInt('ACCOUNTING_LIST_SORT_VENTILATION_TODO') > 0) {
 		$sortorder = "DESC";
 	} else {
 		$sortorder = "ASC";
@@ -104,7 +109,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -114,7 +119,8 @@ if (empty($user->rights->accounting->mouvements->lire)) {
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -158,7 +164,7 @@ if (empty($reshook)) {
 }
 
 
-if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
+if ($massaction == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 	$msg = '';
 
 	if (!empty($mesCasesCochees)) {
@@ -215,7 +221,9 @@ if (GETPOST('sortfield') == 'erd.date, erd.rowid') {
 $form = new Form($db);
 $formother = new FormOther($db);
 
-llxHeader('', $langs->trans("ExpenseReportsVentilation"));
+$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
+
+llxHeader('', $langs->trans("ExpenseReportsVentilation"), $help_url);
 
 if (empty($chartaccountcode)) {
 	print $langs->trans("ErrorChartOfAccountSystemNotSelected");
@@ -240,10 +248,6 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_fees as f ON f.id = erd.fk_c_type_f
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = er.fk_user_author";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON f.accountancy_code = aa.account_number AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
 $sql .= " WHERE er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.") AND erd.fk_code_ventilation <= 0";
-// Define begin binding date
-if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
-	$sql .= " AND er.date_debut >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
-}
 // Add search filter like
 if (strlen(trim($search_login))) {
 	$sql .= natural_search("u.login", $search_login);
@@ -291,6 +295,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$offset = 0;
 	}
 }
+//print $sql;
 
 $sql .= $db->plimit($limit + 1, $offset);
 
@@ -322,22 +327,22 @@ if ($result) {
 		$param .= '&search_lineid='.urlencode($search_lineid);
 	}
 	if ($search_date_startday) {
-		$param .= '&search_date_startday='.urlencode($search_date_startday);
+		$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
 	}
 	if ($search_date_startmonth) {
-		$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+		$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
 	}
 	if ($search_date_startyear) {
-		$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+		$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
 	}
 	if ($search_date_endday) {
-		$param .= '&search_date_endday='.urlencode($search_date_endday);
+		$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
 	}
 	if ($search_date_endmonth) {
-		$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+		$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
 	}
 	if ($search_date_endyear) {
-		$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+		$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
 	}
 	if ($search_expensereport) {
 		$param .= '&search_expensereport='.urlencode($search_expensereport);
@@ -371,6 +376,7 @@ if ($result) {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("ExpenseReportLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
 	print '<span class="opacitymedium">'.$langs->trans("DescVentilTodoExpenseReport").'</span></br><br>';
@@ -389,14 +395,14 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.$search_login.'"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_expensereport" value="'.dol_escape_htmltag($search_expensereport).'"></td>';
-	if (!empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
+	if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
 		print '<td class="liste_titre"></td>';
 	}
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -416,7 +422,7 @@ if ($result) {
 	print_liste_field_titre("Employee", $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("ExpenseReport", $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
-	if (!empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
+	if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
 		print_liste_field_titre("DateValidation", $_SERVER["PHP_SELF"], "er.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
 	print_liste_field_titre("DateOfLine", $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -471,7 +477,7 @@ if ($result) {
 		print '<td>'.$expensereport_static->getNomUrl(1).'</td>';
 
 		// Date validation
-		if (!empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
+		if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
 			print '<td class="center">'.dol_print_date($db->jdate($objp->date_valid), 'day').'</td>';
 		}
 
@@ -480,13 +486,13 @@ if ($result) {
 
 		// Fees label
 		print '<td>';
-		print ($langs->trans($objp->type_fees_code) == $objp->type_fees_code ? $objp->type_fees_label : $langs->trans(($objp->type_fees_code)));
+		print($langs->trans($objp->type_fees_code) == $objp->type_fees_code ? $objp->type_fees_label : $langs->trans(($objp->type_fees_code)));
 		print '</td>';
 
 		// Fees description -- Can be null
 		print '<td>';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments, 1));
-		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
+		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->comments);
 		print '</td>';
 

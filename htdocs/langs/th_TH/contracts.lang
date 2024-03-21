@@ -2,7 +2,7 @@
 ContractsArea=พื้นที่สัญญา
 ListOfContracts=รายชื่อของสัญญา
 AllContracts=สัญญาทั้งหมด
-ContractCard=บัตรสัญญา
+ContractCard=สัญญา
 ContractStatusNotRunning=ไม่ได้ทำงาน
 ContractStatusDraft=ร่าง
 ContractStatusValidated=ผ่านการตรวจสอบ

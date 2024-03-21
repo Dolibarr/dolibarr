@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,13 +35,12 @@ function websiteaccountPrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/website/websiteaccount_card.php", 1).'?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/website/websiteaccount_card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("WebsiteAccount");
 	$head[$h][2] = 'card';
 	$h++;
 
-	/*if (isset($object->fields['note_public']) || isset($object->fields['note_private']))
-	{
+	/*if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
 		$nbNote = 0;
 		if(!empty($object->fields['note_private'])) $nbNote++;
 		if(!empty($object->fields['note_public'])) $nbNote++;

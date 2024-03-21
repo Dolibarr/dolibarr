@@ -33,6 +33,7 @@ DeleteATask=حذف وظیفه
 ConfirmDeleteAProject=آیا اطمینان دارید می‌خواهید این طرح را حذف کنید؟
 ConfirmDeleteATask=آیا اطمینان دارید می‌خواهید این وظیفه را حذف کنید؟
 OpenedProjects=طرح‌های باز
+OpenedProjectsOpportunities=Open opportunities
 OpenedTasks=وظایف باز
 OpportunitiesStatusForOpenedProjects=مبلغ سرنخ طرح‌های باز برحسب وضعیت
 OpportunitiesStatusForProjects=مبلغ سرنخ طرح‌ها برحسب وضعیت
@@ -44,10 +45,11 @@ OutOfProject=Out of project
 NoProject=طرحی تعریف یا تصاحب نشده است
 NbOfProjects=Number of projects
 NbOfTasks=Number of tasks
+TimeEntry=Time tracking
 TimeSpent=زمان صرف شده
+TimeSpentSmall=زمان صرف شده
 TimeSpentByYou=زمان صرف شده توسط شما
 TimeSpentByUser=زمان طرح شده توسط کاربر
-TimesSpent=زمان صرف شده
 TaskId=Task ID
 RefTask=Task ref.
 LabelTask=Task label
@@ -81,7 +83,7 @@ MyProjectsArea=بخش طرح‌های مربوط به من
 DurationEffective=مدت‌زمان مفید
 ProgressDeclared=Declared real progress
 TaskProgressSummary=Task progress
-CurentlyOpenedTasks=Curently open tasks
+CurentlyOpenedTasks=Currently open tasks
 TheReportedProgressIsLessThanTheCalculatedProgressionByX=The declared real progress is less %s than the progress on consumption
 TheReportedProgressIsMoreThanTheCalculatedProgressionByX=The declared real progress is more %s than the progress on consumption
 ProgressCalculated=Progress on consumption
@@ -121,7 +123,7 @@ TaskHasChild=وظیفه دارای فرزند است
 NotOwnerOfProject=صاحب این طرح خصوصی نیست
 AffectedTo=اختصاص داده شده به
 CantRemoveProject=This project can't be removed as it is referenced by some other objects (invoice, orders or other). See tab '%s'.
-ValidateProject=تائیداعتبار طرح
+ValidateProject=Validate project
 ConfirmValidateProject=آیا مطمئنید می‌خواهید اعتبار این طرح را تائید کنید؟
 CloseAProject=بستن طرح
 ConfirmCloseAProject=آیا مطمئن هستید می‌خواهید این طرح را ببندید؟
@@ -202,7 +204,7 @@ InputPerMonth=Input per month
 InputDetail=جزئیات ورودی
 TimeAlreadyRecorded=این زمان صرف شده قبلا برای این وظیفه/روز و کاربر %s ثبت شده است
 ProjectsWithThisUserAsContact=طرح‌های مربوط به این کاربر به‌عنوان طرف تماس
-ProjectsWithThisContact=Projects with this contact
+ProjectsWithThisContact=Projects with this third-party contact
 TasksWithThisUserAsContact=وظایف محول شده به این کاربر
 ResourceNotAssignedToProject=به طرح نسبت داده نشده
 ResourceNotAssignedToTheTask=به این طرح نسبت داده نشده
@@ -225,7 +227,7 @@ ProjectsStatistics=Statistics on projects or leads
 TasksStatistics=Statistics on tasks of projects or leads
 TaskAssignedToEnterTime=وظیفه محول شد. وارد کردن زمان به این وظیفه باید ممکن باشد.
 IdTaskTime=شناسۀ زمان وظیفه
-YouCanCompleteRef=اگر بخواهید عبارت ارجاع را با پس‌وند تکمیل کنید، پیشنهاد می‌شود یک نویسۀ خط‌فاصله - برای جدا کردن آن استفاده کنی،  که شماره‌گذاری خودکار برای طرح‌های بعدی نیز به درستی کار کند. برای مثال %s-پس‌وند من
+YouCanCompleteRef=If you want to complete the ref with some suffix, it is recommended to add a - character to separate it, so the automatic numbering will still work correctly for next projects. For example %s-MYSUFFIX
 OpenedProjectsByThirdparties=طرح‌های باز بر حسب شخص‌سوم
 OnlyOpportunitiesShort=فقط سرنخ‌ها
 OpenedOpportunitiesShort=سرنخ‌های باز
@@ -237,7 +239,7 @@ OpportunityPonderatedAmountDesc=مبلغ سرنخ متوازن شده با اح�
 OppStatusPROSP=چشم‌انداز
 OppStatusQUAL=تائید شرایط
 OppStatusPROPO=پیشنهاد
-OppStatusNEGO=مذاکره
+OppStatusNEGO=Negotiation
 OppStatusPENDING=در انتظار
 OppStatusWON=برد
 OppStatusLOST=باخت
@@ -259,6 +261,7 @@ RecordsClosed=(%s) طرح بسته شد
 SendProjectRef=اطلاعات طرح %s
 ModuleSalaryToDefineHourlyRateMustBeEnabled=واحد 'حقوق‌ها' باید فعال شود تا امکان تعریف نرخ ساعتی کارمند وجود داشته باشد تا ارزش زمان صرف شده قابل تعیت کردن باشد
 NewTaskRefSuggested=ارجاع وظیفه قبلا استفاده شده ات، یک ارجاع جدید وظیفه نیاز است
+NumberOfTasksCloned=%s task(s) cloned
 TimeSpentInvoiced=زمان صرف شدۀ صورت‌حساب شده
 TimeSpentForIntervention=زمان صرف شده
 TimeSpentForInvoice=زمان صرف شده

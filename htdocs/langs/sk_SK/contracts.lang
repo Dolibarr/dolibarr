@@ -2,7 +2,7 @@
 ContractsArea=Zákazky oblasť
 ListOfContracts=Prehľad zmlúv
 AllContracts=Všetky zmluvy
-ContractCard=Zmluva karty
+ContractCard=Zmluva
 ContractStatusNotRunning=Nebeží
 ContractStatusDraft=Návrh
 ContractStatusValidated=Overené

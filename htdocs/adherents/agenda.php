@@ -38,13 +38,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 $langs->loadLangs(array('companies', 'members'));
 
 // Get Parameters
-$id = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('rowid', 'int');
+$id = GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('rowid');
 
 // Pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -64,7 +64,7 @@ if (GETPOST('actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
@@ -173,7 +173,7 @@ if ($object->id > 0) {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).($object->id > 0 ? '?id='.$object->id : '').'&origin=member&originid='.$id);
 	}
 
-	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		print '<br>';
 
 		$param = '&id='.$id;

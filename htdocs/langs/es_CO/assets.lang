@@ -1,10 +1,6 @@
 # Dolibarr language file - Source file is en_US - assets
-AssetType=tipo de activo
-DeleteAnAssetType=Eliminar un modelo de activo
 ConfirmDeleteAssetType=¿Está seguro de que desea eliminar este modelo de activo?
-ShowTypeCard=Mostrar modelo '%s'
 AssetsType=modelo de activos
 AssetsTypeId=ID de modelo de activo
 AssetsTypeLabel=Etiqueta de modelo de activos
-AssetsTypes=Modelos de activos
 ConfirmDeleteAsset=¿Realmente desea eliminar este elemento?

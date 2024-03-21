@@ -22,29 +22,19 @@
 /**
  *  \file       htdocs/core/boxes/box_project.php
  *  \ingroup    project
- *  \brief      Module to show Projet activity of the current Year
+ *  \brief      Module to show Project activity of the current Year
  */
 include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
- * Class to manage the box to show last projet
+ * Class to manage the box to show last project
  */
 class box_project extends ModeleBoxes
 {
 	public $boxcode = "project";
-	public $boximg = "object_projectpub";
+	public $boximg  = "object_projectpub";
 	public $boxlabel;
-	//var $depends = array("projet");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
+	// var $depends = array("projet");
 
 	/**
 	 *  Constructor
@@ -62,7 +52,7 @@ class box_project extends ModeleBoxes
 		$this->db = $db;
 		$this->boxlabel = "OpenedProjects";
 
-		$this->hidden = empty($user->rights->projet->lire);
+		$this->hidden = !$user->hasRight('projet', 'lire');
 	}
 
 	/**
@@ -86,18 +76,18 @@ class box_project extends ModeleBoxes
 
 		$i = 0;
 		// list the summary of the orders
-		if ($user->rights->projet->lire) {
+		if ($user->hasRight('projet', 'lire')) {
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			$projectstatic = new Project($this->db);
 			$companystatic = new Societe($this->db);
 
 			$socid = 0;
-			//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+			//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 			}
 
@@ -107,7 +97,7 @@ class box_project extends ModeleBoxes
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 			$sql .= " WHERE p.entity IN (".getEntity('project').")"; // Only current entity or severals if permission ok
 			$sql .= " AND p.fk_statut = ".((int) $projectstatic::STATUS_VALIDATED); // Only open projects
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 			}
 

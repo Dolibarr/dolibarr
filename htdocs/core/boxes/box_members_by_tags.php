@@ -22,33 +22,23 @@
 /**
  *	\file       htdocs/core/boxes/box_members_by_tags.php
  *	\ingroup    adherent
- *	\brief      Module to show box of members
+ *	\brief      Module to show box of members by tags
  */
 
 include_once DOL_DOCUMENT_ROOT . '/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last modofied members
+ * Class to manage the box to show (last modified) members by tags
  */
 class box_members_by_tags extends ModeleBoxes
 {
-	public $boxcode = "box_members_by_tags";
-	public $boximg = "object_user";
+	public $boxcode  = "box_members_by_tags";
+	public $boximg   = "object_user";
 	public $boxlabel = "BoxTitleMembersByTags";
-	public $depends = array("adherent", "categorie");
+	public $depends  = array("adherent", "categorie");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -63,12 +53,12 @@ class box_members_by_tags extends ModeleBoxes
 		$this->db = $db;
 
 		// disable module for such cases
-		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+		$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 		if (!in_array('adherent', $listofmodulesforexternal) && !empty($user->socid)) {
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !(isModEnabled('adherent') && $user->rights->adherent->lire);
+		$this->hidden = !(isModEnabled('member') && $user->hasRight('adherent', 'lire'));
 	}
 
 	/**
@@ -93,13 +83,13 @@ class box_members_by_tags extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByTags").($numberyears ? ' ('.($year - $numberyears).' - '.$year.')' : ''));
 
-		if ($user->rights->adherent->lire) {
+		if ($user->hasRight('adherent', 'lire')) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$stats = new AdherentStats($this->db, $user->socid, $user->id);
 
 			// Show array
-			$sumMembers= $stats->countMembersByTagAndStatus($numberyears);
+			$sumMembers = $stats->countMembersByTagAndStatus($numberyears);
 			if ($sumMembers) {
 				$line = 0;
 				$this->info_box_contents[$line][] = array(
@@ -148,11 +138,12 @@ class box_members_by_tags extends ModeleBoxes
 					'text' => $langs->trans("Total")
 				);
 				$line++;
+				$AdherentTag = array();
 				foreach ($sumMembers as $key => $data) {
-					$adhtag = new Categorie($db);
+					$adhtag = new Categorie($this->db);
 					$adhtag->id = $key;
 
-					if ($key=='total') {
+					if ($key == 'total') {
 						break;
 					}
 					$adhtag->label = $data['label'];
@@ -160,7 +151,7 @@ class box_members_by_tags extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => $adhtag->getNomUrl(0, '', dol_size(32), '&backtolist='.urlencode($_SERVER["PHP_SELF"])),
+						'text' => '<a href="'.DOL_MAIN_URL_ROOT.'/adherents/list.php?search_categ='.$adhtag->id.'&sortfield=d.datefin,t.subscription&sortorder=desc,desc&backtopage='.urlencode($_SERVER['PHP_SELF']).'">'.dol_trunc(($adhtag->ref ? $adhtag->ref : $adhtag->label), dol_size(32)).'</a>',
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
@@ -219,7 +210,7 @@ class box_members_by_tags extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $sumMembers['total']['members_pending'].' '.$staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, $now, 3),
+						'text' => $sumMembers['total']['members_pending'].' '.$staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 0, 3),
 						'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(
@@ -252,13 +243,13 @@ class box_members_by_tags extends ModeleBoxes
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
 					'maxlength' => 500,
-					'text' => ($this->db->error() . ' sql=' . $sql)
+					'text' => ($this->db->lasterror())
 				);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

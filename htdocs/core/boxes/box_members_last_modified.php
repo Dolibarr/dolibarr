@@ -37,17 +37,7 @@ class box_members_last_modified extends ModeleBoxes
 	public $boxlabel = "BoxLastModifiedMembers";
 	public $depends = array("adherent");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -62,12 +52,12 @@ class box_members_last_modified extends ModeleBoxes
 		$this->db = $db;
 
 		// disable module for such cases
-		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+		$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 		if (!in_array('adherent', $listofmodulesforexternal) && !empty($user->socid)) {
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !(isModEnabled('adherent') && $user->hasRight('adherent', 'lire'));
+		$this->hidden = !(isModEnabled('member') && $user->hasRight('adherent', 'lire'));
 	}
 
 	/**
@@ -90,7 +80,7 @@ class box_members_last_modified extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedMembers", $max));
 
-		if ($user->rights->adherent->lire) {
+		if ($user->hasRight('adherent', 'lire')) {
 			$sql = "SELECT a.rowid, a.ref, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 			$sql .= " a.datec, a.tms as datem, a.statut as status, a.datefin as date_end_subscription,";
 			$sql .= ' a.photo, a.email, a.gender, a.morphy,';
@@ -183,8 +173,8 @@ class box_members_last_modified extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}
