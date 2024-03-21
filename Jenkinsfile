@@ -1,24 +1,36 @@
-podTemplate(
-    label: 'docker-build',
-    volumes: [hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')],
-    containers: [
-        containerTemplate(
-            name: 'docker',
-            image: 'docker:25',
-            ttyEnabled: true,
-            command: 'cat',
-        ),
-        containerTemplate(
-            name: 'git',
-            image: 'alpine/git',
-            ttyEnabled: true,
-            command: 'cat',
-        )
-    ]
-)
 pipeline {
-    agent any
-
+    agent {
+        kubernetes {
+            // Define the pod template with containers and volumes
+            yaml """
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: docker-build
+spec:
+  containers:
+  - name: docker
+    image: docker:25
+    command:
+    - cat
+    tty: true
+    volumeMounts:
+    - mountPath: /var/run/docker.sock
+      name: docker-socket
+  - name: git
+    image: alpine/git
+    command:
+    - cat
+    tty: true
+  volumes:
+  - name: docker-socket
+    hostPath:
+      path: /var/run/docker.sock
+"""
+        }
+    }
+    
     stages {
         stage('Checkout') {
             steps {
