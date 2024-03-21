@@ -1142,7 +1142,7 @@ if (empty($reshook)) {
 		$value_unit_ht = price2num(GETPOST('value_unit_ht', 'alpha'), 'MU');
 		$value_unit = price2num(GETPOST('value_unit', 'alpha'), 'MU');
 		if (empty($value_unit)) {
-			$value_unit = price2num($value_unit_ht + ($value_unit_ht * $tmpvat / 100), 'MU');
+			$value_unit = price2num((float) $value_unit_ht + ((float) $value_unit_ht * (float) $tmpvat / 100), 'MU');
 		}
 
 		$fk_c_exp_tax_cat = GETPOSTINT('fk_c_exp_tax_cat');
@@ -1314,7 +1314,7 @@ if (empty($reshook)) {
 		$value_unit_ht = price2num(GETPOST('value_unit_ht', 'alpha'), 'MU');
 		$value_unit = price2num(GETPOST('value_unit', 'alpha'), 'MU');
 		if (empty($value_unit)) {
-			$value_unit = price2num($value_unit_ht + ($value_unit_ht * $tmpvat / 100), 'MU');
+			$value_unit = price2num((float) $value_unit_ht + ((float) $value_unit_ht * (float) $tmpvat / 100), 'MU');
 		}
 
 		if (!GETPOSTINT('fk_c_type_fees') > 0) {
