@@ -333,7 +333,6 @@ class FormWebsite
 				$arrayofsamples[$key] = $labelkey;
 			}
 		}
-
 		$out = '<div id="template-selector" class="template-container hidden">';
 
 		$templates = array(
