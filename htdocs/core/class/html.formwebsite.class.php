@@ -175,7 +175,6 @@ class FormWebsite
 		$langs->load("admin");
 
 		$listofsamples = dol_dir_list(DOL_DOCUMENT_ROOT.'/website/samples', 'files', 0, '^page-sample-.*\.html$');
-
 		$arrayofsamples = array();
 		$arrayofsamples['empty'] = 'EmptyPage'; // Always this one first
 		foreach ($listofsamples as $sample) {
@@ -189,6 +188,7 @@ class FormWebsite
 				$arrayofsamples[$key] = $labelkey;
 			}
 		}
+		var_dump($arrayofsamples);exit;
 
 		$out = '';
 		$out .= '<select id="select'.$htmlname.'" class="selectSampleOfContainer'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
@@ -305,6 +305,89 @@ class FormWebsite
 			$out .= '<input type="hidden" name="'.$htmlname.'" value="'.$pageid.'">';
 			$out .= ajax_combobox($htmlname);
 		}
+		return $out;
+	}
+
+
+	/**
+	 * Return HTML code for selection of page layout
+	 * @param   string      $htmlContent    HTML name of WYSIWIG field
+	 * @return 	string      HTML for model page boxes
+	 */
+	public function getContentPageTemplate($htmlContent = 'message')
+	{
+		global $user, $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
+
+		$listofsamples = dol_dir_list(DOL_DOCUMENT_ROOT.'/website/samples', 'files', 0, '^page-sample-.*\.html$');
+		$arrayofsamples = array();
+		$arrayofsamples['empty'] = 'EmptyPage'; // Always this one first
+		foreach ($listofsamples as $sample) {
+			$reg = array();
+			if (preg_match('/^page-sample-(.*)\.html$/', $sample['name'], $reg)) {
+				$key = $reg[1];
+				$labelkey = ucfirst($key);
+				if ($key == 'empty') {
+					$labelkey = 'EmptyPage';
+				}
+				$arrayofsamples[$key] = $labelkey;
+			}
+		}
+
+		$out = '<div id="template-selector" class="template-container hidden">';
+
+		$templates = array(
+			'empty' => 'empty',
+			'text' => 'dynamic',
+			'basic' => 'basic',
+			'news'  => 'news',
+			'commerce' => 'commerce',
+		);
+
+
+
+		foreach ($templates as $template => $templateFunction) {
+			if ($template == 'text') {
+				$substitutionarray = array();
+				$substitutionarray['__WEBSITE_CREATE_BY__'] = $user->getFullName($langs);
+
+				$pathtoTemplateFile = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.dol_sanitizeFileName(strtolower($arrayofsamples['dynamiccontent'])).'.html';
+				$contentHtml = file_exists($pathtoTemplateFile) ? make_substitutions(@file_get_contents($pathtoTemplateFile), $substitutionarray) : '';
+			} else {
+				$contentHtml = getHtmlOfLayout($template);
+			}
+
+			$out .= '<div class="template-option" data-template="'.$template.'" data-content="'.htmlentities($contentHtml).'">';
+			$out .= '<img class="maillayout" alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/maillayout/'.$template.'.png" />';
+			if ($template == 'text') {
+				$out .= '<input type="hidden" name="sample" value="'.$arrayofsamples['dynamiccontent'].'" />';
+			}
+			if ($template == 'empty') {
+				$out .= '<input type="hidden" name="sample" value="" />';
+			}
+			$out .= '<span class="template-option-text">'.($template != 'text'  ? ucfirst($template) : ucfirst($templateFunction)).'</span>';
+			$out .= '</div>';
+		}
+		$out .= '</div>';
+
+		$out .= "<script type='text/javascript'>
+				$(document).ready(function() {
+					$('.template-option').click(function() {
+						$('.template-option').removeClass('selected');
+						$(this).addClass('selected');
+
+						var template = $(this).data('template');
+						var contentHtml = $(this).data('content');
+
+						var editorInstance = CKEDITOR.instances.".$htmlContent.";
+						if (editorInstance) {
+							editorInstance.setData(contentHtml);
+						}
+					});
+				});
+		</script>";
+
 		return $out;
 	}
 }
