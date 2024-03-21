@@ -429,8 +429,8 @@ class StockTransferLine extends CommonObjectLine
 		$p->fetch($this->fk_product);
 
 		$op = array();
-		$op[0] = "+".trim($this->qty);
-		$op[1] = "-".trim($this->qty);
+		$op[0] = "+".trim((string) $this->qty);
+		$op[1] = "-".trim((string) $this->qty);
 		$movementstock = new MouvementStock($this->db);
 		$st = new StockTransfer($this->db);
 		$movementstock->origin_type = $st->origin_type;
@@ -939,7 +939,7 @@ class StockTransferLine extends CommonObjectLine
 				$dir = dol_buildpath($reldir."core/modules/stocktransfer/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if ($mybool === false) {

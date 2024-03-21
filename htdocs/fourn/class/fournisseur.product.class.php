@@ -8,6 +8,7 @@
  * Copyright (C) 2016-2023	Charlene Benke         <charlene@patas-monkey.com>
  * Copyright (C) 2019-2024  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2020       Pierre Ardoin         <mapiolca@me.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -224,7 +225,7 @@ class ProductFournisseur extends Product
 
 		$this->db = $db;
 		$langs->load("suppliers");
-		$this->reputations = array('-1'=>'', 'FAVORITE'=>$langs->trans('Favorite'), 'NOTTHGOOD'=>$langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER'=>$langs->trans('DoNotOrderThisProductToThisSupplier'));
+		$this->reputations = array('-1' => '', 'FAVORITE' => $langs->trans('Favorite'), 'NOTTHGOOD' => $langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER' => $langs->trans('DoNotOrderThisProductToThisSupplier'));
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -512,7 +513,7 @@ class ProductFournisseur extends Product
 					$productfournisseurprice = new ProductFournisseurPrice($this->db);
 					$res = $productfournisseurprice->fetch($this->product_fourn_price_id);
 					if ($res > 0) {
-						foreach ($options as $key=>$value) {
+						foreach ($options as $key => $value) {
 							$productfournisseurprice->array_options[$key] = $value;
 						}
 						$res = $productfournisseurprice->update($user);
@@ -616,7 +617,7 @@ class ProductFournisseur extends Product
 						$productfournisseurprice = new ProductFournisseurPrice($this->db);
 						$res = $productfournisseurprice->fetch($this->product_fourn_price_id);
 						if ($res > 0) {
-							foreach ($options as $key=>$value) {
+							foreach ($options as $key => $value) {
 								$productfournisseurprice->array_options[$key] = $value;
 							}
 							$res = $productfournisseurprice->update($user);
@@ -881,7 +882,7 @@ class ProductFournisseur extends Product
 	 *  Load properties for minimum price
 	 *
 	 *  @param	int		$prodid	    Product id
-	 *  @param	int		$qty		Minimum quantity
+	 *  @param	float	$qty		Minimum quantity
 	 *  @param	int		$socid		get min price for specific supplier
 	 *  @return int					Return integer <0 if KO, 0=Not found of no product id provided, >0 if OK
 	 *  @see list_product_fournisseur_price()
@@ -1391,7 +1392,7 @@ class ProductFournisseur extends Product
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

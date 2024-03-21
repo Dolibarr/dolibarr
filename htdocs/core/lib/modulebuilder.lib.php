@@ -1288,12 +1288,12 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	}
 
 	$columns = array(
-		'rowid' => array('type' => 'integer(11)'),
-		'code' => array('type' => 'varchar(255) NOT NULL'),
-		'label' => array('type' => 'varchar(255) NOT NULL'),
-		'position' => array('type' => 'integer(11) NULL'),
-		'use_default' => array('type' => 'varchar(255) DEFAULT 1'),
-		'active' => array('type' => 'integer')
+		'rowid' => array('type' => 'integer', 'value' => 11, 'extra' => 'AUTO_INCREMENT PRIMARY KEY'),
+		'code' => array('type' => 'varchar', 'value' => 255, 'null'=>'NOT NULL'),
+		'label' => array('type' => 'varchar', 'value' => 255, 'null'=>'NOT NULL'),
+		'position' => array('type' => 'integer', 'value' => 11, 'null'=>'NULL'),
+		'use_default' => array('type' => 'varchar', 'value' => 11, 'default'=>'1'),
+		'active' => array('type' => 'integer', 'value' => 3)
 	);
 
 
@@ -1308,14 +1308,16 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 			break;
 		}
 	}
+
 	// check if tablename exist in Database and create it if not
-	$query = "SHOW TABLES LIKE '" . MAIN_DB_PREFIX.strtolower($namedic) . "'";
+	// @FIXME We must use $db->DDLDescTable($table) to know if a table exists.
+	$query = "SHOW TABLES LIKE '" . $db->escape(MAIN_DB_PREFIX.strtolower($namedic)) . "'";
 	$checkTable = $db->query($query);
 	if ($checkTable && $db->num_rows($checkTable) > 0) {
 		setEventMessages($langs->trans("ErrorTableExist", $namedic), null, 'errors');
 		return;
 	} else {
-		$_results = $db->DDLCreateTable(MAIN_DB_PREFIX.strtolower($namedic), $columns, $primaryKey, "InnoDB");
+		$_results = $db->DDLCreateTable(MAIN_DB_PREFIX.strtolower($namedic), $columns, $primaryKey, "");
 		if ($_results < 0) {
 			dol_print_error($db);
 			$langs->load("errors");

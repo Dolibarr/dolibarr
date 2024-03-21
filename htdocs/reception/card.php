@@ -1825,7 +1825,7 @@ if ($action == 'create') {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 		$sql .= " WHERE e.entity IN (".getEntity('reception').")";
 		$sql .= " AND obj.fk_commande = ".((int) $origin_id);
-		$sql .= " AND obj.rowid = ed.fk_commandefourndet";
+		$sql .= " AND obj.rowid = ed.fk_elementdet";
 		$sql .= " AND ed.fk_reception = e.rowid";
 		$sql .= " AND ed.fk_reception !=".((int) $object->id);
 		//if ($filter) $sql.= $filter;

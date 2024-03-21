@@ -2,6 +2,7 @@
 /* Copyright (C) 2012      Christophe Battarel <christophe.battarel@altairis.fr>
  * Copyright (C) 2014-2015 Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016	   Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +143,7 @@ function getMarginInfos($pv_ht, $remise_percent, $tva_tx, $localtax1_tx, $localt
 
 	// calcul marge
 	if ($pu_ht_remise < 0) {
-		$marge = -1 * (abs($pu_ht_remise) - $pa_ht_ret);
+		$marge = -1 * (abs((float) $pu_ht_remise) - $pa_ht_ret);
 	} else {
 		$marge = $pu_ht_remise - $pa_ht_ret;
 	}

@@ -580,7 +580,7 @@ class BOM extends CommonObject
 	 *
 	 * @param	int		$fk_product				Id of product
 	 * @param	float	$qty					Quantity
-	 * @param	int		$qty_frozen				Frozen quantity
+	 * @param	int<0,1> $qty_frozen			If the qty is Frozen
 	 * @param 	int		$disable_stock_change	Disable stock change on using in MO
 	 * @param	float	$efficiency				Efficiency in MO
 	 * @param	int		$position				Position of BOM-Line in BOM-Lines
@@ -689,7 +689,7 @@ class BOM extends CommonObject
 	 *
 	 * @param 	int		$rowid					Id of line to update
 	 * @param	float	$qty					Quantity
-	 * @param	int		$qty_frozen				Frozen quantity
+	 * @param	float	$qty_frozen				Frozen quantity
 	 * @param 	int		$disable_stock_change	Disable stock change on using in MO
 	 * @param	float	$efficiency				Efficiency in MO
 	 * @param	int		$position				Position of BOM-Line in BOM-Lines
@@ -875,7 +875,7 @@ class BOM extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/bom/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if ($mybool === false) {
@@ -1531,8 +1531,8 @@ class BOM extends CommonObject
 	/**
 	 * Get Net needs by product
 	 *
-	 * @param array $TNetNeeds Array of ChildBom and infos linked to
-	 * @param int   $qty       qty needed
+	 * @param array	$TNetNeeds Array of ChildBom and infos linked to
+	 * @param float	$qty       qty needed
 	 * @return void
 	 */
 	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0)
@@ -1557,7 +1557,7 @@ class BOM extends CommonObject
 	 * Get Net needs Tree by product or bom
 	 *
 	 * @param array $TNetNeeds Array of ChildBom and infos linked to
-	 * @param int   $qty       qty needed
+	 * @param float	$qty       qty needed
 	 * @param int   $level     level of recursivity
 	 * @return void
 	 */
@@ -1763,7 +1763,7 @@ class BOMLine extends CommonObjectLine
 	public $qty;
 
 	/**
-	 * @var int qty frozen
+	 * @var float qty frozen
 	 */
 	public $qty_frozen;
 

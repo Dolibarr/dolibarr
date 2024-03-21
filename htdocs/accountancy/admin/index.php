@@ -374,7 +374,7 @@ if (getDolGlobalInt('ACCOUNTING_MANAGE_ZERO')) {
 }
 print '</tr>';
 
-// Param a user $user->hasRights('accounting', 'chartofaccount') can access
+// Param a user $user->hasRight('accounting', 'chartofaccount') can access
 foreach ($list as $key) {
 	print '<tr class="oddeven value">';
 
@@ -404,7 +404,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans('BindingOptions').'</td>';
 print "</tr>\n";
 
-// Param a user $user->hasRights('accounting', 'chartofaccount') can access
+// Param a user $user->hasRight('accounting', 'chartofaccount') can access
 foreach ($list_binding as $key) {
 	print '<tr class="oddeven value">';
 

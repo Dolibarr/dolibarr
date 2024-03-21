@@ -23,7 +23,7 @@
  *      \file       test/phpunit/CommonClassTest.php
  *      \ingroup    test
  *      \brief      PHPUnit test
- *      \remarks    Class that extends all PHPunit tests. To share similare code between each test.
+ *      \remarks    Class that extends all PHPunit tests. To share similar code between each test.
  */
 
 // Workaround for false security issue with main.inc.php on Windows in tests:

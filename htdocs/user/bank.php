@@ -7,6 +7,7 @@
  * Copyright (C) 2015-2016  Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -957,7 +958,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->hasRight('user',
 
 	// Show fields of bank account
 	$bankaccount = $account;
-	// Code here is similare than into paymentmodes.php for third-parties
+	// Code here is similar as in paymentmodes.php for third-parties
 	foreach ($bankaccount->getFieldsToShow(1) as $val) {
 		$require = false;
 		$tooltip = '';

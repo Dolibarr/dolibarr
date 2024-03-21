@@ -204,7 +204,7 @@ function isValidTinForES($str)
 	for ($i = 1; $i < 8; $i += 2) {
 		$sum += intval(substr((string) (2 * $num[$i]), 0, 1)) + intval(substr((string) (2 * $num[$i]), 1, 1));
 	}
-	$n = 10 - substr((string) $sum, strlen($sum) - 1, 1);
+	$n = 10 - substr((string) $sum, strlen((string) $sum) - 1, 1);
 
 	//Check special NIF
 	if (preg_match('/^[KLM]{1}/', $str)) {
@@ -217,7 +217,7 @@ function isValidTinForES($str)
 
 	//Check CIF
 	if (preg_match('/^[ABCDEFGHJNPQRSUVW]{1}/', $str)) {
-		if ($num[8] == chr(64 + $n) || $num[8] == substr((string) $n, strlen($n) - 1, 1)) {
+		if ($num[8] == chr(64 + $n) || $num[8] == substr((string) $n, strlen((string) $n) - 1, 1)) {
 			return 2;
 		} else {
 			return -2;

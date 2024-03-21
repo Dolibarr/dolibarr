@@ -229,6 +229,8 @@ if (empty($reshook)) {
 
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+
+			$action = 'create';
 		} else {
 			$result = $object->delete($user, 0, $mode);
 			if ($result < 0) {

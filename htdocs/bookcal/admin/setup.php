@@ -71,37 +71,6 @@ $formSetup = new FormSetup($db);
 // Setup conf BOOKCAL_PUBLIC_INTERFACE_TOPIC
 $item = $formSetup->newItem('BOOKCAL_PUBLIC_INTERFACE_TOPIC');
 $item->defaultFieldValue = 'MyBigCompany public interface for Bookcal';
-/*// Setup conf BOOKCAL_MYPARAM8
-$item = $formSetup->newItem('BOOKCAL_MYPARAM8');
-$TField = array(
-	'test01' => $langs->trans('test01'),
-	'test02' => $langs->trans('test02'),
-	'test03' => $langs->trans('test03'),
-	'test04' => $langs->trans('test04'),
-	'test05' => $langs->trans('test05'),
-	'test06' => $langs->trans('test06'),
-);
-$item->setAsMultiSelect($TField);
-$item->helpText = $langs->transnoentities('BOOKCAL_MYPARAM8');
-
-
-// Setup conf BOOKCAL_MYPARAM9
-$formSetup->newItem('BOOKCAL_MYPARAM9')->setAsSelect($TField);
-
-
-// Setup conf BOOKCAL_MYPARAM10
-$item = $formSetup->newItem('BOOKCAL_MYPARAM10');
-$item->setAsColor();
-$item->defaultFieldValue = '#FF0000';
-$item->nameText = $item->getNameText().' more html text ';
-$item->fieldInputOverride = '';
-$item->helpText = $langs->transnoentities('AnHelpMessage');*/
-//$item->fieldValue = '';
-//$item->fieldAttr = array() ; // fields attribute only for compatible fields like input text
-//$item->fieldOverride = false; // set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too
-//$item->fieldInputOverride = false; // set this var to override field input
-//$item->fieldOutputOverride = false; // set this var to override field output
-
 
 $setupnotempty = + count($formSetup->items);
 

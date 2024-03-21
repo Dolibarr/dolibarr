@@ -104,7 +104,7 @@ function testSqlAndScriptInject($val, $type)
 		$val = preg_replace_callback(
 			'/&#(x?[0-9][0-9a-f]+;?)/i',
 			/**
-			 * @param string $m
+			 * @param string[] $m
 			 * @return string
 			 */
 			static function ($m) {

@@ -719,14 +719,14 @@ class ProductCombination
 	 *
 	 * @param User 			$user 				Object user
 	 * @param Product 		$product 			Parent product
-	 * @param array 		$combinations 		Attribute and value combinations.
+	 * @param array<array<string,string>> $combinations Attribute and value combinations.
 	 * @param array 		$variations 		Price and weight variations
 	 * @param bool|array 	$price_var_percent 	Is the price variation a relative variation?
 	 * @param bool|float 	$forced_pricevar 	If the price variation is forced
 	 * @param bool|float 	$forced_weightvar 	If the weight variation is forced
 	 * @param bool|string 	$forced_refvar 		If the reference is forced
 	 * @param string 	    $ref_ext            External reference
-	 * @return int 								Return integer <0 KO, >0 OK
+	 * @return int<-1,1>						Return integer <0 KO, >0 OK
 	 */
 	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false, $forced_refvar = false, $ref_ext = '')
 	{
@@ -739,7 +739,7 @@ class ProductCombination
 
 		$price_impact = array(1 => 0); // init level price impact
 
-		$forced_refvar = trim($forced_refvar);
+		$forced_refvar = trim((string) $forced_refvar);
 
 		if (!empty($forced_refvar) && $forced_refvar != $product->ref) {
 			$existingProduct = new Product($this->db);

@@ -1898,13 +1898,13 @@ class Product extends CommonObject
 			while ($obj = $this->db->fetch_object($result)) {
 				//print 'lang='.$obj->lang.' current='.$current_lang.'<br>';
 				if ($obj->lang == $current_lang) {  // si on a les traduct. dans la langue courante on les charge en infos principales.
-					$this->label        = $obj->label;
+					$this->label       = $obj->label;
 					$this->description = $obj->description;
-					$this->other        = $obj->other;
+					$this->other       = $obj->other;
 				}
-				$this->multilangs["$obj->lang"]["label"]        = $obj->label;
-				$this->multilangs["$obj->lang"]["description"] = $obj->description;
-				$this->multilangs["$obj->lang"]["other"]        = $obj->other;
+				$this->multilangs[(string) $obj->lang]["label"]       = $obj->label;
+				$this->multilangs[(string) $obj->lang]["description"] = $obj->description;
+				$this->multilangs[(string) $obj->lang]["other"]       = $obj->other;
 			}
 			return 1;
 		} else {
@@ -3501,7 +3501,7 @@ class Product extends CommonObject
 		if (!$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
-		$sql .= " WHERE cf.rowid = fd.fk_commande";
+		$sql .= " WHERE cf.rowid = fd.fk_element";
 		$sql .= " AND cf.fk_soc = s.rowid";
 		$sql .= " AND cf.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'supplier_order').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
@@ -4447,7 +4447,7 @@ class Product extends CommonObject
 	 *
 	 * @param  int $id_pere Id of parent product/service
 	 * @param  int $id_fils Id of child product/service
-	 * @param  int $qty     Quantity
+	 * @param  float $qty     Quantity
 	 * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
 	 * @param  int $notrigger	Disable triggers
 	 * @return int                Return integer < 0 if KO, > 0 if OK
@@ -4520,7 +4520,7 @@ class Product extends CommonObject
 	 *
 	 * @param  int $id_pere Id of parent product/service
 	 * @param  int $id_fils Id of child product/service
-	 * @param  int $qty     Quantity
+	 * @param  float $qty     Quantity
 	 * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
 	 * @param  int $notrigger	Disable triggers
 	 * @return int                Return integer < 0 if KO, > 0 if OK
@@ -5700,8 +5700,8 @@ class Product extends CommonObject
 				$nbpiece = abs($nbpiece);
 			}
 			$op = array();
-			$op[0] = "+".trim($nbpiece);
-			$op[1] = "-".trim($nbpiece);
+			$op[0] = "+".trim((string) $nbpiece);
+			$op[1] = "-".trim((string) $nbpiece);
 
 			$movementstock = new MouvementStock($this->db);
 			$movementstock->setOrigin($origin_element, $origin_id); // Set ->origin_type and ->origin_id
@@ -5764,8 +5764,8 @@ class Product extends CommonObject
 			}
 
 			$op = array();
-			$op[0] = "+".trim($nbpiece);
-			$op[1] = "-".trim($nbpiece);
+			$op[0] = "+".trim((string) $nbpiece);
+			$op[1] = "-".trim((string) $nbpiece);
 
 			$movementstock = new MouvementStock($this->db);
 			$movementstock->setOrigin($origin_element, $origin_id); // Set ->origin_type and ->fk_origin
