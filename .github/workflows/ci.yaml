@@ -1,0 +1,22 @@
+name: "CI"
+
+on: [push, pull_request]
+jobs:
+  pre-commit:
+    uses: .github/workflows/pre-commit.yml
+    secrets: inherit
+  phan:
+    uses: .github/workflows/phan.yml
+    secrets: inherit
+  phpstan:
+    uses: .github/workflows/phpstan.yml
+    secrets: inherit
+    needs: [pre-commit, phan]
+  windows-ci:
+    needs: [pre-commit, phan]
+    secrets: inherit
+    uses: .github/workflows/windows-ci.yml
+  travis:
+    needs: [windows-ci]
+    secrets: inherit
+    uses: .github/workflows/travis.yml

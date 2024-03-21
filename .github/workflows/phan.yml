@@ -1,10 +1,11 @@
 ---
 on:
-  pull_request:
-  push:
-  schedule:
-    # execute once a day, the 1st
-    - cron: 10 9 * * *
+  # pull_request:
+  # push:
+  # schedule:
+  #   # execute once a day, the 1st
+  #   - cron: 10 9 * * *
+  workflow_call:
   workflow_dispatch:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

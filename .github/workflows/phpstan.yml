@@ -5,10 +5,8 @@ name: PHPStan
 on:
   # push:
   # pull_request:
-  workflow_run:
-    # workflows: [pre-commit, phan]
-    workflows: [pre-commit]
-    types: [completed]
+  workflow_call:
+  workflow_dispatch:
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref
     }}
