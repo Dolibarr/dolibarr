@@ -1151,7 +1151,7 @@ class DoliDBSqlite3 extends DoliDB
 	{
 		// phpcs:enable
 		$sql = "ALTER TABLE ".$this->sanitize($table);
-		$sql .= " MODIFY COLUMN ".$this->sanitize(($field_name)." ".$this->sanitize($field_desc['type']);
+		$sql .= " MODIFY COLUMN ".$this->sanitize($field_name)." ".$this->sanitize($field_desc['type']);
 		if ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
 			$sql .= "(".$this->sanitize($field_desc['value']).")";
 		}
