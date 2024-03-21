@@ -3,20 +3,20 @@ name: "CI"
 on: [push, pull_request]
 jobs:
   pre-commit:
-    uses: .github/workflows/pre-commit.yml@${{ github.sha }}
+    uses: ./.github/workflows/pre-commit.yml@${{ github.sha }}
     secrets: inherit
   phan:
-    uses: .github/workflows/phan.yml@${{ github.sha }}
+    uses: ./.github/workflows/phan.yml@${{ github.sha }}
     secrets: inherit
   phpstan:
-    uses: .github/workflows/phpstan.yml@${{ github.sha }}
+    uses: ./.github/workflows/phpstan.yml@${{ github.sha }}
     secrets: inherit
     needs: [pre-commit, phan]
   windows-ci:
     needs: [pre-commit, phan]
     secrets: inherit
-    uses: .github/workflows/windows-ci.yml@${{ github.sha }}
+    uses: ./.github/workflows/windows-ci.yml@${{ github.sha }}
   travis:
     needs: [windows-ci]
     secrets: inherit
-    uses: .github/workflows/travis.yml@${{ github.sha }}
+    uses: ./.github/workflows/travis.yml@${{ github.sha }}
