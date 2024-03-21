@@ -323,7 +323,7 @@ if ($result) {
 		if (is_array($links) && count($links) > 0) {
 			// Test if entry is for a social contribution, salary or expense report.
 			// In such a case, we will ignore the bank url line for user
-			$is_sc = false;
+			$is_sc = $is_exp = false;
 			$is_salary = false;
 			$is_expensereport = false;
 			foreach ($links as $v) {
@@ -342,9 +342,7 @@ if ($result) {
 			}
 			// Now loop on each link of record in bank (code similar to bankentries_list.php)
 			foreach ($links as $key => $val) {
-				if ($links[$key]['type'] == 'user' && !$is_sc && !$is_salary && !$is_expensereport) {
-					continue;
-				}
+				if ($links[$key]['type'] == 'user' && !$is_sc && !$is_exp) continue;
 				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'member', 'payment_loan', 'payment_salary', 'payment_various'))) {
 					// So we excluded 'company' and 'user' here. We want only payment lines
 
@@ -1506,8 +1504,8 @@ function getSourceDocRef($val, $typerecord)
 		$ref = $langs->transnoentitiesnoconv("SupplierInvoice");
 	} elseif ($typerecord == 'payment_expensereport') {
 		$sqlmid = 'SELECT e.rowid as id, e.ref';
-		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_expensereport as pe, ".MAIN_DB_PREFIX."expensereport as e";
-		$sqlmid .= " WHERE pe.rowid=".((int) $val["paymentexpensereport"])." AND pe.fk_expensereport = e.rowid";
+		$sqlmid .= " FROM ".MAIN_DB_PREFIX."expensereport_payment_expensereport as pe, ".MAIN_DB_PREFIX."expensereport as e";
+		$sqlmid .= " WHERE pe.fk_paiementuser=".((int) $val["paymentexpensereport"])." AND pe.fk_expensereport = e.rowid";
 		$ref = $langs->transnoentitiesnoconv("ExpenseReport");
 	} elseif ($typerecord == 'payment_salary') {
 		$sqlmid = 'SELECT s.rowid as ref';
