@@ -1488,7 +1488,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 	echo '<tr><th>Repair llx_receptiondet_batch.fk_commandefourndet</th></tr>';
 	echo '<tr><td>Repair in progress. This may take a while.</td></tr>';
 
-	$sql_dispatch = 'SELECT * FROM '.MAIN_DB_PREFIX.'receptiondet_batch WHERE COALESCE(fk_commandefourndet, 0) = 0';
+	$sql_dispatch = 'SELECT * FROM '.MAIN_DB_PREFIX.'receptiondet_batch WHERE COALESCE(fk_elementdet, 0) = 0';
 	$db->begin();
 	$resql_dispatch = $db->query($sql_dispatch);
 	$n_processed_rows = 0;
@@ -1529,17 +1529,17 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 				$qty_for_line = min($remaining_qty, $obj_line->qty);
 				if ($first_iteration) {
 					$sql_attach = 'UPDATE '.MAIN_DB_PREFIX.'receptiondet_batch';
-					$sql_attach .= ' SET fk_commandefourndet = '.((int) $obj_line->rowid).', qty = '.((float) $qty_for_line);
+					$sql_attach .= ' SET fk_elementdet = '.((int) $obj_line->rowid).', qty = '.((float) $qty_for_line);
 					$sql_attach .= ' WHERE rowid = '.((int) $obj_dispatch->rowid);
 					$first_iteration = false;
 				} else {
 					$sql_attach_values = array(
-						(string) ((int) $obj_dispatch->fk_commande),
-						(string) ((int) $obj_dispatch->fk_product),
-						(string) ((int) $obj_line->rowid),
-						(string) ((float) $qty_for_line),
-						(string) ((int) $obj_dispatch->fk_entrepot),
-						(string) ((int) $obj_dispatch->fk_user),
+						((int) $obj_dispatch->fk_element),
+						((int) $obj_dispatch->fk_product),
+						((int) $obj_line->rowid),
+						((float) $qty_for_line),
+						((int) $obj_dispatch->fk_entrepot),
+						((int) $obj_dispatch->fk_user),
 						$obj_dispatch->datec ? "'".$db->idate($db->jdate($obj_dispatch->datec))."'" : 'NULL',
 						$obj_dispatch->comment ? "'".$db->escape($obj_dispatch->comment)."'" : 'NULL',
 						$obj_dispatch->status ? (string) ((int) $obj_dispatch->status) : 'NULL',
@@ -1551,7 +1551,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 					$sql_attach_values = implode(', ', $sql_attach_values);
 
 					$sql_attach = 'INSERT INTO '.MAIN_DB_PREFIX.'receptiondet_batch';
-					$sql_attach .= ' (fk_commande, fk_product, fk_commandefourndet, qty, fk_entrepot, fk_user, datec, comment, status, tms, batch, eatby, sellby)';
+					$sql_attach .= ' (fk_element, fk_product, fk_elementdet, qty, fk_entrepot, fk_user, datec, comment, status, tms, batch, eatby, sellby)';
 					$sql_attach .= " VALUES (".$sql_attach_values.")";
 				}
 
