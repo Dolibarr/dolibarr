@@ -266,7 +266,7 @@ abstract class DoliDB implements Database
 	/**
 	 *	Return version of database server into an array
 	 *
-	 *	@return	        array  		Version array
+	 *	@return	        string[]  		Version array
 	 */
 	public function getVersionArray()
 	{
