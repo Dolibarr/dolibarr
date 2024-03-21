@@ -1086,13 +1086,13 @@ class DoliDBPgsql extends DoliDB
 		foreach ($fields as $field_name => $field_desc) {
 			$sqlfields[$i] = $this->sanitize($field_name)." ";
 			$sqlfields[$i] .= $this->sanitize($field_desc['type']);
-			if (!is_null($field_desc['value']) && $field_desc['value'] !== '') {
+			if (isset($field_desc['value']) && $field_desc['value'] !== '') {
 				$sqlfields[$i] .= "(".$this->sanitize($field_desc['value']).")";
 			}
-			if (!is_null($field_desc['attribute']) && $field_desc['attribute'] !== '') {
+			if (isset($field_desc['attribute']) && $field_desc['attribute'] !== '') {
 				$sqlfields[$i] .= " ".$this->sanitize($field_desc['attribute']);
 			}
-			if (!is_null($field_desc['default']) && $field_desc['default'] !== '') {
+			if (isset($field_desc['default']) && $field_desc['default'] !== '') {
 				if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
 					$sqlfields[$i] .= " DEFAULT ".((float) $field_desc['default']);
 				} elseif ($field_desc['default'] == 'null' || $field_desc['default'] == 'CURRENT_TIMESTAMP') {
@@ -1101,16 +1101,16 @@ class DoliDBPgsql extends DoliDB
 					$sqlfields[$i] .= " DEFAULT '".$this->escape($field_desc['default'])."'";
 				}
 			}
-			if (!is_null($field_desc['null']) && $field_desc['null'] !== '') {
+			if (isset($field_desc['null']) && $field_desc['null'] !== '') {
 				$sqlfields[$i] .= " ".$this->sanitize($field_desc['null'], 0, 0, 1);
 			}
-			if (!is_null($field_desc['extra']) && $field_desc['extra'] !== '') {
+			if (isset($field_desc['extra']) && $field_desc['extra'] !== '') {
 				$sqlfields[$i] .= " ".$this->sanitize($field_desc['extra'], 0, 0, 1);
 			}
+			if (!empty($primary_key) && $primary_key == $field_name) {
+				$sqlfields[$i] .= " AUTO_INCREMENT PRIMARY KEY";	// mysql instruction that will be converted by driver late
+			}
 			$i++;
-		}
-		if ($primary_key != "") {
-			$pk = "PRIMARY KEY(".$this->sanitize($primary_key).")";
 		}
 
 		if (is_array($unique_keys)) {
@@ -1128,9 +1128,6 @@ class DoliDBPgsql extends DoliDB
 			}
 		}
 		$sql .= implode(', ', $sqlfields);
-		if ($primary_key != "") {
-			$sql .= ",".$pk;
-		}
 		if ($unique_keys != "") {
 			$sql .= ",".implode(',', $sqluq);
 		}
