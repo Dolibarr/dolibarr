@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2023 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021-2023 Waël Almoman         <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -140,12 +140,11 @@ class box_members_by_tags extends ModeleBoxes
 				$line++;
 				$AdherentTag = array();
 				foreach ($sumMembers as $key => $data) {
-					$adhtag = new Categorie($this->db);
-					$adhtag->id = $key;
-
 					if ($key == 'total') {
 						break;
 					}
+					$adhtag = new Categorie($this->db);
+					$adhtag->id = (int) $key;
 					$adhtag->label = $data['label'];
 					$AdherentTag[$key] = $adhtag;
 
