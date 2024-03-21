@@ -1393,7 +1393,7 @@ class ActionComm extends CommonObject
 	 *
 	 * @param	User	$user   			Object user
 	 * @param	int		$load_state_board	Load indicator array this->nb
-	 * @return WorkboardResponse|int 		Return integer <0 if KO, WorkboardResponse if OK
+	 * @return WorkboardResponse|int<-1,1>	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $load_state_board = 0)
 	{
@@ -1462,7 +1462,7 @@ class ActionComm extends CommonObject
 			}
 
 			$this->db->free($resql);
-			if (empty($load_state_board)) {
+			if (empty($load_state_board) && $response instanceof WorkboardResponse) {
 				return $response;
 			} else {
 				return 1;

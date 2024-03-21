@@ -200,17 +200,17 @@ class Fichinter extends CommonObject
 	/*
 	 * Signed by sender
 	 */
-	CONST STATUS_SIGNED_SENDER   = 1;
+	const STATUS_SIGNED_SENDER   = 1;
 
 	/*
 	 * Signed by receiver
 	 */
-	CONST STATUS_SIGNED_RECEIVER = 2;
+	const STATUS_SIGNED_RECEIVER = 2;
 
 	/*
 	 * Signed by all
 	 */
-	CONST STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
+	const STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
 
 	/**
 	 * Date delivery
@@ -1010,7 +1010,7 @@ class Fichinter extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/fichinter/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if ($mybool === false) {

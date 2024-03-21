@@ -66,7 +66,7 @@ class pdf_standard extends ModelePDFMovement
 		global $conf, $langs, $mysoc;
 
 		// Load traductions files required by page
-		$langs->loadLangs(array("main", "companies"));
+		$langs->loadLangs(array("main", "companies", "productbatch"));
 
 		$this->db = $db;
 		$this->name = "stdmouvement";
@@ -861,7 +861,7 @@ class pdf_standard extends ModelePDFMovement
 		//$pdf->line($this->posxqty - 1, $tab_top, $this->posxqty - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxqty, $tab_top + 1);
-			$pdf->MultiCell($this->posxup - $this->posxqty, 2, $outputlangs->transnoentities("Lot/Série"), '', 'C');
+			$pdf->MultiCell($this->posxup - $this->posxqty, 2, $outputlangs->transnoentities("Batch"), '', 'C');
 		}
 
 		//Code Inv
