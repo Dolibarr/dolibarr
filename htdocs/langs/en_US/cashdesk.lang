@@ -158,3 +158,4 @@ InvoiceDiscount=Invoice discount
 InvoiceDiscountShort=Invoice disc.
 TestPrinterDesc=The server will send a simple test page to a ESC/POS printer
 TestPrinterDesc2=The server will send an enhanced test page with image and barcode to a ESC/POS printer
+CloseTerminal=Close terminal
