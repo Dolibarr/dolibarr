@@ -71,7 +71,7 @@ class DoliDBTest extends CommonClassTest
 			'label' => array('type' => 'varchar', 'value' => 255, 'null'=>'NOT NULL'),
 			'position' => array('type' => 'integer', 'null'=>'NULL'),
 			'use_default' => array('type' => 'varchar', 'value' => 1, 'default'=>'1'),
-			'active' => array('type' => 'integer', 'value' => 3)
+			'active' => array('type' => 'integer')
 		);
 		$primaryKey = 'rowid';
 
