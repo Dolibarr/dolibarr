@@ -240,7 +240,7 @@ class WebsitePage extends CommonObject
 	 * @param string    $website_id     Web site id (page name must also be filled if this parameter is used)
 	 * @param string    $page           Page name (website id must also be filled if this parameter is used). Example 'myaliaspage' or 'fr/myaliaspage'
 	 * @param string    $aliasalt       Alternative alias to search page (slow)
-	 * @return int 						Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @return int<-1,1>				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $website_id = null, $page = null, $aliasalt = null)
 	{
@@ -365,7 +365,7 @@ class WebsitePage extends CommonObject
 	 * @param  string|array	$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
-	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 * @return WebSitePage[]|int<-1,-1>    	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($websiteid, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
