@@ -920,7 +920,7 @@ class DoliDBMysqli extends DoliDB
 		// phpcs:enable
 		$tmptable = preg_replace('/[^a-z0-9\.\-\_]/i', '', $table);
 
-		$sql = "DROP TABLE ".$tmptable;
+		$sql = "DROP TABLE ".$this->sanitize($tmptable);
 
 		if (!$this->query($sql)) {
 			return -1;
