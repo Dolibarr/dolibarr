@@ -657,3 +657,10 @@ SearchUnpaidSupplierInvoicesWithDueDate=Search unpaid supplier invoices with a d
 SearchValidatedSupplierInvoicesWithDate=Search unpaid supplier invoices with a validation date = %s
 SendEmailsRemindersOnSupplierInvoiceDueDate=Send reminder by email for validated and unpaid supplier invoices
 PaymentMadeForSeveralInvoices=Payment made for several invoices
+WarningsObjectIsNotASituation=Warning, this invoice is not a situation
+SituationInvoiceProgressTotal=Total progress
+SituationInvoiceProgressCurrent=Invoice progress
+SituationInvoiceNewMethodAlert=Important:<br>- If you were using status invoices before activating this method: Reset the 'Allow status invoices' value to Yes and use the module <a href="https://github.com/progiseize/facture_situation_migration" target="_blank">FactureSituationMigration</a>.<br>- If you weren't using situation invoices before, you can confirm.
+SituationInvoiceNewMethodAlertMulticompany=(All MultiCompany instances combined)
+SituationInvoiceConfirmMigrationTitle=Are you sure you want to confirm the migration ?
+SituationInvoiceConfirmMigration=The new status invoice system requires a data migration if you were already using status invoices.<br><br>Confirm you've done it or don't need it?

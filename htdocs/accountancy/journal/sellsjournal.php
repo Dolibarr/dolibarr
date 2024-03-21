@@ -304,13 +304,27 @@ if ($result) {
 		}
 
 		$tabttc[$obj->rowid][$compta_soc] += $total_ttc;
-		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht * $situation_ratio;
-		$tva_npr = ((($obj->info_bits & 1) == 1) ? 1 : 0);
-		if (!$tva_npr) { // We ignore line if VAT is a NPR
-			$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio;
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+			$tabht[$obj->rowid][$compta_prod] += $obj->total_ht * $situation_ratio;
+		} else {
+			$tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
 		}
-		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1 * $situation_ratio;
-		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2 * $situation_ratio;
+		$tva_npr = (($obj->info_bits & 1 == 1) ? 1 : 0);
+		if (!$tva_npr) {
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+				$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio; // We ignore line if VAT is a NPR
+			} else {
+				$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva; // We ignore line if VAT is a NPR
+			}
+		}
+
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+			$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1 * $situation_ratio;
+			$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2 * $situation_ratio;
+		} else {
+			$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
+			$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
+		}
 
 		$compta_revenuestamp = 'NotDefined';
 		if (!empty($revenuestamp)) {

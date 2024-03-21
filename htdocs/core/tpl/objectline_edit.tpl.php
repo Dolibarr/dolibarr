@@ -300,6 +300,19 @@ $coldisplay++;
 	// Progession for situation invoices
 	if ($object->situation_cycle_ref) {
 		$coldisplay++;
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+			$fieldv = (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent);
+		} elseif (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			$tmp_fieldv = (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent);
+			$old_fieldv = $line->get_allprev_progress($line->fk_facture);
+			$fieldv = $tmp_fieldv + $old_fieldv;
+		}
+
+		print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress">%</td>';
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			$coldisplay++;
+			print '<td></td>';
+		}
 		print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.(GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent).'" name="progress">%</td>';
 		$coldisplay++;
 		print '<td></td>';
