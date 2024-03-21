@@ -87,11 +87,11 @@ class LogHandler
 	 * It will be called after setting the configuration.
 	 * The function returns an array with error messages
 	 *
-	 * @return array
+	 * @return bool
 	 */
 	public function checkConfiguration()
 	{
-		return array();
+		return true;
 	}
 
 	/**

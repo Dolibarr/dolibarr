@@ -83,7 +83,7 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	 */
 	public function checkConfiguration()
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$facility = constant(getDolGlobalString('SYSLOG_FACILITY'));
 
