@@ -1,8 +1,17 @@
 ---
 name: pre-commit
 on:
-  pull_request:
-  push:
+  # pull_request:
+  # push:
+  workflow_call:
+    inputs:
+      gh_event:
+        required: true
+        type: string
+  workflow_dispatch:
+
+env:
+  gh_event: ${{ inputs.gh_event || github.event_name }}
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
@@ -20,7 +29,7 @@ jobs:
       - name: Get all changed php files (if PR)
         id: changed-php
         uses: tj-actions/changed-files@v43
-        if: github.event_name == 'pull_request'
+        if: env.gh_event == 'pull_request'
         with:
           files: |
             **.php
@@ -58,7 +67,7 @@ jobs:
       # - name: Get all changed php files (if PR)
       #   id: changed-php
       #   uses: tj-actions/changed-files@v43
-      #   if: github.event_name == 'pull_request'
+      #   if: env.gh_event == 'pull_request'
       #   with:
       #     files: |
       #        **.php
@@ -72,7 +81,7 @@ jobs:
             steps.changed-php.outputs.any_changed == 'true'
             ||
             (
-              github.event_name == 'push'
+              env.gh_event == 'push'
               && (
                    github.event.ref == 'refs/heads/develop'
                  || endsWith(github.event.ref, '.0')
@@ -94,7 +103,7 @@ jobs:
 
       - name: Run some pre-commit hooks on all files on push to "main" branches
         if: |
-          github.event_name == 'push'
+          env.gh_event == 'push'
           && (
                github.event.ref == 'refs/heads/develop'
              || endsWith(github.event.ref, '.0')
