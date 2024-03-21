@@ -98,7 +98,7 @@ if ($action == 'set') {
 		// add terminal permissions
 		require_once DOL_DOCUMENT_ROOT . '/core/modules/modTakePos.class.php';
 		$module = new modTakePos($db);
-		$module->delete_permissions(); // $module->rights already loaded in module _construct so we dont lose anything
+		$module->delete_permissions(); // $module->rights already loaded in module _construct so we don't lose anything
 		addTerminalPermissions($module);
 		$module->insert_permissions(1);
 
