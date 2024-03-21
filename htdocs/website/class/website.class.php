@@ -1868,6 +1868,8 @@ class Website extends CommonObject
 				$numOfPageDest = $this->extractNumberFromFilename($fileNeeded['name']);
 				$differences = $this->showDifferences($destContent, $sourceContent, array($numOfPageDest,$numOfPageSource));
 				$differences['file_destination'] = $fileNeeded;
+			} else {
+				$differences = array();
 			}
 			return $differences;
 		}
