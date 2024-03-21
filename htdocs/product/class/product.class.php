@@ -1898,13 +1898,13 @@ class Product extends CommonObject
 			while ($obj = $this->db->fetch_object($result)) {
 				//print 'lang='.$obj->lang.' current='.$current_lang.'<br>';
 				if ($obj->lang == $current_lang) {  // si on a les traduct. dans la langue courante on les charge en infos principales.
-					$this->label        = $obj->label;
+					$this->label       = $obj->label;
 					$this->description = $obj->description;
-					$this->other        = $obj->other;
+					$this->other       = $obj->other;
 				}
-				$this->multilangs["$obj->lang"]["label"]        = $obj->label;
-				$this->multilangs["$obj->lang"]["description"] = $obj->description;
-				$this->multilangs["$obj->lang"]["other"]        = $obj->other;
+				$this->multilangs[(string) $obj->lang]["label"]       = $obj->label;
+				$this->multilangs[(string) $obj->lang]["description"] = $obj->description;
+				$this->multilangs[(string) $obj->lang]["other"]       = $obj->other;
 			}
 			return 1;
 		} else {

@@ -1840,8 +1840,11 @@ if ($placeid > 0) {
 						$sql .= " AND ps.fk_product = ".((int) $line->fk_product);
 						$resql = $db->query($sql);
 						if ($resql) {
+							$stock_real = 0;
 							$obj = $db->fetch_object($resql);
-							$stock_real = price2num($obj->reel, 'MS');
+							if ($obj) {
+								$stock_real = price2num($obj->reel, 'MS');
+							}
 							$htmlforlines .= $line->qty;
 							if ($line->qty && $line->qty > $stock_real) {
 								$htmlforlines .= '<span style="color: var(--amountremaintopaycolor)">';

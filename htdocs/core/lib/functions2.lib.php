@@ -1424,6 +1424,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskuser_maskafter = $maskuser_value;
 			$numFinal = str_replace($maskuser_maskbefore, $maskuser_maskafter, $numFinal);
 		}
+	} else {
+		$numFinal = "ErrorBadMode";
+		dol_syslog("functions2::get_next_value ErrorBadMode '$mode'", LOG_ERR);
 	}
 
 	dol_syslog("functions2::get_next_value return ".$numFinal, LOG_DEBUG);
