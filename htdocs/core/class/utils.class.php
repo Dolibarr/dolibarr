@@ -1228,7 +1228,7 @@ class Utils
 						} elseif (is_string($row[$j]) && $row[$j] == '') {
 							// if it's an empty string, we set it as an empty string
 							$row[$j] = "''";
-						} elseif (is_numeric($row[$j]) && !strcmp((string) $row[$j], (string) ($row[$j] + 0))) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
+						} elseif (is_numeric($row[$j]) && !strcmp((string) $row[$j], (string) ((float) $row[$j] + 0))) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
 							// if it's a number, we return it as-is
 							//	                    $row[$j] = $row[$j];
 						} else { // else for all other cases we escape the value and put quotes around
