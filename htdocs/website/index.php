@@ -4301,7 +4301,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		// Add link to add layout
 		$out .= '<a href="#" id="linkforlayouttemplates" class="reposition notasortlink inline-block alink marginrightonly">';
 		$out .= img_picto($langs->trans("FillMessageWithALayout"), 'layout', 'class="paddingrightonly"');
-		$out .= $langs->trans("FillMessageWithALayout").'...';
+		$out .= $langs->trans("FillPageWithALayout").'...';
 		$out .= '</a> &nbsp; &nbsp; ';
 
 		$out .= '<script>
@@ -4343,14 +4343,12 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 					</script>';
 		}
 
-		$out .= $formwebsite->getContentPageTemplate('content', $objectpage->content);
+		$out .= $formwebsite->getContentPageTemplate('content');
 
 		if ($formmail->withaiprompt && isModEnabled('ai')) {
 			$out .= $formmail->getSectionForAIPrompt('', 'content');
 		}
 		print $out;
-		//var_dump(GETPOST('sample'));
-		//print $formwebsite->selectSampleOfContainer('sample', (GETPOSTISSET('sample') ? GETPOST('sample', 'alpha') : 'empty'), 0, '', 1, 'minwidth300');
 		print '</td></tr>';
 	}
 
@@ -4580,10 +4578,10 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print '</td></tr>';
 	}
 
-	print '<tr id="pageContent" class="hideobject"><td>';
+	print '<tr id="pageContent" class="hideobject"><td class="toptd">';
 	print $langs->trans('PreviewPageContent');
 	print '</td><td>';
-	$doleditor = new DolEditor('content', GETPOST('content', 'restricthtmlallowunvalid'), '', 600, 'dolibarr_mailings', '', true, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '90%');
+	$doleditor = new DolEditor('content', GETPOST('content', 'restricthtmlallowunvalid'), '', 200, 'dolibarr_readonly', 'In', true, true, true, 40, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
