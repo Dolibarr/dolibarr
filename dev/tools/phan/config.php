@@ -495,7 +495,7 @@ return [
 		'PhanPossiblyNullTypeMismatchProperty',
 		'PhanRedefineClass',
 		'PhanRedefineFunction',
-		'PhanTypeInvalidLeftOperandOfBitwiseOp',
+		// 'PhanTypeInvalidLeftOperandOfBitwiseOp',
 		// 'PhanTypeMismatchDimAssignment',
 		// 'PhanPluginDescriptionlessCommentOnProtectedMethod',
 		// 'PhanPluginPrintfIncompatibleArgumentTypeWeak',
