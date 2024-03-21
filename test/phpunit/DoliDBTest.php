@@ -53,6 +53,41 @@ class DoliDBTest extends CommonClassTest
 	 *
 	 * @return	int
 	 */
+	public function testDDLCreateTable()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$namedic = MAIN_DB_PREFIX.'tmptesttabletoremove';
+
+		$res = $db->DDLDropTable($namedic);
+
+		$columns = array(
+			'rowid' => array('type' => 'integer', 'value' => 11, 'AUTO_INCREMENT PRIMARY KEY'),
+			'code' => array('type' => 'varchar', 'value' => 255, 'null'=>'NOT NULL'),
+			'label' => array('type' => 'varchar', 'value' => 255, 'null'=>'NOT NULL'),
+			'position' => array('type' => 'integer', 'value' => 11, 'null'=>'NULL'),
+			'use_default' => array('type' => 'varchar', 'value' => 11, 'default'=>'1'),
+			'active' => array('type' => 'integer', 'value' => 3)
+		);
+		$primaryKey = 'rowid';
+
+		print __METHOD__.' db->type = '.$db->type."\n";
+
+		$res = $db->DDLCreateTable($namedic, $columns, $primaryKey, "");
+
+		$this->assertEquals(1, $res);
+		print __METHOD__." result=".$res."\n";
+	}
+
+	/**
+	 * testDDLUpdateField
+	 *
+	 * @return	int
+	 */
 	public function testDDLUpdateField()
 	{
 		global $conf,$user,$langs,$db;
@@ -81,9 +116,10 @@ class DoliDBTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 
 		// TODO Use $savtype and $savnull instead of hard coded
-		$field_desc = array('type' => 'varchar', 'value' => '16', 'null' => 'NOT NULL');
+		$field_desc = array('type'=>'varchar', 'value'=>'16', 'null'=>'NOT NULL', 'default'=>'aaaabbbbccccdddd');
 
 		$result = $db->DDLUpdateField($db->prefix().'c_paper_format', 'code', $field_desc);
+
 		$this->assertEquals(1, $result);
 		print __METHOD__." result=".$result."\n";
 

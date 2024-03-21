@@ -104,7 +104,7 @@ FIX: #yogosha21416
 
 For users:
 ----------
-NEW: Compatibility with PHP 8.2
+NEW: Compatibility with PHP 8.2 (warning must be disabled)
 NEW: Module Workstation (used to enhance the module BOM and Manufacturing Order) is now stable
 NEW: Add a CLI tool to regenerate all documents
 NEW: Add a confirmation popup when deleting extrafields
