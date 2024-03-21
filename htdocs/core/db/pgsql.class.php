@@ -1106,7 +1106,7 @@ class DoliDBPgsql extends DoliDB
 				$sqlfields[$i] .= " ".$this->sanitize($field_desc['null'], 0, 0, 1);
 			}
 			if (!is_null($field_desc['extra']) && $field_desc['extra'] !== '') {
-				$sqlfields[$i] .= " ".$this->sanitize($field_desc['extra']);
+				$sqlfields[$i] .= " ".$this->sanitize($field_desc['extra'], 0, 0, 1);
 			}
 			$i++;
 		}
@@ -1229,9 +1229,9 @@ class DoliDBPgsql extends DoliDB
 			}
 		}
 		if (isset($field_desc['extra']) && preg_match("/^[^\s]/i", $field_desc['extra'])) {
-			$sql .= " ".$this->escape($field_desc['extra'], 0, 0, 1);
+			$sql .= " ".$this->sanitize($field_desc['extra'], 0, 0, 1);
 		}
-		$sql .= " ".$this->escape($field_position, 0, 0, 1);
+		$sql .= " ".$this->sanitize($field_position, 0, 0, 1);
 
 		dol_syslog($sql, LOG_DEBUG);
 		if (!$this -> query($sql)) {
