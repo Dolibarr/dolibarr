@@ -2102,8 +2102,7 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 	}
 
 	//chercher la table dicname
-	$query = "SHOW TABLES LIKE '" . MAIN_DB_PREFIX.strtolower($newdicname) . "'";
-	$checkTable = $db->query($query);
+	$checkTable = $db->DDLDescTable(MAIN_DB_PREFIX.strtolower($newdicname));
 	if ($checkTable && $db->num_rows($checkTable) <= 0) {
 		$error++;
 	}
