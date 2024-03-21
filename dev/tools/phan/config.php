@@ -463,7 +463,7 @@ return [
 		// 'PhanTypeMismatchPropertyProbablyReal',
 		// 'PhanPluginNoCommentOnPrivateMethod',
 		'PhanPluginUnknownArrayFunctionReturnType',
-		'PhanTypeInvalidLeftOperandOfAdd',
+		// 'PhanTypeInvalidLeftOperandOfAdd',
 		// 'PhanPluginNoCommentOnPrivateProperty',
 		// 'PhanPluginNoCommentOnFunction',
 		'PhanPluginUnknownArrayFunctionParamType',
