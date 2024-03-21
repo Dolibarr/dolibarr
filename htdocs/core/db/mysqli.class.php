@@ -866,7 +866,7 @@ class DoliDBMysqli extends DoliDB
 				$sqlfields[$i] .= " ".$this->sanitize($field_desc['null'], 0, 0, 1);
 			}
 			if (!is_null($field_desc['extra']) && $field_desc['extra'] !== '') {
-				$sqlfields[$i] .= " ".$this->sanitize($field_desc['extra']);
+				$sqlfields[$i] .= " ".$this->sanitize($field_desc['extra'], 0, 0, 1);
 			}
 			$i++;
 		}
@@ -940,7 +940,7 @@ class DoliDBMysqli extends DoliDB
 	public function DDLDescTable($table, $field = "")
 	{
 		// phpcs:enable
-		$sql = "DESC ".$table." ".$field;
+		$sql = "DESC ".$this->sanitize($table)." ".$this->sanitize($field);
 
 		dol_syslog(get_class($this)."::DDLDescTable ".$sql, LOG_DEBUG);
 		$this->_results = $this->query($sql);
@@ -962,30 +962,32 @@ class DoliDBMysqli extends DoliDB
 		// phpcs:enable
 		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-		$sql = "ALTER TABLE ".$table." ADD ".$field_name." ";
-		$sql .= $field_desc['type'];
-		if (preg_match("/^[^\s]/i", $field_desc['value'])) {
-			if (!in_array($field_desc['type'], array('date', 'datetime')) && $field_desc['value']) {
-				$sql .= "(".$field_desc['value'].")";
+		$sql = "ALTER TABLE ".$this->sanitize($table)." ADD ".$this->sanitize($field_name)." ";
+		$sql .= $this->sanitize($field_desc['type']);
+		if (isset($field_desc['value']) && preg_match("/^[^\s]/i", $field_desc['value'])) {
+			if (!in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'date', 'datetime')) && $field_desc['value']) {
+				$sql .= "(".$this->sanitize($field_desc['value']).")";
 			}
 		}
 		if (isset($field_desc['attribute']) && preg_match("/^[^\s]/i", $field_desc['attribute'])) {
-			$sql .= " ".$field_desc['attribute'];
+			$sql .= " ".$this->sanitize($field_desc['attribute']);
 		}
 		if (isset($field_desc['null']) && preg_match("/^[^\s]/i", $field_desc['null'])) {
 			$sql .= " ".$field_desc['null'];
 		}
 		if (isset($field_desc['default']) && preg_match("/^[^\s]/i", $field_desc['default'])) {
-			if (preg_match("/null/i", $field_desc['default'])) {
-				$sql .= " default ".$field_desc['default'];
+			if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
+				$sql .= " DEFAULT ".((float) $field_desc['default']);
+			} elseif ($field_desc['default'] == 'null' || $field_desc['default'] == 'CURRENT_TIMESTAMP') {
+				$sql .= " DEFAULT ".$this->sanitize($field_desc['default']);
 			} else {
-				$sql .= " default '".$this->escape($field_desc['default'])."'";
+				$sql .= " DEFAULT '".$this->escape($field_desc['default'])."'";
 			}
 		}
 		if (isset($field_desc['extra']) && preg_match("/^[^\s]/i", $field_desc['extra'])) {
-			$sql .= " ".$field_desc['extra'];
+			$sql .= " ".$this->escape($field_desc['extra'], 0, 0, 1);
 		}
-		$sql .= " ".$field_position;
+		$sql .= " ".$this->escape($field_position, 0, 0, 1);
 
 		dol_syslog(get_class($this)."::DDLAddField ".$sql, LOG_DEBUG);
 		if ($this->query($sql)) {
@@ -1006,18 +1008,18 @@ class DoliDBMysqli extends DoliDB
 	public function DDLUpdateField($table, $field_name, $field_desc)
 	{
 		// phpcs:enable
-		$sql = "ALTER TABLE ".$table;
-		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
+		$sql = "ALTER TABLE ".$this->sanitize($table);
+		$sql .= " MODIFY COLUMN ".$this->sanitize($field_name)." ".$this->sanitize($field_desc['type']);
 		if (in_array($field_desc['type'], array('double', 'tinyint', 'int', 'varchar')) && $field_desc['value']) {
-			$sql .= "(".$field_desc['value'].")";
+			$sql .= "(".$this->sanitize($field_desc['value']).")";
 		}
 		if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL') {
 			// We will try to change format of column to NOT NULL. To be sure the ALTER works, we try to update fields that are NULL
 			if ($field_desc['type'] == 'varchar' || $field_desc['type'] == 'text') {
-				$sqlbis = "UPDATE ".$table." SET ".$field_name." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$field_name." IS NULL";
+				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->sanitize($field_name)." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$this->sanitize($field_name)." IS NULL";
 				$this->query($sqlbis);
-			} elseif ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') {
-				$sqlbis = "UPDATE ".$table." SET ".$field_name." = ".((int) $this->escape(isset($field_desc['default']) ? $field_desc['default'] : 0))." WHERE ".$field_name." IS NULL";
+			} elseif (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
+				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->sanitize($field_name)." = ".((float) $this->escape(isset($field_desc['default']) ? $field_desc['default'] : 0))." WHERE ".$this->sanitize($field_name)." IS NULL";
 				$this->query($sqlbis);
 			}
 
@@ -1053,7 +1055,7 @@ class DoliDBMysqli extends DoliDB
 		// phpcs:enable
 		$tmp_field_name = preg_replace('/[^a-z0-9\.\-\_]/i', '', $field_name);
 
-		$sql = "ALTER TABLE ".$table." DROP COLUMN `".$tmp_field_name."`";
+		$sql = "ALTER TABLE ".$this->sanitize($table)." DROP COLUMN `".$this->sanitize($tmp_field_name)."`";
 		if ($this->query($sql)) {
 			return 1;
 		}

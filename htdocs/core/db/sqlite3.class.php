@@ -1118,16 +1118,18 @@ class DoliDBSqlite3 extends DoliDB
 			$sql .= " ".$field_desc['null'];
 		}
 		if (preg_match("/^[^\s]/i", $field_desc['default'])) {
-			if (preg_match("/null/i", $field_desc['default'])) {
-				$sql .= " default ".$field_desc['default'];
+			if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
+				$sql .= " DEFAULT ".((float) $field_desc['default']);
+			} elseif ($field_desc['default'] == 'null' || $field_desc['default'] == 'CURRENT_TIMESTAMP') {
+				$sql .= " DEFAULT ".$this->sanitize($field_desc['default']);
 			} else {
-				$sql .= " default '".$this->escape($field_desc['default'])."'";
+				$sql .= " DEFAULT '".$this->escape($field_desc['default'])."'";
 			}
 		}
-		if (preg_match("/^[^\s]/i", $field_desc['extra'])) {
-			$sql .= " ".$field_desc['extra'];
+		if (isset($field_desc['extra']) && preg_match("/^[^\s]/i", $field_desc['extra'])) {
+			$sql .= " ".$this->escape($field_desc['extra'], 0, 0, 1);
 		}
-		$sql .= " ".$field_position;
+		$sql .= " ".$this->escape($field_position, 0, 0, 1);
 
 		dol_syslog(get_class($this)."::DDLAddField ".$sql, LOG_DEBUG);
 		if (!$this->query($sql)) {
@@ -1148,10 +1150,10 @@ class DoliDBSqlite3 extends DoliDB
 	public function DDLUpdateField($table, $field_name, $field_desc)
 	{
 		// phpcs:enable
-		$sql = "ALTER TABLE ".$table;
-		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
+		$sql = "ALTER TABLE ".$this->sanitize($table);
+		$sql .= " MODIFY COLUMN ".$this->sanitize(($field_name)." ".$this->sanitize($field_desc['type']);
 		if ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
-			$sql .= "(".$field_desc['value'].")";
+			$sql .= "(".$this->sanitize($field_desc['value']).")";
 		}
 
 		dol_syslog(get_class($this)."::DDLUpdateField ".$sql, LOG_DEBUG);
@@ -1174,7 +1176,7 @@ class DoliDBSqlite3 extends DoliDB
 		// phpcs:enable
 		$tmp_field_name = preg_replace('/[^a-z0-9\.\-\_]/i', '', $field_name);
 
-		$sql = "ALTER TABLE ".$table." DROP COLUMN `".$tmp_field_name."`";
+		$sql = "ALTER TABLE ".$this->sanitize($table)." DROP COLUMN `".$this->sanitize($tmp_field_name)."`";
 		if (!$this->query($sql)) {
 			$this->error = $this->lasterror();
 			return -1;

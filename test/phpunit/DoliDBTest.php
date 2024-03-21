@@ -66,7 +66,7 @@ class DoliDBTest extends CommonClassTest
 		$res = $db->DDLDropTable($namedic);
 
 		$columns = array(
-			'rowid' => array('type' => 'integer', 'value' => 11),
+			'rowid' => array('type' => 'integer', 'value' => 11, 'AUTO_INCREMENT PRIMARY KEY'),
 			'code' => array('type' => 'varchar', 'value' => 255, 'null'=>'NOT NULL'),
 			'label' => array('type' => 'varchar', 'value' => 255, 'null'=>'NOT NULL'),
 			'position' => array('type' => 'integer', 'value' => 11, 'null'=>'NULL'),
