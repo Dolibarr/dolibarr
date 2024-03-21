@@ -529,7 +529,7 @@ function ChangeThirdparty(idcustomer) {
 function deleteline() {
 	console.log("Delete line");
 	invoiceid = $("#invoiceid").val();
-	$("#poslines").load("invoice.php?action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"invoiceid="+invoiceid, function() {
+	$("#poslines").load("invoice.php?action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&invoiceid="+invoiceid, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 	ClearSearch();
