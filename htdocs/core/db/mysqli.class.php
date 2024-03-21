@@ -889,7 +889,7 @@ class DoliDBMysqli extends DoliDB
 				$i++;
 			}
 		}
-		$sql .= implode(',', $sqlfields);
+		$sql .= implode(', ', $sqlfields);
 		if ($primary_key != "") {
 			$sql .= ",".$pk;
 		}
