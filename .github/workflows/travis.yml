@@ -32,8 +32,8 @@ jobs:
       #    - "8.2"
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Wait until all workflow_runs define workflows are successful
-        uses: ahmadnassri/action-workflow-run-wait@v1
+      - name: Wait until all workflow_runs defined workflows are successful
+        uses: ahmadnassri/action-workflow-run-wait@v1.4.4
 
       - name: Run .travis.yml build script
         uses: ktomk/run-travis-yml@v1

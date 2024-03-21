@@ -32,8 +32,8 @@ jobs:
         php_version: [7.4]  # Add more versions if needed
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Wait until all workflow_runs define workflows are successful
-        uses: ahmadnassri/action-workflow-run-wait@v1
+      - name: Wait until all workflow_runs defined workflows are successful
+        uses: ahmadnassri/action-workflow-run-wait@v1.4.4
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Setup MariaDB

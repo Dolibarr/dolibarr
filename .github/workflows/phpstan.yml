@@ -7,7 +7,8 @@ on:
   # push:
   # pull_request:
   workflow_run:
-    workflows: [pre-commit, phan]
+    #workflows: [pre-commit, phan]
+    workflows: [pre-commit]
     types: [completed]
 
 concurrency:
@@ -32,8 +33,8 @@ jobs:
           - "8.2"
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Wait until all workflow_runs define workflows are successful
-        uses: ahmadnassri/action-workflow-run-wait@v1
+      # - name: Wait until all workflow_runs define workflows are successful
+      #  uses: ahmadnassri/action-workflow-run-wait@v1.4.4
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
