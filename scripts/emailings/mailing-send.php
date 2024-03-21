@@ -154,7 +154,7 @@ if ($resql) {
 			$sql2 .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 			$sql2 .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".((int) $id);
 			if (getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') > 0 && empty($max)) {
-				$sql2 .= " LIMIT " . getDolGlobalString('MAILING_LIMIT_SENDBYCLI');
+				$sql2 .= " LIMIT " . getDolGlobalInt('MAILING_LIMIT_SENDBYCLI');
 			} elseif (getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') > 0 && $max > 0) {
 				$sql2 .= " LIMIT ".min(getDolGlobalInt('MAILING_LIMIT_SENDBYCLI'), $max);
 			} elseif ($max > 0) {
