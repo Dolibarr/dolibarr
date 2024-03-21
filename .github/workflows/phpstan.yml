@@ -3,7 +3,13 @@
 name: "PHPStan"
 
 # Controls when the workflow will run
-on: [push, pull_request]
+on:
+  # push:
+  # pull_request:
+  workflow_run:
+    workflows: [pre-commit, phan]
+    types: [completed]
+
 concurrency:
     group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
     cancel-in-progress: true
@@ -26,6 +32,9 @@ jobs:
           - "8.2"
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: Wait until all workflow_runs define workflows are successful
+        uses: ahmadnassri/action-workflow-run-wait@v1
+
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 

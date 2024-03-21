@@ -2,9 +2,13 @@
 name: Win CI
 # yamllint disable-line rule:truthy
 on:
-  push:
-  pull_request:
-  workflow_dispatch:
+  # push:
+  # pull_request:
+  workflow_dispatch:   # For manual start
+  workflow_run:
+    workflows: [pre-commit, phan]
+    types: [completed]
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref
     }}
@@ -20,6 +24,7 @@ env:
   GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
 jobs:
   win-test:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     strategy:
       matrix:
         os: [windows-latest]
@@ -27,6 +32,8 @@ jobs:
         php_version: [7.4]  # Add more versions if needed
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Wait until all workflow_runs define workflows are successful
+        uses: ahmadnassri/action-workflow-run-wait@v1
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Setup MariaDB
