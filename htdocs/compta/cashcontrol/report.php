@@ -387,7 +387,7 @@ if ($resql) {
 		print '<br>';
 	}
 
-	print $langs->trans("Total").' ('.$totalqty.' '.$langs->trans("Articles").') : <div class="inline-block amount width100">'.price($cash + $cheque + $bank + $other).'</div>';
+	print $langs->trans("Total").' ('.$totalqty.' '.$langs->trans("Articles").') : <div class="inline-block amount width100">'.price((float) $cash + (float) $cheque + (float) $bank + (float) $other).'</div>';
 
 	print '<br>'.$langs->trans("TotalVAT").' : <div class="inline-block amount width100">'.price($totalvat).'</div>';
 
