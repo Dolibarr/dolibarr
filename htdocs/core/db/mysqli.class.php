@@ -832,7 +832,8 @@ class DoliDBMysqli extends DoliDB
 		}
 
 		$pk = '';
-		$sqluq = $sqlk = array();
+		$sqlk = array();
+		$sqluq = array();
 
 		// Keys found into the array $fields: type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array(
