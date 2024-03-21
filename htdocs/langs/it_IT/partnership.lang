@@ -29,7 +29,7 @@ PartnershipCheckBacklink=Partnership: controlla il backlink di riferimento
 # Menu
 #
 NewPartnership=Nuova partnership
-NewPartnershipbyWeb= Your partnership was added successfully.
+NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
 ListOfPartnerships=Elenco delle partnership
 
 #
@@ -38,10 +38,10 @@ ListOfPartnerships=Elenco delle partnership
 PartnershipSetup=Configurazione della partnership
 PartnershipAbout=A proposito di partenariato
 PartnershipAboutPage=Partnership sulla pagina
-partnershipforthirdpartyormember=Lo stato di partner deve essere impostato su "terza parte" o "membro"
+partnershipforthirdpartyormember=Partner status must be set on a 'third party' or a 'member'
 PARTNERSHIP_IS_MANAGED_FOR=Partnership gestita per
 PARTNERSHIP_BACKLINKS_TO_CHECK=Backlink da controllare
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb di giorni prima della cancellazione dello stato di una partnership quando un abbonamento è scaduto
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before canceling status of a partnership when a subscription has expired
 ReferingWebsiteCheck=Verifica del sito web di riferimento
 ReferingWebsiteCheckDesc=Puoi abilitare una funzione per verificare che i tuoi partner abbiano aggiunto un backlink ai domini del tuo sito web sul proprio sito web.
 PublicFormRegistrationPartnerDesc=Dolibarr può fornirti un URL/sito web pubblico per consentire ai visitatori esterni di richiedere di far parte del programma di partnership.
@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Partnership dedicata a questo membro
 DatePartnershipStart=Data di inizio
 DatePartnershipEnd=Data di fine
 ReasonDecline=Rifiuta la ragione
-ReasonDeclineOrCancel=Rifiuta la ragione
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=La partnership esiste già
 ManagePartnership=Gestisci la partnership
 BacklinkNotFoundOnPartnerWebsite=Backlink non trovato sul sito web del partner
@@ -82,15 +82,17 @@ YourPartnershipRefusedTopic=Partnership rifiutata
 YourPartnershipAcceptedTopic=Partnership accettata
 YourPartnershipCanceledTopic=Partnership annullata
 
-YourPartnershipWillSoonBeCanceledContent=Ti informiamo che la tua partnership verrà presto cancellata (Backlink non trovato)
-YourPartnershipRefusedContent=La informiamo che la sua richiesta di partnership è stata rifiutata.
-YourPartnershipAcceptedContent=La informiamo che la sua richiesta di partnership è stata accettata.
-YourPartnershipCanceledContent=Ti informiamo che la tua partnership è stata annullata.
+YourPartnershipWillSoonBeCanceledContent=We would like to inform you that our partnership will soon be canceled (we did not get renewal or a prerequisite for our partnership have not been met). Please contact us if you received this due to an error.
+YourPartnershipRefusedContent=We would like to inform you that your partnership request has been refused. Prerequisites have not been met. Please contact us if you need more information.
+YourPartnershipAcceptedContent=We would like to inform you that your partnership request has been accepted.
+YourPartnershipCanceledContent=We would like to inform you that our partnership has been canceled. Please contact us if you need more information.
 
 CountLastUrlCheckError=Numero di errori per l'ultimo controllo URL
 LastCheckBacklink=Data dell'ultimo controllo dell'URL
-ReasonDeclineOrCancel=Rifiuta la ragione
 
 NewPartnershipRequest=Nuova richiesta di partnership
 NewPartnershipRequestDesc=Questo modulo ti consente di richiedere di far parte di uno dei nostri programmi di partnership. Se hai bisogno di aiuto per compilare questo modulo, contatta via email <b> %s </b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=This page must contains at least one link to one of the following domain: %s
+
+IPOfApplicant=IP of applicant
 

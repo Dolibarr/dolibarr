@@ -34,7 +34,6 @@ PaymentEvent=Pagament de l'esdeveniment
 NewRegistration=Inscripció
 EventOrganizationSetup=Configuració de l'organització d'esdeveniments
 EventOrganization=Organització d'esdeveniments
-Settings=Configuració
 EventOrganizationSetupPage = Pàgina de configuració de l'organització d'esdeveniments
 EVENTORGANIZATION_TASK_LABEL = Nom de tasques per a crear automàticament quan es valida el projecte
 EVENTORGANIZATION_TASK_LABELTooltip = A l'validar un esdeveniment per organitzar, algunes tasques es poden crear automàticament en el <br> <br> projecte Per exemple: <br> Send Call per a les conferències <br> Enviar crida per a cabines de <br> suggeriments Validar de Conferències <br> aplicació Validar per a cabines de <br> subscripcions obertes per a l'esdeveniment per als assistents <br> Envia un recordatori de l'esdeveniment als ponents <br> Envia un recordatori de l'esdeveniment als organitzadors de l'estand <br> Envia un recordatori de l'esdeveniment als assistents
@@ -90,7 +89,7 @@ PriceOfRegistrationHelp=Preu a pagar per inscriure’s o participar a l’esdeve
 PriceOfBooth=Preu de la subscripció per a estand
 PriceOfBoothHelp=Preu de la subscripció per a estand
 EventOrganizationICSLink=Enllaç ICS per a conferències
-ConferenceOrBoothInformation=Informació sobre conferències o estands
+ConferenceOrBoothInformation=Informació sobre la conferència o l'estand
 Attendees=Assistents
 ListOfAttendeesOfEvent=Llista d’assistents al projecte de l’esdeveniment
 DownloadICSLink = Descarregueu l’enllaç ICS
@@ -98,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = Llavor per a assegurar la clau de la pàgina de re
 SERVICE_BOOTH_LOCATION = Servei que s'utilitza per a la fila de factures sobre una ubicació de l'estand
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Servei utilitzat per a la fila de factura sobre la subscripció d'un assistent a un esdeveniment
 NbVotes=Nombre de vots
+
 #
 # Status
 #
@@ -107,8 +107,9 @@ EvntOrgConfirmed = Confirmat
 EvntOrgNotQualified = No qualificat
 EvntOrgDone = Realitzades
 EvntOrgCancelled = Cancel·lat
+
 #
-# Public page
+# Other
 #
 SuggestForm = Pàgina de suggeriments
 SuggestOrVoteForConfOrBooth = Pàgina per suggerir o votar
@@ -144,13 +145,8 @@ OrganizationEventBulkMailToAttendees=Aquest és un recordatori de la vostra part
 OrganizationEventBulkMailToSpeakers=Aquest és un recordatori de la vostra participació a l’esdeveniment com a ponent
 OrganizationEventLinkToThirdParty=Enllaç a tercers (client, proveïdor o soci)
 OrganizationEvenLabelName=Nom públic de la conferència o estand
-
 NewSuggestionOfBooth=Sol·licitud d'estand
 NewSuggestionOfConference=Sol·licitud per a fer una conferència
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = Us donem la benvinguda a la pàgina de suggeriments de conferències o estands.
 EvntOrgRegistrationConfWelcomeMessage = Us donem la benvinguda a la pàgina de suggeriments de la conferència.
 EvntOrgRegistrationBoothWelcomeMessage = Us donem la benvinguda a la pàgina de suggeriments de l'estand.
@@ -158,8 +154,8 @@ EvntOrgVoteHelpMessage = Aquí podeu veure i votar els esdeveniments suggerits p
 VoteOk = El vostre vot s’ha acceptat.
 AlreadyVoted = Ja heu votat per aquest esdeveniment.
 VoteError = S'ha produït un error durant la votació. Torneu-ho a provar.
-
 SubscriptionOk=S'ha enregistrat la teva inscripció
+AmountOfRegistrationPaid=Import de la matrícula pagada
 ConfAttendeeSubscriptionConfirmation = Confirmació de la subscripció a un esdeveniment
 Attendee = Assistent
 PaymentConferenceAttendee = Pagament dels assistents a la conferència
@@ -170,7 +166,7 @@ EmailAttendee=Correu electrònic de l'assistent
 EmailCompany=Correu electrònic de l'empresa
 EmailCompanyForInvoice=Correu electrònic de l'empresa (per a la factura, si és diferent del correu electrònic dels assistents)
 ErrorSeveralCompaniesWithEmailContactUs=S'han trobat diverses empreses amb aquest correu electrònic, de manera que no podem validar automàticament el vostre registre. Si us plau, poseu-vos en contacte amb nosaltres a %s per a una validació manual
-ErrorSeveralCompaniesWithNameContactUs=S'han trobat diverses empreses amb aquest nom, de manera que no podem validar automàticament el vostre registre. Si us plau, poseu-vos en contacte amb nosaltres a %s per a obtenir una validació manual
+ErrorSeveralCompaniesWithNameContactUs=S'han trobat diverses empreses amb aquest nom, de manera que no podem validar automàticament el vostre registre. Si us plau, poseu-vos en contacte amb nosaltres a %s per a una validació manual
 NoPublicActionsAllowedForThisEvent=No hi ha cap acció pública oberta al públic per a aquest esdeveniment
 MaxNbOfAttendees=Nombre màxim d'assistents
 DateStartEvent=Data d'inici de l'esdeveniment

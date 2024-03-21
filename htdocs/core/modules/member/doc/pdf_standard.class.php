@@ -5,6 +5,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo	<jlb@j1b.org>
  * Copyright (C) 2006-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 Francis Appels  <francis.appels@yahoo.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,7 +120,7 @@ class pdf_standard extends CommonStickerGenerator
 
 		$member = new Adherent($db);
 		$member->id = $idmember;
-		$member->ref = $idmember;
+		$member->ref = (string) $idmember;
 
 		// Define photo
 		$dir = $conf->adherent->dir_output;
@@ -133,7 +134,7 @@ class pdf_standard extends CommonStickerGenerator
 
 		// Define background image
 		$backgroundimage = '';
-		if (!empty($conf->global->ADHERENT_CARD_BACKGROUND) && file_exists($conf->adherent->dir_output.'/' . getDolGlobalString('ADHERENT_CARD_BACKGROUND'))) {
+		if (getDolGlobalString('ADHERENT_CARD_BACKGROUND') && file_exists($conf->adherent->dir_output.'/' . getDolGlobalString('ADHERENT_CARD_BACKGROUND'))) {
 			$backgroundimage = $conf->adherent->dir_output.'/' . getDolGlobalString('ADHERENT_CARD_BACKGROUND');
 		}
 
@@ -213,15 +214,13 @@ class pdf_standard extends CommonStickerGenerator
 				}
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell($this->_Width - $widthtouse - $xleft - $xleft - 1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
-			} else // text on halft left and text on half right
-			{
+			} else { // text on halft left and text on half right
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell(round($this->_Width / 2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 				$pdf->SetXY($_PosX + round($this->_Width / 2), $_PosY + $ytop);
 				$pdf->MultiCell(round($this->_Width / 2) - 2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
 			}
-		} else // Only a right part
-		{
+		} else { // Only a right part
 			// Output right area
 			if ($textright == '__LOGO__' && $logo) {
 				$pdf->Image($logo, $_PosX + $this->_Width - $widthtouse - $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
@@ -264,12 +263,12 @@ class pdf_standard extends CommonStickerGenerator
 	/**
 	 *	Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *	@param	Adherent	$object		        Member object. Old usage: Array of record informations (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
-	 *	@param	Translate	$outputlangs		Lang object for output language
-	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file. Example: '5161', 'AVERYC32010', 'CARD', ...
-	 *	@param	string		$mode				Tell if doc module is called for 'member', ...
-	 *  @param  int         $nooutput           1=Generate only file on disk and do not return it on response
-	 *  @param	string		$filename			Name of output file (without extension)
+	 *	@param	Adherent|array	    $object		        Member object. Old usage: Array of record information (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
+	 *	@param	Translate			$outputlangs		Lang object for output language
+	 *	@param	string				$srctemplatepath	Full path of source filename for generator using a template file. Example: '5161', 'AVERYC32010', 'CARD', ...
+	 *	@param	string				$mode				Tell if doc module is called for 'member', ...
+	 *  @param  int         		$nooutput           1=Generate only file on disk and do not return it on response
+	 *  @param	string				$filename			Name of output file (without extension)
 	 *	@return	int								1=OK, 0=KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath, $mode = 'member', $nooutput = 0, $filename = 'tmp_cards')
@@ -291,7 +290,7 @@ class pdf_standard extends CommonStickerGenerator
 
 			// List of values to scan for a replacement
 			$substitutionarray = array(
-				'__ID__' => $object->rowid,
+				'__ID__' => $object->id,
 				'__REF__' => $object->ref,
 				'__LOGIN__' => empty($object->login) ? '' : $object->login,
 				'__FIRSTNAME__' => empty($object->firstname) ? '' : $object->firstname,
@@ -325,14 +324,15 @@ class pdf_standard extends CommonStickerGenerator
 				$nb = 1; // Protection to avoid empty page
 			}
 
+			$arrayofmembers = array();
 			for ($j = 0; $j < $nb; $j++) {
 				$arrayofmembers[] = array(
-					'textleft'=>$textleft,
-					'textheader'=>$textheader,
-					'textfooter'=>$textfooter,
-					'textright'=>$textright,
-					'id'=>(isset($object->rowid) ? $object->rowid : ""),
-					'photo'=>(isset($object->photo) ? $object->photo : "")
+					'textleft' => $textleft,
+					'textheader' => $textheader,
+					'textfooter' => $textfooter,
+					'textright' => $textright,
+					'id' => (isset($object->id) ? $object->id : ""),
+					'photo' => (isset($object->photo) ? $object->photo : "")
 				);
 			}
 
@@ -344,7 +344,7 @@ class pdf_standard extends CommonStickerGenerator
 
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) {
-			dol_print_error('', 'ErrorBadTypeForCard'.$this->code);
+			dol_print_error(null, 'ErrorBadTypeForCard'.$this->code);
 			exit;
 		}
 
@@ -364,7 +364,7 @@ class pdf_standard extends CommonStickerGenerator
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -375,7 +375,7 @@ class pdf_standard extends CommonStickerGenerator
 			$title = $outputlangs->transnoentities('MembersCards');
 			$keywords = $outputlangs->transnoentities('MembersCards')." ".$outputlangs->transnoentities("Foundation")." ".$outputlangs->convToOutputCharset($mysoc->name);
 		} else {
-			dol_print_error('', 'Bad value for $mode');
+			dol_print_error(null, 'Bad value for $mode');
 			return -1;
 		}
 
@@ -420,7 +420,7 @@ class pdf_standard extends CommonStickerGenerator
 		$pdf->SetAutoPageBreak(false);
 
 		$this->_Metric_Doc = $this->Tformat['metric'];
-		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja servie
+		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja service
 		$posX = 1;
 		$posY = 1;
 		if ($posX > 0) {
@@ -457,14 +457,14 @@ class pdf_standard extends CommonStickerGenerator
 
 		dolChmod($file);
 
-		$this->result = array('fullpath'=>$file);
+		$this->result = array('fullpath' => $file);
 
 		// Output to http stream
 		if (empty($nooutput)) {
 			clearstatcache();
 
 			$attachment = true;
-			if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) {
+			if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 				$attachment = false;
 			}
 			$type = dol_mimetype($filename);

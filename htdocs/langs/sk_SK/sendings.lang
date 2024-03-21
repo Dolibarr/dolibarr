@@ -18,16 +18,16 @@ SendingCard=Zasielková karta
 NewSending=Nová zásielka
 CreateShipment=Vytvoriť zásielku
 QtyShipped=Odoslané množstvo
-QtyShippedShort=Qty ship.
-QtyPreparedOrShipped=Qty prepared or shipped
+QtyShippedShort=Množstvo lode.
+QtyPreparedOrShipped=Množstvo pripravené alebo odoslané
 QtyToShip=Množstvo na odoslanie
-QtyToReceive=Qty to receive
+QtyToReceive=Množstvo na prijatie
 QtyReceived=Prijaté množstvo
-QtyInOtherShipments=Qty in other shipments
+QtyInOtherShipments=Množstvo v iných zásielkach
 KeepToShip=Zostáva odoslať
-KeepToShipShort=Remain
+KeepToShipShort=Zostať
 OtherSendingsForSameOrder=Ďalšie zásielky pre túto objednávku
-SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsAndReceivingForSameOrder=Zásielky a potvrdenky pre túto objednávku
 SendingsToValidate=Zásielky na overenie
 StatusSendingCanceled=Zrušený
 StatusSendingCanceledShort=Zrušený
@@ -39,38 +39,48 @@ StatusSendingValidatedShort=Overené
 StatusSendingProcessedShort=Spracované
 SendingSheet=Zásielkový hárok
 ConfirmDeleteSending=Určite chcete zmazať túto zásielku ?
-ConfirmValidateSending=Určite chcete overiť túto zásielku s odkazom <b>%s</b>?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=Určite chcete zrušiť túto zásielku ?
 DocumentModelMerou=Mero A5 modelu
 WarningNoQtyLeftToSend=Varovanie: žiadny tovar majú byť dodané.
-StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
+StatsOnShipmentsOnlyValidated=Štatistiky sú len pre overené zásielky. Použitý dátum je dátum overenia zásielky (plánovaný dátum doručenia nie je vždy známy)
 DateDeliveryPlanned=Plánovaný dátum doručenia
-RefDeliveryReceipt=Ref delivery receipt
-StatusReceipt=Status delivery receipt
+RefDeliveryReceipt=Ref. potvrdenie o doručení
+StatusReceipt=Stav potvrdenia o doručení
 DateReceived=Dátum doručenia obdržal
-ClassifyReception=Classify reception
-SendShippingByEMail=Send shipment by email
+ClassifyReception=Klasifikovať prijaté
+SendShippingByEMail=Zásielku poslať emailom
 SendShippingRef=Podanie zásielky %s
 ActionsOnShipping=Udalosti na zásielky
 LinkToTrackYourPackage=Odkaz pre sledovanie balíkov
-ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentCreationIsDoneFromOrder=V súčasnosti sa vytvorenie novej zásielky vykonáva zo záznamu zákazky odberateľa.
 ShipmentLine=Zásielka linka
-ProductQtyInCustomersOrdersRunning=Product quantity from open sales orders
-ProductQtyInSuppliersOrdersRunning=Product quantity from open purchase orders
-ProductQtyInShipmentAlreadySent=Product quantity from open sales order already sent
-ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open purchase orders already received
-NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+ProductQtyInCustomersOrdersRunning=Množstvo produktu z otvorených zákaziek odberateľa
+ProductQtyInSuppliersOrdersRunning=Množstvo produktu z otvorených objednávok
+ProductQtyInShipmentAlreadySent=Množstvo produktu z otvorenej predajnej objednávky už bolo odoslané
+ProductQtyInSuppliersShipmentAlreadyRecevied=Množstvo produktu z už prijatých otvorených objednávok
+NoProductToShipFoundIntoStock=V sklade sa nenašiel žiadny produkt na odoslanie <b>%s</b>. Opravte zásoby alebo sa vráťte a vyberte si iný sklad.
 WeightVolShort=Váha/Objem
 ValidateOrderFirstBeforeShipment=Najprv musíte overiť objednávku pred vytvorením zásielky.
+NoLineGoOnTabToAddSome=Žiadny riadok, prejdite na kartu „%s“ a pridajte
 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Viac Celý dokument model pre potvrdenie o doručení (logo. ..)
-DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
+DocumentModelStorm=Kompletnejší model dokumentu pre potvrdenie o doručení a kompatibilitu extrapolí (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konštantná EXPEDITION_ADDON_NUMBER nie je definované
 SumOfProductVolumes=Súčet objemov produktov
 SumOfProductWeights=Súčet hmotností produktov
 
 # warehouse details
 DetailWarehouseNumber= Detaily skladu
-DetailWarehouseFormat= W:%s (Qty: %d)
+DetailWarehouseFormat= W:%s (množstvo: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Zobrazte posledný dátum vstupu na sklade počas vytvárania zásielky pre sériové číslo alebo šaržu
+CreationOptions=Dostupné možnosti pri vytváraní zásielky
+
+ShipmentDistribution=Distribúcia zásielok
+
+ErrorTooManyCombinationBatchcode=Žiadne odoslanie pre riadok %s, pretože sa našlo príliš veľa kombinácií kódu skladu, produktu, šarže (%s).
+ErrorNoCombinationBatchcode=Nepodarilo sa uložiť riadok %s ako kombináciu sklad-produkt-šarža/sériový (%s, %s, %s) nebol nájdený na sklade.
+
+ErrorTooMuchShipped=Dodané množstvo by nemalo byť väčšie ako objednané množstvo pre riadok %s

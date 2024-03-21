@@ -5,7 +5,7 @@
  * Copyright (C) 2014-2016  Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Pierre Ardoin           <mapiolca@me.com>
- * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
-$type = GETPOST("type", 'int');
+$type = GETPOST("type", 'intcomma');
 if ($type == '' && !$user->hasRight('produit', 'lire') && $user->hasRight('service', 'lire')) {
 	$type = '1'; // Force global page on service page only
 }
@@ -69,15 +69,15 @@ if ($type == '0') {
 $transAreaType = $langs->trans("ProductsAndServicesArea");
 
 $helpurl = '';
-if (!isset($_GET["type"])) {
+if (!GETPOSTISSET("type")) {
 	$transAreaType = $langs->trans("ProductsAndServicesArea");
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-if ((isset($_GET["type"]) && $_GET["type"] == 0) || !isModEnabled("service")) {
+if ((GETPOSTISSET("type") && GETPOST("type") == '0') || !isModEnabled("service")) {
 	$transAreaType = $langs->trans("ProductsArea");
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-if ((isset($_GET["type"]) && $_GET["type"] == 1) || !isModEnabled("product")) {
+if ((GETPOSTISSET("type") && GETPOST("type") == '1') || !isModEnabled("product")) {
 	$transAreaType = $langs->trans("ServicesArea");
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
@@ -91,10 +91,14 @@ print load_fiche_titre($transAreaType, $linkback, 'product');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be useless due to the global search combo
+if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be useless due to the global search combo
+	if (!isset($listofsearchfields) || !is_array($listofsearchfields)) {
+		// Ensure $listofsearchfields is set and array
+		$listofsearchfields = array();
+	}
 	// Search contract
 	if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
-		$listofsearchfields['search_product'] = array('text'=>'ProductOrService');
+		$listofsearchfields['search_product'] = array('text' => 'ProductOrService');
 	}
 
 	if (count($listofsearchfields)) {
@@ -215,7 +219,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 }
 
 
-if (isModEnabled('categorie') && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_PRODUCTS)) {
+if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODUCTS')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	print '<br>';
 	print '<div class="div-table-responsive-no-min">';
@@ -310,10 +314,10 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 
 		if ($num > 0) {
 			$transRecordedType = $langs->trans("LastModifiedProductsAndServices", $max);
-			if (isset($_GET["type"]) && $_GET["type"] == 0) {
+			if (GETPOSTISSET("type") && GETPOST("type") == '0') {
 				$transRecordedType = $langs->trans("LastRecordedProducts", $max);
 			}
-			if (isset($_GET["type"]) && $_GET["type"] == 1) {
+			if (GETPOSTISSET("type") && GETPOST("type") == '1') {
 				$transRecordedType = $langs->trans("LastRecordedServices", $max);
 			}
 
@@ -321,7 +325,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 			print '<table class="noborder centpercent">';
 
 			$colnb = 2;
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				$colnb++;
 			}
 
@@ -341,9 +345,9 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 				$product_static->status_buy = $objp->tobuy;
 				$product_static->status_batch = $objp->tobatch;
 
-				$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'read');
+				$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'read');
 				if ($product_static->isService()) {
-					$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'read');
+					$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_prices') : $user->hasRight('service', 'read');
 				}
 
 				// Multilangs
@@ -365,14 +369,14 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall tdoverflowmax100">';
-				print $product_static->getNomUrl(1, '', 16);
+				print $product_static->getNomUrl(1);
 				print "</td>\n";
 				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objp->label).'">'.dol_escape_htmltag($objp->label).'</td>';
 				print '<td title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($db->jdate($objp->datem), 'dayhour', 'tzuserrel')).'">';
 				print dol_print_date($db->jdate($objp->datem), 'day', 'tzuserrel');
 				print "</td>";
 				// Sell price
-				if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+				if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 					if (isModEnabled('dynamicprices') && !empty($objp->fk_price_expression)) {
 						$product = new Product($db);
 						$product->fetch($objp->rowid);
@@ -418,7 +422,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 
 // TODO Move this into a page that should be available into menu "accountancy - report - turnover - per quarter"
 // Also method used for counting must provide the 2 possible methods like done by all other reports into menu "accountancy - report - turnover":
-// "commitment engagment" method and "cash accounting" method
+// "commitment engagement" method and "cash accounting" method
 if (isModEnabled("invoice") && $user->hasRight('facture', 'lire') && getDolGlobalString('MAIN_SHOW_PRODUCT_ACTIVITY_TRIM')) {
 	if (isModEnabled("product")) {
 		activitytrim(0);

@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Gestion et suivi des campagnes de recrutement
 # Admin page
 #
 RecruitmentSetup = Paramétrages du recrutement
-Settings = Paramétrages
 RecruitmentSetupPage = Entrez ici la configuration des principales options du module de recrutement
 RecruitmentArea=Espace recrutement
 PublicInterfaceRecruitmentDesc=Les pages publiques des postes ouverts sont des URL publiques pour afficher et répondre aux postes ouverts. Il existe un lien différent pour chaque offre d'emploi, visible sur chaque fiche de poste.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Activer les pages publiques des postes ouverts
 #
 # About page
 #
-About = À propos
 RecruitmentAbout = À propos du module Recrutement
 RecruitmentAboutPage = À propos du module Recrutement
 NbOfEmployeesExpected=Nombre de postes disponibles
@@ -77,3 +75,6 @@ ExtrafieldsApplication=Attributs complémentaires (candidature)
 MakeOffer=Faire un offre
 WeAreRecruiting=Nous recrutons. Voici une liste de postes à pourvoir...
 NoPositionOpen=Aucun poste ouvert pour le moment
+ConfirmClose=Confirmer l'annulation
+ConfirmCloseAsk=Êtes-vous sûr de vouloir annuler cette candidature ?
+recruitment=Recrutement

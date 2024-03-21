@@ -23,7 +23,7 @@
 
 /**
  * \file       htdocs/core/lib/product.lib.php
- * \brief      Ensemble de fonctions de base pour le module produit et service
+ * \brief      Ensemble de functions de base pour le module produit et service
  * \ingroup	product
  */
 
@@ -39,11 +39,11 @@ function product_prepare_head($object)
 	$langs->load("products");
 
 	$label = $langs->trans('Product');
-	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'read');
+	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'read');
 
 	if ($object->isService()) {
 		$label = $langs->trans('Service');
-		$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'read');
+		$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_prices') : $user->hasRight('service', 'read');
 	}
 
 	$h = 0;
@@ -97,7 +97,7 @@ function product_prepare_head($object)
 	}
 
 	// Sub products
-	if (!empty($conf->global->PRODUIT_SOUSPRODUITS)) {
+	if (getDolGlobalString('PRODUIT_SOUSPRODUITS')) {
 		$head[$h][0] = DOL_URL_ROOT."/product/composition/card.php?id=".$object->id;
 		$head[$h][1] = $langs->trans('AssociatedProducts');
 
@@ -129,7 +129,7 @@ function product_prepare_head($object)
 		$h++;
 	}
 
-	if ($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {    // If physical product we can stock (or service with option)
+	if ($object->isProduct() || ($object->isService() && getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {    // If physical product we can stock (or service with option)
 		if (isModEnabled('stock') && $user->hasRight('stock', 'lire')) {
 			$head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$object->id;
 			$head[$h][1] = $langs->trans("Stock");
@@ -140,13 +140,13 @@ function product_prepare_head($object)
 
 	// Tab to link resources
 	if (isModEnabled('resource')) {
-		if ($object->isProduct() && !empty($conf->global->RESOURCE_ON_PRODUCTS)) {
+		if ($object->isProduct() && getDolGlobalString('RESOURCE_ON_PRODUCTS')) {
 			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=product&ref='.$object->ref;
 			$head[$h][1] = $langs->trans("Resources");
 			$head[$h][2] = 'resources';
 			$h++;
 		}
-		if ($object->isService() && !empty($conf->global->RESOURCE_ON_SERVICES)) {
+		if ($object->isService() && getDolGlobalString('RESOURCE_ON_SERVICES')) {
 			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=service&ref='.$object->ref;
 			$head[$h][1] = $langs->trans("Resources");
 			$head[$h][2] = 'resources';
@@ -171,7 +171,7 @@ function product_prepare_head($object)
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'product', 'add', 'core');
 
 	// Notes
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = 0;
 		if (!empty($object->note_private)) {
 			$nbNote++;
@@ -274,7 +274,7 @@ function productlot_prepare_head($object)
 	$h++;
 
 	// Notes
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = 0;
 		if (!empty($object->note_private)) {
 			$nbNote++;
@@ -313,7 +313,7 @@ function productlot_prepare_head($object)
 
 
 /**
-*  Return array head with list of tabs to view object informations.
+*  Return array head with list of tabs to view object information.
 *
 *  @return	array   	        head array with tabs
 */
@@ -333,7 +333,7 @@ function product_admin_prepare_head()
 	$head[$h][2] = 'general';
 	$h++;
 
-	if (!empty($conf->global->PRODUIT_MULTIPRICES) && !empty($conf->global->PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL)) {
+	if (getDolGlobalString('PRODUIT_MULTIPRICES') && getDolGlobalString('PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL')) {
 		$head[$h] = array(
 			0 => DOL_URL_ROOT."/product/admin/price_rules.php",
 			1 => $langs->trans('MultipriceRules'),
@@ -374,7 +374,7 @@ function product_admin_prepare_head()
 
 
 /**
- * Return array head with list of tabs to view object informations.
+ * Return array head with list of tabs to view object information.
  *
  * @return	array   	        head array with tabs
  */
@@ -476,7 +476,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Sales orders
-	if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
+	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_commande($socid);
 		if ($ret < 0) {
@@ -495,7 +495,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Supplier orders
-	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight('fournisseur', 'commande', 'lire')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire'))) {
+	if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'commande', 'lire')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire'))) {
 		$nblines++;
 		$ret = $product->load_stats_commande_fournisseur($socid);
 		if ($ret < 0) {
@@ -514,7 +514,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Customer invoices
-	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
+	if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_facture($socid);
 		if ($ret < 0) {
@@ -533,7 +533,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Customer template invoices
-	if (isModEnabled("facture") && $user->hasRight('facture', 'lire')) {
+	if (isModEnabled("invoice") && $user->hasRight('facture', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_facturerec($socid);
 		if ($ret < 0) {
@@ -552,7 +552,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Supplier invoices
-	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
+	if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 		$nblines++;
 		$ret = $product->load_stats_facture_fournisseur($socid);
 		if ($ret < 0) {
@@ -572,7 +572,7 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// Contracts
-	if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
+	if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_contrat($socid);
 		if ($ret < 0) {
@@ -679,7 +679,7 @@ function show_stats_for_batch($batch, $socid)
 	print '</tr>';
 
 	// Expeditions
-	if (isModEnabled('expedition') && $user->hasRight('expedition', 'lire')) {
+	if (isModEnabled('shipping') && $user->hasRight('expedition', 'lire')) {
 		$nblines++;
 		$ret = $batch->loadStatsExpedition($socid);
 		if ($ret < 0) {
@@ -799,7 +799,7 @@ function measuring_units_string($scale = '', $measuring_style = '', $unit = 0, $
  *  @param	string  	$scale				Scale of unit: '0', '-3', '6', ...
  *  @param	int			$use_short_label	1=Use short label ('g' instead of 'gram'). Short labels are not translated.
  *  @param	Translate	$outputlangs		Language object
- *	@return	string	   			         	Unit string
+ *	@return	string|-1	   			        Unit string if OK, -1 if KO
  * 	@see	formproduct->selectMeasuringUnits()
  */
 function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_short_label = 0, $outputlangs = null)

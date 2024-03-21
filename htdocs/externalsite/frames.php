@@ -22,8 +22,8 @@
  *     \brief      	Page that build two frames: One for menu, the other for the target page to show
  *					Usage:
  *					  /externalsite/frames.php to show URL set into setup
- *					  /externalsite/frames.php?keyforcontent=EXTERNAL_SITE_CONTENT_abc to show html text defined into $conf->global->EXTERNAL_SITE_CONTENT_abc
- *					  /externalsite/frames.php?keyforcontent=EXTERNAL_SITE_URL_abc to show URL defined into $conf->global->EXTERNAL_SITE_URL_abc
+ *					  /externalsite/frames.php?keyforcontent=EXTERNAL_SITE_CONTENT_abc to show html text defined into conf 'EXTERNAL_SITE_CONTENT_abc'
+ *					  /externalsite/frames.php?keyforcontent=EXTERNAL_SITE_URL_abc to show URL defined into conf 'EXTERNAL_SITE_URL_abc'
  */
 
 // Load Dolibarr environment
@@ -35,7 +35,7 @@ $langs->load("other");
 
 $mainmenu = GETPOST('mainmenu', "aZ09");
 $leftmenu = GETPOST('leftmenu', "aZ09");
-$idmenu = GETPOST('idmenu', 'int');
+$idmenu = GETPOSTINT('idmenu');
 $theme = GETPOST('theme', 'aZ09');
 $codelang = GETPOST('lang', 'aZ09');
 $keyforcontent = GETPOST('keyforcontent', 'aZ09');
@@ -49,7 +49,7 @@ if (!isModEnabled("externalsite")) {
  * View
  */
 
-if (empty($keyforcontent) && empty($conf->global->EXTERNALSITE_URL)) {
+if (empty($keyforcontent) && !getDolGlobalString('EXTERNALSITE_URL')) {
 	llxHeader();
 	print '<div class="error">'.$langs->trans('ExternalSiteModuleNotComplete').'</div>';
 	llxFooter();
@@ -117,7 +117,7 @@ if (!empty($keyforcontent)) {
 	<title>Dolibarr frame for external web site</title>
 	</head>
 
-	<frameset ".(empty($conf->global->MAIN_MENU_INVERT) ? "rows" : "cols")."=\"".$heightforframes.",*\" border=0 framespacing=0 frameborder=0>
+	<frameset ".(!getDolGlobalString('MAIN_MENU_INVERT') ? "rows" : "cols")."=\"".$heightforframes.",*\" border=0 framespacing=0 frameborder=0>
 	    <frame name=\"barre\" src=\"frametop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."&idmenu=".$idmenu.($theme ? '&theme='.$theme : '').($codelang ? '&lang='.$codelang : '')."&nobackground=1\" noresize scrolling=\"NO\" noborder>
 	  ";
 		print '<frame name="main" src="';

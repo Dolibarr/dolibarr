@@ -28,13 +28,13 @@ require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 // Load translation files required by the page
 $langs->load("mails");
 
 // Security check
-if (!$user->hasRight('mailing', 'lire') || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+if (!$user->hasRight('mailing', 'lire') || (!getDolGlobalString('EXTERNAL_USERS_ARE_AUTHORIZED') && $user->socid > 0)) {
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'mailing');
@@ -64,20 +64,20 @@ if ($object->fetch($id) >= 0) {
 	$morehtmlref .= $form->editfieldval("", 'title', $object->title, $object, 0, 'string', '', null, null, '', 1);
 	$morehtmlref .= '</div>';
 
-	$morehtmlright = '';
+	$morehtmlstatus = '';
 	$nbtry = $nbok = 0;
-	if ($object->statut == 2 || $object->statut == 3) {
+	if ($object->status == 2 || $object->status == 3) {
 		$nbtry = $object->countNbOfTargets('alreadysent');
 		$nbko  = $object->countNbOfTargets('alreadysentko');
 
-		$morehtmlright .= ' ('.$nbtry.'/'.$object->nbemail;
+		$morehtmlstatus .= ' ('.$nbtry.'/'.$object->nbemail;
 		if ($nbko) {
-			$morehtmlright .= ' - '.$nbko.' '.$langs->trans("Error");
+			$morehtmlstatus .= ' - '.$nbko.' '.$langs->trans("Error");
 		}
-		$morehtmlright .= ') &nbsp; ';
+		$morehtmlstatus .= ') &nbsp; ';
 	}
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 	print '<div class="underbanner clearboth"></div><br>';
 

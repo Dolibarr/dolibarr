@@ -22,7 +22,7 @@
  *
  * @param   string			$type		Type of URL ('proposal', ...)
  * @param	string			$ref		Ref of object
- * @param   Object  		$obj  		object (needed to make multicompany good links)
+ * @param   CommonObject 	$obj  		object (needed to make multicompany good links)
  * @return	string						Url string
  */
 function showOnlineSignatureUrl($type, $ref, $obj = null)
@@ -35,7 +35,7 @@ function showOnlineSignatureUrl($type, $ref, $obj = null)
 	$servicename = 'Online';
 
 	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlineSignature", $servicename).'</span><br>';
-	$url = getOnlineSignatureUrl(0, $type, $ref, $obj);
+	$url = getOnlineSignatureUrl(0, $type, $ref, 1, $obj);
 	$out .= '<div class="urllink">';
 	if ($url == $langs->trans("FeatureOnlineSignDisabled")) {
 		$out .= $url;
@@ -52,11 +52,11 @@ function showOnlineSignatureUrl($type, $ref, $obj = null)
 /**
  * Return string with full Url
  *
- * @param   int				$mode				0=True url, 1=Url formated with colors
+ * @param   int				$mode				0=True url, 1=Url formatted with colors
  * @param   string			$type				Type of URL ('proposal', ...)
  * @param	string			$ref				Ref of object
- * @param   string  		$localorexternal  	0=Url for browser, 1=Url for external access
- * @param   Object  		$obj  				object (needed to make multicompany good links)
+ * @param   int     		$localorexternal  	0=Url for browser, 1=Url for external access
+ * @param   CommonObject  	$obj  				object (needed to make multicompany good links)
  * @return	string								Url string
  */
 function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $obj = null)
@@ -74,7 +74,6 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		}
 	}
 
-	$ref = str_replace(' ', '', $ref);
 	$out = '';
 
 	// Define $urlwithroot
@@ -159,8 +158,8 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		} else {
 			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), '0');
 		}
-	} else {
-		$securekeyseed = getDolGlobalString(dol_strtoupper($type).'ONLINE_SIGNATURE_SECURITY_TOKEN');
+	} else {	// For example $type = 'societe_rib'
+		$securekeyseed = getDolGlobalString(dol_strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN');
 		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source='.$type.'&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= $type.'_ref';

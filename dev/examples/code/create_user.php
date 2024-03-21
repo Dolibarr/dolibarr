@@ -25,7 +25,7 @@
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path=dirname(__FILE__).'/';
+$path = dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
@@ -34,8 +34,8 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Global variables
-$version='1.7';
-$error=0;
+$version = '1.7';
+$error = 0;
 
 
 // -------------------- START OF YOUR CODE HERE --------------------
@@ -48,9 +48,9 @@ $langs->load("main");				// To load language file for default language
 @set_time_limit(0);
 
 // Load user and its permissions
-$result=$user->fetch('', 'admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
-if (! $result > 0) {
-	dol_print_error('', $user->error);
+$result = $user->fetch('', 'admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
+if (!$result > 0) {
+	dol_print_error(null, $user->error);
 	exit;
 }
 $user->getrights();
@@ -71,10 +71,10 @@ $obj->login = 'ABCDEF';
 $obj->nom   = 'ABCDEF';
 
 // Create user
-$idobject=$obj->create($user);
+$idobject = $obj->create($user);
 if ($idobject > 0) {
 	// Change status to validated
-	$result=$obj->setStatut(1);
+	$result = $obj->setStatut(1);
 	if ($result > 0) {
 		print "OK Object created with id ".$idobject."\n";
 	} else {
@@ -82,7 +82,7 @@ if ($idobject > 0) {
 		dol_print_error($db, $obj->error);
 	}
 } elseif ($obj->error == 'ErrorLoginAlreadyExists') {
-	 print "User with login ".$obj->login." already exists\n";
+	print "User with login ".$obj->login." already exists\n";
 } else {
 	$error++;
 	dol_print_error($db, $obj->error);
@@ -91,7 +91,7 @@ if ($idobject > 0) {
 
 // -------------------- END OF YOUR CODE --------------------
 
-if (! $error) {
+if (!$error) {
 	$db->commit();
 	print '--- end ok'."\n";
 } else {

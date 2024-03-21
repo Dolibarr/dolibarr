@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,12 +38,12 @@ $langs->loadLangs(array('companies', 'donations'));
 
 $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'create'/'add', 'edit'/'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'sclist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sclist';
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 $type = GETPOST('type', 'aZ');
 $mode = GETPOST('mode', 'alpha');
 if (empty($page) || $page == -1) {
@@ -59,7 +60,7 @@ if (!$sortfield) {
 }
 
 $search_status = (GETPOST("search_status", 'intcomma') != '') ? GETPOST("search_status", 'intcomma') : "-4";
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_thirdparty = GETPOST('search_thirdparty', 'alpha');
@@ -72,7 +73,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_all = "";
 	$search_ref = "";
 	$search_company = "";
-	$search_thirdparty  = "";
+	$search_thirdparty = "";
 	$search_name = "";
 	$search_amount = "";
 	$search_status = '';
@@ -84,10 +85,10 @@ $hookmanager->initHooks(array('donationlist'));
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'd.rowid'=>'Id',
-	'd.ref'=>'Ref',
-	'd.lastname'=>'Lastname',
-	'd.firstname'=>'Firstname',
+	'd.rowid' => 'Id',
+	'd.ref' => 'Ref',
+	'd.lastname' => 'Lastname',
+	'd.firstname' => 'Firstname',
 );
 
 // Security check
@@ -135,18 +136,24 @@ $sql .= " p.rowid as pid, p.ref, p.title, p.public";
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
-$sql .= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('donation').")";
+$sql .= " ON p.rowid = d.fk_projet";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe AS s ON s.rowid = d.fk_soc";
+$sql .= " WHERE d.entity IN (". getEntity('donation') . ")";
+
 if ($search_status != '' && $search_status != '-4') {
 	$sql .= " AND d.fk_statut IN (".$db->sanitize($search_status).")";
 }
 if (trim($search_ref) != '') {
-	$sql .= natural_search('d.ref', $search_ref);
+	$sql .= natural_search(array('d.ref', "d.rowid"), $search_ref);
 }
 if (trim($search_all) != '') {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 if (trim($search_company) != '') {
 	$sql .= natural_search('d.societe', $search_company);
+}
+if (trim($search_thirdparty) != '') {
+	$sql .= natural_search("s.nom", $search_thirdparty);
 }
 if (trim($search_name) != '') {
 	$sql .= natural_search(array('d.lastname', 'd.firstname'), $search_name);
@@ -202,7 +209,7 @@ if ($num == 1 && !getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sea
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-donation page-list');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
 // Example : Adding jquery code
 // print '<script type="text/javascript">
@@ -260,7 +267,7 @@ $arrayofmassactions = array(
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -282,13 +289,14 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 if ($user->hasRight('don', 'creer')) {
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewDonation'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/don/card.php?action=create');
 }
 
+// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'object_donation', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 if ($search_all) {
@@ -298,11 +306,11 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if DONATION_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -321,7 +329,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print '<td class="liste_titre">';
 print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
 print '</td>';
-if (!empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+if (getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="10" type="text" name="search_thirdparty" value="'.$search_thirdparty.'">';
 	print '</td>';
@@ -342,13 +350,14 @@ if (isModEnabled('project')) {
 	print '</td>';
 }
 print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-print '<td class="liste_titre right parentonrightofpage">';
+print '<td class="liste_titre center parentonrightofpage">';
 $liststatus = array(
-	Don::STATUS_DRAFT=>$langs->trans("DonationStatusPromiseNotValidated"),
-	Don::STATUS_VALIDATED=>$langs->trans("DonationStatusPromiseValidated"),
-	Don::STATUS_PAID=>$langs->trans("DonationStatusPaid"),
-	Don::STATUS_CANCELED=>$langs->trans("Canceled")
+	Don::STATUS_DRAFT => $langs->trans("DonationStatusPromiseNotValidated"),
+	Don::STATUS_VALIDATED => $langs->trans("DonationStatusPromiseValidated"),
+	Don::STATUS_PAID => $langs->trans("DonationStatusPaid"),
+	Don::STATUS_CANCELED => $langs->trans("Canceled")
 );
+// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'search_status maxwidth100 onrightofpage');
 print '</td>';
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -372,7 +381,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
-if (!empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+if (getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
 	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "d.fk_soc", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 } else {
@@ -390,7 +399,7 @@ if (isModEnabled('project')) {
 }
 print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "d.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 $totalarray['nbfield']++;
-print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre('');
@@ -453,14 +462,14 @@ while ($i < $imaxinloop) {
 		$donationstatic->lastname = $obj->lastname;
 		$donationstatic->firstname = $obj->firstname;
 		print "<td>".$donationstatic->getNomUrl(1)."</td>";
-		if (!empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+		if (getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
 			if (!empty($obj->socid) && $company->id > 0) {
 				print "<td>".$company->getNomUrl(1)."</td>";
 			} else {
-				print "<td>".$obj->societe."</td>";
+				print "<td>".((string) $obj->societe)."</td>";
 			}
 		} else {
-			print "<td>".$obj->societe."</td>";
+			print "<td>".((string) $obj->societe)."</td>";
 		}
 		print "<td>".$donationstatic->getFullName($langs)."</td>";
 		print '<td class="center">'.dol_print_date($db->jdate($obj->datedon), 'day').'</td>';
@@ -479,7 +488,9 @@ while ($i < $imaxinloop) {
 			print "</td>\n";
 		}
 		print '<td class="right"><span class="amount">'.price($obj->amount).'</span></td>';
-		print '<td class="right">'.$donationstatic->LibStatut($obj->status, 5).'</td>';
+
+		// Status
+		print '<td class="center">'.$donationstatic->LibStatut($obj->status, 5).'</td>';
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td></td>';
 		}

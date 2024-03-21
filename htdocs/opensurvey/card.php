@@ -61,10 +61,10 @@ $hookmanager->initHooks(array('surveycard', 'globalcard'));
 
 $expiredate = dol_mktime(0, 0, 0, GETPOST('expiremonth'), GETPOST('expireday'), GETPOST('expireyear'));
 
-$permissiontoread = $user->rights->opensurvey->read;
-$permissiontoadd = $user->rights->opensurvey->write;
+$permissiontoread = $user->hasRight('opensurvey', 'read');
+$permissiontoadd = $user->hasRight('opensurvey', 'write');
 // permission delete doesn't exists
-$permissiontodelete = $user->rights->opensurvey->write;
+$permissiontodelete = $user->hasRight('opensurvey', 'write');
 
 
 /*
@@ -166,7 +166,7 @@ if (empty($reshook)) {
 
 	// Delete comment
 	if ($action == 'deletecomment') {
-		$idcomment = GETPOST('idcomment', 'int');
+		$idcomment = GETPOSTINT('idcomment');
 		if ($idcomment > 0) {
 			// Security check
 			if (!$user->hasRight('opensurvey', 'write')) {
@@ -259,7 +259,7 @@ if ($action == 'edit') {
 	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
 	$doleditor->Create(0, '');
 } else {
-	print (dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
+	print(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
 }
 print '</td></tr>';
 

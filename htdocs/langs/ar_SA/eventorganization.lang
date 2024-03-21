@@ -34,7 +34,6 @@ PaymentEvent=دفع الحدث
 NewRegistration=تسجيل
 EventOrganizationSetup=إعداد تنظيم الحدث
 EventOrganization=تنظيم الأحداث
-Settings=إعدادات
 EventOrganizationSetupPage = صفحة إعداد تنظيم الحدث
 EVENTORGANIZATION_TASK_LABEL = تسمية المهام التي سيتم إنشاؤها تلقائيًا عند التحقق من صحة المشروع
 EVENTORGANIZATION_TASK_LABELTooltip = عند التحقق من صحة حدث لتنظيمه ، يمكن إنشاء بعض المهام تلقائيًا في المشروع <br> <br> على سبيل المثال: <br> Send Call for Conferences <br> Send Call for Booths <br>19 <br> أرسل تذكيرًا بالحدث إلى المتحدثين <br> أرسل تذكيرًا بالحدث إلى Booth hosters <br> أرسل تذكيرًا بالحدث إلى الحضور
@@ -53,9 +52,9 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = في نموذج إنشاء / إضافة
 #
 # Object
 #
-OrganizedEvent=Organized event
+OrganizedEvent=حدث منظم
 EventOrganizationConfOrBooth= مؤتمر أو كشك
-EventOrganizationConfOrBoothes=Conferences or Boothes
+EventOrganizationConfOrBoothes=المؤتمرات أو الأكشاك
 ManageOrganizeEvent = إدارة تنظيم الحدث
 ConferenceOrBooth = مؤتمر أو كشك
 ConferenceOrBoothTab = مؤتمر أو كشك
@@ -90,7 +89,7 @@ PriceOfRegistrationHelp=السعر الواجب دفعه للتسجيل أو ا�
 PriceOfBooth=سعر الاشتراك لوقوف كشك
 PriceOfBoothHelp=سعر الاشتراك لوقوف كشك
 EventOrganizationICSLink=رابط ICS للمؤتمرات
-ConferenceOrBoothInformation=معلومات المؤتمر أو الكابينة
+ConferenceOrBoothInformation=معلومات المؤتمر أو كشك
 Attendees=الحاضرين
 ListOfAttendeesOfEvent=قائمة الحاضرين لمشروع الحدث
 DownloadICSLink = رابط تحميل ICS
@@ -98,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = أنشئ لتأمين المفتاح لصفحة ا
 SERVICE_BOOTH_LOCATION = الخدمة المستخدمة لصف الفاتورة حول موقع الكشك
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = الخدمة المستخدمة لصف الفاتورة حول اشتراك حاضر في حدث
 NbVotes=عدد الأصوات
+
 #
 # Status
 #
@@ -106,9 +106,10 @@ EvntOrgSuggested = مقترح
 EvntOrgConfirmed = مؤكد
 EvntOrgNotQualified = غير مؤهل
 EvntOrgDone = منتهي
-EvntOrgCancelled = ألغيت
+EvntOrgCancelled = ملغي
+
 #
-# Public page
+# Other
 #
 SuggestForm = صفحة الاقتراح
 SuggestOrVoteForConfOrBooth = صفحة للاقتراح أو التصويت
@@ -116,15 +117,15 @@ EvntOrgRegistrationHelpMessage = هنا ، يمكنك التصويت لعقد م
 EvntOrgRegistrationConfHelpMessage = هنا ، يمكنك اقتراح مؤتمر جديد لتحريكه أثناء الحدث.
 EvntOrgRegistrationBoothHelpMessage = هنا ، يمكنك تقديم طلب للحصول على كشك أثناء الحدث.
 ListOfSuggestedConferences = قائمة المؤتمرات المقترحة
-ListOfSuggestedBooths=Suggested booths
-ListOfConferencesOrBooths=Conferences or booths of event project
+ListOfSuggestedBooths=الأكشاك المقترحة
+ListOfConferencesOrBooths=المؤتمرات أو أكشاك الأحداث مشروع
 SuggestConference = اقترح مؤتمر جديد
 SuggestBooth = أقترح كشك
 ViewAndVote = عرض والتصويت للأحداث المقترحة
 PublicAttendeeSubscriptionGlobalPage = رابط عام للتسجيل في الحدث
 PublicAttendeeSubscriptionPage = رابط عام للتسجيل في هذا الحدث فقط
 MissingOrBadSecureKey = مفتاح الأمان غير صالح أو مفقود
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
+EvntOrgWelcomeMessage = يتيح لك هذا النموذج التسجيل كمشارك جديد في الحدث
 EvntOrgDuration = يبدأ هذا المؤتمر في %s وينتهي في %s.
 ConferenceAttendeeFee = رسوم حضور المؤتمر للحدث: "%s" يحدث من %s إلى %s.
 BoothLocationFee = موقع كشك الحدث: "%s" يحدث من %s إلى %s
@@ -134,7 +135,7 @@ LabelOfconference=تسمية المؤتمر
 ConferenceIsNotConfirmed=التسجيل غير متاح ، لم يتم تأكيد المؤتمر بعد
 DateMustBeBeforeThan=يجب أن يكون %s قبل %s
 DateMustBeAfterThan=يجب أن يكون %s بعد %s
-MaxNbOfAttendeesReached=The maximum number of participants has been reached
+MaxNbOfAttendeesReached=تم الوصول إلى الحد الأقصى لعدد المشاركين
 NewSubscription=تسجيل
 OrganizationEventConfRequestWasReceived=تم استلام اقتراحك الخاص بالمؤتمر
 OrganizationEventBoothRequestWasReceived=تم استلام طلبك الخاص بكشك
@@ -144,13 +145,8 @@ OrganizationEventBulkMailToAttendees=هذا تذكير بمشاركتك في ا�
 OrganizationEventBulkMailToSpeakers=هذا تذكير بمشاركتك في الحدث كمتحدث
 OrganizationEventLinkToThirdParty=رابط لطرف ثالث (عميل أو مورد أو شريك)
 OrganizationEvenLabelName=الاسم العام للمؤتمر أو الكابينة
-
 NewSuggestionOfBooth=طلب كشك
-NewSuggestionOfConference=Application to hold a conference
-
-#
-# Vote page
-#
+NewSuggestionOfConference=طلب عقد مؤتمر
 EvntOrgRegistrationWelcomeMessage = مرحبًا بكم في صفحة اقتراح المؤتمر أو الكابينة.
 EvntOrgRegistrationConfWelcomeMessage = مرحبا بكم في صفحة اقتراح المؤتمر.
 EvntOrgRegistrationBoothWelcomeMessage = مرحبا بكم في صفحة اقتراح الكابينة.
@@ -158,8 +154,8 @@ EvntOrgVoteHelpMessage = هنا ، يمكنك عرض الأحداث المقتر
 VoteOk = تم قبول تصويتك.
 AlreadyVoted = لقد قمت بالتصويت بالفعل لهذا الحدث.
 VoteError = حدث خطأ أثناء التصويت ، يرجى المحاولة مرة أخرى.
-
-SubscriptionOk=Your registration has been recorded
+SubscriptionOk=لقد تم تسجيل تسجيلك
+AmountOfRegistrationPaid=مبلغ التسجيل المدفوع
 ConfAttendeeSubscriptionConfirmation = تأكيد اشتراكك في حدث
 Attendee = حاضر
 PaymentConferenceAttendee = دفع حضور المؤتمر
@@ -167,11 +163,17 @@ PaymentBoothLocation = دفع موقع كشك
 DeleteConferenceOrBoothAttendee=قم بإزالة الحاضر
 RegistrationAndPaymentWereAlreadyRecorder=تم تسجيل تسجيل ودفع بالفعل للبريد الإلكتروني <b> %s </b>
 EmailAttendee=البريد الإلكتروني للحضور
-EmailCompany=Company email
+EmailCompany=شركة البريد الإلكتروني
 EmailCompanyForInvoice=البريد الإلكتروني للشركة (للفاتورة ، إذا كان مختلفًا عن البريد الإلكتروني للحضور)
-ErrorSeveralCompaniesWithEmailContactUs=تم العثور على العديد من الشركات باستخدام هذا البريد الإلكتروني ، لذا لا يمكننا التحقق من صحة تسجيلك تلقائيًا. يرجى الاتصال بنا على %s للتحقق اليدوي
-ErrorSeveralCompaniesWithNameContactUs=تم العثور على العديد من الشركات بهذا الاسم لذا لا يمكننا التحقق من صحة تسجيلك تلقائيًا. يرجى الاتصال بنا على %s للتحقق اليدوي
+ErrorSeveralCompaniesWithEmailContactUs=تم العثور على العديد من الشركات التي لديها هذا البريد الإلكتروني، لذلك لا يمكننا التحقق من صحة تسجيلك تلقائيًا. يرجى الاتصال بنا على %s للتحقق اليدوي
+ErrorSeveralCompaniesWithNameContactUs=تم العثور على العديد من الشركات التي تحمل هذا الاسم، لذا لا يمكننا التحقق من صحة تسجيلك تلقائيًا. يرجى الاتصال بنا على %s للتحقق اليدوي
 NoPublicActionsAllowedForThisEvent=لا توجد إجراءات عامة مفتوحة للجمهور لهذا الحدث
 MaxNbOfAttendees=أقصى عدد من الحاضرين
-DateStartEvent=Event start date
-DateEndEvent=Event end date
+DateStartEvent=تاريخ بدء الحدث
+DateEndEvent=تاريخ انتهاء الحدث
+ModifyStatus=تعديل حالة
+ConfirmModifyStatus=تأكيد تعديل حالة
+ConfirmModifyStatusQuestion=هل أنت متأكد أنك تريد تعديل %s السجل (السجلات) المحدد؟
+RecordsUpdated = %s تم تحديث السجلات
+RecordUpdated = تم تحديث السجل
+NoRecordUpdated = لم يتم تحديث أي سجل

@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=Bilimlarni boshqarish (KM) yoki Help-Desk bazasini
 # Admin page
 #
 KnowledgeManagementSetup = Bilimlarni boshqarish tizimini sozlash
-Settings = Sozlamalar
 KnowledgeManagementSetupPage = Bilimlarni boshqarish tizimini sozlash sahifasi
 
 
 #
 # About page
 #
-About = Haqida
 KnowledgeManagementAbout = Bilimlarni boshqarish to'g'risida
 KnowledgeManagementAboutPage = Sahifadagi bilimlarni boshqarish
 
 KnowledgeManagementArea = Bilimlarni boshqarish
 MenuKnowledgeRecord = Bilimlar bazasi
+MenuKnowledgeRecordShort = Bilim bazasi
 ListKnowledgeRecord = Maqolalar ro'yxati
 NewKnowledgeRecord = Yangi maqola
 ValidateReply = Eritmani tasdiqlang
@@ -46,9 +45,15 @@ KnowledgeRecords = Maqolalar
 KnowledgeRecord = Maqola
 KnowledgeRecordExtraFields = Maqola uchun qo'shimcha joylar
 GroupOfTicket=Chiptalar guruhi
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Guruh bo'lganda chiptalar taklif etiladi
+YouCanLinkArticleToATicketCategory=Siz maqolani chiptalar guruhiga bog'lashingiz mumkin (shuning uchun maqola ushbu guruhdagi har qanday chiptalarda ajratib ko'rsatiladi)
+SuggestedForTicketsInGroup=Chipta yaratish bo'yicha tavsiya etiladi
 
 SetObsolete=Eskirgan deb belgilang
 ConfirmCloseKM=Ushbu maqolaning yopilishini eskirgan deb tasdiqlaysizmi?
 ConfirmReopenKM=Ushbu maqolani "Tasdiqlangan" holatiga qaytarmoqchimisiz?
+BoxLastKnowledgerecordDescription=Oxirgi %s maqolalar
+BoxLastKnowledgerecord=Oxirgi maqolalar
+BoxLastKnowledgerecordContent=Oxirgi maqolalar
+BoxLastKnowledgerecordModifiedContent=Oxirgi tahrirlangan maqolalar
+BoxLastModifiedKnowledgerecordDescription=Oxirgi %s tahrirlangan maqolalar
+BoxLastModifiedKnowledgerecord=Oxirgi tahrirlangan maqolalar

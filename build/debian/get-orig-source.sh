@@ -1,11 +1,13 @@
 #!/bin/sh
 
+# shellcheck disable=2034,2086,2103,2164
+
 tmpdir=$(mktemp -d)
 
 
 # Download source file
 if [ -n "$1" ]; then
-    uscan_opts="--download-version=$1"
+	uscan_opts="--download-version=$1"
 fi
 #uscan --noconf --force-download --no-symlink --verbose --destdir=$tmpdir $uscan_opts
 

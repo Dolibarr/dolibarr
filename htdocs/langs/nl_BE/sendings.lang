@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - sendings
+RefSending=Referentie verzending
 ShowSending=Toon Verzendingen
 Receivings=Ontvangstbevestingen
 LastSendings=Laatste %s verzendingen
@@ -7,7 +8,6 @@ QtyToShip=Aantal te verzenden
 QtyInOtherShipments=Aantal in andere verzendingen
 SendingsAndReceivingForSameOrder=Verzendingen en ontvangstbevestigingen van deze bestelling
 ConfirmDeleteSending=Weet u zeker dat u deze verzending wilt verwijderen?
-ConfirmValidateSending=Weet u zeker dat u deze verzending met referentie <b>%s</b> wilt valideren?
 DateDeliveryPlanned=Verwachte leveringsdatum
 RefDeliveryReceipt=Referentie ontvangstbevestiging
 ActionsOnShipping=Events i.v.m. verzending

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2012  Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,11 @@
  */
 print "PHP Version: ".phpversion()."\n";
 print "Memory limit: ". ini_get('memory_limit')."\n";
+
+// Workaround for false security issue with main.inc.php on Windows in tests:
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+	$_SERVER['PHP_SELF'] = "phpunit";
+}
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql'); // This is to force using mysql driver
@@ -53,8 +59,8 @@ if (empty($user->id)) {
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
-$conf->global->MAIN_UMASK='666';
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
+$conf->global->MAIN_UMASK = '666';
 
 
 /**
@@ -99,6 +105,8 @@ class AllTests
 		$suite->addTestSuite('FunctionsLibTest');
 		require_once dirname(__FILE__).'/Functions2LibTest.php';
 		$suite->addTestSuite('Functions2LibTest');
+		require_once dirname(__FILE__).'/ProfidLibTest.php';
+		$suite->addTestSuite('ProfidLibTest');
 		require_once dirname(__FILE__).'/XCalLibTest.php';
 		$suite->addTestSuite('XCalLibTest');
 
@@ -237,18 +245,18 @@ class AllTests
 		// Test only with php7.2 or less
 		//if ((float) phpversion() < 7.3)
 		//{
-			require_once dirname(__FILE__).'/WebservicesProductsTest.php';
-			$suite->addTestSuite('WebservicesProductsTest');
-			require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
-			$suite->addTestSuite('WebservicesInvoicesTest');
-			require_once dirname(__FILE__).'/WebservicesOrdersTest.php';
-			$suite->addTestSuite('WebservicesOrdersTest');
-			require_once dirname(__FILE__).'/WebservicesOtherTest.php';
-			$suite->addTestSuite('WebservicesOtherTest');
-			require_once dirname(__FILE__).'/WebservicesThirdpartyTest.php';
-			$suite->addTestSuite('WebservicesThirdpartyTest');
-			require_once dirname(__FILE__).'/WebservicesUserTest.php';
-			$suite->addTestSuite('WebservicesUserTest');
+		require_once dirname(__FILE__).'/WebservicesProductsTest.php';
+		$suite->addTestSuite('WebservicesProductsTest');
+		require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
+		$suite->addTestSuite('WebservicesInvoicesTest');
+		require_once dirname(__FILE__).'/WebservicesOrdersTest.php';
+		$suite->addTestSuite('WebservicesOrdersTest');
+		require_once dirname(__FILE__).'/WebservicesOtherTest.php';
+		$suite->addTestSuite('WebservicesOtherTest');
+		require_once dirname(__FILE__).'/WebservicesThirdpartyTest.php';
+		$suite->addTestSuite('WebservicesThirdpartyTest');
+		require_once dirname(__FILE__).'/WebservicesUserTest.php';
+		$suite->addTestSuite('WebservicesUserTest');
 		//}
 
 		require_once dirname(__FILE__).'/ExportTest.php';

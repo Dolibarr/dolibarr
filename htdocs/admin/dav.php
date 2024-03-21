@@ -37,7 +37,9 @@ if (!$user->admin) {
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-
+if (empty($action)) {
+	$action = 'edit';
+}
 
 $arrayofparameters = array(
 	'DAV_RESTICT_ON_IP'=>array('css'=>'minwidth200', 'enabled'=>1),
@@ -58,6 +60,9 @@ dol_mkdir($conf->dav->dir_output.'/private');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
+if ($action == 'update') {
+	$action = 'edit';
+}
 
 
 /*

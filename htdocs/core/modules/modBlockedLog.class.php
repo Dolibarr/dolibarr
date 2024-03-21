@@ -65,7 +65,7 @@ class modBlockedLog extends DolibarrModules
 		//-------------
 		$this->config_page_url = array('blockedlog.php?withtab=1@blockedlog');
 
-		// Dependancies
+		// Dependencies
 		//-------------
 		$this->hidden = false; // A condition to disable module
 		$this->depends = array('always'=>'modFacture'); // List of modules id that must be enabled if this module is enabled
@@ -91,8 +91,8 @@ class modBlockedLog extends DolibarrModules
 		//var_dump($this->automatic_activation);
 
 		$this->always_enabled = (!empty($conf->blockedlog->enabled)
-			&& !empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY)
-			&& in_array((empty($mysoc->country_code) ? '' : $mysoc->country_code), explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY))
+			&& getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY')
+			&& in_array((empty($mysoc->country_code) ? '' : $mysoc->country_code), explode(',', getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY')))
 			&& $this->alreadyUsed());
 
 		// Constants
@@ -133,8 +133,8 @@ class modBlockedLog extends DolibarrModules
 			'url'=>'/blockedlog/admin/blockedlog_list.php?mainmenu=tools&leftmenu=blockedlogbrowser',
 			'langs'=>'blockedlog', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>200,
-			'enabled'=>'$conf->blockedlog->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->blockedlog->read', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+			'enabled'=>'isModEnabled("blockedlog")', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms'=>'$user->hasRight("blockedlog", "read")', // Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -207,7 +207,6 @@ class modBlockedLog extends DolibarrModules
 	 */
 	public function remove($options = '')
 	{
-
 		global $conf, $user;
 
 		$sql = array();

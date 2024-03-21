@@ -40,6 +40,10 @@ class ActionsCardProduct
 
 	public $name;
 	public $definition;
+	public $description;
+	public $price_base_type;
+	public $accountancy_code_sell;
+	public $accountancy_code_buy;
 	public $fieldListName;
 	public $next_prev_filter;
 
@@ -49,7 +53,7 @@ class ActionsCardProduct
 	//! Template container
 	public $tpl = array();
 
-	// List of fiels for action=list
+	// List of fields for action=list
 	public $field_list = array();
 
 	/**

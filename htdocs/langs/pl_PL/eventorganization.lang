@@ -17,52 +17,52 @@
 #
 # Generic
 #
-ModuleEventOrganizationName = Impreza organizacyjna
+ModuleEventOrganizationName = Organizacja imprez
 EventOrganizationDescription = Impreza organizacyjna za pomocą modułu Projekty
-EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
+EventOrganizationDescriptionLong= Zarządzaj organizacją wydarzenia (pokaz, konferencje, uczestnicy lub prelegenci, z publicznymi stronami do sugestii, głosowania i rejestracji)
 #
 # Menu
 #
-EventOrganizationMenuLeft = Imprezy zorganizowane
+EventOrganizationMenuLeft = Zorganizowane wydarzenia
 EventOrganizationConferenceOrBoothMenuLeft = Konferencja lub stoisko
 
-PaymentEvent=Payment of event
+PaymentEvent=Płatność za wydarzenie
 
 #
 # Admin page
 #
-NewRegistration=Registration
-EventOrganizationSetup=Konfiguracja imprezy organizacyjnej
-EventOrganization=Event organization
-Settings=Ustawienia
-EventOrganizationSetupPage = Strona konfiguracji imprezy organizacyjnej
-EVENTORGANIZATION_TASK_LABEL = Etykiety zadań automatycznie tworzonych po zatwierdzeniu projektu
-EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
-EVENTORGANIZATION_TASK_LABELTooltip2=Keep empty if you don't need to create tasks automatically.
+NewRegistration=Rejestracja
+EventOrganizationSetup=Konfiguracja modułu Organizacji Wydarzeń
+EventOrganization=Organizacja imprez
+EventOrganizationSetupPage = Strona konfiguracji Organizacji Wydarzeń
+EVENTORGANIZATION_TASK_LABEL = Etykieta zadań do utworzenia automatycznie po zatwierdzeniu projektu
+EVENTORGANIZATION_TASK_LABELTooltip = Po zatwierdzeniu wydarzenia do zorganizowania niektóre zadania mogą zostać automatycznie utworzone w projekcie<br><br>Na przykład: <br>Wyślij zaproszenie na konferencje<br>Wyślij zaproszenie na konferencje<br>Weryfikuj sugestie dotyczące konferencji<br>Zatwierdź zgłoszenie na stoiska<br>Otwórz subskrypcje wydarzenia dla uczestników<br>Wyślij przypomnienie wydarzenia do prelegentów<br>Wyślij przypomnienie o wydarzeniu do organizatorów stoisk<br>Wyślij przypomnienie o wydarzeniu do uczestników
+EVENTORGANIZATION_TASK_LABELTooltip2=Pozostaw puste, jeśli nie potrzebujesz automatycznie tworzyć zadań.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategoria dodawana do kontrahentów, tworzona automatycznie po otrzymaniu sugestii zorganizowania konferencji.
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategoria dodawana do kontrahentów, tworzona automatycznie po otrzymaniu sugestii zorganizowania stoiska.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Szablon wiadomości e-mail wysyłany po otrzymaniu sugestii zorganizowania konferencji.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Szablon wiadomości e-mail wysyłany po otrzymaniu sugestii zorganizowania stoiska.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
-EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Wzór wiadomości e-mail do wysłania po opłaceniu rejestracji na stoisko.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Szablon wiadomości e-mail wysyłanej po opłaceniu rejestracji na wydarzenie.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Szablon e-maila do wykorzystania przy wysyłaniu e-maili z masakry „Wyślij e-maile” do prelegentów
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Szablon emaila do wykorzystania podczas wysyłania maili z akcji "Wyślij maile" na listę uczestników
+EVENTORGANIZATION_FILTERATTENDEES_CAT = W formularzu tworzenia/dodawania uczestnika ogranicza listę osób trzecich do osób trzecich w danej kategorii
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = W formularzu tworzenia/dodawania uczestnika zawęża listę osób trzecich do osób trzecich o charakterze
 
 #
 # Object
 #
+OrganizedEvent=Zorganizowane wydarzenie
 EventOrganizationConfOrBooth= Konferencja lub stoisko
-EventOrganizationConfOrBoothes=Conferences or Boothes
-ManageOrganizeEvent = Manage the organization of an event
+EventOrganizationConfOrBoothes=Konferencje lub stoiska
+ManageOrganizeEvent = Zarządzanie organizacją wydarzenia
 ConferenceOrBooth = Konferencja lub stoisko
 ConferenceOrBoothTab = Konferencja lub stoisko
-AmountPaid = Amount paid
-DateOfRegistration = Date of registration
+AmountPaid = Wartość zapłacona
+DateOfRegistration = Data rejestracji
 ConferenceOrBoothAttendee = Uczestnik konferencji lub stoiska
-ApplicantOrVisitor=Applicant or visitor
-Speaker=Speaker
+ApplicantOrVisitor=Wnioskodawca lub gość
+Speaker=Głośnik
 
 #
 # Template Mail
@@ -71,32 +71,33 @@ YourOrganizationEventConfRequestWasReceived = Twoje żądanie o konferencję zos
 YourOrganizationEventBoothRequestWasReceived = Twoje żądanie o stoisko zostało odebrane
 EventOrganizationEmailAskConf = Żądanie o konferencję
 EventOrganizationEmailAskBooth = Żądanie o stoisko
-EventOrganizationEmailBoothPayment = Payment of your booth
-EventOrganizationEmailRegistrationPayment = Registration for an event
+EventOrganizationEmailBoothPayment = Płatność za Twoje stoisko
+EventOrganizationEmailRegistrationPayment = Rejestracja na wydarzenie
 EventOrganizationMassEmailAttendees = Komunikacja z uczestnikami
 EventOrganizationMassEmailSpeakers = Komunikacja z prelegentami
-ToSpeakers=To speakers
+ToSpeakers=Do głośników
 
 #
 # Event
 #
-AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
-AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
-AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
-AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
+AllowUnknownPeopleSuggestConf=Pozwól ludziom proponować konferencje
+AllowUnknownPeopleSuggestConfHelp=Pozwól nieznanym osobom proponować konferencję, którą chcą zorganizować
+AllowUnknownPeopleSuggestBooth=Pozwól ludziom ubiegać się o stoisko
+AllowUnknownPeopleSuggestBoothHelp=Pozwól nieznanym osobom ubiegać się o stoisko
 PriceOfRegistration=Cena rejestracji
-PriceOfRegistrationHelp=Price to pay to register or participate in the event
+PriceOfRegistrationHelp=Cena, jaką należy zapłacić za rejestrację lub udział w wydarzeniu
 PriceOfBooth=Cena abonamentu za stoisko
 PriceOfBoothHelp=Cena abonamentu za stoisko
-EventOrganizationICSLink=Link ICS for conferences
+EventOrganizationICSLink=Link do ICS dla konferencji
 ConferenceOrBoothInformation=Informacje o konferencji lub stoisku
 Attendees=Uczestnicy
-ListOfAttendeesOfEvent=List of attendees of the event project
+ListOfAttendeesOfEvent=Lista uczestników projektu wydarzenia
 DownloadICSLink = Pobierz link do ICS
-EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
+EVENTORGANIZATION_SECUREKEY = Seed, aby zabezpieczyć klucz do strony rejestracji publicznej, aby zasugerować konferencję
 SERVICE_BOOTH_LOCATION = Usługa używana do wiersza faktury o lokalizacji stoiska
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Usługa używana w wierszu faktury dotyczącej subskrypcji uczestnika wydarzenia
 NbVotes=Liczba głosów
+
 #
 # Status
 #
@@ -105,51 +106,47 @@ EvntOrgSuggested = Zasugerowane
 EvntOrgConfirmed = Potwierdzone
 EvntOrgNotQualified = Brak kwalifikacji
 EvntOrgDone = Zrobione
-EvntOrgCancelled = Anulowane
+EvntOrgCancelled = Anulowany
+
 #
-# Public page
+# Other
 #
 SuggestForm = Strona sugestii
-SuggestOrVoteForConfOrBooth = Page for suggestion or vote
-EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
-EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
+SuggestOrVoteForConfOrBooth = Strona z sugestiami lub głosowaniem
+EvntOrgRegistrationHelpMessage = Tutaj możesz oddać głos na konferencję lub zaproponować nową na wydarzenie. Można także ubiegać się o udostępnienie stoiska podczas wydarzenia.
+EvntOrgRegistrationConfHelpMessage = Tutaj możesz zaproponować nową konferencję do animacji podczas wydarzenia.
+EvntOrgRegistrationBoothHelpMessage = Tutaj możesz złożyć wniosek o udostępnienie stoiska podczas wydarzenia.
 ListOfSuggestedConferences = Lista proponowanych konferencji
-ListOfSuggestedBooths=Suggested booths
-ListOfConferencesOrBooths=Conferences or booths of event project
+ListOfSuggestedBooths=Sugerowane stoiska
+ListOfConferencesOrBooths=Konferencje lub stoiska projektu wydarzenia
 SuggestConference = Zaproponuj nową konferencję
 SuggestBooth = Zaproponuj stoisko
 ViewAndVote = Zobacz i zagłosuj na sugerowane wydarzenia
-PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
-PublicAttendeeSubscriptionPage = Public link for registration to this event only
+PublicAttendeeSubscriptionGlobalPage = Publiczny link umożliwiający rejestrację na wydarzenie
+PublicAttendeeSubscriptionPage = Link publiczny umożliwiający wyłącznie rejestrację na to wydarzenie
 MissingOrBadSecureKey = Klucz bezpieczeństwa jest nieprawidłowy lub go brakuje
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
+EvntOrgWelcomeMessage = Formularz ten pozwala na zarejestrowanie się jako nowy uczestnik wydarzenia
 EvntOrgDuration = Ta konferencja zaczyna się %s i kończy się %s.
 ConferenceAttendeeFee = Opłata uczestnika konferencji za wydarzenie: '%s' występujące od %s do %s.
 BoothLocationFee = Lokalizacja stoiska dla wydarzenia: „%s” występujące od %s do %s
 EventType = Typ wydarzenia
 LabelOfBooth=Etykieta stoiska
 LabelOfconference=Etykieta konferencji
-ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
-DateMustBeBeforeThan=%s must be before %s
-DateMustBeAfterThan=%s must be after %s
-MaxNbOfAttendeesReached=The maximum number of participants has been reached
-NewSubscription=Registration
-OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
-OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
-OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
-OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
-OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
-OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
-OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
-OrganizationEvenLabelName=Public name of the conference or booth
-
-NewSuggestionOfBooth=Application for a booth
-NewSuggestionOfConference=Application for a conference
-
-#
-# Vote page
-#
+ConferenceIsNotConfirmed=Rejestracja nie jest możliwa, konferencja nie została jeszcze potwierdzona
+DateMustBeBeforeThan=%s musi być przed %s
+DateMustBeAfterThan=%s musi znajdować się po %s
+MaxNbOfAttendeesReached=Osiągnięto maksymalną liczbę uczestników
+NewSubscription=Rejestracja
+OrganizationEventConfRequestWasReceived=Otrzymaliśmy Twoją propozycję zorganizowania konferencji
+OrganizationEventBoothRequestWasReceived=Otrzymaliśmy Twoją prośbę o stoisko
+OrganizationEventPaymentOfBoothWasReceived=Twoja płatność za stoisko została zarejestrowana
+OrganizationEventPaymentOfRegistrationWasReceived=Twoja płatność za rejestrację na wydarzenie została zarejestrowana
+OrganizationEventBulkMailToAttendees=To przypomnienie o Twoim udziale w wydarzeniu jako uczestnik
+OrganizationEventBulkMailToSpeakers=To jest przypomnienie o Twoim udziale w wydarzeniu w charakterze prelegenta
+OrganizationEventLinkToThirdParty=Link do strony trzeciej (klienta, dostawcy lub partnera)
+OrganizationEvenLabelName=Publiczna nazwa konferencji lub stoiska
+NewSuggestionOfBooth=Wniosek o stoisko
+NewSuggestionOfConference=Aplikacja do zorganizowania konferencji
 EvntOrgRegistrationWelcomeMessage = Witamy na stronie z propozycjami konferencji lub stoisk.
 EvntOrgRegistrationConfWelcomeMessage = Witamy na stronie propozycji konferencji.
 EvntOrgRegistrationBoothWelcomeMessage = Witamy na stronie propozycji stoisk.
@@ -157,18 +154,26 @@ EvntOrgVoteHelpMessage = Tutaj możesz przeglądać i głosować na sugerowane w
 VoteOk = Twój głos został zaakceptowany.
 AlreadyVoted = Już zagłosowałeś na to wydarzenie.
 VoteError = Podczas głosowania wystąpił błąd, spróbuj ponownie.
-
-SubscriptionOk=Your registration has been recorded
-ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
+SubscriptionOk=Twoja rejestracja została zarejestrowana
+AmountOfRegistrationPaid=Kwota wpłaconej rejestracji
+ConfAttendeeSubscriptionConfirmation = Potwierdzenie subskrypcji wydarzenia
 Attendee = Uczestnik
 PaymentConferenceAttendee = Opłata za uczestnika konferencji
 PaymentBoothLocation = Płatność za miejsce na stoisku
-DeleteConferenceOrBoothAttendee=Remove attendee
-RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
-EmailAttendee=Attendee email
-EmailCompany=Company email
-EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
-ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
-MaxNbOfAttendees=Max number of attendees
+DeleteConferenceOrBoothAttendee=Usuń uczestnika
+RegistrationAndPaymentWereAlreadyRecorder=Rejestracja i płatność zostały już zarejestrowane dla adresu e-mail <b>%s</b>
+EmailAttendee=Adres e-mail uczestnika
+EmailCompany=Adres e-mail firmy
+EmailCompanyForInvoice=Adres e-mail firmy (do faktury, jeśli jest inny niż adres e-mail uczestnika)
+ErrorSeveralCompaniesWithEmailContactUs=Znaleziono kilka firm o tym adresie e-mail, więc nie możemy automatycznie zweryfikować Twojej rejestracji. Skontaktuj się z nami pod adresem %s w celu ręcznej weryfikacji
+ErrorSeveralCompaniesWithNameContactUs=Znaleziono kilka firm o tej nazwie, dlatego nie możemy automatycznie zweryfikować Twojej rejestracji. Skontaktuj się z nami pod adresem %s w celu ręcznej weryfikacji
+NoPublicActionsAllowedForThisEvent=Żadne działania publiczne związane z tym wydarzeniem nie są otwarte dla publiczności
+MaxNbOfAttendees=Maksymalna liczba uczestników
+DateStartEvent=Data rozpoczęcia wydarzenia
+DateEndEvent=Data zakończenia wydarzenia
+ModifyStatus=Zmień stan
+ConfirmModifyStatus=Potwierdź zmianę statusu
+ConfirmModifyStatusQuestion=Czy na pewno chcesz zmodyfikować %s wybrane rekordy?
+RecordsUpdated = %s Rekordy zaktualizowane
+RecordUpdated = Rekord zaktualizowany
+NoRecordUpdated = Żaden rekord nie został zaktualizowany

@@ -38,17 +38,6 @@ class box_mos extends ModeleBoxes
 	public $depends  = array("mrp");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -60,7 +49,7 @@ class box_mos extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->bom->read);
+		$this->hidden = !$user->hasRight('bom', 'read');
 	}
 
 	/**
@@ -132,7 +121,7 @@ class box_mos extends ModeleBoxes
 						'asis' => 1,
 					);
 
-					if (!empty($conf->global->MRP_BOX_LAST_MOS_SHOW_VALIDATE_USER)) {
+					if (getDolGlobalString('MRP_BOX_LAST_MOS_SHOW_VALIDATE_USER')) {
 						if ($objp->fk_user_valid > 0) {
 							$userstatic->fetch($objp->fk_user_valid);
 						}

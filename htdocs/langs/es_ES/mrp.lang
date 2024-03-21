@@ -31,9 +31,14 @@ Consumption=Consumo
 ValueOfMeansLoss=El valor de 0.95 significa un promedio de 5%% de pérdida durante la producción
 ValueOfMeansLossForProductProduced=El valor de 0.95 significa un promedio de 5%% de pérdida del producto producido
 DeleteBillOfMaterials=Eliminar Lista de material
+CancelMo=Cancelar orden de fabricación
+MoCancelConsumedAndProducedLines=Cancelar también todas las líneas consumidas y producidas (eliminar líneas y revertir stocks)
+ConfirmCancelMo=¿Está seguro de que desea cancelar esta orden de fabricación?
 DeleteMo=Eliminar Orden de Fabricación
 ConfirmDeleteBillOfMaterials=¿Está seguro de que desea eliminar esta lista de materiales?
 ConfirmDeleteMo=¿Está seguro de que desea eliminar esta Orden de Fabricación?
+DeleteMoChild = Elimine los MO secundarios vinculados a este MO %s
+MoChildsDeleted = Todos los MO infantiles han sido eliminados.
 MenuMRP=Órdenes de fabricación
 NewMO=Nueva orden de fabricación
 QtyToProduce=Cant. a fabricar
@@ -60,6 +65,8 @@ ToProduce=A producir
 ToObtain=Para obtener
 QtyAlreadyConsumed=Cant. ya consumida
 QtyAlreadyProduced=Cant. ya producida
+QtyAlreadyConsumedShort=Cantidad consumida
+QtyAlreadyProducedShort=Cantidad producida
 QtyRequiredIfNoLoss=Cantidad requerida para producir la cantidad definida en la lista de materiales si no hay pérdida (si la eficiencia de fabricación es 100%%)
 ConsumeOrProduce=Consumir o producir
 ConsumeAndProduceAll=Consumir y producir todo
@@ -123,3 +130,10 @@ Manufacturing=Fabricación
 Disassemble=Desmontar
 ProducedBy=Producido por
 QtyTot=Cant. Total
+
+QtyCantBeSplit= La cantidad no se puede dividir
+NoRemainQtyToDispatch=No queda cantidad para dividir
+
+THMOperatorEstimatedHelp=Costo estimado del operador por hora. Se utilizará para estimar el costo de una lista de materiales utilizando esta estación de trabajo.
+THMMachineEstimatedHelp=Costo estimado de la máquina por hora. Se utilizará para estimar el costo de una lista de materiales utilizando esta estación de trabajo.
+

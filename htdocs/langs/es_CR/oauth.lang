@@ -7,7 +7,6 @@ IsTokenGenerated=¿Se generó el token?
 NoAccessToken=Ningún token de acceso guardado en la base de datos local
 HasAccessToken=Se generó un token y se guardó en la base de datos local.
 ToCheckDeleteTokenOnProvider=Haga clic aquí para verificar / eliminar la autorización guardada por el proveedor de OAuth %s
-UseTheFollowingUrlAsRedirectURI=Use la siguiente URL como URI de redireccionamiento al crear sus credenciales con su proveedor de OAuth:
 SeePreviousTab=Ver pestaña anterior
 OAuthIDSecret=OAuth ID y secreto
 TOKEN_REFRESH=Actualizar Token Presente
@@ -18,5 +17,3 @@ OAUTH_GOOGLE_ID=ID de Google OAuth
 OAUTH_GITHUB_NAME=Servicio OAuth GitHub
 OAUTH_GITHUB_ID=Id OAuth GitHub
 OAUTH_URL_FOR_CREDENTIAL=Vaya a <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">esta página<span class="fas fa-external-link-alt paddingleft"></span></a> para crear u obtener su ID y secreto de OAuth
-OAUTH_ID=ID de cliente de OAuth
-OAUTH_TENANT=Inquilino de OAuth

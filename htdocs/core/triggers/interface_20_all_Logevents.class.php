@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceLogevents extends DolibarrTriggers
 {
-	const EVENT_ACTION_DICT = [ // TODO reduce number of events to CREATE, UPDATE & DELETE. Use object properties to pinpoint precise action.
+	const EVENT_ACTION_DICT = array( // TODO reduce number of events to CREATE, UPDATE & DELETE. Use object properties to pinpoint precise action.
 		'USER_LOGIN' => 'UserLogged',
 		'USER_LOGIN_FAILED' => 'UserLoginFailed',
 		'USER_LOGOUT' => 'UserLogoff',
@@ -44,10 +44,20 @@ class InterfaceLogevents extends DolibarrTriggers
 		'USERGROUP_CREATE' => 'NewGroupCreated',
 		'USERGROUP_MODIFY' => 'GroupModified',
 		'USERGROUP_DELETE' => 'GroupDeleted'
-	];
-	private string 	$event_label;
-	private string 	$event_desc;
-	private int 	$event_date;
+	);
+	/**
+	 * @var string	Label
+	 */
+	private $event_label;
+	/**
+	 * @var string	Description
+	 */
+	private $event_desc;
+	/**
+	 * @var int		Date
+	 */
+	private $event_date;
+
 
 	/**
 	 * Constructor
@@ -59,7 +69,7 @@ class InterfaceLogevents extends DolibarrTriggers
 
 		$this->family 		= "core";
 		$this->description  = "Triggers of this module allows to add security event records inside Dolibarr.";
-		$this->version 		= self::VERSION_DOLIBARR;  // VERSION_ 'DEVELOPMENT' or 'EXPERIMENTAL' or 'DOLIBARR'
+		$this->version 		= self::VERSIONS['prod'];
 		$this->picto 		= 'technic';
 		$this->event_label 	= '';
 		$this->event_desc 	= '';
@@ -78,9 +88,9 @@ class InterfaceLogevents extends DolibarrTriggers
 	 * @return	int					if KO: <0, if no trigger ran: 0, if OK: >0
 	 * @throws	Exception			dol_syslog can throw Exceptions
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf): int
+	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (!empty($conf->global->MAIN_LOGEVENTS_DISABLE_ALL)) {
+		if (getDolGlobalString('MAIN_LOGEVENTS_DISABLE_ALL')) {
 			return 0; // Log events is disabled (hidden features)
 		}
 
@@ -90,6 +100,7 @@ class InterfaceLogevents extends DolibarrTriggers
 		}
 
 		if (empty($conf->entity)) {
+			global $entity;
 			$conf->entity = $entity; // forcing of the entity if it's not defined (ex: in login form)
 		}
 
@@ -124,11 +135,11 @@ class InterfaceLogevents extends DolibarrTriggers
 	/**
 	 * Method called by runTrigger to initialize date, label & description data for event
 	 *
-	 * @param	string		$key_text				Action string
+	 * @param	string		$key_text			Action string
 	 * @param	Object		$object				Object
 	 * @return	void
 	 */
-	private function initEventData(string $key_text, Object $object): void
+	private function initEventData($key_text, $object)
 	{
 		$this->event_date = dol_now();
 		$this->event_label = $this->event_desc = $key_text . ' : ' . $object->login;
@@ -144,10 +155,10 @@ class InterfaceLogevents extends DolibarrTriggers
 	/**
 	 * Check if text contains an event action key. Used for dynamic localization on frontend events list.
 	 *
-	 * @param	string	$event_text	input event text
-	 * @return	bool
+	 * @param	string	$event_text		Input event text
+	 * @return	bool					True if event text is a coded structured string
 	 */
-	public static function isEventActionTextKey(string $event_text): bool
+	public static function isEventActionTextKey($event_text)
 	{
 		foreach (InterfaceLogevents::EVENT_ACTION_DICT as $value) {
 			if (str_contains($event_text, $value)) {

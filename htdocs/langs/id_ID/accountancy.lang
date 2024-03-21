@@ -16,8 +16,8 @@ ThisService=Layanan ini
 ThisProduct=Produk ini
 DefaultForService=Default for services
 DefaultForProduct=Default for products
-ProductForThisThirdparty=Produk untuk pihak ketiga ini
-ServiceForThisThirdparty=Layanan untuk pihak ketiga ini
+ProductForThisThirdparty=Product for this third party
+ServiceForThisThirdparty=Service for this third party
 CantSuggest=Tidak bisa menyarankan
 AccountancySetupDoneFromAccountancyMenu=Kebanyakan aturan akutansi dilakukan dari bilah menu %s
 ConfigAccountingExpert=Konfigurasi akuntansi modul (entri ganda)
@@ -38,7 +38,7 @@ DeleteCptCategory=Hilangkan akun akutansi dari grup
 ConfirmDeleteCptCategory=Apakah Anda yakin untuk menghilangkan akun akutansi ini dari grup akun akutansi?
 JournalizationInLedgerStatus=Status Pencatatan Jurnal
 AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
-NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
+NotYetInGeneralLedger=Not yet transferred to accounting journals and ledger
 GroupIsEmptyCheckSetup=Grup kosong, periksa pengaturan grup akuntansi yang dipersonalisasi
 DetailByAccount=Tampilkan rincian berdasarkan akun
 DetailBy=Detail by
@@ -53,15 +53,13 @@ ExportAccountingSourceDocHelp=With this tool, you can search and export the sour
 ExportAccountingSourceDocHelp2=Untuk mengekspor jurnal Anda, gunakan entri menu %s - %s.
 ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 ExportAccountancy=Export accountancy
-WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported to re-export them, click on the button above.
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported, click on the button above.
 VueByAccountAccounting=Lihat berdasarkan akun akuntansi
 VueBySubAccountAccounting=Lihat menurut sub-akun akuntansi
 
 MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
 MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
-MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
-MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
 MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
 MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
 MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
@@ -70,13 +68,14 @@ UserAccountNotDefined=Accounting account for user not defined in setup
 AccountancyArea=Bidang akuntansi
 AccountancyAreaDescIntro=Penggunaan modul akuntansi dilakukan dalam beberapa langkah:
 AccountancyAreaDescActionOnce=Tindakan berikut ini biasanya dilakukan hanya sekali saja, atau sekali setahun...
-AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automatically the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=Tindakan berikut ini biasanya dilakukan setiap bulan, minggu atau hari untuk perusahaan yang sangat besar...
 
 AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=LANGKAH %s: Periksa apakah tersedia model bagan akun atau buat model barudari menu %s
 AccountancyAreaDescChart=LANGKAH %s: Pilih dan|atau selesaikan bagan akun Anda dari menu %s
 
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries. For this, use the menu entry %s.
 AccountancyAreaDescVat=LANGKAH %s: Tentukan akun akuntansi untuk setiap Tarif PPN. Untuk ini, gunakan entri menu %s.
 AccountancyAreaDescDefault=LANGKAH %s: Tentukan akun akuntansi standar. Untuk ini, gunakan entri menu %s.
 AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
@@ -84,7 +83,7 @@ AccountancyAreaDescSal=LANGKAH %s: Tentukan akun akuntansi standar untuk pembaya
 AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=LANGKAH %s: Tentukan akun akuntansi standar untuk donasi. Untuk ini, gunakan entri menu %s.
 AccountancyAreaDescSubscription=LANGKAH %s: Tetapkan akun akuntansi standar untuk langganan anggota. Untuk ini, gunakan entri menu %s.
-AccountancyAreaDescMisc=LANGKAH %s: Tetapkan akun standar wajib dan akun akuntansi standar untuk transaksi lain-lain. Untuk ini, gunakan entri menu %s.
+AccountancyAreaDescMisc=STEP %s: Define mandatory default accounts and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=LANGKAH %s: Tentukan akun akuntansi standar untuk pinjaman. Untuk ini, gunakan entri menu %s.
 AccountancyAreaDescBank=LANGKAH %s: Tentukan akun akuntansi dan kode jurnal untuk masing-masing bank dan akun keuangan. Untuk ini, gunakan entri menu %s.
 AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
@@ -95,6 +94,7 @@ AccountancyAreaDescAnalyze=LANGKAH %s: Tambahkan atau sunting transaksi yang ada
 
 AccountancyAreaDescClosePeriod=LANGKAH %s: Tutup periode sehingga kita tidak dapat melakukan modifikasi di masa mendatang.
 
+TheFiscalPeriodIsNotDefined=A mandatory step in setup has not been completed (Fiscal period is not defined)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Langkah wajib dalam penyiapan belum selesai (jurnal kode akuntansi tidak ditentukan untuk semua rekening bank)
 Selectchartofaccounts=Pilih bagan akun aktif
 ChangeAndLoad=Ubah dan muat
@@ -171,8 +171,8 @@ ACCOUNTING_MANAGE_ZERO=Izinkan untuk mengelola jumlah nol yang berbeda di akhir 
 BANK_DISABLE_DIRECT_INPUT=Nonaktifkan pencatatan langsung transaksi di rekening bank
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Aktifkan konsep ekspor di jurnal
 ACCOUNTANCY_COMBO_FOR_AUX=Aktifkan daftar kombo untuk akun anak perusahaan (mungkin lambat jika Anda memiliki banyak pihak ketiga, hentikan kemampuan untuk mencari sebagian nilai)
-ACCOUNTING_DATE_START_BINDING=Tentukan tanggal untuk mulai mengikat & mentransfer akuntansi. Di bawah tanggal ini, transaksi tidak akan dialihkan ke akuntansi.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
+ACCOUNTING_DATE_START_BINDING=Disable binding & transfer in accountancy when date is below this date (the transactions before this date will be excluded by default)
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On the page to transfer data into accountancy, what is the period selected by default
 
 ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
@@ -186,6 +186,8 @@ ACCOUNTING_SOCIAL_JOURNAL=Jurnal Sosial
 ACCOUNTING_RESULT_PROFIT=Akun akuntansi hasil (Laba)
 ACCOUNTING_RESULT_LOSS=Hasil akun akuntansi (Rugi)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Jurnal penutupan
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Accounting groups used for the balance sheet account (separate by comma)
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Accounting groups used for the income statement (separate by comma)
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account (from the Chart Of Account) to be used as the account for transitional bank transfers
 TransitionalAccount=Rekening transfer bank transisi
@@ -290,7 +292,7 @@ DescVentilDoneCustomer=Consult here the list of the lines of invoices customers 
 DescVentilTodoCustomer=Bind invoice lines not already bound with a product account from chart of account
 ChangeAccount=Change the product/service account (from chart of account) for the selected lines with the following account:
 Vide=-
-DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product account from chart of account (only record not already transfered in accountancy are visible)
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product account from chart of account (only record not already transferred in accountancy are visible)
 DescVentilDoneSupplier=Konsultasikan di sini daftar garis faktur vendor dan akun akuntingnya
 DescVentilTodoExpenseReport=Bind garis laporan pengeluaran belum terikat dengan akun akuntansi biaya
 DescVentilExpenseReport=Konsultasikan di sini daftar garis laporan pengeluaran yang terikat (atau tidak) ke akun akuntansi biaya
@@ -298,7 +300,7 @@ DescVentilExpenseReportMore=Jika Anda mengatur akun akuntansi pada jenis garis l
 DescVentilDoneExpenseReport=Konsultasikan di sini daftar garis laporan pengeluaran dan akun akuntansi biayanya
 
 Closure=Penutupan tahunan
-DescClosure=Consult here the number of movements by month not yet validated & locked
+AccountancyClosureStep1Desc=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
@@ -341,7 +343,7 @@ AccountingJournalType3=Pembelian
 AccountingJournalType4=Bank
 AccountingJournalType5=Expense reports
 AccountingJournalType8=Inventaris
-AccountingJournalType9=Baru
+AccountingJournalType9=Retained earnings
 GenerationOfAccountingEntries=Generation of accounting entries
 ErrorAccountingJournalIsAlreadyUse=Jurnal ini sudah digunakan
 AccountingAccountForSalesTaxAreDefinedInto=Catatan: Akun akuntansi untuk Pajak penjualan didefinisikan ke dalam menu<b>%s</b>-<b>%s </b>
@@ -352,12 +354,14 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Nonaktifkan pengikatan & transfer akunta
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Nonaktifkan pengikatan & transfer akuntansi pada laporan pengeluaran (laporan pengeluaran tidak akan diperhitungkan dalam akuntansi)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
 ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
-EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigourous accounting management.
+EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigorous accounting management.
 ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
-ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not choosed by the end user
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not chosen by the end user
+ACCOUNTING_LETTERING_NBLETTERS=Number of letters when generating lettering code (default 3)
+ACCOUNTING_LETTERING_NBLETTERS_DESC=Some accounting software only accepts a two-letter code. This parameter allows you to set this aspect. The default number of letters is three.
 OptionsAdvanced=Advanced options
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transfered into accountancy differently: A additionnal debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
@@ -420,7 +424,7 @@ SaleLocal=Penjualan lokal
 SaleExport=Penjualan ekspor
 SaleEEC=Dijual dalam EEC
 SaleEECWithVAT=Dijual dalam EEC dengan PPN bukan nol, jadi kami mengira ini BUKAN penjualan intracommunautary dan akun yang disarankan adalah akun produk standar.
-SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of third party is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the third party, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
 ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
@@ -441,16 +445,30 @@ AccountancyNoUnletteringModified=No unreconcile modified
 AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
 AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
 
+## Closure
+AccountancyClosureStep1=Step 1 : Validate and lock movements
+AccountancyClosureStep2=Step 2 : Close fiscal period
+AccountancyClosureStep3=Step 3 : Extract entries (Optional)
+AccountancyClosureClose=Close fiscal period
+AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries
+AccountancyClosureStep3NewFiscalPeriod=Next fiscal period
+AccountancyClosureGenerateClosureBookkeepingRecords=Generate "Retained earnings" entries on the next fiscal period
+AccountancyClosureSeparateAuxiliaryAccounts=When generating the "Retained earnings" entries, detail the sub-ledger accounts
+AccountancyClosureCloseSuccessfully=Fiscal period has been closed successfully
+AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping entries for "Retained earnings" has been inserted successfully
+
 ## Confirm box
 ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
 ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
 ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
 ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
+AccountancyClosureConfirmClose=Are you sure you want to close the current fiscal period ? <span class="warning">You understand that closing the fiscal period is an irreversible action and will permanently block any modification or deletion of entries over this period</span>.
+AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Beberapa langkah pengaturan wajib tidak dilakukan, harap lengkapi
-ErrorNoAccountingCategoryForThisCountry=Tidak ada grup akun akuntansi yang tersedia untuk negara %s (Lihat Beranda - Pengaturan - Kamus)
+ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See %s - %s - %s)
 ErrorInvoiceContainsLinesNotYetBounded=Anda mencoba menjurnal beberapa baris faktur<strong>%s </strong>, tetapi beberapa baris lainnya belum terikat ke akun akuntansi. Jurnalisasi semua lini faktur untuk faktur ini ditolak.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Beberapa baris pada faktur tidak terikat pada akun akuntansi.
 ExportNotSupported=Format ekspor yang diseting tidak sesuai untuk halaman ini
@@ -465,6 +483,9 @@ AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 ErrorArchiveAddFile=Can't put "%s" file in archive
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found
+ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not inside the active fiscal period
+ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
 
 ## Import
 ImportAccountingEntries=Entri akuntansi

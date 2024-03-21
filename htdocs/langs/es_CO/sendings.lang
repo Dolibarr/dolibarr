@@ -23,7 +23,6 @@ StatusSendingCanceledShort=Cancelado
 StatusSendingValidated=Validado (productos para enviar o ya enviados)
 SendingSheet=Hoja de envío
 ConfirmDeleteSending=¿Está seguro de que desea eliminar este envío?
-ConfirmValidateSending=¿Está seguro de que desea validar este envío con la referencia <b> %s </b>?
 ConfirmCancelSending=¿Está seguro de que desea cancelar este envío?
 WarningNoQtyLeftToSend=Advertencia, no hay productos a la espera de ser enviados.
 RefDeliveryReceipt=Recibo de entrega de referencia

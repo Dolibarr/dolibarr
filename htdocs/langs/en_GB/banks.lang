@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - banks
-BankType1=Current, cheque or credit card account
 ValidateCheckReceipt=Validate this cheque receipt?
 DeleteCheckReceipt=Delete this cheque receipt?
 ConfirmDeleteCheckReceipt=Are you sure you want to delete this cheque receipt?

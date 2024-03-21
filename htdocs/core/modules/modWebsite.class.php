@@ -30,7 +30,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modWebsite extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -38,8 +37,6 @@ class modWebsite extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
-
 		$this->db = $db;
 		$this->numero = 10000;
 
@@ -64,7 +61,7 @@ class modWebsite extends DolibarrModules
 		$this->config_page_url = array('website.php');
 
 		// Dependencies
-		$this->hidden = !empty($conf->global->MODULE_WEBSITE_DISABLED); // A condition to disable module
+		$this->hidden = getDolGlobalInt('MODULE_WEBSITE_DISABLED'); // A condition to disable module
 		$this->depends = array('modFckeditor'); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
@@ -126,7 +123,7 @@ class modWebsite extends DolibarrModules
 								'langs'=>'website', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>100,
 								'enabled'=>'$conf->website->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-								'perms'=>'$user->rights->website->read', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+								'perms'=>'$user->rights->website->read', // Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
 								'target'=>'',
 								'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
@@ -218,9 +215,8 @@ class modWebsite extends DolibarrModules
 			}
 		}
 
-		// Copy templates in dir format (recommended)
+		// Copy templates in dir format (recommended) into zip file
 		$docs = dol_dir_list($srcroot, 'directories', 0, 'website_.*$');
-
 		foreach ($docs as $cursorfile) {
 			$src = $srcroot.'/'.$cursorfile['name'];
 			$dest = $destroot.'/'.$cursorfile['name'];

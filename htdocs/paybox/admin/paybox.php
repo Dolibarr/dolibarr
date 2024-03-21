@@ -67,7 +67,7 @@ if ($action == 'setvalue' && $user->admin) {
 	if (!($result > 0)) {
 		$error++;
 	}
-	$result = dolibarr_set_const($db, "PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, "PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS", GETPOSTINT('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS'), 'chaine', 0, '', $conf->entity);
 	if (!($result > 0)) {
 		$error++;
 	}
@@ -100,7 +100,7 @@ if ($action == 'setvalue' && $user->admin) {
 	if (!($result > 0)) {
 		$error++;
 	}
-		$result = dolibarr_set_const($db, "PAYBOX_HMAC_KEY", dol_encode(GETPOST('PAYBOX_HMAC_KEY', 'alpha')), 'chaine', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, "PAYBOX_HMAC_KEY", dol_encode(GETPOST('PAYBOX_HMAC_KEY', 'alpha')), 'chaine', 0, '', $conf->entity);
 	if (!($result > 0)) {
 		$error++;
 	}
@@ -121,15 +121,15 @@ if ($action == 'setvalue' && $user->admin) {
  */
 
 $IBS_SITE = "1999888"; // Site test
-if (empty($conf->global->PAYBOX_IBS_SITE)) {
+if (!getDolGlobalString('PAYBOX_IBS_SITE')) {
 	$conf->global->PAYBOX_IBS_SITE = $IBS_SITE;
 }
 $IBS_RANG = "99"; // Rang test
-if (empty($conf->global->PAYBOX_IBS_RANG)) {
+if (!getDolGlobalString('PAYBOX_IBS_RANG')) {
 	$conf->global->PAYBOX_IBS_RANG = $IBS_RANG;
 }
 $IBS_DEVISE = "978"; // Euro
-if (empty($conf->global->PAYBOX_IBS_DEVISE)) {
+if (!getDolGlobalString('PAYBOX_IBS_DEVISE')) {
 	$conf->global->PAYBOX_IBS_DEVISE = $IBS_DEVISE;
 }
 
@@ -227,7 +227,7 @@ print '<br><span class="opacitymedium">'.$langs->trans("Example").': '.$mysoc->n
 print '</td></tr>';
 
 
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccount").'</td><td>';
 	$form->select_comptes($conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
@@ -279,7 +279,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityTokenIsUnique").'</td><td>';
-print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE", (empty($conf->global->PAYMENT_SECURITY_TOKEN) ? 0 : $conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE), 1);
+print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE", (!getDolGlobalString('PAYMENT_SECURITY_TOKEN') ? 0 : $conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE), 1);
 print '</td></tr>';
 
 print '</table>';

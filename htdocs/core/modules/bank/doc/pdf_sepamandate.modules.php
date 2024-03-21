@@ -100,11 +100,11 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		// Define column position
 		$this->posxref = $this->marge_gauche;
 
-		$this->update_main_doc_field=1;
+		$this->update_main_doc_field = 1;
 
-		$this->heightforinfotot=50;
+		$this->heightforinfotot = 50;
 
-		$this->xPosSignArea=120;
+		$this->xPosSignArea = 120;
 
 		$this->heightforfreetext = (getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT') > 0 ? getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT') : 5);
 
@@ -133,7 +133,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -175,14 +175,14 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
 
-				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
+				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$this->heightforfooter  += 6;
 				}
 				$pdf->SetAutoPageBreak(1, 0);
@@ -206,6 +206,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// New page
@@ -263,8 +264,8 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$tmpbankfordirectdebit->fetch($idbankfordirectdebit);
 					$ics = $tmpbankfordirectdebit->ics;	// ICS for direct debit
 				}
-				if (empty($ics) && !empty($conf->global->PRELEVEMENT_ICS)) {
-					$ics = $conf->global->PRELEVEMENT_ICS;
+				if (empty($ics) && getDolGlobalString('PRELEVEMENT_ICS')) {
+					$ics = getDolGlobalString('PRELEVEMENT_ICS');
 				}
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("CreditorIdentifier").' ('.$outputlangs->transnoentitiesnoconv("ICS").') : '.$ics, 0, 'L');
 
@@ -443,7 +444,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -453,7 +454,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {
@@ -507,7 +508,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$diffsizetitle = (empty($conf->global->PDF_DIFFSIZE_TITLE) ? 1 : $conf->global->PDF_DIFFSIZE_TITLE);
+		$diffsizetitle = (!getDolGlobalString('PDF_DIFFSIZE_TITLE') ? 1 : $conf->global->PDF_DIFFSIZE_TITLE);
 
 		$posy += $this->_signature_area($pdf, $object, $posy, $outputlangs);
 
@@ -534,7 +535,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *	@param	TCPDF				$pdf           	Object PDF
 	 *	@param  CompanyBankAccount	$object         Object invoice
 	 *	@param	int					$posy			Position depart
-	 *	@param	Translate			$outputlangs	Objet langs
+	 *	@param	Translate			$outputlangs	Object langs
 	 *	@return int									Position pour suite
 	 */
 	protected function _signature_area(&$pdf, $object, $posy, $outputlangs)
@@ -549,14 +550,13 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("DateOfSignature"), 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("DateSigning"), 0, 'L', 0);
 		$pdf->MultiCell(100, 3, ' ');
 		$pdf->MultiCell(100, 3, '______________________', 0, 'L', 0);
 
 		$posx = $this->xPosSignArea;
 		$largcol = ($this->page_largeur - $this->marge_droite - $posx);
-		$useborder = 0;
-		$index = 0;
+
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($posx, $tab_top);
@@ -577,7 +577,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *  @param  CompanyBankAccount	$object     	Object to show
 	 *  @param  int	    			$showaddress    0=no, 1=yes
 	 *  @param  Translate			$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   		Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -658,6 +658,8 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 			}
 		}
 		*/
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

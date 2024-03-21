@@ -1,4 +1,4 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,50 +16,170 @@
 #
 # Generic
 #
-Assets = Ativos
-NewAsset = Novo Ativo
-AccountancyCodeAsset = Código de contabilidade (ativo)
-AccountancyCodeDepreciationAsset = Código de contabilidade (conta de depreciação do ativo)
-AccountancyCodeDepreciationExpense = Código de contabilidade (conta de depreciação de despesas)
-NewAssetType=Novo tipo de ativo
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Tipo de ativo
+NewAsset=Novo ativo
+AccountancyCodeAsset=Código de contabilidade (ativo)
+AccountancyCodeDepreciationAsset=Código de contabilidade (conta de depreciação do ativo)
+AccountancyCodeDepreciationExpense=Código de contabilidade (conta de depreciação de despesas)
 AssetsLines=Ativos
 DeleteType=Eliminar
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
+DeleteAnAssetType=Apagar um tipo de recurso
+ConfirmDeleteAssetType=Tem certeza de que deseja apagar este tipo de recurso?
 ShowTypeCard=Ver tipo '%s'
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Ativos
+ModuleAssetsName=Ativos
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Descrição dos ativos
+ModuleAssetsDesc=Descrição dos ativos
 
 #
 # Admin page
 #
-AssetsSetup = Configuração dos ativos
-Settings = Definições
-AssetsSetupPage = Página de configuração dos ativos
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
+AssetSetup=Configuração dos ativos
+AssetSetupPage=Página de configuração dos ativos
+ExtraFieldsAssetModel=Atributos complementares (Tipo de ativo)
+
 AssetsType=Tipo de ativo
 AssetsTypeId=Id. do tipo de ativo
 AssetsTypeLabel=Etiqueta do tipo de ativo
 AssetsTypes=Tipos de ativos
+ASSET_ACCOUNTANCY_CATEGORY=Grupo de contabilidade de ativos fixos
 
 #
 # Menu
 #
-MenuAssets = Ativos
-MenuNewAsset = Novo ativo
-MenuTypeAssets = Tipo de ativos
-MenuListAssets = Lista
-MenuNewTypeAssets = Novo
-MenuListTypeAssets = Lista
+MenuAssets=Ativos
+MenuNewAsset=Novo ativo
+MenuAssetModels=Tipo de ativos
+MenuListAssets=Lista
+MenuNewAssetModel=Novo tipo de ativo
+MenuListAssetModels=Lista
 
 #
 # Module
 #
-NewAssetType=Novo tipo de ativo
-NewAsset=Novo Ativo
+ConfirmDeleteAsset=Tem certeza que deseja remover este ativo?
+
+#
+# Tab
+#
+AssetDepreciationOptions=Opções de depreciação
+AssetAccountancyCodes=Contas contabilísticas
+AssetDepreciation=Depreciação
+
+#
+# Asset
+#
+Asset=Ativo
+Assets=Ativos
+AssetReversalAmountHT=Valor da anulação (sem taxas)
+AssetAcquisitionValueHT=Valor de aquisição (sem impostos)
+AssetRecoveredVAT=IVA recuperado
+AssetReversalDate=Data de reversão
+AssetDateAcquisition=Data de aquisição
+AssetDateStart=Data de inicio
+AssetAcquisitionType=Tipo de aquisição
+AssetAcquisitionTypeNew=Novo
+AssetAcquisitionTypeOccasion=Utilizado
+AssetType=Tipo de ativo
+AssetTypeIntangible=Intangível
+AssetTypeTangible=Tangível
+AssetTypeInProgress=Em progresso
+AssetTypeFinancial=Financeiro
+AssetNotDepreciated=Não depreciado
+AssetDisposal=A eliminar
+AssetConfirmDisposalAsk=Tem a certeza que quer eliminar o ativo <b>%s</b>?
+AssetConfirmReOpenAsk=Tem a certeza que quer reabrir o ativo <b>%s</b>?
+
+#
+# Asset status
+#
+AssetInProgress=Em progresso
+AssetDisposed=Eliminado
+AssetRecorded=Conta
+
+#
+# Asset disposal
+#
+AssetDisposalDate=Data de eliminar
+AssetDisposalAmount=Valor a eliminar
+AssetDisposalType=Tipo de eliminação
+AssetDisposalDepreciated=Depreciar o ano da transferência
+AssetDisposalSubjectToVat=Eliminação sujeita a IVA
+
+#
+# Asset model
+#
+AssetModel=Modelo de ativo, bem
+AssetModels=Modelos de ativo, bem
+
+#
+# Asset depreciation options
+#
+AssetDepreciationOptionEconomic=Depreciação econômica
+AssetDepreciationOptionAcceleratedDepreciation=Depreciação acelerada (imposto)
+AssetDepreciationOptionDepreciationType=Tipo de depreciação
+AssetDepreciationOptionDepreciationTypeLinear=Linear
+AssetDepreciationOptionDepreciationTypeDegressive=Degressivo
+AssetDepreciationOptionDepreciationTypeExceptional=Excepcional
+AssetDepreciationOptionDegressiveRate=Taxa degressiva
+AssetDepreciationOptionDuration=Duração
+AssetDepreciationOptionDurationType=Duração do tipo
+AssetDepreciationOptionDurationTypeAnnual=Anual
+AssetDepreciationOptionDurationTypeMonthly=Mensal
+AssetDepreciationOptionDurationTypeDaily=Diário
+AssetDepreciationOptionRate=Taxa (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Base de depreciação (sem IVA)
+AssetDepreciationOptionAmountBaseDeductibleHT=Base dedutível (sem IVA)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Valor total da última depreciação (sem IVA)
+
+#
+# Asset accountancy codes
+#
+AssetAccountancyCodeDepreciationEconomic=Depreciação econômica
+AssetAccountancyCodeAsset=Ativo
+AssetAccountancyCodeDepreciationAsset=Depreciação
+AssetAccountancyCodeDepreciationExpense=Despesa de depreciação
+AssetAccountancyCodeValueAssetSold=Valor de ativo, bem descartado
+AssetAccountancyCodeReceivableOnAssignment=Recebível na alienação
+AssetAccountancyCodeProceedsFromSales=Produto da alienação
+AssetAccountancyCodeVatCollected=IVA cobrado
+AssetAccountancyCodeVatDeductible=IVA recuperado sobre ativos
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Depreciação acelerada (imposto)
+AssetAccountancyCodeAcceleratedDepreciation=Conta
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Despesa de depreciação
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Reintegração de posse/Provisão
+
+#
+# Asset depreciation
+#
+AssetBaseDepreciationHT=Base de depreciação (sem IVA)
+AssetDepreciationBeginDate=Início da depreciação em
+AssetDepreciationDuration=Duração
+AssetDepreciationRate=Taxa (%%)
+AssetDepreciationDate=Depreciação data
+AssetDepreciationHT=Depreciação (sem IVA)
+AssetCumulativeDepreciationHT=Depreciação acumulada (sem IVA)
+AssetResidualHT=Valor residual (sem IVA)
+AssetDispatchedInBookkeeping=Depreciação registrada
+AssetFutureDepreciationLine=Depreciação futura
+AssetDepreciationReversal=Reversão
+
+#
+# Errors
+#
+AssetErrorAssetOrAssetModelIDNotProvide=Id. do ativo, bem ou o modelo encontrado não foi fornecido
+AssetErrorFetchAccountancyCodesForMode=Erro ao recuperar as contas Contabilista para o modo de depreciação '%s'
+AssetErrorDeleteAccountancyCodesForMode=Erro ao excluir contas Contabilista do modo de depreciação '%s'
+AssetErrorInsertAccountancyCodesForMode=Erro ao inserir as contas Contabilista do modo de depreciação '%s'
+AssetErrorFetchDepreciationOptionsForMode=Erro ao recuperar opções para o modo de depreciação '%s'
+AssetErrorDeleteDepreciationOptionsForMode=Erro ao excluir as opções do modo de depreciação '%s'
+AssetErrorInsertDepreciationOptionsForMode=Erro ao inserir as opções do modo de depreciação '%s'
+AssetErrorFetchDepreciationLines=Erro ao recuperar linhas de depreciação registradas
+AssetErrorClearDepreciationLines=Erro ao limpar linhas de depreciação registradas (reversão e futura)
+AssetErrorAddDepreciationLine=Erro ao adicionar uma linha de depreciação
+AssetErrorCalculationDepreciationLines=Erro ao calcular as linhas de depreciação (recuperação e futura)
+AssetErrorReversalDateNotProvidedForMode=A reversão data não é fornecida para o método de depreciação '%s'
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=A reversão data deve ser maior ou igual ao início do ano fiscal atual para o método de depreciação '%s'
+AssetErrorReversalAmountNotProvidedForMode=O valor de reversão não é fornecido para o modo de depreciação '%s'.
+AssetErrorFetchCumulativeDepreciation=Erro ao recuperar o valor da depreciação acumulada da linha de depreciação
+AssetErrorSetLastCumulativeDepreciation=Erro ao registrar o último valor de depreciação acumulada

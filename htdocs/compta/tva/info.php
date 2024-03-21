@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016-2017  Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2016-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +30,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 
 $object = new Tva($db);
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -62,7 +62,7 @@ if ($action == 'setlib' && $user->hasRight('tax', 'charges', 'creer')) {
 
 $title = $langs->trans("VAT")." - ".$langs->trans("Info");
 $help_url = '';
-llxHeader("", $title, $helpurl);
+llxHeader("", $title, $help_url);
 
 $object = new Tva($db);
 $object->fetch($id);

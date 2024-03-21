@@ -125,7 +125,7 @@ function checkLinkedElements($sourcetype, $targettype)
 /**
  * Clean data into ecm_directories table
  *
- * @return	int			<0 if KO, >0 if OK
+ * @return	int			Return integer <0 if KO, >0 if OK
  */
 function clean_data_ecm_directories()
 {

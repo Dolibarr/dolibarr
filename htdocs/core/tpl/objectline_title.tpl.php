@@ -37,8 +37,11 @@
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
+
+'@phan-var-force CommonObject $this
+ @phan-var-force CommonObject $object';
 
 print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
 
@@ -48,7 +51,7 @@ print "<thead>\n";
 print '<tr class="liste_titre nodrag nodrop">';
 
 // Adds a line numbering column
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 	print '<th class="linecolnum center">&nbsp;</th>';
 }
 
@@ -62,12 +65,13 @@ if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' 
 
 // VAT
 print '<th class="linecolvat right nowraponall">';
-if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || !empty($conf->global->FACTURE_LOCAL_TAX2_OPTION)) {
+if (getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') || getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION')) {
 	print $langs->trans('Taxes');
 } else {
 	print $langs->trans('VAT');
 }
 
+// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 if (in_array($object->element, array('propal', 'commande', 'facture', 'supplier_proposal', 'order_supplier', 'invoice_supplier')) && $object->status == $object::STATUS_DRAFT) {
 	global $mysoc;
 
@@ -100,7 +104,7 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 print '<th class="linecolqty right">'.$langs->trans('Qty').'</th>';
 
 // Unit
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<th class="linecoluseunit left">'.$langs->trans('Unit').'</th>';
 }
 
@@ -108,6 +112,7 @@ if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 print '<th class="linecoldiscount right nowraponall">';
 print $langs->trans('ReductionShort');
 
+// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT) {
 	global $mysoc;
 
@@ -140,7 +145,7 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 		}
 	}
 
-	if (!empty($conf->global->DISPLAY_MARGIN_RATES) && $user->hasRight('margins', 'liretous')) {
+	if (getDolGlobalString('DISPLAY_MARGIN_RATES') && $user->hasRight('margins', 'liretous')) {
 		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarginRate');
 		if ($user->hasRight("propal", "creer")) {
 			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=marginforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickmarginforalllines opacitymedium paddingleft cursorpointer"').'</a>';
@@ -153,7 +158,7 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 		}
 		print '</th>';
 	}
-	if (!empty($conf->global->DISPLAY_MARK_RATES) && $user->hasRight('margins', 'liretous')) {
+	if (getDolGlobalString('DISPLAY_MARK_RATES') && $user->hasRight('margins', 'liretous')) {
 		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarkRate').'</th>';
 	}
 }

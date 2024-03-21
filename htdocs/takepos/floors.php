@@ -41,11 +41,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk"));
 
-$floor = GETPOST('floor', 'int');
+$floor = GETPOSTINT('floor');
 if ($floor == "") {
 	$floor = 1;
 }
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $left = GETPOST('left', 'alpha');
 $top = GETPOST('top', 'alpha');
@@ -118,7 +118,7 @@ if ($action == "add") {
 // Title
 $head = '';
 $title = 'TakePOS - Dolibarr '.DOL_VERSION;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 	$title = 'TakePOS - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 $arrayofcss = array('/takepos/css/pos.css.php?a=xxx');
@@ -157,7 +157,7 @@ function updateplace(idplace, left, top) {
 		url: "<?php echo DOL_URL_ROOT.'/takepos/floors.php'; ?>",
 		data: { action: "update", left: left, top: top, place: idplace, token: '<?php echo currentToken(); ?>' }
 	}).done(function( msg ) {
-		window.location.href='floors.php?mode=edit&floor=<?php echo urlencode($floor); ?>';
+		window.location.href='floors.php?mode=edit&floor=<?php echo urlencode((string) ($floor)); ?>';
 	});
 }
 
@@ -169,7 +169,7 @@ function updatename(rowid) {
 		url: "<?php echo DOL_URL_ROOT.'/takepos/floors.php'; ?>",
 		data: { action: "updatename", place: rowid, newname: after, token: '<?php echo currentToken(); ?>' }
 	}).done(function( msg ) {
-		window.location.href='floors.php?mode=edit&floor=<?php echo urlencode($floor); ?>';
+		window.location.href='floors.php?mode=edit&floor=<?php echo urlencode((string) ($floor)); ?>';
 	});
 }
 
@@ -224,13 +224,16 @@ $( document ).ready(function() {
 	<h1>
 	<?php if ($floor > 1) { ?>
 	<img class="valignmiddle" src="./img/arrow-prev.png" width="5%" onclick="location.href='floors.php?floor=<?php if ($floor > 1) {
-		$floor--; echo $floor; $floor++;
+		$floor--;
+		echo $floor;
+		$floor++;
 																											 } else {
 																												 echo "1";
 																											 } ?>';">
 	<?php } ?>
 	<span class="valignmiddle"><?php echo $langs->trans("Floor")." ".$floor; ?></span>
-	<img src="./img/arrow-next.png" class="valignmiddle" width="5%" onclick="location.href='floors.php?floor=<?php $floor++; echo $floor; ?>';">
+	<img src="./img/arrow-next.png" class="valignmiddle" width="5%" onclick="location.href='floors.php?floor=<?php $floor++;
+	echo $floor; ?>';">
 	</h1>
 	</center>
 </div>

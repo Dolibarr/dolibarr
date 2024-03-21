@@ -65,17 +65,17 @@ $datetime = dol_now();
 $year = dol_print_date($datetime, "%Y");
 $month = dol_print_date($datetime, "%m");
 $day = dol_print_date($datetime, "%d");
-if (GETPOST("year", 'int')) {
-	$year = sprintf("%04d", GETPOST("year", 'int'));
+if (GETPOSTINT("year")) {
+	$year = sprintf("%04d", GETPOSTINT("year"));
 }
-if (GETPOST("month", 'int')) {
-	$month = sprintf("%02d", GETPOST("month", 'int'));
+if (GETPOSTINT("month")) {
+	$month = sprintf("%02d", GETPOSTINT("month"));
 }
 
 
 $object = new Account($db);
 if (GETPOST('account') && !preg_match('/,/', GETPOST('account'))) {	// if for a particular account and not a list
-	$result = $object->fetch(GETPOST('account', 'int'));
+	$result = $object->fetch(GETPOSTINT('account'));
 }
 if (GETPOST("ref")) {
 	$result = $object->fetch(0, GETPOST("ref"));
@@ -188,12 +188,14 @@ if ($result < 0) {
 
 		$subtotal = 0;
 		$day = dol_mktime(12, 0, 0, $month, 1, $year);
-		$textdate = strftime("%Y%m%d", $day);
+		//$textdate = strftime("%Y%m%d", $day);
+		$textdate = dol_print_date($day, "%Y%m%d");
 		$xyear = substr($textdate, 0, 4);
 		$xday = substr($textdate, 6, 2);
 		$xmonth = substr($textdate, 4, 2);
 
 		$i = 0;
+		$dataall = array();
 		while ($xmonth == $month) {
 			$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
 			if ($day > time()) {
@@ -207,7 +209,8 @@ if ($result < 0) {
 			$labels[$i] = $xday;
 
 			$day += 86400;
-			$textdate = strftime("%Y%m%d", $day);
+			//$textdate = strftime("%Y%m%d", $day);
+			$textdate = dol_print_date($day, "%Y%m%d");
 			$xyear = substr($textdate, 0, 4);
 			$xday = substr($textdate, 6, 2);
 			$xmonth = substr($textdate, 4, 2);
@@ -263,7 +266,7 @@ if ($result < 0) {
 		$px1 = null;
 		$graph_datas = null;
 		$datas = null;
-		$datamin = null;
+		$datamin = array();
 		$dataall = null;
 		$labels = null;
 		$amounts = null;
@@ -332,7 +335,8 @@ if ($result < 0) {
 		$subtotal = 0;
 		$now = time();
 		$day = dol_mktime(12, 0, 0, 1, 1, $year);
-		$textdate = strftime("%Y%m%d", $day);
+		//$textdate = strftime("%Y%m%d", $day);
+		$textdate = dol_print_date($day, "%Y%m%d");
 		$xyear = substr($textdate, 0, 4);
 		$xday = substr($textdate, 6, 2);
 
@@ -352,7 +356,8 @@ if ($result < 0) {
 			}*/
 			$labels[$i] = dol_print_date($day, "%Y%m");
 			$day += 86400;
-			$textdate = strftime("%Y%m%d", $day);
+			//$textdate = strftime("%Y%m%d", $day);
+			$textdate = dol_print_date($day, "%Y%m%d");
 			$xyear = substr($textdate, 0, 4);
 			$xday = substr($textdate, 6, 2);
 			$i++;
@@ -449,7 +454,8 @@ if ($result < 0) {
 		$subtotal = 0;
 
 		$day = $min;
-		$textdate = strftime("%Y%m%d", $day);
+		//$textdate = strftime("%Y%m%d", $day);
+		$textdate = dol_print_date($day, "%Y%m%d");
 		//print "x".$textdate;
 		$i = 0;
 		while ($day <= ($max + 86400)) {	// On va au dela du dernier jour
@@ -469,7 +475,8 @@ if ($result < 0) {
 			$labels[$i] = substr($textdate, 0, 6);
 
 			$day += 86400;
-			$textdate = strftime("%Y%m%d", $day);
+			//$textdate = strftime("%Y%m%d", $day);
+			$textdate = dol_print_date($day, "%Y%m%d");
 			$i++;
 		}
 
@@ -594,7 +601,7 @@ if ($result < 0) {
 		}
 
 
-		// Chargement de labels et data_xxx pour tableau 4 Mouvements
+		// Chargement de labels et data_xxx pour tableau 4 Movements
 		$labels = array();
 		$data_credit = array();
 		$data_debit = array();
@@ -695,7 +702,7 @@ if ($result < 0) {
 		}
 
 
-		// Chargement de labels et data_xxx pour tableau 4 Mouvements
+		// Chargement de labels et data_xxx pour tableau 4 Movements
 		$labels = array();
 		$data_credit = array();
 		$data_debit = array();

@@ -4,6 +4,7 @@
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2022      Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2023      Alexandre Janniaux  <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,21 +47,20 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "core";
 		$this->description = "Triggers of this module allows to manage workflows";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = self::VERSION_DOLIBARR;
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'technic';
 	}
 
 	/**
-	 * Function called when a Dolibarrr business event is done.
+	 * Function called when a Dolibarr business event is done.
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 * @param string		$action		Event action code
-	 * @param Object		$object     Object
+	 * @param CommonObject	$object     Object
 	 * @param User		    $user       Object user
 	 * @param Translate 	$langs      Object langs
 	 * @param conf		    $conf       Object conf
-	 * @return int         				<0 if KO, 0 if no triggered ran, >0 if OK
+	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
@@ -73,7 +73,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		// Proposals to order
 		if ($action == 'PROPAL_CLOSE_SIGNED') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (isModEnabled('commande') && !empty($conf->global->WORKFLOW_PROPAL_AUTOCREATE_ORDER)) {
+			if (isModEnabled('order') && getDolGlobalString('WORKFLOW_PROPAL_AUTOCREATE_ORDER')) {
 				$object->fetchObjectLinked();
 				if (!empty($object->linkedObjectsIds['commande'])) {
 					if (empty($object->context['closedfromonlinesignature'])) {
@@ -97,14 +97,14 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
 				$object->clearObjectLinkedCache();
 
-				return $ret;
+				return (int) $ret;
 			}
 		}
 
 		// Order to invoice
 		if ($action == 'ORDER_CLOSE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (isModEnabled('facture') && !empty($conf->global->WORKFLOW_ORDER_AUTOCREATE_INVOICE)) {
+			if (isModEnabled('invoice') && getDolGlobalString('WORKFLOW_ORDER_AUTOCREATE_INVOICE')) {
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 				$newobject = new Facture($this->db);
 
@@ -126,7 +126,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		// Order classify billed proposal
 		if ($action == 'ORDER_CLASSIFY_BILLED') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (isModEnabled("propal") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL)) {
+			if (isModEnabled("propal") && !empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL')) {
 				$object->fetchObjectLinked('', 'propal', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
@@ -135,7 +135,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}
-					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of order = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
+					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of order = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
 					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
 						foreach ($object->linkedObjects['propal'] as $element) {
 							$ret = $element->classifyBilled($user);
@@ -151,7 +151,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			// First classify billed the order to allow the proposal classify process
-			if (isModEnabled('commande') && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) {
+			if (isModEnabled('order') && !empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER')) {
 				$object->fetchObjectLinked('', 'commande', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
@@ -160,7 +160,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}
-					dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
+					dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
 					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
 						foreach ($object->linkedObjects['commande'] as $element) {
 							$ret = $element->classifyBilled($user);
@@ -170,7 +170,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			}
 
 			// Second classify billed the proposal.
-			if (isModEnabled("propal") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL)) {
+			if (isModEnabled("propal") && !empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL')) {
 				$object->fetchObjectLinked('', 'propal', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
@@ -179,7 +179,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}
-					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
+					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
 					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
 						foreach ($object->linkedObjects['propal'] as $element) {
 							$ret = $element->classifyBilled($user);
@@ -188,8 +188,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 
-			// Set shipment to "Closed" if WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE is set (deprecated, WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE instead))
-			if (isModEnabled("expedition") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE)) {
+			// Set shipment to "Closed" if WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE is set (deprecated, has been replaced with WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE instead))
+			if (isModEnabled("shipping") && !empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE')) {
 				$object->fetchObjectLinked('', 'shipping', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
@@ -198,19 +198,19 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}
-					dol_syslog("Amount of linked shipment = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
+					dol_syslog("Amount of linked shipment = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
 					if ($totalonlinkedelements == $object->total_ht) {
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setClosed();
 							if ($ret < 0) {
-								return $ret;
+								return (int) $ret;
 							}
 						}
 					}
 				}
 			}
 
-			if (isModEnabled("expedition") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE)) {
+			if (isModEnabled("shipping") && !empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE')) {
 				$object->fetchObjectLinked('', 'shipping', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
@@ -219,12 +219,12 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}
-					dol_syslog("Amount of linked shipment = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
+					dol_syslog("Amount of linked shipment = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
 					if ($totalonlinkedelements == $object->total_ht) {
 						foreach ($object->linkedObjects['shipping'] as $element) {
 							$ret = $element->setBilled();
 							if ($ret < 0) {
-								return $ret;
+								return (int) $ret;
 							}
 						}
 					}
@@ -240,7 +240,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
 			// Firstly, we set to purchase order to "Billed" if WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER is set.
 			// After we will set proposals
-			if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER)) {
+			if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && getDolGlobalString('WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER')) {
 				$object->fetchObjectLinked('', 'order_supplier', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
@@ -249,7 +249,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}
-					dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
+					dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
 					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
 						foreach ($object->linkedObjects['order_supplier'] as $element) {
 							$ret = $element->classifyBilled($user);
@@ -262,7 +262,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			}
 
 			// Secondly, we set to linked Proposal to "Billed" if WORKFLOW_INVOICE_CLASSIFY_BILLED_SUPPLIER_PROPOSAL is set.
-			if (isModEnabled('supplier_proposal') && !empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_SUPPLIER_PROPOSAL)) {
+			if (isModEnabled('supplier_proposal') && getDolGlobalString('WORKFLOW_INVOICE_CLASSIFY_BILLED_SUPPLIER_PROPOSAL')) {
 				$object->fetchObjectLinked('', 'supplier_proposal', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
@@ -271,7 +271,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}
-					dol_syslog("Amount of linked supplier proposals = ".$totalonlinkedelements.", of supplier invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
+					dol_syslog("Amount of linked supplier proposals = ".$totalonlinkedelements.", of supplier invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
 					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
 						foreach ($object->linkedObjects['supplier_proposal'] as $element) {
 							$ret = $element->classifyBilled($user);
@@ -308,7 +308,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			*/
 
 			// Then set reception to "Billed" if WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE is set
-			if (isModEnabled("reception") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE)) {
+			if (isModEnabled("reception") && !empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE')) {
 				$object->fetchObjectLinked('', 'reception', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
@@ -317,7 +317,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}
-					dol_syslog("Amount of linked reception = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
+					dol_syslog("Amount of linked reception = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
 					if ($totalonlinkedelements == $object->total_ht) {
 						foreach ($object->linkedObjects['reception'] as $element) {
 							$ret = $element->setBilled();
@@ -336,7 +336,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		if ($action == 'BILL_PAYED') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			if (isModEnabled('commande') && !empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER)) {
+			if (isModEnabled('order') && getDolGlobalString('WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER')) {
 				$object->fetchObjectLinked('', 'commande', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
@@ -345,7 +345,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							$totalonlinkedelements += $element->total_ht;
 						}
 					}
-					dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
+					dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
 					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
 						foreach ($object->linkedObjects['commande'] as $element) {
 							$ret = $element->classifyBilled($user);
@@ -360,67 +360,79 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		if (($action == 'SHIPPING_VALIDATE') || ($action == 'SHIPPING_CLOSED')) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			if (isModEnabled('commande') && isModEnabled("expedition") && !empty($conf->workflow->enabled) &&
+			if (isModEnabled('order') && isModEnabled("shipping") && !empty($conf->workflow->enabled) &&
 				(
-					(!empty($conf->global->WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING) && ($action == 'SHIPPING_VALIDATE')) ||
-					(!empty($conf->global->WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED) && ($action == 'SHIPPING_CLOSED'))
+					(getDolGlobalString('WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING') && ($action == 'SHIPPING_VALIDATE')) ||
+					(getDolGlobalString('WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED') && ($action == 'SHIPPING_CLOSED'))
 				)
 			) {
 				$qtyshipped = array();
 				$qtyordred = array();
-				require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-				// Find all shipments on order origin
-				$order = new Commande($this->db);
-				$ret = $order->fetch($object->origin_id);
-				if ($ret < 0) {
-					$this->setErrorsFromObject($order);
-					return $ret;
-				}
-				$ret = $order->fetchObjectLinked($order->id, 'commande', null, 'shipping');
-				if ($ret < 0) {
-					$this->setErrorsFromObject($order);
-					return $ret;
-				}
-				//Build array of quantity shipped by product for an order
-				if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
-					foreach ($order->linkedObjects as $type => $shipping_array) {
-						if ($type != 'shipping' || !is_array($shipping_array) || count($shipping_array) == 0) {
-							continue;
-						}
-						/** @var Expedition[] $shipping_array */
-						foreach ($shipping_array as $shipping) {
-							if ($shipping->status <= 0 || !is_array($shipping->lines) || count($shipping->lines) == 0) {
-								continue;
-							}
+				// The original sale order is id in $object->origin_id
+				// Find all shipments on sale order origin
 
-							foreach ($shipping->lines as $shippingline) {
-								$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
-							}
-						}
-					}
-				}
-
-				//Build array of quantity ordered to be shipped
-				if (is_array($order->lines) && count($order->lines) > 0) {
-					foreach ($order->lines as $orderline) {
-						// Exclude lines not qualified for shipment, similar code is found into calcAndSetStatusDispatch() for vendors
-						if (empty($conf->global->STOCK_SUPPORTS_SERVICES) && $orderline->product_type > 0) {
-							continue;
-						}
-						$qtyordred[$orderline->fk_product] += $orderline->qty;
-					}
-				}
-				//dol_syslog(var_export($qtyordred,true),LOG_DEBUG);
-				//dol_syslog(var_export($qtyshipped,true),LOG_DEBUG);
-				//Compare array
-				$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
-				if (count($diff_array) == 0) {
-					//No diff => mean everythings is shipped
-					$ret = $order->setStatut(Commande::STATUS_CLOSED, $object->origin_id, $object->origin, 'ORDER_CLOSE');
+				if (in_array($object->origin, array('order', 'commande')) && $object->origin_id > 0) {
+					require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+					$order = new Commande($this->db);
+					$ret = $order->fetch($object->origin_id);
 					if ($ret < 0) {
 						$this->setErrorsFromObject($order);
 						return $ret;
+					}
+					$ret = $order->fetchObjectLinked($order->id, 'commande', null, 'shipping');
+					if ($ret < 0) {
+						$this->setErrorsFromObject($order);
+						return $ret;
+					}
+					//Build array of quantity shipped by product for an order
+					if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
+						foreach ($order->linkedObjects as $type => $shipping_array) {
+							if ($type != 'shipping' || !is_array($shipping_array) || count($shipping_array) == 0) {
+								continue;
+							}
+							/** @var Expedition[] $shipping_array */
+							foreach ($shipping_array as $shipping) {
+								if ($shipping->status <= 0 || !is_array($shipping->lines) || count($shipping->lines) == 0) {
+									continue;
+								}
+
+								foreach ($shipping->lines as $shippingline) {
+									if (isset($qtyshipped[$shippingline->fk_product])) {
+										$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
+									} else {
+										$qtyshipped[$shippingline->fk_product] = $shippingline->qty;
+									}
+								}
+							}
+						}
+					}
+
+					//Build array of quantity ordered to be shipped
+					if (is_array($order->lines) && count($order->lines) > 0) {
+						foreach ($order->lines as $orderline) {
+							// Exclude lines not qualified for shipment, similar code is found into calcAndSetStatusDispatch() for vendors
+							if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $orderline->product_type > 0) {
+								continue;
+							}
+							if (isset($qtyordred[$shippingline->fk_product])) {
+								$qtyordred[$orderline->fk_product] += $orderline->qty;
+							} else {
+								$qtyordred[$orderline->fk_product] = $orderline->qty;
+							}
+						}
+					}
+					//dol_syslog(var_export($qtyordred,true),LOG_DEBUG);
+					//dol_syslog(var_export($qtyshipped,true),LOG_DEBUG);
+					//Compare array
+					$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
+					if (count($diff_array) == 0) {
+						//No diff => mean everything is shipped
+						$ret = $order->setStatut(Commande::STATUS_CLOSED, $object->origin_id, $object->origin, 'ORDER_CLOSE');
+						if ($ret < 0) {
+							$this->setErrorsFromObject($order);
+							return $ret;
+						}
 					}
 				}
 			}
@@ -430,67 +442,72 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		if (($action == 'RECEPTION_VALIDATE') || ($action == 'RECEPTION_CLOSED')) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			if ((isModEnabled("fournisseur") || isModEnabled("supplier_order")) && isModEnabled("reception") && !empty($conf->workflow->enabled) &&
+			if ((isModEnabled("fournisseur") || isModEnabled("supplier_order")) && isModEnabled("reception") && isModEnabled('workflow') &&
 				(
-					(!empty($conf->global->WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION) && ($action == 'RECEPTION_VALIDATE')) ||
-					(!empty($conf->global->WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED) && ($action == 'RECEPTION_CLOSED'))
+					(getDolGlobalString('WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION') && ($action == 'RECEPTION_VALIDATE')) ||
+					(getDolGlobalString('WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED') && ($action == 'RECEPTION_CLOSED'))
 				)
 			) {
 				$qtyshipped = array();
 				$qtyordred = array();
-				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
+				// The original purchase order is id in $object->origin_id
 				// Find all reception on purchase order origin
-				$order = new CommandeFournisseur($this->db);
-				$ret = $order->fetch($object->origin_id);
-				if ($ret < 0) {
-					$this->setErrorsFromObject($order);
-					return $ret;
-				}
-				$ret = $order->fetchObjectLinked($order->id, $order->element, null, 'reception');
-				if ($ret < 0) {
-					$this->setErrorsFromObject($order);
-					return $ret;
-				}
-				//Build array of quantity received by product for a purchase order
-				if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
-					foreach ($order->linkedObjects as $type => $shipping_array) {
-						if ($type != 'reception' || !is_array($shipping_array) || count($shipping_array) == 0) {
-							continue;
-						}
 
-						foreach ($shipping_array as $shipping) {
-							if (!is_array($shipping->lines) || count($shipping->lines) == 0) {
-								continue;
-							}
-
-							foreach ($shipping->lines as $shippingline) {
-								$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
-							}
-						}
-					}
-				}
-
-				//Build array of quantity ordered to be received
-				if (is_array($order->lines) && count($order->lines) > 0) {
-					foreach ($order->lines as $orderline) {
-						// Exclude lines not qualified for shipment, similar code is found into calcAndSetStatusDispatch() for vendors
-						if (empty($conf->global->STOCK_SUPPORTS_SERVICES) && $orderline->product_type > 0) {
-							continue;
-						}
-						$qtyordred[$orderline->fk_product] += $orderline->qty;
-					}
-				}
-				//dol_syslog(var_export($qtyordred,true),LOG_DEBUG);
-				//dol_syslog(var_export($qtyshipped,true),LOG_DEBUG);
-				//Compare array
-				$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
-				if (count($diff_array) == 0) {
-					//No diff => mean everythings is received
-					$ret = $order->setStatut(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY, null, null, 'SUPPLIER_ORDER_CLOSE');
+				if (in_array($object->origin, array('order_supplier', 'supplier_order', 'commandeFournisseur')) && $object->origin_id > 0) {
+					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+					$order = new CommandeFournisseur($this->db);
+					$ret = $order->fetch($object->origin_id);
 					if ($ret < 0) {
 						$this->setErrorsFromObject($order);
 						return $ret;
+					}
+					$ret = $order->fetchObjectLinked($order->id, $order->element, null, 'reception');
+					if ($ret < 0) {
+						$this->setErrorsFromObject($order);
+						return $ret;
+					}
+
+					// Build array of quantity received by product for a purchase order
+					if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
+						foreach ($order->linkedObjects as $type => $shipping_array) {
+							if ($type != 'reception' || !is_array($shipping_array) || count($shipping_array) == 0) {
+								continue;
+							}
+
+							foreach ($shipping_array as $shipping) {
+								if (!is_array($shipping->lines) || count($shipping->lines) == 0) {
+									continue;
+								}
+
+								foreach ($shipping->lines as $shippingline) {
+									$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
+								}
+							}
+						}
+					}
+
+					// Build array of quantity ordered to be received
+					if (is_array($order->lines) && count($order->lines) > 0) {
+						foreach ($order->lines as $orderline) {
+							// Exclude lines not qualified for shipment, similar code is found into calcAndSetStatusDispatch() for vendors
+							if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $orderline->product_type > 0) {
+								continue;
+							}
+							$qtyordred[$orderline->fk_product] += $orderline->qty;
+						}
+					}
+					//dol_syslog(var_export($qtyordred,true),LOG_DEBUG);
+					//dol_syslog(var_export($qtyshipped,true),LOG_DEBUG);
+					//Compare array
+					$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
+					if (count($diff_array) == 0) {
+						//No diff => mean everything is received
+						$ret = $order->setStatut(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY, null, null, 'SUPPLIER_ORDER_CLOSE');
+						if ($ret < 0) {
+							$this->setErrorsFromObject($order);
+							return $ret;
+						}
 					}
 				}
 			}
@@ -499,9 +516,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		if ($action == 'TICKET_CREATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			// Auto link contract
-			if (!empty($conf->contract->enabled) && isModEnabled('ticket') && isModEnabled('ficheinter') && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_LINK_CONTRACT) && !empty($conf->global->TICKET_PRODUCT_CATEGORY) && !empty($object->fk_soc)) {
+			if (!empty($conf->contract->enabled) && isModEnabled('ticket') && isModEnabled('intervention') && !empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_TICKET_LINK_CONTRACT') && getDolGlobalString('TICKET_PRODUCT_CATEGORY') && !empty($object->fk_soc)) {
 				$societe = new Societe($this->db);
-				$company_ids = (empty($conf->global->WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS)) ? [$object->fk_soc] : $societe->getParentsForCompany($object->fk_soc, [$object->fk_soc]);
+				$company_ids = (!getDolGlobalString('WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS')) ? [$object->fk_soc] : $societe->getParentsForCompany($object->fk_soc, [$object->fk_soc]);
 
 				$contrat = new Contrat($this->db);
 				$number_contracts_found = 0;
@@ -527,17 +544,19 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					break;
 				}
 				if ($number_contracts_found == 0) {
-					if (empty(NOLOGIN)) setEventMessage($langs->trans('TicketNoContractFoundToLink'), 'mesgs');
+					if (empty(NOLOGIN)) {
+						setEventMessage($langs->trans('TicketNoContractFoundToLink'), 'mesgs');
+					}
 				}
 			}
 			// Automatically create intervention
-			if (isModEnabled('ficheinter') && isModEnabled('ticket') && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_CREATE_INTERVENTION)) {
+			if (isModEnabled('intervention') && isModEnabled('ticket') && !empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_TICKET_CREATE_INTERVENTION')) {
 				$fichinter = new Fichinter($this->db);
 				$fichinter->socid = (int) $object->fk_soc;
-				$fichinter->fk_project = $projectid;
+				$fichinter->fk_project = (int) $object->fk_project;
 				$fichinter->fk_contrat = (int) $object->fk_contract;
 				$fichinter->author = $user->id;
-				$fichinter->model_pdf = (!empty($conf->global->FICHEINTER_ADDON_PDF)) ? $conf->global->FICHEINTER_ADDON_PDF : 'soleil';
+				$fichinter->model_pdf = (getDolGlobalString('FICHEINTER_ADDON_PDF')) ? $conf->global->FICHEINTER_ADDON_PDF : 'soleil';
 				$fichinter->origin = $object->element;
 				$fichinter->origin_id = $object->id;
 
@@ -569,7 +588,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 	private function shouldClassify($conf, $totalonlinkedelements, $object_total_ht)
 	{
 		// if the configuration allows unmatching amounts, allow classification anyway
-		if (!empty($conf->global->WORKFLOW_CLASSIFY_IF_AMOUNTS_ARE_DIFFERENTS)) {
+		if (getDolGlobalString('WORKFLOW_CLASSIFY_IF_AMOUNTS_ARE_DIFFERENTS')) {
 			return true;
 		}
 		// if the amount are same, allow classification, else deny

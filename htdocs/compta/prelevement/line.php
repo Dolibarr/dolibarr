@@ -38,15 +38,15 @@ $langs->loadlangs(array('banks', 'categories', 'bills', 'companies', 'withdrawal
 
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
-$socid = GETPOST('socid', 'int');
+$id = GETPOSTINT('id');
+$socid = GETPOSTINT('socid');
 
 $type = GETPOST('type', 'aZ09');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -84,8 +84,8 @@ $error = 0;
 
 if ($action == 'confirm_rejet' && $permissiontoadd) {
 	if (GETPOST("confirm") == 'yes') {
-		if (GETPOST('remonth', 'int')) {
-			$daterej = mktime(2, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+		if (GETPOSTINT('remonth')) {
+			$daterej = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 		}
 
 		if (empty($daterej)) {
@@ -108,16 +108,18 @@ if ($action == 'confirm_rejet' && $permissiontoadd) {
 			if ($lipre->fetch($id) == 0) {
 				$rej = new RejetPrelevement($db, $user, $type);
 
-				$rej->create($user, $id, GETPOST('motif', 'alpha'), $daterej, $lipre->bon_rowid, GETPOST('facturer', 'int'));
+				$result = $rej->create($user, $id, GETPOSTINT('motif'), $daterej, $lipre->bon_rowid, GETPOSTINT('facturer'));
 
-				header("Location: line.php?id=".urlencode($id).'&type='.urlencode($type));
-				exit;
+				if ($result > 0) {
+					header("Location: line.php?id=".urlencode((string) ($id)).'&type='.urlencode((string) ($type)));
+					exit;
+				}
 			}
 		} else {
 			$action = "rejet";
 		}
 	} else {
-		header("Location: line.php?id=".urlencode($id).'&type='.urlencode($type));
+		header("Location: line.php?id=".urlencode((string) ($id)).'&type='.urlencode((string) ($type)));
 		exit;
 	}
 }
@@ -202,45 +204,54 @@ if ($id) {
 		dol_print_error($db);
 	}
 
+	// Form to record a reject
 	if ($action == 'rejet' && $user->hasRight('prelevement', 'bons', 'credit')) {
 		$soc = new Societe($db);
 		$soc->fetch($lipre->socid);
 
 		$rej = new RejetPrelevement($db, $user, $type);
 
-		print '<form name="confirm_rejet" method="post" action="line.php?id='.$id.'">';
+		print '<form name="confirm_rejet" method="post" action="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="confirm_rejet">';
 		print '<input type="hidden" name="type" value="'.$type.'">';
+
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("WithdrawalRefused").'</td></tr>';
+		print '<td>'.$langs->trans("WithdrawalRefused").'</td>';
+		print '<td></td>';
+		print '</tr>';
 
 		//Select yes/no
 		print '<tr><td class="valid">'.$langs->trans("WithdrawalRefusedConfirm").' '.$soc->name.' ?</td>';
-		print '<td colspan="2" class="valid">';
+		print '<td class="valid">';
 		print $form->selectyesno("confirm", 1, 0);
 		print '</td></tr>';
 
 		//Date
 		print '<tr><td class="fieldrequired valid">'.$langs->trans("RefusedData").'</td>';
-		print '<td colspan="2" class="valid">';
-		print $form->selectDate('', '', '', '', '', "confirm_rejet");
+		print '<td class="valid">';
+		print $form->selectDate('', '', 0, 0, 0, "confirm_rejet");
 		print '</td></tr>';
 
 		//Reason
 		print '<tr><td class="fieldrequired valid">'.$langs->trans("RefusedReason").'</td>';
 		print '<td class="valid">';
-		print $form->selectarray("motif", $rej->motifs, GETPOSTISSET('motif') ? GETPOST('motif', 'int') : '');
+		print $form->selectarray("motif", $rej->motifs, GETPOSTISSET('motif') ? GETPOSTINT('motif') : '');
 		print '</td></tr>';
 
 		//Facturer
-		print '<tr><td class="valid">'.$langs->trans("RefusedInvoicing").'</td>';
-		print '<td class="valid" colspan="2">';
-		print $form->selectarray("facturer", $rej->labelsofinvoicing, GETPOSTISSET('facturer') ? GETPOST('facturer', 'int') : '');
+		print '<tr><td class="fieldrequired valid">';
+		print $form->textwithpicto($langs->trans("RefusedInvoicing"), $langs->trans("DirectDebitRefusedInvoicingDesc"));
+		print '</td>';
+		print '<td class="valid">';
+		print $form->selectarray("facturer", $rej->labelsofinvoicing, GETPOSTISSET('facturer') ? GETPOSTINT('facturer') : '', 0);
 		print '</td></tr>';
-		print '</table><br>';
+
+		print '</table>';
+		print '</div>';
 
 		//Confirm Button
 		print '<div class="center"><input type="submit" class="button button-save" value='.$langs->trans("Confirm").'></div>';
@@ -274,6 +285,9 @@ if ($id) {
 	$sql = "SELECT pf.rowid";
 	$sql .= " ,f.rowid as facid, f.ref as ref, f.total_ttc, f.paye, f.fk_statut";
 	$sql .= " , s.rowid as socid, s.nom as name";
+
+	$sqlfields = $sql; // $sql fields to remove for count total
+
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";
@@ -296,6 +310,30 @@ if ($id) {
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
 	}
+
+	// Count total nb of records
+	$nbtotalofrecords = '';
+	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
+		/* The fast and low memory method to get and count full list converts the sql into a sql count */
+		$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+		$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+		$resql = $db->query($sqlforcount);
+		if ($resql) {
+			$objforcount = $db->fetch_object($resql);
+			$nbtotalofrecords = $objforcount->nbtotalofrecords;
+		} else {
+			dol_print_error($db);
+		}
+
+		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+			$page = 0;
+			$offset = 0;
+		}
+		$db->free($resql);
+	}
+
+	$result = $db->query($sql);
+
 	$sql .= $db->order($sortfield, $sortorder);
 	$sql .= $db->plimit($conf->liste_limit + 1, $offset);
 
@@ -305,9 +343,13 @@ if ($id) {
 		$num = $db->num_rows($result);
 		$i = 0;
 
-		$urladd = "&id=".urlencode($id);
+		$urladd = "&id=".urlencode((string) ($id));
+		$title = $langs->trans("Bills");
+		if ($type == 'bank-transfer') {
+			$title = $langs->trans("SupplierInvoices");
+		}
 
-		print_barre_liste($langs->trans("Bills"), $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num, 0, '');
+		print_barre_liste($title, $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 
 		print"\n<!-- debut table -->\n";
 		print '<table class="noborder" width="100%" cellpadding="4">';

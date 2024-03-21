@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,19 +60,10 @@ abstract class ModelePDFMember extends CommonDocGenerator
 
 
 /**
- *  Classe mere des modeles de numerotation des references de members
+ *  Class mere des modeles de numerotation des references de members
  */
 abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 {
-	public $code_modifiable; // Editable code
-
-	public $code_modifiable_invalide; // Modified code if it is invalid
-
-	public $code_modifiable_null; // Modified code if it is null
-
-	public $code_null; //
-
-
 	/**
 	 *  Return description of module parameters
 	 *
@@ -87,7 +79,7 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 
 		$strikestart = '';
 		$strikeend = '';
-		if (!empty($conf->global->MAIN_MEMBER_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+		if (getDolGlobalString('MAIN_MEMBER_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 			$strikestart = '<strike>';
 			$strikeend = '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 		}
@@ -116,5 +108,17 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 		$s .= $langs->trans("NextValue").' ('.$langs->trans("Member").'): <b>'.$nextval.'</b><br>';
 
 		return $s;
+	}
+
+	/**
+	 *  Return next value
+	 *
+	 *  @param  Societe		$objsoc		Object third party
+	 *  @param  Adherent	$object		Object we need next value for
+	 *  @return	string					next value
+	 */
+	public function getNextValue($objsoc, $object)
+	{
+		return '';
 	}
 }

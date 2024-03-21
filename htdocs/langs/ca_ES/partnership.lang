@@ -38,10 +38,10 @@ ListOfPartnerships=Llista d'associació
 PartnershipSetup=Configuració de l'associació
 PartnershipAbout=Quant a Partnership
 PartnershipAboutPage=Associació sobre la pàgina
-partnershipforthirdpartyormember=L'estatus de soci s'ha de definir com a «tercer» o «soci»
+partnershipforthirdpartyormember=L'estatus de soci s'ha de definir en un "tercer" o en un "membre"
 PARTNERSHIP_IS_MANAGED_FOR=Associació gestionada per
 PARTNERSHIP_BACKLINKS_TO_CHECK=Retroenllaços per a comprovar
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb de dies abans de cancel·lar l'estat d'una associació quan la subscripció ha caducat
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nombre de dies abans de l'estat de cancel·lació d'una associació quan una subscripció ha caducat
 ReferingWebsiteCheck=Comprovació de referència del lloc web
 ReferingWebsiteCheckDesc=Podeu activar una funció per a comprovar que els vostres socis hagin afegit un retroenllaç als dominis del vostre lloc web al seu propi lloc web.
 PublicFormRegistrationPartnerDesc=Dolibarr us pot proporcionar un URL/lloc web públic per a permetre que els visitants externs sol·licitin formar part del programa d'associació.
@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Associació dedicada a aquest membre
 DatePartnershipStart=Data inicial
 DatePartnershipEnd=Data final
 ReasonDecline=Rebutjar la raó
-ReasonDeclineOrCancel=Rebutjar la raó
+ReasonDeclineOrCancel=Motiu de denegació o cancel·lació
 PartnershipAlreadyExist=L’associació ja existeix
 ManagePartnership=Gestioneu l'associació
 BacklinkNotFoundOnPartnerWebsite=Enllaç de retrocés no trobat al lloc web associat
@@ -82,16 +82,17 @@ YourPartnershipRefusedTopic=L'associació es va negar
 YourPartnershipAcceptedTopic=S'ha acceptat l'associació
 YourPartnershipCanceledTopic=S'ha cancel·lat l'associació
 
-YourPartnershipWillSoonBeCanceledContent=Us informem que aviat es cancel·larà la vostra associació (no s'ha trobat l'enllaç de retrocés)
-YourPartnershipRefusedContent=Us informem que la vostra sol·licitud de col·laboració s’ha rebutjat.
-YourPartnershipAcceptedContent=Us informem que la vostra sol·licitud de col·laboració ha estat acceptada.
-YourPartnershipCanceledContent=Us informem que la vostra associació s’ha cancel·lat.
+YourPartnershipWillSoonBeCanceledContent=Ens agradaria informar-vos que la nostra associació es cancel·larà aviat (no hem rebut la renovació o no s'ha complert un requisit previ per a la nostra associació). Si us plau, poseu-vos en contacte amb nosaltres si ho heu rebut a causa d'un error.
+YourPartnershipRefusedContent=Ens agradaria informar-vos que la vostra sol·licitud de col·laboració ha estat denegada. No s'han complert els requisits previs. Si us plau, poseu-vos en contacte amb nosaltres si necessiteu més informació.
+YourPartnershipAcceptedContent=Ens agradaria informar-vos que la vostra sol·licitud de col·laboració ha estat acceptada.
+YourPartnershipCanceledContent=Ens agradaria informar-vos que la nostra associació ha estat cancel·lada. Si us plau, poseu-vos en contacte amb nosaltres si necessiteu més informació.
 
 CountLastUrlCheckError=Nombre d'errors de l'última comprovació de l'URL
 LastCheckBacklink=Data de l'última comprovació de l'URL
-ReasonDeclineOrCancel=Rebutjar la raó
 
 NewPartnershipRequest=Nova sol·licitud de col·laboració
 NewPartnershipRequestDesc=Aquest formulari us permet sol·licitar formar part d'un dels nostres programes d'associació. Si necessiteu ajuda per a omplir aquest formulari, poseu-vos en contacte amb el correu electrònic <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Aquesta pàgina ha de contenir almenys un enllaç a un dels dominis següents: %s
+
+IPOfApplicant=IP del sol·licitant
 

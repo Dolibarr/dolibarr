@@ -8,7 +8,6 @@ NewSupplierInvoice = New vendor invoice
 History=History
 ListOfSuppliers=List of vendors
 ShowSupplier=Show vendor
-OrderDate=Order date
 BuyingPriceMin=Best buying price
 BuyingPriceMinShort=Best buying price
 TotalBuyingPriceMinShort=Total of subproducts buying prices

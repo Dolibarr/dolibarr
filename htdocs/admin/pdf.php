@@ -137,7 +137,7 @@ if ($action == 'update') {
 	}
 
 	if (GETPOSTISSET('MAIN_DOCUMENTS_LOGO_HEIGHT')) {
-		dolibarr_set_const($db, "MAIN_DOCUMENTS_LOGO_HEIGHT", GETPOST("MAIN_DOCUMENTS_LOGO_HEIGHT", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_DOCUMENTS_LOGO_HEIGHT", GETPOSTINT("MAIN_DOCUMENTS_LOGO_HEIGHT"), 'chaine', 0, '', $conf->entity);
 	}
 	if (GETPOSTISSET('MAIN_INVERT_SENDER_RECIPIENT')) {
 		dolibarr_set_const($db, "MAIN_INVERT_SENDER_RECIPIENT", GETPOST("MAIN_INVERT_SENDER_RECIPIENT"), 'chaine', 0, '', $conf->entity);
@@ -367,7 +367,7 @@ for ($i = 1; $i <= 6; $i++) {
 		if ($conf->use_javascript_ajax) {
 			print ajax_constantonoff($keyforconstant);
 		} else {
-			print $form->selectyesno($keyforconstant, isset($conf->global->$keyforconstant) ? $conf->global->$keyforconstant : 0, 1, $noCountryCode);
+			print $form->selectyesno($keyforconstant, getDolGlobalString($keyforconstant, 0), 1, $noCountryCode);
 		}
 		print '</td></tr>';
 	}
@@ -403,7 +403,7 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-// Place customer adress to the ISO location
+// Place customer address to the ISO location
 
 print '<tr class="oddeven"><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td>';
 if ($conf->use_javascript_ajax) {
@@ -543,7 +543,7 @@ if (isModEnabled('barcode')) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE');
 	} else {
-		print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE : 0, 1);
+		print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE', (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE')) ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE : 0, 1);
 	}
 	print '</td></tr>';
 }
@@ -568,7 +568,7 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-// Swicth in Bold
+// Switch in Bold
 
 print '<tr class="oddeven"><td>'.$langs->trans("BoldLabelOnPDF").'</td><td>';
 if ($conf->use_javascript_ajax) {
@@ -578,7 +578,7 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-// Swicth in Bold
+// Switch in Bold
 
 print '<tr class="oddeven"><td>'.$langs->trans("BoldRefAndPeriodOnPDF").'</td><td>';
 if ($conf->use_javascript_ajax) {

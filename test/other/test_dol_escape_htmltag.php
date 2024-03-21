@@ -6,9 +6,15 @@ $path = __DIR__ . '/';
 
 $res=@include_once $path.'/../htdocs/master.inc.php';
 $res=@include_once $path.'/../../htdocs/master.inc.php';
-if (! $res) @include_once '../../master.inc.php';
-if (! $res) @include_once '../master.inc.php';
-if (! $res) @include_once './master.inc.php';
+if (! $res) {
+	@include_once '../../master.inc.php';
+}
+if (! $res) {
+	@include_once '../master.inc.php';
+}
+if (! $res) {
+	@include_once './master.inc.php';
+}
 
 
 // Show information

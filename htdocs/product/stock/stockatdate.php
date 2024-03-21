@@ -51,14 +51,14 @@ $result = restrictedArea($user, 'produit|service');
 //checks if a product has been ordered
 
 $action = GETPOST('action', 'aZ09');
-$type = GETPOST('type', 'int');
+$type = GETPOSTINT('type');
 $mode = GETPOST('mode', 'alpha');
 
 $date = '';
 $dateendofday = '';
 if (GETPOSTISSET('dateday') && GETPOSTISSET('datemonth') && GETPOSTISSET('dateyear')) {
-	$date = dol_mktime(0, 0, 0, GETPOST('datemonth', 'int'), GETPOST('dateday', 'int'), GETPOST('dateyear', 'int'));
-	$dateendofday = dol_mktime(23, 59, 59, GETPOST('datemonth', 'int'), GETPOST('dateday', 'int'), GETPOST('dateyear', 'int'));
+	$date = dol_mktime(0, 0, 0, GETPOSTINT('datemonth'), GETPOSTINT('dateday'), GETPOSTINT('dateyear'));
+	$dateendofday = dol_mktime(23, 59, 59, GETPOSTINT('datemonth'), GETPOSTINT('dateday'), GETPOSTINT('dateyear'));
 }
 
 $search_ref = GETPOST('search_ref', 'alphanohtml');
@@ -66,15 +66,15 @@ $search_nom = GETPOST('search_nom', 'alphanohtml');
 
 $now = dol_now();
 
-$productid = GETPOST('productid', 'int');
+$productid = GETPOSTINT('productid');
 if (GETPOSTISARRAY('search_fk_warehouse')) {
 	$search_fk_warehouse = GETPOST('search_fk_warehouse', 'array:int');
 } else {
-	$search_fk_warehouse = array(GETPOST('search_fk_warehouse', 'int'));
+	$search_fk_warehouse = array(GETPOSTINT('search_fk_warehouse'));
 }
 // For backward compatibility
-if (GETPOST('fk_warehouse', 'int')) {
-	$search_fk_warehouse = array(GETPOST('fk_warehouse', 'int'));
+if (GETPOSTINT('fk_warehouse')) {
+	$search_fk_warehouse = array(GETPOSTINT('fk_warehouse'));
 }
 // Clean value -1
 foreach ($search_fk_warehouse as $key => $val) {
@@ -85,11 +85,11 @@ foreach ($search_fk_warehouse as $key => $val) {
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $offset = $limit * $page;
 if (!$sortfield) {
 	$sortfield = 'p.ref';
@@ -131,7 +131,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 $warehouseStatus = array();
-if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
+if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
 	//$warehouseStatus[] = Entrepot::STATUS_CLOSED;
 	$warehouseStatus[] = Entrepot::STATUS_OPEN_ALL;
 	$warehouseStatus[] = Entrepot::STATUS_OPEN_INTERNAL;
@@ -148,14 +148,14 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 	$sql .= ", ".MAIN_DB_PREFIX."product as p";
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
 	$sql .= " AND w.rowid = ps.fk_entrepot AND p.rowid = ps.fk_product";
-	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
+	if (getDolGlobalString('ENTREPOT_EXTRA_STATUS') && count($warehouseStatus)) {
 		$sql .= " AND w.statut IN (".$db->sanitize(implode(',', $warehouseStatus)).")";
 	}
 	if ($productid > 0) {
 		$sql .= " AND ps.fk_product = ".((int) $productid);
 	}
 	if (! empty($search_fk_warehouse)) {
-		$sql .= " AND ps.fk_entrepot IN (".$db->sanitize(join(",", $search_fk_warehouse)).")";
+		$sql .= " AND ps.fk_entrepot IN (".$db->sanitize(implode(",", $search_fk_warehouse)).")";
 	}
 	if ($search_ref) {
 		$sql .= natural_search("p.ref", $search_ref);
@@ -205,7 +205,7 @@ if ($date && $dateIsValid) {
 	$sql .= ", ".MAIN_DB_PREFIX."product as p";
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
 	$sql .= " AND w.rowid = sm.fk_entrepot AND p.rowid = sm.fk_product ";
-	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
+	if (getDolGlobalString('ENTREPOT_EXTRA_STATUS') && count($warehouseStatus)) {
 		$sql .= " AND w.statut IN (".$db->sanitize(implode(',', $warehouseStatus)).")";
 	}
 	if ($mode == 'future') {
@@ -217,7 +217,7 @@ if ($date && $dateIsValid) {
 		$sql .= " AND sm.fk_product = ".((int) $productid);
 	}
 	if (!empty($search_fk_warehouse)) {
-		$sql .= " AND sm.fk_entrepot IN (".$db->sanitize(join(",", $search_fk_warehouse)).")";
+		$sql .= " AND sm.fk_entrepot IN (".$db->sanitize(implode(",", $search_fk_warehouse)).")";
 	}
 	if ($search_ref) {
 		$sql .= " AND p.ref LIKE '%".$db->escape($search_ref)."%' ";
@@ -276,10 +276,10 @@ $sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price, p.pmp,';
 $sql .= ' p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
 $sql .= ' p.tms as datem, p.duration, p.tobuy, p.stock, ';
 if (!empty($search_fk_warehouse)) {
-	$sql .= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue";
+	$sql .= " SUM(p.pmp * ps.reel) as currentvalue, SUM(p.price * ps.reel) as sellvalue";
 	$sql .= ', SUM(ps.reel) as stock_reel';
 } else {
-	$sql .= " SUM(p.pmp * p.stock) as estimatedvalue, SUM(p.price * p.stock) as sellvalue";
+	$sql .= " SUM(p.pmp * p.stock) as currentvalue, SUM(p.price * p.stock) as sellvalue";
 }
 // Add fields from hooks
 $parameters = array();
@@ -288,7 +288,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if (!empty($search_fk_warehouse)) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot IN ('.$db->sanitize(join(",", $search_fk_warehouse)).")";
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot IN ('.$db->sanitize(implode(",", $search_fk_warehouse)).")";
 }
 // Add fields from hooks
 $parameters = array();
@@ -298,7 +298,7 @@ $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($productid > 0) {
 	$sql .= " AND p.rowid = ".((int) $productid);
 }
-if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$sql .= " AND p.fk_product_type = 0";
 }
 if (!empty($canvas)) {
@@ -325,7 +325,7 @@ if ($sortfield == 'stock' && !empty($search_fk_warehouse)) {
 }
 $sql .= $db->order($sortfield, $sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if ($date && $dateIsValid) {	// We avoid a heavy sql if mandatory parameter date not yet defined
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
@@ -427,22 +427,22 @@ if (!empty($search_fk_warehouse)) {
 	}
 }
 if ($productid > 0) {
-	$param .= '&productid='.$productid;
+	$param .= '&productid='.(int) $productid;
 }
-if (GETPOST('dateday', 'int') > 0) {
-	$param .= '&dateday='.GETPOST('dateday', 'int');
+if (GETPOSTINT('dateday') > 0) {
+	$param .= '&dateday='.GETPOSTINT('dateday');
 }
-if (GETPOST('datemonth', 'int') > 0) {
-	$param .= '&datemonth='.GETPOST('datemonth', 'int');
+if (GETPOSTINT('datemonth') > 0) {
+	$param .= '&datemonth='.GETPOSTINT('datemonth');
 }
-if (GETPOST('dateyear', 'int') > 0) {
-	$param .= '&dateyear='.GETPOST('dateyear', 'int');
+if (GETPOSTINT('dateyear') > 0) {
+	$param .= '&dateyear='.GETPOSTINT('dateyear');
 }
 
 // TODO Move this into the title line ?
 print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="liste centpercent">';
 
 $stocklabel = $langs->trans('StockAtDate');
@@ -521,7 +521,7 @@ $i = 0;
 while ($i < ($limit ? min($num, $limit) : $num)) {
 	$objp = $db->fetch_object($resql);
 
-	if (!empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0) {
+	if (getDolGlobalString('STOCK_SUPPORTS_SERVICES') || $objp->fk_product_type == 0) {
 		$prod->fetch($objp->rowid);
 
 		// Multilangs
@@ -556,7 +556,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			//}
 		} else {
 			//if ($productid > 0) {
-				$currentstock = $stock_prod[$objp->rowid];
+			$currentstock = $stock_prod[$objp->rowid];
 			//} else {
 			//	$currentstock = $objp->stock;
 			//}
@@ -611,17 +611,18 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 			// PMP value
 			print '<td class="right">';
-			if (price2num($stock * $objp->pmp, 'MT')) {
-				print '<span class="amount">'.price(price2num($stock * $objp->pmp, 'MT'), 1).'</span>';
+			$estimatedvalue = $stock * $objp->pmp;
+			if (price2num($estimatedvalue, 'MT')) {
+				print '<span class="amount">'.price(price2num($estimatedvalue, 'MT'), 1).'</span>';
 			} else {
 				print '';
 			}
-			$totalbuyingprice += $stock * $objp->pmp;
+			$totalbuyingprice += $estimatedvalue;
 			print '</td>';
 
 			// Selling value
 			print '<td class="right">';
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				print '<span class="amount">';
 				if ($stock || (float) ($stock * $objp->price)) {
 					print price(price2num($stock * $objp->price, 'MT'), 1);
@@ -638,7 +639,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if ($nbofmovement > 0) {
 				print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$objp->rowid;
 				foreach ($search_fk_warehouse as $val) {
-					print ($val > 0 ? '&search_warehouse='.$val : '');
+					print($val > 0 ? '&search_warehouse='.$val : '');
 				}
 				print '">'.$langs->trans("Movements").'</a>';
 				print ' <span class="tabs"><span class="badge">'.$nbofmovement.'</span></span>';
@@ -687,7 +688,7 @@ if (empty($date) || !$dateIsValid) {
 	} else {
 		print '<td></td>';
 		print '<td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td>';
-		if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			print '<td class="right">'.price(price2num($totalsellingprice, 'MT')).'</td>';
 		} else {
 			print '<td></td>';

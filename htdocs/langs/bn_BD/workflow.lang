@@ -1,26 +1,38 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=Workflow module setup
-WorkflowDesc=This module provides some automatic actions. By default, the workflow is open (you can do things in the order you want) but here you can activate some automatic actions.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+WorkflowSetup=ওয়ার্কফ্লো মডিউল সেটআপ
+WorkflowDesc=এই মডিউল কিছু স্বয়ংক্রিয় ক্রিয়া প্রদান করে। ডিফল্টরূপে, ওয়ার্কফ্লো খোলা থাকে (আপনি আপনার ইচ্ছামত কাজ করতে পারেন) কিন্তু এখানে আপনি কিছু স্বয়ংক্রিয় ক্রিয়া সক্রিয় করতে পারেন।
+ThereIsNoWorkflowToModify=সক্রিয় মডিউলগুলির সাথে কোন কর্মপ্রবাহ পরিবর্তন উপলব্ধ নেই।
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a sales order after a commercial proposal is signed (the new order will have same amount as the proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (the new invoice will have same amount as the proposal)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a sales order is closed (the new invoice will have same amount as the order)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=একটি বাণিজ্যিক প্রস্তাব স্বাক্ষরিত হওয়ার পরে স্বয়ংক্রিয়ভাবে একটি বিক্রয় আদেশ তৈরি করুন (নতুন আদেশে প্রস্তাবের সমান পরিমাণ থাকবে)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=একটি বাণিজ্যিক প্রস্তাবে স্বাক্ষর করার পরে স্বয়ংক্রিয়ভাবে একটি গ্রাহক চালান তৈরি করুন (নতুন চালানে প্রস্তাবের সমান পরিমাণ থাকবে)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=একটি চুক্তি বৈধ হওয়ার পরে স্বয়ংক্রিয়ভাবে একটি গ্রাহক চালান তৈরি করুন
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=বিক্রয় আদেশ বন্ধ হয়ে যাওয়ার পরে স্বয়ংক্রিয়ভাবে একটি গ্রাহক চালান তৈরি করুন (নতুন চালানে অর্ডারের সমান পরিমাণ থাকবে)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=টিকিট তৈরিতে, স্বয়ংক্রিয়ভাবে একটি হস্তক্ষেপ তৈরি করুন।
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales order as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=একটি বিক্রয় আদেশ বিলে সেট করা হলে লিঙ্কযুক্ত উত্স প্রস্তাবগুলিকে বিল হিসাবে শ্রেণীবদ্ধ করুন (এবং যদি অর্ডারের পরিমাণ স্বাক্ষরিত লিঙ্কযুক্ত প্রস্তাবগুলির মোট পরিমাণের সমান হয়)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=যখন একটি গ্রাহক চালান যাচাই করা হয় তখন লিঙ্কযুক্ত উত্স প্রস্তাবগুলিকে বিল হিসাবে শ্রেণীবদ্ধ করুন (এবং যদি চালানের পরিমাণ স্বাক্ষরিত লিঙ্কযুক্ত প্রস্তাবগুলির মোট পরিমাণের সমান হয়)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=যখন একটি গ্রাহক চালান বৈধ করা হয় তখন লিঙ্কযুক্ত উত্স বিক্রয় আদেশকে বিল হিসাবে শ্রেণীবদ্ধ করুন (এবং যদি চালানের পরিমাণ লিঙ্কযুক্ত বিক্রয় আদেশের মোট পরিমাণের সমান হয়)। আপনার যদি n অর্ডারের জন্য 1টি চালান যাচাই করা থাকে, তাহলে এটি সমস্ত অর্ডারকেও বিলের জন্য সেট করতে পারে।
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=যখন একটি গ্রাহক চালান অর্থপ্রদানের জন্য সেট করা হয় (এবং যদি চালানের পরিমাণ লিঙ্কযুক্ত বিক্রয় আদেশের মোট পরিমাণের সমান হয়) তখন লিঙ্কযুক্ত উত্স বিক্রয় আদেশগুলিকে বিল হিসাবে শ্রেণীবদ্ধ করুন। আপনার যদি n অর্ডারের জন্য 1টি চালান সেট করা থাকে, তাহলে এটি সমস্ত অর্ডারকেও বিলের জন্য সেট করতে পারে।
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=যখন একটি চালান যাচাই করা হয় তখন লিংকড সোর্স সেলস অর্ডারকে শিপড হিসাবে শ্রেণীবদ্ধ করুন (এবং যদি সমস্ত চালানের মাধ্যমে পাঠানো পরিমাণ আপডেট করার জন্য একই রকম হয়)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=শিপমেন্ট বন্ধ হয়ে গেলে লিংকড সোর্স সেলস অর্ডারকে শিপড হিসাবে শ্রেণীবদ্ধ করুন (এবং যদি সমস্ত চালানের মাধ্যমে পাঠানো পরিমাণ আপডেট করার জন্য একই রকম হয়)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=যখন বিক্রেতা চালান যাচাই করা হয় তখন লিঙ্কযুক্ত উত্স বিক্রেতা প্রস্তাবকে বিল হিসাবে শ্রেণীবদ্ধ করুন (এবং যদি চালানের পরিমাণ লিঙ্কযুক্ত প্রস্তাবগুলির মোট পরিমাণের সমান হয়)
 # Autoclassify purchase order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
-# Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
-AutomaticCreation=Automatic creation
-AutomaticClassification=Automatic classification
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=বিক্রেতার চালান যাচাই করা হলে লিঙ্কযুক্ত উত্স ক্রয় আদেশকে বিল হিসাবে শ্রেণীবদ্ধ করুন (এবং যদি চালানের পরিমাণ লিঙ্ক করা অর্ডারগুলির মোট পরিমাণের সমান হয়)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=একটি অভ্যর্থনা যাচাই করা হলে প্রাপ্ত হিসাবে লিঙ্কযুক্ত উত্স ক্রয় আদেশ শ্রেণীবদ্ধ করুন (এবং যদি সমস্ত অভ্যর্থনা দ্বারা প্রাপ্ত পরিমাণ আপডেট করার জন্য ক্রয় আদেশের মতোই হয়)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=একটি অভ্যর্থনা বন্ধ হয়ে গেলে প্রাপ্ত হিসাবে লিঙ্কযুক্ত উত্স ক্রয়ের আদেশকে শ্রেণীবদ্ধ করুন (এবং যদি সমস্ত রিসেপশন দ্বারা প্রাপ্ত পরিমাণ আপডেট করার জন্য ক্রয় আদেশের মতোই হয়)
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=যখন একটি গ্রাহক চালান যাচাই করা হয় তখন লিঙ্কযুক্ত উত্স চালানকে বন্ধ হিসাবে শ্রেণীবদ্ধ করুন (এবং যদি চালানের পরিমাণ লিঙ্ক করা চালানের মোট পরিমাণের সমান হয়)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=যখন একটি গ্রাহক চালান যাচাই করা হয় তখন লিঙ্কযুক্ত উত্স চালানকে বিল হিসাবে শ্রেণীবদ্ধ করুন (এবং যদি চালানের পরিমাণ লিঙ্ক করা চালানের মোট পরিমাণের সমান হয়)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=একটি ক্রয় চালান যাচাই করা হলে লিঙ্কযুক্ত উত্স অভ্যর্থনাগুলিকে বিল হিসাবে শ্রেণীবদ্ধ করুন (এবং যদি চালানের পরিমাণ লিঙ্কযুক্ত অভ্যর্থনার মোট পরিমাণের সমান হয়)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=একটি ক্রয় চালান যাচাই করা হলে লিঙ্কযুক্ত উত্স অভ্যর্থনাগুলিকে বিল হিসাবে শ্রেণীবদ্ধ করুন (এবং যদি চালানের পরিমাণ লিঙ্কযুক্ত অভ্যর্থনার মোট পরিমাণের সমান হয়)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=একটি টিকিট তৈরি করার সময়, তৃতীয় পক্ষের সাথে মিলে যাওয়া সমস্ত উপলব্ধ চুক্তি লিঙ্ক করুন
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=চুক্তি লিঙ্ক করার সময়, পিতামাতার কোম্পানিগুলির মধ্যে অনুসন্ধান করুন
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=টিকিট বন্ধ হয়ে গেলে টিকিটের সাথে যুক্ত সমস্ত হস্তক্ষেপ বন্ধ করুন
+AutomaticCreation=স্বয়ংক্রিয় সৃষ্টি
+AutomaticClassification=স্বয়ংক্রিয় শ্রেণীবিভাগ
+AutomaticClosing=স্বয়ংক্রিয় বন্ধ
+AutomaticLinking=স্বয়ংক্রিয় লিঙ্কিং

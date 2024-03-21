@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Pārvaldiet un sekojiet personāla atlases kampaņām ja
 # Admin page
 #
 RecruitmentSetup = Personāla atlases iestatīšana
-Settings = Iestatījumi
 RecruitmentSetupPage = Šeit ievadiet personāla atlases moduļa galveno opciju iestatīšanu
 RecruitmentArea=Darbā pieņemšanas sadaļa
 PublicInterfaceRecruitmentDesc=Darba publiskās lapas ir publiski vietrāži URL, lai parādītu atvērtās darba vietas un atbildētu uz tām. Katram atklātajam darbam ir viena atšķirīga saite, kas atrodama katrā darba ierakstā.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Iespējojiet atvērto darbu publiskās lapas
 #
 # About page
 #
-About = Par
 RecruitmentAbout = Par darbā pieņemšanu
 RecruitmentAboutPage = Darbā pieņemšana par lapu
 NbOfEmployeesExpected=Paredzamais darbinieku skaits
@@ -77,3 +75,6 @@ ExtrafieldsApplication=Papildu atribūti (darba pieteikumi)
 MakeOffer=Uztaisīt piedāvājumu
 WeAreRecruiting=Mēs vervējam. Šis ir aizpildāmo brīvo vietu saraksts...
 NoPositionOpen=Šobrīd neviena atvērta pozīcija
+ConfirmClose=Apstipriniet atcelšanu
+ConfirmCloseAsk=Vai tiešām vēlaties atcelt šo personāla atlases kandidatūru?
+recruitment=Darbā pieņemšana

@@ -14,7 +14,7 @@ FileToLaunchCronJobs=Linie de comanda pentru a verifica și a lansa joburi cron 
 CronExplainHowToRunUnix=Pe mediul Unix veţi  utiliza instrumentul crontab pentru a  rula urmatoarea linia de comanda la fiecare 5 minute
 CronExplainHowToRunWin=În mediul Microsoft (tm) Windows, puteți utiliza instrumentele Scheduled Task pentru a executa linia de comandă la fiecare 5 minute
 CronMethodDoesNotExists=Clasa %s nu conține nicio metodă %s
-CronMethodNotAllowed=Metoda %s clasei %seste în lista neagră a metodelor interzise
+CronMethodNotAllowed=Metoda %s clasei %s este în lista de metode interzise
 CronJobDefDesc=Profilele joburilor cron sunt definite în fișierul descriptor al modulului. Când modulul este activat, acestea sunt încărcate și sunt disponibile, astfel încât să puteți administra joburile din meniul Instrumente de administrare%s.
 CronJobProfiles=Lista profilurilor de job cron predefinite
 # Menu
@@ -67,7 +67,7 @@ CronModuleHelp=Numele directorului modulului Dolibarr (lucrați și cu modul Dol
 CronClassFileHelp=Calea relativă și numele fișierului de încărcat (calea este relativă la directorul rădăcină web). <BR> De exemplu, pentru a apela metoda fetch a obiectului produs Dolibarr htdocs/product/class/<u>product.class.php</u>, valoarea pentru numele fişierului clasei este <br> <i> product/class/product.class.php </i>
 CronObjectHelp=Numele obiectului de încărcat . <BR> De exemplu, pentru a apela metoda fetch a produsului Dolibarr obiect/htdocs/product/class/product.class.php, valoarea pentru numele fişierului clasei este<br> <i> Product</i>
 CronMethodHelp=Metoda obiectului pentru lansare.<BR> De exemplu, pentru a apela metoda fetch a produsului Dolibarr obiect/htdocs/product/class/product.class.php, valoarea metodei este <br> <i> fetch </i>
-CronArgsHelp=Argumentele metodei. <BR> De exemplu, pentru a apela metoda de preluare a produsului Dolibarr  object /htdocs/product/class/product.class.php, valoarea parametrilor poate fi <br> <i> 0, ProductRef </i>
+CronArgsHelp=Argumente metodă. <BR>De exemplu, pentru a apela metoda fetch a obiectului Dolibarr Product /htdocs/product/class/product.class.php, valoarea parametrilor poate fi <br><i>0, ProductRef</i>
 CronCommandHelp=Linia de comandă de sistem pentru execuţie.
 CronCreateJob=Creare job programat
 CronFrom=De la
@@ -91,6 +91,7 @@ WarningCronDelayed=Atenție, din motive de performanță, indiferent de data urm
 DATAPOLICYJob=Curățător de date și anonimizator
 JobXMustBeEnabled=Jobul %s trebuie să fie activat
 EmailIfError=E-mail de avertizare la eroare
+JobNotFound=Jobul %s nu a fost găsit în lista de locuri de muncă (încearcă să dezactivezi/activezi modulul)
 ErrorInBatch=Eroare la rularea jobului %s
 
 # Cron Boxes
