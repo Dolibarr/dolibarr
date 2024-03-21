@@ -480,7 +480,7 @@ return [
 		// 'PhanPluginDescriptionlessCommentOnProtectedProperty',
 		'PhanPluginRedundantAssignmentInGlobalScope',
 		// 'PhanTypeMismatchDeclaredParamNullable',
-		'PhanTypeInvalidRightOperandOfAdd',
+		// 'PhanTypeInvalidRightOperandOfAdd',
 		// 'PhanPluginDescriptionlessCommentOnPrivateProperty',
 		// 'PhanUndeclaredVariableDim',  // Array initialisation on undeclared var: $abc['x']='ab'
 		'PhanTypeInvalidPropertyName',
