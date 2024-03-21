@@ -1013,8 +1013,8 @@ class DoliDBMysqli extends DoliDB
 		}
 
 		if (isset($field_desc['default']) && $field_desc['default'] != '') {
-			if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') {
-				$sql .= " DEFAULT ".$this->escape($field_desc['default']);
+			if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
+				$sql .= " DEFAULT ".((float) $field_desc['default']);
 			} elseif ($field_desc['type'] != 'text') {
 				$sql .= " DEFAULT '".$this->escape($field_desc['default'])."'"; // Default not supported on text fields
 			}
