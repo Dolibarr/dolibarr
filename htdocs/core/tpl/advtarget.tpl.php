@@ -110,9 +110,9 @@ if (!empty($array_query['cust_code'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 	$cust_code_str = (string) $array_query['cust_code'];
 } else {
-	$cust_code_str = "null";
+	$cust_code_str = null;
 }
-print '</td><td><input type="text" name="cust_code" value="'.$cust_code_str.'"/></td><td>'."\n";
+print '</td><td><input type="text" name="cust_code"'.($cust_code_str!=null?' value="'.$cust_code_str.'"':'').'/></td><td>'."\n";
 print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
 print '</td></tr>'."\n";
 
