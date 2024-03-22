@@ -50,7 +50,7 @@ $result = restrictedArea($user, 'produit|service');
 
 //checks if a product has been ordered
 
-$ext = pathinfo(explode('?',$_SERVER['REQUEST_URI'],2)[0] ,PATHINFO_EXTENSION);
+$ext = pathinfo(explode('?', $_SERVER['REQUEST_URI'], 2)[0], PATHINFO_EXTENSION);
 
 $action = GETPOST('action', 'aZ09');
 $type = GETPOSTINT('type');
@@ -364,27 +364,14 @@ if ($mode == 'future') {
 	$stocklabel = $langs->trans("VirtualStockAtDate");
 }
 
-if ($ext == 'csv')
-{
+if ($ext == 'csv') {
 	header("Content-Type: text/csv");
 	header("Content-Disposition: attachment; filename=stock".($date?'-'.date("Y-m-d",$date):'').".csv");
 
 	// Lines of title
-	print implode("\t",
-		($mode == 'future')?array(
-			'"Product Reference"',
-			'"Label"',
-			'"Current Stock"',
-			'"'.$stocklabel.'"',
-			'"Virtual Stock"'):
-			array(
-			'"Product Reference"',
-			'"Label"',
-			'"'.$stocklabel.'"',
-			'"Estimated Stock Value"',
-			'"Estimate Sell Value"',
-			'"Movements"',
-			'"Current Stock"'))."\r\n";
+	print implode("\t", ($mode == 'future')?
+		array('"Product Reference"', '"Label"', '"Current Stock"', '"'.$stocklabel.'"', '"Virtual Stock"'):
+		array('"Product Reference"', '"Label"', '"'.$stocklabel.'"', '"Estimated Stock Value"', '"Estimate Sell Value"', '"Movements"', '"Current Stock"'))."\r\n";
 } else {
 	llxHeader('', $title, $helpurl, '');
 
@@ -479,9 +466,7 @@ if ($ext == 'csv')
 
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	if ($num) {
-		print "<p><a href=\"stockatdate.csv".
-			"?sortfield=$sortfield&sortorder=$sortorder".
-			"&type=$type&mode=$mode".
+		print "<p><a href=\"stockatdate.csv?sortfield=$sortfield&sortorder=$sortorder&type=$type&mode=$mode".
 			(isset($productid)?"&productid=$productid":'').
 			$param_warehouse.
 			"&search_ref=".dol_escape_htmltag($search_ref).
