@@ -366,7 +366,7 @@ if ($mode == 'future') {
 
 if ($ext == 'csv') {
 	header("Content-Type: text/csv");
-	header("Content-Disposition: attachment; filename=stock".($date?'-'.date("Y-m-d",$date):'').".csv");
+	header("Content-Disposition: attachment; filename=stock".($date?'-'.date("Y-m-d", $date):'').".csv");
 
 	// Lines of title
 	print implode("\t", ($mode == 'future')?
