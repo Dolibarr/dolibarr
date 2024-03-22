@@ -167,7 +167,6 @@ class box_external_rss extends ModeleBoxes
 
 			$title = preg_replace("/([[:alnum:]])\?([[:alnum:]])/", "\\1'\\2", $title); // Gere probleme des apostrophes mal codee/decodee par utf8
 			$title = preg_replace("/^\s+/", "", $title); // Supprime espaces de debut
-			$this->info_box_contents["$href"] = "$title";
 
 			$tooltip = $title;
 			$description = !empty($item['description']) ? $item['description'] : '';
