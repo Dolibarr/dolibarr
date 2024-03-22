@@ -631,19 +631,19 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				print implode("\t", array(
 					'"'.$objp->ref.'"',
 					'"'.$objp->label.'"',
-					$currentstock,
-					$stock,
-					$virtualstock))."\r\n";
+					"$currentstock",
+					"$stock",
+					"$virtualstock"))."\r\n";
 				$totalvirtualstock += $virtualstock;
 			} else {
 				print implode("\t", array(
 					'"'.$objp->ref.'"',
 					'"'.$objp->label.'"',
-					$stock,
+					"$stock",
 					price2num($stock * $objp->pmp, 'MT')?'"'.price(price2num($stock * $objp->pmp, 'MT'), 1).'"':'',
 					empty($conf->global->PRODUIT_MULTIPRICES)?'"'.price(price2num($stock * $objp->price, 'MT'), 1).'"':'"'.$langs->trans("Variable").'('.$langs->trans("OptionMULTIPRICESIsOn").')"',
-					$nbofmovement,
-					$currentstock ? $currentstock : 0))."\r\n";
+					"$nbofmovement",
+					$currentstock ? "$currentstock" : ''))."\r\n";
 				$totalbuyingprice += $stock * $objp->pmp;
 				$totalsellingprice += $stock * $objp->price;
 			}
@@ -748,9 +748,9 @@ if ($ext=='csv') {
 		($mode == 'future')?array(
 		'"'.$langs->trans("Totalforthispage").'"',
 		'',
-		$productid > 0 ? $totalcurrentstock : '',
+		$productid > 0 ? "$totalcurrentstock" : '',
 		'',
-		$totalvirtualstock):
+		"$totalvirtualstock"):
 		array(
 		'"'.$langs->trans("Totalforthispage").'"',
 		'',
