@@ -73,7 +73,7 @@ class CTicketCategory extends CommonObject
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString('MY_SETUP_PARAM'))
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -186,7 +186,7 @@ class CTicketCategory extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -530,7 +530,7 @@ class CTicketCategory extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
