@@ -1,4 +1,4 @@
-<?php
+ <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  */
@@ -110,9 +110,9 @@ if (!empty($array_query['cust_code'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 	$cust_code_str = (string) $array_query['cust_code'];
 } else {
-	$cust_code_str = "null";
+	$cust_code_str = null;
 }
-print '</td><td><input type="text" name="cust_code" value="'.$cust_code_str.'"/></td><td>'."\n";
+print '</td><td><input type="text" name="cust_code"'.($cust_code_str!=null?' value="'.$cust_code_str:'').'"/></td><td>'."\n";
 print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
 print '</td></tr>'."\n";
 
@@ -141,6 +141,16 @@ if (!empty($array_query['cust_city'])) {
 }
 print '</td><td><input type="text" name="cust_city" value="'.$array_query['cust_city'].'"/></td><td>'."\n";
 print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
+print '</td></tr>'."\n";
+
+// State Client
+print '<tr><td>'.$langs->trans('State');
+if (!empty($array_query['cust_state'])) {
+	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+}
+print '</td><td>'."\n";
+print $formadvtargetemaling->multiselectState('cust_state', $array_query['cust_state']);
+print '</td><td>'."\n";
 print '</td></tr>'."\n";
 
 // Customer Country
