@@ -282,7 +282,7 @@ llxHeader('', $title, $help_url);
 
 $head = user_prepare_head($object);
 
-if ($id && $bankid && $action == 'edit' && ($user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'))) {
+if ($id && $bankid && $action == 'edit' && !$cancel && $permissiontoaddbankaccount)) {
 	if ($conf->use_javascript_ajax) {
 		print "\n<script>";
 		print 'jQuery(document).ready(function () {
@@ -303,7 +303,7 @@ if ($id && $bankid && $action == 'edit' && ($user->hasRight('user', 'user', 'cre
 	print '<input type="hidden" name="id" value="'.GETPOSTINT("id").'">';
 	print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
-if ($id && $action == 'create' && $user->hasRight('user', 'user', 'creer')) {
+if ($id && $action == 'create' && !$cancel && $permissiontoaddbankaccount)) {
 	if ($conf->use_javascript_ajax) {
 		print "\n<script>";
 		print 'jQuery(document).ready(function () {
