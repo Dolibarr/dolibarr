@@ -69,8 +69,8 @@ $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datedeliver
 $search_datereceipt_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datereceipt_startmonth'), GETPOSTINT('search_datereceipt_startday'), GETPOSTINT('search_datereceipt_startyear'));
 $search_datereceipt_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datereceipt_endmonth'), GETPOSTINT('search_datereceipt_endday'), GETPOSTINT('search_datereceipt_endyear'));
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_user = GETPOSTINT('search_user');
-$search_sale = GETPOSTINT('search_sale');
+$search_user = GETPOST('search_user', 'intcomma');
+$search_sale = GETPOST('search_sale', 'intcomma');
 $search_categ_cus = GETPOSTINT("search_categ_cus");
 $search_product_category = GETPOSTINT('search_product_category');
 
