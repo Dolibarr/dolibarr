@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dolibarr-app
+  labels:
+    app: dolibarr
+spec:
+  replicas: 1  # Adjust the number of replicas as needed
+  selector:
+    matchLabels:
+      app: dolibarr
+  template:
+    metadata:
+      labels:
+        app: dolibarr
+    spec:
+      containers:
+      - name: dolibarr
+        image: iyedbnaissa/dolibarr_app:${BUILD_NUMBER}  # Use the appropriate image tag
+        ports:
+        - containerPort: 80  # Assuming your application listens on port 80
