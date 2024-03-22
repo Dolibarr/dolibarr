@@ -47,5 +47,15 @@ pipeline {
         }
       }
     }
+  stage('Deploy to Kubernetes') {
+      steps {
+        container('docker') {
+          script {
+            // Deploy the Docker image to Kubernetes
+            sh "kubectl apply -f deployment.yml"
+          }
+        }
+      }
+    }
   }
 }
