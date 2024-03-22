@@ -1,21 +1,23 @@
+podTemplate(
+    label: 'docker-build',
+    volumes: [hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')],
+    containers: [
+        containerTemplate(
+            name: 'docker',
+            image: 'docker:25',
+            ttyEnabled: true,
+            command: 'cat',
+        ),
+        containerTemplate(
+            name: 'git',
+            image: 'alpine/git',
+            ttyEnabled: true,
+            command: 'cat',
+        )
+    ]
+)
 pipeline {
-    agent {
-        kubernetes {
-            defaultContainer 'jnlp'
-            yaml """
-                apiVersion: v1
-                kind: Pod
-                spec:
-                  containers:
-                  - name: docker
-                    image: docker:25
-                    tty: true
-                  - name: git
-                    image: alpine/git
-                    tty: true
-            """
-        }
-    }
+    agent any
 
     stages {
         stage('Checkout') {
