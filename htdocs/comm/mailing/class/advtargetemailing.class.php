@@ -534,6 +534,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql .= " t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as t";
 		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields as te ON te.fk_object=t.rowid ";
+		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."c_departements as td ON td.rowid=t.fk_departement ";
 
 		$sqlwhere = array();
 
@@ -555,6 +556,9 @@ class AdvanceTargetingMailing extends CommonObject
 			}
 			if (!empty($arrayquery['cust_adress'])) {
 				$sqlwhere[] = $this->transformToSQL('t.address', $arrayquery['cust_adress']);
+			}
+			if (!empty($arrayquery['cust_state'])) {
+				$sqlwhere[] = $this->transformToSQL('td.nom', $arrayquery['cust_state']);
 			}
 			if (!empty($arrayquery['cust_zip'])) {
 				$sqlwhere[] = $this->transformToSQL('t.zip', $arrayquery['cust_zip']);
@@ -686,10 +690,12 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql .= " t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
 		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as te ON te.fk_object=t.rowid ";
+		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."c_departements as td ON te.rowid=t.fk_departement ";
 
 		if (!empty($withThirdpartyFilter)) {
 			$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe as ts ON ts.rowid=t.fk_soc";
 			$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields as tse ON tse.fk_object=ts.rowid ";
+			$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."c_departements as tsd ON tsd.rowid=ts.fk_departement ";
 		}
 
 		$sqlwhere = array();
@@ -706,6 +712,9 @@ class AdvanceTargetingMailing extends CommonObject
 			}
 			if (!empty($arrayquery['contact_firstname'])) {
 				$sqlwhere[] = $this->transformToSQL('t.firstname', $arrayquery['contact_firstname']);
+			}
+			if (!empty($arrayquery['cust_state'])) {
+				$sqlwhere[] = $this->transformToSQL('td.nom', $arrayquery['cust_state']);
 			}
 			if (!empty($arrayquery['contact_country']) && count($arrayquery['contact_country'])) {
 				$sqlwhere[] = " (t.fk_pays IN (".$this->db->sanitize($this->db->escape(implode(',', $arrayquery['contact_country'])))."))";
@@ -802,6 +811,9 @@ class AdvanceTargetingMailing extends CommonObject
 					}
 					if (!empty($arrayquery['cust_city'])) {
 						$sqlwhere[] = $this->transformToSQL('ts.town', $arrayquery['cust_city']);
+					}
+					if (!empty($arrayquery['cust_state'])) {
+						$sqlwhere[] = $this->transformToSQL('tsd.nom', $arrayquery['cust_state']);
 					}
 					if (!empty($arrayquery['cust_mothercompany'])) {
 						$str = $this->transformToSQL('nom', $arrayquery['cust_mothercompany']);

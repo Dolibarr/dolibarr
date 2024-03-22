@@ -143,6 +143,15 @@ print '</td><td><input type="text" name="cust_city" value="'.$array_query['cust_
 print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
 print '</td></tr>'."\n";
 
+// State Client
+print '<tr><td>'.$langs->trans('State/Province');
+if (!empty($array_query['cust_state'])) {
+	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+}
+print '</td><td><input type="text" name="cust_state" value="'.$array_query['cust_state'].'"/></td><td>'."\n";
+print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
+print '</td></tr>'."\n";
+
 // Customer Country
 print '<tr><td>'.$langs->trans("Country");
 if (!empty($array_query['cust_country'])) {
