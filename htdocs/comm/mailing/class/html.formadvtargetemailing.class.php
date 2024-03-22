@@ -102,15 +102,15 @@ class FormAdvTargetEmailing extends Form
 		$maxlength = 0;
 
 		$out = '';
-		$countryArray = array();
+		$stateArray = array();
 		$label = array();
 
 		$options_array = array();
 
-		$sql = "SELECT d.rowid as rowid, d.code_departement as code_iso, d.nom as department, r.nom as region";
+		$sql = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as department, r.nom as region";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_departements d";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions r on d.fk_region=r.code_region";
-		$sql .= " WHERE d.active = 1 AND d.code_departement<>''";
+		$sql .= " WHERE d.active = 1 AND d.code_departement<>'' AND r.code_region<>''";
 		//$sql .= " ORDER BY r.nom ASC, d.nom ASC";
 
 		$resql = $this->db->query($sql);
@@ -123,9 +123,8 @@ class FormAdvTargetEmailing extends Form
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 					$stateArray [$i] ['rowid'] = $obj->rowid;
-					$stateArray [$i] ['code_iso'] = $obj->code_iso;
+					$stateArray [$i] ['code'] = $obj->code;
 					$stateArray [$i] ['label'] = $obj->region.'/'.$obj->department;
-					//($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso) != "Country".$obj->code_iso ? $langs->transnoentitiesnoconv("Country".$obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
 					$label[$i] = $stateArray[$i]['label'];
 					$i++;
 				}
@@ -135,8 +134,8 @@ class FormAdvTargetEmailing extends Form
 
 				foreach ($stateArray as $row) {
 					$label = dol_trunc($row['label'], $maxlength, 'middle');
-					if ($row['code_iso']) {
-						$label .= ' ('.$row['code_iso'].')';
+					if ($row['code']) {
+						$label .= ' ('.$row['code'].')';
 					}
 
 					$options_array[$row['rowid']] = $label;
