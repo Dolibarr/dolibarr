@@ -1,23 +1,21 @@
-podTemplate(
-    label: 'docker-build',
-    volumes: [hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')],
-    containers: [
-        containerTemplate(
-            name: 'docker',
-            image: 'docker:25',
-            ttyEnabled: true,
-            command: 'cat',
-        ),
-        containerTemplate(
-            name: 'git',
-            image: 'alpine/git',
-            ttyEnabled: true,
-            command: 'cat',
-        )
-    ]
-)
 pipeline {
-    agent any
+    agent {
+        kubernetes {
+            defaultContainer 'jnlp'
+            yaml """
+                apiVersion: v1
+                kind: Pod
+                spec:
+                  containers:
+                  - name: docker
+                    image: docker:25
+                    tty: true
+                  - name: git
+                    image: alpine/git
+                    tty: true
+            """
+        }
+    }
 
     stages {
         stage('Checkout') {
@@ -31,7 +29,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image
-                    def appImage = docker.build("bahabh/dolibarr_rep:${env.BUILD_NUMBER}", "-f build/docker/Dockerfile .")
+                    def appImage = docker.build("iyedbnaissa/dolibarr_app:${env.BUILD_NUMBER}", "-f build/docker/Dockerfile .")
 
                     // Push the Docker image to your Docker registry
                     docker.withRegistry('', '20') {
