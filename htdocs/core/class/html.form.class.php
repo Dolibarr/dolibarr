@@ -8040,7 +8040,6 @@ class Form
 		if ($objectfield) {	// We must retreive the objectdesc from the field or extrafield
 			// Example: $objectfield = 'product:options_package'
 			$tmparray = explode(':', $objectfield);
-			$objectdesc = '';
 
 			// Load object according to $id and $element
 			$objectforfieldstmp = fetchObjectByElement(0, strtolower($tmparray[0]));
@@ -8060,8 +8059,10 @@ class Form
 				}
 			} else {
 				// For a property in ->fields
-				$objectdesc = $objectforfieldstmp->fields[$tmparray[1]]['type'];
-				$objectdesc = preg_replace('/^integer[^:]*:/', '', $objectdesc);
+				if (array_key_exists($tmparray[1], $objectforfieldstmp->fields)) {
+					$objectdesc = $objectforfieldstmp->fields[$tmparray[1]]['type'];
+					$objectdesc = preg_replace('/^integer[^:]*:/', '', $objectdesc);
+				}
 			}
 		}
 
