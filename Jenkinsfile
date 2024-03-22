@@ -6,7 +6,7 @@ pipeline {
         kind: Pod
         spec:
           containers:
-          - name: kubectl
+          - name: git
             image: alpine/git:latest
             command:
             - cat
@@ -43,16 +43,6 @@ pipeline {
             docker.withRegistry('', '30') {
               appImage.push()
             }
-          }
-        }
-      }
-    }
-  stage('Deploy to Kubernetes') {
-      steps {
-        container('docker') {
-          script {
-            // Deploy the Docker image to Kubernetes
-            sh "kubectl apply -f deployment.yml"
           }
         }
       }
