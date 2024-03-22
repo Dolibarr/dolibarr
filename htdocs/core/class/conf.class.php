@@ -754,7 +754,7 @@ class Conf extends stdClass
 
 			// MAIN_HTML_TITLE
 			if (!isset($this->global->MAIN_HTML_TITLE)) {
-				$this->global->MAIN_HTML_TITLE = 'noapp,thirdpartynameonly,contactnameonly,projectnameonly';
+				$this->global->MAIN_HTML_TITLE = 'thirdpartynameonly,contactnameonly,projectnameonly';
 			}
 
 			// conf->liste_limit = constante de taille maximale des listes
