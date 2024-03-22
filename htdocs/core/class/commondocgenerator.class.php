@@ -147,18 +147,18 @@ abstract class CommonDocGenerator
 	public $emetteur;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
+	 * @var array{0:int,1:int} Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 7.1 = array(7, 1)
 	 */
 	public $phpmin = array(7, 1);
 
 	/**
-	 * @var array	Array of columns
+	 * @var array<string,array{rank:string,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of columns
 	 */
 	public $cols;
 
 	/**
-	 * @var array	Array with result of doc generation. content is array('fullpath'=>$file)
+	 * @var array{fullpath:string}	Array with result of doc generation. content is array('fullpath'=>$file)
 	 */
 	public $result;
 
@@ -856,7 +856,7 @@ abstract class CommonDocGenerator
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 		$object->list_delivery_methods($object->shipping_method_id);
-		$calculatedVolume = ($object->trueWidth * $object->trueHeight * $object->trueDepth);
+		$calculatedVolume = ((float) $object->trueWidth * (float) $object->trueHeight * $object->trueDepth);
 
 		$array_shipment = array(
 			$array_key.'_id' => $object->id,
