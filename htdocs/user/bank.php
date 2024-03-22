@@ -282,7 +282,7 @@ llxHeader('', $title, $help_url);
 
 $head = user_prepare_head($object);
 
-if ($id && $bankid && $action == 'edit' && !$cancel && $permissiontoaddbankaccount)) {
+if ($id && $bankid && $action == 'edit' && !$cancel && $permissiontoaddbankaccount) {
 	if ($conf->use_javascript_ajax) {
 		print "\n<script>";
 		print 'jQuery(document).ready(function () {
@@ -303,7 +303,7 @@ if ($id && $bankid && $action == 'edit' && !$cancel && $permissiontoaddbankaccou
 	print '<input type="hidden" name="id" value="'.GETPOSTINT("id").'">';
 	print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
-if ($id && $action == 'create' && !$cancel && $permissiontoaddbankaccount)) {
+if ($id && $action == 'create' && !$cancel && $permissiontoaddbankaccount) {
 	if ($conf->use_javascript_ajax) {
 		print "\n<script>";
 		print 'jQuery(document).ready(function () {
