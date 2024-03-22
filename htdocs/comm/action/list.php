@@ -267,7 +267,7 @@ if (empty($reshook)) {
 	$objectlabel = 'Events';
 	$uploaddir = true;
 	// Only users that can delete any event can remove records.
-	$permissiontodelete = $user->rights->agenda->allactions->delete;
+	$permissiontodelete = $user->hasRight('agenda', 'allactions', 'delete');
 	$permissiontoadd = $user->hasRight('agenda', 'myactions', 'create');
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -708,7 +708,7 @@ $url = DOL_URL_ROOT.'/comm/action/card.php?action=create';
 $url .= '&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec;
 $url .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
 
-$newcardbutton = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, '', $user->rights->agenda->myactions->create || $user->hasRight('agenda', 'allactions', 'create'));
+$newcardbutton = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create'));
 
 $param .= '&mode='.$mode;
 
