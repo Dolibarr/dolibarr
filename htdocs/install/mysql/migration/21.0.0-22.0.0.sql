@@ -249,3 +249,6 @@ ALTER TABLE llx_menu ADD COLUMN showtopmenuinframe integer DEFAULT 0;
 
 ALTER TABLE llx_asset ADD COLUMN fk_user_valid integer;
 ALTER TABLE llx_asset ADD COLUMN date_valid datetime;
+
+-- Move permission thirdparty_paymentinformation out of advanced rights
+UPDATE llx_rights_def SET perms = 'thirdparty_paymentinformation' WHERE perms = 'thirdparty_paymentinformation_advance';
