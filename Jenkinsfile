@@ -6,7 +6,7 @@ pipeline {
         kind: Pod
         spec:
           containers:
-          - name: git
+          - name: kubectl
             image: alpine/git:latest
             command:
             - cat
