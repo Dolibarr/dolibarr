@@ -1,4 +1,4 @@
- <?php
+<?php
 /* Copyright (C) 2014 Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
