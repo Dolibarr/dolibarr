@@ -2756,7 +2756,7 @@ class ExpenseReport extends CommonObject
 		$currentUser->fetch($this->fk_user);
 		$currentUser->getrights('expensereport');
 		//Clean
-		$qty = price2num($qty);
+		$qty = (float) price2num($qty);
 
 		$sql  = " SELECT r.range_ik, t.ikoffset, t.coef";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_ik t";
@@ -2786,7 +2786,7 @@ class ExpenseReport extends CommonObject
 					$cumulYearQty = $obj->cumul;
 				}
 
-				$qty = $cumulYearQty + $qty;
+				$qty += (float) $cumulYearQty;
 			}
 
 			$num = $this->db->num_rows($result);
@@ -2826,7 +2826,7 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with optional picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data
