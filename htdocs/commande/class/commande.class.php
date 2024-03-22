@@ -4406,11 +4406,7 @@ class OrderLine extends CommonOrderLine
 		$sqlCheckShipmentLine = "SELECT";
 		$sqlCheckShipmentLine .= " ed.rowid";
 		$sqlCheckShipmentLine .= " FROM " . MAIN_DB_PREFIX . "expeditiondet ed";
-<<<<<<< HEAD
-		$sqlCheckShipmentLine .= " WHERE ed.fk_origin_line = " . ((int)$this->id);
-=======
 		$sqlCheckShipmentLine .= " WHERE ed.fk_origin_line = " . ((int) $this->id);
->>>>>>> 18.0
 
 		$resqlCheckShipmentLine = $this->db->query($sqlCheckShipmentLine);
 		if (!$resqlCheckShipmentLine) {
