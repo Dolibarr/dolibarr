@@ -102,7 +102,7 @@ if (isModEnabled('accounting')) {
 	    </script>';
 	}
 
-	print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
+	print load_fiche_titre($langs->trans("AccountancyArea"), empty($resultboxes['selectboxlist']) ? '' : $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
 
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 		print info_admin($langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices"));

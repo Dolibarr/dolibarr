@@ -39,7 +39,7 @@ $langs->loadLangs(array("compta", "bills", "other", "accountancy", "trips", "pro
 
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-$account_parent = GETPOSTINT('account_parent');
+$account_parent = GETPOST('account_parent');
 $changeaccount = GETPOST('changeaccount');
 // Search Getpost
 $search_login = GETPOST('search_login', 'alpha');
@@ -314,7 +314,7 @@ if ($result) {
 
 	print '<br><div class="inline-block divButAction paddingbottom">'.$langs->trans("ChangeAccount").' ';
 	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
-	print '<input type="submit" class="button small valignmiddle" value="'.$langs->trans("ChangeBinding").'"/></div>';
+	print '<input type="submit" class="button small smallpaddingimp valignmiddle" value="'.$langs->trans("ChangeBinding").'"/></div>';
 
 	$moreforfilter = '';
 
