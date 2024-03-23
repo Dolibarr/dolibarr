@@ -215,6 +215,7 @@ EMailTextProposalClosedSignedWeb=Proposal %s has been closed signed on portal pa
 EMailTextProposalClosedRefused=Proposal %s has been closed refused.
 EMailTextProposalClosedRefusedWeb=Proposal %s has been closed refuse on portal page.
 EMailTextOrderValidated=Order %s has been validated.
+EMailTextOrderPostValidated=Order %s has been validated.
 EMailTextOrderClose=Order %s has been delivered.
 EMailTextOrderCanceled=Order %s has been canceled.
 EMailTextSupplierOrderApprovedBy=Purchase order %s has been approved by %s.
