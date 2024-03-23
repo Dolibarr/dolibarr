@@ -143,7 +143,8 @@ $result = @include_once $conffile; // Keep @ because with some error reporting m
 $listofwrappers = stream_get_wrappers();
 // We need '.phar' for geoip2. TODO Replace phar in geoip with exploded files so we can disable phar by default.
 // phar stream does not auto unserialize content (possible code execution) since PHP 8.1
-$arrayofstreamtodisable = array('compress.zlib', 'compress.bzip2', 'ftp', 'ftps', 'glob', 'data', 'expect', 'ogg', 'rar', 'zip', 'zlib');
+// zip stream is necessary by excel import module
+$arrayofstreamtodisable = array('compress.zlib', 'compress.bzip2', 'ftp', 'ftps', 'glob', 'data', 'expect', 'ogg', 'rar', 'zlib');
 if (!empty($dolibarr_main_stream_to_disable) && is_array($dolibarr_main_stream_to_disable)) {
 	$arrayofstreamtodisable = $dolibarr_main_stream_to_disable;
 }
