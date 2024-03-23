@@ -856,7 +856,7 @@ abstract class CommonDocGenerator
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 		$object->list_delivery_methods($object->shipping_method_id);
-		$calculatedVolume = ((float) $object->trueWidth * (float) $object->trueHeight * $object->trueDepth);
+		$calculatedVolume = ((float) $object->trueWidth * (float) $object->trueHeight * (float) $object->trueDepth);
 
 		$array_shipment = array(
 			$array_key.'_id' => $object->id,
