@@ -58,7 +58,11 @@ if ($id > 0 || !empty($ref)) {
 	}
 
 	// Linked documents
+<<<<<<<
 	if ($origin == 'order_supplier' && $object->origin_object->id && isModEnabled("supplier_order")) {
+=======
+	if ($origin == 'order_supplier' && is_string($typeobject) && $typeobject != '' && is_string($typeobject) && $object->$typeobject->id && isModEnabled("supplier_order")) {
+>>>>>>>
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->origin_object->id);
 	}
