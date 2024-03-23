@@ -44,7 +44,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'ac
 
 $search_subaccount = GETPOST('search_subaccount', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
-$search_type = GETPOSTINT('search_type');
+$search_type = GETPOST('search_type', 'intcomma');
 
 // Security check
 if ($user->socid > 0) {
