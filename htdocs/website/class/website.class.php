@@ -1085,16 +1085,18 @@ class Website extends CommonObject
 			$allaliases = $objectpageold->pageurl;
 			$allaliases .= ($objectpageold->aliasalt ? ','.$objectpageold->aliasalt : '');
 
-			if (!getDolGlobalInt('WEBSITE_EXPORT_KEEP_FILES_OF_PAGES')) {	// We don't need to keep the PHP files of pages and aliases (they are regenerated at import) so we remove them. You can ask to keep them in the export
+			if (!getDolGlobalInt('WEBSITE_EXPORT_KEEP_FILES_OF_PAGES')) {
+				// We don't need to keep the PHP files of pages and aliases (they are regenerated at import) so we remove them.
 				// Delete the pageX.tpl.php page
 				dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/page'.$objectpageold->id.'.tpl.php', 0, 0, 0, null, false, 0);
 				// Delete the alias page
 				dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/'.$objectpageold->pageurl.'.php', 0, 0, 0, null, false, 0);
 				dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/*/'.$objectpageold->pageurl.'.php', 0, 0, 0, null, false, 0);
 				// Delete alternative alias pages
-				foreach ($objectpageold->aliasalt as $tmpaliasalt) {
-					dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/'.$tmpaliasalt.'.php', 0, 0, 0, null, false, 0);
-					dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/*/'.$tmpaliasalt.'.php', 0, 0, 0, null, false, 0);
+				$arrayofaliases = explode(',', $objectpageold->aliasalt);
+				foreach ($arrayofaliases as $tmpaliasalt) {
+					dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/'.trim($tmpaliasalt).'.php', 0, 0, 0, null, false, 0);
+					dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/*/'.trim($tmpaliasalt).'.php', 0, 0, 0, null, false, 0);
 				}
 			}
 
