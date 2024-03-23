@@ -1271,7 +1271,7 @@ class FormOther
 			$selectboxlist .= '<input type="hidden" name="userid" value="'.$user->id.'">';
 			$selectboxlist .= '<input type="hidden" name="areacode" value="'.$areacode.'">';
 			$selectboxlist .= '<input type="hidden" name="boxorder" value="'.$boxorder.'">';
-			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone hideonprint', 0, 'hidden selected', 0, 0);
+			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth300 hideonprint', 0, 'hidden selected', 0, 0);
 			if (empty($conf->use_javascript_ajax)) {
 				$selectboxlist .= ' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
 			}
