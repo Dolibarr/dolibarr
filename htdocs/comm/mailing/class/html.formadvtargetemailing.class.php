@@ -282,8 +282,8 @@ class FormAdvTargetEmailing extends Form
 	 * Return multiselect list of entities for extrafield type sellist
 	 *
 	 * @param string $htmlname control name
-	 * @param array $sqlqueryparam array
-	 * @param array $selected_array array
+	 * @param array<string,string> $sqlqueryparam array
+	 * @param string[] $selected_array array
 	 *
 	 *  @return	string HTML combo
 	 */
