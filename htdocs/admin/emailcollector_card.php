@@ -520,7 +520,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					if ($f->total() >= 1) {
 						$folder = $f[0];
 						if ($folder instanceof Webklex\PHPIMAP\Folder) {
-							$nbemail = $f[0]->examine()["exists"];
+							$nbemail = $folder->examine()["exists"];
 						} else {
 							$nbemail = 0;
 						}
