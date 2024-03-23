@@ -202,7 +202,11 @@ if ($id > 0 || !empty($ref)) {
 
 	print '<table class="border centpercent tableforfield">';
 	// Linked documents
+<<<<<<< HEAD
 	if ($origin == 'order_supplier' && $object->origin_object->id && isModEnabled("supplier_order")) {
+=======
+	if ($origin == 'order_supplier' && is_string($typeobject) && $typeobject != '' && $object->$typeobject->id && isModEnabled("supplier_order")) {
+>>>>>>> b56fd32716c (Extra test to fix PhanTypeInvalidPropertyName)
 		print '<tr><td class="titlefield">';
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->origin_object->id);
