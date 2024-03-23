@@ -726,7 +726,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 		setEventMessages('', $accountancyexport->errors, 'errors');
 		header('Location: '.$_SERVER['PHP_SELF']);
 	}
-	exit(); // download or show errors
+	exit(0); // download or show errors
 }
 
 
@@ -1004,10 +1004,10 @@ if (!empty($arrayfields['t.subledger_account']['checked'])) {
 	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
 		print '<div class="nowrap">';
 		//print $langs->trans('From').' ';
-		print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', $langs->trans('From'), 'maxwidth250', 'subledgeraccount');
+		print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', $langs->trans('From'), 'maxwidth150', 'subledgeraccount');
 		print '</div>';
 		print '<div class="nowrap">';
-		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', $langs->trans('to'), 'maxwidth250', 'subledgeraccount');
+		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', $langs->trans('to'), 'maxwidth150', 'subledgeraccount');
 		print '</div>';
 	} else {
 		print '<input type="text" class="maxwidth75" name="search_accountancy_aux_code" value="'.dol_escape_htmltag($search_accountancy_aux_code).'">';
