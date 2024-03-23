@@ -1454,17 +1454,14 @@ class BOM extends CommonObject
 							}
 						}
 
-						$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
-
-						$this->total_cost += $line->total_cost;
+						$line->total_cost = (float) price2num($line->qty * $line->unit_cost / $line->efficiency, 'MT');
 					} else {
 						$bom_child = new BOM($this->db);
 						$res = $bom_child->fetch($line->fk_bom_child);
-						if ($res > 0) {
+						if ($res > 0 && $bom_child->qty > 0) {
 							$bom_child->calculateCosts();
-							$line->childBom[] = $bom_child;
-							$this->total_cost += price2num($bom_child->total_cost * $line->qty, 'MT');
-							$this->total_cost += $line->total_cost;
+							$line->childBom = $bom_child;
+							$line->total_cost = (float) price2num($bom_child->total_cost * $line->qty / ($bom_child->qty*$line->efficiency), 'MT');
 						} else {
 							$this->error = $bom_child->error;
 							return -2;
@@ -1474,6 +1471,17 @@ class BOM extends CommonObject
 					// Convert qty of line into hours
 					$unitforline = measuringUnitString($line->fk_unit, '', '', 1);
 					$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
+
+					$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+					if (empty($line->unit_cost)) {
+						if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
+							if ($productFournisseur->fourn_remise_percent != "0") {
+								$line->unit_cost = $productFournisseur->fourn_unitprice_with_discount;
+							} else {
+								$line->unit_cost = $productFournisseur->fourn_unitprice;
+							}
+						}
+					}
 
 					if (isModEnabled('workstation') && !empty($line->fk_default_workstation)) {
 						$workstation = new Workstation($this->db);
@@ -1494,14 +1502,13 @@ class BOM extends CommonObject
 						}
 
 						if ($qtyhourservice) {
-							$line->total_cost = price2num($qtyhourforline / $qtyhourservice * $tmpproduct->cost_price, 'MT');
+							$line->total_cost = price2num($qtyhourforline / $qtyhourservice * $line->unit_cost, 'MT');
 						} else {
-							$line->total_cost = price2num($line->qty * $tmpproduct->cost_price, 'MT');
+							$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
 						}
 					}
-
-					$this->total_cost += $line->total_cost;
 				}
+				$this->total_cost += $line->total_cost;
 			}
 
 			$this->total_cost = price2num($this->total_cost, 'MT');
@@ -1545,14 +1552,12 @@ class BOM extends CommonObject
 		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
 				if (!empty($line->childBom)) {
-					foreach ($line->childBom as $childBom) {
-						$childBom->getNetNeeds($TNetNeeds, $line->qty*$qty);
-					}
+					$line->childBom->getNetNeeds($TNetNeeds, $line->qty * $qty / $this->qty);
 				} else {
 					if (empty($TNetNeeds[$line->fk_product])) {
 						$TNetNeeds[$line->fk_product] = 0;
 					}
-					$TNetNeeds[$line->fk_product] += $line->qty*$qty;
+					$TNetNeeds[$line->fk_product] += $line->qty * $qty;
 				}
 			}
 		}
@@ -1571,13 +1576,11 @@ class BOM extends CommonObject
 		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
 				if (!empty($line->childBom)) {
-					foreach ($line->childBom as $childBom) {
-						$TNetNeeds[$childBom->id]['bom'] = $childBom;
-						$TNetNeeds[$childBom->id]['parentid'] = $this->id;
-						$TNetNeeds[$childBom->id]['qty'] = $line->qty*$qty;
-						$TNetNeeds[$childBom->id]['level'] = $level;
-						$childBom->getNetNeedsTree($TNetNeeds, $line->qty*$qty, $level+1);
-					}
+					$TNetNeeds[$line->childBom->id]['bom'] = $line->childBom;
+					$TNetNeeds[$line->childBom->id]['parentid'] = $this->id;
+					$TNetNeeds[$line->childBom->id]['qty'] = $line->qty * $qty;
+					$TNetNeeds[$line->childBom->id]['level'] = $level;
+					$line->childBom->getNetNeedsTree($TNetNeeds, $line->qty * $qty / $this->qty, $level+1);
 				} else {
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] += $line->qty * $qty;
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['level'] = $level;
@@ -1867,8 +1870,40 @@ class BOMLine extends CommonObjectLine
 		if ($this->efficiency < 0 || $this->efficiency > 1) {
 			$this->efficiency = 1;
 		}
-
+		
+		// check for circular BOM dependency
+		if (checkCircular($this->fk_bom_child)<0) {
+			return -1;
+		}
+		
 		return $this->createCommon($user, $notrigger);
+	}
+
+	/**
+	 * Check for circular BOM dependency
+	 *
+	 * @return int             Return integer <0 if KO, >0 if OK
+	 */
+	public function checkCircular($id)
+	{
+		// check for circular BOM dependency
+		$sql = 'SELECT rowid, fk_bom_child as child, fk_product as product, qty as quantity FROM '.MAIN_DB_PREFIX.'bom_bomline';
+		$sql.= ' WHERE fk_bom ='. (int) $id;
+		$result = $object->db->query($sql);
+
+		if ($result) {
+			// Loop on all the sub-BOM lines if they exist
+			while ($obj = $object->db->fetch_object($result)) {
+				if (!empty($obj->child)) {
+					if ($obj->child==$this->id) {
+						$this->error = 'Found BOM circular dependency';
+						return 0;
+					} else if (!$this->check($obj->child)) return 0;
+				}
+			}
+		}
+		
+		return 1;
 	}
 
 	/**

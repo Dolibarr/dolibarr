@@ -187,7 +187,7 @@ $tmpbom->calculateCosts();
 print '<td id="costline_'.$line->id.'" class="linecolcost nowrap right">';
 $coldisplay++;
 if (!empty($line->fk_bom_child)) {
-	echo '<span class="amount">'.price($tmpbom->total_cost * $line->qty).'</span>';
+	echo '<span class="amount">'.price($tmpbom->total_cost * $line->qty / (($tmpbom->qty>1 ? $tmpbom->qty : 1)*$line->efficiency)).'</span>';
 } else {
 	echo '<span class="amount">'.price($line->total_cost).'</span>';
 }
@@ -284,7 +284,7 @@ if ($resql) {
 		// Qty
 		$label = $sub_bom_product->getLabelOfUnit('long');
 		if ($sub_bom_line->qty_frozen > 0) {
-			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty, 0, '', 0, 0).'</td>';
+			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty / ($tmpbom->qty>1?$tmpbom->qty:1), 0, '', 0, 0).'</td>';
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print '<td class="linecoluseunit nowrap left">';
 				if ($label !== '') {
@@ -294,7 +294,7 @@ if ($resql) {
 			}
 			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">'.$langs->trans('Yes').'</td>';
 		} else {
-			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty, 0, '', 0, 0).'</td>';
+			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty / ($tmpbom->qty>1?$tmpbom->qty:1), 0, '', 0, 0).'</td>';
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print '<td class="linecoluseunit nowrap left">';
 				if ($label !== '') {
@@ -319,8 +319,8 @@ if ($resql) {
 		// Cost
 		if (!empty($sub_bom->id)) {
 			$sub_bom->calculateCosts();
-			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom->total_cost * $sub_bom_line->qty * $line->qty, 'MT')).'</span></td>';
-			$total_cost+= $sub_bom->total_cost * $sub_bom_line->qty * $line->qty;
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom->total_cost * $sub_bom_line->qty * $line->qty / ($tmpbom->qty>1?$tmpbom->qty:1), 'MT')).'</span></td>';
+			$total_cost+= $sub_bom->total_cost * $sub_bom_line->qty * $line->qty / ($tmpbom->qty>1?$tmpbom->qty:1);
 		} elseif ($sub_bom_product->type == Product::TYPE_SERVICE && isModEnabled('workstation') && !empty($sub_bom_product->fk_default_workstation)) {
 			//Convert qty to hour
 			$unit = measuringUnitString($sub_bom_line->fk_unit, '', '', 1);
@@ -331,16 +331,16 @@ if ($resql) {
 				$sub_bom_line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
 			}
 
-			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_line->total_cost, 'MT')).'</span></td>';
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_line->total_cost / (($tmpbom->qty>1?$tmpbom->qty:1)*$sub_bom_line->efficiency), 'MT')).'</span></td>';
 			$this->total_cost += $line->total_cost;
 		} elseif ($sub_bom_product->cost_price > 0) {
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">';
-			print '<span class="amount">'.price(price2num($sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty, 'MT')).'</span></td>';
-			$total_cost+= $sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty;
+			print '<span class="amount">'.price(price2num($sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty / (($tmpbom->qty>1?$tmpbom->qty:1)*$sub_bom_line->efficiency), 'MT')).'</span></td>';
+			$total_cost+= $sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty / ($tmpbom->qty>1?$tmpbom->qty:1);
 		} elseif ($sub_bom_product->pmp > 0) {	// PMP if cost price isn't defined
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">';
-			print '<span class="amount">'.price(price2num($sub_bom_product->pmp * $sub_bom_line->qty * $line->qty, 'MT')).'</span></td>';
-			$total_cost.= $sub_bom_product->pmp * $sub_bom_line->qty * $line->qty;
+			print '<span class="amount">'.price(price2num($sub_bom_product->pmp * $sub_bom_line->qty * $line->qty / (($tmpbom->qty>1?$tmpbom->qty:1)*$sub_bom_line->efficiency), 'MT')).'</span></td>';
+			$total_cost.= $sub_bom_product->pmp * $sub_bom_line->qty * $line->qty / (($sub_bom->qty > 1 ? $sub_bom_product->qty : 1) * $sub_bom_line->efficiency);
 		} else {	// Minimum purchase price if cost price and PMP aren't defined
 			$sql_supplier_price = 'SELECT MIN(price) AS min_price, quantity AS qty FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
 			$sql_supplier_price.= ' WHERE fk_product = '. (int) $sub_bom_product->id;
@@ -348,7 +348,7 @@ if ($resql) {
 			if ($resql_supplier_price) {
 				$obj = $object->db->fetch_object($resql_supplier_price);
 				if (!empty($obj->qty) && !empty($sub_bom_line->qty) && !empty($line->qty)) {
-					$line_cost = $obj->min_price/$obj->qty * $sub_bom_line->qty * $line->qty;
+					$line_cost = $obj->min_price/$obj->qty * $sub_bom_line->qty * $line->qty / ($tmpbom->qty>1?$tmpbom->qty:1);
 				} else {
 					$line_cost = $obj->min_price;
 				}
