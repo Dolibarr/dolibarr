@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,11 +113,16 @@ if ($action == 'set') {
 
 	dolibarr_del_const($db, 'SYSLOG_HANDLERS', -1); // To be sure there is not a setup into another entity
 	dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine', 0, '', 0);
-
+	$error = 0;
+	$errors = [];
 	// Check configuration
 	foreach ($activeModules as $modulename) {
 		$module = new $modulename();
-		$error = $module->checkConfiguration();
+		$res = $module->checkConfiguration();
+		if (!$res) {
+			$error++;
+			$errors = array_merge($errors, $module->errors);
+		}
 	}
 
 
@@ -125,7 +131,7 @@ if ($action == 'set') {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		$db->rollback();
-		setEventMessages($error, $errors, 'errors');
+		setEventMessages('', $errors, 'errors');
 	}
 }
 
