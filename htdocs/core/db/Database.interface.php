@@ -39,10 +39,10 @@ interface Database
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return datas as an array
+	 * @TODO deprecate this. Use fetch_object() so you can access a field with its name instead of using an index of position of field.
 	 *
 	 * @param   resource $resultset 	Resultset of request
 	 * @return  array                   Array
-	 * @deprecated Use fetch_object() so you can access a field with its name instead of using an index of position of field.
 	 */
 	public function fetch_row($resultset);
 	// phpcs:enable
