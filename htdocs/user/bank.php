@@ -85,13 +85,13 @@ if (empty($account->userid)) {
 }
 
 // Define value to know what current user can do on users
-$selfpermission = ( $user->id == $id && $user->hasRight('user', 'self', 'creer'));
+$selfpermission = ($user->id == $id && $user->hasRight('user', 'self', 'creer'));
 $canadduser = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write') );
 $canreaduser = (!empty($user->admin) || $user->hasRight('user', 'user', 'lire') || $user->hasRight('hrm', 'read_personal_information', 'read') );
 $permissiontoaddbankaccount = ($user->hasRight('salaries', 'write') || $user->hasRight('hrm', 'employee', 'write') || $user->hasRight('user', 'user', 'creer') || $selfpermission);
 $permissiontoreadhr = $user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write');
 $permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'write');
-$permissiontosimpleedit = ( $selfpermission || $canadduser );
+$permissiontosimpleedit = ($selfpermission || $canadduser);
 
 // Ok if user->hasRight('salaries', 'readall') or user->hasRight('hrm', 'read')
 //$result = restrictedArea($user, 'salaries|hrm', $object->id, 'user&user', $feature2);
@@ -495,7 +495,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Personal email
-	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write') || $permissiontosimpleedit) {
+	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write') || ) {
 		print '<tr class="nowrap">';
 		print '<td>';
 		print $form->editfieldkey("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'));
@@ -506,7 +506,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Personal phone
-	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write') || $permissiontosimpleedit) {
+	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write') || ) {
 		print '<tr class="nowrap">';
 		print '<td>';
 		print $form->editfieldkey("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'));
