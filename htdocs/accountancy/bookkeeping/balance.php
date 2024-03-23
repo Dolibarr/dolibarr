@@ -473,9 +473,12 @@ if ($action != 'export_csv') {
 		$resql = $db->query($sql);
 		$nrows = $resql->num_rows;
 		$opening_balances = array();
-		for ($i = 0; $i < $nrows; $i++) {
-			$arr = $resql->fetch_array();
-			$opening_balances["'" . $arr['numero_compte'] . "'"] = $arr['opening_balance'];
+		if ($resql) {
+			$nrows = $db->num_rows($resql);
+			for ($i = 0; $i < $nrows; $i++) {
+				$arr = $db->fetch_array($resql);
+				$opening_balances["'" . $arr['numero_compte'] . "'"] = $arr['opening_balance'];
+			}
 		}
 	}
 
