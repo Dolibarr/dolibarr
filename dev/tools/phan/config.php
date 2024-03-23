@@ -473,7 +473,7 @@ return [
 		// 'PhanPluginRedundantAssignment',
 
 		'PhanTypeExpectedObjectPropAccess',
-		'PhanTypeInvalidRightOperandOfNumericOp',
+		// 'PhanTypeInvalidRightOperandOfNumericOp',
 		// 'PhanPluginInlineHTML',
 		// 'PhanPluginInlineHTMLTrailing',
 		// 'PhanPluginUnknownFunctionReturnType',
