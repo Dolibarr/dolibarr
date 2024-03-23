@@ -94,6 +94,67 @@ class FormAdvTargetEmailing extends Form
 	 * @param array     $selected_array or Code or Label of preselected country
 	 * @return string   HTML string with select
 	 */
+	public function multiselectState($htmlname = 'state_id', $selected_array = array())
+	{
+		global $conf, $langs;
+
+		$langs->load("dict");
+		$maxlength = 0;
+
+		$out = '';
+		$stateArray = array();
+		$label = array();
+
+		$options_array = array();
+
+		$sql = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as department, r.nom as region";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_departements d";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions r on d.fk_region=r.code_region";
+		$sql .= " WHERE d.active = 1 AND d.code_departement<>'' AND r.code_region<>''";
+		//$sql .= " ORDER BY r.nom ASC, d.nom ASC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			if ($num) {
+				$foundselected = false;
+
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
+					$stateArray [$i] ['rowid'] = $obj->rowid;
+					$stateArray [$i] ['code'] = $obj->code;
+					$stateArray [$i] ['label'] = $obj->region.'/'.$obj->department;
+					$label[$i] = $stateArray[$i]['label'];
+					$i++;
+				}
+
+				$array1_sort_order = SORT_ASC;
+				array_multisort($label, $array1_sort_order, $stateArray);
+
+				foreach ($stateArray as $row) {
+					$label = dol_trunc($row['label'], $maxlength, 'middle');
+					if ($row['code']) {
+						$label .= ' ('.$row['code'].')';
+					}
+
+					$options_array[$row['rowid']] = $label;
+				}
+			}
+		} else {
+			dol_print_error($this->db);
+		}
+
+		return $this->advMultiselectarray($htmlname, $options_array, $selected_array);
+	}
+
+	/**
+	 * Return combo list of activated countries, into language of user
+	 *
+	 * @param string    $htmlname of html select object
+	 * @param array     $selected_array or Code or Label of preselected country
+	 * @return string   HTML string with select
+	 */
 	public function multiselectCountry($htmlname = 'country_id', $selected_array = array())
 	{
 		global $conf, $langs;
