@@ -596,6 +596,14 @@ class Commande extends CommonOrder
 
 		if (!$error) {
 			$this->db->commit();
+			if (!$error && !$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('ORDER_POST_VALIDATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
 			return 1;
 		} else {
 			$this->db->rollback();

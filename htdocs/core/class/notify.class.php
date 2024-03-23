@@ -130,6 +130,7 @@ class Notify
 		'ORDER_CANCEL',
 		'ORDER_CREATE',
 		'ORDER_VALIDATE',
+		'ORDER_POST_VALIDATE',
 		'ORDER_CLOSE',
 		'PROPAL_VALIDATE',
 		'PROPAL_CLOSE_SIGNED',
@@ -763,6 +764,12 @@ class Notify
 								$object_type = 'order';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextOrderValidated", $link);
 								break;
+							case 'ORDER_POST_VALIDATE':
+								$link = '<a href="'.$urlwithroot.'/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$dir_output = $conf->commande->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'commande');
+								$object_type = 'order';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextOrderPostValidated", $link);
+								break;
 							case 'ORDER_CLOSE':
 								$link = '<a href="'.$urlwithroot.'/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->commande->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'commande');
@@ -1062,6 +1069,12 @@ class Notify
 						$dir_output = $conf->commande->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'commande');
 						$object_type = 'order';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated", $link);
+						break;
+					case 'ORDER_POST_VALIDATE':
+						$link = '<a href="'.$urlwithroot.'/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+						$dir_output = $conf->commande->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'commande');
+						$object_type = 'order';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextOrderPostValidated", $link);
 						break;
 					case 'ORDER_CLOSE':
 						$link = '<a href="'.$urlwithroot.'/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
