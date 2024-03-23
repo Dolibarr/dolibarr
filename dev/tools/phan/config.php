@@ -613,7 +613,7 @@ return [
 		// 'PhanPluginInconsistentReturnMethod',
 		'PhanTypeExpectedObjectPropAccessButGotNull',
 		// 'PhanUndeclaredClassAttribute',
-		'PhanNonClassMethodCall',
+		// 'PhanNonClassMethodCall',
 		// 'PhanPluginNoAssert',
 		// 'PhanTypeMismatchReturnSuperType',
 		// 'PhanTypeMismatchArgumentSuperType',
