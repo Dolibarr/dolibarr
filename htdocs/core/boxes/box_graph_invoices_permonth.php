@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024 Charlene Benke  <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,6 +102,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
 			$param_shownb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_shownb';
 			$param_showtot = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showtot';
+			$param_cumuled = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_cumuled';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
@@ -109,15 +111,18 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				$endyear = GETPOSTINT($param_year);
 				$shownb = GETPOST($param_shownb, 'alpha');
 				$showtot = GETPOST($param_showtot, 'alpha');
+				$showcum = GETPOST($param_cumuled, 'alpha');
 			} else {
 				$tmparray = (!empty($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode]) ? json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true) : array());
 				$endyear = (!empty($tmparray['year']) ? $tmparray['year'] : '');
 				$shownb = (!empty($tmparray['shownb']) ? $tmparray['shownb'] : '');
 				$showtot = (!empty($tmparray['showtot']) ? $tmparray['showtot'] : '');
+				$showcum = (!empty($tmparray['showcum']) ? $tmparray['showcum'] : '');
 			}
-			if (empty($shownb) && empty($showtot)) {
+			if (empty($shownb) && empty($showtot) && empty($showcum)) {
 				$shownb = 1;
 				$showtot = 1;
+				$showcum = 1;
 			}
 			$nowarray = dol_getdate(dol_now(), true);
 			if (empty($endyear)) {
@@ -134,7 +139,15 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb) {
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ? -1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
-
+				if ($showcum) {
+					$cumuled = array("", 0, 0, 0);
+					foreach ($data1 as $key => $value) {
+						$cumuled[1] += $value[1];
+						$cumuled[2] += $value[2];
+						$cumuled[3] += $value[3];
+						$data1[$key] = array($value[0], $cumuled[1], $cumuled[2], $cumuled[3]);
+					}
+				}
 				$filenamenb = $dir."/".$prefix."invoicesnbinyear-".$endyear.".png";
 				// default value for customer mode
 				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=invoicesnbinyear-'.$endyear.'.png';
@@ -160,6 +173,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 					$px1->SetLegend($legend);
 					$px1->SetMaxValue($px1->GetCeilMaxValue());
 					$px1->SetWidth($WIDTH);
+					if ($showcum)
+						$px1->SetType(array('lines', 'lines', 'lines'));
 					$px1->SetHeight($HEIGHT);
 					$px1->SetYLabel($langs->trans("NumberOfBills"));
 					$px1->SetShading(3);
@@ -175,7 +190,15 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showtot) {
 				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ? -1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
-
+				if ($showcum) {
+					$cumuled = array("", 0, 0, 0);
+					foreach ($data2 as $key => $value) {
+						$cumuled[1] += $value[1];
+						$cumuled[2] += $value[2];
+						$cumuled[3] += $value[3];
+						$data2[$key] = array($value[0], $cumuled[1], $cumuled[2], $cumuled[3]);
+					}
+				}
 				$filenamenb = $dir."/".$prefix."invoicesamountinyear-".$endyear.".png";
 				// default value for customer mode
 				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=invoicesamountinyear-'.$endyear.'.png';
@@ -201,6 +224,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 					$px2->SetMaxValue($px2->GetCeilMaxValue());
 					$px2->SetWidth($WIDTH);
 					$px2->SetHeight($HEIGHT);
+					if ($showcum)
+						$px2->SetType(array('lines', 'lines', 'lines'));
 					$px2->SetYLabel($langs->trans("AmountOfBillsHT"));
 					$px2->SetShading(3);
 					$px2->SetHorizTickIncrement(1);
@@ -235,6 +260,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				$stringtoshow .= '<input type="checkbox" name="'.$param_shownb.'"'.($shownb ? ' checked' : '').'> '.$langs->trans("NumberOfBillsByMonth");
 				$stringtoshow .= ' &nbsp; ';
 				$stringtoshow .= '<input type="checkbox" name="'.$param_showtot.'"'.($showtot ? ' checked' : '').'> '.$langs->trans("AmountOfBillsByMonthHT");
+				$stringtoshow .= '<br>';
+				$stringtoshow .= '<input type="checkbox" name="'.$param_cumuled.'"'.($showcum ? ' checked' : '').'> '.$langs->trans("Cumuled");
 				$stringtoshow .= '<br>';
 				$stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
 				$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1).'">';
