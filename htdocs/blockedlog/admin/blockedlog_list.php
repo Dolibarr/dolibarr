@@ -379,7 +379,7 @@ if (GETPOST('withtab', 'alpha')) {
 // Add $param from extra fields
 //include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?output=file">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<div class="right">';
