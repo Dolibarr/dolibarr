@@ -8318,12 +8318,12 @@ function dol_concatdesc($text1, $text2, $forxml = false, $invert = false)
  * Return array of possible common substitutions. This includes several families like: 'system', 'mycompany', 'object', 'objectamount', 'date', 'user'
  *
  * @param	Translate       $outputlangs    Output language
- * @param   int             $onlykey        1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys),
- *                                          2=Values are trunc and html sanitized (to use for help tooltip)
- * @param   array|null      $exclude        Array of family keys we want to exclude. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
- * @param   Object|null     $object         Object for keys on object
- * @param   array|null      $include        Array of family keys we want to include. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
- * @return	array                           Array of substitutions
+ * @param	int             $onlykey		1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys),
+ *											2=Values are trunc and html sanitized (to use for help tooltip)
+ * @param	string[]|null	$exclude		Array of family keys we want to exclude. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
+ * @param	?CommonObject	$object			Object for keys on object
+ * @param	string[]|null	$include		Array of family keys we want to include. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
+ * @return	array<string,string>			Array of substitutions
  * @see setSubstitFromObject()
  */
 function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null, $object = null, $include = null)
@@ -9145,11 +9145,11 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
  *  Complete the $substitutionarray with more entries coming from external module that had set the "substitutions=1" into module_part array.
  *  In this case, method completesubstitutionarray provided by module is called.
  *
- *  @param  array		$substitutionarray		Array substitution old value => new value value
- *  @param  Translate	$outputlangs            Output language
- *  @param  Object		$object                 Source object
- *  @param  mixed		$parameters       		Add more parameters (useful to pass product lines)
- *  @param  string      $callfunc               What is the name of the custom function that will be called? (default: completesubstitutionarray)
+ *  @param  array<string,string>	$substitutionarray		Array substitution old value => new value value
+ *  @param  Translate		$outputlangs            Output language
+ *  @param  CommonObject	$object                 Source object
+ *  @param  mixed			$parameters       		Add more parameters (useful to pass product lines)
+ *  @param  string     		$callfunc               What is the name of the custom function that will be called? (default: completesubstitutionarray)
  *  @return	void
  *  @see 	make_substitutions()
  */
@@ -9331,11 +9331,11 @@ function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0)
  *	Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events.
  *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
  *
- *	@param	string|null	$mesg			Message string
- *	@param	array|null	$mesgs			Message array
- *  @param  string		$style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
- *  @param	string		$messagekey		A key to be used to allow the feature "Never show this message again"
- *  @param	int			$noduplicate	1 means we do not add the message if already present in session stack
+ *	@param	string|null		$mesg		Message string
+ *	@param	string[]|null	$mesgs		Message array
+ *  @param  string			$style     	Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *  @param	string			$messagekey	A key to be used to allow the feature "Never show this message again"
+ *  @param	int				$noduplicate	1 means we do not add the message if already present in session stack
  *  @return	void
  *  @see	dol_htmloutput_events()
  */
@@ -9475,10 +9475,10 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 /**
  *  Get formatted error messages to output (Used to show messages on html output).
  *
- *  @param  string	$mesgstring         Error message
- *  @param  array	$mesgarray          Error messages array
- *  @param  int		$keepembedded       Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
- *  @return string                		Return html output
+ *  @param	string		$mesgstring		Error message
+ *  @param	string[]	$mesgarray		Error messages array
+ *  @param	int			$keepembedded	Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
+ *  @return	string                		Return html output
  *
  *  @see    dol_print_error()
  *  @see    dol_htmloutput_mesg()
@@ -9561,9 +9561,9 @@ function dol_htmloutput_mesg($mesgstring = '', $mesgarray = array(), $style = 'o
 /**
  *  Print formatted error messages to output (Used to show messages on html output).
  *
- *  @param	string	$mesgstring          Error message
- *  @param  array	$mesgarray           Error messages array
- *  @param  int		$keepembedded        Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
+ *  @param	string		$mesgstring		Error message
+ *  @param  string[]	$mesgarray		Error messages array
+ *  @param  int			$keepembedded	Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *  @return	void
  *
  *  @see    dol_print_error()
@@ -9579,14 +9579,14 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *  or descending output and uses optionally natural case insensitive sorting (which
  *  can be optionally case sensitive as well).
  *
- *  @param      array<string|int,mixed>	$array 	Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
- *  @param      string		$index				Key in array to use for sorting criteria
- *  @param      string		$order				Sort order ('asc' or 'desc')
- *  @param      int			$natsort			If values are strings (I said value not type): 0=Use alphabetical order, 1=use "natural" sort (natsort)
- *   											If values are numeric (I said value not type): 0=Use numeric order (even if type is string) so use a "natural" sort, 1=use "natural" sort too (same than 0), -1=Force alphabetical order
- *  @param      int			$case_sensitive		1=sort is case sensitive, 0=not case sensitive
- *  @param		int			$keepindex			If 0 and index key of array to sort is a numeric, then index will be rewritten. If 1 or index key is not numeric, key for index is kept after sorting.
- *  @return     array							Sorted array
+ *  @param	array<string|int,mixed>	$array 	Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
+ *  @param	string		$index				Key in array to use for sorting criteria
+ *  @param	string		$order				Sort order ('asc' or 'desc')
+ *  @param	int			$natsort			If values are strings (I said value not type): 0=Use alphabetical order, 1=use "natural" sort (natsort)
+ *                                          If values are numeric (I said value not type): 0=Use numeric order (even if type is string) so use a "natural" sort, 1=use "natural" sort too (same than 0), -1=Force alphabetical order
+ *  @param	int			$case_sensitive		1=sort is case sensitive, 0=not case sensitive
+ *  @param	int			$keepindex			If 0 and index key of array to sort is a numeric, then index will be rewritten. If 1 or index key is not numeric, key for index is kept after sorting.
+ *  @return	array							Sorted array
  */
 function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sensitive = 0, $keepindex = 0)
 {
@@ -9639,11 +9639,11 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 
 
 /**
- *      Check if a string is in UTF8. Seems similar to utf8_valid() but in pure PHP.
+ *	Check if a string is in UTF8. Seems similar to utf8_valid() but in pure PHP.
  *
- *      @param	string	$str        String to check
- * 		@return	boolean				True if string is UTF8 or ISO compatible with UTF8, False if not (ISO with special non utf8 char or Binary)
- * 		@see utf8_valid()
+ *	@param	string	$str        String to check
+ *	@return	boolean				True if string is UTF8 or ISO compatible with UTF8, False if not (ISO with special non utf8 char or Binary)
+ *	@see utf8_valid()
  */
 function utf8_check($str)
 {
