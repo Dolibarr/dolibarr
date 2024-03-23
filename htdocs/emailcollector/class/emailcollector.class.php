@@ -1567,7 +1567,16 @@ class EmailCollector extends CommonObject
 				//$criteria = [['ALL']];
 				//$Query = $client->getFolders()[0]->messages()->where($criteria);
 				$f = $client->getFolders(false, $sourcedir);
-				$Query = $f[0]->messages()->where($criteria);
+				if ($f->total() >= 1) {
+					$folder = $f[0];
+					if ($folder instanceof Webklex\PHPIMAP\Folder) {
+						$Query = $folder->messages()->where($criteria);
+					} else {
+						return -1;
+					}
+				} else {
+					return -1;
+				}
 			} catch (InvalidWhereQueryCriteriaException $e) {
 				$this->error = $e->getMessage();
 				$this->errors[] = $this->error;
@@ -1807,6 +1816,8 @@ class EmailCollector extends CommonObject
 				} else {
 					$this->getmsg($connection, $imapemail);	// This set global var $charset, $htmlmsg, $plainmsg, $attachments
 				}
+				'@phan-var-force Webklex\PHPIMAP\Attachment[] $attachments';
+
 				//print $plainmsg;
 				//var_dump($plainmsg); exit;
 
