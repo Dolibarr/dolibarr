@@ -4086,6 +4086,11 @@ table.paddingtopbottomonly tr td {
 	padding-top: 1px;
 	padding-bottom: 2px;
 }
+/* CSS to remove the interline border */
+table.nointerlines tr:not(:last-child) td {
+	border-bottom: unset !important;
+	border-top: unset !important;
+}
 
 .liste_titre_filter {
 	background: var(--colorbacktitle1) !important;
@@ -4117,11 +4122,11 @@ tr#trlinefordates td {
 }
 
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
-	padding: 8px 6px 8px 6px;			/* t r b l */
+	padding: 8px 8px 8px 10px;			/* t r b l */
 }
 
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
-	padding: 4px 6px 4px 6px;			/* t r b l */
+	padding: 4px 8px 4px 10px;			/* t r b l */
 	height: 22px;
 }
 table.liste tr.trkanban td {
