@@ -451,7 +451,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoreceive
 }
 
 // Update a dispatched line
-if ($action == 'updateline' && $permissiontoreceive) {
+if ($action == 'updateline' && $permissiontoreceive && empty($cancel)) {
 	$db->begin();
 	$error = 0;
 
