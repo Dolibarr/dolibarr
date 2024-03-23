@@ -608,7 +608,7 @@ return [
 		// 'PhanPluginAlwaysReturnMethod',
 		// 'PhanPluginMissingReturnMethod',
 		// 'PhanUndeclaredTypeReturnType',
-		'PhanUndeclaredClassProperty',
+		// 'PhanUndeclaredClassProperty',
 		'PhanTypeArraySuspiciousNullable',
 		// 'PhanPluginInconsistentReturnMethod',
 		'PhanTypeExpectedObjectPropAccessButGotNull',
