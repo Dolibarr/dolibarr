@@ -550,7 +550,7 @@ class SupplierProposal extends CommonObject
 			$price = $pu;
 			$remise = 0;
 			if ($remise_percent > 0) {
-				$remise = round(($pu * $remise_percent / 100), 2);
+				$remise = round(($pu * (float) $remise_percent / 100), 2);
 				$price = $pu - $remise;
 			}
 
