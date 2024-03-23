@@ -694,9 +694,9 @@ class Propal extends CommonObject
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
 			$remise = 0;
-			if ($remise_percent > 0) {
-				$remise = round(($pu * $remise_percent / 100), 2);
-				$price = $pu - $remise;
+			if ((float) $remise_percent > 0) {
+				$remise = round(((float) $pu * (float) $remise_percent / 100), 2);
+				$price = (float) $pu - $remise;
 			}
 
 			// Insert line
@@ -901,9 +901,9 @@ class Propal extends CommonObject
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
 			$remise = 0;
-			if ($remise_percent > 0) {
-				$remise = round(($pu * $remise_percent / 100), 2);
-				$price = $pu - $remise;
+			if ((float) $remise_percent > 0) {
+				$remise = round(((float) $pu * (float) $remise_percent / 100), 2);
+				$price = (float) $pu - $remise;
 			}
 
 			//Fetch current line from the database and then clone the object and set it in $oldline property
