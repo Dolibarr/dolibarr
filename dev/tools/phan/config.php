@@ -240,6 +240,7 @@ return [
 		'badgeStatus6' => 'string',
 		'badgeStatus8' => 'string',
 		'badgeStatus9' => 'string',
+		'cache_codes' => 'array<string,array<string,array<string,string>>>',
 		'classname' => 'string',
 		'conf' => '\Conf',
 		'conffile' => 'string',
@@ -276,7 +277,7 @@ return [
 		'obj' => '\CommonObject',     // Deprecated
 		'object_rights' => 'int|stdClass',
 		'objectoffield' => '\CommonObject',
-		'senderissupplier' => 'int<0,1,2>',
+		'senderissupplier' => 'int<0,2>',
 		'user' => '\User',
 		'website' => 'string',  // See discussion https://github.com/Dolibarr/dolibarr/pull/28891#issuecomment-2002268334  // Disable because Phan infers Website type
 		'websitepage' => '\WebSitePage',
