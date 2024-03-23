@@ -94,7 +94,7 @@ if ($id > 0 || !empty($ref)) {
 	if ($origin == 'order_supplier' && $object->origin_object->id && (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') || isModEnabled("supplier_order"))) {
 		$origin_id = $object->origin_object->id;
 		$objectsrc = new CommandeFournisseur($db);
-		$objectsrc->fetch($object->origin_object->id);
+		$objectsrc->fetch($origin_id);
 	}
 }
 
