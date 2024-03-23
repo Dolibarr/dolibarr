@@ -356,7 +356,7 @@ if (count($tasksarray) > 0) {
 		//if ($s) $tasks[$taskcursor]['task_resources']=implode(',',$idofusers);
 		$tasks[$taskcursor]['task_resources'] = $s;
 		if ($s) {
-			$tasks[$taskcursor]['task_resources'] = '<a href="'.DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$val->id.'&withproject=1" title="'.dol_escape_htmltag($s).'">'.$langs->trans("List").'</a>';
+			$tasks[$taskcursor]['task_resources'] = '<a href="'.DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$val->id.'&withproject=1" title="'.dol_escape_htmltag($s).'">'.$langs->trans("Contacts").'</a>';
 		}
 		//print "xxx".$val->id.$tasks[$taskcursor]['task_resources'];
 		$tasks[$taskcursor]['note'] = $task->note_public;

@@ -31,7 +31,7 @@ Replace:
     d.items&&
 With
     d&&d.items&&
-    
+
 
 ESCPOS:
 -------
@@ -55,8 +55,8 @@ NUSOAP:
 * Line 1257 of file nusoap.php. Add:
 
 	libxml_disable_entity_loader(true);	// Avoid load of external entities (security problem). Required only for libxml < 2.
-	
-	
+
+
 * Line 4346 of file nusoap.php
 
 	$rev = array();
@@ -128,13 +128,13 @@ with
 			if (!@TCPDF_STATIC::file_exists($file)) {
 				// DOL CHANGE If we keep this, the image is not visible on pages after the first one.
 				//var_dump($file.' '.(!@TCPDF_STATIC::file_exists($file)));
-				//return false;	
+				//return false;
                 $tfile = str_replace(' ', '%20', $file);
 				if (@TCPDF_STATIC::file_exists($tfile)) {
 					$file = $tfile;
 				}
 			}
-			
+
 * Replace in tcpdf.php:
 		if (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
 with
@@ -174,7 +174,7 @@ with
 	imagesetpixel($imgalpha, $xpx, $ypx, $alpha);
 into
 	imagesetpixel($imgalpha, $xpx, $ypx, (int) $alpha);
-	
+
 * Removed useless directories ("examples", "tools")
 
 * Optionally, removed all fonts except
@@ -243,7 +243,7 @@ with:
 with
 	foreach ($value[1] as $k => $v) {
 
-* Fix by replacing 
+* Fix by replacing
 	if ($res[0] == PDF_TYPE_OBJECT)
 with
 	if (isset($res[0]) && $res[0] == PDF_TYPE_OBJECT)
@@ -253,23 +253,16 @@ with
 JSGANTT:
 --------
 * Replace in function JSGantt.taskLink
-    var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
+    window.open(pRef, 'newwin', 'height=' + vHeight + ',width=' + vWidth);
 with
-    // LDR To open in same window
+    // @CHANGE DOLI To open in same window
     //var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
     window.location.href=pRef
 
-* Replace
-    vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vTaskList[i].getResource());
-with                       
-    var vTmpNode=this.newNode(vTmpCell, 'div', null, '');
-    vTmpNode=this.newNode(vTmpNode, 'a', null, '', vLangs[vLang]['moreinfo']);
-    vTmpNode.setAttribute('href',vTaskList[i].getLink());
-                        
 * Replace '% Comp.' to have a smaller text column header
-    'comp':'% Comp.'
+    'comp': '%...'
 with
-    'comp':'%'
+    'comp': '%'
 
 
 
@@ -307,19 +300,19 @@ RESTLER:
     	// @CHANGE LDR
         if (!is_string($haystack)) return false;
 
-* Replace  
+* Replace
 
 	$loaders = array_unique(static::$rogueLoaders);
-	
-	with 
-	
+
+	with
+
 	$loaders = array_unique(static::$rogueLoaders, SORT_REGULAR);
-	
+
 * Replace CommentParser.php line 423
 	elseif (count($value) && is_numeric($value[0]))
-	
+
 	with
-	
+
 	elseif (count($value) && isset($value[0]) && is_numeric($value[0]))
 
 * Add CommentParser.php line 406 & 407 to remove a warning on api request in php 8.1
@@ -417,5 +410,3 @@ Edit CSS to restore line removed between 4.0.5 and 4.0.6. It generates this bug:
 .select2-hidden-accessible {
   margin: -10000px !important;                /* line to restore */
 }
-
-

@@ -6081,7 +6081,7 @@ td.gminorheading {
 }*/
 .gtaskname div, .gtaskname {
 	min-width: 250px !important;
-	max-width: unset !important;
+	max-width: 500px !important;
 	width: unset !important;
 }
 .gpccomplete div, .gpccomplete {
