@@ -270,7 +270,7 @@ return [
 		'langs' => '\Translate',
 		'leftmenu' => 'string',
 		'mainmenu' => 'string',
-		'menumanager' => 'string',
+		'menumanager' => '\MenuManager',
 		'mysoc' => '\Societe',
 		'nblines' => '\int',
 		'obj' => '\CommonObject',     // Deprecated
