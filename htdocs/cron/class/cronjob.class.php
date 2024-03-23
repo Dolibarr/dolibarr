@@ -119,7 +119,7 @@ class Cronjob extends CommonObject
 	public $lastoutput;
 
 	/**
-	 * @var string 			Unit frequency of job execution
+	 * @var int 			Unit frequency of job execution (60, 86400, ...)
 	 */
 	public $unitfrequency;
 
