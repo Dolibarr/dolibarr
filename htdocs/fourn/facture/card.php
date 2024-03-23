@@ -1161,7 +1161,7 @@ if (empty($reshook)) {
 								if ($typeamount == 'amount') {
 									$amount = $valuedeposit;
 								} else {
-									$amount = $srcobject->total_ttc * ($valuedeposit / 100);
+									$amount = $srcobject->total_ttc * ((float) $valuedeposit / 100);
 								}
 
 								$TTotalByTva = array();
@@ -1198,7 +1198,7 @@ if (empty($reshook)) {
 											if ($qualified) {
 												$totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
 												$tva_tx = $lines[$i]->tva_tx;
-												$amountdeposit[$tva_tx] += ($lines[$i]->total_ht * $valuedeposit) / 100;
+												$amountdeposit[$tva_tx] += ($lines[$i]->total_ht * (float) $valuedeposit) / 100;
 											}
 										}
 
@@ -1790,7 +1790,7 @@ if (empty($reshook)) {
 				$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
 			} else {
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
-				$pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
+				$pu_ht = price2num((float) $pu_ttc / (1 + ((float) $tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
 			}
 			$price_base_type = 'HT';
 			$pu_devise = price2num($price_ht_devise, 'CU');
@@ -2915,7 +2915,7 @@ if ($action == 'create') {
 			// TODO We should not need this. Also data comes from not reliable value of $object->multicurrency_total_ttc that may be wrong if it was
 			// calculated by summing lines that were in a currency for some of them and into another for others (lines from discount/down payment into another currency for example)
 			if ($resteapayer == 0 && $multicurrency_resteapayer != 0 && $object->multicurrency_code != $conf->currency) {
-				$resteapayer = price2num($multicurrency_resteapayer / $object->multicurrency_tx, 'MT');
+				$resteapayer = price2num((float) $multicurrency_resteapayer / $object->multicurrency_tx, 'MT');
 			}
 		}
 
