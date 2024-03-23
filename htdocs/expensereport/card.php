@@ -2003,7 +2003,7 @@ if ($action == 'create') {
 					$totalpaid = price2num($totalpaid); // Round $totalpaid to fix floating problem after addition into loop
 				}
 
-				$remaintopay = price2num($object->total_ttc - $totalpaid);
+				$remaintopay = price2num($object->total_ttc - (float) $totalpaid);
 				$resteapayeraffiche = $remaintopay;
 
 				$cssforamountpaymentcomplete = 'amountpaymentcomplete';
@@ -2154,7 +2154,7 @@ if ($action == 'create') {
 							print price($line->value_unit_ht);
 						} else {
 							$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $line->vatrate));
-							$pricenettoshow = price2num($line->value_unit / (1 + $tmpvat / 100), 'MU');
+							$pricenettoshow = price2num((float) $line->value_unit / (1 + $tmpvat / 100), 'MU');
 							print price($pricenettoshow);
 						}
 						print '</td>';
