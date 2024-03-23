@@ -600,7 +600,7 @@ return [
 		// 'PhanPluginUnreachableCode',
 		// 'PhanTypeMismatchArgumentInternal',
 		// 'PhanPluginAlwaysReturnMethod',
-		'PhanUndeclaredClassMethod',
+		// 'PhanUndeclaredClassMethod',
 		'PhanUndeclaredMethod',
 		'PhanTypeMismatchArgumentProbablyReal',
 		'PhanPluginDuplicateExpressionAssignmentOperation',  // Suggestions for optimisation
