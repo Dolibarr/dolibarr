@@ -468,7 +468,7 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 	for ($i = 0; $i < $ln; $i++) {
 		$val = strtolower($bars[$i]);
 		if ($width) {
-			$xpos += $val * $scale;
+			$xpos += (float) $val * $scale;
 			$width = false;
 			continue;
 		}
@@ -479,7 +479,7 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 		} else {
 			$h = $height;
 		}
-		imagefilledrectangle($im, $xpos, $space['top'], $xpos + ($val * $scale) - 1, $h, $col_bar);
+		imagefilledrectangle($im, $xpos, $space['top'], $xpos + (int) ((float) $val * $scale) - 1, $h, $col_bar);
 		$xpos += $val * $scale;
 		$width = true;
 	}
@@ -488,9 +488,9 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 	foreach ($chars as $v) {
 		if (trim($v)) {
 			$inf = explode(":", $v);
-			$fontsize = $scale * ($inf[1] / 1.8);
+			$fontsize = $scale * ((float) $inf[1] / 1.8);
 			$fontheight = (int) round($total_y - ($fontsize / 2.7) + 2);
-			imagettftext($im, $fontsize, 0, $space['left'] + ($scale * $inf[0]) + 2, $fontheight, $col_text, $font_loc, $inf[2]);
+			imagettftext($im, $fontsize, 0, $space['left'] + (int) ($scale * (float) $inf[0]) + 2, $fontheight, $col_text, $font_loc, $inf[2]);
 		}
 	}
 
