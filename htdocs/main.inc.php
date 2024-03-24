@@ -1825,10 +1825,10 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		print '<title>';
 		$titletoshow = '';
-		if ($title && getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/noapp/', $conf->global->MAIN_HTML_TITLE)) {
-			$titletoshow = dol_htmlentities($title);
-		} elseif ($title) {
+		if ($title && preg_match('/showapp/', getDolGlobalString('MAIN_HTML_TITLE'))) {
 			$titletoshow = dol_htmlentities($appli.' - '.$title);
+		} elseif ($title) {
+			$titletoshow = dol_htmlentities($title);
 		} else {
 			$titletoshow = dol_htmlentities($appli);
 		}

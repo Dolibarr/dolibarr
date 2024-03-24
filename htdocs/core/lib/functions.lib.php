@@ -671,7 +671,7 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *                               'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
  *                               'int'=check it's numeric (integer or float)
  *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
- *                               'alpha'=Same than alphanohtml since v13
+ *                               'alpha'=Same than alphanohtml
  *                               'alphawithlgt'=alpha with lgt
  *                               'alphanohtml'=check there is no html content and no " and no ../
  *                               'aZ'=check it's a-z only
@@ -1115,11 +1115,15 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 					$oldstringtoclean = $out;
 					// Remove html tags
 					$out = dol_string_nohtmltag($out, 0);
+					// Convert '\' used for windows path into '/' so we can use for path but not for octal syntax \999, hexa syntax \x999 and unicode syntax \u{999}
+					$out = str_ireplace('\\', '/', $out);
 					// Remove also other dangerous string sequences
-					// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 					// '../' or '..\' is dangerous because it allows dir transversals
-					// Note &#38, '&#0000038', '&#x26'... is a simple char like '&' alone but there is no reason to accept such way to encode input data.
-					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#92', '&#0000092', '&#x2F', '../', '..\\'), '', $out);
+					// '&#38', '&#0000038', '&#x26'... is a the char '&' alone but there is no reason to accept such way to encode input char
+					// '"' = '&#34' = '&#0000034' = '&#x22' is dangerous because param in url can close the href= or src= and add javascript functions.
+					// '&#47', '&#0000047', '&#x2F' is the char '/' but there is no reason to accept such way to encode this input char
+					// '&#92' = '&#0000092' = '&#x5C' is the char '\' but there is no reason to accept such way to encode this input char
+					$out = str_ireplace(array('../', '..\\', '&#38', '&#0000038', '&#x26', '&quot', '"', '&#34', '&#0000034', '&#x22', '&#47', '&#0000047', '&#x2F', '&#92', '&#0000092', '&#x5C'), '', $out);
 				} while ($oldstringtoclean != $out);
 				// keep lines feed
 			}
@@ -1129,12 +1133,17 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 				$out = trim($out);
 				do {
 					$oldstringtoclean = $out;
-					// Remove html tags
+					// Decode html entities
 					$out = dol_html_entity_decode($out, ENT_COMPAT | ENT_HTML5, 'UTF-8');
-					// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+					// Convert '\' used for windows path into '/' so we can use for path but not for octal syntax \999, hexa syntax \x999 and unicode syntax \u{999}
+					$out = str_ireplace('\\', '/', $out);
+					// Remove also other dangerous string sequences
 					// '../' or '..\' is dangerous because it allows dir transversals
-					// Note &#38, '&#0000038', '&#x26'... is a simple char like '&' alone but there is no reason to accept such way to encode input data.
-					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#92', '&#0000092', '&#x2F', '../', '..\\'), '', $out);
+					// '&#38', '&#0000038', '&#x26'... is a the char '&' alone but there is no reason to accept such way to encode input char
+					// '"' = '&#34' = '&#0000034' = '&#x22' is dangerous because param in url can close the href= or src= and add javascript functions.
+					// '&#47', '&#0000047', '&#x2F' is the char '/' but there is no reason to accept such way to encode this input char
+					// '&#92' = '&#0000092' = '&#x5C' is the char '\' but there is no reason to accept such way to encode this input char
+					$out = str_ireplace(array('../', '..\\', '&#38', '&#0000038', '&#x26', '&quot', '"', '&#34', '&#0000034', '&#x22', '&#47', '&#0000047', '&#x2F', '&#92', '&#0000092', '&#x5C'), '', $out);
 				} while ($oldstringtoclean != $out);
 			}
 			break;
@@ -1152,9 +1161,6 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 				if (empty($filter)) {
 					return 'BadParameterForGETPOST - Param 3 of sanitizeVal()';
 				}
-				/*if (empty($options)) {
-					return 'BadParameterForGETPOST - Param 4 of sanitizeVal()';
-				}*/
 				if (is_null($options)) {
 					$options = 0;
 				}
@@ -4001,7 +4007,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		}
 	}
 
-	if (!empty($conf->global->CONTACT_PHONEMOBILE_SHOW_LINK_TO_WHATSAPP) && $withpicto == 'mobile') {
+	if (getDolGlobalString('CONTACT_PHONEMOBILE_SHOW_LINK_TO_WHATSAPP') && $withpicto == 'mobile') {
 		// Link to Whatsapp
 		$newphone .= ' <a href="https://wa.me/'.$newphonewa.'" target="_blank"';// Use api to whatasapp contacts
 		$newphone .= '><span class="paddingright fab fa-whatsapp" style="color:#25D366;" title="WhatsApp"></span></a>';
@@ -6562,7 +6568,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
  *  @param  Societe		$thirdparty_buyer    	Object of buying third party
  *  @param	Societe		$thirdparty_seller		Object of selling third party ($mysoc if not defined)
  *  @param	int			$vatnpr					If vat rate is NPR or not
- * 	@return	mixed			   					0 if not found, localtax rate if found
+ * 	@return	int<0,0>|string	   					0 if not found, localtax rate if found
  *  @see get_default_tva()
  */
 function get_localtax($vatrate, $local, $thirdparty_buyer = null, $thirdparty_seller = null, $vatnpr = 0)
@@ -6826,7 +6832,7 @@ function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid
  *  @param	Societe	    $buyer         		Company object
  *  @param	Societe	    $seller        		Company object
  *  @param  int         $firstparamisid     1 if first param is ID into table instead of Rate+code (use this if you can)
- *  @return	array    	    				array(localtax_type1(1-6 or 0 if not found), rate localtax1, localtax_type2, rate localtax2, accountancycodecust, accountancycodesupp)
+ *  @return	array{}|array{0:string,1:float,2:string,3:string}|array{0:string,1:float,2:string,3:float,4:string,5:string}	array(localtax_type1(1-6 or 0 if not found), rate localtax1, localtax_type2, rate localtax2, accountancycodecust, accountancycodesupp)
  *  @see getTaxesFromId()
  */
 function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisid = 0)
@@ -7648,7 +7654,11 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 
 		// Warning: loadHTML does not support HTML5 on old libxml versions.
 		$dom = new DOMDocument('', 'UTF-8');
+		// If $stringtoclean is wrong, it will generates warnings. So we disable warnings and restore them later.
+		$savwarning = error_reporting();
+		error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
 		$dom->loadHTML($stringtoclean, LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOXMLDECL);
+		error_reporting($savwarning);
 
 		if ($dom instanceof DOMDocument) {
 			for ($els = $dom->getElementsByTagname('*'), $i = $els->length - 1; $i >= 0; $i--) {
@@ -9885,9 +9895,9 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 			}
 			if (preg_match('/[^a-z0-9\s'.preg_quote($specialcharsallowed, '/').']/i', $s)) {
 				if ($returnvalue) {
-					return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
+					return 'Bad string syntax to evaluate (found chars that are not chars for a simple clean eval string): '.$s;
 				} else {
-					dol_syslog('Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s);
+					dol_syslog('Bad string syntax to evaluate (found chars that are not chars for a simple clean eval string): '.$s);
 					return '';
 				}
 			}

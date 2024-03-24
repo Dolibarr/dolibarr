@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018-2023	Frédéric France    	<frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -693,8 +694,8 @@ class pdf_rouget extends ModelePdfExpedition
 		$totalToShip = $tmparray['toship'];
 		// Set trueVolume and volume_units not currently stored into database
 		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) {
-			$object->trueVolume = price(($object->trueWidth * $object->trueHeight * $object->trueDepth), 0, $outputlangs, 0, 0);
-			$object->volume_units = $object->size_units * 3;
+			$object->trueVolume = price(((float) $object->trueWidth * (float) $object->trueHeight * (float) $object->trueDepth), 0, $outputlangs, 0, 0);
+			$object->volume_units = (float) $object->size_units * 3;
 		}
 
 		if ($totalWeight != '') {
@@ -761,8 +762,8 @@ class pdf_rouget extends ModelePdfExpedition
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		float|int	$tab_top		Top position of table
+	 *   @param		float|int	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array

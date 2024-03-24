@@ -25,8 +25,8 @@
  * \ingroup 	Accountancy (Double entries)
  * \brief 		Ventilation page from expense reports
  */
-require '../../main.inc.php';
 
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
@@ -135,6 +135,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
+		$search_lineid = '';
 		$search_login = '';
 		$search_expensereport = '';
 		$search_label = '';
@@ -249,6 +250,9 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = er.fk_user_author";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON f.accountancy_code = aa.account_number AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
 $sql .= " WHERE er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.") AND erd.fk_code_ventilation <= 0";
 // Add search filter like
+if (strlen($search_lineid)) {
+	$sql .= natural_search("er.rowid", $search_lineid, 1);
+}
 if (strlen(trim($search_login))) {
 	$sql .= natural_search("u.login", $search_login);
 }
@@ -320,11 +324,11 @@ if ($result) {
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.((int) $limit);
 	}
-	if ($search_login) {
-		$param .= '&search_login='.urlencode($search_login);
-	}
 	if ($search_lineid) {
 		$param .= '&search_lineid='.urlencode($search_lineid);
+	}
+	if ($search_login) {
+		$param .= '&search_login='.urlencode($search_login);
 	}
 	if ($search_date_startday) {
 		$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
@@ -392,8 +396,8 @@ if ($result) {
 
 	// We add search filter
 	print '<tr class="liste_titre_filter">';
-	print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.$search_login.'"></td>';
-	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth40" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.dol_escape_htmltag($search_login).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_expensereport" value="'.dol_escape_htmltag($search_expensereport).'"></td>';
 	if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
 		print '<td class="liste_titre"></td>';
@@ -419,8 +423,8 @@ if ($result) {
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Employee", $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Employee", $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("ExpenseReport", $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
 	if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
 		print_liste_field_titre("DateValidation", $_SERVER["PHP_SELF"], "er.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -465,13 +469,13 @@ if ($result) {
 
 		print '<tr class="oddeven">';
 
+		// Line id
+		print '<td>'.$objp->rowid.'</td>';
+
 		// Login
 		print '<td class="nowraponall">';
 		print $userstatic->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
 		print '</td>';
-
-		// Line id
-		print '<td>'.$objp->rowid.'</td>';
 
 		// Ref Expense report
 		print '<td>'.$expensereport_static->getNomUrl(1).'</td>';

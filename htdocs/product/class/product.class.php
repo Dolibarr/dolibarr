@@ -562,7 +562,7 @@ class Product extends CommonObject
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -1114,11 +1114,11 @@ class Product extends CommonObject
 
 		// Automated compute surface and volume if not filled
 		if (empty($this->surface) && !empty($this->length) && !empty($this->width) && $this->length_units == $this->width_units) {
-			$this->surface = $this->length * $this->width;
+			$this->surface = (float) $this->length * (float) $this->width;
 			$this->surface_units = measuring_units_squared($this->length_units);
 		}
 		if (empty($this->volume) && !empty($this->surface) && !empty($this->height) && $this->length_units == $this->height_units) {
-			$this->volume = $this->surface * $this->height;
+			$this->volume = $this->surface * (float) $this->height;
 			$this->volume_units = measuring_units_cubed($this->height_units);
 		}
 
@@ -2360,12 +2360,12 @@ class Product extends CommonObject
 		if ($newprice !== '' || $newprice === 0) {
 			if ($newpricebase == 'TTC') {
 				$price_ttc = price2num($newprice, 'MU');
-				$price = price2num($newprice) / (1 + ($newvat / 100));
+				$price = (float) price2num($newprice) / (1 + ((float) $newvat / 100));
 				$price = price2num($price, 'MU');
 
 				if ($newminprice != '' || $newminprice == 0) {
 					$price_min_ttc = price2num($newminprice, 'MU');
-					$price_min = price2num($newminprice) / (1 + ($newvat / 100));
+					$price_min = (float) price2num($newminprice) / (1 + ($newvat / 100));
 					$price_min = price2num($price_min, 'MU');
 				} else {
 					$price_min = 0;
@@ -2378,7 +2378,7 @@ class Product extends CommonObject
 
 				if ($newminprice !== '' || $newminprice === 0) {
 					$price_min = price2num($newminprice, 'MU');
-					$price_min_ttc = price2num($newminprice) * (1 + ($newvat / 100));
+					$price_min_ttc = (float) price2num($newminprice) * (1 + ($newvat / 100));
 					$price_min_ttc = price2num($price_min_ttc, 'MU');
 					//print 'X'.$newminprice.'-'.$price_min;
 				} else {

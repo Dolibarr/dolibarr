@@ -1137,7 +1137,7 @@ class DoliDBPgsql extends DoliDB
 		$sql .= ")";
 		//$sql .= " engine=".$this->sanitize($type);
 
-		if (!$this->query($sql)) {
+		if (!$this->query($sql, 1)) {
 			return -1;
 		} else {
 			return 1;
@@ -1158,7 +1158,7 @@ class DoliDBPgsql extends DoliDB
 
 		$sql = "DROP TABLE ".$this->sanitize($tmptable);
 
-		if (!$this->query($sql)) {
+		if (!$this->query($sql, 1)) {
 			return -1;
 		} else {
 			return 1;

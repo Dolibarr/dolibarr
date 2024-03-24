@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011 Auguria <anthony.poiret@auguria.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +70,7 @@ if (is_array($amounts)) {
 if (is_array($remains)) {
 	foreach ($remains as $key => $value) {
 		$value = price2num($value);
-		$remains[$key] = (($invoice_type) == 2 ? -1 : 1) * $value;
+		$remains[$key] = ($invoice_type == 2 ? -1 : 1) * (float) $value;
 		if (empty($value)) {
 			unset($remains[$key]);
 		}
@@ -81,7 +82,7 @@ if (is_array($remains)) {
 }
 
 // Treatment
-$result = ($amountPayment != '') ? ($amountPayment - array_sum($amounts)) : array_sum($amounts); // Remaining amountPayment
+$result = ($amountPayment != '') ? ((float) $amountPayment - array_sum($amounts)) : array_sum($amounts); // Remaining amountPayment
 $toJsonArray = array();
 $totalRemaining = price2num(array_sum($remains));
 $toJsonArray['label'] = $amountPayment == '' ? '' : $langs->transnoentities('RemainingAmountPayment');

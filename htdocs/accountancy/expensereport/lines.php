@@ -39,9 +39,10 @@ $langs->loadLangs(array("compta", "bills", "other", "accountancy", "trips", "pro
 
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-$account_parent = GETPOSTINT('account_parent');
+$account_parent = GETPOST('account_parent');
 $changeaccount = GETPOST('changeaccount');
 // Search Getpost
+$search_lineid = GETPOST('search_lineid', 'alpha');	// Can be '> 100'
 $search_login = GETPOST('search_login', 'alpha');
 $search_expensereport = GETPOST('search_expensereport', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
@@ -101,6 +102,7 @@ $formaccounting = new FormAccounting($db);
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
+	$search_lineid = '';
 	$search_login = '';
 	$search_expensereport = '';
 	$search_label = '';
@@ -203,6 +205,9 @@ $sql .= " WHERE erd.fk_code_ventilation > 0";
 $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
 $sql .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.")";
 // Add search filter like
+if (strlen($search_lineid)) {
+	$sql .= natural_search("fd.rowid", $search_lineid, 1);
+}
 if (strlen(trim($search_login))) {
 	$sql .= natural_search("u.login", $search_login);
 }
@@ -314,7 +319,7 @@ if ($result) {
 
 	print '<br><div class="inline-block divButAction paddingbottom">'.$langs->trans("ChangeAccount").' ';
 	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
-	print '<input type="submit" class="button small valignmiddle" value="'.$langs->trans("ChangeBinding").'"/></div>';
+	print '<input type="submit" class="button small smallpaddingimp valignmiddle" value="'.$langs->trans("ChangeBinding").'"/></div>';
 
 	$moreforfilter = '';
 
@@ -322,8 +327,8 @@ if ($result) {
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth40" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'"></td>';
 	print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.$search_login.'"></td>';
-	print '<td class="liste_titre"></td>';
 	print '<td><input type="text" class="flat maxwidth50" name="search_expensereport" value="'.dol_escape_htmltag($search_expensereport).'"></td>';
 	if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
 		print '<td class="liste_titre"></td>';
@@ -348,8 +353,8 @@ if ($result) {
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Employees", $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Employees", $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("ExpenseReport", $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
 	if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
 		print_liste_field_titre("DateValidation", $_SERVER["PHP_SELF"], "er.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -393,13 +398,13 @@ if ($result) {
 
 		print '<tr class="oddeven">';
 
+		// Line id
+		print '<td>'.$objp->rowid.'</td>';
+
 		// Login
 		print '<td class="nowraponall">';
 		print $userstatic->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
 		print '</td>';
-
-		// Line id
-		print '<td>'.$objp->rowid.'</td>';
 
 		// Ref Expense report
 		print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';

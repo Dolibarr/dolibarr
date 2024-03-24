@@ -783,7 +783,7 @@ class Fichinter extends CommonObject
 		$thm = $this->author->thm;
 
 		foreach ($this->lines as $line) {
-			$amount += ($line->duration / 60 / 60 * $thm);
+			$amount += ($line->duration / 60 / 60 * (float) $thm);
 		}
 
 		return (float) price2num($amount, 'MT');

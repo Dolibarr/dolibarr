@@ -481,7 +481,6 @@ class DoliDBMysqli extends DoliDB
 		return $this->db->affected_rows;
 	}
 
-
 	/**
 	 *	Libere le dernier resultset utilise sur cette connection
 	 *

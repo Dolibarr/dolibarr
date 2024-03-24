@@ -6920,8 +6920,8 @@ class Form
 				} elseif ($usecalendar == 'jquery' || $usecalendar == 'html') {
 					if (!$disabled && $usecalendar != 'html') {
 						// Output javascript for datepicker
-						$minYear = getDolGlobalInt('MIN_YEAR_SELECT_DATE', (date('Y') - 100));
-						$maxYear = getDolGlobalInt('MAX_YEAR_SELECT_DATE', (date('Y') + 100));
+						$minYear = getDolGlobalInt('MIN_YEAR_SELECT_DATE', (idate('Y') - 100));
+						$maxYear = getDolGlobalInt('MAX_YEAR_SELECT_DATE', (idate('Y') + 100));
 
 						$retstring .= '<script nonce="' . getNonce() . '" type="text/javascript">';
 						$retstring .= "$(function(){ $('#" . $prefix . "').datepicker({
@@ -7006,7 +7006,8 @@ class Form
 				} else {
 					$retstring .= '<select' . ($disabled ? ' disabled' : '') . ' class="flat valignmiddle maxwidth75imp" id="' . $prefix . 'year" name="' . $prefix . 'year">';
 
-					for ($year = $syear - 10; $year < $syear + 10; $year++) {
+					$syear = (int) $syear;
+					for ($year = $syear - 10; $year < (int) $syear + 10; $year++) {
 						$retstring .= '<option value="' . $year . '"' . ($year == $syear ? ' selected' : '') . '>' . $year . '</option>';
 					}
 					$retstring .= "</select>\n";
@@ -8165,7 +8166,7 @@ class Form
 
 				$oldValueForShowOnCombobox = 0;
 				foreach ($objecttmp->fields as $fieldK => $fielV) {
-					if (!$fielV['showoncombobox'] || empty($objecttmp->$fieldK)) {
+					if (empty($fielV['showoncombobox']) || empty($objecttmp->$fieldK)) {
 						continue;
 					}
 

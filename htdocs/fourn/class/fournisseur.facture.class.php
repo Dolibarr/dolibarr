@@ -887,6 +887,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " t.note_private,";
 		$sql .= " t.note_public,";
 		$sql .= " t.model_pdf,";
+		$sql .= " t.last_main_doc,";
 		$sql .= " t.import_key,";
 		$sql .= " t.extraparams,";
 		$sql .= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_label, cr.libelle_facture as cond_reglement_doc,";
@@ -967,6 +968,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->note_private			= $obj->note_private;
 				$this->note_public          = $obj->note_public;
 				$this->model_pdf            = $obj->model_pdf;
+				$this->last_main_doc = $obj->last_main_doc;
 				$this->import_key           = $obj->import_key;
 
 				//Incoterms

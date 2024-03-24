@@ -166,7 +166,7 @@ class Societe extends CommonObject
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -2469,12 +2469,12 @@ class Societe extends CommonObject
 
 			if ($price_base_type == 'TTC') {
 				$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num($remise, 'MT');
-				$discount->amount_ht = $discount->multicurrency_amount_ht = price2num($remise / (1 + $vatrate / 100), 'MT');
-				$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($discount->amount_ttc - $discount->amount_ht, 'MT');
+				$discount->amount_ht = $discount->multicurrency_amount_ht = price2num((float) $remise / (1 + (float) $vatrate / 100), 'MT');
+				$discount->amount_tva = $discount->multicurrency_amount_tva = price2num((float) $discount->amount_ttc - (float) $discount->amount_ht, 'MT');
 			} else {
 				$discount->amount_ht = $discount->multicurrency_amount_ht = price2num($remise, 'MT');
-				$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($remise * $vatrate / 100, 'MT');
-				$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num($discount->amount_ht + $discount->amount_tva, 'MT');
+				$discount->amount_tva = $discount->multicurrency_amount_tva = price2num((float) $remise * (float) $vatrate / 100, 'MT');
+				$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num((float) $discount->amount_ht + (float) $discount->amount_tva, 'MT');
 			}
 
 			$discount->tva_tx = price2num($vatrate);
@@ -5219,7 +5219,7 @@ class Societe extends CommonObject
 	 *  @param		array		$arraydata				Array of data
 	 *  @return		string								HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '', $arraydata = null)
+	public function getKanbanView($option = '', $arraydata = array())
 	{
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
@@ -5353,8 +5353,8 @@ class Societe extends CommonObject
 			$this->db->begin();
 
 			// Recopy some data
-			$this->client = $this->client | $soc_origin->client;
-			$this->fournisseur = $this->fournisseur | $soc_origin->fournisseur;
+			$this->client |= $soc_origin->client;
+			$this->fournisseur |= $soc_origin->fournisseur;
 			$listofproperties = array(
 				'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_mobile', 'fax', 'email', 'socialnetworks', 'url', 'barcode',
 				'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',

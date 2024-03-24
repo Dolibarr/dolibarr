@@ -141,7 +141,7 @@ if ($id > 0 || $ref) {
 
 	$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|DE:Modul_Terminplanung';
 
-	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/productnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
 	llxHeader('', $title, $help_url);

@@ -726,7 +726,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 		setEventMessages('', $accountancyexport->errors, 'errors');
 		header('Location: '.$_SERVER['PHP_SELF']);
 	}
-	exit(); // download or show errors
+	exit(0); // download or show errors
 }
 
 
@@ -845,7 +845,7 @@ if ($action == 'export_file') {
 		);
 	}
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").'...', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 420, 600);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").'...', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 390, 700);
 }
 
 // Print form confirm
@@ -924,12 +924,15 @@ if ($massactionbutton && $contextpage != 'poslist') {
 }
 
 $moreforfilter = '';
-$moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('AccountingCategory').': ';
-$moreforfilter .= '<div class="nowrap inline-block">';
-$moreforfilter .= $formaccounting->select_accounting_category($search_account_category, 'search_account_category', 1, 0, 0, 0);
-$moreforfilter .= '</div>';
-$moreforfilter .= '</div>';
+
+if (!empty($search_account_category)) {
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= $langs->trans('AccountingCategory').': ';
+	$moreforfilter .= '<div class="nowrap inline-block">';
+	$moreforfilter .= $formaccounting->select_accounting_category($search_account_category, 'search_account_category', 1, 0, 0, 0);
+	$moreforfilter .= '</div>';
+	$moreforfilter .= '</div>';
+}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -939,9 +942,11 @@ if (empty($reshook)) {
 	$moreforfilter = $hookmanager->resPrint;
 }
 
-print '<div class="liste_titre liste_titre_bydiv centpercent">';
-print $moreforfilter;
-print '</div>';
+if ($moreforfilter) {
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	print $moreforfilter;
+	print '</div>';
+}
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">';
@@ -999,10 +1004,10 @@ if (!empty($arrayfields['t.subledger_account']['checked'])) {
 	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
 		print '<div class="nowrap">';
 		//print $langs->trans('From').' ';
-		print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', $langs->trans('From'), 'maxwidth250', 'subledgeraccount');
+		print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', $langs->trans('From'), 'maxwidth150', 'subledgeraccount');
 		print '</div>';
 		print '<div class="nowrap">';
-		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', $langs->trans('to'), 'maxwidth250', 'subledgeraccount');
+		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', $langs->trans('to'), 'maxwidth150', 'subledgeraccount');
 		print '</div>';
 	} else {
 		print '<input type="text" class="maxwidth75" name="search_accountancy_aux_code" value="'.dol_escape_htmltag($search_accountancy_aux_code).'">';
@@ -1257,6 +1262,7 @@ while ($i < min($num, $limit)) {
 
 	// Document ref
 	if (!empty($arrayfields['t.doc_ref']['checked'])) {
+		$documentlink = '';
 		if ($line->doc_type == 'customer_invoice') {
 			$langs->loadLangs(array('bills'));
 
@@ -1265,10 +1271,12 @@ while ($i < min($num, $limit)) {
 			$objectstatic->fetch($line->fk_doc);
 			//$modulepart = 'facture';
 
-			$filename = dol_sanitizeFileName($line->doc_ref);
-			$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
-			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
-			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+			if ($objectstatic->id > 0) {
+				$filename = dol_sanitizeFileName($line->doc_ref);
+				$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
+				$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
+				$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+			}
 		} elseif ($line->doc_type == 'supplier_invoice') {
 			$langs->loadLangs(array('bills'));
 
@@ -1277,10 +1285,12 @@ while ($i < min($num, $limit)) {
 			$objectstatic->fetch($line->fk_doc);
 			//$modulepart = 'invoice_supplier';
 
-			$filename = dol_sanitizeFileName($line->doc_ref);
-			$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
-			$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
-			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $subdir, $filedir);
+			if ($objectstatic->id > 0) {
+				$filename = dol_sanitizeFileName($line->doc_ref);
+				$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
+				$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
+				$documentlink = $formfile->getDocumentsLink($objectstatic->element, $subdir, $filedir);
+			}
 		} elseif ($line->doc_type == 'expense_report') {
 			$langs->loadLangs(array('trips'));
 
@@ -1289,10 +1299,12 @@ while ($i < min($num, $limit)) {
 			$objectstatic->fetch($line->fk_doc);
 			//$modulepart = 'expensereport';
 
-			$filename = dol_sanitizeFileName($line->doc_ref);
-			$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
-			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
-			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+			if ($objectstatic->id > 0) {
+				$filename = dol_sanitizeFileName($line->doc_ref);
+				$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
+				$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
+				$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+			}
 		} elseif ($line->doc_type == 'bank') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$objectstatic = new AccountLine($db);
@@ -1304,9 +1316,13 @@ while ($i < min($num, $limit)) {
 		$labeltoshow = '';
 		$labeltoshowalt = '';
 		if ($line->doc_type == 'customer_invoice' || $line->doc_type == 'supplier_invoice' || $line->doc_type == 'expense_report') {
-			$labeltoshow .= $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
-			$labeltoshow .= $documentlink;
-			$labeltoshowalt .= $objectstatic->ref;
+			if ($objectstatic->id > 0) {
+				$labeltoshow .= $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
+				$labeltoshow .= $documentlink;
+				$labeltoshowalt .= $objectstatic->ref;
+			} else {
+				$labeltoshow = '<span class="opacitymedium">'.$langs->trans("Deleted").'</span>';
+			}
 		} elseif ($line->doc_type == 'bank') {
 			$labeltoshow .= $objectstatic->getNomUrl(1);
 			$labeltoshowalt .= $objectstatic->ref;
