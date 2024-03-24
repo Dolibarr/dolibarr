@@ -106,6 +106,7 @@ if ($action == 'specimen') {  // For orders
 		require_once $file;
 
 		$module = new $classname($db, $commande);
+		'@phan-var-force CommonDocGenerator $module';
 
 		if ($module->write_file($commande, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
