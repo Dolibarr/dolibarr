@@ -209,7 +209,6 @@ return [
 		'badgeStatus6' => 'string',
 		'badgeStatus8' => 'string',
 		'badgeStatus9' => 'string',
-		'cache_codes' => 'array<string,array<string,array<string,string>>>',
 		'classname' => 'string',
 		'conf' => '\Conf',
 		'conffile' => 'string',
