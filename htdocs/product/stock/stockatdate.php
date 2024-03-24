@@ -454,10 +454,10 @@ if ($ext == 'csv') {
 	if (GETPOSTINT('dateday') > 0) {
 		$param .= '&dateday='.GETPOSTINT('dateday');
 	}
-	if (GETPOSTINT('datemonth', 'int') > 0) {
+	if (GETPOSTINT('datemonth') > 0) {
 		$param .= '&datemonth='.GETPOSTINT('datemonth');
 	}
-	if (GETPOSTINT('dateyear', 'int') > 0) {
+	if (GETPOSTINT('dateyear') > 0) {
 		$param .= '&dateyear='.GETPOSTINT('dateyear');
 	}
 
