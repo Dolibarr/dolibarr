@@ -292,15 +292,14 @@ class FormAdvTargetEmailing extends Form
 
 		if (is_array($sqlqueryparam)) {
 			$param_list = array_keys($sqlqueryparam);
-			$InfoFieldList = explode(":", $param_list [0]);
+			$InfoFieldList = explode(":", $param_list[0], 4);
 
-			// 0 1 : tableName
-			// 1 2 : label field name 	Name of field that contains the label
-			// 2 3 : key fields name (if differ of rowid)
-			// 3 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
+			// 0 1 : Table name
+			// 1 2 : Name of field that contains the label
+			// 2 3 : Key fields name (if differ of rowid)
+			// 3 4 : Where clause filter on column or table extrafield, syntax field='value' or extra.field=value
 
 			$keyList = 'rowid';
-
 			if (count($InfoFieldList) >= 3) {
 				if (strpos($InfoFieldList[3], 'extra.') !== false) {
 					$keyList = 'main.'.$InfoFieldList[2].' as rowid';
@@ -309,15 +308,17 @@ class FormAdvTargetEmailing extends Form
 				}
 			}
 
-			$sql = "SELECT ".$keyList.", ".$InfoFieldList[1];
-			$sql .= " FROM ".MAIN_DB_PREFIX.$InfoFieldList[0];
+			$sql = "SELECT ".$this->db->sanitize($keyList).", ".$this->db->sanitize($InfoFieldList[1]);
+			$sql .= " FROM ".$this->db->sanitize(MAIN_DB_PREFIX.$InfoFieldList[0]);
 			if (!empty($InfoFieldList[3])) {
+				$errorstr = '';
 				// We have to join on extrafield table
 				if (strpos($InfoFieldList[3], 'extra') !== false) {
-					$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
-					$sql .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[3];
+					$sql .= ' as main, '.$this->db->sanitize(MAIN_DB_PREFIX.$InfoFieldList[0]).'_extrafields as extra';
+					$sql .= " WHERE extra.fk_object=main.".$this->db->sanitize(empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2]);
+					$sql .= " AND ".forgeSQLFromUniversalSearchCriteria($InfoFieldList[3], $errorstr, 1);
 				} else {
-					$sql .= " WHERE ".$InfoFieldList[3];
+					$sql .= " WHERE ".forgeSQLFromUniversalSearchCriteria($InfoFieldList[3], $errorstr, 1);
 				}
 			}
 			if (!empty($InfoFieldList[1])) {
@@ -332,7 +333,8 @@ class FormAdvTargetEmailing extends Form
 				if ($num) {
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
-						$labeltoshow = dol_trunc($obj->$InfoFieldList[1], 90);
+						$fieldtoread = $InfoFieldList[1];
+						$labeltoshow = dol_trunc($obj->$fieldtoread, 90);
 						$options_array[$obj->rowid] = $labeltoshow;
 						$i++;
 					}
