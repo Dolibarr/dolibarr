@@ -1535,8 +1535,9 @@ class FormMail extends Form
 
 	/**
 	 * Return HTML code for selection of email layout
-	 * @param   string      $htmlContent    HTML name of WYSIWIG field
-	 * @return 	string      HTML for model email boxes
+	 *
+	 * @param   string      $htmlContent    HTML name of WYSIWIG field to fill
+	 * @return 	string      				HTML for model email boxes
 	 */
 	public function getModelEmailTemplate($htmlContent = 'message')
 	{
@@ -1561,22 +1562,24 @@ class FormMail extends Form
 		}
 		$out .= '</div>';
 
-		$out .= "<script type='text/javascript'>
+		$out .= '<script type="text/javascript">
 				$(document).ready(function() {
-					$('.template-option').click(function() {
-						$('.template-option').removeClass('selected');
-						$(this).addClass('selected');
+					$(".template-option").click(function() {
+						console.log("We choose a layout for email");
+						$(".template-option").removeClass("selected");
+						$(this).addClass("selected");
 
-						var template = $(this).data('template');
-						var contentHtml = $(this).data('content');
+						var template = $(this).data("template");
+						var contentHtml = $(this).data("content");
 
-						var editorInstance = CKEDITOR.instances.".$htmlContent.";
+						jQuery("#'.$htmlContent.'").val(contentHtml);
+						var editorInstance = CKEDITOR.instances.'.$htmlContent.';
 						if (editorInstance) {
 							editorInstance.setData(contentHtml);
 						}
 					});
 				});
-		</script>";
+		</script>';
 
 		return $out;
 	}

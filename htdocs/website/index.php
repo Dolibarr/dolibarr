@@ -1155,7 +1155,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 		$objectpage->object_type = GETPOST('WEBSITE_OBJECTCLASS');
 		$objectpage->fk_object = GETPOST('WEBSITE_OBJECTID');
 		$substitutionarray = array();
-		$substitutionarray['__WEBSITE_CREATE_BY__'] = $user->getFullName($langs);
+		$substitutionarray['__WEBSITE_CREATED_BY__'] = $user->getFullName($langs);
 
 		// Define id of the page the new page is translation of
 		/*
@@ -1180,14 +1180,23 @@ if ($action == 'addcontainer' && $usercanedit) {
 		$objectpage->fk_page = $pageidfortranslation;
 		//}
 
-		$sample = GETPOST('sample', 'alpha');
-		if (empty($sample)) {
-			$sample = 'empty';
-		}
+		$content = '';
+		if (GETPOSTISSET('content')) {
+			//$content = GETPOST('content', 'restricthtmlallowunvalid');	// @TODO Use a restricthtmlallowunvalidwithphp
+			$content = GETPOST('content', 'none');	// @TODO Use a restricthtmlallowunvalidwithphp
 
-		$pathtosample = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.dol_sanitizeFileName(strtolower($sample)).'.html';
-		// Init content with content into pagetemplate.html, blogposttempltate.html, ...
-		$objectpage->content = make_substitutions(@file_get_contents($pathtosample), $substitutionarray);
+			$objectpage->content = make_substitutions($content, $substitutionarray);
+		} else {
+			/*$sample = GETPOST('sample', 'alpha');
+			if (empty($sample)) {
+				$sample = 'empty';
+			}
+
+			$pathtosample = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.dol_sanitizeFileName(strtolower($sample)).'.html';
+			*/
+			// Init content with content into page-sample-...
+			//$objectpage->content = make_substitutions(@file_get_contents($pathtosample), $substitutionarray);
+		}
 	}
 
 	if (!$error) {
@@ -1224,6 +1233,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 		}
 	}
 
+	$pageid = 0;
 	if (!$error) {
 		$pageid = $objectpage->create($user);
 		if ($pageid <= 0) {
@@ -1265,7 +1275,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 	}
 
 	if (!$error) {
-		if (!empty($objectpage->content)) {
+		if ($pageid > 0) {
 			$filealias = $pathofwebsite.'/'.$objectpage->pageurl.'.php';
 			$filetpl = $pathofwebsite.'/page'.$objectpage->id.'.tpl.php';
 
@@ -4294,7 +4304,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 
 		print '<tr><td class="titlefield fieldrequired tdtop">';
 		print $langs->trans('WEBSITE_PAGE_EXAMPLE');
-		print '</td><td>';
+		print '</td><td class="tdtop">';
 
 		$out = '';
 		// Add link to add layout
@@ -4487,15 +4497,6 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	}
 	print '</td></tr>';
 
-	// Allowed in frames
-	print '<tr><td>';
-	print $langs->trans('AllowedInFrames');
-	//$htmlhelp = $langs->trans("AllowedInFramesDesc");
-	//print $form->textwithpicto($langs->trans('AllowedInFrames'), $htmlhelp, 1, 'help', '', 0, 2, 'allowedinframestooltip');
-	print '</td><td>';
-	print '<input type="checkbox" class="flat" name="WEBSITE_ALLOWED_IN_FRAMES" value="1"'.($pageallowedinframes ? 'checked="checked"' : '').'>';
-	print '</td></tr>';
-
 	// Categories
 	if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 		$langs->load('categories');
@@ -4577,11 +4578,15 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print '</td></tr>';
 	}
 
-	print '<tr id="pageContent" class="hideobject"><td class="toptd">';
+	print '<tr id="pageContent" class="hideobject"><td class="tdtop">';
 	print $langs->trans('PreviewPageContent');
 	print '</td><td>';
-	$doleditor = new DolEditor('content', GETPOST('content', 'restricthtmlallowunvalid'), '', 200, 'dolibarr_readonly', 'In', true, true, true, 40, '90%');
+	//$doleditor = new DolEditor('content', GETPOST('content', 'restricthtmlallowunvalid'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
+	$doleditor = new DolEditor('contentpreview', GETPOST('content', 'none'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
 	$doleditor->Create();
+	//print '<div class="websitesample" id="contentpreview" name="contentpreview" style="height: 200px; border: 1px solid #bbb; overflow: scroll">';
+	print '</div>';
+	print '<textarea id="content" name="content" class="hideobject">'.GETPOST('content', 'none').'</textarea>';
 	print '</td></tr>';
 
 	print '<tr><td class="tdhtmlheader tdtop">';
@@ -4593,6 +4598,15 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	$poscursor = array('x' => GETPOST('htmlheader_x'), 'y' => GETPOST('htmlheader_y'));
 	$doleditor = new DolEditor('htmlheader', $pagehtmlheader, '', '120', 'ace', 'In', true, false, 'ace', ROWS_3, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, 'HTML Header', 'html');
+	print '</td></tr>';
+
+	// Allowed in frames
+	print '<tr><td>';
+	print $langs->trans('AllowedInFrames');
+	//$htmlhelp = $langs->trans("AllowedInFramesDesc");
+	//print $form->textwithpicto($langs->trans('AllowedInFrames'), $htmlhelp, 1, 'help', '', 0, 2, 'allowedinframestooltip');
+	print '</td><td>';
+	print '<input type="checkbox" class="flat" name="WEBSITE_ALLOWED_IN_FRAMES" value="1"'.($pageallowedinframes ? 'checked="checked"' : '').'>';
 	print '</td></tr>';
 
 	print '</table>';
@@ -4660,7 +4674,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 					jQuery(".tablecheckboxcreatefromfetching").hide();
 					jQuery(".tablecheckboxcreatemanually").hide();
 					if (typeof(jQuery("#checkboxcreatefromfetching:checked").val()) != \'undefined\') {
-						console.log("show a");
+						console.log("show create from spider form");
 						if (selectedf != \'createfromfetching\') {
 							jQuery(".tablecheckboxcreatefromfetching").show();
 							selectedf = \'createfromfetching\';
@@ -4671,7 +4685,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 						}
 					}
 					if (typeof(jQuery("#checkboxcreatemanually:checked").val()) != \'undefined\') {
-						console.log("show b");
+						console.log("show create from scratch or template form");
 						if (selectedm != \'createmanually\') {
 							jQuery(".tablecheckboxcreatemanually").show();
 							selectedm = \'createmanually\';

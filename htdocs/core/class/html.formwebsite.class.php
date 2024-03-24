@@ -339,8 +339,8 @@ class FormWebsite
 			'empty' => 'empty',
 			'text' => 'dynamic',
 			'basic' => 'basic',
-			'news'  => 'news',
-			'commerce' => 'commerce',
+			//'news'  => 'news',
+			//'commerce' => 'commerce',
 		);
 
 
@@ -348,7 +348,7 @@ class FormWebsite
 		foreach ($templates as $template => $templateFunction) {
 			if ($template == 'text') {
 				$substitutionarray = array();
-				$substitutionarray['__WEBSITE_CREATE_BY__'] = $user->getFullName($langs);
+				$substitutionarray['__WEBSITE_CREATED_BY__'] = $user->getFullName($langs);
 
 				$pathtoTemplateFile = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.dol_sanitizeFileName(strtolower($arrayofsamples['dynamiccontent'])).'.html';
 				$contentHtml = file_exists($pathtoTemplateFile) ? make_substitutions(@file_get_contents($pathtoTemplateFile), $substitutionarray) : '';
@@ -358,33 +358,32 @@ class FormWebsite
 
 			$out .= '<div class="template-option" data-template="'.$template.'" data-content="'.htmlentities($contentHtml).'">';
 			$out .= '<img class="maillayout" alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/maillayout/'.$template.'.png" />';
-			if ($template == 'text') {
-				$out .= '<input type="hidden" name="sample" value="'.$arrayofsamples['dynamiccontent'].'" />';
-			}
-			if ($template == 'empty') {
-				$out .= '<input type="hidden" name="sample" value="" />';
-			}
 			$out .= '<span class="template-option-text">'.($template != 'text'  ? ucfirst($template) : ucfirst($templateFunction)).'</span>';
 			$out .= '</div>';
 		}
+		$out .= '<input type="hidden" name="sample" value="" />';
 		$out .= '</div>';
 
-		$out .= "<script type='text/javascript'>
+		$out .= '<script type="text/javascript">
 				$(document).ready(function() {
-					$('.template-option').click(function() {
-						$('.template-option').removeClass('selected');
-						$(this).addClass('selected');
+					$(".template-option").click(function() {
+						console.log("We choose a layout for website");
 
-						var template = $(this).data('template');
-						var contentHtml = $(this).data('content');
+						$(".template-option").removeClass("selected");
+						$(this).addClass("selected");
 
-						var editorInstance = CKEDITOR.instances.".$htmlContent.";
+						var template = $(this).data("template");
+						var contentHtml = $(this).data("content");
+
+						jQuery("#'.$htmlContent.'").val(contentHtml);
+						jQuery("#'.$htmlContent.'preview").val(contentHtml);
+						var editorInstance = CKEDITOR.instances.'.$htmlContent.'preview;
 						if (editorInstance) {
 							editorInstance.setData(contentHtml);
 						}
 					});
 				});
-		</script>";
+		</script>';
 
 		return $out;
 	}
