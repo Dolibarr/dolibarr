@@ -10373,6 +10373,9 @@ abstract class CommonObject
 
 			if (!$error) {
 				$this->status = $status;
+				if (property_exists($this, 'statut')) {	// For backward compatibility
+					$this->statut = $status;
+				}
 				$this->db->commit();
 				return 1;
 			} else {

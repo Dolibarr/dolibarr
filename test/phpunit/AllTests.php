@@ -148,6 +148,8 @@ class AllTests
 		$suite->addTestSuite('ActionCommTest');
 		require_once dirname(__FILE__).'/SocieteTest.php';
 		$suite->addTestSuite('SocieteTest');
+		require_once dirname(__FILE__).'/ExpeditionTest.php';
+		$suite->addTestSuite('ReceptionTest');
 		require_once dirname(__FILE__).'/ReceptionTest.php';
 		$suite->addTestSuite('ReceptionTest');
 		require_once dirname(__FILE__).'/ContactTest.php';

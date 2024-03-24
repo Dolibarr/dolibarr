@@ -844,6 +844,7 @@ class Expedition extends CommonObject
 		if (!$error) {
 			$this->ref = $numref;
 			$this->statut = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_VALIDATED;
 		}
 
 		if (!$error) {
@@ -2435,7 +2436,7 @@ class Expedition extends CommonObject
 	 */
 	public function reOpen()
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		$error = 0;
 
@@ -2454,6 +2455,7 @@ class Expedition extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->statut = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_VALIDATED;
 			$this->billed = 0;
 
 			// If stock increment is done on closing
@@ -2541,6 +2543,7 @@ class Expedition extends CommonObject
 			return 1;
 		} else {
 			$this->statut = self::STATUS_CLOSED;
+			$this->status = self::STATUS_CLOSED;
 			$this->billed = $oldbilled;
 			$this->db->rollback();
 			return -1;
