@@ -367,7 +367,10 @@ if ($result) {
 	$arrayofmassactions = array(
 		'ventil' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate")
 	);
-	$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
+	$massactionbutton = '';
+	if ($massaction !== 'set_default_account') {
+		$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
+	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
 	print '<input type="hidden" name="action" value="ventil">';
