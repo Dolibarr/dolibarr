@@ -149,7 +149,6 @@ class pdf_merou extends ModelePdfExpedition
 			$this->expediteur = $mysoc;
 
 			//Create recipient
-			var_dump($object->origin);
 			$idcontact = $object->origin_object->getIdContact('external', 'SHIPPING');
 			$this->destinataire = new Contact($this->db);
 			if (!empty($idcontact[0])) {
