@@ -100,7 +100,7 @@ if (!function_exists('print_line')) {
 			(!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT') ? img_picto('', 'folder') : img_picto('', 'folder-open')).'</a>':'').
 			$extra;
 		
-		// Yes, it is a quantity, not a price, but we just want the formating role of function price
+		// Yes, it is a quantity, not a price, but we just want the formatting role of function price
 		$column[] = '<td class="linecolqty nowrap right">'.price(price2num($data->qty*$quantity,'MT'), 0, '', 0, 0).'</td>';
 		
 		if ($filtertype != 1) {

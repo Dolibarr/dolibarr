@@ -1897,8 +1897,8 @@ class BOMLine extends CommonObjectLine
 				if (!empty($obj->child)) {
 					if ($obj->child==$this->id) {
 						$this->error = 'Found BOM circular dependency';
-						return 0;
-					} else if (!$this->check($obj->child)) return 0;
+						return -1;
+					} else if (!$this->check($obj->child)) return -1;
 				}
 			}
 		}
