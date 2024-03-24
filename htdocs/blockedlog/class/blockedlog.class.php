@@ -371,13 +371,13 @@ class BlockedLog
 	}
 
 	/**
-	 *      Populate properties of log from object data
+	 *	Populate properties of log from object data
 	 *
-	 *      @param		Object		$object     object to store
-	 *      @param		string		$action     action
-	 *      @param		string		$amounts    amounts
-	 *      @param		User		$fuser		User object (forced)
-	 *      @return		int						>0 if OK, <0 if KO
+	 *	@param	CommonObject	$object		object to store
+	 *	@param	string			$action		action
+	 *	@param	string			$amounts	amounts
+	 *	@param	?User			$fuser		User object (forced)
+	 *	@return	int							>0 if OK, <0 if KO
 	 */
 	public function setObjectData(&$object, $action, $amounts, $fuser = null)
 	{
