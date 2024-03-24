@@ -50,11 +50,11 @@ $result = restrictedArea($user, 'produit|service');
 
 //checks if a product has been ordered
 
-$ext = pathinfo(explode('?', $_SERVER['REQUEST_URI'], 2)[0], PATHINFO_EXTENSION);
-
 $action = GETPOST('action', 'aZ09');
 $type = GETPOSTINT('type');
 $mode = GETPOST('mode', 'alpha');
+
+$ext=(GETPOSTISSET('output') && in_array(GETPOST('output'), array('csv'))) ? GETPOST('output') : '';
 
 $date = '';
 $dateendofday = '';
@@ -451,14 +451,14 @@ if ($ext == 'csv') {
 	if ($productid > 0) {
 		$param .= '&productid='.(int) $productid;
 	}
-	if (GETPOST('dateday', 'int') > 0) {
-		$param .= '&dateday='.GETPOST('dateday', 'int');
+	if (GETPOSTINT('dateday') > 0) {
+		$param .= '&dateday='.GETPOSTINT('dateday');
 	}
-	if (GETPOST('datemonth', 'int') > 0) {
-		$param .= '&datemonth='.GETPOST('datemonth', 'int');
+	if (GETPOSTINT('datemonth', 'int') > 0) {
+		$param .= '&datemonth='.GETPOSTINT('datemonth');
 	}
-	if (GETPOST('dateyear', 'int') > 0) {
-		$param .= '&dateyear='.GETPOST('dateyear', 'int');
+	if (GETPOSTINT('dateyear', 'int') > 0) {
+		$param .= '&dateyear='.GETPOSTINT('dateyear');
 	}
 
 	// TODO Move this into the title line ?
@@ -466,14 +466,14 @@ if ($ext == 'csv') {
 
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	if ($num) {
-		print "<p><a href=\"stockatdate.csv?sortfield=$sortfield&sortorder=$sortorder&type=$type&mode=$mode".
+		print "<p><a href=\"stockatdate.php?output=csv&sortfield=$sortfield&sortorder=$sortorder&type=$type&mode=$mode".
 			(isset($productid)?"&productid=$productid":'').
 			$param_warehouse.
 			"&search_ref=".dol_escape_htmltag($search_ref).
 			"&search_nom=".dol_escape_htmltag($search_nom).
-			(GETPOSTISSET('dateday')?"&dateday=".GETPOST('dateday', 'int'):'').
-			(GETPOSTISSET('datemonth')?"&datemonth=".GETPOST('datemonth', 'int'):'').
-			(GETPOSTISSET('dateyear')?"&dateyear=".GETPOST('dateyear', 'int'):'').
+			(GETPOSTISSET('dateday')?"&dateday=".GETPOSTINT('dateday'):'').
+			(GETPOSTISSET('datemonth')?"&datemonth=".GETPOSTINT('datemonth'):'').
+			(GETPOSTISSET('dateyear')?"&dateyear=".GETPOSTINT('dateyear'):'').
 			"\" title=\"Download CSV\" />Download CSV</a></p>";
 	}
 	print '<table class="liste centpercent">';
