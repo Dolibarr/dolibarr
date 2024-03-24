@@ -137,8 +137,8 @@ DateActionEnd=শেষ তারিখ
 AgendaUrlOptions1=আপনি ফিল্টার আউটপুট নিম্নলিখিত পরামিতি যোগ করতে পারেন:
 AgendaUrlOptions3=<b>logina=%s</b> ব্যবহারকারীর মালিকানাধীন ক্রিয়াকলাপগুলিতে আউটপুট সীমাবদ্ধ করতে <b>%s</b>।
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> আউটপুটকে নিজের নয় এমন ক্রিয়াগুলিতে সীমাবদ্ধ করতে ব্যবহারকারী <b>%s</b>।
-AgendaUrlOptions4=<b>logint=%s</b> ব্যবহারকারীকে <অর্পণ করা কর্মগুলিতে আউটপুট সীমাবদ্ধ করতে span class='notranslate'><b></span>%s</b> (মালিক এবং অন্যান্য)।
-AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> প্রজেক্টের সাথে লিঙ্ক করা ক্রিয়াকলাপের আউটপুট সীমাবদ্ধ করতে b0aee85>b0aee83333 __PROJECT_ID__<span class='notranslate'></b>।
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=স্বয়ংক্রিয় ইভেন্টগুলি বাদ দিতে <b>notactiontype=systemauto</b>।
 AgendaUrlOptionsIncludeHolidays=ছুটির ইভেন্টগুলি অন্তর্ভুক্ত করতে <b>includeholidays=1</b>।
 AgendaShowBirthdayEvents=পরিচিতির জন্মদিন

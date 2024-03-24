@@ -143,6 +143,7 @@ if ($mode == 'setup' && $user->admin) {
 	print '<span class="opacitymedium">'.$langs->trans("OAuthSetupForLogin")."</span><br><br>\n";
 
 	// Define $listinsetup
+	$listinsetup = array();
 	foreach ($conf->global as $key => $val) {
 		if (!empty($val) && preg_match('/^OAUTH_.*_ID$/', $key)) {
 			$provider = preg_replace('/_ID$/', '', $key);
@@ -156,7 +157,7 @@ if ($mode == 'setup' && $user->admin) {
 		}
 	}
 
-	$oauthstateanticsrf = bin2hex(random_bytes(128/8));
+	$oauthstateanticsrf = bin2hex(random_bytes(128 / 8));
 
 	// $list is defined into oauth.lib.php to the list of supporter OAuth providers.
 	if (!empty($listinsetup)) {

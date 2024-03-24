@@ -175,10 +175,10 @@ AnnualSummaryDueDebtMode=Кірістер мен шығыстар балансы
 AnnualSummaryInputOutputMode=Кірістер мен шығыстар балансы, жылдық қорытынды
 AnnualByCompanies=Есептердің алдын ала анықталған топтары бойынша кірістер мен шығыстардың қалдығы
 AnnualByCompaniesDueDebtMode=Кірістер мен шығыстар балансы, алдын ала анықталған топтар бойынша егжей-тегжейлі, режим <b>%sТалаптар-Борыштар809f </b> <b>Міндеттеме есебі</b> деді.
-AnnualByCompaniesInputOutputMode=Кірістер мен шығыстар балансы, алдын ала анықталған топтар бойынша егжей-тегжейлі, режим <b>%sКірістер-шығындар<span class='notranslate'ec802f </span></b> <b>қолма-қол ақшаны есепке алу</b> деді.
-SeeReportInInputOutputMode=<b>%sтөлемдердің талдауын қараңыз%s<spante class='notranslate ></b></span> <b>жазылған төлемдерге негізделген есептеу үшін</b> олар әлі тіркелмеген болса да
+AnnualByCompaniesInputOutputMode=Balance of income and expenses, detail by predefined groups, mode <b>%sIncomes-Expenses%s</b> said <b>cash accounting</b>.
+SeeReportInInputOutputMode=See <b>%sanalysis of payments%s</b> for a calculation based on <b>recorded payments</b> made even if they are not yet accounted in Ledger
 SeeReportInDueDebtMode=<b> %s жазылған құжаттарды талдау %s </b> белгілі <b> жазылған құжаттарға </b> тіркелген болса да қараңыз
-SeeReportInBookkeepingMode=<b>%sбухгалтерлік есеп кестесінің талдауын қараңыз%s<span <b>Бухгалтерлік есеп кестесі</b> негізіндегі есеп үшін notranslate'></b></span>
+SeeReportInBookkeepingMode=See <b>%sanalysis of bookkeeping ledger table%s</b> for a report based on <b>Bookkeeping Ledger table</b>
 RulesAmountWithTaxIncluded=- Көрсетілген сомалар барлық салықтарды қосқанда
 RulesAmountWithTaxExcluded=- Көрсетілген шот-фактуралардың сомалары барлық салықтарды есептемегенде
 RulesResultDue=- Оған барлық шот-фактуралар, шығыстар, ҚҚС, қайырылымдар, жалақы төленгеніне немесе төленбегеніне қарамастан кіреді.<br>- Ол шот-фактуралардың есеп айырысу күніне және төлем мерзіміне негізделген. шығындар немесе салық төлемдері. Жалақы үшін кезеңнің аяқталу күні пайдаланылады.

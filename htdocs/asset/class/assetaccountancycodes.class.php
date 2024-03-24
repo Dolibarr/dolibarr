@@ -47,7 +47,7 @@ class AssetAccountancyCodes extends CommonObject
 				'receivable_on_assignment' => array('label' => 'AssetAccountancyCodeReceivableOnAssignment'),
 				'proceeds_from_sales' => array('label' => 'AssetAccountancyCodeProceedsFromSales'),
 				'vat_collected' => array('label' => 'AssetAccountancyCodeVatCollected'),
-				'vat_deductible' => array('label' => 'AssetAccountancyCodeVatDeductible'),
+				'vat_deductible' => array('label' => 'AssetAccountancyCodeVatDeductible','column_break' => true),
 			),
 		),
 		'accelerated_depreciation' => array(
@@ -71,7 +71,7 @@ class AssetAccountancyCodes extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{

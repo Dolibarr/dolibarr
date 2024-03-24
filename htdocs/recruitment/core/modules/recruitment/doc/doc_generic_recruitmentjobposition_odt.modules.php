@@ -4,7 +4,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018-2021  Philippe Grand      <philippe.grand@atoo-net.com>
- * Copyright (C) 2018-2022  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -212,7 +212,7 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 	/**
 	 *  Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		Commande	$object				Object source to build document
+	 *	@param		RecruitmentJobPosition	$object				Object source to build document
 	 *	@param		Translate	$outputlangs		Lang output object
 	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -318,7 +318,7 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 						$contactobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;
-						// if we have a CUSTOMER contact and we dont use it as thirdparty recipient we store the contact object for later use
+						// if we have a CUSTOMER contact and we don't use it as thirdparty recipient we store the contact object for later use
 						$contactobject = $object->contact;
 					}
 				} else {

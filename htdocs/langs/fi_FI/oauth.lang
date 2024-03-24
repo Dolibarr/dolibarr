@@ -14,7 +14,7 @@ RequestAccess=Napsauta tätä pyytääksesi/uusiaksesi käyttöoikeus ja vastaan
 DeleteAccess=Napsauta tästä poistaaksesi tunnuksen
 RedirectURL=Uudelleenohjauksen URL-osoite
 UseTheFollowingUrlAsRedirectURI=Käytä seuraavaa URL-osoitetta uudelleenohjaus-URL-osoitteena, kun luot kirjautumistietojasi OAuth-palveluntarjoajaltasi
-ListOfSupportedOauthProviders=Lisää OAuth2-tunnuksen tarjoajat. Siirry sitten OAuth-palveluntarjoajan Pääkäyttäjä-sivulle ja luo/hae OAuth-tunnus b0ae6e90z09. /span> Salaiset <span class='notranslate'>ja tallenna ne tähän. Kun olet valmis, avaa toinen välilehti luodaksesi tunnus.
+ListOfSupportedOauthProviders=Add your OAuth2 token providers. Then, go on your OAuth provider admin page to create/get an OAuth ID and Secret and save them here. Once done, switch on the other tab to generate your token.
 OAuthSetupForLogin=Sivu, jolla voit hallita (luoda/poista) OAuth-tunnuksia
 SeePreviousTab=Katso edellinen välilehti
 OAuthProvider=OAuth-palveluntarjoaja

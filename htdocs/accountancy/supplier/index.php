@@ -35,8 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
-$validatemonth = GETPOST('validatemonth', 'int');
-$validateyear = GETPOST('validateyear', 'int');
+$validatemonth = GETPOSTINT('validatemonth');
+$validateyear = GETPOSTINT('validateyear');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -52,8 +52,8 @@ if (!$user->hasRight('accounting', 'bind', 'write')) {
 $accountingAccount = new AccountingAccount($db);
 
 $month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-if (GETPOST("year", 'int')) {
-	$year_start = GETPOST("year", 'int');
+if (GETPOSTINT("year")) {
+	$year_start = GETPOSTINT("year");
 } else {
 	$year_start = dol_print_date(dol_now(), '%Y');
 	if (dol_print_date(dol_now(), '%m') < $month_start) {
@@ -232,10 +232,10 @@ if ($action == 'validatehistory') {
 			$facture_static_det->desc = $objp->description;
 
 			$accountingAccountArray = array(
-				'dom'=>$objp->aarowid,
-				'intra'=>$objp->aarowid_intra,
-				'export'=>$objp->aarowid_export,
-				'thirdparty' =>$objp->aarowid_thirdparty);
+				'dom' => $objp->aarowid,
+				'intra' => $objp->aarowid_intra,
+				'export' => $objp->aarowid_export,
+				'thirdparty' => $objp->aarowid_thirdparty);
 
 			$code_buy_p_notset = '';
 			$code_buy_t_notset = '';
@@ -243,7 +243,7 @@ if ($action == 'validatehistory') {
 			$suggestedid = 0;
 
 			$return = $accountingAccount->getAccountingCodeToBind($mysoc, $thirdpartystatic, $product_static, $facture_static, $facture_static_det, $accountingAccountArray, 'supplier');
-			if (!is_array($return) && $return<0) {
+			if (!is_array($return) && $return < 0) {
 				setEventMessage($accountingAccount->error, 'errors');
 			} else {
 				$suggestedid = $return['suggestedid'];
@@ -297,7 +297,7 @@ if ($action == 'validatehistory') {
 /*
  * View
  */
-$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
+$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
 llxHeader('', $langs->trans("SuppliersVentilation"), $help_url);
 
@@ -340,7 +340,7 @@ for ($i = 1; $i <= 12; $i++) {
 		$param .= '&search_date_endday='.$tmp['mday'].'&search_date_endmonth='.$tmp['mon'].'&search_date_endyear='.$tmp['year'];
 		print '<a href="'.DOL_URL_ROOT.'/accountancy/supplier/list.php?'.$param.'">';
 	}
-	print $langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT));
+	print $langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT));
 	if (!empty($tmp['mday'])) {
 		print '</a>';
 	}
@@ -355,7 +355,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql("MONTH(ff.datef)=".$j, "ffd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(ff.datef) = ".((int) $j), "ffd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(ffd.total_ht) as total";
 $sql .= " FROM ".$db->prefix()."facture_fourn_det as ffd";
@@ -422,7 +422,7 @@ if ($resql) {
 			// Add link to make binding
 			if (!empty(price2num($row[$i]))) {
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&year='.$y.'&validatemonth='.((int) $cursormonth).'&validateyear='.((int) $cursoryear).'&token='.newToken().'">';
-				print img_picto($langs->trans("ValidateHistory").' ('.$langs->trans('Month'.str_pad($cursormonth, 2, '0', STR_PAD_LEFT)).' '.$cursoryear.')', 'link', 'class="marginleft2"');
+				print img_picto($langs->trans("ValidateHistory").' ('.$langs->trans('Month'.str_pad((string) $cursormonth, 2, '0', STR_PAD_LEFT)).' '.$cursoryear.')', 'link', 'class="marginleft2"');
 				print '</a>';
 			}
 			print '</td>';
@@ -472,7 +472,7 @@ for ($i = 1; $i <= 12; $i++) {
 		$param .= '&search_date_endday='.$tmp['mday'].'&search_date_endmonth='.$tmp['mon'].'&search_date_endyear='.$tmp['year'];
 		print '<a href="'.DOL_URL_ROOT.'/accountancy/supplier/lines.php?'.$param.'">';
 	}
-	print $langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT));
+	print $langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT));
 	if (!empty($tmp['mday'])) {
 		print '</a>';
 	}
@@ -487,7 +487,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql("MONTH(ff.datef)=".$j, "ffd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(ff.datef) = ".((int) $j), "ffd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(ffd.total_ht) as total";
 $sql .= " FROM ".$db->prefix()."facture_fourn_det as ffd";
@@ -571,7 +571,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 		if ($j > 12) {
 			$j -= 12;
 		}
-		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
+		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT)).'</td>';
 	}
 	print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
@@ -581,7 +581,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 		if ($j > 12) {
 			$j -= 12;
 		}
-		$sql .= "  SUM(".$db->ifsql("MONTH(ff.datef)=".$j, "ffd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
+		$sql .= "  SUM(".$db->ifsql("MONTH(ff.datef) = ".((int) $j), "ffd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql .= "  SUM(ffd.total_ht) as total";
 	$sql .= " FROM ".$db->prefix()."facture_fourn_det as ffd";

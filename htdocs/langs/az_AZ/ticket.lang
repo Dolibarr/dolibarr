@@ -320,7 +320,7 @@ ViewTicket=Biletə baxın
 ViewMyTicketList=Bilet siyahıma baxın
 ErrorEmailMustExistToCreateTicket=Xəta: e-poçt ünvanı verilənlər bazamızda tapılmadı
 TicketNewEmailSubjectAdmin=Yeni bilet yaradıldı - Ref %s (ictimai bilet ID %s)
-TicketNewEmailBodyAdmin=<p>Bilet indicə ID #%s ilə yaradılıb, məlumata baxın:<span class='notranslate'>b0679c9a6a6spand430 >
+TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
 SeeThisTicketIntomanagementInterface=İdarəetmə interfeysində biletə baxın
 TicketPublicInterfaceForbidden=Biletlər üçün ictimai interfeys aktiv edilmədi
 ErrorEmailOrTrackingInvalid=İzləmə ID və ya e-poçt üçün pis dəyər

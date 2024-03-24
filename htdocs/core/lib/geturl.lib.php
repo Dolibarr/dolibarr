@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@
  *
  * @param	string	  $url 				    URL to call.
  * @param	string    $postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'DELETE'
- * @param	string    $param			    Parameters of URL (x=value1&y=value2) or may be a formated content with $postorget='PUTALREADYFORMATED'
+ * @param	string    $param			    Parameters of URL (x=value1&y=value2) or may be a formatted content with $postorget='PUTALREADYFORMATED'
  * @param	integer   $followlocation		0=Do not follow, 1=Follow location.
  * @param	string[]  $addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
  * @param	string[]  $allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)
@@ -69,7 +70,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	}
 	curl_setopt($ch, CURLINFO_HEADER_OUT, true); // To be able to retrieve request header and log it
 
-	// By default use tls decied by PHP.
+	// By default use the TLS version decided by PHP.
 	// You can force, if supported a version like TLSv1 or TLSv1.2
 	if (getDolGlobalString('MAIN_CURL_SSLVERSION')) {
 		curl_setopt($ch, CURLOPT_SSLVERSION, $conf->global->MAIN_CURL_SSLVERSION);
@@ -91,21 +92,27 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	// Restrict use to some protocols only
 	$protocols = 0;
+	$redir_list = array();
 	if (is_array($allowedschemes)) {
 		foreach ($allowedschemes as $allowedscheme) {
 			if ($allowedscheme == 'http') {
 				$protocols |= CURLPROTO_HTTP;
-			}
-			if ($allowedscheme == 'https') {
+				$redir_list["HTTP"] = 1;
+			} elseif ($allowedscheme == 'https') {
 				$protocols |= CURLPROTO_HTTPS;
+				$redir_list["HTTPS"] = 1;
+			} elseif ($allowedscheme == 'ftp') {
+				$protocols |= CURLPROTO_FTP;
+				$redir_list["FTP"] = 1;
+			} elseif ($allowedscheme == 'ftps') {
+				$protocols |= CURLPROTO_FTPS;
+				$redir_list["FTPS"] = 1;
 			}
 		}
-		curl_setopt($ch, CURLOPT_PROTOCOLS, $protocols);
-		curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, $protocols);
 	}
 
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, !getDolGlobalString('MAIN_USE_CONNECT_TIMEOUT') ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
-	curl_setopt($ch, CURLOPT_TIMEOUT, !getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
+	curl_setopt($ch, CURLOPT_TIMEOUT, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
 
 	// limit size of downloaded files. TODO Add MAIN_SECURITY_MAXFILESIZE_DOWNLOADED
 	$maxsize = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
@@ -219,6 +226,16 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			}
 		}
 
+		// Moving these just before the curl_exec option really limits
+		// on windows PHP 7.4.
+		curl_setopt($ch, CURLOPT_PROTOCOLS, $protocols);
+		curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, $protocols);
+		/* CURLOPT_REDIR_PROTOCOLS_STR available from PHP 7.85.0
+		if (version_compare(PHP_VERSION, '8.3.0', '>=') && version_compare(curl_version()['version'], '7.85.0', '>=')) {
+			curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS_STR, implode(",", array_keys($redir_list)));
+		}
+		*/
+
 		// Getting response from server
 		$response = curl_exec($ch);
 
@@ -239,11 +256,11 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	dol_syslog("getURLContent request=".$request);
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
-		// This may contains binary data, so we dont output reponse by default.
+		// This may contains binary data, so we don't output response by default.
 		dol_syslog("getURLContent request=".$request, LOG_DEBUG, 0, '_curl');
 		dol_syslog("getURLContent response =".$response, LOG_DEBUG, 0, '_curl');
 	}
-	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we dont output it
+	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we don't output it
 
 	$rep = array();
 	if (curl_errno($ch)) {
@@ -254,7 +271,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		$rep['curl_error_no'] = curl_errno($ch);
 		$rep['curl_error_msg'] = curl_error($ch);
 
-		dol_syslog("getURLContent response array is ".join(',', $rep));
+		dol_syslog("getURLContent response array is ".implode(',', $rep));
 	} else {
 		//$info = curl_getinfo($ch);
 
@@ -287,8 +304,6 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
  */
 function isIPAllowed($iptocheck, $localurl)
 {
-	global $conf;
-
 	if ($localurl == 0) {	// Only external url allowed (dangerous, may allow to get malware)
 		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
 			// Deny ips like 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 0.0.0.0/8, 169.254.0.0/16, 127.0.0.0/8 et 240.0.0.0/4, ::1/128, ::/128, ::ffff:0:0/96, fe80::/10...
@@ -390,23 +405,15 @@ function getDomainFromURL($url, $mode = 0)
 /**
  * Function root url from a long url
  * For example: https://www.abc.mydomain.com/dir/page.html return 'https://www.abc.mydomain.com'
- * For example: http://www.abc.mydomain.com/ return 'https://www.abc.mydomain.com'
+ * For example: https://www.abc.mydomain.com/ return 'https://www.abc.mydomain.com'
+ * For example: http://www.abc.mydomain.com/ return 'http://www.abc.mydomain.com'
  *
  * @param	string	  $url 				    Full URL.
  * @return	string						    Returns root url
  */
 function getRootURLFromURL($url)
 {
-	$prefix = '';
-	$tmpurl = $url;
-	$reg = null;
-	if (preg_match('/^(https?:\/\/)/i', $tmpurl, $reg)) {
-		$prefix = $reg[1];
-	}
-	$tmpurl = preg_replace('/^https?:\/\//i', '', $tmpurl); // Remove http(s)://
-	$tmpurl = preg_replace('/\/.*$/i', '', $tmpurl); // Remove part after domain
-
-	return $prefix.$tmpurl;
+	return preg_replace('/^([a-z]*:\/\/[^\/]*).*/i', '$1', $url);
 }
 
 /**

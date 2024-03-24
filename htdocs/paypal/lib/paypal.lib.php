@@ -224,7 +224,7 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 	$nvpstr = $nvpstr."&SOLUTIONTYPE=".urlencode($solutionType);
 	$nvpstr = $nvpstr."&LANDINGPAGE=".urlencode($landingPage);
 	if (getDolGlobalString('PAYPAL_CUSTOMER_SERVICE_NUMBER')) {
-		$nvpstr = $nvpstr."&CUSTOMERSERVICENUMBER=".urlencode($conf->global->PAYPAL_CUSTOMER_SERVICE_NUMBER); // Hotline phone number
+		$nvpstr = $nvpstr."&CUSTOMERSERVICENUMBER=".urlencode(getDolGlobalString('PAYPAL_CUSTOMER_SERVICE_NUMBER')); // Hotline phone number
 	}
 
 	$paypalprefix = 'PAYMENTREQUEST_0_';
@@ -233,16 +233,16 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 		$paymentType = 'Sale';
 	}
 
-	$nvpstr = $nvpstr."&AMT=".urlencode($paymentAmount); // Total for all elements
+	$nvpstr = $nvpstr."&AMT=".urlencode((string) ($paymentAmount)); // Total for all elements
 
 	$nvpstr = $nvpstr."&".$paypalprefix."INVNUM=".urlencode($tag);
-	$nvpstr = $nvpstr."&".$paypalprefix."AMT=".urlencode($paymentAmount); // AMT deprecated by paypal -> PAYMENTREQUEST_n_AMT
-	$nvpstr = $nvpstr."&".$paypalprefix."ITEMAMT=".urlencode($paymentAmount); // AMT deprecated by paypal -> PAYMENTREQUEST_n_AMT
+	$nvpstr = $nvpstr."&".$paypalprefix."AMT=".urlencode((string) ($paymentAmount)); // AMT deprecated by paypal -> PAYMENTREQUEST_n_AMT
+	$nvpstr = $nvpstr."&".$paypalprefix."ITEMAMT=".urlencode((string) ($paymentAmount)); // AMT deprecated by paypal -> PAYMENTREQUEST_n_AMT
 	$nvpstr = $nvpstr."&".$paypalprefix."PAYMENTACTION=".urlencode($paymentType); // PAYMENTACTION deprecated by paypal -> PAYMENTREQUEST_n_PAYMENTACTION
 	$nvpstr = $nvpstr."&".$paypalprefix."CURRENCYCODE=".urlencode($currencyCodeType); // CURRENCYCODE deprecated by paypal -> PAYMENTREQUEST_n_CURRENCYCODE
 
 	$nvpstr = $nvpstr."&".$paypalprefix."L_PAYMENTREQUEST_0_QTY0=1";
-	$nvpstr = $nvpstr."&".$paypalprefix."L_PAYMENTREQUEST_0_AMT0=".urlencode($paymentAmount);
+	$nvpstr = $nvpstr."&".$paypalprefix."L_PAYMENTREQUEST_0_AMT0=".urlencode((string) ($paymentAmount));
 	$nvpstr = $nvpstr."&".$paypalprefix."L_PAYMENTREQUEST_0_NAME0=".urlencode($desc);
 	$nvpstr = $nvpstr."&".$paypalprefix."L_PAYMENTREQUEST_0_NUMBER0=0";
 
@@ -273,10 +273,10 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 		$nvpstr = $nvpstr."&LOGOIMG=".urlencode($urllogo);
 	}
 	if (getDolGlobalString('PAYPAL_BRANDNAME')) {
-		$nvpstr = $nvpstr."&BRANDNAME=".urlencode($conf->global->PAYPAL_BRANDNAME); // BRANDNAME
+		$nvpstr = $nvpstr."&BRANDNAME=".urlencode(getDolGlobalString('PAYPAL_BRANDNAME')); // BRANDNAME
 	}
 	if (getDolGlobalString('PAYPAL_NOTETOBUYER')) {
-		$nvpstr = $nvpstr."&NOTETOBUYER=".urlencode($conf->global->PAYPAL_NOTETOBUYER); // PAYPAL_NOTETOBUYER
+		$nvpstr = $nvpstr."&NOTETOBUYER=".urlencode(getDolGlobalString('PAYPAL_NOTETOBUYER')); // PAYPAL_NOTETOBUYER
 	}
 
 	$_SESSION["FinalPaymentAmt"] = $paymentAmount;
@@ -286,8 +286,8 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 
 	//'---------------------------------------------------------------------------------------------------------------
 	//' Make the API call to PayPal
-	//' If the API call succeded, then redirect the buyer to PayPal to begin to authorize payment.
-	//' If an error occured, show the resulting errors
+	//' If the API call succeeded, then redirect the buyer to PayPal to begin to authorize payment.
+	//' If an error occurred, show the resulting errors
 	//'---------------------------------------------------------------------------------------------------------------
 	$resArray = hash_call("SetExpressCheckout", $nvpstr);
 	$ack = strtoupper($resArray["ACK"]);
@@ -310,7 +310,7 @@ function getDetails($token)
 	//'--------------------------------------------------------------
 	//' At this point, the buyer has completed authorizing the payment
 	//' at PayPal.  The function will call PayPal to obtain the details
-	//' of the authorization, incuding any shipping information of the
+	//' of the authorization, including any shipping information of the
 	//' buyer.  Remember, the authorization is not a completed transaction
 	//' at this state - the buyer still needs an additional step to finalize
 	//' the transaction
@@ -376,7 +376,7 @@ function confirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipad
 	$nvpstr .= '&INVNUM='.urlencode($tag);
 
 	/* Make the call to PayPal to finalize payment
-	 If an error occured, show the resulting errors
+	 If an error occurred, show the resulting errors
 	 */
 	$resArray = hash_call("DoExpressCheckoutPayment", $nvpstr);
 
@@ -446,7 +446,7 @@ function DirectPayment($paymentType, $paymentAmount, $creditCardType, $creditCar
  *
  * @param	string	$methodName 	is name of API  method.
  * @param	string	$nvpStr 		is nvp string.
- * @return	array					returns an associtive array containing the response from the server.
+ * @return	array					returns an associative array containing the response from the server.
  */
 function hash_call($methodName, $nvpStr)
 {
@@ -468,19 +468,19 @@ function hash_call($methodName, $nvpStr)
 	// Clean parameters
 	$PAYPAL_API_USER = "";
 	if (getDolGlobalString('PAYPAL_API_USER')) {
-		$PAYPAL_API_USER = $conf->global->PAYPAL_API_USER;
+		$PAYPAL_API_USER = getDolGlobalString('PAYPAL_API_USER');
 	}
 	$PAYPAL_API_PASSWORD = "";
 	if (getDolGlobalString('PAYPAL_API_PASSWORD')) {
-		$PAYPAL_API_PASSWORD = $conf->global->PAYPAL_API_PASSWORD;
+		$PAYPAL_API_PASSWORD = getDolGlobalString('PAYPAL_API_PASSWORD');
 	}
 	$PAYPAL_API_SIGNATURE = "";
 	if (getDolGlobalString('PAYPAL_API_SIGNATURE')) {
-		$PAYPAL_API_SIGNATURE = $conf->global->PAYPAL_API_SIGNATURE;
+		$PAYPAL_API_SIGNATURE = getDolGlobalString('PAYPAL_API_SIGNATURE');
 	}
 	$PAYPAL_API_SANDBOX = "";
 	if (getDolGlobalString('PAYPAL_API_SANDBOX')) {
-		$PAYPAL_API_SANDBOX = $conf->global->PAYPAL_API_SANDBOX;
+		$PAYPAL_API_SANDBOX = getDolGlobalString('PAYPAL_API_SANDBOX');
 	}
 	// TODO END problem with triggers
 
@@ -568,26 +568,26 @@ function hash_call($methodName, $nvpStr)
 
 /**
  * This function will take NVPString and convert it to an Associative Array and it will decode the response.
- * It is usefull to search for a particular key and displaying arrays.
+ * It is useful to search for a particular key and displaying arrays.
  *
  * @param	string	$nvpstr 		NVPString
  * @return	array					nvpArray = Associative Array
  */
 function deformatNVP($nvpstr)
 {
-	$intial = 0;
+	$initial = 0;
 	$nvpArray = array();
 
 	while (strlen($nvpstr)) {
-		//postion of Key
+		//position of Key
 		$keypos = strpos($nvpstr, '=');
 		//position of value
 		$valuepos = strpos($nvpstr, '&') ? strpos($nvpstr, '&') : strlen($nvpstr);
 
 		/*getting the Key and Value values and storing in a Associative Array*/
-		$keyval = substr($nvpstr, $intial, $keypos);
+		$keyval = substr($nvpstr, $initial, $keypos);
 		$valval = substr($nvpstr, $keypos + 1, $valuepos - $keypos - 1);
-		//decoding the respose
+		//decoding the response
 		$nvpArray[urldecode($keyval)] = urldecode($valval);
 		$nvpstr = substr($nvpstr, $valuepos + 1, strlen($nvpstr));
 	}

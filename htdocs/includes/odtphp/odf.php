@@ -304,7 +304,7 @@ class Odf
 							}
 							if (strlen($odtStyles) > 0) {
 								// Generate a unique id for the style (using microtime and random because some CPUs are really fast...)
-								$key = floatval(str_replace('.', '', microtime(true))) + rand(0, 10);
+								$key = str_replace('.', '', (string) microtime(true)) . uniqid(mt_rand());
 								$customStyles[$key] = $odtStyles;
 								$odtResult .= '<text:span text:style-name="customStyle' . $key . '">' . ($tag['children'] != null ? $this->_replaceHtmlWithOdtTag($tag['children'], $customStyles, $fontDeclarations, $encode) : $this->encode_chars($tag['innerText'], $encode, $charset)) . '</text:span>';
 							}

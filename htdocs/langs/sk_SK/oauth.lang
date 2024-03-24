@@ -29,7 +29,7 @@ OAUTH_GOOGLE_SECRET=OAuth Google Secret
 OAUTH_GITHUB_NAME=Služba OAuth GitHub
 OAUTH_GITHUB_ID=Id OAuth GitHub
 OAUTH_GITHUB_SECRET=Tajomstvo OAuth GitHub
-OAUTH_URL_FOR_CREDENTIAL=Prejdite na <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">túto stránku<span class="fas fa-external-link-alt paddingleft"></span><spante class='notranslate ></a></span> a vytvorte alebo získajte svoje ID a tajný kľúč OAuth
+OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">this page<span class="fas fa-external-link-alt paddingleft"></span></a> to create or get your OAuth ID and Secret
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
 OAUTH_ID=ID klienta OAuth

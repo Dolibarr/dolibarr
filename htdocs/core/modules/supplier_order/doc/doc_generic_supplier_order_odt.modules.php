@@ -4,7 +4,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018-2019  Philippe Grand      <philippe.grand@atoo-net.com>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2019       Tim Otte		    <otte@meuser.it>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -123,7 +123,7 @@ class doc_generic_supplier_order_odt extends ModelePDFSuppliersOrders
 		// List of directories area
 		$texte .= '<tr><td>';
 		$texttitle = $langs->trans("ListOfDirectories");
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->SUPPLIER_ORDER_ADDON_PDF_ODT_PATH)));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString('SUPPLIER_ORDER_ADDON_PDF_ODT_PATH'))));
 		$listoffiles = array();
 		foreach ($listofdir as $key => $tmpdir) {
 			$tmpdir = trim($tmpdir);
@@ -302,7 +302,7 @@ class doc_generic_supplier_order_odt extends ModelePDFSuppliersOrders
 						$contactobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;
-						// if we have a CUSTOMER contact and we dont use it as thirdparty recipient we store the contact object for later use
+						// if we have a CUSTOMER contact and we don't use it as thirdparty recipient we store the contact object for later use
 						$contactobject = $object->contact;
 					}
 				} else {

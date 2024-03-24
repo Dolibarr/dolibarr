@@ -5,69 +5,41 @@ provid
 # PostgreSQL
 postgresql
 
-alltime
+# Inside email
 ba
 blacklist
-whitelist
 bu
-captial
 categorie
 categories
-crypted
 clos
-contaxt
-courant
-datea
-datee
+crypted
 errorstring
 exten
 falsy
 master
 medias
-noe
-NOO
-noo
-od
-nd
-udate
-periode
 projet
-referer
-referers
-scrit
-ser
+ro
 slave
-savvy
-# Inside email
-suport
 te
 technic
 thead
-udo
 ue
-ro
+whitelist
 ws
+# Thirdparty should be Third party or Third-party but ignoring it because it's omnipresent
+thirdparty
 # Code string
 ect
 tempdate
-# checkES
-checkes
 sav
 files'
-# Used as array ke
+# Used as array key
 seeked
-# Used as translation key
-developpers
-# Used as var
-pice
 # Used as key
 marge
-# htdocs/projet/activity/permonth.php
-tweek
 # moral (var name)
 mor
-# reyear, remonth, reday
-reday
 # Strings used as keys for translation
 uptodate
 reenable
@@ -87,5 +59,4 @@ dur
 fonction
 espace
 methode
-# Proper names
-tim
+datee

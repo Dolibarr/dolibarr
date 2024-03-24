@@ -6,6 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +26,8 @@
  * $conf
  * $langs
  * $forceall (0 by default, 1 for supplier invoices/orders)
- * $element     (used to test $user->rights->$element->creer)
- * $permtoedit  (used to replace test $user->rights->$element->creer)
+ * $element     (used to test $user->hasRight($element, 'creer'))
+ * $permtoedit  (used to replace test $user->hasRight($element, 'creer'))
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
@@ -34,7 +35,14 @@
  * $type, $text, $description, $line
  */
 
-/** var ObjectLine $line */
+/**
+ * @var CommonObjectLine $line
+ * @var int $num
+ */
+'@phan-var-force CommonObjectLine $line
+ @phan-var-force int $num
+ @phan-var-force CommonObject $this
+ @phan-var-force CommonObject $object';
 
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
@@ -48,7 +56,6 @@ global $filtertype;
 if (empty($filtertype)) {
 	$filtertype = 0;
 }
-
 
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax, $langs;
 
@@ -69,14 +76,24 @@ if (empty($outputalsopricetotalwithtax)) {
 }
 
 if (!function_exists('print_line')) {
+	/**
+	 * Recursively loop through and print BOM lines
+	 *
+	 * @param  DoliDb $db      Database handler
+	 * @param  BOMLine $data   BOMLine to print on row
+	 * @param  float $quantity Quantity modifier for sub BOM
+	 * @param  int $level      Level of recursion
+	 * @param  int $parent     Paring BOMLine ID, used for show/hide
+	 * @return array           Return array of html rows
+	 */
 	function print_line($db, $data, $quantity, $level, $parent)
 	{
 		global $langs, $extrafields, $filtertype, $i, $action;
-		
+
 		$product = new Product($db);
 		$product->fetch($data->fk_product);
 		$bom = $data->childBom;
-		
+
 		$column = array();
 		$extra='';
 		if (!empty($extrafields)) {
@@ -86,12 +103,12 @@ if (!function_exists('print_line')) {
 					$data->id.'" name="extrafield_lines_area_'.$data->id.'">'.$temp.'</div>';
 			}
 		}
-		
+
 		// Line nb
 		if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 			$column[] = '<td class="linecolnum center">'.($i + 1).'</td>';
 		}
-		
+
 		// Product/Service label
 		$column[] = '<td class="linecoldescription minwidth300imp"><div id="line_'.$data->id.'"></div>'.
 			str_repeat('&nbsp;',$level*4).$product->getNomUrl(1).
@@ -99,23 +116,23 @@ if (!function_exists('print_line')) {
 			' <a class="collapse_bom" id="collapse-'.$data->id.'" href="#">'.
 			(!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT') ? img_picto('', 'folder') : img_picto('', 'folder-open')).'</a>':'').
 			$extra;
-		
+
 		// Yes, it is a quantity, not a price, but we just want the formatting role of function price
-		$column[] = '<td class="linecolqty nowrap right">'.price(price2num($data->qty*$quantity,'MT'), 0, '', 0, 0).'</td>';
-		
+		$column[] = '<td class="linecolqty nowrap right">'.price(price2num($data->qty*$quantity, 'MT'), 0, '', 0, 0).'</td>';
+
 		if ($filtertype != 1) {
 			if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 				$label = measuringUnitString($data->fk_unit, '', '', 1);
-				$column[] ='<td class="linecoluseunit nowrap left">'.
-					(($label !== '')?$langs->trans($label):'').'</td>';
+				$column[] = '<td class="linecoluseunit nowrap left">'.
+					(($label !== '') ? $langs->trans($label) : '').'</td>';
 			}
-			
+
 			$column[] = '<td class="linecolqtyfrozen nowrap right">'.
 				($line->qty_frozen ? yn($data->qty_frozen) : '').'</td>';
-			
+
 			$column[] = '<td class="linecoldisablestockchange nowrap right">'.
 				($line->disable_stock_change ? yn($data->disable_stock_change) : '').'</td>';
-			
+
 			$column[] = '<td class="linecolefficiency nowrap right">'.$data->efficiency.'</td>';
 		} else {
 			// Unit
@@ -127,7 +144,7 @@ if (!function_exists('print_line')) {
 				$unit = isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '';
 			}
 			$column[] = '<td class="linecolunit nowrap right">'.$unit.'</td>';
-			
+
 			// Work station
 			if (isModEnabled('workstation')) {
 				$workstation = new Workstation($db);
@@ -136,11 +153,11 @@ if (!function_exists('print_line')) {
 					(($res > 0)?$workstation->getNomUrl(1):'none').'</td>';
 			}
 		}
-		
+
 		// Cost
 		$column[] = '<td id="costline_'.$data->id.'" class="linecolcost nowrap right"><span class="amount">'.
 			price(price2num($data->total_cost*$quantity,'MT')).'</span></td>';
-		
+
 		if ($data->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 			$column[] = '<td class="linecoledit center">'.
 				(($line->info_bits & 2) == 2 || !empty($disableedit)?'':
@@ -167,11 +184,11 @@ if (!function_exists('print_line')) {
 			$column[] = '';
 			$column[] = '';
 		}
-		
+
 		if ($action == 'selectlines') {
 			$column[] = '<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox['.($i + 1).']" value="'.$line->id.'" ></td>';
 		}
-		
+
 		// add html5 dom elements
 		if ($level==0) {
 			$html[] = '<tr id="row-'.$data->id.'" class="drag drp oddeven"'.
@@ -182,12 +199,12 @@ if (!function_exists('print_line')) {
 			$html[] = '<tr'.(!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT')?' style="display:none"':'').
 				(!empty($parent)?' class="sub_bom_lines" parentid="'.$parent.'"':'').'>'.implode('', $column).'</tr>';
 		}
-		foreach ((!empty($bom) && is_array($bom->lines))?$bom->lines:array() as $child) {
-			foreach (print_line($db, $child, ($quantity*$data->qty)/(($bom->qty??1)*$data->efficiency), $level+1, $data->id) as $line) {
+		foreach ((!empty($bom) && is_array($bom->lines)) ? $bom->lines : array() as $child) {
+			foreach (print_line($db, $child, ($quantity * $data->qty) / (($bom->qty??1) * $data->efficiency), $level + 1, $data->id) as $line) {
 				$html[] = $line;
 			}
 		}
-		
+
 		return $html;
 	}
 }

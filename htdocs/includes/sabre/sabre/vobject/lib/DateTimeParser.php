@@ -104,7 +104,7 @@ class DateTimeParser
         if (!$asString) {
             $invert = false;
 
-            if ('-' === $matches['plusminus']) {
+            if (isset($matches['plusminus']) && '-' === $matches['plusminus']) {
                 $invert = true;
             }
 

@@ -7,7 +7,7 @@ on:
   issue_comment:
     types: [created]
   workflow_dispatch:
-  
+
 permissions: {} # none
 
 jobs:
@@ -26,4 +26,3 @@ jobs:
         days-before-close: 10
         operations-per-run: 100
         dry-run: false
-        

@@ -21,7 +21,7 @@
 
 /**
  *	    \file       htdocs/core/lib/doleditor.lib.php
- *		\brief      Ensemble de fonctions de base pour la gestion des utilisaterus et groupes
+ *		\brief      Ensemble de functions de base pour la gestion des utilisaterus et groups
  */
 
 /**

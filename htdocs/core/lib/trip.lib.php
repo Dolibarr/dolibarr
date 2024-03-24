@@ -18,7 +18,7 @@
 
 /**
  *	    \file       htdocs/core/lib/trip.lib.php
- *		\brief      Ensemble de fonctions de base pour les deplacements
+ *		\brief      Ensemble de functions de base pour les deplacements
  */
 
 /**

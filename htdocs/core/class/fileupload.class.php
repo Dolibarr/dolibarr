@@ -18,7 +18,8 @@
 
 /**
  *       \file      htdocs/core/class/fileupload.class.php
- *       \brief     File to return Ajax response on common file upload.
+ *       \brief     File to return the ajax response of core/ajax/fileupload.php for common file upload.
+ *       			Security is check by the ajax component.
  *       			For large files, see flowjs-server.php
  */
 
@@ -63,8 +64,8 @@ class FileUpload
 		//print 'fileupload.class.php: element='.$element.' pathname='.$pathname.' filename='.$filename.' dir_output='.$dir_output."\n";
 
 		if (empty($dir_output)) {
-			setEventMessage('The element '.$element.' is not supported for uploading file. dir_output is unknow.', 'errors');
-			throw new Exception('The element '.$element.' is not supported for uploading file. dir_output is unknow.');
+			setEventMessage('The element '.$element.' is not supported for uploading file. dir_output is unknown.', 'errors');
+			throw new Exception('The element '.$element.' is not supported for uploading file. dir_output is unknown.');
 		}
 
 		// If pathname and filename are null then we can still upload files if we have specified upload_dir on $options
@@ -158,7 +159,7 @@ class FileUpload
 		// At this point we should have a valid upload_dir in options
 		//if ($pathname === null && $filename === null) { // OR or AND???
 		if ($pathname === null || $filename === null) {
-			if (!key_exists("upload_dir", $this->options)) {
+			if (!array_key_exists("upload_dir", $this->options)) {
 				setEventMessage('If $fk_element = null or $element = null you must specify upload_dir on $options', 'errors');
 				throw new Exception('If $fk_element = null or $element = null you must specify upload_dir on $options');
 			} elseif (!is_dir($this->options['upload_dir'])) {
@@ -196,7 +197,7 @@ class FileUpload
 	 */
 	protected function setFileDeleteUrl($file)
 	{
-		$file->delete_url = $this->options['script_url'].'?file='.urlencode($file->name).'&fk_element='.urlencode($this->fk_element).'&element='.urlencode($this->element);
+		$file->delete_url = $this->options['script_url'].'?file='.urlencode((string) ($file->name)).'&fk_element='.urlencode((string) ($this->fk_element)).'&element='.urlencode((string) ($this->element));
 		$file->delete_type = $this->options['delete_type'];
 		if ($file->delete_type !== 'DELETE') {
 			$file->delete_url .= '&_method=DELETE';
@@ -219,6 +220,7 @@ class FileUpload
 			$file->mime = dol_mimetype($file_name, '', 2);
 			$file->size = filesize($file_path);
 			$file->url = $this->options['upload_url'].urlencode($file->name);
+
 			foreach ($this->options['image_versions'] as $version => $options) {
 				if (dol_is_file($options['upload_dir'].$file_name)) {
 					$tmp = explode('.', $file->name);
@@ -283,7 +285,7 @@ class FileUpload
 	/**
 	 * Make validation on an uploaded file
 	 *
-	 * @param 	string	$uploaded_file		Uploade file
+	 * @param 	string	$uploaded_file		Upload file
 	 * @param 	object	$file				File
 	 * @param 	string	$error				Error
 	 * @param	string	$index				Index
@@ -398,7 +400,7 @@ class FileUpload
 	 * handleFileUpload.
 	 * Validate data, move the uploaded file then create the thumbs if this is an image.
 	 *
-	 * @param 	string		$uploaded_file		Uploade file
+	 * @param 	string		$uploaded_file		Upload file
 	 * @param 	string		$name				Name
 	 * @param 	int			$size				Size
 	 * @param 	string		$type				Type
@@ -472,18 +474,19 @@ class FileUpload
 	 *
 	 * @return	void
 	 */
-	public function get()
+	/*public function get()
 	{
-		$file_name = isset($_REQUEST['file']) ?
-		basename(stripslashes($_REQUEST['file'])) : null;
+		$file_name = isset($_REQUEST['file']) ? basename(stripslashes($_REQUEST['file'])) : null;
 		if ($file_name) {
 			$info = $this->getFileObject($file_name);
 		} else {
 			$info = $this->getFileObjects();
 		}
+
 		header('Content-type: application/json');
 		echo json_encode($info);
 	}
+	*/
 
 	/**
 	 * Output data
@@ -494,13 +497,8 @@ class FileUpload
 	{
 		$error = 0;
 
-		if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
-			return $this->delete();
-		}
-		//var_dump($_FILES);
+		$upload = isset($_FILES[$this->options['param_name']]) ? $_FILES[$this->options['param_name']] : null;
 
-		$upload = isset($_FILES[$this->options['param_name']]) ?
-		$_FILES[$this->options['param_name']] : null;
 		$info = array();
 		if ($upload && is_array($upload['tmp_name'])) {
 			// param_name is an array identifier like "files[]",
@@ -560,11 +558,13 @@ class FileUpload
 	/**
 	 * Delete uploaded file
 	 *
+	 * @param	string	$file	File
 	 * @return	int
 	 */
-	public function delete()
+	/*
+	public function delete($file)
 	{
-		$file_name = GETPOST('file') ? basename(GETPOST('file')) : null;
+		$file_name = $file ? basename($file) : null;
 		$file_path = $this->options['upload_dir'].dol_sanitizeFileName($file_name);
 		$success = dol_is_file($file_path) && $file_name[0] !== '.' && unlink($file_path);
 		if ($success) {
@@ -581,4 +581,5 @@ class FileUpload
 
 		return 0;
 	}
+	*/
 }

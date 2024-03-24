@@ -45,7 +45,7 @@ Eval=মূল্যায়ন
 Evals=মূল্যায়ন
 NewEval=নতুন মূল্যায়ন
 ValidateEvaluation=মূল্যায়ন যাচাই করুন
-ConfirmValidateEvaluation=আপনি কি <b>%s</b><span class='notranslate'>রেফারেন্স দিয়ে এই মূল্যায়ন যাচাই করার বিষয়ে নিশ্চিত >?
+ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with the reference <b>%s</b>?
 EvaluationCard=মূল্যায়ন কার্ড
 RequiredRank=কাজের প্রোফাইলের জন্য প্রয়োজনীয় র‌্যাঙ্ক
 RequiredRankShort=প্রয়োজনীয় পদমর্যাদা

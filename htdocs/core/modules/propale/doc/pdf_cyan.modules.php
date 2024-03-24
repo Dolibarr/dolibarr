@@ -8,6 +8,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 class pdf_cyan extends ModelePDFPropales
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -124,7 +125,7 @@ class pdf_cyan extends ModelePDFPropales
 		}
 
 		// Define position of columns
-		$this->posxdesc = $this->marge_gauche + 1; // used for notes ans other stuff
+		$this->posxdesc = $this->marge_gauche + 1; // used for notes and other stuff
 
 
 		$this->tabTitleHeight = 5; // default height
@@ -186,7 +187,7 @@ class pdf_cyan extends ModelePDFPropales
 
 		$hidetop = 0;
 		if (getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE')) {
-			$hidetop = $conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE;
+			$hidetop = getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE');
 		}
 
 		// Loop on each lines to detect if there is at least one image to show
@@ -202,6 +203,7 @@ class pdf_cyan extends ModelePDFPropales
 
 				$objphoto->fetch($object->lines[$i]->fk_product);
 				//var_dump($objphoto->ref);exit;
+				$pdir = array();
 				if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 					$pdir[0] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/";
 					$pdir[1] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/';
@@ -276,7 +278,7 @@ class pdf_cyan extends ModelePDFPropales
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -317,6 +319,7 @@ class pdf_cyan extends ModelePDFPropales
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// Set $this->atleastonediscount if you have at least one discount
@@ -671,7 +674,7 @@ class pdf_cyan extends ModelePDFPropales
 
 					// Unit
 					if ($this->getColumnStatus('unit')) {
-						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
+						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'unit', $unit);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
@@ -711,9 +714,9 @@ class pdf_cyan extends ModelePDFPropales
 					$parameters = array(
 						'object' => $object,
 						'i' => $i,
-						'pdf' =>& $pdf,
-						'curY' =>& $curY,
-						'nexY' =>& $nexY,
+						'pdf' => & $pdf,
+						'curY' => & $curY,
+						'nexY' => & $nexY,
 						'outputlangs' => $outputlangs,
 						'hidedetails' => $hidedetails
 					);
@@ -784,7 +787,7 @@ class pdf_cyan extends ModelePDFPropales
 					if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
 						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
 					}
-					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate'=>$vatrate, 'vatcode'=>$vatcode, 'amount'=> $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
+					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 
 					if ($posYAfterImage > $posYAfterDescription) {
 						$nexY = max($nexY, $posYAfterImage);
@@ -793,10 +796,10 @@ class pdf_cyan extends ModelePDFPropales
 					// Add line
 					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);
-						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
+						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY + 1, $this->page_largeur - $this->marge_droite, $nexY + 1);
-						$pdf->SetLineStyle(array('dash'=>0));
+						$pdf->SetLineStyle(array('dash' => 0));
 					}
 
 					$nexY += 2; // Add space between lines
@@ -873,7 +876,7 @@ class pdf_cyan extends ModelePDFPropales
 					$already_merged = array();
 					foreach ($object->lines as $line) {
 						if (!empty($line->fk_product) && !(in_array($line->fk_product, $already_merged))) {
-							// Find the desire PDF
+							// Find the desired PDF
 							$filetomerge = new Propalmergepdfproduct($this->db);
 
 							if (getDolGlobalInt('MAIN_MULTILANGS')) {
@@ -940,7 +943,7 @@ class pdf_cyan extends ModelePDFPropales
 
 				//Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -950,7 +953,7 @@ class pdf_cyan extends ModelePDFPropales
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {
@@ -1153,7 +1156,7 @@ class pdf_cyan extends ModelePDFPropales
 	 *	@param  Propal		$object         Object proposal
 	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	int			$posy			Position depart
-	 *	@param	Translate	$outputlangs	Objet langs
+	 *	@param	Translate	$outputlangs	Object langs
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
 	 *	@return int							Position pour suite
 	 */
@@ -1424,6 +1427,14 @@ class pdf_cyan extends ModelePDFPropales
 			$pdf->SetTextColor(0, 0, 0);
 		}
 
+		$parameters = array('pdf' => &$pdf, 'object' => &$object, 'outputlangs' => $outputlangs, 'index' => &$index);
+
+		$reshook = $hookmanager->executeHooks('afterPDFTotalTable', $parameters, $this); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) {
+			$this->error = $hookmanager->error;
+			$this->errors = $hookmanager->errors;
+		}
+
 		$index++;
 		return ($tab2_top + ($tab2_hl * $index));
 	}
@@ -1433,8 +1444,8 @@ class pdf_cyan extends ModelePDFPropales
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		float|int	$tab_top		Top position of table
+	 *   @param		float|int	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
@@ -1506,7 +1517,7 @@ class pdf_cyan extends ModelePDFPropales
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	float|int
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
@@ -1770,6 +1781,7 @@ class pdf_cyan extends ModelePDFPropales
 			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->MultiCell($widthrecbox, 2, $carac_client_name, 0, $ltrdirection);
 
 			$posy = $pdf->getY();
@@ -1777,10 +1789,12 @@ class pdf_cyan extends ModelePDFPropales
 			// Show recipient information
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetXY($posx + 2, $posy);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, $ltrdirection);
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
 		return $top_shift;
 	}
 
@@ -1806,7 +1820,7 @@ class pdf_cyan extends ModelePDFPropales
 	 *	@param	TCPDF		$pdf            Object PDF
 	 *	@param  Propal		$object         Object proposal
 	 *	@param	int			$posy			Position depart
-	 *	@param	Translate	$outputlangs	Objet langs
+	 *	@param	Translate	$outputlangs	Object langs
 	 *	@return int							Position pour suite
 	 */
 	protected function drawSignatureArea(&$pdf, $object, $posy, $outputlangs)
@@ -1861,18 +1875,18 @@ class pdf_cyan extends ModelePDFPropales
 		);
 
 		/*
-		 * For exemple
+		 * For example
 		 $this->cols['theColKey'] = array(
 		 'rank' => $rank, // int : use for ordering columns
 		 'width' => 20, // the column width in mm
 		 'title' => array(
 		 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 		 'label' => ' ', // the final label : used fore final generated text
-		 'align' => 'L', // text alignement :  R,C,L
+		 'align' => 'L', // text alignment :  R,C,L
 		 'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 		 ),
 		 'content' => array(
-		 'align' => 'L', // text alignement :  R,C,L
+		 'align' => 'L', // text alignment :  R,C,L
 		 'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 		 ),
 		 );
@@ -1884,7 +1898,7 @@ class pdf_cyan extends ModelePDFPropales
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is usefull in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in somme case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -2034,6 +2048,7 @@ class pdf_cyan extends ModelePDFPropales
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		} elseif (empty($reshook)) {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrderInternal
 			$this->cols = array_replace($this->cols, $hookmanager->resArray); // array_replace is used to preserve keys
 		} else {
 			$this->cols = $hookmanager->resArray;

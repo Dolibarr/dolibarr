@@ -28,7 +28,7 @@ InvoiceProFormaDesc=<b>Proforma lasku</b> on todellinen lasku, mutta sillä ei o
 InvoiceReplacement=Korvaava lasku
 InvoiceReplacementShort=Korvaus
 InvoiceReplacementAsk=Laskun korvaava lasku
-InvoiceReplacementDesc=<b>Korvaava lasku</b> käytetään korvaamaan kokonaan lasku, jossa ei ole b0f70b5017f16. jo vastaanotettu.<span class='notranslate'><br><br>Huomaa: vain laskut, joissa ei ole maksu voidaan vaihtaa. Jos korvaamasi lasku ei ole vielä suljettu, se suljetaan automaattisesti hylätyksi.
+InvoiceReplacementDesc=<b>Replacement invoice</b> is used to completely replace an invoice with no payment already received.<br><br>Note: Only invoices with no payment on it can be replaced. If the invoice you replace is not yet closed, it will be automatically closed to 'abandoned'.
 InvoiceAvoir=Menoilmoitus
 InvoiceAvoirAsk=Menoilmoitus korjata laskun
 InvoiceAvoirDesc=<b>hyvityslasku</b> on negatiivinen lasku, jota käytetään korjaamaan se tosiasia, että laskussa näkyy summa, joka poikkeaa todellisesta summasta. maksettu (esim. asiakas maksoi liikaa vahingossa tai ei maksa koko summaa, koska tuotteet palautettiin).
@@ -93,6 +93,9 @@ CodePaymentMode=maksu -menetelmä (koodi)
 LabelPaymentMode=maksu -menetelmä (tunniste)
 PaymentModeShort=maksu -menetelmä
 PaymentTerm=maksu Termi
+IdPaymentTerm=Payment term (id)
+CodePaymentTerm=Payment term (code)
+LabelPaymentTerm=Payment term (label)
 PaymentConditions=Maksuehdot
 PaymentConditionsShort=Maksuehdot
 PaymentAmount=Maksusumma
@@ -151,7 +154,7 @@ BillShortStatusClosedPaidPartially=Maksettu (osittain)
 PaymentStatusToValidShort=Validoida
 ErrorVATIntraNotConfigured=Yhteisön sisäistä ALV-numeroa ei ole vielä määritetty
 ErrorNoPaiementModeConfigured=Tyyppiä oletus maksu ei ole määritetty. Korjaa tämä siirtymällä Laskumoduulin asetuksiin.
-ErrorCreateBankAccount=luo a pankkitili ja siirry sitten Laskumoduulin asetuspaneeliin ja määritä <span class='notranslate'>b0f70b5017f > tyyppejä
+ErrorCreateBankAccount=Create a bank account, then go to Setup panel of Invoice module to define payment types
 ErrorBillNotFound=Lasku %s ei ole olemassa
 ErrorInvoiceAlreadyReplaced=Virhe, yritit vahvistaa laskun korvataksesi laskun %s. Mutta tämä on jo korvattu laskulla %s.
 ErrorDiscountAlreadyUsed=Virhe, alennus jo käytössä
@@ -207,7 +210,7 @@ ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=Joissakin maissa tämä valint
 ConfirmClassifyPaidPartiallyReasonAvoirDesc=Käytä tätä vaihtoehtoa, jos kaikki muut ei sovi
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=<b>huono asiakas</b> on asiakas, joka kieltäytyy maksamasta velkansa.
 ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=Tämä valinta on käytössä, kun maksua ei ole täydellinen, koska jotkut tuotteet on palautettu
-ConfirmClassifyPaidPartiallyReasonBankChargeDesc=Maksamaton summa on <b>välittäjäpankkimaksut</b>, joka vähennetään suoraan b0aee833658</3span7. >oikea summa<span class='notranslate'></b>, jonka asiakas on maksanut.
+ConfirmClassifyPaidPartiallyReasonBankChargeDesc=The unpaid amount is <b>intermediary bank fees</b>, deducted directly from the <b>correct amount</b> paid by the Customer.
 ConfirmClassifyPaidPartiallyReasonWithholdingTaxDesc=Maksamatonta summaa ei koskaan makseta, koska se on ennakonpidätys vero
 ConfirmClassifyPaidPartiallyReasonOtherDesc=Käytä tätä vaihtoehtoa, jos kaikki muut eivät sovellu, esimerkiksi seuraavassa tilanteessa:<br> - maksu ei ole valmis, koska jokin tuotteet lähetettiin takaisin<br> – vaadittu summa liian tärkeäksi, koska alennus unohdettiin<br> Kaikissa tapauksissa ylikorjattu määrä on korjattava kirjanpitojärjestelmässä luomalla hyvityslasku.
 ConfirmClassifyPaidPartiallyReasonBadSupplierDesc=<b>huono toimittaja</b> on toimittaja, jota kieltäydymme maksamasta.
@@ -561,14 +564,14 @@ NoteListOfYourUnpaidInvoices=Huomautus: Tämä luettelo sisältää vain laskut 
 RevenueStamp=vero leima
 YouMustCreateInvoiceFromThird=Tämä vaihtoehto on käytettävissä vain luotaessa laskua kolmannen osapuolen "Asiakas"-välilehdeltä
 YouMustCreateInvoiceFromSupplierThird=Tämä vaihtoehto on käytettävissä vain, kun luot laskun kolmannen osapuolen välilehdeltä "Toimittaja"
-YouMustCreateStandardInvoiceFirstDesc=Sinun on luo vakiolasku ja muutettava se malliksi luo<span class='notranslate'> /span> uusi <span class='notranslate'>laskupohja
+YouMustCreateStandardInvoiceFirstDesc=You have to create a standard invoice first and convert it to "template" to create a new template invoice
 PDFCrabeDescription=Laskun PDF-malli Crabe. Täydellinen laskumalli (vanha Sponge-mallin toteutus)
 PDFSpongeDescription=Laskun PDF-malli Sponge. Täydellinen laskumalli
 PDFCrevetteDescription=Lasku PDF-malli Crevette. Täydellinen laskumalli tilannelaskuille
-TerreNumRefModelDesc1=Palautusnumero muodossa %syymm-nnnn vakiolaskuille ja b0ecb2ec87f49 yymm-nnnn hyvityslaskuille, joissa yy on vuosi, mm on kuukausi <span class='notranslate'>ja nnnn on peräkkäinen automaattisesti kasvava luku ilman taukoa <span class='notranslate'>ja > ei paluuta nollaan
-MarsNumRefModelDesc1=Palautusnumero muodossa %syymm-nnnn vakiolaskuille, %syymm-nnnn korvaavalle laskulle, %syymm-nnnn osamaksu laskuille ja</noec4b92' class=b span>yymm-nnnn hyvityslaskuille, joissa yy on vuosi, mm on kuukausi ja nnnn on peräkkäinen automaattisesti kasvava luku ilman taukoa <span class='notranslate'>b0ae6e9e5925a0z /span> ei paluuta arvoon 0
+TerreNumRefModelDesc1=Return number in the format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequential auto-incrementing number with no break and no return to 0
+MarsNumRefModelDesc1=Return number in the format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for down payment invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequential auto-incrementing number with no break and no return to 0
 TerreNumRefModelError=A bill alkaen $ syymm jo olemassa, ja ei ole yhteensopiva tämän mallin järjestyksessä. Poistaa sen tai nimetä sen aktivoida tämän moduulin.
-CactusNumRefModelDesc1=Palautusnumero muodossa %syymm-nnnn vakiolaskuille, %syymm-nnnn hyvityslaskuille ja %syymm-nnnn osamaksu laskuille, joissa kuukausi yy on luokka, mm 'notranslate'>ja</span> nnnn on peräkkäinen automaattisesti kasvava luku ilman taukoa ja ei paluuta nollaan
+CactusNumRefModelDesc1=Return number in the format %syymm-nnnn for standard invoices, %syymm-nnnn for credit notes and %syymm-nnnn for down payment invoices where yy is year, mm is month and nnnn is a sequential auto-incrementing number with no break and no return to 0
 EarlyClosingReason=Syy ennenaikaiseen sulkemiseen
 EarlyClosingComment=Varhainen päätöshuomautus
 ##### Types de contacts #####
@@ -609,8 +612,8 @@ PDFCrevetteSituationInvoiceLine=Tilanne N°%s: Laskutus N°%s osoitteessa %s
 TotalSituationInvoice=Kokonaistilanne
 invoiceLineProgressError=Laskun rivin edistyminen ei voi olla suurempi tai yhtä suuri kuin seuraava laskurivi
 updatePriceNextInvoiceErrorUpdateline=Virhe: päivitä hinta laskuriville: %s
-ToCreateARecurringInvoice=Jos haluat luo tämän sopimuksen toistuvan laskun, luo tämä Luonnos , muunna se sitten laskumalliksi <span class='notranslate'>ja määritä tulevien laskujen luontitiheys.
-ToCreateARecurringInvoiceGene=Voit luoda tulevat laskut säännöllisesti ja manuaalisesti siirtymällä kohtaan valikko <strong> span class='notranslate'>%s - %s - %s<span class='notranslate'>b01f65c07 /span>.
+ToCreateARecurringInvoice=To create a recurring invoice for this contract, first create this draft invoice, then convert it into an invoice template and define the frequency for generation of future invoices.
+ToCreateARecurringInvoiceGene=To generate future invoices regularly and manually, just go on menu <strong>%s - %s - %s</strong>.
 ToCreateARecurringInvoiceGeneAuto=Jos sinun on luotava tällaiset laskut automaattisesti, pyydä järjestelmänvalvojaa ottamaan käyttöön ja asennusmoduuli <strong>%s</strong>. Huomaa, että molempia menetelmiä (manuaalinen ja automaattinen) voidaan käyttää yhdessä ilman päällekkäisyyden vaaraa.
 DeleteRepeatableInvoice=Poista laskupohja
 ConfirmDeleteRepeatableInvoice=Haluatko varmasti poistaa kohteen laskupohja?

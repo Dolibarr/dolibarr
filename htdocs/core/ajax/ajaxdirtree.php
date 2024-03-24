@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,7 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 }
 
 $websitekey = GETPOST('websitekey', 'alpha');
-$pageid = GETPOST('pageid', 'int');
+$pageid = GETPOSTINT('pageid');
 
 // Load translation files required by the page
 $langs->load("ecm");
@@ -159,7 +160,7 @@ if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_
 	            	jQuery(document).ready(function () {
 	            		jQuery(".classfortooltip").tooltip({
 							show: { collision: "flipfit", effect:\'toggle\', delay:50 },
-							hide: { delay: 50 }, 	/* If I enable effect:\'toggle\' here, a bug appears: the tooltip is shown when collpasing a new dir if it was shown before */
+							hide: { delay: 50 }, 	/* If I enable effect:\'toggle\' here, a bug appears: the tooltip is shown when collapsing a new dir if it was shown before */
 							tooltipClass: "mytooltip",
 							content: function () {
 	              				return $(this).prop(\'title\');		/* To force to get title as is */
@@ -212,17 +213,18 @@ if (empty($conf->use_javascript_ajax) || getDolGlobalString('MAIN_ECM_DISABLE_JS
 				$expandedsectionarray[] = $idcursor;
 			}
 		}
-		$_SESSION['dol_ecmexpandedsectionarray'] = join(',', $expandedsectionarray);
+		$_SESSION['dol_ecmexpandedsectionarray'] = implode(',', $expandedsectionarray);
 	}
 	if ($section && GETPOST('sectionexpand') == 'false') {
 		// We removed all expanded sections that are child of the closed section
 		$oldexpandedsectionarray = $expandedsectionarray;
 		$expandedsectionarray = array(); // Reset
+		// @phan-suppress-next-line PhanEmptyForeachBody
 		foreach ($oldexpandedsectionarray as $sectioncursor) {
 			// TODO is_in_subtree(fulltree,sectionparent,sectionchild) does nox exists. Enable or remove this...
 			//if ($sectioncursor && ! is_in_subtree($sqltree,$section,$sectioncursor)) $expandedsectionarray[]=$sectioncursor;
 		}
-		$_SESSION['dol_ecmexpandedsectionarray'] = join(',', $expandedsectionarray);
+		$_SESSION['dol_ecmexpandedsectionarray'] = implode(',', $expandedsectionarray);
 	}
 	//print $_SESSION['dol_ecmexpandedsectionarray'].'<br>';
 

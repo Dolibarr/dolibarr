@@ -140,7 +140,7 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb		$db      Database handler
+	 *  @param      DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -211,7 +211,7 @@ class AccountancyCategory // extends CommonObject
 		if ($this->rowid > 0) {
 			$sql .= " ".((int) $this->rowid).",";
 		}
-		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
+		$sql .= " ".(!isset($this->code) ? "NULL" : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
 		$sql .= " ".(!isset($this->range_account) ? 'NULL' : "'".$this->db->escape($this->range_account)."'").",";
 		$sql .= " ".(!isset($this->sens) ? 'NULL' : "'".$this->db->escape($this->sens)."'").",";
@@ -357,12 +357,12 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " range_account=".(isset($this->range_account) ? "'".$this->db->escape($this->range_account)."'" : "null").",";
-		$sql .= " sens=".(isset($this->sens) ? $this->sens : "null").",";
-		$sql .= " category_type=".(isset($this->category_type) ? $this->category_type : "null").",";
+		$sql .= " sens=".(isset($this->sens) ? ((int) $this->sens) : "null").",";
+		$sql .= " category_type=".(isset($this->category_type) ? ((int) $this->category_type) : "null").",";
 		$sql .= " formula=".(isset($this->formula) ? "'".$this->db->escape($this->formula)."'" : "null").",";
-		$sql .= " position=".(isset($this->position) ? $this->position : "null").",";
-		$sql .= " fk_country=".(isset($this->fk_country) ? $this->fk_country : "null").",";
-		$sql .= " active=".(isset($this->active) ? $this->active : "null");
+		$sql .= " position=".(isset($this->position) ? ((int) $this->position) : "null").",";
+		$sql .= " fk_country=".(isset($this->fk_country) ? ((int) $this->fk_country) : "null").",";
+		$sql .= " active=".(isset($this->active) ? ((int) $this->active) : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -624,8 +624,8 @@ class AccountancyCategory // extends CommonObject
 	 * @param string 	$date_end			Date end
 	 * @param int 		$sens 				Sens of the account:  0: credit - debit (use this by default), 1: debit - credit
 	 * @param string	$thirdparty_code	Thirdparty code
-	 * @param int       $month 				Specifig month - Can be empty
-	 * @param int       $year 				Specifig year - Can be empty
+	 * @param int       $month 				Specific month - Can be empty
+	 * @param int       $year 				Specific year - Can be empty
 	 * @return integer 						Return integer <0 if KO, >= 0 if OK
 	 */
 	public function getSumDebitCredit($cpt, $date_start, $date_end, $sens, $thirdparty_code = 'nofilter', $month = 0, $year = 0)
@@ -773,7 +773,7 @@ class AccountancyCategory // extends CommonObject
 	 *
 	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
 	 * @param	int			$active				1= active, 0=not active
-	 * @return	array|int						Array of groups or -1 if error
+	 * @return	array<array{code:string,label:string,formula:string,position:string,category_type:string,sens:string,bc:string}>|int	Array of groups or -1 if error
 	 * @see getCatsCpts(), getCptsCat()
 	 */
 	public function getCats($categorytype = -1, $active = 1)
@@ -781,7 +781,7 @@ class AccountancyCategory // extends CommonObject
 		global $conf, $mysoc;
 
 		if (empty($mysoc->country_id)) {
-			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
+			dol_print_error(null, 'Call to select_accounting_account with mysoc country not yet defined');
 			exit();
 		}
 
@@ -846,7 +846,7 @@ class AccountancyCategory // extends CommonObject
 		$sql = '';
 
 		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
-			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
+			dol_print_error(null, 'Call to select_accounting_account with mysoc country not yet defined');
 			exit();
 		}
 

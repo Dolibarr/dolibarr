@@ -14,4 +14,4 @@
 -- along with this program. If not, see http://www.gnu.org/licenses/.
 
 
-ALTER TABLE llx_mrp_production_extrafields ADD INDEX idx_mrp_production_fk_object(fk_object);
+ALTER TABLE llx_mrp_production_extrafields ADD UNIQUE INDEX uk_mrp_production_fk_object(fk_object);

@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) - 2013-2016    Jean-François FERRY     <hello@librethic.io>
- * Copyright (C) - 2019         Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2021		Frédéric France				<frederic.france@netlogic.fr>
+/* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2021-2024	Frédéric France				<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,8 +43,8 @@ $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$msg_id = GETPOST('msg_id', 'int');
+$id = GETPOSTINT('id');
+$msg_id = GETPOSTINT('msg_id');
 
 $action = GETPOST('action', 'aZ09');
 
@@ -56,7 +56,7 @@ $userid = $user->id;
 
 $nowarray = dol_getdate(dol_now(), true);
 $nowyear = $nowarray['year'];
-$year = GETPOST('year', 'int') > 0 ? GETPOST('year', 'int') : $nowyear;
+$year = GETPOSTINT('year') > 0 ? GETPOSTINT('year') : $nowyear;
 $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
@@ -66,7 +66,7 @@ $object = new Ticket($db);
 // Security check
 //$result = restrictedArea($user, 'ticket|knowledgemanagement', 0, '', '', '', '');
 if (!$user->hasRight('ticket', 'read') && !$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
-	accessforbidden('Not enought permissions');
+	accessforbidden('Not enough permissions');
 }
 
 
@@ -103,7 +103,7 @@ $param_shownb = 'DOLUSERCOOKIE_ticket_by_status_shownb';
 $param_showtot = 'DOLUSERCOOKIE_ticket_by_status_showtot';
 $autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
 if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
-	$endyear = GETPOST($param_year, 'int');
+	$endyear = GETPOSTINT($param_year);
 	$shownb = GETPOST($param_shownb, 'alpha');
 	$showtot = GETPOST($param_showtot, 'alpha');
 } elseif (!empty($_COOKIE['DOLUSERCOOKIE_ticket_by_status'])) {
@@ -123,7 +123,7 @@ if (empty($endyear)) {
 
 $startyear = $endyear - 1;
 
-// Change default WIDHT and HEIGHT (we need a smaller than default for both desktop and smartphone)
+// Change default WIDTH and HEIGHT (we need a smaller than default for both desktop and smartphone)
 $WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '100%' : '80%';
 if (empty($conf->dol_optimize_smallscreen)) {
 	$HEIGHT = '200';
@@ -156,13 +156,13 @@ $tick = array(
 
 $sql = "SELECT t.fk_statut, COUNT(t.fk_statut) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
 $sql .= dolSqlDateFilter('datec', 0, 0, $endyear);
 
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
@@ -207,7 +207,7 @@ if ($result) {
 		}
 	}
 
-	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';	// This define $badgeStatusX
 
 	$dataseries = array();
 	$colorseries = array();
@@ -220,8 +220,10 @@ if ($result) {
 	$colorseries[Ticket::STATUS_ASSIGNED] = $badgeStatus3;
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_IN_PROGRESS]), 'data' => round($tick['inprogress']));
 	$colorseries[Ticket::STATUS_IN_PROGRESS] = $badgeStatus4;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_WAITING]), 'data' => round($tick['waiting']));
-	$colorseries[Ticket::STATUS_WAITING] = '-'.$badgeStatus4;
+	if (getDolGlobalString('TICKET_INCLUDE_SUSPENDED_STATUS')) {
+		$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_WAITING]), 'data' => round($tick['waiting']));
+		$colorseries[Ticket::STATUS_WAITING] = '-'.$badgeStatus4;
+	}
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_NEED_MORE_INFO]), 'data' => round($tick['needmoreinfo']));
 	$colorseries[Ticket::STATUS_NEED_MORE_INFO] = '-'.$badgeStatus3;
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_CANCELED]), 'data' => round($tick['canceled']));
@@ -332,13 +334,13 @@ if ($user->hasRight('ticket', 'read')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 
 	$sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
 	$sql .= " AND t.fk_statut = 0";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
@@ -374,7 +376,6 @@ if ($user->hasRight('ticket', 'read')) {
 				$object->id = $objp->rowid;
 				$object->ref = $objp->ref;
 				$object->track_id = $objp->track_id;
-				$object->fk_statut = $objp->status;
 				$object->status = $objp->status;
 				$object->progress = $objp->progress;
 				$object->subject = $objp->subject;

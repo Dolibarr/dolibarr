@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2020 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,17 +37,7 @@ class box_members_last_modified extends ModeleBoxes
 	public $boxlabel = "BoxLastModifiedMembers";
 	public $depends = array("adherent");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -67,7 +57,7 @@ class box_members_last_modified extends ModeleBoxes
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !(isModEnabled('adherent') && $user->hasRight('adherent', 'lire'));
+		$this->hidden = !(isModEnabled('member') && $user->hasRight('adherent', 'lire'));
 	}
 
 	/**
@@ -120,7 +110,7 @@ class box_members_last_modified extends ModeleBoxes
 					$memberstatic->email = $objp->email;
 					$memberstatic->morphy = $objp->morphy;
 					$memberstatic->company = $objp->company;
-					$memberstatic->statut = $objp->status;
+					$memberstatic->status = $objp->status;
 					$memberstatic->date_creation = $datec;
 					$memberstatic->date_modification = $datem;
 					$memberstatic->need_subscription = $objp->subscription;

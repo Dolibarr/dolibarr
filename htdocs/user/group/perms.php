@@ -39,11 +39,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $module = GETPOST('module', 'alpha');
-$rights = GETPOST('rights', 'int');
+$rights = GETPOSTINT('rights');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'groupperms'; // To manage different context of search
 
 if (!isset($id) || empty($id)) {
@@ -317,7 +317,7 @@ if ($object->id > 0) {
 			$objMod = $modules[$obj->module];
 
 			if (GETPOSTISSET('forbreakperms_'.$obj->module)) {
-				$ishidden = GETPOST('forbreakperms_'.$obj->module, 'int');
+				$ishidden = GETPOSTINT('forbreakperms_'.$obj->module);
 			} elseif (in_array($j, $cookietohidegrouparray)) {	// If j is among list of hidden group
 				$ishidden = 1;
 			} else {
@@ -331,7 +331,7 @@ if ($object->id > 0) {
 
 				$j++;
 				if (GETPOSTISSET('forbreakperms_'.$obj->module)) {
-					$ishidden = GETPOST('forbreakperms_'.$obj->module, 'int');
+					$ishidden = GETPOSTINT('forbreakperms_'.$obj->module);
 				} elseif (in_array($j, $cookietohidegrouparray)) {	// If j is among list of hidden group
 					$ishidden = 1;
 				} else {
@@ -438,7 +438,7 @@ if ($object->id > 0) {
 			if ($user->admin) {
 				print '<td class="right">';
 				$htmltext = $langs->trans("ID").': '.$obj->id;
-				$htmltext .= '<br>'.$langs->trans("Permission").': user->rights->'.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '');
+				$htmltext .= '<br>'.$langs->trans("Permission").': user->hasRight(\''.$obj->module.'\', \''.$obj->perms.'\''.($obj->subperms ? ', \''.$obj->subperms.'\'' : '').')';
 				print $form->textwithpicto('', $htmltext);
 				//print '<span class="opacitymedium">'.$obj->id.'</span>';
 				print '</td>';

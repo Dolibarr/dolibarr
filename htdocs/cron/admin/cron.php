@@ -119,7 +119,7 @@ print '<br><br><br>';
 
 //print $langs->trans("UseMenuModuleToolsToAddCronJobs", dol_buildpath('/cron/list.php?leftmenu=admintools', 1)).'<br>';
 if (getDolGlobalString('CRON_WARNING_DELAY_HOURS')) {
-	print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS)).'<br>';
+	print info_admin($langs->trans("WarningCronDelayed", getDolGlobalString('CRON_WARNING_DELAY_HOURS'))).'<br>';
 }
 
 print '<br>';

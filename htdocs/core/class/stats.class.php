@@ -3,6 +3,7 @@
  * Copyright (c) 2008-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,21 +76,21 @@ abstract class Stats
 	public $month;
 
 	/**
-	 *  @param	int		$year 			number
-	 * 	@param	int 	$format 		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * 	@return int						value
+	 *	@param	int		$year 			number
+	 *	@param	int 	$format 		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array of nb each month
 	 */
 	abstract protected function getNbByMonth($year, $format = 0);
 
 	/**
 	 * Return nb of elements by month for several years
 	 *
-	 * @param 	int		$endyear		Start year
-	 * @param 	int		$startyear		End year
-	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
-	 * @param	int		$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @param   int 	$startmonth		month of the fiscal year start min 1 max 12 ; if 1 = january
-	 * @return 	array					Array of values
+	 *	@param 	int		$endyear		Start year
+	 *	@param 	int		$startyear		End year
+	 *	@param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
+	 *	@param	int		$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *	@param   int 	$startmonth		month of the fiscal year start min 1 max 12 ; if 1 = january
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array of values
 	 */
 	public function getNbByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $format = 0, $startmonth = 1)
 	{
@@ -99,7 +100,8 @@ abstract class Stats
 			return array();
 		}
 
-		$datay = array();
+		$data  = array();  // This is the return value
+		$datay = array();  // This is a work value
 
 		// Search into cache
 		if (!empty($cachedelay)) {
@@ -127,6 +129,7 @@ abstract class Stats
 		if ($foundintocache) {    // Cache file found and is not too old
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
+			'@phan-var-force array<int<0,11>,array{0:int<1,12>,1:int}> $data';
 		} else {
 			$year = $startyear;
 			$sm = $startmonth - 1;
@@ -138,18 +141,17 @@ abstract class Stats
 				$year++;
 			}
 
-			$data = array();
-
 			for ($i = 0; $i < 12; $i++) {
 				$data[$i][] = $datay[$endyear][($i + $sm) % 12][0];
 				$year = $startyear;
 				while ($year <= $endyear) {
 					// floor(($i + $sm) / 12)) is 0 if we are after the month start $sm and same year, become 1 when we reach january of next year
-					$data[$i][] = $datay[$year - (1 - floor(($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1];
+					$data[$i][] = $datay[$year - (1 - (int) floor(($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1];
 					$year++;
 				}
 			}
 		}
+
 
 		// Save cache file
 		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1)) {
@@ -170,15 +172,15 @@ abstract class Stats
 	}
 
 	/**
-	 * @param	int		$year			year number
-	 * @param	int 	$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 * @return 	int						value
+	 *	@param	int		$year			year number
+	 *	@param	int 	$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values by month
 	 */
 	abstract protected function getAmountByMonth($year, $format = 0);
 
 	/**
 	 * Return amount of elements by month for several years.
-	 * Criterias used to build request are defined into the constructor of parent class into xxx/class/xxxstats.class.php
+	 * Criteria used to build request are defined into the constructor of parent class into xxx/class/xxxstats.class.php
 	 * The caller of class can add more filters into sql request by adding criteris into the $stats->where property just after
 	 * calling constructor.
 	 *
@@ -187,7 +189,7 @@ abstract class Stats
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
 	 * @param	int		$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 * @param   int 	$startmonth		month of the fiscal year start min 1 max 12 ; if 1 = january
-	 * @return 	array					Array of values
+	 * @return	array<int<0,11>,array<string|int|float>>	Array of values
 	 */
 	public function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $format = 0, $startmonth = 1)
 	{
@@ -198,6 +200,7 @@ abstract class Stats
 		}
 
 		$datay = array();
+		$data = array();  // Return value
 
 		// Search into cache
 		if (!empty($cachedelay)) {
@@ -237,7 +240,6 @@ abstract class Stats
 				$year++;
 			}
 
-			$data = array();
 			// $data = array('xval'=>array(0=>xlabel,1=>yval1,2=>yval2...),...)
 			for ($i = 0; $i < 12; $i++) {
 				$data[$i][] = isset($datay[$endyear][($i + $sm) % 12]['label']) ? $datay[$endyear][($i + $sm) % 12]['label'] : $datay[$endyear][($i + $sm) % 12][0]; // set label
@@ -271,17 +273,17 @@ abstract class Stats
 	}
 
 	/**
-	 * @param	int     $year           year number
-	 * @return 	array					array of values
+	 *	@param	int     $year           year number
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values
 	 */
 	abstract protected function getAverageByMonth($year);
 
 	/**
-	 * Return average of entity by month for several years
+	 *	Return average of entity by month for several years
 	 *
-	 * @param	int		$endyear		Start year
-	 * @param	int		$startyear		End year
-	 * @return 	array					Array of values
+	 *	@param	int		$endyear		Start year
+	 *	@param	int		$startyear		End year
+	 *	@return array<array<int|float>>	Array of values
 	 */
 	public function getAverageByMonthWithPrevYear($endyear, $startyear)
 	{
@@ -290,14 +292,13 @@ abstract class Stats
 		}
 
 		$datay = array();
+		$data = array();
 
 		$year = $startyear;
 		while ($year <= $endyear) {
 			$datay[$year] = $this->getAverageByMonth($year);
 			$year++;
 		}
-
-		$data = array();
 
 		for ($i = 0; $i < 12; $i++) {
 			$data[$i][] = $datay[$endyear][$i][0];
@@ -312,12 +313,12 @@ abstract class Stats
 	}
 
 	/**
-	 * Return count, and sum of products
+	 *	Return count, and sum of products
 	 *
-	 * @param	int		$year			Year
-	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
-	 * @param  	int     $limit      	Limit
-	 * @return 	array					Array of values
+	 *	@param	int		$year			Year
+	 *	@param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
+	 *	@param 	int     $limit      	Limit
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values
 	 */
 	public function getAllByProductEntry($year, $cachedelay = 0, $limit = 10)
 	{
@@ -325,7 +326,7 @@ abstract class Stats
 
 		$data = array();
 
-		// Search into cache
+		// Search in cache
 		if (!empty($cachedelay)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
@@ -352,6 +353,7 @@ abstract class Stats
 		if ($foundintocache) {    // Cache file found and is not too old
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
+			'@phan-var-force array<int<0,11>,array{0:int<1,12>,1:int|float}> $data';  // Phan can't decode json_decode's return value
 		} else {
 			// This method is defined in parent object only, not into abstract, so we disable phpstan warning
 			/** @phpstan-ignore-next-line */
@@ -465,13 +467,13 @@ abstract class Stats
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *     Renvoie le nombre de documents par mois pour une annee donnee
-	 *     Return number of documents per month for a given year
+	 *	Renvoie le nombre de documents par mois pour une annee donnee
+	 *	Return number of documents per month for a given year
 	 *
-	 *     @param   int		$year       Year
-	 *     @param   string	$sql        SQL
-	 *     @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *     @return	array				Array of nb each month
+	 *	@param	int		$year       Year
+	 *	@param	string	$sql        SQL
+	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array of nb each month
 	 */
 	protected function _getNbByMonth($year, $sql, $format = 0)
 	{
@@ -523,12 +525,12 @@ abstract class Stats
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *     Return the amount per month for a given year
+	 *	Return the amount per month for a given year
 	 *
-	 *     @param	int		$year       Year
-	 *     @param   string	$sql		SQL
-	 *     @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *     @return	array
+	 *	@param	int		$year       Year
+	 *	@param   string	$sql		SQL
+	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of nb each month
 	 */
 	protected function _getAmountByMonth($year, $sql, $format = 0)
 	{
@@ -580,13 +582,12 @@ abstract class Stats
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *  Renvoie le montant moyen par mois pour une annee donnee
 	 *  Return the amount average par month for a given year
 	 *
 	 *  @param  int     $year       Year
 	 *  @param  string  $sql        SQL
 	 *  @param  int     $format     0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *  @return array
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of average each month
 	 */
 	protected function _getAverageByMonth($year, $sql, $format = 0)
 	{
@@ -643,7 +644,7 @@ abstract class Stats
 	 *
 	 *  @param  string  $sql        SQL
 	 *  @param  int     $limit      Limit
-	 *  @return array
+	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of total of product refs each month
 	 */
 	protected function _getAllByProduct($sql, $limit = 10)
 	{
@@ -682,7 +683,7 @@ abstract class Stats
 	/**
 	 *  Returns the summed amounts per year for a given number of past years ending now
 	 *  @param  string  $sql    SQL
-	 *  @return array
+	 *	@return	array<int,array{0:int,1:int}>	Array of sum of amounts
 	 */
 	protected function _getAmountByYear($sql)
 	{
@@ -693,7 +694,6 @@ abstract class Stats
 			$i = 0;
 			while ($i < $num) {
 				$row = $this->db->fetch_row($resql);
-				$j = (int) $row[0];
 				$result[] = [
 					0 => (int) $row[0],
 					1 => (int) $row[1],

@@ -181,7 +181,7 @@ print $langs->trans("NotificationsDescUser").'<br>';
 if (isModEnabled("societe")) {
 	print $langs->trans("NotificationsDescContact").'<br>';
 }
-print $langs->trans("NotificationsDescGlobal").'<br>';
+print $langs->trans("NotificationsDescGlobal").' - '.$langs->trans("YouAreHere").'<br>';
 print '</span>';
 print '<br>';
 
@@ -448,7 +448,7 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	$inputfieldalreadyshown = 0;
 	// Notification with threshold
 	foreach ($conf->global as $key => $val) {
-		if ($val == '' || !preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifiedevent['code'].'_THRESHOLD_HIGHER_(.*)/', $key, $reg)) {
+		if ($val == '' || !preg_match('/^NOTIFICATION_FIXEDEMAIL_'.preg_quote($notifiedevent['code'], '/').'_THRESHOLD_HIGHER_(.*)/', $key, $reg)) {
 			continue;
 		}
 

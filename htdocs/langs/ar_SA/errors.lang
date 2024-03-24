@@ -313,7 +313,7 @@ ErrorTooMuchFileInForm=يوجد عدد كبير جدًا من الملفات ف�
 ErrorSessionInvalidatedAfterPasswordChange=تم إبطال الجلسة بعد تغيير كلمة المرور أو البريد الإلكتروني حالة أو تواريخ الصلاحية. الرجاء إعادة تسجيل الدخول.
 ErrorExistingPermission = الإذن <b>%s</b> للكائن  <b>%s</b> موجود بالفعل
 ErrorFieldExist=قيمة <b>%s</b> موجودة بالفعل
-ErrorEqualModule=نموذج غير صالح في <b>%s</b> 
+ErrorEqualModule=نموذج غير صالح في <b>%s</b>
 ErrorFieldValue=قيمة <b>%s</b> غير صحيحة
 ErrorCoherenceMenu=<b>%s</b> مطلوب عندما  <b>%s</b> هو "يسار"
 ErrorUploadFileDragDrop=حدث خطأ أثناء تحميل الملف (الملفات).
@@ -369,11 +369,11 @@ WarningPaypalPaymentNotCompatibleWithStrict=تجعل القيمة "صارمة" �
 WarningThemeForcedTo=تحذير ، تم إجبار السمة على <b> %s </b> بواسطة الثابت المخفي MAIN_FORCETHEME
 WarningPagesWillBeDeleted=تحذير، سيؤدي هذا أيضًا إلى حذف كافة الصفحات/الحاويات الموجودة بالموقع. يجب عليك تصدير موقع الويب الخاص بك من قبل، حتى يكون لديك نسخة احتياطية لإعادة استيراده لاحقًا.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=يتم تعطيل التحقق التلقائي عند تعيين خيار تقليل المخزون على "التحقق من صحة فاتورة".
-WarningModuleNeedRefresh = نموذج <b>%s<span class='notranslate'></b></ تم تعطيل النطاق>. لا تنس تمكينه
+WarningModuleNeedRefresh = Module <b>%s</b> has been disabled. Don't forget to enable it
 WarningPermissionAlreadyExist=الأذونات الموجودة لهذا الكائن
 WarningGoOnAccountancySetupToAddAccounts=إذا كانت هذه القائمة فارغة، فانتقل إلى القائمة %s - %s - %s لتحميل أو إنشاء حسابات لدليل الحساب الخاص بك.
 WarningCorrectedInvoiceNotFound=لم يتم العثور على فاتورة المصحح
-WarningCommentNotFound=يرجى التحقق من موضع بداية التعليقات و لـ <b>%sقسم </b> في الملف <b>%s<span class='notranslate'></b></ تمتد> قبل تقديم الإجراء الخاص بك
+WarningCommentNotFound=Please check placement of start and end comments for <b>%s</b> section in file <b>%s</b> before submitting your action
 WarningAlreadyReverse=لقد انعكست حركة الأسهم بالفعل
 
 SwissQrOnlyVIR = لا يمكن إضافة SwissQR فاتورة إلا على الفواتير التي تم تعيينها ليتم دفعها من خلال دفعات تحويل الائتمان.

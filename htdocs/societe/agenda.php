@@ -52,10 +52,10 @@ if (GETPOST('actioncode', 'array')) {
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -76,7 +76,7 @@ $object = new Societe($db);
 $hookmanager->initHooks(array('agendathirdparty', 'globalcard'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -94,7 +94,7 @@ $result = restrictedArea($user, 'societe', $socid, '&societe');
  *	Actions
  */
 
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -123,15 +123,12 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $title = $langs->trans("Agenda");
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name." - ".$title;
 }
 $help_url = '';
 llxHeader('', $title, $help_url);
 
-if (isModEnabled('notification')) {
-	$langs->load("mails");
-}
 $head = societe_prepare_head($object);
 
 
@@ -197,7 +194,7 @@ if (isModEnabled('agenda')) {
 if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 	print '<br>';
 
-	$param = '&socid='.urlencode($socid);
+	$param = '&socid='.urlencode((string) ($socid));
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}

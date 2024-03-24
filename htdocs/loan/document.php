@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2023  Alexandre Spangaro  <aspangaro@easya.solutions>
  * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array("other", "companies", "compta", "bills", "loan"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
@@ -47,10 +48,10 @@ if ($user->socid) {
 $result = restrictedArea($user, 'loan', $id, '', '');
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }
@@ -72,7 +73,7 @@ if ($id > 0) {
 $upload_dir = $conf->loan->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'loan';
 
-$permissiontoadd = $user->rights->loan->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+$permissiontoadd = $user->hasRight('loan', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 
 
 /*
@@ -140,7 +141,8 @@ if ($object->id) {
 
 	$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+	$morehtmlstatus = $morehtmlright;
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
@@ -164,8 +166,8 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'loan';
-	$permissiontoadd = $user->rights->loan->write;
-	$permtoedit = $user->rights->loan->write;
+	$permissiontoadd = $user->hasRight('loan', 'write');
+	$permtoedit = $user->hasRight('loan', 'write');
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

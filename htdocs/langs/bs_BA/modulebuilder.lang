@@ -94,7 +94,7 @@ SeeExamples=Pogledajte primjere ovdje
 EnabledDesc=Uslov da ovo polje bude aktivno.<br><br>Primjeri:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
 VisibleDesc=Je li polje vidljivo? (Primjeri: 0=Nikad vidljivo, 1=Vidljivo na listi i kreiranje/ažuriranje/pregled obrazaca, 2=Vidljivo samo na listi, 3=Vidljivo na obrascu za kreiranje/ažuriranje/pregled samo (ne na listama), 4=Vidljivo na listama i samo ažuriranje/pregled obrasca (ne kreiranje), 5=Vidljivo na listi i samo za prikaz (ne kreirajte, ne ažurirajte).<br><br>Upotreba negativne vrijednosti znači da polje nije prikazano podrazumevano na listi, ali se može izabrati za pregled).
 ItCanBeAnExpression=To može biti izraz. Primjer:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user ->hasRight('odmor', 'define_holiday')?1:5
-DisplayOnPdfDesc=Prikažite ovo polje na kompatibilnim PDF dokumentima, možete upravljati pozicijom pomoću polja "Pozicija".<br><strong>Za dokument :</strong><br>0 = nije prikazano <br>1 = display<br>2 = prikaz samo ako nije prazan<br><br>b0e7843947b0e7843947 span>Za redove dokumenta :<span class='notranslate'></strong><br>0 = nije prikazano <br>1 = prikazano u koloni<br>3 = prikaz u stupcu opisa reda nakon opisa<br>4 = prikaz u stupcu opisa nakon opisa samo ako nije prazan
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=Na PDF
 IsAMeasureDesc=Može li se vrijednost polja kumulirati da se ukupan iznos dobije na listi? (Primjeri: 1 ili 0)
 SearchAllDesc=Koristi li se polje za pretraživanje iz alata za brzo pretraživanje? (Primjeri: 1 ili 0)
@@ -111,7 +111,7 @@ TriggerDefDesc=Definirajte u datoteci okidača kod koji želite da izvršite kad
 SeeIDsInUse=Pogledajte ID-ove koji se koriste u vašoj instalaciji
 SeeReservedIDsRangeHere=Pogledajte raspon rezerviranih ID-ova
 ToolkitForDevelopers=Komplet alata za Dolibarr programere
-TryToUseTheModuleBuilder=Ako poznajete SQL i PHP, možete koristiti čarobnjaka za izradu izvornih modula.<br>Omogućite modul <strong>%s</strong> b01f6482 koristi the4 čarobnjaka klikom na <span class='notranslate'><span class="fa fa-bug"></span> u gornjem desnom meniju.<br>Warning : Ovo je napredna razvojna funkcija, <b>ne</b> eksperimentirajte na vašoj proizvodnoj lokaciji!
+TryToUseTheModuleBuilder=If you have knowledge of SQL and PHP, you may use the native module builder wizard.<br>Enable the module <strong>%s</strong> and use the wizard by clicking the <span class="fa fa-bug"></span> on the top right menu.<br>Warning: This is an advanced developer feature, do <b>not</b> experiment on your production site!
 SeeTopRightMenu=Pogledajte <span class="fa fa-bug"></span> u gornjem desnom meniju
 AddLanguageFile=Dodajte jezički fajl
 YouCanUseTranslationKey=Ovdje možete koristiti ključ koji je ključ za prijevod koji se nalazi u jezičnoj datoteci (pogledajte karticu "Jezici")
@@ -148,7 +148,7 @@ CSSListClass=CSS za listu
 NotEditable=Nije moguće uređivati
 ForeignKey=Strani ključ
 ForeignKeyDesc=Ako vrijednost ovog polja mora biti zajamčena da postoji u drugoj tabeli. Ovdje unesite sintaksu koja odgovara vrijednosti: ime tablice.parentfieldtocheck
-TypeOfFieldsHelp=Primjer:<br>varchar(99)<br>e-pošta<br>telefon<span klasa ='notranslate'><br></span>ip<br>url<br>passwordb03b92fcz1 span>double(24,8)<span class='notranslate'><br>real<br>text<br>html <br>date<br>datetime<br>timestamp<span class='notranslate' <br></span>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]fda149bzcc<b03142bzcc<br>'1' znači da dodajemo + dugme nakon kombinacije da kreiramo zapis<br>'filter' je Uvjet sintakse univerzalnog filtera, primjer: '((status:=:1) i (fk_user:=:__USER_ID__) i( entitet:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Ovo je tip polja/atributa.
 AsciiToHtmlConverter=Ascii u HTML konverter
 AsciiToPdfConverter=Ascii u PDF konverter
@@ -180,7 +180,7 @@ FailedToAddCodeIntoDescriptor=Dodavanje koda u deskriptor nije uspjelo. Provjeri
 DictionariesCreated=Rječnik <b>%s</b> uspješno kreiran
 DictionaryDeleted=Rječnik <b>%s</b> je uspješno uklonjen
 PropertyModuleUpdated=Svojstvo <b>%s</b> je uspješno ažurirano
-InfoForApiFile=* Kada generirate datoteku po prvi put, sve metode će biti kreirane <strong>za svaki objekt.</strong><br>* Kada kliknete na <strong>ukloni</strong> samo uklanjate sve metode za klasu <span ='notranslate'><strong></span>odabrani objekat</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Stranica za podešavanje modula
 EmailingSelectors=Emails selectors
 EmailingSelectorDesc=Možete generirati i ovdje urediti datoteke klasa kako biste pružili nove birače cilja e-pošte za modul masovnog slanja e-pošte

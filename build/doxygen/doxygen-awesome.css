@@ -160,7 +160,7 @@ html {
     --toc-background: var(--side-nav-background);
     --toc-foreground: var(--side-nav-foreground);
 
-    /* height of an item in any tree / collapsable table */
+    /* height of an item in any tree / collapsible table */
     --tree-item-height: 30px;
 
     --memname-font-size: var(--code-font-size);

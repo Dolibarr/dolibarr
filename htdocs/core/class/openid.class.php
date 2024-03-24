@@ -184,7 +184,7 @@ class SimpleOpenID
 	{
 		// phpcs:enable
 		$e = $this->error;
-		return array('code'=>$e[0], 'description'=>$e[1]);
+		return array('code' => $e[0], 'description' => $e[1]);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -198,6 +198,7 @@ class SimpleOpenID
 	public function ErrorStore($code, $desc = null)
 	{
 		// phpcs:enable
+		$errs = array();
 		$errs['OPENID_NOSERVERSFOUND'] = 'Cannot find OpenID Server TAG on Identity page.';
 		if ($desc == null) {
 			$desc = $errs[$code];
@@ -359,7 +360,7 @@ class SimpleOpenID
 	 * Get openid server
 	 *
 	 * @param	string	$url	Url to found endpoint
-	 * @return 	string			Endpoint
+	 * @return 	string|false	Endpoint, of false if error
 	 */
 	public function GetOpenIDServer($url = '')
 	{
@@ -368,7 +369,7 @@ class SimpleOpenID
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		if (empty($url)) {
-			$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+			$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL');
 		}
 
 		$response = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'));
@@ -485,7 +486,7 @@ class SimpleOpenID
 	 * Get XRDS response and set possible servers.
 	 *
 	 * @param	string	$url	Url of endpoint to request
-	 * @return 	string			First endpoint OpenID server found. False if it failed to found.
+	 * @return 	string|false	First endpoint OpenID server found. False if it failed to found.
 	 */
 	public function sendDiscoveryRequestToGetXRDS($url = '')
 	{
@@ -493,7 +494,7 @@ class SimpleOpenID
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		if (empty($url)) {
-			$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+			$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL');
 		}
 
 		dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS get XRDS');

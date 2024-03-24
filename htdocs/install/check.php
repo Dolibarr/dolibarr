@@ -275,7 +275,7 @@ if (is_readable($conffile) && filesize($conffile) > 8) {
 		$fp = @fopen($conffile, "w");
 		if ($fp) {
 			@fwrite($fp, '<?php');
-			@fputs($fp, "\n");
+			@fwrite($fp, "\n");
 			fclose($fp);
 		} else {
 			dolibarr_install_syslog("check: failed to create a new file ".$conffile." into current dir ".getcwd().". Please check permissions.", LOG_ERR);
@@ -347,7 +347,7 @@ if (!file_exists($conffile)) {
 					if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
 						require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
 						if (preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
-							$dolibarr_main_db_encrypted_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass); // We need to set this as it is used to know the password was initially crypted
+							$dolibarr_main_db_encrypted_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass); // We need to set this as it is used to know the password was initially encrypted
 							$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 						} else {
 							$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);

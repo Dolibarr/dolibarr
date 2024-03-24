@@ -320,7 +320,7 @@ ViewTicket=ትኬት ይመልከቱ
 ViewMyTicketList=የቲኬቴን ዝርዝር ይመልከቱ
 ErrorEmailMustExistToCreateTicket=ስህተት፡ የኢሜል አድራሻችን በውሂብ ጎታችን ውስጥ አልተገኘም።
 TicketNewEmailSubjectAdmin=አዲስ ቲኬት ተፈጥሯል - Ref %s (የህዝብ ትኬት መታወቂያ %s)
-TicketNewEmailBodyAdmin=<p>ትኬት አሁን የተፈጠረው በመታወቂያ #%s ነው፡ መረጃውን ይመልከቱ፡<span class='notranslate'>b0679c9a6a6a6d43 >
+TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
 SeeThisTicketIntomanagementInterface=በአስተዳደር በይነገጽ ውስጥ ትኬት ይመልከቱ
 TicketPublicInterfaceForbidden=የቲኬቶቹ ይፋዊ በይነገጽ አልነቃም።
 ErrorEmailOrTrackingInvalid=መታወቂያ ወይም ኢሜይል ለመከታተል መጥፎ ዋጋ

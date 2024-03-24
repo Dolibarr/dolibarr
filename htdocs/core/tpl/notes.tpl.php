@@ -20,7 +20,7 @@
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 // $permissionnote 	must be defined by caller. For example $permissionnote=$user->rights->module->create
@@ -34,7 +34,7 @@ if ($module == "product") {
 }
 $colwidth = (isset($colwidth) ? $colwidth : (empty($cssclass) ? '25' : ''));
 // Set $permission from the $permissionnote var defined on calling page
-$permission = (isset($permissionnote) ? $permissionnote : (isset($permission) ? $permission : (isset($user->rights->$module->create) ? $user->rights->$module->create : (isset($user->rights->$module->creer) ? $user->rights->$module->creer : 0))));
+$permission = (isset($permissionnote) ? $permissionnote : (isset($permission) ? $permission : ($user->hasRight($module, 'create') ? $user->rights->$module->create : ($user->hasRight($module, 'creer') ? $user->rights->$module->creer : 0))));
 $moreparam = (isset($moreparam) ? $moreparam : '');
 $value_public = $object->note_public;
 $value_private = $object->note_private;
@@ -99,7 +99,7 @@ if ($module == 'propal') {
 } elseif ($module == 'user') {
 	$permission = $user->hasRight("user", "self", "write");
 }
-//else dol_print_error('','Bad value '.$module.' for param module');
+//else dol_print_error(null,'Bad value '.$module.' for param module');
 
 if (isModEnabled('fckeditor') && getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC')) {
 	$typeofdatapub = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.

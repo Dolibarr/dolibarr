@@ -28,7 +28,7 @@
 // - create table ll_session from the llx_session-disabled.sql file
 // - uncomment the include DOL_DOCUMENT_ROOT.'/core/lib/phpsessionindb.inc.php into main.inc.php
 // - in your PHP.ini, set:  session.save_handler = user
-// The session_set_save_handler() at end of this fille will replace default session management.
+// The session_set_save_handler() at end of this file will replace default session management.
 
 
 /**

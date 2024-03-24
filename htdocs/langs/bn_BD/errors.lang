@@ -81,7 +81,7 @@ ErrorNoValueForRadioType=Please fill value for radio list
 ErrorBadFormatValueList=The list value cannot have more than one comma: <u>%s</u>, but need at least one: key,value
 ErrorFieldCanNotContainSpecialCharacters=<b>%s</b> ক্ষেত্রটিতে অবশ্যই বিশেষ অক্ষর থাকবে না।
 ErrorFieldCanNotContainSpecialNorUpperCharacters=<b>%s</b> বিশেষ অক্ষর থাকা উচিত নয়, বড় হাতের অক্ষরও থাকবে না অক্ষর, এবং একটি বর্ণানুক্রমিক অক্ষর দিয়ে শুরু করতে হবে (a-z)
-ErrorFieldMustHaveXChar=<b>%s</b> ক্ষেত্রটিতে কমপক্ষে <span class=' থাকতে হবে notranslate'>%s</span> অক্ষর।
+ErrorFieldMustHaveXChar=The field <b>%s</b> must have at least %s characters.
 ErrorNoAccountancyModuleLoaded=No accountancy module activated
 ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP matching is not complete.
@@ -95,9 +95,9 @@ ErrorModuleRequireJavascript=এই বৈশিষ্ট্যটি কাজ 
 ErrorPasswordsMustMatch=Both typed passwords must match each other
 ErrorContactEMail=একটি প্রযুক্তিগত ত্রুটি ঘটেছে. অনুগ্রহ করে, নিম্নলিখিত ইমেল <b>%s</b> করার জন্য প্রশাসকের সাথে যোগাযোগ করুন এবং ত্রুটি প্রদান করুন কোড <b>%s</b> আপনার বার্তায়, অথবা এর একটি স্ক্রিন কপি যোগ করুন এই পৃষ্ঠা.
 ErrorWrongValueForField=ক্ষেত্র <b>%s</b>: ' <b>%s</b>' রেজেক্স নিয়মের সাথে মেলে না %s</b>
-ErrorHtmlInjectionForField=ক্ষেত্র <b>%s</b>: মান '<span class='notranslate' '><b></span>%s</b>' একটি দূষিত ডেটা রয়েছে অনুমোদিত নয়
-ErrorFieldValueNotIn=ক্ষেত্র <b>%s</b>: ' <b>%s</b>' b0aee83z5</span class='notranslate' ক্ষেত্রে পাওয়া একটি মান নয় <span class='notranslate'><b> এর span><span class='notranslate'>%s</b> %s</span></b>
-ErrorFieldRefNotIn=ক্ষেত্র <b>%s</b>: ' <b>%s</b>' একটি b0aee83f><span><span></span class='notranslate' নয় class='notranslate'>%s</b> বিদ্যমান রেফ
+ErrorHtmlInjectionForField=Field <b>%s</b>: The value '<b>%s</b>' contains a malicious data not allowed
+ErrorFieldValueNotIn=Field <b>%s</b>: '<b>%s</b>' is not a value found in field <b>%s</b> of <b>%s</b>
+ErrorFieldRefNotIn=Field <b>%s</b>: '<b>%s</b>' is not a <b>%s</b> existing ref
 ErrorMultipleRecordFoundFromRef=রেফ <b>%s</b> থেকে অনুসন্ধান করার সময় বেশ কিছু রেকর্ড পাওয়া গেছে। কোন আইডি ব্যবহার করবেন তা জানার উপায় নেই।
 ErrorsOnXLines=%s ত্রুটি পাওয়া গেছে
 ErrorFileIsInfectedWithAVirus=The antivirus program was not able to validate the file (file might be infected by a virus)
@@ -219,7 +219,7 @@ ErrorPhpMailDelivery=Check that you don't use a too high number of recipients an
 ErrorUserNotAssignedToTask=User must be assigned to task to be able to enter time consumed.
 ErrorTaskAlreadyAssigned=Task already assigned to user
 ErrorModuleFileSeemsToHaveAWrongFormat=The module package seems to have a wrong format.
-ErrorModuleFileSeemsToHaveAWrongFormat2=মডিউলের জিপে অন্তত একটি বাধ্যতামূলক ডিরেক্টরি থাকতে হবে: <strong>%sb0a65d071f6fz90 অথবা <span class='notranslate'><strong>%s</strong>
+ErrorModuleFileSeemsToHaveAWrongFormat2=At least one mandatory directory must exists into zip of module: <strong>%s</strong> or <strong>%s</strong>
 ErrorFilenameDosNotMatchDolibarrPackageRules=The name of the module package (<strong>%s</strong>) does not match expected name syntax: <strong>%s</strong>
 ErrorDuplicateTrigger=Error, duplicate trigger name %s. Already loaded from %s.
 ErrorNoWarehouseDefined=Error, no warehouses defined.
@@ -263,9 +263,9 @@ ErrorReplaceStringEmpty=ত্রুটি, প্রতিস্থাপন �
 ErrorProductNeedBatchNumber=ত্রুটি, পণ্য '<b>%s</b>' প্রচুর/ক্রমিক নম্বর প্রয়োজন
 ErrorProductDoesNotNeedBatchNumber=ত্রুটি, পণ্য '<b>%s</b>' অনেক কিছু গ্রহণ করে না/ ক্রমিক সংখ্যা
 ErrorFailedToReadObject=ত্রুটি, <b>%s</b> প্রকারের বস্তু পড়তে ব্যর্থ হয়েছে
-ErrorParameterMustBeEnabledToAllwoThisFeature=ত্রুটি, প্যারামিটার <b>%s</b> অবশ্যই <span class= এ সক্ষম হতে হবে 'notranslate'><b></span>conf/conf.php<> অভ্যন্তরীণ কাজের সময়সূচী দ্বারা কমান্ড লাইন ইন্টারফেস ব্যবহারের অনুমতি দিতে
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php<> to allow use of Command Line Interface by the internal job scheduler
 ErrorLoginDateValidity=ত্রুটি, এই লগইনটি বৈধতার তারিখ সীমার বাইরে
-ErrorValueLength='<b>%s</b>' ফিল্ডের দৈর্ঘ্য অবশ্যই '< এর থেকে বেশি হতে হবে span class='notranslate'><b></span>%s</b>'
+ErrorValueLength=Length of field '<b>%s</b>' must be higher than '<b>%s</b>'
 ErrorReservedKeyword='<b>%s</b>' শব্দটি একটি সংরক্ষিত কীওয়ার্ড
 ErrorFilenameReserved=ফাইলের নাম <b>%s</b> ব্যবহার করা যাবে না কারণ এটি একটি। সংরক্ষিত এবং সুরক্ষিত কমান্ড।
 ErrorNotAvailableWithThisDistribution=এই বিতরণের সাথে উপলব্ধ নয়

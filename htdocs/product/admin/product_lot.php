@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021		Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,18 +116,16 @@ if ($action == 'updateMaskLot') {
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir . "core/modules/product_batch/doc/pdf_" . $modele . ".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_" . $modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
@@ -176,7 +175,7 @@ print dol_get_fiche_head($head, 'settings', $langs->trans("Batch"), -1, 'lot');
 
 
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-	// The feature to define the numbering module of lot or serial is no enabled bcause it is not used anywhere in Dolibarr code: You can set it
+	// The feature to define the numbering module of lot or serial is no enabled because it is not used anywhere in Dolibarr code: You can set it
 	// but the numbering module is not used.
 	// TODO Use it on lot creation page, when you create a lot and when the lot number is kept empty to define the lot according
 	// to the selected product.
@@ -420,6 +419,7 @@ print "</tr>\n";
 
 clearstatcache();
 
+$filelist = array();
 foreach ($dirmodels as $reldir) {
 	foreach (array('', '/doc') as $valdir) {
 		$dir = dol_buildpath($reldir . "core/modules/product_batch" . $valdir);
@@ -473,7 +473,7 @@ foreach ($dirmodels as $reldir) {
 									print "</td>";
 								}
 
-								// Defaut
+								// Default
 								print '<td class="center">';
 								if (getDolGlobalString('PRODUCT_BATCH_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');

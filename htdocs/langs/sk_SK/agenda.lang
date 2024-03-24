@@ -5,7 +5,7 @@ Agenda=Program rokovania
 TMenuAgenda=Program rokovania
 Agendas=Program
 LocalAgenda=Predvolený kalendár
-ActionsOwnedBy=Udalosť vytvorená: 
+ActionsOwnedBy=Udalosť vytvorená:
 ActionsOwnedByShort=Majiteľ
 AffectedTo=Priradené
 EventsNb=Počet udalostí
@@ -22,7 +22,7 @@ ListOfEvents=Zoznam udalostí (predvolený kalendár)
 ActionsAskedBy=Akcia hlásené
 ActionsToDoBy=Akcia priradené
 ActionsDoneBy=Akcie vykonané
-ActionAssignedTo=Udalosť priradená na 
+ActionAssignedTo=Udalosť priradená na
 ViewCal=Mesačný pohľad
 ViewDay=Denné zobrazenie
 ViewWeek=Zobraziť týždeň
@@ -137,8 +137,8 @@ DateActionEnd=Dátum ukončenia
 AgendaUrlOptions1=Môžete tiež pridať nasledujúce parametre filtrovania výstupu:
 AgendaUrlOptions3=<b>logina=%s</b> pre obmedzenie výstupu akciam ktoré vlastní užívateľ <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> na obmedzenie výstupu na akcie, ktoré nie sú vlastnené používateľ <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> na obmedzenie < výstupu na akcie priradené používateľovi span class='notranslate'><b></span>%s</b> (vlastník a ďalší).
-AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b>, aby ste obmedzili výstup na akcie spojené s projektom b0aeee>3650838 __PROJECT_ID__<span class='notranslate'></b>.
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> na vylúčenie automatických udalostí.
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> na zahrnutie udalostí sviatkov.
 AgendaShowBirthdayEvents=Narodeniny kontaktov

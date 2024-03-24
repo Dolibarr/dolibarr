@@ -1,4 +1,7 @@
 <?php
+/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ */
 /*
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,7 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -105,8 +108,11 @@ print '</td></tr>'."\n";
 print '<tr><td>'.$langs->trans('CustomerCode');
 if (!empty($array_query['cust_code'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+	$cust_code_str = (string) $array_query['cust_code'];
+} else {
+	$cust_code_str = null;
 }
-print '</td><td><input type="text" name="cust_code" value="'.$array_query['cust_code'].'"/></td><td>'."\n";
+print '</td><td><input type="text" name="cust_code"'.($cust_code_str!=null?' value="'.$cust_code_str:'').'"/></td><td>'."\n";
 print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
 print '</td></tr>'."\n";
 
@@ -137,6 +143,16 @@ print '</td><td><input type="text" name="cust_city" value="'.$array_query['cust_
 print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
 print '</td></tr>'."\n";
 
+// State Client
+print '<tr><td>'.$langs->trans('State');
+if (!empty($array_query['cust_state'])) {
+	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+}
+print '</td><td>'."\n";
+print $formadvtargetemaling->multiselectState('cust_state', $array_query['cust_state']);
+print '</td><td>'."\n";
+print '</td></tr>'."\n";
+
 // Customer Country
 print '<tr><td>'.$langs->trans("Country");
 if (!empty($array_query['cust_country'])) {
@@ -165,7 +181,7 @@ print '</td><td>'."\n";
 print '</td></tr>'."\n";
 
 // Mother Company
-print '<tr><td>'.$langs->trans("Maison mère");
+print '<tr><td>'.$langs->trans("ParentCompany");
 if (!empty($array_query['cust_mothercompany'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 }
@@ -242,7 +258,7 @@ print $formadvtargetemaling->multiselectselectSalesRepresentatives('cust_saleman
 print '</td><td>'."\n";
 print '</td></tr>'."\n";
 
-// Customer Default Langauge
+// Customer Default Language
 if (getDolGlobalInt('MAIN_MULTILANGS')) {
 	print '<tr><td>'.$langs->trans("DefaultLang");
 	if (!empty($array_query['cust_language'])) {
@@ -254,7 +270,7 @@ if (getDolGlobalInt('MAIN_MULTILANGS')) {
 	print '</td></tr>'."\n";
 }
 
-if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	// Customer Categories
 	print '<tr><td>'.$langs->trans("CustomersCategoryShort");
 	if (!empty($array_query['cust_categ'])) {
@@ -272,7 +288,7 @@ if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 	$socstatic = new Societe($db);
 	$elementtype = $socstatic->table_element;
 	// fetch optionals attributes and labels
-	dol_include_once('/core/class/extrafields.class.php');
+	require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label($elementtype);
 	foreach ($extrafields->attributes[$elementtype]['label'] as $key => $val) {
@@ -336,7 +352,7 @@ if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 	$std_soc = new Societe($db);
 	$action_search = 'query';
 
-	$parameters = array('advtarget'=>1);
+	$parameters = array('advtarget' => 1);
 	if (!empty($advTarget->id)) {
 		$parameters = array('array_query' => $advTarget->filtervalue);
 	}
@@ -446,7 +462,7 @@ print '</td></tr></table>';
 print '</td><td>'."\n";
 print '</td></tr>'."\n";
 
-if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	// Customer Categories
 	print '<tr><td>'.$langs->trans("ContactCategoriesShort");
 	if (!empty($array_query['contact_categ'])) {

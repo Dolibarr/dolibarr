@@ -111,7 +111,7 @@ function reception_prepare_head(Reception $object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	    		    head array with tabs
  */
@@ -122,7 +122,7 @@ function reception_admin_prepare_head()
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('reception');
-	$extrafields->fetch_name_optionals_label('commande_fournisseur_dispatch');
+	$extrafields->fetch_name_optionals_label('receptiondet_batch');
 
 	$h = 0;
 	$head = array();
@@ -146,9 +146,9 @@ function reception_admin_prepare_head()
 	}
 
 	if (getDolGlobalString('MAIN_SUBMODULE_RECEPTION')) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/commande_fournisseur_dispatch_extrafields.php';
+		$head[$h][0] = DOL_URL_ROOT.'/admin/receptiondet_batch_extrafields.php';
 		$head[$h][1] = $langs->trans("ExtraFieldsLines");
-		$nbExtrafields = $extrafields->attributes['commande_fournisseur_dispatch']['count'];
+		$nbExtrafields = $extrafields->attributes['receptiondet_batch']['count'];
 		if ($nbExtrafields > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 		}
