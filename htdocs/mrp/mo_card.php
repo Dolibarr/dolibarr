@@ -111,6 +111,19 @@ $permissiontoadd = $user->rights->mrp->write; // Used by the include of actions_
 $permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
 
+// Define output language
+$outputlangs = $langs;
+$newlang = '';
+if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+	$newlang = GETPOST('lang_id', 'aZ09');
+}
+if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+	$newlang = $object->thirdparty->default_lang;
+}
+if (!empty($newlang)) {
+	$outputlangs = new Translate("", $conf);
+	$outputlangs->setDefaultLang($newlang);
+}
 
 /*
  * Actions
@@ -286,30 +299,9 @@ if (empty($reshook)) {
 
 	// Action close produced
 	if ($action == 'confirm_produced' && $confirm == 'yes' && $permissiontoadd) {
-		$result = $object->setStatut($object::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
-		if ($result >= 0) {
-			// Define output language
-			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-				$outputlangs = $langs;
-				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-					$newlang = GETPOST('lang_id', 'aZ09');
-				}
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
-				}
-				if (!empty($newlang)) {
-					$outputlangs = new Translate("", $conf);
-					$outputlangs->setDefaultLang($newlang);
-				}
-				$model = $object->model_pdf;
-				$ret = $object->fetch($id); // Reload to get new records
-
-				$object->generateDocument($model, $outputlangs, 0, 0, 0);
-			}
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
+		$result = $object->setStatusAsProduced(-1, $outputlangs);
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
