@@ -111,7 +111,7 @@ if (!function_exists('print_line')) {
 
 		// Product/Service label
 		$column[] = '<td class="linecoldescription minwidth300imp"><div id="line_'.$data->id.'"></div>'.
-			str_repeat('&nbsp;',$level*4).$product->getNomUrl(1).
+			str_repeat('&nbsp;', $level*4).$product->getNomUrl(1).
 			(!empty($bom) ? ' '.$langs->trans("or").' '.$bom->getNomUrl(1).
 			' <a class="collapse_bom" id="collapse-'.$data->id.'" href="#">'.
 			(!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT') ? img_picto('', 'folder') : img_picto('', 'folder-open')).'</a>':'').
@@ -156,7 +156,7 @@ if (!function_exists('print_line')) {
 
 		// Cost
 		$column[] = '<td id="costline_'.$data->id.'" class="linecolcost nowrap right"><span class="amount">'.
-			price(price2num($data->total_cost*$quantity,'MT')).'</span></td>';
+			price(price2num($data->total_cost*$quantity, 'MT')).'</span></td>';
 
 		if ($data->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 			$column[] = '<td class="linecoledit center">'.
@@ -191,10 +191,9 @@ if (!function_exists('print_line')) {
 
 		// add html5 dom elements
 		if ($level==0) {
-			$html[] = '<tr id="row-'.$data->id.'" class="drag drp oddeven"'.
-				' data-element="'.$data->element.($filtertype == 1?'Service':'').'"'.
-				' data-id="'.$data->id.'"'.
-				' data-qty="'.$data->qty.'">'.implode('', $column).'</tr>';
+			$html[] = '<tr id="row-'.$data->id.'" class="drag drp oddeven" data-element="'.
+				$data->element.($filtertype == 1?'Service':'').'" data-id="'.
+				$data->id.'" data-qty="'.$data->qty.'">'.implode('', $column).'</tr>';
 		} else {
 			$html[] = '<tr'.(!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT')?' style="display:none"':'').
 				(!empty($parent)?' class="sub_bom_lines" parentid="'.$parent.'"':'').'>'.implode('', $column).'</tr>';
