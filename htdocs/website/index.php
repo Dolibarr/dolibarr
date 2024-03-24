@@ -4335,7 +4335,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 									console.log("Set focus on input field");
 									jQuery("#ai_instructions").focus();
 									if (!jQuery("pageContent").is(":hidden")) {
-										jQuery("#pageContent").show();	
+										jQuery("#pageContent").show();
 									}
 								}
 							});
