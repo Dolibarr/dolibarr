@@ -53,55 +53,55 @@ function societe_prepare_head(Societe $object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (!getDolGlobalString('MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES')) {
-		if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $user->hasRight('societe', 'contact', 'lire')) {
-			//$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
-			$nbContact = 0;
-			// Enable caching of thirdrparty count Contacts
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-			$cachekey = 'count_contacts_thirdparty_'.$object->id;
-			$dataretrieved = dol_getcache($cachekey);
 
-			if (!is_null($dataretrieved)) {
-				$nbContact = $dataretrieved;
-			} else {
-				$sql = "SELECT COUNT(p.rowid) as nb";
-				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-				// Add table from hooks
-				$parameters = array('contacttab' => true);
-				$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
-				$sql .= $hookmanager->resPrint;
-				$sql .= " WHERE p.fk_soc = ".((int) $object->id);
-				$sql .= " AND p.entity IN (".getEntity($object->element).")";
-				// Add where from hooks
-				$parameters = array('contacttab' => true);  // @phan-suppress-current-line PhanPluginRedundantAssignment
-				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
-				$sql .= $hookmanager->resPrint;
-				$resql = $db->query($sql);
-				if ($resql) {
-					$obj = $db->fetch_object($resql);
-					$nbContact = $obj->nb;
-				}
+	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $user->hasRight('societe', 'contact', 'lire')) {
+		//$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+		$nbContact = 0;
+		// Enable caching of thirdrparty count Contacts
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_contacts_thirdparty_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
 
-				dol_setcache($cachekey, $nbContact, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+		if (!is_null($dataretrieved)) {
+			$nbContact = $dataretrieved;
+		} else {
+			$sql = "SELECT COUNT(p.rowid) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+			// Add table from hooks
+			$parameters = array('contacttab' => true);
+			$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+			$sql .= $hookmanager->resPrint;
+			$sql .= " WHERE p.fk_soc = ".((int) $object->id);
+			$sql .= " AND p.entity IN (".getEntity($object->element).")";
+			// Add where from hooks
+			$parameters = array('contacttab' => true);  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
+			$sql .= $hookmanager->resPrint;
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbContact = $obj->nb;
 			}
 
-			$head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
-			$head[$h][1] = $langs->trans('ContactsAddresses');
-			if ($nbContact > 0) {
-				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
-			}
-			$head[$h][2] = 'contact';
-			$h++;
+			dol_setcache($cachekey, $nbContact, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
-	} else {
-		$head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
-		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
-		$head[$h][1] = $langs->trans("ContactsAddresses");
+
+		$head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
+		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
 		}
 		$head[$h][2] = 'contact';
+		$h++;
+	}
+	if (getDolGlobalString('MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES')) {
+		$head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
+		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
+		$head[$h][1] = $langs->trans("ContactsAddressesExt");
+		if ($nbContact > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		}
+		$head[$h][2] = 'contactext';
 		$h++;
 	}
 
