@@ -6,6 +6,7 @@
  * Copyright (C) 2014-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021-2023	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -203,6 +204,7 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 //var_dump($arrayfields);exit;
 
 // Security check
@@ -670,7 +672,7 @@ if ($search_email) {
 	$param .= "&search_email=".urlencode($search_email);
 }
 if ($search_categ > 0 || $search_categ == -2) {
-	$param .= "&search_categ=".urlencode($search_categ);
+	$param .= "&search_categ=".urlencode((string) ($search_categ));
 }
 if ($search_company) {
 	$param .= "&search_company=".urlencode($search_company);

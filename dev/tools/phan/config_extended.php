@@ -54,7 +54,7 @@ $DEPRECATED_MODULE_MAPPING = array(
 	'commande' => 'order',
 	'contrat' => 'contract',
 	'entrepot' => 'stock',
-	'expedition' => 'delivery_note',
+	'expedition' => 'shipping',
 	'facture' => 'invoice',
 	'ficheinter' => 'intervention',
 	'product_fournisseur_price' => 'productsupplierprice',
@@ -93,7 +93,7 @@ $VALID_MODULE_MAPPING = array(
 	'datapolicy' => 'DataPolicy',
 	'dav' => 'Dav',
 	'debugbar' => 'DebugBar',
-	'delivery_note' => 'Expedition',
+	'shipping' => 'Expedition',
 	'deplacement' => 'Deplacement',
 	"documentgeneration" => 'DocumentGeneration',
 	'don' => 'Don',
@@ -170,6 +170,7 @@ $VALID_MODULE_MAPPING = array(
 	'syslog' => 'Syslog',
 	'takepos' => 'TakePos',
 	'tax' => 'Tax',
+	'theme_datacolor' => 'array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int},3:array{0:int,1:int,2:int}}',
 	'ticket' => 'Ticket',
 	'user' => 'User',
 	'variants' => 'Variants',
@@ -209,7 +210,7 @@ return [
 		'dolibarr_main_data_root' => 'string',
 		'dolibarr_main_authentication' => 'string',
 		'dolibarr_main_demo' => 'string',
-		'menumanager' => 'string',
+		'menumanager' => '\MenuManager',
 		'errormsg' => 'string',
 		'form' => '\Form',
 		'object_rights' => 'int|stdClass',
@@ -217,7 +218,7 @@ return [
 		'disablemove' => 'int<0,1>',
 		'disableremove' => 'int<0,1>',
 		// Found in dol_eval
-		'website' => '\WebSite',
+		'website' => 'string',  // See discussion https://github.com/Dolibarr/dolibarr/pull/28891#issuecomment-2002268334  // Disable because Phan infers Website type
 		'websitepage' => '\WebSitePage',
 		'websitepagefile' => 'string',
 		'action' => 'string',
@@ -262,6 +263,7 @@ return [
 	//	to `exclude_analysis_directory_list`.
 	"exclude_analysis_directory_list" => [
 		'htdocs/includes/',
+		'htdocs/install/doctemplates/websites/',
 		'htdocs/core/class/lessc.class.php', // External library
 		PHAN_DIR . '/stubs/',
 	],
@@ -311,7 +313,7 @@ return [
 
 		'ConstantVariablePlugin', // Warns about values that are actually constant
 		//'HasPHPDocPlugin', // Requires PHPDoc
-		'InlineHTMLPlugin', // html in PHP file, or at end of file
+		// 'InlineHTMLPlugin', // html in PHP file, or at end of file
 		'NonBoolBranchPlugin', // Requires test on bool, nont on ints
 		'NonBoolInLogicalArithPlugin',
 		'NumericalComparisonPlugin',
@@ -368,6 +370,7 @@ return [
 		'PhanPluginDuplicateConditionalTernaryDuplication',		// 2750+ occurrences
 		'PhanPluginDuplicateConditionalNullCoalescing',	// Not essential - 990+ occurrences
 		'PhanPluginRedundantAssignmentInGlobalScope',	// Not essential, a lot of false warning
+		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
 	],
 	// You can put relative paths to internal stubs in this config option.
 	// Phan will continue using its detailed type annotations,
@@ -394,10 +397,12 @@ return [
 	'gd'  => PHAN_DIR . '/stubs/gd.phan_php',
 	'geoip'  => PHAN_DIR . '/stubs/geoip.phan_php',
 	'imap'  => PHAN_DIR . '/stubs/imap.phan_php',
+	'imagick'  => PHAN_DIR . '/stubs/imagick.phan_php',
 	'intl'  => PHAN_DIR . '/stubs/intl.phan_php',
 	'ldap'  => PHAN_DIR . '/stubs/ldap.phan_php',
 	'mcrypt'  => PHAN_DIR . '/stubs/mcrypt.phan_php',
 	'memcache'  => PHAN_DIR . '/stubs/memcache.phan_php',
+	'memcached' => PHAN_DIR . '/stubs/memcached.phan_php',
 	'mysqli'  => PHAN_DIR . '/stubs/mysqli.phan_php',
 	'pdo_cubrid'  => PHAN_DIR . '/stubs/pdo_cubrid.phan_php',
 	'pdo_mysql'  => PHAN_DIR . '/stubs/pdo_mysql.phan_php',
@@ -408,6 +413,7 @@ return [
 	'simplexml'  => PHAN_DIR . '/stubs/SimpleXML.phan_php',
 	'soap'  => PHAN_DIR . '/stubs/soap.phan_php',
 	'sockets'  => PHAN_DIR . '/stubs/sockets.phan_php',
+	'tidy' => PHAN_DIR . '/stubs/tidy.phan_php',
 	'zip'  => PHAN_DIR . '/stubs/zip.phan_php',
 	],
 

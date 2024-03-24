@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,11 +82,11 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'dolibarrkey' => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
-		'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
-		'login' => array('name'=>'login', 'type'=>'xsd:string'),
-		'password' => array('name'=>'password', 'type'=>'xsd:string'),
-		'entity' => array('name'=>'entity', 'type'=>'xsd:string'),
+		'dolibarrkey' => array('name' => 'dolibarrkey', 'type' => 'xsd:string'),
+		'sourceapplication' => array('name' => 'sourceapplication', 'type' => 'xsd:string'),
+		'login' => array('name' => 'login', 'type' => 'xsd:string'),
+		'password' => array('name' => 'password', 'type' => 'xsd:string'),
+		'entity' => array('name' => 'entity', 'type' => 'xsd:string'),
 	)
 );
 // Define WSDL Return object
@@ -96,48 +97,48 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
-		'result_label' => array('name'=>'result_label', 'type'=>'xsd:string'),
+		'result_code' => array('name' => 'result_code', 'type' => 'xsd:string'),
+		'result_label' => array('name' => 'result_label', 'type' => 'xsd:string'),
 	)
 );
 
 
 $thirdparty_fields = array(
-		'id' => array('name'=>'id', 'type'=>'xsd:string'),
-		'ref' => array('name'=>'name', 'type'=>'xsd:string'),
-		'ref_ext' => array('name'=>'ref_ext', 'type'=>'xsd:string'),
-		'fk_user_author' => array('name'=>'fk_user_author', 'type'=>'xsd:string'),
-		'status' => array('name'=>'status', 'type'=>'xsd:string'),
-		'client' => array('name'=>'client', 'type'=>'xsd:string'),
-		'supplier' => array('name'=>'supplier', 'type'=>'xsd:string'),
-		'customer_code' => array('name'=>'customer_code', 'type'=>'xsd:string'),
-		'supplier_code' => array('name'=>'supplier_code', 'type'=>'xsd:string'),
-		'customer_code_accountancy' => array('name'=>'customer_code_accountancy', 'type'=>'xsd:string'),
-		'supplier_code_accountancy' => array('name'=>'supplier_code_accountancy', 'type'=>'xsd:string'),
-		'date_creation' => array('name'=>'date_creation', 'type'=>'xsd:dateTime'),
-		'date_modification' => array('name'=>'date_modification', 'type'=>'xsd:dateTime'),
-		'note_private' => array('name'=>'note_private', 'type'=>'xsd:string'),
-		'note_public' => array('name'=>'note_public', 'type'=>'xsd:string'),
-		'address' => array('name'=>'address', 'type'=>'xsd:string'),
-		'zip' => array('name'=>'zip', 'type'=>'xsd:string'),
-		'town' => array('name'=>'town', 'type'=>'xsd:string'),
-		'region_code' => array('name'=>'region_code', 'type'=>'xsd:string'),
-		'country_id' => array('name'=>'country_id', 'type'=>'xsd:string'),
-		'country_code' => array('name'=>'country_code', 'type'=>'xsd:string'),
-		'country' => array('name'=>'country', 'type'=>'xsd:string'),
-		'phone' => array('name'=>'phone', 'type'=>'xsd:string'),
-		'fax' => array('name'=>'fax', 'type'=>'xsd:string'),
-		'email' => array('name'=>'email', 'type'=>'xsd:string'),
-		'url' => array('name'=>'url', 'type'=>'xsd:string'),
-		'profid1' => array('name'=>'profid1', 'type'=>'xsd:string'),
-		'profid2' => array('name'=>'profid2', 'type'=>'xsd:string'),
-		'profid3' => array('name'=>'profid3', 'type'=>'xsd:string'),
-		'profid4' => array('name'=>'profid4', 'type'=>'xsd:string'),
-		'profid5' => array('name'=>'profid5', 'type'=>'xsd:string'),
-		'profid6' => array('name'=>'profid6', 'type'=>'xsd:string'),
-		'capital' => array('name'=>'capital', 'type'=>'xsd:string'),
-		'vat_used' => array('name'=>'vat_used', 'type'=>'xsd:string'),
-		'vat_number' => array('name'=>'vat_number', 'type'=>'xsd:string'));
+		'id' => array('name' => 'id', 'type' => 'xsd:string'),
+		'ref' => array('name' => 'name', 'type' => 'xsd:string'),
+		'ref_ext' => array('name' => 'ref_ext', 'type' => 'xsd:string'),
+		'fk_user_author' => array('name' => 'fk_user_author', 'type' => 'xsd:string'),
+		'status' => array('name' => 'status', 'type' => 'xsd:string'),
+		'client' => array('name' => 'client', 'type' => 'xsd:string'),
+		'supplier' => array('name' => 'supplier', 'type' => 'xsd:string'),
+		'customer_code' => array('name' => 'customer_code', 'type' => 'xsd:string'),
+		'supplier_code' => array('name' => 'supplier_code', 'type' => 'xsd:string'),
+		'customer_code_accountancy' => array('name' => 'customer_code_accountancy', 'type' => 'xsd:string'),
+		'supplier_code_accountancy' => array('name' => 'supplier_code_accountancy', 'type' => 'xsd:string'),
+		'date_creation' => array('name' => 'date_creation', 'type' => 'xsd:dateTime'),
+		'date_modification' => array('name' => 'date_modification', 'type' => 'xsd:dateTime'),
+		'note_private' => array('name' => 'note_private', 'type' => 'xsd:string'),
+		'note_public' => array('name' => 'note_public', 'type' => 'xsd:string'),
+		'address' => array('name' => 'address', 'type' => 'xsd:string'),
+		'zip' => array('name' => 'zip', 'type' => 'xsd:string'),
+		'town' => array('name' => 'town', 'type' => 'xsd:string'),
+		'region_code' => array('name' => 'region_code', 'type' => 'xsd:string'),
+		'country_id' => array('name' => 'country_id', 'type' => 'xsd:string'),
+		'country_code' => array('name' => 'country_code', 'type' => 'xsd:string'),
+		'country' => array('name' => 'country', 'type' => 'xsd:string'),
+		'phone' => array('name' => 'phone', 'type' => 'xsd:string'),
+		'fax' => array('name' => 'fax', 'type' => 'xsd:string'),
+		'email' => array('name' => 'email', 'type' => 'xsd:string'),
+		'url' => array('name' => 'url', 'type' => 'xsd:string'),
+		'profid1' => array('name' => 'profid1', 'type' => 'xsd:string'),
+		'profid2' => array('name' => 'profid2', 'type' => 'xsd:string'),
+		'profid3' => array('name' => 'profid3', 'type' => 'xsd:string'),
+		'profid4' => array('name' => 'profid4', 'type' => 'xsd:string'),
+		'profid5' => array('name' => 'profid5', 'type' => 'xsd:string'),
+		'profid6' => array('name' => 'profid6', 'type' => 'xsd:string'),
+		'capital' => array('name' => 'capital', 'type' => 'xsd:string'),
+		'vat_used' => array('name' => 'vat_used', 'type' => 'xsd:string'),
+		'vat_number' => array('name' => 'vat_number', 'type' => 'xsd:string'));
 
 $elementtype = 'societe';
 
@@ -159,7 +160,7 @@ if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafie
 			$type = 'xsd:string';
 		}
 
-		$extrafield_array['options_'.$key] = array('name'=>'options_'.$key, 'type'=>$type);
+		$extrafield_array['options_'.$key] = array('name' => 'options_'.$key, 'type' => $type);
 	}
 }
 
@@ -186,9 +187,9 @@ $server->wsdl->addComplexType(
 	'',
 	array(
 		//'limit' => array('name'=>'limit','type'=>'xsd:string'),
-		'client' => array('name'=>'client', 'type'=>'xsd:string'),
-		'supplier' => array('name'=>'supplier', 'type'=>'xsd:string'),
-		'category' => array('name'=>'category', 'type'=>'xsd:string')
+		'client' => array('name' => 'client', 'type' => 'xsd:string'),
+		'supplier' => array('name' => 'supplier', 'type' => 'xsd:string'),
+		'category' => array('name' => 'category', 'type' => 'xsd:string')
 	)
 );
 
@@ -200,7 +201,7 @@ $server->wsdl->addComplexType(
 	'SOAP-ENC:Array',
 	array(),
 	array(
-		array('ref'=>'SOAP-ENC:arrayType', 'wsdl:arrayType'=>'tns:thirdparty[]')
+		array('ref' => 'SOAP-ENC:arrayType', 'wsdl:arrayType' => 'tns:thirdparty[]')
 	),
 	'tns:thirdparty'
 );
@@ -232,9 +233,9 @@ $styleuse = 'encoded'; // encoded/literal/literal wrapped
 $server->register(
 	'getThirdParty',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string', 'barcode'=>'xsd:string', 'profid1'=>'xsd:string', 'profid2'=>'xsd:string'),
+	array('authentication' => 'tns:authentication', 'id' => 'xsd:string', 'ref' => 'xsd:string', 'ref_ext' => 'xsd:string', 'barcode' => 'xsd:string', 'profid1' => 'xsd:string', 'profid2' => 'xsd:string'),
 	// Exit values
-	array('result'=>'tns:result', 'thirdparty'=>'tns:thirdparty'),
+	array('result' => 'tns:result', 'thirdparty' => 'tns:thirdparty'),
 	$ns,
 	$ns.'#getThirdParty',
 	$styledoc,
@@ -246,9 +247,9 @@ $server->register(
 $server->register(
 	'createThirdParty',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'thirdparty'=>'tns:thirdparty'),
+	array('authentication' => 'tns:authentication', 'thirdparty' => 'tns:thirdparty'),
 	// Exit values
-	array('result'=>'tns:result', 'id'=>'xsd:string', 'ref'=>'xsd:string'),
+	array('result' => 'tns:result', 'id' => 'xsd:string', 'ref' => 'xsd:string'),
 	$ns,
 	$ns.'#createThirdParty',
 	$styledoc,
@@ -260,9 +261,9 @@ $server->register(
 $server->register(
 	'updateThirdParty',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'thirdparty'=>'tns:thirdparty'),
+	array('authentication' => 'tns:authentication', 'thirdparty' => 'tns:thirdparty'),
 	// Exit values
-	array('result'=>'tns:result', 'id'=>'xsd:string'),
+	array('result' => 'tns:result', 'id' => 'xsd:string'),
 	$ns,
 	$ns.'#updateThirdParty',
 	$styledoc,
@@ -275,9 +276,9 @@ $server->register(
 $server->register(
 	'getListOfThirdParties',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'filterthirdparty'=>'tns:filterthirdparty'),
+	array('authentication' => 'tns:authentication', 'filterthirdparty' => 'tns:filterthirdparty'),
 	// Exit values
-	array('result'=>'tns:result', 'thirdparties'=>'tns:ThirdPartiesArray2'),
+	array('result' => 'tns:result', 'thirdparties' => 'tns:ThirdPartiesArray2'),
 	$ns,
 	$ns.'#getListOfThirdParties',
 	$styledoc,
@@ -289,9 +290,9 @@ $server->register(
 $server->register(
 	'deleteThirdParty',
 	// Entry values
-		array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string'),
+	array('authentication' => 'tns:authentication', 'id' => 'xsd:string', 'ref' => 'xsd:string', 'ref_ext' => 'xsd:string'),
 	// Exit values
-		array('result'=>'tns:result', 'id'=>'xsd:string'),
+	array('result' => 'tns:result', 'id' => 'xsd:string'),
 	$ns,
 	$ns.'#deleteThirdParty',
 	$styledoc,
@@ -401,8 +402,8 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
 
 				// Create
 				$objectresp = array(
-					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'thirdparty'=>$thirdparty_result_fields);
+					'result' => array('result_code' => 'OK', 'result_label' => ''),
+					'thirdparty' => $thirdparty_result_fields);
 			} elseif ($result == -2) {
 				$error++;
 				$errorcode = 'DUPLICATE_FOUND';
@@ -420,7 +421,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;
@@ -544,7 +545,7 @@ function createThirdParty($authentication, $thirdparty)
 				$newobject->add_commercial($fuser, $thirdparty["commid"]);
 			}
 
-			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
+			$objectresp = array('result' => array('result_code' => 'OK', 'result_label' => ''), 'id' => $newobject->id, 'ref' => $newobject->ref);
 		} else {
 			$db->rollback();
 			$error++;
@@ -554,7 +555,7 @@ function createThirdParty($authentication, $thirdparty)
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;
@@ -669,11 +670,13 @@ function updateThirdParty($authentication, $thirdparty)
 			}
 		}
 
+		'@phan-var-force array{id:string} $thirdparty';
+
 		if ((!$error) && ($objectfound)) {
 			$db->commit();
 			$objectresp = array(
-					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'id'=>$object->id
+					'result' => array('result_code' => 'OK', 'result_label' => ''),
+					'id' => $object->id
 			);
 		} elseif ($objectfound) {
 			$db->rollback();
@@ -688,7 +691,7 @@ function updateThirdParty($authentication, $thirdparty)
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;
@@ -769,16 +772,16 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 					}
 				}
 
-				$arraythirdparties[] = array('id'=>$obj->socRowid,
-					'ref'=>$obj->ref,
-					'ref_ext'=>$obj->ref_ext,
-					'address'=>$obj->address,
-					'zip'=>$obj->zip,
-					'town'=>$obj->town,
-					'country'=>$obj->country,
-					'phone'=>$obj->phone,
-					'fax'=>$obj->fax,
-					'url'=>$obj->url
+				$arraythirdparties[] = array('id' => $obj->socRowid,
+					'ref' => $obj->ref,
+					'ref_ext' => $obj->ref_ext,
+					'address' => $obj->address,
+					'zip' => $obj->zip,
+					'town' => $obj->town,
+					'country' => $obj->country,
+					'phone' => $obj->phone,
+					'fax' => $obj->fax,
+					'url' => $obj->url
 				);
 				$arraythirdparties[$i] = array_merge($arraythirdparties[$i], $extrafieldsOptions);
 
@@ -793,13 +796,13 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 
 	if ($error) {
 		$objectresp = array(
-			'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel),
-			'thirdparties'=>$arraythirdparties
+			'result' => array('result_code' => $errorcode, 'result_label' => $errorlabel),
+			'thirdparties' => $arraythirdparties
 		);
 	} else {
 		$objectresp = array(
-			'result'=>array('result_code' => 'OK', 'result_label' => ''),
-			'thirdparties'=>$arraythirdparties
+			'result' => array('result_code' => 'OK', 'result_label' => ''),
+			'thirdparties' => $arraythirdparties
 		);
 	}
 
@@ -855,7 +858,7 @@ function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 				if ($result > 0) {
 					$db->commit();
 
-					$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''));
+					$objectresp = array('result' => array('result_code' => 'OK', 'result_label' => ''));
 				} else {
 					$db->rollback();
 					$error++;
@@ -876,7 +879,7 @@ function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;

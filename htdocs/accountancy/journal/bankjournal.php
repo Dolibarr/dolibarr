@@ -221,6 +221,7 @@ if ($result) {
 	$account_supplier = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER', 'NotDefined'); // NotDefined is a reserved word
 	$account_customer = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER', 'NotDefined'); // NotDefined is a reserved word
 	$account_employee = getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT', 'NotDefined'); // NotDefined is a reserved word
+	$account_expensereport = getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT', 'NotDefined'); // NotDefined is a reserved word
 	$account_pay_vat = getDolGlobalString('ACCOUNTING_VAT_PAY_ACCOUNT', 'NotDefined'); // NotDefined is a reserved word
 	$account_pay_donation = getDolGlobalString('DONATION_ACCOUNTINGACCOUNT', 'NotDefined'); // NotDefined is a reserved word
 	$account_pay_subscription = getDolGlobalString('ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT', 'NotDefined'); // NotDefined is a reserved word
@@ -625,6 +626,9 @@ if (!$error && $action == 'writebookkeeping') {
 	$accountingaccountpayment = new AccountingAccount($db);
 	$accountingaccountpayment->fetch(null, getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT'), true);
 
+	$accountingaccountexpensereport = new AccountingAccount($db);
+	$accountingaccountexpensereport->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_EXPENSEREPORT, true);
+
 	$accountingaccountsuspense = new AccountingAccount($db);
 	$accountingaccountsuspense->fetch(null, getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE'), true);
 
@@ -757,8 +761,8 @@ if (!$error && $action == 'writebookkeeping') {
 						} elseif ($tabtype[$key] == 'payment_expensereport') {
 							$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code'];
 							$bookkeeping->subledger_label = $tabuser[$key]['name'];
-							$bookkeeping->numero_compte = getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT');
-							$bookkeeping->label_compte = $accountingaccountpayment->label;
+							$bookkeeping->numero_compte = getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT');
+							$bookkeeping->label_compte = $accountingaccountexpensereport->label;
 						} elseif ($tabtype[$key] == 'payment_salary') {
 							$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code'];
 							$bookkeeping->subledger_label = $tabuser[$key]['name'];
@@ -1013,7 +1017,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 					} elseif ($tabtype[$key] == 'payment') {
 						print '"'.getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER').'"'.$sep;
 					} elseif ($tabtype[$key] == 'payment_expensereport') {
-						print '"'.getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT').'"'.$sep;
+						print '"'.getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT').'"'.$sep;
 					} elseif ($tabtype[$key] == 'payment_salary') {
 						print '"'.getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT').'"'.$sep;
 					} else {
@@ -1135,7 +1139,8 @@ if (empty($action) || $action == 'view') {
 	// Button to write into Ledger
 	if (getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1'
 		|| getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1'
-		|| getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == "" || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1') {
+		|| getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == "" || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1'
+		|| getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSERERPORT') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSERERPORT') == '-1') {
 		print($desc ? '' : '<br>').'<div class="warning">'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
 		$desc = ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '{link}');
 		$desc = str_replace('{link}', '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>', $desc);
@@ -1294,7 +1299,7 @@ if (empty($action) || $action == 'view') {
 						$account_ledger = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER');
 					}
 					if ($tabtype[$key] == 'payment_expensereport') {
-						$account_ledger = getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT');
+						$account_ledger = getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT');
 					}
 					if ($tabtype[$key] == 'payment_salary') {
 						$account_ledger = getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT');

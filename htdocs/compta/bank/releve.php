@@ -250,7 +250,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.$limit;
 }
 if ($id > 0) {
-	$param .= '&id='.urlencode($id);
+	$param .= '&id='.urlencode((string) ($id));
 }
 
 if (empty($numref)) {
@@ -528,11 +528,12 @@ if (empty($numref)) {
 			print '<td valign="center">';
 			print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&account='.$object->id.'">';
 			$reg = array();
-			preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parentheses on tente recherche de traduction
-			if ($reg[1] && $langs->trans($reg[1]) != $reg[1]) {
+
+			preg_match('/\((.+)\)/i', $objp->label, $reg); // If text rounded by parenthesis, we try to search translation
+			if (!empty($reg[1]) && $langs->trans($reg[1]) != $reg[1]) {
 				print $langs->trans($reg[1]);
 			} else {
-				print $objp->label;
+				print dol_escape_htmltag($objp->label);
 			}
 			print '</a>';
 

@@ -103,7 +103,7 @@ if (!$sortfield) {
 $sall			= trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
 $search_ref			= GETPOST('search_ref', 'alpha');
-$search_user		= GETPOSTINT('search_user');
+$search_user		= GETPOST('search_user', 'intcomma');
 $search_amount_ht	= GETPOST('search_amount_ht', 'alpha');
 $search_amount_vat	= GETPOST('search_amount_vat', 'alpha');
 $search_amount_ttc	= GETPOST('search_amount_ttc', 'alpha');
@@ -149,29 +149,29 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'd.ref'=>'Ref',
-	'd.note_public'=>"NotePublic",
-	'u.lastname'=>'EmployeeLastname',
-	'u.firstname'=>"EmployeeFirstname",
-	'u.login'=>"Login",
+	'd.ref' => 'Ref',
+	'd.note_public' => "NotePublic",
+	'u.lastname' => 'EmployeeLastname',
+	'u.firstname' => "EmployeeFirstname",
+	'u.login' => "Login",
 );
 if (empty($user->socid)) {
 	$fieldstosearchall["d.note_private"] = "NotePrivate";
 }
 
 $arrayfields = array(
-	'd.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'user'=>array('label'=>$langs->trans("User"), 'checked'=>1),
-	'd.date_debut'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1),
-	'd.date_fin'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1),
-	'd.date_valid'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>1),
-	'd.date_approve'=>array('label'=>$langs->trans("DateApprove"), 'checked'=>1),
-	'd.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
-	'd.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>1),
-	'd.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>1),
-	'd.date_create'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	'd.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-	'd.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+	'd.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1),
+	'user' => array('label' => $langs->trans("User"), 'checked' => 1),
+	'd.date_debut' => array('label' => $langs->trans("DateStart"), 'checked' => 1),
+	'd.date_fin' => array('label' => $langs->trans("DateEnd"), 'checked' => 1),
+	'd.date_valid' => array('label' => $langs->trans("DateValidation"), 'checked' => 1),
+	'd.date_approve' => array('label' => $langs->trans("DateApprove"), 'checked' => 1),
+	'd.total_ht' => array('label' => $langs->trans("AmountHT"), 'checked' => 1),
+	'd.total_vat' => array('label' => $langs->trans("AmountVAT"), 'checked' => 1),
+	'd.total_ttc' => array('label' => $langs->trans("AmountTTC"), 'checked' => 1),
+	'd.date_create' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
+	'd.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
+	'd.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -193,7 +193,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -397,41 +397,41 @@ if ($resql) {
 	}
 	// Start date
 	if ($search_date_startday) {
-		$param .= '&search_date_startday='.urlencode($search_date_startday);
+		$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
 	}
 	if ($search_date_startmonth) {
-		$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+		$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
 	}
 	if ($search_date_startyear) {
-		$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+		$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
 	}
 	if ($search_date_startendday) {
-		$param .= '&search_date_startendday='.urlencode($search_date_startendday);
+		$param .= '&search_date_startendday='.urlencode((string) ($search_date_startendday));
 	}
 	if ($search_date_startendmonth) {
-		$param .= '&search_date_startendmonth='.urlencode($search_date_startendmonth);
+		$param .= '&search_date_startendmonth='.urlencode((string) ($search_date_startendmonth));
 	}
 	if ($search_date_startendyear) {
-		$param .= '&search_date_startendyear='.urlencode($search_date_startendyear);
+		$param .= '&search_date_startendyear='.urlencode((string) ($search_date_startendyear));
 	}
 	// End date
 	if ($search_date_endday) {
-		$param .= '&search_date_endday='.urlencode($search_date_endday);
+		$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
 	}
 	if ($search_date_endmonth) {
-		$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+		$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
 	}
 	if ($search_date_endyear) {
-		$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+		$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
 	}
 	if ($search_date_endendday) {
-		$param .= '&search_date_endendday='.urlencode($search_date_endendday);
+		$param .= '&search_date_endendday='.urlencode((string) ($search_date_endendday));
 	}
 	if ($search_date_endendmonth) {
-		$param .= '&search_date_endendmonth='.urlencode($search_date_endendmonth);
+		$param .= '&search_date_endendmonth='.urlencode((string) ($search_date_endendmonth));
 	}
 	if ($search_date_endendyear) {
-		$param .= '&search_date_endendyear='.urlencode($search_date_endendyear);
+		$param .= '&search_date_endendyear='.urlencode((string) ($search_date_endendyear));
 	}
 	if ($search_user) {
 		$param .= "&search_user=".urlencode($search_user);
@@ -453,9 +453,9 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
-		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-		'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+		'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+		'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+		'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
 	if ($user->hasRight('expensereport', 'supprimer')) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -519,8 +519,8 @@ if ($resql) {
 			$url .= '&socid='.$socid;
 		}
 		$newcardbutton = '';
-		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 		$newcardbutton .= dolGetButtonTitleSeparator();
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewTrip'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('expensereport', 'creer'));
 
@@ -638,7 +638,7 @@ if ($resql) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields);
+	$parameters = array('arrayfields' => $arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
@@ -714,7 +714,7 @@ if ($resql) {
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
-	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (!empty($arrayfields['d.date_create']['checked'])) {
@@ -921,7 +921,7 @@ if ($resql) {
 				// Extra fields
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 				// Fields from hook
-				$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+				$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 
@@ -990,7 +990,7 @@ if ($resql) {
 
 	$db->free($resql);
 
-	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ class ExpenseReports extends DolibarrApi
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of Expense Report objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'lire')) {
 			throw new RestException(403);
@@ -659,7 +659,7 @@ class ExpenseReports extends DolibarrApi
 	 */
 	public function updatePayment($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRights('expensereport', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
 			throw new RestException(403);
 		}
 

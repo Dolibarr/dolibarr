@@ -6,6 +6,7 @@
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2023      Christophe Battarel	<christophe@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,14 +63,14 @@ $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
 $search_country = GETPOSTINT("search_country");
 $search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
-$search_billed = GETPOSTINT("search_billed");
+$search_billed = GETPOST("search_billed", 'intcomma');
 $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datedelivery_startmonth'), GETPOSTINT('search_datedelivery_startday'), GETPOSTINT('search_datedelivery_startyear'));
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datedelivery_endmonth'), GETPOSTINT('search_datedelivery_endday'), GETPOSTINT('search_datedelivery_endyear'));
 $search_datereceipt_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datereceipt_startmonth'), GETPOSTINT('search_datereceipt_startday'), GETPOSTINT('search_datereceipt_startyear'));
 $search_datereceipt_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datereceipt_endmonth'), GETPOSTINT('search_datereceipt_endday'), GETPOSTINT('search_datereceipt_endyear'));
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_user = GETPOSTINT('search_user');
-$search_sale = GETPOSTINT('search_sale');
+$search_user = GETPOST('search_user', 'intcomma');
+$search_sale = GETPOST('search_sale', 'intcomma');
 $search_categ_cus = GETPOSTINT("search_categ_cus");
 $search_product_category = GETPOSTINT('search_product_category');
 
@@ -145,6 +146,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
 $expeditionid = GETPOSTINT('id');
@@ -528,10 +530,10 @@ if ($search_ref_customer) {
 	$param .= "&search_ref_customer=".urlencode($search_ref_customer);
 }
 if ($search_user > 0) {
-	$param .= '&search_user='.urlencode($search_user);
+	$param .= '&search_user='.urlencode((string) ($search_user));
 }
 if ($search_sale > 0) {
-	$param .= '&search_sale='.urlencode($search_sale);
+	$param .= '&search_sale='.urlencode((string) ($search_sale));
 }
 if ($search_company) {
 	$param .= "&search_company=".urlencode($search_company);
@@ -551,7 +553,7 @@ if ($search_zip) {
 	$param .= '&search_zip='.urlencode($search_zip);
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
-	$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
+	$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
 }
 if ($search_datedelivery_start) {
 	$param .= '&search_datedelivery_startday='.urlencode(dol_print_date($search_datedelivery_start, '%d')).'&search_datedelivery_startmonth='.urlencode(dol_print_date($search_datedelivery_start, '%m')).'&search_datedelivery_startyear='.urlencode(dol_print_date($search_datedelivery_start, '%Y'));
@@ -566,10 +568,10 @@ if ($search_datereceipt_end) {
 	$param .= '&search_datereceipt_endday='.urlencode(dol_print_date($search_datereceipt_end, '%d')).'&search_datereceipt_endmonth='.urlencode(dol_print_date($search_datereceipt_end, '%m')).'&search_datereceipt_endyear='.urlencode(dol_print_date($search_datereceipt_end, '%Y'));
 }
 if ($search_product_category != '') {
-	$param .= '&search_product_category='.urlencode($search_product_category);
+	$param .= '&search_product_category='.urlencode((string) ($search_product_category));
 }
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
-	$param .= '&search_categ_cus='.urlencode($search_categ_cus);
+	$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
 }
 if ($search_status != '') {
 	$param .= '&search_status='.urlencode($search_status);
@@ -657,7 +659,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire') && ($user->
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
-	$moreforfilter .= img_picto($tmptitle, 'category');
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
 	//$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
 	//$moreforfilter .= $form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
 	$moreforfilter .= $formother->select_categories(Categorie::TYPE_PRODUCT, $search_product_category, 'search_product_category', 1, $tmptitle);
@@ -668,7 +670,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');
-	$moreforfilter .= img_picto($tmptitle, 'category');
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
 	$moreforfilter .= $formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle);
 	$moreforfilter .= '</div>';
 }
@@ -1117,7 +1119,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['l.ref']['checked']) || !empty($arrayfields['l.date_delivery']['checked'])) {
 			$shipment->fetchObjectLinked($shipment->id, $shipment->element);
 			$receiving = '';
-			if (is_array($shipment->linkedObjects['delivery']) && count($shipment->linkedObjects['delivery']) > 0) {
+			if (array_key_exists('delivery', $shipment->linkedObjects) && count($shipment->linkedObjects['delivery']) > 0) {
 				$receiving = reset($shipment->linkedObjects['delivery']);
 			}
 

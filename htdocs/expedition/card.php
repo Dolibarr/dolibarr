@@ -546,24 +546,24 @@ if (empty($reshook)) {
 			$object->tracking_number = trim(GETPOST('tracking_number', 'alpha'));
 		}
 		if ($action == 'settracking_url') {
-			$object->tracking_url = trim(GETPOSTINT('tracking_url'));
+			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
 		if ($action == 'settrueWeight') {
-			$object->trueWeight = trim(GETPOSTINT('trueWeight'));
+			$object->trueWeight = GETPOSTINT('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
 		}
 		if ($action == 'settrueWidth') {
-			$object->trueWidth = trim(GETPOSTINT('trueWidth'));
+			$object->trueWidth = GETPOSTINT('trueWidth');
 		}
 		if ($action == 'settrueHeight') {
-			$object->trueHeight = trim(GETPOSTINT('trueHeight'));
+			$object->trueHeight = GETPOSTINT('trueHeight');
 			$object->size_units = GETPOSTINT('size_units');
 		}
 		if ($action == 'settrueDepth') {
-			$object->trueDepth = trim(GETPOSTINT('trueDepth'));
+			$object->trueDepth = GETPOSTINT('trueDepth');
 		}
 		if ($action == 'setshipping_method_id') {
-			$object->shipping_method_id = trim(GETPOSTINT('shipping_method_id'));
+			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 		}
 
 		if (!$error) {
@@ -1336,7 +1336,7 @@ if ($action == 'create') {
 									// Show warehouse combo list
 									$ent = "entl".$indiceAsked;
 									$idl = "idl".$indiceAsked;
-									$tmpentrepot_id = is_numeric(GETPOSTINT($ent)) ? GETPOSTINT($ent) : $warehouse_id;
+									$tmpentrepot_id = is_numeric(GETPOST($ent)) ? GETPOSTINT($ent) : $warehouse_id;
 									if ($line->fk_product > 0) {
 										print '<!-- Show warehouse selection -->';
 
@@ -1803,7 +1803,7 @@ if ($action == 'create') {
 	// Confirm deletion
 	if ($action == 'delete') {
 		$formquestion = array();
-		if ($object->statut == Expedition::STATUS_CLOSED && getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
+		if ($object->status == Expedition::STATUS_CLOSED && getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
 			$formquestion = array(
 					array(
 						'label' => $langs->trans('ShipmentIncrementStockOnDelete'),
@@ -1872,13 +1872,13 @@ if ($action == 'create') {
 	$totalWeight = $tmparray['weight'];
 	$totalVolume = $tmparray['volume'];
 
-	if (!empty($typeobject) && $typeobject === 'commande' && is_object($object->$typeobject) && $object->$typeobject->id && isModEnabled('order')) {
+	if (!empty($typeobject) && $typeobject === 'commande' && is_object($object->origin_object) && $object->origin_object->id && isModEnabled('order')) {
 		$objectsrc = new Commande($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($object->origin_object->id);
 	}
-	if (!empty($typeobject) && $typeobject === 'propal' && is_object($object->$typeobject) && $object->$typeobject->id && isModEnabled("propal")) {
+	if (!empty($typeobject) && $typeobject === 'propal' && is_object($object->origin_object) && $object->origin_object->id && isModEnabled("propal")) {
 		$objectsrc = new Propal($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($object->origin_object->id);
 	}
 
 	// Shipment card
@@ -1923,7 +1923,7 @@ if ($action == 'create') {
 	print '<table class="border tableforfield centpercent">';
 
 	// Linked documents
-	if (!empty($typeobject) && $typeobject == 'commande' && $object->$typeobject->id && isModEnabled('order')) {
+	if (!empty($typeobject) && $typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
 		print '<tr><td>';
 		print $langs->trans("RefOrder").'</td>';
 		print '<td colspan="3">';
@@ -1931,7 +1931,7 @@ if ($action == 'create') {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if (!empty($typeobject) && $typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+	if (!empty($typeobject) && $typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
 		print '<tr><td>';
 		print $langs->trans("RefProposal").'</td>';
 		print '<td colspan="3">';
@@ -2184,7 +2184,7 @@ if ($action == 'create') {
 			$editColspan--;
 		}
 		print '<td class="center linecoleditlineotherinfo" colspan="'.$editColspan.'">';
-		if ($object->statut <= 1) {
+		if ($object->status <= 1) {
 			print $langs->trans("QtyToShip").' - ';
 		} else {
 			print $langs->trans("QtyShipped").' - ';
@@ -2197,7 +2197,7 @@ if ($action == 'create') {
 		}
 		print '</td>';
 	} else {
-		if ($object->statut <= 1) {
+		if ($object->status <= 1) {
 			print '<td class="center linecolqtytoship">'.$langs->trans("QtyToShip").'</td>';
 		} else {
 			print '<td class="center linecolqtyshipped">'.$langs->trans("QtyShipped").'</td>';
@@ -2213,7 +2213,7 @@ if ($action == 'create') {
 	print '<td class="center linecolweight">'.$langs->trans("CalculatedWeight").'</td>';
 	print '<td class="center linecolvolume">'.$langs->trans("CalculatedVolume").'</td>';
 	//print '<td class="center">'.$langs->trans("Size").'</td>';
-	if ($object->statut == 0) {
+	if ($object->status == 0) {
 		print '<td class="linecoledit"></td>';
 		print '<td class="linecoldelete" width="10"></td>';
 	}
@@ -2574,7 +2574,7 @@ if ($action == 'create') {
 				print '<input type="submit" class="button button-save" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'"><br>';
 				print '<input type="submit" class="button button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
 				print '</td>';
-			} elseif ($object->statut == Expedition::STATUS_DRAFT) {
+			} elseif ($object->status == Expedition::STATUS_DRAFT) {
 				// edit-delete buttons
 				print '<td class="linecoledit center">';
 				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&lineid='.$lines[$i]->id.'">'.img_edit().'</a>';
@@ -2647,7 +2647,7 @@ if ($action == 'create') {
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 		// modified by hook
 		if (empty($reshook)) {
-			if ($object->statut == Expedition::STATUS_DRAFT && $num_prod > 0) {
+			if ($object->status == Expedition::STATUS_DRAFT && $num_prod > 0) {
 				if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'creer'))
 				 || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'shipping_advance', 'validate'))) {
 					print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=valid&token='.newToken().'&id='.$object->id, '');
@@ -2657,12 +2657,12 @@ if ($action == 'create') {
 			}
 
 			// 0=draft, 1=validated/delivered, 2=closed/delivered
-			if ($object->statut == Expedition::STATUS_VALIDATED && !getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
+			if ($object->status == Expedition::STATUS_VALIDATED && !getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
 				if ($user->hasRight('expedition', 'creer')) {
 					print dolGetButtonAction('', $langs->trans('SetToDraft'), 'default', $_SERVER["PHP_SELF"].'?action=setdraft&token='.newToken().'&id='.$object->id, '');
 				}
 			}
-			if ($object->statut == Expedition::STATUS_CLOSED) {
+			if ($object->status == Expedition::STATUS_CLOSED) {
 				if ($user->hasRight('expedition', 'creer')) {
 					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
 				}
@@ -2670,7 +2670,7 @@ if ($action == 'create') {
 
 			// Send
 			if (empty($user->socid)) {
-				if ($object->statut > 0) {
+				if ($object->status > 0) {
 					if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('expedition', 'shipping_advance', 'send')) {
 						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 					} else {
@@ -2680,7 +2680,7 @@ if ($action == 'create') {
 			}
 
 			// Create bill
-			if (isModEnabled('invoice') && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED)) {
+			if (isModEnabled('invoice') && ($object->status == Expedition::STATUS_VALIDATED || $object->status == Expedition::STATUS_CLOSED)) {
 				if ($user->hasRight('facture', 'creer')) {
 					if (getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0') {
 						print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid, '');
@@ -2690,13 +2690,13 @@ if ($action == 'create') {
 
 			// This is just to generate a delivery receipt
 			//var_dump($object->linkedObjectsIds['delivery']);
-			if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED) && $user->hasRight('expedition', 'delivery', 'creer') && empty($object->linkedObjectsIds['delivery'])) {
+			if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && ($object->status == Expedition::STATUS_VALIDATED || $object->status == Expedition::STATUS_CLOSED) && $user->hasRight('expedition', 'delivery', 'creer') && empty($object->linkedObjectsIds['delivery'])) {
 				print dolGetButtonAction('', $langs->trans('CreateDeliveryOrder'), 'default', $_SERVER["PHP_SELF"].'?action=create_delivery&token='.newToken().'&id='.$object->id, '');
 			}
 
 			// Set Billed and Closed
-			if ($object->statut == Expedition::STATUS_VALIDATED) {
-				if ($user->hasRight('expedition', 'creer') && $object->statut > 0) {
+			if ($object->status == Expedition::STATUS_VALIDATED) {
+				if ($user->hasRight('expedition', 'creer') && $object->status > 0) {
 					if (!$object->billed && getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0') {
 						print dolGetButtonAction('', $langs->trans('ClassifyBilled'), 'default', $_SERVER["PHP_SELF"].'?action=classifybilled&token='.newToken().'&id='.$object->id, '');
 					}
@@ -2705,7 +2705,7 @@ if ($action == 'create') {
 			}
 
 			// Cancel
-			if ($object->statut == Expedition::STATUS_VALIDATED) {
+			if ($object->status == Expedition::STATUS_VALIDATED) {
 				if ($user->hasRight('expedition', 'creer')) {
 					print dolGetButtonAction('', $langs->trans('Cancel'), 'danger', $_SERVER["PHP_SELF"].'?action=cancel&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 				}

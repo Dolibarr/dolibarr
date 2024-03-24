@@ -411,7 +411,7 @@ if (empty($reshook)) {
 
 							if (getDolGlobalString('MAILING_DELAY')) {
 								dol_syslog("Wait a delay of MAILING_DELAY=".((float) $conf->global->MAILING_DELAY));
-								usleep((float) $conf->global->MAILING_DELAY * 1000000);
+								usleep((int) ((float) $conf->global->MAILING_DELAY * 1000000));
 							}
 
 							//test if CHECK READ change statut prospect contact
@@ -847,7 +847,7 @@ if ($action == 'create') {
 
 	$formmail = new FormMail($db);
 	$formmail->withfckeditor = 1;
-	$formmail->withaiprompt = 1;
+	$formmail->withaiprompt = 'html';
 	$formmail->withlayout = 1;
 
 	print '<tr class="fieldsforemail"><td></td><td>';
@@ -895,10 +895,10 @@ if ($action == 'create') {
 				</script>';
 	}
 	if ($formmail->withfckeditor) {
-		$out .= $formmail->getModelEmailTemplate();
+		$out .= $formmail->getModelEmailTemplate('bodyemail');
 	}
 	if ($formmail->withaiprompt && isModEnabled('ai')) {
-		$out .= $formmail->getSectionForAIPrompt();
+		$out .= $formmail->getSectionForAIPrompt('', 'bodyemail');
 	}
 	print $out;
 	print '</td></tr>';
@@ -1023,20 +1023,20 @@ if ($action == 'create') {
 			$morehtmlref .= $form->editfieldval("", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string', '', null, null, '', 1);
 			$morehtmlref .= '</div>';
 
-			$morehtmlright = '';
+			$morehtmlstatus = '';
 			$nbtry = $nbok = 0;
 			if ($object->status == 2 || $object->status == 3) {
 				$nbtry = $object->countNbOfTargets('alreadysent');
 				$nbko  = $object->countNbOfTargets('alreadysentko');
 
-				$morehtmlright .= ' ('.$nbtry.'/'.$object->nbemail;
+				$morehtmlstatus .= ' ('.$nbtry.'/'.$object->nbemail;
 				if ($nbko) {
-					$morehtmlright .= ' - '.$nbko.' '.$langs->trans("Error");
+					$morehtmlstatus .= ' - '.$nbko.' '.$langs->trans("Error");
 				}
-				$morehtmlright .= ') &nbsp; ';
+				$morehtmlstatus .= ') &nbsp; ';
 			}
 
-			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
@@ -1151,8 +1151,8 @@ if ($action == 'create') {
 				// Create an array for form
 				$formquestion = array(
 					'text' => $langs->trans("ConfirmClone"),
-				array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneContent"), 'value' => 1),
-				array('type' => 'checkbox', 'name' => 'clone_receivers', 'label' => $langs->trans("CloneReceivers"), 'value' => 0)
+				0 => array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneContent"), 'value' => 1),
+				1 => array('type' => 'checkbox', 'name' => 'clone_receivers', 'label' => $langs->trans("CloneReceivers"), 'value' => 0)
 				);
 				// Incomplete payment. On demande si motif = escompte ou autre
 				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneEMailing', $object->ref), 'confirm_clone', $formquestion, 'yes', 2, 240);
@@ -1252,7 +1252,7 @@ if ($action == 'create') {
 				$formmail->withtopicreadonly = 1;
 				$formmail->withfile = 0;
 				$formmail->withlayout = 0;
-				$formmail->withaiprompt = 0;
+				$formmail->withaiprompt = '';
 				$formmail->withbody = 0;
 				$formmail->withbodyreadonly = 1;
 				$formmail->withcancel = 1;
@@ -1345,20 +1345,20 @@ if ($action == 'create') {
 			$morehtmlref .= $form->editfieldval("", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string', '', null, null, '', 1);
 			$morehtmlref .= '</div>';
 
-			$morehtmlright = '';
+			$morehtmlstatus = '';
 			$nbtry = $nbok = 0;
 			if ($object->status == 2 || $object->status == 3) {
 				$nbtry = $object->countNbOfTargets('alreadysent');
 				$nbko  = $object->countNbOfTargets('alreadysentko');
 
-				$morehtmlright .= ' ('.$nbtry.'/'.$object->nbemail;
+				$morehtmlstatus .= ' ('.$nbtry.'/'.$object->nbemail;
 				if ($nbko) {
-					$morehtmlright .= ' - '.$nbko.' '.$langs->trans("Error");
+					$morehtmlstatus .= ' - '.$nbko.' '.$langs->trans("Error");
 				}
-				$morehtmlright .= ') &nbsp; ';
+				$morehtmlstatus .= ') &nbsp; ';
 			}
 
-			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
@@ -1491,6 +1491,7 @@ if ($action == 'create') {
 				print '<td colspan="3">';
 				// List of files
 				$listofpaths = dol_dir_list($upload_dir, 'all', 0, '', '', 'name', SORT_ASC, 0);
+				$out = '';
 
 				// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 				$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";

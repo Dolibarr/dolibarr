@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017 	Laurent Destailleur <eldy@stocks.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +66,7 @@ class pdf_standard extends ModelePDFMovement
 		global $conf, $langs, $mysoc;
 
 		// Load traductions files required by page
-		$langs->loadLangs(array("main", "companies"));
+		$langs->loadLangs(array("main", "companies", "productbatch"));
 
 		$this->db = $db;
 		$this->name = "stdmouvement";
@@ -291,7 +292,7 @@ class pdf_standard extends ModelePDFMovement
 		// Add where from extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 		// Add where from hooks
-		$parameters = array();
+		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -446,7 +447,6 @@ class pdf_standard extends ModelePDFMovement
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$num = $this->db->num_rows($resql);
-					$i = 0;
 					$nblines = $num;
 					for ($i = 0; $i < $nblines; $i++) {
 						$objp = $this->db->fetch_object($resql);
@@ -779,8 +779,8 @@ class pdf_standard extends ModelePDFMovement
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		float|int	$tab_top		Top position of table
+	 *   @param		float|int	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
@@ -861,7 +861,7 @@ class pdf_standard extends ModelePDFMovement
 		//$pdf->line($this->posxqty - 1, $tab_top, $this->posxqty - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxqty, $tab_top + 1);
-			$pdf->MultiCell($this->posxup - $this->posxqty, 2, $outputlangs->transnoentities("Lot/Série"), '', 'C');
+			$pdf->MultiCell($this->posxup - $this->posxqty, 2, $outputlangs->transnoentities("Batch"), '', 'C');
 		}
 
 		//Code Inv

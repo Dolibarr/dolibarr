@@ -13,6 +13,7 @@
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020-2022  Open-Dsi                <support@open-dsi.fr>
+ * Copyright (C) 2024       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -507,7 +508,7 @@ $tabcond[14] = (isModEnabled("product") && (isModEnabled('ecotax') || getDolGlob
 $tabcond[15] = true;
 $tabcond[16] = (isModEnabled("societe") && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS'));
 $tabcond[17] = (isModEnabled('deplacement') || isModEnabled('expensereport'));
-$tabcond[18] = isModEnabled("delivery_note") || isModEnabled("reception");
+$tabcond[18] = isModEnabled("shipping") || isModEnabled("reception");
 $tabcond[19] = isModEnabled("societe");
 $tabcond[20] = isModEnabled("supplier_order");
 $tabcond[21] = isModEnabled("propal");
@@ -983,7 +984,7 @@ if (empty($reshook)) {
 			}
 			$i = 0;
 			foreach ($listfieldmodify as $field) {
-				$keycode = $listfieldvalue[$i];
+				$keycode = empty($listfieldvalue[$i]) ? '' : $listfieldvalue[$i];
 				if (empty($keycode)) {
 					$keycode = $field;
 				}
@@ -1000,7 +1001,7 @@ if (empty($reshook)) {
 					$sql .= ",";
 				}
 				$sql .= $field."=";
-				if ($listfieldvalue[$i] == 'sortorder') {		// For column name 'sortorder', we use the field name 'position'
+				if ($keycode == 'sortorder') {		// For column name 'sortorder', we use the field name 'position'
 					$sql .= GETPOSTINT('position');
 				} elseif (GETPOST($keycode) == '' && !($keycode == 'code' && $id == 10)) {
 					$sql .= "null"; // For vat, we want/accept code = ''
@@ -1227,9 +1228,9 @@ if ($id == 7 && GETPOST('from') == 'accountancy') {
 	$titlepicto = 'accountancy';
 }
 
-$param = '&id='.urlencode($id);
+$param = '&id='.urlencode((string) ($id));
 if ($search_country_id || GETPOSTISSET('page') || GETPOST('button_removefilter', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter_x', 'alpha')) {
-	$param .= '&search_country_id='.urlencode($search_country_id ? $search_country_id : -1);
+	$param .= '&search_country_id='.urlencode((string) ($search_country_id ? $search_country_id : -1));
 }
 if ($search_code != '') {
 	$param .= '&search_code='.urlencode($search_code);
@@ -2130,6 +2131,11 @@ if ($id > 0) {
 					$canbemodified = 1;
 				}
 
+				if ($tabname[$id] == "c_product_nature" && in_array($obj->code, array(0, 1))) {
+					$canbedisabled = 0;
+					$canbemodified = 0;
+					$iserasable = 0;
+				}
 				// Build Url. The table is id=, the id of line is rowid=
 				$rowidcol = empty($tabrowid[$id]) ? 'rowid' : $tabrowid[$id];
 				// If rowidcol not defined

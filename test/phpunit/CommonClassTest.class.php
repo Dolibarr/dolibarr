@@ -23,7 +23,7 @@
  *      \file       test/phpunit/CommonClassTest.php
  *      \ingroup    test
  *      \brief      PHPUnit test
- *      \remarks    Class that extends all PHPunit tests. To share similare code between each test.
+ *      \remarks    Class that extends all PHPunit tests. To share similar code between each test.
  */
 
 // Workaround for false security issue with main.inc.php on Windows in tests:
@@ -247,7 +247,7 @@ abstract class CommonClassTest extends TestCase
 		'commande' => 'order',
 		'contrat' => 'contract',
 		'entrepot' => 'stock',
-		'expedition' => 'delivery_note',
+		'expedition' => 'shipping',
 		'facture' => 'invoice',
 		'fichinter' => 'intervention',
 		'product_fournisseur_price' => 'productsupplierprice',
@@ -296,7 +296,7 @@ abstract class CommonClassTest extends TestCase
 		'datapolicy' => 'DataPolicy',
 		'dav' => 'Dav',
 		'debugbar' => 'DebugBar',
-		'delivery_note' => 'Expedition',
+		'shipping' => 'Expedition',
 		'deplacement' => 'Deplacement',
 		"documentgeneration" => 'DocumentGeneration',  // TODO: fill in proper name
 		'don' => 'Don',

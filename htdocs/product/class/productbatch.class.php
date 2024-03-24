@@ -1,7 +1,9 @@
 <?php
 /* Copyright (C) 2007-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -366,7 +368,7 @@ class Productbatch extends CommonObject
 			$this->batch = trim($this->batch);
 		}
 		if (isset($this->qty)) {
-			$this->qty = (float) trim($this->qty);
+			$this->qty = (float) trim((string) $this->qty);
 		}
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
@@ -522,7 +524,7 @@ class Productbatch extends CommonObject
 				$tmp->import_key = $obj->import_key;
 
 				if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
-					$tmp->context['stock_date_entry'] = $obj->date_entree;
+					$tmp->context['stock_entry_date'] = $dbs->jdate($obj->date_entree);
 				}
 
 				if ($fk_product > 0) {

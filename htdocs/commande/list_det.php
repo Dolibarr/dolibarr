@@ -12,6 +12,7 @@
  * Copyright (C) 2016-2021  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2023  Charlene Benke	        <charlene@patas-monkey.com>
  * Copyright (C) 2021-2023 	Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,12 +106,12 @@ $search_country = GETPOSTINT("search_country");
 $search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $socid = GETPOSTINT('socid');
-$search_user = GETPOSTINT('search_user');
-$search_sale = GETPOSTINT('search_sale');
+$search_user = GETPOST('search_user', 'intcomma');
+$search_sale = GETPOST('search_sale', 'intcomma');
 $search_total_ht = GETPOST('search_total_ht', 'alpha');
 $search_total_vat = GETPOST('search_total_vat', 'alpha');
 $search_total_ttc = GETPOST('search_total_ttc', 'alpha');
-$search_warehouse = GETPOSTINT('search_warehouse');
+$search_warehouse = GETPOST('search_warehouse', 'intcomma');
 $search_multicurrency_code = GETPOST('search_multicurrency_code', 'alpha');
 $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
@@ -195,7 +196,7 @@ $arrayfields = array(
 	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 55),
 	'c.date_commande' => array('label' => "OrderDateShort", 'checked' => 1, 'position' => 60),
 	'c.date_delivery' => array('label' => "DateDeliveryPlanned", 'checked' => 1, 'enabled' => !getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE'), 'position' => 65),
-	'c.fk_shipping_method' => array('label' => "SendingMethod", 'checked' => -1, 'position' => 66 , 'enabled' => isModEnabled('delivery_note')),
+	'c.fk_shipping_method' => array('label' => "SendingMethod", 'checked' => -1, 'position' => 66 , 'enabled' => isModEnabled('shipping')),
 	'c.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => -1, 'position' => 67),
 	'c.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => -1, 'position' => 68),
 	'c.fk_input_reason' => array('label' => "Channel", 'checked' => -1, 'position' => 69),
@@ -219,7 +220,7 @@ $arrayfields = array(
 	'c.date_cloture' => array('label' => "DateClosing", 'checked' => 0, 'position' => 130),
 	'c.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'enabled' => (!getDolGlobalString('MAIN_LIST_ALLOW_PUBLIC_NOTES')), 'position' => 135),
 	'c.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'enabled' => (!getDolGlobalString('MAIN_LIST_ALLOW_PRIVATE_NOTES')), 'position' => 140),
-	'shippable' => array('label' => "Shippable", 'checked' => 1,'enabled' => (isModEnabled('delivery_note')), 'position' => 990),
+	'shippable' => array('label' => "Shippable", 'checked' => 1,'enabled' => (isModEnabled('shipping')), 'position' => 990),
 	'c.facture' => array('label' => "Billed", 'checked' => 1, 'enabled' => (!getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')), 'position' => 995),
 	'c.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 999),
 	'c.fk_statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000)
@@ -230,6 +231,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
@@ -470,7 +472,7 @@ if ($search_billed != '' && $search_billed >= 0) {
 }
 if ($search_status != '') {
 	if ($search_status <= 3 && $search_status >= -1) {	// status from -1 to 3 are real status (other are virtual combination)
-		if ($search_status == 1 && !isModEnabled('delivery_note')) {
+		if ($search_status == 1 && !isModEnabled('shipping')) {
 			$sql .= ' AND c.fk_statut IN (1,2)'; // If module expedition disabled, we include order with status "sent" into "validated"
 		} else {
 			$sql .= ' AND c.fk_statut = '.((int) $search_status); // draft, validated, in process or canceled
@@ -685,7 +687,7 @@ if ($resql) {
 		$title .= ' - '.$langs->trans('StatusOrderToProcessShort');
 	}
 	if ($search_status == -3) {
-		$title .= ' - '.$langs->trans('StatusOrderValidated').', '.(!isModEnabled('delivery_note') ? '' : $langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
+		$title .= ' - '.$langs->trans('StatusOrderValidated').', '.(!isModEnabled('shipping') ? '' : $langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
 	}
 	if ($search_status == -4) {
 		$title .= ' - '.$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort");
@@ -716,7 +718,7 @@ if ($resql) {
 		$param .= '&sall='.urlencode($sall);
 	}
 	if ($socid > 0) {
-		$param .= '&socid='.urlencode($socid);
+		$param .= '&socid='.urlencode((string) ($socid));
 	}
 	if ($search_id) {
 		$param .= '&search_id='.urlencode($search_id);
@@ -762,7 +764,7 @@ if ($resql) {
 		$param .= '&search_ref_customer='.urlencode($search_ref_customer);
 	}
 	if ($search_user > 0) {
-		$param .= '&search_user='.urlencode($search_user);
+		$param .= '&search_user='.urlencode((string) ($search_user));
 	}
 	if ($search_sale > 0) {
 		$param .= '&search_sale='.urlencode($search_sale);
@@ -777,7 +779,7 @@ if ($resql) {
 		$param .= '&search_total_ttc='.urlencode($search_total_ttc);
 	}
 	if ($search_warehouse != '') {
-		$param .= '&search_warehouse='.urlencode($search_warehouse);
+		$param .= '&search_warehouse='.urlencode((string) ($search_warehouse));
 	}
 	if ($search_login) {
 		$param .= '&search_login='.urlencode($search_login);
@@ -810,10 +812,10 @@ if ($resql) {
 		$param .= '&search_state='.urlencode($search_state);
 	}
 	if ($search_country != '') {
-		$param .= '&search_country='.urlencode($search_country);
+		$param .= '&search_country='.urlencode((string) ($search_country));
 	}
 	if ($search_type_thirdparty && $search_type_thirdparty != '-1') {
-		$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
+		$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
 	}
 	if (!empty($search_product_category_array)) {
 		foreach ($search_product_category_array as $tmpval) {
@@ -821,10 +823,10 @@ if ($resql) {
 		}
 	}
 	if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
-		$param .= '&search_categ_cus='.urlencode($search_categ_cus);
+		$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
 	}
 	if ($show_files) {
-		$param .= '&show_files='.urlencode($show_files);
+		$param .= '&show_files='.urlencode((string) ($show_files));
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
@@ -833,16 +835,16 @@ if ($resql) {
 		$param .= '&search_billed='.urlencode($search_billed);
 	}
 	if ($search_fk_cond_reglement > 0) {
-		$param .= '&search_fk_cond_reglement='.urlencode($search_fk_cond_reglement);
+		$param .= '&search_fk_cond_reglement='.urlencode((string) ($search_fk_cond_reglement));
 	}
 	if ($search_fk_shipping_method > 0) {
-		$param .= '&search_fk_shipping_method='.urlencode($search_fk_shipping_method);
+		$param .= '&search_fk_shipping_method='.urlencode((string) ($search_fk_shipping_method));
 	}
 	if ($search_fk_mode_reglement > 0) {
-		$param .= '&search_fk_mode_reglement='.urlencode($search_fk_mode_reglement);
+		$param .= '&search_fk_mode_reglement='.urlencode((string) ($search_fk_mode_reglement));
 	}
 	if ($search_fk_input_reason > 0) {
-		$param .= '&search_fk_input_reason='.urlencode($search_fk_input_reason);
+		$param .= '&search_fk_input_reason='.urlencode((string) ($search_fk_input_reason));
 	}
 	if (!empty($productobuy)) {
 		$param .= '&productobuy='.urlencode($productobuy);
@@ -1107,7 +1109,7 @@ if ($resql) {
 	// Payment term
 	if (!empty($arrayfields['c.fk_cond_reglement']['checked'])) {
 		print '<td class="liste_titre">';
-		$form->select_conditions_paiements($search_fk_cond_reglement, 'search_fk_cond_reglement', 1, 1, 1);
+		print $form->getSelectConditionsPaiements($search_fk_cond_reglement, 'search_fk_cond_reglement', 1, 1, 1);
 		print '</td>';
 	}
 	// Payment mode
@@ -1294,6 +1296,7 @@ if ($resql) {
 	// Détail commande
 	if (!empty($arrayfields['rowid']['checked'])) {
 		print_liste_field_titre($arrayfields['rowid']['label'], $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder);
+		'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 	}
 	if (!empty($arrayfields['pr.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['pr.ref']['label'], $_SERVER["PHP_SELF"], 'pr.ref', '', $param, '', $sortfield, $sortorder);

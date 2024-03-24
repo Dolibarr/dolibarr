@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -278,21 +279,21 @@ if ($object->fetch($id) >= 0) {
 	$morehtmlref .= $form->editfieldval("", 'title', $object->title, $object, 0, 'string', '', null, null, '', 1);
 	$morehtmlref .= '</div>';
 
-	$morehtmlright = '';
+	$morehtmlstatus = '';
 	$nbtry = $nbok = 0;
 	if ($object->status == $object::STATUS_SENTPARTIALY || $object->status == $object::STATUS_SENTCOMPLETELY) {
 		$nbtry = $object->countNbOfTargets('alreadysent');
 		$nbko  = $object->countNbOfTargets('alreadysentko');
 		$nbok = ($nbtry - $nbko);
 
-		$morehtmlright .= ' ('.$nbtry.'/'.$object->nbemail;
+		$morehtmlstatus .= ' ('.$nbtry.'/'.$object->nbemail;
 		if ($nbko) {
-			$morehtmlright .= ' - '.$nbko.' '.$langs->trans("Error");
+			$morehtmlstatus .= ' - '.$nbko.' '.$langs->trans("Error");
 		}
-		$morehtmlright .= ') &nbsp; ';
+		$morehtmlstatus .= ') &nbsp; ';
 	}
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
@@ -364,6 +365,7 @@ if ($object->fetch($id) >= 0) {
 			$nbemail .= ' '.img_warning($langs->trans('ToAddRecipientsChooseHere'));//.' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
 		}
 		if ($text) {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			print $form->textwithpicto($nbemail, $text, 1, 'warning');
 		} else {
 			print $nbemail;
@@ -752,7 +754,7 @@ if ($object->fetch($id) >= 0) {
 		print '</tr>';
 
 		if ($page) {
-			$param .= "&page=".urlencode($page);
+			$param .= "&page=".urlencode((string) ($page));
 		}
 
 		print '<tr class="liste_titre">';

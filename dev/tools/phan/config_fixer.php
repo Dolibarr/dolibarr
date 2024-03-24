@@ -1,4 +1,7 @@
 <?php
+/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ */
 
 // Uncomment require_once to enable corresponding fixer
 
@@ -7,8 +10,6 @@
 //require_once __DIR__.'/plugins/UrlEncodeStringifyFixer.php';
 require_once __DIR__.'/plugins/SelectDateFixer.php';
 
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- */
 define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
 define('DOL_DOCUMENT_ROOT', DOL_PROJECT_ROOT.'/htdocs');
 define('PHAN_DIR', __DIR__);
@@ -22,7 +23,7 @@ $DEPRECATED_MODULE_MAPPING = array(
 	'commande' => 'order',
 	'contrat' => 'contract',
 	'entrepot' => 'stock',
-	'expedition' => 'delivery_note',
+	'expedition' => 'shipping',
 	'facture' => 'invoice',
 	'ficheinter' => 'intervention',
 	'product_fournisseur_price' => 'productsupplierprice',
@@ -91,6 +92,7 @@ return [
 	//	to `exclude_analysis_directory_list`.
 	"exclude_analysis_directory_list" => [
 		'htdocs/includes/',
+		'htdocs/install/doctemplates/websites/',
 		'htdocs/core/class/lessc.class.php', // External library
 		PHAN_DIR . '/stubs/',
 	],
@@ -226,10 +228,12 @@ return [
 	'gd'  => PHAN_DIR . '/stubs/gd.phan_php',
 	'geoip'  => PHAN_DIR . '/stubs/geoip.phan_php',
 	'imap'  => PHAN_DIR . '/stubs/imap.phan_php',
+	'imagick'  => PHAN_DIR . '/stubs/imagick.phan_php',
 	'intl'  => PHAN_DIR . '/stubs/intl.phan_php',
 	'ldap'  => PHAN_DIR . '/stubs/ldap.phan_php',
 	'mcrypt'  => PHAN_DIR . '/stubs/mcrypt.phan_php',
 	'memcache'  => PHAN_DIR . '/stubs/memcache.phan_php',
+	'memcached' => PHAN_DIR . '/stubs/memcached.phan_php',
 	'mysqli'  => PHAN_DIR . '/stubs/mysqli.phan_php',
 	'pdo_cubrid'  => PHAN_DIR . '/stubs/pdo_cubrid.phan_php',
 	'pdo_mysql'  => PHAN_DIR . '/stubs/pdo_mysql.phan_php',
@@ -239,6 +243,7 @@ return [
 	'session'  => PHAN_DIR . '/stubs/session.phan_php',
 	'simplexml'  => PHAN_DIR . '/stubs/SimpleXML.phan_php',
 	'soap'  => PHAN_DIR . '/stubs/soap.phan_php',
+	'tidy' => PHAN_DIR . '/stubs/tidy.phan_php',
 	'sockets'  => PHAN_DIR . '/stubs/sockets.phan_php',
 	'zip'  => PHAN_DIR . '/stubs/zip.phan_php',
 	],

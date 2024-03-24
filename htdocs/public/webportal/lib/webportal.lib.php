@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ */
 
 /**
  * \file        htdocs/public/webportal/lib/webportal.lib.php
@@ -9,7 +11,7 @@
 /**
  * Get nav menu
  *
- * @param	array	$Tmenu	Array of menu
+ * @param	array<string,array{id:string,rank:int,url:string,name:string,group:string,override?:int<0,1>,children?:array<array{id:string,rank:int,url:string,name:string,group:string,override?:int<0,1>}>}>	$Tmenu	Array of menu
  * @return  string
  */
 function getNav($Tmenu)
@@ -27,7 +29,7 @@ function getNav($Tmenu)
  * Get nav item
  *
  * TODO : Dropdown is actually not css implemented
- * @param	array	$item	Item of menu
+ * @param	array{id:string,rank:int,url:string,name:string,group:string,override?:int<0,1>,children?:array<array{id:string,rank:int,url:string,name:string,group:string,override?:int<0,1>,active?:bool,separator?:bool}>}	$item	Item of menu
  * @param	int		$deep	Level of deep
  * @return  string
  */
@@ -53,14 +55,15 @@ function getNavItem($item, $deep = 0)
 	}
 
 
-	if (!empty($item['overrride'])) {
-		$menu .= $item['overrride'];
+	if (!empty($item['override'])) {
+		$menu .= $item['override'];
 	} elseif (!empty($item['children'])) {
 		$menuChildren = '';
 		$haveChildActive = false;
 
 		foreach ($item['children'] as $child) {
 			$item = array_replace($itemDefault, $item); // applique les valeurs par default
+			'@phan-var-force array{id:string,rank:int,url:string,name:string,group:string,override?:int<0,1>,active?:bool,separator?:bool}	$child';
 
 			if (!empty($child['separator'])) {
 				$menuChildren .= '<li role="separator" class="divider"></li>';
@@ -100,9 +103,9 @@ function getNavItem($item, $deep = 0)
  * Sort menu
  * uasort callback function to Sort menu fields
  *
- * @param	array $a	PDF lines array fields configs
- * @param 	array $b	PDF lines array fields configs
- * @return 	int                                Return compare result
+ * @param	array{rank?:int} $a	PDF lines array fields configs
+ * @param 	array{rank?:int} $b	PDF lines array fields configs
+ * @return 	int<-1,1>           Return compare result
  *
  * 	// Sorting
  * 	uasort ( $this->cols, array( $this, 'menuSort' ) );

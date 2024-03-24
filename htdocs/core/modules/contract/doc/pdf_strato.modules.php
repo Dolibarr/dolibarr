@@ -184,7 +184,7 @@ class pdf_strato extends ModelePDFContract
 
 			if (!file_exists($dir)) {
 				if (dol_mkdir($dir) < 0) {
-					$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
+					$this->error = $langs->transnoentitiesnoconv("ErrorCanNotCreateDir", $dir);
 					return 0;
 				}
 			}
@@ -496,8 +496,8 @@ class pdf_strato extends ModelePDFContract
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		float|int	$tab_top		Top position of table
+	 *   @param		float|int	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array

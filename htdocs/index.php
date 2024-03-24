@@ -93,14 +93,14 @@ $resultboxes = FormOther::getBoxesArea($user, "0"); // Load $resultboxes (select
 print load_fiche_titre('&nbsp;', $resultboxes['selectboxlist'], '', 0, '', 'titleforhome');
 
 if (getDolGlobalString('MAIN_MOTD')) {
-	$conf->global->MAIN_MOTD = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $conf->global->MAIN_MOTD);
+	$conf->global->MAIN_MOTD = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', getDolGlobalString('MAIN_MOTD'));
 	if (getDolGlobalString('MAIN_MOTD')) {
 		$substitutionarray = getCommonSubstitutionArray($langs);
 		complete_substitutions_array($substitutionarray, $langs);
 		$texttoshow = make_substitutions(getDolGlobalString('MAIN_MOTD'), $substitutionarray, $langs);
 
 		print "\n<!-- Start of welcome text -->\n";
-		print '<table width="100%" class="notopnoleftnoright"><tr><td>';
+		print '<table class="centpercent notopnoleftnoright"><tr><td>';
 		print dol_htmlentitiesbr($texttoshow);
 		print '</td></tr></table><br>';
 		print "\n<!-- End of welcome text -->\n";
@@ -145,7 +145,7 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 }
 
 /*
- * Dashboard Dolibarr states (statistics)
+ * Dashboard Dolibarr statistics
  * Hidden for external users
  */
 
@@ -156,7 +156,7 @@ $boxstatFromHook = '';
 $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 
 // Dolibarr Working Board with weather
-if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
+if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
 	$showweather = (!getDolGlobalString('MAIN_DISABLE_METEO') || getDolGlobalInt('MAIN_DISABLE_METEO') == 2) ? 1 : 0;
 
 	//Array that contains all WorkboardResponse classes to process them

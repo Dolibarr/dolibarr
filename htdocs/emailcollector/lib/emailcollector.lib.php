@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) ---Put here your own copyright and developer email---
- * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+/* Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
  */
 function emailcollectorPrepareHead($object)
 {
-	global $db, $langs, $conf;
+	global $langs, $conf;
 
 	$langs->load("emailcollector@emailcollector");
 
@@ -117,13 +117,13 @@ function getDParameters($part)
  */
 function getAttachments($jk, $mbox)
 {
-	$structure = imap_fetchstructure($mbox, $jk, FT_UID);
+	$structure = imap_fetchstructure($mbox, $jk, FT_UID);  // @phan-suppress-current-line PhanTypeMismatchArgumentInternal
 	$parts = getParts($structure);
 
 	$fpos = 2;
 	$attachments = array();
 	$nb = count($parts);
-	if ($parts && $nb) {
+	if ($nb && !empty($parts)) {
 		for ($i = 1; $i < $nb; $i++) {
 			$part = $parts[$i];
 
@@ -154,7 +154,7 @@ function getAttachments($jk, $mbox)
  */
 function getFileData($jk, $fpos, $type, $mbox)
 {
-	$merge = imap_fetchbody($mbox, $jk, $fpos, FT_UID);
+	$merge = imap_fetchbody($mbox, $jk, $fpos, FT_UID);  // @phan-suppress-current-line PhanTypeMismatchArgumentInternal
 	$data = getDecodeValue($merge, $type);
 
 	return $data;

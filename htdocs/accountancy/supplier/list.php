@@ -55,8 +55,8 @@ $default_account = GETPOSTINT('default_account');
 $mesCasesCochees = GETPOST('toselect', 'array');
 
 // Search Getpost
+$search_lineid = GETPOST('search_lineid', 'alpha');		// Can be '> 100'
 $search_societe = GETPOST('search_societe', 'alpha');
-$search_lineid = GETPOSTINT('search_lineid');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
 $search_invoice = GETPOST('search_invoice', 'alpha');
@@ -291,11 +291,11 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa4 ON " . $alias_so
 $sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 $sql .= " AND l.product_type <= 2";
 // Add search filter like
-if ($search_societe) {
-	$sql .= natural_search('s.nom', $search_societe);
-}
-if ($search_lineid) {
+if (strlen($search_lineid)) {
 	$sql .= natural_search("l.rowid", $search_lineid, 1);
+}
+if (strlen($search_societe)) {
+	$sql .= natural_search('s.nom', $search_societe);
 }
 if (strlen(trim($search_invoice))) {
 	$sql .= natural_search(array("f.ref", "f.ref_supplier"), $search_invoice);
@@ -399,29 +399,29 @@ if ($result) {
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.((int) $limit);
 	}
+	if ($search_lineid) {
+		$param .= '&search_lineid='.urlencode((string) ($search_lineid));
+	}
 	if ($search_societe) {
 		$param .= '&search_societe='.urlencode($search_societe);
 	}
-	if ($search_lineid) {
-		$param .= '&search_lineid='.urlencode($search_lineid);
-	}
 	if ($search_date_startday) {
-		$param .= '&search_date_startday='.urlencode($search_date_startday);
+		$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
 	}
 	if ($search_date_startmonth) {
-		$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+		$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
 	}
 	if ($search_date_startyear) {
-		$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+		$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
 	}
 	if ($search_date_endday) {
-		$param .= '&search_date_endday='.urlencode($search_date_endday);
+		$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
 	}
 	if ($search_date_endmonth) {
-		$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+		$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
 	}
 	if ($search_date_endyear) {
-		$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+		$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
 	}
 	if ($search_invoice) {
 		$param .= '&search_invoice='.urlencode($search_invoice);

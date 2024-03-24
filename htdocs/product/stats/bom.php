@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020 Floiran Henry <florian.henry@scopen.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +83,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$object = $product;
 
-	$parameters = array('id'=>$id);
+	$parameters = array('id' => $id);
 	$reshook = $hookmanager->executeHooks('doActions', $parameters, $product, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -130,7 +131,7 @@ if ($id > 0 || !empty($ref)) {
 		//Calcul total qty and amount for global if full scan list
 		$total_qty_toconsume = 0;
 		$total_qty_toproduce = 0;
-		$product_cache=array();
+		$product_cache = array();
 		$bom_data_result = array();
 
 		//Qauntity  to produce
@@ -265,10 +266,10 @@ if ($id > 0 || !empty($ref)) {
 			$option .= '&limit='.((int) $limit);
 		}
 		if (!empty($search_month)) {
-			$option .= '&search_month='.urlencode($search_month);
+			$option .= '&search_month='.urlencode((string) $search_month);
 		}
 		if (!empty($search_year)) {
-			$option .= '&search_year='.urlencode($search_year);
+			$option .= '&search_year='.urlencode((string) $search_year);
 		}
 
 		print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
@@ -283,7 +284,7 @@ if ($id > 0 || !empty($ref)) {
 		print_barre_liste($langs->trans("BOMs"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', count($bom_data_result), count($bom_data_result), '', 0, '', '', $limit, 0, 0, 1);
 
 		if (!empty($page)) {
-			$option .= '&page='.urlencode($page);
+			$option .= '&page='.urlencode((string) ($page));
 		}
 
 		print '<div class="div-table-responsive">';

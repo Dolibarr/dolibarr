@@ -2,7 +2,7 @@
 /* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -460,7 +460,7 @@ if ($id > 0 || $ref) {
 	if ($salaryBonPl) {
 		$sql = "SELECT pl.rowid, pl.statut, pl.amount, pl.fk_user,";
 		$sql .= " u.rowid as socid, u.login as name";
-		$sql .= " FROM llx_prelevement_lignes as pl";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 		$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
 		$sql .= ", ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $id);
@@ -506,7 +506,7 @@ if ($id > 0 || $ref) {
 		$num = $db->num_rows($result);
 		$i = 0;
 
-		$urladd = "&id=".urlencode($id);
+		$urladd = "&id=".urlencode((string) ($id));
 		if ($limit > 0 && $limit != $conf->liste_limit) {
 			$urladd .= '&limit='.((int) $limit);
 		}

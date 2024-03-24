@@ -57,7 +57,7 @@ function dol_basename($pathfile)
  * @param	string			$relativename	For recursive purpose only. Must be "" at first call.
  * @param	int 			$donotfollowsymlinks	Do not follow symbolic links
  * @param	int 			$nbsecondsold	Only files older than $nbsecondsold
- * @return	array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
+ * @return	array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)>
  * @see dol_dir_list_in_database()
  */
 function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0, $nohook = 0, $relativename = "", $donotfollowsymlinks = 0, $nbsecondsold = 0)
@@ -256,7 +256,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
  * @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
  * @param	int			$sortorder		Sort order (SORT_ASC, SORT_DESC)
  * @param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like description
- * @return	array<array{rowid:string,label:string,name:string,path:string,level1name:string,fullname:string,fullpath_orig:string,date_c:string,datem:string,type:string,keywords:string,cover:string,position:int,acl:string,share:string,description:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
+ * @return	array<array{rowid:string,label:string,name:string,path:string,level1name:string,fullname:string,fullpath_orig:string,date_c:string,date_m:string,type:string,keywords:string,cover:string,position:int,acl:string,share:string,description:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  * @see dol_dir_list()
  */
 function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0)
@@ -644,19 +644,17 @@ function dol_fileperm($pathoffile)
 /**
  * Make replacement of strings into a file.
  *
- * @param	string	$srcfile			       Source file (can't be a directory)
+ * @param	string					$srcfile			       Source file (can't be a directory)
  * @param	array<string,string>	$arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
- * @param	string	$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
- * @param	string	$newmask			       Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
- * @param	int		$indexdatabase		       1=index new file into database.
- * @param   int     $arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/'
- * @return	int							       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
+ * @param	string					$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
+ * @param	string					$newmask			       Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @param	int						$indexdatabase		       1=index new file into database.
+ * @param   int     				$arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/'
+ * @return	int											       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
  * @see		dol_copy()
  */
 function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask = '0', $indexdatabase = 0, $arrayreplacementisregex = 0)
 {
-	global $conf;
-
 	dol_syslog("files.lib.php::dolReplaceInFile srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." indexdatabase=".$indexdatabase." arrayreplacementisregex=".$arrayreplacementisregex);
 
 	if (empty($srcfile)) {
@@ -859,14 +857,14 @@ function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 /**
  * Copy a dir to another dir. This include recursive subdirectories.
  *
- * @param	string	$srcfile			Source file (a directory)
- * @param	string	$destfile			Destination file (a directory)
- * @param	string	$newmask			Mask for new file ('0' by default means getDolGlobalString('MAIN_UMASK')). Example: '0666'
- * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
+ * @param	string					$srcfile			Source file (a directory)
+ * @param	string					$destfile			Destination file (a directory)
+ * @param	string					$newmask			Mask for new file ('0' by default means getDolGlobalString('MAIN_UMASK')). Example: '0666'
+ * @param 	int						$overwriteifexists	Overwrite file if exists (1 by default)
  * @param	array<string,string>	$arrayreplacement	Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
- * @param	int		$excludesubdir		0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
- * @param	string[]	$excludefileext		Exclude some file extensions
- * @return	int							Return integer <0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
+ * @param	int						$excludesubdir		0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
+ * @param	string[]				$excludefileext		Exclude some file extensions
+ * @return	int											Return integer <0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
  * @see		dol_copy()
  */
 function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null, $excludesubdir = 0, $excludefileext = null)
@@ -880,6 +878,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 	}
 
 	$destexists = dol_is_dir($destfile);
+
 	//if (! $overwriteifexists && $destexists) return 0;	// The overwriteifexists is for files only, so propagated to dol_copy only.
 
 	if (!$destexists) {
@@ -890,7 +889,13 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 			$dirmaskdec = octdec(getDolGlobalString('MAIN_UMASK'));
 		}
 		$dirmaskdec |= octdec('0200'); // Set w bit required to be able to create content for recursive subdirs files
-		dol_mkdir($destfile, '', decoct($dirmaskdec));
+
+		$result = dol_mkdir($destfile, '', decoct($dirmaskdec));
+
+		if (!dol_is_dir($destfile)) {
+			// The output directory does not exists and we failed to create it. So we stop here.
+			return -1;
+		}
 	}
 
 	$ossrcfile = dol_osencode($srcfile);
@@ -1104,7 +1109,7 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 				}
 
 				if ($resultecm > 0) {
-					$result = true;
+					$result = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 				} else {
 					$result = false;
 				}
@@ -1180,7 +1185,7 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 							}
 						}
 					}
-					$result = true;
+					$result = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 				}
 			}
 		}
@@ -2518,9 +2523,9 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 
 	try {
 		if ($mode == 'gz') {
-			$foundhandler = 0;
+			$foundhandler = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		} elseif ($mode == 'bz') {
-			$foundhandler = 0;
+			$foundhandler = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		} elseif ($mode == 'zip') {
 			/*if (defined('ODTPHP_PATHTOPCLZIP'))
 			 {
@@ -2616,10 +2621,10 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
  *
  * @param 	string		$dir			Directory to scan
  * @param	string		$regexfilter	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
- * @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
- * @param	int			$nohook			Disable all hooks
- * @param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
- * @return	array						Array with properties (full path, date, ...) of to most recent file
+ * @param	string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
+ * @param	int<0,1>	$nohook			Disable all hooks
+ * @param	int<0,3>	$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
+ * @return	null|array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}	null if none or Array with properties (full path, date, ...) of the most recent file
  */
 function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(\.meta|_preview.*\.png)$', '^\.'), $nohook = 0, $mode = 0)
 {
@@ -2736,7 +2741,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->mycompany->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'userphoto' && !empty($conf->user->dir_output)) {
 		// Wrapping for users photos (user photos are allowed to any connected users)
-		$accessallowed = 0;
+		$accessallowed = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		if (preg_match('/^\d+\/photos\//', $original_file)) {
 			$accessallowed = 1;
 		}
@@ -2772,7 +2777,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->mycompany->dir_output.'/logos/'.$original_file;
 	} elseif ($modulepart == 'memberphoto' && !empty($conf->adherent->dir_output)) {
 		// Wrapping for members photos
-		$accessallowed = 0;
+		$accessallowed = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		if (preg_match('/^\d+\/photos\//', $original_file)) {
 			$accessallowed = 1;
 		}
@@ -3167,12 +3172,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->expedition->dir_output."/".(strpos($original_file, 'receipt/') === 0 ? '' : 'receipt/').$original_file;
-	} elseif ($modulepart == 'actions' && !empty($conf->agenda->dir_output)) {
-		// Wrapping pour les actions
-		if ($fuser->hasRight('agenda', 'myactions', $read) || preg_match('/^specimen/i', $original_file)) {
-			$accessallowed = 1;
-		}
-		$original_file = $conf->agenda->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'actionsreport' && !empty($conf->agenda->dir_temp)) {
 		// Wrapping pour les actions
 		if ($fuser->hasRight('agenda', 'allactions', $read) || preg_match('/^specimen/i', $original_file)) {
@@ -3289,10 +3288,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->adherent->dir_output.'/'.$original_file;
-	} elseif ($modulepart == 'scanner_user_temp' && !empty($conf->scanner->dir_temp)) {
-		// Wrapping for Scanner
-		$accessallowed = 1;
-		$original_file = $conf->scanner->dir_temp.'/'.$fuser->id.'/'.$original_file;
 		// If modulepart=module_user_temp	Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp/iduser
 		// If modulepart=module_temp		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp
 		// If modulepart=module_user		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/iduser

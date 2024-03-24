@@ -76,7 +76,7 @@ class SocieteAccount extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 
 	public $fields = array(
@@ -87,7 +87,7 @@ class SocieteAccount extends CommonObject
 		'pass_crypted' => array('type' => 'password', 'label' => 'Password', 'visible' => -1, 'enabled' => 1, 'position' => 31, 'notnull' => 1),
 		'pass_temp'    => array('type' => 'varchar(128)', 'label' => 'Temp', 'visible' => 0, 'enabled' => 0, 'position' => 32, 'notnull' => -1,),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'visible' => 1, 'enabled' => 1, 'position' => 40, 'notnull' => -1, 'index' => 1, 'picto' => 'company', 'css' => 'maxwidth300 widthcentpercentminusxx'),
-		'site' => array('type' => 'varchar(128)', 'label' => 'WebsiteTypeLabel', 'visible' => 0, 'enabled' => 0, 'position' => 41, 'notnull' => 1, 'default' => '', 'help' => 'Name of the website or service if this is account on an external website or service'),
+		'site' => array('type' => 'varchar(128)', 'label' => 'WebsiteTypeLabel', 'visible' => 0, 'enabled' => 0, 'position' => 41, 'notnull' => 1, 'default' => '', 'help' => 'Name of the website or service if this is account on an external website or service', 'arrayofkeyval' => array( /* For static analysis, filled in constructor */)),
 		'fk_website' => array('type' => 'integer:Website:website/class/website.class.php', 'label' => 'WebSite', 'visible' => 0, 'enabled' => 0, 'position' => 42, 'notnull' => -1, 'index' => 1, 'picto' => 'website', 'css' => 'maxwidth300 widthcentpercentminusxx'),
 		'site_account' => array('type' => 'varchar(128)', 'label' => 'ExternalSiteAccount', 'visible' => 0, 'enabled' => 1, 'position' => 44, 'help' => 'A key to identify the account on external web site if this is an account on an external website'),
 		'key_account' => array('type' => 'varchar(128)', 'label' => 'KeyAccount', 'visible' => 0, 'enabled' => 1, 'position' => 48, 'notnull' => 0, 'index' => 1, 'searchall' => 1, 'comment' => 'The id of third party in the external web site (for site_account if site_account defined)',),

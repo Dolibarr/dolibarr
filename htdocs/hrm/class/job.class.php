@@ -5,6 +5,7 @@
  * Copyright (C) 2021 	Jean-Pascal BOUDET  <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 	Grégory BLEMAND     <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024	Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +29,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+
 
 /**
  * Class for Job
@@ -101,19 +101,19 @@ class Job extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => '1', 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => '1', 'index' => 1, 'css' => 'left', 'comment' => "Id"),
-		'label' => array('type' => 'varchar(128)', 'label' => 'Label', 'enabled' => '1', 'position' => 20, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'showoncombobox' => '1', 'comment' => "Label of object"),
-		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => '1', 'position' => 21, 'notnull' => 0, 'visible' => 1,),
-		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => '1', 'position' => 500, 'notnull' => 1, 'visible' => 2,),
-		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => '1', 'position' => 501, 'notnull' => 0, 'visible' => 2,),
-		'deplacement' => array('type' => 'select', 'required' => 1,'label' => 'NeedBusinessTravels', 'enabled' => 1, 'position' => 90, 'notnull' => 1, 'visible' => 1, 'arrayofkeyval' => array(0 => "No", 1 => "Yes"), 'default' => 0),
-		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => '1', 'position' => 70, 'notnull' => 0, 'visible' => 0,),
-		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => '1', 'position' => 71, 'notnull' => 0, 'visible' => 0,),
-		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => '1', 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
-		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => '1', 'position' => 511, 'notnull' => -1, 'visible' => -2,),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
+		'label' => array('type' => 'varchar(128)', 'label' => 'Label', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'comment' => "Label of object"),
+		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 21, 'notnull' => 0, 'visible' => 1,),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => 2,),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => 2,),
+		'deplacement' => array('type' => 'select', 'required' => 1,'label' => 'NeedBusinessTravels', 'enabled' => 1, 'position' => 90, 'notnull' => 1, 'visible' => 1, 'arrayofkeyval' => array(0 => "No", 1 => "Yes"), 'default' => '0'),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => 0,),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 71, 'notnull' => 0, 'visible' => 0,),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2,),
 	);
 	public $rowid;
 	public $ref;
@@ -122,8 +122,6 @@ class Job extends CommonObject
 	public $date_creation;
 
 	public $deplacement;
-	public $note_public;
-	public $note_private;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	// END MODULEBUILDER PROPERTIES
@@ -136,9 +134,9 @@ class Job extends CommonObject
 	//  */
 	// public $table_element_line = 'hrm_jobline';
 
-	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
-	//  */
+	/**
+	 * @var string    Field with ID of parent key if this object has a parent
+	 */
 	public $fk_element = 'fk_job';
 
 	// /**
@@ -146,16 +144,19 @@ class Job extends CommonObject
 	//  */
 	// public $class_element_line = 'Jobline';
 
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	protected $childtables = array('hrm_evaluation', 'hrm_job_user');
+	/**
+	 * @var array<string,string[]>	List of child tables. To test if we can delete object.
+	 */
+	protected $childtables = array(
+		'hrm_evaluation' => ['name' => 'Evaluation'],
+		'hrm_job_user' => ['name' => 'Job'],
+	);
 
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass:ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	//  */
+	/**
+	 * @var string[]    List of child tables. To know object to delete on cascade.
+	 *               If name matches '@ClassNAme:FilePathClass:ParentFkFieldName' it will
+	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	 */
 	protected $childtablesoncascade = array("@SkillRank:hrm/class/skillrank.class.php:fk_object:(objecttype:=:'job')");
 
 	// /**
@@ -291,8 +292,7 @@ class Job extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
@@ -927,8 +927,7 @@ class Job extends CommonObject
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_job:=:'.((int) $this->id).')');
 
 		if (is_numeric($result)) {
-			$this->error = $objectline->error;
-			$this->errors = $objectline->errors;
+			$this->setErrorsFromObject($objectline);
 			return $result;
 		} else {
 			$this->lines = $result;
@@ -962,7 +961,7 @@ class Job extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/hrm/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if ($mybool === false) {
@@ -1031,36 +1030,6 @@ class Job extends CommonObject
 	}
 
 	/**
-	 * Action executed by scheduler
-	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
-	 * Use public function doScheduledJob($param1, $param2, ...) to get parameters
-	 *
-	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
-	 */
-	public function doScheduledJob()
-	{
-		global $conf, $langs;
-
-		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
-
-		$error = 0;
-		$this->output = '';
-		$this->error = '';
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$now = dol_now();
-
-		$this->db->begin();
-
-		// ...
-
-		$this->db->commit();
-
-		return $error;
-	}
-
-	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
@@ -1096,6 +1065,7 @@ class Job extends CommonObject
 		$return .= '</div>';
 		return $return;
 	}
+
 	/**
 	 * function for get required skills associate to job object
 	 * @param int  $id  Id of object

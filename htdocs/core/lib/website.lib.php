@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -602,7 +603,7 @@ function includeContainer($containerref)
 	$fullpathfile = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$websitekey.'/'.$containerref;
 
 	if (empty($includehtmlcontentopened)) {
-		$includehtmlcontentopened = 0;
+		$includehtmlcontentopened = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 	}
 	$includehtmlcontentopened++;
 	if ($includehtmlcontentopened > $MAXLEVEL) {
@@ -617,7 +618,7 @@ function includeContainer($containerref)
 	//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
 
 	ob_start();
-	$res = include $fullpathfile; // Include because we want to execute code content
+	$res = @include $fullpathfile; // Include because we want to execute code content
 	$tmpoutput = ob_get_contents();
 	ob_end_clean();
 
@@ -836,6 +837,8 @@ function getStructuredData($type, $data = array())
 				}
 			}'."\n";
 		$ret .= '</script>'."\n";
+	} else {
+		$ret = '';
 	}
 	return $ret;
 }
@@ -978,8 +981,8 @@ function getSocialNetworkSharingLinks()
 /**
  * Return HTML content to add structured data for an article, news or Blog Post.
  *
- * @param	Object	$object			Object
- * @return  string					HTML img content or '' if no image found
+ * @param	Object	$object		Object
+ * @return  int					HTML img content or '' if no image found
  * @see getImagePublicURLOfObject()
  */
 function getNbOfImagePublicURLOfObject($object)

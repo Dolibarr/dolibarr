@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,10 +89,10 @@ class modStripe extends DolibarrModules
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
-		$r = 0;
+		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 
 		// Main menu entries
-		$r = 0;
+		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		/* $this->menu[$r]=array(
 			'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'mainmenu'=>'billing',
@@ -109,12 +110,12 @@ class modStripe extends DolibarrModules
 		$r++;*/
 
 		$this->menu[$r] = array(
-			'fk_menu'=>'fk_mainmenu=bank',
-			'type'=>'left',
-			'titre'=>'StripeAccount',
+			'fk_menu' => 'fk_mainmenu=bank',
+			'type' => 'left',
+			'titre' => 'StripeAccount',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
-			'mainmenu'=>'bank',
-			'leftmenu'=>'stripe',
+			'mainmenu' => 'bank',
+			'leftmenu' => 'stripe',
 			'url' => '',
 			'langs' => 'stripe',
 			'position' => 100,

@@ -106,7 +106,7 @@ if (isModEnabled('propal') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_PROP
 if (isModEnabled('order') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_ORDER_DISABLED') && $user->hasRight('commande', 'lire')) {
 	$arrayresult['searchintoorder'] = array('position' => 70, 'img' => 'object_order', 'label' => $langs->trans("SearchIntoCustomerOrders", $search_boxvalue), 'text' => img_picto('', 'object_order', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerOrders", $search_boxvalue), 'url' => DOL_URL_ROOT.'/commande/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
-if (isModEnabled('delivery_note') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_SHIPMENT_DISABLED') && $user->hasRight('expedition', 'lire')) {
+if (isModEnabled('shipping') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_SHIPMENT_DISABLED') && $user->hasRight('expedition', 'lire')) {
 	$arrayresult['searchintoshipment'] = array('position' => 80, 'img' => 'object_shipment', 'label' => $langs->trans("SearchIntoCustomerShipments", $search_boxvalue), 'text' => img_picto('', 'object_shipment', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerShipments", $search_boxvalue), 'url' => DOL_URL_ROOT.'/expedition/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 if (isModEnabled('invoice') && !getDolGlobalString('MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED') && $user->hasRight('facture', 'lire')) {

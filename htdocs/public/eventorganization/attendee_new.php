@@ -164,7 +164,7 @@ if (empty($conf->eventorganization->enabled)) {
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
-	global $user, $conf, $langs, $mysoc;
+	global $conf, $langs, $mysoc;
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
@@ -235,7 +235,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conference->status==2  || !empty($project->id) && $project->status == Project::STATUS_VALIDATED)) {
+if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conference->status == 2  || !empty($project->id) && $project->status == Project::STATUS_VALIDATED)) {
 	$error = 0;
 
 	$urlback = '';
@@ -510,6 +510,8 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 			// TODO Use default language of $thirdparty->default_lang to build $outputlang
 
+			$outputlangs->loadLangs(array("eventorganization"));
+
 			// Get product to use for invoice
 			$productforinvoicerow = new Product($db);
 			$productforinvoicerow->id = 0;
@@ -600,7 +602,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				// Now we redirect to the payment page
 				$sourcetouse = 'organizedeventregistration';
 				$reftouse = $facture->id;
-				$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.urlencode($sourcetouse).'&ref='.urlencode($reftouse);
+				$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.urlencode((string) ($sourcetouse)).'&ref='.urlencode((string) ($reftouse));
 				if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 					if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 						$redirection .= '&securekey='.dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
@@ -629,7 +631,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$outputlangs = new Translate('', $conf);
 			$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
 			// Load traductions files required by page
-			$outputlangs->loadLangs(array("main", "members"));
+			$outputlangs->loadLangs(array("main", "members", "eventorganization"));
 			// Get email content from template
 			$arraydefaultmessage = null;
 
@@ -802,11 +804,15 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		print '<table class="border" summary="form to subscribe" id="tablesubscribe">' . "\n";
 
 		// Firstname
-		print '<tr><td><span class="fieldrequired">' . $langs->trans("Firstname") . '</span></td><td>';
-		print '<input type="text" name="firstname" maxlength="255" class="minwidth200 maxwidth300" value="' . dol_escape_htmltag($firstname) . '" required></td></tr>' . "\n";
+		print '<tr><td><span class="fieldrequired">';
+		print $langs->trans("Firstname") . '</span></td><td>';
+		print img_picto('', 'user', 'class="pictofixedwidth"');
+		print '<input type="text" name="firstname" maxlength="255" class="minwidth200 maxwidth300" value="' . dol_escape_htmltag($firstname) . '" required autofocus></td></tr>' . "\n";
 
 		// Lastname
-		print '<tr><td><span class="fieldrequired">' . $langs->trans("Lastname") . '</span></td><td>';
+		print '<tr><td><span class="fieldrequired">';
+		print $langs->trans("Lastname") . '</span></td><td>';
+		print img_picto('', 'user', 'class="pictofixedwidth"');
 		print '<input type="text" name="lastname" maxlength="255" class="minwidth200 maxwidth300" value="' . dol_escape_htmltag($lastname) . '" required></td></tr>' . "\n";
 
 		// Email

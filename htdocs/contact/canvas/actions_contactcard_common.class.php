@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,7 +157,7 @@ abstract class ActionsContactCardCommon
 			// Town
 			$this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 
-			if (dol_strlen(trim($this->object->country_id)) == 0) {
+			if (dol_strlen(trim((string) $this->object->country_id)) == 0) {
 				$this->object->country_id = $objsoc->country_id;
 			}
 
@@ -176,7 +177,7 @@ abstract class ActionsContactCardCommon
 			}
 
 			// Public or private
-			$selectarray = array('0'=>$langs->trans("ContactPublic"), '1'=>$langs->trans("ContactPrivate"));
+			$selectarray = array('0' => $langs->trans("ContactPublic"), '1' => $langs->trans("ContactPrivate"));
 			$this->tpl['select_visibility'] = $form->selectarray('priv', $selectarray, $this->object->priv, 0);
 		}
 

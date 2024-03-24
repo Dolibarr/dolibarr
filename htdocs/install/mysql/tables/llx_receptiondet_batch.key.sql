@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2015      Claudio Aschieri	<c.aschieri@19.coop>
+-- Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,13 +14,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- This table should have been named llx_receptiondet_batch_extrafields
 -- ===================================================================
 
-create table llx_commande_fournisseur_dispatch_extrafields
-(
-  rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  fk_object        integer NOT NULL,    -- object id
-  import_key       varchar(14)      	-- import key
-)ENGINE=innodb;
+ALTER TABLE llx_receptiondet_batch ADD INDEX idx_receptiondet_batch_fk_commande (fk_commande);
+ALTER TABLE llx_receptiondet_batch ADD INDEX idx_receptiondet_batch_fk_reception (fk_reception);
+ALTER TABLE llx_receptiondet_batch ADD CONSTRAINT fk_receptiondet_batch_fk_reception FOREIGN KEY (fk_reception) REFERENCES llx_reception (rowid);
+ALTER TABLE llx_receptiondet_batch ADD INDEX idx_receptiondet_batch_fk_product (fk_product);
+ALTER TABLE llx_receptiondet_batch ADD INDEX idx_receptiondet_batch_fk_elementdet (fk_elementdet);

@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/authority.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'bills', 'blockedlog', 'other'));
@@ -154,7 +155,10 @@ if ($action === 'downloadblockchain') {
 	$previoushash = '';
 	$firstid = '';
 
-	if (!$error) {
+	if (! (GETPOSTINT('yeartoexport') > 0)) {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Year")), null, "errors");
+		$error++;
+	} else {
 		// Get ID of first line
 		$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
@@ -292,13 +296,14 @@ if ($action === 'downloadblockchain') {
  */
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
 if (GETPOST('withtab', 'alpha')) {
 	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
 } else {
 	$title = $langs->trans("BrowseBlockedLog");
 }
-$help_url="EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
+$help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
 
 llxHeader('', $title, $help_url);
 
@@ -353,16 +358,16 @@ if ($search_startday > 0) {
 	$param .= '&search_startday='.urlencode($search_startday);
 }
 if ($search_endyear > 0) {
-	$param .= '&search_endyear='.urlencode($search_endyear);
+	$param .= '&search_endyear='.urlencode((string) ($search_endyear));
 }
 if ($search_endmonth > 0) {
-	$param .= '&search_endmonth='.urlencode($search_endmonth);
+	$param .= '&search_endmonth='.urlencode((string) ($search_endmonth));
 }
 if ($search_endday > 0) {
-	$param .= '&search_endday='.urlencode($search_endday);
+	$param .= '&search_endday='.urlencode((string) ($search_endday));
 }
 if ($search_showonlyerrors > 0) {
-	$param .= '&search_showonlyerrors='.urlencode($search_showonlyerrors);
+	$param .= '&search_showonlyerrors='.urlencode((string) ($search_showonlyerrors));
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -374,24 +379,14 @@ if (GETPOST('withtab', 'alpha')) {
 // Add $param from extra fields
 //include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?output=file">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<div class="right">';
 print $langs->trans("RestrictYearToExport").': ';
-$smonth = GETPOSTINT('monthtoexport');
 // Month
-$retstring = '';
-$retstring .= '<select class="flat valignmiddle maxwidth75imp marginrightonly" id="monthtoexport" name="monthtoexport">';
-$retstring .= '<option value="0" selected>&nbsp;</option>';
-for ($month = 1; $month <= 12; $month++) {
-	$retstring .= '<option value="'.$month.'"'.($month == $smonth ? ' selected' : '').'>';
-	$retstring .= dol_print_date(mktime(12, 0, 0, $month, 1, 2000), "%b");
-	$retstring .= "</option>";
-}
-$retstring .= "</select>";
-print $retstring;
-print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth50imp" value="'.GETPOSTINT('yeartoexport').'">';
+print $formother->select_month(GETPOSTINT('monthtoexport'), 'monthtoexport', 1, 0, 'minwidth50 maxwidth75imp valignmiddle', true);
+print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth50imp" value="'.GETPOST('yeartoexport').'" placeholder="'.$langs->trans("Year").'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
 if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
@@ -416,7 +411,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="noborder centpercent">';
+print '<table class="noborder centpercent liste">';
 
 // Line of filters
 print '<tr class="liste_titre_filter">';
@@ -465,9 +460,9 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 
 // Status
-print '<td class="liste_titre">';
+print '<td class="liste_titre center minwidth75imp parentonrightofpage">';
 $array = array("1" => "OnlyNonValid");
-print $form->selectarray('search_showonlyerrors', $array, $search_showonlyerrors, 1, 0, 0, '', 1, 0, 0, 'ASC', 'search_status maxwidth200 onrightofpage', 1);
+print $form->selectarray('search_showonlyerrors', $array, $search_showonlyerrors, 1, 0, 0, '', 1, 0, 0, 'ASC', 'search_status width100 onrightofpage', 1);
 print '</td>';
 
 // Status note

@@ -151,6 +151,7 @@ include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Init search fields
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
@@ -606,7 +607,7 @@ if ($optioncss != '') {
 	$param .= '&amp;optioncss='.urlencode($optioncss);
 }
 if ($search_categ > 0) {
-	$param .= '&amp;search_categ='.urlencode($search_categ);
+	$param .= '&amp;search_categ='.urlencode((string) ($search_categ));
 }
 if ($search_warehouse > 0) {
 	$param .= '&amp;search_warehouse='.urlencode($search_warehouse);
@@ -650,7 +651,7 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $url = DOL_URL_ROOT.'/user/card.php?action=create'.($contextpage == 'employeelist' ? '&search_employee=1' : '').'&leftmenu=';
 if (!empty($socid)) {
-	$url .= '&socid='.urlencode($socid);
+	$url .= '&socid='.urlencode((string) ($socid));
 }
 
 $newcardbutton = '';

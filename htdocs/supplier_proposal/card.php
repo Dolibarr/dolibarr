@@ -1328,7 +1328,7 @@ if ($action == 'create') {
 		}
 
 		// Shipping Method
-		if (isModEnabled("delivery_note")) {
+		if (isModEnabled("shipping")) {
 			print '<tr><td>'.$langs->trans('SendingMethod').'</td><td colspan="2">';
 			print img_picto('', 'dolly', 'class="pictofixedwidth"');
 			$form->selectShippingMethod(GETPOST('shipping_method_id') > 0 ? GETPOSTINT('shipping_method_id') : "", 'shipping_method_id', '', 1);
@@ -1917,10 +1917,10 @@ if ($action == 'create') {
 		}
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table id="tablelines" class="noborder noshadow" width="100%">';
+		print '<table id="tablelines" class="noborder noshadow centpercent">';
 
 		// Add free products/services form
-		global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
+		global $forceall, $senderissupplier, $inputalsopricewithtax;
 		$forceall = 1;
 		$dateSelector = 0;
 		$inputalsopricewithtax = 1;
@@ -1938,7 +1938,7 @@ if ($action == 'create') {
 			if ($action != 'editline') {
 				// Add products/services form
 
-				$parameters = array();
+				$parameters = array('dateSelector' => $dateSelector);
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				if ($reshook < 0) {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

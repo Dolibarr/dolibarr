@@ -52,7 +52,7 @@ if (isModEnabled("propal")) {
 if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
-if (isModEnabled("delivery_note")) {
+if (isModEnabled("shipping")) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
 if (isModEnabled('contract')) {
@@ -74,7 +74,7 @@ if (isModEnabled('contract')) {
 if (isModEnabled('order')) {
 	$langs->load("orders");
 }
-if (isModEnabled("delivery_note")) {
+if (isModEnabled("shipping")) {
 	$langs->load("sendings");
 }
 if (isModEnabled('invoice')) {
@@ -313,14 +313,13 @@ $form = new Form($db);
 $formcompany = new FormCompany($db);
 
 $title = $langs->trans("ThirdParty")." - ".$langs->trans('Customer');
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name." - ".$langs->trans('Customer');
 }
 
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Geschäftspartner';
 
 llxHeader('', $title, $help_url);
-
 
 if ($object->id > 0) {
 	$head = societe_prepare_head($object);
@@ -1029,7 +1028,7 @@ if ($object->id > 0) {
 	/*
 	 *   Latest shipments
 	 */
-	if (isModEnabled("delivery_note") && $user->hasRight('expedition', 'lire')) {
+	if (isModEnabled("shipping") && $user->hasRight('expedition', 'lire')) {
 		$sql = 'SELECT e.rowid as id';
 		$sql .= ', e.ref, e.entity';
 		$sql .= ', e.date_creation';

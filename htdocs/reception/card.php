@@ -12,6 +12,7 @@
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
  * Copyright (C) 2018	    Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,9 +126,9 @@ if ($id > 0 || !empty($ref)) {
 	$typeobject = '';
 	if (!empty($object->origin)) {
 		$origin = $object->origin;
+		$typeobject = $object->origin;
 
 		$object->fetch_origin();
-		$typeobject = $object->origin;
 	}
 
 	// Set $origin_id and $objectsrc
@@ -391,7 +392,7 @@ if (empty($reshook)) {
 					$ent = "entl".$i;
 					$idl = "idl".$i;
 
-					$entrepot_id = is_numeric(GETPOSTINT($ent)) ? GETPOSTINT($ent) : GETPOSTINT('entrepot_id');
+					$entrepot_id = is_numeric(GETPOST($ent)) ? GETPOSTINT($ent) : GETPOSTINT('entrepot_id');
 
 					/*
 					if (!empty($lineToTest)) {
@@ -520,24 +521,24 @@ if (empty($reshook)) {
 			$object->tracking_number = trim(GETPOST('tracking_number', 'alpha'));
 		}
 		if ($action == 'settracking_url') {
-			$object->tracking_url = trim(GETPOSTINT('tracking_url'));
+			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
 		if ($action == 'settrueWeight') {
-			$object->trueWeight = trim(GETPOSTINT('trueWeight'));
+			$object->trueWeight = GETPOSTINT('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
 		}
 		if ($action == 'settrueWidth') {
-			$object->trueWidth = trim(GETPOSTINT('trueWidth'));
+			$object->trueWidth = GETPOSTINT('trueWidth');
 		}
 		if ($action == 'settrueHeight') {
-			$object->trueHeight = trim(GETPOSTINT('trueHeight'));
+			$object->trueHeight = GETPOSTINT('trueHeight');
 			$object->size_units = GETPOSTINT('size_units');
 		}
 		if ($action == 'settrueDepth') {
-			$object->trueDepth = trim(GETPOSTINT('trueDepth'));
+			$object->trueDepth = GETPOSTINT('trueDepth');
 		}
 		if ($action == 'setshipping_method_id') {
-			$object->shipping_method_id = trim(GETPOSTINT('shipping_method_id'));
+			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 		}
 
 		if (!$error) {
@@ -1036,7 +1037,7 @@ if ($action == 'create') {
 			// Note that if an extrafield with the same name exists in the origin supplier order line, the value
 			// from the HTTP query will be ignored
 			foreach ($suffix2numAsked as $suffix => $n) {
-				$dispatchLines[$n]['array_options'] = $extrafields->getOptionalsFromPost('commande_fournisseur_dispatch', '_' . $suffix, '');
+				$dispatchLines[$n]['array_options'] = $extrafields->getOptionalsFromPost('receptiondet_batch', '_' . $suffix, '');
 			}
 
 			print '<script type="text/javascript">
@@ -1255,7 +1256,7 @@ if ($action == 'create') {
 							// Show warehouse combo list
 							$ent = "entl".$indiceAsked;
 							$idl = "idl".$indiceAsked;
-							$tmpentrepot_id = is_numeric(GETPOSTINT($ent)) ? GETPOSTINT($ent) : $warehouse_id;
+							$tmpentrepot_id = is_numeric(GETPOST($ent)) ? GETPOSTINT($ent) : $warehouse_id;
 							if ($line->fk_product > 0) {
 								print '<!-- Show warehouse selection -->';
 								print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 0, 0, $line->fk_product, '', 1);
@@ -1354,7 +1355,7 @@ if ($action == 'create') {
 		$typeobject = $object->origin;
 		$origin = $object->origin;
 		$origin_id = $object->origin_id;
-		$object->fetch_origin(); // Load property $object->commande, $object->propal, ...
+		$object->fetch_origin(); // Load property $object->origin_object, $object->commande, $object->propal, ...
 	}
 
 	$soc = new Societe($db);
@@ -1424,17 +1425,17 @@ if ($action == 'create') {
 	$totalVolume = $tmparray['volume'];
 
 
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('order')) {
+	if ($typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
 		$objectsrc = new Commande($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($object->origin_object->id);
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+	if ($typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
 		$objectsrc = new Propal($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($object->origin_object->id);
 	}
-	if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && isModEnabled("supplier_order")) {
+	if ($typeobject == 'CommandeFournisseur' && $object->origin_object->id && isModEnabled("supplier_order")) {
 		$objectsrc = new CommandeFournisseur($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($object->origin_object->id);
 	}
 	// Reception card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/reception/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
@@ -1479,7 +1480,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent tableforfield">';
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('order')) {
+	if ($typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
 		print '<tr><td>';
 		print $langs->trans("RefOrder").'</td>';
 		print '<td colspan="3">';
@@ -1487,7 +1488,7 @@ if ($action == 'create') {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+	if ($typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
 		print '<tr><td>';
 		print $langs->trans("RefProposal").'</td>';
 		print '<td colspan="3">';
@@ -1495,7 +1496,7 @@ if ($action == 'create') {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && isModEnabled("propal")) {
+	if ($typeobject == 'CommandeFournisseur' && $object->origin_object->id && isModEnabled("propal")) {
 		print '<tr><td>';
 		print $langs->trans("SupplierOrder").'</td>';
 		print '<td colspan="3">';
@@ -1817,14 +1818,14 @@ if ($action == 'create') {
 		//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received";
 		$sql .= ', p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch';
 		$sql .= ', p.description as product_desc';
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+		$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as ed";
 		$sql .= ", ".MAIN_DB_PREFIX."reception as e";
 		$sql .= ", ".MAIN_DB_PREFIX.$origin."det as obj";
 		//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_reception = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 		$sql .= " WHERE e.entity IN (".getEntity('reception').")";
 		$sql .= " AND obj.fk_commande = ".((int) $origin_id);
-		$sql .= " AND obj.rowid = ed.fk_commandefourndet";
+		$sql .= " AND obj.rowid = ed.fk_elementdet";
 		$sql .= " AND ed.fk_reception = e.rowid";
 		$sql .= " AND ed.fk_reception !=".((int) $object->id);
 		//if ($filter) $sql.= $filter;

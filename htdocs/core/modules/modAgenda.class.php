@@ -8,6 +8,7 @@
  * Copyright (C) 2013      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
  * Copyright (C) 2017      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -200,7 +201,7 @@ class modAgenda extends DolibarrModules
 		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		//							'position'=>100,
 		//							'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-		//							'perms'=>'1',			// Use 'perms'=>'$user->hasRights('mymodule', 'level1', 'level2') if you want your menu with a permission rules
+		//							'perms'=>'1',			// Use 'perms'=>'$user->hasRight('mymodule', 'level1', 'level2') if you want your menu with a permission rules
 		//							'target'=>'',
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
@@ -578,9 +579,9 @@ class modAgenda extends DolibarrModules
 		);
 
 		// Import Event Extra Fields
-		$keyforselect = 'actioncomm';
-		$keyforelement = 'action';
-		$keyforaliasextra = 'extra';
+		$keyforselect = 'actioncomm';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforelement = 'action';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 	}
 }

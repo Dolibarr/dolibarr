@@ -20,6 +20,7 @@
  * Copyright (C) 2019-2020  Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2020  		Pierre Ardoin     	 <mapiolca@me.com>
  * Copyright (C) 2022  		Vincent de Grandpré  <vincent@de-grandpre.quebec>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +91,9 @@ if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }
 
-$mesg = ''; $error = 0; $errors = array();
+$mesg = '';
+$error = 0;
+$errors = array();
 
 $refalreadyexists = 0;
 
@@ -216,7 +219,7 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('barcode',
 	$createbarcode = 0;
 }
 
-$parameters = array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
+$parameters = array('id' => $id, 'ref' => $ref, 'objcanvas' => $objcanvas);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -700,8 +703,8 @@ if (empty($reshook)) {
 				$object->setCategories($categories);
 
 				if (!empty($backtopage)) {
-					$backtopage = preg_replace('/__ID__/', $object->id, $backtopage); // New method to autoselect parent project after a New on another form object creation
-					$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect parent after a New on another form object creation
+					$backtopage = preg_replace('/__ID__/', (string) $object->id, $backtopage); // New method to autoselect parent project after a New on another form object creation
+					$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $backtopage); // New method to autoselect parent after a New on another form object creation
 					if (preg_match('/\?/', $backtopage)) {
 						$backtopage .= '&productid='.$object->id; // Old method
 					}
@@ -804,7 +807,7 @@ if (empty($reshook)) {
 				if ($fk_default_bom >= 0) {
 					$object->fk_default_bom = $fk_default_bom;
 				} else {
-					$object->fk_default_bom = null;
+					$object->fk_default_bom = 0;
 				}
 
 				$units = GETPOSTINT('units');
@@ -969,13 +972,7 @@ if (empty($reshook)) {
 							$mesg .= ' <a href="' . $_SERVER["PHP_SELF"] . '?ref=' . $clone->ref . '">' . $langs->trans("ShowCardHere") . '</a>.';
 							setEventMessages($mesg, null, 'errors');
 						} else {
-							if (count($clone->errors)) {
-								setEventMessages($clone->error, $clone->errors, 'errors');
-								dol_print_error($db, $clone->errors);
-							} else {
-								setEventMessages($langs->trans($clone->error), null, 'errors');
-								dol_print_error($db, $clone->error);
-							}
+							setEventMessages(empty($clone->error) ? '' : $langs->trans($clone->error), $clone->errors, 'errors');
 						}
 						$error++;
 					}
@@ -994,7 +991,7 @@ if (empty($reshook)) {
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NewRefForClone")), null, 'errors');
 				}
 			} else {
-				dol_print_error($db, $object->error);
+				dol_print_error($db, $object->error, $object->errors);
 			}
 		}
 		$action = 'clone';
@@ -1182,7 +1179,7 @@ if (empty($reshook)) {
 				);
 
 				if ($result > 0) {
-					header("Location: ".DOL_URL_ROOT."/commande/card.php?id=".urlencode($commande->id));
+					header("Location: ".DOL_URL_ROOT."/commande/card.php?id=".urlencode((string) ($commande->id)));
 					exit;
 				}
 			} elseif (GETPOST('factureid') > 0) {
@@ -1480,7 +1477,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					if (empty($fk_barcode_type) && getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE')) {
 						$fk_barcode_type = getDolGlobalInt("PRODUIT_DEFAULT_BARCODE_TYPE");
 					} else {
-						$fk_barcode_type=0;
+						$fk_barcode_type = 0;
 					}
 				}
 				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
@@ -1666,7 +1663,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			// Other attributes
-			$parameters = array('colspan' => ' colspan="2"', 'cols'=>2);
+			$parameters = array('colspan' => ' colspan="2"', 'cols' => 2);
 			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			if (empty($reshook)) {
@@ -2695,9 +2692,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td>';
 					print $object->duration_value;
 					if ($object->duration_value > 1) {
-						$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
+						$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
 					} elseif ($object->duration_value > 0) {
-						$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
+						$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
 					}
 					print(!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? "&nbsp;".$langs->trans($dur[$object->duration_unit])."&nbsp;" : '');
 
@@ -2882,9 +2879,9 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 	// Define confirmation messages
 	$formquestionclone = array(
 		'text' => $langs->trans("ConfirmClone"),
-		array('type' => 'text', 'name' => 'clone_ref', 'label' => $langs->trans("NewRefForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->ref : $tmpcode, 'morecss'=>'width150'),
-		array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneContentProduct"), 'value' => 1),
-		array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 1),
+		0 => array('type' => 'text', 'name' => 'clone_ref', 'label' => $langs->trans("NewRefForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->ref : $tmpcode, 'morecss' => 'width150'),
+		1 => array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneContentProduct"), 'value' => 1),
+		2 => array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 1),
 	);
 	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("CustomerPrices").')', 'value' => 0);

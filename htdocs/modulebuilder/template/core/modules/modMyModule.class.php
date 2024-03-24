@@ -28,6 +28,7 @@
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
+
 /**
  *  Description and activation class for module MyModule
  */
@@ -149,7 +150,7 @@ class modMyModule extends DolibarrModules
 
 		// Prerequisites
 		$this->phpmin = array(7, 1); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
+		$this->need_dolibarr_version = array(19, -3); // Minimum version of Dolibarr required by module
 		$this->need_javascript_ajax = 0;
 
 		// Messages at activation
@@ -303,8 +304,10 @@ class modMyModule extends DolibarrModules
 		// Main menu entries to add
 		$this->menu = array();
 		$r = 0;
+
 		// Add here entries to declare new menus
-		/* BEGIN MODULEBUILDER TOPMENU */
+
+		/* BEGIN MODULEBUILDER TOPMENU MYOBJECT */
 		$this->menu[$r++] = array(
 			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'top', // This is a Top menu entry
@@ -320,9 +323,11 @@ class modMyModule extends DolibarrModules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
-		/* END MODULEBUILDER TOPMENU */
+		/* END MODULEBUILDER TOPMENU MYOBJECT */
+
 		/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */
-		/*$this->menu[$r++]=array(
+		/*
+		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=mymodule',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',                          // This is a Left menu entry
 			'titre'=>'MyObject',
@@ -340,6 +345,20 @@ class modMyModule extends DolibarrModules
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
+			'titre'=>'New_MyObject',
+			'mainmenu'=>'mymodule',
+			'leftmenu'=>'mymodule_myobject_new',
+			'url'=>'/mymodule/myobject_card.php?action=create',
+			'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position'=>1000+$r,
+			'enabled'=>'isModEnabled("mymodule")', // Define condition to show or hide menu entry. Use 'isModEnabled("mymodule")' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms'=>'$user->hasRight("mymodule", "myobject", "write")'
+			'target'=>'',
+			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
+		);
+		$this->menu[$r++]=array(
+			'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type'=>'left',			                // This is a Left menu entry
 			'titre'=>'List_MyObject',
 			'mainmenu'=>'mymodule',
 			'leftmenu'=>'mymodule_myobject_list',
@@ -351,21 +370,10 @@ class modMyModule extends DolibarrModules
 			'target'=>'',
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'New_MyObject',
-			'mainmenu'=>'mymodule',
-			'leftmenu'=>'mymodule_myobject_new',
-			'url'=>'/mymodule/myobject_card.php?action=create',
-			'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'isModEnabled("mymodule")', // Define condition to show or hide menu entry. Use 'isModEnabled("mymodule")' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->hasRight("mymodule", "myobject", "write")'
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);*/
+		*/
 		/* END MODULEBUILDER LEFTMENU MYOBJECT */
+
+
 		// Exports profiles provided by this module
 		$r = 1;
 		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */

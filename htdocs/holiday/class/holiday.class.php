@@ -5,6 +5,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,17 +72,36 @@ class Holiday extends CommonObject
 	 */
 	public $description;
 
-	public $date_debut = ''; // Date start in PHP server TZ
-	public $date_fin = ''; // Date end in PHP server TZ
-	public $date_debut_gmt = ''; // Date start in GMT
-	public $date_fin_gmt = ''; // Date end in GMT
-	public $halfday = ''; // 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
+	/**
+	 * @var int|string Date start in PHP server TZ
+	 */
+	public $date_debut = '';
 
 	/**
-	 * @var int
+	 * @var int|string Date end in PHP server TZ
+	 */
+	public $date_fin = '';
+
+	/**
+	 * @var int|string Date start in GMT
+	 */
+	public $date_debut_gmt = '';
+
+	/**
+	 * @var int|string Date end in GMT
+	 */
+	public $date_fin_gmt = '';
+
+	/**
+	 * @var int|string 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
+	 */
+	public $halfday = '';
+
+	/**
+	 * @var int Status 1=draft, 2=validated, 3=approved, 4 canceled, 5 refused
 	 * @deprecated
 	 */
-	public $statut = 0; // 1=draft, 2=validated, 3=approved
+	public $statut = 0;
 
 	/**
 	 * @var int 	ID of user that must approve. Real user for approval is fk_user_valid (old version) or fk_user_approve (new versions)
@@ -133,7 +153,9 @@ class Holiday extends CommonObject
 	 */
 	public $fk_user_create;
 
-
+	/**
+	 * @var string Detail of refuse
+	 */
 	public $detail_refuse = '';
 
 	/**
@@ -210,7 +232,7 @@ class Holiday extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/holiday/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if ($mybool === false) {
@@ -760,8 +782,8 @@ class Holiday extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
 		$sql .= " fk_user_valid = ".((int) $user->id).",";
 		$sql .= " date_valid = '".$this->db->idate(dol_now())."',";
-		if (!empty($this->statut) && is_numeric($this->statut)) {
-			$sql .= " statut = ".((int) $this->statut).",";
+		if (!empty($this->status) && is_numeric($this->status)) {
+			$sql .= " statut = ".((int) $this->status).",";
 		} else {
 			$this->error = 'Property status must be a numeric value';
 			$error++;
@@ -888,8 +910,8 @@ class Holiday extends CommonObject
 			$error++;
 		}
 		$sql .= " halfday = ".((int) $this->halfday).",";
-		if (!empty($this->statut) && is_numeric($this->statut)) {
-			$sql .= " statut = ".((int) $this->statut).",";
+		if (!empty($this->status) && is_numeric($this->status)) {
+			$sql .= " statut = ".((int) $this->status).",";
 		} else {
 			$error++;
 		}
@@ -993,7 +1015,7 @@ class Holiday extends CommonObject
 
 		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type);
 
-		if ($checkBalance > 0 && $this->statut != self::STATUS_DRAFT) {
+		if ($checkBalance > 0 && $this->status != self::STATUS_DRAFT) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
 
 			if ($balance < 0) {
@@ -1018,8 +1040,8 @@ class Holiday extends CommonObject
 			$error++;
 		}
 		$sql .= " halfday = ".$this->halfday.",";
-		if (!empty($this->statut) && is_numeric($this->statut)) {
-			$sql .= " statut = ".$this->statut.",";
+		if (!empty($this->status) && is_numeric($this->status)) {
+			$sql .= " statut = ".$this->status.",";
 		} else {
 			$error++;
 		}
@@ -1285,7 +1307,7 @@ class Holiday extends CommonObject
 				}
 
 				// We found a record, user is on holiday by default, so is not available is true.
-				$isavailablemorning = true;
+				$isavailablemorning = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 				foreach ($arrayofrecord as $record) {
 					if ($timestamp == $record['date_start'] && $record['halfday'] == 2) {
 						continue;
@@ -1296,7 +1318,7 @@ class Holiday extends CommonObject
 					$isavailablemorning = false;
 					break;
 				}
-				$isavailableafternoon = true;
+				$isavailableafternoon = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 				foreach ($arrayofrecord as $record) {
 					if ($timestamp == $record['date_end'] && $record['halfday'] == 2) {
 						continue;
@@ -1338,15 +1360,19 @@ class Holiday extends CommonObject
 
 		$datas = array();
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Holiday").'</u>';
-		if (isset($this->statut)) {
+		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		// show type for this record only in ajax to not overload lists
 		if (!$nofetch && !empty($this->fk_type)) {
 			$typeleaves = $this->getTypes(1, -1);
-			$labeltoshow = (($typeleaves[$this->fk_type]['code'] && $langs->trans($typeleaves[$this->fk_type]['code']) != $typeleaves[$this->fk_type]['code']) ? $langs->trans($typeleaves[$this->fk_type]['code']) : $typeleaves[$this->fk_type]['label']);
-			$datas['type'] = '<br><b>'.$langs->trans("Type") . ':</b> ' . (empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved", $this->fk_type) : $labeltoshow);
+			if (empty($typeleaves[$this->fk_type])) {
+				$labeltoshow = $langs->trans("TypeWasDisabledOrRemoved", $this->fk_type);
+			} else {
+				$labeltoshow = (($typeleaves[$this->fk_type]['code'] && $langs->trans($typeleaves[$this->fk_type]['code']) != $typeleaves[$this->fk_type]['code']) ? $langs->trans($typeleaves[$this->fk_type]['code']) : $typeleaves[$this->fk_type]['label']);
+			}
+			$datas['type'] = '<br><b>'.$langs->trans("Type") . ':</b> ' . $labeltoshow;
 		}
 		if (isset($this->halfday) && !empty($this->date_debut) && !empty($this->date_fin)) {
 			$listhalfday = array(
@@ -1457,17 +1483,17 @@ class Holiday extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode, $this->date_debut);
+		return $this->LibStatut($this->status, $mode, $this->date_debut);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Returns the label of a status
 	 *
-	 *	@param      int		$status     Id status
-	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *  @param		integer	$startdate	Date holiday should start
-	 *	@return     string      		Label
+	 *	@param      int			$status     Id status
+	 *	@param      int			$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *  @param		int|string	$startdate	Date holiday should start
+	 *	@return     string      			Label
 	 */
 	public function LibStatut($status, $mode = 0, $startdate = '')
 	{
@@ -1520,7 +1546,7 @@ class Holiday extends CommonObject
 	 *   @param		string	$morecss		More CSS on select component
 	 *   @return    string					Show select of status
 	 */
-	public function selectStatutCP($selected = '', $htmlname = 'select_statut', $morecss = 'minwidth125')
+	public function selectStatutCP($selected = 0, $htmlname = 'select_statut', $morecss = 'minwidth125')
 	{
 		global $langs;
 
@@ -1541,7 +1567,7 @@ class Holiday extends CommonObject
 			}
 		}
 
-		$out .= '</select>'."\n";
+		$out .= "</select>\n";
 
 		$showempty = 0;
 		$out .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($showempty < 0 ? (string) $showempty : '-1'), $morecss);
@@ -1623,7 +1649,7 @@ class Holiday extends CommonObject
 	 *  @param		int		$fk_type	Type of vacation
 	 *  @return     int					0=Nothing done, 1=OK, -1=KO
 	 */
-	public function updateSoldeCP($userID = '', $nbHoliday = '', $fk_type = '')
+	public function updateSoldeCP($userID = 0, $nbHoliday = 0, $fk_type = 0)
 	{
 		global $user, $langs;
 
@@ -1741,7 +1767,7 @@ class Holiday extends CommonObject
 	 *  @param	int			$userid		Id user
 	 *  @return void
 	 */
-	public function createCPusers($single = false, $userid = '')
+	public function createCPusers($single = false, $userid = 0)
 	{
 		// do we have to add balance for all users ?
 		if (!$single) {
@@ -2324,7 +2350,7 @@ class Holiday extends CommonObject
 				$this->date_approval = $this->db->jdate($obj->datea);
 
 				$this->user_creation_id = $obj->fk_user_creation;
-				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_validation_id = $obj->fk_user_validation;
 				$this->user_modification_id = $obj->fk_user_modification;
 
 				if ($obj->status == Holiday::STATUS_APPROVED || $obj->status == Holiday::STATUS_CANCELED) {
@@ -2363,7 +2389,6 @@ class Holiday extends CommonObject
 		$this->fk_validator = $user->id;
 		$this->halfday = 0;
 		$this->fk_type = 1;
-		$this->statut = Holiday::STATUS_VALIDATED;
 		$this->status = Holiday::STATUS_VALIDATED;
 
 		return 1;

@@ -7,6 +7,7 @@
  * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,6 +115,7 @@ if (isModEnabled("bank")) {
 }
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('sclist'));
@@ -328,7 +330,7 @@ if ($search_amount) {
 	$param .= '&search_amount='.urlencode($search_amount);
 }
 if ($search_typeid) {
-	$param .= '&search_typeid='.urlencode($search_typeid);
+	$param .= '&search_typeid='.urlencode((string) ($search_typeid));
 }
 if ($search_users) {
 	foreach ($search_users as $id_user) {
@@ -336,7 +338,7 @@ if ($search_users) {
 	}
 }
 if ($search_type) {
-	$param .= '&search_type='.urlencode($search_type);
+	$param .= '&search_type='.urlencode((string) ($search_type));
 }
 if ($search_account) {
 	$param .= '&search_account='.$search_account;
@@ -345,40 +347,40 @@ if ($search_status != '' && $search_status != '-1') {
 	$param .= '&search_status='.urlencode($search_status);
 }
 if ($search_date_startday) {
-	$param .= '&search_date_startday='.urlencode($search_date_startday);
+	$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
 }
 if ($search_date_startmonth) {
-	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+	$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
 }
 if ($search_date_startyear) {
-	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+	$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
 }
 if ($search_date_endday) {
-	$param .= '&search_date_endday='.urlencode($search_date_endday);
+	$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
 }
 if ($search_date_endmonth) {
-	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
 }
 if ($search_date_endyear) {
-	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
 }
 if ($search_date_limit_startday) {
-	$param .= '&search_date_limit_startday='.urlencode($search_date_limit_startday);
+	$param .= '&search_date_limit_startday='.urlencode((string) ($search_date_limit_startday));
 }
 if ($search_date_limit_startmonth) {
-	$param .= '&search_date_limit_startmonth='.urlencode($search_date_limit_startmonth);
+	$param .= '&search_date_limit_startmonth='.urlencode((string) ($search_date_limit_startmonth));
 }
 if ($search_date_limit_startyear) {
-	$param .= '&search_date_limit_startyear='.urlencode($search_date_limit_startyear);
+	$param .= '&search_date_limit_startyear='.urlencode((string) ($search_date_limit_startyear));
 }
 if ($search_date_limit_endday) {
-	$param .= '&search_date_limit_endday='.urlencode($search_date_limit_endday);
+	$param .= '&search_date_limit_endday='.urlencode((string) ($search_date_limit_endday));
 }
 if ($search_date_limit_endmonth) {
-	$param .= '&search_date_limit_endmonth='.urlencode($search_date_limit_endmonth);
+	$param .= '&search_date_limit_endmonth='.urlencode((string) ($search_date_limit_endmonth));
 }
 if ($search_date_limit_endyear) {
-	$param .= '&search_date_limit_endyear='.urlencode($search_date_limit_endyear);
+	$param .= '&search_date_limit_endyear='.urlencode((string) ($search_date_limit_endyear));
 }
 
 $url = DOL_URL_ROOT.'/compta/sociales/card.php?action=create';

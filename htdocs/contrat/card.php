@@ -12,6 +12,7 @@
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023       Charlene Benke     		<charlene@patas-monkey.com>
  * Copyright (C) 2023       Nick Fragoulis
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -545,16 +546,16 @@ if (empty($reshook)) {
 				}
 
 				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
-				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', (string) $prod->tva_tx));
 
 				// Set unit price to use
 				if (!empty($price_ht) || $price_ht === '0') {
 					$pu_ht = price2num($price_ht, 'MU');
-					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+					$pu_ttc = price2num((float) $pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
 					$price_base_type = 'HT';
 				} elseif (!empty($price_ttc) || $price_ttc === '0') {
 					$pu_ttc = price2num($price_ttc, 'MU');
-					$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+					$pu_ht = price2num((float) $pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
 					$price_base_type = 'TTC';
 				}
 
@@ -590,11 +591,11 @@ if (empty($reshook)) {
 				// Set unit price to use
 				if (!empty($price_ht) || $price_ht === '0') {
 					$pu_ht = price2num($price_ht, 'MU');
-					$pu_ttc = price2num($pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
+					$pu_ttc = price2num((float) $pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
 					$price_base_type = 'HT';
 				} elseif (!empty($price_ttc) || $price_ttc === '0') {
 					$pu_ttc = price2num($price_ttc, 'MU');
-					$pu_ht = price2num($pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
+					$pu_ht = price2num((float) $pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
 					$price_base_type = 'TTC';
 				}
 			}
@@ -616,7 +617,7 @@ if (empty($reshook)) {
 			}
 
 			if (((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('produit', 'ignore_price_min_advance'))
-				|| !getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) && ($price_min && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min)))) {
+				|| !getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) && ($price_min && ((float) price2num($pu_ht) * (1 - (float) price2num($remise_percent) / 100) < (float) price2num($price_min)))) {
 				$object->error = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 				$result = -1;
 			} else {
@@ -763,12 +764,12 @@ if (empty($reshook)) {
 			$fk_unit = GETPOST('unit', 'alpha');
 
 			// update price_ht with discount
-			// TODO Use object->updateline instead objedtline->update
+			// TODO Use object->updateline instead objectline->update
 
 			$price_ht =  price2num(GETPOST('elprice'), 'MU');
 			$remise_percent = price2num(GETPOST('elremise_percent'), '', 2);
 			if ($remise_percent > 0) {
-				$remise = round(($price_ht * $remise_percent / 100), 2);
+				$remise = round(((float) $price_ht * (float) $remise_percent / 100), 2);
 			}
 
 			$objectline->fk_product = GETPOSTINT('idprod');
@@ -788,7 +789,7 @@ if (empty($reshook)) {
 			$objectline->user_closing_id = $user->id;
 			//$objectline->fk_fournprice = $fk_fournprice;
 			$objectline->pa_ht = $pa_ht;
-			$objectline->rang = $objectline->rang;
+			// $objectline->rang = $objectline->rang;
 
 			if ($fk_unit > 0) {
 				$objectline->fk_unit = GETPOST('unit');
@@ -1351,8 +1352,8 @@ if ($action == 'create') {
 		} elseif ($action == 'activate') {
 			$formquestion = array(
 				array('type' => 'date', 'name' => 'd_start', 'label' => $langs->trans("DateServiceActivate"), 'value' => dol_now()),
-				array('type' => 'date', 'name' => 'd_end', 'label' => $langs->trans("DateEndPlanned"), /*'value' => $form->selectDate('', "end", $usehm, $usehm, '', "active", 1, 0),*/ '', ''),
-				array('type' => 'text', 'name' => 'comment', 'label' => $langs->trans("Comment"), 'value' => '', '', '', 'class' => 'minwidth300', 'moreattr' => 'autofocus')
+				array('type' => 'date', 'name' => 'd_end', 'label' => $langs->trans("DateEndPlanned"), /*'value' => $form->selectDate('', "end", $usehm, $usehm, '', "active", 1, 0),*/ 0 => '', 1 => ''),
+				array('type' => 'text', 'name' => 'comment', 'label' => $langs->trans("Comment"), 'value' => '', 0 => '', 1 => '', 'class' => 'minwidth300', 'moreattr' => 'autofocus')
 			);
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ActivateAllOnContract"), $langs->trans("ConfirmActivateAllOnContract"), "confirm_activate", $formquestion, 'yes', 1, 280);
 		} elseif ($action == 'clone') {
@@ -1890,7 +1891,7 @@ if ($action == 'create') {
 				// Cree un tableau formulaire
 				$formquestion = array(
 				'text' => $langs->trans("ConfirmMoveToAnotherContractQuestion"),
-				array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
+				0 => array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
 
 				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOSTINT('rowid'), $langs->trans("MoveToAnotherContract"), $langs->trans("ConfirmMoveToAnotherContract"), "confirm_move", $formquestion);
 				print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';

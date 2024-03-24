@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -179,7 +179,7 @@ if (empty($reshook)) {
 		$object->datev = $datev;
 		$object->datep = $datep;
 
-		$amount = price2num(GETPOST("amount", 'alpha'));
+		$amount = (float) price2num(GETPOST("amount", 'alpha'));
 		if ($refund == 1) {
 			$amount = price2num(-1 * $amount);
 		}
@@ -227,6 +227,7 @@ if (empty($reshook)) {
 				$paiement->paiementtype = GETPOST("type_payment", 'alphanohtml');
 				$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
 				$paiement->note = GETPOST("note", 'restricthtml');
+				$paiement->note_private = GETPOST("note", 'restricthtml');
 
 				if (!$error) {
 					$paymentid = $paiement->create($user, (int) GETPOST('closepaidtva'));

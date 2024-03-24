@@ -12,6 +12,7 @@
  * Copyright (C) 2019       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2020       Open-Dsi      			<support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -268,6 +269,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 
 if (($id > 0 || !empty($ref)) && $action != 'add') {
@@ -832,25 +834,25 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
-$param .= '&begin='.urlencode($begin).'&userid='.urlencode($userid).'&contactname='.urlencode($search_all);
+$param .= '&begin='.urlencode((string) ($begin)).'&userid='.urlencode((string) ($userid)).'&contactname='.urlencode((string) ($search_all));
 $param .= '&type='.urlencode($type).'&view='.urlencode($view);
 if (!empty($search_sale) && $search_sale != '-1') {
 	$param .= '&search_sale='.urlencode($search_sale);
 }
 if (!empty($search_categ) && $search_categ != '-1') {
-	$param .= '&search_categ='.urlencode($search_categ);
+	$param .= '&search_categ='.urlencode((string) ($search_categ));
 }
 if (!empty($search_categ_thirdparty) && $search_categ_thirdparty != '-1') {
-	$param .= '&search_categ_thirdparty='.urlencode($search_categ_thirdparty);
+	$param .= '&search_categ_thirdparty='.urlencode((string) ($search_categ_thirdparty));
 }
 if (!empty($search_categ_supplier) && $search_categ_supplier != '-1') {
-	$param .= '&search_categ_supplier='.urlencode($search_categ_supplier);
+	$param .= '&search_categ_supplier='.urlencode((string) ($search_categ_supplier));
 }
 if ($search_all != '') {
 	$param .= '&search_all='.urlencode($search_all);
 }
 if ($search_id > 0) {
-	$param .= "&search_id=".urlencode($search_id);
+	$param .= "&search_id=".urlencode((string) ($search_id));
 }
 if ($search_lastname != '') {
 	$param .= '&search_lastname='.urlencode($search_lastname);
@@ -895,16 +897,16 @@ if ($search_email != '') {
 	$param .= '&search_email='.urlencode($search_email);
 }
 if ($search_no_email != '') {
-	$param .= '&search_no_email='.urlencode($search_no_email);
+	$param .= '&search_no_email='.urlencode((string) ($search_no_email));
 }
 if ($search_status != '') {
-	$param .= '&search_status='.urlencode($search_status);
+	$param .= '&search_status='.urlencode((string) ($search_status));
 }
 if ($search_priv == '0' || $search_priv == '1') {
 	$param .= "&search_priv=".urlencode($search_priv);
 }
 if ($search_stcomm != '') {
-	$param .= '&search_stcomm='.urlencode($search_stcomm);
+	$param .= '&search_stcomm='.urlencode((string) ($search_stcomm));
 }
 if (is_array($search_level) && count($search_level)) {
 	foreach ($search_level as $slevel) {
@@ -1688,7 +1690,7 @@ while ($i < $imaxinloop) {
 					$titlealt = $val['label'];
 				}
 				if ($obj->stcomm_id != $val['id']) {
-					print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommcontactid='.$obj->rowid.'&stcomm='.urlencode($val['code']).'&action=setstcomm&token='.newToken().$param.($page ? '&page='.urlencode($page) : '').'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
+					print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommcontactid='.$obj->rowid.'&stcomm='.urlencode((string) ($val['code'])).'&action=setstcomm&token='.newToken().$param.($page ? '&page='.urlencode((string) ($page)) : '').'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
 				}
 			}
 			print '</div></div></td>';

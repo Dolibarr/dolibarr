@@ -2,7 +2,8 @@
 /* Copyright (C) 2016       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2016       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2016-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -443,7 +444,7 @@ if ($action != 'export_csv') {
 	print_liste_field_titre("Balance", $_SERVER["PHP_SELF"], "", $param, "", 'class="right"', $sortfield, $sortorder);
 
 	// Hook fields
-	$parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
@@ -472,11 +473,13 @@ if ($action != 'export_csv') {
 		$sql .= " GROUP BY t.numero_compte";
 
 		$resql = $db->query($sql);
-		$nrows = $resql->num_rows;
 		$opening_balances = array();
-		for ($i = 0; $i < $nrows; $i++) {
-			$arr = $resql->fetch_array();
-			$opening_balances["'" . $arr['numero_compte'] . "'"] = $arr['opening_balance'];
+		if ($resql) {
+			$nrows = $db->num_rows($resql);
+			for ($i = 0; $i < $nrows; $i++) {
+				$arr = $db->fetch_array($resql);
+				$opening_balances["'" . $arr['numero_compte'] . "'"] = $arr['opening_balance'];
+			}
 		}
 	}
 
@@ -547,7 +550,7 @@ if ($action != 'export_csv') {
 
 				// Show first line of a break
 				print '<tr class="trforbreak">';
-				print '<td colspan="'.($colspan+1).'" class="tdforbreak">'.$root_account_number.($root_account_description ? ' - '.$root_account_description : '').'</td>';
+				print '<td colspan="'.($colspan + 1).'" class="tdforbreak">'.$root_account_number.($root_account_description ? ' - '.$root_account_description : '').'</td>';
 				print '</tr>';
 
 				$displayed_account = $root_account_number;
@@ -690,7 +693,7 @@ if ($action != 'export_csv') {
 
 		$accountingResult = $object->accountingResult($search_date_start, $search_date_end);
 		if ($accountingResult < 0) {
-			$accountingResultDebit = price(price2num(abs($accountingResult), 'MT'));
+			$accountingResultDebit = price(abs((float) price2num($accountingResult, 'MT')));
 			$accountingResultClassCSS = ' error';
 		} else {
 			$accountingResultCredit = price(price2num($accountingResult, 'MT'));

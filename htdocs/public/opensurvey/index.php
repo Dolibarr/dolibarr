@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,7 +170,7 @@ if (getDolGlobalString('OPENSURVEY_IMAGE_PUBLIC_INTERFACE')) {
 }
 
 
-$results = $object->fetchAll($sortfield, $sortorder, 0, 0, '(status:=:1)');
+$results = $object->fetchAll($sortorder, $sortfield, 0, 0, '(status:=:1)');
 $now = dol_now();
 
 if (is_array($results)) {

@@ -9,6 +9,7 @@
  * Copyright (C) 2017-2022 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2022 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2020 Christophe Battarel	<christophe@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,14 +87,14 @@ if ($id > 0 || !empty($ref)) {
 	}
 	if (!empty($object->origin)) {
 		$origin = $object->origin;
+		$typeobject = $object->origin;
 
 		$object->fetch_origin();
-		$typeobject = $object->origin;
 	}
-	if ($origin == 'order_supplier' && $object->$typeobject->id && (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') || isModEnabled("supplier_order"))) {
-		$origin_id = $object->$typeobject->id;
+	if ($origin == 'order_supplier' && $object->origin_object->id && (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') || isModEnabled("supplier_order"))) {
+		$origin_id = $object->origin_object->id;
 		$objectsrc = new CommandeFournisseur($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($origin_id);
 	}
 }
 
@@ -304,6 +305,7 @@ $supplierorderdispatch = new CommandeFournisseurDispatch($db);
 $title = $object->ref." - ".$langs->trans('ReceptionDistribution');
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 $morejs = array('/fourn/js/lib_dispatch.js.php');
+$numline = 0;
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs);
 
@@ -313,7 +315,7 @@ if ($id > 0 || !empty($ref)) {
 		$typeobject = $object->origin;
 		$origin = $object->origin;
 		$origin_id = $object->origin_id;
-		$object->fetch_origin(); // Load property $object->commande, $object->propal, ...
+		$object->fetch_origin(); // Load property $object->origin_object, $object->commande, $object->propal, ...
 	}
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
@@ -389,7 +391,7 @@ if ($id > 0 || !empty($ref)) {
 	print '<table class="border tableforfield" width="100%">';
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('order')) {
+	if ($typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
 		print '<tr><td>';
 		print $langs->trans("RefOrder").'</td>';
 		print '<td colspan="3">';
@@ -397,7 +399,7 @@ if ($id > 0 || !empty($ref)) {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+	if ($typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
 		print '<tr><td>';
 		print $langs->trans("RefProposal").'</td>';
 		print '<td colspan="3">';
@@ -405,7 +407,7 @@ if ($id > 0 || !empty($ref)) {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && isModEnabled("propal")) {
+	if ($typeobject == 'CommandeFournisseur' && $object->origin_object->id && isModEnabled("propal")) {
 		print '<tr><td>';
 		print $langs->trans("SupplierOrder").'</td>';
 		print '<td colspan="3">';
@@ -459,8 +461,8 @@ if ($id > 0 || !empty($ref)) {
 		// Get list of lines from the original Order into $products_dispatched with qty dispatched for each product id
 		$products_dispatched = array();
 		$sql = "SELECT l.rowid, cfd.fk_product, sum(cfd.qty) as qty";
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as l on l.rowid = cfd.fk_commandefourndet";
+		$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as cfd";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."receptiondet_batch as l on l.rowid = cfd.fk_elementdet";
 		$sql .= " WHERE cfd.fk_reception = ".((int) $object->id);
 		$sql .= " GROUP BY l.rowid, cfd.fk_product";
 
@@ -686,10 +688,10 @@ if ($id > 0 || !empty($ref)) {
 						print '<td></td>'; // Warehouse column
 
 						$sql = "SELECT cfd.rowid, cfd.qty, cfd.fk_entrepot, cfd.batch, cfd.eatby, cfd.sellby, cfd.fk_product";
-						$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";	// commande_fournisseur_dispatch should be named receptiondet_batch
+						$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as cfd";	// commande_fournisseur_dispatch should be named receptiondet_batch
 						$sql .= " WHERE cfd.fk_reception = ".((int) $object->id);
-						$sql .= " AND cfd.fk_commande = ".((int) $objectsrc->id);
-						$sql .= " AND cfd.fk_commandefourndet = ".(int) $objp->rowid;
+						$sql .= " AND cfd.fk_element = ".((int) $objectsrc->id);
+						$sql .= " AND cfd.fk_elementdet = ".(int) $objp->rowid;
 
 						//print $sql;
 						$resultsql = $db->query($sql);

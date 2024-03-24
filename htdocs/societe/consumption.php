@@ -116,7 +116,7 @@ $formother = new FormOther($db);
 $productstatic = new Product($db);
 
 $title = $langs->trans("Referers", $object->name);
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name." - ".$title;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -412,7 +412,7 @@ if ($sql_select) {
 
 	$num = $db->num_rows($resql);
 
-	$param = "&socid=".urlencode($socid)."&type_element=".urlencode($type_element);
+	$param = "&socid=".urlencode((string) ($socid))."&type_element=".urlencode((string) ($type_element));
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
@@ -426,10 +426,10 @@ if ($sql_select) {
 		$param .= "&sref=".urlencode($sref);
 	}
 	if ($month) {
-		$param .= "&month=".urlencode($month);
+		$param .= "&month=".urlencode((string) ($month));
 	}
 	if ($year) {
-		$param .= "&year=".urlencode($year);
+		$param .= "&year=".urlencode((string) ($year));
 	}
 	if ($optioncss) {
 		$param .= '&optioncss='.urlencode($optioncss);

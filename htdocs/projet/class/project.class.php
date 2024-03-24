@@ -9,6 +9,7 @@
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +155,7 @@ class Project extends CommonObject
 	public $public; //!< Tell if this is a public or private project
 
 	/**
-	 * @var float budget Amount
+	 * @var float|string budget Amount (May need price2num)
 	 */
 	public $budget_amount;
 
@@ -189,17 +190,17 @@ class Project extends CommonObject
 	public $accept_booth_suggestions;
 
 	/**
-	 * @var float Event organization: registration price
+	 * @var float|string Event organization: registration price (may need price2num)
 	 */
 	public $price_registration;
 
 	/**
-	 * @var float Event organization: booth price
+	 * @var float|string Event organization: booth price (may need price2num)
 	 */
 	public $price_booth;
 
 	/**
-	 * @var float Max attendees
+	 * @var int|string Max attendees (may be empty/need cast to iint)
 	 */
 	public $max_attendees;
 
@@ -292,14 +293,14 @@ class Project extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'fk_project' => array('type' => 'integer', 'label' => 'Parent', 'enabled' => 1, 'visible' => 1, 'notnull' => 0, 'position' => 12),
 		'ref' => array('type' => 'varchar(50)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'showoncombobox' => 1, 'position' => 15, 'searchall' => 1),
 		'title' => array('type' => 'varchar(255)', 'label' => 'ProjectLabel', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 17, 'showoncombobox' => 2, 'searchall' => 1),
-		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => 3, 'notnull' => 1, 'position' => 19),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 3, 'notnull' => 1, 'position' => 19),
 		'fk_soc' => array('type' => 'integer', 'label' => 'Thirdparty', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'dateo' => array('type' => 'date', 'label' => 'DateStart', 'enabled' => 1, 'visible' => 1, 'position' => 30),
 		'datee' => array('type' => 'date', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => 1, 'position' => 35),
@@ -479,16 +480,16 @@ class Project extends CommonObject
 		$sql .= ", ".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
 		$sql .= ", ".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
 		$sql .= ", ".(strcmp($this->opp_amount, '') ? price2num($this->opp_amount) : 'null');
-		$sql .= ", ".(strcmp($this->budget_amount, '') ? price2num($this->budget_amount) : 'null');
+		$sql .= ", ".(strcmp((string) $this->budget_amount, '') ? price2num($this->budget_amount) : 'null');
 		$sql .= ", ".($this->usage_opportunity ? 1 : 0);
 		$sql .= ", ".($this->usage_task ? 1 : 0);
 		$sql .= ", ".($this->usage_bill_time ? 1 : 0);
 		$sql .= ", ".($this->usage_organize_event ? 1 : 0);
 		$sql .= ", ".($this->accept_conference_suggestions ? 1 : 0);
 		$sql .= ", ".($this->accept_booth_suggestions ? 1 : 0);
-		$sql .= ", ".(strcmp($this->price_registration, '') ? price2num($this->price_registration) : 'null');
-		$sql .= ", ".(strcmp($this->price_booth, '') ? price2num($this->price_booth) : 'null');
-		$sql .= ", ".(strcmp($this->max_attendees, '') ? ((int) $this->max_attendees) : 'null');
+		$sql .= ", ".(strcmp((string) $this->price_registration, '') ? price2num($this->price_registration) : 'null');
+		$sql .= ", ".(strcmp((string) $this->price_booth, '') ? price2num($this->price_booth) : 'null');
+		$sql .= ", ".(strcmp((string) $this->max_attendees, '') ? ((int) $this->max_attendees) : 'null');
 		$sql .= ", ".($this->date_start_event != '' ? "'".$this->db->idate($this->date_start_event)."'" : 'null');
 		$sql .= ", ".($this->date_end_event != '' ? "'".$this->db->idate($this->date_end_event)."'" : 'null');
 		$sql .= ", ".($this->location ? "'".$this->db->escape($this->location)."'" : 'null');
@@ -604,8 +605,8 @@ class Project extends CommonObject
 			$sql .= ", accept_conference_suggestions = ".($this->accept_conference_suggestions ? 1 : 0);
 			$sql .= ", accept_booth_suggestions = ".($this->accept_booth_suggestions ? 1 : 0);
 			$sql .= ", price_registration = ".(isset($this->price_registration) && strcmp($this->price_registration, '') ? price2num($this->price_registration) : "null");
-			$sql .= ", price_booth = ".(isset($this->price_booth) && strcmp($this->price_booth, '') ? price2num($this->price_booth) : "null");
-			$sql .= ", max_attendees = ".(strcmp($this->max_attendees, '') ? price2num($this->max_attendees) : "null");
+			$sql .= ", price_booth = ".(isset($this->price_booth) && strcmp((string) $this->price_booth, '') ? price2num($this->price_booth) : "null");
+			$sql .= ", max_attendees = ".(strcmp((string) $this->max_attendees, '') ? (int) $this->max_attendees : "null");
 			$sql .= ", date_start_event = ".($this->date_start_event != '' ? "'".$this->db->idate($this->date_start_event)."'" : 'null');
 			$sql .= ", date_end_event = ".($this->date_end_event != '' ? "'".$this->db->idate($this->date_end_event)."'" : 'null');
 			$sql .= ", location = '".$this->db->escape($this->location)."'";
@@ -1687,7 +1688,7 @@ class Project extends CommonObject
 	 *  @param	bool	$clone_task_file	  Clone file of task (if task are copied)
 	 *  @param	bool	$clone_note		      Clone note of project
 	 *  @param	bool	$move_date		      Move task date on clone
-	 *  @param	integer	$notrigger		      No trigger flag
+	 *  @param	int    	$notrigger		      No trigger flag
 	 *  @param  int     $newthirdpartyid      New thirdparty id
 	 *  @return	int						      New id of clone
 	 */
@@ -1696,8 +1697,9 @@ class Project extends CommonObject
 		global $langs, $conf;
 
 		$error = 0;
+		$clone_project_id = 0;   // For static toolcheck
 
-		dol_syslog("createFromClone clone_contact=".$clone_contact." clone_task=".$clone_task." clone_project_file=".$clone_project_file." clone_note=".$clone_note." move_date=".$move_date, LOG_DEBUG);
+		dol_syslog("createFromClone clone_contact=".json_encode($clone_contact)." clone_task=".json_encode($clone_task)." clone_project_file=".json_encode($clone_project_file)." clone_note=".json_encode($clone_note)." move_date=".json_encode($move_date), LOG_DEBUG);
 
 		$now = dol_mktime(0, 0, 0, idate('m', dol_now()), idate('d', dol_now()), idate('Y', dol_now()));
 
@@ -1899,7 +1901,7 @@ class Project extends CommonObject
 
 		unset($clone_project->context['createfromclone']);
 
-		if (!$error) {
+		if (!$error && $clone_project_id != 0) {
 			$this->db->commit();
 			return $clone_project_id;
 		} else {
@@ -2565,6 +2567,8 @@ class Project extends CommonObject
 
 		$now = dol_now();
 		$nowDate = dol_getdate($now, true);
+
+		$errormesg = '';
 		$errorsMsg = array();
 
 		$firstDayOfWeekTS = dol_get_first_day_week($nowDate['mday'], $nowDate['mon'], $nowDate['year']);
@@ -2584,9 +2588,9 @@ class Project extends CommonObject
 		u.email,u.weeklyhours,
 		SUM(et.element_duration) AS total_seconds
 		FROM
-			llx_element_time AS et
+			".MAIN_DB_PREFIX."element_time AS et
 		JOIN
-			llx_user AS u ON et.fk_user = u.rowid
+			".MAIN_DB_PREFIX."user AS u ON et.fk_user = u.rowid
 		WHERE
 			et.element_date BETWEEN '".$this->db->escape($startDate)."' AND '".$this->db->escape($endDate)."'
 			AND et.elementtype = 'task'
@@ -2606,7 +2610,7 @@ class Project extends CommonObject
 			$to = '';
 			$nbMailSend = 0;
 			$error = 0;
-			$errors_to = 0;
+			$errors_to = '';
 			while ($obj = $this->db->fetch_object($resql)) {
 				$to = $obj->email;
 				$numHolidays = num_public_holiday($lastWeekStartTS, $lastWeekEndTS, $mysoc->country_code, 1);
@@ -2672,7 +2676,7 @@ class Project extends CommonObject
 					$actioncomm->errors_to = $errors_to;
 
 					$actioncomm->elementtype = 'project_task';
-					$actioncomm->fk_element = $this->element;
+					$actioncomm->fk_element = (int) $this->element;
 
 					$actioncomm->create($user);
 				} else {
@@ -2706,14 +2710,14 @@ class Project extends CommonObject
 					$actioncomm->errors_to = $errors_to;
 
 					$actioncomm->elementtype = 'project_task';
-					$actioncomm->fk_element = $this->element;
+					$actioncomm->fk_element = (int) $this->element;
 
 					$actioncomm->create($user);
 				}
 				$this->db->commit();
 			}
 		}
-		if ($errormesg) {
+		if (!empty($errormesg)) {
 			$errorsMsg[] = $errormesg;
 		}
 
@@ -2722,7 +2726,7 @@ class Project extends CommonObject
 			dol_syslog(__METHOD__." end - ".$this->output, LOG_INFO);
 			return 0;
 		} else {
-			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? implode(', ', $errorsMsg) : $error;
+			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(empty($errorsMsg) ? $error : implode(', ', $errorsMsg));
 			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
 			return $error;
 		}

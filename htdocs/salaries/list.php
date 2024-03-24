@@ -166,6 +166,93 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
+//credit transfer request
+if ($massaction == 'withdrawrequest') {
+	$langs->load("withdrawals");
+
+	if (!$user->hasRight('paymentbybanktransfer', 'create')) {
+		$error++;
+		setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+	} else {
+		//Checking error
+		$error = 0;
+		$listofSalries =  array();
+		$arrayofselected = is_array($toselect) ? $toselect : array();
+		foreach ($arrayofselected as $toselectid) {
+			$objecttmp = new Salary($db);
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0) {
+				$totalpaid = $objecttmp->getSommePaiement();
+				$objecttmp->resteapayer = price2num($objecttmp->amount - $totalpaid, 'MT');
+
+				// hook to finalize the remaining amount, considering e.g. cash discount agreements
+				$parameters = array('remaintopay' => $objecttmp->resteapayer);
+				$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $objecttmp, $action); // Note that $action and $object may have been modified by some hooks
+				if ($reshook > 0) {
+					if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
+						$objecttmp->resteapayer = $remaintopay;
+					}
+				} elseif ($reshook < 0) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
+				}
+
+				if ($objecttmp->status == Salary::STATUS_PAID || $objecttmp->resteapayer == 0) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
+				} elseif ($resteapayer < 0) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
+				}
+
+				$rsql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
+				$rsql .= " , pfd.date_traite as date_traite";
+				$rsql .= " , pfd.amount";
+				$rsql .= " , u.rowid as user_id, u.lastname, u.firstname, u.login";
+				$rsql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+				$rsql .= " , ".MAIN_DB_PREFIX."user as u";
+				$rsql .= " WHERE fk_salary = ".((int) $objecttmp->id);
+				$rsql .= " AND pfd.fk_user_demande = u.rowid";
+				$rsql .= " AND pfd.traite = 0";
+				$rsql .= " ORDER BY pfd.date_demande DESC";
+
+				$result_sql = $db->query($rsql);
+				if ($result_sql) {
+					$numprlv = $db->num_rows($result_sql);
+				}
+
+				if ($numprlv > 0) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
+				} elseif (!empty($objecttmp->type_payment) && $objecttmp->type_payment != '2') {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+				} else {
+					$listofSalries[] = $objecttmp;
+				}
+			}
+		}
+
+		if (!empty($listofSalries)) {
+			$nbwithdrawrequestok = 0;
+			foreach ($listofSalries as $salary) {
+				$db->begin();
+				$result = $salary->demande_prelevement($user, (float) $salary->resteapayer, 'salaire');
+				if ($result > 0) {
+					$db->commit();
+					$nbwithdrawrequestok++;
+				} else {
+					$db->rollback();
+					setEventMessages($aBill->error, $aBill->errors, 'errors');
+				}
+			}
+			if ($nbwithdrawrequestok > 0) {
+				setEventMessages($langs->trans("WithdrawRequestsDone", $nbwithdrawrequestok), null, 'mesgs');
+			}
+		}
+	}
+}
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -380,7 +467,7 @@ if ($search_label) {
 	$param .= '&search_label='.urlencode($search_label);
 }
 if ($search_account) {
-	$param .= '&search_account='.urlencode($search_account);
+	$param .= '&search_account='.urlencode((string) ($search_account));
 }
 if ($search_status != '' && $search_status != '-1') {
 	$param .= '&search_status='.urlencode($search_status);
@@ -412,6 +499,10 @@ $arrayofmassactions = array(
 );
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+}
+if (isModEnabled('prelevement') && $user->hasRight('prelevement', 'bons', 'creer')) {
+	$langs->load("withdrawals");
+	$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeBankTransferOrder");
 }
 if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();

@@ -164,7 +164,7 @@ if (empty($reshook)) {
 	// Action update object
 	if ($action == 'update') {
 		if (!empty($cancel)) {
-			header("Location: ".$_SERVER['PHP_SELF']."?id=".urlencode($id));
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".urlencode((string) ($id)));
 			exit;
 		}
 

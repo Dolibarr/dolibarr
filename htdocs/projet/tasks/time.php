@@ -81,8 +81,8 @@ $search_duration = GETPOSTINT('search_duration');
 $search_value = GETPOSTINT('search_value');
 $search_task_ref = GETPOST('search_task_ref', 'alpha');
 $search_task_label = GETPOST('search_task_label', 'alpha');
-$search_user = GETPOSTINT('search_user');
-$search_valuebilled = GETPOSTINT('search_valuebilled');
+$search_user = GETPOST('search_user', 'intcomma');
+$search_valuebilled = GETPOST('search_valuebilled', 'intcomma');
 $search_product_ref = GETPOST('search_product_ref', 'alpha');
 $search_company = GETPOST('$search_company', 'alpha');
 $search_company_alias = GETPOST('$search_company_alias', 'alpha');
@@ -1288,6 +1288,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
 
 		$arrayfields = dol_sort_array($arrayfields, 'position');
+		'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 		$param = '';
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -1297,10 +1298,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$param .= '&limit='.((int) $limit);
 		}
 		if ($search_month > 0) {
-			$param .= '&search_month=' . urlencode($search_month);
+			$param .= '&search_month=' . urlencode((string) ($search_month));
 		}
 		if ($search_year > 0) {
-			$param .= '&search_year=' . urlencode($search_year);
+			$param .= '&search_year=' . urlencode((string) ($search_year));
 		}
 		if (!empty($search_user)) { 	// We keep param if -1 because default value is forced to user id if not set
 			$param .= '&search_user='.urlencode($search_user);
@@ -1327,40 +1328,40 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$param .= '&search_note=' . urlencode($search_note);
 		}
 		if ($search_duration != '') {
-			$param .= '&amp;search_field2=' . urlencode($search_duration);
+			$param .= '&amp;search_field2=' . urlencode((string) ($search_duration));
 		}
 		if ($optioncss != '') {
 			$param .= '&optioncss=' . urlencode($optioncss);
 		}
 		if ($search_date_startday) {
-			$param .= '&search_date_startday=' . urlencode($search_date_startday);
+			$param .= '&search_date_startday=' . urlencode((string) ($search_date_startday));
 		}
 		if ($search_date_startmonth) {
-			$param .= '&search_date_startmonth=' . urlencode($search_date_startmonth);
+			$param .= '&search_date_startmonth=' . urlencode((string) ($search_date_startmonth));
 		}
 		if ($search_date_startyear) {
-			$param .= '&search_date_startyear=' . urlencode($search_date_startyear);
+			$param .= '&search_date_startyear=' . urlencode((string) ($search_date_startyear));
 		}
 		if ($search_date_endday) {
-			$param .= '&search_date_endday=' . urlencode($search_date_endday);
+			$param .= '&search_date_endday=' . urlencode((string) ($search_date_endday));
 		}
 		if ($search_date_endmonth) {
-			$param .= '&search_date_endmonth=' . urlencode($search_date_endmonth);
+			$param .= '&search_date_endmonth=' . urlencode((string) ($search_date_endmonth));
 		}
 		if ($search_date_endyear) {
-			$param .= '&search_date_endyear=' . urlencode($search_date_endyear);
+			$param .= '&search_date_endyear=' . urlencode((string) ($search_date_endyear));
 		}
 		if ($search_timespent_starthour) {
-			$param .= '&search_timespent_duration_starthour=' . urlencode($search_timespent_starthour);
+			$param .= '&search_timespent_duration_starthour=' . urlencode((string) ($search_timespent_starthour));
 		}
 		if ($search_timespent_startmin) {
-			$param .= '&search_timespent_duration_startmin=' . urlencode($search_timespent_startmin);
+			$param .= '&search_timespent_duration_startmin=' . urlencode((string) ($search_timespent_startmin));
 		}
 		if ($search_timespent_endhour) {
-			$param .= '&search_timespent_duration_endhour=' . urlencode($search_timespent_endhour);
+			$param .= '&search_timespent_duration_endhour=' . urlencode((string) ($search_timespent_endhour));
 		}
 		if ($search_timespent_endmin) {
-			$param .= '&search_timespent_duration_endmin=' . urlencode($search_timespent_endmin);
+			$param .= '&search_timespent_duration_endmin=' . urlencode((string) ($search_timespent_endmin));
 		}
 
 		/*
@@ -1368,13 +1369,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 		 */
 		if ($id) {
-			$param .= '&id=' . urlencode($id);
+			$param .= '&id=' . urlencode((string) ($id));
 		}
 		if ($projectid) {
-			$param .= '&projectid=' . urlencode($projectid);
+			$param .= '&projectid=' . urlencode((string) ($projectid));
 		}
 		if ($withproject) {
-			$param .= '&withproject=' . urlencode($withproject);
+			$param .= '&withproject=' . urlencode((string) ($withproject));
 		}
 		// Add $param from hooks
 		$parameters = array();

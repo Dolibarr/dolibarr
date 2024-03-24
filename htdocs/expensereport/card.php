@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -69,6 +69,7 @@ $comments = GETPOST('comments', 'restricthtml');
 $fk_c_type_fees = GETPOSTINT('fk_c_type_fees');
 $socid = GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('socid_id');
 
+/** @var User $user */
 $childids = $user->getAllChildIds(1);
 
 if (getDolGlobalString('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH')) {
@@ -951,7 +952,7 @@ if (empty($reshook)) {
 	if ($action == "confirm_setdraft" && GETPOST('confirm', 'alpha') == "yes" && $id > 0 && $user->hasRight('expensereport', 'creer')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
-		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) {
+		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid || in_array($object->fk_user_author, $childids)) {
 			$result = $object->setStatut(0);
 
 			if ($result > 0) {
@@ -1141,7 +1142,7 @@ if (empty($reshook)) {
 		$value_unit_ht = price2num(GETPOST('value_unit_ht', 'alpha'), 'MU');
 		$value_unit = price2num(GETPOST('value_unit', 'alpha'), 'MU');
 		if (empty($value_unit)) {
-			$value_unit = price2num($value_unit_ht + ($value_unit_ht * $tmpvat / 100), 'MU');
+			$value_unit = price2num((float) $value_unit_ht + ((float) $value_unit_ht * (float) $tmpvat / 100), 'MU');
 		}
 
 		$fk_c_exp_tax_cat = GETPOSTINT('fk_c_exp_tax_cat');
@@ -1313,7 +1314,7 @@ if (empty($reshook)) {
 		$value_unit_ht = price2num(GETPOST('value_unit_ht', 'alpha'), 'MU');
 		$value_unit = price2num(GETPOST('value_unit', 'alpha'), 'MU');
 		if (empty($value_unit)) {
-			$value_unit = price2num($value_unit_ht + ($value_unit_ht * $tmpvat / 100), 'MU');
+			$value_unit = price2num((float) $value_unit_ht + ((float) $value_unit_ht * (float) $tmpvat / 100), 'MU');
 		}
 
 		if (!GETPOSTINT('fk_c_type_fees') > 0) {
@@ -1537,7 +1538,7 @@ if ($action == 'create') {
 	$result = $object->fetch($id, $ref);
 
 	if ($result > 0) {
-		if (!in_array($object->fk_user_author, $user->getAllChildIds(1))) {
+		if (!in_array($object->fk_user_author, $childids)) {
 			if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')
 				&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance'))) {
 				print load_fiche_titre($langs->trans('TripCard'), '', 'trip');
@@ -1667,7 +1668,7 @@ if ($action == 'create') {
 				}
 				$formquestion = array(
 					'text' => '',
-					array('type' => 'other', 'name' => 'fk_user_author', 'label' => $langs->trans("SelectTargetUser"), 'value' => $form->select_dolusers((GETPOSTINT('fk_user_author') > 0 ? GETPOSTINT('fk_user_author') : $user->id), 'fk_user_author', 0, null, 0, $criteriaforfilter, '', '0', 0, 0, '', 0, '', 'maxwidth150'))
+					0 => array('type' => 'other', 'name' => 'fk_user_author', 'label' => $langs->trans("SelectTargetUser"), 'value' => $form->select_dolusers((GETPOSTINT('fk_user_author') > 0 ? GETPOSTINT('fk_user_author') : $user->id), 'fk_user_author', 0, null, 0, $criteriaforfilter, '', '0', 0, 0, '', 0, '', 'maxwidth150'))
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneExpenseReport', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
@@ -1694,7 +1695,7 @@ if ($action == 'create') {
 			}
 
 			if ($action == 'cancel') {
-				$array_input = array('text' => $langs->trans("ConfirmCancelTrip"), array('type' => "text", 'label' => '<strong>'.$langs->trans("Comment").'</strong>', 'name' => "detail_cancel", 'value' => ""));
+				$array_input = array('text' => $langs->trans("ConfirmCancelTrip"), 0 => array('type' => "text", 'label' => '<strong>'.$langs->trans("Comment").'</strong>', 'name' => "detail_cancel", 'value' => ""));
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("Cancel"), "", "confirm_cancel", $array_input, "", 1);
 			}
 
@@ -1703,7 +1704,7 @@ if ($action == 'create') {
 			}
 
 			if ($action == 'refuse') {		// Deny
-				$array_input = array('text' => $langs->trans("ConfirmRefuseTrip"), array('type' => "text", 'label' => $langs->trans("Comment"), 'name' => "detail_refuse", 'value' => ""));
+				$array_input = array('text' => $langs->trans("ConfirmRefuseTrip"), 0 => array('type' => "text", 'label' => $langs->trans("Comment"), 'name' => "detail_refuse", 'value' => ""));
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("Deny"), '', "confirm_refuse", $array_input, "yes", 1);
 			}
 
@@ -2002,7 +2003,7 @@ if ($action == 'create') {
 					$totalpaid = price2num($totalpaid); // Round $totalpaid to fix floating problem after addition into loop
 				}
 
-				$remaintopay = price2num($object->total_ttc - $totalpaid);
+				$remaintopay = price2num($object->total_ttc - (float) $totalpaid);
 				$resteapayeraffiche = $remaintopay;
 
 				$cssforamountpaymentcomplete = 'amountpaymentcomplete';
@@ -2153,7 +2154,7 @@ if ($action == 'create') {
 							print price($line->value_unit_ht);
 						} else {
 							$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $line->vatrate));
-							$pricenettoshow = price2num($line->value_unit / (1 + $tmpvat / 100), 'MU');
+							$pricenettoshow = price2num((float) $line->value_unit / (1 + $tmpvat / 100), 'MU');
 							print price($pricenettoshow);
 						}
 						print '</td>';
@@ -2710,7 +2711,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	* 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
 	*/
 	if ($user->hasRight('expensereport', 'creer') && $object->status == ExpenseReport::STATUS_DRAFT) {
-		if (in_array($object->fk_user_author, $user->getAllChildIds(1)) || $user->hasRight('expensereport', 'writeall_advance')) {
+		if (in_array($object->fk_user_author, $childids) || $user->hasRight('expensereport', 'writeall_advance')) {
 			// Modify
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
@@ -2751,7 +2752,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	 *	Afficher : "Valider" / "Refuser" / "Supprimer"
 	 */
 	if ($object->status == ExpenseReport::STATUS_VALIDATED) {
-		if (in_array($object->fk_user_author, $user->getAllChildIds(1))) {
+		if (in_array($object->fk_user_author, $childids)) {
 			// set draft
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=setdraft&token='.newToken().'&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
 		}

@@ -19,6 +19,7 @@
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -280,18 +281,6 @@ class Propal extends CommonObject
 	public $labelStatus = array();
 	public $labelStatusShort = array();
 
-	// Multicurrency
-	/**
-	 * @var int ID
-	 */
-	public $fk_multicurrency;
-
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
-
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -319,11 +308,11 @@ class Propal extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
-		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 20),
 		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 22),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 40),
@@ -424,8 +413,8 @@ class Propal extends CommonObject
 	 *  $this->thirdparty should be loaded
 	 *
 	 * 	@param  int		$idproduct       	Product Id to add
-	 * 	@param  int		$qty             	Quantity
-	 * 	@param  int		$remise_percent  	Discount effected on Product
+	 * 	@param  float	$qty             	Quantity
+	 * 	@param  float	$remise_percent  	Discount effected on Product
 	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 *
 	 *	TODO	Replace calls to this function by generation object Ligne
@@ -565,7 +554,7 @@ class Propal extends CommonObject
 	 * 		@param    	string		$desc				Description of line
 	 * 		@param    	float		$pu_ht				Unit price
 	 * 		@param    	float		$qty             	Quantity
-	 * 		@param    	float		$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
+	 * 		@param    	float|string	$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
 	 * 		@param		float		$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
 	 *  	@param		float		$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *		@param    	int			$fk_product      	Product/Service ID predefined
@@ -623,7 +612,7 @@ class Propal extends CommonObject
 			$pu_ht = price2num($pu_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
 			$pu_ttc = price2num($pu_ttc);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
 			}
 			$txlocaltax1 = price2num($txlocaltax1);
@@ -672,7 +661,6 @@ class Propal extends CommonObject
 			// Clean vat code
 			$reg = array();
 			$vat_src_code = '';
-			$reg = array();
 			if (preg_match('/\((.*)\)/', $txtva, $reg)) {
 				$vat_src_code = $reg[1];
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
@@ -706,9 +694,9 @@ class Propal extends CommonObject
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
 			$remise = 0;
-			if ($remise_percent > 0) {
-				$remise = round(($pu * $remise_percent / 100), 2);
-				$price = $pu - $remise;
+			if ((float) $remise_percent > 0) {
+				$remise = round(((float) $pu * (float) $remise_percent / 100), 2);
+				$price = (float) $pu - $remise;
 			}
 
 			// Insert line
@@ -817,7 +805,7 @@ class Propal extends CommonObject
 	 *  @param      float		$pu		     	  	Unit price (HT or TTC depending on price_base_type)
 	 *  @param      float		$qty            	Quantity
 	 *  @param      float		$remise_percent  	Discount on line
-	 *  @param      float		$txtva	          	VAT Rate (Can be '1.23' or '1.23 (ABC)')
+	 *  @param      float|string	$txtva	          	VAT Rate (Can be '1.23' or '1.23 (ABC)')
 	 * 	@param	  	float		$txlocaltax1		Local tax 1 rate
 	 *  @param	  	float		$txlocaltax2		Local tax 2 rate
 	 *  @param      string		$desc            	Description
@@ -852,7 +840,7 @@ class Propal extends CommonObject
 		$qty = price2num($qty);
 		$pu = price2num($pu);
 		$pu_ht_devise = price2num($pu_ht_devise);
-		if (!preg_match('/\((.*)\)/', $txtva)) {
+		if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 			$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 		}
 		$txlocaltax1 = price2num($txlocaltax1);
@@ -913,9 +901,9 @@ class Propal extends CommonObject
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
 			$remise = 0;
-			if ($remise_percent > 0) {
-				$remise = round(($pu * $remise_percent / 100), 2);
-				$price = $pu - $remise;
+			if ((float) $remise_percent > 0) {
+				$remise = round(((float) $pu * (float) $remise_percent / 100), 2);
+				$price = (float) $pu - $remise;
 			}
 
 			//Fetch current line from the database and then clone the object and set it in $oldline property
@@ -2473,136 +2461,6 @@ class Propal extends CommonObject
 		return -1;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Set an overall discount on the proposal
-	 *
-	 *	@param      User	$user       Object user that modify
-	 *	@param      double	$remise     Amount discount
-	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         		Return integer <0 if ko, >0 if ok
-	 *	@deprecated remise_percent is a deprecated field for object parent
-	 */
-	/*
-	public function set_remise_percent($user, $remise, $notrigger = 0)
-	{
-		// phpcs:enable
-		$remise = trim($remise) ?trim($remise) : 0;
-
-		if ($user->hasRight('propal', 'creer')) {
-			$remise = price2num($remise, 2);
-
-			$error = 0;
-
-			$this->db->begin();
-
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET remise_percent = ".((float) $remise);
-			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = ".self::STATUS_DRAFT;
-
-			dol_syslog(__METHOD__, LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$this->errors[] = $this->db->error();
-				$error++;
-			}
-
-			if (!$error) {
-				$this->oldcopy = clone $this;
-				$this->remise_percent = $remise;
-				$this->update_price(1);
-			}
-
-			if (!$notrigger && empty($error)) {
-				// Call trigger
-				$result = $this->call_trigger('PROPAL_MODIFY', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
-			}
-
-			if (!$error) {
-				$this->db->commit();
-				return 1;
-			} else {
-				foreach ($this->errors as $errmsg) {
-					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
-					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-				}
-				$this->db->rollback();
-				return -1 * $error;
-			}
-		}
-
-		return -1;
-	}
-	*/
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Set an absolute overall discount on the proposal
-	 *
-	 *	@param      User	$user       Object user that modify
-	 *	@param      double	$remise     Amount discount
-	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         		Return integer <0 if ko, >0 if ok
-	 */
-	/*
-	public function set_remise_absolue($user, $remise, $notrigger = 0)
-	{
-		// phpcs:enable
-		if (empty($remise)) {
-			$remise = 0;
-		}
-		$remise = price2num($remise);
-
-		if ($user->hasRight('propal', 'creer')) {
-			$error = 0;
-
-			$this->db->begin();
-
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-			$sql .= " SET remise_absolue = ".((float) $remise);
-			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = ".self::STATUS_DRAFT;
-
-			dol_syslog(__METHOD__, LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$this->errors[] = $this->db->error();
-				$error++;
-			}
-
-			if (!$error) {
-				$this->oldcopy = clone $this;
-				$this->update_price(1);
-			}
-
-			if (!$notrigger && empty($error)) {
-				// Call trigger
-				$result = $this->call_trigger('PROPAL_MODIFY', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
-			}
-
-			if (!$error) {
-				$this->db->commit();
-				return 1;
-			} else {
-				foreach ($this->errors as $errmsg) {
-					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
-					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-				}
-				$this->db->rollback();
-				return -1 * $error;
-			}
-		}
-
-		return -1;
-	}
-	*/
-
 
 	/**
 	 *	Reopen the commercial proposal
@@ -3757,7 +3615,7 @@ class Propal extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/propale/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if (!$mybool) {
@@ -4670,10 +4528,8 @@ class PropaleLigne extends CommonObjectLine
 		}
 		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
 		$sql .= ", buy_price_ht=".price2num($this->pa_ht);
-		if (strlen($this->special_code)) {
-			$sql .= ", special_code=".$this->special_code;
-		}
-		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
+		$sql .= ", special_code=".((int) $this->special_code);
+		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? (int) $this->fk_parent_line : "null");
 		if (!empty($this->rang)) {
 			$sql .= ", rang=".((int) $this->rang);
 		}

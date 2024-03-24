@@ -26,7 +26,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 if (!is_object($form)) {
 	$form = new Form($db);
