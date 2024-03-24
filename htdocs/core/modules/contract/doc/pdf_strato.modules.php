@@ -618,7 +618,7 @@ class pdf_strato extends ModelePDFContract
 		if (!getDolGlobalString('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
-				if (!empty(getMultidirOutput($object, 'mycompany'))) {
+				if (getMultidirOutput($object, 'mycompany')) {
 					$logodir = getMultidirOutput($object, 'mycompany');
 				}
 				if (!getDolGlobalString('MAIN_PDF_USE_LARGE_LOGO')) {
