@@ -291,7 +291,7 @@ if (isModEnabled("shipping")) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT_CLOSE', array(), null, 0, 0, 0, 2, 1, '', '', 'reposition');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT_CLOSE", $arrval, $conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE);
+		print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT_CLOSE", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE'));
 	}
 } else {
 	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name")).'</span>';

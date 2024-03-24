@@ -988,7 +988,7 @@ class SecurityTest extends CommonClassTest
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
-		$result = dol_eval('1==\x01', 1, 0);	// Check that we can' make dol_eval on string containing \ char.
+		$result = dol_eval('1==\x01', 1, 0);	// Check that we can't make dol_eval on string containing \ char.
 		print "result0 = ".$result."\n";
 		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
