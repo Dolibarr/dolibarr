@@ -730,7 +730,7 @@ class Reception extends CommonObject
 		if (!empty($this->origin) && $this->origin_id > 0 && ($this->origin == 'order_supplier' || $this->origin == 'commandeFournisseur')) {
 			if (empty($this->origin_object)) {
 				$this->fetch_origin();
-				if (empty($this->origin_object->lines)) {
+				if ($this->origin_object instanceof CommonObject && empty($this->origin_object->lines)) {
 					$res = $this->origin_object->fetch_lines();
 					if ($this->origin_object instanceof CommandeFournisseur) {
 						$this->commandeFournisseur = $this->origin_object;	// deprecated

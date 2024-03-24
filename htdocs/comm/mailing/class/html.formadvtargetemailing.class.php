@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -278,11 +279,11 @@ class FormAdvTargetEmailing extends Form
 	}
 
 	/**
-	 * Return multiselect list of entities for extrafeild type sellist
+	 * Return multiselect list of entities for extrafield type sellist
 	 *
 	 * @param string $htmlname control name
-	 * @param array $sqlqueryparam array
-	 * @param array $selected_array array
+	 * @param array<string,string> $sqlqueryparam array
+	 * @param string[] $selected_array array
 	 *
 	 *  @return	string HTML combo
 	 */

@@ -270,13 +270,13 @@ return [
 		'langs' => '\Translate',
 		'leftmenu' => 'string',
 		'mainmenu' => 'string',
-		'menumanager' => 'string',
+		'menumanager' => '\MenuManager',
 		'mysoc' => '\Societe',
 		'nblines' => '\int',
 		'obj' => '\CommonObject',     // Deprecated
 		'object_rights' => 'int|stdClass',
 		'objectoffield' => '\CommonObject',
-		'senderissupplier' => 'int<0,1,2>',
+		'senderissupplier' => 'int<0,2>',
 		'user' => '\User',
 		'website' => 'string',  // See discussion https://github.com/Dolibarr/dolibarr/pull/28891#issuecomment-2002268334  // Disable because Phan infers Website type
 		'websitepage' => '\WebSitePage',
@@ -483,7 +483,7 @@ return [
 		// 'PhanTypeInvalidRightOperandOfAdd',
 		// 'PhanPluginDescriptionlessCommentOnPrivateProperty',
 		// 'PhanUndeclaredVariableDim',  // Array initialisation on undeclared var: $abc['x']='ab'
-		'PhanTypeInvalidPropertyName',
+		// 'PhanTypeInvalidPropertyName',
 		'PhanPluginDuplicateCatchStatementBody',
 		'PhanPluginUndeclaredVariableIsset',
 		// 'PhanTypeInvalidUnaryOperandIncOrDec',
@@ -613,7 +613,7 @@ return [
 		// 'PhanPluginInconsistentReturnMethod',
 		'PhanTypeExpectedObjectPropAccessButGotNull',
 		// 'PhanUndeclaredClassAttribute',
-		'PhanNonClassMethodCall',
+		// 'PhanNonClassMethodCall',
 		// 'PhanPluginNoAssert',
 		// 'PhanTypeMismatchReturnSuperType',
 		// 'PhanTypeMismatchArgumentSuperType',
