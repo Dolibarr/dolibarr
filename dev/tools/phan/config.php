@@ -270,7 +270,7 @@ return [
 		'langs' => '\Translate',
 		'leftmenu' => 'string',
 		'mainmenu' => 'string',
-		'menumanager' => 'string',
+		'menumanager' => '\MenuManager',
 		'mysoc' => '\Societe',
 		'nblines' => '\int',
 		'obj' => '\CommonObject',     // Deprecated
@@ -483,7 +483,7 @@ return [
 		// 'PhanTypeInvalidRightOperandOfAdd',
 		// 'PhanPluginDescriptionlessCommentOnPrivateProperty',
 		// 'PhanUndeclaredVariableDim',  // Array initialisation on undeclared var: $abc['x']='ab'
-		'PhanTypeInvalidPropertyName',
+		// 'PhanTypeInvalidPropertyName',
 		'PhanPluginDuplicateCatchStatementBody',
 		'PhanPluginUndeclaredVariableIsset',
 		// 'PhanTypeInvalidUnaryOperandIncOrDec',

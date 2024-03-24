@@ -15,6 +15,7 @@ dolibar->dolibarr
 dolibarrr->dolibarr
 dollibar->dolibarr
 dollibarr->dolibarr
+extrafeild->extrafield
 thoose->those
 # fiche->card
 mot de passe->password
