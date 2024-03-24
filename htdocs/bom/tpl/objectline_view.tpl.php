@@ -83,12 +83,12 @@ if (!function_exists('print_line')) {
 	 * @param  BOMLine $data   BOMLine to print on row
 	 * @param  float $quantity Quantity modifier for sub BOM
 	 * @param  int $level      Level of recursion
-	 * @param  int $parent     Paring BOMLine ID, used for show/hide
+	 * @param  BOM $parent     Parent BOMLine ID, used for show/hide/edit/delete
 	 * @return array           Return array of html rows
 	 */
 	function print_line($db, $data, $quantity, $level, $parent)
 	{
-		global $langs, $extrafields, $filtertype, $i, $action;
+		global $langs, $extrafields, $filtertype, $i, $action, $object_rights;
 
 		$product = new Product($db);
 		$product->fetch($data->fk_product);
@@ -115,7 +115,8 @@ if (!function_exists('print_line')) {
 			(!empty($bom) ? ' '.$langs->trans("or").' '.$bom->getNomUrl(1).
 			' <a class="collapse_bom" id="collapse-'.$data->id.'" href="#">'.
 			(!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT') ? img_picto('', 'folder') : img_picto('', 'folder-open')).'</a>':'').
-			$extra;
+			' - '.$product->label.
+			(!empty($extra)?' - '.$extra:'');
 
 		// Yes, it is a quantity, not a price, but we just want the formatting role of function price
 		$column[] = '<td class="linecolqty nowrap right">'.price(price2num($data->qty*$quantity, 'MT'), 0, '', 0, 0).'</td>';
@@ -128,10 +129,10 @@ if (!function_exists('print_line')) {
 			}
 
 			$column[] = '<td class="linecolqtyfrozen nowrap right">'.
-				($line->qty_frozen ? yn($data->qty_frozen) : '').'</td>';
+				($data->qty_frozen ? yn($data->qty_frozen) : '').'</td>';
 
 			$column[] = '<td class="linecoldisablestockchange nowrap right">'.
-				($line->disable_stock_change ? yn($data->disable_stock_change) : '').'</td>';
+				($data->disable_stock_change ? yn($data->disable_stock_change) : '').'</td>';
 
 			$column[] = '<td class="linecolefficiency nowrap right">'.$data->efficiency.'</td>';
 		} else {
@@ -158,23 +159,23 @@ if (!function_exists('print_line')) {
 		$column[] = '<td id="costline_'.$data->id.'" class="linecolcost nowrap right"><span class="amount">'.
 			price(price2num($data->total_cost*$quantity, 'MT')).'</span></td>';
 
-		if ($data->status == 0 && ($object_rights->write) && $action != 'selectlines') {
+		if ($level==0 && $parent->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 			$column[] = '<td class="linecoledit center">'.
-				(($line->info_bits & 2) == 2 || !empty($disableedit)?'':
-				('<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id.'">'.img_edit().'</a>')).
+				(($data->info_bits & 2) == 2 || !empty($disableedit)?'':
+				('<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$parent->id.'&action=editline&token='.newToken().'&lineid='.$data->id.'">'.img_edit().'</a>')).
 				'</td>';
 
 			//La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
 			$column[] = '<td class="linecoldelete center">'.
-				(($line->fk_prev_id == null) && empty($disableremove)?
-					'<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=deleteline&token='.newToken().'&lineid='.$line->id.'">'.img_delete().'</a>':'').
+				(($data->fk_prev_id == null) && empty($disableremove)?
+					'<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$parent->id.'&action=deleteline&token='.newToken().'&lineid='.$data->id.'">'.img_delete().'</a>':'').
 				'</td>';
 
 			if ($num > 1 && $conf->browser->layout != 'phone' && empty($disablemove)) {
 				$column[] = '<td class="linecolmove tdlineupdown center">'.
-					(($i > 0)?'<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=up&token='.newToken().'&rowid='.$line->id.'">'.
+					(($i > 0)?'<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$parent->id.'&action=up&token='.newToken().'&rowid='.$data->id.'">'.
 						img_up('default', 0, 'imgupforline').'</a>':'').
-					(($i < $num - 1)?'<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=down&token='.newToken().'&rowid='.$line->id.'">'.
+					(($i < $num - 1)?'<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$parent->id.'&action=down&token='.newToken().'&rowid='.$data->id.'">'.
 						img_down('default', 0, 'imgdownforline').'</a>':'').'</td>';
 			} else {
 				$column[] = '<td '.(($conf->browser->layout != 'phone' && empty($disablemove)) ? ' class="linecolmove tdlineupdown center"' : ' class="linecolmove center"').'></td>';
@@ -186,7 +187,7 @@ if (!function_exists('print_line')) {
 		}
 
 		if ($action == 'selectlines') {
-			$column[] = '<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox['.($i + 1).']" value="'.$line->id.'" ></td>';
+			$column[] = '<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox['.($i + 1).']" value="'.$data->id.'" ></td>';
 		}
 
 		// add html5 dom elements
@@ -196,10 +197,10 @@ if (!function_exists('print_line')) {
 				$data->id.'" data-qty="'.$data->qty.'">'.implode('', $column).'</tr>';
 		} else {
 			$html[] = '<tr'.(!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT')?' style="display:none"':'').
-				(!empty($parent)?' class="sub_bom_lines" parentid="'.$parent.'"':'').'>'.implode('', $column).'</tr>';
+				(!empty($parent)?' class="sub_bom_lines" parentid="'.$parent->id.'"':'').'>'.implode('', $column).'</tr>';
 		}
 		foreach ((!empty($bom) && is_array($bom->lines)) ? $bom->lines : array() as $child) {
-			foreach (print_line($db, $child, ($quantity * $data->qty) / (($bom->qty??1) * $data->efficiency), $level + 1, $data->id) as $line) {
+			foreach (print_line($db, $child, ($quantity * $data->qty) / (($bom->qty??1) * $data->efficiency), $level + 1, $data) as $line) {
 				$html[] = $line;
 			}
 		}
@@ -209,5 +210,5 @@ if (!function_exists('print_line')) {
 }
 
 print "<!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->\n";
-print implode('', print_line($object->db, $line, 1, 0, null));
+print implode('', print_line($object->db, $line, 1, 0, $this));
 print "<!-- END PHP TEMPLATE objectline_view.tpl.php -->\n";

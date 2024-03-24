@@ -1885,11 +1885,11 @@ class BOMLine extends CommonObjectLine
 		// check for circular BOM dependency
 		$sql = 'SELECT rowid, fk_bom_child as child, fk_product as product, qty as quantity FROM '.MAIN_DB_PREFIX.'bom_bomline';
 		$sql.= ' WHERE fk_bom ='. (int) $id;
-		$result = $object->db->query($sql);
+		$result = $this->db->query($sql);
 
 		if ($result) {
 			// Loop on all the sub-BOM lines if they exist
-			while ($obj = $object->db->fetch_object($result)) {
+			while ($obj = $this->db->fetch_object($result)) {
 				if (!empty($obj->child)) {
 					if ($obj->child==$this->fk_bom) {
 						$this->error = 'Found BOM circular dependency';
