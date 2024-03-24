@@ -247,8 +247,8 @@ if ($date && $dateIsValid) {
 			$movements_prod_warehouse_nb[$fk_product][$fk_entrepot] = $nbofmovement;
 
 			// Pour llx_product.stock
-			$movements_prod[$fk_product] += $stock;
-			$movements_prod_nb[$fk_product] += $nbofmovement;
+			$movements_prod[$fk_product] = $stock + (array_key_exists($fk_product, $movements_prod)?$movements_prod[$fk_product]:0);
+			$movements_prod_nb[$fk_product] = $nbofmovement + (array_key_exists($fk_product, $movements_prod_nb)?$movements_prod_nb[$fk_product]:0);
 
 			$i++;
 		}
@@ -646,20 +646,20 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 			if ($mode == 'future') {
 				// Current stock
-				print '<td class="right">'.$currentstock.'</td>';
+				print '<td class="right">'.price(price2num($currentstock, 'MS')).'</td>';
 				//$totalcurrentstock += $currentstock;
 
 				print '<td class="right"></td>';
 
 				// Virtual stock at date
-				print '<td class="right">'.$stock.'</td>';
+				print '<td class="right">'.price(price2num($stock, 'MS')).'</td>';
 
 				// Final virtual stock
-				print '<td class="right">'.$virtualstock.'</td>';
+				print '<td class="right">'.price(price2num($virtualstock, 'MS')).'</td>';
 				$totalvirtualstock += $virtualstock;
 			} else {
 				// Stock at date
-				print '<td class="right">'.($stock ? $stock : '<span class="opacitymedium">'.$stock.'</span>').'</td>';
+				print '<td class="right">'.($stock ? price(price2num($stock : '<span class="opacitymedium">'.price(price2num($stock, 'MS')).'</span>').'</td>';
 
 				// PMP value
 				print '<td class="right">';
@@ -699,7 +699,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				print '</td>';
 
 				// Current stock
-				print '<td class="right">'.($currentstock ? $currentstock : '<span class="opacitymedium">0</span>').'</td>';
+				print '<td class="right">'.($currentstock ? price(price2num($currentstock, 'MS')) : '<span class="opacitymedium">0</span>').'</td>';
 			}
 			$totalcurrentstock += $currentstock;
 
@@ -733,9 +733,9 @@ if ($ext=='csv') {
 		($mode == 'future')?array(
 		'"'.$langs->trans("Totalforthispage").'"',
 		'',
-		$productid > 0 ? "$totalcurrentstock" : '',
+		$productid > 0 ? price(price2num($totalcurrentstock, 'MS')) : '',
 		'',
-		"$totalvirtualstock"):
+		price(price2num($totalvirtualstock, 'MS'))):
 		array(
 		'"'.$langs->trans("Totalforthispage").'"',
 		'',
@@ -743,7 +743,7 @@ if ($ext=='csv') {
 		'"'.price(price2num($totalbuyingprice, 'MT')).'"',
 		!getDolGlobalString('PRODUIT_MULTIPRICES')?'"'.price(price2num($totalsellingprice, 'MT')).'"':'',
 		'',
-		$productid > 0 ? $totalcurrentstock : ''));
+		$productid > 0 ? price(price2num($totalcurrentstock, 'MS')) : ''));
 } else {
 	if (empty($date) || !$dateIsValid) {
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("EnterADateCriteria").'</span></td></tr>';
@@ -752,10 +752,10 @@ if ($ext=='csv') {
 		print '<td>'.$langs->trans("Totalforthispage").'</td>';
 		print '<td></td>';
 		if ($mode == 'future') {
-			print '<td class="right">'.$totalcurrentstock.'</td>';
+			print '<td class="right">'.price(price2num($totalcurrentstock,'MS')).'</td>';
 			print '<td></td>';
 			print '<td></td>';
-			print '<td class="right">'.$totalvirtualstock.'</td>';
+			print '<td class="right">'.price(price2num($totalvirtualstock,'MS')).'</td>';
 		} else {
 			print '<td></td>';
 			print '<td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td>';
@@ -765,7 +765,7 @@ if ($ext=='csv') {
 				print '<td></td>';
 			}
 			print '<td></td>';
-			print '<td class="right">'.($productid > 0 ? $totalcurrentstock : '').'</td>';
+			print '<td class="right">'.($productid > 0 ? price(price2num($totalcurrentstock, 'MS')) : '').'</td>';
 		}
 		print '<td></td>';
 		print '</tr>';
