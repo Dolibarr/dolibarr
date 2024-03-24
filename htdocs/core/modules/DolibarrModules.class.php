@@ -696,7 +696,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$pathoffile = $this->getDescLongReadmeFound();
 
 		if ($pathoffile) {     // Mostly for external modules
-			$content = file_get_contents($pathoffile, null, null, null, 1024 * 1024);	// Max size loaded 1Mb
+			$content = file_get_contents($pathoffile, false, null, 0, 1024 * 1024);	// Max size loaded 1Mb
 
 			if ((float) DOL_VERSION >= 6.0) {
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
