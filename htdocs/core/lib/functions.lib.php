@@ -336,10 +336,10 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  *									'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
  *									'email_template', 'event', 'donation'
  *									'c_paiement', 'c_payment_term', ...
- * 	@param	int		$shared			0=Return id of current entity only,
+ * 	@param	int<0,1>	$shared		0=Return id of current entity only,
  * 									1=Return id of current entity + shared entities (default)
- *  @param	object	$currentobject	Current object if needed
- * 	@return	mixed					Entity id(s) to use ( eg. entity IN ('.getEntity(elementname).')' )
+ *  @param	?CommonObject			$currentobject	Current object if needed
+ * 	@return	string					Entity id(s) to use ( eg. entity IN ('.getEntity(elementname).')' )
  */
 function getEntity($element, $shared = 1, $currentobject = null)
 {
@@ -401,8 +401,8 @@ function getEntity($element, $shared = 1, $currentobject = null)
 /**
  * 	Set entity id to use when to create an object
  *
- * 	@param	object	$currentobject	Current object
- * 	@return	mixed					Entity id to use ( eg. entity = '.setEntity($object) )
+ * 	@param	CommonObject	$currentobject	Current object
+ * 	@return	int								Entity id to use ( eg. entity = '.setEntity($object) )
  */
 function setEntity($currentobject)
 {
