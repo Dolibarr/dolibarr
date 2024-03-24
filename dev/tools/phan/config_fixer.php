@@ -49,7 +49,6 @@ return [
 	'analyzed_file_extensions' => ['php','inc'],
 	'globals_type_map' => [
 		'conf' => '\Conf',
-		'cache_codes' => 'array<string,array<string,array<string,string>>>',
 		'db' => '\DoliDB',
 		'extrafields' => '\ExtraFields',
 		'hookmanager' => '\HookManager',
