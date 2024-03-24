@@ -143,18 +143,20 @@ class pdf_merou extends ModelePdfExpedition
 
 			$origin = $object->origin;
 
+			$object->fetch_origin();
+
 			//Create sender
 			$this->expediteur = $mysoc;
 
 			//Create recipient
-			$idcontact = $object->$origin->getIdContact('external', 'SHIPPING');
+			$idcontact = $object->object_origin->getIdContact('external', 'SHIPPING');
 			$this->destinataire = new Contact($this->db);
 			if (!empty($idcontact[0])) {
 				$this->destinataire->fetch($idcontact[0]);
 			}
 
 			//Create deliverer
-			$idcontact = $object->$origin->getIdContact('internal', 'LIVREUR');
+			$idcontact = $object->object_origin->getIdContact('internal', 'LIVREUR');
 			$this->livreur = new User($this->db);
 			if (!empty($idcontact[0])) {
 				$this->livreur->fetch($idcontact[0]);
@@ -634,7 +636,7 @@ class pdf_merou extends ModelePdfExpedition
 
 		// If SHIPPING contact defined on order, we use it
 		$usecontact = false;
-		$arrayidcontact = $object->$origin->getIdContact('external', 'SHIPPING');
+		$arrayidcontact = $object->object_origin->getIdContact('external', 'SHIPPING');
 		if (count($arrayidcontact) > 0) {
 			$usecontact = true;
 			$result = $object->fetch_contact($arrayidcontact[0]);

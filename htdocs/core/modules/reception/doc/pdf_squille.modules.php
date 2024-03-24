@@ -955,6 +955,8 @@ class pdf_squille extends ModelePdfReception
 		$origin = $object->origin;
 		$origin_id = $object->origin_id;
 
+		$object->fetch_origin();
+
 		// TODO move to external function
 		if (isModEnabled("supplier_order")) {     // commonly $origin='commande'
 			$outputlangs->load('orders');
@@ -984,11 +986,11 @@ class pdf_squille extends ModelePdfReception
 			$carac_emetteur = '';
 			// Add internal contact of origin element if defined
 			$arrayidcontact = array();
-			if (!empty($origin) && is_object($object->$origin)) {
-				$arrayidcontact = $object->$origin->getIdContact('internal', 'SALESREPFOLL');
+			if (!empty($origin) && is_object($object->object_origin)) {
+				$arrayidcontact = $object->object_origin->getIdContact('internal', 'SALESREPFOLL');
 			}
 			if (empty($arrayidcontact)) {
-				$arrayidcontact = $object->$origin->getIdContact('internal', 'SHIPPING');
+				$arrayidcontact = $object->object_origin->getIdContact('internal', 'SHIPPING');
 			}
 			if (count($arrayidcontact) > 0) {
 				$object->fetch_user(reset($arrayidcontact));
@@ -1027,7 +1029,7 @@ class pdf_squille extends ModelePdfReception
 
 			// If RECEPTION contact defined, we use it
 			$usecontact = false;
-			$arrayidcontact = $object->$origin->getIdContact('external', 'SHIPPING');
+			$arrayidcontact = $object->object_origin->getIdContact('external', 'SHIPPING');
 
 			if (count($arrayidcontact) > 0) {
 				$usecontact = true;
