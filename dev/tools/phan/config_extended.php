@@ -214,7 +214,6 @@ return [
 		'conffile' => 'string',
 		'conffiletoshow' => 'string',
 		'conffiletoshowshort' => 'string',
-		'dateSelector' => 'int<0,1>',
 		'db' => '\DoliDB',
 		'disableedit' => 'int<0,1>',
 		'disablemove' => 'int<0,1>',
