@@ -4292,8 +4292,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		$formmail = new FormMail($db);
 		$formmail->withaiprompt = 'html';
 
-
-		print '<tr><td class="titlefield fieldrequired">';
+		print '<tr><td class="titlefield fieldrequired tdtop">';
 		print $langs->trans('WEBSITE_PAGE_EXAMPLE');
 		print '</td><td>';
 
