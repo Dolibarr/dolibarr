@@ -6763,7 +6763,7 @@ function get_localtax_by_third($local)
  */
 function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid = 1)
 {
-	global $db, $mysoc;
+	global $db;
 
 	dol_syslog("getTaxesFromId vat id or rate = ".$vatrate);
 
@@ -6891,13 +6891,13 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 
 /**
  *	Return vat rate of a product in a particular country, or default country vat if product is unknown.
- *  Function called by get_default_tva().
+ *  Function called by get_default_tva(). Do not use this function directly, prefer to use get_default_tva().
  *
  *  @param	int				$idprod          	Id of product or 0 if not a predefined product
  *  @param  Societe			$thirdpartytouse  	Thirdparty with a ->country_code defined (FR, US, IT, ...)
  *	@param	int				$idprodfournprice	Id product_fournisseur_price (for "supplier" proposal/order/invoice)
  *  @return float|string   					    Vat rate to use with format 5.0 or '5.0 (XXX)'
- *  @see get_product_localtax_for_country()
+ *  @see get_default_tva(), get_product_localtax_for_country()
  */
 function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournprice = 0)
 {
