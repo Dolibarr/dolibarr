@@ -24,7 +24,7 @@ create table llx_expeditiondet
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   fk_expedition     integer NOT NULL,  						-- ID of parent object
   fk_element        integer,           						-- ID of main source object
-  fk_origin_line    integer,           						-- ID of line of source object (proposal, sale order). TODO should be renamed into fk_elementdet in SQL files and code in same PR
+  fk_elementdet    integer,           						-- ID of line of source object (proposal, sale order)
   element_type   	varchar(50) DEFAULT 'order' NOT NULL,	-- Type of source object ('order', ...)
   qty               real,              						-- Quantity
   fk_entrepot       integer,           						-- Warehouse for departure of product
