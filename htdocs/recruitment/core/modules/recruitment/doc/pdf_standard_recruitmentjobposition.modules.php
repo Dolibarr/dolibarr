@@ -70,7 +70,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
+	 * @var array{0:int,1:int} Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
 	public $phpmin = array(7, 0);
@@ -108,7 +108,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	public $defaultTitlesFieldsStyle = array();
 
 	/**
-	 * @var array of document table columns
+	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of document tablecolumns
 	 */
 	public $cols = array();
 

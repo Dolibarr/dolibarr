@@ -180,7 +180,7 @@ class FormMail extends Form
 	public $substit = array();
 	public $substit_lines = array();
 	/**
-	 * @var array{models:string,langmodels?:string,fileinit?:string[],returnurl:string}
+	 * @var array{}|array{models:string,langmodels?:string,fileinit?:string[],returnurl:string}
 	 */
 	public $param = array();
 
@@ -335,7 +335,7 @@ class FormMail extends Form
 	/**
 	 * Return list of attached files (stored in SECTION array)
 	 *
-	 * @return	array       array('paths'=> ,'names'=>, 'mimes'=> )
+	 * @return	array{paths:string[],names:string[],mimes:string[]}
 	 */
 	public function get_attached_files()
 	{
@@ -1404,7 +1404,7 @@ class FormMail extends Form
 	/**
 	 * Return Html section for the Topic of message
 	 *
-	 * @param	array	$arraydefaultmessage		Array with message template content
+	 * @param	ModelMail	$arraydefaultmessage		Array with message template content
 	 * @param	string	$helpforsubstitution		Help string for substitution
 	 * @return 	string 								Text for topic
 	 */
@@ -1599,7 +1599,7 @@ class FormMail extends Form
 	 *  @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *  @param	string		$label			Label of template to get
 	 *  @param  int         $defaultfortype 1=Only default templates, 0=Only not default, -1=All
-	 *  @return ModelMail|integer			One instance of ModelMail or < 0 if error
+	 *  @return ModelMail|int<-1,-1>		One instance of ModelMail or < 0 if error
 	 */
 	public function getEMailTemplate($dbs, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '', $defaultfortype = -1)
 	{

@@ -210,7 +210,7 @@ return [
 		'dolibarr_main_data_root' => 'string',
 		'dolibarr_main_authentication' => 'string',
 		'dolibarr_main_demo' => 'string',
-		'menumanager' => 'string',
+		'menumanager' => '\MenuManager',
 		'errormsg' => 'string',
 		'form' => '\Form',
 		'object_rights' => 'int|stdClass',
