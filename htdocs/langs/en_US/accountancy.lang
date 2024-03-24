@@ -178,7 +178,7 @@ ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
 ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
-ACCOUNTING_ACCOUNT_EXPENSEREPORT=Default accounting account for "expense reports"
+
 ACCOUNTING_MISCELLANEOUS_JOURNAL=General journal
 ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
 ACCOUNTING_INVENTORY_JOURNAL=Inventory journal
