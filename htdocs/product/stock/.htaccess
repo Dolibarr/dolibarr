@@ -1,7 +1,0 @@
-RewriteEngine On
-
-#RewriteCond %{HTTP:X-Forwarded-Proto} !https
-#RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R,L]
-
-#RewriteRUle ^product/stock/stockatdate\.csv$ product/stock/stockatdate.php  [L]
-RewriteRUle ^stockatdate\.csv$ stockatdate.php  [L]
