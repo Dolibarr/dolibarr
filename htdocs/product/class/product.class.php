@@ -1114,11 +1114,11 @@ class Product extends CommonObject
 
 		// Automated compute surface and volume if not filled
 		if (empty($this->surface) && !empty($this->length) && !empty($this->width) && $this->length_units == $this->width_units) {
-			$this->surface = $this->length * $this->width;
+			$this->surface = (float) $this->length * (float) $this->width;
 			$this->surface_units = measuring_units_squared($this->length_units);
 		}
 		if (empty($this->volume) && !empty($this->surface) && !empty($this->height) && $this->length_units == $this->height_units) {
-			$this->volume = $this->surface * $this->height;
+			$this->volume = $this->surface * (float) $this->height;
 			$this->volume_units = measuring_units_cubed($this->height_units);
 		}
 
@@ -2360,12 +2360,12 @@ class Product extends CommonObject
 		if ($newprice !== '' || $newprice === 0) {
 			if ($newpricebase == 'TTC') {
 				$price_ttc = price2num($newprice, 'MU');
-				$price = price2num($newprice) / (1 + ($newvat / 100));
+				$price = (float) price2num($newprice) / (1 + ((float) $newvat / 100));
 				$price = price2num($price, 'MU');
 
 				if ($newminprice != '' || $newminprice == 0) {
 					$price_min_ttc = price2num($newminprice, 'MU');
-					$price_min = price2num($newminprice) / (1 + ($newvat / 100));
+					$price_min = (float) price2num($newminprice) / (1 + ($newvat / 100));
 					$price_min = price2num($price_min, 'MU');
 				} else {
 					$price_min = 0;
@@ -2378,7 +2378,7 @@ class Product extends CommonObject
 
 				if ($newminprice !== '' || $newminprice === 0) {
 					$price_min = price2num($newminprice, 'MU');
-					$price_min_ttc = price2num($newminprice) * (1 + ($newvat / 100));
+					$price_min_ttc = (float) price2num($newminprice) * (1 + ($newvat / 100));
 					$price_min_ttc = price2num($price_min_ttc, 'MU');
 					//print 'X'.$newminprice.'-'.$price_min;
 				} else {

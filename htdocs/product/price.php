@@ -13,6 +13,7 @@
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018		Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -566,11 +567,11 @@ if (empty($reshook)) {
 		if (!$error) {
 			// Calcul du prix HT et du prix unitaire
 			if ($object->price_base_type == 'TTC') {
-				$price = price2num($newprice) / (1 + ($object->tva_tx / 100));
+				$price = (float) price2num($newprice) / (1 + ($object->tva_tx / 100));
 			}
 
 			$price = price2num($newprice, 'MU');
-			$unitPrice = price2num($price / $quantity, 'MU');
+			$unitPrice = price2num((float) $price / (float) $quantity, 'MU');
 
 			// Ajout / mise à jour
 			if ($rowid > 0) {
