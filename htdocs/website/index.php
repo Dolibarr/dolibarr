@@ -51,6 +51,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "website", "errors"));
@@ -1183,8 +1185,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 			$sample = 'empty';
 		}
 
-		$pathtosample = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.dol_sanitizeFileName($sample).'.html';
-
+		$pathtosample = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.dol_sanitizeFileName(strtolower($sample)).'.html';
 		// Init content with content into pagetemplate.html, blogposttempltate.html, ...
 		$objectpage->content = make_substitutions(@file_get_contents($pathtosample), $substitutionarray);
 	}
@@ -4288,10 +4289,65 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 
 	// Example/templates of page
 	if ($action == 'createcontainer') {
-		print '<tr><td class="titlefield fieldrequired">';
+		$formmail = new FormMail($db);
+		$formmail->withaiprompt = 'html';
+
+		print '<tr><td class="titlefield fieldrequired tdtop">';
 		print $langs->trans('WEBSITE_PAGE_EXAMPLE');
 		print '</td><td>';
-		print $formwebsite->selectSampleOfContainer('sample', (GETPOSTISSET('sample') ? GETPOST('sample', 'alpha') : 'empty'), 0, '', 1, 'minwidth300');
+
+		$out = '';
+		// Add link to add layout
+		$out .= '<a href="#" id="linkforlayouttemplates" class="reposition notasortlink inline-block alink marginrightonly">';
+		$out .= img_picto($langs->trans("FillMessageWithALayout"), 'layout', 'class="paddingrightonly"');
+		$out .= $langs->trans("FillPageWithALayout").'...';
+		$out .= '</a> &nbsp; &nbsp; ';
+
+		$out .= '<script>
+			$(document).ready(function() {
+				$("#linkforlayouttemplates").click(function() {
+					console.log("We click on linkforlayouttemplates");
+					event.preventDefault();
+					jQuery("#template-selector").toggle();
+					//jQuery("#template-selector").attr("style", "aaa");
+					jQuery("#ai_input").hide();
+					jQuery("#pageContent").show();
+				});
+			});
+		</script>
+		';
+
+		// Add link to add AI content
+		if ($formmail->withaiprompt && isModEnabled('ai')) {
+			$out .= '<a href="#" id="linkforaiprompt" class="reposition notasortlink inline-block alink marginrightonly">';
+			$out .= img_picto($langs->trans("FillMessageWithAIContent"), 'ai', 'class="paddingrightonly"');
+			$out .= $langs->trans("FillMessageWithAIContent").'...';
+			$out .= '</a>';
+			$out .= '<script>
+						$(document).ready(function() {
+							$("#linkforaiprompt").click(function() {
+								console.log("We click on linkforaiprompt");
+								event.preventDefault();
+								jQuery("#ai_input").toggle();
+								jQuery("#template-selector").hide();
+								if (!jQuery("ai_input").is(":hidden")) {
+									console.log("Set focus on input field");
+									jQuery("#ai_instructions").focus();
+									if (!jQuery("pageContent").is(":hidden")) {
+										jQuery("#pageContent").show();
+									}
+								}
+							});
+						});
+					</script>';
+		}
+
+		$out .= $formwebsite->getContentPageTemplate('content');
+
+		if ($formmail->withaiprompt && isModEnabled('ai')) {
+			$out .= $formmail->getSectionForAIPrompt('', 'content');
+		}
+		print $out;
 		print '</td></tr>';
 	}
 
@@ -4520,6 +4576,13 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print dol_print_date($pagedatemodification, 'dayhour', 'tzuser');
 		print '</td></tr>';
 	}
+
+	print '<tr id="pageContent" class="hideobject"><td class="toptd">';
+	print $langs->trans('PreviewPageContent');
+	print '</td><td>';
+	$doleditor = new DolEditor('content', GETPOST('content', 'restricthtmlallowunvalid'), '', 200, 'dolibarr_readonly', 'In', true, true, true, 40, '90%');
+	$doleditor->Create();
+	print '</td></tr>';
 
 	print '<tr><td class="tdhtmlheader tdtop">';
 	$htmlhelp = $langs->trans("EditTheWebSiteForACommonHeader").'<br><br>';
