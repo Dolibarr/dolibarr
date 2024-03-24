@@ -9745,7 +9745,7 @@ function dol_osencode($str)
 
 /**
  *      Return an id or code from a code or id.
- *      Store also Code-Id into a cache to speed up next request on same key.
+ *      Store also Code-Id into a cache to speed up next request on same table and key.
  *
  * 		@param	DoliDB				$db				Database handler
  * 		@param	string				$key			Code or Id to get Id or Code
@@ -9759,7 +9759,7 @@ function dol_osencode($str)
  */
 function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0, $filters = '')
 {
-	global $cache_codes;
+	global $conf;
 
 	// If key empty
 	if ($key == '') {
@@ -9767,8 +9767,8 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 	}
 
 	// Check in cache
-	if (isset($cache_codes[$tablename][$key][$fieldid])) {	// Can be defined to 0 or ''
-		return $cache_codes[$tablename][$key][$fieldid]; // Found in cache
+	if (isset($conf->cache['codeid'][$tablename][$key][$fieldid])) {	// Can be defined to 0 or ''
+		return $conf->cache['codeid'][$tablename][$key][$fieldid]; // Found in cache
 	}
 
 	dol_syslog('dol_getIdFromCode (value for field '.$fieldid.' from key '.$key.' not found into cache)', LOG_DEBUG);
@@ -9787,12 +9787,13 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
-			$cache_codes[$tablename][$key][$fieldid] = $obj->valuetoget;
+			$conf->cache['codeid'][$tablename][$key][$fieldid] = $obj->valuetoget;
 		} else {
-			$cache_codes[$tablename][$key][$fieldid] = '';
+			$conf->cache['codeid'][$tablename][$key][$fieldid] = '';
 		}
 		$db->free($resql);
-		return $cache_codes[$tablename][$key][$fieldid];
+
+		return $conf->cache['codeid'][$tablename][$key][$fieldid];
 	} else {
 		return -1;
 	}
