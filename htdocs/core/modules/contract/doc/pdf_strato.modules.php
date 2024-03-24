@@ -161,9 +161,9 @@ class pdf_strato extends ModelePDFContract
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
-		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
+		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
-			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
 			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
 		}
 
@@ -174,17 +174,17 @@ class pdf_strato extends ModelePDFContract
 
 			// Definition of $dir and $file
 			if ($object->specimen) {
-				$dir = $conf->contract->multidir_output[$conf->entity];
+				$dir = getMultidirOutput($object);;
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->contrat->multidir_output[$object->entity]."/".$objectref;
+				$dir = getMultidirOutput($object)."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 
 			if (!file_exists($dir)) {
 				if (dol_mkdir($dir) < 0) {
-					$this->error = $langs->trans("ErrorCanNotCreateDir", $dir);
+					$this->error = $langs->transnoentitiesnoconv("ErrorCanNotCreateDir", $dir);
 					return 0;
 				}
 			}
