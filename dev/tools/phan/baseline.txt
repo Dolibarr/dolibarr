@@ -47,7 +47,7 @@ return [
         'htdocs/core/lib/functions.lib.php' => ['PhanParamTooMany', 'PhanRedefineFunctionInternal'],
         'htdocs/core/lib/price.lib.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/core/modules/movement/doc/pdf_standard.modules.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
-        'htdocs/core/modules/mrp/doc/pdf_vinci.modules.php' => ['PhanTypeArraySuspiciousNull'],
+        'htdocs/core/modules/mrp/doc/pdf_vinci.modules.php' => ['PhanTypeArraySuspiciousNull', 'PhanTypeInvalidRightOperandOfAdd'],
         'htdocs/core/modules/syslog/mod_syslog_file.php' => ['PhanParamSignatureMismatch'],
         'htdocs/core/modules/syslog/mod_syslog_syslog.php' => ['PhanParamSignatureMismatch'],
         'htdocs/don/class/don.class.php' => ['PhanParamTooMany'],

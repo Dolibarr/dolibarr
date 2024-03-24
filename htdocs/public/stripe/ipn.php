@@ -243,7 +243,7 @@ if ($event->type == 'payout.created') {
 			$typeto = 'VIR';
 
 			if (!$error) {
-				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * price2num($amount), '', '', $user);
+				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * (float) price2num($amount), '', '', $user);
 			}
 			if (!($bank_line_id_from > 0)) {
 				$error++;

@@ -171,7 +171,7 @@ function isValidTinForBE($str)
  *  - NIE = Número de Identidad de Extranjero
  *
  *  @param		string		$str		TIN to check
- *  @return		int						1 if NIF ok, 2 if CIF ok, 3 if NIE ok, -1 if NIF bad, -2 if CIF bad, -3 if NIE bad, -4 if unexpected bad
+ *  @return		int<-4,3>				1 if NIF ok, 2 if CIF ok, 3 if NIE ok, -1 if NIF bad, -2 if CIF bad, -3 if NIE bad, -4 if unexpected bad
  *  @since		Dolibarr V20
  */
 function isValidTinForES($str)
@@ -192,7 +192,7 @@ function isValidTinForES($str)
 
 	//Check NIF
 	if (preg_match('/(^[0-9]{8}[A-Z]{1}$)/', $str)) {
-		if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($str, 0, 8) % 23, 1)) {
+		if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', (int) substr($str, 0, 8) % 23, 1)) {
 			return 1;
 		} else {
 			return -1;
@@ -200,15 +200,15 @@ function isValidTinForES($str)
 	}
 
 	//algorithm checking type code CIF
-	$sum = $num[2] + $num[4] + $num[6];
+	$sum = (int) $num[2] + (int) $num[4] + (int) $num[6];
 	for ($i = 1; $i < 8; $i += 2) {
-		$sum += intval(substr((string) (2 * $num[$i]), 0, 1)) + intval(substr((string) (2 * $num[$i]), 1, 1));
+		$sum += intval(substr((string) (2 * (int) $num[$i]), 0, 1)) + intval(substr((string) (2 * (int) $num[$i]), 1, 1));
 	}
-	$n = 10 - substr((string) $sum, strlen((string) $sum) - 1, 1);
+	$n = 10 - (int) substr((string) $sum, strlen((string) $sum) - 1, 1);
 
 	//Check special NIF
 	if (preg_match('/^[KLM]{1}/', $str)) {
-		if ($num[8] == chr(64 + $n) || $num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($str, 1, 8) % 23, 1)) {
+		if ($num[8] == chr(64 + $n) || $num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', (int) substr($str, 1, 8) % 23, 1)) {
 			return 1;
 		} else {
 			return -1;
@@ -235,7 +235,7 @@ function isValidTinForES($str)
 
 	//Check NIE XYZ
 	if (preg_match('/^[XYZ]{1}/', $str)) {
-		if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr(str_replace(array('X', 'Y', 'Z'), array('0', '1', '2'), $str), 0, 8) % 23, 1)) {
+		if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', (int) substr(str_replace(array('X', 'Y', 'Z'), array('0', '1', '2'), $str), 0, 8) % 23, 1)) {
 			return 3;
 		} else {
 			return -3;

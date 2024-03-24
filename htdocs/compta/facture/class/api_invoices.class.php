@@ -3,6 +3,7 @@
  * Copyright (C) 2020   Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2023	Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1480,10 +1481,10 @@ class Invoices extends DolibarrApi
 		// Clean parameters amount if payment is for a credit note
 		if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
 			$resteapayer = price2num($resteapayer, 'MT');
-			$amounts[$id] = (float) price2num(-1 * $resteapayer, 'MT');
+			$amounts[$id] = (float) price2num(-1 * (float) $resteapayer, 'MT');
 			// Multicurrency
 			$newvalue = price2num($this->invoice->multicurrency_total_ttc, 'MT');
-			$multicurrency_amounts[$id] = (float) price2num(-1 * $newvalue, 'MT');
+			$multicurrency_amounts[$id] = (float) price2num(-1 * (float) $newvalue, 'MT');
 		} else {
 			$resteapayer = price2num($resteapayer, 'MT');
 			$amounts[$id] = (float) $resteapayer;
@@ -1626,7 +1627,7 @@ class Invoices extends DolibarrApi
 			}
 
 			if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
-				$amount = price2num(-1 * $amount, 'MT');
+				$amount = price2num(-1 * (float) $amount, 'MT');
 			}
 
 			if ($is_multicurrency) {

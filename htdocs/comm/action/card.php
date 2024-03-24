@@ -495,10 +495,10 @@ if (empty($reshook) && $action == 'add') {
 			$selectedrecurrulefreq = $reg1[1];
 		}
 		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY(\d+)/i', $object->recurrule, $reg2)) {
-			$selectedrecurrulebymonthday = $reg2[1];
+			$selectedrecurrulebymonthday = (int) $reg2[1];
 		}
 		if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg3)) {
-			$selectedrecurrulebyday = $reg3[1];
+			$selectedrecurrulebyday = (int) $reg3[1];
 		}
 
 		// Is event recurrent ?
@@ -1300,10 +1300,10 @@ if ($action == 'create') {
 			$selectedrecurrulefreq = $reg[1];
 		}
 		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY(\d+)/i', $object->recurrule, $reg)) {
-			$selectedrecurrulebymonthday = $reg[1];
+			$selectedrecurrulebymonthday = (int) $reg[1];
 		}
 		if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg)) {
-			$selectedrecurrulebyday = $reg[1];
+			$selectedrecurrulebyday = (int) $reg[1];
 		}
 
 		print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq, 0, 0, 0, '', 0, 0, 0, '', 'marginrightonly');
