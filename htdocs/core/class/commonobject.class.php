@@ -2005,14 +2005,11 @@ abstract class CommonObject
 			$this->origin = 'commandeFournisseur';
 		}
 
-		$origin = $this->origin;
+		$origin = $this->origin ? $this->origin : $this->origin_type;
 
 		$classname = ucfirst($origin);
 		$this->origin_object = new $classname($this->db);
 		$this->origin_object->fetch($this->origin_id);
-
-		// TODO Remove this line
-		$this->$origin = $this->origin_object;
 	}
 
 	/**
