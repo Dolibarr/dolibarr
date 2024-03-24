@@ -3491,7 +3491,7 @@ class Form
 		}
 
 		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.duration, p.fk_product_type, p.stock, p.tva_tx as tva_tx_sale, p.default_vat_code as default_vat_code_sale,";
-		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice";
+		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice, pfp.barcode";
 		if (isModEnabled('multicurrency')) {
 			$sql .= ", pfp.multicurrency_code, pfp.multicurrency_unitprice";
 		}
@@ -3506,9 +3506,6 @@ class Form
 		// Units
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$sql .= ", u.label as unit_long, u.short_label as unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units";
-		}
-		if (isModEnabled('barcode')) {
-			$sql .= ", pfp.barcode";
 		}
 		$sql .= " FROM " . $this->db->prefix() . "product as p";
 		$sql .= " LEFT JOIN " . $this->db->prefix() . "product_fournisseur_price as pfp ON ( p.rowid = pfp.fk_product AND pfp.entity IN (" . getEntity('product') . ") )";
