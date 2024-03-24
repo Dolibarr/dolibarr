@@ -1,4 +1,7 @@
 <?php
+/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
 
@@ -45,13 +48,12 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	}
 
 	/**
-	 * Is the module active ?
+	 * Is the logger active ?
 	 *
-	 * @return int
+	 * @return int		1 if logger enabled
 	 */
 	public function isActive()
 	{
-		global $conf;
 		return !getDolGlobalString('SYSLOG_DISABLE_LOGHANDLER_FILE') ? 1 : 0; // Set SYSLOG_DISABLE_LOGHANDLER_FILE to 1 to disable this loghandler
 	}
 
@@ -77,23 +79,21 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	/**
 	 * 	Return if configuration is valid
 	 *
-	 * 	@return	array		Array of errors. Empty array if ok.
+	 * 	@return	bool		true if ok
 	 */
 	public function checkConfiguration()
 	{
 		global $langs;
 
-		$errors = array();
-
 		$filename = $this->getFilename();
 
 		if (file_exists($filename) && is_writable($filename)) {
 			dol_syslog('admin/syslog: file '.$filename);
+			return true;
 		} else {
-			$errors[] = $langs->trans("ErrorFailedToOpenFile", $filename);
+			$this->errors[] = $langs->trans("ErrorFailedToOpenFile", $filename);
+			return false;
 		}
-
-		return $errors;
 	}
 
 	/**
@@ -113,7 +113,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 		}
 
 		if (getDolGlobalString('SYSLOG_FILE_ONEPERSESSION')) {
-			if (is_numeric($conf->global->SYSLOG_FILE_ONEPERSESSION)) {
+			if (is_numeric(getDolGlobalString('SYSLOG_FILE_ONEPERSESSION'))) {
 				if (getDolGlobalInt('SYSLOG_FILE_ONEPERSESSION') == 1) {	// file depend on instance session key name (Note that session name is same for the instance so for all users and is not a per user value)
 					$suffixinfilename .= '_'.session_name();
 				}
@@ -134,6 +134,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 * @param  	array 	$content 			Array containing the info about the message
 	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename.
 	 * @return	void
+	 * @phan-suppress PhanPluginDuplicateArrayKey
 	 */
 	public function export($content, $suffixinfilename = '')
 	{
@@ -177,6 +178,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 				$this->lastTime = $now;
 			}
 
+			// @phan-suppress-next-line PhanParamSuspiciousOrder
 			$message = dol_print_date(dol_now('gmt'), 'standard', 'gmt').$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident > 0 ? str_pad('', $this->ident, ' ') : '').$content['message'];
 			fwrite($filefd, $message."\n");
 			fclose($filefd);

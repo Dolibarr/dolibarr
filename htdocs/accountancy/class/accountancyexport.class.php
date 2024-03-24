@@ -14,6 +14,7 @@
  * Copyright (C) 2020       Guillaume Alexandre <guillaume@tag-info.fr>
  * Copyright (C) 2022		Joachim Kueter		<jkueter@gmx.de>
  * Copyright (C) 2022  		Progiseize         	<a.bisotti@progiseize.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class AccountancyExport
 {
-	// Type of export. Used into $conf->global->ACCOUNTING_EXPORT_MODELCSV
+	// Types of export.
 	public static $EXPORT_TYPE_CONFIGURABLE = 1; // CSV
 	public static $EXPORT_TYPE_AGIRIS = 10;
 	public static $EXPORT_TYPE_EBP = 15;
@@ -81,28 +82,32 @@ class AccountancyExport
 	public $errors = array();
 
 	/**
-	 *
-	 * @var string Separator
+	 * @var string 	Separator
 	 */
 	public $separator = '';
 
 	/**
-	 *
-	 * @var string End of line
+	 * @var string 	End of line
 	 */
 	public $end_line = '';
 
 	/**
+	 * @var array 	Generated file
+	 */
+	public $generatedfiledata = array();
+
+
+	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
 		global $conf, $hookmanager;
 
 		$this->db = $db;
-		$this->separator = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+		$this->separator = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
 		$this->end_line = getDolGlobalString('ACCOUNTING_EXPORT_ENDLINE') ? (getDolGlobalInt('ACCOUNTING_EXPORT_ENDLINE') == 1 ? "\n" : "\r\n") : "\n";
 
 		$hookmanager->initHooks(array('accountancyexport'));
@@ -195,7 +200,7 @@ class AccountancyExport
 	 */
 	public function getTypeConfig()
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$exporttypes = array(
 			'param' => array(
@@ -273,7 +278,7 @@ class AccountancyExport
 					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
 				),
 			),
-			'cr'=> array(
+			'cr' => array(
 				'1' => $langs->trans("Unix"),
 				'2' => $langs->trans("Windows")
 			),
@@ -298,8 +303,6 @@ class AccountancyExport
 	 */
 	public function getMimeType($formatexportset)
 	{
-		$mime = 'text/csv';
-
 		switch ($formatexportset) {
 			case self::$EXPORT_TYPE_FEC:
 				$mime = 'text/tab-separated-values';
@@ -319,29 +322,30 @@ class AccountancyExport
 	 * @param	int		$formatexportset			Id of export format
 	 * @param	int		$withAttachment				[=0] Not add files
 	 * 												or 1 to have attached in an archive (ex : Quadratus) - Force output mode to write in a file (output mode = 1)
-	 * @param	int		$downloadMode				[=0] Direct download
+	 * @param	int		$downloadMode				[=0] Direct download. Deprecated. Always use value 1.
 	 * 												or 1 to download after writing files - Forced by default when use withAttachment = 1
 	 * 												or -1 not to download files
-	 * @param	int		$outputMode					[=0] Print on screen
-	 * 												or 1 to write in file and uses a temp directory - Forced by default when use withAttachment = 1
+	 * @param	int		$outputMode					[=0] Print on screen. Deprecated. Always use value 1.
+	 * 												or 1 to write in file and uses the temp directory - Forced by default when use withAttachment = 1
 	 * 												or 2 to write in file a default export directory (accounting/export/)
-	 * @return 	int		Return integer <0 if KO, >0 OK
+	 * @param	int		$noouput					0=old mode. Deprecated. Always use value 1.
+	 * 												or 1=Do not output the file on stdout with this method. This must always be done by the main page, never by a method.
+	 * @return 	int									Return integer <0 if KO, >0 OK. The property ->generatedfile is also filled.
 	 */
-	public function export(&$TData, $formatexportset, $withAttachment = 0, $downloadMode = 0, $outputMode = 0)
+	public function export(&$TData, $formatexportset, $withAttachment = 0, $downloadMode = 0, $outputMode = 0, $noouput = 0)
 	{
-		global $conf, $langs;
-		global $search_date_end; // Used into /accountancy/tpl/export_journal.tpl.php
+		global $db, $conf, $langs;	// The tpl file use $db
+		global $search_date_end; 	// Used into /accountancy/tpl/export_journal.tpl.php
 
 		// Define name of file to save
 		$filename = 'general_ledger-'.$this->getFormatCode($formatexportset);
 		$type_export = 'general_ledger';
 
-		global $db; // The tpl file use $db
 		$completefilename = '';
 		$exportFile = null;
 		$exportFileName = '';
 		$exportFilePath = '';
-		$exportFileFullName ='';
+		$exportFileFullName = '';
 		$downloadFileMimeType = '';
 		$downloadFileFullName = '';
 		$downloadFilePath = '';
@@ -369,17 +373,19 @@ class AccountancyExport
 			// begin to print header for direct download
 			top_httphead($mimetype, 1);
 		}
+
 		include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
+
 		if ($outputMode == 1 || $outputMode == 2) {
 			if ($outputMode == 1) {
-				// uses temp directory by default to write files
+				// uses the temp directory by default to write files
 				if (!empty($conf->accounting->multidir_temp[$conf->entity])) {
 					$outputDir = $conf->accounting->multidir_temp[$conf->entity];
 				} else {
 					$outputDir = $conf->accounting->dir_temp;
 				}
 			} else {
-				// uses default export directory "accounting/export"
+				// uses the default export directory "accounting/export"
 				if (!empty($conf->accounting->multidir_output[$conf->entity])) {
 					$outputDir = $conf->accounting->multidir_output[$conf->entity];
 				} else {
@@ -503,7 +509,8 @@ class AccountancyExport
 				break;
 		}
 
-		// create and download export file or archive
+
+		// Create and download export file or archive
 		if ($outputMode == 1 || $outputMode == 2) {
 			$error = 0;
 
@@ -558,14 +565,19 @@ class AccountancyExport
 					}
 
 					// download export file or archive
-					if (!empty($downloadFileMimeType) && !empty($downloadFileFullName) && !empty($downloadFilePath)) {
+					if (!empty($downloadFileMimeType) && !empty($downloadFileFullName) && !empty($downloadFilePath) && empty($noouput)) {
+						// deprecated. We must not use this anymore, but have $noouput = 1 because HTTP header must be sent
+						// into main page not into a method.
 						header('Content-Type: ' . $downloadFileMimeType);
 						header('Content-Disposition: attachment; filename=' . $downloadFileFullName);
 						header('Cache-Control: Public, must-revalidate');
 						header('Pragma: public');
 						header('Content-Length: ' . dol_filesize($downloadFilePath));
+
 						readfileLowMemory($downloadFilePath);
 					}
+
+					$this->generatedfiledata = array('downloadFilePath' => $downloadFilePath, 'downloadFileMimeType' => $downloadFileMimeType, 'downloadFileFullName' => $downloadFileFullName);
 				}
 			}
 
@@ -838,7 +850,7 @@ class AccountancyExport
 
 		$end_line = "\r\n";
 
-		// We should use dol_now function not time however this is wrong date to transfert in accounting
+		// We should use dol_now function not time however this is wrong date to transfer in accounting
 		foreach ($objectLines as $line) {
 			// Clean some data
 			$line->doc_ref = dol_string_unaccent($line->doc_ref);
@@ -869,11 +881,11 @@ class AccountancyExport
 				if ($line->doc_type == 'customer_invoice') {
 					$tab['lib_alpha'] = strtoupper(str_pad('C'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 7));
 					$tab['filler'] = str_repeat(' ', 52);
-					$tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, 8), 8);
+					$tab['coll_compte'] = str_pad(self::trunc(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), 8), 8);
 				} elseif ($line->doc_type == 'supplier_invoice') {
 					$tab['lib_alpha'] = strtoupper(str_pad('F'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 7));
 					$tab['filler'] = str_repeat(' ', 52);
-					$tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER, 8), 8);
+					$tab['coll_compte'] = str_pad(self::trunc(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER'), 8), 8);
 				} else {
 					$tab['filler'] = str_repeat(' ', 59);
 					$tab['coll_compte'] = str_pad(' ', 8);
@@ -907,7 +919,7 @@ class AccountancyExport
 			$tab['code_journal'] = str_pad(self::trunc($line->code_journal, 2), 2);
 			$tab['folio'] = '000';
 
-			// We use invoice date $line->doc_date not $date_ecriture which is the transfert date
+			// We use invoice date $line->doc_date not $date_ecriture which is the transfer date
 			// maybe we should set an option for customer who prefer to keep in accounting software the tranfert date instead of invoice date ?
 			//$tab['date_ecriture'] = $date_ecriture;
 			$tab['date_ecriture'] = dol_print_date($line->doc_date, '%d%m%y');
@@ -931,7 +943,7 @@ class AccountancyExport
 			$tab['signe_montant'] = '+';
 
 			// The amount must be in centimes without decimal points.
-			$tab['montant'] = str_pad(abs(($line->debit - $line->credit) * 100), 12, '0', STR_PAD_LEFT);
+			$tab['montant'] = str_pad((string) abs(($line->debit - $line->credit) * 100), 12, '0', STR_PAD_LEFT);
 			$tab['contrepartie'] = str_repeat(' ', 8);
 
 			// Force date format : %d%m%y
@@ -965,7 +977,7 @@ class AccountancyExport
 			$tab['libelle_ecriture2'] = str_pad(self::trunc($line->label_operation, 30), 30);
 			$tab['codetva'] = str_repeat(' ', 2);
 
-			// We need to keep the 10 lastest number of invoice doc_ref not the beginning part that is the unusefull almost same part
+			// We need to keep the 10 latest number of invoices doc_ref not the beginning part that is the useless almost same part
 			// $tab['num_piece3'] = str_pad(self::trunc($line->piece_num, 10), 10);
 			$tab['num_piece3'] = substr(self::trunc($line->doc_ref, 20), -10);
 			$tab['reserved'] = str_repeat(' ', 10); // position 159
@@ -987,7 +999,7 @@ class AccountancyExport
 						$invoice = new FactureFournisseur($this->db);
 						$invoice->fetch($line->fk_doc);
 						$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
-						$objectDirPath.= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
+						$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 					}
 					$arrayofinclusion = array();
 					// If it is a supplier invoice, we want to use last uploaded file
@@ -1070,7 +1082,7 @@ class AccountancyExport
 			//$tab['type_ligne'] = 'M';
 			$tab['code_journal'] = str_pad(dol_trunc($line->code_journal, 2, 'right', 'UTF-8', 1), 2);
 
-			//We use invoice date $line->doc_date not $date_ecriture which is the transfert date
+			//We use invoice date $line->doc_date not $date_ecriture which is the transfer date
 			//maybe we should set an option for customer who prefer to keep in accounting software the tranfert date instead of invoice date ?
 			//$tab['date_ecriture'] = $date_ecriture;
 			$tab['date_operation'] = dol_print_date($line->doc_date, '%d%m%Y');
@@ -1343,6 +1355,7 @@ class AccountancyExport
 
 		foreach ($objectLines as $line) {
 			if ($line->debit == 0 && $line->credit == 0) {
+				//var_dump($line->id);
 				//unset($array[$line]);
 			} else {
 				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
@@ -1452,7 +1465,7 @@ class AccountancyExport
 							$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 						} elseif ($line->doc_type == 'supplier_invoice') {
 							$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
-							$objectDirPath.= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
+							$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 						}
 						$arrayofinclusion = array();
 						// If it is a supplier invoice, we want to use last uploaded file
@@ -1492,6 +1505,7 @@ class AccountancyExport
 				$tab[] = $attachmentFileName;
 
 				$output = implode($separator, $tab).$end_line;
+
 				if ($exportFile) {
 					fwrite($exportFile, $output);
 				} else {
@@ -1663,7 +1677,7 @@ class AccountancyExport
 							$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 						} elseif ($line->doc_type == 'supplier_invoice') {
 							$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
-							$objectDirPath.= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
+							$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 						}
 						$arrayofinclusion = array();
 						// If it is a supplier invoice, we want to use last uploaded file
@@ -1774,7 +1788,7 @@ class AccountancyExport
 					&& $objectLines[$aIndex + 1]->piece_num == $line->piece_num
 					&& $aIndex - 1 < $aSize
 					&& $objectLines[$aIndex - 1]->piece_num == $line->piece_num
-					) {
+			) {
 				$sammelBuchung = true;
 			}
 
@@ -1954,7 +1968,7 @@ class AccountancyExport
 			} else {
 				$tab[] = "";
 			}
-			// CNAT
+			// C.N.A.T
 			if ($line->doc_type == 'supplier_invoice' && !empty($line->subledger_account)) {
 				$tab[] = 'F';
 			} elseif ($line->doc_type == 'customer_invoice' && !empty($line->subledger_account)) {
@@ -2231,7 +2245,7 @@ class AccountancyExport
 			} else {
 				$tab[] = "";
 			}
-			// CNAT
+			// C.N.A.T
 			if ($line->doc_type == 'supplier_invoice' && !empty($line->subledger_account)) {
 				$tab[] = 'F';
 			} elseif ($line->doc_type == 'customer_invoice' && !empty($line->subledger_account)) {
@@ -2452,7 +2466,7 @@ class AccountancyExport
 				//Libellé Auto
 				$tab[] = "";
 				//print '"'.dol_trunc(str_replace('"', '', $line->label_operation),40,'right','UTF-8',1).'"';
-				//Libellé manuel
+				//Libellé manual
 				$tab[] = dol_trunc(str_replace('"', '', $invoice_ref . (!empty($company_name) ? ' - ' : '') . $company_name), 40, 'right', 'UTF-8', 1);
 				//Numéro de pièce
 				$tab[] = dol_trunc(str_replace('"', '', $line->piece_num), 10, 'right', 'UTF-8', 1);
@@ -2603,7 +2617,7 @@ class AccountancyExport
 	/**
 	 * toAnsi
 	 *
-	 * @param string	$str 		Original string to encode and optionaly truncate
+	 * @param string	$str 		Original string to encode and optionally truncate
 	 * @param integer 	$size 		Truncate string after $size characters
 	 * @return string 				String encoded in Windows-1251 charset
 	 */

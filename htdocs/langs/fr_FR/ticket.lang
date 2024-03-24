@@ -106,6 +106,7 @@ TicketsShowProgressionHelp=Activez cette option pour masquer la progression du t
 TicketCreateThirdPartyWithContactIfNotExist=Demandez le nom et le nom de l'entreprise pour les e-mails inconnus.
 TicketCreateThirdPartyWithContactIfNotExistHelp=Vérifiez s'il existe un tiers ou un contact pour l'e-mail saisi. Sinon, demandez un nom et un nom société pour créer un tiers avec contact.
 PublicInterface=Interface publique
+TicketUrlPublicInterfaceLabelAdmin=URL alternative pour l'interface publique
 TicketPublicInterfaceTextHomeLabelAdmin=Texte de bienvenue dans l'interface publique
 TicketPublicInterfaceTextHome=Vous pouvez créer un ticket ou consulter à partir d'un ID de ticket existant.
 TicketPublicInterfaceTextHomeHelpAdmin=Le texte défini ici apparaîtra sur la page d'accueil de l'interface publique.

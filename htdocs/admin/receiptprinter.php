@@ -3,6 +3,7 @@
  * Copyright (C) 2015      Frederic France       <frederic.france@free.fr>
  * Copyright (C) 2016      Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2020      Andreu Bisquerra Gaya <jove@bisquerra.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,12 +44,12 @@ $action = GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha');
 
 $printername = GETPOST('printername', 'alpha');
-$printerid = GETPOST('printerid', 'int');
+$printerid = GETPOSTINT('printerid');
 $parameter = GETPOST('parameter', 'alpha');
 
 $template = GETPOST('template', 'alphanohtml');
 $templatename = GETPOST('templatename', 'alpha');
-$templateid = GETPOST('templateid', 'int');
+$templateid = GETPOSTINT('templateid');
 
 $printer = new dolReceiptPrinter($db);
 
@@ -88,7 +89,7 @@ if ($action == 'addprinter' && $user->admin) {
 
 	if (!$error) {
 		$db->begin();
-		$result = $printer->addPrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter);
+		$result = $printer->addPrinter($printername, GETPOSTINT('printertypeid'), GETPOSTINT('printerprofileid'), $parameter);
 		if ($result > 0) {
 			$error++;
 		}
@@ -138,7 +139,7 @@ if ($action == 'updateprinter' && $user->admin) {
 
 	if (!$error) {
 		$db->begin();
-		$result = $printer->updatePrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter, $printerid);
+		$result = $printer->updatePrinter($printername, GETPOSTINT('printertypeid'), GETPOSTINT('printerprofileid'), $parameter, $printerid);
 		if ($result > 0) {
 			$error++;
 		}

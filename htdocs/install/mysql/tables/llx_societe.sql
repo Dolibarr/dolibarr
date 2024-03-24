@@ -43,13 +43,21 @@ create table llx_societe
   address                  varchar(255),                        		-- company address
   zip                      varchar(25),                         		-- zipcode
   town                     varchar(50),                         		-- town
-  fk_departement           integer        DEFAULT 0,            		--
-  fk_pays                  integer        DEFAULT 0,            		--
-  fk_account               integer        DEFAULT 0,            		-- default bank account
+  fk_departement           integer        DEFAULT 0,            		-- state
+  fk_pays                  integer        DEFAULT 0,            		-- country
+
+  geolat                   double(24,8)   DEFAULT NULL,
+  geolong                  double(24,8)   DEFAULT NULL,
+  geopoint                 point DEFAULT NULL,
+  georesultcode            varchar(16),
+
   phone                    varchar(20),                         		-- phone number
+  phone_mobile             varchar(20),                         		-- mobile phone number
   fax                      varchar(20),                         		-- fax number
-  url                      varchar(255),                        		--
-  email                    varchar(128),                        		--
+  url                      varchar(255),                        		-- web site
+  email                    varchar(128),                        		-- main email
+
+  fk_account               integer        DEFAULT 0,                    -- default bank account
 
   socialnetworks           text DEFAULT NULL,                           -- json with socialnetworks
 

@@ -30,7 +30,7 @@ class mailing_advthirdparties extends MailingTargets
 	public $desc = "Third parties";
 	public $require_admin = 0;
 
-	public $require_module = array("none"); // This module should not be displayed as Selector in mailling
+	public $require_module = array("none"); // This module should not be displayed as Selector in mailing
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -188,7 +188,7 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	public function getSqlArrayForStats()
 	{
-		// CHANGE THIS: Optionnal
+		// CHANGE THIS: Optional
 
 		//var $statssql=array();
 		//$this->statssql[0]="SELECT field1 as label, count(distinct(email)) as nb FROM mytable WHERE email IS NOT NULL";
@@ -248,7 +248,7 @@ class mailing_advthirdparties extends MailingTargets
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			if (!isModEnabled("categorie")) {
+			if (!isModEnabled("category")) {
 				$num = 0; // Force empty list if category module is not enabled
 			}
 

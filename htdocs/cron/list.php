@@ -2,7 +2,8 @@
 /* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2021 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2019      Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024 Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,12 +41,12 @@ $confirm = GETPOST('confirm', 'alpha');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'cronjoblist'; // To manage different context of search
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -61,11 +62,11 @@ if (!$sortorder) {
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'aZ09');
 //Search criteria
-$search_status = (GETPOSTISSET('search_status') ? GETPOST('search_status', 'int') : GETPOST('status', 'int'));
+$search_status = GETPOST('search_status', 'intcomma');
 $search_label = GETPOST("search_label", 'alpha');
 $search_module_name = GETPOST("search_module_name", 'alpha');
 $search_lastresult = GETPOST("search_lastresult", "alphawithlgt");
-$search_processing = GETPOST("search_processing", "int");
+$search_processing = GETPOSTINT("search_processing");
 $securitykey = GETPOST('securitykey', 'alpha');
 
 $outputdir = $conf->cron->dir_output;
@@ -90,10 +91,10 @@ if (!$user->hasRight('cron', 'read')) {
 	accessforbidden();
 }
 
-$permissiontoread = $user->rights->cron->read;
+$permissiontoread = $user->hasRight('cron', 'read');
 $permissiontoadd = $user->rights->cron->create ? $user->rights->cron->create : $user->rights->cron->write;
-$permissiontodelete = $user->rights->cron->delete;
-$permissiontoexecute = $user->rights->cron->execute;
+$permissiontodelete = $user->hasRight('cron', 'delete');
+$permissiontoexecute = $user->hasRight('cron', 'execute');
 
 
 /*
@@ -164,7 +165,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 
-			// Programm next run
+			// Plan next run
 			$res = $object->reprogram_jobs($user->login, $now);
 			if ($res > 0) {
 				if ($resrunjob >= 0) {	// We show the result of reprogram only if no error message already reported
@@ -379,13 +380,13 @@ if ($action == 'delete' && empty($toselect)) {	// Used when we make a delete on 
 $arrayofmassactions = array(
 //'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 //'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-	'enable'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("CronStatusActiveBtn"),
-	'disable'=>img_picto('', 'uncheck', 'class="pictofixedwidth"').$langs->trans("CronStatusInactiveBtn"),
+	'enable' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("CronStatusActiveBtn"),
+	'disable' => img_picto('', 'uncheck', 'class="pictofixedwidth"').$langs->trans("CronStatusInactiveBtn"),
 );
 if ($user->hasRight('cron', 'delete')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -433,7 +434,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $text = $langs->trans("HoursOnThisPageAreOnServerTZ").' '.$stringcurrentdate.'<br>';
 if (getDolGlobalString('CRON_WARNING_DELAY_HOURS')) {
-	$text .= $langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS);
+	$text .= $langs->trans("WarningCronDelayed", getDolGlobalString('CRON_WARNING_DELAY_HOURS'));
 }
 print info_admin($text);
 //print '<br>';
@@ -444,7 +445,7 @@ $selectedfields = '';
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
-print '<table class="noborder">';
+print '<table class="noborder liste">';
 
 print '<tr class="liste_titre_filter">';
 // Action column
@@ -471,7 +472,7 @@ print '<td class="liste_titre center"><input type="text" class="width50" name="s
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre center">';
-print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Scheduled")), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
+print $form->selectarray('search_status', array('0' => $langs->trans("Disabled"), '1' => $langs->trans("Scheduled")), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 print '</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 // Action column
@@ -490,14 +491,14 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "t.rowid", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronLabel", $_SERVER["PHP_SELF"], "t.label", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("Prority", $_SERVER["PHP_SELF"], "t.priority", "", $param, '', $sortfield, $sortorder);
+print_liste_field_titre("Priority", $_SERVER["PHP_SELF"], "t.priority", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronModule", $_SERVER["PHP_SELF"], "t.module_name", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronType", '', '', "", $param, '', $sortfield, $sortorder, 'tdoverflowmax100 ');
 print_liste_field_titre("CronFrequency", '', "", "", $param, '', $sortfield, $sortorder);
 //print_liste_field_titre("CronDtStart", $_SERVER["PHP_SELF"], "t.datestart", "", $param, 'align="center"', $sortfield, $sortorder);
 //print_liste_field_titre("CronDtEnd", $_SERVER["PHP_SELF"], "t.dateend", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("CronNbRun", $_SERVER["PHP_SELF"], "t.nbrun", "", $param, '', $sortfield, $sortorder, 'right tdoverflowmax50');
-print_liste_field_titre("CronDtLastLaunch", $_SERVER["PHP_SELF"], "t.datelastrun", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("CronNbRun", $_SERVER["PHP_SELF"], "t.nbrun", "", $param, '', $sortfield, $sortorder, 'right tdoverflowmax50 ');
+print_liste_field_titre("CronDtLastLaunch", $_SERVER["PHP_SELF"], "t.datelastrun", "", $param, '', $sortfield, $sortorder, 'center tdoverflowmax100 ');
 print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre("CronLastResult", $_SERVER["PHP_SELF"], "t.lastresult", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre("CronLastOutput", $_SERVER["PHP_SELF"], "t.lastoutput", "", $param, '', $sortfield, $sortorder);
@@ -534,7 +535,7 @@ if ($num > 0) {
 		$object->status = $obj->status;
 		$object->priority = $obj->priority;
 		$object->processing = $obj->processing;
-		$object->lastresult = $obj->lastresult;
+		$object->lastresult = (string) $obj->lastresult;
 		$object->datestart = $db->jdate($obj->datestart);
 		$object->dateend = $db->jdate($obj->dateend);
 		$object->module_name = $obj->module_name;
@@ -607,9 +608,9 @@ if ($num > 0) {
 
 		$s = '';
 		if ($obj->unitfrequency == "60") {
-			$s = ($obj->frequency)." ".($obj->frequency > 1 ? $langs->trans('MinuteShort') : $langs->trans('MinuteShort'));
+			$s = ($obj->frequency)." ".$langs->trans('MinuteShort');
 		} elseif ($obj->unitfrequency == "3600") {
-			$s = ($obj->frequency)." ".($obj->frequency > 1 ? $langs->trans('HourShort') : $langs->trans('HourShort'));
+			$s = ($obj->frequency)." ".$langs->trans('HourShort');
 		} elseif ($obj->unitfrequency == "86400") {
 			$s = ($obj->frequency)." ".($obj->frequency > 1 ? $langs->trans('DurationDays') : $langs->trans('DurationDay'));
 		} elseif ($obj->unitfrequency == "604800") {
@@ -659,7 +660,7 @@ if ($num > 0) {
 		print '<td class="center nowraponall" title="'.dol_escape_htmltag($datefromto).'">';
 		if (!empty($datelastresult) && ($datelastresult >= $datelastrun)) {
 			$nbseconds = max($datelastresult - $datelastrun, 1);
-			print $nbseconds.' '.($nbseconds > 1 ? $langs->trans("SecondShort") : $langs->trans("SecondShort"));
+			print $nbseconds.' '.$langs->trans("SecondShort");
 		}
 		print '</td>';
 
@@ -684,7 +685,7 @@ if ($num > 0) {
 		print '</td>';
 
 		// Next run date
-		print '<td class="center nowraponall">';
+		print '<td class="center">';
 		if (!empty($obj->datenextrun)) {
 			$datenextrun = $db->jdate($obj->datenextrun);
 			if (empty($obj->status)) {

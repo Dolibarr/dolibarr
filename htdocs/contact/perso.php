@@ -21,7 +21,7 @@
 /**
  *       \file       htdocs/contact/perso.php
  *       \ingroup    societe
- *       \brief      Onglet informations personnelles d'un contact
+ *       \brief      Onglet information personnelles d'un contact
  */
 
 // Load Dolibarr environment
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
@@ -55,7 +55,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 
 	// Note: Correct date should be completed with location to have exact GM time of birth.
 	$object->birthday = dol_mktime(0, 0, 0, GETPOST("birthdaymonth"), GETPOST("birthdayday"), GETPOST("birthdayyear"));
-	$object->birthday_alert = GETPOST("birthday_alert");
+	$object->birthday_alert = GETPOSTINT("birthday_alert");
 
 	if (GETPOST('deletephoto')) {
 		$object->photo = '';
@@ -120,7 +120,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 $now = dol_now();
 
 $title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contactnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->lastname) {
 	$title = $object->lastname;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -135,7 +135,7 @@ $head = contact_prepare_head($object);
 
 if ($action == 'edit') {
 	/*
-	 * Fiche en mode edition
+	 * Card in edit mode
 	 */
 
 	print '<form name="perso" method="POST" enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';

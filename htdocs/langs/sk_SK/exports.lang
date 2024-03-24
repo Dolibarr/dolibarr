@@ -87,7 +87,7 @@ ErrorMissingMandatoryValue=V zdrojovom súbore v stĺpci <b>%s</b> sú povinné 
 TooMuchErrors=Stále existujú <b>%s</b> ďalšie zdrojové riadky s chybami, ale výstup má boli obmedzené.
 TooMuchWarnings=Stále existujú <b>%s</b> iné zdrojové riadky s upozorneniami boli obmedzené.
 EmptyLine=Prázdny riadok (budú odstránené)
-CorrectErrorBeforeRunningImport=<b>musíte</b> opraviť všetky chyby b0aee83365837fore class<span='be notranslate'></b> spustí definitívny import.
+CorrectErrorBeforeRunningImport=You <b>must</b> correct all errors <b>before</b> running the definitive import.
 FileWasImported=Súbor bol importovaný s číslom <b>%s.</b>
 YouCanUseImportIdToFindRecord=Všetky importované záznamy môžete nájsť vo svojej databáze filtrovaním podľa poľa <b>import_key='%s'</b>.
 NbOfLinesOK=Počet riadkov bez chýb a bez varovania: <b>%s.</b>
@@ -103,9 +103,9 @@ SourceRequired=Hodnota dát je povinné
 SourceExample=Príklad možné hodnoty údajov
 ExampleAnyRefFoundIntoElement=Akékoľvek ref našli prvkov <b>%s</b>
 ExampleAnyCodeOrIdFoundIntoDictionary=Kód (alebo ID) nájdené v slovníku <b>%s</b>
-CSVFormatDesc=<b>Hodnota oddelená čiarkou</b> formát súboru (.csv).<br> je formát textového súboru, kde sú polia oddelené oddeľovačom [ <span class='notranslate'>%s ]. Ak sa v obsahu poľa nájde oddeľovač, pole sa zaokrúhli na okrúhly znak [ %s ]. Únikový znak na únikový kruhový znak je [ %s ].
+CSVFormatDesc=<b>Comma Separated Value</b> file format (.csv).<br>This is a text file format where fields are separated by a separator [ %s ]. If separator is found inside a field content, field is rounded by round character [ %s ]. Escape character to escape round character is [ %s ].
 Excel95FormatDesc=<b>Excel</b> formát súboru (.xls)<br> Formát Excel 95 (BIFF5).
-Excel2007FormatDesc=<b>Excel</b> formát súboru (.xlsx)<span class='notranslate'><br> Formát Excel 2007 (Tabuľkový hárokML).
+Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is the native Excel 2007 format (SpreadsheetML).
 TsvFormatDesc=<b>Tab Hodnoty oddelené</b> formát súboru (. TSV) <br> Jedná sa o textový formát súboru, kde sú polia oddelené tabulátorom [Tab].
 ExportFieldAutomaticallyAdded=Pole <b>%s</b> bolo pridané automaticky. Vyhnete sa tak tomu, že podobné riadky sa budú považovať za duplicitný záznam (pri pridaní tohto poľa budú mať všetky riadky svoje vlastné ID a budú sa líšiť).
 CsvOptions=Možnosti formátu CSV
@@ -113,8 +113,8 @@ Separator=Oddeľovač polí
 Enclosure=Oddeľovač reťazcov
 SpecialCode=Špeciálny kód
 ExportStringFilter=%% umožňuje nahradenie jedného alebo viac znakov v texte
-ExportDateFilter=RRRR, RRRRMM, RRRRMMDD: filtre podľa jedného roka/mesiaca/deň<br>RRRR+RRRR, RRRRMM+RRRRMMDD+RRRRMMDD+ RRRRMMDD roky/mesiace/dni span class='notranslate'><br></span> > RRRR, > RRRRMM, > RRRRMMDD: filtre pre všetky nasledujúce roky/mesiace/dni<br> < RRRR, < RRRR, < RRRR RRRRMMDD: filtruje všetky predchádzajúce roky/mesiace/dni
-ExportNumericFilter=NNNNN filtruje podľa jednej hodnoty<br>NNNNN+NNNNNN filtruje v rozsahu hodnôt<br><span class='notranslate'>b08912a027 /span>> NNNNN filtruje vyššie hodnoty
+ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD: filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD: filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD: filters on all previous years/months/days
+ExportNumericFilter=NNNNN filters by one value<br>NNNNN+NNNNN filters over a range of values<br>< NNNNN filters by lower values<br>> NNNNN filters by higher values
 ImportFromLine=Import začína od riadka číslo
 EndAtLineNb=Číslo konca riadka
 ImportFromToLine=Limitný rozsah (Od - Do). Napr. vynechať riadok(y) hlavičky.

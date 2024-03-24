@@ -34,4 +34,4 @@ ARollbackWasPerformedOnPostActions=সমস্ত পোস্ট অ্যা�
 ValidationOfPaymentFailed=অর্থপ্রদানের বৈধতা ব্যর্থ হয়েছে৷
 CardOwner=কার্ড হোল্ডার
 PayPalBalance=পেপ্যাল ক্রেডিট
-OnlineSubscriptionPaymentLine=অনলাইন সাবস্ক্রিপশন %s<br> %s<span class=' এর মাধ্যমে প্রদান করা হয়েছে notranslate'><br></span>প্রাথমিক আইপি ঠিকানা: %s<br>লেনদেন আইডি: <span class='noeclatec82f7f7f7f7 </span>
+OnlineSubscriptionPaymentLine=Online subscription recorded on %s<br>Paid via %s<br>Originating IP address: %s<br>Transaction ID: %s

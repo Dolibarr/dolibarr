@@ -49,7 +49,7 @@ class modDebugBar extends DolibarrModules
 
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "A tool for developper adding a debug bar in your browser.";
+		$this->description = "A tool for developer adding a debug bar in your browser.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
@@ -80,8 +80,8 @@ class modDebugBar extends DolibarrModules
 
 		$this->rights[1][0] = 431; // id de la permission
 		$this->rights[1][1] = 'Use Debug Bar'; // libelle de la permission
-		$this->rights[1][2] = 'u'; // type de la permission (deprecie a ce jour)
-		$this->rights[1][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[1][2] = 'u'; // type de la permission (deprecated)
+		$this->rights[1][3] = 0; // La permission est-elle une permission par default
 		$this->rights[1][4] = 'read';
 	}
 

@@ -45,7 +45,7 @@ Eval=Бағалау
 Evals=Бағалар
 NewEval=Жаңа бағалау
 ValidateEvaluation=Бағалауды растау
-ConfirmValidateEvaluation=Бұл бағалауды <b>%s<span class='notranslate'>b09a4b739f17f80z сілтемесі арқылы растағыңыз келетініне сенімдісіз бе >?
+ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with the reference <b>%s</b>?
 EvaluationCard=Бағалау картасы
 RequiredRank=Жұмыс профилі үшін қажетті дәреже
 RequiredRankShort=Міндетті дәреже

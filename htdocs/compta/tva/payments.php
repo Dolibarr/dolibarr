@@ -40,17 +40,17 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 $langs->loadLangs(array('compta', 'bills'));
 
 $mode = GETPOST("mode", 'alpha');
-$year = GETPOST("year", 'int');
+$year = GETPOSTINT("year");
 $filtre = GETPOST("filtre", 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 if (!$year && $mode != 'tvaonly') {
 	$year = date("Y", time());
 }
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -146,6 +146,7 @@ if ($resql) {
 	setEventMessages($db->lasterror, null, 'errors');
 }
 
+// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $num, 'title_accountancy', 0, '', '', $limit);
 
 if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
@@ -160,7 +161,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	print '<input type="hidden" name="page" value="' . $page . '">';
 	print '<input type="hidden" name="mode" value="' . $mode . '">';
 
-	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "ptva.rowid", "", $param, '', $sortfield, $sortorder);
@@ -170,7 +171,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "ptva.datep", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "ptva.num_paiement", "", $param, '', $sortfield, $sortorder, '', 'ChequeOrTransferNumber');
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		print_liste_field_titre("BankTransactionLine", $_SERVER["PHP_SELF"], "ptva.fk_bank", "", $param, '', $sortfield, $sortorder);
 		print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "bank.ref", "", $param, '', $sortfield, $sortorder);
 	}
@@ -258,7 +259,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			// Chq number
 			print '<td>' . dol_escape_htmltag($obj->num_payment) . '</td>';
 
-			if (isModEnabled("banque")) {
+			if (isModEnabled("bank")) {
 				// Bank transaction
 				print '<td>';
 				$accountlinestatic->id = $obj->fk_bank;
@@ -294,7 +295,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		print '<td class="liste_total right"></td>'; // A total here has no sense
 		print '<td class="center liste_total">&nbsp;</td>';
 		print '<td class="center liste_total">&nbsp;</td>';
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			print '<td class="center liste_total">&nbsp;</td>';
 			print '<td class="center liste_total">&nbsp;</td>';
 		}

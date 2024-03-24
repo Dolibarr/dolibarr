@@ -1,9 +1,7 @@
 # Dolibarr language file - Source file is en_US - admin
 VersionProgram=Versión del programa
 VersionLastInstall=Instalar versión inicial
-MAIN_MAIL_SENDMODE=Sending method
 Module30Name=Facturas
-Module10000Desc=CMS to create websites with a WYSIWYG editor. This is a webmaster or developer oriented Content Management System (it is better to know HTML and CSS language). Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the internet with your own domain name.
 Permission91=Consultar impuestos e IGV
 Permission92=Crear/modificar impuestos e IGV
 Permission93=Eliminar impuestos e IGV

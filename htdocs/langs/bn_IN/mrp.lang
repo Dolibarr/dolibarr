@@ -47,7 +47,7 @@ DateEndPlannedMo=তারিখ শেষ পরিকল্পিত
 KeepEmptyForAsap=খালি মানে 'যত তাড়াতাড়ি সম্ভব'
 EstimatedDuration=আনুমানিক সময়কাল
 EstimatedDurationDesc=এই BOM ব্যবহার করে এই পণ্যটি তৈরি (বা বিচ্ছিন্ন) করার আনুমানিক সময়কাল
-ConfirmValidateBom=আপনি কি <strong>%s</strong><span class='notranslate'>রেফারেন্স সহ BOM যাচাই করতে চান > (আপনি নতুন ম্যানুফ্যাকচারিং অর্ডার তৈরি করতে এটি ব্যবহার করতে সক্ষম হবেন)
+ConfirmValidateBom=Are you sure you want to validate the BOM with the reference <strong>%s</strong> (you will be able to use it to build new Manufacturing Orders)
 ConfirmCloseBom=আপনি কি এই BOM বাতিল করার বিষয়ে নিশ্চিত (আপনি আর নতুন ম্যানুফ্যাকচারিং অর্ডার তৈরি করতে এটি ব্যবহার করতে পারবেন না)?
 ConfirmReopenBom=আপনি কি নিশ্চিত যে আপনি এই BOM পুনরায় খুলতে চান (আপনি এটি নতুন উত্পাদন অর্ডার তৈরি করতে ব্যবহার করতে সক্ষম হবেন)
 StatusMOProduced=উত্পাদিত
@@ -136,4 +136,3 @@ NoRemainQtyToDispatch=ভাগ করার জন্য কোন পরিম
 
 THMOperatorEstimatedHelp=প্রতি ঘন্টায় অপারেটরের আনুমানিক খরচ। এই ওয়ার্কস্টেশন ব্যবহার করে একটি BOM-এর খরচ অনুমান করতে ব্যবহার করা হবে।
 THMMachineEstimatedHelp=প্রতি ঘণ্টায় মেশিনের আনুমানিক খরচ। এই ওয়ার্কস্টেশন ব্যবহার করে একটি BOM-এর খরচ অনুমান করতে ব্যবহার করা হবে।
-

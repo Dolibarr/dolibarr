@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -450,15 +451,17 @@ class EcmDirectory extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 
 		$this->label = 'MyDirectory';
-		$this->fk_parent = '0';
+		$this->fk_parent = 0;
 		$this->description = 'This is a directory';
+
+		return 1;
 	}
 
 
@@ -711,7 +714,7 @@ class EcmDirectory extends CommonObject
 	}
 
 	/**
-	 *	Define properties fullpath, fullrelativename, fulllabel of a directory of array this->cats and all its childs.
+	 *	Define properties fullpath, fullrelativename, fulllabel of a directory of array this->cats and all its children.
 	 *  Separator between directories is always '/', whatever is OS.
 	 *
 	 * 	@param	int		$id_categ		id_categ entry to update

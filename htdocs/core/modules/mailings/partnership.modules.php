@@ -78,8 +78,8 @@ class mailing_partnership extends MailingTargets
 		$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		$sql .= " AND p.fk_soc = s.rowid";
 		$sql .= " AND pt.rowid = p.fk_type";
-		if (GETPOST('filter', 'int') > 0) {
-			$sql .= " AND pt.rowid=".((int) GETPOST('filter', 'int'));
+		if (GETPOSTINT('filter') > 0) {
+			$sql .= " AND pt.rowid=".(GETPOSTINT('filter'));
 		}
 		if (GETPOSTISSET('filter_status_partnership') && GETPOSTINT('filter_status_partnership') >= 0) {
 			$sql .= " AND p.status = ".GETPOSTINT('filter_status_partnership');
@@ -97,8 +97,8 @@ class mailing_partnership extends MailingTargets
 		$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		$sql .= " AND p.fk_member = s.rowid";
 		$sql .= " AND pt.rowid = p.fk_type";
-		if (GETPOST('filter', 'int') > 0) {
-			$sql .= " AND pt.rowid=".((int) GETPOST('filter', 'int'));
+		if (GETPOSTINT('filter') > 0) {
+			$sql .= " AND pt.rowid=".(GETPOSTINT('filter'));
 		}
 		if (GETPOSTISSET('filter_status_partnership') && GETPOSTINT('filter_status_partnership') >= 0) {
 			$sql .= " AND p.status = ".GETPOSTINT('filter_status_partnership');
@@ -163,7 +163,7 @@ class mailing_partnership extends MailingTargets
 	 */
 	public function getSqlArrayForStats()
 	{
-		// CHANGE THIS: Optionnal
+		// CHANGE THIS: Optional
 
 		//var $statssql=array();
 		//$this->statssql[0]="SELECT field1 as label, count(distinct(email)) as nb FROM mytable WHERE email IS NOT NULL";

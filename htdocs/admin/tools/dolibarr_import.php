@@ -142,7 +142,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 		print '<fieldset id="mysql_options">';
 		print '<legend>'.$langs->trans('RestoreMySQL').'</legend>';
 		print '<div class="formelementrow centpercent">';
-		// Parameteres execution
+		// Parameters execution
 		$command = $db->getPathOfRestore();
 	if (preg_match("/\s/", $command)) {
 		$command = $command = escapeshellarg($command); // Use quotes on command
@@ -176,7 +176,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<fieldset id="postgresql_options">';
 	print '<legend>Restore PostgreSQL</legend>';
 	print '<div class="formelementrow">';
-	// Parameteres execution
+	// Parameters execution
 	$command = $db->getPathOfRestore();
 	if (preg_match("/\s/", $command)) {
 		$command = $command = escapeshellarg($command); // Use quotes on command

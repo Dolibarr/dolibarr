@@ -84,7 +84,7 @@ $Config['HtmlExtensions'] = array("html", "htm", "xml", "xsd", "txt", "js");
 // Note: not needed on Windows-based servers.
 $newmask = '0644';
 if (getDolGlobalString('MAIN_UMASK')) {
-	$newmask = $conf->global->MAIN_UMASK;
+	$newmask = getDolGlobalString('MAIN_UMASK');
 }
 $Config['ChmodOnUpload'] = $newmask;
 

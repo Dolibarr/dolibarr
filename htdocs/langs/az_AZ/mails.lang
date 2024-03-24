@@ -139,7 +139,7 @@ AddNewNotification=Yeni avtomatik e-poçt bildirişinə abunə olun (hədəf/tə
 ListOfActiveNotifications=Avtomatik e-poçt bildirişi üçün bütün aktiv abunəliklərin (hədəflər/tədbirlər) siyahısı
 ListOfNotificationsDone=Göndərilən bütün avtomatik e-poçt bildirişlərinin siyahısı
 MailSendSetupIs=E-poçt göndərmə konfiqurasiyası '%s' üçün quraşdırılıb. Bu rejim kütləvi e-poçt göndərmək üçün istifadə edilə bilməz.
-MailSendSetupIs2=<span class= parametrini dəyişmək üçün əvvəlcə admin hesabı ilə %sAna səhifə - Quraşdırma - E-poçtlar%s menyusuna daxil olmalısınız. 'notranslate'><strong></span>'%s'</strong> rejimindən istifadə etmək üçün '<spantec249'>b </span>'. Bu rejimlə siz İnternet Xidmət Provayderiniz tərəfindən təmin edilən SMTP serverinin quraşdırılmasına daxil ola və Kütləvi e-poçt göndərmə funksiyasından istifadə edə bilərsiniz.
+MailSendSetupIs2=You must first go, with an admin account, into menu %sHome - Setup - EMails%s to change parameter <strong>'%s'</strong> to use mode '%s'. With this mode, you can enter setup of the SMTP server provided by your Internet Service Provider and use Mass emailing feature.
 MailSendSetupIs3=SMTP serverinizi necə quraşdırmaq barədə hər hansı sualınız varsa, %s ünvanına müraciət edə bilərsiniz.
 YouCanAlsoUseSupervisorKeyword=Siz həmçinin istifadəçinin nəzarətçisinə e-poçt göndərilməsi üçün <strong>__SUPERVISOREMAIL__</strong> açar sözünü əlavə edə bilərsiniz (yalnız e-poçt olduqda işləyir) bu nəzarətçi üçün müəyyən edilmişdir)
 NbOfTargetedContacts=Hədəflənmiş əlaqə e-poçtlarının cari sayı
@@ -147,7 +147,7 @@ UseFormatFileEmailToTarget=İdxal edilmiş fayl <strong>email;name;firstname;oth
 UseFormatInputEmailToTarget=<strong>email;name;firstname;other</strong> formatlı sətir daxil edin
 MailAdvTargetRecipients=Qəbul edənlər (qabaqcıl seçim)
 AdvTgtTitle=Üçüncü tərəfləri və ya hədəflənəcək kontaktları/ünvanları əvvəlcədən seçmək üçün daxiletmə sahələrini doldurun
-AdvTgtSearchTextHelp=Joker simvol kimi %% istifadə edin. Məsələn, <b>jean, joe, jim</b> kimi bütün elementləri tapmaq üçün  daxil edə bilərsiniz. <b>j%%</b>, siz də istifadə edə bilərsiniz ; dəyər üçün ayırıcı kimi və istifadə edin! bu dəyər istisna olmaqla. Məsələn <b>jean;joe;jim%%;!jimo;!jimab07e631701f span><span class='notranslate'></b> bütün jean, joe-ni hədəf alacaq, jim ilə başlayacaq, lakin jimo ilə deyil, jima ilə başlayan hər şey deyil
+AdvTgtSearchTextHelp=Use %% as wildcards. For example to find all item like <b>jean, joe, jim</b>, you can input <b>j%%</b>, you can also use ; as separator for value, and use ! for except this value. For example  <b>jean;joe;jim%%;!jimo;!jima%%</b> will target all jean, joe, start with jim but not jimo and not everything that starts with jima
 AdvTgtSearchIntHelp=int və ya float dəyərini seçmək üçün intervaldan istifadə edin
 AdvTgtMinVal=Minimum dəyər
 AdvTgtMaxVal=Maksimum dəyər
@@ -182,7 +182,7 @@ IsAnAnswer=İlkin e-poçtun cavabıdır
 RecordCreatedByEmailCollector=%s e-poçtundan %s E-poçt Kollektoru tərəfindən yaradılmış qeyd
 DefaultBlacklistMailingStatus=Yeni kontakt yaratarkən '%s' sahəsi üçün defolt dəyər
 DefaultStatusEmptyMandatory=Boş, lakin məcburidir
-WarningLimitSendByDay=XƏBƏRDARLIQ: Nümunənizin quraşdırması və ya müqaviləsi gündə e-məktubların sayını <b>%s<span class='notranslate' ilə məhdudlaşdırır. ></b></span>. Daha çox göndərməyə cəhd nümunənizin yavaşlamasına və ya dayandırılmasına səbəb ola bilər. Daha yüksək kvotaya ehtiyacınız olarsa, dəstəyinizlə əlaqə saxlayın.
+WarningLimitSendByDay=WARNING: The setup or contract of your instance limits your number of emails per day to <b>%s</b>. Trying to send more may result in having your instance slow down or suspended. Please contact your support if you need a higher quota.
 NoMoreRecipientToSendTo=E-poçtu göndərmək üçün daha alıcı yoxdur
 EmailOptedOut=E-poçt sahibi daha bu e-poçt ilə onunla əlaqə saxlamamağı xahiş etdi
 EvenUnsubscribe=İmtina e-poçtlarını daxil edin

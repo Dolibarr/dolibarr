@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 $langs->loadLangs(array('users', 'admin'));
 
 $action = (string) GETPOST('action', 'aZ09');
-$id = (int) GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 // Security check
 $socid = 0;
@@ -159,7 +159,7 @@ if ($id > 0) {
 			print '<tr><td class="">ClickToDial URL</td>';
 			print '<td class="valeur">';
 			if (getDolGlobalString('CLICKTODIAL_URL')) {
-				$url = $conf->global->CLICKTODIAL_URL;
+				$url = getDolGlobalString('CLICKTODIAL_URL');
 			}
 			if (!empty($object->clicktodial_url)) {
 				$url = $object->clicktodial_url;

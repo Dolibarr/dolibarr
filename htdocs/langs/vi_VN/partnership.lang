@@ -91,8 +91,7 @@ CountLastUrlCheckError=Số lỗi trong lần kiểm tra URL cuối cùng
 LastCheckBacklink=Ngày kiểm tra URL lần cuối
 
 NewPartnershipRequest=Yêu cầu hợp tác mới
-NewPartnershipRequestDesc=Biểu mẫu này cho phép bạn yêu cầu tham gia một trong các chương trình hợp tác của chúng tôi. Nếu bạn cần trợ giúp để điền vào biểu mẫu này, vui lòng liên hệ qua email <b>%s<span class='notranslate'></b></ khoảng>.
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Trang này phải chứa ít nhất một liên kết đến một trong các tên miền sau: %s
 
 IPOfApplicant=IP của người nộp đơn
-

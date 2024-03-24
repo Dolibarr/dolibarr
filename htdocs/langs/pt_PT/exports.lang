@@ -72,7 +72,7 @@ FieldsTarget=Domínios orientados
 FieldTarget=Campo alvo
 FieldSource=Campo da Fonte
 NbOfSourceLines=Número de linhas no arquivo de origem
-NowClickToTestTheImport=verificar que o formato ficheiro (campo e delimitadores de string) do seu verificar span class='notranslate'>ficheiro</span> corresponde às opções mostradas e que você omitiu a linha do cabeçalho ou serão sinalizadas como erros na simulação a seguir.<br>Clique em "<b>%s </b>" para executar um verificar da ficheiro estrutura/conteúdo e  simula o processo de importação.<br><b>Nenhum dado será alterado em seu banco de dados</b>.
+NowClickToTestTheImport=Check that the file format (field and string delimiters) of your file matches the options shown and that you have omitted the header line, or these will be flagged as errors in the following simulation.<br>Click on the "<b>%s</b>" button to run a check of the file structure/contents and simulate the import process.<br><b>No data will be changed in your database</b>.
 RunSimulateImportFile=Executar Simulação de Importação
 FieldNeedSource=Este campo requer dados do ficheiro fonte
 SomeMandatoryFieldHaveNoSource=Alguns campos obrigatórios não têm nenhuma fonte de dados de arquivo
@@ -95,7 +95,7 @@ NbOfLinesImported=Número de linhas de importados com sucesso: <b>%s.</b>
 DataComeFromNoWhere=Valor para inserir vem do nada no arquivo fonte.
 DataComeFromFileFieldNb=O valor a ser inserido vem da coluna <b>%s</b> na fonte ficheiro.
 DataComeFromIdFoundFromRef=O valor que vem da fonte ficheiro será usado para encontrar o Id. do origem, fonte  objeto a ser usado (portanto, o objeto <b>%s</b> que tem a referência da fonte ficheiro deve existir no banco de dados).
-DataComeFromIdFoundFromCodeId=O valor de Código que vem da fonte ficheiro será usado para encontrar o Id. do objeto origem, fonte a ser usado (portanto, o Código da fonte ficheiro deve existir no dicionário <b>%s</b>). Observe que se você conhece o Id., também pode usá-lo na fonte ficheiro em vez do <span class='notranslate' '>Código</span>. A importação deve funcionar em ambos os casos.
+DataComeFromIdFoundFromCodeId=The value of code that comes from source file will be used to find the id of the parent object to use (so the code from source file must exist in the dictionary <b>%s</b>). Note that if you know the id, you can also use it in the source file instead of the code. Import should work in both cases.
 DataIsInsertedInto=Dados provenientes de arquivo de origem será inserido no seguinte campo:
 DataIDSourceIsInsertedInto=O Id. do objeto origem, fonte, que foi encontrado usando os dados na fonte ficheiro, será inserido no seguinte campo:
 DataCodeIDSourceIsInsertedInto=O Id. da linha origem, fonte, que foi encontrada em Código, será ser inserido no seguinte campo:

@@ -320,7 +320,7 @@ ViewTicket=Pogledaj kartu
 ViewMyTicketList=Pogledaj moju listu karata
 ErrorEmailMustExistToCreateTicket=Greška: adresa e-pošte nije pronađena u našoj bazi podataka
 TicketNewEmailSubjectAdmin=Nova karta kreirana - Ref %s (ID javne karte %s)
-TicketNewEmailBodyAdmin=<p>Ulaznica je upravo kreirana sa ID-om #%s, pogledajte informacije:<span class='notranslate'></p> >
+TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
 SeeThisTicketIntomanagementInterface=Pogledajte kartu u interfejsu upravljanja
 TicketPublicInterfaceForbidden=Javni interfejs za karte nije bio omogućen
 ErrorEmailOrTrackingInvalid=Loša vrijednost za ID praćenja ili e-poštu

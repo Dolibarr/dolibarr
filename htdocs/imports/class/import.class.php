@@ -2,7 +2,7 @@
 /* Copyright (C) 2011       Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020		Ahmad Jamaly Rabib	<rabib@metroworks.co.jp>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,28 +49,99 @@ class Import
 	 */
 	public $errno;
 
+	/**
+	 * @var array
+	 */
 	public $array_import_module;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_perms;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_icon;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_code;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_label;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_tables;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_tables_creator;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_fields;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_fieldshidden;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_entities;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_regex;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_updatekeys;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_preselected_updatekeys;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_examplevalues;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_convertvalue;
+
+	/**
+	 * @var array
+	 */
 	public $array_import_run_sql_after;
 
 	// To store import templates
 	public $id;
 	public $hexa; // List of fields in the export profile
 	public $datatoimport;
-	public $model_name; // Name of export profile
+
+	/**
+	 * @var string Name of export profile
+	 */
+	public $model_name;
+
+	/**
+	 * @var int ID
+	 */
 	public $fk_user;
 
 
@@ -171,7 +242,7 @@ class Import
 						}
 
 						// Permission
-						$this->array_import_perms[$i] = $user->rights->import->run;
+						$this->array_import_perms[$i] = $user->hasRight('import', 'run');
 						// Icon
 						$this->array_import_icon[$i] = (isset($module->import_icon[$r]) ? $module->import_icon[$r] : $module->picto);
 						// Code of dataset export
@@ -186,9 +257,9 @@ class Import
 						$this->array_import_fields[$i] = $module->import_fields_array[$r];
 						// Array of hidden fields to import (key=field, value=label)
 						$this->array_import_fieldshidden[$i] = (isset($module->import_fieldshidden_array[$r]) ? $module->import_fieldshidden_array[$r] : '');
-						// Tableau des entites a exporter (cle=champ, valeur=entite)
+						// Array of entiteis to export (key=field, value=entity)
 						$this->array_import_entities[$i] = $module->import_entities_array[$r];
-						// Tableau des alias a exporter (cle=champ, valeur=alias)
+						// Array of aliases to export (key=field, value=alias)
 						$this->array_import_regex[$i] = (isset($module->import_regex_array[$r]) ? $module->import_regex_array[$r] : '');
 						// Array of columns allowed as UPDATE options
 						$this->array_import_updatekeys[$i] = (isset($module->import_updatekeys_array[$r]) ? $module->import_updatekeys_array[$r] : '');
@@ -235,7 +306,7 @@ class Import
 
 		dol_syslog(get_class($this)."::build_example_file ".$model);
 
-		// Creation de la classe d'import du model Import_XXX
+		// Create the import class for the model Import_XXX
 		$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
 		$file = "import_".$model.".modules.php";
 		$classname = "Import".$model;

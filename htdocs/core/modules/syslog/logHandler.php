@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ */
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +25,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandlerInterface.php';
 class LogHandler
 {
 	protected $ident = 0;
+
+	/**
+	 * @var string[] Array of errors messages
+	 */
+	public $errors = [];
 
 
 	/**
@@ -56,13 +63,13 @@ class LogHandler
 	}
 
 	/**
-	 * Is the module active ?
+	 * Is the logger active ?
 	 *
-	 * @return boolean
+	 * @return int		1 if logger enabled
 	 */
 	public function isActive()
 	{
-		return false;
+		return 0;
 	}
 
 	/**
@@ -80,11 +87,11 @@ class LogHandler
 	 * It will be called after setting the configuration.
 	 * The function returns an array with error messages
 	 *
-	 * @return array
+	 * @return bool
 	 */
 	public function checkConfiguration()
 	{
-		return array();
+		return true;
 	}
 
 	/**

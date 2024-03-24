@@ -37,3 +37,5 @@ ImportDataset_resource_1=Burimet
 
 ErrorResourcesAlreadyInUse=Disa burime janë në përdorim
 ErrorResourceUseInEvent=%s përdoret në ngjarjen %s
+
+MaxUsers=Përdoruesit maksimalë (vendet, vendet, etj.)

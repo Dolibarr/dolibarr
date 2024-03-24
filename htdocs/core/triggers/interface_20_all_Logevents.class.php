@@ -69,7 +69,7 @@ class InterfaceLogevents extends DolibarrTriggers
 
 		$this->family 		= "core";
 		$this->description  = "Triggers of this module allows to add security event records inside Dolibarr.";
-		$this->version 		= self::VERSION_DOLIBARR;  // VERSION_ 'DEVELOPMENT' or 'EXPERIMENTAL' or 'DOLIBARR'
+		$this->version 		= self::VERSIONS['prod'];
 		$this->picto 		= 'technic';
 		$this->event_label 	= '';
 		$this->event_desc 	= '';

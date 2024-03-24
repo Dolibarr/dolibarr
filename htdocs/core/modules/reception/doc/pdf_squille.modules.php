@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018	   Quentin Vial-Gouteyron   <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2023      Frédéric France          <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 /**
  *	\file       htdocs/core/modules/reception/doc/pdf_squille.modules.php
  *	\ingroup    reception
- *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au modele Squille
+ *	\brief      Fichier de la class permettant de generer les bordereaux envoi au modele Squille
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
@@ -29,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Classe permettant de generer les borderaux envoi au modele Squille
+ *	Class permettant de generer les borderaux envoi au modele Squille
  */
 class pdf_squille extends ModelePdfReception
 {
@@ -154,7 +155,7 @@ class pdf_squille extends ModelePdfReception
 
 		// Show Draft Watermark
 		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('RECEPTION_DRAFT_WATERMARK'))) {
-			$this->watermark = $conf->global->RECEPTION_DRAFT_WATERMARK;
+			$this->watermark = getDolGlobalString('RECEPTION_DRAFT_WATERMARK');
 		}
 
 		$nblines = count($object->lines);
@@ -233,7 +234,7 @@ class pdf_squille extends ModelePdfReception
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -275,6 +276,7 @@ class pdf_squille extends ModelePdfReception
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// New page
@@ -498,7 +500,7 @@ class pdf_squille extends ModelePdfReception
 						$curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 					// Description
 					$pdf->SetXY($this->posxweightvol, $curY);
@@ -548,10 +550,10 @@ class pdf_squille extends ModelePdfReception
 					// Add line
 					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);
-						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
+						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY - 1, $this->page_largeur - $this->marge_droite, $nexY - 1);
-						$pdf->SetLineStyle(array('dash'=>0));
+						$pdf->SetLineStyle(array('dash' => 0));
 					}
 
 					// Detect if some page were added automatically and output _tableau for past pages
@@ -610,7 +612,7 @@ class pdf_squille extends ModelePdfReception
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -640,7 +642,7 @@ class pdf_squille extends ModelePdfReception
 	 *	@param  Reception	$object         Object reception
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
-	 *	@param	Translate	$outputlangs	Objet langs
+	 *	@param	Translate	$outputlangs	Object langs
 	 *  @param	int			$totalOrdered	Total ordered
 	 *  @param	int			$totalAmount	Total amount
 	 *	@return int							Position pour suite
@@ -686,7 +688,7 @@ class pdf_squille extends ModelePdfReception
 
 		// Set trueVolume and volume_units not currently stored into database
 		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) {
-			$object->trueVolume = ($object->trueWidth * $object->trueHeight * $object->trueDepth);
+			$object->trueVolume = ((float) $object->trueWidth * (float) $object->trueHeight * (float) $object->trueDepth);
 			$object->volume_units = $object->size_units * 3;
 		}
 
@@ -755,8 +757,8 @@ class pdf_squille extends ModelePdfReception
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		float|int	$tab_top		Top position of table
+	 *   @param		float|int	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
@@ -852,7 +854,7 @@ class pdf_squille extends ModelePdfReception
 	 *  @param  Reception	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -953,6 +955,8 @@ class pdf_squille extends ModelePdfReception
 		$origin = $object->origin;
 		$origin_id = $object->origin_id;
 
+		$object->fetch_origin();
+
 		// TODO move to external function
 		if (isModEnabled("supplier_order")) {     // commonly $origin='commande'
 			$outputlangs->load('orders');
@@ -982,11 +986,11 @@ class pdf_squille extends ModelePdfReception
 			$carac_emetteur = '';
 			// Add internal contact of origin element if defined
 			$arrayidcontact = array();
-			if (!empty($origin) && is_object($object->$origin)) {
-				$arrayidcontact = $object->$origin->getIdContact('internal', 'SALESREPFOLL');
+			if (!empty($origin) && is_object($object->origin_object)) {
+				$arrayidcontact = $object->origin_object->getIdContact('internal', 'SALESREPFOLL');
 			}
 			if (empty($arrayidcontact)) {
-				$arrayidcontact = $object->$origin->getIdContact('internal', 'SHIPPING');
+				$arrayidcontact = $object->origin_object->getIdContact('internal', 'SHIPPING');
 			}
 			if (count($arrayidcontact) > 0) {
 				$object->fetch_user(reset($arrayidcontact));
@@ -1025,7 +1029,7 @@ class pdf_squille extends ModelePdfReception
 
 			// If RECEPTION contact defined, we use it
 			$usecontact = false;
-			$arrayidcontact = $object->$origin->getIdContact('external', 'SHIPPING');
+			$arrayidcontact = $object->origin_object->getIdContact('external', 'SHIPPING');
 
 			if (count($arrayidcontact) > 0) {
 				$usecontact = true;
@@ -1088,6 +1092,8 @@ class pdf_squille extends ModelePdfReception
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

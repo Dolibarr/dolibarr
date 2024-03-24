@@ -88,7 +88,7 @@ if ($action == 'set') {
 	}
 }
 
-// Action desactivation d'un sous module du module adherent
+// Action deactivation d'un sous module du module adherent
 if ($action == 'unset') {
 	$result = dolibarr_del_const($db, $_GET["name"], $conf->entity);
 	if ($result < 0) {
@@ -129,7 +129,7 @@ if (getDolGlobalString('ADHERENT_USE_SPIP')) {
 	//$link.=$langs->trans("Disable");
 	$link .= img_picto($langs->trans("Activated"), 'switch_on');
 	$link .= '</a>';
-	// Edition des varibales globales
+	// Edition des variables globales
 	$constantes = array(
 		'ADHERENT_SPIP_SERVEUR',
 		'ADHERENT_SPIP_DB',

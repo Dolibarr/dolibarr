@@ -6,6 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +26,8 @@
  * $conf
  * $langs
  * $forceall (0 by default, 1 for supplier invoices/orders)
- * $element     (used to test $user->rights->$element->creer)
- * $permtoedit  (used to replace test $user->rights->$element->creer)
+ * $element     (used to test $user->hasRight($element, 'creer'))
+ * $permtoedit  (used to replace test $user->hasRight($element, 'creer'))
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
@@ -34,7 +35,14 @@
  * $type, $text, $description, $line
  */
 
-/** var ObjectLine $line */
+/**
+ * @var CommonObjectLine $line
+ * @var int $num
+ */
+'@phan-var-force CommonObjectLine $line
+ @phan-var-force int $num
+ @phan-var-force CommonObject $this
+ @phan-var-force CommonObject $object';
 
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
@@ -43,6 +51,7 @@ if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+
 
 global $filtertype;
 if (empty($filtertype)) {
