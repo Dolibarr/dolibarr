@@ -352,7 +352,7 @@ class pdf_strato extends ModelePDFContract
 							$txt .= '<br>';
 							$txt .= $outputlangs->transnoentities("DateStartRealShort")." : <strong>".$daters.'</strong>';
 							if (!empty($objectligne->date_end_real)) {
-								$txt .= " - ".$outputlangs->transnoentities("DateEndRealShort")." : '<strong>'".$datere.'</strong>';
+								$txt .= " - ".$outputlangs->transnoentities("DateEndRealShort")." : <strong>".$datere.'</strong>';
 							}
 						}
 
