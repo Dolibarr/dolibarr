@@ -88,7 +88,7 @@ class pdf_strato extends ModelePDFContract
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	public function __construct(DoliDB $db)
+	public function __construct($db)
 	{
 		global $langs, $mysoc;
 
