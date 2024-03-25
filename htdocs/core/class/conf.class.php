@@ -110,13 +110,17 @@ class Conf extends stdClass
 	public $logbuffer = array();
 
 	/**
-	 * @var LogHandlerInterface[]
+	 * @var LogHandler[]
 	 */
 	public $loghandlers = array();
 
-	//! Used to store running instance for multi-company (default 1)
+	/**
+	 * @var int Used to store running instance for multi-company (default 1)
+	 */
 	public $entity = 1;
-	//! Used to store list of entities to use for each element
+	/**
+	 * @var int[] Used to store list of entities to use for each element
+	 */
 	public $entities = array();
 
 	public $dol_hide_topmenu; // Set if we force param dol_hide_topmenu into login url
