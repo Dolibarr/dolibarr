@@ -79,18 +79,17 @@ if (!function_exists('print_line')) {
 	/**
 	 * Recursively loop through and print BOM lines
 	 *
-	 * @param  DoliDb $db				Database handler
 	 * @param  CommonObjectLine $data	BOMLine to print on row
 	 * @param  float $quantity			Quantity modifier for sub BOM
 	 * @param  int $level				Level of recursion
 	 * @param  CommonObject $parent		Parent BOMLine ID, used for show/hide/edit/delete
 	 * @return array					Return array of html rows
 	 */
-	function print_line($db, $data, $quantity, $level, $parent)
+	function print_line($data, $quantity, $level, $parent)
 	{
 		global $conf, $langs, $extrafields, $filtertype, $i, $action, $object_rights, $num, $disableedit, $disableremove, $disablemove;
 
-		$product = new Product($db);
+		$product = new Product($data->db);
 		$product->fetch($data->fk_product);
 		$bom = $data->childBom;
 
@@ -141,7 +140,7 @@ if (!function_exists('print_line')) {
 			$unit = '?';
 			if (!empty($data->fk_unit)) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
-				$unit = new CUnits($db);
+				$unit = new CUnits($data->db);
 				$unit->fetch($data->fk_unit);
 				$unit = isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '';
 			}
@@ -149,7 +148,7 @@ if (!function_exists('print_line')) {
 
 			// Work station
 			if (isModEnabled('workstation')) {
-				$workstation = new Workstation($db);
+				$workstation = new Workstation($data->db);
 				$res = $workstation->fetch($data->fk_default_workstation);
 				$column[] = '<td class="linecolworkstation nowrap right">'.
 					(($res > 0)?$workstation->getNomUrl(1):'none').'</td>';
@@ -201,7 +200,7 @@ if (!function_exists('print_line')) {
 				(!empty($parent)?' class="sub_bom_lines" parentid="'.$parent->id.'"':'').'>'.implode('', $column).'</tr>';
 		}
 		foreach (((!empty($bom) && is_array($bom->lines)) ? $bom->lines : array()) as $child) {
-			foreach (print_line($db, $child, ($quantity * $data->qty) / (($bom->qty??1) * $data->efficiency), $level + 1, $data) as $line) {
+			foreach (print_line($child, ($quantity * $data->qty) / (($bom->qty??1) * $data->efficiency), $level + 1, $data) as $line) {
 				$html[] = $line;
 			}
 		}
@@ -211,5 +210,5 @@ if (!function_exists('print_line')) {
 }
 
 print "<!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->\n";
-print implode('', print_line($object->db, $line, 1, 0, $this));
+print implode('', print_line($line, 1, 0, $this));
 print "<!-- END PHP TEMPLATE objectline_view.tpl.php -->\n";
