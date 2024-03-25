@@ -659,7 +659,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				$totalvirtualstock += $virtualstock;
 			} else {
 				// Stock at date
-				print '<td class="right">'.($stock ? price(price2num($stock : '<span class="opacitymedium">'.price(price2num($stock, 'MS')).'</span>').'</td>';
+				print '<td class="right">'.($stock ? price(price2num($stock, 'MS')) : ('<span class="opacitymedium">0</span>')).'</td>';
 
 				// PMP value
 				print '<td class="right">';
@@ -752,10 +752,10 @@ if ($ext=='csv') {
 		print '<td>'.$langs->trans("Totalforthispage").'</td>';
 		print '<td></td>';
 		if ($mode == 'future') {
-			print '<td class="right">'.price(price2num($totalcurrentstock,'MS')).'</td>';
+			print '<td class="right">'.price(price2num($totalcurrentstock, 'MS')).'</td>';
 			print '<td></td>';
 			print '<td></td>';
-			print '<td class="right">'.price(price2num($totalvirtualstock,'MS')).'</td>';
+			print '<td class="right">'.price(price2num($totalvirtualstock, 'MS')).'</td>';
 		} else {
 			print '<td></td>';
 			print '<td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td>';
