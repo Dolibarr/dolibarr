@@ -79,12 +79,12 @@ if (!function_exists('print_line')) {
 	/**
 	 * Recursively loop through and print BOM lines
 	 *
-	 * @param  DoliDb $db      Database handler
-	 * @param  BOMLine $data   BOMLine to print on row
-	 * @param  float $quantity Quantity modifier for sub BOM
-	 * @param  int $level      Level of recursion
-	 * @param  BOM $parent     Parent BOMLine ID, used for show/hide/edit/delete
-	 * @return array           Return array of html rows
+	 * @param  DoliDb $db				Database handler
+	 * @param  CommonObjectLine $data	BOMLine to print on row
+	 * @param  float $quantity			Quantity modifier for sub BOM
+	 * @param  int $level				Level of recursion
+	 * @param  CommonObject $parent		Parent BOMLine ID, used for show/hide/edit/delete
+	 * @return array					Return array of html rows
 	 */
 	function print_line($db, $data, $quantity, $level, $parent)
 	{
@@ -191,8 +191,8 @@ if (!function_exists('print_line')) {
 			$column[] = '<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox['.($i + 1).']" value="'.$data->id.'" ></td>';
 		}
 
-		// add html5 dom elements
 		if ($level==0) {
+			// add html5 dom elements
 			$html[] = '<tr id="row-'.$data->id.'" class="drag drp oddeven" data-element="'.
 				$data->element.($filtertype == 1?'Service':'').'" data-id="'.
 				$data->id.'" data-qty="'.$data->qty.'">'.implode('', $column).'</tr>';
