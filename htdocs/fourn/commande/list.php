@@ -132,7 +132,7 @@ if (GETPOSTISARRAY('search_status')) {
 	$search_status = join(',', GETPOST('search_status', 'array:intcomma'));
 } else {
 	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
-    if ( is_array($search_status) ) $search_status = join(',', $search_status);
+	if ( is_array($search_status) ) $search_status = join(',', $search_status);
 }
 
 // Security check
