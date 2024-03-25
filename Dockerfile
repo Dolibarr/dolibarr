@@ -2,8 +2,6 @@ ARG ARCH=
 
 FROM ${ARCH}php:8.2-apache-buster
 
-LABEL maintainer="Garcia MICHEL <garcia@soamichel.fr>"
-
 ENV DOLI_VERSION 19.0.0
 ENV DOLI_INSTALL_AUTO 1
 ENV DOLI_PROD 1
@@ -73,7 +71,9 @@ RUN apt-get update -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Get Dolibarr
-RUN cp -r /tmp/dolibarr-${DOLI_VERSION}/htdocs/* /var/www/html/ && \
+RUN curl -fLSs https://github.com/Dolibarr/dolibarr/archive/${DOLI_VERSION}.tar.gz |\
+    tar -C /tmp -xz && \
+    cp -r /tmp/dolibarr-${DOLI_VERSION}/htdocs/* /var/www/html/ && \
     ln -s /var/www/html /var/www/htdocs && \
     cp -r /tmp/dolibarr-${DOLI_VERSION}/scripts /var/www/ && \
     rm -rf /tmp/* && \
