@@ -463,6 +463,21 @@ ALTER TABLE llx_c_ziptown ADD COLUMN town_up varchar(180);
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN imap_encryption varchar(16) DEFAULT 'ssl' AFTER hostcharset;
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN norsh integer DEFAULT 0 AFTER imap_encryption;
 
+-- payments on several expense reports
+create table llx_expensereport_payment_expensereport
+(
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    fk_paiementuser INTEGER DEFAULT NULL,
+    fk_expensereport  INTEGER DEFAULT NULL,
+    amount double(24,8) DEFAULT 0
+)ENGINE=innodb;
+
+INSERT INTO llx_expensereport_payment_expensereport (rowid, fk_paiementuser, fk_expensereport, amount) SELECT pu.rowid, pu.rowid, pu.fk_expensereport, pu.amount FROM llx_payment_expensereport pu WHERE pu.fk_expensereport IS NOT NULL;
+
+-- VPGSQL8.2 CREATE SEQUENCE llx_paymentuser_rowid_seq OWNED BY llx_paymentuser.rowid;
+-- VPGSQL8.2 ALTER TABLE llx_paymentuser ALTER COLUMN rowid SET DEFAULT nextval('llx_paymentuser_rowid_seq');
+-- VPGSQL8.2 SELECT setval('llx_paymentuser_rowid_seq', MAX(rowid)) FROM llx_paymentuser;
+
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '1.1', 'Τιμολόγιο Πώλησης', 1);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '1.2', 'Τιμολόγιο Πώλησης / Ενδοκοινοτικές Παραδόσεις', 1);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '1.3', 'Τιμολόγιο Πώλησης / Παραδόσεις Τρίτων Χωρών', 1);
