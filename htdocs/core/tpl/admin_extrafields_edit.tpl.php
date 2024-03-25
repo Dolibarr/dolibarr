@@ -59,7 +59,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 				print 'jQuery("#value_choice").hide();';
 			}
 
-			if (GETPOST('type', 'alpha') == "separate") {
+			if (in_array(GETPOST('type', 'alpha'), ["separate", 'point', 'linestrg', 'polygon'])) {
 				print "jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);";
 				print 'jQuery("#value_choice").hide();';
 			}
@@ -113,7 +113,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 				unique.removeAttr('disabled');
 			}
 
-			if (type == 'separate')
+			if (type == 'separate' || type == 'point' || type == 'linestrg' || type == 'polygon')
 			{
 				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.removeAttr('checked').prop('disabled', true);
 				jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);

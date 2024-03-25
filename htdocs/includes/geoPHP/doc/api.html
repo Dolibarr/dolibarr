@@ -1,0 +1,734 @@
+<div id="wiki-wrapper" class="page">
+  <div id="head">
+    <h1 class="instapaper_title">API Reference</h1>
+    <ul class="wiki-actions readability-extra">
+      <li class="gollum-minibutton">
+        <a href="/phayes/geoPHP/wiki/API-Reference/_history"
+          class="minibutton bigger action-page-history">
+          <span>Page History</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div id="wiki-content">
+    <div class="wrap">
+      <div id="wiki-body" class="gollum-mediawiki-content instapaper_body">
+        <div class="markdown-body">
+          <table class="toc" summary="Contents">
+            <tr>
+              <td>
+                <div>Table of Contents</div>
+                <ul>
+                  <ul>
+                    <li>
+                      <a href="#wiki-geoPHP_static_class" rel="nofollow">geoPHP static class</a>
+                      <ul>
+                        <li>
+                          <a href="#wiki-Example" rel="nofollow">Example</a>
+                        </li>
+                        <li>
+                          <a href="#wiki-Static_Methods" rel="nofollow">Static Methods</a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li>
+                      <a href="#wiki-Adapters" rel="nofollow">Adapters</a>
+                      <ul>
+                        <li>
+                          <a href="#wiki-Class_Hierarchy" rel="nofollow">Class Hierarchy</a>
+                        </li>
+                        <li>
+                          <a href="#wiki-Example-2" rel="nofollow">Example</a>
+                        </li>
+                        <li>
+                          <a href="#wiki-Methods" rel="nofollow">Methods</a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li>
+                      <a href="#wiki-Geometries" rel="nofollow">Geometries</a>
+                      <ul>
+                        <li>
+                          <a href="#wiki-Class_Hierarchy-2" rel="nofollow">Class Hierarchy</a>
+                        </li>
+                        <li>
+                          <a href="#wiki-Example-3" rel="nofollow">Example</a>
+                        </li>
+                        <li>
+                          <a href="#wiki-Methods-2" rel="nofollow">Methods</a>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </ul>
+              </td>
+            </tr>
+          </table>
+          <h2>
+            <span class="mw-headline">
+              <a name="wiki-geoPHP_static_class" rel="nofollow">geoPHP static class</a>
+            </span>
+          </h2>
+
+          <p>geoPHP provides a static class that contains useful utility functions. All methods must
+            be called statically. </p>
+          <h3>
+            <span class="mw-headline">
+              <a name="wiki-Example" rel="nofollow">Example</a>
+            </span>
+          </h3>
+
+          <pre>$geometry = geoPHP::load('MULTILINESTRING((10 10,20 20,10 40))','wkt');</pre>
+          <pre>$reduced_geometry = geoPHP::geometryReduce($geometry);</pre>
+
+          <h3>
+            <span class="mw-headline">
+              <a name="wiki-Static_Methods" rel="nofollow">Static Methods</a>
+            </span>
+          </h3>
+
+          <table>
+            <tr>
+              <td>
+                <b>Method</b>
+              </td>
+              <td>
+                <b>Description</b>
+              </td>
+              <td>
+                <b>Returns</b>
+              </td>
+            </tr>
+            <tr>
+              <td> version </td>
+              <td> Provides the current geoPHP version. Useful if you need to check compatablity </td>
+              <td> Numeric String </td>
+            </tr>
+            <tr>
+              <td> load </td>
+              <td> Load from an adapter format (like wkt) into a geometry. The first argument is the
+                data, the second one is the format of the data
+                ('wkt','wkb','json','kml','gpx','google_geocode'). All additional arguments are
+                passed along to the read method of the relevant adapte </td>
+              <td> Geometry </td>
+            </tr>
+            <tr>
+              <td> getAdapterMap </td>
+              <td> Get a list of adapters as an array keyed by the value that should be passed to
+                geoPHP::load </td>
+              <td> Array </td>
+            </tr>
+            <tr>
+              <td> geometryList </td>
+              <td> List all geometry types </td>
+              <td> Array </td>
+            </tr>
+            <tr>
+              <td> geosToGeometry </td>
+              <td> Given a GEOSGeometry, get a geoPHP geometry </td>
+              <td> Geometry </td>
+            </tr>
+            <tr>
+              <td> geometryReduce </td>
+              <td> Reduce a geometry, or an array of geometries, into their \'lowest\' available
+                common geometry. For example a GeometryCollection of only points will become a
+                MultiPoint, while a multi-point containing a single point will return a point. An
+                array of geometries can be passed and they will be compiled into a single geometry. </td>
+              <td> Geometry </td>
+            </tr>
+            <tr>
+              <td> geosInstalled </td>
+              <td> Check if the GEOS php extension is installed and working </td>
+              <td> Boolean </td>
+            </tr>
+          </table>
+          <h2>
+            <span class="mw-headline">
+              <a name="wiki-Adapters" rel="nofollow">Adapters</a>
+            </span>
+          </h2>
+
+          <p>Adapters are responsible for getting data in and out of geoPHP Geometries. Generally
+            you will use an adapter to load data into a geoPHP geometry, do various manipulations on
+            the geometry, then use another adapter to write it out to another (or the same) format.
+            You can also use adapters by themselves to simply do conversion from one format to
+            another (See <a class="internal present"
+              href="/phayes/geoPHP/wiki/Example-format-converter" rel="nofollow"
+              >example-format-converter</a> for an example of this). Adapters should be instantiated
+            and not called statically. </p>
+          <h3>
+            <span class="mw-headline">
+              <a name="wiki-Class_Hierarchy" rel="nofollow">Class Hierarchy</a>
+            </span>
+          </h3>
+
+          <ul>
+            <li>GeoAdapter Abtract Class<ul>
+                <li>WKT Enables reading and writing WKT (Well Known Text)</li>
+                <li>WKB Enables reading and writing WKB (Well Known Binary). This is very fast.</li>
+                <li>GeoJSON Enables reading and writing GeoJSON</li>
+                <li>KML Enables reading and writing KML (Google Earth)</li>
+                <li>GoogleGeocode Enables geocoding and reverse-geocoding via google geocoding
+                  API</li>
+                <li>GPX Enables reading and writing GPX (from handheld GPS devices)</li>
+                <li>GeoRSS Enables reading and writing of GeoRSS</li>
+              </ul>
+            </li>
+          </ul>
+          <h3>
+            <span class="mw-headline">
+              <a name="wiki-Example-2" rel="nofollow">Example</a>
+            </span>
+          </h3>
+
+          <pre>$wkb_reader = new WKB();</pre>
+          <pre>$geometry = $wkb_reader-&gt;read('0101000000000000000000f03f000000000000f03f',TRUE);</pre>
+          <pre>$wkt_writer = new wkt();</pre>
+          <pre>$wkt = $wkt_writer-&gt;write($geometry);</pre>
+
+          <h3>
+            <span class="mw-headline">
+              <a name="wiki-Methods" rel="nofollow">Methods</a>
+            </span>
+          </h3>
+
+          <table>
+            <tr>
+              <td>
+                <b>Method</b>
+              </td>
+              <td>
+                <b>Description</b>
+              </td>
+              <td>
+                <b>Returns</b>
+              </td>
+            </tr>
+            <tr>
+              <td> read </td>
+              <td> Read in input (generally a string) and return a Geometry </td>
+              <td> Geometry </td>
+            </tr>
+            <tr>
+              <td> write </td>
+              <td> Write out the given geometry into the adapter formater </td>
+              <td> String </td>
+            </tr>
+          </table>
+          <h2>
+            <span class="mw-headline">
+              <a name="wiki-Geometries" rel="nofollow">Geometries</a>
+            </span>
+          </h2>
+
+          <p>Geometries form the heart of the geoPHP library. Once you have loaded your data into a
+            Geometry object, you have access to all the various methods detailed below for doing
+            conversions, transformations, and operations. While generally you would use an adapter
+            to get a Geometry object, they can also be built by hand. See the constructor methods in
+            the classes to see how to do this. GEOS-php extension needs to be installed in order to
+            use some of the advanced methods (detailed below). </p>
+          <h3>
+            <span class="mw-headline">
+              <a name="wiki-Class_Hierarchy-2" rel="nofollow">Class Hierarchy</a>
+            </span>
+          </h3>
+
+          <ul>
+            <li>Geometry<ul>
+                <li>Point</li>
+                <li>Collection<ul>
+                    <li>LineString</li>
+                    <li>Polygon</li>
+                    <li>MultiLineString</li>
+                    <li>MultiPoint</li>
+                    <li>MultiPolygon</li>
+                    <li>GeometryCollection</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <h3>
+            <span class="mw-headline">
+              <a name="wiki-Example-3" rel="nofollow">Example</a>
+            </span>
+          </h3>
+
+          <pre>$poly1 = $geoPHP::load('POLYGON((30 10,10 20,20 40,40 40,30 10))','wkt');</pre>
+          <pre>$poly2 = $geoPHP::load('POLYGON((35 10,10 20,15 40,45 45,35 10),(20 30, 35 35, 30 20, 20 30))','wkt');</pre>
+          <pre>$combined_poly = $poly1-&gt;union($poly2);</pre>
+          <pre>$kml = $combined_poly-&gt;out('kml');</pre>
+
+          <h3>
+            <span class="mw-headline">
+              <a name="wiki-Methods-2" rel="nofollow">Methods</a>
+            </span>
+          </h3>
+
+          <p>
+            <b>Common Methods</b>
+          </p>
+          <table>
+            <tr>
+              <td>
+                <b>Method</b>
+              </td>
+              <td>
+                <b>Description</b>
+              </td>
+              <td>
+                <b>Returns</b>
+              </td>
+            </tr>
+            <tr>
+              <td> out </td>
+              <td> Outputs the geometry into the specified adapter format. Available formats are
+                  <i>wkt</i>, <i>wkb</i>, <i>json</i>, <i>kml</i>, <i>gpx</i>, <i>google_geocode</i>
+              </td>
+              <td> String </td>
+            </tr>
+            <tr>
+              <td> area </td>
+              <td> The area of this Polygon (or GeometryCollection), as measured in the spatial
+                reference system of the geometry </td>
+              <td> Float </td>
+            </tr>
+            <tr>
+              <td> boundary </td>
+              <td> Returns the closure of the combinatorial boundary of this geometric object. </td>
+              <td> LinearRing </td>
+            </tr>
+            <tr>
+              <td> envelope </td>
+              <td> The minimum bounding box for this Geometry, returned as a Geometry. </td>
+              <td> Polygon </td>
+            </tr>
+            <tr>
+              <td> getBBox </td>
+              <td> The minimum bounding box for this Geometry, returned as an array. Also see
+                envelope() </td>
+              <td> Array </td>
+            </tr>
+            <tr>
+              <td> centroid </td>
+              <td> The mathematical centroid for this geometry as a Point. For polygons, the result
+                is not guaranteed to be interior. </td>
+              <td> Point </td>
+            </tr>
+            <tr>
+              <td> length </td>
+              <td> The length of this Curve in its associated spatial reference. </td>
+              <td> Float </td>
+            </tr>
+            <tr>
+              <td> y </td>
+              <td> The y-coordinate value for this Point. </td>
+              <td> Float </td>
+            </tr>
+            <tr>
+              <td> x </td>
+              <td> The x-coordinate value for this Point. </td>
+              <td> Float </td>
+            </tr>
+            <tr>
+              <td> numGeometries </td>
+              <td> The number of component geometries in this collection </td>
+              <td> Integer </td>
+            </tr>
+            <tr>
+              <td> geometryN </td>
+              <td> Returns the geometry N in this collection. Note that the index starts at 1. </td>
+              <td> Geometry </td>
+            </tr>
+            <tr>
+              <td> startPoint </td>
+              <td> The start Point of this LineString </td>
+              <td> Point </td>
+            </tr>
+            <tr>
+              <td> endPoint </td>
+              <td> The end Point of this LineString </td>
+              <td> Point </td>
+            </tr>
+            <tr>
+              <td> isRing </td>
+              <td> Returns 1 (TRUE) if this Curve is closed() and this Curve isSimple(). </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> isClosed </td>
+              <td> Returns 1 (TRUE) if this Curve is closed. StartPoint() == EndPoint(). </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> getComponents </td>
+              <td> Get all sub-geometry components of the geometry </td>
+              <td> Array of geometries </td>
+            </tr>
+            <tr>
+              <td> numPoints </td>
+              <td> The number of Points in this LineString </td>
+              <td> Integer </td>
+            </tr>
+            <tr>
+              <td> pointN </td>
+              <td> Returns the specified Point N in this LineString. Note that the index starts at
+                1. </td>
+              <td> Point </td>
+            </tr>
+            <tr>
+              <td> exteriorRing </td>
+              <td> Returns the exterior ring of this Polygon. </td>
+              <td> LineString </td>
+            </tr>
+            <tr>
+              <td> numInteriorRings </td>
+              <td> Returns the number of interior rings in this Polygon. </td>
+              <td> Integer </td>
+            </tr>
+            <tr>
+              <td> interiorRingN </td>
+              <td> Returns the Nth interior ring for this Polygon as a LineString. Note that the
+                index starts at 1. </td>
+              <td> LineString </td>
+            </tr>
+            <tr>
+              <td> dimension </td>
+              <td> The inherent dimension of this geometric object. In non-homogeneous collections,
+                this will return the largest topological dimension of the contained objects. </td>
+              <td> Integer </td>
+            </tr>
+            <tr>
+              <td> geometryType </td>
+              <td> Returns the name of the instantiable subtype of Geometry of which this geometric
+                object is an instantiable member. The name of the subtype of Geometry is returned as
+                a string. </td>
+              <td> String </td>
+            </tr>
+            <tr>
+              <td> SRID </td>
+              <td> Returns the Spatial Reference System ID for this geometric object. </td>
+              <td> integer </td>
+            </tr>
+            <tr>
+              <td> setSRID </td>
+              <td> Set the Spatial Reference System ID for this geometric object. </td>
+              <td> NULL </td>
+            </tr>
+            <tr>
+              <td> asArray </td>
+              <td> Get the given geometry as an array of components (recursive) </td>
+              <td> Array </td>
+            </tr>
+            <tr>
+              <td> getGeoInterface </td>
+              <td> Get the geometryType and Coordinates as an array </td>
+              <td> Array </td>
+            </tr>
+          </table>
+          <p>
+            <b>Aliases</b>
+          </p>
+          <table>
+            <tr>
+              <td>
+                <b>Method</b>
+              </td>
+              <td>
+                <b>Description</b>
+              </td>
+              <td>
+                <b>Returns</b>
+              </td>
+            </tr>
+            <tr>
+              <td> getCentroid </td>
+              <td> Alias for centroid() </td>
+              <td> Point </td>
+            </tr>
+            <tr>
+              <td> getArea </td>
+              <td> Alias for area() </td>
+              <td> Float </td>
+            </tr>
+            <tr>
+              <td> getX </td>
+              <td> Alias for x() </td>
+              <td> Float </td>
+            </tr>
+            <tr>
+              <td> getY </td>
+              <td> Alias for y() </td>
+              <td> Float </td>
+            </tr>
+            <tr>
+              <td> getGeos </td>
+              <td> Alias for geos() </td>
+              <td> GEOSGeometry </td>
+            </tr>
+            <tr>
+              <td> getGeomType </td>
+              <td> Alias for geometryType() </td>
+              <td> String </td>
+            </tr>
+            <tr>
+              <td> getSRID </td>
+              <td> Alias for SRID() </td>
+              <td> Integer </td>
+            </tr>
+            <tr>
+              <td> asText </td>
+              <td> Alias for <i>$this-&gt;out('wkt')</i>
+              </td>
+              <td> String </td>
+            </tr>
+            <tr>
+              <td> asBinary </td>
+              <td> Alias for <i>$this-&gt;out('wkb')</i>
+              </td>
+              <td> String </td>
+            </tr>
+          </table>
+          <p>
+            <b>Advanced Methods</b>
+          </p>
+          <p>The <a class="internal present" href="/phayes/geoPHP/wiki/GEOS" rel="nofollow">GEOS-php
+              extension</a> needs to be installed for these functions to be available </p>
+          <table>
+            <tr>
+              <td>
+                <b>Method</b>
+              </td>
+              <td>
+                <b>Description</b>
+              </td>
+              <td>
+                <b>Returns</b>
+              </td>
+            </tr>
+            <tr>
+              <td> geos </td>
+              <td> Return a GEOSGeometry object representing this geometry </td>
+              <td> GEOSGeometry </td>
+            </tr>
+            <tr>
+              <td> setGeos </td>
+              <td> Set a GEOSGeometry object representing this geometry </td>
+              <td> NULL </td>
+            </tr>
+            <tr>
+              <td> pointOnSurface </td>
+              <td> A Point guaranteed to be within a polygon </td>
+              <td> Point </td>
+            </tr>
+            <tr>
+              <td> equals </td>
+              <td> Returns 1 (TRUE) if this geometry is “spatially equal” to another Geometry </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> equalsExact </td>
+              <td> Returns 1 (TRUE) if this gemometric object is exactly the same as another object,
+                including the ordering of component parts </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> relate </td>
+              <td> Returns 1 (TRUE) if this geometric object is spatially related to anotherGeometry
+                by testing for intersections between the interior, boundary and exterior of the two
+                geometric objects as specified by the values in the intersectionPatternMatrix. This
+                returns FALSE if all the tested intersections are empty except exterior (this)
+                intersect exterior (another). </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> checkValidity </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> isSimple </td>
+              <td> Returns 1 (TRUE) if this geometry does not pass through the same point in space
+                more than once </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> project </td>
+              <td> Project the geometry from from one SRID to another </td>
+              <td> Geometry </td>
+            </tr>
+            <tr>
+              <td> buffer </td>
+              <td> Returns a geometric object that represents all Points whose distance from this
+                geometric object is less than or equal to distance. Calculations are in the spatial
+                reference system of this geometric object. Because of the limitations of linear
+                interpolation, there will often be some relatively small error in this distance, but
+                it should be near the resolution of the coordinates used. </td>
+              <td> Geometry </td>
+            </tr>
+            <tr>
+              <td> intersection </td>
+              <td> Returns a geometric object that represents the Point set intersection of this
+                geometric object with anotherGeometry. See <a
+                  href="http://en.wikipedia.org/wiki/Intersection_(set_theory)" rel="nofollow"
+                  >http://en.wikipedia.org/wiki/Intersection_(set_theory)</a>
+              </td>
+              <td> Geometry </td>
+            </tr>
+            <tr>
+              <td> convexHull </td>
+              <td> Returns a geometric object that represents the convex hull of this geometric
+                object. See <a href="http://en.wikipedia.org/wiki/Convex_hull" rel="nofollow"
+                  >http://en.wikipedia.org/wiki/Convex_hull</a>
+              </td>
+              <td> Geometry </td>
+            </tr>
+            <tr>
+              <td> difference </td>
+              <td> Returns a geometric object that represents the Point set difference of this
+                geometric object with anotherGeometry. </td>
+              <td> Geometry </td>
+            </tr>
+            <tr>
+              <td> symDifference </td>
+              <td> Returns a geometric object that represents the Point set symmetric difference of
+                this geometric object with another Geometry. See <a
+                  href="http://en.wikipedia.org/wiki/Symmetric_difference" rel="nofollow"
+                  >http://en.wikipedia.org/wiki/Symmetric_difference</a>
+              </td>
+              <td> Geometry </td>
+            </tr>
+            <tr>
+              <td> union </td>
+              <td> Returns a geometric object that represents the Point set union of this geometric
+                object with anotherGeometry. See <a
+                  href="http://en.wikipedia.org/wiki/Union_(set_theory)" rel="nofollow"
+                  >http://en.wikipedia.org/wiki/Union_(set_theory)</a>
+              </td>
+              <td> Geometry </td>
+            </tr>
+            <tr>
+              <td> simplify </td>
+              <td> Simplify the geometry </td>
+              <td> Geometry </td>
+            </tr>
+            <tr>
+              <td> disjoint </td>
+              <td> Returns 1 (TRUE) if this geometric object is “spatially disjoint” from another
+                Geometry. </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> touches </td>
+              <td> Returns 1 (TRUE) if this geometric object “spatially touches” another Geometry. </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> intersects </td>
+              <td> Returns 1 (TRUE) if this geometric object “spatially intersects” another
+                Geometry. </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> crosses </td>
+              <td> Returns 1 (TRUE) if this geometric object “spatially crosses? another Geometry. </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> within </td>
+              <td> Returns 1 (TRUE) if this geometric object is “spatially within” another Geometry. </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> contains </td>
+              <td> Returns 1 (TRUE) if this geometric object “spatially contains” another Geometry. </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> overlaps </td>
+              <td> Returns 1 (TRUE) if this geometric object “spatially overlaps” another Geometry. </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> covers </td>
+              <td> Alias for contains() </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> coveredBy </td>
+              <td> Alias for within() </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> distance </td>
+              <td> Returns the shortest distance between any two Points in the two geometric objects
+                as calculated in the spatial reference system of this geometric object. Because the
+                geometries are closed, it is possible to find a point on each geometric object
+                involved, such that the distance between these 2 points is the returned distance
+                between their geometric objects. </td>
+              <td> Float </td>
+            </tr>
+            <tr>
+              <td> hausdorffDistance </td>
+              <td> See <a href="http://en.wikipedia.org/wiki/Hausdorff_distance" rel="nofollow"
+                  >http://en.wikipedia.org/wiki/Hausdorff_distance</a>
+              </td>
+              <td> Float </td>
+            </tr>
+          </table>
+          <p>
+            <b>Placeholders</b>
+          </p>
+          <p>These methods are part of the specification, but are not really supported by geoPHP. </p>
+          <table>
+            <tr>
+              <td>
+                <b>Method</b>
+              </td>
+              <td>
+                <b>Description</b>
+              </td>
+              <td>
+                <b>Returns</b>
+              </td>
+            </tr>
+            <tr>
+              <td> hasZ </td>
+              <td> returns FALSE. geoPHP does not support Z values at the moment. </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> is3D </td>
+              <td> returns FALSE. geoPHP does not support 3D geometries at the moment. </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> isMeasured </td>
+              <td> returns FALSE. geoPHP does not yet support M values </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> isEmpty </td>
+              <td> returns FALSE. geoPHP does not yet support empty geometries </td>
+              <td> Boolean </td>
+            </tr>
+            <tr>
+              <td> coordinateDimension </td>
+              <td> returns 2. geoPHP only supports 2-dimentional space </td>
+              <td> Integer </td>
+            </tr>
+            <tr>
+              <td> z </td>
+              <td> returns NULL. geoPHP does not support Z values at the moment </td>
+              <td> NULL </td>
+            </tr>
+            <tr>
+              <td> m </td>
+              <td> returns NULL. geoPHP does not support M values </td>
+              <td> NULL </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
