@@ -351,6 +351,9 @@ return [
 		'/^isModEnable[d]$/' => [0, $deprecatedModuleNameRegex, "DeprecatedModuleName"],
 		'/^sanitizeVal$/' => [1, $sanitizeRegex,"UnknownSanitizeType"],
 		'/^\\\\ExtraFields::addExtraField$/' => [2, $extraFieldTypeRegex,"UnknownExtrafieldTypeBack"],
+		'/^dol_now$/' => [0, '{^(?:auto|gmt|tz(?:server|ref|user(?:rel)?))$}',"InvalidDolNowArgument"],  // '', 0, 1 match bool and int values
+		'/^dol_mktime$/' => [6, '{^(?:|0|1|auto|gmt|tz(?:server|ref|user(?:rel)?|,[+a-zA-Z-/]+))$}',"InvalidDolMktimeArgument"],  // '', 0, 1 match bool and int values
+		'/^dol_print_date$/' => [2, '{^(?:|0|1|auto|gmt|tz(?:server|user(?:rel)?))$}',"InvalidDolMktimeArgument"],
 	],
 	'plugins' => [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
