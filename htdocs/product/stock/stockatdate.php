@@ -616,19 +616,19 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				print implode("\t", array(
 					'"'.$objp->ref.'"',
 					'"'.$objp->label.'"',
-					"$currentstock",
-					"$stock",
-					"$virtualstock"))."\r\n";
+					'"'.price(price2num($currentstock, 'MS')).'"',
+					'"'.price(price2num($stock, 'MS')).'"',
+					'"'.price(price2num($virtualstock, 'MS')).'"'))."\r\n";
 				$totalvirtualstock += $virtualstock;
 			} else {
 				print implode("\t", array(
 					'"'.$objp->ref.'"',
 					'"'.$objp->label.'"',
-					"$stock",
+					'"'.price(price2num($stock, 'MS')).'"',
 					price2num($stock * $objp->pmp, 'MT')?'"'.price(price2num($stock * $objp->pmp, 'MT'), 1).'"':'',
 					empty($conf->global->PRODUIT_MULTIPRICES)?'"'.price(price2num($stock * $objp->price, 'MT'), 1).'"':'"'.$langs->trans("Variable").'('.$langs->trans("OptionMULTIPRICESIsOn").')"',
 					"$nbofmovement",
-					$currentstock ? "$currentstock" : ''))."\r\n";
+					'"'.price(price2num($currentstock, 'MS')).'"'))."\r\n";
 				$totalbuyingprice += $stock * $objp->pmp;
 				$totalsellingprice += $stock * $objp->price;
 			}
