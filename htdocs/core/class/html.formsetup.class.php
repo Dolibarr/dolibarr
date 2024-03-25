@@ -786,7 +786,7 @@ class FormSetupItem
 
 		$tmp = explode(':', $this->type);
 		$out= img_picto('', 'category', 'class="pictofixedwidth"');
-		$out.= $formother->select_categories($tmp[1],  $this->fieldValue, $this->confKey, 0, $this->langs->trans('CustomersProspectsCategoriesShort'));
+		$out.= $formother->select_categories($tmp[1],  $this->fieldValue, $this->confKey, 0, 1);
 		return $out;
 	}
 
