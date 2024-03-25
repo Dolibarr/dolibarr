@@ -5696,11 +5696,11 @@ function dol_print_error($db = null, $error = '', $errors = null)
 /**
  * Show a public email and error code to contact if technical error
  *
- * @param	string	$prefixcode		Prefix of public error code
- * @param   string  $errormessage   Complete error message
- * @param	array	$errormessages	Array of error messages
- * @param	string	$morecss		More css
- * @param	string	$email			Email
+ * @param	string		$prefixcode		Prefix of public error code
+ * @param	string  	$errormessage	Complete error message
+ * @param	string[]	$errormessages	Array of error messages
+ * @param	string		$morecss		More css
+ * @param	string		$email			Email
  * @return	void
  */
 function dol_print_error_email($prefixcode, $errormessage = '', $errormessages = array(), $morecss = 'error', $email = '')
@@ -6270,7 +6270,7 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0,
  *
  *		@param	string|float		$amount			Amount value to format
  *		@param	int<0,1>			$form			Type of formatting: 1=HTML, 0=no formatting (no by default)
- *		@param	Translate|string	$outlangs		Object langs for output. '' use default lang. 'none' use international separators.
+ *		@param	Translate|string|null	$outlangs		Object langs for output. '' use default lang. 'none' use international separators.
  *		@param	int					$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accuracy) before being inserted into database or after a computation, so this parameter should be useless.
  *		@param	int					$rounding		MINIMUM number of decimal to show: 0=no change, -1=we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
  *		@param	int|string			$forcerounding	MAXIMUM number of decimal to forcerounding decimal: -1=no change, 'MU' or 'MT' or a numeric to round to MU or MT or to a given number of decimal
@@ -6303,7 +6303,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 		$thousand = ' ';
 
 		// If $outlangs not forced, we use use language
-		if (!is_object($outlangs)) {
+		if (!($outlangs instanceof Translate)) {
 			$outlangs = $langs;
 		}
 
@@ -6543,17 +6543,17 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 	if (($forceunitoutput == 'no' && $dimension < 1 / 10000 && $unit < 90) || (is_numeric($forceunitoutput) && $forceunitoutput == -6)) {
-		$dimension = $dimension * 1000000;
+		$dimension *= 1000000;
 		$unit = $unit - 6;
 	} elseif (($forceunitoutput == 'no' && $dimension < 1 / 10 && $unit < 90) || (is_numeric($forceunitoutput) && $forceunitoutput == -3)) {
-		$dimension = $dimension * 1000;
-		$unit = $unit - 3;
+		$dimension *= 1000;
+		$unit -= 3;
 	} elseif (($forceunitoutput == 'no' && $dimension > 100000000 && $unit < 90) || (is_numeric($forceunitoutput) && $forceunitoutput == 6)) {
-		$dimension = $dimension / 1000000;
-		$unit = $unit + 6;
+		$dimension /= 1000000;
+		$unit += 6;
 	} elseif (($forceunitoutput == 'no' && $dimension > 100000 && $unit < 90) || (is_numeric($forceunitoutput) && $forceunitoutput == 3)) {
-		$dimension = $dimension / 1000;
-		$unit = $unit + 3;
+		$dimension /= 1000;
+		$unit += 3;
 	}
 	// Special case when we want output unit into pound or ounce
 	/* TODO
