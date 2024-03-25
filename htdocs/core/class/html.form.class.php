@@ -5225,8 +5225,8 @@ class Form
 	 * @param string 		$question 			Question
 	 * @param string 		$action 			Action
 	 * @param array|string|null 	$formquestion 		An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>'autofocus' or 'style=...'))
-	 *                                   		'type' can be 'text', 'password', 'checkbox', 'radio', 'date', 'datetime', 'select', 'multiselect', 'morecss',
-	 *                                   		'other', 'onecolumn' or 'hidden'...
+	 *                                                  'type' can be 'text', 'password', 'checkbox', 'radio', 'date', 'datetime', 'select', 'multiselect', 'morecss',
+	 *                                                  'other', 'onecolumn' or 'hidden'...
 	 * @param int|string 	$selectedchoice 	'' or 'no', or 'yes' or '1', 1, '0' or 0
 	 * @param int|string 	$useajax 			0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
 	 * @param int|string 	$height 			Force height of box (0 = auto)
