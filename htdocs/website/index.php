@@ -3448,16 +3448,16 @@ if (!GETPOST('hide_websitemenu')) {
 							{
 								if (! isEditingEnabled || forceenable)
 								{
-									console.log("Enable inline edit");
+									console.log("Enable inline edit for some html tags with contenteditable=true attribute");
 
-									jQuery(\'section[contenteditable="true"],div[contenteditable="true"],table[contenteditable="true"],header[contenteditable="true"],footer[contenteditable="true"],menu[contenteditable="true"]\').each(function(idx){
+									jQuery(\'section[contenteditable="true"],div[contenteditable="true"],header[contenteditable="true"],main[contenteditable="true"],footer[contenteditable="true"]\').each(function(idx){
 										var idtouse = $(this).attr(\'id\');
 										console.log("Enable inline edit for "+idtouse);
 										if (idtouse !== undefined) {
 											var inlineditor = CKEDITOR.inline(idtouse, {
 												// Allow some non-standard markup that we used in the introduction.
 												// + a[target];div{float,display} ?
-												extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);footer(*);menu(*);button(*);h1(*);h2(*);h3(*);\',
+												extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);main(*);footer(*);button(*);h1(*);h2(*);h3(*);\',
 												//extraPlugins: \'sourcedialog\',
 												removePlugins: \'flash,stylescombo,exportpdf,scayt,wsc,pagebreak,iframe,smiley\',
 												// Show toolbar on startup (optional).
@@ -3488,6 +3488,8 @@ if (!GETPOST('hide_websitemenu')) {
 											    // ...
 											//});
 
+										} else {
+											console.warn("A html section has the contenteditable=true attribute but has no id attribute");
 										}
 									})
 
@@ -5302,7 +5304,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		// Change the contenteditable to "true" or "false" when mode Edit Inline is on or off
 		if (!getDolGlobalString('WEBSITE_EDITINLINE')) {
 			// Remove the contenteditable="true"
-			$newcontent = preg_replace('/(div|section|table|header|footer|menu)(\s[^\>]*)contenteditable="true"/', '\1\2', $newcontent);
+			$newcontent = preg_replace('/(div|section|header|main|footer)(\s[^\>]*)contenteditable="true"/', '\1\2', $newcontent);
 		} else {
 			// Keep the contenteditable="true" when mode Edit Inline is on
 		}
