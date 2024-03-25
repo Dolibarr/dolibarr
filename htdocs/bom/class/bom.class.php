@@ -264,7 +264,7 @@ class BOM extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -565,7 +565,7 @@ class BOM extends CommonObject
 	 * Delete object in database
 	 *
 	 * @param User $user		User that deletes
-	 * @param bool $notrigger	0=launch triggers after, 1=disable triggers
+	 * @param int  $notrigger	0=launch triggers after, 1=disable triggers
 	 * @return int				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 1)
@@ -688,7 +688,7 @@ class BOM extends CommonObject
 	 *
 	 * @param 	int		$rowid					Id of line to update
 	 * @param	float	$qty					Quantity
-	 * @param	flloat	$qty_frozen				Frozen quantity
+	 * @param	float	$qty_frozen				Frozen quantity
 	 * @param 	int		$disable_stock_change	Disable stock change on using in MO
 	 * @param	float	$efficiency				Efficiency in MO
 	 * @param	int		$position				Position of BOM-Line in BOM-Lines
@@ -1076,7 +1076,7 @@ class BOM extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		$langs->loadLangs(['product', 'mrp']);
 
@@ -1118,7 +1118,7 @@ class BOM extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $db, $conf, $langs, $hookmanager;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1625,7 +1625,7 @@ class BOM extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $db,$langs;
+		global $langs;
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
@@ -1825,7 +1825,7 @@ class BOMLine extends CommonObjectLine
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -1867,7 +1867,7 @@ class BOMLine extends CommonObjectLine
 		}
 
 		// check for circular BOM dependency
-		if (checkCircular($this->fk_bom_child)<0) {
+		if ($this->checkCircular($this->fk_bom_child)<0) {
 			return -1;
 		}
 
@@ -2023,7 +2023,7 @@ class BOMLine extends CommonObjectLine
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $db, $conf, $langs, $hookmanager;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
