@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017 Regis Houssin      	<regis.houssin@inodbox.com>
  * Copyright (C) 2006 	   Jean Heimburger    	<jean@tiaris.info>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,19 +71,32 @@ class Conf extends stdClass
 	//! Used to store current currency (ISO code like 'USD', 'EUR', ...). To get the currency symbol: $langs->getCurrencySymbol($this->currency)
 	public $currency;
 
-	//! Used to store current css (from theme)
+	/**
+	 * @var string
+	 */
 	public $theme; // Contains current theme ("eldy", "auguria", ...)
+	//! Used to store current css (from theme)
+	/**
+	 * @var string
+	 */
 	public $css; // Contains full path of css page ("/theme/eldy/style.css.php", ...)
 
 	public $email_from;
 
 	//! Used to store current menu handler
 	public $standard_menu;
-	// List of activated modules
+	/**
+	 * @var array<string,string>  List of activated modules
+	 */
 	public $modules;
+	/**
+	 * @var array<string,array<string,string|array>>  List of activated modules
+	 */
 	public $modules_parts;
 
-	// An array to store cache results ->cache['nameofcache']=...
+	/**
+	 * @var array<string,mixed> An array to store cache results ->cache['nameofcache']=...
+	 */
 	public $cache;
 
 	/**
