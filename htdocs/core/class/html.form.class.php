@@ -5224,7 +5224,7 @@ class Form
 	 * @param string 		$title 				Title
 	 * @param string 		$question 			Question
 	 * @param string 		$action 			Action
-	 * @param array|string 	$formquestion 		An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>'autofocus' or 'style=...'))
+	 * @param array|string|null 	$formquestion 		An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>'autofocus' or 'style=...'))
 	 *                                   		'type' can be 'text', 'password', 'checkbox', 'radio', 'date', 'datetime', 'select', 'multiselect', 'morecss',
 	 *                                   		'other', 'onecolumn' or 'hidden'...
 	 * @param int|string 	$selectedchoice 	'' or 'no', or 'yes' or '1', 1, '0' or 0
