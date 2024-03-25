@@ -4,6 +4,8 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,42 +41,42 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 class MultiCurrency extends CommonObject
 {
 	/**
-	 * @var string Id to identify managed objects
+	 * @var string 			Id to identify managed objects
 	 */
 	public $element = 'multicurrency';
 
 	/**
-	 * @var string Name of table without prefix where object is stored
+	 * @var string 			Name of table without prefix where object is stored
 	 */
 	public $table_element = 'multicurrency';
 
 	/**
-	 * @var string Name of table without prefix where object is stored
+	 * @var string 			Name of table without prefix where object is stored
 	 */
 	public $table_element_line = "multicurrency_rate";
 
 	/**
-	 * @var CurrencyRate[] rates
+	 * @var CurrencyRate[]	Currency rates
 	 */
 	public $rates = array();
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var int 			The environment ID when using a multicompany module
 	 */
 	public $id;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var string 			The currency code
 	 */
 	public $code;
 
 	/**
-	 * @var mixed Sample property 2
+	 * @var string 			The currency name
 	 */
 	public $name;
 
 	/**
-	 * @var int Entity
+	 * @var int 			The environment ID when using a multicompany module
 	 */
 	public $entity;
 
@@ -89,7 +91,7 @@ class MultiCurrency extends CommonObject
 	public $fk_user;
 
 	/**
-	 * @var mixed Sample property 2
+	 * @var ?CurrencyRate 	The currency rate
 	 */
 	public $rate;
 
@@ -412,7 +414,7 @@ class MultiCurrency extends CommonObject
 		global $user;
 
 		$currencyRate = new CurrencyRate($this->db);
-		$currencyRate->rate = price2num($rate);
+		$currencyRate->rate = (float) price2num($rate);
 
 		if ($currencyRate->create($user, $this->id) > 0) {
 			$this->rate = $currencyRate;
@@ -519,12 +521,12 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Get id and rate of currency from code
 	 *
-	 * @param DoliDB	$dbs	        Object db
-	 * @param string	$code	        Code value search
-	 * @param integer	$date_document	Date from document (propal, order, invoice, ...)
+	 * @param DoliDB			$dbs	        Object db
+	 * @param string			$code	        Code value search
+	 * @param integer|string	$date_document	Date from document (propal, order, invoice, ...)
 	 *
-	 * @return 	array	[0] => id currency
-	 *						[1] => rate
+	 * @return 	array			[0] => id currency
+	 *							[1] => rate
 	 */
 	public static function getIdAndTxFromCode($dbs, $code, $date_document = '')
 	{
@@ -567,7 +569,7 @@ class MultiCurrency extends CommonObject
 	 * @param	string			$way					'dolibarr' mean the amount is in dolibarr currency
 	 * @param	string			$table					'facture' or 'facture_fourn'
 	 * @param	float|null		$invoice_rate			Invoice rate if known (to avoid to make the getInvoiceRate call)
-	 * @return	double|boolean 							amount converted or false if conversion fails
+	 * @return	float|false 							amount converted or false if conversion fails
 	 */
 	public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way = 'dolibarr', $table = 'facture', $invoice_rate = null)
 	{
@@ -579,9 +581,9 @@ class MultiCurrency extends CommonObject
 
 		if ($multicurrency_tx) {
 			if ($way == 'dolibarr') {
-				return price2num($amount * $multicurrency_tx, 'MU');
+				return (float) price2num($amount * $multicurrency_tx, 'MU');
 			} else {
-				return price2num($amount / $multicurrency_tx, 'MU');
+				return (float) price2num($amount / $multicurrency_tx, 'MU');
 			}
 		} else {
 			return false;
@@ -799,7 +801,7 @@ class CurrencyRate extends CommonObjectLine
 		dol_syslog('CurrencyRate::create', LOG_DEBUG);
 
 		$error = 0;
-		$this->rate = price2num($this->rate);
+		$this->rate = (float) price2num($this->rate);
 		if (empty($this->entity) || $this->entity <= 0) {
 			$this->entity = $conf->entity;
 		}
@@ -910,7 +912,7 @@ class CurrencyRate extends CommonObjectLine
 
 		dol_syslog('CurrencyRate::update', LOG_DEBUG);
 
-		$this->rate = price2num($this->rate);
+		$this->rate = (float) price2num($this->rate);
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;

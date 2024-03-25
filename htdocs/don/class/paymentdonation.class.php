@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -540,7 +541,7 @@ class PaymentDonation extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -548,7 +549,7 @@ class PaymentDonation extends CommonObject
 
 		$this->fk_donation = 0;
 		$this->datec = '';
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->datep = '';
 		$this->amount = '';
 		$this->fk_typepayment = '';
@@ -558,6 +559,8 @@ class PaymentDonation extends CommonObject
 		$this->fk_bank = 0;
 		$this->fk_user_creat = dol_now();
 		$this->fk_user_modif = dol_now();
+
+		return 1;
 	}
 
 
@@ -579,7 +582,7 @@ class PaymentDonation extends CommonObject
 
 		$error = 0;
 
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);

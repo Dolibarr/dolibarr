@@ -8,7 +8,6 @@ NewSupplierInvoice = فاتورة مورد الجديد
 History=التاريخ
 ListOfSuppliers=قائمة الموردين
 ShowSupplier=عرض المورد
-OrderDate=تاريخ الامر
 BuyingPriceMin=أفضل سعر شراء
 BuyingPriceMinShort=أفضل سعر شراء
 TotalBuyingPriceMinShort=إجمالي أسعار شراء المنتجات الفرعية

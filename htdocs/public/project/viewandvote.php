@@ -66,6 +66,7 @@ $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors",
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
 
+$errmsg = '';
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id');
 $securekeyreceived = GETPOST("securekey");
@@ -172,7 +173,7 @@ if (strlen($idvote)) {
 		// Has not already voted
 		$conforbooth = new ActionComm($db);
 		$resultconforbooth = $conforbooth->fetch($idvote);
-		if ($resultconforbooth<=0) {
+		if ($resultconforbooth <= 0) {
 			$error++;
 			$errmsg .= $conforbooth->error;
 		} else {
@@ -188,11 +189,11 @@ if (strlen($idvote)) {
 			}
 		}
 	}
-	if ($votestatus=="ok") {
+	if ($votestatus == "ok") {
 		setEventMessage($langs->trans("VoteOk"), 'mesgs');
-	} elseif ($votestatus=="ko") {
+	} elseif ($votestatus == "ko") {
 		setEventMessage($langs->trans("AlreadyVoted"), 'warnings');
-	} elseif ($votestatus=="err") {
+	} elseif ($votestatus == "err") {
 		setEventMessage($langs->trans("VoteError"), 'warnings');
 	}
 	header("Refresh:0;url=".dol_buildpath('/public/project/viewandvote.php?id='.$id.'&securekey=', 1).$securekeyreceived);
@@ -225,7 +226,7 @@ print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n
 print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
 print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($securekeyreceived).'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
-print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox', 'int').'" />';
+print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
 print "\n";
 
 

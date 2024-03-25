@@ -2,6 +2,7 @@
 /* Copyright (C)    2013      Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,8 @@
 // $object = Object fetched;
 // $sendto
 // $withmaindocfilemail
+'@phan-var-force CommonObject $objecttmp';
+
 if (!empty($sall) || !empty($search_all)) {
 	$search_all = empty($sall) ? $search_all : $sall;
 
@@ -65,12 +68,12 @@ if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 		// Test on $object (should be useless, we already check on $objecttmp just after)
 		if (isset($object) && $categdef['obj_table'] == $object->table_element) {
 			if (!array_key_exists($categdef['code'], $categ_types)) {
-				$categ_types[$categdef['code']] = array('code'=>$categdef['code'], 'label'=>$langs->trans($categdef['obj_class']));
+				$categ_types[$categdef['code']] = array('code' => $categdef['code'], 'label' => $langs->trans($categdef['obj_class']));
 			}
 		}
 		if (isset($objecttmp) && $categdef['obj_table'] == $objecttmp->table_element) {
 			if (!array_key_exists($categdef['code'], $categ_types)) {
-				$categ_types[$categdef['code']] = array('code'=>$categdef['code'], 'label'=>$langs->trans($categdef['obj_class']));
+				$categ_types[$categdef['code']] = array('code' => $categdef['code'], 'label' => $langs->trans($categdef['obj_class']));
 			}
 		}
 	}
@@ -247,7 +250,7 @@ if ($massaction == 'presend') {
 	}
 
 
-	$formmail->withoptiononeemailperrecipient = ((count($listofselectedref) == 1 && count(reset($listofselectedref)) == 1) || empty($liste)) ? 0 : (GETPOST('oneemailperrecipient', 'int') ? 1 : -1);
+	$formmail->withoptiononeemailperrecipient = ((count($listofselectedref) == 1 && count(reset($listofselectedref)) == 1) || empty($liste)) ? 0 : (GETPOSTINT('oneemailperrecipient') ? 1 : -1);
 	if (in_array($objecttmp->element, array('conferenceorboothattendee'))) {
 		$formmail->withoptiononeemailperrecipient = 0;
 	}
@@ -303,7 +306,7 @@ if ($massaction == 'presend') {
 	// Tableau des parameters complementaires du post
 	$formmail->param['action'] = $action;
 	$formmail->param['models'] = $modelmail;	// the filter to know which kind of template emails to show. 'none' means no template suggested.
-	$formmail->param['models_id'] = GETPOST('modelmailselected', 'int') ? GETPOST('modelmailselected', 'int') : '-1';
+	$formmail->param['models_id'] = GETPOSTINT('modelmailselected') ? GETPOSTINT('modelmailselected') : '-1';
 	$formmail->param['id'] = implode(',', $arrayofselected);
 	// $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 	if (getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && count($listofselectedrecipientobjid) > $conf->global->MAILING_LIMIT_SENDBYWEB) {
@@ -345,12 +348,12 @@ if ($massaction == 'edit_extrafields') {
 		$outputShowOutputFields = '<div class="extrafields-inputs">';
 
 		foreach ($extrafields_list as $extraKey => $extraLabel) {
-			$outputShowOutputFields.= '<div class="mass-action-extrafield" data-extrafield="'.$extraKey.'" style="display:none;" >';
-			$outputShowOutputFields.= '<br><span>'. $langs->trans('NewValue').'</span>';
-			$outputShowOutputFields.= $extrafields->showInputField($extraKey, '', '', $keysuffix, '', 0, $objecttmp->id, $objecttmp->table_element);
-			$outputShowOutputFields.= '</div>';
+			$outputShowOutputFields .= '<div class="mass-action-extrafield" data-extrafield="'.$extraKey.'" style="display:none;" >';
+			$outputShowOutputFields .= '<br><span>'. $langs->trans('NewValue').'</span>';
+			$outputShowOutputFields .= $extrafields->showInputField($extraKey, '', '', $keysuffix, '', 0, $objecttmp->id, $objecttmp->table_element);
+			$outputShowOutputFields .= '</div>';
 		}
-		$outputShowOutputFields.= '<script>
+		$outputShowOutputFields .= '<script>
 		jQuery(function($) {
             $("#extrafield-key-to-update").on(\'change\',function(){
             	let selectedExtrtafield = $(this).val();
@@ -361,7 +364,7 @@ if ($massaction == 'edit_extrafields') {
             });
 		});
 		</script>';
-		$outputShowOutputFields.= '</div>';
+		$outputShowOutputFields .= '</div>';
 
 
 

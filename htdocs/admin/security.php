@@ -144,14 +144,14 @@ if ($action == 'activate_MAIN_SECURITY_DISABLEFORGETPASSLINK') {
 
 if ($action == 'updatepattern') {
 	$pattern = GETPOST("pattern", "alpha");
-	$explodePattern = explode(';', $pattern);
+	$explodePattern = explode(';', $pattern);  // List of ints separated with ';' containing counts
 
 	$patternInError = false;
-	if ($explodePattern[0] < 1 || $explodePattern[4] < 0) {
+	if ((int) $explodePattern[0] < 1 || (int) $explodePattern[4] < 0) {
 		$patternInError = true;
 	}
 
-	if ($explodePattern[0] < $explodePattern[1] + $explodePattern[2] + $explodePattern[3]) {
+	if ((int) $explodePattern[0] < (int) $explodePattern[1] + (int) $explodePattern[2] + (int) $explodePattern[3]) {
 		$patternInError = true;
 	}
 
@@ -198,6 +198,7 @@ $dir = "../core/modules/security/generate";
 clearstatcache();
 $handle = opendir($dir);
 $i = 1;
+$arrayhandler = array();
 if (is_resource($handle)) {
 	while (($file = readdir($handle)) !== false) {
 		if (preg_match('/(modGeneratePass[a-z]+)\.class\.php$/i', $file, $reg)) {

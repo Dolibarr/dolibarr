@@ -34,10 +34,9 @@ PaymentEvent=Pagesa e ngjarjes
 NewRegistration=Regjistrimi
 EventOrganizationSetup=Konfigurimi i organizimit të ngjarjeve
 EventOrganization=Organizimi i eventit
-Settings=Cilësimet
 EventOrganizationSetupPage = Faqja e konfigurimit të organizimit të ngjarjeve
 EVENTORGANIZATION_TASK_LABEL = Etiketa e detyrave për t'u krijuar automatikisht kur projekti të vërtetohet
-EVENTORGANIZATION_TASK_LABELTooltip = Kur vërtetoni një ngjarje për të organizuar, disa detyra mund të krijohen automatikisht në projekt<br><br>Për shembull: <br>Dërgo thirrje për konferenca<br>Dërgo thirrje për kabinatb0342fccfda19bzit sugjerime të klasave të konferencave</span ='notranslate'><br>Vërteto aplikacionin për Booths<br>Hap abonimet në ngjarje për të pranishmitb0342fccfda19>b0342fccfda1 i ngjarjes folësve<span class='notranslate'><br>Dërgo një kujtim të ngjarjes te mbajtësit e Booth<br>Dërgo një kujtim të ngjarjes për të pranishmit
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
 EVENTORGANIZATION_TASK_LABELTooltip2=Mbajeni bosh nëse nuk keni nevojë të krijoni detyra automatikisht.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategoria për t'u shtuar palëve të treta krijohet automatikisht kur dikush sugjeron një konferencë
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategoria për t'u shtuar palëve të treta krijohet automatikisht kur ata sugjerojnë një kabinë
@@ -89,6 +88,7 @@ PriceOfRegistration=Çmimi i regjistrimit
 PriceOfRegistrationHelp=Çmimi që duhet paguar për t'u regjistruar ose për të marrë pjesë në ngjarje
 PriceOfBooth=Çmimi i abonimit për të qëndruar në një kabinë
 PriceOfBoothHelp=Çmimi i abonimit për të qëndruar në një kabinë
+EventOrganizationICSLinkProject=Lidhni ICS për ngjarjen
 EventOrganizationICSLink=Lidhni ICS për konferenca
 ConferenceOrBoothInformation=Informacione për Konferencën ose Bothin
 Attendees=Të pranishmit
@@ -128,8 +128,8 @@ PublicAttendeeSubscriptionPage = Lidhje publike vetëm për regjistrim në kët�
 MissingOrBadSecureKey = Çelësi i sigurisë është i pavlefshëm ose mungon
 EvntOrgWelcomeMessage = Ky formular ju lejon të regjistroheni si një pjesëmarrës i ri në ngjarje
 EvntOrgDuration = Kjo konferencë fillon në %s dhe përfundon në %s.
-ConferenceAttendeeFee = Tarifa e pjesëmarrësve në konferencë për ngjarjen : '%s' ndodh nga %s në <span class='notranslate'>b0ecb2fz874 >.
-BoothLocationFee = Vendndodhja e kabinës për ngjarjen : '%s' që ndodh nga %s në <span class='notranslate'>b0ecb2ec87f49>f
+ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
+BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
 EventType = Lloji i ngjarjes
 LabelOfBooth=Etiketa e kabinës
 LabelOfconference=Etiketa e konferencës
@@ -162,7 +162,7 @@ Attendee = Pjesëmarrësit
 PaymentConferenceAttendee = Pagesa e pjesëmarrësve në konferencë
 PaymentBoothLocation = Pagesa e vendndodhjes së kabinës
 DeleteConferenceOrBoothAttendee=Hiq pjesëmarrësin
-RegistrationAndPaymentWereAlreadyRecorder=Një regjistrim dhe një pagesë janë regjistruar tashmë për emailin <b>%s<span class='notranslate'>b09a4b739f17f8z
+RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
 EmailAttendee=Email i pjesëmarrësit
 EmailCompany=Email i kompanisë
 EmailCompanyForInvoice=Email-i i kompanisë (për faturë, nëse është i ndryshëm nga email-i i pjesëmarrësit)

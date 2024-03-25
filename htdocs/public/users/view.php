@@ -49,7 +49,7 @@ $mode     = GETPOST('mode', 'aZ09');
 $cancel   = GETPOST('cancel', 'alpha');
 $backtopage = '';
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $securekey = GETPOST('securekey', 'alpha');
 $suffix = GETPOST('suffix');
 
@@ -147,7 +147,7 @@ if (getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object)) {
 	$object->user_mobile = '';
 }
 if (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object)) {
-	$object->socialnetworks = '';
+	$object->socialnetworks = [];
 }
 // By default, personal address not visible
 if (!getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object)) {

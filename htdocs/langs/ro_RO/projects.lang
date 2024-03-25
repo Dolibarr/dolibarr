@@ -249,7 +249,7 @@ LatestProjects=Ultimele %s proiecte
 LatestModifiedProjects=Ultimele %s proiecte modificate 
 OtherFilteredTasks=Alte task-uri filtrate
 NoAssignedTasks=Nu au fost găsite task-uri atribuite (atribuiți proiectul/task-urile utilizatorului curent din caseta de selectare superioară pentru a introduce timp pe acesta)
-ThirdPartyRequiredToGenerateInvoice=Un terț trebuie definit pe proiect pentru a putea să fie facturat.
+ThirdPartyRequiredToGenerateIntervention=Un terț trebuie să fie definit pe proiect pentru a putea crea o intervenție.
 ThirdPartyRequiredToGenerateInvoice=Un terț trebuie definit pe proiect pentru a putea să fie facturat.
 ChooseANotYetAssignedTask=Alege un task care nu îţi este atribuit
 # Comments trans

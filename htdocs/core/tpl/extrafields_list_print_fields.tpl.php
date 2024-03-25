@@ -3,7 +3,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 if (empty($extrafieldsobjectkey) && is_object($object)) {
@@ -35,7 +35,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 				// If field is a computed field, we make computation to get value
 				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]) {
 					$objectoffield = $object; //For compatibility with the computed formula
-					$value = dol_eval($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '2');
+					$value = dol_eval((int) $extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '2');
 					if (is_numeric(price2num($value)) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
 						$obj->$tmpkey = price2num($value);
 					}
@@ -71,7 +71,8 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 						$totalarray['totalizable'][$key]['total'] += $obj->$tmpkey;
 					}
 				}
-				if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
+				// key 'totalizable' if in extrafields same as 'isameasure' into ->$fields
+				if (!empty($extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key] == 1) {
 					if (!$i) {
 						$totalarray['pos'][$totalarray['nbfield']] = $extrafieldsobjectprefix.$tmpkey;
 					}

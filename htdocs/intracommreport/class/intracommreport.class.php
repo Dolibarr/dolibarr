@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2015       ATM Consulting          <support@atm-consulting.fr>
  * Copyright (C) 2019-2020  Open-DSI                <support@open-dsi.fr>
- * Copyright (C) 2020-2024  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,8 +56,10 @@ class IntracommReport extends CommonObject
 
 	public $picto = 'intracommreport';
 
-
-	public $label; 		// ref ???
+	/**
+	 * @var string ref ???
+	 */
+	public $label;
 
 	public $period;
 
@@ -67,7 +70,14 @@ class IntracommReport extends CommonObject
 	 */
 	public $declaration_number;
 
+	/**
+	 * @var string
+	 */
 	public $exporttype;			// deb or des
+
+	/**
+	 * @var string
+	 */
 	public $type_declaration;	// 'introduction' or 'expedition'
 	public $numero_declaration;
 
@@ -83,8 +93,8 @@ class IntracommReport extends CommonObject
 	const TYPE_DES = 1;
 
 	public static $type = array(
-		'introduction'=>'Introduction',
-		'expedition'=>'Expédition'
+		'introduction' => 'Introduction',
+		'expedition' => 'Expédition'
 	);
 
 
@@ -125,12 +135,11 @@ class IntracommReport extends CommonObject
 	/**
 	 * Function delete
 	 *
-	 * @param 	int 	$id 		object ID
 	 * @param 	User 	$user 		User
 	 * @param 	int 	$notrigger 	notrigger
 	 * @return 	int
 	 */
-	public function delete($id, $user, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		return 1;
 	}
@@ -148,7 +157,7 @@ class IntracommReport extends CommonObject
 		global $conf, $mysoc;
 
 		/**************Construction de quelques variables********************/
-		$party_id = substr(strtr($mysoc->tva_intra, array(' '=>'')), 0, 4).$mysoc->idprof2;
+		$party_id = substr(strtr($mysoc->tva_intra, array(' ' => '')), 0, 4).$mysoc->idprof2;
 		$declarant = substr($mysoc->managers, 0, 14);
 		$id_declaration = self::getDeclarationNumber($this->numero_declaration);
 		/********************************************************************/
@@ -213,8 +222,8 @@ class IntracommReport extends CommonObject
 		$declaration_des = $e->addChild('declaration_des');
 		$declaration_des->addChild('num_des', self::getDeclarationNumber($this->numero_declaration));
 		$declaration_des->addChild('num_tvaFr', $mysoc->tva_intra); // /^FR[a-Z0-9]{2}[0-9]{9}$/  // Doit faire 13 caractères
-		$declaration_des->addChild('mois_des', $period_month);
-		$declaration_des->addChild('an_des', $period_year);
+		$declaration_des->addChild('mois_des', (string) $period_month);
+		$declaration_des->addChild('an_des', (string) $period_year);
 
 		// Add invoice lines
 		$res = $this->addItemsFact($declaration_des, $type_declaration, $period_year.'-'.$period_month, 'des');
@@ -341,7 +350,7 @@ class IntracommReport extends CommonObject
 	 *	Add item for DEB
 	 *
 	 * 	@param	SimpleXMLElement	$declaration		Reference declaration
-	 * 	@param	Resource			$res				Result of request SQL
+	 * 	@param	stdClass			$res				Result of request SQL
 	 *  @param	int					$i					Line Id
 	 * 	@param	string				$code_douane_spe	Specific customs authorities code
 	 *  @return	void
@@ -349,7 +358,7 @@ class IntracommReport extends CommonObject
 	public function addItemXMl(&$declaration, &$res, $i, $code_douane_spe = '')
 	{
 		$item = $declaration->addChild('Item');
-		$item->addChild('itemNumber', $i);
+		$item->addChild('itemNumber', (string) $i);
 		$cn8 = $item->addChild('CN8');
 		if (empty($code_douane_spe)) {
 			$code_douane = $res->customcode;
@@ -359,17 +368,17 @@ class IntracommReport extends CommonObject
 		$cn8->addChild('CN8Code', $code_douane);
 		$item->addChild('MSConsDestCode', $res->code); // code iso pays client
 		$item->addChild('countryOfOriginCode', substr($res->zip, 0, 2)); // code iso pays d'origine
-		$item->addChild('netMass', round($res->weight * $res->qty)); // Poids du produit
-		$item->addChild('quantityInSU', $res->qty); // Quantité de produit dans la ligne
-		$item->addChild('invoicedAmount', round($res->total_ht)); // Montant total ht de la facture (entier attendu)
+		$item->addChild('netMass', (string) round($res->weight * $res->qty)); // Poids du produit
+		$item->addChild('quantityInSU', (string) $res->qty); // Quantité de produit dans la ligne
+		$item->addChild('invoicedAmount', (string) round($res->total_ht)); // Montant total ht de la facture (entier attendu)
 		// $item->addChild('invoicedNumber', $res->refinvoice); // Numéro facture
 		if (!empty($res->tva_intra)) {
 			$item->addChild('partnerId', $res->tva_intra);
 		}
 		$item->addChild('statisticalProcedureCode', '11');
 		$nature_of_transaction = $item->addChild('NatureOfTransaction');
-		$nature_of_transaction->addChild('natureOfTransactionACode', 1);
-		$nature_of_transaction->addChild('natureOfTransactionBCode', 1);
+		$nature_of_transaction->addChild('natureOfTransactionACode', '1');
+		$nature_of_transaction->addChild('natureOfTransactionBCode', '1');
 		$item->addChild('modeOfTransportCode', $res->mode_transport);
 		$item->addChild('regionCode', substr($res->zip, 0, 2));
 	}
@@ -378,15 +387,15 @@ class IntracommReport extends CommonObject
 	 *	Add item for DES
 	 *
 	 * 	@param	SimpleXMLElement	$declaration		Reference declaration
-	 * 	@param	Resource				$res				Result of request SQL
+	 * 	@param	stdClass			$res				Result of request SQL
 	 *  @param	int					$i					Line Id
 	 *  @return	void
 	 */
 	public function addItemXMlDes($declaration, &$res, $i)
 	{
 		$item = $declaration->addChild('ligne_des');
-		$item->addChild('numlin_des', $i);
-		$item->addChild('valeur', round($res->total_ht)); // Total amount excl. tax of the invoice (whole amount expected)
+		$item->addChild('numlin_des', (string) $i);
+		$item->addChild('valeur', (string) round($res->total_ht)); // Total amount excl. tax of the invoice (whole amount expected)
 		$item->addChild('partner_des', $res->tva_intra); // Represents the foreign customer's VAT number
 	}
 
@@ -474,7 +483,7 @@ class IntracommReport extends CommonObject
 	 */
 	public static function getDeclarationNumber($number)
 	{
-		return str_pad($number, 6, 0, STR_PAD_LEFT);
+		return str_pad($number, 6, '0', STR_PAD_LEFT);
 	}
 
 	/**

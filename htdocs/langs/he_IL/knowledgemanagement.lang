@@ -26,14 +26,12 @@ ModuleKnowledgeManagementDesc=נהל בסיס ניהול ידע (KM) או בסי
 # Admin page
 #
 KnowledgeManagementSetup = הגדרת מערכת ניהול ידע
-Settings = הגדרות
 KnowledgeManagementSetupPage = דף התקנת מערכת ניהול הידע
 
 
 #
 # About page
 #
-About = על אודות
 KnowledgeManagementAbout = על ניהול ידע
 KnowledgeManagementAboutPage = ניהול ידע אודות הדף
 

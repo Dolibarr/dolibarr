@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011-2013      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2011-2018      Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +56,7 @@ if (!getDolGlobalString('CONTRACT_ADDON')) {
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-$error=0;
+$error = 0;
 
 if ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconstcontract', 'aZ09');
@@ -82,18 +83,16 @@ if ($action == 'updateMask') {
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/contract/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
@@ -243,7 +242,7 @@ foreach ($dirmodels as $reldir) {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
-
+					/** @var ModelNumRefContracts $module */
 					$module = new $file($db);
 
 					// Show modules according to features level
@@ -255,7 +254,7 @@ foreach ($dirmodels as $reldir) {
 					}
 
 					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -363,6 +362,7 @@ foreach ($dirmodels as $reldir) {
 		if (is_dir($dir)) {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
+				$filelist = array();
 				while (($file = readdir($handle)) !== false) {
 					$filelist[] = $file;
 				}
@@ -376,6 +376,7 @@ foreach ($dirmodels as $reldir) {
 							$classname = substr($file, 0, dol_strlen($file) - 12);
 
 							require_once $dir.'/'.$file;
+							/** @var ModelePDFContract $module */
 							$module = new $classname($db);
 
 							$modulequalified = 1;

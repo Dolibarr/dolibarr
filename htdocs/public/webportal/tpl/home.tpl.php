@@ -2,7 +2,7 @@
 // Protection to avoid direct call of template
 if (empty($context) || !is_object($context)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 global $conf, $langs;
@@ -18,13 +18,13 @@ global $conf, $langs;
 				<?php print '<a class="home-links-card__link" href="' . $context->getControllerUrl('propallist') . '" title="' . $langs->trans('WebPortalPropalListDesc') . '">' . $langs->trans('WebPortalPropalListTitle') . '</a>'; ?>
 			</article>
 			<?php endif; ?>
-			<?php if (isModEnabled('commande') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS')) : ?>
+			<?php if (isModEnabled('order') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS')) : ?>
 			<article class="home-links-card --order-list">
 				<div class="home-links-card__icon" ></div>
 				<?php print '<a class="home-links-card__link" href="' . $context->getControllerUrl('orderlist') . '" title="' . $langs->trans('WebPortalOrderListDesc') . '">' . $langs->trans('WebPortalOrderListTitle') . '</a>'; ?>
 			</article>
 			<?php endif; ?>
-			<?php if (isModEnabled('facture') && getDolGlobalInt('WEBPORTAL_INVOICE_LIST_ACCESS')) : ?>
+			<?php if (isModEnabled('invoice') && getDolGlobalInt('WEBPORTAL_INVOICE_LIST_ACCESS')) : ?>
 			<article class="home-links-card --invoice-list">
 				<div class="home-links-card__icon" ></div>
 				<?php print '<a class="home-links-card__link" href="' . $context->getControllerUrl('invoicelist') . '" title="' . $langs->trans('WebPortalInvoiceListDesc') . '">' . $langs->trans('WebPortalInvoiceListTitle') . '</a>'; ?>

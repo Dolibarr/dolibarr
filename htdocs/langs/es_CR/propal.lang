@@ -31,7 +31,6 @@ PropalStatusValidated=Validado (la cotización está abierta)
 PropalStatusSigned=Firmado (necesita facturación)
 PropalStatusBilled=Facturada
 PropalStatusCanceledShort=Cancelado
-PropalStatusValidatedShort=Validada (abierta)
 PropalStatusSignedShort=Firmada
 PropalStatusNotSignedShort=No firmada
 PropalStatusBilledShort=Facturada

@@ -28,7 +28,7 @@
 					$tmpprojtime = $element->getSumOfAmount($idofelementuser ? $elementuser : '', $dates, $datee); // $element is a task. $elementuser may be empty
 					$typea = ($data[$j]->typea == 'birth') ? $picb : $pice;
 					//var_dump("$key, $tablename, $datefieldname, $dates, $datee");
-					GETPOST("mouvement", 'int'),
+					GETPOSTINT("mouvement"),
 					dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
 					if ((empty($dates) && empty($datee)) || (intval($dates) <= $element->datestart && intval($datee) >= $element->dateend)) {
 					jQuery("#mouvement option").removeAttr("selected").change();
@@ -56,28 +56,30 @@
 				$this->datea = $this->db->jdate($obj->datea);
 				$this->datee        = $this->db->jdate($obj->datee);
 				$this->periode = $this->db->jdate($obj->period);
-				$tmp = array('id_users'=>$obj->id_users, 'nom'=>$obj->name, 'reponses'=>$obj->reponses);
+				$tmp = array('id_users' => $obj->id_users, 'nom' => $obj->name, 'reponses' => $obj->reponses);
 				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0, true); // Disable hook for the moment
 				//si les reponses ne concerne pas la colonne effacée, on concatenate
-				GETPOST("mouvement", "int"),
 				GETPOST("mouvement", 'alpha'),
-				GETPOST("mouvement", 'int'),
+				GETPOSTINT("mouvement"),
 				foreach ($TWeek as $weekIndex => $weekNb) {
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.datee']['checked'])) {
 				if (jQuery("#mouvement").val() == \'0\') jQuery("#unitprice").removeAttr("disabled");
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
 				print '<td class="center">'.dol_print_date($link->datea, "dayhour", "tzuser").'</td>';
 			$action = 'transfert';
-			$date_com = dol_mktime(GETPOST('rehour', 'int'), GETPOST('remin', 'int'), GETPOST('resec', 'int'), GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+			$date_com = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 			$date_next_execution = (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
-			$datee = dol_get_last_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int') ? GETPOST('monthtoexport', 'int') : 12);
-			$datesubscription = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", "int"), GETPOST("reyear", "int"));
+			$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 12);
+			$datesubscription = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 			$ensemblereponses = $obj->reponses;
+			$field = preg_replace('/(:[!<>=\s]+:|:in:|:notin:|:like:|:notlike:).*$/', '', $tmpcrit);		// the name of the field
+			$newcrit = preg_replace('/(:[!<>=\s]+:|:in:|:notin:|:like:|:notlike:)/', '', $tmpcrit);
 			$object->datee = $datee;
 			$object->periode = $dateperiod;
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Payement").'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
 			$sortfield = "datea";
+			$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
 			$sql .= " '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.date_ech as date, t.periode as date_due, 'SocialContributions' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " , datee = ".(!empty($obj->datee) ? "'".$this->db->escape($obj->datee)."'" : "null");
 			$sql .= " AND (".$datefieldname." <= '".$this->db->idate($datee)."' OR ".$datefieldname." IS NULL)";
@@ -98,36 +100,36 @@
 			$taskstatic->datee = $db->jdate($obj->date_end);
 			$this->category->childs = array();
 			$this->datea = dol_now();
+			$tmpcrit = preg_replace('/^.*(:[!<>=\s]+:|:in:|:notin:|:like:|:notlike:)/', '\1', $tmpcrit);	// the condition after the name of the field
 			'datee' => $date_end,
 			// mise a jour des reponses utilisateurs dans la base
 			if (!empty($arrayfields['t.datee']['checked'])) {
 			if ($user->hasRight('stock', 'mouvement', 'lire')) {
 			if (empty($reyear) || empty($remonth) || empty($reday)) {
 			jQuery("#mouvement").change(function() {
+			preg_match('/:([!<>=\s]+|in|notin|like|notlike):/', $tmpcrit, $reg);
 			print $form->selectDate($object->periode, 'period', 0, 0, 0, 'charge', 1);
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
 			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
 			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->periode), 'day').'</td>';
+			print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 			print dol_print_date($object->periode, "day");
 		$TWeek[$week_number] = $week_number;
 		$action = 'transfert';
 		$cle_rib = strtolower(checkES($rib, $CCC));
 		$date_com = dol_mktime(GETPOST('rehour'), GETPOST('remin'), GETPOST('resec'), GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
 		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
-		$datefrom = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$datesubscription = dol_mktime(0, 0, 0, GETPOST("remonth", "int"), GETPOST("reday", "int"), GETPOST("reyear", "int"));
+		$datefrom = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
+		$datesubscription = dol_mktime(0, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 		$datetouse = ($this->date_end > 0) ? $this->date_end : ((isset($this->datee) && $this->datee > 0) ? $this->datee : 0);
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field) ? $project_field : 'fk_projet');
 		$ensemblereponses = $obj->reponses;
 		$head[$h][1] = $langs->trans("Referers");
 		$head[$tab][1] = $langs->trans("Referers");
 		$out .= "<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"]) ? dol_htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT) : '')."<br>\n";
-		$reday = GETPOST('reday', 'int');
 		$reday = GETPOSTINT('reday');
 		$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_modification, p.budget_amount";
-		$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
 		$sql  = 'SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_modification, p.budget_amount';
-		$sql  = 'SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount';
 		$sql .= "   (cs.periode IS NOT NULL AND cs.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datea)."'";
@@ -152,8 +154,8 @@
 		$sql = "SELECT p.rowid, p.fk_statut as status, p.fk_opp_status, p.datee as datee";
 		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".$this->db->prefix()."links";
 		$sql = 'SELECT c.rowid, date_creation as datec, tms as datem, date_valid as date_validation, date_approve as datea, date_approve2 as datea2,';
+		$test = "<IMG SRC=\"jav&#x0D;ascript:alert('XSS');\">";	// Same
 		$test = '/javas:cript/google.com';
-		$test="<IMG SRC=\"jav&#x0D;ascript:alert('XSS');\">";	// Same
 		$this->periode = $this->date_creation + 3600 * 24 * 30;
 		$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Referers');
 		$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Referers');
@@ -177,7 +179,10 @@
 		if (empty($this->datea)) {
 		if (in_array('01', $TWeek) && in_array('52', $TWeek) && $weekNb == '01') {
 		print $form->selectDate(strtotime(date('Y-m-d', $object->datee)), 'end', '', '', 0, '', 1, 0);
+		print $form->selectDate(strtotime(date('Y-m-d', $object->datee)), 'end', 0, 0, 0, '', 1, 0);
 		print $object->datee ? dol_print_date($object->datee, 'daytext') : '&nbsp;';
+		print '<input type="hidden" name="action" value="addin">';
+		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 		print '<tr><td>'.$langs->trans("Datee").'</td>';
 		print_liste_field_titre($arrayfields['t.datee']['label'], $_SERVER["PHP_SELF"], "t.datee", '', $param, '', $sortfield, $sortorder, 'center ');
 	 *  @param		string		$datee		End date (ex 23:59:59)
@@ -187,13 +192,14 @@
 	$datee = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
 	$datee = dol_stringtotime($dateerfc);
 	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
-	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
-	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", "int"), GETPOST("reday", "int"), GETPOST("reyear", "int"));
-	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
-	$datepaye = dol_mktime(GETPOST("rehour", 'int'), GETPOST("remin", 'int'), GETPOST("resec", 'int'), GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
-	$datepaye = dol_mktime(GETPOST("rehour", 'int'), GETPOST("remin", 'int'), GETPOST("resec", 'int'), GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'), 'tzuserrel');
+	$datepaid = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
+	$datepaye = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
+	$datepaye = dol_mktime(GETPOSTINT("rehour"), GETPOSTINT("remin"), GETPOSTINT("resec"), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
+	$datepaye = dol_mktime(GETPOSTINT("rehour"), GETPOSTINT("remin"), GETPOSTINT("resec"), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"), 'tzuserrel');
 	$ensemblereponses = $obj->reponses;
 	$head[$h][1] = $langs->trans('Referers');
+	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', $tmpval);
+	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', $val);
 	$morewherefilterarray[] = " t.datee <= '".$db->idate($search_date_end_end)."'";
 	$morewherefilterarray[] = " t.datee >= '".$db->idate($search_date_end_start)."'";
 	$opensurveysondage->mail_admin = $_SESSION['adresse'];
@@ -226,7 +232,8 @@
 	$sql2 .= " s.logo, s.email, s.entity, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_percent, p.opp_amount, p.dateo, p.datee";
 	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('Referers');
 	$totalforvisibletasks = projectLinesPerMonth($j, $firstdaytoshow, $usertoprocess, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $isavailable, 0, $TWeek);
-	'cs.periode'	=>array('label'=>"PeriodEndDate", 'checked'=>1, 'position'=>50),
+	$value = preg_replace('/([a-z\.]+)\s*([!<>=]+|in|notin|like|notlike)\s*/', '\1:\2:', $value); // Clean string 'x < 10' into 'x:<:10' so we can then explode on space to get all AND tests to do
+	'cs.periode'	=> array('label' => "PeriodEndDate", 'checked' => 1, 'position' => 50),
 	't.datee'=>array('label'=>"Deadline", 'checked'=>1, 'position'=>101),
 	't.datee'=>array('label'=>"Deadline", 'checked'=>1, 'position'=>5),
 	// Ligne de la periode d'analyse du rapport
@@ -238,13 +245,15 @@
 	foreach ($TWeek as $week_number) {
 	if (!empty($arrayfields['t.datee']['checked'])) {
 	if ($action == "transfert") {
-	if (GETPOST("reyear", "int") && GETPOST("remonth", "int") && GETPOST("reday", "int")) {
+	if ($object->id > 0 && $action == 'addin') {
 	if (GETPOST('reday')) {
+	if (GETPOSTINT("reyear") && GETPOSTINT("remonth") && GETPOSTINT("reday")) {
 	print $form->selectDate($datee, 'datee', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
 	print '<select name="mouvement" id="mouvement" class="minwidth100 valignmiddle">';
 	print '<td class="left" width="25%">'.$langs->trans("Referers").'</td>';
 	print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></td>';
+	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 	print '<tr><td>'.$langs->trans("Period")."</td><td>".dol_print_date($charge->periode, 'day')."</td></tr>\n";
 	print ajax_combobox("mouvement");
 	print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname,cs.periode", "", $param, 'class="left"', $sortfield, $sortorder);
@@ -265,7 +274,12 @@
 	public function getSumOfAmount($fuser = '', $dates = '', $datee = '')
 	return $TWeek;
 	unset($_SESSION["adresse"]);
+          - creat,unitl,alltime,datas,referers
+          - informations,medias,uptodate,reenable,crypted,developpers
+          - ned
  *	@param	array 		$TWeek			array of week numbers
+ *	@param	string[] 	$TWeek			array of week numbers
+ *	@param	string[] 	$TWeek			array of week numbers (week 1 must be '01')
  * @param	array		$TWeek					Array of week numbers
  * Copyright (C) 2019		Tim Otte    			<otte@meuser.it>
  * Copyright (C) 2019       Tim Otte		    <otte@meuser.it>
@@ -296,9 +310,7 @@ $sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.
 $sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode, cs.fk_account,";
 $sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total, cs.paye,";
 $sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_modification, p.budget_amount,";
-$sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount,";
 $sql .= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_modification,";
-$sql .= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_update,";
 $sql .= dolSqlDateFilter('p.datee', $search_eday, $search_emonth, $search_eyear);
 $sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate, p.usage_bill_time,";
 $sql = "SELECT id_users, nom as name, id_sondage, reponses";
@@ -316,6 +328,9 @@ $usercanread = (($user->hasRight('stock', 'mouvement', 'lire')));
 * The hook contaxt thirdpartycard has been renamed thirdpartycontact
 * The private array ->status_short, ->statuts and ->status_long are now array ->labelStatusShort and ->labelStatus everywhere.
 - New: Add proposals into referer page of thirdparty.
+AmountIn
+NEW: ModuleBuilder: Checkin comments begin and end before each actions
+for /F "tokens=2 delims=," %%i in ('tasklist /FI "IMAGENAME eq php.exe" /FO CSV /NH') do (
 foreach ($TWeek as $week_number) {
 function checkES($IentOfi, $InumCta)
 function getFirstDayOfEachWeek($TWeek, $year)

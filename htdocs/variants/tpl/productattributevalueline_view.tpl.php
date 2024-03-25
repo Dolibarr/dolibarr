@@ -35,8 +35,11 @@
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
+
+'@phan-var-force CommonObject $this
+ @phan-var-force CommonObject $object';
 
 // add html5 elements
 $domData  = ' data-element="'.$line->element.'"';

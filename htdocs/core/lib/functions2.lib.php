@@ -6,6 +6,8 @@
  * Copyright (C) 2015       Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,11 +73,13 @@ function jsUnEscape($source)
 
 
 /**
- * Return list of modules directories. We detect directories that contains a subdirectory /core/modules
- * We discard directory modules that contains 'disabled' into their name.
+ * Return list of directories that contain modules.
  *
- * @param	string	$subdir		Sub directory (Example: '/mailings')
- * @return	array				Array of directories that can contains module descriptors
+ * Detects directories that contain a subdirectory /core/modules.
+ * Modules that contains 'disabled' in their name are excluded.
+ *
+ * @param	string					$subdir	Sub directory (Example: '/mailings' will look for /core/modules/mailings/)
+ * @return	array<string,string>			Array of directories that can contain module descriptors ($key==value)
  */
 function dolGetModulesDirs($subdir = '')
 {
@@ -97,7 +101,7 @@ function dolGetModulesDirs($subdir = '')
 					continue; // We discard module if it contains disabled into name.
 				}
 
-				if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS' && $file != 'includes') {
+				if (substr($file, 0, 1) != '.' && is_dir($dirroot.'/'.$file) && strtoupper(substr($file, 0, 3)) != 'CVS' && $file != 'includes') {
 					if (is_dir($dirroot.'/'.$file.'/core/modules'.$subdir.'/')) {
 						$modulesdir[$dirroot.'/'.$file.'/core/modules'.$subdir.'/'] = $dirroot.'/'.$file.'/core/modules'.$subdir.'/';
 					}
@@ -885,11 +889,11 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
  * Return last or next value for a mask (according to area we should not reset)
  *
  * @param   DoliDB		$db				Database handler
- * @param   string		$mask			Mask to use
+ * @param   string		$mask			Mask to use. Must contains {0...0}. Can contains {t..}, {u...}, {user_extra_xxx}, .;.
  * @param   string		$table			Table containing field with counter
  * @param   string		$field			Field containing already used values of counter
  * @param   string		$where			To add a filter on selection (for example to filter on invoice types)
- * @param   Societe		$objsoc			The company that own the object we need a counter for
+ * @param   Societe|string $objsoc		The company that own the object we need a counter for
  * @param   string		$date			Date to use for the {y},{m},{d} tags.
  * @param   string		$mode			'next' for next value or 'last' for last value
  * @param   bool		$bentityon		Activate the entity filter. Default is true (for modules not compatible with multicompany)
@@ -899,7 +903,7 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
  */
 function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $date = '', $mode = 'next', $bentityon = true, $objuser = null, $forceentity = null)
 {
-	global $conf, $user;
+	global $user;
 
 	if (!is_object($objsoc)) {
 		$valueforccc = $objsoc;
@@ -1003,7 +1007,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$regKey = array();
 	while (preg_match('/\{([A-Z]+)\-([1-9])\}/', $tmpmask, $regKey)) {
 		$maskperso[$regKey[1]] = '{'.$regKey[1].'-'.$regKey[2].'}';
-		$maskpersonew[$regKey[1]] = str_pad('', $regKey[2], '_', STR_PAD_RIGHT);
+		// @phan-suppress-next-line PhanParamSuspiciousOrder
+		$maskpersonew[$regKey[1]] = str_pad('', (int) $regKey[2], '_', STR_PAD_RIGHT);
 		$tmpmask = preg_replace('/\{'.$regKey[1].'\-'.$regKey[2].'\}/i', $maskpersonew[$regKey[1]], $tmpmask);
 	}
 
@@ -1065,7 +1070,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
 	if ($maskraz > 0) {   // A reset is required
 		if ($maskraz == 99) {
-			$maskraz = date('m', $date);
+			$maskraz = (int) date('m', $date);
 			$resetEveryMonth = true;
 		}
 		if ($maskraz > 12) {
@@ -1118,7 +1123,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$yearcomp = 0;
 
 		if (!empty($yearoffsettype) && !is_numeric($yearoffsettype) && $yearoffsettype != '=') {	// $yearoffsettype is - or +
-			$currentyear = date("Y", $date);
+			$currentyear = (int) date("Y", $date);
 			$fiscaldate = dol_mktime('0', '0', '0', $maskraz, '1', $currentyear);
 			$newyeardate = dol_mktime('0', '0', '0', '1', '1', $currentyear);
 			$nextnewyeardate = dol_mktime('0', '0', '0', '1', '1', $currentyear + 1);
@@ -1134,23 +1139,23 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 				// If after or equal of current new year date
 				$yearoffset = -1;
 			}
-		} elseif (date("m", $date) < $maskraz && empty($resetEveryMonth)) {
+		} elseif ((int) date("m", $date) < $maskraz && empty($resetEveryMonth)) {
 			// For backward compatibility
 			$yearoffset = -1;
 		}	// If current month lower that month of return to zero, year is previous year
 
 		if ($yearlen == 4) {
-			$yearcomp = sprintf("%04d", date("Y", $date) + $yearoffset);
+			$yearcomp = sprintf("%04d", idate("Y", $date) + $yearoffset);
 		} elseif ($yearlen == 2) {
-			$yearcomp = sprintf("%02d", date("y", $date) + $yearoffset);
+			$yearcomp = sprintf("%02d", idate("y", $date) + $yearoffset);
 		} elseif ($yearlen == 1) {
-			$yearcomp = substr(date('y', $date), 1, 1) + $yearoffset;
+			$yearcomp = (int) substr(date('y', $date), 1, 1) + $yearoffset;
 		}
 		if ($monthcomp > 1 && empty($resetEveryMonth)) {	// Test with month is useless if monthcomp = 0 or 1 (0 is same as 1) (regis: $monthcomp can't equal 0)
 			if ($yearlen == 4) {
-				$yearcomp1 = sprintf("%04d", date("Y", $date) + $yearoffset + 1);
+				$yearcomp1 = sprintf("%04d", idate("Y", $date) + $yearoffset + 1);
 			} elseif ($yearlen == 2) {
-				$yearcomp1 = sprintf("%02d", date("y", $date) + $yearoffset + 1);
+				$yearcomp1 = sprintf("%02d", idate("y", $date) + $yearoffset + 1);
 			}
 
 			$sqlwhere .= "(";
@@ -1191,8 +1196,10 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$maskLike = preg_replace('/\{y\}/i', '_', $maskLike);
 	$maskLike = preg_replace('/\{mm\}/i', '__', $maskLike);
 	$maskLike = preg_replace('/\{dd\}/i', '__', $maskLike);
+	// @phan-suppress-next-line PhanParamSuspiciousOrder
 	$maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'), str_pad("", dol_strlen($maskcounter), "_"), $maskLike);
 	if ($maskrefclient) {
+		// @phan-suppress-next-line PhanParamSuspiciousOrder
 		$maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), str_pad("", dol_strlen($maskrefclient), "_"), $maskLike);
 	}
 	if ($masktype) {
@@ -1215,6 +1222,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	// To ensure that all variables within the MAX() brackets are integers
 	// This avoid bad detection of max when data are noised with non numeric values at the position of the numero
 	if (getDolGlobalInt('MAIN_NUMBERING_FILTER_ON_INT_ONLY')) {
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$sql .= " AND ". $db->regexpsql($sqlstring, '^[0-9]+$', 1);
 	}
 
@@ -1264,6 +1272,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$maskLike = preg_replace('/\{dd\}/i', '__', $maskLike);
 		$maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'), $counterpadded, $maskLike);
 		if ($maskrefclient) {
+			// @phan-suppress-next-line PhanParamSuspiciousOrder
 			$maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), str_pad("", dol_strlen($maskrefclient), "_"), $maskLike);
 		}
 		if ($masktype) {
@@ -1331,7 +1340,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{y}'), '_', $maskrefclient_maskLike);
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{mm}'), '__', $maskrefclient_maskLike);
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{dd}'), '__', $maskrefclient_maskLike);
+			// @phan-suppress-next-line PhanParamSuspiciousOrder
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'), str_pad("", dol_strlen($maskcounter), "_"), $maskrefclient_maskLike);
+			// @phan-suppress-next-line PhanParamSuspiciousOrder
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), $maskrefclient_clientcode.str_pad("", dol_strlen($maskrefclient_maskcounter), "_"), $maskrefclient_maskLike);
 
 			// Get counter in database
@@ -1372,9 +1383,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
 		// We replace special codes except refclient
 		if (!empty($yearoffsettype) && !is_numeric($yearoffsettype) && $yearoffsettype != '=') {	// yearoffsettype is - or +, so we don't want current year
-			$numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date) + $yearoffset, $numFinal);
-			$numFinal = preg_replace('/\{yy\}/i', date("y", $date) + $yearoffset, $numFinal);
-			$numFinal = preg_replace('/\{y\}/i', substr(date("y", $date), 1, 1) + $yearoffset, $numFinal);
+			$numFinal = preg_replace('/\{yyyy\}/i', (string) ((int) date("Y", $date) + $yearoffset), $numFinal);
+			$numFinal = preg_replace('/\{yy\}/i', (string) ((int) date("y", $date) + $yearoffset), $numFinal);
+			$numFinal = preg_replace('/\{y\}/i', (string) ((int) substr((string) date("y", $date), 1, 1) + $yearoffset), $numFinal);
 		} else { // we want yyyy to be current year
 			$numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date), $numFinal);
 			$numFinal = preg_replace('/\{yy\}/i', date("y", $date), $numFinal);
@@ -1413,6 +1424,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskuser_maskafter = $maskuser_value;
 			$numFinal = str_replace($maskuser_maskbefore, $maskuser_maskafter, $numFinal);
 		}
+	} else {
+		$numFinal = "ErrorBadMode";
+		dol_syslog("functions2::get_next_value ErrorBadMode '$mode'", LOG_ERR);
 	}
 
 	dol_syslog("functions2::get_next_value return ".$numFinal, LOG_DEBUG);
@@ -1420,23 +1434,28 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 }
 
 /**
- * Get string between
+ * Get string from "$start" up to "$end"
+ *
+ * If string is "STARTcontentEND" and $start is "START" and $end is "END",
+ * then this function returns "content"
  *
  * @param   string  $string     String to test
- * @param   int     $start      Value for start
- * @param   int     $end        Value for end
+ * @param   string  $start      String Value for start
+ * @param   string  $end        String Value for end
  * @return  string              Return part of string
  */
 function get_string_between($string, $start, $end)
 {
-	$string = " ".$string;
 	$ini = strpos($string, $start);
-	if ($ini == 0) {
-		return "";
+	if ($ini === false) {
+		return '';
 	}
 	$ini += strlen($start);
-	$len = strpos($string, $end, $ini) - $ini;
-	return substr($string, $ini, $len);
+	$endpos = strpos($string, $end, $ini);
+	if ($endpos === false) {
+		return '';
+	}
+	return substr($string, $ini, $endpos - $ini);
 }
 
 /**
@@ -1522,7 +1541,7 @@ function check_value($mask, $value)
 	}
 	if ($maskraz >= 0) {
 		if ($maskraz == 99) {
-			$maskraz = date('m');
+			$maskraz = (int) date('m');
 			$resetEveryMonth = true;
 		}
 		if ($maskraz > 12) {
@@ -1573,8 +1592,9 @@ function check_value($mask, $value)
 function binhex($bin, $pad = false, $upper = false)
 {
 	$last = dol_strlen($bin) - 1;
+	$x = 0;
 	for ($i = 0; $i <= $last; $i++) {
-		$x += $bin[$last - $i] * pow(2, $i);
+		$x += ($bin[$last - $i] ? 1 : 0) << $i;
 	}
 	$x = dechex($x);
 	if ($pad) {
@@ -1616,9 +1636,9 @@ function numero_semaine($time)
 
 	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/i', $stime, $reg)) {
 		// Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
-		$annee = $reg[1];
-		$mois = $reg[2];
-		$jour = $reg[3];
+		$annee = (int) $reg[1];
+		$mois = (int) $reg[2];
+		$jour = (int) $reg[3];
 	}
 
 	/*
@@ -1629,40 +1649,46 @@ function numero_semaine($time)
 	 */
 
 	// Definition du Jeudi de la semaine
-	if (date("w", mktime(12, 0, 0, $mois, $jour, $annee)) == 0) { // Dimanche
+	if ((int) date("w", mktime(12, 0, 0, $mois, $jour, $annee)) == 0) { // Dimanche
 		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) - 3 * 24 * 60 * 60;
 	} elseif (date("w", mktime(12, 0, 0, $mois, $jour, $annee)) < 4) { // du Lundi au Mercredi
-		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) + (4 - date("w", mktime(12, 0, 0, $mois, $jour, $annee))) * 24 * 60 * 60;
-	} elseif (date("w", mktime(12, 0, 0, $mois, $jour, $annee)) > 4) { // du Vendredi au Samedi
-		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) - (date("w", mktime(12, 0, 0, $mois, $jour, $annee)) - 4) * 24 * 60 * 60;
+		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) + (4 - (int) date("w", mktime(12, 0, 0, $mois, $jour, $annee))) * 24 * 60 * 60;
+	} elseif ((int) date("w", mktime(12, 0, 0, $mois, $jour, $annee)) > 4) { // du Vendredi au Samedi
+		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee) - ((int) date("w", mktime(12, 0, 0, $mois, $jour, $annee)) - 4) * 24 * 60 * 60;
 	} else { // Jeudi
 		$jeudiSemaine = mktime(12, 0, 0, $mois, $jour, $annee);
 	}
 
 	// Definition du premier Jeudi de l'annee
-	if (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) == 0) { // Dimanche
-		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)) + 4 * 24 * 60 * 60;
-	} elseif (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) < 4) { // du Lundi au Mercredi
-		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)) + (4 - date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))) * 24 * 60 * 60;
-	} elseif (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) > 4) { // du Vendredi au Samedi
-		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)) + (7 - (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) - 4)) * 24 * 60 * 60;
+	if ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) == 0) { // Dimanche
+		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine)) + 4 * 24 * 60 * 60;
+	} elseif ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) < 4) { // du Lundi au Mercredi
+		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine)) + (4 - (int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine)))) * 24 * 60 * 60;
+	} elseif ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) > 4) { // du Vendredi au Samedi
+		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine)) + (7 - ((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) - 4)) * 24 * 60 * 60;
 	} else { // Jeudi
-		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine));
+		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine));
 	}
 
 	// Definition du numero de semaine: nb de jours entre "premier Jeudi de l'annee" et "Jeudi de la semaine";
 	$numeroSemaine = (
 		(
-		date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
-	-
-	date("z", mktime(12, 0, 0, date("m", $premierJeudiAnnee), date("d", $premierJeudiAnnee), date("Y", $premierJeudiAnnee)))
-	) / 7
+			(int) date("z", mktime(12, 0, 0, (int) date("m", $jeudiSemaine), (int) date("d", $jeudiSemaine), (int) date("Y", $jeudiSemaine)))
+		-
+		(int) date("z", mktime(12, 0, 0, (int) date("m", $premierJeudiAnnee), (int) date("d", $premierJeudiAnnee), (int) date("Y", $premierJeudiAnnee)))
+		) / 7
 	) + 1;
 
 	// Cas particulier de la semaine 53
 	if ($numeroSemaine == 53) {
-		// Les annees qui commence un Jeudi et les annees bissextiles commencant un Mercredi en possede 53
-		if (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) == 4 || (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) == 3 && date("z", mktime(12, 0, 0, 12, 31, date("Y", $jeudiSemaine))) == 365)) {
+		// Les annees qui commencent un Jeudi et les annees bissextiles commencant un Mercredi en possedent 53
+		if (
+			((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) == 4)
+			|| (
+				((int) date("w", mktime(12, 0, 0, 1, 1, (int) date("Y", $jeudiSemaine))) == 3)
+				&& ((int) date("z", mktime(12, 0, 0, 12, 31, (int) date("Y", $jeudiSemaine))) == 365)
+			)
+		) {
 			$numeroSemaine = 53;
 		} else {
 			$numeroSemaine = 1;
@@ -1908,7 +1934,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 					}
 					if (is_dir($tmpdir)) {
 						// all type of template is allowed
-						$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '', '', 'name', SORT_ASC, 0);
+						$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '', null, 'name', SORT_ASC, 0);
 						if (count($tmpfiles)) {
 							$listoffiles = array_merge($listoffiles, $tmpfiles);
 						}
@@ -2027,8 +2053,8 @@ function getSoapParams()
 	$response_timeout = (!getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT); // Response timeout
 	//print extension_loaded('soap');
 	if ($proxyuse) {
-		$params = array('connection_timeout'=>$timeout,
-					  'response_timeout'=>$response_timeout,
+		$params = array('connection_timeout' => $timeout,
+					  'response_timeout' => $response_timeout,
 					  'proxy_use'      => 1,
 					  'proxy_host'     => $proxyhost,
 					  'proxy_port'     => $proxyport,
@@ -2037,8 +2063,8 @@ function getSoapParams()
 					  'trace'		   => 1
 		);
 	} else {
-		$params = array('connection_timeout'=>$timeout,
-					  'response_timeout'=>$response_timeout,
+		$params = array('connection_timeout' => $timeout,
+					  'response_timeout' => $response_timeout,
 					  'proxy_use'      => 0,
 					  'proxy_host'     => false,
 					  'proxy_port'     => false,
@@ -2501,25 +2527,25 @@ function colorLighten($hex, $percent)
 
 
 /**
- * @param string 	$hex 			color in hex
- * @param float 	$alpha 			0 to 1 to add alpha channel
- * @param bool 		$returnArray	true=return an array instead, false=return string
- * @return string|array				String or array
+ * @param string 		$hex 			color in hex
+ * @param float|false	$alpha 			0 to 1 to add alpha channel
+ * @param bool 			$returnArray	true=return an array instead, false=return string
+ * @return string|array					String or array
  */
 function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 {
 	$string = '';
-	$hex      = str_replace('#', '', $hex);
-	$length   = strlen($hex);
+	$hex = str_replace('#', '', $hex);
+	$length = strlen($hex);
 	$rgb = array();
 	$rgb['r'] = hexdec($length == 6 ? substr($hex, 0, 2) : ($length == 3 ? str_repeat(substr($hex, 0, 1), 2) : 0));
 	$rgb['g'] = hexdec($length == 6 ? substr($hex, 2, 2) : ($length == 3 ? str_repeat(substr($hex, 1, 1), 2) : 0));
 	$rgb['b'] = hexdec($length == 6 ? substr($hex, 4, 2) : ($length == 3 ? str_repeat(substr($hex, 2, 1), 2) : 0));
 	if ($alpha !== false) {
 		$rgb['a'] = (float) $alpha;
-		$string = 'rgba('.implode(',', $rgb).')';
+		$string = 'rgba('.implode(',', array_map('strval', $rgb)).')';
 	} else {
-		$string = 'rgb('.implode(',', $rgb).')';
+		$string = 'rgb('.implode(',', array_map('strval', $rgb)).')';
 	}
 
 	if ($returnArray) {
@@ -2569,8 +2595,8 @@ function colorHexToHsl($hex, $alpha = false, $returnArray = false)
 		$saturation += 1;
 	}
 
-	$lightness = round($lightness*100);
-	$saturation = round($saturation*100);
+	$lightness = round($lightness * 100);
+	$saturation = round($saturation * 100);
 
 	if ($returnArray) {
 		return array(
@@ -2672,6 +2698,10 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'accountancy';
 	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions', 'partnerships', 'recruitments'))) {
 		$moduledirforclass = preg_replace('/s$/', '', $moduleobject);
+	} elseif ($moduleobject == 'paymentsalaries') {
+		$moduledirforclass = 'salaries';
+	} elseif ($moduleobject == 'paymentexpensereports') {
+		$moduledirforclass = 'expensereport';
 	}
 
 	return $moduledirforclass;
@@ -2711,7 +2741,7 @@ if (!function_exists('dolEscapeXML')) {
 	 */
 	function dolEscapeXML($string)
 	{
-		return strtr($string, array('\''=>'&apos;', '"'=>'&quot;', '&'=>'&amp;', '<'=>'&lt;', '>'=>'&gt;'));
+		return strtr($string, array('\'' => '&apos;', '"' => '&quot;', '&' => '&amp;', '<' => '&lt;', '>' => '&gt;'));
 	}
 }
 
@@ -2832,6 +2862,7 @@ function phpSyntaxError($code)
 	ob_start();
 	$code = substr($code, strlen('<?php '));
 	$braces || $code = "if(0){{$code}\n}";
+	// @phan-suppress-next-line PhanPluginUnsafeEval
 	if (eval($code) === false) {
 		if ($braces) {
 			$braces = PHP_INT_MAX;
@@ -2844,8 +2875,8 @@ function phpSyntaxError($code)
 		if (preg_match("'syntax error, (.+) in .+ on line (\d+)$'s", $code, $code)) {
 			$code[2] = (int) $code[2];
 			$code = $code[2] <= $braces
-			? array($code[1], $code[2])
-			: array('unexpected $end'.substr($code[1], 14), $braces);
+				? array($code[1], $code[2])
+				: array('unexpected $end'.substr($code[1], 14), $braces);
 		} else {
 			$code = array('syntax error', 0);
 		}

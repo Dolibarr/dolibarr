@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Spravujte a sledujte náborové kampane na nové pracovn
 # Admin page
 #
 RecruitmentSetup = Nastavenie náboru
-Settings = nastavenie
 RecruitmentSetupPage = Tu zadajte nastavenie hlavných možností pre modul náboru
 RecruitmentArea=Oblasť náboru
 PublicInterfaceRecruitmentDesc=Verejné stránky úloh sú verejné adresy URL na zobrazenie a odpovedanie na otvorené úlohy. Pre každú otvorenú úlohu existuje jeden odlišný odkaz, ktorý sa nachádza v každom zázname o úlohe.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Povoliť verejné stránky otvorených úloh
 #
 # About page
 #
-About = O
 RecruitmentAbout = O nábore
 RecruitmentAboutPage = Nábor o stránke
 NbOfEmployeesExpected=Očakávaný počet zamestnancov

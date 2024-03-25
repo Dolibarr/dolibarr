@@ -38,10 +38,10 @@ ListOfPartnerships=Partnerības saraksts
 PartnershipSetup=Partnerības iestatīšana
 PartnershipAbout=Par partnerību
 PartnershipAboutPage=Partnerība par lapu
-partnershipforthirdpartyormember=Partnera statusam jābūt iestatītam “trešajai pusei” vai “dalībniekam”
+partnershipforthirdpartyormember=Partnera statusam ir jābūt iestatītam uz “trešā puse” vai “biedrs”
 PARTNERSHIP_IS_MANAGED_FOR=Partnerattiecības pārvaldītas
 PARTNERSHIP_BACKLINKS_TO_CHECK=Atpakaļsaites, lai pārbaudītu
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb dienas pirms partnerības statusa atcelšanas, kad abonements ir beidzies
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Dienu skaits pirms partnerības statusa atcelšanas, kad abonements ir beidzies
 ReferingWebsiteCheck=Vietnes atsauces pārbaude
 ReferingWebsiteCheckDesc=Varat iespējot funkciju, lai pārbaudītu, vai jūsu partneri ir pievienojuši atpakaļsaišu jūsu vietnes domēniem savā vietnē.
 PublicFormRegistrationPartnerDesc=Dolibarr var nodrošināt jums publisku URL/tīmekļa vietni, lai ārējie apmeklētāji varētu pieprasīt dalību partnerības programmā.
@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Šim dalībniekam veltīta partnerība
 DatePartnershipStart=Sākuma datums
 DatePartnershipEnd=Beigu datums
 ReasonDecline=Noraidīt iemeslu
-ReasonDeclineOrCancel=Noraidīt iemeslu
+ReasonDeclineOrCancel=Atteikuma vai atcelšanas iemesls
 PartnershipAlreadyExist=Partnerattiecības jau pastāv
 ManagePartnership=Pārvaldiet partnerību
 BacklinkNotFoundOnPartnerWebsite=Atpakaļsaite nav atrasta partnera vietnē
@@ -82,16 +82,17 @@ YourPartnershipRefusedTopic=Partnerība atteikta
 YourPartnershipAcceptedTopic=Partnerība pieņemta
 YourPartnershipCanceledTopic=Partnerattiecības atceltas
 
-YourPartnershipWillSoonBeCanceledContent=Mēs jūs informējam, ka jūsu partnerība drīz tiks atcelta (atpakaļsaite nav atrasta)
-YourPartnershipRefusedContent=Mēs jūs informējam, ka jūsu partnerības pieprasījums ir noraidīts.
-YourPartnershipAcceptedContent=Mēs jūs informējam, ka jūsu partnerības pieprasījums ir pieņemts.
-YourPartnershipCanceledContent=Mēs jūs informējam, ka jūsu partnerattiecības ir atceltas.
+YourPartnershipWillSoonBeCanceledContent=Vēlamies jūs informēt, ka mūsu partnerība drīzumā tiks pārtraukta (nesaņēmām atjaunošanu vai nav izpildīts mūsu partnerības priekšnoteikums). Lūdzu, sazinieties ar mums, ja to saņēmāt kļūdas dēļ.
+YourPartnershipRefusedContent=Vēlamies jūs informēt, ka jūsu partnerības pieprasījums ir noraidīts. Priekšnosacījumi nav izpildīti. Lūdzu, sazinieties ar mums, ja jums nepieciešama papildu informācija.
+YourPartnershipAcceptedContent=Vēlamies jūs informēt, ka jūsu partnerības pieprasījums ir pieņemts.
+YourPartnershipCanceledContent=Vēlamies jūs informēt, ka mūsu partnerība ir pārtraukta. Lūdzu, sazinieties ar mums, ja jums nepieciešama papildu informācija.
 
 CountLastUrlCheckError=Kļūdu skaits pēdējā URL pārbaudē
 LastCheckBacklink=Pēdējās URL pārbaudes datums
-ReasonDeclineOrCancel=Noraidīt iemeslu
 
 NewPartnershipRequest=Jauns partnerības pieprasījums
 NewPartnershipRequestDesc=Šī veidlapa ļauj jums pieprasīt dalību kādā no mūsu partnerības programmām. Ja jums nepieciešama palīdzība, lai aizpildītu šo veidlapu, lūdzu, sazinieties pa e-pastu <b> %s </b> .
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Šajā lapā ir jābūt vismaz vienai saitei uz vienu no šiem domēniem: %s
+
+IPOfApplicant=Pretendenta IP
 

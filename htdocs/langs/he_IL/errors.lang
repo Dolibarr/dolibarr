@@ -8,14 +8,14 @@ ErrorBadEMail=כתובת האימייל %s שגויה
 ErrorBadMXDomain=דוא"ל %s נראה שגוי (לדומיין אין רשומת MX חוקית)
 ErrorBadUrl=כתובת האתר %s שגויה
 ErrorBadValueForParamNotAString=ערך גרוע לפרמטר שלך. זה מצורף בדרך כלל כאשר חסר תרגום.
-ErrorRefAlreadyExists=הפניה <b>%s</b> כבר קיימת.
+ErrorRefAlreadyExists=Reference <b>%s</b> used for creation already exists.
 ErrorTitleAlreadyExists=הכותרת <b>%s</b> כבר קיימת.
 ErrorLoginAlreadyExists=הכניסה %s כבר קיימת.
 ErrorGroupAlreadyExists=הקבוצה %s כבר קיימת.
 ErrorEmailAlreadyExists=דוא"ל %s כבר קיים.
 ErrorRecordNotFound=רשומה לא נמצאה.
 ErrorRecordNotFoundShort=לא נמצא
-ErrorFailToCopyFile=נכשלה העתקת הקובץ '<b>%s</b>' אל '<span class' ='notranslate'><b></span>%s</b>'.
+ErrorFailToCopyFile=Failed to copy file '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToCopyDir=נכשלה העתקת הספרייה '<b>%s</b>' אל '<b>%s</b>'.
 ErrorFailToRenameFile=נכשל שינוי שם הקובץ '<b>%s</b>' ל-'<b>%s</b>'.
 ErrorFailToDeleteFile=הסרת הקובץ '<b>%s</b>' נכשלה.
@@ -51,7 +51,7 @@ ErrorBadDateFormat=לערך '%s' יש פורמט תאריך שגוי
 ErrorWrongDate=התאריך לא נכון!
 ErrorFailedToWriteInDir=נכשל כתיבה בספרייה %s
 ErrorFailedToBuildArchive=בניית קובץ הארכיון נכשלה %s
-ErrorFoundBadEmailInFile=נמצא תחביר דוא"ל שגוי עבור שורות %s בקובץ (שורה לדוגמא %s עם email=<span class='notranslate'>b0ecb2ec87f49f /span>)
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=%s)
 ErrorUserCannotBeDelete=לא ניתן למחוק את המשתמש. אולי זה משויך לישויות Dolibarr.
 ErrorFieldsRequired=כמה שדות חובה נותרו ריקים.
 ErrorSubjectIsRequired=נושא הדוא"ל נדרש
@@ -87,7 +87,6 @@ ErrorExportDuplicateProfil=שם הפרופיל הזה כבר קיים עבור �
 ErrorLDAPSetupNotComplete=התאמת Dolibarr-LDAP לא הושלמה.
 ErrorLDAPMakeManualTest=קובץ .ldif נוצר בספרייה %s. נסה לטעון אותו ידנית משורת הפקודה כדי לקבל מידע נוסף על שגיאות.
 ErrorCantSaveADoneUserWithZeroPercentage=לא ניתן לשמור פעולה עם "סטטוס לא התחיל" אם גם השדה "בוצע על ידי" ממולא.
-ErrorRefAlreadyExists=הפניה <b>%s</b> כבר קיימת.
 ErrorPleaseTypeBankTransactionReportName=נא להזין את שם דף חשבון הבנק שבו יש לדווח על הרישום (פורמט YYYYMM או YYYYMMDD)
 ErrorRecordHasChildren=מחיקת הרשומה נכשלה מכיוון שיש לה כמה רשומות צאצא.
 ErrorRecordHasAtLeastOneChildOfType=לאובייקט %s יש לפחות בן אחד מסוג %s
@@ -96,9 +95,9 @@ ErrorModuleRequireJavascript=אין להשבית את JavaScript כדי שתכו
 ErrorPasswordsMustMatch=שתי הסיסמאות המוקלדות חייבות להתאים זו לזו
 ErrorContactEMail=אירעה שגיאה טכנית. אנא צור קשר עם מנהל המערכת כדי לשלוח את הדוא"ל <b>%s</b> ולספק את השגיאה קוד <b>%s</b> בהודעה שלך, או הוסף עותק מסך של הדף הזה.
 ErrorWrongValueForField=שדה <b>%s</b>: ' <b>%s</b>' אינו תואם את כלל הביטוי הרגולרי b065837f %s</b>
-ErrorHtmlInjectionForField=שדה <b>%s</b>: הערך '<span class='notranslate' '><b></span>%s</b>' מכיל נתונים זדוניים אסורים
+ErrorHtmlInjectionForField=Field <b>%s</b>: The value '<b>%s</b>' contains a malicious data not allowed
 ErrorFieldValueNotIn=שדה <b>%s</b>: ' <b>%s</b>' אינו ערך שנמצא בשדה b30583fz span>%s</b> מתוך <b> %s</b>
-ErrorFieldRefNotIn=שדה <b>%s</b>: ' <b>%s</b>' אינו b0aee873365 class='notranslate'>%s</span></b> ref קיים
+ErrorFieldRefNotIn=Field <b>%s</b>: '<b>%s</b>' is not a <b>%s</b> existing ref
 ErrorMultipleRecordFoundFromRef=נמצאו מספר רשומות בעת חיפוש מ-ref <b>%s</b>. אין דרך לדעת באיזה תעודת זהות להשתמש.
 ErrorsOnXLines=נמצאו שגיאות %s
 ErrorFileIsInfectedWithAVirus=תוכנית האנטי וירוס לא הצליחה לאמת את הקובץ (ייתכן שהקובץ נגוע בווירוס)
@@ -264,7 +263,7 @@ ErrorReplaceStringEmpty=שגיאה, המחרוזת להחלפה ריקה
 ErrorProductNeedBatchNumber=שגיאה, המוצר '<b>%s</b>' צריך הרבה/מספר סידורי
 ErrorProductDoesNotNeedBatchNumber=שגיאה, המוצר '<b>%s</b>' אינו מקבל הרבה/ מספר סידורי
 ErrorFailedToReadObject=שגיאה, כשל בקריאת אובייקט מסוג <b>%s</b>
-ErrorParameterMustBeEnabledToAllwoThisFeature=שגיאה, יש להפעיל את הפרמטר <b>%s</b> ב-<span class 'notranslate'><b></span>conf/conf.php<> כדי לאפשר שימוש בממשק שורת הפקודה על ידי מתזמן המשימות הפנימי
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php<> to allow use of Command Line Interface by the internal job scheduler
 ErrorLoginDateValidity=שגיאה, התחברות זו היא מחוץ לטווח תאריכי התוקף
 ErrorValueLength=אורך השדה '<b>%s</b>' חייב להיות גבוה מ-'<b>%s</b>'
 ErrorReservedKeyword=המילה '<b>%s</b>' היא מילת מפתח שמורה
@@ -326,6 +325,7 @@ ErrorSVGFilesNotAllowedAsLinksWithout=קובצי SVG אינם מותרים כק�
 ErrorTypeMenu=בלתי אפשרי להוסיף תפריט נוסף עבור אותו מודול בסרגל הניווט, עדיין לא לטפל
 ErrorObjectNotFound = האובייקט <b>%s</b> לא נמצא, אנא בדוק את כתובת האתר שלך
 ErrorCountryCodeMustBe2Char=קוד המדינה חייב להיות מחרוזת בת 2 תווים
+ErrorABatchShouldNotContainsSpaces=A lot or serial number should not contains spaces
 
 ErrorTableExist=הטבלה <b>%s</b> כבר קיימת
 ErrorDictionaryNotFound=מילון <b>%s</b> לא נמצא
@@ -349,7 +349,7 @@ WarningCloseAlways=אזהרה, הסגירה מתבצעת גם אם הכמות ש
 WarningUsingThisBoxSlowDown=אזהרה, שימוש בתיבה זו האט ברצינות את כל הדפים המציגים את התיבה.
 WarningClickToDialUserSetupNotComplete=ההגדרה של מידע ClickToDial עבור המשתמש שלך לא הושלמה (ראה את הכרטיסייה ClickToDial בכרטיס המשתמש שלך).
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=התכונה מושבתת כאשר הגדרת התצוגה מותאמת לאדם עיוור או לדפדפני טקסט.
-WarningPaymentDateLowerThanInvoiceDate=תאריך התשלום (%s) מוקדם מתאריך החשבונית (%s) עבור חשבונית <span class='notranslate'>b0ecb2ec87f49fz span>.
+WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s.
 WarningTooManyDataPleaseUseMoreFilters=יותר מדי נתונים (יותר משורות %s). אנא השתמש בעוד מסננים או הגדר את הקבוע %s לגבול גבוה יותר.
 WarningSomeLinesWithNullHourlyRate=חלק מהפעמים תועדו על ידי חלק מהמשתמשים בעוד התעריף השעתי שלהם לא הוגדר. נעשה שימוש בערך של 0 %s לשעה, אך הדבר עלול לגרום להערכה שגויה של הזמן המושקע.
 WarningYourLoginWasModifiedPleaseLogin=פרטי הכניסה שלך השתנו. למטרות אבטחה תצטרך להתחבר עם פרטי הכניסה החדשים שלך לפני הפעולה הבאה.
@@ -404,3 +404,10 @@ BadSetupOfFieldClassNotFoundForValidation = שגיאה בהגדרה שגויה �
 BadSetupOfFieldFileNotFound = שגיאה בהגדרה שגויה של השדה: הקובץ לא נמצא להכללה
 BadSetupOfFieldFetchNotCallable = שגיאה בהגדרה שגויה של השדה: לא ניתן להתקשר לאחזור בכיתה
 ErrorTooManyAttempts= יותר מדי ניסיונות, אנא נסה שוב מאוחר יותר
+
+TotalAmountEmpty=Total Amount Empty
+FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
+ThisIdNotDefined=Id not defined
+OperNotDefined=Payment method not defined
+ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
+ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.

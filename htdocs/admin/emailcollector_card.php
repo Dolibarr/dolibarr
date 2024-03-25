@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2022 Charlene Benke	   <charlene@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ if (!isModEnabled('emailcollector')) {
 $langs->loadLangs(array("admin", "mails", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
@@ -61,7 +62,7 @@ $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'emailcollectorcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$operationid = GETPOST('operationid', 'int');
+$operationid = GETPOSTINT('operationid');
 
 // Initialize technical objects
 $object = new EmailCollector($db);
@@ -154,7 +155,7 @@ if (GETPOST('addfilter', 'alpha')) {
 
 if ($action == 'deletefilter') {
 	$emailcollectorfilter = new EmailCollectorFilter($db);
-	$emailcollectorfilter->fetch(GETPOST('filterid', 'int'));
+	$emailcollectorfilter->fetch(GETPOSTINT('filterid'));
 	if ($emailcollectorfilter->id > 0) {
 		$result = $emailcollectorfilter->delete($user);
 		if ($result > 0) {
@@ -198,7 +199,7 @@ if (GETPOST('addoperation', 'alpha')) {
 
 if ($action == 'updateoperation') {
 	$emailcollectoroperation = new EmailCollectorAction($db);
-	$emailcollectoroperation->fetch(GETPOST('rowidoperation2', 'int'));
+	$emailcollectoroperation->fetch(GETPOSTINT('rowidoperation2'));
 
 	$emailcollectoroperation->actionparam = GETPOST('operationparam2', 'alphawithlgt');
 
@@ -221,7 +222,7 @@ if ($action == 'updateoperation') {
 }
 if ($action == 'deleteoperation') {
 	$emailcollectoroperation = new EmailCollectorAction($db);
-	$emailcollectoroperation->fetch(GETPOST('operationid', 'int'));
+	$emailcollectoroperation->fetch(GETPOSTINT('operationid'));
 	if ($emailcollectoroperation->id > 0) {
 		$result = $emailcollectoroperation->delete($user);
 		if ($result > 0) {
@@ -516,7 +517,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					$client->connect();
 
 					$f = $client->getFolders(false, $object->source_directory);
-					$nbemail = $f[0]->examine()["exists"];
+					if ($f->total() >= 1) {
+						$folder = $f[0];
+						if ($folder instanceof Webklex\PHPIMAP\Folder) {
+							$nbemail = $folder->examine()["exists"];
+						} else {
+							$nbemail = 0;
+						}
+					} else {
+						$nbemail = 0;
+					}
 					$morehtml .= $nbemail;
 				} catch (ConnectionFailedException $e) {
 					$morehtml .= 'ConnectionFailedException '.$e->getMessage();
@@ -611,31 +621,31 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<tr class="oddeven nodrag nodrop">';
 	print '<td>';
 	$arrayoftypes = array(
-		'from'=>array('label'=>'MailFrom', 'data-placeholder'=>$langs->trans('SearchString')),
-		'to'=>array('label'=>'MailTo', 'data-placeholder'=>$langs->trans('SearchString')),
-		'cc'=>array('label'=>'Cc', 'data-placeholder'=>$langs->trans('SearchString')),
-		'bcc'=>array('label'=>'Bcc', 'data-placeholder'=>$langs->trans('SearchString')),
-		'replyto'=>array('label'=>'ReplyTo', 'data-placeholder'=>$langs->trans('SearchString')),
-		'subject'=>array('label'=>'Subject', 'data-placeholder'=>$langs->trans('SearchString')),
-		'body'=>array('label'=>'Body', 'data-placeholder'=>$langs->trans('SearchString')),
+		'from' => array('label' => 'MailFrom', 'data-placeholder' => $langs->trans('SearchString')),
+		'to' => array('label' => 'MailTo', 'data-placeholder' => $langs->trans('SearchString')),
+		'cc' => array('label' => 'Cc', 'data-placeholder' => $langs->trans('SearchString')),
+		'bcc' => array('label' => 'Bcc', 'data-placeholder' => $langs->trans('SearchString')),
+		'replyto' => array('label' => 'ReplyTo', 'data-placeholder' => $langs->trans('SearchString')),
+		'subject' => array('label' => 'Subject', 'data-placeholder' => $langs->trans('SearchString')),
+		'body' => array('label' => 'Body', 'data-placeholder' => $langs->trans('SearchString')),
 		// disabled because PHP imap_search is not compatible IMAPv4, only IMAPv2
 		//'header'=>array('label'=>'Header', 'data-placeholder'=>'HeaderKey SearchString'),                // HEADER key value
 		//'X1'=>'---',
-		'X2'=>'---',
-		'seen'=>array('label'=>'AlreadyRead', 'data-noparam'=>1),
-		'unseen'=>array('label'=>'NotRead', 'data-noparam'=>1),
-		'unanswered'=>array('label'=>'Unanswered', 'data-noparam'=>1),
-		'answered'=>array('label'=>'Answered', 'data-noparam'=>1),
-		'smaller'=>array('label'=>$langs->trans("Size").' ('.$langs->trans("SmallerThan").")", 'data-placeholder'=>$langs->trans('NumberOfBytes')),
-		'larger'=>array('label'=>$langs->trans("Size").' ('.$langs->trans("LargerThan").")", 'data-placeholder'=>$langs->trans('NumberOfBytes')),
-		'X3'=>'---',
-		'withtrackingid'=>array('label'=>'WithDolTrackingID', 'data-noparam'=>1),
-		'withouttrackingid'=>array('label'=>'WithoutDolTrackingID', 'data-noparam'=>1),
-		'withtrackingidinmsgid'=>array('label'=>'WithDolTrackingIDInMsgId', 'data-noparam'=>1),
-		'withouttrackingidinmsgid'=>array('label'=>'WithoutDolTrackingIDInMsgId', 'data-noparam'=>1),
-		'X4'=>'---',
-		'isnotanswer'=>array('label'=>'IsNotAnAnswer', 'data-noparam'=>1),
-		'isanswer'=>array('label'=>'IsAnAnswer', 'data-noparam'=>1)
+		'X2' => '---',
+		'seen' => array('label' => 'AlreadyRead', 'data-noparam' => 1),
+		'unseen' => array('label' => 'NotRead', 'data-noparam' => 1),
+		'unanswered' => array('label' => 'Unanswered', 'data-noparam' => 1),
+		'answered' => array('label' => 'Answered', 'data-noparam' => 1),
+		'smaller' => array('label' => $langs->trans("Size").' ('.$langs->trans("SmallerThan").")", 'data-placeholder' => $langs->trans('NumberOfBytes')),
+		'larger' => array('label' => $langs->trans("Size").' ('.$langs->trans("LargerThan").")", 'data-placeholder' => $langs->trans('NumberOfBytes')),
+		'X3' => '---',
+		'withtrackingid' => array('label' => 'WithDolTrackingID', 'data-noparam' => 1),
+		'withouttrackingid' => array('label' => 'WithoutDolTrackingID', 'data-noparam' => 1),
+		'withtrackingidinmsgid' => array('label' => 'WithDolTrackingIDInMsgId', 'data-noparam' => 1),
+		'withouttrackingidinmsgid' => array('label' => 'WithoutDolTrackingIDInMsgId', 'data-noparam' => 1),
+		'X4' => '---',
+		'isnotanswer' => array('label' => 'IsNotAnAnswer', 'data-noparam' => 1),
+		'isanswer' => array('label' => 'IsAnAnswer', 'data-noparam' => 1)
 	);
 	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth300', 1, '', 2);
 

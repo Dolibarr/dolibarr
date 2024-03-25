@@ -3,8 +3,9 @@
  * Copyright (C) 2004-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -413,13 +414,13 @@ class Tva extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return	int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->datep = '';
 		$this->datev = '';
 		$this->amount = '';
@@ -428,6 +429,8 @@ class Tva extends CommonObject
 		$this->fk_bank = 0;
 		$this->fk_user_creat = 0;
 		$this->fk_user_modif = 0;
+
+		return 1;
 	}
 
 
@@ -587,11 +590,11 @@ class Tva extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -4;
 		}
-		if (isModEnabled("banque") && (empty($this->accountid) || $this->accountid <= 0)) {
+		if (isModEnabled("bank") && (empty($this->accountid) || $this->accountid <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("BankAccount"));
 			return -5;
 		}
-		if (isModEnabled("banque") && (empty($this->type_payment) || $this->type_payment <= 0)) {
+		if (isModEnabled("bank") && (empty($this->type_payment) || $this->type_payment <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -5;
 		}
@@ -648,7 +651,7 @@ class Tva extends CommonObject
 
 			if ($this->id > 0) {
 				$ok = 1;
-				if (isModEnabled("banque") && !empty($this->amount)) {
+				if (isModEnabled("bank") && !empty($this->amount)) {
 					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -659,9 +662,9 @@ class Tva extends CommonObject
 					}
 
 					if ($this->amount > 0) {
-						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, -abs($this->amount), $this->num_payment, '', $user);
+						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, -abs((float) $this->amount), $this->num_payment, '', $user);
 					} else {
-						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, abs($this->amount), $this->num_payment, '', $user);
+						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, abs((float) $this->amount), $this->num_payment, '', $user);
 					}
 
 					// Update fk_bank into llx_tva. So we know vat line used to generate bank transaction

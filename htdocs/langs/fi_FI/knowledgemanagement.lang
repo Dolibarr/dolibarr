@@ -26,14 +26,12 @@ ModuleKnowledgeManagementDesc=Hallinnoi Knowledge Management (KM) tai Help-desk-
 # Admin page
 #
 KnowledgeManagementSetup = Tiedonhallintajärjestelmän asennus
-Settings = Asetukset
 KnowledgeManagementSetupPage = Tiedonhallintajärjestelmän asetussivu
 
 
 #
 # About page
 #
-About = Yleisesti
 KnowledgeManagementAbout = Tietoja tiedonhallinnasta
 KnowledgeManagementAboutPage = Tiedonhallinta sivusta
 

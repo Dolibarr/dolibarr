@@ -29,13 +29,14 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/user/class/user.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -45,36 +46,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class UserTest extends PHPUnit\Framework\TestCase
+class UserTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return UserTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
 	/**
 	 * setUpBeforeClass
 	 *
@@ -95,45 +68,6 @@ class UserTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
-
-	/**
 	 * testUserCreate
 	 *
 	 * @return  void
@@ -141,16 +75,16 @@ class UserTest extends PHPUnit\Framework\TestCase
 	public function testUserCreate()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		print __METHOD__." USER_PASSWORD_GENERATED=".getDolGlobalString('USER_PASSWORD_GENERATED')."\n";
 
-		$localobject=new User($db);
+		$localobject = new User($db);
 		$localobject->initAsSpecimen();
-		$result=$localobject->create($user);
+		$result = $localobject->create($user);
 
 		$this->assertLessThan($result, 0, 'Creation of user has failed: '.$localobject->error);
 		print __METHOD__." result=".$result."\n";
@@ -168,13 +102,13 @@ class UserTest extends PHPUnit\Framework\TestCase
 	public function testUserFetch($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new User($db);
-		$result=$localobject->fetch($id);
+		$localobject = new User($db);
+		$result = $localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -192,19 +126,19 @@ class UserTest extends PHPUnit\Framework\TestCase
 	public function testUserUpdate($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$this->changeProperties($localobject);
-		$result=$localobject->update($user);
+		$result = $localobject->update($user);
 
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
 		// Test everything are still same than specimen
-		$newlocalobject=new User($db);
+		$newlocalobject = new User($db);
 		$newlocalobject->initAsSpecimen();
 		$this->changeProperties($newlocalobject);
 		$this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('id','socid','societe_id','specimen','note','ref','pass','pass_indatabase','pass_indatabase_crypted','pass_temp','datec','datem','datelastlogin','datepreviouslogin','flagdelsessionsbefore','iplastlogin','ippreviouslogin','trackid')), array());    // Actual, Expected
@@ -223,12 +157,12 @@ class UserTest extends PHPUnit\Framework\TestCase
 	public function testUserDisable($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$result=$localobject->setstatus(0);
+		$result = $localobject->setstatus(0);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
 		$this->assertLessThan($result, 0);
@@ -247,10 +181,10 @@ class UserTest extends PHPUnit\Framework\TestCase
 	public function testUserOther($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		/*$result=$localobject->setstatus(0);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
@@ -273,10 +207,10 @@ class UserTest extends PHPUnit\Framework\TestCase
 	public function testUserHasRight($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 		/*$result=$localobject->setstatus(0);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -305,10 +239,10 @@ class UserTest extends PHPUnit\Framework\TestCase
 	public function testUserSetPassword($localobject)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		// Test the 'none' password generator
 
@@ -418,14 +352,14 @@ class UserTest extends PHPUnit\Framework\TestCase
 	public function testUserDelete($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new User($db);
-		$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+		$localobject = new User($db);
+		$result = $localobject->fetch($id);
+		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -443,14 +377,14 @@ class UserTest extends PHPUnit\Framework\TestCase
 	public function testUserAddPermission($id)
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localobject=new User($db);
-		$result=$localobject->fetch(1);			// Other tests use the user id 1
-		$result=$localobject->addrights(0, 'supplier_proposal');
+		$localobject = new User($db);
+		$result = $localobject->fetch(1);			// Other tests use the user id 1
+		$result = $localobject->addrights(0, 'supplier_proposal');
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -467,7 +401,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	 */
 	public function changeProperties(&$localobject)
 	{
-		$localobject->note_private='New note after update';
+		$localobject->note_private = 'New note after update';
 	}
 
 	/**
@@ -481,23 +415,23 @@ class UserTest extends PHPUnit\Framework\TestCase
 	 */
 	public function objCompare($oA, $oB, $ignoretype = true, $fieldstoignorearray = array('id'))
 	{
-		$retAr=array();
+		$retAr = array();
 
 		if (get_class($oA) !== get_class($oB)) {
-			$retAr[]="Supplied objects are not of same class.";
+			$retAr[] = "Supplied objects are not of same class.";
 		} else {
-			$oVarsA=get_object_vars($oA);
-			$oVarsB=get_object_vars($oB);
-			$aKeys=array_keys($oVarsA);
+			$oVarsA = get_object_vars($oA);
+			$oVarsB = get_object_vars($oB);
+			$aKeys = array_keys($oVarsA);
 			foreach ($aKeys as $sKey) {
 				if (in_array($sKey, $fieldstoignorearray)) {
 					continue;
 				}
 				if (! $ignoretype && ($oVarsA[$sKey] !== $oVarsB[$sKey])) {
-					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
+					$retAr[] = $sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
 				}
 				if ($ignoretype && ($oVarsA[$sKey] != $oVarsB[$sKey])) {
-					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
+					$retAr[] = $sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
 				}
 			}
 		}

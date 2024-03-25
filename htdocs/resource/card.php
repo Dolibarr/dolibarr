@@ -49,6 +49,7 @@ $description			= GETPOST('description', 'restricthtml');
 $phone					= GETPOST('phone', 'alpha');
 $email					= GETPOST('email', 'alpha');
 $max_users				= GETPOSTINT('max_users');
+$url					= GETPOST('url', 'alpha');
 $confirm				= GETPOST('confirm', 'aZ09');
 $fk_code_type_resource	= GETPOST('fk_code_type_resource', 'aZ09');
 
@@ -115,6 +116,7 @@ if (empty($reshook)) {
 				$object->phone					= $phone;
 				$object->email					= $email;
 				$object->max_users				= $max_users;
+				$object->url					= $url;
 				$object->fk_code_type_resource	= $fk_code_type_resource;
 
 				// Fill array 'array_options' with data from add form
@@ -162,6 +164,7 @@ if (empty($reshook)) {
 				$object->phone					= $phone;
 				$object->email					= $email;
 				$object->max_users				= $max_users;
+				$object->url					= $url;
 				$object->fk_code_type_resource  = $fk_code_type_resource;
 
 				// Fill array 'array_options' with data from add form
@@ -192,7 +195,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
 		$res = $object->fetch($id);
 		if ($res > 0) {
-			$result = $object->delete($id);
+			$result = $object->delete($user);
 
 			if ($result >= 0) {
 				setEventMessages($langs->trans('RessourceSuccessfullyDeleted'), null);
@@ -322,6 +325,13 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<td>';
 		print img_picto('', 'object_user', 'class="pictofixedwidth"');
 		print '<input type="number" name="max_users" id="max_users" value="'.(GETPOSTISSET('max_users') ? GETPOSTINT('max_users') : $object->max_users).'"></td>';
+		print '</tr>';
+
+		// URL
+		print '<tr><td>'.$form->editfieldkey('URL', 'url', '', $object, 0).'</td>';
+		print '<td>';
+		print img_picto('', 'object_url', 'class="pictofixedwidth"');
+		print '<input type="url" name="url" id="url" value="'.(GETPOSTISSET('url') ? GETPOST('url', 'alpha') : $object->url).'"></td>';
 		print '</tr>';
 
 		// Other attributes

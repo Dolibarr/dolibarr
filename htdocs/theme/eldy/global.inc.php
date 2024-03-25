@@ -1,4 +1,26 @@
 <?php
+/*
+/* Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *		\file       htdocs/theme/eldy/global.inc.php
+ *		\brief      File for CSS style sheet Eldy
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
@@ -1324,6 +1346,9 @@ select.flat.selectlimit {
 .marginrightonlyshort {
 	margin-<?php echo $right; ?>: 4px !important;
 }
+.marginrightonlylarge {
+	margin-<?php echo $right; ?>: 20px !important;
+}
 .margintoponly {
 	margin-top: 10px !important;
 }
@@ -2193,7 +2218,7 @@ div.vmenu, td.vmenu {
 
 	.menuhider { display: block !important; }
 	.dropdown-user-image { display: none; }
-	.user-header { height: auto !important; color: var(--colorbackbody); }
+	.user-header { height: auto !important; color: var(--colortextbackhmenu); }
 
 	#id-container {
 		width: 100%;
@@ -2454,8 +2479,8 @@ span.widthpictotitle.pictotitle {
 	opacity: 0.4;
 }
 .pictofixedwidth {
-	text-align: <?php echo $left; ?>;
-	width: 20px;
+	text-align: start;
+	width: 21px;
 	/* padding-right: 0; */
 }
 
@@ -2769,6 +2794,9 @@ a.tmenuimage:focus, .mainmenu.topmenuimage:focus {
 }
 button.ui-button.ui-corner-all.ui-widget:focus {
 	outline: none;
+}
+.tmenuimage {
+	color: var(--colortextbackhmenu);
 }
 
 /* For mainmenu, we always load the img */
@@ -3112,8 +3140,8 @@ div.login a:hover {
 div.login_block_user {
 	display: inline-block;
 	vertical-align: middle;
-	line-height: <?php echo $disableimages ? '25' : '52'; ?>px;
-	height: <?php echo $disableimages ? '25' : '52'; ?>px;
+	line-height: <?php echo $disableimages ? '25' : '51'; ?>px;
+	height: <?php echo $disableimages ? '25' : '51'; ?>px;
 }
 div.login_block_other {
 	display: inline-block;
@@ -3936,6 +3964,13 @@ table.liste tr:last-of-type td, table.noborder:not(#tablelines):not(#tableliness
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
 }
+/* CSS to remove the interline border */
+table.nointerlines tr:not(:last-child) td {
+	border-bottom: unset !important;
+	border-top: unset !important;
+}
+
+
 /*
 div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable):not(.lastrecordtable):last-of-type {
 	border-bottom: 1px solid var(--colortopbordertitle1);
@@ -3994,10 +4029,10 @@ table.liste tr, table.noborder tr, div.noborder form {
 	min-height: 20px;
 }
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
-	padding: 7px 8px 7px 8px;			/* t r b l */
+	padding: 7px 10px 7px 12px;			/* t r b l */
 }
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
-	padding: 8px 6px 8px 6px;			/* t r b l */
+	padding: 8px 10px 8px 12px;			/* t r b l */
 	/* line-height: 22px; This create trouble on cell login on list of last events of a contract*/
 	height: 22px;
 }
@@ -6049,7 +6084,7 @@ td.gminorheading {
 }*/
 .gtaskname div, .gtaskname {
 	min-width: 250px !important;
-	max-width: unset !important;
+	max-width: 500px !important;
 	width: unset !important;
 }
 .gpccomplete div, .gpccomplete {
@@ -8009,6 +8044,9 @@ table.jPicker {
 		max-width: 200px;      /* must be width of menu + padding + padding of sidenav */
 		width: 200px;          /* must be width of menu + padding + padding of sidenav */
 	}
+	.loginbuttonexternal {
+		width: 260px;
+	}
 	.side-nav-vert .user-menu .dropdown-menu {
 		width: 234px !important;
 	}
@@ -8125,8 +8163,6 @@ table.jPicker {
 		margin-top: 30px;
 	}
 }
-
-
 @media only screen and (max-width: 320px)
 {
 	.dropdown dd ul {
@@ -8146,23 +8182,32 @@ table.jPicker {
 	}
 }
 
-
 <?php
+if (getDolUserString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+	// Set a max height on multiselect when using multiselect
+	?>
+	select[multiple] {
+		height: 42px;
+	}
+	<?php
+}
+
+
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/emaillayout.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/timeline.inc.php', 0);
 
-if (getDolGlobalString('THEME_CUSTOM_CSS')) {
-	print $conf->global->THEME_CUSTOM_CSS;
-}
+
+// Add custom CSS if defined
+print getDolGlobalString('THEME_CUSTOM_CSS');
 
 ?>
 
-	div.extra_inline_chkbxlst,
-	div.extra_inline_checkbox {
-		min-width:150px;
-	}
+div.extra_inline_chkbxlst, div.extra_inline_checkbox {
+	min-width:150px;
+}
 
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {

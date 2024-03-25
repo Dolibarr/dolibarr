@@ -585,7 +585,6 @@ PayedTo=Pagado para
 LocalAndRemote=Locales y Remotos
 AssignedTo=Asignado a
 ConfirmMassDraftDeletion=Borrador de confirmación de eliminación masiva
-FileSharedViaALink=Public file shared via link
 SelectAThirdPartyFirst=Seleccione un tercero primero...
 YouAreCurrentlyInSandboxMode=Actualmente se encuentra en el modo "sandbox" %s
 AnalyticCode=código analítico

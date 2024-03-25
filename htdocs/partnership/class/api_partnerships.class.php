@@ -217,9 +217,9 @@ class Partnerships extends DolibarrApi
 	/**
 	 * Update partnership
 	 *
-	 * @param int   $id             Id of partnership to update
-	 * @param array $request_data   Datas
-	 * @return int
+	 * @param 	int   	$id             	Id of partnership to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 *
 	 * @throws RestException
 	 *

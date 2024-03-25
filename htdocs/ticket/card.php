@@ -6,6 +6,7 @@
  * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2022-2023 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@ if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcontract.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
@@ -54,12 +55,12 @@ if (isModEnabled('contrat')) {
 $langs->loadLangs(array("companies", "other", "ticket"));
 
 // Get parameters
-$id        = GETPOST('id', 'int');
+$id        = GETPOSTINT('id');
 $ref       = GETPOST('ref', 'alpha');
 $track_id  = GETPOST('track_id', 'alpha', 3);
-$socid     = GETPOST('socid', 'int');
-$contactid = GETPOST('contactid', 'int');
-$projectid = GETPOST('projectid', 'int');
+$socid     = GETPOSTINT('socid');
+$contactid = GETPOSTINT('contactid');
+$projectid = GETPOSTINT('projectid');
 $notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 
 $action    = GETPOST('action', 'aZ09');
@@ -229,7 +230,7 @@ if (empty($reshook)) {
 				$object->ref = $getRef;
 			}
 
-			$object->fk_soc 					= $object->socid = GETPOST("socid", 'int') > 0 ? GETPOST("socid", 'int') : 0;
+			$object->fk_soc 					= $object->socid = GETPOSTINT("socid") > 0 ? GETPOSTINT("socid") : 0;
 			$object->subject 					= GETPOST("subject", 'alphanohtml');
 			$object->message 					= GETPOST("message", 'restricthtml');
 
@@ -246,14 +247,14 @@ if (empty($reshook)) {
 			$notifyTiers 						= GETPOST("notify_tiers_at_create", 'alpha');
 			$object->notify_tiers_at_create 	= empty($notifyTiers) ? 0 : 1;
 
-			$fk_user_assign 				= GETPOST("fk_user_assign", 'int');
+			$fk_user_assign 				= GETPOSTINT("fk_user_assign");
 			if ($fk_user_assign > 0) {
 				$object->fk_user_assign 	= $fk_user_assign;
 				$object->status 			= $object::STATUS_ASSIGNED;
 			}
 
 			$object->fk_project 				= $projectid;
-			$object->fk_contract 				= GETPOST('fk_contract', 'int');
+			$object->fk_contract 				= GETPOSTINT('fk_contract');
 
 			$object->context['contact_id'] = GETPOSTINT('contact_id');
 
@@ -266,7 +267,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Add contact
-				$contactid = GETPOST('contactid', 'int');
+				$contactid = GETPOSTINT('contactid');
 				$type_contact = GETPOST("type", 'alpha');
 
 				// Category association
@@ -280,9 +281,9 @@ if (empty($reshook)) {
 
 				// Link ticket to project
 				if (GETPOST('origin', 'alpha') == 'projet') {
-					$projectid = GETPOST('originid', 'int');
+					$projectid = GETPOSTINT('originid');
 				} else {
-					$projectid = GETPOST('projectid', 'int');
+					$projectid = GETPOSTINT('projectid');
 				}
 
 				if ($projectid > 0) {
@@ -336,7 +337,7 @@ if (empty($reshook)) {
 	if ($action == 'update' && $permissiontoadd && $object->status < Ticket::STATUS_CLOSED) {
 		$error = 0;
 
-		$ret = $object->fetch(GETPOST('id', 'int'), GETPOST('ref', 'alpha'), GETPOST('track_id', 'alpha'));
+		$ret = $object->fetch(GETPOSTINT('id'), GETPOSTINT('ref'), GETPOSTINT('track_id'));
 		if ($ret < 0) {
 			$error++;
 			array_push($object->errors, $langs->trans('ErrorTicketIsNotValid'));
@@ -416,7 +417,7 @@ if (empty($reshook)) {
 	if ($action == "assign_user" && GETPOST('btn_assign_user', 'alpha') && $permissiontoadd) {
 		$object->fetch('', '', GETPOST("track_id", 'alpha'));
 		$useroriginassign = $object->fk_user_assign;
-		$usertoassign = GETPOST('fk_user_assign', 'int');
+		$usertoassign = GETPOSTINT('fk_user_assign');
 
 		/*if (! ($usertoassign > 0)) {
 		 $error++;
@@ -438,7 +439,7 @@ if (empty($reshook)) {
 				foreach ($internal_contacts as $key => $contact) {
 					if ($contact['id'] !== $usertoassign) {
 						$result = $object->delete_contact($contact['rowid']);
-						if ($result<0) {
+						if ($result < 0) {
 							$error++;
 							setEventMessages($object->error, $object->errors, 'errors');
 						}
@@ -446,9 +447,9 @@ if (empty($reshook)) {
 				}
 			}
 
-			if ($usertoassign > 0 && $usertoassign!==$useroriginassign) {
+			if ($usertoassign > 0 && $usertoassign !== $useroriginassign) {
 				$result = $object->add_contact($usertoassign, "SUPPORTTEC", 'internal', $notrigger = 0);
-				if ($result<0) {
+				if ($result < 0) {
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -489,7 +490,7 @@ if (empty($reshook)) {
 	}
 
 	if (($action == "confirm_close" || $action == "confirm_abandon") && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoadd) {
-		$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
+		$object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id'));
 
 		if ($object->close($user, ($action == "confirm_abandon" ? 1 : 0))) {
 			setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
@@ -504,7 +505,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == "confirm_public_close" && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoadd) {
-		$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
+		$object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id'));
 		if ($_SESSION['email_customer'] == $object->origin_email || $_SESSION['email_customer'] == $object->thirdparty->email) {
 			$object->context['contact_id'] = GETPOSTINT('contact_id');
 
@@ -522,7 +523,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_delete_ticket' && GETPOST('confirm', 'alpha') == "yes" && $permissiontodelete) {
-		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
+		if ($object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id')) >= 0) {
 			if ($object->delete($user) > 0) {
 				setEventMessages('<div class="confirm">'.$langs->trans('TicketDeletedSuccess').'</div>', null, 'mesgs');
 				header("Location: ".DOL_URL_ROOT."/ticket/list.php");
@@ -537,8 +538,8 @@ if (empty($reshook)) {
 
 	// Set parent company
 	if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
-		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
-			$result = $object->setCustomer(GETPOST('editcustomer', 'int'));
+		if ($object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id')) >= 0) {
+			$result = $object->setCustomer(GETPOSTINT('editcustomer'));
 			$url = $_SERVER["PHP_SELF"].'?track_id='.GETPOST('track_id', 'alpha');
 			header("Location: ".$url);
 			exit();
@@ -547,7 +548,7 @@ if (empty($reshook)) {
 
 	// Set progress status
 	if ($action == 'set_progression' && $user->hasRight('ticket', 'write')) {
-		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
+		if ($object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id')) >= 0) {
 			$result = $object->setProgression(GETPOST('progress', 'alpha'));
 
 			$url = 'card.php?track_id='.$object->track_id;
@@ -558,7 +559,7 @@ if (empty($reshook)) {
 
 	// Set categories
 	if ($action == 'set_categories' && $user->hasRight('ticket', 'write')) {
-		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
+		if ($object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id')) >= 0) {
 			$result = $object->setCategories(GETPOST('categories', 'array'));
 
 			$url = 'card.php?track_id='.$object->track_id;
@@ -569,7 +570,7 @@ if (empty($reshook)) {
 
 	// Set Subject
 	if ($action == 'setsubject' && $user->hasRight('ticket', 'write')) {
-		if ($object->fetch(GETPOST('id', 'int'))) {
+		if ($object->fetch(GETPOSTINT('id'))) {
 			if ($action == 'setsubject') {
 				$object->subject = GETPOST('subject', 'alphanohtml');
 			}
@@ -592,10 +593,14 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_reopen' && $user->hasRight('ticket', 'manage') && !GETPOST('cancel')) {
-		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
+		if ($object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id')) >= 0) {
 			// prevent browser refresh from reopening ticket several times
 			if ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED) {
-				$res = $object->setStatut(Ticket::STATUS_ASSIGNED);
+				if ($object->fk_user_assign != null) {
+					$res = $object->setStatut(Ticket::STATUS_ASSIGNED);
+				} else {
+					$res = $object->setStatut(Ticket::STATUS_NOT_READ);
+				}
 				if ($res) {
 					$url = 'card.php?track_id='.$object->track_id;
 					header("Location: ".$url);
@@ -608,7 +613,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'classin' && $permissiontoadd) {
 		// Categorisation dans projet
-		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
+		if ($object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id')) >= 0) {
 			$object->setProject($projectid);
 			$url = 'card.php?track_id='.$object->track_id;
 			header("Location: ".$url);
@@ -616,8 +621,8 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setcontract' && $permissiontoadd) {
 		// Categorisation dans contrat
-		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
-			$object->setContract(GETPOST('contractid', 'int'));
+		if ($object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id')) >= 0) {
+			$object->setContract(GETPOSTINT('contractid'));
 			$url = 'card.php?track_id='.$object->track_id;
 			header("Location: ".$url);
 			exit();
@@ -645,8 +650,8 @@ if (empty($reshook)) {
 		$action = 'view';
 	} elseif ($action == 'confirm_set_status' && $permissiontoadd && !GETPOST('cancel')) {
 		// Reopen ticket
-		if ($object->fetch(GETPOST('id', 'int'), GETPOST('track_id', 'alpha')) >= 0) {
-			$new_status = GETPOST('new_status', 'int');
+		if ($object->fetch(GETPOSTINT('id'), GETPOSTINT('track_id')) >= 0) {
+			$new_status = GETPOSTINT('new_status');
 			//$old_status = $object->status;
 			$res = $object->setStatut($new_status);
 			if ($res) {
@@ -662,7 +667,7 @@ if (empty($reshook)) {
 
 	// Action to update an extrafield
 	if ($action == "update_extras" && $permissiontoadd) {
-		$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
+		$object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id'));
 
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) {
@@ -686,7 +691,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == "change_property" && GETPOST('btn_update_ticket_prop', 'alpha') && $permissiontoadd) {
-		$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
+		$object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id'));
 
 		$object->type_code = GETPOST('update_value_type', 'aZ09');
 		$object->severity_code = GETPOST('update_value_severity', 'aZ09');
@@ -750,7 +755,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withfromsocid = $socid ? $socid : $user->socid;
 	$formticket->withfromcontactid = $contactid ? $contactid : '';
 	$formticket->withtitletopic = 1;
-	$formticket->withnotifytiersatcreate = ($notifyTiers ? 1 : (!getDolGlobalString('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION') ? 0 : 1));
+	$formticket->withnotifytiersatcreate = ($notifyTiers ? 1 : (getDolGlobalString('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION') ? 1 : 0));
 	$formticket->withusercreate = 0;
 	$formticket->withref = 1;
 	$formticket->fk_user_create = $user->id;
@@ -831,7 +836,7 @@ if ($action == 'create' || $action == 'presend') {
 			}
 
 			// Default select all or no contact
-			$default = (getDolGlobalString('TICKET_NOTIFY_AT_CLOSING')) ? -2 : -3;
+			$default = (getDolGlobalString('TICKET_NOTIFY_AT_CLOSING') ? -2 : -3);
 			$formquestion = array(
 				array(
 					'name' => 'contactid',
@@ -1010,7 +1015,7 @@ if ($action == 'create' || $action == 'presend') {
 		// Contract
 		if (getDolGlobalString('TICKET_LINK_TO_CONTRACT_WITH_HARDLINK')) {
 			// Deprecated. Duplicate feature. Ticket can already be linked to contract with the generic "Link to" feature.
-			if (isModEnabled('contrat')) {
+			if (isModEnabled('contract')) {
 				$langs->load('contracts');
 				$morehtmlref .= '<br>';
 				if ($permissiontoedit) {
@@ -1158,7 +1163,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '</tr>';
 
 		// Timing (Duration sum of linked fichinter)
-		if (isModEnabled('ficheinter')) {
+		if (isModEnabled('intervention')) {
 			$object->fetchObjectLinked();
 			$num = count($object->linkedObjects);
 			$timing = 0;
@@ -1176,7 +1181,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<tr><td>';
 			print $form->textwithpicto($langs->trans("TicketDurationAuto"), $langs->trans("TicketDurationAutoInfos"), 1);
 			print '</td><td>';
-			print $foundinter ? convertSecondToTime($timing, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY) : '';
+			print $foundinter ? convertSecondToTime($timing, 'all', getDolGlobalString('MAIN_DURATION_OF_WORKDAY')) : '';
 			print '</td></tr>';
 		}
 
@@ -1197,7 +1202,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<input type="hidden" name="trackid" value="'.$trackid.'">';
 
 		// Categories
-		if (isModEnabled('categorie')) {
+		if (isModEnabled('category')) {
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border centpercent tableforfield">';
 			print '<tr>';
@@ -1345,9 +1350,10 @@ if ($action == 'create' || $action == 'presend') {
 			foreach (array('internal', 'external') as $source) {
 				$tmpobject = $object;
 				$tab = $tmpobject->listeContact(-1, $source);
-				$num = count($tab);
+				'@phan-var-force array<array{source:string,id:int,rowid:int,email:string,civility:string,firstname:string,lastname:string,labeltype:string,libelle:string,socid:int,code:string,status:int,statuscontact:string,fk_c_typecontact:string,phone:string,phone_mobile:string,nom:string}> $tab';
+				$num = is_array($tab) ? 0 : count($tab);
 				$i = 0;
-				while ($i < $num) {
+				foreach (array_keys($tab) as $i) {
 					$var = !$var;
 					print '<div class="tagtr '.($var ? 'pair' : 'impair').'">';
 
@@ -1368,7 +1374,7 @@ if ($action == 'create' || $action == 'presend') {
 						echo $companystatic->getNomUrl(-1);
 					}
 					if ($tab[$i]['socid'] < 0) {
-						echo $conf->global->MAIN_INFO_SOCIETE_NOM;
+						echo getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 					}
 					if (!$tab[$i]['socid']) {
 						echo '&nbsp;';
@@ -1532,6 +1538,7 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlright = '';
 			$help = "";
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
+			complete_substitutions_array($substitutionarray, $outputlangs, $object);
 			$morehtmlright .= $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("TicketMessageSubstitutionReplacedByGenericValues").'</span>', $help, 1, 'helpclickable', '', 0, 3, 'helpsubstitution');
 
 			print '<div>';
@@ -1557,7 +1564,7 @@ if ($action == 'create' || $action == 'presend') {
 
 			// Table of additional post parameters
 			$formticket->param['models'] = $modelmail;
-			$formticket->param['models_id'] = GETPOST('modelmailselected', 'int');
+			$formticket->param['models_id'] = GETPOSTINT('modelmailselected');
 			//$formticket->param['socid']=$object->fk_soc;
 			$formticket->param['returnurl'] = $_SERVER["PHP_SELF"].'?track_id='.$object->track_id;
 
@@ -1638,7 +1645,7 @@ if ($action == 'create' || $action == 'presend') {
 			print showDirectPublicLink($object).'<br>';
 			print '</div>';
 
-			if (!getDolGlobalString('TICKET_SHOW_MESSAGES_ON_CARD')) {
+			if (getDolGlobalString('TICKET_SHOW_MESSAGES_ON_CARD')) {
 				print '<div class="fichehalfright">';
 
 				$MAXEVENT = 10;

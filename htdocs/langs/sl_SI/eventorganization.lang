@@ -34,7 +34,6 @@ PaymentEvent=Plačilo dogodka
 NewRegistration=Registracija
 EventOrganizationSetup=Postavitev organizacije dogodka
 EventOrganization=Organizacija dogodkov
-Settings=nastavitve
 EventOrganizationSetupPage = Stran za nastavitev organizacije dogodka
 EVENTORGANIZATION_TASK_LABEL = Oznaka opravil, ki se samodejno ustvari, ko je projekt potrjen
 EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project <br>  <br> For example:  <br> Send Call for Conferences <br> Send Call for Booths <br> Validate suggestions of Conferences <br> Validate application for Booths <br> Open subscriptions to the event for attendees <br> Pošlji opomnik na dogodek govorcem <br> Pošlji opomin na dogodek gostiteljem stojnice <br> Pošlji opomin na dogodek udeležencem
@@ -53,9 +52,9 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = V obrazcu za ustvarjanje/dodajanje udel
 #
 # Object
 #
-OrganizedEvent=Organized event
+OrganizedEvent=Organiziran dogodek
 EventOrganizationConfOrBooth= Konferenca ali kabina
-EventOrganizationConfOrBoothes=Conferences or Boothes
+EventOrganizationConfOrBoothes=Konference ali kabine
 ManageOrganizeEvent = Vodite organizacijo dogodka
 ConferenceOrBooth = Konferenca ali kabina
 ConferenceOrBoothTab = Konferenca ali kabina
@@ -98,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = Seed za zagotovitev ključa za javno registracijsk
 SERVICE_BOOTH_LOCATION = Storitev, uporabljena za vrstico računa o lokaciji stojnice
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Storitev, ki se uporablja za vrstico računa o naročnini udeleženca na dogodek
 NbVotes=Število glasov
+
 #
 # Status
 #
@@ -106,9 +106,10 @@ EvntOrgSuggested = Predlagano
 EvntOrgConfirmed = Potrjeno
 EvntOrgNotQualified = Ni kvalificiran
 EvntOrgDone = Izvršene
-EvntOrgCancelled = Prekinjeno
+EvntOrgCancelled = Preklicano
+
 #
-# Public page
+# Other
 #
 SuggestForm = Stran s predlogi
 SuggestOrVoteForConfOrBooth = Stran za predlog ali glasovanje
@@ -116,8 +117,8 @@ EvntOrgRegistrationHelpMessage = Tukaj lahko glasujete za konferenco ali predlag
 EvntOrgRegistrationConfHelpMessage = Tukaj lahko predlagate novo konferenco za animacijo med dogodkom.
 EvntOrgRegistrationBoothHelpMessage = Tukaj se lahko prijavite za stojnico med dogodkom.
 ListOfSuggestedConferences = Seznam predlaganih konferenc
-ListOfSuggestedBooths=Suggested booths
-ListOfConferencesOrBooths=Conferences or booths of event project
+ListOfSuggestedBooths=Predlagane kabine
+ListOfConferencesOrBooths=Konference ali stojnice projekta dogodka
 SuggestConference = Predlagajte novo konferenco
 SuggestBooth = Predlagaj stojnico
 ViewAndVote = Oglejte si predlagane dogodke in glasujte zanje
@@ -144,13 +145,8 @@ OrganizationEventBulkMailToAttendees=To je opomnik o vaši udeležbi na dogodku 
 OrganizationEventBulkMailToSpeakers=To je opomnik o vaši udeležbi na dogodku kot govornik
 OrganizationEventLinkToThirdParty=Povezava do tretje osebe (stranka, dobavitelj ali partner)
 OrganizationEvenLabelName=Javno ime konference ali stojnice
-
 NewSuggestionOfBooth=Prijava za stojnico
-NewSuggestionOfConference=Application to hold a conference
-
-#
-# Vote page
-#
+NewSuggestionOfConference=Prijava za izvedbo konference
 EvntOrgRegistrationWelcomeMessage = Dobrodošli na strani s predlogi za konferenco ali stojnico.
 EvntOrgRegistrationConfWelcomeMessage = Dobrodošli na strani s predlogi konference.
 EvntOrgRegistrationBoothWelcomeMessage = Dobrodošli na strani s predlogi stojnice.
@@ -158,8 +154,8 @@ EvntOrgVoteHelpMessage = Tukaj si lahko ogledate in glasujete za predlagane dogo
 VoteOk = Vaš glas je bil sprejet.
 AlreadyVoted = Za ta dogodek ste že glasovali.
 VoteError = Med glasovanjem je prišlo do napake, poskusite znova.
-
 SubscriptionOk=Registracija je zabeležena
+AmountOfRegistrationPaid=Znesek plačane registracije
 ConfAttendeeSubscriptionConfirmation = Potrditev vaše naročnine na dogodek
 Attendee = Udeleženec
 PaymentConferenceAttendee = Plačilo udeležencev konference
@@ -169,9 +165,15 @@ RegistrationAndPaymentWereAlreadyRecorder=Za email <b> %s </b> je bila že zabel
 EmailAttendee=E-pošta udeleženca
 EmailCompany=Elektronski naslov
 EmailCompanyForInvoice=E-pošta podjetja (za račun, če se razlikuje od e-pošte udeleženca)
-ErrorSeveralCompaniesWithEmailContactUs=Najdenih je bilo več podjetij s tem e-poštnim naslovom, zato ne moremo samodejno potrditi vaše registracije. Za ročno preverjanje nas kontaktirajte na %s
-ErrorSeveralCompaniesWithNameContactUs=Najdenih je bilo več podjetij s tem imenom, zato ne moremo samodejno potrditi vaše registracije. Za ročno preverjanje nas kontaktirajte na %s
+ErrorSeveralCompaniesWithEmailContactUs=Najdenih je bilo več podjetij s tem e-poštnim naslovom, zato ne moremo samodejno potrditi vaše registracije. Pišite nam na %s za ročno preverjanje
+ErrorSeveralCompaniesWithNameContactUs=Najdenih je bilo več podjetij s tem imenom, zato ne moremo samodejno potrditi vaše registracije. Pišite nam na %s za ročno preverjanje
 NoPublicActionsAllowedForThisEvent=Za ta dogodek niso odprta nobena javna dejanja
 MaxNbOfAttendees=Največje število udeležencev
-DateStartEvent=Event start date
-DateEndEvent=Event end date
+DateStartEvent=Datum začetka dogodka
+DateEndEvent=Končni datum dogodka
+ModifyStatus=Spremeni stanje
+ConfirmModifyStatus=Potrdite spremembo stanja
+ConfirmModifyStatusQuestion=Ali ste prepričani, da želite spremeniti %s izbran(e) zapis(e)?
+RecordsUpdated = %s Zapisi posodobljeni
+RecordUpdated = Zapis posodobljen
+NoRecordUpdated = Ni posodobljenega zapisa

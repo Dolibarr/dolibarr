@@ -61,9 +61,9 @@ SetupArea=Konfigurimi
 UploadNewTemplate=Ngarko shabllon(t) e ri
 FormToTestFileUploadForm=Formulari për të testuar ngarkimin e skedarit (sipas konfigurimit)
 ModuleMustBeEnabled=Moduli/aplikacioni <b>%s</b> duhet të jetë en
-ModuleIsEnabled=Moduli/aplikacioni <b>%s<span class='notranslate'></b></spanabled> ka qenë i hapur
-IfModuleEnabled=Shënim: po është efektive vetëm nëse moduli <b>%s<span class='notranslate'></b> është i mundshëm</spand>
-RemoveLock=Hiq/riemërto skedarin <b>%s<span class='notranslate'></b></span të na lejojë të ekzistojë të mjetit Përditëso/Instalo.
+ModuleIsEnabled=The module/application <b>%s</b> has been enabled
+IfModuleEnabled=Note: yes is effective only if module <b>%s</b> is enabled
+RemoveLock=Remove/rename file <b>%s</b> if it exists, to allow usage of the Update/Install tool.
 RestoreLock=Rivendos skedarin <b>%s</b>, vetëm me leje të lexueshme përdorimi i mëtejshëm i mjetit Përditëso/Instalo.
 SecuritySetup=Konfigurimi i sigurisë
 PHPSetup=Konfigurimi i PHP
@@ -71,7 +71,7 @@ OSSetup=Konfigurimi i OS
 SecurityFilesDesc=Përcaktoni këtu opsionet që lidhen me sigurinë në lidhje me ngarkimin e skedarëve.
 ErrorModuleRequirePHPVersion=Gabim, ky modul kërkon versionin PHP %s ose më të lartë
 ErrorModuleRequireDolibarrVersion=Gabim, ky modul kërkon versionin Dolibarr %s ose më të lartë
-ErrorDecimalLargerThanAreForbidden=Gabim, një saktësi më e lartë se <b>%s<span class='notranslate'></b></s> nuk mbështetet.
+ErrorDecimalLargerThanAreForbidden=Error, a precision higher than <b>%s</b> is not supported.
 DictionarySetup=Vendosja e fjalorit
 Dictionary=fjalorë
 ErrorReservedTypeSystemSystemAuto=Vlera 'system' dhe 'systemauto' për llojin është e rezervuar. Ju mund të përdorni 'përdoruesin' si vlerë për të shtuar rekordin tuaj
@@ -106,7 +106,7 @@ NextValueForInvoices=Vlera tjetër (faturat)
 NextValueForCreditNotes=Vlera tjetër (shënimet e kreditit)
 NextValueForDeposit=Vlera tjetër (parapagim)
 NextValueForReplacements=Vlera tjetër (zëvendësimet)
-MustBeLowerThanPHPLimit=Shënim: konfigurimi juaj PHP aktualisht kufizon madhësinë maksimale të skedarit për ngarkim në <b>%sb09a4fz0 span> <span class='notranslate'>%s, pavarësisht nga vlera e këtij parametri
+MustBeLowerThanPHPLimit=Note: your PHP configuration currently limits the maximum filesize for upload to <b>%s</b> %s, irrespective of the value of this parameter
 NoMaxSizeByPHPLimit=Shënim: Asnjë kufi nuk është vendosur në konfigurimin tuaj të PHP
 MaxSizeForUploadedFiles=Madhësia maksimale për skedarët e ngarkuar (0 për të mos lejuar çdo ngarkim)
 UseCaptchaCode=Përdorni kodin grafik (CAPTCHA) në faqen e hyrjes dhe disa faqe publike
@@ -149,9 +149,8 @@ MaxNbOfLinesForBoxes=Maks. numri i rreshtave për miniaplikacionet
 AllWidgetsWereEnabled=Të gjitha miniaplikacionet e disponueshme janë aktivizuar
 WidgetAvailable=Widget i disponueshëm
 PositionByDefault=Rendi i parazgjedhur
-Position=Pozicioni
 MenusDesc=Menaxherët e menysë vendosin përmbajtjen e dy shiritave të menysë (horizontale dhe vertikale).
-MenusEditorDesc=Redaktori i menusë ju lejon të përcaktoni hyrjet e personalizuara të menusë. Përdoreni atë me kujdes për të shmangur paqëndrueshmërinë dhe hyrjet e menysë të paarritshme përgjithmonë.<br>Disa module shtojnë hyrje të menysë (në menynë <b></span class>Të gjitha<s ='notranslate'></b> kryesisht). Nëse i hiqni gabimisht disa nga këto hyrje, mund t'i rivendosni ato duke çaktivizuar dhe riaktivizuar modulin.
+MenusEditorDesc=The menu editor allows you to define custom menu entries. Use it carefully to avoid instability and permanently unreachable menu entries.<br>Some modules add menu entries (in menu <b>All</b> mostly). If you remove some of these entries by mistake, you can restore them disabling and reenabling the module.
 MenuForUsers=Menu për përdoruesit
 LangFile=skedar .lang
 Language_en_US_es_MX_etc=Gjuha (en_US, es_MX, ...)
@@ -160,11 +159,11 @@ SystemInfo=Informacioni i sistemit
 SystemToolsArea=Zona e mjeteve të sistemit
 SystemToolsAreaDesc=Kjo zonë ofron funksione administrative. Përdorni menunë për të zgjedhur funksionin e kërkuar.
 Purge=Pastrimi
-PurgeAreaDesc=Kjo faqe ju lejon të fshini të gjithë skedarët e krijuar ose të ruajtur nga Dolibarr (skedarët e përkohshëm ose të gjithë skedarët në <b>%s<span class= drejtoria 'notranslate'></b></span>). Përdorimi i kësaj veçorie zakonisht nuk është i nevojshëm. Ofrohet si një zgjidhje për përdoruesit, Dolibarr i të cilëve është pritur nga një ofrues që nuk ofron leje për të fshirë skedarët e krijuar nga serveri i uebit.
+PurgeAreaDesc=This page allows you to delete all files generated or stored by Dolibarr (temporary files or all files in <b>%s</b> directory). Using this feature is not normally necessary. It is provided as a workaround for users whose Dolibarr is hosted by a provider that does not offer permissions to delete files generated by the web server.
 PurgeDeleteLogFile=Fshi skedarët e regjistrit, duke përfshirë <b>%s</b> të përcaktuar për modulin Synlog rreziku i humbjes së të dhënave)
 PurgeDeleteTemporaryFiles=Fshini të gjithë skedarët e regjistrit dhe të përkohshëm (pa rrezik të humbjes së të dhënave). Parametri mund të jetë 'tempfilesold', 'logfiles' ose të dyja 'tempfilesold+logfiles'. Shënim: Fshirja e skedarëve të përkohshëm bëhet vetëm nëse drejtoria temp është krijuar më shumë se 24 orë më parë.
 PurgeDeleteTemporaryFilesShort=Fshini regjistrin dhe skedarët e përkohshëm (pa rrezik të humbjes së të dhënave)
-PurgeDeleteAllFilesInDocumentsDir=Fshi të gjithë skedarët në direktori: <b>%s</b><span class=>. 'notranslate'><br>Kjo do të fshijë të gjitha dokumentet e krijuara në lidhje me elementët (palë të treta, fatura etj...), skedarët e ngarkuar në modulin ECM, depozitat e rezervave të bazës së të dhënave dhe skedarët e përkohshëm.
+PurgeDeleteAllFilesInDocumentsDir=Delete all files in directory: <b>%s</b>.<br>This will delete all generated documents related to elements (third parties, invoices etc...), files uploaded into the ECM module, database backup dumps and temporary files.
 PurgeRunNow=Pastroni tani
 PurgeNothingToDelete=Nuk ka drejtori ose skedarë për të fshirë.
 PurgeNDirectoriesDeleted=skedarët ose drejtoritë janë fshirë <b>%s</b>.
@@ -213,18 +212,17 @@ FeatureAvailableOnlyOnStable=Funksioni i disponueshëm vetëm në versionet zyrt
 BoxesDesc=Miniaplikacionet janë komponentë që tregojnë disa informacione që mund t'i shtoni për të personalizuar disa faqe. Mund të zgjidhni midis shfaqjes ose jo të miniaplikacionit duke zgjedhur faqen e synuar dhe duke klikuar 'Aktivizo', ose duke klikuar në koshin e plehrave për ta çaktivizuar atë.
 OnlyActiveElementsAreShown=Shfaqen vetëm elementet nga <a href="%s">modulet e aktivizuara</a>.
 ModulesDesc=Modulet/aplikacionet përcaktojnë se cilat veçori janë të disponueshme në softuer. Disa module kërkojnë që lejet t'u jepen përdoruesve pas aktivizimit të modulit. Klikoni butonin e ndezjes/fikjes <span class="small valignmiddle">%s</span> për çdo modul ose çaktivizoni një modul/aplikacion.
-ModulesDesc2=Klikoni butonin e rrotës <span class="small valignmiddle">%s<span class='notranslate'></span></span/> për të konfiguruar modulin.
+ModulesDesc2=Click the wheel button <span class="small valignmiddle">%s</span> to configure the module/application.
 ModulesMarketPlaceDesc=Mund të gjeni më shumë module për t'u shkarkuar në faqet e jashtme të internetit në internet...
-ModulesDeployDesc=Nëse lejet në sistemin tuaj të skedarëve e lejojnë këtë, mund ta përdorni këtë mjet për të vendosur një modul të jashtëm. Moduli më pas do të jetë i dukshëm në skedën <strong>%s<span class='notranslate'></strong></s.
+ModulesDeployDesc=If permissions on your file system allow it, you can use this tool to deploy an external module. The module will then be visible on the tab <strong>%s</strong>.
 ModulesMarketPlaces=Gjeni aplikacionin/modulet e jashtme
 ModulesDevelopYourModule=Zhvilloni aplikacionin/modulet tuaja
 ModulesDevelopDesc=Ju gjithashtu mund të zhvilloni modulin tuaj ose të gjeni një partner për të zhvilluar një për ju.
 DOLISTOREdescriptionLong=Në vend që të aktivizoni faqen e internetit <a href="https://www.dolistore.com">www.dolistore.com</a> për të gjetur një modul të jashtëm, mund të përdorni këtë mjet të integruar që do të kryejë kërkimin në tregun e jashtëm për ju (mund të jetë i ngadalshëm, ka nevojë për qasje në internet)...
-NewModule=Moduli i ri
 FreeModule=Falas
 CompatibleUpTo=E përputhshme me versionin %s
-NotCompatible=Ky modul nuk duket i pajtueshëm me Dolibarr tuaj %s (Min %s - Maksimumi <span class='notranslate'>b049f2ec87 span>).
-CompatibleAfterUpdate=Ky modul kërkon një përditësim të Dolibarr tuaj %s (Min %s - Maksimumi <span class='notranslate'>b0ecb2ecz87f9 >).
+NotCompatible=This module does not seem compatible with your Dolibarr %s (Min %s - Max %s).
+CompatibleAfterUpdate=This module requires an update to your Dolibarr %s (Min %s - Max %s).
 SeeInMarkerPlace=Shihni në treg
 SeeSetupOfModule=Shiko konfigurimin e modulit %s
 SeeSetupPage=Shiko faqen e konfigurimit në %s
@@ -252,8 +250,8 @@ Security=Siguria
 Passwords=Fjalëkalimet
 DoNotStoreClearPassword=Enkriptoni fjalëkalimet e ruajtura në bazën e të dhënave (JO si tekst i thjeshtë). Rekomandohet fuqimisht të aktivizoni këtë opsion.
 MainDbPasswordFileConfEncrypted=Enkriptoni fjalëkalimin e bazës së të dhënave të ruajtur në conf.php. Rekomandohet fuqimisht të aktivizoni këtë opsion.
-InstrucToEncodePass=Për të pasur fjalëkalim të koduar në skedarin <b>conf.php</b>, zëvendëso rreshtin cc<0192fz /span><span class='notranslate'><b>$dolibarr_main_db_pass="...";</b>b014 >nga<span class='notranslate'><br><b>$dolibarr_main_db_pass="crypted:b0ecb9f2ec span class='notranslate'></b>
-InstrucToClearPass=Për të deshifruar (pastruar) fjalëkalimin në skedarin <b>conf.php</b>, zëvendësoni rreshtin <br><b>$dolibarr_main_db_pass="crypted:...";b09a4b739f17f8f8s0 ><br>nga<br><b>$dolibarr_main_db_pass'8fda19bz0<span> > ";</b>
+InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
+InstrucToClearPass=To have password decoded (clear) into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="crypted:...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
 ProtectAndEncryptPdfFiles=Mbroni skedarët PDF të krijuar. Kjo NUK rekomandohet pasi prish gjenerimin e PDF-ve në masë.
 ProtectAndEncryptPdfFilesDesc=Mbrojtja e një dokumenti PDF e mban atë të disponueshëm për t'u lexuar dhe printuar me çdo shfletues PDF. Megjithatë, redaktimi dhe kopjimi nuk është më i mundur. Vini re se përdorimi i kësaj veçorie bën që ndërtimi i PDF-ve të bashkuara globale të mos funksionojë.
 Feature=Veçori
@@ -270,8 +268,8 @@ OtherResources=Burime të tjera
 ExternalResources=Burimet e Jashtme
 SocialNetworks=Rrjete sociale
 SocialNetworkId=ID e rrjetit social
-ForDocumentationSeeWiki=Për dokumentacionin e përdoruesit ose zhvilluesit (Dokument, FAQ...),<br>hidhini një sy Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s<span class='notranslate'88>c650 </b>
-ForAnswersSeeForum=Për çdo pyetje/ndihmë tjetër, mund të përdorni forumin e Dolibarr:<br><b>b00fab32z0e<9 /span><span class='notranslate'>%s</a></b>
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=Këtu janë disa burime për të marrë ndihmë dhe mbështetje me Dolibarr.
 HelpCenterDesc2=Disa nga këto burime disponohen vetëm në <b>anglisht</b>.
 CurrentMenuHandler=Trajtuesi aktual i menysë
@@ -292,8 +290,8 @@ EMailsSetup=Konfigurimi i emaileve
 EMailsDesc=Kjo faqe ju lejon të vendosni parametra ose opsione për dërgimin e emailit.
 EmailSenderProfiles=Profilet e dërguesit të emaileve
 EMailsSenderProfileDesc=Ju mund ta mbani këtë seksion bosh. Nëse futni disa email këtu, ato do të shtohen në listën e dërguesve të mundshëm në kutinë e kombinuar kur shkruani një email të ri.
-MAIN_MAIL_SMTP_PORT=Porta SMTP/SMTPS (vlera e parazgjedhur në php.ini: <b>%s<span class='notranslate'>b09f17b73 >)
-MAIN_MAIL_SMTP_SERVER=Pritësi SMTP/SMTPS (vlera e parazgjedhur në php.ini: <b>%s<span class='notranslate'>b09f177 >)
+MAIN_MAIL_SMTP_PORT=SMTP/SMTPS Port (default value in php.ini: <b>%s</b>)
+MAIN_MAIL_SMTP_SERVER=SMTP/SMTPS Host (default value in php.ini: <b>%s</b>)
 MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike=Porta SMTP/SMTPS
 MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=Pritësi SMTP/SMTPS
 MAIN_MAIL_EMAIL_FROM=Email dërgues për emaile automatike
@@ -304,7 +302,7 @@ MAIN_DISABLE_ALL_MAILS=Çaktivizo të gjithë dërgimin e emaileve (për qëllim
 MAIN_MAIL_FORCE_SENDTO=Dërgoni të gjitha emailet tek (në vend të marrësve të vërtetë, për qëllime testimi)
 MAIN_MAIL_ENABLED_USER_DEST_SELECT=Sugjeroni emailet e punonjësve (nëse është përcaktuar) në listën e marrësve të paracaktuar kur shkruani një email të ri
 MAIN_MAIL_NO_WITH_TO_SELECTED=Mos zgjidhni një marrës të paracaktuar edhe nëse ka vetëm 1 zgjedhje të mundshme
-MAIN_MAIL_SENDMODE=Mënyra e dërgimit të emailit
+MAIN_MAIL_SENDMODE=Mënyra e dërgimit
 MAIN_MAIL_SMTPS_ID=ID SMTP (nëse serveri dërgues kërkon vërtetim)
 MAIN_MAIL_SMTPS_PW=Fjalëkalimi SMTP (nëse serveri dërgues kërkon vërtetim)
 MAIN_MAIL_EMAIL_TLS=Përdorni enkriptimin TLS (SSL).
@@ -347,12 +345,12 @@ ThisIsAlternativeProcessToFollow=Ky është një konfigurim alternativ për t'u 
 StepNb=Hapi %s
 FindPackageFromWebSite=Gjeni një paketë që ofron veçoritë që ju nevojiten (për shembull në faqen zyrtare të internetit %s).
 DownloadPackageFromWebSite=Shkarko paketën (për shembull nga faqja zyrtare e internetit %s).
-UnpackPackageInDolibarrRoot=Shpaketoni/zbrisni skedarët e paketuar në drejtorinë tuaj të serverit Dolibarr: <b>%s<span class='notranslate'>b09a17sf830f >
+UnpackPackageInDolibarrRoot=Unpack/unzip the packaged files into your Dolibarr server directory: <b>%s</b>
 UnpackPackageInModulesRoot=Për të vendosur/instaluar një modul të jashtëm, duhet të shpaketoni/zbrisni skedarin e arkivit në drejtorinë e serverit të dedikuar për modulet e jashtme:<br><b>%s</b>
 SetupIsReadyForUse=Vendosja e modulit ka përfunduar. Sidoqoftë, duhet ta aktivizoni dhe konfiguroni modulin në aplikacionin tuaj duke shkuar te modulet e konfigurimit të faqes: <a href="%s">%s</a>.
 NotExistsDirect=Drejtoria alternative rrënjë nuk është përcaktuar në një direktori ekzistuese.<br>
 InfDirAlt=Që nga versioni 3, është e mundur të përcaktohet një direktori alternative rrënjë. Kjo ju lejon të ruani, në një drejtori të dedikuar, shtojca dhe shabllone të personalizuara.<br>Thjesht krijoni një direktori në rrënjë të Dolibarr (p.sh.: me porosi).<br>
-InfDirExample=<br>Më pas deklaroje në skedarin <strong>conf.phpb0a65d09zpan0sf class = 'noTranslate'> <br>  $ dolibarr_main_url_root_alt = '/custom'  <br>  'notranslate'><br></span>Nëse këto rreshta komentohen me "#", për t'i aktivizuar ato, thjesht hiqni komentin duke hequr karakterin "#".
+InfDirExample=<br>Then declare it in the file <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>If these lines are commented with "#", to enable them, just uncomment by removing the "#" character.
 YouCanSubmitFile=Ju mund të ngarkoni skedarin .zip të paketës së modulit nga këtu:
 CurrentVersion=Versioni aktual i Dolibarr
 CallUpdatePage=Shfletoni në faqen që përditëson strukturën dhe të dhënat e bazës së të dhënave: %s.
@@ -363,28 +361,28 @@ LastActivationIP=IP e fundit e aktivizimit
 LastActivationVersion=Versioni i fundit i aktivizimit
 UpdateServerOffline=Përditëso serverin jashtë linje
 WithCounter=Menaxhoni një numërues
-GenericMaskCodes=Ju mund të vendosni çdo maskë numërimi. Në këtë maskë, etiketat e mëposhtme mund të përdoren:<br><b>{000000}b09a4b73 /span> korrespondon me një numër që do të rritet në çdo <span class='notranslate'>%s. Futni aq zero sa gjatësia e dëshiruar e numëruesit. Numëruesi do të plotësohet me zero nga e majta në mënyrë që të ketë aq zero sa maska. <br><b>{000000+000}b09a4b739f17f8z e mëparshme, por e njëjta gjë një zhvendosje që korrespondon me numrin në të djathtë të shenjës + zbatohet duke filluar nga <span class='notranslate'>%s e parë. <br><b>{000000@x}</b> por e njëjta gjë si e mëparshme numëruesi rivendoset në zero kur arrihet muaji x (x midis 1 dhe 12, ose 0 për të përdorur muajt e parë të vitit fiskal të përcaktuar në konfigurimin tuaj, ose 99 për të rivendosur në zero çdo muaj). Nëse përdoret ky opsion dhe x është 2 ose më i lartë, atëherë kërkohet gjithashtu sekuenca {yy}{mm} ose {yyyy}{mm}. <br><b>{dd}</b> 10 ditë (<1 deri në 3). span class='notranslate'><br></span><b>{mm}</b> 1 muaj (01 deri në 1 muaj). class='notranslate'><br></span><b>{yy}</b>, <span8e33f6050 </span>{yyyy}</b> ose <b>{y}b09a4b739f17> viti mbi 2, 4 ose 1 numra. <span class='notranslate'><br>
-GenericMaskCodes2=<b>{cccc}</b> kodi i klientit në karakterin e <span class='s notranslate'><br></span><b>{cccc000}b091 code</span class='notranslate'8f391>b091 në n karaktere ndiqet nga një numërues i dedikuar klientit. Ky numërues i dedikuar klientit rivendoset në të njëjtën kohë me numëruesin global.<span class='notranslate'><br><b>b06a5f45149e </b> Kodi i llojit të palës së tretë në n karaktere (shih menynë Faqja kryesore - Konfigurimi - Fjalori - Llojet e palëve të treta). Nëse shtoni këtë etiketë, numëruesi do të jetë i ndryshëm për çdo lloj pale të tretë.<br>
+GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags can be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as the previous one but an offset corresponding to the number to the right of the + sign is applied starting on the first %s. <br><b>{000000@x}</b> same as the previous one but the counter is reset to zero when month x is reached (x between 1 and 12, or 0 to use the early months of fiscal year defined in your configuration, or 99 to reset to zero every month). If this option is used and x is 2 or higher, then the sequence {yy}{mm} or {yyyy}{mm} is also required. <br><b>{dd}</b> day (01 to 31).<br><b>{mm}</b> month (01 to 12).<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated to the customer. This counter dedicated to customer is reset at same time as the global counter.<br><b>{tttt}</b> The code of third party type on n characters (see menu Home - Setup - Dictionary - Types of third parties). If you add this tag, the counter will be different for each type of third party.<br>
 GenericMaskCodes3=Të gjithë karakteret e tjera në maskë do të mbeten të paprekura.<br>Hapësirat nuk lejohen.<br>
 GenericMaskCodes3EAN=Të gjithë karakteret e tjera në maskë do të mbeten të paprekura (përveç * ose ? në pozicionin e 13-të në EAN13).<br>Hapësirat nuk lejohen.<br>Në EAN13, karakteri i fundit pas }-së së fundit në pozicionin e 13-të duhet të jetë * ose ? . Ai do të zëvendësohet nga çelësi i llogaritur.<br>
 GenericMaskCodes4a=<u>Shembull në datën 99 %s të palës së tretë TheCompany, me datë 2023-01-31:<span class='notrans '></u></span><br>
 GenericMaskCodes4b=<u>Shembull për palën e tretë i krijuar më 31/01/2023:</u>b0349fccf
-GenericMaskCodes4c=<u>Shembull për produktin e krijuar më 31/01/2023:</u><span class='notranslate'>b0342fccfdas</1>b0342fccfdas
-GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> do të japë b65</83738 span>ABC2301-000099<span class='notranslate'></b><br>b0aee83fz0658>b0aee83fz0658@0+0 }-ZZZ/{dd}/XXX<span class='notranslate'></b> do të japë <b>0199-ZZZ/31/XXX<span class='notrans '></b></span><br><b>IN{yy}{mm}-{0000}-{t class='notranslate'></b></span> do t'i japë <b>IN2301-0099-A<span class='notranslate'>b09a4b739f17 të llojit të kompanisë 'Responsable Inscripto' me kod për llojin që është 'A_RI'
+GenericMaskCodes4c=<u>Example on product created on 2023-01-31:</u><br>
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=Kthen një numër të personalizueshëm sipas një maske të përcaktuar.
-ServerAvailableOnIPOrPort=Serveri është i disponueshëm në adresën <b>%s</b> <span class= në port 'notranslate'><b>%s</b>
-ServerNotAvailableOnIPOrPort=Serveri nuk është i disponueshëm në adresën <b>%s</b> <span class ='notranslate'><b></span>%s</b>
+ServerAvailableOnIPOrPort=Server is available at address <b>%s</b> on port <b>%s</b>
+ServerNotAvailableOnIPOrPort=Server is not available at address <b>%s</b> on port <b>%s</b>
 DoTestServerAvailability=Testoni lidhjen e serverit
 DoTestSend=Testimi i dërgimit
 DoTestSendHTML=Testoni dërgimin e HTML
 ErrorCantUseRazIfNoYearInMask=Gabim, nuk mund të përdoret opsioni @ për të rivendosur numëruesin çdo vit nëse sekuenca {yy} ose {yyyy} nuk është në maskë.
-ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Gabim, nuk mund të përdoret opsioni @ nëse sekuenca {yy}{mm} ose b03d0fe4bc90b>9 <span class='notranslate'>{mm} nuk është në maskë.
+ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Error, can't use option @ if sequence {yy}{mm} or {yyyy}{mm} is not in mask.
 UMask=Parametri UMask për skedarët e rinj në sistemin e skedarëve Unix/Linux/BSD/Mac.
 UMaskExplanation=Ky parametër ju lejon të përcaktoni lejet e vendosura si parazgjedhje për skedarët e krijuar nga Dolibarr në server (për shembull gjatë ngarkimit).<br>Duhet të jetë vlera oktal (për shembull, 0666 do të thotë lexo dhe shkruani për të gjithë.). Vlera e rekomanduar është 0600 ose 0660<br>Ky parametër është i padobishëm në një server Windows.
 SeeWikiForAllTeam=Hidhini një sy faqes Wiki për një listë të kontribuesve dhe organizimin e tyre
 UseACacheDelay= Vonesa për ruajtjen e përgjigjes së eksportit në memorie të fshehtë në sekonda (0 ose bosh pa memorie të fshehtë)
 DisableLinkToHelpCenter=Fshih lidhjen "<b>Ke nevojë për ndihmë ose mbështetje</b>" në faqen e identifikimit
-DisableLinkToHelp=Fshih lidhjen për ndihmën në internet "<b>%s<span class='notranslate'></b></s>"
+DisableLinkToHelp=Hide the link to the online help "<b>%s</b>"
 AddCRIfTooLong=Nuk ka mbështjellje automatike të tekstit, teksti që është shumë i gjatë nuk do të shfaqet në dokumente. Ju lutemi shtoni kthimet e transportit në zonën e tekstit nëse është e nevojshme.
 ConfirmPurge=Jeni i sigurt që dëshironi ta ekzekutoni këtë spastrim?<br>Kjo do të fshijë përgjithmonë të gjithë skedarët tuaj të të dhënave pa asnjë mënyrë për t'i rivendosur ato (skedarët ECM, skedarët e bashkangjitur...).
 MinLength=Gjatësia minimale
@@ -392,9 +390,9 @@ LanguageFilesCachedIntoShmopSharedMemory=Skedarët .lang ngarkohen në memorien 
 LanguageFile=Skedari i gjuhës
 ExamplesWithCurrentSetup=Shembuj me konfigurimin aktual
 ListOfDirectories=Lista e drejtorive të shablloneve të OpenDocument
-ListOfDirectoriesForModelGenODT=Lista e drejtorive që përmbajnë skedarë shabllonesh me formatin OpenDocument.<br><br>Vendosni këtu rrugën e plotë të drejtorive.<br>Shto një kthim transporti midis drejtorisë eah.<br>Për të shtuar një drejtori të modulit GED, shtoni këtu b0aee833z0583f >DOL_DATA_ROOT/ecm/yourdirectoryname<span class='notranslate'></b>.<br>b031panFisles</spanFiccs' duhet të përfundojë me <span class='notranslate'><b>.odt</b> ose <b></span. ='notranslate'></b>.
+ListOfDirectoriesForModelGenODT=List of directories containing templates files with OpenDocument format.<br><br>Put here full path of directories.<br>Add a carriage return between eah directory.<br>To add a directory of the GED module, add here <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Files in those directories must end with <b>.odt</b> or <b>.ods</b>.
 NumberOfModelFilesFound=Numri i skedarëve të shabllonit ODT/ODS të gjetur në këto drejtori
-ExampleOfDirectoriesForModelGen=Shembuj të sintaksës:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mydocumentdir/my 'notranslate'><br></span>DOL_DATA_ROOT/ecm/ecmdir
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 FollowingSubstitutionKeysCanBeUsed=<br>Për të ditur se si të krijoni shabllonet tuaja të dokumenteve odt, përpara se t'i ruani në ato drejtori, lexoni dokumentacionin wiki:
 FullListOnOnlineDocumentation=https://wiki.dolibarr.org/index.php/Create_an_ODT_document_template
 FirstnameNamePosition=Pozicioni i Emrit/Mbiemrit
@@ -435,6 +433,7 @@ MassConvert=Nis konvertimin në masë
 PriceFormatInCurrentLanguage=Formati i çmimit në gjuhën aktuale
 String=Vargu
 String1Line=Varg (1 rresht)
+Text=Teksti
 TextLong=Tekst i gjatë
 TextLongNLines=Tekst i gjatë (n rreshta)
 HtmlText=Teksti HTML
@@ -462,11 +461,11 @@ ComputedFormulaDesc=Këtu mund të futni një formulë duke përdorur vetitë e 
 Computedpersistent=Ruaj fushën e llogaritur
 ComputedpersistentDesc=Fushat shtesë të llogaritura do të ruhen në bazën e të dhënave, megjithatë, vlera do të rillogaritet vetëm kur objekti i kësaj fushe ndryshohet. Nëse fusha e llogaritur varet nga objekte të tjera ose të dhëna globale, kjo vlerë mund të jetë e gabuar!!
 ExtrafieldParamHelpPassword=Lënia e kësaj fushe bosh do të thotë se kjo vlerë do të ruhet PA enkriptim (fusha thjesht është fshehur me yje në ekran).<br><br>Enter vlera 'dolcrypt' për të koduar vlerën me një algoritëm të kthyeshëm enkriptimi. Të dhënat e pastra ende mund të njihen dhe modifikohen, por janë të koduara në bazën e të dhënave.<br><br>Fut 'auto' (ose 'md5', 'sha256', 'password_hash', ...) për të përdorur algoritmin e parazgjedhur të enkriptimit të fjalëkalimit (ose md5, sha256, password_hash...) për të ruajtur fjalëkalimin e hashuar jo të kthyeshëm në bazën e të dhënave (nuk ka asnjë mënyrë për të marrë vlerën origjinale)
-ExtrafieldParamHelpselect=Lista e vlerave duhet të jetë rreshta me çelësin e formatit, vlerën (ku çelësi nuk mund të jetë '0')<br><br> për shembull : <br>1,value1<br>2,value2<br></s span class='notranslate'><br>...<br><br>Për të pasur listën në varësi të një tjetri lista plotësuese e atributeve:<br>1,value1|options_<i>parent_list_code<span class='notranslate'4:0bace>7span çelësi_prindëror<br>2,value2|opsionet_<i>kodi_lista_parent7par_833>b0pansbacey3>b0pansbacey6 class='notranslate'><br><br>Për të pasur listën në varësi të një liste tjetër:<br>1, vlera1|<i>parent_list_code</i>:parent_keyb0342fccfda1, b0342zvalue</029>b0342fccfda1| class='notranslate'><i>parent_list_code</i>:parent_key
-ExtrafieldParamHelpcheckbox=Lista e vlerave duhet të jetë rreshta me çelësin e formatit, vlerën (ku çelësi nuk mund të jetë '0')<br><br> për shembull : <br>1,value1<br>2,value2<br>,value<3> span class='notranslate'><br>...
-ExtrafieldParamHelpradio=Lista e vlerave duhet të jetë rreshta me çelësin e formatit, vlerën (ku çelësi nuk mund të jetë '0')<br><br> për shembull : <br>1,value1<br>2,value2<br>,value<3> span class='notranslate'><br>...
-ExtrafieldParamHelpsellist=Lista e vlerave vjen nga një tabelë<br>Sintaksa: table_name:label_field:id_field::filtersql<br>Shembull: cbelle_typident: ::filtersql<br><br>- id_field është domosdoshmërisht një çelës int primarb03420cc - filtersql është një kusht SQL. Mund të jetë një test i thjeshtë (p.sh. aktiv=1) për të shfaqur vetëm vlerën aktive<span class='notranslate'><br>Mund të përdorni gjithashtu $ID$ në filtër që është id-ja aktuale e objektit aktual<br>Për të përdorur një SELECT në filtër, përdorni fjalën kyçe $SEL$ për të anashkaluar mbrojtjen kundër injektimit.<br>nëse dëshironi të filtroni në fusha shtesë përdorni sintaksë extra.fieldcode=... (ku kodi i fushës është kodi i extrafield)<br><br>Për të pasur listë në varësi të një liste atributesh plotësuese:<br>c_typent:libelle:id:options_<i>parent_list_codenotranslate' class='> </i></span>|column_parent:filter <br><br>Për të pasur listën në varësi të një liste tjetër: 'notranslate'><br></span>c_typent:libelle:id:<i>parent_list_code<span class='notranslate'>b0ae64758sacum33>b0ae64758sbacum33|
-ExtrafieldParamHelpchkbxlst=Lista e vlerave vjen nga një tabelë<br>Sintaksa: table_name:label_field:id_field::filtersql<br>Shembull: cbelle_typident: ::filtersql<br><br>filtri mund të jetë një test i thjeshtë (p.sh. active=1) për të shfaqur vetëm vlerën aktive<br>Mund të përdorni gjithashtu $ID$ në filtër, ku është id-ja aktuale e objektit aktual<br>Për të bërë një SELECT në filtër përdorni $SEL$<br>nëse dëshiron të filtrosh në fusha shtesë, përdor sintaksën extra.fieldcode=... (ku kodi i fushës është kodi i extrafield)<br><br>Për të pasur listën në varësi të një liste tjetër atributesh plotësuese:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter b0342fccfdaspannotranslate'>b0342fccfdaspannotranslate'0342fccfdaspannotranslate'0 9bz0 Për të pasur listën në varësi të një liste tjetër:<br>c_typent:libelle:id:<i>parent_list_code<s class='notranslate'></i></span>|column_parent:filter
+ExtrafieldParamHelpselect=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>code3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list:<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list:<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
+ExtrafieldParamHelpcheckbox=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>3,value3<br>...
+ExtrafieldParamHelpradio=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>3,value3<br>...
+ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a SQL condition. It can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>To use a SELECT into the filter use the keyword $SEL$ to bypass anti-injection protection.<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpchkbxlst=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Parametrat duhet të jenë ObjectName:Classpath<br>Sintaksa: ObjectName:Classpath
 ExtrafieldParamHelpSeparator=Mbajeni bosh për një ndarës të thjeshtë<br>Vendoseni këtë në 1 për një ndarës në kolaps (i hapur si parazgjedhje për sesionin e ri, më pas statusi mbahet për çdo sesion përdoruesi)<br>Cakto këtë në 2 për një ndarës në kolaps (i palosur si parazgjedhje për sesionin e ri, më pas statusi mbahet për çdo sesion përdoruesi)
 LibraryToBuildPDF=Biblioteka e përdorur për gjenerimin e PDF-ve
@@ -474,7 +473,7 @@ LocalTaxDesc=Disa vende mund të aplikojnë dy ose tre taksa për çdo linjë fa
 SMS=SMS
 LinkToTestClickToDial=Fut një numër telefoni për të thirrur për të shfaqur një lidhje për të testuar url-në ClickToDial për përdoruesin <strong>%s</strong>
 RefreshPhoneLink=Rifresko lidhjen
-LinkToTest=Lidhja e klikueshme e krijuar për përdoruesin <strong>%s<span class='notranslate'>b0a65d071f6fc9zli</span test për numrin e telefonit )
+LinkToTest=Clickable link generated for user <strong>%s</strong> (click phone number to test)
 KeepEmptyToUseDefault=Mbajeni bosh për të përdorur vlerën e paracaktuar
 KeepThisEmptyInMostCases=Në shumicën e rasteve, ju mund ta mbani këtë fushë bosh.
 DefaultLink=Lidhja e parazgjedhur
@@ -484,7 +483,7 @@ ExternalModule=Moduli i jashtëm
 InstalledInto=Instaluar në drejtorinë %s
 BarcodeInitForThirdparties=Fillimi masiv i barkodit për palët e treta
 BarcodeInitForProductsOrServices=Fillimi ose rivendosja e barkodit masiv për produktet ose shërbimet
-CurrentlyNWithoutBarCode=Aktualisht, ju keni <strong>%s</strong> <span class=' notranslate'><strong>%s</strong> <span class='notranslate'8 pa definicion'87f4b4 .
+CurrentlyNWithoutBarCode=Currently, you have <strong>%s</strong> record on <strong>%s</strong> %s without barcode defined.
 InitEmptyBarCode=Vlera fillestare për barkodet boshe %s
 EraseAllCurrentBarCode=Fshini të gjitha vlerat aktuale të barkodit
 ConfirmEraseAllCurrentBarCode=Jeni i sigurt që dëshironi të fshini të gjitha vlerat aktuale të barkodit?
@@ -519,8 +518,8 @@ DependsOn=Ky modul ka nevojë për modulin(et)
 RequiredBy=Ky modul kërkohet nga moduli(et)
 TheKeyIsTheNameOfHtmlField=Ky është emri i fushës HTML. Kërkohen njohuri teknike për të lexuar përmbajtjen e faqes HTML për të marrë emrin kyç të një fushe.
 PageUrlForDefaultValues=Duhet të futni shtegun përkatës të URL-së së faqes. Nëse përfshini parametra në URL, do të jetë efektive nëse të gjithë parametrat në URL-në e shfletuar kanë vlerën e përcaktuar këtu.
-PageUrlForDefaultValuesCreate=<br>Shembull:<br>Për formularin për të krijuar një palë të tretë të re, është b0e7843947c<0 /span><span class='notranslate'>%s</strong>.<br>Për URL të instaluar në module të jashtme drejtoria e personalizuar, mos përfshini "custom/", prandaj përdorni shteg si <strong>mymodule/mypage.php</strong> dhe jo të personalizuar /mymodule/mypage.php.<br>Nëse dëshironi vlerën e paracaktuar vetëm nëse url-ja ka ndonjë parametër, mund të përdorni <strong>%s</strong>
-PageUrlForDefaultValuesList=<br>Shembull:<br>Për faqen që liston palët e treta, është b0e7843947c0 ><span class='notranslate'>%s</strong>.<br>Për URL-në e instaluar të moduleve të jashtme , mos përfshini "custom/" kështu që përdorni një shteg si <strong>mymodule/mypagelist.php</strong> dhe jo të personalizuar/mymodule /mypagelist.php.<br>Nëse dëshironi vlerën e paracaktuar vetëm nëse url-ja ka ndonjë parametër, mund të përdorni <strong>%s</strong>
+PageUrlForDefaultValuesCreate=<br>Example:<br>For the form to create a new third party, it is <strong>%s</strong>.<br>For URL of external modules installed into custom directory, do not include the "custom/", so use path like <strong>mymodule/mypage.php</strong> and not custom/mymodule/mypage.php.<br>If you want default value only if url has some parameter, you can use <strong>%s</strong>
+PageUrlForDefaultValuesList=<br>Example:<br>For the page that lists third parties, it is <strong>%s</strong>.<br>For URL of external modules installed into custom directory, do not include the "custom/" so use a path like <strong>mymodule/mypagelist.php</strong> and not custom/mymodule/mypagelist.php.<br>If you want default value only if url has some parameter, you can use <strong>%s</strong>
 AlsoDefaultValuesAreEffectiveForActionCreate=Vini re gjithashtu se mbishkrimi i vlerave të paracaktuara për krijimin e formularit funksionon vetëm për faqet që janë projektuar saktë (pra me parametrin veprim=krijoni ose paraqisni...)
 EnableDefaultValues=Aktivizo personalizimin e vlerave të paracaktuara
 EnableOverwriteTranslation=Lejo personalizimin e përkthimeve
@@ -685,7 +684,7 @@ Module5000Desc=Ju lejon të menaxhoni kompani të shumta
 Module6000Name=Rrjedha e punës ndërmodule
 Module6000Desc=Menaxhimi i rrjedhës së punës midis moduleve të ndryshme (krijimi automatik i objektit dhe/ose ndryshimi automatik i statusit)
 Module10000Name=Faqet e internetit
-Module10000Desc=Krijoni faqe interneti (publike) me një redaktues WYSIWYG. Ky është një CMS i orientuar nga webmaster ose zhvillues (është më mirë të dini gjuhën HTML dhe CSS). Thjesht konfiguroni serverin tuaj të internetit (Apache, Nginx, ...) për të treguar direktorinë e dedikuar Dolibarr për ta vendosur atë në internet në internet me emrin tuaj të domenit.
+Module10000Desc=CMS për të krijuar faqe interneti me një redaktues WYSIWYG. Ky është një sistem i menaxhimit të përmbajtjes i orientuar nga webmaster ose zhvillues (është më mirë të dini gjuhën HTML dhe CSS). Thjesht konfiguroni serverin tuaj të internetit (Apache, Nginx, ...) për të treguar direktorinë e dedikuar Dolibarr për ta vendosur atë në internet në internet me emrin tuaj të domenit.
 Module20000Name=Menaxhimi i Kërkesave të Lënë
 Module20000Desc=Përcaktoni dhe gjurmoni kërkesat për pushim të punonjësve
 Module39000Name=Shumë produkte
@@ -1131,14 +1130,10 @@ LocalTax1IsNotUsed=Mos përdorni taksën e dytë
 LocalTax1IsUsedDesc=Përdorni një lloj të dytë tatimi (përveç atij të parë)
 LocalTax1IsNotUsedDesc=Mos përdorni lloj tjetër tatimi (përveç atij të parë)
 LocalTax1Management=Lloji i dytë i tatimit
-LocalTax1IsUsedExample=
-LocalTax1IsNotUsedExample=
 LocalTax2IsNotUsed=Mos përdorni taksën e tretë
 LocalTax2IsUsedDesc=Përdorni një lloj të tretë tatimi (përveç atij të parë)
 LocalTax2IsNotUsedDesc=Mos përdorni lloj tjetër tatimi (përveç atij të parë)
 LocalTax2Management=Lloji i tretë i tatimit
-LocalTax2IsUsedExample=
-LocalTax2IsNotUsedExample=
 LocalTax1ManagementES=Menaxhimi i RE
 LocalTax1IsUsedDescES=Norma e RE si parazgjedhje kur krijoni prospekte, fatura, porosi etj. ndjek rregullin standard aktiv:<br>Nëse blerësi nuk i nënshtrohet RE, RE si parazgjedhje=0. Fundi i rregullit.<br>Nëse blerësi i nënshtrohet RE, atëherë RE si parazgjedhje. Fundi i rregullit.<br>
 LocalTax1IsNotUsedDescES=Si parazgjedhje RE e propozuar është 0. Fundi i rregullit.
@@ -1159,7 +1154,7 @@ CalcLocaltax2=Blerjet
 CalcLocaltax2Desc=Raportet e taksave lokale janë totali i blerjeve të taksave lokale
 CalcLocaltax3=Shitjet
 CalcLocaltax3Desc=Raportet e taksave lokale janë totali i shitjeve të taksave lokale
-NoLocalTaxXForThisCountry=Sipas konfigurimit të taksave (Shih %s - %s - <span class='notranslate'>b0ecb2ec87f49>fz)0 , vendi juaj nuk ka nevojë të përdorë këtë lloj takse
+NoLocalTaxXForThisCountry=According to the setup of taxes (See %s - %s - %s), your country does not need to use such type of tax
 LabelUsedByDefault=Etiketa përdoret si parazgjedhje nëse nuk mund të gjendet përkthim për kodin
 LabelOnDocuments=Etiketa në dokumente
 LabelOrTranslationKey=Etiketa ose çelësi i përkthimit
@@ -1202,6 +1197,7 @@ Skin=Tema e lëkurës
 DefaultSkin=Tema e parazgjedhur e lëkurës
 MaxSizeList=Gjatësia maksimale për listën
 DefaultMaxSizeList=Gjatësia maksimale e parazgjedhur për listat
+DisplayGrandTotalInList=Shfaq totalin e përgjithshëm (për të gjitha faqet) në fundin e listave
 DefaultMaxSizeShortList=Gjatësia maksimale e parazgjedhur për listat e shkurtra (d.m.th. në kartën e klientit)
 MessageOfDay=Mesazhi i ditës
 MessageLogin=Mesazhi i faqes së hyrjes
@@ -1213,7 +1209,6 @@ EnableMultilangInterface=Aktivizo mbështetjen shumëgjuhëshe për marrëdhëni
 EnableShowLogo=Trego logon e kompanisë në meny
 CompanyInfo=Kompania/Organizata
 CompanyIds=Identitetet e kompanisë/organizatës
-CompanyName=Emri
 CompanyAddress=Adresë
 CompanyZip=Zip
 CompanyTown=Qyteti
@@ -1255,7 +1250,7 @@ SetupDescription2=Dy seksionet e mëposhtme janë të detyrueshme (dy hyrjet e p
 SetupDescription3=<a href="%s">%s -> %sc60804 <br><br>Parametrat bazë të përdorur për të personalizuar sjelljen e paracaktuar të aplikacionit tuaj (p.sh. për veçoritë që lidhen me shtetin).
 SetupDescription4=<a href="%s">%s -> %sc60804 <br><br>Ky softuer është një grup i shumë moduleve/aplikacioneve. Modulet që lidhen me nevojat tuaja duhet të aktivizohen dhe konfigurohen. Regjistrimet e menysë do të shfaqen me aktivizimin e këtyre moduleve.
 SetupDescription5=Regjistrimet e tjera të menusë Setup menaxhojnë parametrat opsionalë.
-SetupDescriptionLink=<a href="%s">%s - %s<span class='enotranslate'8 /span>
+SetupDescriptionLink=<a href="%s">%s - %s</a>
 SetupDescription3b=Parametrat bazë të përdorur për të personalizuar sjelljen e paracaktuar të aplikacionit tuaj (p.sh. për veçoritë që lidhen me shtetin).
 SetupDescription4b=Ky softuer është një grup i shumë moduleve/aplikacioneve. Modulet që lidhen me nevojat tuaja duhet të aktivizohen. Regjistrimet e menysë do të shfaqen me aktivizimin e këtyre moduleve.
 AuditedSecurityEvents=Ngjarjet e sigurisë që auditohen
@@ -1274,7 +1269,7 @@ BrowserOS=Shfletuesi OS
 ListOfSecurityEvents=Lista e ngjarjeve të sigurisë Dolibarr
 SecurityEventsPurged=Ngjarjet e sigurisë u spastruan
 TrackableSecurityEvents=Ngjarjet e sigurisë të gjurmueshme
-LogEventDesc=Aktivizo regjistrimin për ngjarje specifike të sigurisë. Administratorët regjistrin nëpërmjet menysë <b>%s - %s notranslate'></b></span>. Kujdes, kjo veçori mund të gjenerojë një sasi të madhe të dhënash në bazën e të dhënave.
+LogEventDesc=Enable logging for specific security events. Administrators the log via menu <b>%s - %s</b>. Warning, this feature can generate a large amount of data in the database.
 AreaForAdminOnly=Parametrat e konfigurimit mund të vendosen vetëm nga <b>përdoruesit e administratorit</b>.
 SystemInfoDesc=Informacioni i sistemit është informacion i ndryshëm teknik që merrni në modalitetin vetëm për lexim dhe i dukshëm vetëm për administratorët.
 SystemAreaForAdminOnly=Kjo zonë është e disponueshme vetëm për përdoruesit e administratorëve. Lejet e përdoruesve të Dolibarr nuk mund ta ndryshojnë këtë kufizim.
@@ -1286,14 +1281,14 @@ DisplayDesc=Parametrat që ndikojnë në pamjen dhe paraqitjen e aplikacionit mu
 AvailableModules=Aplikacioni/modulet e disponueshme
 ToActivateModule=Për të aktivizuar modulet, shkoni te zona e konfigurimit (Home->Setup->Modules).
 SessionTimeOut=Kohëzgjatja e seancës
-SessionExplanation=Ky numër garanton që sesioni nuk do të skadojë kurrë përpara kësaj vonese, nëse pastruesi i sesionit bëhet nga Pastruesi i brendshëm i sesioneve PHP (dhe asgjë tjetër). Pastruesi i brendshëm i sesioneve PHP nuk garanton që sesioni do të përfundojë pas kësaj vonese. Ai do të skadojë, pas kësaj vonese dhe kur të ekzekutohet pastruesja e sesioneve, kështu që çdo <b>%s/<span class=' qasje notranslate'>%s</span></b>, por vetëm gjatë aksesit të bërë nga sesionet e tjera (nëse vlera është 0, do të thotë se pastrimi i sesionit bëhet vetëm nga një proces i jashtëm) .<br>Shënim: në disa serverë me një mekanizëm të jashtëm pastrimi të sesioneve (cron nën debian, ubuntu ...), sesionet mund të shkatërrohen pas një periudhe të përcaktuar nga një konfigurim i jashtëm, pa marrë parasysh se cila është vlera e futur këtu.
-SessionsPurgedByExternalSystem=Sesionet në këtë server duket se pastrohen nga një mekanizëm i jashtëm (cron nën debian, ubuntu ...), ndoshta çdo <b>%s</b> sekonda (= vlera e parametrit <b>session.gc_maxlifetime<span class='notranslate'>8f391>b091 , kështu që ndryshimi i vlerës këtu nuk ka asnjë efekt. Duhet t'i kërkoni administratorit të serverit të ndryshojë vonesën e sesionit.
+SessionExplanation=This number guarantees that the session will never expire before this delay, if the session cleaner is done by Internal PHP session cleaner (and nothing else). Internal PHP session cleaner does not guarantee that the session will expire after this delay. It will expire, after this delay, and when the session cleaner is run, so every <b>%s/%s</b> access, but only during access made by other sessions (if value is 0, it means clearing of session is done only by an external process).<br>Note: on some servers with an external session cleaning mechanism (cron under debian, ubuntu ...), the sessions can be destroyed after a period defined by an external setup, no matter what the value entered here is.
+SessionsPurgedByExternalSystem=Sessions on this server seems to be cleaned by an external mechanism (cron under debian, ubuntu ...), probably every <b>%s</b> seconds (= value of parameter <b>session.gc_maxlifetime</b>), so changing the value here has no effect. You must ask the server administrator to change session delay.
 TriggersAvailable=Shkaktarët e disponueshëm
-TriggersDesc=Aktivizuesit janë skedarë që do të modifikojnë sjelljen e rrjedhës së punës Dolibarr sapo të kopjohen në drejtorinë <b>htdocs/core/triggers<span class='notranslate'></b></s>. Ata realizojnë veprime të reja, të aktivizuara në ngjarjet e Dolibarr (krijimi i kompanisë së re, vlefshmëria e faturës, ...).
+TriggersDesc=Triggers are files that will modify the behavior of Dolibarr workflow once copied into the directory <b>htdocs/core/triggers</b>. They realize new actions, activated on Dolibarr events (new company creation, invoice validation, ...).
 TriggerDisabledByName=Aktivizuesit në këtë skedar janë çaktivizuar nga prapashtesa <b>-NORUN</b> në emrin e tyre.
-TriggerDisabledAsModuleDisabled=Aktivizuesit në këtë skedar janë çaktivizuar pasi moduli <b>%s<span class='notranslate'>b09a4b739f17f8z është i çaktivizuar.
+TriggerDisabledAsModuleDisabled=Triggers in this file are disabled as module <b>%s</b> is disabled.
 TriggerAlwaysActive=Aktivizuesit në këtë skedar janë gjithmonë aktivë, pavarësisht nga modulet e aktivizuara Dolibarr.
-TriggerActiveAsModuleActive=Aktivizuesit në këtë skedar janë aktiv si modul <b>%s<span class='notranslate'></b>s.
+TriggerActiveAsModuleActive=Triggers in this file are active as module <b>%s</b> is enabled.
 GeneratedPasswordDesc=Zgjidhni metodën që do të përdoret për fjalëkalimet e krijuara automatikisht.
 DictionaryDesc=Fut të gjitha të dhënat e referencës. Ju mund të shtoni vlerat tuaja në parazgjedhje.
 ConstDesc=Kjo faqe ju lejon të modifikoni (të anashkaloni) parametrat që nuk janë të disponueshëm në faqet e tjera. Këto janë kryesisht parametra të rezervuar vetëm për zhvilluesit/zgjidhja e avancuar e problemeve.
@@ -1312,8 +1307,8 @@ NoEventOrNoAuditSetup=Asnjë ngjarje sigurie nuk është regjistruar. Kjo ësht�
 NoEventFoundWithCriteria=Asnjë ngjarje sigurie nuk është gjetur për këtë kriter kërkimi.
 SeeLocalSendMailSetup=Shikoni konfigurimin tuaj lokal të postës elektronike
 BackupDesc=Një kopje rezervë <b>i plotë</b> e një instalimi Dolibarr kërkon dy hapa.
-BackupDesc2=Rezervoni përmbajtjen e drejtorisë "documents" (<b>%s<span class='notranslate'>b09a4b739f17f) që përmban të gjithë skedarët e ngarkuar dhe të krijuar. Kjo do të përfshijë gjithashtu të gjithë skedarët e grumbullimit të krijuar në Hapin 1. Ky operacion mund të zgjasë disa minuta.
-BackupDesc3=Rezervoni strukturën dhe përmbajtjen e bazës së të dhënave tuaja (<b>%s<span class='notranslate'>b09a4b739f17f8z) në</s0 një skedar hale. Për këtë, mund të përdorni asistentin e mëposhtëm.
+BackupDesc2=Backup the contents of the "documents" directory (<b>%s</b>) containing all uploaded and generated files. This will also include all the dump files generated in Step 1. This operation may last several minutes.
+BackupDesc3=Backup the structure and contents of your database (<b>%s</b>) into a dump file. For this, you can use the following assistant.
 BackupDescX=Drejtoria e arkivuar duhet të ruhet në një vend të sigurt.
 BackupDescY=Skedari i krijuar i deponimit duhet të ruhet në një vend të sigurt.
 BackupPHPWarning=Rezervimi nuk mund të garantohet me këtë metodë. E mëparshme e rekomanduar.
@@ -1377,7 +1372,7 @@ SendmailOptionMayHurtBuggedMTA=Funksioni për të dërguar email duke përdorur 
 TranslationSetup=Vendosja e përkthimit
 TranslationKeySearch=Kërkoni një çelës ose varg përkthimi
 TranslationOverwriteKey=Mbishkruani një varg përkthimi
-TranslationDesc=Si të vendosni gjuhën e ekranit:<br>* Parazgjedhja/sistem mbarë: menyja <strong>Home -> Konfigurimi -> Ekrani</strong><br>* Për përdorues: Klikoni në emrin e përdoruesit në krye të ekranit dhe modifikoni b0e7843947c</0 span>Konfigurimi i ekranit të përdoruesit<span class='notranslate'></strong> skeda në kartën e përdoruesit.
+TranslationDesc=How to set the display language:<br>* Default/Systemwide: menu <strong>Home -> Setup -> Display</strong><br>* Per user: Click on the username at the top of the screen and modify the <strong>User Display Setup</strong> tab on the user card.
 TranslationOverwriteDesc=Ju gjithashtu mund të anashkaloni vargjet që plotësojnë tabelën e mëposhtme. Zgjidhni gjuhën tuaj nga "%s", futni vargun e çelësit të përkthimit në "%s" dhe përkthimin tuaj të ri në "%s"
 TranslationOverwriteDesc2=Mund të përdorni skedën tjetër për t'ju ndihmuar të dini se cilin çelës përkthimi të përdorni
 TranslationString=Varg përkthimi
@@ -1385,9 +1380,9 @@ CurrentTranslationString=Vargu aktual i përkthimit
 WarningAtLeastKeyOrTranslationRequired=Kërkohet një kriter kërkimi të paktën për çelësin ose vargun e përkthimit
 NewTranslationStringToShow=Varg i ri përkthimi për t'u shfaqur
 OriginalValueWas=Përkthimi origjinal është mbishkruar. Vlera origjinale ishte:<br><br>%s
-TransKeyWithoutOriginalValue=Detyruat një përkthim të ri për çelësin e përkthimit '<strong>%s<span class='notranslate'>b0a65d071f6fc9>'s që nuk ekziston në asnjë skedar gjuhësor
+TransKeyWithoutOriginalValue=You forced a new translation for the translation key '<strong>%s</strong>' that does not exist in any language files
 TitleNumberOfActivatedModules=Modulet e aktivizuara
-TotalNumberOfActivatedModules=Modulet e aktivizuara: <b>%s</b></span'notranslate'> ><b>%s</b>
+TotalNumberOfActivatedModules=Activated modules: <b>%s</b> / <b>%s</b>
 YouMustEnableOneModule=Duhet të aktivizoni të paktën 1 modul
 YouMustEnableTranslationOverwriteBefore=Së pari duhet të aktivizoni mbishkrimin e përkthimit që të lejohet të zëvendësojë një përkthim
 ClassNotFoundIntoPathWarning=Klasa %s nuk u gjet në shtegun PHP
@@ -1403,7 +1398,7 @@ SearchOptim=Optimizimi i kërkimit
 YouHaveXObjectUseComboOptim=Ju keni %s %s në bazën e të dhënave. Mund të shkoni në konfigurimin e modulit për të mundësuar ngarkimin e listës së kombinuar në ngjarjen e shtypur.
 YouHaveXObjectUseSearchOptim=Ju keni %s %s në bazën e të dhënave. Mund të shtoni konstanten %s në 1 në Home-Setup-Other.
 YouHaveXObjectUseSearchOptimDesc=Kjo kufizon kërkimin në fillim të vargjeve, gjë që bën të mundur që baza e të dhënave të përdorë indekse dhe ju duhet të merrni një përgjigje të menjëhershme.
-YouHaveXObjectAndSearchOptimOn=Ju keni %s %s në bazën e të dhënave dhe konstante %s është caktuar në <span> span class='notranslate'>%s</span> në Home-Setup-Other.
+YouHaveXObjectAndSearchOptimOn=You have %s %s in the database and constant %s is set to %s in Home-Setup-Other.
 BrowserIsOK=Po përdorni shfletuesin e internetit %s. Ky shfletues është në rregull për sigurinë dhe performancën.
 BrowserIsKO=Po përdorni shfletuesin e internetit %s. Ky shfletues njihet si një zgjedhje e keqe për sigurinë, performancën dhe besueshmërinë. Ne rekomandojmë përdorimin e Firefox, Chrome, Opera ose Safari.
 PHPModuleLoaded=Komponenti PHP %s është ngarkuar
@@ -1430,8 +1425,8 @@ DisableForgetPasswordLinkOnLogonPage=Mos e shfaq lidhjen "Fjalëkalimi i harruar
 UsersSetup=Konfigurimi i modulit të përdoruesve
 UserMailRequired=Kërkohet email për të krijuar një përdorues të ri
 UserHideInactive=Fshih përdoruesit joaktivë nga të gjitha listat e kombinuara të përdoruesve (Nuk rekomandohet: kjo mund të thotë që nuk do të mund të filtrosh ose të kërkosh përdorues të vjetër në disa faqe)
-UserHideExternal=Hide external users (not linked to a third party) from all combo lists of users (Not recommended: this may means you won't be able to filter or search on external users on some pages)
-UserHideNonEmployee=Hide non employee users from all combo lists of users (Not recommended: this may means you won't be able to filter or search on non employee users on some pages)
+UserHideExternal=Fshih përdoruesit e jashtëm (jo të lidhur me një palë të tretë) nga të gjitha listat e kombinuara të përdoruesve (Nuk rekomandohet: kjo mund të thotë që nuk do të mund të filtrosh ose të kërkosh te përdoruesit e jashtëm në disa faqe)
+UserHideNonEmployee=Fshih përdoruesit jo punonjës nga të gjitha listat e kombinuara të përdoruesve (Nuk rekomandohet: kjo mund të thotë që nuk do të mund të filtrosh ose të kërkosh te përdoruesit jo punonjës në disa faqe)
 UsersDocModules=Modelet e dokumenteve për dokumentet e krijuara nga të dhënat e përdoruesit
 GroupsDocModules=Modelet e dokumenteve për dokumentet e krijuara nga një rekord grupi
 ##### HRM setup #####
@@ -1669,7 +1664,7 @@ LDAPDescUsers=Kjo faqe ju lejon të përcaktoni emrin e atributeve LDAP në pem�
 LDAPDescGroups=Kjo faqe ju lejon të përcaktoni emrin e atributeve LDAP në pemën LDAP për çdo të dhënë të gjetur në grupet Dolibarr.
 LDAPDescMembers=Kjo faqe ju lejon të përcaktoni emrin e atributeve LDAP në pemën LDAP për çdo të dhënë të gjetur në modulin e anëtarëve Dolibarr.
 LDAPDescMembersTypes=Kjo faqe ju lejon të përcaktoni emrin e atributeve LDAP në pemën LDAP për çdo të dhënë të gjetur në llojet e anëtarëve Dolibarr.
-LDAPDescValues=Vlerat e shembujve janë të dizajnuara për <b>OpenLDAP</b> me skemat e ngarkuara në vijim: <span class='notranslate'873>b650 core.schema, cosine.schema, inetorgperson.schema</b>). Nëse përdorni ato vlera dhe OpenLDAP, modifikoni skedarin tuaj të konfigurimit LDAP <b>slapd.conf</b> që të ketë të gjitha skemat e ngarkuara.
+LDAPDescValues=Example values are designed for <b>OpenLDAP</b> with following loaded schemas: <b>core.schema, cosine.schema, inetorgperson.schema</b>). If you use thoose values and OpenLDAP, modify your LDAP config file <b>slapd.conf</b> to have all thoose schemas loaded.
 ForANonAnonymousAccess=Për një akses të vërtetuar (për shembull për një akses shkrimi)
 PerfDolibarr=Raporti i konfigurimit/optimizimit të performancës
 YouMayFindPerfAdviceHere=Kjo faqe ofron disa kontrolle ose këshilla në lidhje me performancën.
@@ -1752,8 +1747,6 @@ BarcodeDescQRCODE=Barkodi i tipit kod QR
 GenbarcodeLocation=Vegël e linjës së komandës për gjenerimin e kodit të shiritit (përdoret nga motori i brendshëm për disa lloje kodesh bar). Duhet të jetë në përputhje me "genbarcode".<br>Për shembull: /usr/local/bin/genbarcode
 BarcodeInternalEngine=Motori i brendshëm
 BarCodeNumberManager=Menaxher për të përcaktuar automatikisht numrat e barkodit
-##### Prelevements #####
-WithdrawalsSetup=Vendosja e modulit të pagesave me Debitim Direkt
 ##### ExternalRSS #####
 ExternalRSSSetup=Konfigurimi i importeve të jashtme RSS
 NewRSS=Furnizimi i ri RSS
@@ -1823,7 +1816,7 @@ DetailTarget=Synimi për lidhjet (_blank krye hap një dritare të re)
 DetailLevel=Niveli (-1: menyja e sipërme, 0: menyja me kokë, >0 menyja dhe nënmenyja)
 ModifMenu=Ndryshimi i menysë
 DeleteMenu=Fshi hyrjen e menysë
-ConfirmDeleteMenu=Jeni të sigurt që dëshironi të fshini hyrjen e menysë <b>%s<span class='notranslate'></b></s?
+ConfirmDeleteMenu=Are you sure you want to delete menu entry <b>%s</b>?
 FailedToInitializeMenu=Inicializimi i menysë dështoi
 ##### Tax #####
 TaxSetup=Krijimi i modulit të taksave, taksave sociale ose fiskale dhe dividentëve
@@ -1868,7 +1861,7 @@ PastDelayVCalExport=Mos e eksportoni ngjarje më të vjetër se
 SecurityKey = Çelësi i sigurisë
 ##### ClickToDial #####
 ClickToDialSetup=Kliko Për të thirrur konfigurimin e modulit
-ClickToDialUrlDesc=URL thirret kur kryhet një klikim në foton e telefonit. Në URL, mund të përdorni etiketat<br><b>__PHONETO__b09a4b78z0f1 zëvendësohet me numrin e telefonit të personit që do të telefonojë<span class='notranslate'><br><b>__PHONEFROM__b09f17f789 that do të zëvendësohet me numrin e telefonit të personit që telefonon (i juaji)<span class='notranslate'><br><b>__LOGIN__<span class='notranslate'8f3091 span> që do të zëvendësohet me login clicktodial (të përcaktuar në kartën e përdoruesit)<br><b>__PASS__<span class='notrans </b></span> që do të zëvendësohet me fjalëkalimin e klikimit (të përcaktuar në kartën e përdoruesit).
+ClickToDialUrlDesc=URL called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).
 ClickToDialDesc=Ky modul ndryshon numrat e telefonit, kur përdorni një kompjuter desktop, në lidhje të klikueshme. Një klikim do të telefonojë numrin. Kjo mund të përdoret për të nisur një telefonatë kur përdorni një telefon të butë në desktop ose kur përdorni një sistem CTI bazuar në protokollin SIP për shembull. Shënim: Kur përdorni një smartphone, numrat e telefonit janë gjithmonë të klikueshëm.
 ClickToDialUseTelLink=Përdorni vetëm një lidhje "tel:" në numrat e telefonit
 ClickToDialUseTelLinkDesc=Përdoreni këtë metodë nëse përdoruesit tuaj kanë një telefon të butë ose një ndërfaqe softuerike, të instaluar në të njëjtin kompjuter si shfletuesi dhe të thirrur kur klikoni në një lidhje që fillon me "tel:" në shfletuesin tuaj. Nëse keni nevojë për një lidhje që fillon me "sip:" ose një zgjidhje të plotë të serverit (nuk ka nevojë për instalim lokal të softuerit), duhet ta vendosni këtë në "Jo" dhe të plotësoni fushën tjetër.
@@ -1928,7 +1921,7 @@ IfSetToYesDontForgetPermission=Nëse vendoset në një vlerë jo null, mos harro
 GeoIPMaxmindSetup=Konfigurimi i modulit GeoIP Maxmind
 PathToGeoIPMaxmindCountryDataFile=Rruga drejt skedarit që përmban përkthimin e ip-së së Maxmind në shtet
 NoteOnPathLocation=Vini re se skedari juaj i të dhënave ip në shtet duhet të jetë brenda një drejtorie që mund të lexojë PHP-ja juaj (Kontrollo konfigurimin e PHP open_basedir dhe lejet e sistemit të skedarëve).
-YouCanDownloadFreeDatFileTo=Ju mund të shkarkoni një <b>version demo falas</b> të skedarit të vendit të Maxmind GeoIP në <span class='notranslate'8000<4bec /span>.
+YouCanDownloadFreeDatFileTo=You can download a <b>free demo version</b> of the Maxmind GeoIP country file at %s.
 YouCanDownloadAdvancedDatFileTo=Mund të shkarkoni gjithashtu një version më të plotë <b>, me përditësime,</b> të skedarit të vendit Maxmind GeoIP në %s.
 TestGeoIPResult=Testi i një IP konvertimi -> vendi
 ##### Projects #####
@@ -1979,7 +1972,7 @@ SomethingMakeInstallFromWebNotPossible=Instalimi i modulit të jashtëm nuk ësh
 SomethingMakeInstallFromWebNotPossible2=Për këtë arsye, procesi i përmirësimit i përshkruar këtu është një proces manual që mund të kryejë vetëm një përdorues i privilegjuar.
 InstallModuleFromWebHasBeenDisabledContactUs=Instalimi ose zhvillimi i moduleve të jashtme ose uebsajteve dinamike, nga aplikacioni, aktualisht është i bllokuar për qëllime sigurie. Ju lutemi na kontaktoni nëse duhet ta aktivizoni këtë veçori.
 InstallModuleFromWebHasBeenDisabledByFile=Instalimi i modulit të jashtëm nga aplikacioni është çaktivizuar nga administratori juaj. Duhet t'i kërkoni atij të heqë skedarin <strong>%s</strong> veçori.
-ConfFileMustContainCustom=Instalimi ose ndërtimi i një moduli të jashtëm nga aplikacioni duhet të ruani skedarët e modulit në direktorinë <strong>%s </strong>. Për ta përpunuar këtë direktori nga Dolibarr, duhet të konfiguroni <strong>conf/conf.php</strong> për të shtuar 2 linjat e direktivës: <br><strong>$dolibarr_main_url_root_alt='/custom';<span class='notranslate'09span class='notranslate'09f1000 ='notranslate'><br></span><strong>$dolibarr_main_document_root_alt='b0ecb2ec8787f94; '></strong>
+ConfFileMustContainCustom=Installing or building an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Theksoni linjat e tabelës kur lëvizja e miut kalon
 HighlightLinesColor=Theksoni ngjyrën e rreshtit kur miu kalon sipër (përdorni 'ffffff' për të mos theksuar)
 HighlightLinesChecked=Theksoni ngjyrën e rreshtit kur është e kontrolluar (përdorni 'ffffff' për të mos theksuar)
@@ -2073,7 +2066,7 @@ DetectionNotPossible=Zbulimi nuk është i mundur
 UrlToGetKeyToUseAPIs=Url për të marrë token për të përdorur API (pasi të merret token, ai ruhet në tabelën e përdoruesve të bazës së të dhënave dhe duhet të sigurohet në çdo thirrje API)
 ListOfAvailableAPIs=Lista e API-ve të disponueshme
 activateModuleDependNotSatisfied=Moduli "%s" varet nga moduli "%s", që mungon, kështu që moduli " %1$s" mund të mos funksionojë siç duhet. Ju lutemi instaloni modulin "%2$s" ose çaktivizoni modulin "%1$s" nëse doni të jeni të sigurt nga çdo surprizë
-CommandIsNotInsideAllowedCommands=Komanda që po përpiqeni të ekzekutoni nuk është në listën e komandave të lejuara të përcaktuara në parametrin <strong>$dolibarr_main_restrict_os_commandsb0a65d071f6fc9> file class='notranslate'><strong>conf.php</strong>.
+CommandIsNotInsideAllowedCommands=The command you are trying to run is not in the list of allowed commands defined in parameter <strong>$dolibarr_main_restrict_os_commands</strong> in the <strong>conf.php</strong> file.
 LandingPage=Faqja e uljes
 SamePriceAlsoForSharedCompanies=Nëse përdorni një modul shumëkompani, me zgjedhjen "Çmim i vetëm", çmimi do të jetë gjithashtu i njëjtë për të gjitha kompanitë nëse produktet ndahen midis mjediseve.
 ModuleEnabledAdminMustCheckRights=Moduli është aktivizuar. Lejet për modul(et) e aktivizuara iu dhanë vetëm përdoruesve të administratorëve. Mund t'ju duhet t'u jepni leje përdoruesve ose grupeve të tjerë manualisht nëse është e nevojshme.
@@ -2184,7 +2177,7 @@ CreateCandidature=Krijo aplikim për punë
 FormatZip=Zip
 MainMenuCode=Kodi i hyrjes në meny (menyja kryesore)
 ECMAutoTree=Shfaq pemën automatike ECM
-OperationParamDesc=Përcaktoni rregullat për t'u përdorur për të nxjerrë disa të dhëna ose për të vendosur vlera për t'u përdorur për operim.<br><br>Shembull për të nxjerrë një emër kompanie nga subjekti i emailit në një variabël të përkohshëm:<br>tmp_var=EXTRACT:SUBJECT:Mesazhi nga kompania ([^\n]*)<br><br>Shembuj për të vendosur vetitë e një objekti për të krijuar:b0342fccfda<9 /span>objproperty1=SET:një vlerë e koduar e fortë<span class='notranslate'><br>objproperty2=SET:__tmp_var__<br></spanTYaSE/vlera provalty:obj vendoset vetëm nëse vetia nuk është përcaktuar tashmë)<span class='notranslate'><br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:Emri i kompanisë është\\DY: s([^\\s]*)<br><br>Përdor një rresht të ri për të nxjerrë ose vendosur disa veti.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a company name from email subject into a temporary variable:<br>tmp_var=EXTRACT:SUBJECT:Message from company ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=Orari i hapjes
 OpeningHoursDesc=Shkruani këtu orarin e rregullt të hapjes së kompanisë suaj.
 ResourceSetup=Konfigurimi i modulit të Burimeve
@@ -2270,7 +2263,7 @@ ModuleActivatedMayExposeInformation=Kjo shtesë PHP mund të ekspozojë të dhë
 ModuleActivatedDoNotUseInProduction=Një modul i krijuar për zhvillimin është aktivizuar. Mos e aktivizoni në një mjedis prodhimi.
 CombinationsSeparator=Karakteri ndarës për kombinimet e produkteve
 SeeLinkToOnlineDocumentation=Shih lidhjen me dokumentacionin online në menunë e sipërme për shembuj
-SHOW_SUBPRODUCT_REF_IN_PDF=Nëse veçoria "%s" e modulit <b>%s<s class 'notranslate'></b></span> është përdorur, tregoni detajet e nënprodukteve të një komplete në PDF.
+SHOW_SUBPRODUCT_REF_IN_PDF=If the feature "%s" of module <b>%s</b> is used, show details of subproducts of a kit on PDF.
 AskThisIDToYourBank=Kontaktoni bankën tuaj për të marrë këtë ID
 AdvancedModeOnly=Leja disponohet vetëm në modalitetin e lejeve të avancuara
 ConfFileIsReadableOrWritableByAnyUsers=Skedari conf është i lexueshëm ose i shkruhet nga çdo përdorues. Jepni leje vetëm përdoruesit dhe grupit të serverit të uebit.
@@ -2297,9 +2290,9 @@ DatabasePasswordObfuscated=Fjalëkalimi i bazës së të dhënave është i turb
 DatabasePasswordNotObfuscated=Fjalëkalimi i bazës së të dhënave NUK është i turbullt në skedarin conf
 APIsAreNotEnabled=Modulet e API-ve nuk janë të aktivizuara
 YouShouldSetThisToOff=Ju duhet ta vendosni këtë në 0 ose jo
-InstallAndUpgradeLockedBy=Instalimi dhe përmirësimet janë të kyçura nga skedari <b>%s<span class='notranslate'>b09a4b739f17f
-InstallLockedBy=Instalimi/Rinstalimi është i kyçur nga skedari <b>%s<span class='notranslate'>b09a4b739f17>b09a4b739f17>
-InstallOfAddonIsNotBlocked=Instalimet e shtesave nuk janë të kyçura. Krijo një skedar <b>installmodules.lock</b> në direktoriumin b0aee83panslateb0aee833305 ='notranslate'>%s</span></b> për të bllokuar instalimet e shtesave/moduleve të jashtme.
+InstallAndUpgradeLockedBy=Install and upgrades are locked by the file <b>%s</b>
+InstallLockedBy=Install/Reinstall is locked by the file <b>%s</b>
+InstallOfAddonIsNotBlocked=Installations of addons are not locked. Create a file <b>installmodules.lock</b> into directory <b>%s</b> to block installations of external addons/modules.
 OldImplementation=Zbatimi i vjetër
 PDF_SHOW_LINK_TO_ONLINE_PAYMENT=Nëse janë aktivizuar disa module pagese në internet (Paypal, Stripe, ...), shtoni një lidhje në PDF për të bërë pagesën në internet
 DashboardDisableGlobal=Çaktivizo globalisht të gjithë gishtat e mëdhenj të objekteve të hapura
@@ -2320,8 +2313,6 @@ IfYouUseASecondTaxYouMustSetYouUseTheMainTax=Nëse dëshironi të përdorni një
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=Nëse dëshironi të përdorni një taksë të tretë, duhet të aktivizoni edhe taksën e parë të shitjes
 LanguageAndPresentation=Gjuha dhe prezantimi
 SkinAndColors=Lëkura dhe ngjyrat
-IfYouUseASecondTaxYouMustSetYouUseTheMainTax=Nëse dëshironi të përdorni një taksë të dytë, duhet të aktivizoni edhe taksën e parë të shitjes
-IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=Nëse dëshironi të përdorni një taksë të tretë, duhet të aktivizoni edhe taksën e parë të shitjes
 PDF_USE_1A=Gjeneroni PDF me format PDF/A-1b
 MissingTranslationForConfKey = Mungon përkthimi për %s
 NativeModules=Modulet amtare
@@ -2339,7 +2330,6 @@ ExportUseLowMemoryModeHelp=Përdorni modalitetin e memories së ulët për të g
 ModuleWebhookName = Uebhook
 ModuleWebhookDesc = Ndërfaqja për të kapur nxitësit e dolibarr dhe për të dërguar të dhëna të ngjarjes në një URL
 WebhookSetup = Konfigurimi i uebhook-ut
-Settings = Cilësimet
 WebhookSetupPage = Faqja e konfigurimit të uebhook
 ShowQuickAddLink=Shfaq një buton për të shtuar shpejt një element në menynë lart djathtas
 ShowSearchAreaInTopMenu=Trego zonën e kërkimit në menunë e sipërme
@@ -2371,7 +2361,6 @@ DoesNotWorkWithAllThemes=Nuk do të funksionojë me të gjitha temat
 NoName=Pa emer
 ShowAdvancedOptions= Shfaq opsionet e avancuara
 HideAdvancedoptions= Fshih opsionet e avancuara
-CIDLookupURL=Moduli sjell një URL që mund të përdoret nga një mjet i jashtëm për të marrë emrin e një pale të tretë ose kontaktit nga numri i tij i telefonit. URL-ja për t'u përdorur është:
 OauthNotAvailableForAllAndHadToBeCreatedBefore=Vërtetimi i OAUTH2 nuk është i disponueshëm për të gjithë hostet dhe një token me lejet e duhura duhet të jetë krijuar në rrjedhën e sipërme me modulin OAUTH
 MAIN_MAIL_SMTPS_OAUTH_SERVICE=Shërbimi i vërtetimit OAUTH2
 DontForgetCreateTokenOauthMod=Një shenjë me lejet e duhura duhet të jetë krijuar në rrjedhën e sipërme me modulin OAUTH
@@ -2384,7 +2373,7 @@ MaxNumberOfPostOnPublicPagesByIP=Numri maksimal i postimeve në faqet publike me
 CIDLookupURL=Moduli sjell një URL që mund të përdoret nga një mjet i jashtëm për të marrë emrin e një pale të tretë ose kontaktit nga numri i tij i telefonit. URL-ja për t'u përdorur është:
 ScriptIsEmpty=Skenari është bosh
 ShowHideTheNRequests=Shfaq/fsheh %s kërkesat SQL
-DefinedAPathForAntivirusCommandIntoSetup=Përcaktoni një shteg për një program antivirus në <b>%s<span class='notranslate'></b></s
+DefinedAPathForAntivirusCommandIntoSetup=Define a path for an antivirus program into <b>%s</b>
 TriggerCodes=Ngjarjet e shkaktuara
 TriggerCodeInfo=Futni këtu kodin(et) e aktivizimit që duhet të gjenerojnë një postim të një kërkese në ueb (lejohen vetëm URL-të e jashtme). Mund të futni disa kode nxitëse të ndara me presje.
 EditableWhenDraftOnly=Nëse nuk është zgjedhur, vlera mund të modifikohet vetëm kur objekti ka një status draft
@@ -2417,8 +2406,8 @@ NotAvailableByDefaultEnabledOnModuleActivation=Nuk është krijuar si parazgjedh
 CSSPage=Stili CSS
 Defaultfortype=E paracaktuar
 DefaultForTypeDesc=Modeli përdoret si parazgjedhje kur krijoni një email të ri për llojin e shabllonit
-OptionXShouldBeEnabledInModuleY=Opsioni "<b>%s</b>" duhet të jetë <pan classable ='notranslate'><b></span>%s</b>
-OptionXIsCorrectlyEnabledInModuleY=Opsioni "<b>%s</b>" është aktivizuar në module 'notranslate'><b></span>%s</b>
+OptionXShouldBeEnabledInModuleY=Option "<b>%s</b>" should be enabled into module <b>%s</b>
+OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
 AllowOnLineSign=Lejo nënshkrimin On Line
 AtBottomOfPage=Në fund të faqes
 FailedAuth=vërtetimet e dështuara
@@ -2440,3 +2429,17 @@ ParametersForTestEnvironment=Parametrat për mjedisin e testimit
 TryToKeepOnly=Mundohuni të mbani vetëm %s
 RecommendedForProduction=Rekomandohet për prodhim
 RecommendedForDebug=Rekomandohet për korrigjimin e gabimeve
+UrlPublicInterfaceLabelAdmin=URL alternative për ndërfaqen publike
+UrlPublicInterfaceHelpAdmin=Është e mundur të përcaktohet një pseudonim për serverin e uebit dhe kështu të vihet në dispozicion ndërfaqja publike me një URL tjetër (serveri virtual i hostit duhet të veprojë si një përfaqësues në URL-në standarde)
+ExportUseForce=Përdorni parametrin -f
+ExportUseForceHelp=Detyroni të vazhdoni eksportin edhe kur zbulohet një gabim (Rezervimi mund të mos jetë i besueshëm)
+CustomPrompt=Kërkesat e personalizuara
+AiDescription=Karakteristikat e AI (Inteligjencës Artificiale).
+AiDescriptionLong=Ofron veçori të AI (Inteligjencës Artificiale) në pjesë të ndryshme të aplikacionit. Nevojë për API të jashtme të AI.
+AI_KEY_API_CHATGPT= Çelësi për api ChatGPT IA
+AiSetup=Konfigurimi i modulit AI
+AiCustomPrompt=Kërkesa doganore e AI
+AI_CONFIGURATIONS_PROMPT=Prompt i personalizuar
+ImageGeneration=Gjenerimi i imazhit
+AIPromptForFeatures=Kërkesat me porosi të AI për veçori
+EnterAnIP=Futni një adresë IP

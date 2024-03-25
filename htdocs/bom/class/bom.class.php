@@ -2,6 +2,8 @@
 /* Copyright (C) 2019	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2023	Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2023	Charlene Benke		<charlene@patas-monkey.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +88,7 @@ class BOM extends CommonObject
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -109,32 +111,32 @@ class BOM extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
-		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>5),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'noteditable'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of BOM", 'showoncombobox'=>'1', 'csslist'=>'nowraponall'),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>1, 'searchall'=>1, 'showoncombobox'=>'2', 'autofocusoncreate'=>1, 'css'=>'minwidth300 maxwidth400', 'csslist'=>'tdoverflowmax200'),
-		'bomtype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'position'=>33, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing', 1=>'Disassemble'), 'css'=>'minwidth175', 'csslist'=>'minwidth175 center'),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'default' => 1, 'index' => 1, 'position' => 5),
+		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'noteditable' => 1, 'visible' => 4, 'position' => 10, 'notnull' => 1, 'default' => '(PROV)', 'index' => 1, 'searchall' => 1, 'comment' => "Reference of BOM", 'showoncombobox' => 1, 'csslist' => 'nowraponall'),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'notnull' => 1, 'searchall' => 1, 'showoncombobox' => '2', 'autofocusoncreate' => 1, 'css' => 'minwidth300 maxwidth400', 'csslist' => 'tdoverflowmax200'),
+		'bomtype' => array('type' => 'integer', 'label' => 'Type', 'enabled' => 1, 'visible' => 1, 'position' => 33, 'notnull' => 1, 'default' => '0', 'arrayofkeyval' => array(0 => 'Manufacturing', 1 => 'Disassemble'), 'css' => 'minwidth175', 'csslist' => 'minwidth175 center'),
 		//'bomtype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'position'=>32, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing')),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:1:((finished:is:null) or (finished:!=:0))', 'label'=>'Product', 'picto'=>'product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax100'),
-		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
-		'qty' => array('type'=>'real', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>55, 'notnull'=>1, 'isameasure'=>'1', 'css'=>'maxwidth50imp right'),
+		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php:1:((finished:is:null) or (finished:!=:0))', 'label' => 'Product', 'picto' => 'product', 'enabled' => 1, 'visible' => 1, 'position' => 35, 'notnull' => 1, 'index' => 1, 'help' => 'ProductBOMHelp', 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax100'),
+		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => -1, 'position' => 60, 'notnull' => -1,),
+		'qty' => array('type' => 'real', 'label' => 'Quantity', 'enabled' => 1, 'visible' => 1, 'default' => 1, 'position' => 55, 'notnull' => 1, 'isameasure' => 1, 'css' => 'maxwidth50imp right'),
 		//'efficiency' => array('type'=>'real', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>-1, 'default'=>1, 'position'=>100, 'notnull'=>0, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLossForProductProduced'),
-		'duration' => array('type'=>'duration', 'label'=>'EstimatedDuration', 'enabled'=>1, 'visible'=>-1, 'position'=>101, 'notnull'=>-1, 'css'=>'maxwidth50imp', 'help'=>'EstimatedDurationDesc'),
-		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'picto'=>'stock', 'enabled'=>1, 'visible'=>-1, 'position'=>102, 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax100'),
-		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>-2, 'position'=>161, 'notnull'=>-1,),
-		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>-2, 'position'=>162, 'notnull'=>-1,),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>300, 'notnull'=>1,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'position'=>501, 'notnull'=>1,),
-		'date_valid' => array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>502, 'notnull'=>0,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserCreation', 'picto'=>'user', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax100'),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'picto'=>'user', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1, 'csslist'=>'tdoverflowmax100'),
-		'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'picto'=>'user', 'enabled'=>1, 'visible'=>-2, 'position'=>512, 'notnull'=>0, 'csslist'=>'tdoverflowmax100'),
-		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
-		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Enabled', 9=>'Disabled')),
+		'duration' => array('type' => 'duration', 'label' => 'EstimatedDuration', 'enabled' => 1, 'visible' => -1, 'position' => 101, 'notnull' => -1, 'css' => 'maxwidth50imp', 'help' => 'EstimatedDurationDesc'),
+		'fk_warehouse' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label' => 'WarehouseForProduction', 'picto' => 'stock', 'enabled' => 1, 'visible' => -1, 'position' => 102, 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax100'),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => -2, 'position' => 161, 'notnull' => -1,),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => -2, 'position' => 162, 'notnull' => -1,),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'position' => 300, 'notnull' => 1,),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'position' => 501, 'notnull' => 1,),
+		'date_valid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -2, 'position' => 502, 'notnull' => 0,),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserCreation', 'picto' => 'user', 'enabled' => 1, 'visible' => -2, 'position' => 510, 'notnull' => 1, 'foreignkey' => 'user.rowid', 'csslist' => 'tdoverflowmax100'),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'picto' => 'user', 'enabled' => 1, 'visible' => -2, 'position' => 511, 'notnull' => -1, 'csslist' => 'tdoverflowmax100'),
+		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'picto' => 'user', 'enabled' => 1, 'visible' => -2, 'position' => 512, 'notnull' => 0, 'csslist' => 'tdoverflowmax100'),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 1000, 'notnull' => -1,),
+		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 1010),
+		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'position' => 1000, 'notnull' => 1, 'default' => 0, 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Enabled', 9 => 'Disabled')),
 	);
 
 	/**
@@ -235,7 +237,7 @@ class BOM extends CommonObject
 	// protected $childtables=array();
 
 	/**
-	 * @var array	List of child tables. To know object to delete on cascade.
+	 * @var string[]	List of child tables. To know object to delete on cascade.
 	 */
 	protected $childtablesoncascade = array('bom_bomline');
 
@@ -484,18 +486,16 @@ class BOM extends CommonObject
 	/**
 	 * Load list of objects in memory from the database.
 	 *
-	 * @param  string      $sortorder    Sort Order
-	 * @param  string      $sortfield    Sort field
-	 * @param  int         $limit        limit
-	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
-	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @param  string      		$sortorder    Sort Order
+	 * @param  string      		$sortfield    Sort field
+	 * @param  int         		$limit        Limit
+	 * @param  int         		$offset       Offset
+	 * @param  string   		$filter       Filter USF
+	 * @param  string      		$filtermode   Filter mode (AND or OR)
+	 * @return array|int        			  int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -508,23 +508,14 @@ class BOM extends CommonObject
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
+
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (strpos($key, 'date') !== false) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
-				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
-				}
-			}
-		}
-		if (count($sqlwhere) > 0) {
-			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {
@@ -589,7 +580,7 @@ class BOM extends CommonObject
 	 *
 	 * @param	int		$fk_product				Id of product
 	 * @param	float	$qty					Quantity
-	 * @param	int		$qty_frozen				Frozen quantity
+	 * @param	int<0,1> $qty_frozen			If the qty is Frozen
 	 * @param 	int		$disable_stock_change	Disable stock change on using in MO
 	 * @param	float	$efficiency				Efficiency in MO
 	 * @param	int		$position				Position of BOM-Line in BOM-Lines
@@ -600,7 +591,7 @@ class BOM extends CommonObject
 	 * @param	int		$fk_default_workstation	Default workstation
 	 * @return	int								Return integer <0 if KO, Id of created object if OK
 	 */
-	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '', $array_options = array(), $fk_default_workstation = null)
+	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = 0, $array_options = array(), $fk_default_workstation = null)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -698,7 +689,7 @@ class BOM extends CommonObject
 	 *
 	 * @param 	int		$rowid					Id of line to update
 	 * @param	float	$qty					Quantity
-	 * @param	int		$qty_frozen				Frozen quantity
+	 * @param	float	$qty_frozen				Frozen quantity
 	 * @param 	int		$disable_stock_change	Disable stock change on using in MO
 	 * @param	float	$efficiency				Efficiency in MO
 	 * @param	int		$position				Position of BOM-Line in BOM-Lines
@@ -710,7 +701,7 @@ class BOM extends CommonObject
 	 */
 	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = array(), $fk_default_workstation = null)
 	{
-		global $mysoc, $conf, $langs, $user;
+		global $user;
 
 		$logtext = "::updateLine bomid=$this->id, qty=$qty, qty_frozen=$qty_frozen, disable_stock_change=$disable_stock_change, efficiency=$efficiency";
 		$logtext .= ", import_key=$import_key";
@@ -884,7 +875,7 @@ class BOM extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/bom/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if ($mybool === false) {
@@ -1191,7 +1182,7 @@ class BOM extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('bomdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1284,7 +1275,7 @@ class BOM extends CommonObject
 		$this->lines = array();
 
 		$objectline = new BOMLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_bom = '.((int) $this->id)));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_bom:=:'.((int) $this->id).')');
 
 		if (is_numeric($result)) {
 			$this->error = $objectline->error;
@@ -1368,13 +1359,15 @@ class BOM extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->initAsSpecimenCommon();
 		$this->ref = 'BOM-123';
 		$this->date_creation = dol_now() - 20000;
+
+		return 1;
 	}
 
 
@@ -1411,7 +1404,7 @@ class BOM extends CommonObject
 	 * BOM costs calculation based on cost_price or pmp of each BOM line.
 	 * Set the property ->total_cost and ->unit_cost of BOM.
 	 *
-	 * @return int			Return integer <0 if KO, >0 if OK
+	 * @return int|string	Return integer <0 if KO, >0 if OK, or printable error result from hook
 	 */
 	public function calculateCosts()
 	{
@@ -1421,7 +1414,7 @@ class BOM extends CommonObject
 		$this->unit_cost = 0;
 		$this->total_cost = 0;
 
-		$parameters=array();
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('calculateCostsBom', $parameters, $this); // Note that $action and $object may have been modified by hook
 
 		if ($reshook > 0) {
@@ -1538,8 +1531,8 @@ class BOM extends CommonObject
 	/**
 	 * Get Net needs by product
 	 *
-	 * @param array $TNetNeeds Array of ChildBom and infos linked to
-	 * @param int   $qty       qty needed
+	 * @param array	$TNetNeeds Array of ChildBom and infos linked to
+	 * @param float	$qty       qty needed
 	 * @return void
 	 */
 	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0)
@@ -1548,13 +1541,13 @@ class BOM extends CommonObject
 			foreach ($this->lines as $line) {
 				if (!empty($line->childBom)) {
 					foreach ($line->childBom as $childBom) {
-						$childBom->getNetNeeds($TNetNeeds, $line->qty*$qty);
+						$childBom->getNetNeeds($TNetNeeds, $line->qty * $qty);
 					}
 				} else {
 					if (empty($TNetNeeds[$line->fk_product])) {
 						$TNetNeeds[$line->fk_product] = 0;
 					}
-					$TNetNeeds[$line->fk_product] += $line->qty*$qty;
+					$TNetNeeds[$line->fk_product] += $line->qty * $qty;
 				}
 			}
 		}
@@ -1564,7 +1557,7 @@ class BOM extends CommonObject
 	 * Get Net needs Tree by product or bom
 	 *
 	 * @param array $TNetNeeds Array of ChildBom and infos linked to
-	 * @param int   $qty       qty needed
+	 * @param float	$qty       qty needed
 	 * @param int   $level     level of recursivity
 	 * @return void
 	 */
@@ -1576,9 +1569,9 @@ class BOM extends CommonObject
 					foreach ($line->childBom as $childBom) {
 						$TNetNeeds[$childBom->id]['bom'] = $childBom;
 						$TNetNeeds[$childBom->id]['parentid'] = $this->id;
-						$TNetNeeds[$childBom->id]['qty'] = $line->qty*$qty;
+						$TNetNeeds[$childBom->id]['qty'] = $line->qty * $qty;
 						$TNetNeeds[$childBom->id]['level'] = $level;
-						$childBom->getNetNeedsTree($TNetNeeds, $line->qty*$qty, $level+1);
+						$childBom->getNetNeedsTree($TNetNeeds, $line->qty * $qty, $level + 1);
 					}
 				} else {
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] += $line->qty * $qty;
@@ -1605,7 +1598,7 @@ class BOM extends CommonObject
 		}
 
 		if (empty($bom_id)) {
-			$bom_id=$this->id;
+			$bom_id = $this->id;
 		}
 
 		$sql = 'SELECT l.fk_bom, b.label
@@ -1617,7 +1610,7 @@ class BOM extends CommonObject
 		if (!empty($resql)) {
 			while ($res = $this->db->fetch_object($resql)) {
 				$TParentBom[$res->fk_bom] = $res->fk_bom;
-				$this->getParentBomTreeRecursive($TParentBom, $res->fk_bom, $level+1);
+				$this->getParentBomTreeRecursive($TParentBom, $res->fk_bom, $level + 1);
 			}
 		}
 	}
@@ -1721,22 +1714,22 @@ class BOMLine extends CommonObjectLine
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type'=>'integer', 'label'=>'LineID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
-		'fk_bom' => array('type'=>'integer:BillOfMaterials:societe/class/bom.class.php', 'label'=>'BillOfMaterials', 'enabled'=>1, 'visible'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1,),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
-		'fk_bom_child' => array('type'=>'integer:BOM:bom/class/bom.class.php', 'label'=>'BillOfMaterials', 'enabled'=>1, 'visible'=>-1, 'position'=>40, 'notnull'=>-1,),
-		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
-		'qty' => array('type'=>'double(24,8)', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'notnull'=>1, 'isameasure'=>'1',),
-		'qty_frozen' => array('type'=>'smallint', 'label'=>'QuantityFrozen', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>105, 'css'=>'maxwidth50imp', 'help'=>'QuantityConsumedInvariable'),
-		'disable_stock_change' => array('type'=>'smallint', 'label'=>'DisableStockChange', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>108, 'css'=>'maxwidth50imp', 'help'=>'DisableStockChangeHelp'),
-		'efficiency' => array('type'=>'double(24,8)', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'position'=>110, 'notnull'=>1, 'css'=>'maxwidth50imp', 'help'=>'ValueOfEfficiencyConsumedMeans'),
-		'fk_unit' => array('type'=>'integer', 'label'=>'Unit', 'enabled'=>1, 'visible'=>1, 'position'=>120, 'notnull'=>-1,),
-		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'default'=>0, 'position'=>200, 'notnull'=>1,),
-		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
-		'fk_default_workstation' =>array('type'=>'integer', 'label'=>'DefaultWorkstation', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'position'=>1050)
+		'rowid' => array('type' => 'integer', 'label' => 'LineID', 'enabled' => 1, 'visible' => -1, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
+		'fk_bom' => array('type' => 'integer:BillOfMaterials:societe/class/bom.class.php', 'label' => 'BillOfMaterials', 'enabled' => 1, 'visible' => 1, 'position' => 10, 'notnull' => 1, 'index' => 1,),
+		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php', 'label' => 'Product', 'enabled' => 1, 'visible' => 1, 'position' => 20, 'notnull' => 1, 'index' => 1,),
+		'fk_bom_child' => array('type' => 'integer:BOM:bom/class/bom.class.php', 'label' => 'BillOfMaterials', 'enabled' => 1, 'visible' => -1, 'position' => 40, 'notnull' => -1,),
+		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => -1, 'position' => 60, 'notnull' => -1,),
+		'qty' => array('type' => 'double(24,8)', 'label' => 'Quantity', 'enabled' => 1, 'visible' => 1, 'position' => 100, 'notnull' => 1, 'isameasure' => 1,),
+		'qty_frozen' => array('type' => 'smallint', 'label' => 'QuantityFrozen', 'enabled' => 1, 'visible' => 1, 'default' => '0', 'position' => 105, 'css' => 'maxwidth50imp', 'help' => 'QuantityConsumedInvariable'),
+		'disable_stock_change' => array('type' => 'smallint', 'label' => 'DisableStockChange', 'enabled' => 1, 'visible' => 1, 'default' => '0', 'position' => 108, 'css' => 'maxwidth50imp', 'help' => 'DisableStockChangeHelp'),
+		'efficiency' => array('type' => 'double(24,8)', 'label' => 'ManufacturingEfficiency', 'enabled' => 1, 'visible' => 0, 'default' => '1', 'position' => 110, 'notnull' => 1, 'css' => 'maxwidth50imp', 'help' => 'ValueOfEfficiencyConsumedMeans'),
+		'fk_unit' => array('type' => 'integer', 'label' => 'Unit', 'enabled' => 1, 'visible' => 1, 'position' => 120, 'notnull' => -1,),
+		'position' => array('type' => 'integer', 'label' => 'Rank', 'enabled' => 1, 'visible' => 0, 'default' => '0', 'position' => 200, 'notnull' => 1,),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 1000, 'notnull' => -1,),
+		'fk_default_workstation' => array('type' => 'integer', 'label' => 'DefaultWorkstation', 'enabled' => 1, 'visible' => 1, 'notnull' => 0, 'position' => 1050)
 	);
 
 	/**
@@ -1770,7 +1763,7 @@ class BOMLine extends CommonObjectLine
 	public $qty;
 
 	/**
-	 * @var int qty frozen
+	 * @var float qty frozen
 	 */
 	public $qty_frozen;
 
@@ -1811,7 +1804,9 @@ class BOMLine extends CommonObjectLine
 	public $childBom = array();
 
 	/**
-	 * @var int Service unit
+	 * @var int|null                ID of the unit of measurement (rowid in llx_c_units table)
+	 * @see measuringUnitString()
+	 * @see getLabelOfUnit()
 	 */
 	public $fk_unit;
 
@@ -1890,18 +1885,17 @@ class BOMLine extends CommonObjectLine
 	/**
 	 * Load list of objects in memory from the database.
 	 *
-	 * @param  string      $sortorder    Sort Order
-	 * @param  string      $sortfield    Sort field
-	 * @param  int         $limit        limit
-	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
-	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @param  string      	$sortorder    	Sort Order
+	 * @param  string      	$sortfield    	Sort field
+	 * @param  int         	$limit        	limit
+	 * @param  int         	$offset       	Offset
+	 * @param  string		$filter       	Filter as an Universal Search string.
+	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string		$filtermode		No more used
+	 * @return array|int                 	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -1914,23 +1908,14 @@ class BOMLine extends CommonObjectLine
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
+
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (strpos($key, 'date') !== false) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
-				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
-				}
-			}
-		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {
@@ -1947,6 +1932,7 @@ class BOMLine extends CommonObjectLine
 			while ($obj = $this->db->fetch_object($resql)) {
 				$record = new self($this->db);
 				$record->setVarsFromFetchObj($obj);
+				$record->fetch_optionals();
 
 				$records[$record->id] = $record;
 			}
@@ -2055,7 +2041,7 @@ class BOMLine extends CommonObjectLine
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('bomlinedao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -2125,10 +2111,10 @@ class BOMLine extends CommonObjectLine
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
-		$this->initAsSpecimenCommon();
+		return $this->initAsSpecimenCommon();
 	}
 }

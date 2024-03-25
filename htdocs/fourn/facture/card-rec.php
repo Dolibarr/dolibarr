@@ -9,6 +9,7 @@
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
  * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,28 +50,28 @@ $langs->loadLangs(array('bills', 'companies', 'compta', 'admin', 'other', 'produ
 
 $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'supplierinvoicetemplatelist'; // To manage different context of search
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 
 // Security check
-$id = (GETPOST('facid', 'int') ? GETPOST('facid', 'int') : GETPOST('id', 'int'));
+$id = (GETPOSTINT('facid') ? GETPOSTINT('facid') : GETPOSTINT('id'));
 $lineid = GETPOSTINT('lineid');
 $title = GETPOST('title', 'alpha');
 $libelle = GETPOST('libelle', 'alpha');
 $ref_supplier = GETPOST('ref_supplier', 'alpha');
-$projectid = GETPOST('projectid', 'int');
+$projectid = GETPOSTINT('projectid');
 $year_date_when = GETPOST('year_date_when');
 $month_date_when = GETPOST('month_date_when');
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -172,16 +173,16 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		$frequency = GETPOST('frequency', 'int');
-		$reyear = GETPOST('reyear', 'int');
-		$remonth = GETPOST('remonth', 'int');
-		$reday = GETPOST('reday', 'int');
-		$rehour = GETPOST('rehour', 'int');
-		$remin = GETPOST('remin', 'int');
-		$nb_gen_max = GETPOST('nb_gen_max', 'int');
+		$frequency = GETPOSTINT('frequency');
+		$reyear = GETPOSTINT('reyear');
+		$remonth = GETPOSTINT('remonth');
+		$reday = GETPOSTINT('reday');
+		$rehour = GETPOSTINT('rehour');
+		$remin = GETPOSTINT('remin');
+		$nb_gen_max = GETPOSTINT('nb_gen_max');
 		//if (empty($nb_gen_max)) $nb_gen_max =0;
 
-		if (GETPOST('frequency', 'int')) {
+		if (GETPOSTINT('frequency')) {
 			if (empty($reyear) || empty($remonth) || empty($reday)) {
 				setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
 				$action = "create";
@@ -205,8 +206,8 @@ if (empty($reshook)) {
 			$object->frequency = $frequency;
 			$object->unit_frequency = GETPOST('unit_frequency', 'alpha');
 			$object->nb_gen_max = $nb_gen_max;
-			$object->auto_validate = GETPOST('auto_validate', 'int');
-			$object->generate_pdf = GETPOST('generate_pdf', 'int');
+			$object->auto_validate = GETPOSTINT('auto_validate');
+			$object->generate_pdf = GETPOSTINT('generate_pdf');
 
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 			$object->date_when = $date_next_execution;
@@ -214,7 +215,7 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$oldinvoice = new FactureFournisseur($db);
-			$oldinvoice->fetch(GETPOST('facid', 'int'));
+			$oldinvoice->fetch(GETPOSTINT('facid'));
 
 			$object->cond_reglement_id = $oldinvoice->cond_reglement_id;
 			$object->cond_reglement_code = $oldinvoice->cond_reglement_code;
@@ -265,13 +266,13 @@ if (empty($reshook)) {
 	// Update field
 	// Set condition
 	if ($action == 'setconditions' && $usercancreate) {
-		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'));
 	} elseif ($action == 'setmode' && $usercancreate) {
 		// Set mode
-		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
+		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
 	} elseif ($action == 'classin' && $usercancreate) {
 		// Set project
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	} elseif ($action == 'setref_supplier' && $usercancreate) {
 		$result = $object->setValueFrom('ref_supplier', $ref_supplier, '', null, 'text', '', $user);
 
@@ -302,10 +303,10 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setbankaccount' && $usercancreate) {
 		// Set bank account
-		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
+		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
 	} elseif ($action == 'setfrequency' && $usercancreate) {
 		// Set frequency and unit frequency
-		$object->setFrequencyAndUnit(GETPOST('frequency', 'int'), GETPOST('unit_frequency', 'alpha'));
+		$object->setFrequencyAndUnit(GETPOSTINT('frequency'), GETPOSTINT('unit_frequency'));
 	} elseif ($action == 'setdate_when' && $usercancreate) {
 		// Set next date of execution
 		$date = dol_mktime(GETPOST('date_whenhour'), GETPOST('date_whenmin'), 0, GETPOST('date_whenmonth'), GETPOST('date_whenday'), GETPOST('date_whenyear'));
@@ -314,13 +315,13 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setnb_gen_max' && $usercancreate) {
 		// Set max period
-		$object->setMaxPeriod(GETPOST('nb_gen_max', 'int'));
+		$object->setMaxPeriod(GETPOSTINT('nb_gen_max'));
 	} elseif ($action == 'setauto_validate' && $usercancreate) {
 		// Set auto validate
-		$object->setAutoValidate(GETPOST('auto_validate', 'int'));
+		$object->setAutoValidate(GETPOSTINT('auto_validate'));
 	} elseif ($action == 'setgenerate_pdf' && $usercancreate) {
 		// Set generate pdf
-		$object->setGeneratepdf(GETPOST('generate_pdf', 'int'));
+		$object->setGeneratepdf(GETPOSTINT('generate_pdf'));
 	} elseif ($action == 'setmodelpdf' && $usercancreate) {
 		// Set model pdf
 		$object->setModelpdf(GETPOST('modelpdf', 'alpha'));
@@ -363,7 +364,7 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOST('calculation_mode', 'int'));
+		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOSTINT('calculation_mode'));
 	} elseif ($action == 'setlibelle' && $usercancreate) {
 		// Set label
 		$object->fetch($id);
@@ -436,7 +437,7 @@ if (empty($reshook)) {
 			$tva_tx = (GETPOST('tva_tx', 'alpha') ? GETPOST('tva_tx', 'alpha') : 0);
 			$ref_fournisseur = (GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref', 'restricthtml') : '');
 		} else {
-			$idprod = GETPOST('idprod', 'int');
+			$idprod = GETPOSTINT('idprod');
 			$tva_tx = '';
 		}
 
@@ -547,7 +548,7 @@ if (empty($reshook)) {
 				}
 
 				// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
-				$pqp = (GETPOST('pbq', 'int') ? GETPOST('pbq', 'int') : 0);
+				$pqp = (GETPOSTINT('pbq') ? GETPOSTINT('pbq') : 0);
 
 				$datapriceofproduct = $prod->getSellPrice($mysoc, $object->thirdparty, $pqp);
 
@@ -559,7 +560,7 @@ if (empty($reshook)) {
 				$tva_npr = $datapriceofproduct['tva_npr'];
 
 				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
-				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', (string) $prod->tva_tx));
 
 				// if price ht was forced (ie: from gui when calculated by margin rate and cost price). TODO Why this ?
 				if (!empty($price_ht)) {
@@ -656,8 +657,8 @@ if (empty($reshook)) {
 				$fk_unit = GETPOST('units', 'alpha');
 			}
 
-			$date_start_fill = !empty(GETPOST('date_start_fill', 'int')) ? GETPOST('date_start_fill', 'int') : null;
-			$date_end_fill = !empty(GETPOST('date_end_fill', 'int')) ? GETPOST('date_end_fill', 'int') : null;
+			$date_start_fill = !empty(GETPOSTINT('date_start_fill')) ? GETPOSTINT('date_start_fill') : null;
+			$date_end_fill = !empty(GETPOSTINT('date_end_fill')) ? GETPOSTINT('date_end_fill') : null;
 
 			// Margin
 			$fournprice = price2num(GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');
@@ -759,7 +760,7 @@ if (empty($reshook)) {
 		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
 
 		$objectline = new FactureFournisseurLigneRec($db);
-		if ($objectline->fetch(GETPOST('lineid', 'int'))) {
+		if ($objectline->fetch(GETPOSTINT('lineid'))) {
 			$objectline->array_options = $array_options;
 			$result = $objectline->insertExtraFields();
 			if ($result < 0) {
@@ -778,7 +779,7 @@ if (empty($reshook)) {
 		}
 
 		// Define special_code for special lines
-		$special_code = GETPOST('special_code', 'int');
+		$special_code = GETPOSTINT('special_code');
 		if (! GETPOST('qty', 'alpha')) {
 			$special_code = 3;
 		}
@@ -786,7 +787,7 @@ if (empty($reshook)) {
 		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
 
 		// Check minimum price
-		$productid = GETPOST('productid', 'int');
+		$productid = GETPOSTINT('productid');
 		if (!empty($productid)) {
 			$product = new Product($db);
 			$product->fetch($productid);
@@ -806,11 +807,11 @@ if (empty($reshook)) {
 				$error++;
 			}
 		} else {
-			$type = GETPOST('type', 'int');
+			$type = GETPOSTINT('type');
 			$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
 
 			// Check parameters
-			if (GETPOST('type', 'int') < 0) {
+			if (GETPOSTINT('type') < 0) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 				$error++;
 			}
@@ -821,12 +822,12 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		$date_start_fill = !empty(GETPOST('date_start_fill', 'int')) ? GETPOST('date_start_fill', 'int') : 'NULL';
-		$date_end_fill = !empty(GETPOST('date_end_fill', 'int')) ? GETPOST('date_end_fill', 'int') : 'NULL';
+		$date_start_fill = !empty(GETPOSTINT('date_start_fill')) ? GETPOSTINT('date_start_fill') : 'NULL';
+		$date_end_fill = !empty(GETPOSTINT('date_end_fill')) ? GETPOSTINT('date_end_fill') : 'NULL';
 
 		// Update line
 		if (! $error) {
-			$result = $object->updateline(GETPOST('lineid', 'int'), GETPOST('productid', 'int'), $ref_fourn, $label, $description, $pu_ht, $qty, $remise_percent, $vat_rate, $localtax1_rate, $localtax1_rate, 'HT', $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1);
+			$result = $object->updateline(GETPOSTINT('lineid'), GETPOSTINT('productid'), $ref_fourn, $label, $description, $pu_ht, $qty, $remise_percent, $vat_rate, $localtax1_rate, $localtax1_rate, 'HT', $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1);
 			if ($result >= 0) {
 				$object->fetch($object->id); // Reload lines
 
@@ -1038,13 +1039,13 @@ if ($action == 'create') {
 
 		// Frequency + unit
 		print '<tr><td class="titlefieldcreate">' . $form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency')) . "</td><td>";
-		print "<input type='text' name='frequency' value='" . GETPOST('frequency', 'int') . "' size='4' />&nbsp;" . $form->selectarray('unit_frequency', array('d' => $langs->trans('Day'), 'm' => $langs->trans('Month'), 'y' => $langs->trans('Year')), (GETPOST('unit_frequency') ? GETPOST('unit_frequency') : 'm'));
+		print "<input type='text' name='frequency' value='" . GETPOSTINT('frequency') . "' size='4' />&nbsp;" . $form->selectarray('unit_frequency', array('d' => $langs->trans('Day'), 'm' => $langs->trans('Month'), 'y' => $langs->trans('Year')), (GETPOST('unit_frequency') ? GETPOST('unit_frequency') : 'm'));
 		print "</td></tr>";
 
 		// Date next run
 		print "<tr><td>" . $langs->trans('NextDateToExecution') . "</td><td>";
 		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
-		print $form->selectDate($date_next_execution, '', 1, 1, '', "add", 1, 1);
+		print $form->selectDate($date_next_execution, '', 1, 1, 0, "add", 1, 1);
 		print "</td></tr>";
 
 		// Number max of generation
@@ -1184,9 +1185,9 @@ if ($action == 'create') {
 		}
 		$morehtmlref .= '</div>';
 
-		$morehtmlright = '';
+		$morehtmlstatus = '';
 
-		dol_banner_tab($object, 'ref', $linkback, 1, 'title', 'none', $morehtmlref, '', 0, '', $morehtmlright);
+		dol_banner_tab($object, 'ref', $linkback, 1, 'title', 'none', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
@@ -1205,10 +1206,10 @@ if ($action == 'create') {
 		print '</tr>';
 
 		print '<tr><td>' . $langs->trans('AmountHT') . '</td>';
-		print '<td>' . price($object->total_ht, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
+		print '<td>' . price($object->total_ht, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 		print '</tr>';
 
-		print '<tr><td>' . $langs->trans("AmountVAT") . '</td><td>' . price($object->total_tva, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
+		print '<tr><td>' . $langs->trans("AmountVAT") . '</td><td>' . price($object->total_tva, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 		print '</tr>';
 
 		// Amount Local Taxes
@@ -1221,7 +1222,7 @@ if ($action == 'create') {
 			print '<td class=nowrap">' . price($object->total_localtax2, 1, '', 1, -1, -1, $conf->currency) . '</td></tr>';
 		}
 
-		print '<tr><td>' . $langs->trans("AmountTTC") . '</td><td colspan="3">' . price($object->total_ttc, '', $langs, 1, -1, -1, $conf->currency) . '</td>';
+		print '<tr><td>' . $langs->trans("AmountTTC") . '</td><td colspan="3">' . price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 		print '</tr>';
 
 		// Payment term
@@ -1554,7 +1555,7 @@ if ($action == 'create') {
 		print '<div class="clearboth"></div><br>';
 
 		// Lines
-		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#add' : '#line_' . GETPOST('lineid', 'int')) . '" method="POST">
+		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#add' : '#line_' . GETPOSTINT('lineid')) . '" method="POST">
         	<input type="hidden" name="token" value="' . newToken() . '">
         	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
         	<input type="hidden" name="mode" value="">

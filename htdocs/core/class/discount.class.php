@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -731,7 +732,7 @@ class DiscountAbsolute extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return	int
 	 */
 	public function initAsSpecimen()
 	{
@@ -742,5 +743,7 @@ class DiscountAbsolute extends CommonObject
 		$this->amount_ttc     = 11.96;
 		$this->tva_tx         = 19.6;
 		$this->description    = 'Specimen discount';
+
+		return 1;
 	}
 }

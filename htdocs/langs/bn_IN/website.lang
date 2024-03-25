@@ -49,21 +49,21 @@ SetHereVirtualHost=<u>Apache/NGinx এর সাথে ব্যবহার ক
 ExampleToUseInApacheVirtualHostConfig=Apache ভার্চুয়াল হোস্ট সেটআপে ব্যবহার করার উদাহরণ:
 YouCanAlsoTestWithPHPS=<u>PHP এম্বেডেড সার্ভারের সাথে ব্যবহার করুন</u><br>উন্নত পরিবেশে, আপনি করতে পারেন <br><strong>php -S 0.0.0.0 চালিয়ে PHP এমবেডেড ওয়েব সার্ভার (PHP 5.5 প্রয়োজনীয়) দিয়ে সাইটটি পরীক্ষা করতে পছন্দ করুন :8080 -t %s</strong>
 YouCanAlsoDeployToAnotherWHP=<u>অন্য Dolibarr হোস্টিং প্রদানকারীর সাথে আপনার ওয়েব সাইট চালান</u><br> ইন্টারনেটে Apache বা NGinx-এর মতো কোনো ওয়েব সার্ভার উপলব্ধ নেই, আপনি আপনার ওয়েব সাইটটিকে অন্য Dolibarr হোস্টিং প্রদানকারী দ্বারা প্রদত্ত অন্য Dolibarr উদাহরণে রপ্তানি এবং আমদানি করতে পারেন যা ওয়েবসাইট মডিউলের সাথে সম্পূর্ণ একীকরণ প্রদান করে। আপনি <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>-এ কিছু Dolibarr হোস্টিং প্রদানকারীর একটি তালিকা পেতে পারেন
-CheckVirtualHostPerms=ভার্চুয়াল হোস্ট ব্যবহারকারীর (উদাহরণস্বরূপ www-ডেটা) <strong>%sb0a65d071f6fcz9 আছে কিনা পরীক্ষা করুন  ফাইলগুলিতে <br><strong>%s<span ক্লাসে অনুমতি ='notranslate'></strong></span>
+CheckVirtualHostPerms=Check also that the virtual host user (for example www-data) has <strong>%s</strong> permissions on files into<br><strong>%s</strong>
 ReadPerm=পড়ুন
 WritePerm=লিখুন
 TestDeployOnWeb=ওয়েবে পরীক্ষা/নিয়োগ করুন
-PreviewSiteServedByWebServer=<u>একটি নতুন ট্যাবে %s পূর্বরূপ দেখুন।</u><br><br> %s একটি বহিরাগত ওয়েব সার্ভার (যেমন Apache, NginxIS, Nginx) দ্বারা পরিবেশিত হবে ) ডিরেক্টরিতে নির্দেশ করার আগে আপনাকে অবশ্যই এই সার্ভারটি ইনস্টল এবং সেটআপ করতে হবে:<br><strong>%s span><span class='notranslate'></strong><br>বাহ্যিক সার্ভার দ্বারা পরিবেশিত URL:<br><strong>%s</strong>
+PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before to point to directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>একটি নতুন ট্যাবে %s পূর্বরূপ দেখুন।</u><br><br> %s Dolibarr সার্ভার দ্বারা পরিবেশিত হবে তাই এটির কোনো অতিরিক্ত ওয়েব সার্ভারের প্রয়োজন নেই (যেমন Apache, Nginx, IIS) ইনস্টল করতে হবে।<br>অসুবিধে হল যে পৃষ্ঠাগুলির URLগুলি ব্যবহারকারী বান্ধব নয় এবং আপনার Dolibarr এর পথ দিয়ে শুরু হয়৷<span class= Dolibarr দ্বারা পরিবেশিত URL /span></strong><br><br>এতে আপনার নিজস্ব বাহ্যিক ওয়েব সার্ভার ব্যবহার করতে এই ওয়েব সাইটটি পরিবেশন করুন, আপনার ওয়েব সার্ভারে একটি ভার্চুয়াল হোস্ট তৈরি করুন যা নির্দেশিকা নির্দেশ করে<br><strong>%s</strong><br>তারপর এই ওয়েবসাইটের বৈশিষ্ট্যগুলিতে এই ভার্চুয়াল সার্ভারের নাম লিখুন এবং ক্লিক করুন লিঙ্ক "টেস্ট/ডেপ্লয় অন ওয়েব"।
 VirtualHostUrlNotDefined=বহিরাগত ওয়েব সার্ভার দ্বারা পরিবেশিত ভার্চুয়াল হোস্টের URL সংজ্ঞায়িত করা হয়নি
 NoPageYet=এখনো কোনো পৃষ্ঠা নেই
 YouCanCreatePageOrImportTemplate=আপনি একটি নতুন পৃষ্ঠা তৈরি করতে পারেন বা একটি সম্পূর্ণ ওয়েবসাইট টেমপ্লেট আমদানি করতে পারেন৷
 SyntaxHelp=নির্দিষ্ট সিনট্যাক্স টিপস সাহায্য
 YouCanEditHtmlSourceckeditor=আপনি সম্পাদকের "উৎস" বোতামটি ব্যবহার করে HTML উত্স কোড সম্পাদনা করতে পারেন৷
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> আপনি ট্যাগ ব্যবহার করে এই উত্সে PHP কোড অন্তর্ভুক্ত করতে পারেন span class='notranslate'><strong></span>&lt;?php ?&gt;<span class='notranslate'd0947c06bz0 </span> নিম্নলিখিত গ্লোবাল ভেরিয়েবলগুলি উপলব্ধ: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs।<br><br><span class="fa fa-bug"></span> আপনি নিম্নলিখিত সিনট্যাক্স সহ অন্য পৃষ্ঠা/কন্টেইনারের সামগ্রীও অন্তর্ভুক্ত করতে পারেন:<br><strong>&lt;?php includeContainer('alias_of'_include); ?&gt;</strong><br>b0341ccb0341 /span><span class='notranslate'><span class="fa fa-bug"></span> আপনি নিম্নলিখিত সিনট্যাক্স সহ অন্য পৃষ্ঠা/কন্টেইনারে একটি পুনঃনির্দেশ করতে পারেন (দ্রষ্টব্য: কোনো আউটপুট করবেন না পুনঃনির্দেশের আগে সামগ্রী):<br><strong>&lt;?php redirect('noCtain) alias_of_container_to_redirect_to'); ?&gt;</strong><br>b0341ccb0341 /span><span class='notranslate'><span class="fa fa-link"></span> অন্য পৃষ্ঠায় একটি লিঙ্ক যোগ করতে, সিনট্যাক্স ব্যবহার করুন:<br> <strong>&lt;a href="alias_of_page_to_link_to.php"b0012c807dcbe >mylink<span class='notranslate'>&lt;a&gt;</strong> <br><br><span class="fa fa-download"></span>এ অন্তর্ভুক্ত করার জন্য ='notranslate'><strong></span>ডাউনলোড করার লিঙ্ক</strong> <strong>দস্তাবেজগুলিতে সংরক্ষিত একটি ফাইল notranslate'></strong></span> ডিরেক্টরি ব্যবহার করুন, <strong>document.php</strong> class'=translate' wrapper:<translate' ><br></span>উদাহরণ, নথিতে একটি ফাইলের জন্য/ecm (লগ করা প্রয়োজন), সিনট্যাক্স হল:<br><strong> >&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>দস্তাবেজ/মিডিয়াতে একটি ফাইলের জন্য (সর্বজনীন অ্যাক্সেসের জন্য খোলা ডিরেক্টরি), সিনট্যাক্স হল: <br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dname. ext"&gt;</strong><br>শেয়ার লিঙ্কের সাথে শেয়ার করা ফাইলের জন্য ( ফাইলের শেয়ারিং হ্যাশ কী ব্যবহার করে খোলা অ্যাক্সেস), সিনট্যাক্স হল:<br><strong>&lt;<span class='notranslate'> /span>a href="/document.php?hashp=publicsharekeyoffile"<span class='notranslate'>&gt;</strong> <br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image"></span> একটি  অন্তর্ভুক্ত করতে <strong>ছবি</strong> <strong>দস্তাবেজগুলি</strong> সংরক্ষিত , <strong>viewimage.php</strong> র‍্যাপার ব্যবহার করুন।b0342fccfda19bzamp>এর জন্য, নথি/মিডিয়াতে একটি চিত্র (সর্বজনীন অ্যাক্সেসের জন্য খোলা ডিরেক্টরি), সিনট্যাক্স হল:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"b00dc78 </strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper.<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=একটি শেয়ার লিঙ্কের সাথে শেয়ার করা একটি ছবির জন্য (ফাইলের শেয়ারিং হ্যাশ কী ব্যবহার করে খোলা অ্যাক্সেস), সিনট্যাক্স হল:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;016f7f7f7012 <br>
-YouCanEditHtmlSource3=একটি PHP বস্তুর ছবির URL পেতে, <br><strong>&lt; span>img src="<span class='notranslate'>&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt; class='notranslate'>&gt;</span></strong><br>
+YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>এইচটিএমএল বা ডায়নামিক কোডের আরও উদাহরণ <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">উইকি ডকুমেন্টেশনb0e40dc6587এ উপলব্ধ >।<br>
 ClonePage=ক্লোন পৃষ্ঠা/ধারক
 CloneSite=ক্লোন সাইট
@@ -118,10 +118,9 @@ DeleteAlsoMedias=এই ওয়েবসাইটের জন্য নির
 MyWebsitePages=আমার ওয়েবসাইট পেজ
 SearchReplaceInto=অনুসন্ধান | মধ্যে প্রতিস্থাপন
 ReplaceString=নতুন স্ট্রিং
-CSSContentTooltipHelp=এখানে CSS কন্টেন্ট লিখুন। অ্যাপ্লিকেশনের CSS-এর সাথে কোনো দ্বন্দ্ব এড়াতে, .bodywebsite ক্লাসের সাথে সমস্ত ঘোষণা আগে-প্রান্তে রাখতে ভুলবেন না। যেমন:<br><br>#mycssselector, input.myclass:hover { ...  <br>অবশ্যই<br>।bodywebsite #mycssselector, .bodywebsite input.myclass:হোভার { ... b0342fccfda19>b0342fccfda19 <span class='notranslate'><br>দ্রষ্টব্য: যদি আপনার কাছে এই উপসর্গ ছাড়া একটি বড় ফাইল থাকে, তাহলে আপনি 'lessc' ব্যবহার করে এটিকে রূপান্তর করতে .bodywebsite উপসর্গটি সর্বত্র যুক্ত করতে পারেন।
+CSSContentTooltipHelp=Enter here CSS content. To avoid any conflict with the CSS of the application, be sure to prepend all declaration with the .bodywebsite class. For example:<br><br>#mycssselector, input.myclass:hover { ... }<br>must be<br>.bodywebsite #mycssselector, .bodywebsite input.myclass:hover { ... }<br><br>Note: If you have a large file without this prefix, you can use 'lessc' to convert it to append the .bodywebsite prefix everywhere.
 LinkAndScriptsHereAreNotLoadedInEditor=সতর্কতা: এই বিষয়বস্তু আউটপুট শুধুমাত্র যখন সাইট একটি সার্ভার থেকে অ্যাক্সেস করা হয়. এটি সম্পাদনা মোডে ব্যবহার করা হয় না তাই যদি আপনাকে জাভাস্ক্রিপ্ট ফাইলগুলিকে সম্পাদনা মোডেও লোড করতে হয়, তাহলে পৃষ্ঠায় আপনার ট্যাগ 'script src=...' যোগ করুন।
 Dynamiccontent=গতিশীল বিষয়বস্তু সহ একটি পৃষ্ঠার নমুনা
-ImportSite=ওয়েবসাইট টেমপ্লেট আমদানি করুন
 EditInLineOnOff=মোড 'ইনলাইন সম্পাদনা' হল %s
 ShowSubContainersOnOff='ডাইনামিক কন্টেন্ট' চালানোর মোড হল %s
 GlobalCSSorJS=ওয়েব সাইটের গ্লোবাল CSS/JS/হেডার ফাইল
@@ -158,9 +157,81 @@ Booking=সংরক্ষণ
 Reservation=রিজার্ভেশন
 PagesViewedPreviousMonth=পৃষ্ঠা দেখা হয়েছে (আগের মাসে)
 PagesViewedTotal=পৃষ্ঠা দেখা (মোট)
-Visibility=দৃশ্যমানতা
 Everyone=সবাই
 AssignedContacts=বরাদ্দ পরিচিতি
 WebsiteTypeLabel=ওয়েব সাইটের ধরন
-WebsiteTypeDolibarrWebsite=ওয়েব সাইট (সিএমএস ডলিবার)
-WebsiteTypeDolibarrPortal=নেটিভ ডলিবার পোর্টাল
+WebsiteTypeDolibarrWebsite=Web site (Module WebSites CMS)
+WebsiteTypeDolibarrPortal=Native and ready to use web portal (Module Web Portal)
+WebPortalURL=Web portal URL
+NewWebsiteAccount=New accounts for websites
+ModuleWebPortalName=Web portal
+ModuleWebPortalDesc=A ready to use native web portal for customers, suppliers, partners or members
+WebPortalDescription=Public web portal module for membership and partnership
+WebPortalSetup=WebPortal setup
+WebPortalCSS=Web portal CSS
+WebPortalSetupPage=WebPortal setup page
+WEBPORTAL_TITLE=Brand name on header of public page
+UserAccountForWebPortalAreInThirdPartyTabHelp=Users accounts for WebPortal can be set on each third party card in Website accounts tab
+WebPortalAccessHidden=Hidden
+WebPortalAccessVisible=Visible
+WebPortalAccessEdit=Editable
+WEBPORTAL_MEMBER_CARD_ACCESS=Enable access to the membership record
+WebPortalMemberCardAccessHelp=Enable access to the membership record (Hidden / Visible or Editable)
+WEBPORTAL_PARTNERSHIP_CARD_ACCESS=Enable access to the partnership record
+WebPortalPartnerShipCardAccessHelp=Enable access to the partnership record (Hidden / Visible or Editable)
+WEBPORTAL_PROPAL_LIST_ACCESS=Enable access to the proposals
+WEBPORTAL_ORDER_LIST_ACCESS=Enable access to the orders
+WEBPORTAL_INVOICE_LIST_ACCESS=Enable access to the invoices
+WEBPORTAL_USER_LOGGED=Select an anonymous user
+WebPortalUserLoggedHelp=This user is used to update cards
+WebPortalHomeTitle=Welcome
+WebPortalHomeDesc=Welcome to the public interface
+WebPortalPropalListMenu=Proposals
+WebPortalPropalListTitle=List of proposals
+WebPortalPropalListDesc=List of proposals
+WebPortalPropalListNothing=Proposals not found
+WebPortalOrderListMenu=Orders
+WebPortalOrderListTitle=List of orders
+WebPortalOrderListDesc=List of orders
+WebPortalOrderListNothing=Orders not found
+WebPortalInvoiceListMenu=Invoices
+WebPortalInvoiceListTitle=List of invoices
+WebPortalInvoiceListDesc=List of invoices
+WebPortalInvoiceListNothing=Invoices not found
+WebPortalMemberCardMenu=Member
+WebPortalMemberCardTitle=Member card
+WebPortalMemberCardDesc=Member card
+WebPortalPartnershipCardMenu=Partnership
+WebPortalPartnershipCardTitle=Partnership card
+WebPortalPartnershipCardDesc=Partnership card
+loginWebportalUserName=User name / email
+loginWebportalPassword=Password
+LoginNow=Login now
+RemoveSearchFilters=Remove search filters
+WEBPORTAL_PRIMARY_COLOR=Primary color
+WEBPORTAL_SECONDARY_COLOR=Secondary color
+WEBPORTAL_LOGIN_LOGO_URL=Login logo image URL
+WEBPORTAL_MENU_LOGO_URL=Menu logo image URL
+WEBPORTAL_MENU_LOGO_URLTooltip=Leave empty to use login logo
+WEBPORTAL_LOGIN_BACKGROUND=Background login image URL
+WEBPORTAL_BANNER_BACKGROUND=Background for banner
+WEBPORTAL_BANNER_BACKGROUND_IS_DARK=Use dark theme for banner
+AriaPrevPage=Previous page
+AriaNextPage=Next page
+AriaPageX=Page %s
+WebPortalError404=Page not found
+WebPortalErrorPageNotExist=Page not exist
+WebPortalErrorFetchThirdPartyAccountFromLogin=Error when loading third-party account (login : %s)
+WebPortalErrorAuthentication=Authentication error
+WebPortalErrorFetchLoggedThirdPartyAccount=Error when loading third-party account (login : %s)
+WebPortalErrorFetchLoggedUser=Error when loading user (Id : %s)
+WebPortalErrorFetchLoggedThirdParty=Error when loading third-party (Id : %s)
+WebPortalErrorFetchLoggedMember=Error when loading member (Id : %s)
+WebPortalErrorFetchLoggedPartnership=Error when loading partnership (Third-party Id : %s, Member Id : %s)
+ExportIntoGIT=Export into sources
+WebPortalMember=Membership
+WebPortalOrder=Sale Order
+WebPortalPartnership=Partnership
+WebPortalPropal=Proposal
+WebPortalGroupMenuAdmin=Administration
+WebPortalGroupMenuTechnical=System

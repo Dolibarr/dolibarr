@@ -62,11 +62,11 @@ if ($mode == 'supplier') {
 }
 
 
-$typent_id = GETPOST('typent_id', 'int');
-$categ_id = GETPOST('categ_id', 'categ_id');
+$typent_id = GETPOSTINT('typent_id');
+$categ_id = GETPOSTINT('categ_id');
 
-$userid = GETPOST('userid', 'int');
-$socid = GETPOST('socid', 'int');
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
 // Security check
 if ($user->socid > 0) {
 	$action = '';

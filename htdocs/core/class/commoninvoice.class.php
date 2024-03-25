@@ -3,6 +3,8 @@
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -268,7 +270,7 @@ abstract class CommonInvoice extends CommonObject
 				if ($multicurrency < 0) {
 					$this->sumpayed = $obj->amount;
 					$this->sumpayed_multicurrency = $obj->multicurrency_amount;
-					return array('alreadypaid'=>(float) $obj->amount, 'alreadypaid_multicurrency'=>(float) $obj->multicurrency_amount);
+					return array('alreadypaid' => (float) $obj->amount, 'alreadypaid_multicurrency' => (float) $obj->multicurrency_amount);
 				} elseif ($multicurrency) {
 					$this->sumpayed_multicurrency = $obj->multicurrency_amount;
 					return (float) $obj->multicurrency_amount;
@@ -435,13 +437,17 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *  Return list of payments
 	 *
+	 *  @see $error Empty string '' if no error.
+	 *
 	 *	@param		string	$filtertype		1 to filter on type of payment == 'PRE'
 	 *  @param      int     $multicurrency  Return multicurrency_amount instead of amount
-	 *  @return     array					Array with list of payments
+	 *  @return     array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int}>		 Array with list of payments
 	 */
 	public function getListOfPayments($filtertype = '', $multicurrency = 0)
 	{
 		$retarray = array();
+		// By default no error, list can be empty.
+		$this->error = '';
 
 		$table = 'paiement_facture';
 		$table2 = 'paiement';
@@ -476,7 +482,7 @@ abstract class CommonInvoice extends CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$tmp = array('amount'=>$obj->amount, 'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
+				$tmp = array('amount' => $obj->amount, 'type' => $obj->code, 'date' => $obj->datep, 'num' => $obj->num, 'ref' => $obj->ref);
 				if (!empty($field3)) {
 					$tmp['ref_ext'] = $obj->ref_ext;
 				}
@@ -510,9 +516,9 @@ abstract class CommonInvoice extends CommonObject
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 						if ($multicurrency) {
-							$retarray[] = array('amount'=>$obj->multicurrency_amount, 'type'=>$obj->type, 'date'=>$obj->date, 'num'=>'0', 'ref'=>$obj->ref);
+							$retarray[] = array('amount' => $obj->multicurrency_amount, 'type' => $obj->type, 'date' => $obj->date, 'num' => '0', 'ref' => $obj->ref);
 						} else {
-							$retarray[] = array('amount'=>$obj->amount, 'type'=>$obj->type, 'date'=>$obj->date, 'num'=>'', 'ref'=>$obj->ref);
+							$retarray[] = array('amount' => $obj->amount, 'type' => $obj->type, 'date' => $obj->date, 'num' => '', 'ref' => $obj->ref);
 						}
 						$i++;
 					}
@@ -550,7 +556,6 @@ abstract class CommonInvoice extends CommonObject
 	public function is_erasable()
 	{
 		// phpcs:enable
-		global $conf;
 
 		// We check if invoice is a temporary number (PROVxxxx)
 		$tmppart = substr($this->ref, 1, 4);
@@ -1149,7 +1154,7 @@ abstract class CommonInvoice extends CommonObject
 				$sql .= " AND fk_facture = ".((int) $this->id);				// Add a protection to not pay another invoice than current one
 			}
 			if ($type != 'direct-debit') {
-				if ($$sourcetype == 'salary') {
+				if ($sourcetype == 'salary') {
 					$sql .= " AND fk_salary = ".((int) $this->id);			// Add a protection to not pay another salary than current one
 				} else {
 					$sql .= " AND fk_facture_fourn = ".((int) $this->id);	// Add a protection to not pay another invoice than current one
@@ -1312,9 +1317,9 @@ abstract class CommonInvoice extends CommonObject
 
 								if ($foundalternativestripeaccount) {
 									if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-										$customer = \Stripe\Customer::retrieve(array('id'=>"$foundalternativestripeaccount", 'expand[]'=>'sources'));
+										$customer = \Stripe\Customer::retrieve(array('id' => "$foundalternativestripeaccount", 'expand[]' => 'sources'));
 									} else {
-										$customer = \Stripe\Customer::retrieve(array('id'=>"$foundalternativestripeaccount", 'expand[]'=>'sources'), array("stripe_account" => $stripeacc));
+										$customer = \Stripe\Customer::retrieve(array('id' => "$foundalternativestripeaccount", 'expand[]' => 'sources'), array("stripe_account" => $stripeacc));
 									}
 								} else {
 									$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 0);
@@ -1500,7 +1505,7 @@ abstract class CommonInvoice extends CommonObject
 									$description = 'Failed to find or use your payment mode (no payment mode for this customer id)';
 									$stripefailurecode = 'BADPAYMENTMODE';
 									$stripefailuremessage = 'Failed to find or use your payment mode (no payment mode for this customer id)';
-									$postactionmessages = [];
+									$postactionmessages = [];  // @phan-suppress-current-line PhanPluginRedundantAssignment
 
 									$object = $this;
 
@@ -1903,8 +1908,8 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $vat_src_code;
 
 	/**
-	 * VAT %
-	 * @var float
+	 * VAT %  Vat rate can be like "21.30 (CODE)"
+	 * @var string|float
 	 */
 	public $tva_tx;
 
@@ -1922,13 +1927,15 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 
 	/**
 	 * Local tax 1 type
-	 * @var string
+	 * @var int<0,6>		From 1 to 6, or 0 if not found
+	 * @see getLocalTaxesFromRate()
 	 */
 	public $localtax1_type;
 
 	/**
 	 * Local tax 2 type
-	 * @var string
+	 * @var int<0,6>		From 1 to 6, or 0 if not found
+	 * @see getLocalTaxesFromRate()
 	 */
 	public $localtax2_type;
 
@@ -1995,7 +2002,13 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 
 	public $special_code = 0;
 
+	/**
+	 * @deprecated	Use user_creation_id
+	 */
 	public $fk_user_author;
+	/**
+	 * @deprecated	Use user_modification_id
+	 */
 	public $fk_user_modif;
 
 	public $fk_accounting_account;

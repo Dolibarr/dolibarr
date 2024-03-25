@@ -36,7 +36,7 @@
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
@@ -129,13 +129,14 @@ $coldisplay++;
 
 	<?php
 	if (is_object($hookmanager)) {
-		$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOST('fk_parent_line', 'int') : $line->fk_parent_line);
+		$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOSTINT('fk_parent_line') : $line->fk_parent_line);
 		$parameters = array('line'=>$line, 'fk_parent_line'=>$fk_parent_line, 'var'=>$var, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer);
 		$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 	}
 
 	$situationinvoicelinewithparent = 0;
 	if ($line->fk_prev_id != null && in_array($object->element, array('facture', 'facturedet'))) {
+		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 		if ($object->type == $object::TYPE_SITUATION) {	// The constant TYPE_SITUATION exists only for object invoice
 			// Set constant to disallow editing during a situation cycle
 			$situationinvoicelinewithparent = 1;
@@ -186,10 +187,10 @@ $coldisplay++;
 		}
 		echo '<br>';
 		echo $langs->trans('AutoFillDateFrom').' ';
-		echo $form->selectyesno('date_start_fill', GETPOSTISSET('date_start_fill') ? GETPOST('date_start_fill', 'int') : $line->date_start_fill, 1);
+		echo $form->selectyesno('date_start_fill', GETPOSTISSET('date_start_fill') ? GETPOSTINT('date_start_fill') : $line->date_start_fill, 1);
 		echo ' - ';
 		echo $langs->trans('AutoFillDateTo').' ';
-		echo $form->selectyesno('date_end_fill', GETPOSTISSET('date_end_fill') ? GETPOST('date_end_fill', 'int') : $line->date_end_fill, 1);
+		echo $form->selectyesno('date_end_fill', GETPOSTISSET('date_end_fill') ? GETPOSTINT('date_end_fill') : $line->date_end_fill, 1);
 	}
 
 	?>
@@ -357,11 +358,43 @@ $coldisplay++;
 	<?php } ?>
 	<td colspan="<?php echo $coldisplay - (!getDolGlobalString('MAIN_VIEW_LINE_NUMBER') ? 0 : 1) ?>"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php
+	$prefillDates = false;
+	if (getDolGlobalString('MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE') && !empty($object->lines) && $i > 0) {
+		for ($j = $i - 1; $j >= 0; $j--) {
+			$lastline = $object->lines[$j];
+			if ($lastline->product_type == Product::TYPE_SERVICE && (!empty($lastline->date_start) || !empty($lastline->date_end))) {
+				$date_start_prefill = $lastline->date_start;
+				$date_end_prefill = $lastline->date_end;
+				$prefillDates = true;
+				break;
+			}
+		}
+	}
 	$hourmin = (isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE : '');
 	print $form->selectDate($line->date_start, 'date_start', $hourmin, $hourmin, $line->date_start ? 0 : 1, "updateline", 1, 0);
 	print ' '.$langs->trans('to').' ';
 	print $form->selectDate($line->date_end, 'date_end', $hourmin, $hourmin, $line->date_end ? 0 : 1, "updateline", 1, 0);
+	if ($prefillDates) {
+		echo ' <span class="small"><a href="#" id="prefill_service_dates">'.$langs->trans('FillWithLastServiceDates').'</a></span>';
+	}
 	print '<script>';
+	if ($prefillDates) {
+		?>
+		function prefill_service_dates()
+		{
+			$('#date_start').val("<?php echo dol_escape_js(dol_print_date($date_start_prefill, 'day')); ?>").trigger('change');
+			$('#date_end').val("<?php echo dol_escape_js(dol_print_date($date_end_prefill, 'day')); ?>").trigger('change');
+
+			return false; // Prevent default link behaviour (which is go to href URL)
+		}
+
+		$(document).ready(function()
+		{
+			$('#prefill_service_dates').click(prefill_service_dates);
+		});
+
+		<?php
+	}
 	if (!$line->date_start) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
 			print 'jQuery("#date_starthour").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_HOUR').'");';

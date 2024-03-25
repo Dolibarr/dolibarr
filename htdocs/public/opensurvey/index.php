@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,15 +49,15 @@ $langs->loadLangs(array("companies", "other", "opensurveys"));
 $action   = GETPOST('action', 'aZ09');
 $cancel   = GETPOST('cancel', 'alpha');
 $SECUREKEY = GETPOST("securekey");
-$entity = GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity;
+$entity = GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity;
 $backtopage = '';
 $suffix = "";
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters
@@ -79,8 +80,8 @@ $object = new Opensurveysondage($db);
 $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
 
 // Security check
-if (empty($conf->recruitment->enabled)) {
-	httponly_accessforbidden('Module Recruitment not enabled');
+if (!isModEnabled('opensurvey')) {
+	httponly_accessforbidden('Module Opensurvey not enabled');
 }
 
 
@@ -169,7 +170,7 @@ if (getDolGlobalString('OPENSURVEY_IMAGE_PUBLIC_INTERFACE')) {
 }
 
 
-$results = $object->fetchAll($sortfield, $sortorder, 0, 0, array('status' => 1));
+$results = $object->fetchAll($sortorder, $sortfield, 0, 0, '(status:=:1)');
 $now = dol_now();
 
 if (is_array($results)) {

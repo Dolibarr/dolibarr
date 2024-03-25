@@ -42,7 +42,7 @@ require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 $action = GETPOST('action', 'aZ09');
-$productId = GETPOST('product_id', 'int');
+$productId = GETPOSTINT('product_id');
 $batch = GETPOST('batch', 'alphanohtml');
 
 // Security check

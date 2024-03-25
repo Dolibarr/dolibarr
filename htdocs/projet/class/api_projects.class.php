@@ -438,10 +438,9 @@ class Projects extends DolibarrApi
 	/**
 	 * Update project general fields (won't touch lines of project)
 	 *
-	 * @param int   $id             Id of project to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   	$id             	Id of project to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{

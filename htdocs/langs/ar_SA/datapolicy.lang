@@ -23,7 +23,7 @@ Module4100Desc = نموذج لإدارة خصوصية البيانات (التو
 #
 datapolicySetup = نموذج إعداد سياسة خصوصية البيانات
 Deletion = حذف البيانات
-datapolicySetupPage = وفقًا لقوانين بلدانك (مثال <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">المادة 5</a> من اللائحة العامة لحماية البيانات)، يجب الاحتفاظ بالبيانات الشخصية لفترة لا تتجاوز ما هو ضروري للأغراض التي تم جمعها من أجلها، باستثناء الأغراض الأرشفية.<br>سيتم الحذف تلقائيًا بعد مدة معينة بدون حدث (المدة التي حددتها أقل).
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
 NB_MONTHS = %s شهر
 ONE_YEAR = 1 سنة
 NB_YEARS = %s سنة
@@ -40,16 +40,16 @@ DATAPOLICY_CONTACT_FOURNISSEUR = المورد
 DATAPOLICY_ADHERENT = عضو
 DATAPOLICY_Tooltip_SETUP = نوع جهة الاتصال - حدد اختياراتك لكل نوع.
 DATAPOLICYMail = إعداد رسائل البريد الإلكتروني
-DATAPOLICYSUBJECTMAIL = موضوع البريد الإلكتروني
+DATAPOLICYSUBJECTMAIL = Subject of the email
 DATAPOLICYCONTENTMAIL = محتوى البريد الإلكتروني
 DATAPOLICYSUBSITUTION = يمكنك استخدام المتغيرات التالية في بريدك الإلكتروني (يسمح LINKACCEPT بإنشاء رابط يسجل موافقة الشخص، ويتيح LINKREFUSED تسجيل رفض الشخص):
 DATAPOLICYACCEPT = رسالة بعد الاتفاق
-DATAPOLICYREFUSE = رسالة بعد عدم الاتفاق
+DATAPOLICYREFUSE = Message after disagreement
 SendAgreementText = يمكنك إرسال بريد إلكتروني بالقانون العام لحماية البيانات (GDPR) إلى جميع جهات الاتصال ذات الصلة (الذين لم يتلقوا بعد رسالة بريد إلكتروني و والتي لم تسجل أي شيء بشأن اتفاقية القانون العام لحماية البيانات الخاصة بهم). للقيام بذلك، استخدم الزر التالي.
 SendAgreement = إرسال رسائل البريد الإلكتروني
 AllAgreementSend = تم إرسال كافة رسائل البريد الإلكتروني
 TXTLINKDATAPOLICYACCEPT = نص الرابط "الاتفاقية"
-TXTLINKDATAPOLICYREFUSE = نص الرابط "عدم الاتفاق"
+TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
 
 
 #
@@ -57,8 +57,8 @@ TXTLINKDATAPOLICYREFUSE = نص الرابط "عدم الاتفاق"
 #
 DATAPOLICY_BLOCKCHECKBOX = اللائحة العامة لحماية البيانات: معالجة البيانات الشخصية
 DATAPOLICY_consentement = تم الحصول على الموافقة لمعالجة البيانات الشخصية
-DATAPOLICY_opposition_traitement = يعارض معالجة بياناته الشخصية
-DATAPOLICY_opposition_prospection = يعارض معالجة بياناته الشخصية لأغراض التنقيب
+DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
+DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
 
 #
 # Popup
@@ -78,15 +78,11 @@ DATAPOLICY_PORTABILITE_CONFIRMATION = تريد تصدير البيانات ال�
 #
 ANONYMISER_AT = تم إخفاء هوية %s
 
-# V2
-DATAPOLICYReturn = التحقق من صحة اللائحة العامة لحماية البيانات
-DATAPOLICY_date = تاريخ الاتفاق/عدم الاتفاق الناتج المحلي الإجمالي
-DATAPOLICY_send = تاريخ إرسال الاتفاقية بالبريد الإلكتروني
-DATAPOLICYReturn = التحقق من صحة اللائحة العامة لحماية البيانات
+DATAPOLICY_date = Date of agreement/disagreement GDPR
+DATAPOLICY_send = Date agreement email sent
 DATAPOLICY_SEND = إرسال البريد الإلكتروني اللائحة العامة لحماية البيانات
 MailSent = تم ارسال البريد الالكتروني
 
 # ERROR
-ErrorSubjectIsRequired = خطأ: موضوع البريد الإلكتروني مطلوب. قم بالإشارة إليه في إعداد نموذج
-=بسبب مشكلة فنية، لم نتمكن من تسجيل اختيارك. ونحن نعتذر عن ذلك. اتصل بنا لترسل لنا اختيارك.
-NUMBER_MONTH_BEFORE_DELETION = عدد الأشهر قبل الحذف
+=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
+NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

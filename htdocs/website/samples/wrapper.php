@@ -15,10 +15,10 @@ $encoding = '';
 // Parameters to download files
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');
-$entity = GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity;
+$entity = GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity;
 $original_file = GETPOST("file", "alpha");
 $l = GETPOST('l', 'aZ09');
-$limit = GETPOST('limit', 'int');
+$limit = GETPOSTINT('limit');
 
 // Parameters for RSS
 $rss = GETPOST('rss', 'aZ09');
@@ -252,7 +252,7 @@ if ($rss) {
 
 	// This test if file exists should be useless. We keep it to find bug more easily
 	if (!file_exists($fullpath_original_file_osencoded)) {
-		print "ErrorFileDoesNotExists: ".$original_file;
+		print "ErrorFileDoesNotExists: ".dol_escape_htmltag($original_file);
 		exit;
 	}
 

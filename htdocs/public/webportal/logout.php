@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  */
 
 /**
- * \file		htdocs/user/logout.php
+ * \file		htdocs/public/webportal/logout.php
  * \ingroup		webportal
  * \brief		Page called to disconnect a user
  */
@@ -33,10 +34,7 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
-// Change this following line to use the correct relative path (../, ../../, etc)
-$res = 0;
-if (!$res && file_exists('./webportal.main.inc.php')) $res = @include './webportal.main.inc.php';                // to work if your module directory is into dolibarr root htdocs directory
-if (!$res) die('Include of WebPortal main fails');
+include 'webportal.main.inc.php';
 
 global $db;
 

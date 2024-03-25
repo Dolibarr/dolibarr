@@ -539,7 +539,7 @@ print '</td></tr>';
 if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
 	if ($country_code) {
-		print $formcompany->select_state(GETPOST("state_id", 'int'), $country_code);
+		print $formcompany->select_state(GETPOSTINT("state_id"), $country_code);
 	} else {
 		print '';
 	}

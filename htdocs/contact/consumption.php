@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $object = new Contact($db);
 if ($id > 0) {
@@ -46,13 +46,13 @@ if ($id > 0) {
 if (empty($object->thirdparty)) {
 	$object->fetch_thirdparty();
 }
-$socid = $object->thirdparty->id;
+$socid = !empty($object->thirdparty->id) ? $object->thirdparty->id : null;
 
 // Sort & Order fields
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -69,8 +69,8 @@ if (!$sortfield) {
 // Search fields
 $sref = GETPOST("sref");
 $sprod_fulldescr = GETPOST("sprod_fulldescr");
-$month = GETPOST('month', 'int');
-$year = GETPOST('year', 'int');
+$month = GETPOSTINT('month');
+$year = GETPOSTINT('year');
 
 // Clean up on purge search criteria ?
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
@@ -96,7 +96,7 @@ $result = restrictedArea($user, 'contact', $object->id, 'socpeople&societe');
  * Actions
  */
 
-$parameters = array('id'=>$id);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -153,27 +153,30 @@ print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
 print $object->getCivilityLabel();
 print '</td></tr>';
 
-if ($object->thirdparty->client) {
+$thirdTypeArray = array();
+$elementTypeArray = array();
+
+if (!empty($object->thirdparty->client)) {
 	$thirdTypeArray['customer'] = $langs->trans("customer");
 	if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 		$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
 	}
-	if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
+	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 		$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 	}
-	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
+	if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 	}
-	if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
+	if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 		$elementTypeArray['contract'] = $langs->transnoentitiesnoconv('Contracts');
 	}
 }
 
-if (isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')) {
+if (isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire')) {
 	$elementTypeArray['fichinter'] = $langs->transnoentitiesnoconv('Interventions');
 }
 
-if ($object->thirdparty->fournisseur) {
+if (!empty($object->thirdparty->fournisseur)) {
 	$thirdTypeArray['supplier'] = $langs->trans("supplier");
 	if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 		$elementTypeArray['supplier_invoice'] = $langs->transnoentitiesnoconv('SuppliersInvoices');
@@ -364,11 +367,13 @@ $param .= "&sref=".urlencode($sref);
 $param .= "&month=".urlencode($month);
 $param .= "&year=".urlencode($year);
 $param .= "&sprod_fulldescr=".urlencode($sprod_fulldescr);
-$param .= "&socid=".urlencode($socid);
+if (!empty($socid)) {
+	$param .= "&socid=".urlencode((string) ($socid));
+}
 $param .= "&type_element=".urlencode($type_element);
 
 $total_qty = 0;
-$num=0;
+$num = 0;
 if ($sql_select) {
 	$resql = $db->query($sql);
 	if (!$resql) {
@@ -377,7 +382,7 @@ if ($sql_select) {
 
 	$num = $db->num_rows($resql);
 
-	$param = "&socid=".urlencode($socid)."&type_element=".urlencode($type_element)."&id=".urlencode($id);
+	$param = (!empty($socid) ? "&socid=".urlencode((string) ($socid)) : "")."&type_element=".urlencode((string) ($type_element))."&id=".urlencode((string) ($id));
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
@@ -391,10 +396,10 @@ if ($sql_select) {
 		$param .= "&sref=".urlencode($sref);
 	}
 	if ($month) {
-		$param .= "&month=".urlencode($month);
+		$param .= "&month=".urlencode((string) ($month));
 	}
 	if ($year) {
-		$param .= "&year=".urlencode($year);
+		$param .= "&year=".urlencode((string) ($year));
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);

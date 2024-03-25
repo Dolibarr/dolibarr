@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$search_project_user = GETPOST('search_project_user', 'int');
+$search_project_user = GETPOSTINT('search_project_user');
 $mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
 if ($search_project_user == $user->id) {
 	$mine = 1;
@@ -475,6 +475,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_SHO
 			$taskstatic->projectstatus = $obj->projectstatus;
 			$taskstatic->progress = $obj->progress;
 			$taskstatic->fk_statut = $obj->status;
+			$taskstatic->status = $obj->status;
 			$taskstatic->date_start = $db->jdate($obj->date_start);
 			$taskstatic->date_end = $db->jdate($obj->date_end);
 			$taskstatic->dateo = $db->jdate($obj->date_start);

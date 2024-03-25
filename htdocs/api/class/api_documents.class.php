@@ -497,7 +497,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'expensereport') {
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
-			if (!DolibarrApiAccess::$user->hasRight('expensereport', 'read') && !DolibarrApiAccess::$user->hasRights('expensereport', 'read')) {
+			if (!DolibarrApiAccess::$user->hasRight('expensereport', 'read') && !DolibarrApiAccess::$user->hasRight('expensereport', 'read')) {
 				throw new RestException(403);
 			}
 
@@ -761,6 +761,7 @@ class Documents extends DolibarrApi
 
 			if (is_object($object)) {
 				if ($fetchbyid) {
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$result = $object->fetch($ref);
 				} else {
 					$result = $object->fetch('', $ref);

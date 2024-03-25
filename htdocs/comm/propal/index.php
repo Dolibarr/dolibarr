@@ -42,7 +42,7 @@ $now = dol_now();
 $max = 5;
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
@@ -311,7 +311,7 @@ if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 				print '</table>';
 				print '</td>';
 
-				print '<td class="left">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
+				print '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dp), 'day').'</td>';
 				print '<td class="right">'.price(getDolGlobalString('MAIN_DASHBOARD_USE_TOTAL_HT') ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>';

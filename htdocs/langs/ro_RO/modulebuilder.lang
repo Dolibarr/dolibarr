@@ -27,8 +27,7 @@ ModuleBuilderDeschooks=Această filă este dedicată cârligelor hooks.
 ModuleBuilderDescwidgets=Această filă este dedicată administrării/construirii de widget-uri.
 ModuleBuilderDescbuildpackage=Puteți genera aici un fișier pachet "pregătit pentru distribuire" (un fișier .zip) al modulului tău și un fișier de documentație "gata de distribuire". Doar fă clic pe buton pentru a construi pachetul sau documentația.
 EnterNameOfModuleToDeleteDesc= Puteți șterge modulul pe care l-aţi creat. ATENŢIE: Toate fișierele de cod ale modulului (generate sau create manual) ȘI datele și documentația de structură vor fi șterse!
-EnterNameOfObjectToDeleteDesc=Puteți șterge un obiect. ATENŢIE: Toate fișierele de cod (generate sau create manual) legate de obiect vor fi șterse!
-EnterNameOfObjectToDeleteDesc=Puteți șterge un obiect. ATENŢIE: Toate fișierele de cod (generate sau create manual) legate de obiect vor fi șterse!
+EnterNameOfObjectToDeleteDesc=Poți șterge un obiect. ATENȚIE: Toate fișierele de cod (generate sau create manual) asociate de obiect vor fi șterse!
 DangerZone=Zona periculoasă
 BuildPackage=Construiți pachetul
 BuildPackageDesc=Puteți genera un pachet zip al aplicației dvs., pentru a-l putea distribui in orice implementare de Dolibarr. Puteți, de asemenea, să-l distribuiți sau să-l vindeţi în marketplace, de exemplu pe <a href="https://www.dolistore.com">DoliStore.com</a>.

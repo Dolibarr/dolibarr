@@ -8,7 +8,8 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@
  *  \brief      File of class to generate document from standard template
  */
 
-dol_include_once('/asset/core/modules/asset/modules_asset.php');
+require_once DOL_DOCUMENT_ROOT . '/asset/core/modules/asset/modules_asset.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -80,7 +81,7 @@ class pdf_standard_asset extends ModelePDFAsset
 	public $situationinvoice;
 
 	/**
-	 * @var array of document table columns
+	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
 	 */
 	public $cols;
 
@@ -166,10 +167,10 @@ class pdf_standard_asset extends ModelePDFAsset
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
 
-		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
+		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			global $outputlangsbis;
 			$outputlangsbis = new Translate('', $conf);
-			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
 			$outputlangsbis->loadLangs(array("main", "bills", "products", "dict", "companies"));
 		}
 
@@ -262,7 +263,7 @@ class pdf_standard_asset extends ModelePDFAsset
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -320,6 +321,7 @@ class pdf_standard_asset extends ModelePDFAsset
 					$pdf->setSignature($cert, $cert, $this->emetteur->name, '', 2, $info);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// New page
@@ -607,9 +609,9 @@ class pdf_standard_asset extends ModelePDFAsset
 					$parameters = array(
 						'object' => $object,
 						'i' => $i,
-						'pdf' =>& $pdf,
-						'curY' =>& $curY,
-						'nexY' =>& $nexY,
+						'pdf' => & $pdf,
+						'curY' => & $curY,
+						'nexY' => & $nexY,
 						'outputlangs' => $outputlangs,
 						'hidedetails' => $hidedetails
 					);
@@ -690,10 +692,10 @@ class pdf_standard_asset extends ModelePDFAsset
 					// Add line
 					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);
-						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
+						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY, $this->page_largeur - $this->marge_droite, $nexY);
-						$pdf->SetLineStyle(array('dash'=>0));
+						$pdf->SetLineStyle(array('dash' => 0));
 					}
 
 					// Detect if some page were added automatically and output _tableau for past pages
@@ -767,7 +769,7 @@ class pdf_standard_asset extends ModelePDFAsset
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -777,7 +779,7 @@ class pdf_standard_asset extends ModelePDFAsset
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {
@@ -808,9 +810,9 @@ class pdf_standard_asset extends ModelePDFAsset
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		tcpdf			$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		TCPDF|TCPDI	$pdf     		Object PDF
+	 *   @param		int|float	$tab_top		Top position of table
+	 *   @param		int|float	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
@@ -869,7 +871,7 @@ class pdf_standard_asset extends ModelePDFAsset
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	Tcpdf		$pdf     		Object PDF
+	 *  @param	TCPDF|TCPDI	$pdf     		Object PDF
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -1325,6 +1327,7 @@ class pdf_standard_asset extends ModelePDFAsset
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		} elseif (empty($reshook)) {
+			// @phan-suppress-next-line PhanPluginSuspiciousParamOrderInternal
 			$this->cols = array_replace($this->cols, $hookmanager->resArray); // array_replace is used to preserve keys
 		} else {
 			$this->cols = $hookmanager->resArray;

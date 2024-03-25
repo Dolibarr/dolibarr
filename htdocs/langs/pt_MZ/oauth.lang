@@ -1,8 +1,6 @@
 # Dolibarr language file - Source file is en_US - oauth
 ConfigOAuth=Configuração do OAuth
-OAuthServices=Serviços OAuth
 ManualTokenGeneration=Geração manual do token
-TokenManager=Gerenciador de tokens
 IsTokenGenerated=O token está gerado?
 NoAccessToken=Nenhum token de acesso guardado na base de dados local
 HasAccessToken=Um token foi gerado e salvo no banco de dados local

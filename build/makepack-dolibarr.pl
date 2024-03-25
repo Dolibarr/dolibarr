@@ -538,6 +538,8 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/security`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/spec`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/test`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/tools/php-cs-fixer/vendor`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/tools/rector/vendor`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/uml`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/vagrant`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/xdebug`;
@@ -581,6 +583,7 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/factory*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/forceproject*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/lead*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/langs/*/README.md`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/management*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/multicompany*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/ndf*`;

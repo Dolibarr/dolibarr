@@ -80,7 +80,7 @@ html,body {
 }
 
 .bodytakepos {
-	background-color: #EEE;
+	background-color: var(--colorbackgrey);
 }
 
 .center {
@@ -184,6 +184,7 @@ button.productbutton {
 
 button.actionbutton {
 	background: #EABCA6;
+	color: #222;
 	border: 2px solid #EEE;
 	min-height: 40px;
 	border-radius: 3px;
@@ -382,7 +383,7 @@ div.paymentbordline
 	margin: 0 auto;
 	width: 100%;
 	height: 55%;
-	overflow: hidden;
+	overflow-x: hidden;
 }
 
 .div1{

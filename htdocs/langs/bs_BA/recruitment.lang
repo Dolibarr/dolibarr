@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Upravljajte i pratite kampanje zapošljavanja za nova ra
 # Admin page
 #
 RecruitmentSetup = Podešavanje zapošljavanja
-Settings = Postavke
 RecruitmentSetupPage = Ovdje unesite postavke glavnih opcija za modul za zapošljavanje
 RecruitmentArea=Područje za zapošljavanje
 PublicInterfaceRecruitmentDesc=Javne stranice poslova su javni URL-ovi za prikaz i odgovora na otvorene poslove. Postoji jedna različita veza za svaki otvoreni posao, koja se nalazi na svakom zapisu o poslu.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Omogućite javne stranice otvorenih poslova
 #
 # About page
 #
-About = O programu
 RecruitmentAbout = O regrutaciji
 RecruitmentAboutPage = Regrutacija o stranici
 NbOfEmployeesExpected=Očekivani broj zaposlenih

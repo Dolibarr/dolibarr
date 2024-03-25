@@ -90,8 +90,8 @@ AccountancyAreaDescProd=Étape %s : Définissez les comptes comptables sur vos p
 
 AccountancyAreaDescBind=Étape %s : Vérifier que la liaison entre les %s lignes existantes et le compte comptable est faite, ainsi l'application sera capable d'inscrire les transaction dans le grand livre en un seul clic. Compléter les liaisons manquantes. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescWriteRecords=Étape %s: Ecrire les transactions dans le grand livre. Pour cela, suivez le menu <strong>%s</strong>, et cliquer sur le bouton <strong>%s</strong>.
-AccountancyAreaDescAnalyze=Étape %s : lire les rapports ou générer des fichiers d'exportation pour d'autres comptables.
-AccountancyAreaDescClosePeriod=Étape %s : Fermer la période afin que nous ne puissions plus transférer de données au cours de la même période dans le futur.
+AccountancyAreaDescAnalyze=STEP %s : lire les rapports ou générer des fichiers d'exportation pour d'autres comptables.
+AccountancyAreaDescClosePeriod=ÉTAPE %s : Fermer la période afin que nous ne puissions plus transférer de données au cours de la même période dans le futur.
 
 TheFiscalPeriodIsNotDefined=Une étape obligatoire de configuration n'a pas été complétée (l'exercice fiscal n'est pas défini)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Une étape obligatoire dans la configuration n'a pas été terminée (journal de code de comptabilité non défini pour tous les comptes bancaires)
@@ -335,7 +335,6 @@ CategoryDeleted=Le groupe de comptes comptables a été supprimé
 AccountingJournals=Journaux comptables
 AccountingJournal=Journal comptable
 NewAccountingJournal=Nouveau journal comptable
-ShowAccountingJournal=Afficher le journal
 NatureOfJournal=Nature du journal
 AccountingJournalType1=Opérations diverses
 AccountingJournalType2=Ventes

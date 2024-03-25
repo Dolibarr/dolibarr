@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +50,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public $table_element = 'eventorganization_conferenceorboothattendee';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
+	 * @var int|string  Does this object support multicompany module ?
 	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 'fk_project@projet';
@@ -98,32 +100,32 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>2, 'index'=>1, 'comment'=>"Reference of object"),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
+		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'comment' => "Reference of object"),
 		//'fk_actioncomm' => array('type'=>'integer:ActionComm:comm/action/class/actioncomm.class.php:1', 'label'=>'ConferenceOrBooth', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>0, 'index'=>1, 'picto'=>'agenda'),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'position'=>20, 'notnull'=>1, 'visible'=>0, 'index'=>1, 'picto'=>'project', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
-		'email' => array('type'=>'mail', 'label'=>'EmailAttendee', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'autofocusoncreate'=>1, 'searchall'=>1, 'csslist'=>'tdoverflowmax150'),
-		'firstname' => array('type'=>'varchar(100)', 'label'=>'Firstname', 'enabled'=>'1', 'position'=>31, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'csslist'=>'tdoverflowmax125'),
-		'lastname' => array('type'=>'varchar(100)', 'label'=>'Lastname', 'enabled'=>'1', 'position'=>32, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'csslist'=>'tdoverflowmax125'),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'position'=>40, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"OrganizationEventLinkToThirdParty", 'picto'=>'company', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
-		'email_company' => array('type'=>'mail', 'label'=>'EmailCompany', 'enabled'=>'1', 'position'=>41, 'notnull'=>0, 'visible'=>-2, 'searchall'=>1),
-		'date_subscription' => array('type'=>'datetime', 'label'=>'DateOfRegistration', 'enabled'=>'1', 'position'=>56, 'notnull'=>1, 'visible'=>1, 'showoncombobox'=>'1',),
-		'fk_invoice' => array('type'=>'integer:Facture:compta/facture/class/facture.class.php', 'label'=>'Invoice', 'enabled'=>'isModEnabled("facture")', 'position'=>57, 'notnull'=>0, 'visible'=>1, 'index'=>0, 'picto'=>'bill', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
-		'amount' => array('type'=>'price', 'label'=>'AmountPaid', 'enabled'=>'1', 'position'=>57, 'notnull'=>0, 'visible'=>1, 'default'=>'null', 'isameasure'=>'1', 'help'=>"AmountOfRegistrationPaid",),
-		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>3,),
-		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>3,),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2, 'css'=>'nowraponall'),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>-1, 'visible'=>-2),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
-		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>0,),
-		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
-		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-		'ip' => array('type'=>'varchar(250)', 'label'=>'IPAddress', 'enabled'=>'1', 'position'=>900, 'notnull'=>-1, 'visible'=>-2,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'default'=>0, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
+		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'position' => 20, 'notnull' => 1, 'visible' => 0, 'index' => 1, 'picto' => 'project', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'email' => array('type' => 'mail', 'label' => 'EmailAttendee', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'autofocusoncreate' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax150'),
+		'firstname' => array('type' => 'varchar(100)', 'label' => 'Firstname', 'enabled' => 1, 'position' => 31, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125'),
+		'lastname' => array('type' => 'varchar(100)', 'label' => 'Lastname', 'enabled' => 1, 'position' => 32, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125'),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'position' => 40, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'help' => "OrganizationEventLinkToThirdParty", 'picto' => 'company', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'email_company' => array('type' => 'mail', 'label' => 'EmailCompany', 'enabled' => 1, 'position' => 41, 'notnull' => 0, 'visible' => -2, 'searchall' => 1),
+		'date_subscription' => array('type' => 'datetime', 'label' => 'DateOfRegistration', 'enabled' => 1, 'position' => 56, 'notnull' => 1, 'visible' => 1, 'showoncombobox' => 1,),
+		'fk_invoice' => array('type' => 'integer:Facture:compta/facture/class/facture.class.php', 'label' => 'Invoice', 'enabled' => 'isModEnabled("invoice")', 'position' => 57, 'notnull' => 0, 'visible' => 1, 'index' => 0, 'picto' => 'bill', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'amount' => array('type' => 'price', 'label' => 'AmountPaid', 'enabled' => 1, 'position' => 57, 'notnull' => 0, 'visible' => 1, 'default' => 'null', 'isameasure' => 1, 'help' => "AmountOfRegistrationPaid",),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 61, 'notnull' => 0, 'visible' => 3,),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 62, 'notnull' => 0, 'visible' => 3,),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2, 'css' => 'nowraponall'),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => -2,),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => -1, 'visible' => -2),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2,),
+		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => 0,),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
+		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
+		'ip' => array('type' => 'varchar(250)', 'label' => 'IPAddress', 'enabled' => 1, 'position' => 900, 'notnull' => -1, 'visible' => -2,),
+		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '9' => 'Canceled'),),
 	);
 	public $rowid;
 	public $ref;
@@ -209,7 +211,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		if (isset($conf->global->EVENTORGANIZATION_FILTERATTENDEES_TYPE)
 			&& getDolGlobalString('EVENTORGANIZATION_FILTERATTENDEES_TYPE') !== ''
 			&& getDolGlobalString('EVENTORGANIZATION_FILTERATTENDEES_TYPE') !== '-1') {
-				$this->fields['fk_soc']['type'] .= ' AND client = '.((int) getDolGlobalInt('EVENTORGANIZATION_FILTERATTENDEES_TYPE', 0));
+			$this->fields['fk_soc']['type'] .= ' AND client = '.((int) getDolGlobalInt('EVENTORGANIZATION_FILTERATTENDEES_TYPE', 0));
 		}
 
 		// Example to show how to set values of fields definition dynamically
@@ -258,7 +260,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		if ($result > 0) {
 			$result = $this->fetch($result);
 			if ($result > 0) {
-				$this->ref = $this->id;
+				$this->ref = (string) $this->id;
 				$result = $this->update($user);
 			}
 		}
@@ -333,10 +335,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		} else {
-			$object->ref = $object->id;
+			$object->ref = (string) $object->id;
 			$result = $object->update($user);
 		}
 
@@ -401,18 +402,17 @@ class ConferenceOrBoothAttendee extends CommonObject
 	/**
 	 * Load list of objects in memory from the database.
 	 *
-	 * @param  string      $sortorder    Sort Order
-	 * @param  string      $sortfield    Sort field
-	 * @param  int         $limit        limit
-	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...). WARNING: customerurl must be a sanitized SQL string.
-	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @param  string      	$sortorder    	Sort Order
+	 * @param  string      	$sortfield    	Sort field
+	 * @param  int         	$limit        	limit
+	 * @param  int         	$offset       	Offset
+	 * @param  string		$filter       	Filter as an Universal Search string.
+	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string      	$filtermode   	No more used
+	 * @return array|int                 	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -426,25 +426,14 @@ class ConferenceOrBoothAttendee extends CommonObject
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
+
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid' || $key == 't.fk_soc' || $key == 't.fk_project' || $key == 't.fk_actioncomm') {
-					$sqlwhere[] = $key.'='.((int) $value);
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
-				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;
-				} elseif (strpos($value, '%') === false) {
-					$sqlwhere[] = $key.' IN ('.$this->db->sanitize($this->db->escape($value)).')';
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
-				}
-			}
-		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {
@@ -842,7 +831,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('conferenceorboothattendeedao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -947,11 +936,11 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
-		$this->initAsSpecimenCommon();
+		return $this->initAsSpecimenCommon();
 	}
 
 	/**
@@ -980,7 +969,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/eventorganization/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if ($mybool === false) {

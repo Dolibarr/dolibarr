@@ -4,6 +4,7 @@
  * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2019  Frederic France         <frederic.france@netlogic.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,7 @@ print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionProgram").'</
 // If current version differs from last upgrade
 if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 	// Compare version with last install database version (upgrades never occurred)
-	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) {
+	if (DOL_VERSION != getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
 		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 	}
 } else {
@@ -83,7 +84,7 @@ $xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST(
 
 $xmlfile = DOL_DOCUMENT_ROOT.'/install/'.$xmlshortfile;
 if (!preg_match('/\.zip$/i', $xmlfile) && dol_is_file($xmlfile.'.zip')) {
-	$xmlfile = $xmlfile.'.zip';
+	$xmlfile .= '.zip';
 }
 
 // Remote file to compare to
@@ -179,10 +180,11 @@ if (GETPOST('target') == 'remote') {
 		if (LIBXML_VERSION < 20900) {
 			// Avoid load of external entities (security problem).
 			// Required only if LIBXML_VERSION < 20900
+			// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 			libxml_disable_entity_loader(true);
 		}
 
-		$xml = simplexml_load_string($xmlfile, 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
+		$xml = simplexml_load_string($xmlfile, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET);
 	} else {
 		$errormsg = $langs->trans('XmlNotFound').': '.$xmlremote.' - '.$xmlarray['http_code'].(($xmlarray['http_code'] == 400 && $xmlarray['content']) ? ' '.$xmlarray['content'] : '').' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
 		setEventMessages($errormsg, null, 'errors');
@@ -258,7 +260,7 @@ if (empty($error) && !empty($xml)) {
 			$tmprelativefilename = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $valfile['fullname']);
 			if (!in_array($tmprelativefilename, $file_list['insignature'])) {
 				$md5newfile = @md5_file($valfile['fullname']); // Can fails if we don't have permission to open/read file
-				$file_list['added'][] = array('filename'=>$tmprelativefilename, 'md5'=>$md5newfile);
+				$file_list['added'][] = array('filename' => $tmprelativefilename, 'md5' => $md5newfile);
 			}
 		}
 

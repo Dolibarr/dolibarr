@@ -190,7 +190,9 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 		for ($i = $x1; $i <= $x2; $i += $Pointilles + $Pointilles) {
 			for ($j = $i; $j <= ($i + $Pointilles); $j++) {
 				if ($j <= ($x2 - 1)) {
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$pdf->Line($j, $y1, $j + 1, $y1); // on trace le pointill? du haut, point par point
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$pdf->Line($j, $y2, $j + 1, $y2); // on trace le pointill? du bas, point par point
 				}
 			}
@@ -198,7 +200,9 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 		for ($i = $y1; $i <= $y2; $i += $Pointilles + $Pointilles) {
 			for ($j = $i; $j <= ($i + $Pointilles); $j++) {
 				if ($j <= ($y2 - 1)) {
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$pdf->Line($x1, $j, $x1, $j + 1); // on trace le pointill? du haut, point par point
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$pdf->Line($x2, $j, $x2, $j + 1); // on trace le pointill? du bas, point par point
 				}
 			}
@@ -218,6 +222,8 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	 * @param int	$epaisseur			Epaisseur
 	 * @param int	$taille             Size
 	 * @return void
+	 *
+	 * @phan-suppress PhanPluginSuspiciousParamPosition
 	 */
 	protected function _Croix(&$pdf, $x1 = 0, $y1 = 0, $x2 = 210, $y2 = 297, $epaisseur = 1, $taille = 4)
 	{
@@ -255,8 +261,8 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	{
 		if ($src != $dest) {
 			$tab = array(
-				'in'=>39.37008,
-				'mm'=>1000
+				'in' => 39.37008,
+				'mm' => 1000
 			);
 			return $value * $tab[$dest] / $tab[$src];
 		}
@@ -276,7 +282,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	{
 		// phpcs:enable
 		// Array for link between height of characters and space between lines
-		$_Table_Hauteur_Chars = array(6=>2, 7=>2.5, 8=>3, 9=>3.5, 10=>4, 11=>6, 12=>7, 13=>8, 14=>9, 15=>10);
+		$_Table_Hauteur_Chars = array(6 => 2, 7 => 2.5, 8 => 3, 9 => 3.5, 10 => 4, 11 => 6, 12 => 7, 13 => 8, 14 => 9, 15 => 10);
 		if (in_array($pt, array_keys($_Table_Hauteur_Chars))) {
 			return $_Table_Hauteur_Chars[$pt];
 		} else {
@@ -290,7 +296,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	 * protected Set format
 	 *
 	 * @param    TCPDF     $pdf     PDF reference
-	 * @param    string    $format  Format
+	 * @param    array{metric:string,name:string,code:string,marginLeft:float,marginTip:float,SpaceX:float,SpaceY:float,NX:int,NY:int,width:float,height:float,font-size:float}	$format  Format
 	 * @return   void
 	 */
 	protected function _Set_Format(&$pdf, $format)

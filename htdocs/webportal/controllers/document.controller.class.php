@@ -89,15 +89,17 @@ class DocumentController extends Controller
 		$action = GETPOST('action', 'aZ09');
 		$original_file = GETPOST('file', 'alphanohtml'); // Do not use urldecode here ($_GET are already decoded by PHP).
 		$modulepart = GETPOST('modulepart', 'alpha');
-		$entity = GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity;
-		$socId = (int) GETPOST('soc_id', 'int');
+		$entity = GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity;
+		$socId = GETPOSTINT('soc_id');
 
 		// Security check
 		if (empty($modulepart)) {
 			httponly_accessforbidden('Bad link. Bad value for parameter modulepart', 400);
+			exit;
 		}
 		if (empty($original_file)) {
 			httponly_accessforbidden('Bad link. Missing identification to find file (original_file)', 400);
+			exit;
 		}
 
 		// get original file

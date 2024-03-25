@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
 /*
- * Copyright (C) 2023 	   Laurent Destailleur 	<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023 	   	Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,10 +88,11 @@ while ($i < $argc) {
 }
 
 if (!is_readable("{$path}phan/config.php")) {
-	print "Skipping phan - configuration not found";
+	print "Skipping phan - configuration not found\n";
 	// Disable phan while not integrated yet
 	$dir_phan = 'disabled';
 }
+
 
 // Start getting data
 
@@ -337,9 +339,9 @@ $html = '<html>'."\n";
 $html .= '<meta charset="utf-8">'."\n";
 $html .= '<meta http-equiv="refresh" content="300">'."\n";
 $html .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
-$html .= '<meta name="keywords" content="erp, crm, dolibarr, statistics, project, security alerts" />'."\n";
-$html .= '<meta name="title" content="Dolibarr project statistics" />'."\n";
-$html .= '<meta name="description" content="Statistics about the Dolibarr ERP CRM Open Source project (lines of code, contributions, security alerts, technical debt..." />'."\n";
+$html .= '<meta name="keywords" content="erp, crm, dolibarr, statistics, project, security alerts">'."\n";
+$html .= '<meta name="title" content="Dolibarr project statistics">'."\n";
+$html .= '<meta name="description" content="Statistics about the Dolibarr ERP CRM Open Source project (lines of code, contributions, security alerts, technical debt...">'."\n";
 $html .= '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />'."\n";
 $html .= '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>'."\n";
 $html .= '<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">';
@@ -397,6 +399,9 @@ th,td {
 .hidden {
 	display: none;
 }
+.hiddenimp {
+	display: none !important;
+}
 .trgroup {
 	border-bottom: 1px solid #aaa;
 }
@@ -414,7 +419,6 @@ th,td {
 }
 .seedetail {
 	color: #000088;
-	cursor: pointer;
 }
 .box {
 	padding: 20px;
@@ -422,6 +426,12 @@ th,td {
 	margin-top: 10px;
 	margin-bottom: 10px;
 	width: 200px;
+}
+.inline-block {
+	display: inline-block;
+}
+.inline {
+	display: inline;
 }
 .box.inline-box {
     display: inline-block;
@@ -444,7 +454,13 @@ th,td {
 	background-color: #664488;
 	color: #FFF;
 }
-
+.badge {
+	padding: 2px;
+	background-color: #eee;
+}
+.seeothercommit, .seedetail {
+	cursor: pointer;
+}
 div.fiche>form>div.div-table-responsive {
     min-height: 392px;
 }
@@ -505,11 +521,11 @@ $html .= '</header>'."\n";
 $html .= '<section class="chapter" id="linesofcode">'."\n";
 $html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Lines of code</h2>'."\n";
 
-$html .= '<div class="div-table-responsive">'."\n";
 $html .= '<div class="boxallwidth">'."\n";
+$html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="centpercent">';
 $html .= '<tr class="loc">';
-$html .= '<th class="left">Language</th>';
+$html .= '<th class="left" style="min-width: 150px">Language</th>';
 $html .= '<th class="right">Bytes</th>';
 $html .= '<th class="right">Files</th>';
 $html .= '<th class="right">Lines</th>';
@@ -635,7 +651,8 @@ $html .= '</div>';
 
 $html .= '</section>'."\n";
 
-$tmp = '';
+
+$tmpstan = '';
 $nblines = 0;
 if (!empty($output_arrtd)) {
 	foreach ($output_arrtd as $line) {
@@ -644,22 +661,23 @@ if (!empty($output_arrtd)) {
 		preg_match('/^::error file=(.*),line=(\d+),col=(\d+)::(.*)$/', $line, $reg);
 		if (!empty($reg[1])) {
 			if ($nblines < 20) {
-				$tmp .= '<tr class="nohidden">';
+				$tmpstan .= '<tr class="nohidden">';
 			} else {
-				$tmp .= '<tr class="hidden sourcephpstan">';
+				$tmpstan .= '<tr class="hidden sourcephpstan">';
 			}
-			$tmp .= '<td>'.$reg[1].'</td>';
-			$tmp .= '<td class="">';
-			$tmp .= '<a href="'.$urlgit.$reg[1].'#L'.$reg[2].'" target="_blank">'.$reg[2].'</a>';
-			$tmp .= '</td>';
-			$tmp .= '<td>'.$reg[4].'</td>';
-			$tmp .= '</tr>'."\n";
+			$tmpstan .= '<td>'.dolPrintLabel($reg[1]).'</td>';
+			$tmpstan .= '<td class="">';
+			$tmpstan .= '<a href="'.($urlgit.$reg[1].'#L'.$reg[2]).'" target="_blank">'.dolPrintLabel($reg[2]).'</a>';
+			$tmpstan .= '</td>';
+			$tmpstan .= '<td class="tdoverflowmax300" title="'.dolPrintHTMLForAttribute($reg[4]).'">'.dolPrintLabel($reg[4]).'</td>';
+			$tmpstan .= '</tr>'."\n";
+
 			$nblines++;
 		}
 	}
 }
 
-
+$tmpphan = '';
 $phan_nblines = 0;
 if (count($output_phan_json) != 0) {
 	$phan_notices = json_decode($output_phan_json[count($output_phan_json) - 1], true);
@@ -669,6 +687,9 @@ if (count($output_phan_json) != 0) {
 	foreach ($phan_notices as $notice) {
 		if (!empty($notice['location'])) {
 			$path = $notice['location']['path'];
+			if ($path == 'internal') {
+				continue;
+			}
 			$line_start = $notice['location']['lines']['begin'];
 			$line_end = $notice['location']['lines']['end'];
 			if ($line_start == $line_end) {
@@ -678,20 +699,20 @@ if (count($output_phan_json) != 0) {
 				$line_range = "#L{$line_start}-L{$line_end}";
 				$line_range_txt = "{$line_start}-{$line_end}";
 			}
-			$code_url = $urlgit.$path.$line_range;
-			$description = dolPrintLabel($notice['description']);
+			$code_url_attr = dol_escape_htmltag($urlgit.$path.$line_range);
 			if ($phan_nblines < 20) {
-				$tmp = '<tr class="nohidden">';
+				$tmpphan .= '<tr class="nohidden">';
 			} else {
-				$tmp = '<tr class="hidden sourcephan">';
+				$tmpphan .= '<tr class="hidden sourcephan">';
 			}
-			$tmp .= "<td>$path</td>";
-			$tmp .= '<td class="">';
-			$tmp .= "<a href=\"{$code_url}\" target=\"_blank\">{$line_range_txt}</a>";
-			$tmp .= '</td>';
-			$tmp .= "<td>$description</td>";
-			$tmp .= '</tr>';
-			$phan_items[] = $tmp;
+			$tmpphan .= '<td>'.dolPrintLabel($path).'</td>';
+			$tmpphan .= '<td class="">';
+			$tmpphan .= '<a href="'.$code_url_attr.'" target="_blank">'.$line_range_txt.'</a>';
+			$tmpphan .= '</td>';
+			$tmpphan .= '<td class="tdoverflowmax300" title="'.dolPrintHTMLForAttribute($notice['description']).'">'.dolPrintLabel($notice['description']).'</td>';
+			$tmpphan .= '</tr>';
+			$tmpphan .= "\n";
+
 			$phan_nblines++;
 		}
 	}
@@ -701,26 +722,31 @@ if (count($output_phan_json) != 0) {
 // Last security errors
 
 $html .= '<section class="chapter" id="linesofcode">'."\n";
-$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Last security issues <span class="opacitymedium">(last '.($nbofmonths!=1?$nbofmonths.' months':'month').')</span></h2>'."\n";
+$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Last security issues <span class="opacitymedium">(last '.($nbofmonth != 1 ? $nbofmonth.' months' : 'month').')</span></h2>'."\n";
 
-$html .= '<div class="div-table-responsive">'."\n";
 $html .= '<div class="boxallwidth">'."\n";
+$html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="list_technical_debt centpercent">'."\n";
-$html .= '<tr class="trgroup"><td>Commit ID</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td><td>Date</td></tr>'."\n";
+$html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td></tr>'."\n";
 foreach ($arrayofalerts as $alert) {
-	$html .= '<tr>';
-	$html .= '<td>';
-	$html .= '<a target="_blank" href="https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'].'">'.$alert['commitid'].'</a>';
+	$html .= '<tr style="vertical-align: top;">';
+	$html .= '<td class="nowrap">';
+	$html .= '<a target="_blank" href="https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'].'">'.dol_trunc($alert['commitid'], 8).'</a>';
 	if (!empty($alert['commitidbis'])) {
+		$html .= ' <div class="more inline"><span class="seeothercommit badge">+</span><div class="morediv hidden">';
 		foreach ($alert['commitidbis'] as $tmpcommitidbis) {
-			$html .= '<br>+<a target="_blank" href="https://github.com/Dolibarr/dolibarr/commit/'.$tmpcommitidbis.'">'.$tmpcommitidbis.'</a>';
+			$html .= '<a target="_blank" href="https://github.com/Dolibarr/dolibarr/commit/'.$tmpcommitidbis.'">'.dol_trunc($tmpcommitidbis, 8).'</a><br>';
 		}
+		$html .= '</div></div>';
 	}
+	$html .= '</td>';
+	$html .= '<td style="white-space: nowrap">';
+	$html .= preg_replace('/T.*$/', '', $alert['created_at']);
 	$html .= '</td>';
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['issueidyogosha'])) {
 		//$html .= '<a target="_blank" href="https://yogosha.com?'.$alert['issueidyogosha'].'">';
-		$html .= $alert['issueidyogosha'];
+		$html .= '#yogosha'.$alert['issueidyogosha'];
 		//$html .= '</a>';
 	} else {
 		//$html .= '<span class="opacitymedium">public issue</span>';
@@ -739,10 +765,7 @@ foreach ($arrayofalerts as $alert) {
 		$html .= '<a target="_blank" href="https://nvd.nist.gov/vuln/detail/CVE-'.$cve.'">CVE-'.$cve.'</a>';
 	}
 	$html .= '</td>';
-	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.$alert['title'].'</td>';
-	$html .= '<td style="white-space: nowrap">';
-	$html .= preg_replace('/T.*$/', '', $alert['created_at']);
-	$html .= '</td>';
+	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.dol_escape_htmltag($alert['title']).'</td>';
 	$html .= '</tr>';
 }
 $html .= '</table>';
@@ -752,19 +775,28 @@ $html .= '</section>';
 
 
 // Technical debt PHPstan
-if ($nblines != 0) {
+
+if ($dirphpstan != 'disabled') {
+	$datatable_script .= '
+ if (typeof(DataTable)==="function") {jQuery(".sourcephpstan").toggle(true);}
+ let phpstantable = new DataTable("#technicaldebt table", {
+    lengthMenu: [
+        [10, 25, 50, 100, -1],
+        [10, 25, 50, 100, \'All\']
+    ]});
+';
 	$html .= '<section class="chapter" id="technicaldebt">'."\n";
 	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' -> '.$nblines.' warnings)</span></h2>'."\n";
 
-	$html .= '<div class="div-table-responsive">'."\n";
 	$html .= '<div class="boxallwidth">'."\n";
+	$html .= '<div class="div-table-responsive">'."\n";
 	$html .= '<table class="list_technical_debt centpercent">'."\n";
-	$html .= '<tr class="trgroup"><td>File</td><td>Line</td><td>Type</td></tr>'."\n";
-	$html .= $tmp;
-	$html .= '<tr class="sourcephpstan"><td colspan="3"><span class="seedetail" data-source="phpstan" id="sourcephpstan">Show all...</span></td></tr>';
-	$html .= '</table>';
-	$html .= '</div>';
-	$html .= '</div>';
+	$html .= '<thead><tr class="trgroup"><td>File</td><td>Line</td><td>Type</td></tr></thead><tbody>'."\n";
+	$html .= $tmpstan;
+	$html .= '<tbody></table>';
+	// Disabled, no more required as list is managed with datatable
+	//$html .= '<div><span class="seedetail" data-source="phpstan" id="sourcephpstan">Show all...</span></div>';
+	$html .= '</div></div>';
 
 	$html .= '</section>'."\n";
 }
@@ -772,21 +804,26 @@ if ($nblines != 0) {
 
 // Technical debt Phan
 
-if ($phan_nblines != 0) {
+if ($dir_phan != 'disabled') {
 	$datatable_script .= '
  if (typeof(DataTable)==="function") {jQuery(".sourcephan").toggle(true);}
- let phantable = new DataTable("#technicaldebtphan table");
+ let phantable = new DataTable("#technicaldebtphan table", {
+    lengthMenu: [
+        [10, 25, 50, 100, -1],
+        [10, 25, 50, 100, \'All\']
+    ]});
 ';
 	$html .= '<section class="chapter" id="technicaldebtphan">'."\n";
 	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">(PHAN '.$phan_nblines.' warnings)</span></h2>'."\n";
 
-	$html .= '<div class="div-table-responsive">'."\n";
 	$html .= '<div class="boxallwidth">'."\n";
+	$html .= '<div class="div-table-responsive">'."\n";
 	$html .= '<table class="list_technical_debt centpercent">'."\n";
 	$html .= '<thead><tr class="trgroup"><td>File</td><td>Line</td><td>Detail</td></tr></thead><tbody>'."\n";
-	$html .= implode("\n", $phan_items);
+	$html .= $tmpphan;
 	$html .= '</tbody></table>';
-	$html .= '<div><span class="seedetail" data-source="phan" id="sourcephan">Show all...</span></div>';
+	// Disabled, no more required as list is managed with datatable
+	//$html .= '<div><span class="seedetail" data-source="phan" id="sourcephan">Show all...</span></div>';
 	$html .= '</div></div>';
 
 	$html .= '</section>'."\n";
@@ -798,12 +835,16 @@ if ($phan_nblines != 0) {
 $html .= '
 <script>
 $(document).ready(function() {
-$(".seedetail").on("click", function() {
-	var source = $(this).attr("data-source");
-  	console.log("Click on "+source+" so we show class .source"+source);
-	jQuery(".source"+source).toggle();
-} );
-'.$datatable_script.'
+	$(".seeothercommit").on("click", function() {
+	  	console.log("Click on seeothercommit");
+ 		$(this).closest(\'.more\').find(\'.morediv\').toggle();
+	});
+	$(".seedetail").on("click", function() {
+		var source = $(this).attr("data-source");
+	  	console.log("Click on "+source+" so we show class .source"+source);
+		jQuery(".source"+source).toggle();
+	} );
+	'.$datatable_script.'
 });
 </script>
 ';

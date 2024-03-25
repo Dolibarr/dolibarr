@@ -42,16 +42,16 @@ $hookmanager->initHooks(array('expensereportindex'));
 $langs->loadLangs(array('companies', 'users', 'trips'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'expensereport', '', '');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -64,7 +64,7 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "d.date_create";
 }
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 
 
 /*
@@ -129,6 +129,7 @@ print '<th colspan="4">'.$langs->trans("Statistics").'</th>';
 print "</tr>\n";
 
 $listoftype = $tripandexpense_static->listOfTypes();
+$dataseries = array();
 foreach ($listoftype as $code => $label) {
 	$dataseries[] = array($label, (isset($somme[$code]) ? (int) $somme[$code] : 0));
 }

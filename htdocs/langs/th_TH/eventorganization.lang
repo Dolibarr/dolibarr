@@ -17,151 +17,163 @@
 #
 # Generic
 #
-ModuleEventOrganizationName = Event Organization
-EventOrganizationDescription = Event Organization through Module Project
-EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
+ModuleEventOrganizationName = การจัดงาน
+EventOrganizationDescription = การจัดกิจกรรมผ่านโครงการโมดูล
+EventOrganizationDescriptionLong= จัดการการจัดกิจกรรม (การแสดง การประชุม ผู้เข้าร่วม หรือวิทยากร พร้อมหน้าสาธารณะสำหรับข้อเสนอแนะ การลงคะแนนเสียง หรือการลงทะเบียน)
 #
 # Menu
 #
-EventOrganizationMenuLeft = Organized events
-EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
+EventOrganizationMenuLeft = จัดกิจกรรมต่างๆ
+EventOrganizationConferenceOrBoothMenuLeft = การประชุมหรือบูธ
 
-PaymentEvent=Payment of event
+PaymentEvent=การชำระค่าจัดงาน
 
 #
 # Admin page
 #
-NewRegistration=Registration
-EventOrganizationSetup=Event Organization setup
-EventOrganization=Event organization
-Settings=Settings
-EventOrganizationSetupPage = Event Organization setup page
-EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
-EVENTORGANIZATION_TASK_LABELTooltip = When you validate an organized event, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
-EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties automatically created when someone suggests a conference
-EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template of email to send after receiving a suggestion of a conference.
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template of email to send after receiving a suggestion of a booth.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
-EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
+NewRegistration=การลงทะเบียน
+EventOrganizationSetup=การตั้งค่าการจัดงาน
+EventOrganization=การจัดงาน
+EventOrganizationSetupPage = หน้าการตั้งค่าการจัดงาน
+EVENTORGANIZATION_TASK_LABEL = ป้ายกำกับของงานที่จะสร้างโดยอัตโนมัติเมื่อโครงการได้รับการตรวจสอบความถูกต้อง
+EVENTORGANIZATION_TASK_LABELTooltip = เมื่อคุณตรวจสอบกิจกรรมที่จะจัดระเบียบ งานบางอย่างจะถูกสร้างขึ้นโดยอัตโนมัติในโปรเจ็กต์<br><br>ตัวอย่างเช่น: <br>ส่งการโทรสำหรับการประชุม<br>ส่งการโทรสำหรับบูธ<br>ตรวจสอบข้อเสนอแนะของการประชุม<br>ตรวจสอบใบสมัครสำหรับบูธ<br>เปิดการสมัครรับข้อมูลกิจกรรมสำหรับผู้เข้าร่วม<br>ส่งการแจ้งเตือน ของกิจกรรมถึงวิทยากร<br>ส่งการแจ้งเตือนเกี่ยวกับกิจกรรมไปยังผู้จัดงานบูธ<br>ส่งการแจ้งเตือนเกี่ยวกับกิจกรรมไปยังผู้เข้าร่วม
+EVENTORGANIZATION_TASK_LABELTooltip2=โปรดเว้นว่างไว้หากคุณไม่ต้องการสร้างงานโดยอัตโนมัติ
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = หมวดหมู่ที่จะเพิ่มให้กับบุคคลที่สามที่สร้างขึ้นโดยอัตโนมัติเมื่อมีคนแนะนำการประชุม
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = หมวดหมู่ที่จะเพิ่มให้กับบุคคลที่สามที่สร้างขึ้นโดยอัตโนมัติเมื่อพวกเขาแนะนำบูธ
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = เทมเพลตอีเมลที่จะส่งหลังจากได้รับข้อเสนอแนะเกี่ยวกับการประชุม
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = เทมเพลตอีเมลที่จะส่งหลังจากได้รับข้อเสนอแนะจากบูธ
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = เทมเพลตอีเมลที่จะส่งหลังจากชำระค่าลงทะเบียนเข้าบูธแล้ว
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = เทมเพลตอีเมลที่จะส่งหลังจากชำระเงินการลงทะเบียนเข้าร่วมกิจกรรมแล้ว
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = เทมเพลตอีเมลที่จะใช้เมื่อส่งอีเมลจากกลุ่ม "ส่งอีเมล" ถึงวิทยากร
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = เทมเพลตอีเมลที่จะใช้เมื่อส่งอีเมลจากกลุ่ม "ส่งอีเมล" ในรายชื่อผู้เข้าร่วม
+EVENTORGANIZATION_FILTERATTENDEES_CAT = ในแบบฟอร์มสำหรับสร้าง/เพิ่มผู้เข้าร่วม ให้จำกัดรายชื่อบุคคลที่สามไว้เฉพาะบุคคลที่สามในหมวดหมู่
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = ในแบบฟอร์มสำหรับสร้าง/เพิ่มผู้เข้าร่วม ให้จำกัดรายชื่อบุคคลที่สามไว้เฉพาะบุคคลที่สามเท่านั้น
 
 #
 # Object
 #
-EventOrganizationConfOrBooth= Conference Or Booth
-ManageOrganizeEvent = Manage the organization of an event
-ConferenceOrBooth = Conference Or Booth
-ConferenceOrBoothTab = Conference Or Booth
-AmountPaid = Amount paid
-DateOfRegistration = Date of registration
-ConferenceOrBoothAttendee = Conference Or Booth Attendee
+OrganizedEvent=จัดงาน
+EventOrganizationConfOrBooth= การประชุมหรือบูธ
+EventOrganizationConfOrBoothes=การประชุมหรือบูธต่างๆ
+ManageOrganizeEvent = จัดการการจัดงาน
+ConferenceOrBooth = การประชุมหรือบูธ
+ConferenceOrBoothTab = การประชุมหรือบูธ
+AmountPaid = จำนวนเงินที่จ่าย
+DateOfRegistration = วันที่ลงทะเบียน
+ConferenceOrBoothAttendee = ผู้เข้าร่วมการประชุมหรือบูธ
+ApplicantOrVisitor=ผู้สมัครหรือผู้เยี่ยมชม
+Speaker=วิทยากร
 
 #
 # Template Mail
 #
-YourOrganizationEventConfRequestWasReceived = Your request for conference was received
-YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
-EventOrganizationEmailAskConf = Request for conference
-EventOrganizationEmailAskBooth = Request for booth
-EventOrganizationEmailBoothPayment = Payment of your booth
-EventOrganizationEmailRegistrationPayment = Registration for an event
-EventOrganizationMassEmailAttendees = Communication to attendees
-EventOrganizationMassEmailSpeakers = Communication to speakers
-ToSpeakers=To speakers
+YourOrganizationEventConfRequestWasReceived = ได้รับคำขอของคุณสำหรับการประชุมแล้ว
+YourOrganizationEventBoothRequestWasReceived = ได้รับคำขอของคุณสำหรับบูธแล้ว
+EventOrganizationEmailAskConf = ขอประชุม
+EventOrganizationEmailAskBooth = ขอออกบูธ
+EventOrganizationEmailBoothPayment = การชำระเงินของบูธของคุณ
+EventOrganizationEmailRegistrationPayment = การลงทะเบียนสำหรับกิจกรรม
+EventOrganizationMassEmailAttendees = การสื่อสารกับผู้เข้าร่วม
+EventOrganizationMassEmailSpeakers = การสื่อสารกับวิทยากร
+ToSpeakers=ให้กับวิทยากร
 
 #
 # Event
 #
-AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
-AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
-AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
-AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
-PriceOfRegistration=Price of registration
-PriceOfRegistrationHelp=Price to pay to register or participate in the event
-PriceOfBooth=Subscription price to stand a booth
-PriceOfBoothHelp=Subscription price to stand a booth
-EventOrganizationICSLink=Link ICS for conferences
-ConferenceOrBoothInformation=Conference Or Booth informations
-Attendees=Attendees
-ListOfAttendeesOfEvent=List of attendees of the event project
-DownloadICSLink = Download ICS link
-EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
-SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
-NbVotes=Number of votes
+AllowUnknownPeopleSuggestConf=อนุญาตให้ผู้คนแนะนำการประชุม
+AllowUnknownPeopleSuggestConfHelp=อนุญาตให้บุคคลที่ไม่รู้จักแนะนำการประชุมที่พวกเขาต้องการทำ
+AllowUnknownPeopleSuggestBooth=เปิดให้คนมาสมัครออกบูธได้
+AllowUnknownPeopleSuggestBoothHelp=อนุญาตให้บุคคลที่ไม่รู้จักมาสมัครออกบูธได้
+PriceOfRegistration=ราคาลงทะเบียน
+PriceOfRegistrationHelp=ราคาที่ต้องชำระในการลงทะเบียนหรือเข้าร่วมงาน
+PriceOfBooth=ราคาสมัครสมาชิกยืนออกบูธ
+PriceOfBoothHelp=ราคาสมัครสมาชิกยืนออกบูธ
+EventOrganizationICSLink=เชื่อมโยง ICS สำหรับการประชุม
+ConferenceOrBoothInformation=ข้อมูลการประชุมหรือบูธ
+Attendees=ผู้เข้าร่วม
+ListOfAttendeesOfEvent=รายชื่อผู้เข้าร่วมโครงการฯ
+DownloadICSLink = ลิงค์ดาวน์โหลด ICS
+EVENTORGANIZATION_SECUREKEY = เมล็ดพันธุ์เพื่อรักษาความปลอดภัยที่สำคัญสำหรับหน้าลงทะเบียนสาธารณะเพื่อเสนอแนะการประชุม
+SERVICE_BOOTH_LOCATION = บริการที่ใช้สำหรับแถวใบแจ้งหนี้เกี่ยวกับที่ตั้งบูธ
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = บริการที่ใช้สำหรับแถวใบแจ้งหนี้เกี่ยวกับการสมัครสมาชิกของผู้เข้าร่วมกิจกรรม
+NbVotes=จำนวนคะแนนเสียง
+
 #
 # Status
 #
 EvntOrgDraft = ร่าง
-EvntOrgSuggested = Suggested
-EvntOrgConfirmed = Confirmed
-EvntOrgNotQualified = Not Qualified
+EvntOrgSuggested = แนะนำ
+EvntOrgConfirmed = ยืนยันแล้ว
+EvntOrgNotQualified = ไม่ผ่านการรับรอง
 EvntOrgDone = เสร็จสิ้น
-EvntOrgCancelled = Cancelled
+EvntOrgCancelled = ยกเลิก
+
 #
-# Public page
+# Other
 #
-SuggestForm = Suggestion page
-SuggestOrVoteForConfOrBooth = Page for suggestion or vote
-EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
-EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
-ListOfSuggestedConferences = List of suggested conferences
-ListOfSuggestedBooths = List of suggested booths
-ListOfConferencesOrBooths=List of conferences or booths of event project
-SuggestConference = Suggest a new conference
-SuggestBooth = Suggest a booth
-ViewAndVote = View and vote for suggested events
-PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
-PublicAttendeeSubscriptionPage = Public link for registration to this event only
-MissingOrBadSecureKey = The security key is invalid or missing
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
-EvntOrgDuration = This conference starts on %s and ends on %s.
-ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
-BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
+SuggestForm = หน้าแนะนำ
+SuggestOrVoteForConfOrBooth = เพจสำหรับข้อเสนอแนะหรือโหวต
+EvntOrgRegistrationHelpMessage = ที่นี่ คุณสามารถลงคะแนนเสียงสำหรับการประชุมใหญ่หรือเสนอแนะการประชุมใหม่สำหรับกิจกรรมได้ ยังสามารถสมัครออกบูธภายในงานได้อีกด้วย
+EvntOrgRegistrationConfHelpMessage = ที่นี่ คุณสามารถแนะนำการประชุมใหม่เพื่อให้เคลื่อนไหวในระหว่างกิจกรรมได้
+EvntOrgRegistrationBoothHelpMessage = ที่นี่คุณสามารถสมัครออกบูธได้ภายในงาน
+ListOfSuggestedConferences = รายชื่อสัมมนาที่แนะนำ
+ListOfSuggestedBooths=บูธแนะนำ
+ListOfConferencesOrBooths=การประชุมหรือบูธของโครงการต่างๆ
+SuggestConference = เสนอให้มีการประชุมใหม่
+SuggestBooth = แนะนำบูธครับ
+ViewAndVote = ดูและลงคะแนนสำหรับกิจกรรมที่แนะนำ
+PublicAttendeeSubscriptionGlobalPage = ลิงค์สาธารณะสำหรับการลงทะเบียนเข้าร่วมกิจกรรม
+PublicAttendeeSubscriptionPage = ลิงก์สาธารณะสำหรับการลงทะเบียนเข้าร่วมกิจกรรมนี้เท่านั้น
+MissingOrBadSecureKey = รหัสความปลอดภัยไม่ถูกต้องหรือหายไป
+EvntOrgWelcomeMessage = แบบฟอร์มนี้ช่วยให้คุณสามารถลงทะเบียนเป็นผู้เข้าร่วมใหม่ในกิจกรรมได้
+EvntOrgDuration = การประชุมนี้เริ่มต้นในวันที่ %s และสิ้นสุดในวันที่ %s
+ConferenceAttendeeFee = ค่าธรรมเนียมผู้เข้าร่วมการประชุมสำหรับกิจกรรม : '%s' เกิดขึ้นตั้งแต่ %s ถึง %s.
+BoothLocationFee = ตำแหน่งบูธสำหรับกิจกรรม : '%s' เกิดขึ้นตั้งแต่ %s ถึง %s
 EventType = ประเภทเหตุการณ์
-LabelOfBooth=Booth label
-LabelOfconference=Conference label
-ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
-DateMustBeBeforeThan=%s must be before %s
-DateMustBeAfterThan=%s must be after %s
-
-NewSubscription=Registration
-OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
-OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
-OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
-OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
-OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
-OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
-OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
-
-NewSuggestionOfBooth=Application for a booth
-NewSuggestionOfConference=Application for a conference
-
-#
-# Vote page
-#
-EvntOrgRegistrationWelcomeMessage = Welcome on the conference or booth suggestion page.
-EvntOrgRegistrationConfWelcomeMessage = Welcome on the conference suggestion page.
-EvntOrgRegistrationBoothWelcomeMessage = Welcome on the booth suggestion page.
-EvntOrgVoteHelpMessage = Here, you can view and vote for the suggested events for the project
-VoteOk = Your vote has been accepted.
-AlreadyVoted = You have already voted for this event.
-VoteError = An error has occurred during the vote, please try again.
-
-SubscriptionOk = Your registration has been validated
-ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
-Attendee = Attendee
-PaymentConferenceAttendee = Conference attendee payment
-PaymentBoothLocation = Booth location payment
-DeleteConferenceOrBoothAttendee=Remove attendee
-RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
-EmailAttendee=Attendee email
-EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
-ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
+LabelOfBooth=ป้ายบูธ
+LabelOfconference=ป้ายประชุม
+ConferenceIsNotConfirmed=ไม่สามารถลงทะเบียนได้ การประชุมยังไม่ได้รับการยืนยัน
+DateMustBeBeforeThan=%s จะต้องอยู่ก่อน %s
+DateMustBeAfterThan=%s ต้องอยู่หลัง %s
+MaxNbOfAttendeesReached=ถึงจำนวนผู้เข้าร่วมสูงสุดแล้ว
+NewSubscription=การลงทะเบียน
+OrganizationEventConfRequestWasReceived=ได้รับข้อเสนอแนะของคุณสำหรับการประชุมแล้ว
+OrganizationEventBoothRequestWasReceived=ได้รับคำขอออกบูธของคุณแล้ว
+OrganizationEventPaymentOfBoothWasReceived=บันทึกการชำระเงินสำหรับบูธของคุณแล้ว
+OrganizationEventPaymentOfRegistrationWasReceived=การชำระเงินสำหรับการลงทะเบียนกิจกรรมของคุณได้รับการบันทึกแล้ว
+OrganizationEventBulkMailToAttendees=นี่เป็นการเตือนความจำเกี่ยวกับการเข้าร่วมกิจกรรมของคุณในฐานะผู้เข้าร่วม
+OrganizationEventBulkMailToSpeakers=นี่เป็นเครื่องเตือนใจเกี่ยวกับการเข้าร่วมกิจกรรมของคุณในฐานะวิทยากร
+OrganizationEventLinkToThirdParty=ลิงก์ไปยังบุคคลที่สาม (ลูกค้า ซัพพลายเออร์ หรือหุ้นส่วน)
+OrganizationEvenLabelName=ชื่อสาธารณะของการประชุมหรือบูธ
+NewSuggestionOfBooth=รับสมัครออกบูธ
+NewSuggestionOfConference=ใบสมัครจัดสัมมนา
+EvntOrgRegistrationWelcomeMessage = ยินดีต้อนรับสู่หน้าแนะนำการประชุมหรือบูธ
+EvntOrgRegistrationConfWelcomeMessage = ยินดีต้อนรับสู่หน้าข้อเสนอแนะการประชุม
+EvntOrgRegistrationBoothWelcomeMessage = ยินดีต้อนรับสู่หน้าแนะนำบูธ
+EvntOrgVoteHelpMessage = ที่นี่ คุณสามารถดูและลงคะแนนสำหรับเหตุการณ์ที่แนะนำสำหรับโครงการได้
+VoteOk = การลงคะแนนของคุณได้รับการยอมรับแล้ว
+AlreadyVoted = คุณได้ลงคะแนนให้กับกิจกรรมนี้แล้ว
+VoteError = เกิดข้อผิดพลาดระหว่างการโหวต โปรดลองอีกครั้ง
+SubscriptionOk=การลงทะเบียนของคุณได้รับการบันทึกแล้ว
+AmountOfRegistrationPaid=จำนวนเงินค่าลงทะเบียนที่ชำระ
+ConfAttendeeSubscriptionConfirmation = การยืนยันการสมัครของคุณกับกิจกรรม
+Attendee = ผู้เข้าร่วม
+PaymentConferenceAttendee = การชำระเงินของผู้เข้าร่วมประชุม
+PaymentBoothLocation = การชำระเงินที่ตั้งบูธ
+DeleteConferenceOrBoothAttendee=ลบผู้เข้าร่วม
+RegistrationAndPaymentWereAlreadyRecorder=การลงทะเบียนและการชำระเงินได้รับการบันทึกสำหรับอีเมลแล้ว <b>%s</b>
+EmailAttendee=อีเมลผู้เข้าร่วม
+EmailCompany=อีเมล์บริษัท
+EmailCompanyForInvoice=อีเมลบริษัท (สำหรับใบแจ้งหนี้ หากไม่ใช่อีเมลของผู้เข้าร่วม)
+ErrorSeveralCompaniesWithEmailContactUs=พบบริษัทหลายแห่งที่ใช้อีเมลนี้ เราจึงไม่สามารถตรวจสอบการลงทะเบียนของคุณโดยอัตโนมัติได้ โปรดติดต่อเราที่ %s เพื่อตรวจสอบความถูกต้องด้วยตนเอง
+ErrorSeveralCompaniesWithNameContactUs=พบบริษัทหลายแห่งที่ใช้ชื่อนี้ เราจึงไม่สามารถตรวจสอบการลงทะเบียนของคุณโดยอัตโนมัติได้ โปรดติดต่อเราที่ %s เพื่อตรวจสอบความถูกต้องด้วยตนเอง
+NoPublicActionsAllowedForThisEvent=ไม่มีการดำเนินการสาธารณะใดที่เปิดให้บุคคลทั่วไปเข้าชมสำหรับกิจกรรมนี้
+MaxNbOfAttendees=จำนวนผู้เข้าร่วมสูงสุด
+DateStartEvent=วันที่เริ่มต้นกิจกรรม
+DateEndEvent=วันที่สิ้นสุดกิจกรรม
+ModifyStatus=ปรับเปลี่ยนสถานะ
+ConfirmModifyStatus=ยืนยันการแก้ไขสถานะ
+ConfirmModifyStatusQuestion=คุณแน่ใจหรือไม่ว่าต้องการแก้ไขบันทึกที่เลือก %s
+RecordsUpdated = %s อัปเดตบันทึกแล้ว
+RecordUpdated = อัปเดตบันทึกแล้ว
+NoRecordUpdated = ไม่มีการอัปเดตบันทึก

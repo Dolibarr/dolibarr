@@ -133,4 +133,4 @@ HideAllPerms=Ẩn tất cả các hàng quyền
 UserPublicPageDesc=Bạn có thể kích hoạt thẻ ảo cho người dùng này. Một url có hồ sơ người dùng và mã vạch sẽ có sẵn để cho phép bất kỳ ai có điện thoại thông minh quét nó và thêm liên hệ của bạn vào sổ địa chỉ của nó.
 EnablePublicVirtualCard=Kích hoạt danh thiếp ảo của người dùng
 UserEnabledDisabled=Trạng thái người dùng đã thay đổi: %s
-AlternativeEmailForOAuth2=Alternative Email for OAuth2 login
+AlternativeEmailForOAuth2=Email thay thế để đăng nhập OAuth2

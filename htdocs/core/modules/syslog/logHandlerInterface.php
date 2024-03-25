@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ */
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,16 +72,16 @@ interface LogHandlerInterface
 	public function checkConfiguration();
 
 	/**
-	 * 	Return if logger active
+	 * 	Is the logger active ?
 	 *
-	 * 	@return	boolean		True if active
+	 * 	@return int		1 if logger enabled
 	 */
 	public function isActive();
 
 	/**
 	 * 	Output log content
 	 *
-	 *	@param	string	$content	Content to log
+	 *	@param	array	$content	Content to log
 	 * 	@return	void
 	 */
 	public function export($content);

@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->load("categories");
 
 // Security check
-$socid = (int) GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (!$user->hasRight('categorie', 'lire')) {
 	accessforbidden();
 }
@@ -45,7 +45,7 @@ if (!$user->hasRight('categorie', 'lire')) {
 $action = GETPOST('action', 'alpha');
 $cancel		= GETPOST('cancel', 'alpha');
 $origin		= GETPOST('origin', 'alpha');
-$catorigin  = (int) GETPOST('catorigin', 'int');
+$catorigin  = GETPOSTINT('catorigin');
 $type = GETPOST('type', 'aZ09');
 $urlfrom = GETPOST('urlfrom', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -53,9 +53,9 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $label = (string) GETPOST('label', 'alphanohtml');
 $description = (string) GETPOST('description', 'restricthtml');
 $color = preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('color', 'alphanohtml'));
-$position = (int) GETPOST('position', 'int');
-$visible = (int) GETPOST('visible', 'int');
-$parent = (int) GETPOST('parent', 'int');
+$position = GETPOSTINT('position');
+$visible = GETPOSTINT('visible');
+$parent = GETPOSTINT('parent');
 
 if ($origin) {
 	if ($type == Categorie::TYPE_PRODUCT) {

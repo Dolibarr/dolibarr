@@ -16,7 +16,6 @@ CurrenciesUsed_help_to_add=Dodaj różne waluty i kursy walut, które potrzebuje
 rate=kurs
 MulticurrencyReceived=Otrzymano, oryginalna waluta
 MulticurrencyRemainderToTake=Pozostała kwota, waluta pierwotna
-MulticurrencyPaymentAmount=Kwota płatności, oryginalna waluta
 AmountToOthercurrency=Kwota do (w walucie rachunku odbiorczego)
 CurrencyRateSyncSucceed=Synchronizacja kursów walut przebiegła pomyślnie
 MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Używaj waluty dokumentu do płatności online

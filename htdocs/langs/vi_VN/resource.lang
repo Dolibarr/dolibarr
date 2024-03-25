@@ -37,3 +37,5 @@ ImportDataset_resource_1=Tài nguyên
 
 ErrorResourcesAlreadyInUse=Một số tài nguyên đang được sử dụng
 ErrorResourceUseInEvent=%s được sử dụng trong %s sự kiện
+
+MaxUsers=Maximum users (places, seats, etc.)

@@ -3,6 +3,7 @@
  * Copyright (C) 2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018 Andreu Bisquerra     <jove@bisquerra.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +60,7 @@ class CashControl extends CommonObject
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -80,26 +81,26 @@ class CashControl extends CommonObject
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 	public $fields = array(
-	'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>10),
-	'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>15),
-	'ref' =>array('type'=>'varchar(64)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>18),
-	'posmodule' =>array('type'=>'varchar(30)', 'label'=>'Module', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>19),
-	'posnumber' =>array('type'=>'varchar(30)', 'label'=>'Terminal', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>20, 'css'=>'center'),
-	'label' =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>0, 'position'=>24),
-	'opening' =>array('type'=>'price', 'label'=>'Opening', 'enabled'=>1, 'visible'=>1, 'position'=>25, 'csslist'=>'amount'),
-	'cash' =>array('type'=>'price', 'label'=>'Cash', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'csslist'=>'amount'),
-	'cheque' =>array('type'=>'price', 'label'=>'Cheque', 'enabled'=>1, 'visible'=>1, 'position'=>33, 'csslist'=>'amount'),
-	'card' =>array('type'=>'price', 'label'=>'CreditCard', 'enabled'=>1, 'visible'=>1, 'position'=>36, 'csslist'=>'amount'),
-	'year_close' =>array('type'=>'integer', 'label'=>'Year close', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>50, 'css'=>'center'),
-	'month_close' =>array('type'=>'integer', 'label'=>'Month close', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'css'=>'center'),
-	'day_close' =>array('type'=>'integer', 'label'=>'Day close', 'enabled'=>1, 'visible'=>1, 'position'=>60, 'css'=>'center'),
-	'date_creation' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
-	'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>502),
-	'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>505),
-	'fk_user_creat' =>array('type'=>'integer:User', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>600),
-	'fk_user_valid' =>array('type'=>'integer:User', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>602),
-	'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>0, 'position'=>700),
-	'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated')),
+	'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 10),
+	'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 15),
+	'ref' => array('type' => 'varchar(64)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 18),
+	'posmodule' => array('type' => 'varchar(30)', 'label' => 'Module', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 19),
+	'posnumber' => array('type' => 'varchar(30)', 'label' => 'Terminal', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 20, 'css' => 'center'),
+	'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 0, 'position' => 24),
+	'opening' => array('type' => 'price', 'label' => 'Opening', 'enabled' => 1, 'visible' => 1, 'position' => 25, 'csslist' => 'amount'),
+	'cash' => array('type' => 'price', 'label' => 'Cash', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'csslist' => 'amount'),
+	'cheque' => array('type' => 'price', 'label' => 'Cheque', 'enabled' => 1, 'visible' => 1, 'position' => 33, 'csslist' => 'amount'),
+	'card' => array('type' => 'price', 'label' => 'CreditCard', 'enabled' => 1, 'visible' => 1, 'position' => 36, 'csslist' => 'amount'),
+	'year_close' => array('type' => 'integer', 'label' => 'Year close', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 50, 'css' => 'center'),
+	'month_close' => array('type' => 'integer', 'label' => 'Month close', 'enabled' => 1, 'visible' => 1, 'position' => 55, 'css' => 'center'),
+	'day_close' => array('type' => 'integer', 'label' => 'Day close', 'enabled' => 1, 'visible' => 1, 'position' => 60, 'css' => 'center'),
+	'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
+	'date_valid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 502),
+	'tms' => array('type' => 'timestamp', 'label' => 'Tms', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 505),
+	'fk_user_creat' => array('type' => 'integer:User', 'label' => 'UserCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 600),
+	'fk_user_valid' => array('type' => 'integer:User', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 602),
+	'import_key' => array('type' => 'varchar(14)', 'label' => 'Import key', 'enabled' => 1, 'visible' => 0, 'position' => 700),
+	'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'position' => 1000, 'notnull' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated')),
 	);
 
 	/**
@@ -241,7 +242,7 @@ class CashControl extends CommonObject
 	 * Validate cash fence
 	 *
 	 * @param 	User 		$user		User
-	 * @param 	number 		$notrigger	No trigger
+	 * @param 	int 		$notrigger	No trigger
 	 * @return 	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function valid(User $user, $notrigger = 0)
@@ -450,7 +451,7 @@ class CashControl extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('cashfencedao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

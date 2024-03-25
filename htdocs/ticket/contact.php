@@ -44,17 +44,17 @@ if (isModEnabled('project')) {
 $langs->loadLangs(array('companies', 'ticket'));
 
 // Get parameters
-$socid = GETPOST("socid", 'int');
+$socid = GETPOSTINT("socid");
 $action = GETPOST("action", 'alpha');
 $track_id = GETPOST("track_id", 'alpha');
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 $ref = GETPOST('ref', 'alpha');
 
 $type = GETPOST('type', 'alpha');
 $source = GETPOST('source', 'alpha');
 
-$ligne = GETPOST('ligne', 'int');
-$lineid = GETPOST('lineid', 'int');
+$ligne = GETPOSTINT('ligne');
+$lineid = GETPOSTINT('lineid');
 
 
 // Store current page url
@@ -63,7 +63,7 @@ $url_page_current = DOL_URL_ROOT.'/ticket/contact.php';
 $object = new Ticket($db);
 
 // Security check
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
@@ -89,7 +89,7 @@ if ($action == 'addcontact' && $user->hasRight('ticket', 'write')) {
 	$result = $object->fetch($id, '', $track_id);
 
 	if ($result > 0 && ($id > 0 || (!empty($track_id)))) {
-		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 
 		$error = 0;
@@ -165,8 +165,8 @@ if ($action == 'deletecontact' && $user->hasRight('ticket', 'write')) {
 
 // Set parent company
 if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
-	if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
-		$result = $object->setCustomer(GETPOST('editcustomer', 'int'));
+	if ($object->fetch(GETPOSTINT('id'), '', GETPOSTINT('track_id')) >= 0) {
+		$result = $object->setCustomer(GETPOSTINT('editcustomer'));
 		$url = $_SERVER["PHP_SELF"].'?track_id='.GETPOST('track_id', 'alpha');
 		header("Location: ".$url);
 		exit();

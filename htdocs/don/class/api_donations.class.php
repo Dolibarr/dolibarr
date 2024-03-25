@@ -209,10 +209,9 @@ class Donations extends DolibarrApi
 	/**
 	 * Update order general fields (won't touch lines of order)
 	 *
-	 * @param int   $id             Id of order to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   	$id             	Id of order to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -318,6 +317,7 @@ class Donations extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$result = $this->don->valid_promesse($id, DolibarrApiAccess::$user->id, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already validated');

@@ -7,6 +7,7 @@
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,10 +45,10 @@ $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -71,8 +72,8 @@ $search_total_ttc = GETPOST("search_total_ttc", 'alpha');
 $search_contract = GETPOST("search_contract", 'alpha');
 $search_service = GETPOST("search_service", 'alpha');
 $search_status = GETPOST("search_status", 'alpha');
-$search_product_category = GETPOST('search_product_category', 'int');
-$socid = GETPOST('socid', 'int');
+$search_product_category = GETPOSTINT('search_product_category');
+$socid = GETPOSTINT('socid');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'contractservicelist'.$mode;
 
 $opouvertureprevuemonth = GETPOST('opouvertureprevuemonth');
@@ -80,19 +81,19 @@ $opouvertureprevueday = GETPOST('opouvertureprevueday');
 $opouvertureprevueyear = GETPOST('opouvertureprevueyear');
 $filter_opouvertureprevue = GETPOST('filter_opouvertureprevue');
 
-$op1month = GETPOST('op1month', 'int');
-$op1day = GETPOST('op1day', 'int');
-$op1year = GETPOST('op1year', 'int');
+$op1month = GETPOSTINT('op1month');
+$op1day = GETPOSTINT('op1day');
+$op1year = GETPOSTINT('op1year');
 $filter_op1 = GETPOST('filter_op1', 'alpha');
 
-$op2month = GETPOST('op2month', 'int');
-$op2day = GETPOST('op2day', 'int');
-$op2year = GETPOST('op2year', 'int');
+$op2month = GETPOSTINT('op2month');
+$op2day = GETPOSTINT('op2day');
+$op2year = GETPOSTINT('op2year');
 $filter_op2 = GETPOST('filter_op2', 'alpha');
 
-$opcloturemonth = GETPOST('opcloturemonth', 'int');
-$opclotureday = GETPOST('opclotureday', 'int');
-$opclotureyear = GETPOST('opclotureyear', 'int');
+$opcloturemonth = GETPOSTINT('opcloturemonth');
+$opclotureday = GETPOSTINT('opclotureday');
+$opclotureyear = GETPOSTINT('opclotureyear');
 $filter_opcloture = GETPOST('filter_opcloture', 'alpha');
 
 
@@ -107,7 +108,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Security check
-$contratid = GETPOST('id', 'int');
+$contratid = GETPOSTINT('id');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
@@ -118,27 +119,28 @@ $staticcontratligne = new ContratLigne($db);
 $companystatic = new Societe($db);
 
 $arrayfields = array(
-	'c.ref'=>array('label'=>"Contract", 'checked'=>1, 'position'=>80),
-	'p.description'=>array('label'=>"Service", 'checked'=>1, 'position'=>80),
-	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>90),
-	'cd.tva_tx'=>array('label'=>"VATRate", 'checked'=>-1, 'position'=>100),
-	'cd.subprice'=>array('label'=>"PriceUHT", 'checked'=>-1, 'position'=>105),
-	'cd.qty'=>array('label'=>"Qty", 'checked'=>1, 'position'=>108),
-	'cd.total_ht'=>array('label'=>"TotalHT", 'checked'=>-1, 'position'=>109, 'isameasure'=>1),
-	'cd.total_tva'=>array('label'=>"TotalVAT", 'checked'=>-1, 'position'=>110),
-	'cd.date_ouverture_prevue'=>array('label'=>"DateStartPlannedShort", 'checked'=>1, 'position'=>150),
-	'cd.date_ouverture'=>array('label'=>"DateStartRealShort", 'checked'=>1, 'position'=>160),
-	'cd.date_fin_validite'=>array('label'=>"DateEndPlannedShort", 'checked'=>1, 'position'=>170),
-	'cd.date_cloture'=>array('label'=>"DateEndRealShort", 'checked'=>1, 'position'=>180),
+	'c.ref' => array('label' => "Contract", 'checked' => 1, 'position' => 80),
+	'p.description' => array('label' => "Service", 'checked' => 1, 'position' => 80),
+	's.nom' => array('label' => "ThirdParty", 'checked' => 1, 'position' => 90),
+	'cd.tva_tx' => array('label' => "VATRate", 'checked' => -1, 'position' => 100),
+	'cd.subprice' => array('label' => "PriceUHT", 'checked' => -1, 'position' => 105),
+	'cd.qty' => array('label' => "Qty", 'checked' => 1, 'position' => 108),
+	'cd.total_ht' => array('label' => "TotalHT", 'checked' => -1, 'position' => 109, 'isameasure' => 1),
+	'cd.total_tva' => array('label' => "TotalVAT", 'checked' => -1, 'position' => 110),
+	'cd.date_ouverture_prevue' => array('label' => "DateStartPlannedShort", 'checked' => 1, 'position' => 150),
+	'cd.date_ouverture' => array('label' => "DateStartRealShort", 'checked' => 1, 'position' => 160),
+	'cd.date_fin_validite' => array('label' => "DateEndPlannedShort", 'checked' => 1, 'position' => 170),
+	'cd.date_cloture' => array('label' => "DateEndRealShort", 'checked' => 1, 'position' => 180),
 	//'cd.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	'cd.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
-	'status'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
+	'cd.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
+	'status' => array('label' => "Status", 'checked' => 1, 'position' => 1000)
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $permissiontoread = $user->hasRight('contrat', 'lire');
 $permissiontoadd = $user->hasRight('contrat', 'creer');
@@ -159,7 +161,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -518,6 +520,7 @@ $newcardbutton = '';
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contract', 0, '', '', $limit);
 
 if (!empty($sall)) {
+	$fieldstosearchall = array();
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
@@ -528,7 +531,7 @@ $morefilter = '';
 $moreforfilter = '';
 
 // If the user can view categories of products
-if (isModEnabled('categorie') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
+if (isModEnabled('category') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -556,7 +559,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 
@@ -619,7 +622,7 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 
 if (!empty($arrayfields['cd.date_ouverture_prevue']['checked'])) {
 	print '<td class="liste_titre center">';
-	$arrayofoperators = array('<'=>'<', '>'=>'>');
+	$arrayofoperators = array('<' => '<', '>' => '>');
 	print $form->selectarray('filter_opouvertureprevue', $arrayofoperators, $filter_opouvertureprevue, 1, 0, 0, '', 0, 0, 0, '', 'width50');
 	print ' ';
 	$filter_dateouvertureprevue = dol_mktime(0, 0, 0, $opouvertureprevuemonth, $opouvertureprevueday, $opouvertureprevueyear);
@@ -628,7 +631,7 @@ if (!empty($arrayfields['cd.date_ouverture_prevue']['checked'])) {
 }
 if (!empty($arrayfields['cd.date_ouverture']['checked'])) {
 	print '<td class="liste_titre center">';
-	$arrayofoperators = array('<'=>'<', '>'=>'>');
+	$arrayofoperators = array('<' => '<', '>' => '>');
 	print $form->selectarray('filter_op1', $arrayofoperators, $filter_op1, 1, 0, 0, '', 0, 0, 0, '', 'width50');
 	print ' ';
 	$filter_date1 = dol_mktime(0, 0, 0, $op1month, $op1day, $op1year);
@@ -637,7 +640,7 @@ if (!empty($arrayfields['cd.date_ouverture']['checked'])) {
 }
 if (!empty($arrayfields['cd.date_fin_validite']['checked'])) {
 	print '<td class="liste_titre center">';
-	$arrayofoperators = array('<'=>'<', '>'=>'>');
+	$arrayofoperators = array('<' => '<', '>' => '>');
 	print $form->selectarray('filter_op2', $arrayofoperators, $filter_op2, 1, 0, 0, '', 0, 0, 0, '', 'width50');
 	print ' ';
 	$filter_date2 = dol_mktime(0, 0, 0, $op2month, $op2day, $op2year);
@@ -646,7 +649,7 @@ if (!empty($arrayfields['cd.date_fin_validite']['checked'])) {
 }
 if (!empty($arrayfields['cd.date_cloture']['checked'])) {
 	print '<td class="liste_titre center">';
-	$arrayofoperators = array('<'=>'<', '>'=>'>');
+	$arrayofoperators = array('<' => '<', '>' => '>');
 	print $form->selectarray('filter_opcloture', $arrayofoperators, $filter_opcloture, 1, 0, 0, '', 0, 0, 0, '', 'width50');
 	print ' ';
 	$filter_date_cloture = dol_mktime(0, 0, 0, $opcloturemonth, $opclotureday, $opclotureyear);
@@ -657,7 +660,7 @@ if (!empty($arrayfields['cd.date_cloture']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['cd.datec']['checked'])) {
@@ -674,11 +677,11 @@ if (!empty($arrayfields['status']['checked'])) {
 	// Status
 	print '<td class="liste_titre right parentonrightofpage">';
 	$arrayofstatus = array(
-		'0'=>$langs->trans("ServiceStatusInitial"),
-		'4'=>$langs->trans("ServiceStatusRunning"),
-		'4&filter=notexpired'=>$langs->trans("ServiceStatusNotLate"),
-		'4&filter=expired'=>$langs->trans("ServiceStatusLate"),
-		'5'=>$langs->trans("ServiceStatusClosed")
+		'0' => $langs->trans("ServiceStatusInitial"),
+		'4' => $langs->trans("ServiceStatusRunning"),
+		'4&filter=notexpired' => $langs->trans("ServiceStatusNotLate"),
+		'4&filter=expired' => $langs->trans("ServiceStatusLate"),
+		'5' => $langs->trans("ServiceStatusClosed")
 	);
 	$search_status_new = GETPOST('search_status', 'alpha');
 	if ($filter == 'expired' && !preg_match('/expired/', $search_status_new)) {
@@ -746,7 +749,7 @@ if (!empty($arrayfields['cd.date_cloture']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['cd.datec']['checked'])) {
@@ -774,7 +777,7 @@ $productstatic = new Product($db);
 
 $i = 0;
 $savnbfield = $totalarray['nbfield'];
-$totalarray = array('nbfield'=>0, 'cd.qty'=>0, 'cd.total_ht'=>0, 'cd.total_tva'=>0);
+$totalarray = array('nbfield' => 0, 'cd.qty' => 0, 'cd.total_ht' => 0, 'cd.total_tva' => 0);
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
@@ -961,7 +964,7 @@ while ($i < $imaxinloop) {
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+	$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation

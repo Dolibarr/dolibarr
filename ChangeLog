@@ -2,7 +2,8 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-***** ChangeLog for 20.0.0 compared to 19.0.0 *****
+
+***** ChangeLog for 20.0.0 compared to 19.0 *****
 
 For users:
 ----------
@@ -20,14 +21,91 @@ The following changes may create regressions for some external modules, but were
 * Ldap class methods connect_bind() & dump_content() have been renamed
 * More class properties (with old name in french) are now deprecated in favor of the property name in english.
 * Some API HTTP return code were moved from 401 to 403 to better follow REST specification.
+* dolibarrtriggers class VERSION_XXX constants have been deprecated. Please use array dictionary VERSIONS['XXX'].
 * Properties ->date_update and ->date_modification were merged into date_modification.
+* All CLI tools (into /scripts) return a positive value to the shell if error (0 remains success) for a better
+  cross platform compatibility. On linux the exit(-1) was caught as 255, it may be now exit(1) so will be caught as 1.
+* The parameter $filter of method fetchAll does not accept array of SQL but must be a string of an Universal Search Filter syntax.
+* Use of dol_eval with parameter $returnvalue=0 is deprecated.
+* The signature for all ->delete() method has been modified to match the modulebuilder template (so first param is now always $user), except
+  the delete for thirdparty (still accept the id of thirdparty to delete as first parameter). Will probably be modified into another version.
+* Route for API /thirdparties/gateways has been renamed into /thirdparties/accounts to better match the api object name.
+* The AGENDA_ENABLE_DONEBY hidden option has been removed. So $userdoneid in actioncomm class is deprecated. Please use $userownerid instead. Also,
+  the deprecated field $fk_user_done in actioncomm table is removed. Please use $fk_user_action instead.
+* The table commande_fournisseur_dispatch has been renamed into receptiondet_batch to better match its goal and the field fk_commande
+  and fk_commandefourndet were renamed into fk_element and fk_elementdet
+
+
+***** ChangeLog for 19.0.1 compared to 19.0.0 *****
+
+FIX: 16.0 - parent company gets emptied when updating a third party from the card in edit mode (#28269)
+FIX: 17.0: $num doesn't take trigger-modified newref into account, leading to inconsistencies if BILL_SUPPLIER_VALIDATE changes the invoice's ref (#28684)
+FIX: #22948
+FIX: #24265 regression cannot see all product on takepos (#28753)
+FIX: #28205
+FIX: #28251 Fixing subpermission name on api_multicurrencies.class.php (#28252)
+FIX: #28369
+FIX: #28429
+FIX: #28491 (#28522)
+FIX: #28518 (#28520)
+FIX: #28533 Mo::deleteLine removes the "main" MoLine if consumed line is delete (#28535)
+FIX: #28564
+FIX: Adding the dependencies list feature for extrafields "select" (#28549)
+FIX: Add new hidden conf "DISABLE_QTY_OVERWRITTEN" (#28523)
+FIX: Amount of localtaxes in foreign currency was wrong on screen and PDF
+FIX: an error in a complex else condition
+FIX: avoid error "Column 'entity' in where clause is ambiguous" (#28270)
+FIX: avoid Unknown column 'pfp.ref_fourn' (#28145)
+FIX: avoid warning "error parsing attribute name in Entity" (#28543)
+FIX: Bad column for total in bom list
+FIX: Bad condition on button back to draft on recruitment job.
+FIX: Bad CRLF when sending text only content. Fix dol_htmlwithnojs()
+FIX: Bad picto on list of permission of a user when user not admin
+FIX: bad timezone for the start/end date of an event
+FIX: Better test on validity of compute field syntax with parenthesis
+FIX: close #28279
+FIX: Count of virtual stock at Services and MoLine with disabled stock change (#28580)
+FIX: disabled picto of menu must be greyed.
+FIX: Don't display column when it's out of date (#28271)
+FIX: duplicate with lines: 414-416 (#28358)
+FIX: edit bank suggested for credit transfer payment in invoice setup
+FIX: Error When cloning fourn price no default value for tva_tx (#28368)
+FIX: fatal error Unsupported operand types when recording load payment
+FIX: Fix create shipping with product who have negative stocks on warehouse but the negative stock transfer is allowed (#26217)
+FIX: migration missing 2 columns in llx_resource and 1 in llx_user
+FIX: missing trans
+FIX: notification module: for supplier orders (any of the 3 triggers), user can choose an e-mail template in conf, but the conf is not used when sending the notification (#28216)
+FIX: Not trancate the multicurrency rate shown on cards (even if the global MAIN_MAX_DECIMALS_SHOWN is set to 0) (#28211)
+FIX: Option MAIN_DOC_USE_TIMING can be a string with date format
+FIX: Payment on customer invoice - Remove accountid in url if empty for apply default value (#28156)
+FIX: Pb in redirect of a website page in USEDOLIBARRSERVER mode
+FIX: permission on payment file of a tax
+FIX: PHP Warning: Undefined variable $lib (#28342)
+FIX: PHP Warning: Undefined variable $mode (#28697)
+FIX: Picto for mime
+FIX: Picto in top menu
+FIX: position of field in list of field in shipment list
+FIX: postgresql error (#28542)
+FIX: quote in sql request
+FIX: Responsive on admin project
+FIX: Shipment closing action has wrong value (#28174)
+FIX: skip adding tab if user doesn't have permission (#28698)
+FIX: some tooltips has disappeared on invoice action button
+FIX: Special code is now transmitted by args only in order supplier (#28546)
+FIX: Special code is now transmitted by args only in order supplier (#28619)
+FIX: subscription must be editable when accounting isn't reconciled (#28469)
+FIX: Translation for select  (#28677)
+FIX: upload odt files should not start/end with space
+FIX: Value of field int = 0 from modulebuilder must not be set to null
+FIX: Wrong currency shown in TakePOS payment page
+FIX: #yogosha21416
 
 
 ***** ChangeLog for 19.0.0 compared to 18.0.0 *****
 
 For users:
 ----------
-NEW: Compatibility with PHP 8.2
+NEW: Compatibility with PHP 8.2 (warning must be disabled)
 NEW: Module Workstation (used to enhance the module BOM and Manufacturing Order) is now stable
 NEW: Add a CLI tool to regenerate all documents
 NEW: Add a confirmation popup when deleting extrafields
@@ -177,6 +255,7 @@ NEW: TakePOS: added option TAKEPOS_HIDE_PRODUCT_PRICES to hide prices in TakePOS
 NEW: Tickets: add and list external contributors on ticket public interface
 NEW: Third-Parties: add total line to third-parties list (#26148)
 NEW: Tooltips are using ajax by default
+NEW: Website: Support of js into the Dolibarr server preview
 NEW: Top menu support picto of modules that are font awesome picto.
 NEW: updating by adding massactions for delete projects in societe tab
 NEW: updating by adding tooltip for api section in Modulebuilder
@@ -187,7 +266,6 @@ NEW: use account address in sepa mandate (#23642)
 NEW: VAT rate - Add entity
 NEW: Website: Support of js into the Dolibarr server preview
 NEW: When an user unset the batch management of products, transformation of each batch stock movement in global stock movement
-
 
 
 For developers or integrators:
@@ -281,6 +359,74 @@ The following changes may create regressions for some external modules, but were
 * The delete() method of AdherentType, Contact, Delivery, MultiCurrency, CurrencyRate now need $user as first parameter.
 * A very high number of class properties (with old name in french) are now deprecated in favor of the property name in english.
 * The load of hook context productdao has been removed before calling loadvirtualstock. Modules must use the context of main parent page or 'all' for all cases.
+
+
+***** ChangeLog for 18.0.5 compared to 18.0.4 *****
+FIX: 17.0: deprecated field should only be a fallback
+FIX: 17.0 - php8 warnings: test for $field existence before checking if it is null or empty
+FIX: #24185: v18: display of the merged pdf lists
+FIX: #26416 BOM_SUB_BOM blank page
+FIX: #27166
+FIX: #27262 Recurrent invoice - user to string conversion
+FIX: #27970 #26283 #27970
+FIX: Accountancy - Level 3 of binding not working on supplier side (#27462)
+FIX: Accounting files export - Use th instead of td on all title columns (#28003)
+FIX: add action update_extras to don card
+FIX: Adding hooks init
+FIX: Adding the $encode parameter to recursive _replaceHtmlWithOdtTag() utilisation
+FIX: add new hook context for mo production card (#28037)
+FIX: avoid from re-initializing result on nested hook getEntity (#27799)
+FIX: avoid sql error (issue #26342)
+FIX: bad accountancy code autoselection for supplier ventilation
+FIX: Bad visible status of proposal after reopen
+FIX: Barcode header cell not well displayed
+FIX: BarCode Header not well displayed
+FIX: Bar code verification should be done by entity because generation does (#28087)
+FIX: can edit reminders on past events
+FIX: check parameter socid before cloning a customer proposal (#28085)
+FIX: crabe PDF is generating in conf->entity instead of object->entity
+FIX: CVE-2024-23817 (#28089)
+FIX: disable pointer events on jQuery-UI tooltips to prevent a glitch (fast-blinking tooltip)
+FIX: Error on emailreminder not reported
+FIX: Fatal error converting object of class User to string (php8)
+FIX: filter by entity on contact is missing
+FIX: Fix supplier invoice security check
+FIX: format of color in manifest is wrong when using a custom color
+FIX: #GHSA-7947-48q7-cp5m
+FIX: HTML injection vulnerability in Dolibarr Application Home Page
+FIX: invoice add line save devise
+FIX: Keep a link to enable a 'always_enabled' module to solve pb.
+FIX: label
+FIX: line special_code never saved (#28051)
+FIX: link to print when there is a search on multiselect fields
+FIX: Menu Create of project no working on smartphone with no top menu.
+FIX: missing $search_sale var (backport from v19)
+FIX: Missing begin transaction when updating supplier recurring invoice
+FIX: missing entity filter for check if period exists
+FIX: more correctly parse the select part to be replaced in sql queries
+FIX: MouvementStock::origin is not an object
+FIX: notification information on intervention validated confirmation message (v17+)
+FIX: not load all contacts by default when creating an event
+FIX: port in Docker MailDev
+FIX: propal use devise changes
+FIX: public user photo not visible if $dolibarr_main_instance_unique_id
+FIX: remove DISTINCT (backport from v19)
+FIX: remove specific name from v19
+FIX: Retours PR
+FIX: Return a better error message when token is not valid
+FIX: search by ref & rowid in don list
+FIX: search by thirdparty in don list
+FIX: several names for one const THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT
+FIX: SQL concatenation error
+FIX: [TAKEPOS] display prices with or without taxes depending on setup (TAKEPOS_CHANGE_PRICE_HT)
+FIX: Ternary operator condition is always true/false
+FIX: too long output
+FIX: Undefined property: Task::$fk_parent
+FIX: uniformization to use "intervention"
+FIX: Update loan.class.php (#27971)
+FIX: update price extrafield on propal card
+FIX: user filter in per user view of event list (#28049)
+FIX: use the currency for propal signature page
 
 
 ***** ChangeLog for 18.0.4 compared to 18.0.3 *****
@@ -471,7 +617,7 @@ FIX: url to check keyword not saved on partnership from public form
 FIX: when adding new times on a survey, all hours would be erased.
 
 
-***** ChangeLog for 18.0.0 compared to 17.0.0 *****
+***** ChangeLog for 18.0.0 compared to 17.0 *****
 
 For users:
 ----------
@@ -678,11 +824,10 @@ WARNING:
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * Minimal PHP version is now PHP 7.1 instead of PHP 7.0
 * Sensitive data like keys in setup pages, that need encryption (for example the API keys of users, the CRON security key, the keys into the Stripe module, or
-external modules setup pages that store sensitive keys or password), are using the $dolibarr_main_instance_unique_id as part of the key for encryption. So,
-if you restore or duplicate the data from another instance dump, you must also
-update this parameter in the conf.php file to allow decryption in the new instance, or
-better, you must reenter the sensitive data into the setup pages of the new instance to resave them correctly.
-Note that to find all the parameters that are encrypted into the setup database, you can do a "SELECT * FROM llx_const WHERE value LIKE '%dolcrypt%';"
+  external modules setup pages that store sensitive keys or password), are using the $dolibarr_main_instance_unique_id as part of the key for encryption. So,
+  if you restore or duplicate the data from another instance dump, you must also update this parameter in the conf.php file to allow decryption in the new instance, or
+  better, you must reenter the sensitive data into the setup pages of the new instance to resave them correctly.
+  Note that to find all the parameters that are encrypted into the setup database, you can do a "SELECT * FROM llx_const WHERE value LIKE '%dolcrypt%';"
 * The deprecated method "escapeunderscore()" of database handlers has been removed. You must use "escapeforlike()" instead.
 * The method "nb_expedition()" has been renamed into "countNbOfShipments()"
 * Revert default type of hooks. Default is now 'addreplace' hooks (and exception become 'output' hooks, that become deprecated).
@@ -692,6 +837,117 @@ Note that to find all the parameters that are encrypted into the setup database,
 * The method htmlPrintOnlinePaymentFooter() used for public footer pages has been renamed into htmlPrintOnlineFooter() and moved into company.lib.php
 * The method getCheckOption() and deleteCPUser() of class Holiday has been removed (it was not used)
 
+
+***** ChangeLog for 17.0.4 compared to 17.0.3 *****
+FIX: $this->newref already exists and could have been modified by trigger but we still use a local variable for the filesystem-based renaming
+FIX: 16.0 only, backport fix for SQL error on global search product
+FIX: 17.0: deprecated field should only be a fallback
+FIX: 17.0 PHP8: supplier invoice class:
+FIX: 17.0 - php8 warnings: test for $field existence before checking is_null
+FIX: #25399 (#26694)
+FIX: #25458 intervention localizations (backport v17) (#26757)
+FIX: #25580 install/step1.php - wrong command line argument used for $main_dir (#25581)
+FIX: #25919
+FIX: #25934 #25929
+FIX: #26100 - Ticket - On edit, list of closed project must be excluded (#26223)
+FIX: #26195 - Various payment - List of project excluded those assigned to third parties (#26222)
+FIX: #26735 FIX: #26994
+FIX: #27262 Recurrent invoice - user to string conversion
+FIX: Accountancy - Possibility to write in bookkeeping expense report operation with some line not bound (#26545)
+FIX: Accountancy - Update Quadra export format
+FIX: add action update_extras to don card
+FIX: add_customer_ref_on_linked_shipment (#26349)
+FIX: add display of an error when attempting to delete a committed transaction (#26573)
+FIX: Adding the $encode parameter to recursive _replaceHtmlWithOdtTag() utilisation
+FIX: add warning in the changelog
+FIX: avoid php8 warnings (#25596)
+FIX: avoid warning : Cannot use a scalar value as an array (#26437)
+FIX: Backport memory fix for fatal error when +100000 products
+FIX: backport SQL error on global search product
+FIX: bad accountancy code autoselection for supplier ventilation
+FIX: Bad calculation of localtax when price_base_type not defined.
+FIX: bad check return for sendfile
+FIX: bad from and to
+FIX: Bad value of accounting account shown in list. Edit fails.
+FIX: Barcode header cell not well displayed
+FIX: Bar code verification should be done by entity because generation does (#28087)
+FIX: # Bug Estimated Stock at date value in V14 (#26479)
+FIX: Can't access to rec supplier invoice card
+FIX: Can't delete a fourn commande row if a commande ligne is linked
+FIX: check tva_tx before comparing price_min_ttc (#25220)
+FIX: commande context (#26497)
+FIX: compare the result of the send mail file function
+FIX: could not delete a fourn commande row if a commande ligne is linked
+FIX: count cronjob list differs of lines shown nb
+FIX: crabe PDF is generating in conf->entity instead of object->entity
+FIX: creation of invoice from contract with discount lines
+FIX: CVE-2024-23817 (#28089)
+FIX: dir output path for ODT models on reception card
+FIX: disable pointer events on jQuery-UI tooltips to prevent a glitch (fast-blinking tooltip)
+FIX: Error handling for computed values on import (#24897)
+FIX: escape HTML tags in return value of getFullName() (#26735)
+FIX: export FEC
+FIX: Fatal error converting object of class User to string (php8)
+FIX: fatal error with bad definition of dictionaries
+FIX: filter by entity on contact is missing
+FIX: Fix supplier invoice security check
+FIX: HTML in ODT templates (#26181)
+FIX: include
+FIX: label
+FIX: line special_code never saved (#28051)
+FIX: link to create purchase order from sale order
+FIX: menu auguria
+FIX: message order in ticket public view is not coherent with tickets events tab
+FIX: Missing begin transaction when updating supplier recurring invoice
+FIX: missing contact_id for the trigger
+FIX: Missing error message on CommandeFourn creation
+FIX: missing fk_account situation invoice
+FIX: missing project entity filter (Issue #26243) (#26247)
+FIX: modification of complementary attributes in commercial proposals
+FIX: modification of complementary attributes in invoices (#26180)
+FIX: more correctly parse the select part to be replaced in sql queries
+FIX: not create/update extrafields for visibility 0,2 and 5
+FIX: notification information on intervention validated confirmation message (v17+)
+FIX: payment card: misleading message when delete button disabled
+FIX: payment : language is not propagated to following pages
+FIX: pdf cornas page head multicell width (backport v17)
+FIX: possible inconsistency between llx_ecm_files and file system when BILL_SUPPLIER_VALIDATES changes ref
+FIX: Prices visible on TakePOS KO with multiprices support
+FIX: product list accounting length
+FIX: propal list : warning if product module is not enabled (#25583)
+FIX: Propal's negative quantities
+FIX: Quick search Intervention redirect to wrong page
+FIX: reception odt dir output path
+FIX: regression on rounding stocks fields on product list
+FIX_reload_linked_objects_on_propal_closeas
+FIX: Return right content type
+FIX: right access on salary card and tabs
+FIX: rights paymentsc paiementcharge
+FIX: same broken feature as v18 (Multicompany)
+FIX: Save user modif id when changing a contact status
+FIX: search by ref & rowid in don list
+FIX: search by thirdparty in don list
+FIX: special_code update line keep old value. (#26819)
+FIX: SQL concatenation error
+FIX: SQL request parenthesis
+FIX: substitute project variables in invoice documents (#26445)
+FIX: Suppliers addlines never have VAT if buyprice for this supplier
+FIX: [TAKEPOS] display prices with or without taxes depending on setup (TAKEPOS_CHANGE_PRICE_HT)
+FIX: TakePOS receipt preview in admin #25648
+FIX: template invoice list extrafield filters (backport v17) (#26227)
+FIX: thirdparty object in proposal card is not loaded
+FIX: too long output
+FIX: translation button
+FIX: use event.key instead event.which to avoid keyboard difference
+FIX: Use of line->insert instead of line->create
+FIX: user creation when LDAP is configured (#26332)
+FIX: Use the wrong logo size on PDF
+FIX: v17: Param $notrigger in $societe->create() causes method to return true regardless of actual result of database functions (#26499)
+FIX: warning param $lineID getSpecialCode is negatif (#26826)
+FIX: warning php8.2 undefined_array_key (#26830)
+FIX: warning when Workboard Responses display non numeric strings
+FIX: Wrong backtopage given for the stocktransfer button from the stocktransfer list (#26271)
+FIX: wrong place of trigger delete
 
 ***** ChangeLog for 17.0.3 compared to 17.0.2 *****
 FIX: #20304 propaldates update
@@ -9868,7 +10124,7 @@ For developers:
 WARNING:
 - A lot of class files (*.class.php) has moved into subdirectories. So If you use
   or develop non official modules that includes Dolibarr classes, you will have to rename
-  path to thoose classes into the include function.
+  path to those classes into the include function.
 - Also, parameters of the "fetch()" method for class "User" has changed to reflect
   other fetch methods.
 - If you build a personalised themes, you must rename the style sheet into style.css.php.

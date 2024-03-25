@@ -28,7 +28,7 @@ create table llx_fichinter
   ref_client		varchar(255),				-- customer intervention number
   entity			integer DEFAULT 1 NOT NULL, -- multi company id
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  datec				datetime,                   -- date de creation 
+  datec				datetime,                   -- date de creation
   date_valid		datetime,                   -- date de validation
   datei				date,						-- date de livraison du bon d'intervention
   fk_user_author	integer,					-- user making creation
@@ -39,7 +39,7 @@ create table llx_fichinter
   datee				date,						-- date de fin d'intervention
   datet				date,						-- date de terminaison de l'intervention
   duree				real,                       -- duree totale de l'intervention
-  signed            integer  DEFAULT NULL,        -- signed status
+  signed_status     smallint DEFAULT NULL,      -- signed status
   description		text,
   note_private		text,
   note_public		text,

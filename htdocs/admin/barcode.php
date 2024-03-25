@@ -70,7 +70,7 @@ if ($action == 'setbarcodethirdpartyon') {
 
 if ($action == 'setcoder') {
 	$coder = GETPOST('coder', 'alpha');
-	$code_id = GETPOST('code_id', 'int');
+	$code_id = GETPOSTINT('code_id');
 	$sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
 	$sqlp .= " SET coder = '".$db->escape($coder)."'";
 	$sqlp .= " WHERE rowid = ".((int) $code_id);

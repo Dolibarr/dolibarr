@@ -229,10 +229,9 @@ class AgendaEvents extends DolibarrApi
 	/**
 	 * Update Agenda Event general fields
 	 *
-	 * @param int   $id             Id of Agenda Event to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return Object|false			Object with cleaned properties
+	 * @param 	int   		$id             Id of Agenda Event to update
+	 * @param 	array 		$request_data   Datas
+	 * @return 	Object|false				Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
 	{

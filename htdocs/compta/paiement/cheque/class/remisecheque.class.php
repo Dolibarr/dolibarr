@@ -4,6 +4,8 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2016 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -422,7 +424,7 @@ class RemiseCheque extends CommonObject
 
 				// Load file with numbering class (if found)
 				if (is_file($dir.$file) && is_readable($dir.$file)) {
-					$mybool |= include_once $dir.$file;
+					$mybool = (include_once $dir.$file) || $mybool;
 				}
 			}
 
@@ -437,7 +439,7 @@ class RemiseCheque extends CommonObject
 
 					// Load file with numbering class (if found)
 					if (is_file($dir.$file) && is_readable($dir.$file)) {
-						$mybool |= include_once $dir.$file;
+						$mybool = (include_once $dir.$file) || $mybool;
 					}
 				}
 			}
@@ -872,7 +874,7 @@ class RemiseCheque extends CommonObject
 	 *	id must be 0 if object instance is a specimen.
 	 *
 	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
-	 *  @return	void
+	 *  @return	int
 	 */
 	public function initAsSpecimen($option = '')
 	{
@@ -887,6 +889,8 @@ class RemiseCheque extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
 		$this->date_bordereau = $nownotime;
+
+		return 1;
 	}
 
 	/**

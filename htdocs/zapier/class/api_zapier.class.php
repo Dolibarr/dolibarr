@@ -259,44 +259,6 @@ class Zapier extends DolibarrApi
 		);
 	}
 
-	// /**
-	//  * Update hook
-	//  *
-	//  * @param int   $id             Id of hook to update
-	//  * @param array $request_data   Datas
-	//  * @return int
-	//  *
-	//  * @url	PUT /hooks/{id}
-	//  */
-	/*public function put($id, $request_data = null)
-	{
-		if (! DolibarrApiAccess::$user->hasRight('zapier', 'write')) {
-			throw new RestException(403);
-		}
-
-		$result = $this->hook->fetch($id);
-		if( ! $result ) {
-			throw new RestException(404, 'Hook not found');
-		}
-
-		if( ! DolibarrApi::_checkAccessToResource('hook', $this->hook->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
-
-		foreach($request_data as $field => $value) {
-			if ($field == 'id') {
-				continue;
-			}
-			$this->hook->$field = $value;
-		}
-
-		if ($this->hook->update($id, DolibarrApiAccess::$user) > 0) {
-			return $this->get($id);
-		} else {
-			throw new RestException(500, $this->hook->error);
-		}
-	}*/
-
 	/**
 	 * Delete hook
 	 *

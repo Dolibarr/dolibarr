@@ -32,7 +32,7 @@ AddWebsite=Dodaj web stranicu
 Webpage=Web stranica/kontejner
 AddPage=Dodajte stranicu/kontejner
 PageContainer=Stranica
-PreviewOfSiteNotYetAvailable=Pregled vaše web stranice <strong>%s</strong> još nije dostupan. Prvo morate '<strong>uvesti cijeli predložak web stranice</strong>' ili samo 'b0e7843947c</00 span>Dodajte stranicu/kontejner<span class='notranslate'></strong>'.
+PreviewOfSiteNotYetAvailable=The preview of your website <strong>%s</strong> is not yet available. You must first '<strong>Import a full website template</strong>' or just '<strong>Add a page/container</strong>'.
 RequestedPageHasNoContentYet=Zatražena stranica sa ID-om %s još nema sadržaja ili je keš datoteka .tpl.php uklonjena. Uredite sadržaj stranice da to riješite.
 SiteDeleted=Web stranica '%s' je izbrisana
 PageContent=Page/Contenair
@@ -49,21 +49,21 @@ SetHereVirtualHost=<u>Koristite sa Apache/NGinx/...</u><br>Kreirajte na vaš web
 ExampleToUseInApacheVirtualHostConfig=Primjer za korištenje u Apache postavci virtualnog hosta:
 YouCanAlsoTestWithPHPS=<u>Koristite sa PHP ugrađenim serverom</u><br>U razvojnom okruženju možete radije testirajte web lokaciju sa PHP ugrađenim web serverom (potreban je PHP 5.5) pokretanjem<br><strong>php -S 0.0.0.0 :8080 -t %s</strong>
 YouCanAlsoDeployToAnotherWHP=<u>Pokrenite svoju web stranicu s drugim Dolibarr hosting provajderom</u><br> vas nemate web server kao što je Apache ili NGinx dostupan na internetu, možete izvesti i svoju web stranicu u drugu Dolibarr instancu koju pruža drugi Dolibarr hosting provajder koji pruža potpunu integraciju sa modul Website. Spisak nekih Dolibarr hosting provajdera možete pronaći na <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
-CheckVirtualHostPerms=Provjerite također da li korisnik virtualnog hosta (na primjer www-data) ima <strong>%s</strong>  dozvole za datoteke u<br><strong>%s<span klasu ='notranslate'></strong></span>
+CheckVirtualHostPerms=Check also that the virtual host user (for example www-data) has <strong>%s</strong> permissions on files into<br><strong>%s</strong>
 ReadPerm=Pročitaj
 WritePerm=Pisati
 TestDeployOnWeb=Testirajte / implementirajte na webu
-PreviewSiteServedByWebServer=<u>Pregled %s na novoj kartici.</u><br><br>%s će služiti vanjski web server (kao što je Apache, Nginx, IIS ). Morate instalirati i postaviti ovaj server prije nego što ukažete na direktorij:<br><strong> ><span class='notranslate'>%s</strong><br>URL poslužuje vanjski server:<br><strong>%s<span class='notranslate'>b0a65d09z0f>b0a65d09z071
+PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before to point to directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>Pregled %s na novoj kartici.</u><br><br>%s će služiti Dolibarr server tako da mu ne treba nikakav dodatni web server (kao Apache, Nginx, IIS) za instaliranje.<br>Nezgodno je to što URL-ovi stranica nisu prilagođeni korisniku i počnite s putanjom vašeg Dolibarra.<br>URL koju poslužuje Dolibarr:<br>b0e7843947c06bz span>%s</strong><br>b031492zcc Da biste koristili vlastiti vanjski web server za posluživanje ove web stranice, kreirajte virtualni host na svom web serveru koji pokazuje na direktorij<br> <strong>%s</strong><br> unesite ovo ime19bz0 virtuelni server u svojstvima ove web stranice i kliknite na vezu "Test/Deploy on the web".
 VirtualHostUrlNotDefined=URL virtuelnog hosta kojeg opslužuje vanjski web server nije definiran
 NoPageYet=Još nema stranica
 YouCanCreatePageOrImportTemplate=Možete kreirati novu stranicu ili uvesti cijeli predložak web stranice
 SyntaxHelp=Pomoć za specifične savjete o sintaksi
 YouCanEditHtmlSourceckeditor=Možete uređivati HTML izvorni kod koristeći dugme "Izvor" u uređivaču.
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> Možete uključiti PHP kod u ovaj izvor pomoću oznaka <strong>&lt;?php ?&gt;<span class='notranslate'0af6f6zd07f6f6cd </span>. Dostupne su sljedeće globalne varijable: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> Također možete uključiti sadržaj druge stranice/kontejnera sa sljedećom sintaksom:<br><strong>&lt;?php includeContainer('alias_of_include'); ?&gt;</strong><br>b0349z0b0349 /span><span class='notranslate'><span class="fa fa-bug"></span> Možete izvršiti preusmjeravanje na drugu stranicu/kontejner sa sljedećom sintaksom (Napomena: nemojte ispisivati nikakve sadržaj prije preusmjeravanja):<br><strong>&lt;?php redirectToContainer( alias_of_container_to_redirect_to'); ?&gt;</strong><br>b0349z0b0349 /span><span class='notranslate'><span class="fa fa-link"></span> Da dodate link na drugu stranicu, koristite sintaksu:<br> <strong>&lt;a href="alias_of_page_to_link_to.php"b0012c7z0dcbe >mylink<span class='notranslate'>&lt;a&gt;</strong> <br><br><span class="fa fa-download">b014f1b93d7c65z To include aclass0 ='notranslate'><strong></span>link za preuzimanje</strong> datoteke pohranjene u <strong>dokumentima notranslate'></strong></span> direktorij, koristite <strong>document.php</strong> omotač class'no:<translate' ><br></span>Primjer, za fajl u dokumentima/ecm (treba biti evidentiran), sintaksa je:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Za datoteku u dokumentima/medijima (otvoreni direktorij za javni pristup), sintaksa je: <br><strong>&lt;a href="/document.php?modulepart=medias&file/=[relative_name. ext"&gt;</strong><br>Za fajl koji se dijeli putem linka za dijeljenje ( otvoreni pristup koristeći hash ključ za dijeljenje datoteke), sintaksa je:<br><strong>&lt; /span>a href="/document.php?hashp=publicsharekeyoffile"<span class='notranslate'>&gt;</strong> <br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image"></span> Za uključivanje  <strong>slika</strong> pohranjena u <strong>dokumente<span class='notranslate'0zdb>direktor</span class='notranslate'0zd>b , koristite omotač <strong>viewimage.php</strong>.<br>,Example0, sliku u dokumente/medije (otvoreni direktorij za javni pristup), sintaksa je:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"7zdcbe </strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper.<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Za sliku koja se dijeli s vezom za dijeljenje (otvoreni pristup koristeći hash ključ za dijeljenje datoteke), sintaksa je:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;0af665dc71f09 <br>
-YouCanEditHtmlSource3=Da biste dobili URL slike PHP objekta, koristite<br><strong>&lt; span>img src="<span class='notranslate'>&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;" class='notranslate'>&gt;</span></strong><br>
+YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>Više primjera HTML ili dinamičkog koda dostupno je na <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">wiki dokumentacijib0e40dc6087 >.<br>
 ClonePage=Kloniraj stranicu/kontejner
 CloneSite=Clone site
@@ -118,10 +118,9 @@ DeleteAlsoMedias=Izbrisati i sve medijske datoteke specifične za ovu web strani
 MyWebsitePages=Moje web stranice
 SearchReplaceInto=Pretraga | Zamijenite u
 ReplaceString=New string
-CSSContentTooltipHelp=Ovdje unesite CSS sadržaj. Da biste izbjegli bilo kakav sukob sa CSS-om aplikacije, obavezno dodajte sve deklaracije klasom .bodywebsite. Na primjer:<br><br>#mycssselector, input.myclass:hover { ... } <br>mora biti<br>.bodywebsite #mycssselector, .bodywebsite input.myclass:hover { ... }b0342fccfda19b <span class='notranslate'><br>Napomena: Ako imate veliki fajl bez ovog prefiksa, možete koristiti 'lessc' da ga konvertujete da biste svuda dodali prefiks .bodywebsite.
+CSSContentTooltipHelp=Enter here CSS content. To avoid any conflict with the CSS of the application, be sure to prepend all declaration with the .bodywebsite class. For example:<br><br>#mycssselector, input.myclass:hover { ... }<br>must be<br>.bodywebsite #mycssselector, .bodywebsite input.myclass:hover { ... }<br><br>Note: If you have a large file without this prefix, you can use 'lessc' to convert it to append the .bodywebsite prefix everywhere.
 LinkAndScriptsHereAreNotLoadedInEditor=Upozorenje: Ovaj sadržaj se izlazi samo kada se sajtu pristupa sa servera. Ne koristi se u režimu za uređivanje, tako da ako treba da učitate JavaScript fajlove iu režimu za uređivanje, samo dodajte svoju oznaku 'script src=...' na stranicu.
 Dynamiccontent=Uzorak stranice sa dinamičkim sadržajem
-ImportSite=Uvezite predložak web stranice
 EditInLineOnOff=Način rada 'Edit inline' je %s
 ShowSubContainersOnOff=Način za izvršavanje 'dinamičkog sadržaja' je %s
 GlobalCSSorJS=Globalni CSS/JS/Header fajl web stranice
@@ -158,9 +157,81 @@ Booking=Rezervacija
 Reservation=Rezervacija
 PagesViewedPreviousMonth=Pregledane stranice (prethodni mjesec)
 PagesViewedTotal=Pregledane stranice (ukupno)
-Visibility=Vidljivost
 Everyone=Svi
 AssignedContacts=Dodijeljeni kontakti
 WebsiteTypeLabel=Vrsta web stranice
-WebsiteTypeDolibarrWebsite=Web stranica (CMS Dolibarr)
-WebsiteTypeDolibarrPortal=Native Dolibarr portal
+WebsiteTypeDolibarrWebsite=Web site (Module WebSites CMS)
+WebsiteTypeDolibarrPortal=Native and ready to use web portal (Module Web Portal)
+WebPortalURL=Web portal URL
+NewWebsiteAccount=New accounts for websites
+ModuleWebPortalName=Web portal
+ModuleWebPortalDesc=A ready to use native web portal for customers, suppliers, partners or members
+WebPortalDescription=Public web portal module for membership and partnership
+WebPortalSetup=WebPortal setup
+WebPortalCSS=Web portal CSS
+WebPortalSetupPage=WebPortal setup page
+WEBPORTAL_TITLE=Brand name on header of public page
+UserAccountForWebPortalAreInThirdPartyTabHelp=Users accounts for WebPortal can be set on each third party card in Website accounts tab
+WebPortalAccessHidden=Sakriveno
+WebPortalAccessVisible=Visible
+WebPortalAccessEdit=Editable
+WEBPORTAL_MEMBER_CARD_ACCESS=Enable access to the membership record
+WebPortalMemberCardAccessHelp=Enable access to the membership record (Hidden / Visible or Editable)
+WEBPORTAL_PARTNERSHIP_CARD_ACCESS=Enable access to the partnership record
+WebPortalPartnerShipCardAccessHelp=Enable access to the partnership record (Hidden / Visible or Editable)
+WEBPORTAL_PROPAL_LIST_ACCESS=Enable access to the proposals
+WEBPORTAL_ORDER_LIST_ACCESS=Enable access to the orders
+WEBPORTAL_INVOICE_LIST_ACCESS=Enable access to the invoices
+WEBPORTAL_USER_LOGGED=Select an anonymous user
+WebPortalUserLoggedHelp=This user is used to update cards
+WebPortalHomeTitle=Welcome
+WebPortalHomeDesc=Welcome to the public interface
+WebPortalPropalListMenu=Prijedlozi
+WebPortalPropalListTitle=List of proposals
+WebPortalPropalListDesc=List of proposals
+WebPortalPropalListNothing=Proposals not found
+WebPortalOrderListMenu=Narudžbe
+WebPortalOrderListTitle=List of orders
+WebPortalOrderListDesc=List of orders
+WebPortalOrderListNothing=Orders not found
+WebPortalInvoiceListMenu=Fakture
+WebPortalInvoiceListTitle=List of invoices
+WebPortalInvoiceListDesc=List of invoices
+WebPortalInvoiceListNothing=Invoices not found
+WebPortalMemberCardMenu=Member
+WebPortalMemberCardTitle=Member card
+WebPortalMemberCardDesc=Member card
+WebPortalPartnershipCardMenu=Partnership
+WebPortalPartnershipCardTitle=Partnership card
+WebPortalPartnershipCardDesc=Partnership card
+loginWebportalUserName=User name / email
+loginWebportalPassword=Šifra
+LoginNow=Login now
+RemoveSearchFilters=Remove search filters
+WEBPORTAL_PRIMARY_COLOR=Primary color
+WEBPORTAL_SECONDARY_COLOR=Secondary color
+WEBPORTAL_LOGIN_LOGO_URL=Login logo image URL
+WEBPORTAL_MENU_LOGO_URL=Menu logo image URL
+WEBPORTAL_MENU_LOGO_URLTooltip=Leave empty to use login logo
+WEBPORTAL_LOGIN_BACKGROUND=Background login image URL
+WEBPORTAL_BANNER_BACKGROUND=Background for banner
+WEBPORTAL_BANNER_BACKGROUND_IS_DARK=Use dark theme for banner
+AriaPrevPage=Previous page
+AriaNextPage=Next page
+AriaPageX=Page %s
+WebPortalError404=Page not found
+WebPortalErrorPageNotExist=Page not exist
+WebPortalErrorFetchThirdPartyAccountFromLogin=Error when loading third-party account (login : %s)
+WebPortalErrorAuthentication=Authentication error
+WebPortalErrorFetchLoggedThirdPartyAccount=Error when loading third-party account (login : %s)
+WebPortalErrorFetchLoggedUser=Error when loading user (Id : %s)
+WebPortalErrorFetchLoggedThirdParty=Error when loading third-party (Id : %s)
+WebPortalErrorFetchLoggedMember=Error when loading member (Id : %s)
+WebPortalErrorFetchLoggedPartnership=Error when loading partnership (Third-party Id : %s, Member Id : %s)
+ExportIntoGIT=Export into sources
+WebPortalMember=Membership
+WebPortalOrder=Sale Order
+WebPortalPartnership=Partnership
+WebPortalPropal=Prijedlog
+WebPortalGroupMenuAdmin=Administration
+WebPortalGroupMenuTechnical=Sistem

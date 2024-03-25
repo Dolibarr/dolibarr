@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2018-2021 	Thibault FOUCART       <support@ptibogxiv.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +50,9 @@ class Stripe extends CommonObject
 	 */
 	public $id;
 
+	/**
+	 * @var string
+	 */
 	public $mode;
 
 	/**
@@ -55,11 +60,21 @@ class Stripe extends CommonObject
 	 */
 	public $entity;
 
+	/**
+	 * @var string
+	 */
 	public $statut;
 
 	public $type;
 
+	/**
+	 * @var string
+	 */
 	public $code;
+
+	/**
+	 * @var string
+	 */
 	public $declinecode;
 
 	/**
@@ -150,13 +165,13 @@ class Stripe extends CommonObject
 	 * Get the Stripe customer of a thirdparty (with option to create it in Stripe if not linked yet).
 	 * Search on site_account = 0 or = $stripearrayofkeysbyenv[$status]['publishable_key']
 	 *
-	 * @param	Societe	$object							Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity)
+	 * @param	CommonObject	$object							Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity).  Used for AdherentType and Societe.
 	 * @param	string	$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int		$status							Status (0=test, 1=live)
 	 * @param	int		$createifnotlinkedtostripe		1=Create the stripe customer and the link if the thirdparty is not yet linked to a stripe customer
 	 * @return 	\Stripe\Customer|null 					Stripe Customer or null if not found
 	 */
-	public function customerStripe(Societe $object, $key = '', $status = 0, $createifnotlinkedtostripe = 0)
+	public function customerStripe(CommonObject $object, $key = '', $status = 0, $createifnotlinkedtostripe = 0)
 	{
 		global $conf, $user;
 
@@ -192,10 +207,10 @@ class Stripe extends CommonObject
 				try {
 					if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
 						//$customer = \Stripe\Customer::retrieve("$tiers");
-						$customer = \Stripe\Customer::retrieve(array('id'=>"$tiers", 'expand[]'=>'sources'));
+						$customer = \Stripe\Customer::retrieve(array('id' => "$tiers", 'expand[]' => 'sources'));
 					} else {
 						//$customer = \Stripe\Customer::retrieve("$tiers", array("stripe_account" => $key));
-						$customer = \Stripe\Customer::retrieve(array('id'=>"$tiers", 'expand[]'=>'sources'), array("stripe_account" => $key));
+						$customer = \Stripe\Customer::retrieve(array('id' => "$tiers", 'expand[]' => 'sources'), array("stripe_account" => $key));
 					}
 				} catch (Exception $e) {
 					// For example, we may have error: 'No such customer: cus_XXXXX; a similar object exists in live mode, but a test mode key was used to make this request.'
@@ -207,7 +222,7 @@ class Stripe extends CommonObject
 				$dataforcustomer = array(
 					"email" => $object->email,
 					"description" => $object->name,
-					"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress)
+					"metadata" => array('dol_id' => $object->id, 'dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress)
 				);
 
 				$vatcleaned = $object->tva_intra ? $object->tva_intra : null;
@@ -242,7 +257,7 @@ class Stripe extends CommonObject
 							$isineec = isInEEC($object);
 							if ($object->country_code && $isineec) {
 								//$taxids = $customer->allTaxIds($customer->id);
-								$customer->createTaxId($customer->id, array('type'=>'eu_vat', 'value'=>$vatcleaned));
+								$customer->createTaxId($customer->id, array('type' => 'eu_vat', 'value' => $vatcleaned));
 							}
 						}
 					}
@@ -430,7 +445,7 @@ class Stripe extends CommonObject
 		if (empty($paymentintent)) {
 			// Try to create intent. See https://stripe.com/docs/api/payment_intents/create
 			$ipaddress = getUserRemoteIP();
-			$metadata = array('dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress);
+			$metadata = array('dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress);
 			if (is_object($object)) {
 				$metadata['dol_type'] = $object->element;
 				$metadata['dol_id'] = $object->id;
@@ -653,7 +668,7 @@ class Stripe extends CommonObject
 	{
 		global $conf;
 
-		dol_syslog("getSetupIntent description=".$description.' confirmnow='.$confirmnow, LOG_INFO, 1);
+		dol_syslog("getSetupIntent description=".$description.' confirmnow='.json_encode($confirmnow), LOG_INFO, 1);
 
 		$error = 0;
 
@@ -667,7 +682,7 @@ class Stripe extends CommonObject
 
 		if (empty($setupintent)) {
 			$ipaddress = getUserRemoteIP();
-			$metadata = array('dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress);
+			$metadata = array('dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress);
 			if (is_object($object)) {
 				$metadata['dol_type'] = $object->element;
 				$metadata['dol_id'] = $object->id;
@@ -863,19 +878,19 @@ class Stripe extends CommonObject
 
 					$dataforcard = array(
 						"source" => array(
-							'object'=>'card',
-							'exp_month'=>$exp_date_month,
-							'exp_year'=>$exp_date_year,
-							'number'=>$number,
-							'cvc'=>$cvc,
-							'name'=>$cardholdername
+							'object' => 'card',
+							'exp_month' => $exp_date_month,
+							'exp_year' => $exp_date_year,
+							'number' => $number,
+							'cvc' => $cvc,
+							'name' => $cardholdername
 						),
 						"metadata" => array(
-							'dol_type'=>$object->element,
-							'dol_id'=>$object->id,
-							'dol_version'=>DOL_VERSION,
-							'dol_entity'=>$conf->entity,
-							'ipaddress'=>$ipaddress
+							'dol_type' => $object->element,
+							'dol_id' => $object->id,
+							'dol_version' => DOL_VERSION,
+							'dol_entity' => $conf->entity,
+							'ipaddress' => $ipaddress
 						)
 					);
 
@@ -1008,7 +1023,7 @@ class Stripe extends CommonObject
 				} elseif ($createifnotlinkedtostripe) {
 					$iban = $obj->iban;
 					$ipaddress = getUserRemoteIP();
-					$metadata = array('dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress);
+					$metadata = array('dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress);
 					if (is_object($object)) {
 						$metadata['dol_type'] = $object->element;
 						$metadata['dol_id'] = $object->id;
@@ -1018,7 +1033,7 @@ class Stripe extends CommonObject
 					$description = 'SEPA for IBAN '.$iban;
 
 					$dataforcard = array(
-						'type'=>'sepa_debit',
+						'type' => 'sepa_debit',
 						"sepa_debit" => array('iban' => $iban),
 						'billing_details' => array(
 							'name' => $soc->name,
@@ -1028,19 +1043,19 @@ class Stripe extends CommonObject
 					);
 					// Complete owner name
 					if (!empty($soc->town)) {
-						$dataforcard['billing_details']['address']['city']=$soc->town;
+						$dataforcard['billing_details']['address']['city'] = $soc->town;
 					}
 					if (!empty($soc->country_code)) {
-						$dataforcard['billing_details']['address']['country']=$soc->country_code;
+						$dataforcard['billing_details']['address']['country'] = $soc->country_code;
 					}
 					if (!empty($soc->address)) {
-						$dataforcard['billing_details']['address']['line1']=$soc->address;
+						$dataforcard['billing_details']['address']['line1'] = $soc->address;
 					}
 					if (!empty($soc->zip)) {
-						$dataforcard['billing_details']['address']['postal_code']=$soc->zip;
+						$dataforcard['billing_details']['address']['postal_code'] = $soc->zip;
 					}
 					if (!empty($soc->state)) {
-						$dataforcard['billing_details']['address']['state']=$soc->state;
+						$dataforcard['billing_details']['address']['state'] = $soc->state;
 					}
 
 					//$a = \Stripe\Stripe::getApiKey();
@@ -1070,7 +1085,7 @@ class Stripe extends CommonObject
 						} else {
 							// link customer and src
 							//$cs = $this->getSetupIntent($description, $soc, $cu, '', $status);
-							$dataforintent = array(['description'=> $description, 'payment_method_types' => ['sepa_debit'], 'customer' => $cu->id, 'payment_method' => $sepa->id], 'metadata'=>$metadata);
+							$dataforintent = array(0 => ['description' => $description, 'payment_method_types' => ['sepa_debit'], 'customer' => $cu->id, 'payment_method' => $sepa->id], 'metadata' => $metadata);
 
 							$cs = $s->setupIntents->create($dataforintent);
 							//$cs = $s->setupIntents->update($cs->id, ['payment_method' => $sepa->id]);

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015 Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019-2022 Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021      Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2021      Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023      Charlene Benke	       <charlene.r@patas-monkey.com>
@@ -135,7 +135,7 @@ class FormTicket
 
 		$this->action = 'add';
 
-		$this->withcompany = isModEnabled("societe");
+		$this->withcompany = !getDolGlobalInt("TICKETS_NO_COMPANY_ON_FORM") && isModEnabled("societe");
 		$this->withfromsocid = 0;
 		$this->withfromcontactid = 0;
 		$this->withreadid=0;
@@ -320,7 +320,7 @@ class FormTicket
 			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($this->db);
-			$objectsrc->fetch(GETPOST('originid', 'int'));
+			$objectsrc->fetch(GETPOSTINT('originid'));
 
 			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
 				$objectsrc->fetch_lines();
@@ -460,7 +460,7 @@ class FormTicket
 		}
 
 		// Categories
-		if (isModEnabled('categorie')) {
+		if (isModEnabled('category')) {
 			include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_TICKET, '', 'parent', 64, 0, 1);
 
@@ -546,7 +546,7 @@ class FormTicket
 
 		// Customer or supplier
 		if ($this->withcompany) {
-			// altairis: force company and contact id for external user
+			// force company and contact id for external user
 			if (empty($user->socid)) {
 				// Company
 				print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
@@ -616,6 +616,7 @@ class FormTicket
 				// If no socid, set to -1 to avoid full contacts list
 				$selectedCompany = ($this->withfromsocid > 0) ? $this->withfromsocid : -1;
 				print img_picto('', 'contact', 'class="paddingright"');
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				print $form->selectcontacts($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 0, 'minwidth200');
 				print ' ';
 				$formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');
@@ -638,7 +639,7 @@ class FormTicket
 			print $langs->trans("AssignedTo");
 			print '</td><td>';
 			print img_picto('', 'user', 'class="pictofixedwidth"');
-			print $form->select_dolusers(GETPOST('fk_user_assign', 'int'), 'fk_user_assign', 1);
+			print $form->select_dolusers(GETPOSTINT('fk_user_assign'), 'fk_user_assign', 1);
 			print '</td>';
 			print '</tr>';
 		}
@@ -647,7 +648,7 @@ class FormTicket
 			if (isModEnabled('project') && !$this->ispublic) {
 				$formproject = new FormProjets($this->db);
 				print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
-				print img_picto('', 'project').$formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+				print img_picto('', 'project').$formproject->select_projects(-1, GETPOSTINT('projectid'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 				print '</td></tr>';
 			}
 		}
@@ -657,7 +658,7 @@ class FormTicket
 				$formcontract = new FormContract($this->db);
 				print '<tr><td><label for="contract"><span class="">'.$langs->trans("Contract").'</span></label></td><td>';
 				print img_picto('', 'contract');
-				print $formcontract->select_contract(-1, GETPOST('contactid', 'int'), 'contractid', 0, 1, 1);
+				print $formcontract->select_contract(-1, GETPOSTINT('contactid'), 'contractid', 0, 1, 1);
 				print '</td></tr>';
 			}
 		}
@@ -941,7 +942,7 @@ class FormTicket
 			$stringtoprint .= '<option value="">&nbsp;</option>';
 
 			$sql = "SELECT ctc.rowid, ctc.code, ctc.label, ctc.fk_parent, ctc.public, ";
-			$sql .= $this->db->ifsql("ctc.rowid NOT IN (SELECT ctcfather.rowid FROM llx_c_ticket_category as ctcfather JOIN llx_c_ticket_category as ctcjoin ON ctcfather.rowid = ctcjoin.fk_parent WHERE ctcjoin.active > 0)", "'NOTPARENT'", "'PARENT'")." as isparent";
+			$sql .= $this->db->ifsql("ctc.rowid NOT IN (SELECT ctcfather.rowid FROM ".MAIN_DB_PREFIX."c_ticket_category as ctcfather JOIN ".MAIN_DB_PREFIX."c_ticket_category as ctcjoin ON ctcfather.rowid = ctcjoin.fk_parent WHERE ctcjoin.active > 0)", "'NOTPARENT'", "'PARENT'")." as isparent";
 			$sql .= " FROM ".$this->db->prefix()."c_ticket_category as ctc";
 			$sql .= " WHERE ctc.active > 0 AND ctc.entity = ".((int) $conf->entity);
 			if ($filtertype == 'public=1') {
@@ -1370,7 +1371,7 @@ class FormTicket
 
 		print "\n<!-- Begin message_form TICKET -->\n";
 
-		$send_email = GETPOST('send_email', 'int') ? GETPOST('send_email', 'int') : 0;
+		$send_email = GETPOSTINT('send_email') ? GETPOSTINT('send_email') : 0;
 
 		// Example 1 : Adding jquery code
 		print '<script nonce="'.getNonce().'" type="text/javascript">
@@ -1660,10 +1661,14 @@ class FormTicket
 				$texttooltip .= '<br><br>'.$langs->trans("ForEmailMessageWillBeCompletedWith").'...';
 			}
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO')) {
-				$texttooltip .= '<br><u>'.$langs->trans("TicketMessageMailIntro").'</u><br>'.getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO');
+				$mail_intro = make_substitutions(getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO'), $this->substit);
+				print '<input type="hidden" name="mail_intro" value="'.$mail_intro.'">';
+				$texttooltip .= '<br><u>'.$langs->trans("TicketMessageMailIntro").'</u><br>'.$mail_intro;
 			}
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE')) {
-				$texttooltip .= '<br><br><u>'.$langs->trans("TicketMessageMailFooter").'</u><br>'.getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE');
+				$mail_signature = make_substitutions(getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE'), $this->substit);
+				print '<input type="hidden" name="mail_signature" value="'.$mail_signature.'">';
+				$texttooltip .= '<br><br><u>'.$langs->trans("TicketMessageMailFooter").'</u><br>'.$mail_signature;
 			}
 			print $form->textwithpicto('', $texttooltip, 1, 'help');
 		}

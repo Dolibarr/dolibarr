@@ -4,6 +4,7 @@
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2017		Rui Strecht			<rui.strecht@aliartalentos.com>
  * Copyright (C) 2020       Open-Dsi         	<support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,6 +130,8 @@ class FormCompany extends Form
 			}
 			$this->db->free($resql);
 		}
+		//return natural sorted list
+		natsort($effs);
 		return $effs;
 	}
 
@@ -143,7 +146,7 @@ class FormCompany extends Form
 	 *	@param	int		$empty			Add empty value in list
 	 *	@return	void
 	 */
-	public function form_prospect_level($page, $selected = '', $htmlname = 'prospect_level_id', $empty = 0)
+	public function form_prospect_level($page, $selected = 0, $htmlname = 'prospect_level_id', $empty = 0)
 	{
 		// phpcs:enable
 		global $user, $langs;
@@ -195,7 +198,7 @@ class FormCompany extends Form
 	 *	@param	int		$empty			Add empty value in list
 	 *	@return	void
 	 */
-	public function formProspectContactLevel($page, $selected = '', $htmlname = 'prospect_contact_level_id', $empty = 0)
+	public function formProspectContactLevel($page, $selected = 0, $htmlname = 'prospect_contact_level_id', $empty = 0)
 	{
 		global $user, $langs;
 
@@ -635,7 +638,7 @@ class FormCompany extends Form
 	 *
 	 *  @param  object		$object         Object we try to find contacts
 	 *  @param  string		$var_id         Name of id field
-	 *  @param  string		$selected       Pre-selected third party
+	 *  @param  int 		$selected       Pre-selected third party
 	 *  @param  string		$htmlname       Name of HTML form
 	 * 	@param	array		$limitto		Disable answers that are not id in this array list
 	 *  @param	int			$forceid		This is to force another object id than object->id
@@ -643,7 +646,7 @@ class FormCompany extends Form
 	 *  @param	string		$morecss		More CSS on select component
 	 * 	@return int 						The selected third party ID
 	 */
-	public function selectCompaniesForNewContact($object, $var_id, $selected = '', $htmlname = 'newcompany', $limitto = '', $forceid = 0, $moreparam = '', $morecss = '')
+	public function selectCompaniesForNewContact($object, $var_id, $selected = 0, $htmlname = 'newcompany', $limitto = [], $forceid = 0, $moreparam = '', $morecss = '')
 	{
 		global $conf, $hookmanager;
 
@@ -1157,7 +1160,7 @@ class FormCompany extends Form
 	 */
 	public function selectProspectStatus($htmlname, $prospectstatic, $statusprospect, $idprospect, $mode = "html")
 	{
-		global $langs;
+		global $user, $langs;
 
 		if ($mode === "html") {
 			$actioncode = empty($prospectstatic->cacheprospectstatus[$statusprospect]) ? '' : $prospectstatic->cacheprospectstatus[$statusprospect]['code'];
@@ -1165,12 +1168,16 @@ class FormCompany extends Form
 
 			//print $prospectstatic->LibProspCommStatut($statusprospect, 2, $prospectstatic->cacheprospectstatus[$statusprospect]['label'], $prospectstatic->cacheprospectstatus[$statusprospect]['picto']);
 			print img_action('', $actioncode, $actionpicto, 'class="inline-block valignmiddle paddingright pictoprospectstatus"');
-			print '<select class="flat selectprospectstatus maxwidth150" id="'. $htmlname.$idprospect .'" data-socid="'.$idprospect.'" name="' . $htmlname .'">';
+			print '<select class="flat selectprospectstatus maxwidth150" id="'. $htmlname.$idprospect .'" data-socid="'.$idprospect.'" name="' . $htmlname .'"';
+			if (!$user->hasRight('societe', 'creer')) {
+				print ' disabled';
+			}
+			print '>';
 			foreach ($prospectstatic->cacheprospectstatus as $key => $val) {
-				$titlealt = (empty($val['label']) ? 'default' : $val['label']);
+				//$titlealt = (empty($val['label']) ? 'default' : $val['label']);
 				$label = $val['label'];
 				if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) {
-					$titlealt = $val['label'];
+					//$titlealt = $val['label'];
 					$label = (($langs->trans("StatusProspect".$val['code']) != "StatusProspect".$val['code']) ? $langs->trans("StatusProspect".$val['code']) : $label);
 				} else {
 					$label = (($langs->trans("StatusProspect".$val['id']) != "StatusProspect".$val['id']) ? $langs->trans("StatusProspect".$val['id']) : $label);

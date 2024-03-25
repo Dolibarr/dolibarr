@@ -189,7 +189,7 @@ EnterNewPasswordHere=הזן את הסיסמה החדשה שלך כאן
 BackToLoginPage=חזרה לדף הכניסה
 AuthenticationDoesNotAllowSendNewPassword=מצב האימות הוא <b>%s</b>.<translate' class='no ><br></span>במצב זה, Dolibarr לא יכול לדעת או לשנות את הסיסמה שלך.<br>צור קשר עם מנהל המערכת שלך אם ברצונך לשנות את הסיסמה שלך.
 EnableGDLibraryDesc=התקן או הפעל את ספריית GD בהתקנת PHP שלך כדי להשתמש באפשרות זו.
-ProfIdShortDesc=<b>מזהה מקצוען %s</b> הוא מידע התלוי במדינה של צד שלישי. <br>לדוגמה, עבור מדינה <b>%s</b>, זה הקוד <b>%s<span class='notranslate'>b09a17f8z.b09a17b>.
+ProfIdShortDesc=<b>Prof Id %s</b> is an information depending on third party country.<br>For example, for country <b>%s</b>, it's code <b>%s</b>.
 DolibarrDemo=הדגמה של Dolibarr ERP/CRM
 StatsByAmount=סטטיסטיקה על כמות מוצרים/שירותים
 StatsByAmountProducts=סטטיסטיקה על כמות המוצרים
@@ -336,3 +336,5 @@ FTPFailedToUploadFile=העלאת הקובץ <b>%s</b> נכשלה.
 AddFolder=צור תיקיה
 FileWasCreateFolder=התיקיה <b>%s</b> נוצרה
 FTPFailedToCreateFolder=יצירת התיקייה <b>%s</b> נכשלה.
+SelectADay=Select a day in calendar
+SelectANewDate=Select a new date

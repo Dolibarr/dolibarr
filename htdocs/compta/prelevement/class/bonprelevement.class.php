@@ -6,6 +6,8 @@
  * Copyright (C) 2014-2016 Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2018      Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2019		JC Prieto			<jcprieto@virtual20.com><prietojc@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,6 +84,9 @@ class BonPrelevement extends CommonObject
 
 	public $factures = array();
 
+	/**
+	 * @var array<int,string>
+	 */
 	public $methodes_trans = array();
 
 	public $invoice_in_error = array();
@@ -92,7 +97,7 @@ class BonPrelevement extends CommonObject
 	 */
 	public $file;
 
-	/*
+	/**
 	 * @var string filename
 	 */
 	public $filename;
@@ -144,23 +149,23 @@ class BonPrelevement extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>0,),
-		'ref' => array('type'=>'varchar(12)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>-1, 'csslist'=>'tdoverflowmax150', 'showoncombobox'=>'1',),
-		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>25, 'notnull'=>0, 'visible'=>-1,),
-		'amount' => array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>-1,),
-		'statut' => array('type'=>'smallint(6)', 'label'=>'Statut', 'enabled'=>'1', 'position'=>500, 'notnull'=>0, 'visible'=>-1, 'arrayofkeyval'=>array(0=>'Wait', 1=>'Transfered', 2=>'Credited')),
-		'credite' => array('type'=>'smallint(6)', 'label'=>'Credite', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>-1,),
-		'note' => array('type'=>'text', 'label'=>'Note', 'enabled'=>'1', 'position'=>45, 'notnull'=>0, 'visible'=>-1,),
-		'date_trans' => array('type'=>'datetime', 'label'=>'Datetrans', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
-		'method_trans' => array('type'=>'smallint(6)', 'label'=>'Methodtrans', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1,),
-		'fk_user_trans' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fkusertrans', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>-1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150',),
-		'date_credit' => array('type'=>'datetime', 'label'=>'Datecredit', 'enabled'=>'1', 'position'=>65, 'notnull'=>0, 'visible'=>-1,),
-		'fk_user_credit' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fkusercredit', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>-1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150',),
-		'type' => array('type'=>'varchar(16)', 'label'=>'Type', 'enabled'=>'1', 'position'=>75, 'notnull'=>0, 'visible'=>-1,),
-		'fk_bank_account' => array('type'=>'integer', 'label'=>'Fkbankaccount', 'enabled'=>'1', 'position'=>80, 'notnull'=>0, 'visible'=>-1, 'css'=>'maxwidth500 widthcentpercentminusxx',),
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 0,),
+		'ref' => array('type' => 'varchar(12)', 'label' => 'Ref', 'enabled' => 1, 'position' => 15, 'notnull' => 0, 'visible' => -1, 'csslist' => 'tdoverflowmax150', 'showoncombobox' => 1,),
+		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 25, 'notnull' => 0, 'visible' => -1,),
+		'amount' => array('type' => 'double(24,8)', 'label' => 'Amount', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => -1,),
+		'statut' => array('type' => 'smallint(6)', 'label' => 'Statut', 'enabled' => 1, 'position' => 500, 'notnull' => 0, 'visible' => -1, 'arrayofkeyval' => array(0 => 'Wait', 1 => 'Transfered', 2 => 'Credited')),
+		'credite' => array('type' => 'smallint(6)', 'label' => 'Credite', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => -1,),
+		'note' => array('type' => 'text', 'label' => 'Note', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => -1,),
+		'date_trans' => array('type' => 'datetime', 'label' => 'Datetrans', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => -1,),
+		'method_trans' => array('type' => 'smallint(6)', 'label' => 'Methodtrans', 'enabled' => 1, 'position' => 55, 'notnull' => 0, 'visible' => -1,),
+		'fk_user_trans' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkusertrans', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'date_credit' => array('type' => 'datetime', 'label' => 'Datecredit', 'enabled' => 1, 'position' => 65, 'notnull' => 0, 'visible' => -1,),
+		'fk_user_credit' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkusercredit', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'type' => array('type' => 'varchar(16)', 'label' => 'Type', 'enabled' => 1, 'position' => 75, 'notnull' => 0, 'visible' => -1,),
+		'fk_bank_account' => array('type' => 'integer', 'label' => 'Fkbankaccount', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx',),
 	);
 	public $rowid;
 	public $ref;
@@ -170,6 +175,9 @@ class BonPrelevement extends CommonObject
 	public $credite;
 	public $note;
 	public $date_trans;
+	/**
+	 * @var int Current transport method, index to $methodes_trans
+	 */
 	public $method_trans;
 	public $fk_user_trans;
 	public $date_credit;
@@ -315,7 +323,7 @@ class BonPrelevement extends CommonObject
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
 			} else {
-				$result = -1;
+				$result = -1;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 			}
 		} else {
 			/*
@@ -665,7 +673,7 @@ class BonPrelevement extends CommonObject
 	 *
 	 *	@param	User		$user		Id of user
 	 *	@param 	int			$date		Date of action
-	 *	@param	string		$method		Method of transmission to bank (0=Internet, 1=Api...)
+	 *	@param	int			$method		Method of transmission to bank (0=Internet, 1=Api...)
 	 *	@return	int						>0 if OK, <0 if KO
 	 */
 	public function set_infotrans($user, $date, $method)
@@ -1565,7 +1573,7 @@ class BonPrelevement extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('banktransferdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1648,7 +1656,7 @@ class BonPrelevement extends CommonObject
 
 			dol_syslog("adnotiff: ".$sql);
 			if ($this->db->query($sql)) {
-				$result = 0;
+				$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 			} else {
 				$result = -1;
 				dol_syslog(get_class($this)."::addNotification Error $result");
@@ -2057,7 +2065,7 @@ class BonPrelevement extends CommonObject
 	 *	@param	float	$amount			amount
 	 *	@param	string	$ref		ref of invoice
 	 *	@param	int		$facid			id of invoice
-	 *  @param	string	$rib_dom		rib domiciliation
+	 *  @param	string	$rib_dom		bank address
 	 *  @param	string	$type			'direct-debit' or 'bank-transfer'
 	 *	@return	void
 	 *  @see EnregDestinataireSEPA()
@@ -2082,9 +2090,9 @@ class BonPrelevement extends CommonObject
 
 		fwrite($this->file, substr(strtoupper($client_nom)."                         ", 0, 24));
 
-		// Domiciliation facultative D1
-		$domiciliation = strtr($rib_dom, array(" " => "-", chr(13) => " ", chr(10) => ""));
-		fwrite($this->file, substr($domiciliation."                         ", 0, 24));
+		// Address optional D1
+		$address = strtr($rib_dom, array(" " => "-", chr(13) => " ", chr(10) => ""));
+		fwrite($this->file, substr($address."                         ", 0, 24));
 
 		// Zone Reservee D2
 
@@ -2133,9 +2141,9 @@ class BonPrelevement extends CommonObject
 	 *	@param	string		$row_cb				pl.code_banque AS cb,		Not used for SEPA
 	 *	@param	string		$row_cg				pl.code_guichet AS cg,		Not used for SEPA
 	 *	@param	string		$row_cc				pl.number AS cc,			Not used for SEPA
-	 *	@param	string		$row_somme			pl.amount AS somme,
+	 *	@param	float		$row_somme			pl.amount AS somme,
 	 *	@param	string		$row_ref			Invoice ref (f.ref) or Salary ref
-	 *	@param	string		$row_idfac			p.fk_facture AS idfac or p.fk_facture_fourn or p.fk_salary,
+	 *	@param	int			$row_idfac			p.fk_facture AS idfac or p.fk_facture_fourn or p.fk_salary,
 	 *	@param	string		$row_iban			rib.iban_prefix AS iban,
 	 *	@param	string		$row_bic			rib.bic AS bic,
 	 *	@param	string		$row_datec			rib.datec,
@@ -2171,7 +2179,7 @@ class BonPrelevement extends CommonObject
 			// Add EndToEndId. Must be a unique ID for each payment (for example by including bank, buyer or seller, date, checksum)
 			$XML_DEBITOR .= '					<EndToEndId>'.((getDolGlobalString('PRELEVEMENT_END_TO_END') != "") ? $conf->global->PRELEVEMENT_END_TO_END : ('DD-'.dol_trunc($row_idfac.'-'.$row_ref, 20, 'right', 'UTF-8', 1)).'-'.$Rowing).'</EndToEndId>'.$CrLf; // ISO20022 states that EndToEndId has a MaxLength of 35 characters
 			$XML_DEBITOR .= '				</PmtId>'.$CrLf;
-			$XML_DEBITOR .= '				<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
+			$XML_DEBITOR .= '				<InstdAmt Ccy="EUR">'.round((float) $row_somme, 2).'</InstdAmt>'.$CrLf;
 			$XML_DEBITOR .= '				<DrctDbtTx>'.$CrLf;
 			$XML_DEBITOR .= '					<MndtRltdInf>'.$CrLf;
 			$XML_DEBITOR .= '						<MndtId>'.$Rum.'</MndtId>'.$CrLf;
@@ -2236,7 +2244,7 @@ class BonPrelevement extends CommonObject
 				$XML_CREDITOR .= '				</PmtTpInf>' . $CrLf;
 			}
 			$XML_CREDITOR .= '				<Amt>'.$CrLf;
-			$XML_CREDITOR .= '					<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
+			$XML_CREDITOR .= '					<InstdAmt Ccy="EUR">'.round((float) $row_somme, 2).'</InstdAmt>'.$CrLf;
 			$XML_CREDITOR .= '				</Amt>'.$CrLf;
 			/*
 			 $XML_CREDITOR .= '				<DrctDbtTx>'.$CrLf;
@@ -2762,7 +2770,7 @@ class BonPrelevement extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="amount">'.price($this->total).'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

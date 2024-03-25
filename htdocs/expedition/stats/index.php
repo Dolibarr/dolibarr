@@ -32,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid = GETPOST('userid', 'int');
-$socid = GETPOST('socid', 'int');
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
 // Security check
 if ($user->socid > 0) {
 	$action = '';

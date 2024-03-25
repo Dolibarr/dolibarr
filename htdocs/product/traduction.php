@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'languages'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -329,7 +329,7 @@ if ($action == 'add' && ($user->hasRight('produit', 'creer') || $user->hasRight(
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="vadd">';
-	print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">';
+	print '<input type="hidden" name="id" value="'.GETPOSTINT("id").'">';
 
 	print dol_get_fiche_head();
 

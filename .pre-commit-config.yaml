@@ -1,18 +1,34 @@
 ---
-exclude: (?x)^( htdocs/includes/ckeditor/.* )
+exclude: (?x)^( htdocs/includes/ckeditor/.*|(\.[^/]*/.*))$
 repos:
   # Several miscellaneous checks and fix (on yaml files, end of files fix)
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
+      # This hook tests the name of the branch and return an error if the name is
+      #  'develop' or an official version 'x.y'
+      # So you can't commit if your branch name is not a custom branch name.
+      # Using a custom branch name is good practice that makes it easier to manage PRs.
+      # You can skip this:
+      #  - Permanently:
+      #      export SKIP=no-commit-to-branch   # In your .bashrc or session.
+      #  - Only this for one commit:
+      #      SKIP=no-commit-to-branch git commit -a -m "My message"
+      #  - Skipping all checks for a commit:
+      #      git commit -a -m "My message" --no-verify
+      #      (Recommendation: run git commit -a .. once, then with `--no-verify`)
       - id: no-commit-to-branch
         args: [--branch, develop, --pattern, \d+.0]
+      # This checks that xml files are correct
       - id: check-xml
         exclude: |
           (?x)^(htdocs/includes/.*)$
+      # This checks that yaml files are correct
       - id: check-yaml
         args: [--unsafe]
+      # This checks that json files are correct
       - id: check-json
+      # Fixes Fix files that have DOS end of line endings
       - id: mixed-line-ending
         # alternative for dev/tools/fixdosfiles.sh
         exclude: |
@@ -20,18 +36,25 @@ repos:
                |.*/CRLF.*.php  # Files in swiftmailer
                )$
         args: [--fix=lf]
+      # Remove trailing whitespace
       - id: trailing-whitespace
         exclude_types: [markdown]
+      # Fix the end of file
       - id: end-of-file-fixer
+      # Check that there are no completely merged file conflicts
       - id: check-merge-conflict
+      # Check that files with shebangs have the executable bit set (in git)
       - id: check-executables-have-shebangs
+      # Check that shell files are executables
       - id: check-shebang-scripts-are-executable
         exclude:
           (?x)^( dev/tools/dolibarr-postgres2mysql.php |test/other/test_serialize.php
           |test/phpunit/textutf8.txt |test/phpunit/textiso.txt |htdocs/includes/.*
           |htdocs/modulebuilder/template/.* |build/debian/dolibarr.postrm |build/debian/dolibarr.postinst
           |build/debian/dolibarr.config )$
+      # Fix the first UTF8 byte
       - id: fix-byte-order-marker
+      # Check that there are no files that have are the same when uppercased (conflict on windows)
       - id: check-case-conflict
 
   # Beautify shell scripts
@@ -39,21 +62,30 @@ repos:
     rev: v6.2.1
     hooks:
       - id: beautysh
-        exclude: (?x)^(dev/setup/git/hooks/pre-commit)$
+        exclude: |
+          (?x)^(dev/setup/git/hooks/pre-commit
+               )$
         args: [--tab]
 
   # Run local script
   #
-  # For instance to update the license in edited files, you could add to local.sh:
+  # For example, to update the license in edited files, you could add to local.sh:
   #
   #   ```shell
-  #  #!/bin/bash
+  #   #!/bin/bash
   #   MYDIR=$(dirname "$0")
   #   git diff HEAD --name-only | grep -v includes | \
   #       xargs "$MYDIR/dev/tools/updatelicense.php"
   #   ```
   - repo: local
     hooks:
+      - name: Find missing/unused/duplicate language keys
+        id: check-translations
+        files: (?x)^(htdocs/langs/en_US/.*\.lang)
+        language: script
+        entry: ./dev/translation/sanity_check_trans_missing_unused.sh
+        pass_filenames: false
+        args: [list]
       - id: local-precommit-script
         name: Run local script before commit if it exists
         language: system
@@ -86,7 +118,7 @@ repos:
 
   # Check PHP syntax
   - repo: https://github.com/mdeweerd/pre-commit-php
-    rev: v1.6.5
+    rev: v1.6.8
     hooks:
       - id: php-cbf
         files: \.(php)$
@@ -168,8 +200,6 @@ repos:
           - dev/tools/codespell/codespell-ignore.txt
           - -x
           - dev/tools/codespell/codespell-lines-ignore.txt
-          - --uri-ignore-words-list
-          - ned
         exclude_types: [image]
         exclude: (?x)^(.phan/stubs/.*)$
         additional_dependencies: [tomli]

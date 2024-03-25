@@ -20,6 +20,7 @@ ModulePartnershipName=Manajemen kemitraan
 PartnershipDescription=Modul Manajemen kemitraan
 PartnershipDescriptionLong= Modul Manajemen kemitraan
 Partnership=Kemitraan
+Partnerships=Partnerships
 AddPartnership=Tambahkan kemitraan
 CancelPartnershipForExpiredMembers=Kemitraan: Batalkan kemitraan anggota dengan langganan yang kedaluwarsa
 PartnershipCheckBacklink=Kemitraan: Periksa tautan balik rujukan
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Kemitraan: Periksa tautan balik rujukan
 # Menu
 #
 NewPartnership=Kemitraan Baru
+NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
 ListOfPartnerships=Daftar kemitraan
 
 #
@@ -36,12 +38,13 @@ ListOfPartnerships=Daftar kemitraan
 PartnershipSetup=Pengaturan kemitraan
 PartnershipAbout=Tentang Kemitraan
 PartnershipAboutPage=Halaman tentang kemitraan
-partnershipforthirdpartyormember=Status mitra harus ditetapkan pada 'pihak ketiga' atau 'anggota'
+partnershipforthirdpartyormember=Partner status must be set on a 'third party' or a 'member'
 PARTNERSHIP_IS_MANAGED_FOR=Kemitraan dikelola untuk
 PARTNERSHIP_BACKLINKS_TO_CHECK=Tautan balik untuk diperiksa
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Jumlah hari sebelum membatalkan status kemitraan ketika langganan telah kedaluwarsa
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before canceling status of a partnership when a subscription has expired
 ReferingWebsiteCheck=Periksa referensi situs web
 ReferingWebsiteCheckDesc=Anda dapat mengaktifkan fitur untuk memeriksa apakah mitra Anda telah menambahkan tautan balik ke domain situs web Anda di situs web mereka sendiri.
+PublicFormRegistrationPartnerDesc=Dolibarr can provide you a public URL/website to allow external visitors to request to be part of the partnership program.
 
 #
 # Object
@@ -52,13 +55,19 @@ PartnershipDedicatedToThisMember=Kemitraan yang didedikasikan untuk anggota ini
 DatePartnershipStart=Tanggal mulai
 DatePartnershipEnd=Tanggal Akhir
 ReasonDecline=Alasan penolakan
-ReasonDeclineOrCancel=Alasan penolakan
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=Kemitraan sudah ada
 ManagePartnership=Kelola kemitraan
 BacklinkNotFoundOnPartnerWebsite=Tautan balik tidak ditemukan di situs web mitra
 ConfirmClosePartnershipAsk=Anda yakin ingin membatalkan kemitraan ini?
 PartnershipType=Jenis kemitraan
 PartnershipRefApproved=Partnership %s approved
+KeywordToCheckInWebsite=If you want to check that a given keyword is present into the website of each partner, define this keyword here
+PartnershipDraft=Konsep
+PartnershipAccepted=Diterima
+PartnershipRefused=Ditolak
+PartnershipCanceled=Dibatalkan
+PartnershipManagedFor=Mitra adalah
 
 #
 # Template Mail
@@ -73,20 +82,17 @@ YourPartnershipRefusedTopic=Kemitraan ditolak
 YourPartnershipAcceptedTopic=Kemitraan diterima
 YourPartnershipCanceledTopic=Kemitraan dibatalkan
 
-YourPartnershipWillSoonBeCanceledContent=Kami informasikan bahwa kemitraan Anda akan segera dibatalkan (Tautan balik tidak ditemukan)
-YourPartnershipRefusedContent=Kami memberi tahu Anda bahwa permintaan kemitraan Anda telah ditolak.
-YourPartnershipAcceptedContent=Kami menginformasikan bahwa permintaan kemitraan Anda telah diterima.
-YourPartnershipCanceledContent=Kami memberi tahu Anda bahwa kemitraan Anda telah dibatalkan.
+YourPartnershipWillSoonBeCanceledContent=We would like to inform you that our partnership will soon be canceled (we did not get renewal or a prerequisite for our partnership have not been met). Please contact us if you received this due to an error.
+YourPartnershipRefusedContent=We would like to inform you that your partnership request has been refused. Prerequisites have not been met. Please contact us if you need more information.
+YourPartnershipAcceptedContent=We would like to inform you that your partnership request has been accepted.
+YourPartnershipCanceledContent=We would like to inform you that our partnership has been canceled. Please contact us if you need more information.
 
 CountLastUrlCheckError=Jumlah kesalahan untuk pemeriksaan URL terakhir
 LastCheckBacklink=Tanggal pemeriksaan URL terakhir
-ReasonDeclineOrCancel=Alasan penolakan
 
-#
-# Status
-#
-PartnershipDraft=Konsep
-PartnershipAccepted=Diterima
-PartnershipRefused=Ditolak
-PartnershipCanceled=Dibatalkan
-PartnershipManagedFor=Mitra adalah
+NewPartnershipRequest=New partnership request
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=This page must contains at least one link to one of the following domain: %s
+
+IPOfApplicant=IP of applicant
+

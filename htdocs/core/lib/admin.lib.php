@@ -4,6 +4,7 @@
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -543,7 +544,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 	if ($error == 0) {
 		$ok = 1;
 	} else {
-		$ok = 0;
+		$ok = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 	}
 
 	return $ok;
@@ -992,7 +993,7 @@ function defaultvalues_prepare_head()
 /**
  * 	Return list of session
  *
- *	@return		array			Array list of sessions
+ *  @return array<string,array{login:string,age:int,creation:int,modification:int,raw:string}>	Array list of sessions
  */
 function listOfSessions()
 {
@@ -1101,7 +1102,7 @@ function purgeSessions($mysessionid)
  *  @param      string		$value      			Name of module to activate
  *  @param      int			$withdeps  				Activate/Disable also all dependencies
  * 	@param		int			$noconfverification		Remove verification of $conf variable for module
- *  @return     array      			    			array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
+ *  @return     array{nbmodules?:int,errors:string[],nbperms?:int}	array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
  */
 function activateModule($value, $withdeps = 1, $noconfverification = 0)
 {
@@ -1111,11 +1112,11 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 
 	// Check parameters
 	if (empty($value)) {
-		$ret['errors'][] = 'ErrorBadParameter';
+		$ret['errors'] = array('ErrorBadParameter');
 		return $ret;
 	}
 
-	$ret = array('nbmodules'=>0, 'errors'=>array(), 'nbperms'=>0);
+	$ret = array('nbmodules' => 0, 'errors' => array(), 'nbperms' => 0);
 	$modName = $value;
 	$modFile = $modName.".class.php";
 
@@ -1552,7 +1553,7 @@ function activateModulesRequiredByCountry($country_code)
 /**
  *  Search external modules to complete the list of contact element
  *
- * 	@param		array		$elementList			elementList
+ * 	@param		array<string,string>	$elementList			elementList
  * 	@return		int			1
  */
 function complete_elementList_with_modules(&$elementList)
@@ -1655,14 +1656,14 @@ function complete_elementList_with_modules(&$elementList)
 /**
  *	Show array with constants to edit
  *
- *	@param	array	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
- *									where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
- *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all, 3=No form nor button at all and each field has a unique name (form is output by caller, recommended)
+ *	@param	array<string,array{type:string,label:string}>	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
+ *                                                                          where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
+ *	@param	int<2,3>		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all, 3=No form nor button at all and each field has a unique name (form is output by caller, recommended)  (typed as int<2,3> to highlight the deprecated values)
  *  @param  string  $helptext       Tooltip help to use for the column name of values
  *  @param	string	$text			Text to use for the column name of values
  *	@return	void
  */
-function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Value')
+function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Value')
 {
 	global $db, $langs, $conf, $user;
 	global $_Avery_Labels;
@@ -1725,7 +1726,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 			$obj = $db->fetch_object($result); // Take first result of select
 
 			if (empty($obj)) {	// If not yet into table
-				$obj = (object) array('rowid'=>'', 'name'=>$const, 'value'=>'', 'type'=>$type, 'note'=>'');
+				$obj = (object) array('rowid' => '', 'name' => $const, 'value' => '', 'type' => $type, 'note' => '');
 			}
 
 			if (empty($strictw3c)) {
@@ -1769,7 +1770,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 				print 'mymailmanlist<br>';
 				print 'mymailmanlist1,mymailmanlist2<br>';
 				print 'TYPE:Type1:mymailmanlist1,TYPE:Type2:mymailmanlist2<br>';
-				if (isModEnabled('categorie')) {
+				if (isModEnabled('category')) {
 					print 'CATEG:Categ1:mymailmanlist1,CATEG:Categ2:mymailmanlist2<br>';
 				}
 				print '</div>';
@@ -1865,8 +1866,8 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 /**
  *	Show array with constants to edit
  *
- *	@param	array	$modules		Array of all modules
- *	@return	string					HTML string with warning
+ *	@param	DolibarrModules[]	$modules	Array of all modules
+ *	@return	string							HTML string with warning
  */
 function showModulesExludedForExternal($modules)
 {

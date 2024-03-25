@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,14 +46,14 @@ $langs->loadLangs(array('receptions', 'companies', 'other'));
 
 $action		= GETPOST('action', 'aZ09');
 $confirm	= GETPOST('confirm');
-$id			= GETPOST('id', 'int');
+$id			= GETPOSTINT('id');
 $ref		= GETPOST('ref');
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -73,15 +74,15 @@ if ($id > 0 || !empty($ref)) {
 
 	if (!empty($object->origin)) {
 		$origin = $object->origin;
+		$typeobject = $object->origin;
 
 		$object->fetch_origin();
-		$typeobject = $object->origin;
 	}
 
 	// Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && isModEnabled("supplier_order")) {
+	if ($origin == 'order_supplier' && $object->origin_object->id && isModEnabled("supplier_order")) {
 		$objectsrc = new CommandeFournisseur($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($object->origin_object->id);
 	}
 
 	$upload_dir = $conf->reception->dir_output."/".dol_sanitizeFileName($object->ref);

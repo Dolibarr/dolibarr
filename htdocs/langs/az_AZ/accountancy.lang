@@ -287,7 +287,7 @@ TotalVente=Vergidən əvvəl ümumi dövriyyə
 TotalMarge=Ümumi satış marjası
 
 DescVentilCustomer=Hesab planından məhsul hesabına bağlı (və ya olmayan) müştəri hesab-faktura xətlərinin siyahısına burada müraciət edin
-DescVentilMore=Əksər hallarda, siz əvvəlcədən təyin edilmiş məhsul və ya xidmətlərdən istifadə edirsinizsə və məhsul/xidmət kartında hesabı (hesab planından) təyin edirsinizsə, proqram faktura xətlərinizlə qrafikinizin mühasibat hesabı arasında bütün bəndləri həyata keçirə biləcək. yalnız bir kliklə <strong>"%s"b0a65d071f6spanfc90z >. Hesab məhsul/xidmət kartlarında qurulmayıbsa və ya hələ də hesaba bağlı olmayan bəzi xətləriniz varsa, "<span class='notranslate'><strong><span menyusundan əl ilə bağlama etməli olacaqsınız. class='notranslate'>%s</span></strong>".
+DescVentilMore=In most cases, if you use predefined products or services and you set the account (from chart of account) on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneCustomer=Müştərilərin hesab-faktura sətirlərinin siyahısı və onların hesab planından məhsul hesabı ilə buradan tanış olun
 DescVentilTodoCustomer=Hesab cədvəlindən məhsul hesabı ilə artıq bağlı olmayan faktura xətlərini bağlayın
 ChangeAccount=Seçilmiş xətlər üçün məhsul/xidmət hesabını (hesab planından) aşağıdakı hesabla dəyişdirin:
@@ -296,7 +296,7 @@ DescVentilSupplier=Hesab planından məhsul hesabına bağlı və ya hələ bağ
 DescVentilDoneSupplier=Burada satıcı hesab-fakturalarının sətirlərinin siyahısı və onların mühasibat hesabı ilə tanış olun
 DescVentilTodoExpenseReport=Artıq ödəniş mühasibat hesabı ilə əlaqələndirilməyən xərc hesabatı xətlərini birləşdirin
 DescVentilExpenseReport=Bir haqq mühasibat hesabına bağlı (və ya olmayan) xərc hesabatı xətlərinin siyahısına burada müraciət edin
-DescVentilExpenseReportMore=Xərc hesabatı sətirlərinin növü üzrə mühasibat hesabı qurarsanız, proqram <span class='notranslate düyməsi ilə bir kliklə xərc hesabatı xətləri ilə hesablar planınızın mühasibat hesabı arasında bütün əlaqəni həyata keçirə biləcək. '><strong></span>"%s"</strong>. Əgər haqq-hesab rüsumlar lüğətində qurulmayıbsa və ya hələ də hər hansı hesaba bağlı olmayan bəzi sətirləriniz varsa, "<strong><span class=" menyusundan əl ilə bağlama etməli olacaqsınız. 'notranslate'>%s</span></strong>".
+DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still have some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Xərc hesabatlarının sətirlərinin siyahısı və onların haqlarının uçotu hesabı ilə buradan tanış olun
 
 Closure=İllik bağlanma
@@ -335,7 +335,6 @@ CategoryDeleted=Mühasibat hesabı üçün kateqoriya silindi
 AccountingJournals=Mühasibat jurnalları
 AccountingJournal=Mühasibat jurnalı
 NewAccountingJournal=Yeni mühasibat jurnalı
-ShowAccountingJournal=Mühasibat jurnalını göstərin
 NatureOfJournal=Jurnalın təbiəti
 AccountingJournalType1=Müxtəlif əməliyyatlar
 AccountingJournalType2=Satış
@@ -353,7 +352,7 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Satış üzrə mühasibatlıqda məcburi və
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Satınalmalar üzrə mühasibatlıqda məcburi və köçürməni aradan buraxın (satıcı fakturaları mühasibat uçotunda nəzərə alınmayacaq)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Xərc hesabatlarında mühasibatlıqda məcburi və köçürməni aradan buraxın (xərc hesabatları mühasibat uçotunda nəzərə alınmayacaq)
 ACCOUNTING_ENABLE_LETTERING=Mühasibat uçotunda yazı funksiyasını aktivləşdirin
-ACCOUNTING_ENABLE_LETTERING_DESC=Bu seçimlər aktiv olduqda, siz hər bir mühasibat qeydində kod təyin edə bilərsiniz ki, müxtəlif uçot hərəkətlərini birlikdə qruplaşdıra biləsiniz. Keçmişdə müxtəlif jurnallar müstəqil idarə olunanda bu xüsusiyyət müxtəlif jurnalların hərəkət xətlərini bir yerdə qruplaşdırmaq üçün lazım idi. Bununla belə, Dolibarr mühasibatlığı ilə belə bir izləmə kodu "<b>%s<span class='notranslate'>b09a4b739fz01f adlanır. span>" artıq avtomatik olaraq yadda saxlanılır, ona görə də avtomatik hərf artıq yerinə yetirilib, xəta riski olmadan bu funksiya ümumi istifadə üçün yararsız hala düşüb. Əl ilə yazı funksiyası mühasibatlıqda məlumatların ötürülməsini həyata keçirən kompüter mühərrikinə həqiqətən etibar etməyən son istifadəçilər üçün nəzərdə tutulub.
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
 EnablingThisFeatureIsNotNecessary=Bu funksiyanı aktivləşdirmək daha ciddi mühasibat uçotu idarəçiliyi üçün lazım deyil.
 ACCOUNTING_ENABLE_AUTOLETTERING=Mühasibat uçotuna köçürərkən avtomatik hərfləri aktivləşdirin
 ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Yazı üçün kod avtomatik olaraq yaradılır və artırılır və son istifadəçi tərəfindən seçilmir
@@ -361,7 +360,7 @@ ACCOUNTING_LETTERING_NBLETTERS=Hərf kodu yaradan zaman hərflərin sayı (stand
 ACCOUNTING_LETTERING_NBLETTERS_DESC=Bəzi mühasibat proqramları yalnız iki hərfli kodu qəbul edir. Bu parametr bu aspekti təyin etməyə imkan verir. Hərflərin standart sayı üçdür.
 OptionsAdvanced=Təkmilləşmiş Seçimlər
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Təchizatçı alışlarında ƏDV-nin əks ödənişinin idarə edilməsini aktivləşdirin
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Bu seçim aktiv olduqda, tədarükçünün və ya verilmiş satıcı hesab-fakturasının fərqli şəkildə mühasibat uçotuna köçürülməli olduğunu müəyyən edə bilərsiniz: "<"-də müəyyən edilmiş hesab planından 2 verilmiş hesab üzrə mühasibat uçotuna əlavə debet və kredit xətti yaradılacaq. span class='notranslate'>%s</span>" quraşdırma səhifəsi.
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
 ## Export
 NotExportLettering=Fayl yaradarkən hərfləri ixrac etməyin
@@ -446,8 +445,8 @@ AccountancyOneUnletteringModifiedSuccessfully=Bir barışdırılma uğurla dəyi
 AccountancyUnletteringModifiedSuccessfully=%s barışdırmaq uğurla dəyişdirildi
 
 ## Closure
-AccountancyClosureStep1=Step 1 : Validate and lock the movements
-AccountancyClosureStep2=Step 2 : Close the fiscal period
+AccountancyClosureStep1=Addım 1: Hərəkətləri təsdiqləyin və kilidləyin
+AccountancyClosureStep2=Addım 2: Maliyyə dövrünü bağlayın
 AccountancyClosureStep3=Addım 3: Girişləri çıxarın (İstəyə görə)
 AccountancyClosureClose=Maliyyə dövrünü bağlayın
 AccountancyClosureAccountingReversal="Bölüşdürülməmiş mənfəət" qeydlərini çıxarın və qeyd edin

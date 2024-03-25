@@ -499,7 +499,7 @@ function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '',
  * Create an invoice
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Product		$product			Product
+ * @param	array		$product			Product
  * @return	array							Array result
  */
 function createProductOrService($authentication, $product)
@@ -665,7 +665,7 @@ function createProductOrService($authentication, $product)
  * Update a product or service
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Product		$product			Product
+ * @param	array		$product			Product
  * @return	array							Array result
  */
 function updateProductOrService($authentication, $product)

@@ -6,8 +6,9 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
- * Copyright (C) 2019-2020 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021      Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -234,7 +235,7 @@ class Don extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -283,7 +284,9 @@ class Don extends CommonObject
 		$this->email = 'email@email.com';
 		$this->phone = '0123456789';
 		$this->phone_mobile = '0606060606';
-		$this->statut = 1;
+		$this->status = 1;
+
+		return 1;
 	}
 
 
@@ -333,9 +336,9 @@ class Don extends CommonObject
 		$this->amount = (float) $this->amount;
 
 		$map = range(0, 9);
-		$len = dol_strlen($this->amount);
+		$len = dol_strlen((string) $this->amount);
 		for ($i = 0; $i < $len; $i++) {
-			if (!isset($map[substr($this->amount, $i, 1)])) {
+			if (!isset($map[substr((string) $this->amount, $i, 1)])) {
 				$error_string[] = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Amount'));
 				$err++;
 				$amount_invalid = 1;
@@ -349,7 +352,7 @@ class Don extends CommonObject
 				$err++;
 			} else {
 				if ($this->amount < $minimum && $minimum > 0) {
-					$error_string[] = $langs->trans('MinimumAmount', $langs->transnoentitiesnoconv('$minimum'));
+					$error_string[] = $langs->trans('MinimumAmount', $minimum);
 					$err++;
 				}
 			}
@@ -380,11 +383,11 @@ class Don extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->address = ($this->address > 0 ? $this->address : $this->address);
-		$this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
-		$this->town = ($this->town > 0 ? $this->town : $this->town);
-		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
-		$this->country = ($this->country ? $this->country : $this->country);
+		// $this->address = ($this->address > 0 ? $this->address : $this->address);
+		// $this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
+		// $this->town = ($this->town > 0 ? $this->town : $this->town);
+		// $this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
+		// $this->country = ($this->country ? $this->country : $this->country);
 		$this->amount = (float) price2num($this->amount);
 
 		// Check parameters
@@ -497,11 +500,11 @@ class Don extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->address = ($this->address > 0 ? $this->address : $this->address);
-		$this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
-		$this->town = ($this->town > 0 ? $this->town : $this->town);
-		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
-		$this->country = ($this->country ? $this->country : $this->country);
+		// $this->address = ($this->address > 0 ? $this->address : $this->address);
+		// $this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
+		// $this->town = ($this->town > 0 ? $this->town : $this->town);
+		// $this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
+		// $this->country = ($this->country ? $this->country : $this->country);
 		$this->amount = (float) price2num($this->amount);
 
 		// Check parameters
@@ -723,6 +726,7 @@ class Don extends CommonObject
 	 */
 	public function setValid($user, $notrigger = 0)
 	{
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		return $this->valid_promesse($this->id, $user->id, $notrigger);
 	}
 
@@ -955,7 +959,7 @@ class Don extends CommonObject
 		$result .= $linkend;
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

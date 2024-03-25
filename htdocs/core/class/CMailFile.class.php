@@ -7,6 +7,7 @@
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,7 @@
 
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
+
 
 /**
  *	Class to send emails (with attachments or not)
@@ -80,19 +82,20 @@ class CMailFile
 	 */
 	public $errors = array();
 
-	public $smtps; // Contains SMTPs object (if this method is used)
-	public $phpmailer; // Contains PHPMailer object (if this method is used)
+
+	/**
+	 * @var SMTPS (if this method is used)
+	 */
+	public $smtps;
+	/**
+	 * @var Swift_Mailer (if the method is used)
+	 */
+	public $mailer;
 
 	/**
 	 * @var Swift_SmtpTransport
 	 */
 	public $transport;
-
-	/**
-	 * @var Swift_Mailer
-	 */
-	public $mailer;
-
 	/**
 	 * @var Swift_Plugins_Loggers_ArrayLogger
 	 */
@@ -107,9 +110,13 @@ class CMailFile
 	//! Defined background directly in body tag
 	public $bodyCSS;
 
+	/**
+	 * @var string	Message-ID of the email to send (generated)
+	 */
 	public $msgid;
 	public $headers;
 	public $message;
+
 	/**
 	 * @var array fullfilenames list (full path of filename on file system)
 	 */
@@ -197,7 +204,7 @@ class CMailFile
 			}
 		}
 		if (empty($this->sendmode)) {
-			$this->sendmode = (getDolGlobalString('MAIN_MAIL_SENDMODE') ? $conf->global->MAIN_MAIL_SENDMODE : 'mail');
+			$this->sendmode = getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail');
 		}
 
 		// Add a Feedback-ID. Must be used for stats on spam report only.
@@ -261,6 +268,7 @@ class CMailFile
 		if (getDolGlobalString('MAIN_MAIL_FORCE_CONTENT_TYPE_TO_HTML')) {
 			$this->msgishtml = 1; // To force to send everything with content type html.
 		}
+		dol_syslog("CMailFile::CMailfile: msgishtml=".$this->msgishtml);
 
 		// Detect images
 		if ($this->msgishtml) {
@@ -273,7 +281,7 @@ class CMailFile
 				// This converts an embed file with src="/viewimage.php?modulepart... into a cid link
 				// TODO Exclude viewimage used for the read tracker ?
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
-				if ($findimg<0) {
+				if ($findimg < 0) {
 					dol_syslog("CMailFile::CMailfile: Error on findHtmlImages");
 					$this->error = 'ErrorInAddAttachementsImageBaseOnMedia';
 					return;
@@ -284,8 +292,8 @@ class CMailFile
 				// Search into the body for <img src="data:image/ext;base64,..." to replace them with an embedded file
 				// This convert an embedded file with src="data:image... into a cid link + attached file
 				$resultImageData = $this->findHtmlImagesIsSrcData($upload_dir_tmp);
-				if ($resultImageData<0) {
-					dol_syslog("CMailFile::CMailfile: Error on findHtmlImagesInSrcData");
+				if ($resultImageData < 0) {
+					dol_syslog("CMailFile::CMailfile: Error on findHtmlImagesInSrcData code=".$resultImageData." upload_dir_tmp=".$upload_dir_tmp);
 					$this->error = 'ErrorInAddAttachementsImageBaseOnMedia';
 					return;
 				}
@@ -387,7 +395,7 @@ class CMailFile
 			$addr_cc = implode(',', $tabcc);
 
 			//Verify for $addr_bcc
-			$replacebcc= false;
+			$replacebcc = false;
 			$tabbcc = explode(',', $addr_bcc);
 			foreach ($tabbcc as $key => $bcc) {
 				if (in_array($bcc, $tabbcc)) {
@@ -523,7 +531,7 @@ class CMailFile
 					$this->buildCSS();
 				}
 				$msg = $this->html;
-				$msg = $this->checkIfHTML($msg);
+				$msg = $this->checkIfHTML($msg);		// This add a header and a body including custom CSS to the HTML content
 			}
 
 			// Replace . alone on a new line with .. to avoid to have SMTP interpret this as end of message
@@ -577,12 +585,15 @@ class CMailFile
 			//$this->message = new Swift_SignedMessage();
 			// Adding a trackid header to a message
 			$headers = $this->message->getHeaders();
+
 			$headers->addTextHeader('X-Dolibarr-TRACKID', $this->trackid.'@'.$host);
 			$this->msgid = time().'.swiftmailer-dolibarr-'.$this->trackid.'@'.$host;
 			$headerID = $this->msgid;
 			$msgid = $headers->get('Message-ID');
 			$msgid->setId($headerID);
-			$headers->addIdHeader('References', $headerID);
+
+			// Add 'References:' header
+			//$headers->addIdHeader('References', $headerID);
 
 			if (!empty($moreinheader)) {
 				$moreinheaderarray = preg_split('/[\r\n]+/', $moreinheader);
@@ -661,7 +672,7 @@ class CMailFile
 					$this->buildCSS();
 				}
 				$msg = $this->html;
-				$msg = $this->checkIfHTML($msg);
+				$msg = $this->checkIfHTML($msg);		// This add a header and a body including custom CSS to the HTML content
 			}
 
 			if ($this->atleastoneimage) {
@@ -725,11 +736,12 @@ class CMailFile
 		}
 	}
 
-
 	/**
 	 * Send mail that was prepared by constructor.
 	 *
-	 * @return    boolean     True if mail sent, false otherwise
+	 * @return    bool	True if mail sent, false otherwise.  Negative int if error in hook.  String if incorrect send mode.
+	 *
+	 * @phan-suppress PhanTypeMismatchReturnNullable  False positif by phan for unclear reason.
 	 */
 	public function sendfile()
 	{
@@ -754,7 +766,7 @@ class CMailFile
 				$this->error = "Error in hook maildao sendMail ".$reshook;
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 
-				return $reshook;
+				return false;
 			}
 			if ($reshook == 1) {	// Hook replace standard code
 				return true;
@@ -1117,7 +1129,7 @@ class CMailFile
 					$result = $this->smtps->getErrors();	// applicative error code (not SMTP error code)
 					if (empty($this->error) && empty($result)) {
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
-						$res = true;
+						$res = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 					} else {
 						if (empty($this->error)) {
 							$this->error = $result;
@@ -1282,7 +1294,8 @@ class CMailFile
 				// Send mail method not correctly defined
 				// --------------------------------------
 
-				return 'Bad value for sendmode';
+				$this->error = 'Bad value for sendmode';
+				return false;
 			}
 
 			// Now we delete image files that were created dynamically to manage data inline files
@@ -1299,7 +1312,7 @@ class CMailFile
 				$this->error = "Error in hook maildao sendMailAfter ".$reshook;
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 
-				return $reshook;
+				return false;
 			}
 		} else {
 			$this->error = 'No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
@@ -1533,7 +1546,7 @@ class CMailFile
 			// References is kept in response and Message-ID is returned into In-Reply-To:
 			$this->msgid = time().'.phpmail-dolibarr-'.$trackid.'@'.$host;
 			$out .= 'Message-ID: <'.$this->msgid.">".$this->eol2; // Uppercase seems replaced by phpmail
-			$out .= 'References: <'.$this->msgid.">".$this->eol2;
+			//$out .= 'References: <'.$this->msgid.">".$this->eol2;
 			$out .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host.$this->eol2;
 		} else {
 			$this->msgid = time().'.phpmail@'.$host;
@@ -1623,7 +1636,7 @@ class CMailFile
 			$strContentAltText = trim(wordwrap($strContentAltText, 75, !getDolGlobalString('MAIN_FIX_FOR_BUGGED_MTA') ? "\r\n" : "\n"));
 
 			// Check if html header already in message, if not complete the message
-			$strContent = $this->checkIfHTML($strContent);
+			$strContent = $this->checkIfHTML($strContent);		// This add a header and a body including custom CSS to the HTML content
 		}
 
 		// Make RFC2045 Compliant, split lines
@@ -1687,7 +1700,7 @@ class CMailFile
 	 * @param	array	$mimetype_list		Tableau
 	 * @param 	array	$mimefilename_list	Tableau
 	 * @param	array	$cidlist			Array of CID if file must be completed with CID code
-	 * @return	string						String with files encoded
+	 * @return	string|int						String with files encoded
 	 */
 	private function write_files($filename_list, $mimetype_list, $mimefilename_list, $cidlist)
 	{
@@ -1968,8 +1981,15 @@ class CMailFile
 	{
 		global $conf;
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 		// Build the array of image extensions
 		$extensions = array_keys($this->image_types);
+
+		if (empty($images_dir)) {
+			//$images_dir = $conf->admin->dir_output.'/temp/'.uniqid('cmailfile');
+			$images_dir = $conf->admin->dir_output.'/temp/cmailfile';
+		}
 
 		if ($images_dir && !dol_is_dir($images_dir)) {
 			dol_mkdir($images_dir, DOL_DATA_ROOT);
@@ -1993,7 +2013,7 @@ class CMailFile
 		if (!empty($matches) && !empty($matches[1])) {
 			if (empty($images_dir)) {
 				// No temp directory provided, so we are not able to support conversion of data:image into physical images.
-				$this->error = 'NoTempDirProvidedInCMailConstructorSoCantConvertDataImgOnDisk';
+				$this->errors[] = 'NoTempDirProvidedInCMailConstructorSoCantConvertDataImgOnDisk';
 				return -1;
 			}
 
@@ -2015,7 +2035,7 @@ class CMailFile
 						dolChmod($destfiletmp);
 					} else {
 						$this->errors[] = "Failed to open file '".$destfiletmp."' for write";
-						return -1;
+						return -2;
 					}
 				}
 
@@ -2063,7 +2083,7 @@ class CMailFile
 
 		$ret = '';
 
-		$arrayaddress = explode(',', $address);
+		$arrayaddress = (!empty($address) ? explode(',', $address) : array());
 
 		// Boucle sur chaque composant de l'address
 		$i = 0;

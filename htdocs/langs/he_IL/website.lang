@@ -54,17 +54,17 @@ ReadPerm=לקרוא
 WritePerm=לִכתוֹב
 TestDeployOnWeb=בדיקה/פריסה באינטרנט
 PreviewSiteServedByWebServer=<u>תצוגה מקדימה של %s בכרטיסייה חדשה.</u><br><br>ה-%s יוגש על ידי שרת אינטרנט חיצוני (כמו Apache, Nginx, IIS ). עליך להתקין ולהגדיר את השרת הזה לפני כדי להצביע על הספרייה:<br><strong>%s span></strong><br>כתובת אתר מוגשת על ידי שרת חיצוני:<br><strong>%s</strong>
-PreviewSiteServedByDolibarr=<u>תצוגה מקדימה של %s בכרטיסייה חדשה.</u><br><br>ה-%s יוגש על ידי שרת Dolibarr כך שהוא לא צריך שום שרת אינטרנט נוסף (כמו Apache, Nginx, IIS) להתקנה.<br>הבלתי נוח הוא שכתובות האתרים של הדפים אינן ידידותיות למשתמש ומתחילות בנתיב של Dolibarr שלך.<br>כתובת אתר מוגשת על ידי Dolibarr:<br><strong><span class='notranslate2ec8b87b /span></strong><br><br>כדי להשתמש בשרת אינטרנט חיצוני משלך כדי שרת אתר אינטרנט זה, צור מארח וירטואלי בשרת האינטרנט שלך שמצביע על הספרייה<br><strong>%s</strong><br>ולאחר מכן הזן את השם של שרת וירטואלי זה במאפייני אתר זה ולחץ על קישור "בדוק/פרוס באינטרנט".
+PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To use your own external web server to serve this web site, create a virtual host on your web server that points on directory<br><strong>%s</strong><br>then enter the name of this virtual server in the properties of this website and click on the link "Test/Deploy on the web".
 VirtualHostUrlNotDefined=כתובת האתר של המארח הוירטואלי המוגש על ידי שרת אינטרנט חיצוני לא מוגדרת
 NoPageYet=עדיין אין דפים
 YouCanCreatePageOrImportTemplate=אתה יכול ליצור דף חדש או לייבא תבנית אתר מלאה
 SyntaxHelp=עזרה לגבי עצות תחביר ספציפיות
 YouCanEditHtmlSourceckeditor=אתה יכול לערוך קוד מקור HTML באמצעות כפתור "מקור" בעורך.
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> אתה יכול לכלול קוד PHP במקור זה באמצעות תגים <strong>&lt;?php ?&gt;<span class='01a665dcz01a665d> </span>. המשתנים הגלובליים הבאים זמינים: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> אתה יכול גם לכלול תוכן של דף/מיכל אחר עם התחביר הבא:<br><strong>&lt;?php includeContainer('alias_to_include'); ?&gt;</strong><br>b03492bzfcc<03192bzcc<fda /span><span class='notranslate'><span class="fa fa-bug"></span> אתה יכול לבצע הפניה מחדש לדף/מיכל אחר עם התחביר הבא (הערה: אין פלט תוכן לפני הפניה מחדש):<br><strong>&lt;?php('redirectToContainer alias_of_container_to_redirect_to'); ?&gt;</strong><br>b03492bzfcc<03192bzcc<fda /span><span class='notranslate'><span class="fa fa-link"></span> כדי להוסיף קישור לדף אחר, השתמש בתחביר:<br> <strong>&lt;a href="alias_of_page_to_link_to.php"b0012c7z0 >mylink<span class='notranslate'>&lt;a&gt;</strong> <br><br><span class="fa fa-download"></span> to include a <span ='notranslate'><strong>קישור להורדה</strong> קובץ המאוחסן במסמכי <strong> notranslate'></strong></span> בספרייה, השתמשו בספריית <strong>document.php</strong> class='notranslate' ><br></span>לדוגמה, עבור קובץ למסמכים/ecm (צריך להתחבר), התחביר הוא:<br><span class='nospanlate'><strong></span> >&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>עבור קובץ למסמכים/מדיה (ספרייה פתוחה לגישה ציבורית), התחביר הוא: <br><strong>&lt;a href="/document.php?modulepart=medias&file=]file_dir/ ext"&gt;</strong><br>עבור קובץ משותף עם קישור שיתוף ( גישה פתוחה באמצעות מפתח ה-hash השיתוף של הקובץ), התחביר הוא:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong> <br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image"></span> כדי לכלול  <strong>image</strong> מאוחסנת ב-<strong>מסמכים<span class='notranslate'notranslate'>070zfcfc107b0f07bcf> , השתמש במעטפת <strong>viewimage.php</strong>.b0342fccfda19bzle,לדוגמה תמונה למסמכים/מדיה (ספרייה פתוחה לגישה ציבורית), התחביר הוא:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"<span class='0128c7bc7bc </span></strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper.<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=עבור תמונה ששותפה עם קישור שיתוף (גישה פתוחה באמצעות מפתח ה-hash השיתוף של הקובץ), התחביר הוא:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;070fcd9b <br>
-YouCanEditHtmlSource3=כדי לקבל את כתובת האתר של התמונה של אובייקט PHP, השתמש ב<br><strong>&lt; span>img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"<span> class='notranslate'>&gt;</strong><br>
-YouCanEditHtmlSourceMore=<br>דוגמאות נוספות של HTML או קוד דינמי זמינות ב<a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">תיעוד הוויקי</a> >.<span class='notranslate'><br>
+YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=שיבוט דף/מיכל
 CloneSite=אתר שיבוט
 SiteAdded=האתר נוסף
@@ -121,7 +121,6 @@ ReplaceString=מחרוזת חדשה
 CSSContentTooltipHelp=הזן כאן תוכן CSS. כדי למנוע כל התנגשות עם ה-CSS של האפליקציה, הקפד להוסיף את כל ההצהרות עם המחלקה .bodywebsite. לדוגמה:<br><br>#mycssselector, input.myclass:hover { ...  <br>חייב להיות<br>.bodywebsite #mycssselector, .bodywebsite input.myclass:hover { ... <br> <br>הערה: אם יש לך קובץ גדול ללא קידומת זו, אתה יכול להשתמש ב-'lessc' כדי להמיר אותו כדי להוסיף את הקידומת .bodywebsite בכל מקום.
 LinkAndScriptsHereAreNotLoadedInEditor=אזהרה: תוכן זה מופק רק כאשר הגישה לאתר מתבצעת משרת. זה לא בשימוש במצב עריכה אז אם אתה צריך לטעון קבצי JavaScript גם במצב עריכה, פשוט הוסף את התג שלך 'script src=...' לדף.
 Dynamiccontent=דוגמה של עמוד עם תוכן דינמי
-ImportSite=ייבוא תבנית אתר
 EditInLineOnOff=המצב 'ערוך מוטבע' הוא %s
 ShowSubContainersOnOff=המצב לביצוע 'תוכן דינמי' הוא %s
 GlobalCSSorJS=קובץ CSS/JS/Header גלובלי של אתר אינטרנט
@@ -158,9 +157,81 @@ Booking=הזמנה
 Reservation=הזמנה
 PagesViewedPreviousMonth=דפים שנצפו (בחודש הקודם)
 PagesViewedTotal=דפים שנצפו (סה"כ)
-Visibility=רְאוּת
 Everyone=כל אחד
 AssignedContacts=אנשי קשר שהוקצו
 WebsiteTypeLabel=סוג אתר אינטרנט
-WebsiteTypeDolibarrWebsite=אתר אינטרנט (CMS Dolibarr)
-WebsiteTypeDolibarrPortal=פורטל דוליבר יליד
+WebsiteTypeDolibarrWebsite=Web site (Module WebSites CMS)
+WebsiteTypeDolibarrPortal=Native and ready to use web portal (Module Web Portal)
+WebPortalURL=Web portal URL
+NewWebsiteAccount=New accounts for websites
+ModuleWebPortalName=Web portal
+ModuleWebPortalDesc=A ready to use native web portal for customers, suppliers, partners or members
+WebPortalDescription=Public web portal module for membership and partnership
+WebPortalSetup=WebPortal setup
+WebPortalCSS=Web portal CSS
+WebPortalSetupPage=WebPortal setup page
+WEBPORTAL_TITLE=Brand name on header of public page
+UserAccountForWebPortalAreInThirdPartyTabHelp=Users accounts for WebPortal can be set on each third party card in Website accounts tab
+WebPortalAccessHidden=Hidden
+WebPortalAccessVisible=Visible
+WebPortalAccessEdit=Editable
+WEBPORTAL_MEMBER_CARD_ACCESS=Enable access to the membership record
+WebPortalMemberCardAccessHelp=Enable access to the membership record (Hidden / Visible or Editable)
+WEBPORTAL_PARTNERSHIP_CARD_ACCESS=Enable access to the partnership record
+WebPortalPartnerShipCardAccessHelp=Enable access to the partnership record (Hidden / Visible or Editable)
+WEBPORTAL_PROPAL_LIST_ACCESS=Enable access to the proposals
+WEBPORTAL_ORDER_LIST_ACCESS=Enable access to the orders
+WEBPORTAL_INVOICE_LIST_ACCESS=Enable access to the invoices
+WEBPORTAL_USER_LOGGED=Select an anonymous user
+WebPortalUserLoggedHelp=This user is used to update cards
+WebPortalHomeTitle=Welcome
+WebPortalHomeDesc=Welcome to the public interface
+WebPortalPropalListMenu=הצעות
+WebPortalPropalListTitle=List of proposals
+WebPortalPropalListDesc=List of proposals
+WebPortalPropalListNothing=Proposals not found
+WebPortalOrderListMenu=Orders
+WebPortalOrderListTitle=List of orders
+WebPortalOrderListDesc=List of orders
+WebPortalOrderListNothing=Orders not found
+WebPortalInvoiceListMenu=חשבוניות
+WebPortalInvoiceListTitle=List of invoices
+WebPortalInvoiceListDesc=List of invoices
+WebPortalInvoiceListNothing=Invoices not found
+WebPortalMemberCardMenu=Member
+WebPortalMemberCardTitle=Member card
+WebPortalMemberCardDesc=Member card
+WebPortalPartnershipCardMenu=Partnership
+WebPortalPartnershipCardTitle=Partnership card
+WebPortalPartnershipCardDesc=Partnership card
+loginWebportalUserName=User name / email
+loginWebportalPassword=סיסמה
+LoginNow=Login now
+RemoveSearchFilters=Remove search filters
+WEBPORTAL_PRIMARY_COLOR=Primary color
+WEBPORTAL_SECONDARY_COLOR=Secondary color
+WEBPORTAL_LOGIN_LOGO_URL=Login logo image URL
+WEBPORTAL_MENU_LOGO_URL=Menu logo image URL
+WEBPORTAL_MENU_LOGO_URLTooltip=Leave empty to use login logo
+WEBPORTAL_LOGIN_BACKGROUND=Background login image URL
+WEBPORTAL_BANNER_BACKGROUND=Background for banner
+WEBPORTAL_BANNER_BACKGROUND_IS_DARK=Use dark theme for banner
+AriaPrevPage=Previous page
+AriaNextPage=Next page
+AriaPageX=Page %s
+WebPortalError404=Page not found
+WebPortalErrorPageNotExist=Page not exist
+WebPortalErrorFetchThirdPartyAccountFromLogin=Error when loading third-party account (login : %s)
+WebPortalErrorAuthentication=Authentication error
+WebPortalErrorFetchLoggedThirdPartyAccount=Error when loading third-party account (login : %s)
+WebPortalErrorFetchLoggedUser=Error when loading user (Id : %s)
+WebPortalErrorFetchLoggedThirdParty=Error when loading third-party (Id : %s)
+WebPortalErrorFetchLoggedMember=Error when loading member (Id : %s)
+WebPortalErrorFetchLoggedPartnership=Error when loading partnership (Third-party Id : %s, Member Id : %s)
+ExportIntoGIT=Export into sources
+WebPortalMember=Membership
+WebPortalOrder=Sale Order
+WebPortalPartnership=Partnership
+WebPortalPropal=Proposal
+WebPortalGroupMenuAdmin=Administration
+WebPortalGroupMenuTechnical=מערכת

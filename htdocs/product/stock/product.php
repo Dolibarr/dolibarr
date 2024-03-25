@@ -65,15 +65,15 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $stocklimit = (float) GETPOST('seuil_stock_alerte');
 $desiredstock = GETPOST('desiredstock');
 $cancel = GETPOST('cancel', 'alpha');
 $fieldid = isset($_GET["ref"]) ? 'ref' : 'rowid';
-$d_eatby = dol_mktime(0, 0, 0, GETPOST('eatbymonth', 'int'), GETPOST('eatbyday', 'int'), GETPOST('eatbyyear', 'int'));
-$d_sellby = dol_mktime(0, 0, 0, GETPOST('sellbymonth', 'int'), GETPOST('sellbyday', 'int'), GETPOST('sellbyyear', 'int'));
-$pdluoid = GETPOST('pdluoid', 'int');
+$d_eatby = dol_mktime(0, 0, 0, GETPOSTINT('eatbymonth'), GETPOSTINT('eatbyday'), GETPOSTINT('eatbyyear'));
+$d_sellby = dol_mktime(0, 0, 0, GETPOSTINT('sellbymonth'), GETPOSTINT('sellbyday'), GETPOSTINT('sellbyyear'));
+$pdluoid = GETPOSTINT('pdluoid');
 $batchnumber = GETPOST('batch_number', 'san_alpha');
 if (!empty($batchnumber)) {
 	$batchnumber = trim($batchnumber);
@@ -144,7 +144,7 @@ if ($cancel) {
 	$action = '';
 }
 
-$parameters = array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
+$parameters = array('id' => $id, 'ref' => $ref, 'objcanvas' => $objcanvas);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -181,7 +181,8 @@ if ($action == 'addlimitstockwarehouse' && $user->hasRight('produit', 'creer')) 
 
 	if ($maj_ok) {
 		$pse = new ProductStockEntrepot($db);
-		if ($pse->fetch(0, $id, GETPOST('fk_entrepot', 'int')) > 0) {
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+		if ($pse->fetch(0, $id, GETPOSTINT('fk_entrepot')) > 0) {
 			// Update
 			$pse->seuil_stock_alerte = $seuil_stock_alerte;
 			$pse->desiredstock = $desiredstock;
@@ -207,7 +208,7 @@ if ($action == 'addlimitstockwarehouse' && $user->hasRight('produit', 'creer')) 
 if ($action == 'delete_productstockwarehouse' && $user->hasRight('produit', 'creer')) {
 	$pse = new ProductStockEntrepot($db);
 
-	$pse->fetch(GETPOST('fk_productstockwarehouse', 'int'));
+	$pse->fetch(GETPOSTINT('fk_productstockwarehouse'));
 	if ($pse->delete($user) > 0) {
 		setEventMessages($langs->trans('ProductStockWarehouseDeleted'), null, 'mesgs');
 	}
@@ -244,7 +245,7 @@ if ($action == 'setdesiredstock' && $user->hasRight('produit', 'creer')) {
 
 // Correct stock
 if ($action == "correct_stock" && !$cancel) {
-	if (!(GETPOST("id_entrepot", 'int') > 0)) {
+	if (!(GETPOSTINT("id_entrepot") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 		$error++;
 		$action = 'correction';
@@ -273,9 +274,9 @@ if ($action == "correct_stock" && !$cancel) {
 			$origin_element = '';
 			$origin_id = null;
 
-			if (GETPOST('projectid', 'int')) {
+			if (GETPOSTINT('projectid')) {
 				$origin_element = 'project';
-				$origin_id = GETPOST('projectid', 'int');
+				$origin_id = GETPOSTINT('projectid');
 			}
 
 			if (empty($object)) {
@@ -291,9 +292,9 @@ if ($action == "correct_stock" && !$cancel) {
 			if ($object->hasbatch()) {
 				$result = $object->correct_stock_batch(
 					$user,
-					GETPOST("id_entrepot", 'int'),
+					GETPOSTINT("id_entrepot"),
 					$nbpiece,
-					GETPOST("mouvement", 'int'),
+					GETPOSTINT("mouvement"),
 					GETPOST("label", 'alphanohtml'), // label movement
 					$priceunit,
 					$d_eatby,
@@ -307,9 +308,9 @@ if ($action == "correct_stock" && !$cancel) {
 			} else {
 				$result = $object->correct_stock(
 					$user,
-					GETPOST("id_entrepot", 'int'),
+					GETPOSTINT("id_entrepot"),
 					$nbpiece,
-					GETPOST("mouvement", 'int'),
+					GETPOSTINT("mouvement"),
 					GETPOST("label", 'alphanohtml'),
 					$priceunit,
 					GETPOST('inventorycode', 'alphanohtml'),
@@ -337,17 +338,17 @@ if ($action == "correct_stock" && !$cancel) {
 
 // Transfer stock from a warehouse to another warehouse
 if ($action == "transfert_stock" && !$cancel) {
-	if (!(GETPOST("id_entrepot", 'int') > 0) || !(GETPOST("id_entrepot_destination", 'int') > 0)) {
+	if (!(GETPOSTINT("id_entrepot") > 0) || !(GETPOSTINT("id_entrepot_destination") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 		$error++;
 		$action = 'transfert';
 	}
-	if (!GETPOST("nbpiece", 'int')) {
+	if (!GETPOSTINT("nbpiece")) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$error++;
 		$action = 'transfert';
 	}
-	if (GETPOST("id_entrepot", 'int') == GETPOST("id_entrepot_destination", 'int')) {
+	if (GETPOSTINT("id_entrepot") == GETPOSTINT("id_entrepot_destination")) {
 		setEventMessages($langs->trans("ErrorSrcAndTargetWarehouseMustDiffers"), null, 'errors');
 		$error++;
 		$action = 'transfert';
@@ -396,7 +397,7 @@ if ($action == "transfert_stock" && !$cancel) {
 						$error++;
 					}
 				} else {
-					$srcwarehouseid = GETPOST('id_entrepot', 'int');
+					$srcwarehouseid = GETPOSTINT('id_entrepot');
 					$batch = $batchnumber;
 					$eatby = $d_eatby;
 					$sellby = $d_sellby;
@@ -426,7 +427,7 @@ if ($action == "transfert_stock" && !$cancel) {
 					// Add stock
 					$result2 = $object->correct_stock_batch(
 						$user,
-						GETPOST("id_entrepot_destination", 'int'),
+						GETPOSTINT("id_entrepot_destination"),
 						$nbpiece,
 						0,
 						GETPOST("label", 'alphanohtml'),
@@ -445,7 +446,7 @@ if ($action == "transfert_stock" && !$cancel) {
 					// Remove stock
 					$result1 = $object->correct_stock(
 						$user,
-						GETPOST("id_entrepot", 'int'),
+						GETPOSTINT("id_entrepot"),
 						$nbpiece,
 						1,
 						GETPOST("label", 'alphanohtml'),
@@ -460,7 +461,7 @@ if ($action == "transfert_stock" && !$cancel) {
 					// Add stock
 					$result2 = $object->correct_stock(
 						$user,
-						GETPOST("id_entrepot_destination", 'int'),
+						GETPOSTINT("id_entrepot_destination"),
 						$nbpiece,
 						0,
 						GETPOST("label", 'alphanohtml'),
@@ -496,15 +497,15 @@ if ($action == "transfert_stock" && !$cancel) {
 // Update batch information
 if ($action == 'updateline' && GETPOST('save') == $langs->trans("Save")) {
 	$pdluo = new Productbatch($db);
-	$result = $pdluo->fetch(GETPOST('pdluoid', 'int'));
+	$result = $pdluo->fetch(GETPOSTINT('pdluoid'));
 
 	if ($result > 0) {
 		if ($pdluo->id) {
 			if ((!GETPOST("sellby")) && (!GETPOST("eatby")) && (!$batchnumber)) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("atleast1batchfield")), null, 'errors');
 			} else {
-				$d_eatby = dol_mktime(0, 0, 0, GETPOST('eatbymonth', 'int'), GETPOST('eatbyday', 'int'), GETPOST('eatbyyear', 'int'));
-				$d_sellby = dol_mktime(0, 0, 0, GETPOST('sellbymonth', 'int'), GETPOST('sellbyday', 'int'), GETPOST('sellbyyear', 'int'));
+				$d_eatby = dol_mktime(0, 0, 0, GETPOSTINT('eatbymonth'), GETPOSTINT('eatbyday'), GETPOSTINT('eatbyyear'));
+				$d_sellby = dol_mktime(0, 0, 0, GETPOSTINT('sellbymonth'), GETPOSTINT('sellbyday'), GETPOSTINT('sellbyyear'));
 				$pdluo->batch = $batchnumber;
 				$pdluo->eatby = $d_eatby;
 				$pdluo->sellby = $d_sellby;
@@ -780,7 +781,7 @@ if ($id > 0 || $ref) {
 			$found = 0;
 			$helpondiff = '<strong>'.$langs->trans("StockDiffPhysicTeoric").':</strong><br>';
 			// Number of sales orders running
-			if (isModEnabled('commande')) {
+			if (isModEnabled('order')) {
 				if ($found) {
 					$helpondiff .= '<br>';
 				} else {
@@ -795,7 +796,7 @@ if ($id > 0 || $ref) {
 			}
 
 			// Number of product from sales order already sent (partial shipping)
-			if (isModEnabled("expedition")) {
+			if (isModEnabled("shipping")) {
 				require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 				$filterShipmentStatus = '';
 				if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
@@ -1137,7 +1138,7 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 					$product_lot_static->eatby = $pdluo->eatby;
 					$product_lot_static->sellby = $pdluo->sellby;
 
-					if ($action == 'editline' && GETPOST('lineid', 'int') == $pdluo->id) { //Current line edit
+					if ($action == 'editline' && GETPOSTINT('lineid') == $pdluo->id) { //Current line edit
 						print "\n".'<tr>';
 						print '<td colspan="9">';
 						print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -1146,12 +1147,12 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 						print '<td class="right" width="10%"><input type="text" name="batch_number" value="'.$pdluo->batch.'"></td>';
 						if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 							print '<td class="center" width="10%">';
-							print $form->selectDate($pdluo->sellby, 'sellby', '', '', 1, '', 1, 0);
+							print $form->selectDate($pdluo->sellby, 'sellby', 0, 0, 1, '', 1, 0);
 							print '</td>';
 						}
 						if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 							print '<td class="center" width="10%">';
-							print $form->selectDate($pdluo->eatby, 'eatby', '', '', 1, '', 1, 0);
+							print $form->selectDate($pdluo->eatby, 'eatby', 0, 0, 1, '', 1, 0);
 							print '</td>';
 						}
 						print '<td class="right" colspan="3">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';

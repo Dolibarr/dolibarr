@@ -6,7 +6,7 @@
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2009       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,9 +54,24 @@ class MailmanSpip
 	 */
 	public $errors = array();
 
+	/**
+	 * @var array
+	 */
 	public $mladded_ok;
+
+	/**
+	 * @var array
+	 */
 	public $mladded_ko;
+
+	/**
+	 * @var array
+	 */
 	public $mlremoved_ok;
+
+	/**
+	 * @var array
+	 */
 	public $mlremoved_ko;
 
 
@@ -156,7 +171,7 @@ class MailmanSpip
 	 *  Fonction qui donne les droits redacteurs dans spip
 	 *
 	 *	@param	Adherent	$object		Object with data (->firstname, ->lastname, ->email and ->login)
-	 *  @return	int					=0 if KO, >0 if OK
+	 *  @return	int						=0 if KO, >0 if OK
 	 */
 	public function add_to_spip($object)
 	{
@@ -171,7 +186,10 @@ class MailmanSpip
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 					$mdpass = dol_hash($object->pass);
 					$htpass = crypt($object->pass, makesalt());
-					$query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".dolGetFirstLastname($object->firstname, $object->lastname)."\",\"".$object->email."\",\"".$object->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
+
+					$query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut)";
+					$query .= " VALUES('".$mydb->escape(dolGetFirstLastname($object->firstname, $object->lastname))."', '".$mydb->escape($object->email)."',";
+					$query .= " '".$mydb->escape($object->login)."', '".$mydb->escape($mdpass)."', '".$mydb->escape($htpass)."', FLOOR(32000*RAND()), '1comite')";
 
 					$result = $mydb->query($query);
 
@@ -306,7 +324,7 @@ class MailmanSpip
 			return -1;
 		}
 
-		if (isModEnabled('adherent')) {	// Synchro for members
+		if (isModEnabled('member')) {	// Synchro for members
 			if (getDolGlobalString('ADHERENT_MAILMAN_URL')) {
 				if ($listes == '' && getDolGlobalString('ADHERENT_MAILMAN_LISTS')) {
 					$lists = explode(',', getDolGlobalString('ADHERENT_MAILMAN_LISTS'));
@@ -376,7 +394,7 @@ class MailmanSpip
 			return -1;
 		}
 
-		if (isModEnabled('adherent')) {	// Synchro for members
+		if (isModEnabled('member')) {	// Synchro for members
 			if (getDolGlobalString('ADHERENT_MAILMAN_UNSUB_URL')) {
 				if ($listes == '' && getDolGlobalString('ADHERENT_MAILMAN_LISTS')) {
 					$lists = explode(',', getDolGlobalString('ADHERENT_MAILMAN_LISTS'));

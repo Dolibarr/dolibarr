@@ -59,8 +59,9 @@ $langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
 
+$errmsg = '';
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $securekeyreceived = GETPOST("securekey", 'alpha');
 $securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $id), 'md5');
 
@@ -220,7 +221,7 @@ print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n
 print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
 print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($securekeyreceived).'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
-print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox', 'int').'" />';
+print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
 print "\n";
 
 

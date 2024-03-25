@@ -3,6 +3,8 @@
  * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2022		Anthony Berton		<anthony.berton@bb2a.fr>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -157,7 +159,7 @@ class Utils
 						}
 					}
 					if (!$alreadyincluded) {
-						$filesarray[] = array('fullname'=>$filelog, 'type'=>'file');
+						$filesarray[] = array('fullname' => $filelog, 'type' => 'file');
 					}
 				}
 			}
@@ -277,12 +279,10 @@ class Utils
 			$ext = 'sql';
 			if (in_array($type, array('mysql', 'mysqli'))) {
 				$prefix = 'mysqldump';
-				$ext = 'sql';
 			}
 			//if ($label == 'PostgreSQL') { $prefix='pg_dump'; $ext='dump'; }
 			if (in_array($type, array('pgsql'))) {
 				$prefix = 'pg_dump';
-				$ext = 'sql';
 			}
 			$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.dol_print_date(dol_now('gmt'), "dayhourlogsmall", 'tzuser').'.'.$ext;
 		}
@@ -466,7 +466,7 @@ class Utils
 						$langs->load("errors");
 						dol_syslog("Datadump retval after exec=".$retval, LOG_ERR);
 						$errormsg = 'Error '.$retval;
-						$ok = 0;
+						$ok = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 					} else {
 						$i = 0;
 						if (!empty($output_arr)) {
@@ -783,7 +783,7 @@ class Utils
 
 		dol_syslog("Utils::executeCLI result=".$result." output=".$output." error=".$error, LOG_DEBUG);
 
-		return array('result'=>$result, 'output'=>$output, 'error'=>$error);
+		return array('result' => $result, 'output' => $output, 'error' => $error);
 	}
 
 	/**
@@ -909,25 +909,26 @@ class Utils
 
 					//var_dump($phpfileval['fullname']);
 					$arrayreplacement = array(
-						'mymodule'=>strtolower($module),
-						'MyModule'=>$module,
-						'MYMODULE'=>strtoupper($module),
-						'My module'=>$module,
-						'my module'=>$module,
-						'Mon module'=>$module,
-						'mon module'=>$module,
-						'htdocs/modulebuilder/template'=>strtolower($module),
-						'__MYCOMPANY_NAME__'=>$mysoc->name,
-						'__KEYWORDS__'=>$module,
-						'__USER_FULLNAME__'=>$user->getFullName($langs),
-						'__USER_EMAIL__'=>$user->email,
-						'__YYYY-MM-DD__'=>dol_print_date($now, 'dayrfc'),
-						'---Put here your own copyright and developer email---'=>dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : ''),
-						'__DATA_SPECIFICATION__'=>'Not yet available',
-						'__README__'=>dolMd2Asciidoc($contentreadme),
-						'__CHANGELOG__'=>dolMd2Asciidoc($contentchangelog),
+						'mymodule' => strtolower($module),
+						'MyModule' => $module,
+						'MYMODULE' => strtoupper($module),
+						'My module' => $module,
+						'my module' => $module,
+						'Mon module' => $module,
+						'mon module' => $module,
+						'htdocs/modulebuilder/template' => strtolower($module),
+						'__MYCOMPANY_NAME__' => $mysoc->name,
+						'__KEYWORDS__' => $module,
+						'__USER_FULLNAME__' => $user->getFullName($langs),
+						'__USER_EMAIL__' => $user->email,
+						'__YYYY-MM-DD__' => dol_print_date($now, 'dayrfc'),
+						'---Put here your own copyright and developer email---' => dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : ''),
+						'__DATA_SPECIFICATION__' => 'Not yet available',
+						'__README__' => dolMd2Asciidoc($contentreadme),
+						'__CHANGELOG__' => dolMd2Asciidoc($contentchangelog),
 					);
 
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					dolReplaceInFile($destfile, $arrayreplacement);
 				}
 
@@ -1006,7 +1007,7 @@ class Utils
 			return -1;
 		}
 
-		dol_include_once('/core/lib/files.lib.php');
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$nbSaves = intval(getDolGlobalString('SYSLOG_FILE_SAVES', 10));
 
@@ -1227,7 +1228,7 @@ class Utils
 						} elseif (is_string($row[$j]) && $row[$j] == '') {
 							// if it's an empty string, we set it as an empty string
 							$row[$j] = "''";
-						} elseif (is_numeric($row[$j]) && !strcmp($row[$j], $row[$j] + 0)) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
+						} elseif (is_numeric($row[$j]) && !strcmp((string) $row[$j], (string) ((float) $row[$j] + 0))) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
 							// if it's a number, we return it as-is
 							//	                    $row[$j] = $row[$j];
 						} else { // else for all other cases we escape the value and put quotes around
@@ -1412,7 +1413,7 @@ class Utils
 		dol_syslog("Utils::cleanUnfinishedCronjob Starting cleaning");
 
 		// Import Cronjob class if not present
-		dol_include_once('/cron/class/cronjob.class.php');
+		require_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
 
 		// Get this job object
 		$this_job = new Cronjob($db);
@@ -1454,7 +1455,7 @@ class Utils
 				$job->pid = null;
 
 				// Set last result as an error and add the reason on the last output
-				$job->lastresult = -1;
+				$job->lastresult = strval(-1);
 				$job->lastoutput = 'Job killed by job cleanUnfinishedCronjob';
 
 				if ($job->update($user) < 0) {

@@ -148,7 +148,7 @@ class Mailing extends CommonObject
 	public $date_validation;
 
 	/**
-	 * @var int date sending
+	 * @var int|null date sending
 	 */
 	public $date_envoi;
 
@@ -226,7 +226,11 @@ class Mailing extends CommonObject
 		$this->email_from = trim($this->email_from);
 
 		if (!$this->email_from) {
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("From"));
+			if ($this->messtype !== 'sms') {
+				$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MailFrom"));
+			} else {
+				$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PhoneFrom"));
+			}
 			return -1;
 		}
 
@@ -287,6 +291,8 @@ class Mailing extends CommonObject
 	 */
 	public function update($user, $notrigger = 0)
 	{
+		global $langs;
+
 		// Check properties
 		if (preg_match('/^InvalidHTMLStringCantBeCleaned/', $this->body)) {
 			$this->error = 'InvalidHTMLStringCantBeCleaned';
@@ -331,7 +337,11 @@ class Mailing extends CommonObject
 				return -2;
 			}
 		} else {
-			$this->error = $this->db->lasterror();
+			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$this->error = $langs->trans("ErrorTitleAlreadyExists", $this->title);
+			} else {
+				$this->error = $this->db->lasterror();
+			}
 			$this->db->rollback();
 			return -1;
 		}
@@ -461,7 +471,7 @@ class Mailing extends CommonObject
 			$object->email_errorsto     = '';
 
 			$object->user_creation_id = $user->id;
-			$object->user_validation_id = '';
+			$object->user_validation_id = null;
 
 			$object->date_envoi         = null;
 		}

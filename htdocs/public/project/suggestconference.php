@@ -70,8 +70,8 @@ $email = GETPOST("email");
 $societe = GETPOST("societe");
 $label = GETPOST("label");
 $note = GETPOST("note");
-$datestart = dol_mktime(0, 0, 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'));
-$dateend = dol_mktime(23, 59, 59, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'));
+$datestart = dol_mktime(0, 0, 0, GETPOSTINT('datestartmonth'), GETPOSTINT('datestartday'), GETPOSTINT('datestartyear'));
+$dateend = dol_mktime(23, 59, 59, GETPOSTINT('dateendmonth'), GETPOSTINT('dateendday'), GETPOSTINT('dateendyear'));
 
 $id = GETPOST('id');
 
@@ -300,8 +300,8 @@ if (empty($reshook) && $action == 'add') {
 				$contact->address = (string) GETPOST("address", 'alpha');
 				$contact->zip = (string) GETPOST("zipcode", 'alpha');
 				$contact->town = (string) GETPOST("town", 'alpha');
-				$contact->country_id = (int) GETPOST("country_id", 'int');
-				$contact->state_id = (int) GETPOST("state_id", 'int');
+				$contact->country_id = GETPOSTINT("country_id");
+				$contact->state_id = GETPOSTINT("state_id");
 				$contact->email = $email;
 				$contact->statut = 1; //Default status to Actif
 				$resultcreatecontact = $contact->create($user);

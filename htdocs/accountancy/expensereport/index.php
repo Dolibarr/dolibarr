@@ -33,12 +33,12 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
-$validatemonth = GETPOST('validatemonth', 'int');
-$validateyear = GETPOST('validateyear', 'int');
+$validatemonth = GETPOSTINT('validatemonth');
+$validateyear = GETPOSTINT('validateyear');
 
 $month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-if (GETPOST("year", 'int')) {
-	$year_start = GETPOST("year", 'int');
+if (GETPOSTINT("year")) {
+	$year_start = GETPOSTINT("year");
 } else {
 	$year_start = dol_print_date(dol_now(), '%Y');
 	if (dol_print_date(dol_now(), '%m') < $month_start) {
@@ -177,7 +177,7 @@ if ($action == 'validatehistory') {
 /*
  * View
  */
-$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
+$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
 llxHeader('', $langs->trans("ExpenseReportsVentilation"), $help_url);
 
@@ -223,7 +223,7 @@ for ($i = 1; $i <= 12; $i++) {
 		$param .= '&search_month='.$tmp['mon'].'&search_year='.$tmp['year'];
 		print '<a href="'.DOL_URL_ROOT.'/accountancy/expensereport/list.php?'.$param.'">';
 	}
-	print $langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT));
+	print $langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT));
 	if (!empty($tmp['mday'])) {
 		print '</a>';
 	}
@@ -238,7 +238,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql("MONTH(er.date_debut)=".$j, "erd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(er.date_debut) = ".((int) $j), "erd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= " SUM(erd.total_ht) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
@@ -300,7 +300,7 @@ if ($resql) {
 			// Add link to make binding
 			if (!empty(price2num($row[$i]))) {
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&year='.$y.'&validatemonth='.((int) $cursormonth).'&validateyear='.((int) $cursoryear).'&token='.newToken().'">';
-				print img_picto($langs->trans("ValidateHistory").' ('.$langs->trans('Month'.str_pad($cursormonth, 2, '0', STR_PAD_LEFT)).' '.$cursoryear.')', 'link', 'class="marginleft2"');
+				print img_picto($langs->trans("ValidateHistory").' ('.$langs->trans('Month'.str_pad((string) $cursormonth, 2, '0', STR_PAD_LEFT)).' '.$cursoryear.')', 'link', 'class="marginleft2"');
 				print '</a>';
 			}
 			print '</td>';
@@ -338,7 +338,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
+	print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT)).'</td>';
 }
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
@@ -349,7 +349,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= " SUM(".$db->ifsql("MONTH(er.date_debut)=".$j, "erd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= " SUM(".$db->ifsql("MONTH(er.date_debut) = ".((int) $j), "erd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= " ROUND(SUM(erd.total_ht),2) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
@@ -426,7 +426,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 		if ($j > 12) {
 			$j -= 12;
 		}
-		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
+		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT)).'</td>';
 	}
 	print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
@@ -436,7 +436,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 		if ($j > 12) {
 			$j -= 12;
 		}
-		$sql .= " SUM(".$db->ifsql("MONTH(er.date_create)=".$j, "erd.total_ht", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
+		$sql .= " SUM(".$db->ifsql("MONTH(er.date_create) = ".((int) $j), "erd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql .= " SUM(erd.total_ht) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";

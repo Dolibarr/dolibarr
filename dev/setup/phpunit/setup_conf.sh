@@ -4,10 +4,14 @@
 
 TRAVIS_BUILD_DIR=${TRAVIS_BUILD_DIR:=$(realpath "$(dirname "$0")/../../..")}
 MYSQL=${MYSQL:=mysql}
+MYSQLDUMP=${MYSQLDUMP:="${MYSQL}dump"}
+PHP=${PHP:=php}
+PHP_OPT="-d error_reporting=32767"
 
 DB=${DB:=mariadb}
 DB_ROOT=${DB_ROOT:=root}
 DB_PASS=${DB_PASS:=}
+DB_CACHE_FILE="${TRAVIS_BUILD_DIR}/db_init.sql"
 
 TRAVIS_DOC_ROOT_PHP="${TRAVIS_DOC_ROOT_PHP:=$TRAVIS_BUILD_DIR/htdocs}"
 TRAVIS_DATA_ROOT_PHP="${TRAVIS_DATA_ROOT_PHP:=$TRAVIS_BUILD_DIR/documents}"
@@ -22,6 +26,18 @@ else
 	SUDO="sudo"
 fi
 CONF_FILE=${CONF_FILE:=${TRAVIS_BUILD_DIR}/htdocs/conf/conf.php}
+
+function save_db_cache() (
+	set -x
+	rm "${DB_CACHE_FILE}".md5 2>/dev/null
+	echo "Saving DB to cache file '${DB_CACHE_FILE}'"
+	${SUDO} "${MYSQLDUMP}" -u "$DB_ROOT" -h 127.0.0.1 $PASS_OPT travis \
+		--hex-blob --lock-tables=false --skip-add-locks \
+		| sed -e 's/DEFINER=[^ ]* / /' > ${DB_CACHE_FILE}
+	echo "${sum}" > "${DB_CACHE_FILE}".md5
+	set +x
+)
+
 
 if [ -r "${CONF_FILE}" ] ; then
 	echo "'${CONF_FILE} exists, not overwriting!"
@@ -55,6 +71,7 @@ else
 	echo
 fi
 
+load_cache=0
 echo "Setting up database '$DB'"
 if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; then
 	echo "MySQL stop"
@@ -71,6 +88,7 @@ if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; the
 		PASS_OPT="'-password=${DB_PASS}'"
 	fi
 	echo "MySQL set root password"
+
 	if [ 1 = 1 ]  ; then
 		CMDS=( \
 				""
@@ -110,8 +128,20 @@ if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; the
 	echo "MySQL flush"
 	${SUDO} "${MYSQL}" -u "$DB_ROOT" -h 127.0.0.1 $PASS_OPT -e 'FLUSH PRIVILEGES;'
 
-	echo "MySQL load sql"
-	${SUDO} "${MYSQL}" --force -u "$DB_ROOT" -h 127.0.0.1 $PASS_OPT -D travis < ${TRAVIS_BUILD_DIR}/dev/initdemo/mysqldump_dolibarr_3.5.0.sql | tee $TRAVIS_BUILD_DIR/initial_350.log
+	sum=$(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f -exec md5sum {} + | LC_ALL=C sort | md5sum)
+	load_cache=0
+	if [ -r "$DB_CACHE_FILE".md5 ] && [ -r "$DB_CACHE_FILE" ] && [ -x "$(which "${MYSQLDUMP}")" ] ; then
+		cache_sum="$(<"$DB_CACHE_FILE".md5)"
+		[ "$sum" = "$cache_sum" ] && load_cache=1
+	fi
+
+	if [ "$load_cache" = "1" ] ; then
+		echo "MySQL load cached sql"
+		${SUDO} "${MYSQL}" --force -u "$DB_ROOT" -h 127.0.0.1 $PASS_OPT -D travis < ${DB_CACHE_FILE} | tee $TRAVIS_BUILD_DIR/db_from_cacheinit.log
+	else
+		echo "MySQL load initial sql"
+		${SUDO} "${MYSQL}" --force -u "$DB_ROOT" -h 127.0.0.1 $PASS_OPT -D travis < ${TRAVIS_BUILD_DIR}/dev/initdemo/mysqldump_dolibarr_3.5.0.sql | tee $TRAVIS_BUILD_DIR/initial_350.log
+	fi
 elif [ "$DB" = 'postgresql' ]; then
 	echo Install pgsql if run is for pgsql
 
@@ -158,32 +188,33 @@ set +e
 	echo '$'force_install_prefix=\'llx_\'';'
 } > "$INSTALL_FORCED_FILE"
 
-(
-	cd "${TRAVIS_BUILD_DIR}/htdocs/install" || exit 1
+if [ "$load_cache" != "1" ] ; then
+	(
+		cd "${TRAVIS_BUILD_DIR}/htdocs/install" || exit 1
 
-	VERSIONS=("3.5.0" "3.6.0" "3.7.0" "3.8.0" "3.9.0")
-	VERSIONS+=("4.0.0")
-	VERSIONS+=("5.0.0" "6.0.0" "7.0.0" "8.0.0" "9.0.0")
-	VERSIONS+=("10.0.0" "11.0.0" "12.0.0" "13.0.0" "14.0.0")
-	VERSIONS+=("15.0.0" "16.0.0" "18.0.0" "19.0.0" "20.0.0")
-	pVer=${VERSIONS[0]}
-	for v in "${VERSIONS[@]:1}" ; do
-		LOGNAME="${TRAVIS_BUILD_DIR}/upgrade${pVer//./}${v//./}"
-		php upgrade.php "$pVer" "$v" ignoredbversion > "${LOGNAME}.log"
-		php upgrade2.php "$pVer" "$v" ignoredbversion > "${LOGNAME}-2.log"
-		php step5.php "$pVer" "$v" ignoredbversion > "${LOGNAME}-3.log"
-		pVer="$v"
-	done
+		VERSIONS=("3.5.0" "3.6.0" "3.7.0" "3.8.0" "3.9.0")
+		VERSIONS+=("4.0.0")
+		VERSIONS+=("5.0.0" "6.0.0" "7.0.0" "8.0.0" "9.0.0")
+		VERSIONS+=("10.0.0" "11.0.0" "12.0.0" "13.0.0" "14.0.0")
+		VERSIONS+=("15.0.0" "16.0.0" "18.0.0" "19.0.0" "20.0.0")
+		pVer=${VERSIONS[0]}
+		for v in "${VERSIONS[@]:1}" ; do
+			LOGNAME="${TRAVIS_BUILD_DIR}/upgrade${pVer//./}${v//./}"
+			"${PHP}" $PHP_OPT upgrade.php "$pVer" "$v" ignoredbversion > "${LOGNAME}.log"
+			"${PHP}" $PHP_OPT upgrade2.php "$pVer" "$v" ignoredbversion > "${LOGNAME}-2.log"
+			"${PHP}" $PHP_OPT step5.php "$pVer" "$v" ignoredbversion > "${LOGNAME}-3.log"
+			pVer="$v"
+		done
 
-	${SUDO} "${MYSQL}" --force -u "$DB_ROOT" -h 127.0.0.1 $PASS_OPT -D travis < "${TRAVIS_BUILD_DIR}/htdocs/install/mysql/migration/repair.sql"
+		${SUDO} "${MYSQL}" --force -u "$DB_ROOT" -h 127.0.0.1 $PASS_OPT -D travis < "${TRAVIS_BUILD_DIR}/htdocs/install/mysql/migration/repair.sql"
 
 
-	{
-		php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_ProductBatch,MAIN_MODULE_SupplierProposal,MAIN_MODULE_STRIPE,MAIN_MODULE_ExpenseReport
-		php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP
-		php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_RECEPTION,MAIN_MODULE_RECRUITMENT
-		php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_KnowledgeManagement,MAIN_MODULE_EventOrganization,MAIN_MODULE_PARTNERSHIP
-		php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_EmailCollector
-	} > $TRAVIS_BUILD_DIR/enablemodule.log
-
-)
+		{
+			"${PHP}" $PHP_OPT upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_ProductBatch,MAIN_MODULE_SupplierProposal,MAIN_MODULE_STRIPE,MAIN_MODULE_ExpenseReport
+			"${PHP}" $PHP_OPT upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP
+			"${PHP}" $PHP_OPT upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_RECEPTION,MAIN_MODULE_RECRUITMENT
+			"${PHP}" $PHP_OPT upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_KnowledgeManagement,MAIN_MODULE_EventOrganization,MAIN_MODULE_PARTNERSHIP
+			"${PHP}" $PHP_OPT upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_EmailCollector
+		} > $TRAVIS_BUILD_DIR/enablemodule.log
+	) && save_db_cache
+fi

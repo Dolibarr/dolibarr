@@ -101,17 +101,17 @@ if (GETPOST("type", 'alpha')) {
 }
 
 $filters = array();
-if (GETPOST("year", 'int')) {
-	$filters['year'] = GETPOST("year", 'int');
+if (GETPOSTINT("year")) {
+	$filters['year'] = GETPOSTINT("year");
 }
-if (GETPOST("id", 'int')) {
-	$filters['id'] = GETPOST("id", 'int');
+if (GETPOSTINT("id")) {
+	$filters['id'] = GETPOSTINT("id");
 }
-if (GETPOST("idfrom", 'int')) {
-	$filters['idfrom'] = GETPOST("idfrom", 'int');
+if (GETPOSTINT("idfrom")) {
+	$filters['idfrom'] = GETPOSTINT("idfrom");
 }
-if (GETPOST("idto", 'int')) {
-	$filters['idto'] = GETPOST("idto", 'int');
+if (GETPOSTINT("idto")) {
+	$filters['idto'] = GETPOSTINT("idto");
 }
 if (GETPOST("project", 'alpha')) {
 	$filters['project'] = GETPOST("project", 'alpha');
@@ -128,16 +128,16 @@ if (GETPOST("notactiontype", 'alpha')) {
 if (GETPOST("actiontype", 'alpha')) {
 	$filters['actiontype'] = GETPOST("actiontype", 'alpha');
 }
-if (GETPOST("notolderthan", 'int')) {
-	$filters['notolderthan'] = GETPOST("notolderthan", "int");
+if (GETPOSTINT("notolderthan")) {
+	$filters['notolderthan'] = GETPOSTINT("notolderthan");
 } else {
 	$filters['notolderthan'] = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY');
 }
 if (GETPOST("module", 'alpha')) {
 	$filters['module'] = GETPOST("module", 'alpha');
 }
-if (GETPOST("status", 'int')) {
-	$filters['status'] = GETPOST("status", 'int');
+if (GETPOSTINT("status")) {
+	$filters['status'] = GETPOSTINT("status");
 }
 
 // Security check
@@ -211,6 +211,7 @@ foreach ($filters as $key => $value) {
 	}
 	if ($key == 'project') {
 		$filename .= '-project'.$value;
+		$shortfilename .= '-project'.$value;
 	}
 	if ($key == 'logina') {
 		$filename .= '-logina'.$value; // Author
@@ -226,6 +227,11 @@ foreach ($filters as $key => $value) {
 	}
 	if ($key == 'module') {
 		$filename .= '-module'.$value;
+		if ($value == 'project@eventorganization') {
+			$shortfilename .= '-project';
+		} elseif ($value == 'conforbooth@eventorganization') {
+			$shortfilename .= '-conforbooth';
+		}
 	}
 	if ($key == 'status') {
 		$filename .= '-status'.$value;
@@ -262,20 +268,25 @@ if (getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE')) {
 	$cachedelay = getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE');
 }
 
-$exportholidays = GETPOST('includeholidays', 'int');
+$exportholidays = GETPOSTINT('includeholidays');
 
 // Build file
 if ($format == 'ical' || $format == 'vcal') {
+	// For export of conforbooth, we disable the filter 'notolderthan'
+	if (!empty($filters['project']) && !empty($filters['module']) && ($filters['module'] == 'project@eventorganization' || $filters['module'] == 'conforbooth@eventorganization')) {
+		$filters['notolderthan'] = null;
+	}
+
 	$result = $agenda->build_exportfile($format, $type, $cachedelay, $filename, $filters, $exportholidays);
 	if ($result >= 0) {
 		$attachment = true;
-		if (isset($_GET["attachment"])) {
-			$attachment = $_GET["attachment"];
+		if (GETPOSTISSET("attachment")) {
+			$attachment = GETPOST("attachment");
 		}
 		//$attachment = false;
 		$contenttype = 'text/calendar';
-		if (isset($_GET["contenttype"])) {
-			$contenttype = $_GET["contenttype"];
+		if (GETPOSTISSET("contenttype")) {
+			$contenttype = GETPOST("contenttype");
 		}
 		//$contenttype='text/plain';
 		$outputencoding = 'UTF-8';

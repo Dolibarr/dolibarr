@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright (C) 2018  ptibogxiv	<support@ptibogxiv.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,12 +48,12 @@ class InterfaceStripe extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = 'stripe';
 		$this->description = "Triggers of the module Stripe";
-		$this->version = self::VERSION_DOLIBARR; // 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'stripe';
 	}
 
 	/**
-	 * Function called when a Dolibarrr business event is done.
+	 * Function called when a Dolibarr business event is done.
 	 * All functions "runTrigger" are triggered if file
 	 * is inside directory core/triggers
 	 *
@@ -86,7 +87,7 @@ class InterfaceStripe extends DolibarrTriggers
 		}
 
 		// If customer is linked to Stripe, we update/delete Stripe too
-		if ($action == 'COMPANY_MODIFY') {
+		if ($action == 'COMPANY_MODIFY' && $object instanceof Societe) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$stripeacc = $stripe->getStripeAccount($service); // No need of network access for this. May return '' if no Oauth defined.
@@ -128,10 +129,10 @@ class InterfaceStripe extends DolibarrTriggers
 					if (($customer->tax_exempt == 'exempt' && !$object->tva_assuj) || (!$customer->tax_exempt == 'exempt' && empty($object->tva_assuj))) {
 						$changerequested++;
 					}
-					if (!isset($customer->tax_ids['data']) && !is_null($vatcleaned)) {
+					if (!isset($customer->tax_ids->data) && !is_null($vatcleaned)) {
 						$changerequested++;
-					} elseif (isset($customer->tax_ids['data'])) {
-						$taxinfo = reset($customer->tax_ids['data']);
+					} elseif (isset($customer->tax_ids->data)) {
+						$taxinfo = reset($customer->tax_ids->data);
 						if (empty($taxinfo) && !empty($vatcleaned)) {
 							$changerequested++;
 						}
@@ -157,12 +158,13 @@ class InterfaceStripe extends DolibarrTriggers
 									$isineec = isInEEC($object);
 									if ($object->country_code && $isineec) {
 										//$taxids = $customer->allTaxIds($customer->id);
-										$customer->createTaxId($customer->id, array('type'=>'eu_vat', 'value'=>$vatcleaned));
+										$customer->createTaxId($customer->id, array('type' => 'eu_vat', 'value' => $vatcleaned));
 									}
 								} else {
 									$taxids = $customer->allTaxIds($customer->id);
 									if (is_array($taxids->data)) {
 										foreach ($taxids->data as $taxidobj) {
+											// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 											$customer->deleteTaxId($customer->id, $taxidobj->id);
 										}
 									}
@@ -170,6 +172,7 @@ class InterfaceStripe extends DolibarrTriggers
 							}
 
 							// Update Customer on Stripe
+							// @phan-suppress-next-line PhanDeprecatedFunction
 							$customer->save();
 						} catch (Exception $e) {
 							//var_dump(\Stripe\Stripe::getApiVersion());
@@ -180,7 +183,7 @@ class InterfaceStripe extends DolibarrTriggers
 				}
 			}
 		}
-		if ($action == 'COMPANY_DELETE') {
+		if ($action == 'COMPANY_DELETE' && $object instanceof Societe) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			if (getDolGlobalString('STRIPE_DELETE_STRIPE_ACCOUNT_WHEN_DELETING_THIRDPARTY')) {
@@ -206,7 +209,7 @@ class InterfaceStripe extends DolibarrTriggers
 		if ($action == 'COMPANYPAYMENTMODE_CREATE' && $object->type == 'card') {
 			// For creation of credit card, we do not create in Stripe automatically
 		}
-		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
+		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card' && $object instanceof CompanyPaymentMode) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			if (!empty($object->stripe_card_ref)) {
@@ -225,8 +228,10 @@ class InterfaceStripe extends DolibarrTriggers
 						dol_syslog("We got the customer, so now we update the credit card", LOG_DEBUG);
 						$card = $stripe->cardStripe($customer, $object, $stripeacc, $servicestatus);
 						if ($card) {
-							$card->metadata = array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']));
+							// @phan-suppress-next-line PhanTypeMismatchPropertyProbablyReal
+							$card->metadata = array('dol_id' => $object->id, 'dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']));
 							try {
+								// @phan-suppress-next-line PhanDeprecatedFunction
 								$card->save();
 							} catch (Exception $e) {
 								$ok = -1;
@@ -237,7 +242,7 @@ class InterfaceStripe extends DolibarrTriggers
 				}
 			}
 		}
-		if ($action == 'COMPANYPAYMENTMODE_DELETE' && $object->type == 'card') {
+		if ($action == 'COMPANYPAYMENTMODE_DELETE' && $object->type == 'card' && $object instanceof CompanyPaymentMode) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			if (!empty($object->stripe_card_ref)) {

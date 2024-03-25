@@ -43,7 +43,7 @@ $hookmanager->initHooks(array('thirdpartiesindex'));
 
 
 
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -63,8 +63,8 @@ $resultboxes = FormOther::getBoxesArea($user, "3");
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'int');
-	$userid = GETPOST('userid', 'int');
+	$zone = GETPOSTINT('areacode');
+	$userid = GETPOSTINT('userid');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
 	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
@@ -203,7 +203,7 @@ $thirdpartygraph .= '</table>';
 $thirdpartygraph .= '</div>';
 
 $thirdpartycateggraph = '';
-if (isModEnabled('categorie') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRDPARTIES')) {
+if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRDPARTIES')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$elementtype = 'societe';
 

@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2021	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,13 +44,12 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "ldap";
 		$this->description = "Triggers of this module allows to synchronize Dolibarr toward a LDAP database.";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = self::VERSION_DOLIBARR;
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'technic';
 	}
 
 	/**
-	 * Function called when a Dolibarrr business event is done.
+	 * Function called when a Dolibarr business event is done.
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 * @param string		$action		Event action code
@@ -233,6 +233,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 							$userAccountControl -= 2;
 						}
 						$info['userAccountControl'] = $userAccountControl;
+						// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 						$resUpdate = $ldap->update($dn, $info, $user, $dn);
 						if ($resUpdate < 0) {
 							$this->error = "ErrorLDAP " . $ldap->error;

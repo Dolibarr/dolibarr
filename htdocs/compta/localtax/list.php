@@ -28,16 +28,16 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 // Load translation files required by the page
 $langs->load("compta");
 
-$limit = GETPOST('limit', 'int');
+$limit = GETPOSTINT('limit');
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 
 $result = restrictedArea($user, 'tax', '', '', 'charges');
-$ltt = GETPOST("localTaxType", 'int');
+$ltt = GETPOSTINT("localTaxType");
 $mode = GETPOST('mode', 'alpha');
 
 

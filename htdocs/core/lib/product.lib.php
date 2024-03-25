@@ -476,7 +476,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Sales orders
-	if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
+	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_commande($socid);
 		if ($ret < 0) {
@@ -514,7 +514,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Customer invoices
-	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
+	if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_facture($socid);
 		if ($ret < 0) {
@@ -533,7 +533,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Customer template invoices
-	if (isModEnabled("facture") && $user->hasRight('facture', 'lire')) {
+	if (isModEnabled("invoice") && $user->hasRight('facture', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_facturerec($socid);
 		if ($ret < 0) {
@@ -572,7 +572,7 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// Contracts
-	if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
+	if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 		$nblines++;
 		$ret = $product->load_stats_contrat($socid);
 		if ($ret < 0) {
@@ -679,7 +679,7 @@ function show_stats_for_batch($batch, $socid)
 	print '</tr>';
 
 	// Expeditions
-	if (isModEnabled('expedition') && $user->hasRight('expedition', 'lire')) {
+	if (isModEnabled('shipping') && $user->hasRight('expedition', 'lire')) {
 		$nblines++;
 		$ret = $batch->loadStatsExpedition($socid);
 		if ($ret < 0) {

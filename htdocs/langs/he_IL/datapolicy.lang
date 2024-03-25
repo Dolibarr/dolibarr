@@ -23,7 +23,7 @@ Module4100Desc = מודול לניהול פרטיות נתונים (תאימות
 #
 datapolicySetup = הגדרת מדיניות פרטיות של נתוני מודול
 Deletion = מחיקת נתונים
-datapolicySetupPage = בהתאם לחוקי המדינות שלך (דוגמה <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">סעיף 5</a> של ה-GDPR), יש לשמור את הנתונים האישיים לתקופה שלא חריגה מהנדרש למטרות שלשמן נאספו, למעט למטרות ארכיון.<br>המחיקה תתבצע אוטומטית לאחר משך זמן מסוים ללא אירוע (משך הזמן אותו תציין לְהַלָן).
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
 NB_MONTHS = %s חודשים
 ONE_YEAR = 1 שנה
 NB_YEARS = %s שנים
@@ -40,16 +40,16 @@ DATAPOLICY_CONTACT_FOURNISSEUR = ספק
 DATAPOLICY_ADHERENT = חבר
 DATAPOLICY_Tooltip_SETUP = סוג איש קשר - ציין את הבחירות שלך עבור כל סוג.
 DATAPOLICYMail = הגדרת מיילים
-DATAPOLICYSUBJECTMAIL = נושא המייל
+DATAPOLICYSUBJECTMAIL = Subject of the email
 DATAPOLICYCONTENTMAIL = תוכן המייל
 DATAPOLICYSUBSITUTION = אתה יכול להשתמש במשתנים הבאים במייל שלך (LINKACCEPT מאפשר ליצור קישור המתעד את הסכמת האדם, LINKREFUSED מאפשר לרשום את הסירוב של האדם):
 DATAPOLICYACCEPT = הודעה לאחר הסכם
-DATAPOLICYREFUSE = הודעה לאחר אי הסכמה
+DATAPOLICYREFUSE = Message after disagreement
 SendAgreementText = אתה יכול לשלוח דוא"ל GDPR לכל אנשי הקשר הרלוונטיים שלך (שעדיין לא קיבלו דוא"ל ועבורם לא רשמת שום דבר על הסכם ה-GDPR שלהם). לשם כך, השתמש בכפתור הבא.
 SendAgreement = לשלוח מיילים
 AllAgreementSend = כל המיילים נשלחו
 TXTLINKDATAPOLICYACCEPT = טקסט לקישור "הסכם"
-TXTLINKDATAPOLICYREFUSE = טקסט לקישור "אי הסכמה"
+TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
 
 
 #
@@ -57,8 +57,8 @@ TXTLINKDATAPOLICYREFUSE = טקסט לקישור "אי הסכמה"
 #
 DATAPOLICY_BLOCKCHECKBOX = GDPR: עיבוד נתונים אישיים
 DATAPOLICY_consentement = הסכמה שהתקבלה לעיבוד נתונים אישיים
-DATAPOLICY_opposition_traitement = מתנגד לעיבוד הנתונים האישיים שלו
-DATAPOLICY_opposition_prospection = מתנגד לעיבוד הנתונים האישיים שלו למטרות חיפוש
+DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
+DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
 
 #
 # Popup
@@ -78,15 +78,11 @@ DATAPOLICY_PORTABILITE_CONFIRMATION = אתה רוצה לייצא את הנתונ
 #
 ANONYMISER_AT = עשה אנונימי את %s
 
-# V2
-DATAPOLICYReturn = אימות GDPR
-DATAPOLICY_date = תאריך הסכם/אי הסכמה GDPR
-DATAPOLICY_send = תאריך שליחת דוא"ל הסכם
-DATAPOLICYReturn = אימות GDPR
+DATAPOLICY_date = Date of agreement/disagreement GDPR
+DATAPOLICY_send = Date agreement email sent
 DATAPOLICY_SEND = שלח דוא"ל GDPR
 MailSent = דוא"ל נשלח
 
 # ERROR
-ErrorSubjectIsRequired = שגיאה: נדרש נושא האימייל. ציין זאת בהגדרת המודול
-=עקב בעיה טכנית, לא הצלחנו לרשום את בחירתך. אנו מתנצלים על כך. צור איתנו קשר כדי לשלוח לנו את בחירתך.
-NUMBER_MONTH_BEFORE_DELETION = מספר החודשים לפני המחיקה
+=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
+NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

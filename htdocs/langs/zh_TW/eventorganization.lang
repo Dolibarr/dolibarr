@@ -34,7 +34,6 @@ PaymentEvent=活動的付款
 NewRegistration=登記
 EventOrganizationSetup=活動組織設定
 EventOrganization=活動組織
-Settings=設定
 EventOrganizationSetupPage = 活動組織設定頁面
 EVENTORGANIZATION_TASK_LABEL = 當專案驗證時自動地建立任務標籤
 EVENTORGANIZATION_TASK_LABELTooltip = 當您驗證一個有組織的活動，有些任務可以自動在專案中建立<br> <br>例如：<br>發送會議呼叫<br>發送展位呼叫<br>驗證建議會議<br>驗證展位應用<br>為參與者打開訂閱活動<br>向演講者發送活動提醒 <br> 向展位主持人發送活動提醒 <br> 向與會者發送活動提醒
@@ -90,7 +89,7 @@ PriceOfRegistrationHelp=註冊或參加活動的費用
 PriceOfBooth=展位認購價
 PriceOfBoothHelp=展位認購價
 EventOrganizationICSLink=連結會議的ICS
-ConferenceOrBoothInformation=會議或展位資訊
+ConferenceOrBoothInformation=Conference Or Booth information
 Attendees=參與者
 ListOfAttendeesOfEvent=活動項目參與者名單
 DownloadICSLink = 下載 ICS連結
@@ -98,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = 用於建議會議之公共註冊頁面安全金�
 SERVICE_BOOTH_LOCATION = 關於展位位置發票行的服務
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = 關於參與者訂閱會議發票行的服務
 NbVotes=票數
+
 #
 # Status
 #
@@ -107,8 +107,9 @@ EvntOrgConfirmed = 已確認
 EvntOrgNotQualified = 不合格
 EvntOrgDone = 完成
 EvntOrgCancelled = 已取消
+
 #
-# Public page
+# Other
 #
 SuggestForm = 建議頁面
 SuggestOrVoteForConfOrBooth = 建議或投票頁面
@@ -144,13 +145,8 @@ OrganizationEventBulkMailToAttendees=這是關於您作為參與者參與活動�
 OrganizationEventBulkMailToSpeakers=這是對您作為演講者參與活動的提醒
 OrganizationEventLinkToThirdParty=連結到合作方（客戶、供應商或合作夥伴）
 OrganizationEvenLabelName=Public name of the conference or booth
-
 NewSuggestionOfBooth=申請展位
 NewSuggestionOfConference=Application to hold a conference
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = 歡迎來到會議或展位建議頁面。
 EvntOrgRegistrationConfWelcomeMessage = 歡迎來到會議建議頁面。
 EvntOrgRegistrationBoothWelcomeMessage = 歡迎來到展位建議頁面。
@@ -158,8 +154,8 @@ EvntOrgVoteHelpMessage = 在這裡，您可以查看專案的建議活動並投�
 VoteOk = 您的投票已被接受。
 AlreadyVoted = 您已經為此事件投票。
 VoteError = 投票時發生錯誤，請重試。
-
 SubscriptionOk=Your registration has been recorded
+AmountOfRegistrationPaid=Amount of registration paid
 ConfAttendeeSubscriptionConfirmation = 確認您的活動訂閱
 Attendee = 參加者
 PaymentConferenceAttendee = 參與人員繳費
@@ -169,9 +165,15 @@ RegistrationAndPaymentWereAlreadyRecorder=已記錄電子郵件 <b> %s </b> 的�
 EmailAttendee=參與者電子郵件
 EmailCompany=Company email
 EmailCompanyForInvoice=公司電子郵件（用於發票，如果與參與者電子郵件不同）
-ErrorSeveralCompaniesWithEmailContactUs=已找到幾家收到此電子郵件的公司，因此我們無法自動驗證您的註冊。請以 %s 聯繫我們進行手動驗證
-ErrorSeveralCompaniesWithNameContactUs=已找到數家具有此名稱的公司，因此我們無法自動驗證您的註冊。請以 %s 聯繫我們進行手動驗證
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
 NoPublicActionsAllowedForThisEvent=本次活動不對外公開任何公開活動
 MaxNbOfAttendees=參加人數上限
 DateStartEvent=Event start date
 DateEndEvent=Event end date
+ModifyStatus=Modify status
+ConfirmModifyStatus=Confirm status modification
+ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
+RecordsUpdated = %s Records updated
+RecordUpdated = Record updated
+NoRecordUpdated = No Record updated
