@@ -70,16 +70,16 @@ RUN apt-get update -y \
     && mv ${PHP_INI_DIR}/php.ini-production ${PHP_INI_DIR}/php.ini \
     && rm -rf /var/lib/apt/lists/*
 
-# Get Dolibarr
-RUN curl -fLSs https://github.com/Dolibarr/dolibarr/archive/${DOLI_VERSION}.tar.gz |\
-    tar -C /tmp -xz && \
-    cp -r /tmp/dolibarr-${DOLI_VERSION}/htdocs/* /var/www/html/ && \
-    ln -s /var/www/html /var/www/htdocs && \
-    cp -r /tmp/dolibarr-${DOLI_VERSION}/scripts /var/www/ && \
-    rm -rf /tmp/* && \
+# Copy the source code into the Docker image
+COPY . /var/www/html/
+
+# Symlink the copied directory
+RUN ln -s /var/www/html /var/www/htdocs && \
+    cp -r /var/www/html/scripts /var/www/ && \
     mkdir -p /var/www/documents && \
     mkdir -p /var/www/html/custom && \
     chown -R www-data:www-data /var/www
+
 
 EXPOSE 80
 VOLUME /var/www/documents
