@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -91,9 +92,8 @@ print '<body>'."\n";
 print '<div>';
 //print '<br>';
 
-if (!isset($bookmarkList)) {
-	$bookmarkList = '';
-}
+
+$bookmarkList = '';
 if (!isModEnabled('multicompany')) {
 	$langs->load("admin");
 	$bookmarkList .= '<br><span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("MultiCompany")).'</span>';
@@ -109,6 +109,8 @@ if (!isModEnabled('multicompany')) {
 
 	if (is_object($mc)) {
 		$listofentities = $mc->getEntitiesList($user->login, false, true);
+	} else {
+		$listofentities = array();
 	}
 
 	$multicompanyList .= '<ul class="ullistonly left" style="list-style: none;">';
