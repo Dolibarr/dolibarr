@@ -54,6 +54,7 @@ if (!function_exists('utf8_encode')) {
 	 *
 	 * @param	mixed	$elements		PHP Object to json encode
 	 * @return 	string					Json encoded string
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function utf8_encode($elements)
 	{
@@ -67,6 +68,7 @@ if (!function_exists('utf8_decode')) {
 	 *
 	 * @param	mixed	$elements		PHP Object to json encode
 	 * @return 	string					Json encoded string
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function utf8_decode($elements)
 	{
@@ -80,6 +82,7 @@ if (!function_exists('str_starts_with')) {
 	 * @param string $haystack	haystack
 	 * @param string $needle	needle
 	 * @return boolean
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function str_starts_with($haystack, $needle)
 	{
@@ -93,6 +96,7 @@ if (!function_exists('str_ends_with')) {
 	 * @param string $haystack	haystack
 	 * @param string $needle	needle
 	 * @return boolean
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function str_ends_with($haystack, $needle)
 	{
@@ -106,6 +110,7 @@ if (!function_exists('str_contains')) {
 	 * @param string $haystack	haystack
 	 * @param string $needle	needle
 	 * @return boolean
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function str_contains($haystack, $needle)
 	{
@@ -456,7 +461,7 @@ function num2Alpha($n)
  * )
  *
  * @param string $user_agent Content of $_SERVER["HTTP_USER_AGENT"] variable
- * @return	array Check function documentation
+ * @return	array{browsername:string,browserversion:string,browseros:string,browserua:string,layout:string,phone:string,tablet:bool} Check function documentation
  */
 function getBrowserInfo($user_agent)
 {
@@ -12117,7 +12122,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  *                                    'action', 'facture', 'project', 'project_task' or
  *                                    'myobject@mymodule' or
  *                                    'myobject_mysubobject' (where mymodule = myobject, like 'project_task')
- * @return  array					array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>)
+ * @return  array{module:string,element:string,table_element:string,subelement:string,classpath:string,classfile:string,classname:string,dir_output:string}		array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>)
  * @see fetchObjectByElement(), getMultiDirOutput()
  */
 function getElementProperties($elementType)
@@ -12479,6 +12484,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 		if (class_exists($element_prop['classname'])) {
 			$className = $element_prop['classname'];
 			$objecttmp = new $className($db);
+			'@phan-var-force CommonObject $objecttmp';
 
 			if ($element_id > 0 || !empty($element_ref)) {
 				$ret = $objecttmp->fetch($element_id, $element_ref);
@@ -12869,7 +12875,7 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 
  * This is used to output the search criteria in an UFS (Universal Filter Syntax) input component.
  *
  * @param 	string			$sqlfilters			Universal SQL filter string. Must have been trimmed before.
- * @return 	array								Array of AND
+ * @return 	string[]							Array of AND
  */
 function dolForgeExplodeAnd($sqlfilters)
 {
@@ -12995,7 +13001,7 @@ function dolCheckFilters($sqlfilters, &$error = '', &$parenthesislevel = 0)
  * Function to forge a SQL criteria from a Dolibarr filter syntax string.
  * This method is called by forgeSQLFromUniversalSearchCriteria()
  *
- * @param  array    $matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.nature:is:NULL"
+ * @param  string[]	$matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.nature:is:NULL"
  * @return string                  Forged criteria. Example: "" or "()"
  */
 function dolForgeDummyCriteriaCallback($matches)
@@ -13016,7 +13022,7 @@ function dolForgeDummyCriteriaCallback($matches)
  * Function to forge a SQL criteria from a Dolibarr filter syntax string.
  * This method is called by forgeSQLFromUniversalSearchCriteria()
  *
- * @param  array    $matches       	Array of found string by regex search.
+ * @param  string[]	$matches       	Array of found string by regex search.
  * 									Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
  * @return string                  	Forged criteria. Example: "t.field LIKE 'abc%'"
  */
@@ -13097,7 +13103,7 @@ function dolForgeCriteriaCallback($matches)
  * Get timeline icon
  *
  * @param 	ActionComm 	$actionstatic 	actioncomm
- * @param 	array 		$histo 			histo
+ * @param 	array<string,array{percent:int}>	$histo 			histo
  * @param 	int 		$key 			key
  * @return 	string						String with timeline icon
  * @deprecated Use actioncomm->getPictoType() instead
@@ -13164,7 +13170,7 @@ function getTimelineIcon($actionstatic, &$histo, $key)
  * getActionCommEcmList
  *
  * @param	ActionComm		$object			Object ActionComm
- * @return 	array							Array of documents in index table
+ * @return 	array<int,stdClass>				Array of documents in index table
  */
 function getActionCommEcmList($object)
 {
@@ -13191,23 +13197,22 @@ function getActionCommEcmList($object)
 }
 
 
-
 /**
- *    	Show html area with actions in messaging format.
- *      Note: Global parameter $param must be defined.
+ *	Show html area with actions in messaging format.
+ *	Note: Global parameter $param must be defined.
  *
- * 		@param	Conf		       $conf		   Object conf
- * 		@param	Translate	       $langs		   Object langs
- * 		@param	DoliDB		       $db			   Object db
- * 		@param	mixed			   $filterobj	   Filter on object Adherent|Societe|Project|Product|CommandeFournisseur|Dolresource|Ticket|... to list events linked to an object
- * 		@param	Contact|null       $objcon		   Filter on object contact to filter events on a contact
- *      @param  int			       $noprint        Return string but does not output it
- *      @param  string		       $actioncode     Filter on actioncode
- *      @param  string             $donetodo       Filter on event 'done' or 'todo' or ''=nofilter (all).
- *      @param  array              $filters        Filter on other fields
- *      @param  string             $sortfield      Sort field
- *      @param  string             $sortorder      Sort order
- *      @return	string|void				           Return html part or void if noprint is 1
+ *	@param	Conf				$conf		Object conf
+ *	@param	Translate			$langs		Object langs
+ *	@param	DoliDB				$db			Object db
+ *	@param	?CommonObject		$filterobj	Filter on object Adherent|Societe|Project|Product|CommandeFournisseur|Dolresource|Ticket|... to list events linked to an object
+ *	@param	?Contact			$objcon		Filter on object contact to filter events on a contact
+ *	@param  int					$noprint	Return string but does not output it
+ *	@param  string				$actioncode	Filter on actioncode
+ *	@param  string				$donetodo	Filter on event 'done' or 'todo' or ''=nofilter (all).
+ *	@param  array<string,string>	$filters	Filter on other fields
+ *	@param  string				$sortfield	Sort field
+ *	@param  string				$sortorder	Sort order
+ *	@return	string|void						Return html part or void if noprint is 1
  */
 function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC')
 {
@@ -13236,6 +13241,9 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		$sortfield_new_list[] = $sortfield_label_list[trim($sortfield_value)];
 	}
 	$sortfield_new = implode(',', $sortfield_new_list);
+
+	$sql = null;
+	$sql2 = null;
 
 	if (isModEnabled('agenda')) {
 		// Search histo on actioncomm
@@ -13433,7 +13441,6 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			while ($i < $imaxinloop) {
 				$obj = $db->fetch_object($resql);
 
-				'@phan-var-force array{apicto:string,contact_id:string,dp:string,dp2:string,firstname:string,label:string,message:string,msg_from:string,ref:string,type:string,user_lastname:string} $obj';
 				if ($obj->type == 'action') {
 					$contactaction = new ActionComm($db);
 					$contactaction->id = $obj->id;
@@ -13839,6 +13846,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					$conf->cache['contact'][$histo[$key]['contact_id']] = $contact;
 				} else {
 					$contact = $conf->cache['contact'][$histo[$key]['contact_id']];
+					$result = ($contact instanceof Contact) ? $contact->id : 0;
 				}
 
 				if ($result > 0) {
