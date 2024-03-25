@@ -88,12 +88,13 @@ if (!function_exists('print_line')) {
 	 */
 	function print_line($db, $data, $quantity, $level, $parent)
 	{
-		global $langs, $extrafields, $filtertype, $i, $action, $object_rights;
+		global $conf, $langs, $extrafields, $filtertype, $i, $action, $object_rights, $num, $disableedit, $disableremove, $disablemove;
 
 		$product = new Product($db);
 		$product->fetch($data->fk_product);
 		$bom = $data->childBom;
 
+		$html = array();
 		$column = array();
 		$extra='';
 		if (!empty($extrafields)) {
@@ -199,7 +200,7 @@ if (!function_exists('print_line')) {
 			$html[] = '<tr'.(!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT')?' style="display:none"':'').
 				(!empty($parent)?' class="sub_bom_lines" parentid="'.$parent->id.'"':'').'>'.implode('', $column).'</tr>';
 		}
-		foreach ((!empty($bom) && is_array($bom->lines)) ? $bom->lines : array() as $child) {
+		foreach (((!empty($bom) && is_array($bom->lines)) ? $bom->lines : array()) as $child) {
 			foreach (print_line($db, $child, ($quantity * $data->qty) / (($bom->qty??1) * $data->efficiency), $level + 1, $data) as $line) {
 				$html[] = $line;
 			}
