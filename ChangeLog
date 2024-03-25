@@ -27,12 +27,13 @@ The following changes may create regressions for some external modules, but were
   cross platform compatibility. On linux the exit(-1) was caught as 255, it may be now exit(1) so will be caught as 1.
 * The parameter $filter of method fetchAll does not accept array of SQL but must be a string of an Universal Search Filter syntax.
 * Use of dol_eval with parameter $returnvalue=0 is deprecated.
-* The signature for all ->delete() method has been modified to match the modulebuilder template (so first paramis now always $user), except
+* The signature for all ->delete() method has been modified to match the modulebuilder template (so first param is now always $user), except
   the delete for thirdparty (still accept the id of thirdparty to delete as first parameter). Will probably be modified into another version.
 * Route for API /thirdparties/gateways has been renamed into /thirdparties/accounts to better match the api object name.
 * The AGENDA_ENABLE_DONEBY hidden option has been removed. So $userdoneid in actioncomm class is deprecated. Please use $userownerid instead. Also,
-  the field $fk_user_done in actioncomm table is deprecated. Please use $fk_user_action instead.
-* The table commande_fournisseur_dispatch has been renamed into receptiondet_batch to better match its goal.
+  the deprecated field $fk_user_done in actioncomm table is removed. Please use $fk_user_action instead.
+* The table commande_fournisseur_dispatch has been renamed into receptiondet_batch to better match its goal and the field fk_commande
+  and fk_commandefourndet were renamed into fk_element and fk_elementdet
 
 
 ***** ChangeLog for 19.0.1 compared to 19.0.0 *****
