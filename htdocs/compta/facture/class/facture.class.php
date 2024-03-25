@@ -262,6 +262,8 @@ class Facture extends CommonInvoice
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
+	public $multicurrency_total_localtax1;	// not in database
+	public $multicurrency_total_localtax2;	// not in database
 
 	/**
 	 * @var int Situation cycle reference number
@@ -2377,8 +2379,6 @@ class Facture extends CommonInvoice
 				$line->remise_percent   = $objp->remise_percent;
 				$line->fk_remise_except = $objp->fk_remise_except;
 				$line->fk_product       = $objp->fk_product;
-				$line->date_start       = $this->db->jdate($objp->date_start);
-				$line->date_end         = $this->db->jdate($objp->date_end);
 				$line->date_start       = $this->db->jdate($objp->date_start);
 				$line->date_end         = $this->db->jdate($objp->date_end);
 				$line->info_bits        = $objp->info_bits;

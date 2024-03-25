@@ -73,7 +73,6 @@ if ($setcurrency != "") {
 	// We will recalculate amount for foreign currency at next call of invoice.php when $_SESSION["takeposcustomercurrency"] differs from invoice->multicurrency_code.
 }
 
-$_SESSION["urlfrom"] = '/takepos/index.php';
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter", "banks"));
 
@@ -372,8 +371,18 @@ function LoadProducts(position, issubcat) {
 				}
 				?>
 				if (data[parseInt(idata)]['price_formated']) {
-					$("#proprice"+ishow).attr("class", "productprice");
-					$("#proprice"+ishow).html(data[parseInt(idata)]['price_ttc_formated']);
+					$("#proprice" + ishow).attr("class", "productprice");
+					<?php
+					if (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT')) {
+						?>
+						$("#proprice" + ishow).html(data[parseInt(idata)]['price_formated']);
+						<?php
+					} else {
+						?>
+						$("#proprice" + ishow).html(data[parseInt(idata)]['price_ttc_formated']);
+						<?php
+					}
+					?>
 				}
 				console.log("#prodiv"+ishow+".data(rowid)="+data[idata]['id']);
 				console.log($("#prodiv"+ishow));
@@ -458,8 +467,18 @@ function MoreProducts(moreorless) {
 				$("#probutton"+ishow).html(data[parseInt(idata)]['label']);
 				$("#probutton"+ishow).show();
 				if (data[parseInt(idata)]['price_formated']) {
-					$("#proprice"+ishow).attr("class", "productprice");
-					$("#proprice"+ishow).html(data[parseInt(idata)]['price_ttc_formated']);
+					$("#proprice" + ishow).attr("class", "productprice");
+					<?php
+					if (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT')) {
+						?>
+						$("#proprice" + ishow).html(data[parseInt(idata)]['price_formated']);
+						<?php
+					} else {
+						?>
+						$("#proprice" + ishow).html(data[parseInt(idata)]['price_ttc_formated']);
+						<?php
+					}
+					?>
 				}
 				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
@@ -484,11 +503,12 @@ function ClickProduct(position, qty = 1) {
 	}
 	else{
 		console.log($('#prodiv4').data('rowid'));
+		invoiceid = $("#invoiceid").val();
 		idproduct=$('#prodiv'+position).data('rowid');
 		console.log("Click on product at position "+position+" for idproduct "+idproduct+", qty="+qty);
 		if (idproduct=="") return;
 		// Call page invoice.php to generate the section with product lines
-		$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken() ?>&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline+"&qty="+qty, function() {
+		$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken() ?>&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline+"&qty="+qty+"&invoiceid="+invoiceid, function() {
 			<?php if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) echo "CustomerDisplay();";?>
 		});
 	}
@@ -507,7 +527,8 @@ function ChangeThirdparty(idcustomer) {
 
 function deleteline() {
 	console.log("Delete line");
-	$("#poslines").load("invoice.php?action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline, function() {
+	invoiceid = $("#invoiceid").val();
+	$("#poslines").load("invoice.php?action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&invoiceid="+invoiceid, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 	ClearSearch();
@@ -670,7 +691,17 @@ function Search2(keyCodeForEnter, moreorless) {
 					$("#probutton" + i).show();
 					if (data[i]['price_formated']) {
 						$("#proprice" + i).attr("class", "productprice");
-						$("#proprice" + i).html(data[i]['price_ttc_formated']);
+						<?php
+						if (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT')) {
+							?>
+							$("#proprice" + i).html(data[i]['price_formated']);
+							<?php
+						} else {
+							?>
+							$("#proprice" + i).html(data[i]['price_ttc_formated']);
+							<?php
+						}
+						?>
 					}
 					$("#proimg" + i).attr("title", titlestring);
 					if( undefined !== data[i]['img']) {
@@ -1077,7 +1108,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				}?>
 				<div class="login_block_user">
 				<?php
-				print top_menu_user(1);
+				print top_menu_user(1, DOL_URL_ROOT.'/user/logout.php?token='.newtoken().'&urlfrom='.urlencode('/takepos/?setterminal='.((int) $term)));
 				?>
 				</div>
 			</div>

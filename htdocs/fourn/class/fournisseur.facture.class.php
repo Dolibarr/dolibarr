@@ -1905,7 +1905,7 @@ class FactureFournisseur extends CommonInvoice
 
 			// Set new ref and define current statut
 			if (!$error) {
-				$this->ref = $num;
+				$this->ref = $this->newref;
 				$this->statut = self::STATUS_VALIDATED;
 				//$this->date_validation=$now; this is stored into log table
 			}
