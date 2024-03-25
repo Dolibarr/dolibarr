@@ -128,6 +128,7 @@ $form = new Form($db);
 // Page Header
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 $title = $langs->trans('ChartOfIndividualAccountsOfSubsidiaryLedger');
+
 llxHeader('', $title, $help_url);
 
 
@@ -300,14 +301,17 @@ if ($resql) {
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.((int) $limit);
 	}
+	if ($optioncss != '') {
+		$param .= '&optioncss='.urlencode($optioncss);
+	}
 	if ($search_subaccount) {
 		$param .= '&search_subaccount='.urlencode($search_subaccount);
 	}
 	if ($search_label) {
 		$param .= '&search_label='.urlencode($search_label);
 	}
-	if ($optioncss != '') {
-		$param .= '&optioncss='.urlencode($optioncss);
+	if ($search_type) {
+		$param .= '&search_type='.urlencode($search_type);
 	}
 
 	// List of mass actions available
@@ -373,7 +377,7 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	}
 	if (!empty($arrayfields['subaccount']['checked'])) {
 		print_liste_field_titre($arrayfields['subaccount']['label'], $_SERVER["PHP_SELF"], "subaccount", "", $param, '', $sortfield, $sortorder);
@@ -391,7 +395,7 @@ if ($resql) {
 	}
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	}
 	print "</tr>\n";
 
