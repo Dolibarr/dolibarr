@@ -854,7 +854,7 @@ abstract class CommonObject
 			$sql .= " AND ref_ext = '".$db->escape($ref_ext)."'";
 		} else {
 			$error = 'ErrorWrongParameters';
-			dol_print_error(get_class()."::isExistingObject ".$error, LOG_ERR);
+			dol_syslog(get_class()."::isExistingObject ".$error, LOG_ERR);
 			return -1;
 		}
 		if ($ref || $ref_ext) {		// Because the same ref can exists in 2 different entities, we force the current one in priority
