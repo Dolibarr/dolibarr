@@ -2622,11 +2622,11 @@ function top_menu_quickadd()
 					if ( event.which === 65 && event.ctrlKey ) {
 						console.log(\'control + a : trigger open quick add dropdown\');
 						openQuickAddDropDown(event);
-					} else {
-						if ( event.which === 65 && event.ctrlKey && event.shiftKey ) {
-							console.log(\'control + shift + a : trigger open quick add dropdown\');
-							openQuickAddDropDown(event);
-						}
+					}
+				} else {
+					if ( event.which === 65 && event.ctrlKey && event.shiftKey ) {
+						console.log(\'control + shift + a : trigger open quick add dropdown\');
+						openQuickAddDropDown(event);
 					}
 				}
             });
