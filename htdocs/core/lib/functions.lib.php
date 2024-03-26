@@ -2018,7 +2018,10 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		// If adding log inside HTML page is required
 		if ((!empty($_REQUEST['logtohtml']) && getDolGlobalString('MAIN_ENABLE_LOG_TO_HTML'))
 			|| (is_object($user) && $user->hasRight('debugbar', 'read') && is_object($debugbar))) {
-			$conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S")." ".$logLevels[$level]." ".$message;
+			$ospid = sprintf("%7s", dol_trunc(getmypid(), 7, 'right', 'UTF-8', 1));
+			$osuser = " ".sprintf("%6s", dol_trunc(function_exists('posix_getuid') ? posix_getuid() : '', 6, 'right', 'UTF-8', 1));
+
+			$conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S")." ".sprintf("%-7s", $logLevels[$level])." ".$ospid." ".$osuser." ".$message;
 		}
 
 		//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
@@ -2034,7 +2037,9 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			'script' => (isset($_SERVER['PHP_SELF']) ? basename($_SERVER['PHP_SELF'], '.php') : false),
 			'level' => $level,
 			'user' => ((is_object($user) && $user->id) ? $user->login : false),
-			'ip' => false
+			'ip' => false,
+			'osuser' => function_exists('posix_getuid') ? posix_getuid() : false,
+			'ospid' => getmypid()	// on linux, max value is defined into cat /proc/sys/kernel/pid_max
 		);
 
 		$remoteip = getUserRemoteIP(); // Get ip when page run on a web server
@@ -2050,11 +2055,18 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
 			$data['ip'] = $_SERVER['SERVER_ADDR'];
 		} elseif (!empty($_SERVER['COMPUTERNAME'])) {
-			// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
-			$data['ip'] = $_SERVER['COMPUTERNAME'].(empty($_SERVER['USERNAME']) ? '' : '@'.$_SERVER['USERNAME']);
+			// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defines it).
+			$data['ip'] = $_SERVER['COMPUTERNAME'];
+		} else {
+			$data['ip'] = '???';
+		}
+
+		if (!empty($_SERVER['USERNAME'])) {
+			// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but useful if OS defines it).
+			$data['osuser'] = $_SERVER['USERNAME'];
 		} elseif (!empty($_SERVER['LOGNAME'])) {
-			// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but useful if OS defined it).
-			$data['ip'] = '???@'.$_SERVER['LOGNAME'];
+			// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but useful if OS defines it).
+			$data['osuser'] = $_SERVER['LOGNAME'];
 		}
 
 		// Loop on each log handler and send output
