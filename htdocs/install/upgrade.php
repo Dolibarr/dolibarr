@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -417,7 +418,8 @@ if (!$ok && isset($argv[1])) {
 }
 dolibarr_install_syslog("Exit ".$ret);
 
-dolibarr_install_syslog("--- upgrade: end ".((!$ok && empty($_GET["ignoreerrors"])) || $dirmodule));
+dolibarr_install_syslog("--- upgrade: end ".((int) (!$ok && empty($_GET["ignoreerrors"])))." dirmodule=".$dirmodule);
+
 $nonext = (!$ok && empty($_GET["ignoreerrors"])) ? 2 : 0;
 if ($dirmodule) {
 	$nonext = 1;

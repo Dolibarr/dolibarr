@@ -1346,6 +1346,9 @@ select.flat.selectlimit {
 .marginrightonlyshort {
 	margin-<?php echo $right; ?>: 4px !important;
 }
+.marginrightonlylarge {
+	margin-<?php echo $right; ?>: 20px !important;
+}
 .margintoponly {
 	margin-top: 10px !important;
 }
@@ -2476,8 +2479,8 @@ span.widthpictotitle.pictotitle {
 	opacity: 0.4;
 }
 .pictofixedwidth {
-	text-align: <?php echo $left; ?>;
-	width: 20px;
+	text-align: start;
+	width: 21px;
 	/* padding-right: 0; */
 }
 
@@ -3137,8 +3140,8 @@ div.login a:hover {
 div.login_block_user {
 	display: inline-block;
 	vertical-align: middle;
-	line-height: <?php echo $disableimages ? '25' : '52'; ?>px;
-	height: <?php echo $disableimages ? '25' : '52'; ?>px;
+	line-height: <?php echo $disableimages ? '25' : '51'; ?>px;
+	height: <?php echo $disableimages ? '25' : '51'; ?>px;
 }
 div.login_block_other {
 	display: inline-block;
@@ -3961,6 +3964,13 @@ table.liste tr:last-of-type td, table.noborder:not(#tablelines):not(#tableliness
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
 }
+/* CSS to remove the interline border */
+table.nointerlines tr:not(:last-child) td {
+	border-bottom: unset !important;
+	border-top: unset !important;
+}
+
+
 /*
 div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable):not(.lastrecordtable):last-of-type {
 	border-bottom: 1px solid var(--colortopbordertitle1);
@@ -4019,10 +4029,10 @@ table.liste tr, table.noborder tr, div.noborder form {
 	min-height: 20px;
 }
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
-	padding: 7px 8px 7px 8px;			/* t r b l */
+	padding: 7px 10px 7px 12px;			/* t r b l */
 }
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
-	padding: 8px 6px 8px 6px;			/* t r b l */
+	padding: 8px 10px 8px 12px;			/* t r b l */
 	/* line-height: 22px; This create trouble on cell login on list of last events of a contract*/
 	height: 22px;
 }
@@ -6074,7 +6084,7 @@ td.gminorheading {
 }*/
 .gtaskname div, .gtaskname {
 	min-width: 250px !important;
-	max-width: unset !important;
+	max-width: 500px !important;
 	width: unset !important;
 }
 .gpccomplete div, .gpccomplete {
@@ -8153,8 +8163,6 @@ table.jPicker {
 		margin-top: 30px;
 	}
 }
-
-
 @media only screen and (max-width: 320px)
 {
 	.dropdown dd ul {

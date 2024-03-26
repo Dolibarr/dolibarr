@@ -172,7 +172,7 @@ if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned')
 	$idtoremove = GETPOST('removedassigned');
 
 	if (!empty($_SESSION['assignedtouser'])) {
-		$tmpassigneduserids = json_decode($_SESSION['assignedtouser'], 1);
+		$tmpassigneduserids = json_decode($_SESSION['assignedtouser'], true);
 	} else {
 		$tmpassigneduserids = array();
 	}
@@ -199,7 +199,7 @@ if (empty($reshook) && (GETPOST('removedassignedresource') || GETPOST('removedas
 	$idtoremove = GETPOST('removedassignedresource');
 
 	if (!empty($_SESSION['assignedtoresource'])) {
-		$tmpassignedresourceids = json_decode($_SESSION['assignedtoresource'], 1);
+		$tmpassignedresourceids = json_decode($_SESSION['assignedtoresource'], true);
 	} else {
 		$tmpassignedresourceids = array();
 	}
@@ -426,12 +426,6 @@ if (empty($reshook) && $action == 'add') {
 		}
 	}
 
-	if (!$error && getDolGlobalString('AGENDA_ENABLE_DONEBY')) {
-		if (GETPOST("doneby") > 0) {
-			$object->userdoneid = GETPOSTINT("doneby");
-		}
-	}
-
 	$object->note_private = trim(GETPOST("note", "restricthtml"));
 
 	if (GETPOSTISSET("contactid")) {
@@ -501,10 +495,10 @@ if (empty($reshook) && $action == 'add') {
 			$selectedrecurrulefreq = $reg1[1];
 		}
 		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY(\d+)/i', $object->recurrule, $reg2)) {
-			$selectedrecurrulebymonthday = $reg2[1];
+			$selectedrecurrulebymonthday = (int) $reg2[1];
 		}
 		if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg3)) {
-			$selectedrecurrulebyday = $reg3[1];
+			$selectedrecurrulebyday = (int) $reg3[1];
 		}
 
 		// Is event recurrent ?
@@ -877,12 +871,6 @@ if (empty($reshook) && $action == 'update') {
 		$object->transparency = $transparency; // We set transparency on event (even if we can also store it on each user, standard says this property is for event)
 		// TODO store also transparency on owner user
 
-		if (getDolGlobalString('AGENDA_ENABLE_DONEBY')) {
-			if (GETPOST("doneby")) {
-				$object->userdoneid = GETPOSTINT("doneby");
-			}
-		}
-
 		// Check parameters
 		if (GETPOSTISSET('actioncode') && !GETPOST('actioncode', 'aZ09')) {	// actioncode is '0'
 			$error++;
@@ -1230,16 +1218,6 @@ if ($action == 'create') {
                         setdatefields();
                     });
 
-                    $("#selectcomplete").change(function() {
-						console.log("we change the complete status - set the doneby");
-                        if ($("#selectcomplete").val() == 100) {
-                            if ($("#doneby").val() <= 0) $("#doneby").val(\''.((int) $user->id).'\');
-                        }
-                        if ($("#selectcomplete").val() == 0) {
-                            $("#doneby").val(-1);
-                        }
-                    });
-
                     $("#actioncode").change(function() {
                         if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
                         else $("#dateend").removeClass("fieldrequired");
@@ -1322,10 +1300,10 @@ if ($action == 'create') {
 			$selectedrecurrulefreq = $reg[1];
 		}
 		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY(\d+)/i', $object->recurrule, $reg)) {
-			$selectedrecurrulebymonthday = $reg[1];
+			$selectedrecurrulebymonthday = (int) $reg[1];
 		}
 		if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg)) {
-			$selectedrecurrulebyday = $reg[1];
+			$selectedrecurrulebyday = (int) $reg[1];
 		}
 
 		print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq, 0, 0, 0, '', 0, 0, 0, '', 'marginrightonly');
@@ -1443,13 +1421,6 @@ if ($action == 'create') {
 	print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0', 1, $listofuserid, $listofcontactid, $listofotherid);
 	print '</div>';
 	print '</td></tr>';
-
-	// Done by
-	if (getDolGlobalString('AGENDA_ENABLE_DONEBY')) {
-		print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td>';
-		print $form->select_dolusers(GETPOSTISSET("doneby") ? GETPOSTINT("doneby") : (!empty($object->userdoneid) && $percent == 100 ? $object->userdoneid : 0), 'doneby', 1);
-		print '</td></tr>';
-	}
 
 	// Location
 	if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
@@ -1945,9 +1916,9 @@ if ($id > 0) {
 		*/
 		print '</td><td td colspan="3">';
 		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
-		print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
+		print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span> ';
-		print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
+		print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		print '</td></tr>';
 
 		print '<tr><td class="">&nbsp;</td><td></td></tr>';
@@ -1994,13 +1965,6 @@ if ($id > 0) {
 			print '</div>';
 		}*/
 		print '</td></tr>';
-
-		// Realised by
-		if (getDolGlobalString('AGENDA_ENABLE_DONEBY')) {
-			print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
-			print $form->select_dolusers($object->userdoneid > 0 ? $object->userdoneid : -1, 'doneby', 1);
-			print '</td></tr>';
-		}
 
 		// Location
 		if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
@@ -2426,17 +2390,6 @@ if ($id > 0) {
 		}
 		*/
 		print '	</td></tr>';
-
-		// Done by
-		if (getDolGlobalString('AGENDA_ENABLE_DONEBY')) {
-			print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td>';
-			if ($object->userdoneid > 0) {
-				$tmpuser = new User($db);
-				$tmpuser->fetch($object->userdoneid);
-				print $tmpuser->getNomUrl(1);
-			}
-			print '</td></tr>';
-		}
 
 		// Categories
 		if (isModEnabled('category')) {

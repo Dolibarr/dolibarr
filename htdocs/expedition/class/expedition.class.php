@@ -9,7 +9,7 @@
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2017  Francis Appels          <francis.appels@yahoo.com>
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
- * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2016-2024	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
@@ -92,7 +92,7 @@ class Expedition extends CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -306,7 +306,7 @@ class Expedition extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/expedition/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if (!$mybool) {
@@ -493,7 +493,7 @@ class Expedition extends CommonObject
 	 *
 	 * @param 	int		$entrepot_id		Id of warehouse
 	 * @param 	int		$origin_line_id		Id of source line
-	 * @param 	int		$qty				Quantity
+	 * @param 	float	$qty				Quantity
 	 * @param 	int		$rang				Rang
 	 * @param	array	$array_options		extrafields array
 	 * @return	int							Return integer <0 if KO, line_id if OK
@@ -594,7 +594,7 @@ class Expedition extends CommonObject
 		$sql .= ', e.fk_incoterms, e.location_incoterms';
 		$sql .= ', i.libelle as label_incoterms';
 		$sql .= ', s.libelle as shipping_method';
-		$sql .= ", el.fk_source as origin_id, el.sourcetype as origin";
+		$sql .= ", el.fk_source as origin_id, el.sourcetype as origin_type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
@@ -637,7 +637,8 @@ class Expedition extends CommonObject
 				$this->shipping_method_id   = $obj->fk_shipping_method;
 				$this->shipping_method = $obj->shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
-				$this->origin               = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
+				$this->origin               = ($obj->origin_type ? $obj->origin_type : 'commande'); // For compatibility
+				$this->origin_type          = ($obj->origin_type ? $obj->origin_type : 'commande');
 				$this->origin_id            = $obj->origin_id;
 				$this->billed               = $obj->billed;
 				$this->fk_project = $obj->fk_project;
@@ -843,6 +844,7 @@ class Expedition extends CommonObject
 		if (!$error) {
 			$this->ref = $numref;
 			$this->statut = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_VALIDATED;
 		}
 
 		if (!$error) {
@@ -895,7 +897,7 @@ class Expedition extends CommonObject
 	 *
 	 * @param 	int		$entrepot_id		Id of warehouse
 	 * @param 	int		$id					Id of source line (order line)
-	 * @param 	int		$qty				Quantity
+	 * @param 	float	$qty				Quantity
 	 * @param	array	$array_options		extrafields array
 	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
@@ -921,7 +923,7 @@ class Expedition extends CommonObject
 		if (isModEnabled('stock') && !empty($orderline->fk_product)) {
 			$fk_product = $orderline->fk_product;
 
-			if (!($entrepot_id > 0) && !getDolGlobalString('STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS')) {
+			if (!($entrepot_id > 0) && !getDolGlobalString('STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS') && !(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && $line->product_type == Product::TYPE_SERVICE)) {
 				$langs->load("errors");
 				$this->error = $langs->trans("ErrorWarehouseRequiredIntoShipmentLine");
 				return -1;
@@ -1104,7 +1106,7 @@ class Expedition extends CommonObject
 			$this->weight_units = trim($this->weight_units);
 		}
 		if (isset($this->trueWeight)) {
-			$this->weight = trim($this->trueWeight);
+			$this->weight = trim((string) $this->trueWeight);
 		}
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
@@ -1217,8 +1219,8 @@ class Expedition extends CommonObject
 
 		// Stock control
 		if (!$error && isModEnabled('stock') &&
-			(($conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > self::STATUS_DRAFT) ||
-			 ($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE && $this->statut == self::STATUS_CLOSED && $also_update_stock))) {
+			((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->statut > self::STATUS_DRAFT) ||
+				(getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') && $this->statut == self::STATUS_CLOSED && $also_update_stock))) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
 			$langs->load("agenda");
@@ -1315,13 +1317,12 @@ class Expedition extends CommonObject
 					if ($this->db->query($sql)) {
 						if (!empty($this->origin) && $this->origin_id > 0) {
 							$this->fetch_origin();
-							$origin = $this->origin;
-							if ($this->$origin->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
+							if ($this->origin_object->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
 								// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
-								$this->$origin->loadExpeditions();
+								$this->origin_object->loadExpeditions();
 								//var_dump($this->$origin->expeditions);exit;
-								if (count($this->$origin->expeditions) <= 0) {
-									$this->$origin->setStatut(Commande::STATUS_VALIDATED);
+								if (count($this->origin_object->expeditions) <= 0) {
+									$this->origin_object->setStatut(Commande::STATUS_VALIDATED);
 								}
 							}
 						}
@@ -1415,8 +1416,8 @@ class Expedition extends CommonObject
 
 		// Stock control
 		if (!$error && isModEnabled('stock') &&
-			(($conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > self::STATUS_DRAFT) ||
-			 ($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE && $this->statut == self::STATUS_CLOSED && $also_update_stock))) {
+			((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->statut > self::STATUS_DRAFT) ||
+				(getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') && $this->statut == self::STATUS_CLOSED && $also_update_stock))) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
 			$langs->load("agenda");
@@ -1517,13 +1518,12 @@ class Expedition extends CommonObject
 					if ($this->db->query($sql)) {
 						if (!empty($this->origin) && $this->origin_id > 0) {
 							$this->fetch_origin();
-							$origin = $this->origin;
-							if ($this->$origin->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
+							if ($this->origin_object->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
 								// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
-								$this->$origin->loadExpeditions();
+								$this->origin_object->loadExpeditions();
 								//var_dump($this->$origin->expeditions);exit;
-								if (count($this->$origin->expeditions) <= 0) {
-									$this->$origin->setStatut(Commande::STATUS_VALIDATED);
+								if (count($this->origin_object->expeditions) <= 0) {
+									$this->origin_object->setStatut(Commande::STATUS_VALIDATED);
 								}
 							}
 						}
@@ -2193,14 +2193,14 @@ class Expedition extends CommonObject
 
 		if (!empty($tracking) && !empty($value)) {
 			$url = str_replace('{TRACKID}', $value, $tracking);
-			$this->tracking_url = sprintf('<a target="_blank" rel="noopener noreferrer" href="%s">'.($value ? $value : 'url').'</a>', $url, $url);
+			$this->tracking_url = sprintf('<a target="_blank" rel="noopener noreferrer" href="%s">%s</a>', $url, ($value ? $value : 'url'));
 		} else {
 			$this->tracking_url = $value;
 		}
 	}
 
 	/**
-	 *	Classify the shipping as closed (this record also the stock movement)
+	 *	Classify the shipping as closed (this records also the stock movement)
 	 *
 	 *	@return     int     Return integer <0 if KO, >0 if OK
 	 */
@@ -2436,7 +2436,7 @@ class Expedition extends CommonObject
 	 */
 	public function reOpen()
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		$error = 0;
 
@@ -2455,6 +2455,7 @@ class Expedition extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->statut = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_VALIDATED;
 			$this->billed = 0;
 
 			// If stock increment is done on closing
@@ -2542,6 +2543,7 @@ class Expedition extends CommonObject
 			return 1;
 		} else {
 			$this->statut = self::STATUS_CLOSED;
+			$this->status = self::STATUS_CLOSED;
 			$this->billed = $oldbilled;
 			$this->db->rollback();
 			return -1;
@@ -3050,7 +3052,8 @@ class ExpeditionLigne extends CommonObjectLine
 		// update lot
 
 		if (!empty($batch) && isModEnabled('productbatch')) {
-			dol_syslog(get_class($this)."::update expedition batch id=$expedition_batch_id, batch_id=$batch_id, batch=$batch");
+			$batch_id_str = $batch_id ?? 'null';
+			dol_syslog(get_class($this)."::update expedition batch id=$expedition_batch_id, batch_id=$batch_id_str, batch=$batch");
 
 			if (empty($batch_id) || empty($this->fk_product)) {
 				dol_syslog(get_class($this).'::update missing fk_origin_stock (batch_id) and/or fk_product', LOG_ERR);

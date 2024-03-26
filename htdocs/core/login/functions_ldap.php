@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2021 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -247,7 +248,9 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			 */
 			dol_syslog("functions_ldap::check_user_password_ldap Authentication KO failed to connect to LDAP for '".$usertotest."'", LOG_NOTICE);
 			if (is_resource($ldap->connection) || is_object($ldap->connection)) {    // If connection ok but bind ko
+				// @phan-suppress-next-line PhanTypeMismatchArgumentInternal  Expects LDAP\Connection, not 'resource'
 				$ldap->ldapErrorCode = ldap_errno($ldap->connection);
+				// @phan-suppress-next-line PhanTypeMismatchArgumentInternal  Expects LDAP\Connection, not 'resource'
 				$ldap->ldapErrorText = ldap_error($ldap->connection);
 				dol_syslog("functions_ldap::check_user_password_ldap ".$ldap->ldapErrorCode." ".$ldap->ldapErrorText);
 			}

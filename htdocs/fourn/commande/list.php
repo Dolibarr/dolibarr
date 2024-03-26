@@ -10,6 +10,7 @@
  * Copyright (C) 2018-2022 Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2019      Nicolas Zabouri		<info@inovea-conseil.com>
  * Copyright (C) 2021-2023 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,11 +108,11 @@ $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state", 'alpha');
 $search_country = GETPOSTINT("search_country");
 $search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
-$search_user = GETPOSTINT('search_user');
+$search_user = GETPOST('search_user', 'intcomma');
 $search_request_author = GETPOST('search_request_author', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $socid = GETPOSTINT('socid');
-$search_sale = GETPOSTINT('search_sale');
+$search_sale = GETPOST('search_sale', 'intcomma');
 $search_total_ht = GETPOST('search_total_ht', 'alpha');
 $search_total_tva = GETPOST('search_total_tva', 'alpha');
 $search_total_ttc = GETPOST('search_total_ttc', 'alpha');
@@ -211,6 +212,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $error = 0;
 

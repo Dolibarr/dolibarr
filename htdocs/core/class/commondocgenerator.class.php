@@ -5,8 +5,9 @@
  * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016-2023  Charlene Benke           <charlene@patas-monkey.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,18 +147,18 @@ abstract class CommonDocGenerator
 	public $emetteur;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
+	 * @var array{0:int,1:int} Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 7.1 = array(7, 1)
 	 */
 	public $phpmin = array(7, 1);
 
 	/**
-	 * @var array	Array of columns
+	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of columns
 	 */
 	public $cols;
 
 	/**
-	 * @var array	Array with result of doc generation. content is array('fullpath'=>$file)
+	 * @var array{fullpath:string}	Array with result of doc generation. content is array('fullpath'=>$file)
 	 */
 	public $result;
 
@@ -232,6 +233,9 @@ abstract class CommonDocGenerator
 		);
 		// Retrieve extrafields
 		if (is_array($user->array_options) && count($user->array_options)) {
+			if (empty($extrafields->attributes[$user->table_element])) {
+				$extrafields->fetch_name_optionals_label($user->table_element);
+			}
 			$array_user = $this->fill_substitutionarray_with_extrafields($user, $array_user, $extrafields, 'myuser', $outputlangs);
 		}
 		return $array_user;
@@ -852,7 +856,7 @@ abstract class CommonDocGenerator
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 		$object->list_delivery_methods($object->shipping_method_id);
-		$calculatedVolume = ($object->trueWidth * $object->trueHeight * $object->trueDepth);
+		$calculatedVolume = ((float) $object->trueWidth * (float) $object->trueHeight * (float) $object->trueDepth);
 
 		$array_shipment = array(
 			$array_key.'_id' => $object->id,
@@ -1040,13 +1044,13 @@ abstract class CommonDocGenerator
 	/**
 	 * Rect pdf
 	 *
-	 * @param	TCPDF	$pdf			Object PDF
-	 * @param	float	$x				Abscissa of first point
-	 * @param	float	$y		        Ordinate of first point
-	 * @param	float	$l				??
-	 * @param	float	$h				??
-	 * @param	int		$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
-	 * @param	int		$hidebottom		Hide bottom
+	 * @param	TCPDI|TCPDF	$pdf            Pdf object
+	 * @param	float		$x				Abscissa of first point
+	 * @param	float		$y		        Ordinate of first point
+	 * @param	float		$l				??
+	 * @param	float		$h				??
+	 * @param	int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 * @param	int			$hidebottom		Hide bottom
 	 * @return	void
 	 */
 	public function printRect($pdf, $x, $y, $l, $h, $hidetop = 0, $hidebottom = 0)
@@ -1244,7 +1248,7 @@ abstract class CommonDocGenerator
 	/**
 	 *  print standard column content
 	 *
-	 *  @param	TCPDF		$pdf    		pdf object
+	 *	@param	TCPDI|TCPDF	$pdf            Pdf object
 	 *  @param	float		$curY    		current Y position
 	 *  @param	string		$colKey    		the column key
 	 *  @param	string		$columnText   	column text
@@ -1287,7 +1291,7 @@ abstract class CommonDocGenerator
 	/**
 	 *  print description column content
 	 *
-	 *  @param	TCPDF		$pdf    		pdf object
+	 *	@param	TCPDI|TCPDF	$pdf            Pdf object
 	 *  @param	float		$curY    		current Y position
 	 *  @param	string		$colKey    		the column key
 	 *  @param  object      $object 		CommonObject
@@ -1488,9 +1492,17 @@ abstract class CommonDocGenerator
 
 		if (!empty($fields)) {
 			// Sort extrafields by rank
-			uasort($fields, function ($a, $b) {
-				return  ($a->rank > $b->rank) ? 1 : -1;
-			});
+			uasort(
+				$fields,
+				/**
+				 * @param stdClass $a
+				 * @param stdClass $b
+				 * @return int<-1,1>
+				 */
+				static function ($a, $b) {
+					return  ($a->rank > $b->rank) ? 1 : -1;
+				}
+			);
 
 			// define some HTML content with style
 			$html .= !empty($params['style']) ? '<style>'.$params['style'].'</style>' : '';
@@ -1588,12 +1600,12 @@ abstract class CommonDocGenerator
 	/**
 	 * Print standard column content
 	 *
-	 * @param TCPDI	    $pdf            Pdf object
-	 * @param float     $tab_top        Tab top position
-	 * @param float     $tab_height     Default tab height
-	 * @param Translate $outputlangs    Output language
-	 * @param int       $hidetop        Hide top
-	 * @return float                    Height of col tab titles
+	 * @param TCPDI|TCPDF	$pdf            Pdf object
+	 * @param float			$tab_top        Tab top position
+	 * @param float			$tab_height     Default tab height
+	 * @param Translate		$outputlangs    Output language
+	 * @param int			$hidetop        Hide top
+	 * @return float						Height of col tab titles
 	 */
 	public function pdfTabTitles(&$pdf, $tab_top, $tab_height, $outputlangs, $hidetop = 0)
 	{

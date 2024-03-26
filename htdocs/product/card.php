@@ -703,8 +703,8 @@ if (empty($reshook)) {
 				$object->setCategories($categories);
 
 				if (!empty($backtopage)) {
-					$backtopage = preg_replace('/__ID__/', $object->id, $backtopage); // New method to autoselect parent project after a New on another form object creation
-					$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect parent after a New on another form object creation
+					$backtopage = preg_replace('/__ID__/', (string) $object->id, $backtopage); // New method to autoselect parent project after a New on another form object creation
+					$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $backtopage); // New method to autoselect parent after a New on another form object creation
 					if (preg_match('/\?/', $backtopage)) {
 						$backtopage .= '&productid='.$object->id; // Old method
 					}
@@ -807,7 +807,7 @@ if (empty($reshook)) {
 				if ($fk_default_bom >= 0) {
 					$object->fk_default_bom = $fk_default_bom;
 				} else {
-					$object->fk_default_bom = null;
+					$object->fk_default_bom = 0;
 				}
 
 				$units = GETPOSTINT('units');
@@ -972,13 +972,7 @@ if (empty($reshook)) {
 							$mesg .= ' <a href="' . $_SERVER["PHP_SELF"] . '?ref=' . $clone->ref . '">' . $langs->trans("ShowCardHere") . '</a>.';
 							setEventMessages($mesg, null, 'errors');
 						} else {
-							if (count($clone->errors)) {
-								setEventMessages($clone->error, $clone->errors, 'errors');
-								dol_print_error($db, $clone->errors);
-							} else {
-								setEventMessages($langs->trans($clone->error), null, 'errors');
-								dol_print_error($db, $clone->error);
-							}
+							setEventMessages(empty($clone->error) ? '' : $langs->trans($clone->error), $clone->errors, 'errors');
 						}
 						$error++;
 					}
@@ -997,7 +991,7 @@ if (empty($reshook)) {
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NewRefForClone")), null, 'errors');
 				}
 			} else {
-				dol_print_error($db, $object->error);
+				dol_print_error($db, $object->error, $object->errors);
 			}
 		}
 		$action = 'clone';
@@ -2435,7 +2429,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print dol_get_fiche_head($head, 'card', $titre, -1, $picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-			$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
+			$object->next_prev_filter = "fk_product_type:=:".((int) $object->type);
 
 			$shownav = 1;
 			if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {

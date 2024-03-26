@@ -102,7 +102,7 @@ if ($confirm == 'no') {
 	}
 }
 
-$parameters = array();
+$parameters = array('type' => $type, 'id' => $id, 'label' => $label);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 // Remove element from category
 if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
@@ -1354,6 +1354,10 @@ if ($type == Categorie::TYPE_TICKET) {
 		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
+
+// Note that $action and $object may have been modified by some hooks
+$parameters = array('type' => $type, 'id' => $id, 'label' => $label);
+$reshook = $hookmanager->executeHooks('addMoreCategoriesList', $parameters, $object, $action);
 
 // End of page
 llxFooter();

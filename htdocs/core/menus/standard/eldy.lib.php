@@ -7,6 +7,7 @@
  * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2022 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param 	DoliDB	$db				Database handler
  * @param 	string	$atarget		Target (Example: '' or '_top')
  * @param 	int		$type_user     	0=Menu for backoffice, 1=Menu for front office
- * @param  	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}> 	$tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty). For eldy menu, it contains menu entries loaded from database.
+ * @param  	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}> 	$tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty). For eldy menu, it contains menu entries loaded from database.
  * @param	Menu	$menu			Object Menu to return back list of menu entries
  * @param	int		$noout			1=Disable output (Initialise &$menu only).
  * @param	string	$mode			'top', 'topnb', 'left', 'jmobile'
@@ -120,15 +121,15 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Third parties
 	$tmpentry = array(
-		'enabled'=> (
+		'enabled' => (
 			(
-			isModEnabled('societe') &&
+				isModEnabled('societe') &&
 			(!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') || !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS'))
-		)
+			)
 			|| (isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice'))
 		),
-		'perms'=> ($user->hasRight('societe', 'lire') || $user->hasRight('fournisseur', 'lire') || $user->hasRight('supplier_order', 'lire') || $user->hasRight('supplier_invoice', 'lire') || $user->hasRight('supplier_proposal', 'lire')),
-		'module'=>'societe|fournisseur'
+		'perms' => ($user->hasRight('societe', 'lire') || $user->hasRight('fournisseur', 'lire') || $user->hasRight('supplier_order', 'lire') || $user->hasRight('supplier_invoice', 'lire') || $user->hasRight('supplier_proposal', 'lire')),
+		'module' => 'societe|fournisseur'
 	);
 	$menu_arr[] = array(
 		'name' => 'Companies',
@@ -151,9 +152,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Products-Services
 	$tmpentry = array(
-		'enabled'=> (isModEnabled('product') || isModEnabled('service') || isModEnabled('shipping')),
-		'perms'=> ($user->hasRight('product', 'read') || $user->hasRight('service', 'read') || $user->hasRight('expedition', 'lire')),
-		'module'=>'product|service'
+		'enabled' => (isModEnabled('product') || isModEnabled('service') || isModEnabled('shipping')),
+		'perms' => ($user->hasRight('product', 'read') || $user->hasRight('service', 'read') || $user->hasRight('expedition', 'lire')),
+		'module' => 'product|service'
 	);
 	$menu_arr[] = array(
 		'name' => 'Products',
@@ -178,9 +179,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// MRP - GPAO
 	$tmpentry = array(
-		'enabled'=>(isModEnabled('bom') || isModEnabled('mrp')),
-		'perms'=>($user->hasRight('bom', 'read') || $user->hasRight('mrp', 'read')),
-		'module'=>'bom|mrp'
+		'enabled' => (isModEnabled('bom') || isModEnabled('mrp')),
+		'perms' => ($user->hasRight('bom', 'read') || $user->hasRight('mrp', 'read')),
+		'module' => 'bom|mrp'
 	);
 	$menu_arr[] = array(
 		'name' => 'TMenuMRP',
@@ -203,9 +204,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Projects
 	$tmpentry = array(
-		'enabled'=> (isModEnabled('project') ? 1 : 0),
-		'perms'=> ($user->hasRight('projet', 'lire') ? 1 : 0),
-		'module'=>'projet'
+		'enabled' => (isModEnabled('project') ? 1 : 0),
+		'perms' => ($user->hasRight('projet', 'lire') ? 1 : 0),
+		'module' => 'projet'
 	);
 
 	if ($mode == 'jmobile') {
@@ -241,7 +242,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Commercial (propal, commande, supplier_proposal, supplier_order, contrat, ficheinter)
 	$tmpentry = array(
-		'enabled'=>(
+		'enabled' => (
 			isModEnabled('propal')
 			|| isModEnabled('order')
 			|| isModEnabled('fournisseur')
@@ -250,7 +251,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			|| isModEnabled('contract')
 			|| isModEnabled('intervention')
 		) ? 1 : 0,
-		'perms'=>(
+		'perms' => (
 			$user->hasRight('propal', 'read')
 			|| $user->hasRight('commande', 'lire')
 			|| $user->hasRight('supplier_proposal', 'lire')
@@ -260,7 +261,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			|| $user->hasRight('contrat', 'lire')
 			|| $user->hasRight('ficheinter', 'lire')
 		),
-		'module'=>'propal|commande|supplier_proposal|supplier_order|contrat|ficheinter'
+		'module' => 'propal|commande|supplier_proposal|supplier_order|contrat|ficheinter'
 	);
 
 	$onlysupplierorder = $user->hasRight('fournisseur', 'commande', 'lire') &&
@@ -292,7 +293,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Billing - Financial
 	$tmpentry = array(
-		'enabled'=>(
+		'enabled' => (
 			isModEnabled('invoice') ||
 			isModEnabled('don') ||
 			isModEnabled('tax') ||
@@ -301,10 +302,10 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			isModEnabled('loan') ||
 			isModEnabled('margin')
 		) ? 1 : 0,
-		'perms'=>($user->hasRight('facture', 'lire') || $user->hasRight('don', 'contact', 'lire')
+		'perms' => ($user->hasRight('facture', 'lire') || $user->hasRight('don', 'contact', 'lire')
 			|| $user->hasRight('tax', 'charges', 'lire') || $user->hasRight('salaries', 'read')
 			|| $user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('loan', 'read') || $user->hasRight('margins', 'liretous')),
-		'module'=>'facture|supplier_invoice|don|tax|salaries|loan'
+		'module' => 'facture|supplier_invoice|don|tax|salaries|loan'
 	);
 	$menu_arr[] = array(
 		'name' => 'Compta',
@@ -327,9 +328,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Bank
 	$tmpentry = array(
-		'enabled'=>(isModEnabled('bank') || isModEnabled('prelevement')),
-		'perms'=>($user->hasRight('banque', 'lire') || $user->hasRight('prelevement', 'lire') || $user->hasRight('paymentbybanktransfer', 'read')),
-		'module'=>'banque|prelevement|paymentbybanktransfer'
+		'enabled' => (isModEnabled('bank') || isModEnabled('prelevement')),
+		'perms' => ($user->hasRight('banque', 'lire') || $user->hasRight('prelevement', 'lire') || $user->hasRight('paymentbybanktransfer', 'read')),
+		'module' => 'banque|prelevement|paymentbybanktransfer'
 	);
 	$menu_arr[] = array(
 		'name' => 'Bank',
@@ -352,9 +353,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Accounting
 	$tmpentry = array(
-		'enabled'=>(isModEnabled('comptabilite') || isModEnabled('accounting') || isModEnabled('asset') || isModEnabled('intracommreport')),
-		'perms'=>($user->hasRight('compta', 'resultat', 'lire') || $user->hasRight('accounting', 'comptarapport', 'lire') || $user->hasRight('accounting', 'mouvements', 'lire') || $user->hasRight('asset', 'read') || $user->hasRight('intracommreport', 'read')),
-		'module'=>'comptabilite|accounting|asset|intracommreport'
+		'enabled' => (isModEnabled('comptabilite') || isModEnabled('accounting') || isModEnabled('asset') || isModEnabled('intracommreport')),
+		'perms' => ($user->hasRight('compta', 'resultat', 'lire') || $user->hasRight('accounting', 'comptarapport', 'lire') || $user->hasRight('accounting', 'mouvements', 'lire') || $user->hasRight('asset', 'read') || $user->hasRight('intracommreport', 'read')),
+		'module' => 'comptabilite|accounting|asset|intracommreport'
 	);
 	$menu_arr[] = array(
 		'name' => 'Accounting',
@@ -377,9 +378,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// HRM
 	$tmpentry = array(
-		'enabled'=>(isModEnabled('hrm') || (isModEnabled('holiday')) || isModEnabled('deplacement') || isModEnabled('expensereport') || isModEnabled('recruitment')),
-		'perms'=>($user->hasRight('user', 'user', 'lire') || $user->hasRight('holiday', 'read') || $user->hasRight('deplacement', 'lire') || $user->hasRight('expensereport', 'lire') || $user->hasRight('recruitment', 'recruitmentjobposition', 'read')),
-		'module'=>'hrm|holiday|deplacement|expensereport|recruitment'
+		'enabled' => (isModEnabled('hrm') || (isModEnabled('holiday')) || isModEnabled('deplacement') || isModEnabled('expensereport') || isModEnabled('recruitment')),
+		'perms' => ($user->hasRight('user', 'user', 'lire') || $user->hasRight('holiday', 'read') || $user->hasRight('deplacement', 'lire') || $user->hasRight('expensereport', 'lire') || $user->hasRight('recruitment', 'recruitmentjobposition', 'read')),
+		'module' => 'hrm|holiday|deplacement|expensereport|recruitment'
 	);
 
 	$menu_arr[] = array(
@@ -403,9 +404,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Tickets and Knowledge base
 	$tmpentry = array(
-		'enabled'=>(isModEnabled('ticket') || isModEnabled('knowledgemanagement')),
-		'perms'=>($user->hasRight('ticket', 'read') || $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')),
-		'module'=>'ticket|knowledgemanagement'
+		'enabled' => (isModEnabled('ticket') || isModEnabled('knowledgemanagement')),
+		'perms' => ($user->hasRight('ticket', 'read') || $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')),
+		'module' => 'ticket|knowledgemanagement'
 	);
 	$link = '';
 	if (isModEnabled('ticket')) {
@@ -434,9 +435,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Tools
 	$tmpentry = array(
-		'enabled'=>1,
-		'perms'=>1,
-		'module'=>''
+		'enabled' => 1,
+		'perms' => 1,
+		'module' => ''
 	);
 	$menu_arr[] = array(
 		'name' => 'Tools',
@@ -505,6 +506,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			$param = (isset($tmp[1]) ? $tmp[1] : '');
 
 			if ((!preg_match('/mainmenu/i', $param)) || !preg_match('/leftmenu/i', $param)) {
+				// @phan-suppress-next-line PhanTypeSuspiciousStringExpression
 				$param .= ($param ? '&' : '').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
 			}
 			//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
@@ -638,7 +640,7 @@ function print_start_menu_entry($idsel, $classname, $showmode)
  * @param	string	$idsel			Id sel
  * @param	string	$classname		Class name
  * @param	string	$atarget		Target
- * @param	array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string} 	$menuval		All the $menuval array
+ * @param	array{}|array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string} 	$menuval		All the $menuval array
  * @return	void
  */
 function print_text_menu_entry($text, $showmode, $url, $id, $idsel, $classname, $atarget, $menuval = array())
@@ -719,9 +721,9 @@ function print_end_menu_array()
  * Fill &$menu (example with $forcemainmenu='home' $forceleftmenu='all', return left menu tree of Home)
  *
  * @param	DoliDB		$db                 Database handler
- * @param 	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}> 	$menu_array_before  Table of menu entries to show before entries of menu handler (menu->liste filled with menu->add)
- * @param   array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}>		$menu_array_after   Table of menu entries to show after entries of menu handler (menu->liste filled with menu->add)
- * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,prefix:string}> 	$tabMenu       		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param 	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}> 	$menu_array_before  Table of menu entries to show before entries of menu handler (menu->liste filled with menu->add)
+ * @param   array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}>		$menu_array_after   Table of menu entries to show after entries of menu handler (menu->liste filled with menu->add)
+ * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}> 	$tabMenu       		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	Menu		$menu				Object Menu to return back list of menu entries
  * @param	int			$noout				Disable output (Initialise &$menu only).
  * @param	string		$forcemainmenu		'x'=Force mainmenu to mainmenu='x'
@@ -738,8 +740,8 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 	$newmenu = $menu;
 
-	$mainmenu = ($forcemainmenu ? $forcemainmenu : $_SESSION["mainmenu"]??'');
-	$leftmenu = ($forceleftmenu ? '' : (empty($_SESSION["leftmenu"]) ? 'none' : $_SESSION["leftmenu"]??''));
+	$mainmenu = ($forcemainmenu ? $forcemainmenu : $_SESSION["mainmenu"] ?? '');
+	$leftmenu = ($forceleftmenu ? '' : (empty($_SESSION["leftmenu"]) ? 'none' : $_SESSION["leftmenu"] ?? ''));
 
 	if (is_null($mainmenu)) {
 		$mainmenu = 'home';
@@ -931,6 +933,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	 $cursor++;
 	 }*/
 
+	// Force the typing at this point to get useful analysis below:
+	'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}> $menu_array';
+
+
 	// Show menu
 	$invert = !getDolGlobalString('MAIN_MENU_INVERT') ? "" : "invert";
 	if (empty($noout)) {
@@ -938,7 +944,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		$blockvmenuopened = false;
 		$lastlevel0 = '';
 		$num = count($menu_array);
-		for ($i = 0; $i < $num; $i++) {     // Loop on each menu entry
+		foreach (array_keys($menu_array) as $i) {     // Loop on each menu entry (got better static analysis)
 			$showmenu = true;
 			if (getDolGlobalString('MAIN_MENU_HIDE_UNAUTHORIZED') && empty($menu_array[$i]['enabled'])) {
 				$showmenu = false;
@@ -2038,7 +2044,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 
 		// Cash Control
 		if (isModEnabled('takepos') || isModEnabled('cashdesk')) {
-			$permtomakecashfence = ($user->hasRight('cashdesk', 'run')|| $user->hasRight('takepos', 'run'));
+			$permtomakecashfence = ($user->hasRight('cashdesk', 'run') || $user->hasRight('takepos', 'run'));
 			$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list", $langs->trans("CashControl"), 0, $permtomakecashfence, '', $mainmenu, 'cashcontrol', 0, '', '', '', img_picto('', 'pos', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/compta/cashcontrol/cashcontrol_card.php?action=create", $langs->trans("NewCashFence"), 1, $permtomakecashfence);
 			$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list", $langs->trans("List"), 1, $permtomakecashfence);
@@ -2245,9 +2251,9 @@ function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			$search_project_user = GETPOSTINT('search_project_user');
 
 			$tmpentry = array(
-				'enabled'=>isModEnabled('project'),
-				'perms'=>$user->hasRight('projet', 'lire'),
-				'module'=>'projet'
+				'enabled' => isModEnabled('project'),
+				'perms' => $user->hasRight('projet', 'lire'),
+				'module' => 'projet'
 			);
 			$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 			$showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
@@ -2494,7 +2500,7 @@ function get_left_menu_members($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			}
 
 			$newmenu->add("/adherents/index.php?leftmenu=members&amp;mainmenu=members", $langs->trans("Subscriptions"), 0, $user->hasRight('adherent', 'cotisation', 'read'), '', $mainmenu, 'members', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=-1,1&amp;mainmenu=members", $langs->trans("NewSubscription"), 1, $user->hasRight('adherent', 'cotisation', 'write'));
+			$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=-1,1&amp;mainmenu=members", $langs->trans("NewMembership"), 1, $user->hasRight('adherent', 'cotisation', 'write'));
 			$newmenu->add("/adherents/subscription/list.php?leftmenu=members", $langs->trans("List"), 1, $user->hasRight('adherent', 'cotisation', 'read'));
 			$newmenu->add("/adherents/stats/index.php?leftmenu=members", $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
 

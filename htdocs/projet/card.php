@@ -271,7 +271,7 @@ if (empty($reshook)) {
 				$db->commit();
 
 				if (!empty($backtopage)) {
-					$backtopage = preg_replace('/--IDFORBACKTOPAGE--|__ID__/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
+					$backtopage = preg_replace('/--IDFORBACKTOPAGE--|__ID__/', (string) $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
 					$backtopage = $backtopage.'&projectid='.$object->id; // Old method
 					header("Location: ".$backtopage);
 					exit;
@@ -508,7 +508,7 @@ if (empty($reshook)) {
 
 			if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
 				$tmpurl = $_SESSION['pageforbacktolist']['project'];
-				$tmpurl = preg_replace('/__SOCID__/', $object->socid, $tmpurl);
+				$tmpurl = preg_replace('/__SOCID__/', (string) $object->socid, $tmpurl);
 				$urlback = $tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1';
 			} else {
 				$urlback = DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1';
@@ -568,7 +568,7 @@ $formproject = new FormProjets($db);
 $userstatic = new User($db);
 
 $title = $langs->trans("Project").' - '.$object->ref.(!empty($object->thirdparty->name) ? ' - '.$object->thirdparty->name : '').(!empty($object->title) ? ' - '.$object->title : '');
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE)) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', getDolGlobalString('MAIN_HTML_TITLE'))) {
 	$title = $object->ref.(!empty($object->thirdparty->name) ? ' - '.$object->thirdparty->name : '').(!empty($object->title) ? ' - '.$object->title : '');
 }
 
@@ -1300,7 +1300,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
 			$tmpurl = $_SESSION['pageforbacktolist']['project'];
-			$tmpurl = preg_replace('/__SOCID__/', $object->socid, $tmpurl);
+			$tmpurl = preg_replace('/__SOCID__/', (string) $object->socid, $tmpurl);
 			$linkback = '<a href="'.$tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		} else {
 			$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';

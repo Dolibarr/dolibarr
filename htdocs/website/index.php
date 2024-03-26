@@ -51,6 +51,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "website", "errors"));
@@ -683,7 +685,7 @@ if ($action == 'adddir' && $permtouploadfile)
 }
 */
 
-// Add site
+// Add a website
 if ($action == 'addsite' && $usercanedit) {
 	$db->begin();
 
@@ -1153,9 +1155,19 @@ if ($action == 'addcontainer' && $usercanedit) {
 		$objectpage->object_type = GETPOST('WEBSITE_OBJECTCLASS');
 		$objectpage->fk_object = GETPOST('WEBSITE_OBJECTID');
 		$substitutionarray = array();
-		$substitutionarray['__WEBSITE_CREATE_BY__'] = $user->getFullName($langs);
+		$substitutionarray['__WEBSITE_CREATED_BY__'] = $user->getFullName($langs);
 
-		// Define id of page the new page is translation of
+		// Define id of the page the new page is translation of
+		/*
+		if ($objectpage->lang == $object->lang) {
+			// If
+			$pageidfortranslation = (GETPOSTINT('pageidfortranslation') > 0 ? GETPOSTINT('pageidfortranslation') : 0);
+			if ($pageidfortranslation > 0) {
+				// We must update the page $pageidfortranslation to set fk_page = $object->id.
+				// But what if page $pageidfortranslation is already linked to another ?
+			}
+		} else {
+		*/
 		$pageidfortranslation = (GETPOSTINT('pageidfortranslation') > 0 ? GETPOSTINT('pageidfortranslation') : 0);
 		if ($pageidfortranslation > 0) {
 			// Check if the page we are translation of is already a translation of a source page. if yes, we will use source id instead
@@ -1166,16 +1178,25 @@ if ($action == 'addcontainer' && $usercanedit) {
 			}
 		}
 		$objectpage->fk_page = $pageidfortranslation;
+		//}
 
-		$sample = GETPOST('sample', 'alpha');
-		if (empty($sample)) {
-			$sample = 'empty';
+		$content = '';
+		if (GETPOSTISSET('content')) {
+			//$content = GETPOST('content', 'restricthtmlallowunvalid');	// @TODO Use a restricthtmlallowunvalidwithphp
+			$content = GETPOST('content', 'none');	// @TODO Use a restricthtmlallowunvalidwithphp
+
+			$objectpage->content = make_substitutions($content, $substitutionarray);
+		} else {
+			/*$sample = GETPOST('sample', 'alpha');
+			if (empty($sample)) {
+				$sample = 'empty';
+			}
+
+			$pathtosample = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.dol_sanitizeFileName(strtolower($sample)).'.html';
+			*/
+			// Init content with content into page-sample-...
+			//$objectpage->content = make_substitutions(@file_get_contents($pathtosample), $substitutionarray);
 		}
-
-		$pathtosample = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.dol_sanitizeFileName($sample).'.html';
-
-		// Init content with content into pagetemplate.html, blogposttempltate.html, ...
-		$objectpage->content = make_substitutions(@file_get_contents($pathtosample), $substitutionarray);
 	}
 
 	if (!$error) {
@@ -1212,6 +1233,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 		}
 	}
 
+	$pageid = 0;
 	if (!$error) {
 		$pageid = $objectpage->create($user);
 		if ($pageid <= 0) {
@@ -1253,7 +1275,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 	}
 
 	if (!$error) {
-		if (!empty($objectpage->content)) {
+		if ($pageid > 0) {
 			$filealias = $pathofwebsite.'/'.$objectpage->pageurl.'.php';
 			$filetpl = $pathofwebsite.'/page'.$objectpage->id.'.tpl.php';
 
@@ -2406,6 +2428,22 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 	}
 }
 
+if ($action == 'deletelang' && $usercanedit) {
+	$sql = "UPDATE ".MAIN_DB_PREFIX."website_page SET fk_page = NULL";
+	$sql .= " WHERE rowid = ".GETPOSTINT('deletelangforid');
+	//$sql .= " AND fk_page = ".((int) $objectpage->id);
+
+	$resql = $db->query($sql);
+	if (!$resql) {
+		setEventMessages($db->lasterror(), null, 'errors');
+	} else {
+		$objectpage->fk_page = null;
+	}
+
+	$action = 'editmeta';
+}
+
+
 // Export site
 if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
 	$fileofzip = $object->exportWebSite();
@@ -3370,7 +3408,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 				// Edit CKEditor
 				if (getDolGlobalInt('WEBSITE_ALLOW_CKEDITOR')) {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editcontent&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans($conf->dol_optimize_smallscreen ? "CKEditor" : "CKEditor")).'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editcontent&token='.newToken().'" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag("CKEditor").'</a>';
 				}
 
 				print '</span>';
@@ -3410,16 +3448,16 @@ if (!GETPOST('hide_websitemenu')) {
 							{
 								if (! isEditingEnabled || forceenable)
 								{
-									console.log("Enable inline edit");
+									console.log("Enable inline edit for some html tags with contenteditable=true attribute");
 
-									jQuery(\'section[contenteditable="true"],div[contenteditable="true"]\').each(function(idx){
+									jQuery(\'section[contenteditable="true"],div[contenteditable="true"],header[contenteditable="true"],main[contenteditable="true"],footer[contenteditable="true"]\').each(function(idx){
 										var idtouse = $(this).attr(\'id\');
 										console.log("Enable inline edit for "+idtouse);
 										if (idtouse !== undefined) {
 											var inlineditor = CKEDITOR.inline(idtouse, {
 												// Allow some non-standard markup that we used in the introduction.
 												// + a[target];div{float,display} ?
-												extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);\',
+												extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);main(*);footer(*);button(*);h1(*);h2(*);h3(*);\',
 												//extraPlugins: \'sourcedialog\',
 												removePlugins: \'flash,stylescombo,exportpdf,scayt,wsc,pagebreak,iframe,smiley\',
 												// Show toolbar on startup (optional).
@@ -3450,6 +3488,8 @@ if (!GETPOST('hide_websitemenu')) {
 											    // ...
 											//});
 
+										} else {
+											console.warn("A html section has the contenteditable=true attribute but has no id attribute");
 										}
 									})
 
@@ -4261,10 +4301,65 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 
 	// Example/templates of page
 	if ($action == 'createcontainer') {
-		print '<tr><td class="titlefield fieldrequired">';
+		$formmail = new FormMail($db);
+		$formmail->withaiprompt = 'html';
+
+		print '<tr><td class="titlefield fieldrequired tdtop">';
 		print $langs->trans('WEBSITE_PAGE_EXAMPLE');
-		print '</td><td>';
-		print $formwebsite->selectSampleOfContainer('sample', (GETPOSTISSET('sample') ? GETPOST('sample', 'alpha') : 'empty'), 0, '', 1, 'minwidth300');
+		print '</td><td class="tdtop">';
+
+		$out = '';
+		// Add link to add layout
+		$out .= '<a href="#" id="linkforlayouttemplates" class="reposition notasortlink inline-block alink marginrightonly">';
+		$out .= img_picto($langs->trans("FillMessageWithALayout"), 'layout', 'class="paddingrightonly"');
+		$out .= $langs->trans("FillPageWithALayout").'...';
+		$out .= '</a> &nbsp; &nbsp; ';
+
+		$out .= '<script>
+			$(document).ready(function() {
+				$("#linkforlayouttemplates").click(function() {
+					console.log("We click on linkforlayouttemplates");
+					event.preventDefault();
+					jQuery("#template-selector").toggle();
+					//jQuery("#template-selector").attr("style", "aaa");
+					jQuery("#ai_input").hide();
+					jQuery("#pageContent").show();
+				});
+			});
+		</script>
+		';
+
+		// Add link to add AI content
+		if ($formmail->withaiprompt && isModEnabled('ai')) {
+			$out .= '<a href="#" id="linkforaiprompt" class="reposition notasortlink inline-block alink marginrightonly">';
+			$out .= img_picto($langs->trans("FillMessageWithAIContent"), 'ai', 'class="paddingrightonly"');
+			$out .= $langs->trans("FillMessageWithAIContent").'...';
+			$out .= '</a>';
+			$out .= '<script>
+						$(document).ready(function() {
+							$("#linkforaiprompt").click(function() {
+								console.log("We click on linkforaiprompt");
+								event.preventDefault();
+								jQuery("#ai_input").toggle();
+								jQuery("#template-selector").hide();
+								if (!jQuery("ai_input").is(":hidden")) {
+									console.log("Set focus on input field");
+									jQuery("#ai_instructions").focus();
+									if (!jQuery("pageContent").is(":hidden")) {
+										jQuery("#pageContent").show();
+									}
+								}
+							});
+						});
+					</script>';
+		}
+
+		$out .= $formwebsite->getContentPageTemplate('content');
+
+		if ($formmail->withaiprompt && isModEnabled('ai')) {
+			$out .= $formmail->getSectionForAIPrompt('', 'content');
+		}
+		print $out;
 		print '</td></tr>';
 	}
 
@@ -4360,7 +4455,9 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 						if ($i > 0) {
 							$tmpstring .= '<br>';
 						}
-						$tmpstring .= $tmppage->getNomUrl(1).' ('.$tmppage->lang.')';
+						$tmpstring .= $tmppage->getNomUrl(1).' '.picto_from_langcode($tmppage->lang).' '.$tmppage->lang;
+						// Button unlink
+						$tmpstring .= ' <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($object->ref).'&pageid='.((int) $objectpage->id).'&action=deletelang&token='.newToken().'&deletelangforid='.((int) $tmppage->id).'">'.img_picto($langs->trans("Remove"), 'unlink').'</a>';
 						$translatedby++;
 						$i++;
 					}
@@ -4376,29 +4473,30 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 			dol_print_error($db);
 		}
 	}
-	if (empty($translatedby) && ($action == 'editmeta' || $action == 'createcontainer' || $objectpage->fk_page > 0)) {
+	if ((empty($translatedby) || ($objectpage->lang != $object->lang)) && ($action == 'editmeta' || $action == 'createcontainer' || $objectpage->fk_page > 0)) {
 		$sourcepage = new WebsitePage($db);
-		$result = $sourcepage->fetch($objectpage->fk_page);
-		if ($result == 0) {
-			// not found, we can reset value to clean database
-		} elseif ($result > 0) {
+		$result = 1;
+		if ($objectpage->fk_page > 0) {
+			$result = $sourcepage->fetch($objectpage->fk_page);
+			if ($result == 0) {
+				// not found, we can reset value to clean database
+				// TODO
+			}
+		}
+		if ($result >= 0) {
+			if ($translatedby) {
+				print '<br>';
+			}
 			$translationof = $objectpage->fk_page;
 			print '<span class="opacitymedium">'.$langs->trans('ThisPageIsTranslationOf').'</span> ';
-			print $formwebsite->selectContainer($website, 'pageidfortranslation', ($translationof ? $translationof : -1), 1, $action, 'minwidth300', array($objectpage->id));
+			print $sourcepage->getNomUrl(2).' '.$formwebsite->selectContainer($website, 'pageidfortranslation', ($translationof ? $translationof : -1), 1, $action, 'minwidth300', array($objectpage->id));
 			if ($translationof > 0 && $sourcepage->lang) {
-				print $sourcepage->getNomUrl(2).' ('.$sourcepage->lang.')';
+				print picto_from_langcode($sourcepage->lang).' '.$sourcepage->lang;
+				// Button unlink
+				print ' <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($object->ref).'&pageid='.((int) $objectpage->id).'&action=deletelang&token='.newToken().'&deletelangforid='.((int) $objectpage->id).'">'.img_picto($langs->trans("Remove"), 'unlink').'</a>';
 			}
 		}
 	}
-	print '</td></tr>';
-
-	// Allowed in frames
-	print '<tr><td>';
-	print $langs->trans('AllowedInFrames');
-	//$htmlhelp = $langs->trans("AllowedInFramesDesc");
-	//print $form->textwithpicto($langs->trans('AllowedInFrames'), $htmlhelp, 1, 'help', '', 0, 2, 'allowedinframestooltip');
-	print '</td><td>';
-	print '<input type="checkbox" class="flat" name="WEBSITE_ALLOWED_IN_FRAMES" value="1"'.($pageallowedinframes ? 'checked="checked"' : '').'>';
 	print '</td></tr>';
 
 	// Categories
@@ -4482,6 +4580,17 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print '</td></tr>';
 	}
 
+	print '<tr id="pageContent" class="hideobject"><td class="tdtop">';
+	print $langs->trans('PreviewPageContent');
+	print '</td><td>';
+	//$doleditor = new DolEditor('content', GETPOST('content', 'restricthtmlallowunvalid'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
+	$doleditor = new DolEditor('contentpreview', GETPOST('content', 'none'), '', 200, 'dolibarr_mailings', 'In', true, true, true, 40, '90%');
+	$doleditor->Create();
+	//print '<div class="websitesample" id="contentpreview" name="contentpreview" style="height: 200px; border: 1px solid #bbb; overflow: scroll">';
+	print '</div>';
+	print '<textarea id="content" name="content" class="hideobject">'.GETPOST('content', 'none').'</textarea>';
+	print '</td></tr>';
+
 	print '<tr><td class="tdhtmlheader tdtop">';
 	$htmlhelp = $langs->trans("EditTheWebSiteForACommonHeader").'<br><br>';
 	$htmlhelp .= $langs->trans("Example").' :<br>';
@@ -4491,6 +4600,15 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	$poscursor = array('x' => GETPOST('htmlheader_x'), 'y' => GETPOST('htmlheader_y'));
 	$doleditor = new DolEditor('htmlheader', $pagehtmlheader, '', '120', 'ace', 'In', true, false, 'ace', ROWS_3, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, 'HTML Header', 'html');
+	print '</td></tr>';
+
+	// Allowed in frames
+	print '<tr><td>';
+	print $langs->trans('AllowedInFrames');
+	//$htmlhelp = $langs->trans("AllowedInFramesDesc");
+	//print $form->textwithpicto($langs->trans('AllowedInFrames'), $htmlhelp, 1, 'help', '', 0, 2, 'allowedinframestooltip');
+	print '</td><td>';
+	print '<input type="checkbox" class="flat" name="WEBSITE_ALLOWED_IN_FRAMES" value="1"'.($pageallowedinframes ? 'checked="checked"' : '').'>';
 	print '</td></tr>';
 
 	print '</table>';
@@ -4558,7 +4676,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 					jQuery(".tablecheckboxcreatefromfetching").hide();
 					jQuery(".tablecheckboxcreatemanually").hide();
 					if (typeof(jQuery("#checkboxcreatefromfetching:checked").val()) != \'undefined\') {
-						console.log("show a");
+						console.log("show create from spider form");
 						if (selectedf != \'createfromfetching\') {
 							jQuery(".tablecheckboxcreatefromfetching").show();
 							selectedf = \'createfromfetching\';
@@ -4569,7 +4687,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 						}
 					}
 					if (typeof(jQuery("#checkboxcreatemanually:checked").val()) != \'undefined\') {
-						console.log("show b");
+						console.log("show create from scratch or template form");
 						if (selectedm != \'createmanually\') {
 							jQuery(".tablecheckboxcreatemanually").show();
 							selectedm = \'createmanually\';
@@ -5146,7 +5264,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		$out .= $tmpout;
 		$out .= '</style>'."\n";
 
-		// Note: <div> or <section> with contenteditable="true" inside this can be edited with inline ckeditor
+		// Note: <div>, <section>, ... with contenteditable="true" inside this can be edited with inline ckeditor
 
 		// Do not enable the contenteditable when page was grabbed, ckeditor is removing span and adding borders,
 		// so editable will be available only from container created from scratch
@@ -5161,6 +5279,12 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 
 			//var_dump($filetpl);
 			$filephp = $filetpl;
+
+			// Get session info and obfuscate session cookie
+			$savsessionname = session_name();
+			$savsessionid = $_COOKIE[$savsessionname];
+			$_COOKIE[$savsessionname] = 'obfuscatedcookie';
+
 			ob_start();
 			try {
 				$res = include $filephp;
@@ -5172,12 +5296,15 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 			}
 			$newcontent = ob_get_contents();
 			ob_end_clean();
+
+			// Restore data
+			$_COOKIE[$savsessionname] = $savsessionid;
 		}
 
 		// Change the contenteditable to "true" or "false" when mode Edit Inline is on or off
 		if (!getDolGlobalString('WEBSITE_EDITINLINE')) {
 			// Remove the contenteditable="true"
-			$newcontent = preg_replace('/(div|section)(\s[^\>]*)contenteditable="true"/', '\1\2', $newcontent);
+			$newcontent = preg_replace('/(div|section|header|main|footer)(\s[^\>]*)contenteditable="true"/', '\1\2', $newcontent);
 		} else {
 			// Keep the contenteditable="true" when mode Edit Inline is on
 		}

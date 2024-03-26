@@ -194,12 +194,12 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	/**
 	 * Standard method to show a box (usage by boxes not mandatory, a box can still use its own showBox function)
 	 *
-	 * @param   array   $head       Array with properties of box title
-	 * @param   array<array<array{tr?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>   $contents   Array with properties of box lines
+	 * @param   array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}   $head       Array with properties of box title
+	 * @param   array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>   $contents   Array with properties of box lines
 	 * @param	int		$nooutput	No print, only return string
 	 * @return  string
 	 */
-	public function showBox($head = null, $contents = null, $nooutput = 0)
+	public function showBox($head, $contents, $nooutput = 0)
 	{
 		global $langs, $user, $conf;
 
@@ -231,7 +231,6 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 			$out .= "\n<!-- Box ".get_class($this)." start -->\n";
 
 			$out .= '<div class="box divboxtable boxdraggable" id="boxto_'.$this->box_id.'">'."\n";
-
 			if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto']) || $nblines) {
 				$out .= '<table summary="boxtable'.$this->box_id.'" width="100%" class="noborder boxtable">'."\n";
 			}
@@ -295,8 +294,8 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 			// Show box lines
 			if ($nblines) {
 				// Loop on each record
-				for ($i = 0, $n = $nblines; $i < $n; $i++) {
-					if (isset($contents[$i])) {
+				foreach (array_keys($contents) as $i) {
+					if (isset($contents[$i]) && is_array($contents[$i])) {
 						// TR
 						if (isset($contents[$i][0]['tr'])) {
 							$out .= '<tr '.$contents[$i][0]['tr'].'>';
@@ -306,7 +305,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 
 						// Loop on each TD
 						$nbcolthisline = count($contents[$i]);
-						for ($j = 0; $j < $nbcolthisline; $j++) {
+						foreach (array_keys($contents[$i]) as $j) {
 							// Define tdparam
 							$tdparam = '';
 							if (!empty($contents[$i][$j]['td'])) {
@@ -417,7 +416,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	 *  Return list of widget. Function used by admin page htdoc/admin/widget.
 	 *  List is sorted by widget filename so by priority to run.
 	 *
-	 *  @param	array	$forcedirwidget		null=All default directories. This parameter is used by modulebuilder module only.
+	 *  @param	?string[]	$forcedirwidget		null=All default directories. This parameter is used by modulebuilder module only.
 	 * 	@return	array						Array list of widget
 	 */
 	public static function getWidgetsList($forcedirwidget = null)

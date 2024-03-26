@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Ari Elbaz (elarifr) <github@accedinfo.com>
  * Copyright (C) 2021       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,14 +59,19 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $codeventil_buy = GETPOST('codeventil_buy', 'array');
 $codeventil_sell = GETPOST('codeventil_sell', 'array');
 $chk_prod = GETPOST('chk_prod', 'array');
+'@phan-var-force string[] $chk_prod';
 $default_account = GETPOSTINT('default_account');
 $account_number_buy = GETPOST('account_number_buy');
 $account_number_sell = GETPOST('account_number_sell');
 $changeaccount = GETPOST('changeaccount', 'array');
+'@phan-var-force string[] $changeaccount';
 $changeaccount_buy = GETPOST('changeaccount_buy', 'array');
+'@phan-var-force string[] $changeaccount_buy';
 $changeaccount_sell = GETPOST('changeaccount_sell', 'array');
+'@phan-var-force string[] $changeaccount_sell';
 $searchCategoryProductOperator = (GETPOSTINT('search_category_product_operator') ? GETPOSTINT('search_category_product_operator') : 0);
 $searchCategoryProductList = GETPOST('search_category_product_list', 'array');
+'@phan-var-force string[] $searchCategoryProductList';
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_desc = GETPOST('search_desc', 'alpha');
@@ -80,6 +86,12 @@ $search_onpurchase = GETPOST('search_onpurchase', 'alpha');
 
 $accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
 $btn_changetype = GETPOST('changetype', 'alpha');
+
+// Show/hide child product variants
+$show_childproducts = 0;
+if (isModEnabled('variants')) {
+	$show_childproducts = GETPOST('search_show_childproducts');
+}
 
 if (empty($accounting_product_mode)) {
 	$accounting_product_mode = 'ACCOUNTANCY_SELL';
@@ -179,6 +191,10 @@ if ($action == 'update') {
 
 	if (!empty($chk_prod) && $massaction === 'changeaccount') {
 		//$msg = '<div><span class="accountingprocessing">' . $langs->trans("Processing") . '...</span></div>';
+		$ok = 0;
+		$ko = 0;
+		$msg = '';
+		$sql = '';
 		if (!empty($chk_prod) && in_array($accounting_product_mode, $accounting_product_modes)) {
 			$accounting = new AccountingAccount($db);
 
@@ -186,8 +202,6 @@ if ($action == 'update') {
 			$arrayofdifferentselectedvalues = array();
 
 			$cpt = 0;
-			$ok = 0;
-			$ko = 0;
 			foreach ($chk_prod as $productid) {
 				$accounting_account_id = GETPOST('codeventil_'.$productid);
 
@@ -201,7 +215,6 @@ if ($action == 'update') {
 					$msg .= '<div><span class="error">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br> <pre>'.$sql.'</pre></span></div>';
 					$ko++;
 				} else {
-					$sql = '';
 					if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 						$sql_exists  = "SELECT rowid FROM " . MAIN_DB_PREFIX . "product_perentity";
 						$sql_exists .= " WHERE fk_product = " . ((int) $productid) . " AND entity = " . ((int) $conf->entity);

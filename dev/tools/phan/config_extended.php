@@ -170,6 +170,7 @@ $VALID_MODULE_MAPPING = array(
 	'syslog' => 'Syslog',
 	'takepos' => 'TakePos',
 	'tax' => 'Tax',
+	'theme_datacolor' => 'array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int},3:array{0:int,1:int,2:int}}',
 	'ticket' => 'Ticket',
 	'user' => 'User',
 	'variants' => 'Variants',
@@ -198,34 +199,57 @@ return [
 	'simplify_ast' => true,
 	'analyzed_file_extensions' => ['php','inc'],
 	'globals_type_map' => [
+		'action' => 'string',
+		'actioncode' => 'string',
+		'badgeStatus0' => 'string',
+		'badgeStatus1' => 'string',
+		'badgeStatus11' => 'string',
+		'badgeStatus3' => 'string',
+		'badgeStatus4' => 'string',
+		'badgeStatus6' => 'string',
+		'badgeStatus8' => 'string',
+		'badgeStatus9' => 'string',
+		'classname' => 'string',
 		'conf' => '\Conf',
+		'conffile' => 'string',
+		'conffiletoshow' => 'string',
+		'conffiletoshowshort' => 'string',
 		'db' => '\DoliDB',
-		'extrafields' => '\ExtraFields',
-		'hookmanager' => '\HookManager',
-		'langs' => '\Translate',
-		'mysoc' => '\Societe',
-		'nblines' => '\int',
-		'user' => '\User',
-		'dolibarr_main_data_root' => 'string',
-		'dolibarr_main_authentication' => 'string',
-		'dolibarr_main_demo' => 'string',
-		'menumanager' => 'string',
-		'errormsg' => 'string',
-		'form' => '\Form',
-		'object_rights' => 'int|stdClass',
 		'disableedit' => 'int<0,1>',
 		'disablemove' => 'int<0,1>',
 		'disableremove' => 'int<0,1>',
-		// Found in dol_eval
-		'website' => '\WebSite',
+		'dolibarr_main_authentication' => 'string',
+		'dolibarr_main_data_root' => 'string',
+		'dolibarr_main_data_root' => 'string',
+		'dolibarr_main_db_encrypted_pass' => 'string',
+		'dolibarr_main_db_host' => 'string',
+		'dolibarr_main_db_pass' => 'string',
+		'dolibarr_main_demo' => 'string',
+		'dolibarr_main_document_root' => 'string',
+		'dolibarr_main_url_root' => 'string',
+		'errormsg' => 'string',
+		'extrafields' => '\ExtraFields',
+		'filter' => 'string',
+		'filtert' => 'int',
+		'forceall' => 'int<0,1>',
+		'form' => '\Form',
+		'hookmanager' => '\HookManager',
+		'inputalsopricewithtax' => 'int<0,1>',
+		'langs' => '\Translate',
+		'leftmenu' => 'string',
+		'mainmenu' => 'string',
+		'menumanager' => '\MenuManager',
+		'mysoc' => '\Societe',
+		'nblines' => '\int',
+		'obj' => '\CommonObject',     // Deprecated
+		'object_rights' => 'int|stdClass',
+		'objectoffield' => '\CommonObject',
+		'senderissupplier' => 'int<0,2>',
+		'user' => '\User',
+		'website' => 'string',  // See discussion https://github.com/Dolibarr/dolibarr/pull/28891#issuecomment-2002268334  // Disable because Phan infers Website type
 		'websitepage' => '\WebSitePage',
 		'websitepagefile' => 'string',
-		'action' => 'string',
-		'mainmenu' => 'string',
-		'leftmenu' => 'string',
-		'objectoffield' => '\CommonObject',
 		// 'object' => '\CommonObject',  // Deprecated, not enabled because conflicts with $object assignments
-		'obj' => '\CommonObject',     // Deprecated
 	],
 
 	// Supported values: `'5.6'`, `'7.0'`, `'7.1'`, `'7.2'`, `'7.3'`, `'7.4'`, `null`.
@@ -262,6 +286,7 @@ return [
 	//	to `exclude_analysis_directory_list`.
 	"exclude_analysis_directory_list" => [
 		'htdocs/includes/',
+		'htdocs/install/doctemplates/websites/',
 		'htdocs/core/class/lessc.class.php', // External library
 		PHAN_DIR . '/stubs/',
 	],
@@ -311,7 +336,7 @@ return [
 
 		'ConstantVariablePlugin', // Warns about values that are actually constant
 		//'HasPHPDocPlugin', // Requires PHPDoc
-		'InlineHTMLPlugin', // html in PHP file, or at end of file
+		// 'InlineHTMLPlugin', // html in PHP file, or at end of file
 		'NonBoolBranchPlugin', // Requires test on bool, nont on ints
 		'NonBoolInLogicalArithPlugin',
 		'NumericalComparisonPlugin',
@@ -368,6 +393,7 @@ return [
 		'PhanPluginDuplicateConditionalTernaryDuplication',		// 2750+ occurrences
 		'PhanPluginDuplicateConditionalNullCoalescing',	// Not essential - 990+ occurrences
 		'PhanPluginRedundantAssignmentInGlobalScope',	// Not essential, a lot of false warning
+		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
 	],
 	// You can put relative paths to internal stubs in this config option.
 	// Phan will continue using its detailed type annotations,
@@ -394,10 +420,12 @@ return [
 	'gd'  => PHAN_DIR . '/stubs/gd.phan_php',
 	'geoip'  => PHAN_DIR . '/stubs/geoip.phan_php',
 	'imap'  => PHAN_DIR . '/stubs/imap.phan_php',
+	'imagick'  => PHAN_DIR . '/stubs/imagick.phan_php',
 	'intl'  => PHAN_DIR . '/stubs/intl.phan_php',
 	'ldap'  => PHAN_DIR . '/stubs/ldap.phan_php',
 	'mcrypt'  => PHAN_DIR . '/stubs/mcrypt.phan_php',
 	'memcache'  => PHAN_DIR . '/stubs/memcache.phan_php',
+	'memcached' => PHAN_DIR . '/stubs/memcached.phan_php',
 	'mysqli'  => PHAN_DIR . '/stubs/mysqli.phan_php',
 	'pdo_cubrid'  => PHAN_DIR . '/stubs/pdo_cubrid.phan_php',
 	'pdo_mysql'  => PHAN_DIR . '/stubs/pdo_mysql.phan_php',
@@ -408,6 +436,7 @@ return [
 	'simplexml'  => PHAN_DIR . '/stubs/SimpleXML.phan_php',
 	'soap'  => PHAN_DIR . '/stubs/soap.phan_php',
 	'sockets'  => PHAN_DIR . '/stubs/sockets.phan_php',
+	'tidy' => PHAN_DIR . '/stubs/tidy.phan_php',
 	'zip'  => PHAN_DIR . '/stubs/zip.phan_php',
 	],
 

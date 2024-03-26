@@ -1,16 +1,25 @@
+---
 # This is a basic workflow to check code with PHPSTAN tool
-
-name: "PHPStan"
-
+name: PHPStan
 # Controls when the workflow will run
-on: [push, pull_request]
-concurrency:
-    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-    cancel-in-progress: true
+on:
+  # push:
+  # pull_request:
+  workflow_call:
+    inputs:
+      gh_event:
+        required: true
+        type: string
+  workflow_dispatch:
 
+concurrency:
+  group: stan-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref
+    }}
+  cancel-in-progress: true
 env:
-  CACHE_KEY_PART: ${{ github.event_name == 'pull_request' && format('{0}-{1}', github.base_ref, github.head_ref) || github.ref_name }}
-  GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
+  gh_event: ${{ inputs.gh_event || github.event_name }}
+  CACHE_KEY_PART: ${{ ( inputs.gh_event == 'pull_request' || github.event_name == 'pull_request' ) && format('{0}-{1}', github.base_ref, github.head_ref) || github.ref_name }}
+  GITHUB_JSON: ${{ toJSON(github) }}  # Helps in debugging Github Action
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job
@@ -23,7 +32,7 @@ jobs:
         php-version:
           # PHPStan requires PHP >= 7.2.
           #- "7.2"
-          - "8.2"
+          - '8.2'
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -34,9 +43,10 @@ jobs:
         id: setup-php
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "${{ matrix.php-version }}"
+          php-version: ${{ matrix.php-version }}
           tools: phpstan, cs2pr
-          extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap, mysql, pgsql, sqlite3, ldap, xml, mcrypt
+          extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap,
+            mysql, pgsql, sqlite3, ldap, xml, mcrypt
 
       # Restore old cache
       - name: Restore phpstan cache
@@ -44,7 +54,8 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ./.github/tmp
-          key: phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-${{ github.run_id }}
+          key: phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-${{
+            github.run_id }}
           restore-keys: |
             phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-
             phpstan-cache-${{ matrix.php-version }}-${{ github.head_ref }}-
@@ -61,12 +72,13 @@ jobs:
         # continue-on-error: true
 
       # Save cache
-      - name: "Save phpstan cache"
+      - name: Save phpstan cache
         uses: actions/cache/save@v4
         if: ${{ success() || ( ! cancelled() && steps.cache.outputs.cache-hit != 'true' ) }}
         with:
           path: ./.github/tmp
-          key: phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-${{ github.run_id }}
+          key: phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-${{
+            github.run_id }}
       - name: Provide phpstan log as artifact
         uses: actions/upload-artifact@v4
         if: ${{ always() }}

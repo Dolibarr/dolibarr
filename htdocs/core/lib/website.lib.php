@@ -618,7 +618,7 @@ function includeContainer($containerref)
 	//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
 
 	ob_start();
-	$res = include $fullpathfile; // Include because we want to execute code content
+	$res = @include $fullpathfile; // Include because we want to execute code content
 	$tmpoutput = ob_get_contents();
 	ob_end_clean();
 
@@ -837,6 +837,8 @@ function getStructuredData($type, $data = array())
 				}
 			}'."\n";
 		$ret .= '</script>'."\n";
+	} else {
+		$ret = '';
 	}
 	return $ret;
 }
@@ -979,8 +981,8 @@ function getSocialNetworkSharingLinks()
 /**
  * Return HTML content to add structured data for an article, news or Blog Post.
  *
- * @param	Object	$object			Object
- * @return  string					HTML img content or '' if no image found
+ * @param	Object	$object		Object
+ * @return  int					HTML img content or '' if no image found
  * @see getImagePublicURLOfObject()
  */
 function getNbOfImagePublicURLOfObject($object)

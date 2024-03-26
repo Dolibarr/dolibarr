@@ -3,6 +3,7 @@
  * Copyright (C) 2010-2014  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018-2024  Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,7 +125,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		/* if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || !empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) {
 			$this->posxtva = $this->posxup;
 		} */
-		$this->posxpicture = $this->posxtva - (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
+		$this->posxpicture = $this->posxtva - (getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20)); // width of images
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$this->posxpicture -= 20;
 			$this->posxtva -= 20;
@@ -714,8 +715,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 					$tvacompl = '';
-					if (preg_match('/\*/', $tvakey)) {
-						$tvakey = str_replace('*', '', $tvakey);
+					if (preg_match('/\*/', (string) $tvakey)) {
+						$tvakey = str_replace('*', '', (string) $tvakey);
 						$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 					}
 					$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).' ';
@@ -739,8 +740,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 					$tvacompl = '';
-					if (preg_match('/\*/', $tvakey)) {
-						$tvakey = str_replace('*', '', $tvakey);
+					if (preg_match('/\*/', (string) $tvakey)) {
+						$tvakey = str_replace('*', '', (string) $tvakey);
 						$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 					}
 					$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
@@ -833,8 +834,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		float|int	$tab_top		Top position of table
+	 *   @param		float|int	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title

@@ -5,6 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +91,7 @@ class MultiCurrency extends CommonObject
 	public $fk_user;
 
 	/**
-	 * @var CurrencyRate 	The currency rate
+	 * @var ?CurrencyRate 	The currency rate
 	 */
 	public $rate;
 

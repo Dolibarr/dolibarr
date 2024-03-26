@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -85,7 +85,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		foreach ($_POST as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_') {
 				$other_chid = substr($key, 7);
-				$amounts[$other_chid] = price2num(GETPOST($key));
+				$amounts[$other_chid] = (float) price2num(GETPOST($key));
 			}
 		}
 
@@ -231,7 +231,7 @@ if ($action == 'create') {
 
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-	print '<td class="tdtop"><textarea class="quatrevingpercent" name="note" wrap="soft" rows="'.ROWS_3.'">'.GETPOST('note', 'alphanohtml').'</textarea></td>';
+	print '<td class="tdtop"><textarea class="quatrevingtpercent" name="note" wrap="soft" rows="'.ROWS_3.'">'.GETPOST('note', 'alphanohtml').'</textarea></td>';
 	print '</tr>';
 
 	print '</table>';

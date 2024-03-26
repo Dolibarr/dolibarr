@@ -400,7 +400,7 @@ if (empty($reshook)) {
 						$action = '';
 					} else {
 						$tmpvatratetoshow = explode('_', $vatrate);
-						$tmpvatratetoshow[0] = round($tmpvatratetoshow[0], 2);
+						$tmpvatratetoshow[0] = round((float) $tmpvatratetoshow[0], 2);
 
 						if ($tmpvatratetoshow[0] != 0) {
 							$langs->load("errors");
@@ -476,7 +476,7 @@ if (empty($reshook)) {
 
 		$object->date = $newdate;
 		$new_date_lim_reglement = $object->calculate_date_lim_reglement();
-		if ($new_date_lim_reglement > $old_date_lim_reglement) {
+		if ($new_date_lim_reglement) {
 			$object->date_lim_reglement = $new_date_lim_reglement;
 		}
 		if ($object->date_lim_reglement < $object->date) {
@@ -517,7 +517,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			$old_date_lim_reglement = $object->date_lim_reglement;
 			$new_date_lim_reglement = $object->calculate_date_lim_reglement();
-			if ($new_date_lim_reglement > $old_date_lim_reglement) {
+			if ($new_date_lim_reglement) {
 				$object->date_lim_reglement = $new_date_lim_reglement;
 			}
 			if ($object->date_lim_reglement < $object->date) {
@@ -959,12 +959,12 @@ if (empty($reshook)) {
 			}
 			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
 				foreach ($amount_ht as $tva_tx => $xxx) {
-					$discount->amount_ht = abs($amount_ht[$tva_tx]);
-					$discount->amount_tva = abs($amount_tva[$tva_tx]);
-					$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
-					$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
-					$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
-					$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+					$discount->amount_ht = abs((float) $amount_ht[$tva_tx]);
+					$discount->amount_tva = abs((float) $amount_tva[$tva_tx]);
+					$discount->amount_ttc = abs((float) $amount_ttc[$tva_tx]);
+					$discount->multicurrency_amount_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
+					$discount->multicurrency_amount_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
+					$discount->multicurrency_amount_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
 
 					// Clean vat code
 					$reg = array();
@@ -1573,6 +1573,7 @@ if (empty($reshook)) {
 									$TTotalByTva[$line->tva_tx] += $line->total_ttc;
 								}
 
+								$amount_ttc_diff = 0.;
 								foreach ($TTotalByTva as $tva => &$total) {
 									$coef = $total / $srcobject->total_ttc; // Calc coef
 									$am = $amount * $coef;
@@ -1598,7 +1599,7 @@ if (empty($reshook)) {
 											if ($qualified) {
 												$totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
 												$tva_tx = $lines[$i]->tva_tx;
-												$amountdeposit[$tva_tx] += ($lines[$i]->total_ht * $valuedeposit) / 100;
+												$amountdeposit[$tva_tx] += ($lines[$i]->total_ht * (float) $valuedeposit) / 100;
 											}
 										}
 
@@ -1690,7 +1691,7 @@ if (empty($reshook)) {
 									if (is_array($lines)) {
 										foreach ($lines as $line) {
 											// We keep ->subprice and ->pa_ht, but we change the qty
-											$line->qty = price2num($line->qty * $valuestandardinvoice / 100, 'MS');
+											$line->qty = price2num($line->qty * (float) $valuestandardinvoice / 100, 'MS');
 										}
 									}
 								}
@@ -1699,7 +1700,7 @@ if (empty($reshook)) {
 									if (is_array($lines)) {
 										foreach ($lines as $line) {
 											// We keep ->subprice and ->pa_ht, but we change the qty
-											$line->qty = price2num($line->qty * $valuedeposit / 100, 'MS');
+											$line->qty = price2num($line->qty * (float) $valuedeposit / 100, 'MS');
 										}
 									}
 								}
@@ -2246,20 +2247,20 @@ if (empty($reshook)) {
 				//$tva_tx = $datapriceofproduct['tva_tx'];
 				//$tva_npr = $datapriceofproduct['tva_npr'];
 				$tmpvat = (float) price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
-				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', (string) $prod->tva_tx));
 
 				// Set unit price to use
 				// TODO We should not have this
 				if (!empty($price_ht) || $price_ht === '0') {
 					$pu_ht = price2num($price_ht, 'MU');
-					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+					$pu_ttc = price2num((float) $pu_ht * (1 + ($tmpvat / 100)), 'MU');
 				} elseif (!empty($price_ht_devise) || $price_ht_devise === '0') {
 					$pu_ht_devise = price2num($price_ht_devise, 'MU');
 					$pu_ht = '';
 					$pu_ttc = '';
 				} elseif (!empty($price_ttc) || $price_ttc === '0') {
 					$pu_ttc = price2num($price_ttc, 'MU');
-					$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+					$pu_ht = price2num((float) $pu_ttc / (1 + ($tmpvat / 100)), 'MU');
 				} elseif ($tmpvat != $tmpprodvat) {
 					// Is this still used ?
 					if ($price_base_type != 'HT') {
@@ -2398,7 +2399,7 @@ if (empty($reshook)) {
 				$pu_equivalent = $pu_ht_devise * $currency_tx;
 			}
 			if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
-				$pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
+				$pu_equivalent_ttc = (float) $pu_ttc_devise * $currency_tx;
 			}
 
 			// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
@@ -2436,11 +2437,11 @@ if (empty($reshook)) {
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
 			if ($usermustrespectpricemin && ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)) {
-				if ($pu_equivalent && $price_min && ((price2num($pu_equivalent) * (1 - $remise_percent / 100)) < price2num($price_min)) && $price_base_type == 'HT') {
+				if ($pu_equivalent && $price_min && (((float) price2num($pu_equivalent) * (1 - $remise_percent / 100)) < (float) price2num($price_min)) && $price_base_type == 'HT') {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
-				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc)) && $price_base_type == 'TTC') {
+				} elseif ($pu_equivalent_ttc && $price_min_ttc && (((float) price2num($pu_equivalent_ttc) * (1 - $remise_percent / 100)) < (float) price2num($price_min_ttc)) && $price_base_type == 'TTC') {
 					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
@@ -2571,10 +2572,10 @@ if (empty($reshook)) {
 		// Check if we have a foreign currency
 		// If so, we update the pu_equiv as the equivalent price in base currency
 		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
-			$pu_equivalent = $pu_ht_devise * $currency_tx;
+			$pu_equivalent = (float) $pu_ht_devise * (float) $currency_tx;
 		}
 		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
-			$pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
+			$pu_equivalent_ttc = (float) $pu_ttc_devise * (float) $currency_tx;
 		}
 
 		// TODO $pu_equivalent or $pu_equivalent_ttc must be calculated from the one not null taking into account all taxes
@@ -2658,7 +2659,7 @@ if (empty($reshook)) {
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 					$action = 'editline';
-				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - (float) $remise_percent / 100)) < price2num($price_min_ttc)) && $price_base_type == 'TTC') {
+				} elseif ($pu_equivalent_ttc && $price_min_ttc && (((float) price2num($pu_equivalent_ttc) * (1 - (float) $remise_percent / 100)) < (float) price2num($price_min_ttc)) && $price_base_type == 'TTC') {
 					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
@@ -3523,11 +3524,15 @@ if ($action == 'create') {
 						setRadioForTypeOfInvoice();
 					});
 					function setRadioForTypeOfInvoice() {
-						console.log("Change radio");
+						console.log("Change radio for type of invoice");
 						if (jQuery("#radio_deposit").prop("checked") && (jQuery("#typedeposit").val() == \'amount\' || jQuery("#typedeposit").val() == \'variable\')) {
+							jQuery("#checkforselects").prop("disabled", true);
+							jQuery("#checkforselects").prop("checked", false);
 							jQuery(".checkforselect").prop("disabled", true);
 							jQuery(".checkforselect").prop("checked", false);
 						} else {
+							jQuery("#checkforselects").prop("disabled", false);
+							jQuery("#checkforselects").prop("checked", true);
 							jQuery(".checkforselect").prop("disabled", false);
 							jQuery(".checkforselect").prop("checked", true);
 						}
@@ -4190,7 +4195,7 @@ if ($action == 'create') {
 		// TODO We should not need this. Also data comes from a not reliable value of $object->multicurrency_total_ttc that may be wrong if it was
 		// calculated by summing lines that were in a currency for some of them and into another for others (lines from discount/down payment into another currency for example)
 		if ($resteapayer == 0 && $multicurrency_resteapayer != 0 && $object->multicurrency_code != $conf->currency) {
-			$resteapayer = price2num($multicurrency_resteapayer / $object->multicurrency_tx, 'MT');
+			$resteapayer = price2num((float) $multicurrency_resteapayer / $object->multicurrency_tx, 'MT');
 		}
 	}
 

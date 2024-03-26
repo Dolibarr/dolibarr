@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,7 +93,7 @@ $hookmanager->initHooks(array('usercard', 'userperms', 'globalcard'));
  * Actions
  */
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -192,6 +193,8 @@ foreach ($modulesdir as $dir) {
 }
 
 $db->commit();
+
+'@phan-var-force DolibarrModules[] $modules';
 
 // Read permissions of edited user
 $permsuser = array();
@@ -323,7 +326,7 @@ if (!empty($object->socid)) {
 	print info_admin(showModulesExludedForExternal($modules))."\n";
 }
 
-$parameters = array('permsgroupbyentity'=>$permsgroupbyentity);
+$parameters = array('permsgroupbyentity' => $permsgroupbyentity);
 $reshook = $hookmanager->executeHooks('insertExtraHeader', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

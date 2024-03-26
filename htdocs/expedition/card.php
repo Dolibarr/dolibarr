@@ -546,24 +546,24 @@ if (empty($reshook)) {
 			$object->tracking_number = trim(GETPOST('tracking_number', 'alpha'));
 		}
 		if ($action == 'settracking_url') {
-			$object->tracking_url = trim(GETPOSTINT('tracking_url'));
+			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
 		if ($action == 'settrueWeight') {
-			$object->trueWeight = trim(GETPOSTINT('trueWeight'));
+			$object->trueWeight = GETPOSTINT('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
 		}
 		if ($action == 'settrueWidth') {
-			$object->trueWidth = trim(GETPOSTINT('trueWidth'));
+			$object->trueWidth = GETPOSTINT('trueWidth');
 		}
 		if ($action == 'settrueHeight') {
-			$object->trueHeight = trim(GETPOSTINT('trueHeight'));
+			$object->trueHeight = GETPOSTINT('trueHeight');
 			$object->size_units = GETPOSTINT('size_units');
 		}
 		if ($action == 'settrueDepth') {
-			$object->trueDepth = trim(GETPOSTINT('trueDepth'));
+			$object->trueDepth = GETPOSTINT('trueDepth');
 		}
 		if ($action == 'setshipping_method_id') {
-			$object->shipping_method_id = trim(GETPOSTINT('shipping_method_id'));
+			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 		}
 
 		if (!$error) {
@@ -1336,7 +1336,7 @@ if ($action == 'create') {
 									// Show warehouse combo list
 									$ent = "entl".$indiceAsked;
 									$idl = "idl".$indiceAsked;
-									$tmpentrepot_id = is_numeric(GETPOSTINT($ent)) ? GETPOSTINT($ent) : $warehouse_id;
+									$tmpentrepot_id = is_numeric(GETPOST($ent)) ? GETPOSTINT($ent) : $warehouse_id;
 									if ($line->fk_product > 0) {
 										print '<!-- Show warehouse selection -->';
 
@@ -1872,13 +1872,13 @@ if ($action == 'create') {
 	$totalWeight = $tmparray['weight'];
 	$totalVolume = $tmparray['volume'];
 
-	if (!empty($typeobject) && $typeobject === 'commande' && is_object($object->$typeobject) && $object->$typeobject->id && isModEnabled('order')) {
+	if (!empty($typeobject) && $typeobject === 'commande' && is_object($object->origin_object) && $object->origin_object->id && isModEnabled('order')) {
 		$objectsrc = new Commande($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($object->origin_object->id);
 	}
-	if (!empty($typeobject) && $typeobject === 'propal' && is_object($object->$typeobject) && $object->$typeobject->id && isModEnabled("propal")) {
+	if (!empty($typeobject) && $typeobject === 'propal' && is_object($object->origin_object) && $object->origin_object->id && isModEnabled("propal")) {
 		$objectsrc = new Propal($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($object->origin_object->id);
 	}
 
 	// Shipment card
@@ -1923,7 +1923,7 @@ if ($action == 'create') {
 	print '<table class="border tableforfield centpercent">';
 
 	// Linked documents
-	if (!empty($typeobject) && $typeobject == 'commande' && $object->$typeobject->id && isModEnabled('order')) {
+	if (!empty($typeobject) && $typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
 		print '<tr><td>';
 		print $langs->trans("RefOrder").'</td>';
 		print '<td colspan="3">';
@@ -1931,7 +1931,7 @@ if ($action == 'create') {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if (!empty($typeobject) && $typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
+	if (!empty($typeobject) && $typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
 		print '<tr><td>';
 		print $langs->trans("RefProposal").'</td>';
 		print '<td colspan="3">';

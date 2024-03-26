@@ -148,9 +148,9 @@ class pdf_espadon extends ModelePdfExpedition
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
-		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
+		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
-			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
 			$outputlangsbis->loadLangs(array("main", "bills", "orders", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
 		}
 
@@ -820,8 +820,8 @@ class pdf_espadon extends ModelePdfExpedition
 		$totalToShip = $tmparray['toship'];
 		// Set trueVolume and volume_units not currently stored into database
 		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) {
-			$object->trueVolume = $object->trueWidth * $object->trueHeight * $object->trueDepth;
-			$object->volume_units = $object->size_units * 3;
+			$object->trueVolume = (float) $object->trueWidth * (float) $object->trueHeight * (float) $object->trueDepth;
+			$object->volume_units = (float) $object->size_units * 3;
 		}
 
 		if ($totalWeight != '') {
@@ -880,8 +880,8 @@ class pdf_espadon extends ModelePdfExpedition
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		float|int	$tab_top		Top position of table
+	 *   @param		float|int	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
@@ -1044,9 +1044,10 @@ class pdf_espadon extends ModelePdfExpedition
 		// Add list of linked orders
 		$origin = $object->origin;
 		$origin_id = $object->origin_id;
+		$object->fetch_origin();
 
 		// TODO move to external function
-		if (!empty($conf->$origin->enabled)) {     // commonly $origin='commande'
+		if (isModEnabled($origin)) {     // commonly $origin='commande'
 			$outputlangs->load('orders');
 
 			$classname = ucfirst($origin);
@@ -1082,8 +1083,8 @@ class pdf_espadon extends ModelePdfExpedition
 			$carac_emetteur = '';
 			// Add internal contact of origin element if defined
 			$arrayidcontact = array();
-			if (!empty($origin) && is_object($object->$origin)) {
-				$arrayidcontact = $object->$origin->getIdContact('internal', 'SALESREPFOLL');
+			if (!empty($origin) && is_object($object->origin_object)) {
+				$arrayidcontact = $object->origin_object->getIdContact('internal', 'SALESREPFOLL');
 			}
 			if (is_array($arrayidcontact) && count($arrayidcontact) > 0) {
 				$object->fetch_user(reset($arrayidcontact));
@@ -1138,7 +1139,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 			// If SHIPPING contact defined, we use it
 			$usecontact = false;
-			$arrayidcontact = $object->$origin->getIdContact('external', 'SHIPPING');
+			$arrayidcontact = $object->origin_object->getIdContact('external', 'SHIPPING');
 			if (count($arrayidcontact) > 0) {
 				$usecontact = true;
 				$result = $object->fetch_contact($arrayidcontact[0]);

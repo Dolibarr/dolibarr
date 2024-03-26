@@ -1619,7 +1619,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 
 			// Set the new member type
 			$member->typeid = $newtypeid;
-			$member->type = dol_getIdFromCode($db, $newtypeid, 'adherent_type', 'rowid', 'libelle');
+			$member->type = (string) dol_getIdFromCode($db, $newtypeid, 'adherent_type', 'rowid', 'libelle');
 
 			// list member type
 			if (!$action) {
@@ -2152,7 +2152,7 @@ if ($action != 'dopayment') {
 				if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') != 'integral') {
 					print '<div style="line-height: 1em">&nbsp;</div>';
 				}
-				print '<span class="fa fa-paypal"></span> <input class="" type="submit" id="dopayment_paypal" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
+				print '<span class="fab fa-paypal"></span> <input class="" type="submit" id="dopayment_paypal" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
 				if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') == 'integral') {
 					print '<br>';
 					print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span><span class="buttonpaymentsmall"> - </span>';
