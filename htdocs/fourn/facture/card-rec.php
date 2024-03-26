@@ -10,7 +10,7 @@
  * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
  * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023-2024  Nick Fragoulis
- * Copyright (C) 2024		    MDW							        <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -192,23 +192,23 @@ if (empty($reshook)) {
 		}
 
 		if (! $error) {
-			$object->titre = GETPOST('title', 'alphanohtml'); // deprecated
-			$object->title = GETPOST('title', 'alphanohtml');
-			$object->libelle = GETPOST('libelle', 'alpha');	// deprecated
-			$object->label = GETPOST('libelle', 'alpha');
-			$object->fk_project = GETPOSTINT('projectid');
-			$object->ref_supplier = GETPOST('ref_supplier', 'alphanohtml');
+			$object->subtype               = GETPOSTINT('subtype');
+			$object->title                 = GETPOST('title', 'alphanohtml');
+			$object->libelle               = GETPOST('libelle', 'alpha');	// deprecated
+			$object->label                 = GETPOST('libelle', 'alpha');
+			$object->fk_project            = GETPOSTINT('projectid');
+			$object->ref_supplier          = GETPOST('ref_supplier', 'alphanohtml');
 
-			$object->note_private = GETPOST('note_private', 'restricthtml');
-			$object->note_public = GETPOST('note_public', 'restricthtml');
-			$object->model_pdf = GETPOST('modelpdf', 'alpha');
-			$object->usenewprice = GETPOST('usenewprice', 'alpha');
+			$object->note_private          = GETPOST('note_private', 'restricthtml');
+			$object->note_public           = GETPOST('note_public', 'restricthtml');
+			$object->model_pdf             = GETPOST('modelpdf', 'alpha');
+			$object->usenewprice           = GETPOST('usenewprice', 'alpha');
 
-			$object->frequency = $frequency;
-			$object->unit_frequency = GETPOST('unit_frequency', 'alpha');
-			$object->nb_gen_max = $nb_gen_max;
-			$object->auto_validate = GETPOSTINT('auto_validate');
-			$object->generate_pdf = GETPOSTINT('generate_pdf');
+			$object->frequency             = $frequency;
+			$object->unit_frequency        = GETPOST('unit_frequency', 'alpha');
+			$object->nb_gen_max            = $nb_gen_max;
+			$object->auto_validate         = GETPOSTINT('auto_validate');
+			$object->generate_pdf          = GETPOSTINT('generate_pdf');
 
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 			$object->date_when = $date_next_execution;
@@ -937,7 +937,7 @@ if ($action == 'create') {
 		// Invoice subtype
 		if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED')) {
 			print "<tr><td>".$langs->trans("InvoiceSubtype")."</td><td>";
-			print $form->getSelectInvoiceSubtype(GETPOSTISSET('subtype') ? GETPOST('subtype') : $object->subtype, 'subtype', -1, 0, 0, '');
+			print $form->getSelectInvoiceSubtype(GETPOSTISSET('subtype') ? GETPOST('subtype') : $object->subtype, 'subtype', 0, 0, '');
 			print "</td></tr>";
 		}
 
