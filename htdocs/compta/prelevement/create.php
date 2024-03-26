@@ -787,9 +787,6 @@ if ($resql) {
 
 print '<div class="tabsAction">'."\n";
 
-// print '<form action="'.$_SERVER['PHP_SELF'].'?action=create" method="POST" id="selectbank">';
-// print '<input type="hidden" name="token" value="'.newToken().'">';
-// print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="searchsql" value="'.$searchsql.'">';
 if ($nb) {
 	if ($pricetowithdraw) {
@@ -832,7 +829,6 @@ if ($nb) {
 				print '<option value="RCUR"'.($format == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
 				print '</select>';
 			}
-			// print '<input type="submit" class="butAction margintoponly maringbottomonly" value="'.$title.'"/>';
 			print '<button type="submit" class="butAction margintoponly maringbottomonly" name="action" value="create">'.$title.'</button>'."\n";
 		} else {
 			$title = $langs->trans("CreateAll");
@@ -840,7 +836,6 @@ if ($nb) {
 				$title = $langs->trans("CreateFileForPaymentByBankTransfer");
 			}
 			print '<input type="hidden" name="format" value="ALL">'."\n";
-			// print '<input type="submit" class="butAction margintoponly maringbottomonly" value="'.$title.'">'."\n";
 			print '<button type="submit" class="butAction margintoponly maringbottomonly" name="action" value="create">'.$title.'</button>'."\n";
 		}
 	} else {
