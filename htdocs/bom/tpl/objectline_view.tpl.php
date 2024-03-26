@@ -111,7 +111,7 @@ if (!function_exists('print_line')) {
 
 		// Product/Service label
 		$column[] = '<td class="linecoldescription minwidth300imp"><div id="line_'.$bomline->id.'"></div>'.
-			str_repeat('&nbsp;', $level*4).$product->getNomUrl(1).
+			str_repeat('&nbsp;', $level * 4).$product->getNomUrl(1).
 			(!empty($bom) ? ' '.$langs->trans("or").' '.$bom->getNomUrl(1).
 			' <a class="collapse_bom" id="collapse-'.$bomline->id.'" href="#">'.
 			(!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT') ? img_picto('', 'folder') : img_picto('', 'folder-open')).'</a>':'').
@@ -119,7 +119,7 @@ if (!function_exists('print_line')) {
 			(!empty($extra)?' - '.$extra:'');
 
 		// Yes, it is a quantity, not a price, but we just want the formatting role of function price
-		$column[] = '<td class="linecolqty nowrap right">'.price(price2num($bomline->qty*$quantity, 'MT'), 0, '', 0, 0).'</td>';
+		$column[] = '<td class="linecolqty nowrap right">'.price(price2num($bomline->qty * $quantity, 'MS')).'</td>';
 
 		if ($filtertype != 1) {
 			if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
@@ -157,7 +157,7 @@ if (!function_exists('print_line')) {
 
 		// Cost
 		$column[] = '<td id="costline_'.$bomline->id.'" class="linecolcost nowrap right"><span class="amount">'.
-			price(price2num($bomline->total_cost * $quantity, 'MT')).'</span></td>';
+			price(price2num($bomline->total_cost * $quantity, 'MS')).'</span></td>';
 
 		if ($level==0 && $parent->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 			$column[] = '<td class="linecoledit center">'.
@@ -201,7 +201,7 @@ if (!function_exists('print_line')) {
 		}
 		foreach (((!empty($bom) && is_array($bom->lines)) ? $bom->lines : array()) as $bomchild) {
 			$parent = $bomline;
-			$quantity_multiplier = ($quantity * $bomline->qty) / (($bom->qty??1) * $bomline->efficiency);
+			$quantity_multiplier = ($quantity * $bomline->qty) / (($bom->qty ?? 1) * $bomline->efficiency);
 			foreach (print_line($bomchild, $parent, $quantity_multiplier, $level + 1) as $line) {
 				$html[] = $line;
 			}
