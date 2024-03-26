@@ -32,6 +32,7 @@ InvoiceWaitingWithdraw=Invoice waiting for direct debit
 InvoiceWaitingPaymentByBankTransfer=Invoice waiting for credit transfer
 AmountToWithdraw=Amount to withdraw
 AmountToTransfer=Amount to transfer
+NoInvoiceSelected=No invoice selected.
 NoInvoiceToWithdraw=No invoice open for '%s' is waiting. Go on tab '%s' on invoice card to make a request.
 NoSupplierInvoiceToWithdraw=No supplier invoice with open '%s' is waiting. Go on tab '%s' on invoice card to make a request.
 ResponsibleUser=User Responsible

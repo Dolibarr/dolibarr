@@ -196,6 +196,12 @@ if (empty($reshook)) {
 			$action = '';
 			$error++;
 		}
+		if (empty($toselect)) {
+			$mesg = $langs->trans("NoInvoiceSelected");
+			setEventMessages($mesg, null, 'errors');
+			$action = '';
+			$error++;
+		}
 
 
 		$bprev = new BonPrelevement($db);
@@ -203,8 +209,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			// getDolGlobalString('PRELEVEMENT_CODE_BANQUE') and getDolGlobalString('PRELEVEMENT_CODE_GUICHET') should be empty (we don't use them anymore)
 			$selected_invoices = array();
-			if (!empty($toselect)) {
-				foreach($toselect as $select)
+			foreach($toselect as $select) {
 				$selected_invoices[] = (int) $select;
 			}
 			$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type, $selected_invoices, $id_bankaccount);
@@ -634,7 +639,7 @@ if ($resql) {
 				if (in_array($obj->request_row_id, $arrayofselected) || empty($arrayofselected)) {
 					$selected = 1;
 				}
-				print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').'>';
+				print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').' amount="'.$obj->amount.'">';
 				print '</td>';
 			}
 
@@ -760,7 +765,7 @@ if ($resql) {
 				if (in_array($obj->request_row_id, $arrayofselected) || empty($arrayofselected)) {
 					$selected = 1;
 				}
-				print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').'>';
+				print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').' amount="'.$obj->amount.'">';
 				print '</td>';
 			}
 			print '</tr>';
@@ -829,8 +834,7 @@ if ($nb) {
 			let total_checked = 0;
 			let checked_pfd = Array.from($('[id^="cb"]').filter(':checked'));
 			checked_pfd.forEach((pfd) => {
-				let text_amount = $('[id^="amount_'+Number(pfd.value)+'"]').text()
-				let amount = Number(text_amount.replace(' ', '').replace(',', '.'))
+				let amount = Number(pfd.getAttribute('amount'));
 				total_checked += amount;
 			})
 			$('#total_checked').val(total_checked);
