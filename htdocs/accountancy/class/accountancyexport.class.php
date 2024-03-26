@@ -385,11 +385,12 @@ class AccountancyExport
 				// directory already created when module is enabled
 				$outputDir .= '/export';
 				$outputDir .= '/'.dol_sanitizePathName($formatexportset);
-				if (!dol_is_dir($outputDir)) {
-					if (dol_mkdir($outputDir) < 0) {
-						$this->errors[] = $langs->trans('ErrorCanNotCreateDir', $outputDir);
-						return -1;
-					}
+			}
+
+			if (!dol_is_dir($outputDir)) {
+				if (dol_mkdir($outputDir) < 0) {
+					$this->errors[] = $langs->trans('ErrorCanNotCreateDir', $outputDir);
+					return -1;
 				}
 			}
 
