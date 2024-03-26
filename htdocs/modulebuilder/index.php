@@ -4960,7 +4960,7 @@ if ($module == 'initmodule') {
 
 					print '<span class="opacitymedium">'.$langs->trans("EnterNameOfDictionaryDesc").'</span><br><br>';
 
-					print dol_get_fiche_head('');
+					print dol_get_fiche_head();
 					print '<table class="border centpercent">';
 					print '<tbody>';
 					print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Table").'</td><td><input type="text" name="dicname" maxlength="64" value="'.dol_escape_htmltag(GETPOST('dicname', 'alpha') ? GETPOST('dicname', 'alpha') : $modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("DicKey")).'" autofocus></td>';
