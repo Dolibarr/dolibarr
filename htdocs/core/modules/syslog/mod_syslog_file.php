@@ -181,7 +181,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 			$message = dol_print_date(dol_now('gmt'), 'standard', 'gmt').$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip']);
 			$message .= " ".sprintf("%7s", dol_trunc($content['ospid'], 7, 'right', 'UTF-8', 1));
 			$message .= " ".sprintf("%6s", dol_trunc($content['osuser'], 6, 'right', 'UTF-8', 1));
-			$message .= " ".($this->ident > 0 ? str_pad('', $this->ident, ' ') : '').$content['message'];
+			$message .= " ".($this->ident > 0 ? str_pad(((string) ''), ((int) $this->ident), ((string) ' ')) : '').$content['message'];
 			fwrite($filefd, $message."\n");
 			fclose($filefd);
 			dolChmod($logfile);
