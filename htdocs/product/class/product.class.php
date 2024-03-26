@@ -1438,6 +1438,38 @@ class Product extends CommonObject
 				}
 			}
 
+            // Cancel delete product on Bom
+            if(! $error) {
+                $sql = " SELECT fk_product";
+                $sql .= " FROM ".$this->db->prefix().'bom_bom';
+                $sql .= " WHERE fk_product =".(int) $this->id;
+
+                $result = $this->db->query($sql);
+                if($result) {
+                    $nbrows = $this->db->num_rows($result);
+                    if($nbrows > 0) {
+                        $error++;
+                        $this->errors[] = $langs->trans("ProductIsUsed");
+                    }
+                }
+            }
+
+            // Cancel delete product on BomLine
+            if(! $error) {
+                $sql = " SELECT fk_product";
+                $sql .= " FROM ".$this->db->prefix().'bom_bomline';
+                $sql .= " WHERE fk_product =". (int) $this->id;
+
+                $result = $this->db->query($sql);
+                if($result) {
+                    $nbrows = $this->db->num_rows($result);
+                    if($nbrows > 0) {
+                        $error++;
+                        $this->errors[] = $langs->trans("ProductIsUsed");
+                    }
+                }
+            }
+
 			// Delete all child tables
 			if (!$error) {
 				$elements = array('product_fournisseur_price', 'product_price', 'product_lang', 'categorie_product', 'product_stock', 'product_customer_price', 'product_lot'); // product_batch is done before
