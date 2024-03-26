@@ -2,6 +2,7 @@
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,8 +50,8 @@ $outjson = (GETPOSTINT('outjson') ? GETPOSTINT('outjson') : 0);
 $action = GETPOST('action', 'aZ09');
 $id = GETPOSTINT('id');
 $excludeids = GETPOST('excludeids', 'intcomma');
-$showtype = GETPOSTINT('showtype', 'alpha');
-$showcode = GETPOSTINT('showcode', 'alpha');
+$showtype = GETPOSTINT('showtype');
+$showcode = GETPOSTINT('showcode');
 
 $object = new Societe($db);
 if ($id > 0) {
