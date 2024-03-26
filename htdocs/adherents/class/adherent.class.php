@@ -2470,19 +2470,19 @@ class Adherent extends CommonObject
 		} elseif ($status >= self::STATUS_VALIDATED) {
 			if ($need_subscription === 0) {
 				$statusType = 'status4';
-				$labelStatus = $langs->trans("MemberStatusNoSubscription");
+				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("MemberStatusNoSubscription");
 				$labelStatusShort = $langs->trans("MemberStatusNoSubscriptionShort");
 			} elseif (!$date_end_subscription) {
 				$statusType = 'status1';
-				$labelStatus = $langs->trans("WaitingSubscription");
+				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("WaitingSubscription");
 				$labelStatusShort = $langs->trans("WaitingSubscriptionShort");
 			} elseif ($date_end_subscription < dol_now()) {	// expired
 				$statusType = 'status8';
-				$labelStatus = $langs->trans("MemberStatusActiveLate");
+				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("MemberStatusActiveLate");
 				$labelStatusShort = $langs->trans("MemberStatusActiveLateShort");
 			} else {
 				$statusType = 'status4';
-				$labelStatus = $langs->trans("MemberStatusPaid");
+				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("MemberStatusPaid");
 				$labelStatusShort = $langs->trans("MemberStatusPaidShort");
 			}
 		} elseif ($status == self::STATUS_RESILIATED) {

@@ -4,6 +4,7 @@
  * Copyright (C) 2015       Ari Elbaz (elarifr)     <github@accedinfo.com>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
  */
 class FormAccounting extends Form
 {
+	/**
+	 * @var array<string,array<string,string>>
+	 */
 	private $options_cache = array();
 
 	/**
@@ -148,16 +152,16 @@ class FormAccounting extends Form
 	/**
 	 * Return list of journals with label by nature
 	 *
-	 * @param	array	$selectedIds		Preselected journal code array
-	 * @param	string	$htmlname			Name of field in html form
-	 * @param	int		$nature				Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
-	 * @param	int		$showempty			Add an empty field
-	 * @param	int		$select_in			0=selectid value is the journal rowid (default) or 1=selectid is journal code
-	 * @param	int		$select_out			Set value returned by select. 0=rowid (default), 1=code
-	 * @param	string	$morecss			More css non HTML object
-	 * @param	string	$usecache			Key to use to store result into a cache. Next call with same key will reuse the cache.
-	 * @param   int     $disabledajaxcombo 	Disable ajax combo box.
-	 * @return	string|int						String with HTML select, or -1 if error
+	 * @param	string[]	$selectedIds		Preselected journal code array
+	 * @param	string		$htmlname			Name of field in html form
+	 * @param	int			$nature				Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
+	 * @param	int			$showempty			Add an empty field
+	 * @param	int			$select_in			0=selectid value is the journal rowid (default) or 1=selectid is journal code
+	 * @param	int			$select_out			Set value returned by select. 0=rowid (default), 1=code
+	 * @param	string		$morecss			More css non HTML object
+	 * @param	string		$usecache			Key to use to store result into a cache. Next call with same key will reuse the cache.
+	 * @param   int    		$disabledajaxcombo Disable ajax combo box.
+	 * @return	string|int<-1,-1>				String with HTML select, or -1 if error
 	 */
 	public function multi_select_journal($selectedIds = array(), $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = '', $usecache = '', $disabledajaxcombo = 0)
 	{
@@ -317,9 +321,9 @@ class FormAccounting extends Form
 	/**
 	 * Return select filter with date of transaction
 	 *
-	 * @param string $htmlname         Name of select field
-	 * @param string $selectedkey      Value
-	 * @return string|int              HTML edit field, or -1 if error
+	 * @param string $htmlname		Name of select field
+	 * @param string $selectedkey	Value
+	 * @return string|int<-1,-1>	HTML edit field, or -1 if error
 	 */
 	public function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '')
 	{
@@ -353,13 +357,13 @@ class FormAccounting extends Form
 	 * @param string   		$selectid          	Preselected id of accounting accounts (depends on $select_in)
 	 * @param string   		$htmlname          	Name of HTML field id. If name start with '.', it is name of HTML css class, so several component with same name in different forms can be used.
 	 * @param int|string    $showempty         	1=Add an empty field, 2=Add an empty field+'None' field
-	 * @param array    		$event             	Event options
+	 * @param array<array<string,mixed>> $event Event options
 	 * @param int      		$select_in         	0=selectid value is a aa.rowid (default) or 1=selectid is aa.account_number
 	 * @param int      		$select_out        	Set value returned by select. 0=rowid (default), 1=account_number
 	 * @param string   		$morecss           	More css non HTML object
 	 * @param string   		$usecache          	Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @param string		$active				Filter on status active or not: '0', '1' or '' for no filter
-	 * @return string|int      	               	String with HTML select, or -1 if error
+	 * @return string|int<-1,-1>               	String with HTML select, or -1 if error
 	 */
 	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '', $active = '1')
 	{
@@ -467,7 +471,7 @@ class FormAccounting extends Form
 	 * @param string   		$morecss        More css
 	 * @param string   		$usecache       Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @param string		$labelhtmlname	HTML name of label for autofill of account from name.
-	 * @return string|int      	   			String with HTML select, or -1 if error
+	 * @return string|int<-1,-1>			String with HTML select, or -1 if error
 	 */
 	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '', $labelhtmlname = '')
 	{
@@ -560,7 +564,7 @@ class FormAccounting extends Form
 	 * @param string 	$htmlname 		Name of HTML select object
 	 * @param int 		$useempty 		Affiche valeur vide dans liste
 	 * @param string 	$output_format 	(html/option (for option html only)/array (to return options arrays
-	 * @return string|array|int			HTML select component || array of select options || - 1 if error
+	 * @return string|array<string,string>|int<-1,-1>	HTML select component || array of select options || - 1 if error
 	 */
 	public function selectyear_accountancy_bookkepping($selected = '', $htmlname = 'yearid', $useempty = 0, $output_format = 'html')
 	{
@@ -615,7 +619,7 @@ class FormAccounting extends Form
 			$out .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
 			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
 			if ($option == 0) {
-				$out .= $this->select_account($selected, $htmlname, $useempty, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts', $filter);
+				$out .= $this->select_account($selected, $htmlname, $useempty, array(), 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts', $filter);
 			} else {
 				$out .= $this->select_auxaccount($selected, $htmlname, $useempty, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'subaccounts');
 			}

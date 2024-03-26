@@ -12797,7 +12797,7 @@ function jsonOrUnserialize($stringtodecode)
  * 									Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
  * @param	string		$errorstr	Error message string
  * @param	int			$noand		1=Do not add the AND before the condition string.
- * @param	int			$nopar		1=Do not add the perenthesis around the condition string.
+ * @param	int			$nopar		1=Do not add the parenthesis around the final condition string.
  * @param	int			$noerror	1=If search criteria is not valid, does not return an error string but invalidate the SQL
  * @return	string					Return forged SQL string
  * @see dolSqlDateFilter()
@@ -12805,6 +12805,8 @@ function jsonOrUnserialize($stringtodecode)
  */
 function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 0, $nopar = 0, $noerror = 0)
 {
+	global $db, $user;
+
 	if ($filter === '') {
 		return '';
 	}
@@ -12838,7 +12840,16 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 
 		}
 	}
 
-	return ($noand ? "" : " AND ").($nopar ? "" : '(').preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).($nopar ? "" : ')');
+	$ret = ($noand ? "" : " AND ").($nopar ? "" : '(').preg_replace_callback('/'.$regexstring.'/i', 'dolForgeCriteriaCallback', $filter).($nopar ? "" : ')');
+
+	if (is_object($db)) {
+		$ret = str_replace('__NOW__', $db->idate(dol_now()), $ret);
+	}
+	if (is_object($user)) {
+		$ret = str_replace('__USER_ID__', (int) $user->id, $ret);
+	}
+
+	return $ret;
 }
 
 /**
