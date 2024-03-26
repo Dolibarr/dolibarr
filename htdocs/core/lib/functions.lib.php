@@ -12858,7 +12858,7 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 
 		$ret = str_replace('__NOW__', $db->idate(dol_now()), $ret);
 	}
 	if (is_object($user)) {
-		$ret = str_replace('__USER_ID__', (int) $user->id, $ret);
+		$ret = str_replace('__USER_ID__', (string) $user->id, $ret);
 	}
 
 	return $ret;
