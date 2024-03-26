@@ -79,28 +79,28 @@ if (!function_exists('print_line')) {
 	/**
 	 * Recursively loop through and print BOM lines
 	 *
-	 * @param  CommonObjectLine $data	BOMLine to print on row
+	 * @param  CommonObjectLine $bomline BOMLine to print on row
+	 * @param  CommonObject $parent		Parent BOMLine ID, used for show/hide/edit/delete
 	 * @param  float $quantity			Quantity modifier for sub BOM
 	 * @param  int $level				Level of recursion
-	 * @param  CommonObject $parent		Parent BOMLine ID, used for show/hide/edit/delete
 	 * @return array					Return array of html rows
 	 */
-	function print_line($data, $quantity, $level, $parent)
+	function print_line($bomline, $parent, $quantity, $level)
 	{
 		global $conf, $langs, $extrafields, $filtertype, $i, $action, $object_rights, $num, $disableedit, $disableremove, $disablemove;
 
-		$product = new Product($data->db);
-		$product->fetch($data->fk_product);
-		$bom = $data->childBom;
+		$product = new Product($bomline->db);
+		$product->fetch($bomline->fk_product);
+		$bom = $bomline->childBom;
 
 		$html = array();
 		$column = array();
 		$extra='';
 		if (!empty($extrafields)) {
-			$temp = $data->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
+			$temp = $bomline->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
 			if (!empty($temp)) {
 				$extra = '<div style="padding-top: 10px" id="extrafield_lines_area_'.
-					$data->id.'" name="extrafield_lines_area_'.$data->id.'">'.$temp.'</div>';
+					$bomline->id.'" name="extrafield_lines_area_'.$bomline->id.'">'.$temp.'</div>';
 			}
 		}
 
@@ -110,72 +110,72 @@ if (!function_exists('print_line')) {
 		}
 
 		// Product/Service label
-		$column[] = '<td class="linecoldescription minwidth300imp"><div id="line_'.$data->id.'"></div>'.
+		$column[] = '<td class="linecoldescription minwidth300imp"><div id="line_'.$bomline->id.'"></div>'.
 			str_repeat('&nbsp;', $level*4).$product->getNomUrl(1).
 			(!empty($bom) ? ' '.$langs->trans("or").' '.$bom->getNomUrl(1).
-			' <a class="collapse_bom" id="collapse-'.$data->id.'" href="#">'.
+			' <a class="collapse_bom" id="collapse-'.$bomline->id.'" href="#">'.
 			(!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT') ? img_picto('', 'folder') : img_picto('', 'folder-open')).'</a>':'').
 			' - '.$product->label.
 			(!empty($extra)?' - '.$extra:'');
 
 		// Yes, it is a quantity, not a price, but we just want the formatting role of function price
-		$column[] = '<td class="linecolqty nowrap right">'.price(price2num($data->qty*$quantity, 'MT'), 0, '', 0, 0).'</td>';
+		$column[] = '<td class="linecolqty nowrap right">'.price(price2num($bomline->qty*$quantity, 'MT'), 0, '', 0, 0).'</td>';
 
 		if ($filtertype != 1) {
 			if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-				$label = measuringUnitString($data->fk_unit, '', '', 1);
+				$label = measuringUnitString($bomline->fk_unit, '', '', 1);
 				$column[] = '<td class="linecoluseunit nowrap left">'.
 					(($label !== '') ? $langs->trans($label) : '').'</td>';
 			}
 
 			$column[] = '<td class="linecolqtyfrozen nowrap right">'.
-				($data->qty_frozen ? yn($data->qty_frozen) : '').'</td>';
+				($bomline->qty_frozen ? yn($bomline->qty_frozen) : '').'</td>';
 
 			$column[] = '<td class="linecoldisablestockchange nowrap right">'.
-				($data->disable_stock_change ? yn($data->disable_stock_change) : '').'</td>';
+				($bomline->disable_stock_change ? yn($bomline->disable_stock_change) : '').'</td>';
 
-			$column[] = '<td class="linecolefficiency nowrap right">'.$data->efficiency.'</td>';
+			$column[] = '<td class="linecolefficiency nowrap right">'.$bomline->efficiency.'</td>';
 		} else {
 			// Unit
 			$unit = '?';
-			if (!empty($data->fk_unit)) {
+			if (!empty($bomline->fk_unit)) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
-				$unit = new CUnits($data->db);
-				$unit->fetch($data->fk_unit);
+				$unit = new CUnits($bomline->db);
+				$unit->fetch($bomline->fk_unit);
 				$unit = isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '';
 			}
 			$column[] = '<td class="linecolunit nowrap right">'.$unit.'</td>';
 
 			// Work station
 			if (isModEnabled('workstation')) {
-				$workstation = new Workstation($data->db);
-				$res = $workstation->fetch($data->fk_default_workstation);
+				$workstation = new Workstation($bomline->db);
+				$res = $workstation->fetch($bomline->fk_default_workstation);
 				$column[] = '<td class="linecolworkstation nowrap right">'.
 					(($res > 0)?$workstation->getNomUrl(1):'none').'</td>';
 			}
 		}
 
 		// Cost
-		$column[] = '<td id="costline_'.$data->id.'" class="linecolcost nowrap right"><span class="amount">'.
-			price(price2num($data->total_cost*$quantity, 'MT')).'</span></td>';
+		$column[] = '<td id="costline_'.$bomline->id.'" class="linecolcost nowrap right"><span class="amount">'.
+			price(price2num($bomline->total_cost * $quantity, 'MT')).'</span></td>';
 
 		if ($level==0 && $parent->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 			$column[] = '<td class="linecoledit center">'.
-				(($data->info_bits & 2) == 2 || !empty($disableedit)?'':
-				('<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$parent->id.'&action=editline&token='.newToken().'&lineid='.$data->id.'">'.img_edit().'</a>')).
+				(($bomline->info_bits & 2) == 2 || !empty($disableedit)?'':
+				('<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$parent->id.'&action=editline&token='.newToken().'&lineid='.$bomline->id.'">'.img_edit().'</a>')).
 				'</td>';
 
 			//La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
 			$column[] = '<td class="linecoldelete center">'.
-				(($data->fk_prev_id == null) && empty($disableremove)?
-					'<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$parent->id.'&action=deleteline&token='.newToken().'&lineid='.$data->id.'">'.img_delete().'</a>':'').
+				(($bomline->fk_prev_id == null) && empty($disableremove)?
+					'<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$parent->id.'&action=deleteline&token='.newToken().'&lineid='.$bomline->id.'">'.img_delete().'</a>':'').
 				'</td>';
 
 			if ($num > 1 && $conf->browser->layout != 'phone' && empty($disablemove)) {
 				$column[] = '<td class="linecolmove tdlineupdown center">'.
-					(($i > 0)?'<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$parent->id.'&action=up&token='.newToken().'&rowid='.$data->id.'">'.
+					(($i > 0)?'<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$parent->id.'&action=up&token='.newToken().'&rowid='.$bomline->id.'">'.
 						img_up('default', 0, 'imgupforline').'</a>':'').
-					(($i < $num - 1)?'<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$parent->id.'&action=down&token='.newToken().'&rowid='.$data->id.'">'.
+					(($i < $num - 1)?'<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$parent->id.'&action=down&token='.newToken().'&rowid='.$bomline->id.'">'.
 						img_down('default', 0, 'imgdownforline').'</a>':'').'</td>';
 			} else {
 				$column[] = '<td '.(($conf->browser->layout != 'phone' && empty($disablemove)) ? ' class="linecolmove tdlineupdown center"' : ' class="linecolmove center"').'></td>';
@@ -187,20 +187,22 @@ if (!function_exists('print_line')) {
 		}
 
 		if ($action == 'selectlines') {
-			$column[] = '<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox['.($i + 1).']" value="'.$data->id.'" ></td>';
+			$column[] = '<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox['.($i + 1).']" value="'.$bomline->id.'" ></td>';
 		}
 
 		if ($level==0) {
 			// add html5 dom elements
-			$html[] = '<tr id="row-'.$data->id.'" class="drag drp oddeven" data-element="'.
-				$data->element.($filtertype == 1?'Service':'').'" data-id="'.
-				$data->id.'" data-qty="'.$data->qty.'">'.implode('', $column).'</tr>';
+			$html[] = '<tr id="row-'.$bomline->id.'" class="drag drp oddeven" data-element="'.
+				$bomline->element.($filtertype == 1?'Service':'').'" data-id="'.
+				$bomline->id.'" data-qty="'.$bomline->qty.'">'.implode('', $column).'</tr>';
 		} else {
 			$html[] = '<tr'.(!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT')?' style="display:none"':'').
 				(!empty($parent)?' class="sub_bom_lines" parentid="'.$parent->id.'"':'').'>'.implode('', $column).'</tr>';
 		}
-		foreach (((!empty($bom) && is_array($bom->lines)) ? $bom->lines : array()) as $child) {
-			foreach (print_line($child, ($quantity * $data->qty) / (($bom->qty??1) * $data->efficiency), $level + 1, $data) as $line) {
+		foreach (((!empty($bom) && is_array($bom->lines)) ? $bom->lines : array()) as $bomchild) {
+			$parent = $bomline;
+			$quantity_multiplier = ($quantity * $bomline->qty) / (($bom->qty??1) * $bomline->efficiency);
+			foreach (print_line($bomchild, $parent, $quantity_multiplier, $level + 1) as $line) {
 				$html[] = $line;
 			}
 		}
@@ -210,5 +212,5 @@ if (!function_exists('print_line')) {
 }
 
 print "<!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->\n";
-print implode('', print_line($line, 1, 0, $this));
+print implode('', print_line($line, $this, 1, 0));
 print "<!-- END PHP TEMPLATE objectline_view.tpl.php -->\n";
