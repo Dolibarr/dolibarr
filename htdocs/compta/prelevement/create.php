@@ -284,6 +284,9 @@ if ($search_ref) {
 if ($search_ref) {
 	$searchsql .= natural_search('f.ref', $search_ref);
 }
+if ($search_ref_supplier) {
+	$searchsql .= natural_search('f.ref_supplier', $search_ref_supplier);
+}
 if ($search_company) {
 	$searchsql .= natural_search('s.nom', $search_company);
 }
