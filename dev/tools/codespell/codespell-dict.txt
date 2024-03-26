@@ -18,6 +18,7 @@ dollibarr->dolibarr
 extrafeild->extrafield
 thoose->those
 # fiche->card
+nempty->an empty, empty, not empty,
 mot de passe->password
 not de passe->password
 nothtml->nohtml
