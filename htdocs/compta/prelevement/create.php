@@ -735,7 +735,7 @@ if ($resql) {
 
 			// Amount
 			if (!empty($arrayfields['pfd.amount']['checked'])) {
-				print '<td class="right nowrap"><span class="amount">'.price($obj->amount)."</span></td>\n";
+				print '<td class="right nowrap"><span id="amount_'.$obj->request_row_id.'" class="amount">'.price($obj->amount)."</span></td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 					$totalarray['pos'][$totalarray['nbfield']] = 'pfd.amount';
@@ -816,7 +816,27 @@ if ($nb) {
 		$datere = $executiondate;
 		print $form->selectDate($datere, 're');
 
+		print '<span class="hideonsmartphone">'.$langs->trans('Total').' </span>';
+		print '<input id="total_checked" value=0 disabled>';
+		?>
+		<script>
 
+		function computeTotalChecked() {
+			let total_checked = 0;
+			let checked_pfd = Array.from($('[id^="cb"]').filter(':checked'));
+			checked_pfd.forEach((pfd) => {
+				let text_amount = $('[id^="amount_'+Number(pfd.value)+'"]').text()
+				let amount = Number(text_amount.replace(' ', '').replace(',', '.'))
+				total_checked += amount;
+			})
+			$('#total_checked').val(total_checked);
+		}
+
+		$('[id^="cb"]').change(computeTotalChecked);
+		computeTotalChecked();
+
+		</script>
+		<?php
 		if ($mysoc->isInEEC()) {
 			$title = $langs->trans("CreateForSepa");
 			if ($type == 'bank-transfer') {
