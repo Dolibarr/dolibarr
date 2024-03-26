@@ -926,7 +926,7 @@ class Form
 	 * @param integer 		$maxlength 				Max length for labels (0=no limit)
 	 * @param string 		$morecss 				More css class
 	 * @param string 		$usecodeaskey 			''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
-	 * @param int|string 	$showempty 				Show empty choice
+	 * @param int<0,1>|string 	$showempty 				Show empty choice
 	 * @param int 			$disablefavorites 		1=Disable favorites,
 	 * @param int 			$addspecialentries 		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
 	 * @param array 		$exclude_country_code 	Array of country code (iso2) to exclude
@@ -1148,7 +1148,7 @@ class Form
 	 *
 	 * @param 	string 		$selected 	Preselected type
 	 * @param 	string 		$htmlname 	Name of field in html form
-	 * @param 	int 		$showempty 	Add an empty field
+	 * @param 	int<0,1> 	$showempty 	Add an empty field
 	 * @param 	int 		$hidetext 	Do not show label 'Type' before combo box (used only if there is at least 2 choices to select)
 	 * @param 	integer 	$forceall 	1=Force to show products and services in combo list, whatever are activated modules, 0=No force, 2=Force to show only Products, 3=Force to show only services, -1=Force none (and set hidden field to 'service')
 	 * @return  void
@@ -1303,7 +1303,7 @@ class Form
 	 * @param string 	$selected 			Preselected type
 	 * @param string 	$htmlname 			Name of field in form
 	 * @param string 	$filter 			Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here. Example: ((s.client:IN:1,3) AND (s.status:=:1)). Do not use a filter coming from input of users.
-	 * @param string 	$showempty 			Add an empty field (Can be '1' or text key to use on empty line like 'SelectThirdParty')
+	 * @param string|int<1,1> 	$showempty 	Add an empty field (Can be '1' or text key to use on empty line like 'SelectThirdParty')
 	 * @param int 		$showtype 			Show third party type in combolist (customer, prospect or supplier)
 	 * @param int 		$forcecombo 		Force to load all values and output a standard combobox (with no beautification)
 	 * @param array 	$events 			Ajax event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
@@ -1381,8 +1381,8 @@ class Form
 	 * @param string 	$filter 		Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>] are allowed here, example: 's.rowid <> x'
 	 * 									If you need parenthesis, use the Universal Filter Syntax, example: '(s.client:in:1,3)'
 	 * 									Do not use a filter coming from input of users.
-	 * @param string 	$showempty 		Add an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
-	 * @param int 		$showtype 		Show third party type in combolist (customer, prospect or supplier)
+	 * @param string|int<0,1> 	$showempty 	Add an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
+	 * @param int<0,1>	$showtype 		Show third party type in combolist (customer, prospect or supplier)
 	 * @param int 		$forcecombo 	Force to use standard HTML select component without beautification
 	 * @param array 	$events 		Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param string 	$filterkey 		Filter on key value
@@ -1720,7 +1720,7 @@ class Form
 	 * @param int 		$socid 			Id of third party or 0 for all
 	 * @param string 	$selected 		Id of preselected contact
 	 * @param string 	$htmlname 		Name of HTML field ('none' for a not editable field)
-	 * @param int 		$showempty 		0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
+	 * @param int<0,3>	$showempty 		0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
 	 * @param string 	$exclude 		List of contacts id to exclude
 	 * @param string 	$limitto 		Disable answers that are not id in this array list
 	 * @param integer 	$showfunction 	Add function into label
@@ -1750,7 +1750,7 @@ class Form
 	 * @param int 			$socid 				Id of third party or 0 for all or -1 for empty list
 	 * @param array|int 	$selected 			Array of ID of preselected contact id
 	 * @param string 		$htmlname 			Name of HTML field ('none' for a not editable field)
-	 * @param int|string 	$showempty 			0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
+	 * @param int<0,3>|string	$showempty		0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
 	 * @param string 		$exclude 			List of contacts id to exclude
 	 * @param string 		$limitto 			Disable answers that are not id in this array list
 	 * @param integer 		$showfunction 		Add function into label
@@ -2458,7 +2458,7 @@ class Form
 	 *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
 	 *  @param		array		$ajaxoptions			Options for ajax_autocompleter
 	 *  @param      int			$socid					Thirdparty Id (to get also price dedicated to this customer)
-	 *  @param		string		$showempty				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 *  @param		string|int<0,1>	$showempty			'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * 	@param		int			$forcecombo				Force to use combo box
 	 *  @param      string      $morecss                Add more css on select
 	 *  @param      int         $hidepriceinlabel       1=Hide prices in label
@@ -2623,7 +2623,7 @@ class Form
 	 * @param int $limit Limit on number of returned lines
 	 * @param int $status Sell status -1=Return all bom, 0=Draft BOM, 1=Validated BOM
 	 * @param int $type type of the BOM (-1=Return all BOM, 0=Return disassemble BOM, 1=Return manufacturing BOM)
-	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param string|int<0,1>	$showempty	'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param string $morecss Add more css on select
 	 * @param string $nooutput No print, return the output into a string
 	 * @param int $forcecombo Force to use combo box
@@ -2709,7 +2709,7 @@ class Form
 	 * @param 	int 		$finished 				Filter on finished field: 2=No filter
 	 * @param 	int 		$outputmode 			0=HTML select string, 1=Array
 	 * @param 	int 		$socid 					Thirdparty Id (to get also price dedicated to this customer)
-	 * @param 	string 		$showempty 				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param 	string|int<0,1>	$showempty 			'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param 	int 		$forcecombo 			Force to use combo box
 	 * @param 	string 		$morecss 				Add more css on select
 	 * @param 	int 		$hidepriceinlabel	 	1=Hide prices in label
@@ -4838,13 +4838,13 @@ class Form
 	}
 
 	/**
-	 *      Creates HTML units selector (code => label)
+	 * Creates HTML units selector (code => label)
 	 *
-	 * @param string $selected Preselected Unit ID
-	 * @param string $htmlname Select name
-	 * @param int $showempty Add a nempty line
-	 * @param string $unit_type Restrict to one given unit type
-	 * @return    string                  HTML select
+	 * @param	string		$selected	Preselected Unit ID
+	 * @param	string		$htmlname	Select name
+	 * @param	int<0,1>	$showempty	Add an empty line
+	 * @param	string		$unit_type	Restrict to one given unit type
+	 * @return	string					HTML select
 	 */
 	public function selectUnits($selected = '', $htmlname = 'units', $showempty = 0, $unit_type = '')
 	{
@@ -6205,9 +6205,9 @@ class Form
 	 * @param string 	$selected 				Id preselected
 	 * @param string 	$htmlname 				Name of HTML select
 	 * @param string	$filter 				Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here (example: 's.rowid <> x', 's.client IN (1,3)'). Do not use a filter coming from input of users.
-	 * @param int 		$showempty 				Add an empty field
-	 * @param int 		$showtype 				Show third party type in combolist (customer, prospect or supplier)
-	 * @param int 		$forcecombo 			Force to use combo box
+	 * @param string|int<0,1> 	$showempty 		Add an empty field (Can be '1' or text key to use on empty line like 'SelectThirdParty')
+	 * @param int<0,1>	$showtype 				Show third party type in combolist (customer, prospect or supplier)
+	 * @param int<0,1>	$forcecombo 			Force to use combo box
 	 * @param array 	$events 				Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param int 		$nooutput 				No print output. Return it only.
 	 * @param array 	$excludeids 			Exclude IDs from the select combo
@@ -7355,21 +7355,21 @@ class Form
 	/**
 	 *  Return list of tickets in Ajax if Ajax activated or go to selectTicketsList
 	 *
-	 * @param string $selected Preselected tickets
-	 * @param string $htmlname Name of HTML select field (must be unique in page).
-	 * @param string $filtertype To add a filter
-	 * @param int $limit Limit on number of returned lines
-	 * @param int $status Ticket status
-	 * @param string $selected_input_value Value of preselected input text (for use with ajax)
-	 * @param int $hidelabel Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
-	 * @param array $ajaxoptions Options for ajax_autocompleter
-	 * @param int $socid Thirdparty Id (to get also price dedicated to this customer)
-	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param int $forcecombo Force to use combo box
-	 * @param string $morecss Add more css on select
-	 * @param array $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
-	 * @param int $nooutput No print, return the output into a string
-	 * @return        string
+	 * @param	string		$selected		Preselected tickets
+	 * @param	string		$htmlname		Name of HTML select field (must be unique in page).
+	 * @param	string		$filtertype		To add a filter
+	 * @param	int			$limit			Limit on number of returned lines
+	 * @param	int			$status			Ticket status
+	 * @param	string		$selected_input_value Value of preselected input text (for use with ajax)
+	 * @param	int			$hidelabel		Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 * @param	array		$ajaxoptions	Options for ajax_autocompleter
+	 * @param	int			$socid Thirdparty Id (to get also price dedicated to this customer)
+	 * @param	string|int<0,1>	$showempty	'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param	int<0,1>	$forcecombo	Force to use combo box
+	 * @param	string		$morecss		Add more css on select
+	 * @param	array		$selected_combinations	Selected combinations. Format: array([attrid] => attrval, [...])
+	 * @param	int			$nooutput		No print, return the output into a string
+	 * @return	string
 	 */
 	public function selectTickets($selected = '', $htmlname = 'ticketid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0)
 	{
@@ -7422,20 +7422,20 @@ class Form
 
 
 	/**
-	 *    Return list of tickets.
+	 * Return list of tickets.
 	 *  Called by selectTickets.
 	 *
-	 * @param string $selected Preselected ticket
-	 * @param string $htmlname Name of select html
-	 * @param string $filtertype Filter on ticket type
-	 * @param int $limit Limit on number of returned lines
-	 * @param string $filterkey Filter on ticket ref or subject
-	 * @param int $status Ticket status
-	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param	string		$selected		Preselected ticket
+	 * @param	string		$htmlname		Name of select html
+	 * @param	string		$filtertype		Filter on ticket type
+	 * @param	int			$limit Limit on number of returned lines
+	 * @param	string		$filterkey		Filter on ticket ref or subject
+	 * @param	int			$status			Ticket status
+	 * @param	int			$outputmode		0=HTML select string, 1=Array
+	 * @param	string|int<0,1> $showempty	'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param int $forcecombo Force to use combo box
-	 * @param string $morecss Add more css on select
-	 * @return     array|string                Array of keys for json or HTML component
+	 * @param	string $morecss Add more css on select
+	 * @return	array|string				Array of keys for json or HTML component
 	 */
 	public function selectTicketsList($selected = '', $htmlname = 'ticketid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
 	{
@@ -7590,7 +7590,7 @@ class Form
 	 * @param 	int		$hidelabel 				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
 	 * @param 	array 	$ajaxoptions 			Options for ajax_autocompleter
 	 * @param 	int 	$socid 					Thirdparty Id (to get also price dedicated to this customer)
-	 * @param 	string 	$showempty 				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param 	string|int<0,1>	$showempty 		'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param 	int 	$forcecombo 			Force to use combo box
 	 * @param 	string 	$morecss 				Add more css on select
 	 * @param 	array 	$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
@@ -7657,7 +7657,7 @@ class Form
 	 * @param string $filterkey Filter on project ref or subject
 	 * @param int $status Ticket status
 	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param int $forcecombo Force to use combo box
 	 * @param string $morecss Add more css on select
 	 * @return     array|string                Array of keys for json or HTML component
@@ -7819,7 +7819,7 @@ class Form
 	 * @param int $hidelabel Hide label (0=no, 1=yes, 2=show search icon before and placeholder, 3 search icon after)
 	 * @param array $ajaxoptions Options for ajax_autocompleter
 	 * @param int $socid Thirdparty Id (to get also price dedicated to this customer)
-	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param int $forcecombo Force to use combo box
 	 * @param string $morecss Add more css on select
 	 * @param array $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
@@ -7889,7 +7889,7 @@ class Form
 	 * @param string $filterkey Filter on member status
 	 * @param int $status Member status
 	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param int $forcecombo Force to use combo box
 	 * @param string $morecss Add more css on select
 	 * @return     array|string                Array of keys for json or HTML string component
@@ -8042,18 +8042,18 @@ class Form
 	 * Can use autocomplete with ajax after x key pressed or a full combo, depending on setup.
 	 * This is the generic method that will replace all specific existing methods.
 	 *
-	 * @param 	string $objectdesc           'ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'. For hard coded custom needs. Try to prefer method using $objectfield instead of $objectdesc.
-	 * @param 	string $htmlname             Name of HTML select component
-	 * @param 	int    $preSelectedValue     Preselected value (ID of element)
-	 * @param 	string $showempty            ''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
-	 * @param 	string $searchkey            Search criteria
-	 * @param 	string $placeholder          Place holder
-	 * @param 	string $morecss              More CSS
-	 * @param 	string $moreparams           More params provided to ajax call
-	 * @param 	int    $forcecombo           Force to load all values and output a standard combobox (with no beautification)
-	 * @param 	int    $disabled             1=Html component is disabled
-	 * @param 	string $selected_input_value Value of preselected input text (for use with ajax)
-	 * @param	string $objectfield          Object:Field that contains the definition (in table $fields or $extrafields). Example: 'Object:xxx' or 'Module_Object:xxx' or 'Object:options_xxx' or 'Module_Object:options_xxx'
+	 * @param	string	$objectdesc           'ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'. For hard coded custom needs. Try to prefer method using $objectfield instead of $objectdesc.
+	 * @param	string	$htmlname             Name of HTML select component
+	 * @param 	int		$preSelectedValue     Preselected value (ID of element)
+	 * @param 	string|int<0,1> $showempty	''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
+	 * @param 	string	$searchkey            Search criteria
+	 * @param	string	$placeholder          Place holder
+	 * @param	string	$morecss              More CSS
+	 * @param	string	$moreparams           More params provided to ajax call
+	 * @param 	int		$forcecombo           Force to load all values and output a standard combobox (with no beautification)
+	 * @param 	int		$disabled             1=Html component is disabled
+	 * @param	string	$selected_input_value Value of preselected input text (for use with ajax)
+	 * @param	string	$objectfield          Object:Field that contains the definition (in table $fields or $extrafields). Example: 'Object:xxx' or 'Module_Object:xxx' or 'Object:options_xxx' or 'Module_Object:options_xxx'
 	 * @return  string	                      	Return HTML string
 	 * @see selectForFormsList(), select_thirdparty_list()
 	 */
@@ -8201,7 +8201,7 @@ class Form
 	 * @param Object 		$objecttmp 			Object to know the table to scan for combo.
 	 * @param string 		$htmlname 			Name of HTML select component
 	 * @param int 			$preselectedvalue 	Preselected value (ID of element)
-	 * @param string 		$showempty 			''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
+	 * @param string|int<0,1>	$showempty 		''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
 	 * @param string 		$searchkey 			Search value
 	 * @param string 		$placeholder 		Place holder
 	 * @param string 		$morecss 			More CSS
