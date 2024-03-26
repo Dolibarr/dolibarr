@@ -724,7 +724,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 	}
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head();
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="border centpercent">';
