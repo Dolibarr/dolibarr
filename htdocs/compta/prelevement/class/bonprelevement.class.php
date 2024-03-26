@@ -840,11 +840,12 @@ class BonPrelevement extends CommonObject
 	 *  @param  string  $executiondate		Date to execute the transfer
 	 *  @param	int	    $notrigger			Disable triggers
 	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
-	 *  @param	int		$did				ID of an existing payment request. If $did is defined, no entry
+	 *  @param	int | Aray[int]	$dids	ID(s) of existing payment request(s). If $did is defined, no entry. If $did is an array, the createdBonsPrelevement will include these apyment requests. 
 	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
+	 * @param	Array(int)		$invoices	IDs of invoices to include;			
 	 *	@return	int							<0 if KO, No of invoice included into file if OK
 	 */
-	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0, $type = 'direct-debit', $did = 0, $fk_bank_account = 0)
+	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0, $type = 'direct-debit', $dids = [], $fk_bank_account = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs, $user;
@@ -865,6 +866,9 @@ class BonPrelevement extends CommonObject
 		// Clean params
 		if (empty($fk_bank_account)) {
 			$fk_bank_account = ($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+		}
+		if (is_int($dids)) {
+			$dids = array($dids);
 		}
 
 		$error = 0;
@@ -912,8 +916,8 @@ class BonPrelevement extends CommonObject
 			$sql .= " AND pfd.traite = 0";
 			$sql .= " AND f.total_ttc > 0";
 			$sql .= " AND pfd.ext_payment_id IS NULL";
-			if ($did > 0) {
-				$sql .= " AND pfd.rowid = ".((int) $did);
+			if (is_array($dids) && !empty($dids)) {
+				$sql .= " AND pfd.rowid IN (".$this->db->escape(implode(',', $dids)).")";
 			}
 			dol_syslog(__METHOD__." Read invoices,", LOG_DEBUG);
 

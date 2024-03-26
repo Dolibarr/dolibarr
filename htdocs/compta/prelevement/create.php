@@ -202,7 +202,13 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			// getDolGlobalString('PRELEVEMENT_CODE_BANQUE') and getDolGlobalString('PRELEVEMENT_CODE_GUICHET') should be empty (we don't use them anymore)
-			$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type, $id_bankaccount, $searchsql);
+			$selected_invoices = array();
+			if (!empty($toselect)) {
+				foreach($toselect as $select)
+				$selected_invoices[] = (int) $select;
+			}
+			$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type, $selected_invoices, $id_bankaccount);
+			
 			if ($result < 0) {
 				setEventMessages($bprev->error, $bprev->errors, 'errors');
 			} elseif ($result == 0) {
@@ -377,98 +383,7 @@ if ($mesg) {
 	print $mesg;
 }
 
-print '<div class="tabsAction">'."\n";
 
-print '<form action="'.$_SERVER['PHP_SELF'].'?action=create" method="POST" id="selectbank">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="type" value="'.$type.'">';
-print '<input type="hidden" name="searchsql" value="'.$searchsql.'">';
-if ($nb) {
-	if ($pricetowithdraw) {
-		$title = $langs->trans('BankToReceiveWithdraw').': ';
-		if ($type == 'bank-transfer') {
-			$title = $langs->trans('BankToPayCreditTransfer').': ';
-		}
-		print '<span class="hideonsmartphone">'.$title.'</span>';
-		print img_picto('', 'bank_account');
-
-		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
-		print $form->select_comptes(getDolGlobalInt($default_account), 'id_bankaccount', 0, "courant=1", 0, '', 0, 'widthcentpercentminusx maxwidth300', 1);
-		print ' &nbsp; &nbsp; ';
-
-		if (empty($executiondate)) {
-			$delayindays = 0;
-			if ($type != 'bank-transfer') {
-				$delayindays = getDolGlobalInt('PRELEVEMENT_ADDDAYS');
-			} else {
-				$delayindays = getDolGlobalInt('PAYMENTBYBANKTRANSFER_ADDDAYS');
-			}
-
-			$executiondate = dol_time_plus_duree(dol_now(), $delayindays, 'd');
-		}
-
-		print $langs->trans('ExecutionDate').' ';
-		$datere = $executiondate;
-		print $form->selectDate($datere, 're');
-
-
-		if ($mysoc->isInEEC()) {
-			$title = $langs->trans("CreateForSepa");
-			if ($type == 'bank-transfer') {
-				$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");
-			}
-
-			if ($type != 'bank-transfer') {
-				print '<select name="format">';
-				print '<option value="FRST"'.($format == 'FRST' ? ' selected="selected"' : '').'>'.$langs->trans('SEPAFRST').'</option>';
-				print '<option value="RCUR"'.($format == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
-				print '</select>';
-			}
-			print '<input type="submit" class="butAction margintoponly maringbottomonly" value="'.$title.'"/>';
-		} else {
-			$title = $langs->trans("CreateAll");
-			if ($type == 'bank-transfer') {
-				$title = $langs->trans("CreateFileForPaymentByBankTransfer");
-			}
-			print '<input type="hidden" name="format" value="ALL">'."\n";
-			print '<input type="submit" class="butAction margintoponly maringbottomonly" value="'.$title.'">'."\n";
-		}
-	} else {
-		if ($mysoc->isInEEC()) {
-			$title = $langs->trans("CreateForSepaFRST");
-			if ($type == 'bank-transfer') {
-				$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");
-			}
-			print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
-
-			if ($type != 'bank-transfer') {
-				$title = $langs->trans("CreateForSepaRCUR");
-				print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
-			}
-		} else {
-			$title = $langs->trans("CreateAll");
-			if ($type == 'bank-transfer') {
-				$title = $langs->trans("CreateFileForPaymentByBankTransfer");
-			}
-			print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#">'.$title."</a>\n";
-		}
-	}
-} else {
-	$titlefortab = $langs->transnoentitiesnoconv("StandingOrders");
-	$title = $langs->trans("CreateAll");
-	if ($type == 'bank-transfer') {
-		$titlefortab = $langs->transnoentitiesnoconv("PaymentByBankTransfers");
-		$title = $langs->trans("CreateFileForPaymentByBankTransfer");
-	}
-	print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $titlefortab, $titlefortab)).'">';
-	print $title;
-	print "</a>\n";
-}
-
-print "</form>\n";
-
-print "</div>\n";
-print '<br>';
 
 
 /*
@@ -864,12 +779,105 @@ if ($resql) {
 	print "</table>";
 	print "</div>";
 
-	print "</form>";
+	// print "</form>";
 	print "<br>\n";
 } else {
 	dol_print_error($db);
 }
 
+print '<div class="tabsAction">'."\n";
+
+// print '<form action="'.$_SERVER['PHP_SELF'].'?action=create" method="POST" id="selectbank">';
+// print '<input type="hidden" name="token" value="'.newToken().'">';
+// print '<input type="hidden" name="type" value="'.$type.'">';
+print '<input type="hidden" name="searchsql" value="'.$searchsql.'">';
+if ($nb) {
+	if ($pricetowithdraw) {
+		$title = $langs->trans('BankToReceiveWithdraw').': ';
+		if ($type == 'bank-transfer') {
+			$title = $langs->trans('BankToPayCreditTransfer').': ';
+		}
+		print '<span class="hideonsmartphone">'.$title.'</span>';
+		print img_picto('', 'bank_account');
+
+		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
+		print $form->select_comptes(getDolGlobalInt($default_account), 'id_bankaccount', 0, "courant=1", 0, '', 0, 'widthcentpercentminusx maxwidth300', 1);
+		print ' &nbsp; &nbsp; ';
+
+		if (empty($executiondate)) {
+			$delayindays = 0;
+			if ($type != 'bank-transfer') {
+				$delayindays = getDolGlobalInt('PRELEVEMENT_ADDDAYS');
+			} else {
+				$delayindays = getDolGlobalInt('PAYMENTBYBANKTRANSFER_ADDDAYS');
+			}
+
+			$executiondate = dol_time_plus_duree(dol_now(), $delayindays, 'd');
+		}
+
+		print $langs->trans('ExecutionDate').' ';
+		$datere = $executiondate;
+		print $form->selectDate($datere, 're');
+
+
+		if ($mysoc->isInEEC()) {
+			$title = $langs->trans("CreateForSepa");
+			if ($type == 'bank-transfer') {
+				$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");
+			}
+
+			if ($type != 'bank-transfer') {
+				print '<select name="format">';
+				print '<option value="FRST"'.($format == 'FRST' ? ' selected="selected"' : '').'>'.$langs->trans('SEPAFRST').'</option>';
+				print '<option value="RCUR"'.($format == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
+				print '</select>';
+			}
+			// print '<input type="submit" class="butAction margintoponly maringbottomonly" value="'.$title.'"/>';
+			print '<button type="submit" class="butAction margintoponly maringbottomonly" name="action" value="create">'.$title.'</button>'."\n";
+		} else {
+			$title = $langs->trans("CreateAll");
+			if ($type == 'bank-transfer') {
+				$title = $langs->trans("CreateFileForPaymentByBankTransfer");
+			}
+			print '<input type="hidden" name="format" value="ALL">'."\n";
+			// print '<input type="submit" class="butAction margintoponly maringbottomonly" value="'.$title.'">'."\n";
+			print '<button type="submit" class="butAction margintoponly maringbottomonly" name="action" value="create">'.$title.'</button>'."\n";
+		}
+	} else {
+		if ($mysoc->isInEEC()) {
+			$title = $langs->trans("CreateForSepaFRST");
+			if ($type == 'bank-transfer') {
+				$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");
+			}
+			print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
+
+			if ($type != 'bank-transfer') {
+				$title = $langs->trans("CreateForSepaRCUR");
+				print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
+			}
+		} else {
+			$title = $langs->trans("CreateAll");
+			if ($type == 'bank-transfer') {
+				$title = $langs->trans("CreateFileForPaymentByBankTransfer");
+			}
+			print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#">'.$title."</a>\n";
+		}
+	}
+} else {
+	$titlefortab = $langs->transnoentitiesnoconv("StandingOrders");
+	$title = $langs->trans("CreateAll");
+	if ($type == 'bank-transfer') {
+		$titlefortab = $langs->transnoentitiesnoconv("PaymentByBankTransfers");
+		$title = $langs->trans("CreateFileForPaymentByBankTransfer");
+	}
+	print '<a class="butActionRefused classfortooltip margintoponly maringbottomonly" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $titlefortab, $titlefortab)).'">';
+	print $title;
+	print "</a>\n";
+}
+
+print "</form>\n";
+
+print "</div>\n";
 
 // End of page
 llxFooter();
