@@ -646,7 +646,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 
 	// Check parameters
 	if (empty($name)) {
-		dol_print_error($db, "Error: Call to function dolibarr_set_const with wrong parameters", LOG_ERR);
+		dol_print_error($db, "Error: Call to function dolibarr_set_const with wrong parameters");
 		exit;
 	}
 
