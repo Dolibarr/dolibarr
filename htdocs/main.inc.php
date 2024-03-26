@@ -2575,15 +2575,12 @@ function top_menu_quickadd()
 {
 	global $conf, $langs;
 
-	$tmp = getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
-	$ostype = $tmp['browseros'];
-
 	$html = '';
 
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 	// accesskey is for Mac:               CTRL + key for all browsers
 	$stringforfirstkey = $langs->trans("KeyboardShortcut");
-	if ($ostype === 'macintosh') {
+	if ($conf->browser->os === 'macintosh') {
 		$stringforfirstkey .= ' CTL +';
 	} else {
 		if ($conf->browser->name == 'chrome') {
@@ -2617,7 +2614,7 @@ function top_menu_quickadd()
 
             // Key map shortcut
             $(document).keydown(function(event){
-				var ostype = "'.$ostype.'";
+				var ostype = "'.$conf->browser->os.'";
 				if (ostype === "macintosh") {
 					if ( event.which === 65 && event.ctrlKey ) {
 						console.log(\'control + a : trigger open quick add dropdown\');
@@ -2837,13 +2834,10 @@ function top_menu_bookmark()
 		return $html;
 	}
 
-	$tmp = getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
-	$ostype = $tmp['browseros'];
-
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 	// accesskey is for Mac:               CTRL + key for all browsers
 	$stringforfirstkey = $langs->trans("KeyboardShortcut");
-	if ($ostype === 'macintosh') {
+	if ($conf->browser->os === 'macintosh') {
 		$stringforfirstkey .= ' CTL +';
 	} else {
 		if ($conf->browser->name == 'chrome') {
@@ -2891,7 +2885,7 @@ function top_menu_bookmark()
 
 	            // Key map shortcut
 	            jQuery(document).keydown(function(event) {
-					var ostype = "'.$ostype.'";
+					var ostype = "'.$conf->browser->os.'";
 					if (ostype === "macintosh") {
 						if ( event.which === 66 && event.ctrlKey ) {
 							console.log("Click on control + b : trigger open bookmark dropdown");
