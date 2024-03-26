@@ -164,7 +164,7 @@ abstract class Stats
 				fwrite($fp, json_encode($data));
 				fclose($fp);
 			} else {
-				dol_syslog("Failed to save cache file ".$newpathofdestfile);
+				dol_syslog("Failed to save cache file ".$newpathofdestfile, LOG_WARNING);
 			}
 			dolChmod($newpathofdestfile);
 
