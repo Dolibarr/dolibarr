@@ -468,7 +468,6 @@ if ($nb) {
 print "</form>\n";
 
 print "</div>\n";
-print '</form>';
 print '<br>';
 
 
