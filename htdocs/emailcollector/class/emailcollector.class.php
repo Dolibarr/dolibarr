@@ -1174,6 +1174,7 @@ class EmailCollector extends CommonObject
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 
 					$expire = true;
+					// TODO
 					// Is token expired or will token expire in the next 30 seconds
 					// if (is_object($tokenobj)) {
 					// 	$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
@@ -1566,8 +1567,12 @@ class EmailCollector extends CommonObject
 			try {
 				//$criteria = [['ALL']];
 				//$Query = $client->getFolders()[0]->messages()->where($criteria);
+
+				// Uncomment this to output debug info
+				$client->getConnection()->enableDebug();
+
 				$f = $client->getFolders(false, $sourcedir);
-				if ($f->total() >= 1) {
+				if ($f) {
 					$folder = $f[0];
 					if ($folder instanceof Webklex\PHPIMAP\Folder) {
 						$Query = $folder->messages()->where($criteria);
