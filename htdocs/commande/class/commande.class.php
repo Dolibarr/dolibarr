@@ -4428,7 +4428,7 @@ class OrderLine extends CommonOrderLine
 
 			dol_syslog("OrderLine::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if ($resql) {
+			if (!$resql) {
 				$this->error = $this->db->lasterror();
 				$error++;
 			}

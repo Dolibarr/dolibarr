@@ -4031,7 +4031,7 @@ class Facture extends CommonInvoice
 				return -2;
 			}
 		} else {
-			$this->errors[]='status of invoice must be Draft to allow use of ->addline()';
+			$this->errors[] = 'status of invoice must be Draft to allow use of ->addline()';
 			dol_syslog(get_class($this)."::addline status of invoice must be Draft to allow use of ->addline()", LOG_ERR);
 			return -3;
 		}
