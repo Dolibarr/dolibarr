@@ -5,7 +5,7 @@
  * Copyright (C) 2014-2016  Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Pierre Ardoin           <mapiolca@me.com>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,6 +32,7 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
@@ -61,6 +62,22 @@ if ($type == '0') {
 	$result = restrictedArea($user, 'produit|service|expedition|reception');
 }
 
+// Load $resultboxes
+$resultboxes = FormOther::getBoxesArea($user, "4");
+
+if (GETPOST('addbox')) {
+	// Add box (when submit is done from a form when ajax disabled)
+	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+	$zone = GETPOST('areacode', 'int');
+	$userid = GETPOST('userid', 'int');
+	$boxorder = GETPOST('boxorder', 'aZ09');
+	$boxorder .= GETPOST('boxcombo', 'aZ09');
+	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
+	if ($result > 0) {
+		setEventMessages($langs->trans("BoxAdded"), null);
+	}
+}
+
 
 /*
  * View
@@ -84,11 +101,7 @@ if ((GETPOSTISSET("type") && GETPOST("type") == '1') || !isModEnabled("product")
 
 llxHeader("", $langs->trans("ProductsAndServices"), $helpurl);
 
-$linkback = "";
-print load_fiche_titre($transAreaType, $linkback, 'product');
-
-
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print load_fiche_titre($transAreaType, $resultboxes['selectboxlist'], 'product');
 
 
 if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be useless due to the global search combo
@@ -130,6 +143,7 @@ if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be u
 /*
  * Number of products and/or services
  */
+$graph = '';
 if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
 	$prodser = array();
 	$prodser[0][0] = $prodser[0][1] = $prodser[0][2] = $prodser[0][3] = 0;
@@ -174,10 +188,10 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 	}
 
 	if ($conf->use_javascript_ajax) {
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><th>'.$langs->trans("Statistics").'</th></tr>';
-		print '<tr><td class="center nopaddingleftimp nopaddingrightimp">';
+		$graph .= '<div class="div-table-responsive-no-min">';
+		$graph .= '<table class="noborder centpercent">';
+		$graph .= '<tr class="liste_titre"><th>'.$langs->trans("Statistics").'</th></tr>';
+		$graph .= '<tr><td class="center nopaddingleftimp nopaddingrightimp">';
 
 		$SommeA = $prodser[0]['sell'];
 		$SommeB = $prodser[0]['buy'];
@@ -210,22 +224,23 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 		$dolgraph->SetType(array('pie'));
 		$dolgraph->setHeight('200');
 		$dolgraph->draw('idgraphstatus');
-		print $dolgraph->show($total ? 0 : 1);
+		$graph .= $dolgraph->show($total ? 0 : 1);
 
-		print '</td></tr>';
-		print '</table>';
-		print '</div>';
+		$graph .= '</td></tr>';
+		$graph .= '</table>';
+		$graph .= '</div>';
+		$graph .= '<br>';
 	}
 }
 
-
-if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODUCTS')) {
+$graphcat = '';
+if (isModEnabled('categorie') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODUCTS')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-	print '<br>';
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
-	print '<tr><td class="center" colspan="2">';
+	$graphcat .= '<br>';
+	$graphcat .= '<div class="div-table-responsive-no-min">';
+	$graphcat .= '<table class="noborder centpercent">';
+	$graphcat .= '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
+	$graphcat .= '<tr><td class="center" colspan="2">';
 	$sql = "SELECT c.label, count(*) as nb";
 	$sql .= " FROM ".MAIN_DB_PREFIX."categorie_product as cs";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
@@ -242,6 +257,7 @@ if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODU
 			$dataseries = array();
 			$rest = 0;
 			$nbmax = 10;
+
 			while ($i < $num) {
 				$obj = $db->fetch_object($result);
 				if ($i < $nbmax) {
@@ -255,7 +271,6 @@ if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODU
 			if ($i > $nbmax) {
 				$dataseries[] = array($langs->transnoentitiesnoconv("Other"), round($rest));
 			}
-
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			$dolgraph = new DolGraph();
 			$dolgraph->SetData($dataseries);
@@ -264,25 +279,25 @@ if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODU
 			$dolgraph->SetType(array('pie'));
 			$dolgraph->setHeight('200');
 			$dolgraph->draw('idstatscategproduct');
-			print $dolgraph->show($total ? 0 : 1);
+			$graphcat .= $dolgraph->show($total ? 0 : 1);
 		} else {
 			while ($i < $num) {
 				$obj = $db->fetch_object($result);
 
-				print '<tr><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
+				$graphcat .= '<tr><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
 				$total += $obj->nb;
 				$i++;
 			}
 		}
 	}
-	print '</td></tr>';
-	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
-	print $total;
-	print '</td></tr>';
-	print '</table>';
-	print '</div>';
+	$graphcat .= '</td></tr>';
+	$graphcat .= '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
+	$graphcat .= $total;
+	$graphcat .= '</td></tr>';
+	$graphcat .= '</table>';
+	$graphcat .= '</div>';
+	$graphcat .= '<br>';
 }
-print '</div><div class="fichetwothirdright">';
 
 
 /*
@@ -306,6 +321,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 	$sql .= $db->plimit($max, 0);
 
 	//print $sql;
+	$lastmodified="";
 	$result = $db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -321,17 +337,17 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 				$transRecordedType = $langs->trans("LastRecordedServices", $max);
 			}
 
-			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder centpercent">';
+			$lastmodified .= '<div class="div-table-responsive-no-min">';
+			$lastmodified .= '<table class="noborder centpercent">';
 
 			$colnb = 2;
 			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				$colnb++;
 			}
 
-			print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th>';
-			print '<th class="right" colspan="3"><a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC">'.$langs->trans("FullList").'</td>';
-			print '</tr>';
+			$lastmodified .= '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th>';
+			$lastmodified .= '<th class="right" colspan="3"><a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+			$lastmodified .= '</tr>';
 
 			while ($i < $num) {
 				$objp = $db->fetch_object($result);
@@ -367,14 +383,14 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 				}
 
 
-				print '<tr class="oddeven">';
-				print '<td class="nowraponall tdoverflowmax100">';
-				print $product_static->getNomUrl(1);
-				print "</td>\n";
-				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objp->label).'">'.dol_escape_htmltag($objp->label).'</td>';
-				print '<td title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($db->jdate($objp->datem), 'dayhour', 'tzuserrel')).'">';
-				print dol_print_date($db->jdate($objp->datem), 'day', 'tzuserrel');
-				print "</td>";
+				$lastmodified .= '<tr class="oddeven">';
+				$lastmodified .= '<td class="nowraponall tdoverflowmax100">';
+				$lastmodified .= $product_static->getNomUrl(1);
+				$lastmodified .= "</td>\n";
+				$lastmodified .= '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objp->label).'">'.dol_escape_htmltag($objp->label).'</td>';
+				$lastmodified .= '<td title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($db->jdate($objp->datem), 'dayhour', 'tzuserrel')).'">';
+				$lastmodified .= dol_print_date($db->jdate($objp->datem), 'day', 'tzuserrel');
+				$lastmodified .= "</td>";
 				// Sell price
 				if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 					if (isModEnabled('dynamicprices') && !empty($objp->fk_price_expression)) {
@@ -388,31 +404,31 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 							$objp->price = $price_result;
 						}
 					}
-					print '<td class="nowraponall amount right">';
+					$lastmodified .= '<td class="nowraponall amount right">';
 					if ($usercancreadprice) {
 						if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') {
-							print price($objp->price_ttc).' '.$langs->trans("TTC");
+							$lastmodified .= price($objp->price_ttc).' '.$langs->trans("TTC");
 						} else {
-							print price($objp->price).' '.$langs->trans("HT");
+							$lastmodified .= price($objp->price).' '.$langs->trans("HT");
 						}
 					}
-					print '</td>';
+					$lastmodified .= '</td>';
 				}
-				print '<td class="right nowrap width25"><span class="statusrefsell">';
-				print $product_static->LibStatut($objp->tosell, 3, 0);
-				print "</span></td>";
-				print '<td class="right nowrap width25"><span class="statusrefbuy">';
-				print $product_static->LibStatut($objp->tobuy, 3, 1);
-				print "</span></td>";
-				print "</tr>\n";
+				$lastmodified .= '<td class="right nowrap width25"><span class="statusrefsell">';
+				$lastmodified .= $product_static->LibStatut($objp->tosell, 3, 0);
+				$lastmodified .= "</span></td>";
+				$lastmodified .= '<td class="right nowrap width25"><span class="statusrefbuy">';
+				$lastmodified .= $product_static->LibStatut($objp->tobuy, 3, 1);
+				$lastmodified .= "</span></td>";
+				$lastmodified .= "</tr>\n";
 				$i++;
 			}
 
 			$db->free($result);
 
-			print "</table>";
-			print '</div>';
-			print '<br>';
+			$lastmodified .= "</table>";
+			$lastmodified .= '</div>';
+			$lastmodified .= '<br>';
 		}
 	} else {
 		dol_print_error($db);
@@ -423,17 +439,43 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 // TODO Move this into a page that should be available into menu "accountancy - report - turnover - per quarter"
 // Also method used for counting must provide the 2 possible methods like done by all other reports into menu "accountancy - report - turnover":
 // "commitment engagement" method and "cash accounting" method
+$activity = '';
 if (isModEnabled("invoice") && $user->hasRight('facture', 'lire') && getDolGlobalString('MAIN_SHOW_PRODUCT_ACTIVITY_TRIM')) {
 	if (isModEnabled("product")) {
-		activitytrim(0);
+		$activity .= activitytrim(0);
 	}
 	if (isModEnabled("service")) {
-		activitytrim(1);
+		$activity .= activitytrim(1);
 	}
 }
 
 
-print '</div></div>';
+// print '</div></div>';
+
+// boxes
+print '<div class="clearboth"></div>';
+print '<div class="fichecenter fichecenterbis">';
+
+$boxlist = '<div class="twocolumns">';
+
+$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+$boxlist .= $graph;
+$boxlist .= $graphcat;
+$boxlist .= $activity;
+$boxlist .= '<br>';
+$boxlist .= $resultboxes['boxlista'];
+$boxlist .= "</div>\n";
+
+$boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+$boxlist .= $lastmodified;
+$boxlist .= $resultboxes['boxlistb'];
+$boxlist .= '</div>'."\n";
+
+$boxlist .= "</div>\n";
+
+print $boxlist;
+
+print '</div>';
 
 $parameters = array('type' => $type, 'user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardProductsServices', $parameters, $product_static); // Note that $action and $object may have been modified by hook
@@ -447,7 +489,7 @@ $db->close();
  *  Print html activity for product type
  *
  *  @param      int $product_type   Type of product
- *  @return     void
+ *  @return     string
  */
 function activitytrim($product_type)
 {
@@ -455,7 +497,7 @@ function activitytrim($product_type)
 
 	// We display the last 3 years
 	$yearofbegindate = date('Y', dol_time_plus_duree(time(), -3, "y"));
-
+	$out = '';
 	// breakdown by quarter
 	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as Mnttot";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as fd";
@@ -480,20 +522,20 @@ function activitytrim($product_type)
 		$num = $db->num_rows($result);
 
 		if ($num > 0) {
-			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder" width="75%">';
+			$out .= '<div class="div-table-responsive-no-min">';
+			$out .= '<table class="noborder" width="75%">';
 
 			if ($product_type == 0) {
-				print '<tr class="liste_titre"><td class=left>'.$langs->trans("ProductSellByQuarterHT").'</td>';
+				$out .= '<tr class="liste_titre"><td class=left>'.$langs->trans("ProductSellByQuarterHT").'</td>';
 			} else {
-				print '<tr class="liste_titre"><td class=left>'.$langs->trans("ServiceSellByQuarterHT").'</td>';
+				$out .= '<tr class="liste_titre"><td class=left>'.$langs->trans("ServiceSellByQuarterHT").'</td>';
 			}
-			print '<td class=right>'.$langs->trans("Quarter1").'</td>';
-			print '<td class=right>'.$langs->trans("Quarter2").'</td>';
-			print '<td class=right>'.$langs->trans("Quarter3").'</td>';
-			print '<td class=right>'.$langs->trans("Quarter4").'</td>';
-			print '<td class=right>'.$langs->trans("Total").'</td>';
-			print '</tr>';
+			$out .= '<td class=right>'.$langs->trans("Quarter1").'</td>';
+			$out .= '<td class=right>'.$langs->trans("Quarter2").'</td>';
+			$out .= '<td class=right>'.$langs->trans("Quarter3").'</td>';
+			$out .= '<td class=right>'.$langs->trans("Quarter4").'</td>';
+			$out .= '<td class=right>'.$langs->trans("Total").'</td>';
+			$out .= '</tr>';
 		}
 		$i = 0;
 
@@ -501,13 +543,13 @@ function activitytrim($product_type)
 			$objp = $db->fetch_object($result);
 			if ($tmpyear != $objp->annee) {
 				if ($trim1 + $trim2 + $trim3 + $trim4 > 0) {
-					print '<tr class="oddeven"><td class=left>'.$tmpyear.'</td>';
-					print '<td class="nowrap right">'.price($trim1).'</td>';
-					print '<td class="nowrap right">'.price($trim2).'</td>';
-					print '<td class="nowrap right">'.price($trim3).'</td>';
-					print '<td class="nowrap right">'.price($trim4).'</td>';
-					print '<td class="nowrap right">'.price($trim1 + $trim2 + $trim3 + $trim4).'</td>';
-					print '</tr>';
+					$out .= '<tr class="oddeven"><td class=left>'.$tmpyear.'</td>';
+					$out .= '<td class="nowrap right">'.price($trim1).'</td>';
+					$out .= '<td class="nowrap right">'.price($trim2).'</td>';
+					$out .= '<td class="nowrap right">'.price($trim3).'</td>';
+					$out .= '<td class="nowrap right">'.price($trim4).'</td>';
+					$out .= '<td class="nowrap right">'.price($trim1 + $trim2 + $trim3 + $trim4).'</td>';
+					$out .= '</tr>';
 					$lgn++;
 				}
 				// We go to the following year
@@ -537,16 +579,19 @@ function activitytrim($product_type)
 			$i++;
 		}
 		if ($trim1 + $trim2 + $trim3 + $trim4 > 0) {
-			print '<tr class="oddeven"><td class=left>'.$tmpyear.'</td>';
-			print '<td class="nowrap right">'.price($trim1).'</td>';
-			print '<td class="nowrap right">'.price($trim2).'</td>';
-			print '<td class="nowrap right">'.price($trim3).'</td>';
-			print '<td class="nowrap right">'.price($trim4).'</td>';
-			print '<td class="nowrap right">'.price($trim1 + $trim2 + $trim3 + $trim4).'</td>';
-			print '</tr>';
+			$out .= '<tr class="oddeven"><td class=left>'.$tmpyear.'</td>';
+			$out .= '<td class="nowrap right">'.price($trim1).'</td>';
+			$out .= '<td class="nowrap right">'.price($trim2).'</td>';
+			$out .= '<td class="nowrap right">'.price($trim3).'</td>';
+			$out .= '<td class="nowrap right">'.price($trim4).'</td>';
+			$out .= '<td class="nowrap right">'.price($trim1 + $trim2 + $trim3 + $trim4).'</td>';
+			$out .= '</tr>';
 		}
 		if ($num > 0) {
-			print '</table></div>';
+			$out .= '</table></div>';
+			$out .= '<br>';
 		}
 	}
+
+	return $out;
 }
