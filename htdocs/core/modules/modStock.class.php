@@ -116,7 +116,7 @@ class modStock extends DolibarrModules
 		$r = 0;
 
 		$this->rights[$r][0] = 1001;
-		$this->rights[$r][1] = 'Lire les stocks';
+		$this->rights[$r][1] = 'Read stocks';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
@@ -124,7 +124,7 @@ class modStock extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 1002;
-		$this->rights[$r][1] = 'Creer/Modifier les stocks';
+		$this->rights[$r][1] = 'Create/Modify stocks';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'creer';
@@ -132,7 +132,7 @@ class modStock extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 1003;
-		$this->rights[$r][1] = 'Supprimer les stocks';
+		$this->rights[$r][1] = 'Delete stock';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'supprimer';
@@ -140,7 +140,7 @@ class modStock extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 1004;
-		$this->rights[$r][1] = 'Lire mouvements de stocks';
+		$this->rights[$r][1] = 'Read stock movements';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'mouvement';
@@ -148,7 +148,7 @@ class modStock extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 1005;
-		$this->rights[$r][1] = 'Creer/modifier mouvements de stocks';
+		$this->rights[$r][1] = 'Create/modify stock movements';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'mouvement';
@@ -177,7 +177,6 @@ class modStock extends DolibarrModules
 
 		// TODO and if MAIN_FEATURES_LEVEL >= 2 after module is activated ?
 		if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
-
 			$r++;
 			$this->rights[$r][0] = 1014;
 			$this->rights[$r][1] = 'inventoryValidatePermission'; // Permission label
