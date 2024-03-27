@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@ class DiscountAbsolute extends CommonObject
 {
 	/**
 	 * @var int 	Thirdparty ID
-	 * @deprecated
+	 * @deprecated  Use socid instead.
 	 */
 	public $fk_soc;
 	/**
@@ -171,6 +172,7 @@ class DiscountAbsolute extends CommonObject
 
 				$this->id = $obj->rowid;
 				$this->fk_soc = $obj->fk_soc;
+				$this->socid = $obj->fk_soc;
 				$this->discount_type = $obj->discount_type;
 
 				$this->total_ht = $obj->amount_ht;
@@ -275,7 +277,7 @@ class DiscountAbsolute extends CommonObject
 		$sql .= " multicurrency_amount_ht, multicurrency_amount_tva, multicurrency_amount_ttc,";
 		$sql .= " fk_facture_source, fk_invoice_supplier_source";
 		$sql .= ")";
-		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".((int) $this->fk_soc).", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".((int) $userid).", '".$this->db->escape($this->description)."',";
+		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".((int) $this->socid).", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".((int) $userid).", '".$this->db->escape($this->description)."',";
 		$sql .= " ".price2num($this->amount_ht).", ".price2num($this->amount_tva).", ".price2num($this->amount_ttc).", ".price2num($this->tva_tx).", '".$this->db->escape($this->vat_src_code)."',";
 		$sql .= " ".price2num($this->multicurrency_amount_ht).", ".price2num($this->multicurrency_amount_tva).", ".price2num($this->multicurrency_amount_ttc).", ";
 		$sql .= " ".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
@@ -709,7 +711,7 @@ class DiscountAbsolute extends CommonObject
 		}
 		if ($option == 'discount') {
 			$label = $langs->trans("Discount");
-			$link = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$this->fk_soc.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+			$link = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 			$linkend = '</a>';
 			$ref = $langs->trans("Discount");
 			$picto = 'generic';

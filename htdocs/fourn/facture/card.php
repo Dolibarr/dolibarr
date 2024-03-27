@@ -647,6 +647,7 @@ if (empty($reshook)) {
 			}
 			$discount->discount_type = 1; // Supplier discount
 			$discount->fk_soc = $object->socid;
+			$discount->socid = $object->socid;
 			$discount->fk_invoice_supplier_source = $object->id;
 
 			$error = 0;

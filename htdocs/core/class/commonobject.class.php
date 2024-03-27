@@ -175,7 +175,7 @@ abstract class CommonObject
 	private $linkedObjectsFullLoaded = array();
 
 	/**
-	 * @var CommonObject	To store a cloned copy of the object before editing it (to keep track of its former properties)
+	 * @var static	To store a cloned copy of the object before editing it (to keep track of its former properties)
 	 */
 	public $oldcopy;
 
@@ -5372,6 +5372,7 @@ abstract class CommonObject
 			$discount = new DiscountAbsolute($this->db);
 			if (property_exists($this, 'socid')) {
 				$discount->fk_soc = $this->socid;
+				$discount->socid = $this->socid;
 			}
 			$this->tpl['label'] .= $discount->getNomUrl(0, 'discount');
 		} elseif (!empty($line->fk_product)) {
