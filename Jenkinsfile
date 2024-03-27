@@ -38,11 +38,7 @@ pipeline {
         container('docker') {
           script {
             // Build the Docker image
-            def appImage = docker.build(
-                          "iyedbnaissa/dolibarr_build:${env.BUILD_NUMBER}",
-                          "--no-cache", 
-                          "-f Dockerfile ."
-                          )
+            def appImage = docker.build("iyedbnaissa/dolibarr_build:${env.BUILD_NUMBER}", "-f Dockerfile .")
             // Push the Docker image to your Docker registry
             docker.withRegistry('', '30') {
               appImage.push()
