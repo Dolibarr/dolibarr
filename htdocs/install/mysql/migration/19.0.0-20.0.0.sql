@@ -47,6 +47,8 @@ ALTER TABLE llx_resource ADD INDEX idx_resource_fk_state (fk_state);
 
 UPDATE llx_c_type_contact SET element = 'stocktransfer' WHERE element = 'StockTransfer';
 
+DELETE FROM llx_boxes WHERE box_id IN (SELECT rowid FROM llx_boxes_def WHERE file = 'box_members.php');
+DELETE FROM llx_boxes_def WHERE file = 'box_members.php';
 
 -- Use unique keys for extrafields
 ALTER TABLE llx_actioncomm_extrafields DROP INDEX idx_actioncomm_extrafields;
