@@ -714,10 +714,10 @@ if ($search_ref) {
 if ($search_refcustomer) {
 	$sql .= natural_search('f.ref_client', $search_refcustomer);
 }
-if ($search_type != '' && $search_type != '-1') {
+if (!empty($search_type) && $search_type != '' && $search_type != '-1') {
 	$sql .= " AND f.type IN (".$db->sanitize($db->escape($search_type)).")";
 }
-if ($search_subtype != '' && $search_subtype != '-1') {
+if (!empty($search_subtype) && $search_subtype != '' && $search_subtype != '-1') {
 	$sql .= " AND f.subtype IN (".$db->sanitize($db->escape($search_subtype)).")";
 }
 if ($search_project_ref) {
@@ -772,7 +772,7 @@ if (strlen(trim($search_country))) {
 		$sql .= natural_search("country.code", $search_country);
 	}
 }
-if ($search_type_thirdparty != '' && $search_type_thirdparty != '-1') {
+if (!empty($search_type_thirdparty) && $search_type_thirdparty != '' && $search_type_thirdparty != '-1') {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
 }
 if ($search_montant_ht != '') {

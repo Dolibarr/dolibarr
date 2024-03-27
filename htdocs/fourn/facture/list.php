@@ -68,8 +68,8 @@ $search_amount_no_tax = GETPOST("search_amount_no_tax", "alpha");
 $search_amount_all_tax = GETPOST("search_amount_all_tax", "alpha");
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refsupplier = GETPOST('search_refsupplier', 'alpha');
-$search_type = GETPOSTINT('search_type');
-$search_subtype = GETPOSTINT('search_subtype');
+$search_type = GETPOST('search_type', 'intcomma');
+$search_subtype = GETPOST('search_subtype', 'intcomma');
 $search_project = GETPOST('search_project', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_company_alias = GETPOST('search_company_alias', 'alpha');
@@ -512,7 +512,7 @@ if ($search_ref) {
 if ($search_refsupplier) {
 	$sql .= natural_search('f.ref_supplier', $search_refsupplier);
 }
-if ($search_type != '' && $search_type >= 0) {
+if (!empty($search_type) && $search_type != '' && $search_type >= 0) {
 	if ($search_type == '0') {
 		$sql .= " AND f.type = 0"; // standard
 	}
@@ -528,7 +528,7 @@ if ($search_type != '' && $search_type >= 0) {
 	//if ($search_type == '4') $sql.=" AND f.type = 4";  // proforma
 	//if ($search_type == '5') $sql.=" AND f.type = 5";  // situation
 }
-if ($search_subtype != '' && $search_subtype != '-1') {
+if (!empty($search_subtype) && $search_subtype != '' && $search_subtype != '-1') {
 	$sql .= " AND f.subtype IN (".$db->sanitize($db->escape($search_subtype)).")";
 }
 if ($search_project) {
@@ -574,7 +574,7 @@ if (strlen(trim($search_country))) {
 		$sql .= natural_search("country.code", $search_country);
 	}
 }
-if ($search_type_thirdparty != '' && $search_type_thirdparty >= 0) {
+if (!empty($search_type_thirdparty) && $search_type_thirdparty != '' && $search_type_thirdparty >= 0) {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
 if ($search_montant_ht != '') {
