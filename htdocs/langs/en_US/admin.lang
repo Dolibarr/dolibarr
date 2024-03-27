@@ -2368,6 +2368,7 @@ HideAdvancedoptions= Hide advanced options
 OauthNotAvailableForAllAndHadToBeCreatedBefore=OAUTH2 authentication is not available for all hosts, and a token with the right permissions must have been created upstream with the OAUTH module
 MAIN_MAIL_SMTPS_OAUTH_SERVICE=OAUTH2 authentication service
 DontForgetCreateTokenOauthMod=A token with the right permissions must have been created upstream with the OAUTH module
+AuthenticationMethod=Authentication method
 MAIN_MAIL_SMTPS_AUTH_TYPE=Authentication method
 UsePassword=Use a password
 UseOauth=Use a OAUTH token
