@@ -54,6 +54,8 @@ $action = GETPOST('action', 'aZ09');
 $type = GETPOSTINT('type');
 $mode = GETPOST('mode', 'alpha');
 
+$ext=(GETPOSTISSET('output') && in_array(GETPOST('output'), array('csv'))) ? GETPOST('output') : '';
+
 $date = '';
 $dateendofday = '';
 if (GETPOSTISSET('dateday') && GETPOSTISSET('datemonth') && GETPOSTISSET('dateyear')) {
@@ -245,8 +247,8 @@ if ($date && $dateIsValid) {
 			$movements_prod_warehouse_nb[$fk_product][$fk_entrepot] = $nbofmovement;
 
 			// Pour llx_product.stock
-			$movements_prod[$fk_product] += $stock;
-			$movements_prod_nb[$fk_product] += $nbofmovement;
+			$movements_prod[$fk_product] = $stock + (array_key_exists($fk_product, $movements_prod)?$movements_prod[$fk_product]:0);
+			$movements_prod_nb[$fk_product] = $nbofmovement + (array_key_exists($fk_product, $movements_prod_nb)?$movements_prod_nb[$fk_product]:0);
 
 			$i++;
 		}
@@ -330,16 +332,20 @@ if ($date && $dateIsValid) {	// We avoid a heavy sql if mandatory parameter date
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
-		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		if (($page * $limit) > $nbtotalofrecords || $ext == 'csv') {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;
 		}
 	}
 
-	$sql .= $db->plimit($limit + 1, $offset);
-
 	//print $sql;
-	$resql = $db->query($sql);
+	if ($ext != 'csv') {
+		$sql .= $db->plimit($limit + 1, $offset);
+		$resql = $db->query($sql);
+	} else {
+		$resql = $result;
+		$limit = 0;
+	}
 	if (empty($resql)) {
 		dol_print_error($db);
 		exit;
@@ -353,164 +359,187 @@ $i = 0;
 $helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|';
 $helpurl .= 'ES:M&oacute;dulo_Stocks';
 
-llxHeader('', $title, $helpurl, '');
-
-$head = array();
-
-$head[0][0] = DOL_URL_ROOT.'/product/stock/stockatdate.php';
-$head[0][1] = $langs->trans("StockAtDateInPast");
-$head[0][2] = 'stockatdatepast';
-
-$head[1][0] = DOL_URL_ROOT.'/product/stock/stockatdate.php?mode=future';
-$head[1][1] = $langs->trans("StockAtDateInFuture");
-$head[1][2] = 'stockatdatefuture';
-
-
-print load_fiche_titre($langs->trans('StockAtDate'), '', 'stock');
-
-print dol_get_fiche_head($head, ($mode == 'future' ? 'stockatdatefuture' : 'stockatdatepast'), '', -1, '');
-
-$desc = $langs->trans("StockAtDatePastDesc");
-if ($mode == 'future') {
-	$desc = $langs->trans("StockAtDateFutureDesc");
-}
-print '<span class="opacitymedium">'.$desc.'</span><br>'."\n";
-print '<br>'."\n";
-
-print '<form name="formFilterWarehouse" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="filter">';
-print '<input type="hidden" name="mode" value="'.$mode.'">';
-
-print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
-print '<span class="fieldrequired">'.$langs->trans('Date').'</span> '.$form->selectDate(($date ? $date : -1), 'date');
-
-print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
-print img_picto('', 'product', 'class="pictofiwedwidth"').' ';
-print '</span> ';
-print $form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, array(), 0, $langs->trans('Product'), 0, 'maxwidth300', 0, '', null, 1);
-
-if ($mode != 'future') {
-	// A virtual stock in future has no sense on a per warehouse view, so no filter on warehouse is available for stock at date in future
-	print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
-	print img_picto('', 'stock', 'class="pictofixedwidth"').$langs->trans("Warehouse").' :';
-	print '</span> ';
-	$selected = ((GETPOSTISSET('search_fk_warehouse') || GETPOSTISSET('fk_warehouse')) ? $search_fk_warehouse : 'ifonenodefault');
-	print $formproduct->selectWarehouses($selected, 'search_fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, null, 'minwidth200', null, 1, false, 'e.ref', 1);
-}
-
-print '</div>';
-
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
-if (empty($reshook)) {
-	print $hookmanager->resPrint;
-}
-
-print '<div class="inline-block valignmiddle">';
-print '<input type="submit" class="button" name="valid" value="'.$langs->trans('Refresh').'">';
-print '</div>';
-
-//print '</form>';
-
-$param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-	$param .= '&contextpage='.urlencode($contextpage);
-}
-if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.((int) $limit);
-}
-$param .= '&mode='.$mode;
-if (!empty($search_fk_warehouse)) {
-	foreach ($search_fk_warehouse as $val) {
-		$param .= '&search_fk_warehouse[]='.$val;
-	}
-}
-if ($productid > 0) {
-	$param .= '&productid='.(int) $productid;
-}
-if (GETPOSTINT('dateday') > 0) {
-	$param .= '&dateday='.GETPOSTINT('dateday');
-}
-if (GETPOSTINT('datemonth') > 0) {
-	$param .= '&datemonth='.GETPOSTINT('datemonth');
-}
-if (GETPOSTINT('dateyear') > 0) {
-	$param .= '&dateyear='.GETPOSTINT('dateyear');
-}
-
-// TODO Move this into the title line ?
-print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
-
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="liste centpercent">';
-
 $stocklabel = $langs->trans('StockAtDate');
 if ($mode == 'future') {
 	$stocklabel = $langs->trans("VirtualStockAtDate");
 }
 
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="type" value="'.$type.'">';
-print '<input type="hidden" name="mode" value="'.$mode.'">';
+if ($ext == 'csv') {
+	header("Content-Type: text/csv");
+	header("Content-Disposition: attachment; filename=stock".($date?'-'.date("Y-m-d", $date):'').".csv");
 
-// Fields title search
-print '<tr class="liste_titre_filter">';
-print '<td class="liste_titre"><input class="flat" type="text" name="search_ref" size="8" value="'.dol_escape_htmltag($search_ref).'"></td>';
-print '<td class="liste_titre"><input class="flat" type="text" name="search_nom" size="8" value="'.dol_escape_htmltag($search_nom).'"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-if ($mode == 'future') {
-	print '<td class="liste_titre"></td>';
+	// Lines of title
+	print implode("\t", ($mode == 'future')?
+		array('"Product Reference"', '"Label"', '"Current Stock"', '"'.$stocklabel.'"', '"Virtual Stock"'):
+		array('"Product Reference"', '"Label"', '"'.$stocklabel.'"', '"Estimated Stock Value"', '"Estimate Sell Value"', '"Movements"', '"Current Stock"'))."\r\n";
 } else {
+	llxHeader('', $title, $helpurl, '');
+
+	$head = array();
+
+	$head[0][0] = DOL_URL_ROOT.'/product/stock/stockatdate.php';
+	$head[0][1] = $langs->trans("StockAtDateInPast");
+	$head[0][2] = 'stockatdatepast';
+
+	$head[1][0] = DOL_URL_ROOT.'/product/stock/stockatdate.php?mode=future';
+	$head[1][1] = $langs->trans("StockAtDateInFuture");
+	$head[1][2] = 'stockatdatefuture';
+
+
+	print load_fiche_titre($langs->trans('StockAtDate'), '', 'stock');
+
+	print dol_get_fiche_head($head, ($mode == 'future' ? 'stockatdatefuture' : 'stockatdatepast'), '', -1, '');
+
+	$desc = $langs->trans("StockAtDatePastDesc");
+	if ($mode == 'future') {
+		$desc = $langs->trans("StockAtDateFutureDesc");
+	}
+	print '<span class="opacitymedium">'.$desc.'</span><br>'."\n";
+	print '<br>'."\n";
+
+	print '<form name="formFilterWarehouse" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="filter">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
+
+	print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
+	print '<span class="fieldrequired">'.$langs->trans('Date').'</span> '.$form->selectDate(($date ? $date : -1), 'date');
+
+	print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
+	print img_picto('', 'product', 'class="pictofiwedwidth"').' ';
+	print '</span> ';
+	print $form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, array(), 0, $langs->trans('Product'), 0, 'maxwidth300', 0, '', null, 1);
+
+	if ($mode != 'future') {
+		// A virtual stock in future has no sense on a per warehouse view, so no filter on warehouse is available for stock at date in future
+		print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
+		print img_picto('', 'stock', 'class="pictofixedwidth"').$langs->trans("Warehouse").' :';
+		print '</span> ';
+		$selected = ((GETPOSTISSET('search_fk_warehouse') || GETPOSTISSET('fk_warehouse')) ? $search_fk_warehouse : 'ifonenodefault');
+		print $formproduct->selectWarehouses($selected, 'search_fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, null, 'minwidth200', null, 1, false, 'e.ref', 1);
+	}
+
+	print '</div>';
+
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) {
+		print $hookmanager->resPrint;
+	}
+
+	print '<div class="inline-block valignmiddle">';
+	print '<input type="submit" class="button" name="valid" value="'.$langs->trans('Refresh').'">';
+	print '</div>';
+
+	//print '</form>';
+
+	$param = '';
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage='.urlencode($contextpage);
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.((int) $limit);
+	}
+	$param .= '&mode='.$mode;
+	$param_warehouse = '';
+	if (!empty($search_fk_warehouse)) {
+		foreach ($search_fk_warehouse as $val) {
+			$param_warehouse .= '&search_fk_warehouse[]='.$val;
+		}
+		$param .= $param_warehouse;
+	}
+	if ($productid > 0) {
+		$param .= '&productid='.(int) $productid;
+	}
+	if (GETPOSTINT('dateday') > 0) {
+		$param .= '&dateday='.GETPOSTINT('dateday');
+	}
+	if (GETPOSTINT('datemonth') > 0) {
+		$param .= '&datemonth='.GETPOSTINT('datemonth');
+	}
+	if (GETPOSTINT('dateyear') > 0) {
+		$param .= '&dateyear='.GETPOSTINT('dateyear');
+	}
+
+	// TODO Move this into the title line ?
+	print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
+
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+	if ($num) {
+		print "<p><a href=\"stockatdate.php?output=csv&sortfield=$sortfield&sortorder=$sortorder&type=$type&mode=$mode".
+			(isset($productid)?"&productid=$productid":'').
+			$param_warehouse.
+			"&search_ref=".dol_escape_htmltag($search_ref).
+			"&search_nom=".dol_escape_htmltag($search_nom).
+			(GETPOSTISSET('dateday')?"&dateday=".GETPOSTINT('dateday'):'').
+			(GETPOSTISSET('datemonth')?"&datemonth=".GETPOSTINT('datemonth'):'').
+			(GETPOSTISSET('dateyear')?"&dateyear=".GETPOSTINT('dateyear'):'').
+			"\" title=\"Download CSV\" />Download CSV</a></p>";
+	}
+	print '<table class="liste centpercent">';
+
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="type" value="'.$type.'">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
+
+	// Fields title search
+	print '<tr class="liste_titre_filter">';
+	print '<td class="liste_titre"><input class="flat" type="text" name="search_ref" size="8" value="'.dol_escape_htmltag($search_ref).'"></td>';
+	print '<td class="liste_titre"><input class="flat" type="text" name="search_nom" size="8" value="'.dol_escape_htmltag($search_nom).'"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
+	if ($mode == 'future') {
+		print '<td class="liste_titre"></td>';
+	} else {
+		print '<td class="liste_titre"></td>';
+		print '<td class="liste_titre"></td>';
+	}
+	// Fields from hook
+	$parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
+	print '</td>';
+	print '</tr>';
+
+	$fieldtosortcurrentstock = 'stock';
+	if (!empty($search_fk_warehouse)) {
+		$fieldtosortcurrentstock = 'stock_reel';
+	}
+
+	// Lines of title
+	print '<tr class="liste_titre">';
+	print_liste_field_titre('ProductRef', $_SERVER["PHP_SELF"], 'p.ref', $param, '', '', $sortfield, $sortorder);
+	print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', $param, '', '', $sortfield, $sortorder);
+
+	if ($mode == 'future') {
+		print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre('', $_SERVER["PHP_SELF"]);
+		print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ', 'VirtualStockAtDateDesc');
+		print_liste_field_titre('VirtualStock', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ', 'VirtualStockDesc');
+	} else {
+		print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue", '', $param, '', $sortfield, $sortorder, 'right ', $langs->trans("AtDate"), 1);
+		print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', $langs->trans("AtDate"), 1);
+		print_liste_field_titre('', $_SERVER["PHP_SELF"]);
+		print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
+	}
+
+	// Hook fields
+	$parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
+
+	print "</tr>\n";
 }
-// Fields from hook
-$parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
-$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
-print $hookmanager->resPrint;
-
-print '<td class="liste_titre maxwidthsearch">';
-$searchpicto = $form->showFilterAndCheckAddButtons(0);
-print $searchpicto;
-print '</td>';
-print '</tr>';
-
-$fieldtosortcurrentstock = 'stock';
-if (!empty($search_fk_warehouse)) {
-	$fieldtosortcurrentstock = 'stock_reel';
-}
-
-// Lines of title
-print '<tr class="liste_titre">';
-print_liste_field_titre('ProductRef', $_SERVER["PHP_SELF"], 'p.ref', $param, '', '', $sortfield, $sortorder);
-print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', $param, '', '', $sortfield, $sortorder);
-
-if ($mode == 'future') {
-	print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
-	print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ', 'VirtualStockAtDateDesc');
-	print_liste_field_titre('VirtualStock', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ', 'VirtualStockDesc');
-} else {
-	print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue", '', $param, '', $sortfield, $sortorder, 'right ', $langs->trans("AtDate"), 1);
-	print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', $langs->trans("AtDate"), 1);
-	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
-	print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
-}
-
-// Hook fields
-$parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
-print $hookmanager->resPrint;
-
-print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
-
-print "</tr>\n";
 
 $totalbuyingprice = 0;
 $totalsellingprice = 0;
@@ -582,135 +611,178 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 
 
-		print '<tr class="oddeven">';
+		if ($ext == 'csv') {
+			if ($mode == 'future') {
+				print implode("\t", array(
+					'"'.$objp->ref.'"',
+					'"'.$objp->label.'"',
+					'"'.price(price2num($currentstock, 'MS')).'"',
+					'"'.price(price2num($stock, 'MS')).'"',
+					'"'.price(price2num($virtualstock, 'MS')).'"'))."\r\n";
+				$totalvirtualstock += $virtualstock;
+			} else {
+				print implode("\t", array(
+					'"'.$objp->ref.'"',
+					'"'.$objp->label.'"',
+					'"'.price(price2num($stock, 'MS')).'"',
+					price2num($stock * $objp->pmp, 'MT')?'"'.price(price2num($stock * $objp->pmp, 'MT'), 1).'"':'',
+					empty($conf->global->PRODUIT_MULTIPRICES)?'"'.price(price2num($stock * $objp->price, 'MT'), 1).'"':'"'.$langs->trans("Variable").'('.$langs->trans("OptionMULTIPRICESIsOn").')"',
+					"$nbofmovement",
+					'"'.price(price2num($currentstock, 'MS')).'"'))."\r\n";
+				$totalbuyingprice += $stock * $objp->pmp;
+				$totalsellingprice += $stock * $objp->price;
+			}
+			$totalcurrentstock += $currentstock;
+		} else {
+			print '<tr class="oddeven">';
 
-		// Product ref
-		print '<td class="nowrap">'.$prod->getNomUrl(1, '').'</td>';
+			// Product ref
+			print '<td class="nowrap">'.$prod->getNomUrl(1, '').'</td>';
 
-		// Product label
-		print '<td>';
-		print dol_escape_htmltag($objp->label);
-		print '</td>';
+			// Product label
+			print '<td>';
+			print dol_escape_htmltag($objp->label);
+			print '</td>';
 
-		if ($mode == 'future') {
-			// Current stock
-			print '<td class="right">'.$currentstock.'</td>';
+			if ($mode == 'future') {
+				// Current stock
+				print '<td class="right">'.price(price2num($currentstock, 'MS')).'</td>';
+				//$totalcurrentstock += $currentstock;
+
+				print '<td class="right"></td>';
+
+				// Virtual stock at date
+				print '<td class="right">'.price(price2num($stock, 'MS')).'</td>';
+
+				// Final virtual stock
+				print '<td class="right">'.price(price2num($virtualstock, 'MS')).'</td>';
+				$totalvirtualstock += $virtualstock;
+			} else {
+				// Stock at date
+				print '<td class="right">'.($stock ? price(price2num($stock, 'MS')) : ('<span class="opacitymedium">0</span>')).'</td>';
+
+				// PMP value
+				print '<td class="right">';
+				$estimatedvalue = $stock * $objp->pmp;
+				if (price2num($estimatedvalue, 'MT')) {
+					print '<span class="amount">'.price(price2num($estimatedvalue, 'MT'), 1).'</span>';
+				} else {
+					print '';
+				}
+				$totalbuyingprice += $estimatedvalue;
+				print '</td>';
+
+				// Selling value
+				print '<td class="right">';
+				if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+					print '<span class="amount">';
+					if ($stock || (float) ($stock * $objp->price)) {
+						print price(price2num($stock * $objp->price, 'MT'), 1);
+					}
+					print '</span>';
+					$totalsellingprice += $stock * $objp->price;
+				} else {
+					$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
+					print $form->textwithtooltip('<span class="opacitymedium">'.$langs->trans("Variable").'</span>', $htmltext);
+				}
+				print '</td>';
+
+				print '<td class="right">';
+				if ($nbofmovement > 0) {
+					print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$objp->rowid;
+					foreach ($search_fk_warehouse as $val) {
+						print($val > 0 ? '&search_warehouse='.$val : '');
+					}
+					print '">'.$langs->trans("Movements").'</a>';
+					print ' <span class="tabs"><span class="badge">'.$nbofmovement.'</span></span>';
+				}
+				print '</td>';
+
+				// Current stock
+				print '<td class="right">'.($currentstock ? price(price2num($currentstock, 'MS')) : '<span class="opacitymedium">0</span>').'</td>';
+			}
 			$totalcurrentstock += $currentstock;
 
+			// Fields from hook
+			$parameters = array('objp'=>$objp);
+			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
+
+			// Action
 			print '<td class="right"></td>';
 
-			// Virtual stock at date
-			print '<td class="right">'.$stock.'</td>';
-
-			// Final virtual stock
-			print '<td class="right">'.$virtualstock.'</td>';
-			$totalvirtualstock += $virtualstock;
-		} else {
-			// Stock at date
-			print '<td class="right">'.($stock ? $stock : '<span class="opacitymedium">'.$stock.'</span>').'</td>';
-
-			// PMP value
-			print '<td class="right">';
-			$estimatedvalue = $stock * $objp->pmp;
-			if (price2num($estimatedvalue, 'MT')) {
-				print '<span class="amount">'.price(price2num($estimatedvalue, 'MT'), 1).'</span>';
-			} else {
-				print '';
-			}
-			$totalbuyingprice += $estimatedvalue;
-			print '</td>';
-
-			// Selling value
-			print '<td class="right">';
-			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
-				print '<span class="amount">';
-				if ($stock || (float) ($stock * $objp->price)) {
-					print price(price2num($stock * $objp->price, 'MT'), 1);
-				}
-				print '</span>';
-				$totalsellingprice += $stock * $objp->price;
-			} else {
-				$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
-				print $form->textwithtooltip('<span class="opacitymedium">'.$langs->trans("Variable").'</span>', $htmltext);
-			}
-			print '</td>';
-
-			print '<td class="right">';
-			if ($nbofmovement > 0) {
-				print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$objp->rowid;
-				foreach ($search_fk_warehouse as $val) {
-					print($val > 0 ? '&search_warehouse='.$val : '');
-				}
-				print '">'.$langs->trans("Movements").'</a>';
-				print ' <span class="tabs"><span class="badge">'.$nbofmovement.'</span></span>';
-			}
-			print '</td>';
-
-			// Current stock
-			print '<td class="right">'.($currentstock ? $currentstock : '<span class="opacitymedium">0</span>').'</td>';
-			$totalcurrentstock += $currentstock;
+			print '</tr>'."\n";
 		}
-
-		// Fields from hook
-		$parameters = array('objp'=>$objp);
-		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-
-		// Action
-		print '<td class="right"></td>';
-
-		print '</tr>'."\n";
 	}
 	$i++;
 }
 
 $parameters = array('sql'=>$sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
-print $hookmanager->resPrint;
+if ($ext!='csv') {
+	print $hookmanager->resPrint;
+}
 
 $colspan = 8;
 if ($mode == 'future') {
 	$colspan++;
 }
 
-
-if (empty($date) || !$dateIsValid) {
-	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("EnterADateCriteria").'</span></td></tr>';
+if ($ext=='csv') {
+	print implode("\t",
+		($mode == 'future')?array(
+		'"'.$langs->trans("Totalforthispage").'"',
+		'',
+		$productid > 0 ? price(price2num($totalcurrentstock, 'MS')) : '',
+		'',
+		price(price2num($totalvirtualstock, 'MS'))):
+		array(
+		'"'.$langs->trans("Totalforthispage").'"',
+		'',
+		'',
+		'"'.price(price2num($totalbuyingprice, 'MT')).'"',
+		!getDolGlobalString('PRODUIT_MULTIPRICES')?'"'.price(price2num($totalsellingprice, 'MT')).'"':'',
+		'',
+		$productid > 0 ? price(price2num($totalcurrentstock, 'MS')) : ''));
 } else {
-	print '<tr class="liste_total">';
-	print '<td>'.$langs->trans("Totalforthispage").'</td>';
-	print '<td></td>';
-	if ($mode == 'future') {
-		print '<td class="right">'.price(price2num($totalcurrentstock, 'MS')).'</td>';
-		print '<td></td>';
-		print '<td></td>';
-		print '<td class="right">'.price(price2num($totalvirtualstock, 'MS')).'</td>';
+	if (empty($date) || !$dateIsValid) {
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("EnterADateCriteria").'</span></td></tr>';
 	} else {
+		print '<tr class="liste_total">';
+		print '<td>'.$langs->trans("Totalforthispage").'</td>';
 		print '<td></td>';
-		print '<td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td>';
-		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
-			print '<td class="right">'.price(price2num($totalsellingprice, 'MT')).'</td>';
+		if ($mode == 'future') {
+			print '<td class="right">'.price(price2num($totalcurrentstock, 'MS')).'</td>';
+			print '<td></td>';
+			print '<td></td>';
+			print '<td class="right">'.price(price2num($totalvirtualstock, 'MS')).'</td>';
 		} else {
 			print '<td></td>';
+			print '<td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td>';
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+				print '<td class="right">'.price(price2num($totalsellingprice, 'MT')).'</td>';
+			} else {
+				print '<td></td>';
+			}
+			print '<td></td>';
+			print '<td class="right">'.($productid > 0 ? price(price2num($totalcurrentstock, 'MS')) : '').'</td>';
 		}
 		print '<td></td>';
-		print '<td class="right">'.($productid > 0 ? price(price2num($totalcurrentstock, 'MS')) : '').'</td>';
+		print '</tr>';
 	}
-	print '<td></td>';
-	print '</tr>';
-}
 
-print '</table>';
-print '</div>';
+	print '</table>';
+	print '</div>';
+
+	print dol_get_fiche_end();
+
+	print '</form>';
+
+	llxFooter();
+}
 
 if (!empty($resql)) {
 	$db->free($resql);
 }
-
-print dol_get_fiche_end();
-
-print '</form>';
-
-llxFooter();
 
 $db->close();
