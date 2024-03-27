@@ -988,6 +988,29 @@ print '<td class="right">'.price(price2num($balance_ht, 'MT')).'</td>';
 print '<td class="right">'.price(price2num($balance_ttc, 'MT')).'</td>';
 print '</tr>';
 
+// and the cost per attendee
+if ($object->usage_organize_event) {
+	require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+	$conforboothattendee = new ConferenceOrBoothAttendee($db);
+	$result = $conforboothattendee->fetchAll('', '', 0, 0, '(t.fk_project:=:'.((int) $object->id).') AND (t.status:=:'.ConferenceOrBoothAttendee::STATUS_VALIDATED.')');
+
+	if (!is_array($result) && $result < 0) {
+		setEventMessages($conforboothattendee->error, $conforboothattendee->errors, 'errors');
+	} else {
+		$nbAttendees = count($result);
+	}
+
+	if ($nbAttendees >= 2) {
+		$costperattendee_ht = $balance_ht / $nbAttendees;
+		$costperattendee_ttc = $balance_ttc / $nbAttendees;
+		print '<tr class="liste_total">';
+		print '<td class="right" colspan="2">'.$langs->trans("ProfitPerValidatedAttendee").'</td>';
+		print '<td class="right">'.price(price2num($costperattendee_ht, 'MT')).'</td>';
+		print '<td class="right">'.price(price2num($costperattendee_ttc, 'MT')).'</td>';
+		print '</tr>';
+	}
+}
+
 // and the margin (profit / revenues)
 if ($total_revenue_ht) {
 	print '<tr class="liste_total">';
