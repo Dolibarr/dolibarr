@@ -89,7 +89,7 @@ class modStock extends DolibarrModules
 		$this->const[$r][0] = "MOUVEMENT_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "stdmovement";
-		$this->const[$r][3] = 'Name of PDF model of stock mouvement';
+		$this->const[$r][3] = 'Name of PDF model of stock movement';
 		$this->const[$r][4] = 0;
 
 		$r++;
