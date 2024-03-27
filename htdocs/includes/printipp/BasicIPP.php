@@ -71,7 +71,7 @@ class BasicIPP
     );
     public $http_timeout = 30; // timeout at http connection (seconds) 0 => default => 30.
     public $http_data_timeout = 30; // data reading timeout (milliseconds) 0 => default => 30.
-    public $ssl = true; // false;
+    public $ssl = false;
     public $debug_level = 3; // max 3: almost silent
     public $alert_on_end_tag; // debugging purpose: echo "END tag OK" if (1 and  reads while end tag)
     public $with_exceptions = 1; // compatibility mode for old scripts		// DOL_LDR_CHANGE set this to 1
