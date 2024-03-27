@@ -3,14 +3,15 @@ This file describes changes made on external libraries after being included
 in Dolibarr root.
 
 
+
 ALL:
 ----
 Check "@CHANGE"
 
 
 
-PrestaShopWebservice:
----------------------
+PHP PrestaShopWebservice:
+-------------------------
 Replace
 	$params = array('filter', 'display', 'sort', 'limit', 'id_shop', 'id_group_shop');
 With
@@ -18,8 +19,8 @@ With
 
 
 
-PHPIMAP
--------
+PHP PHPIMAP:
+------------
 * In htdocs/includes/webklex/php-imap/vendor/nesbot/carbon/src/Carbon/Traits/Creator.php
 
 Replace:
@@ -31,8 +32,8 @@ with:
 
 
 
-CKEDITOR (4.22.1):
------------------
+PHP CKEDITOR:
+-------------
 * In ckeditor/ckeditor/contents.css
 Replace:
 	body { ... margin: 20px;
@@ -46,16 +47,18 @@ With
     d&&d.items&&
 
 
-ESCPOS:
--------
+
+PHP ESCPOS:
+-----------
 Replace
 	private $connector;
 With
 	protected $connector;
 
 
-SABRE:
-------
+
+PHP SABRE:
+----------
 rm -fr ./htdocs/includes/sabre/sabre/bin;
 rm -fr ./htdocs/includes/sabre/sabre/*/bin;
 rm -fr ./htdocs/includes/sabre/sabre/*/*/bin;
@@ -63,8 +66,9 @@ rm -fr ./htdocs/includes/sabre/sabre/*/*/*/bin;
 rm -fr ./htdocs/includes/sabre/sabre/*/*/*/*/bin;
 
 
-NUSOAP:
--------
+
+PHP NUSOAP:
+-----------
 * Line 1257 of file nusoap.php. Add:
 
 	libxml_disable_entity_loader(true);	// Avoid load of external entities (security problem). Required only for libxml < 2.
@@ -84,8 +88,8 @@ NUSOAP:
 
 
 
-TCPDF:
-------
+PHP TCPDF:
+----------
 * Modify in tcpdf.php: make TCPDF::_out public.
   (htdocs/core/lib/pdf.lib.php uses it as a public method)
 
@@ -234,8 +238,9 @@ In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 	}
 
 
-TCPDI:
-------
+
+PHP TCPDI:
+----------
 Add file fpdf_tpl.php 1.2
 
 Add file tcpdi.php
@@ -263,36 +268,14 @@ with
 
 
 
-JSGANTT:
---------
-* Replace in function JSGantt.taskLink
-    window.open(pRef, 'newwin', 'height=' + vHeight + ',width=' + vWidth);
-with
-    // @CHANGE DOLI To open in same window
-    //var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
-    window.location.href=pRef
-
-* Replace '% Comp.' to have a smaller text column header
-    'comp': '%...'
-with
-    'comp': '%'
-
-
-
-JCROP:
-------
-* Remove analytics tag into file index.html
-
-
-
-JQUERYFILETREE:
----------------
+PHP JQUERYFILETREE:
+-------------------
 * Remove directory htdocs/includes/jquery/plugins/jqueryFileTree/connectors
 
 
 
-RESTLER:
---------
+PHP RESTLER:
+------------
 
 * Add line into Util.php to complete function
 
@@ -357,8 +340,8 @@ Change content of file htdocs/includes/restler/framework/Luracast/Restler/explor
 
 
 
-PARSEDOWN
----------
+PHP PARSEDOWN
+-------------
 
 * Add support of css by adding in Parsedown.php:
 
@@ -390,8 +373,8 @@ PARSEDOWN
 
 
 
-OAUTH
------
+PHP OAUTH
+---------
 Add into Class Google of file OAuth2/Service/Google:
 
     // LDR CHANGE Add approval_prompt to force the prompt if value is set to 'force' so it force return of a "refresh token" in addition to "standard token"
@@ -407,7 +390,23 @@ Add into Class Google of file OAuth2/Service/Google:
 
 
 
-JEDITABLE.JS
+JS JSGANTT:
+-----------
+* Replace in function JSGantt.taskLink
+    window.open(pRef, 'newwin', 'height=' + vHeight + ',width=' + vWidth);
+with
+    // @CHANGE DOLI To open in same window
+    //var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
+    window.location.href=pRef
+
+* Replace '% Comp.' to have a smaller text column header
+    'comp': '%...'
+with
+    'comp': '%'
+
+
+
+JS JEDITABLE
 ------------
 
 * <button type="submit" />  =>  <button class="button" type="submit" />
@@ -415,11 +414,17 @@ JEDITABLE.JS
 
 
 
-SELECT2
--------
+JS SELECT2
+----------
 
 Edit CSS to restore line removed between 4.0.5 and 4.0.6. It generates this bug: https://github.com/select2/select2/issues/5832
 
 .select2-hidden-accessible {
   margin: -10000px !important;                /* line to restore */
 }
+
+
+
+JS JCROP:
+----------
+* Remove analytics tag into file index.html
