@@ -1259,7 +1259,7 @@ foreach ($listofreferent as $key => $value) {
 				print "</td>\n";
 
 				// Ref
-				print '<td class="left nowraponall">';
+				print '<td class="left nowraponall tdoverflowmax250">';
 				if ($tablename == 'expensereport_det') {
 					print $expensereport->getNomUrl(1);
 				} else {
@@ -1372,7 +1372,7 @@ foreach ($listofreferent as $key => $value) {
 				print '</td>';
 
 				// Third party or user
-				print '<td class="left">';
+				print '<td class="tdoverflowmax150">';
 				if (is_object($element->thirdparty)) {
 					print $element->thirdparty->getNomUrl(1, '', 48);
 				} elseif ($tablename == 'expensereport_det') {
