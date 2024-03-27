@@ -83,7 +83,7 @@ function ticketAdminPrepareHead()
  */
 function ticket_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
 
 	$h = 0;
 	$head = array();
@@ -109,6 +109,16 @@ function ticket_prepare_head($object)
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$upload_dir = $conf->ticket->dir_output."/".$object->ref;
 	$nbFiles = count(dol_dir_list($upload_dir, 'files'));
+	$sql = 'SELECT id FROM '.MAIN_DB_PREFIX.'actioncomm';
+	$sql .= " WHERE fk_element = ".(int) $object->id." AND elementtype = 'ticket'";
+	$resql = $db->query($sql);
+	if ($resql) {
+		$numrows = $db->num_rows($resql);
+		for ($i=0; $i < $numrows; $i++) {
+			$upload_msg_dir = $conf->agenda->dir_output.'/'.$db->fetch_row($resql)[0];
+			$nbFiles += count(dol_dir_list($upload_msg_dir, "files"));
+		}
+	}
 	$head[$h][0] = DOL_URL_ROOT.'/ticket/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
 	if ($nbFiles > 0) {
