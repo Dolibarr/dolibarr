@@ -1569,7 +1569,7 @@ class EmailCollector extends CommonObject
 				//$Query = $client->getFolders()[0]->messages()->where($criteria);
 
 				// Uncomment this to output debug info
-				$client->getConnection()->enableDebug();
+				//$client->getConnection()->enableDebug();
 
 				$f = $client->getFolders(false, $sourcedir);
 				if ($f) {
