@@ -18,6 +18,19 @@ With
 
 
 
+PHPIMAP
+-------
+* In htdocs/includes/webklex/php-imap/vendor/nesbot/carbon/src/Carbon/Traits/Creator.php
+
+Replace:
+	self::setLastErrors(parent::getLastErrors());
+with:
+	if (parent::getLastErrors()) {
+      	self::setLastErrors(parent::getLastErrors());
+	}
+
+
+
 CKEDITOR (4.22.1):
 -----------------
 * In ckeditor/ckeditor/contents.css
