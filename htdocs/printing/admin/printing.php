@@ -167,6 +167,15 @@ if ($mode == 'setup' && $user->admin) {
 					print '<td>&nbsp;'.($key['example'] != '' ? $langs->trans("Example").' : '.$key['example'] : '').'</td>';
 					print '</tr>'."\n";
 					break;
+				case "checkbox":
+					print '<tr class="oddeven">';
+					print '<td'.($key['required'] ? ' class=required' : '').'>'.$langs->trans($key['varname']).'</td>';
+					print '<td><input class="width100" type="'.(empty($key['type']) ? 'text' : $key['type']).'" name="setupdriver['.$i.'][value]" value="1" '.((getDolGlobalInt($key['varname'])) ? 'checked' : '');
+					print isset($key['moreattributes']) ? ' '.$key['moreattributes'] : '';
+					print '><input type="hidden" name="setupdriver['.$i.'][varname]" value="'.$key['varname'].'"></td>';
+					print '<td>&nbsp;'.($key['example'] != '' ? $langs->trans("Example").' : '.$key['example'] : '').'</td>';
+					print '</tr>'."\n";
+					break;
 				case "info":    // Google Api setup or Google OAuth Token
 					print '<tr class="oddeven">';
 					print '<td'.($key['required'] ? ' class=required' : '').'>';
