@@ -234,7 +234,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 }
 
 $graphcat = '';
-if (isModEnabled('categorie') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODUCTS')) {
+if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODUCTS')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$graphcat .= '<br>';
 	$graphcat .= '<div class="div-table-responsive-no-min">';
