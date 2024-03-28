@@ -97,7 +97,7 @@ $search_idprof4 = trim(GETPOST('search_idprof4', 'alpha'));
 $search_idprof5 = trim(GETPOST('search_idprof5', 'alpha'));
 $search_idprof6 = trim(GETPOST('search_idprof6', 'alpha'));
 $search_vat = trim(GETPOST('search_vat', 'alpha'));
-$search_sale = GETPOST("commercial", 'alphanohtml');
+$search_sale = GETPOST("search_sale", 'alphanohtml');
 $search_categ_cus = GETPOSTINT("search_categ_cus");
 $search_categ_sup = GETPOSTINT("search_categ_sup");
 $searchCategoryCustomerOperator = 0;
@@ -590,9 +590,6 @@ if (!$user->hasRight('fournisseur', 'lire')) {
 }
 // Search on sale representative
 if (!empty($search_sale) && $search_sale != '-1') {
-	if (!is_array($search_sale)) {
-		$search_sale = explode(',', $search_sale);
-	}
 	$search_sale_req = array_filter($search_sale, function($value) {
 		return $value >= 0;
 	});
@@ -600,9 +597,9 @@ if (!empty($search_sale) && $search_sale != '-1') {
 
 	if (count($search_sale) == 1 && in_array('-2', $search_sale)) {
 		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid)";
-	} elseif (count($search_sale) > 0 && !in_array('-2', $search_sale)) {
+	} elseif (count($search_sale) > 1 && !in_array('-2', $search_sale)) {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user IN (".$search_sale_req."))";
-	} elseif (count($search_sale) > 0 && in_array('-2', $search_sale)) {
+	} elseif (count($search_sale) > 1 && in_array('-2', $search_sale)) {
 		$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user IN (".$search_sale_req."))";
 		$sql .= " OR NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid))";
 	}
@@ -926,8 +923,10 @@ foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 foreach ($searchCategorySupplierList as $searchCategorySupplier) {
 	$param .= "&search_category_supplier_list[]=".urlencode($searchCategorySupplier);
 }
-if (!empty($search_sale)) {
-	$param .= '&commercial=' . (implode(',', $search_sale));
+if (is_array($search_sale)) {
+	foreach ($search_sale as $sale_id) {
+		$param .= '&search_sale[]=' . urlencode($sale_id);
+	}
 }
 if ($search_id > 0) {
 	$param .= "&search_id=".((int) $search_id);
@@ -1249,7 +1248,7 @@ if ($user->hasRight("societe", "client", "voir") || $socid) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('SalesRepresentatives');
 	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"');
-	$moreforfilter .=  $form->multiselectarray('commercial', $userlist, $search_sale, 0, 0, '', 0, 300, '', '', $langs->trans('SalesRepresentatives'), 1);
+	$moreforfilter .=  $form->multiselectarray('search_sale', $userlist, $search_sale, 0, 0, '', 0, 300, '', '', $langs->trans('SalesRepresentatives'), 1);
 	$moreforfilter .= '</div>';
 }
 if (!empty($moreforfilter)) {
