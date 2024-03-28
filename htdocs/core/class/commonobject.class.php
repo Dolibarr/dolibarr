@@ -140,7 +140,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -786,7 +786,7 @@ abstract class CommonObject
 	public $extraparams = array();
 
 	/**
-	 * @var array<string,string[]|array{parent:string,parentkey:string}>	List of child tables. To test if we can delete object.
+	 * @var string[]|array<string,string[]|array{parent:string,parentkey:string}>	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array();
 
@@ -2005,14 +2005,11 @@ abstract class CommonObject
 			$this->origin = 'commandeFournisseur';
 		}
 
-		$origin = $this->origin;
+		$origin = $this->origin ? $this->origin : $this->origin_type;
 
 		$classname = ucfirst($origin);
 		$this->origin_object = new $classname($this->db);
 		$this->origin_object->fetch($this->origin_id);
-
-		// TODO Remove this line
-		$this->$origin = $this->origin_object;
 	}
 
 	/**
@@ -2225,8 +2222,9 @@ abstract class CommonObject
 	/**
 	 *      Load properties id_previous and id_next by comparing $fieldid with $this->ref
 	 *
-	 *      @param	string	$filter		Optional SQL filter. Example: "(t.field1 = 'aa' OR t.field2 = 'bb')". Do not allow user input data here.
-	 *      							Use SQL and not Universal Search Filter. @TODO Replace this with an USF string after changing all ->next_prev_filter
+	 *      @param	string	$filter		Optional SQL filter. Use SQL or Universal Search Filter.
+	 *      							Example: "(t.field1 = 'aa' OR t.field2 = 'bb')". Do not allow user input data here with this syntax.
+	 *      							Example: "((t.field1:=:'aa') OR (t.field2:=:'bb'))".
 	 *	 	@param  string	$fieldid   	Name of field to use for the select MAX and MIN
 	 *		@param	int		$nodbprefix	Do not include DB prefix to forge table name
 	 *      @return int         		Return integer <0 if KO, >0 if OK
@@ -2286,12 +2284,21 @@ abstract class CommonObject
 		if ($restrictiononfksoc == 2 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND (sc.fk_user = ".((int) $user->id).' OR te.fk_soc IS NULL)';
 		}
-		if (!empty($filter)) {
-			if (!preg_match('/^\s*AND/i', $filter)) {
+
+		$filtermax = $filter;
+
+		// Manage filter
+		$errormessage = '';
+		$tmpsql = forgeSQLFromUniversalSearchCriteria($filtermax, $errormessage);
+		if ($errormessage) {
+			if (!preg_match('/^\s*AND/i', $filtermax)) {
 				$sql .= " AND ";
 			}
-			$sql .= $filter;
+			$sql .= $filtermax;
+		} else {
+			$sql .= $tmpsql;
 		}
+
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= " AND te.".$tmparray[0]." = ".($tmparray[1] == "societe" ? "s" : "parenttable").".rowid"; // If we need to link to this table to limit select to entity
@@ -2361,12 +2368,23 @@ abstract class CommonObject
 		if ($restrictiononfksoc == 2 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND (sc.fk_user = ".((int) $user->id).' OR te.fk_soc IS NULL)';
 		}
-		if (!empty($filter)) {
-			if (!preg_match('/^\s*AND/i', $filter)) {
-				$sql .= " AND "; // For backward compatibility
+
+		$filtermin = $filter;
+
+		// Manage filter
+		$errormessage = '';
+		$tmpsql = forgeSQLFromUniversalSearchCriteria($filtermin, $errormessage);
+		if ($errormessage) {
+			if (!preg_match('/^\s*AND/i', $filtermin)) {
+				$sql .= " AND ";
 			}
-			$sql .= $filter;
+			$sql .= $filtermin;
+
+			$filtermin = '';
+		} else {
+			$sql .= $tmpsql;
 		}
+
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= " AND te.".$tmparray[0]." = ".($tmparray[1] == "societe" ? "s" : "parenttable").".rowid"; // If we need to link to this table to limit select to entity
@@ -3861,10 +3879,10 @@ abstract class CommonObject
 
 				if ($forcedroundingmode == '1') {	// Check if we need adjustment onto line for vat. TODO This works on the company currency but not on foreign currency
 					$tmpvat = price2num($total_ht_by_vats[$obj->vatrate] * $obj->vatrate / 100, 'MT', 1);
-					$diff = price2num($total_tva_by_vats[$obj->vatrate] - $tmpvat, 'MT', 1);
+					$diff = price2num($total_tva_by_vats[$obj->vatrate] - (float) $tmpvat, 'MT', 1);
 					//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
 					if ($diff) {
-						if (abs($diff) > (10 * pow(10, -1 * getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 0)))) {
+						if (abs((float) $diff) > (10 * pow(10, -1 * getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 0)))) {
 							// If error is more than 10 times the accuracy of rounding. This should not happen.
 							$errmsg = 'A rounding difference was detected into TOTAL but is too high to be corrected. Some data in your lines may be corrupted. Try to edit each line manually to fix this before restarting.';
 							dol_syslog($errmsg, LOG_WARNING);
@@ -3872,7 +3890,7 @@ abstract class CommonObject
 							$error++;
 							break;
 						}
-						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - $diff).", total_ttc = ".price2num($obj->total_ttc - $diff)." WHERE rowid = ".((int) $obj->rowid);
+						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - (float) $diff).", total_ttc = ".price2num($obj->total_ttc - (float) $diff)." WHERE rowid = ".((int) $obj->rowid);
 						dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
 
 						$resqlfix = $this->db->query($sqlfix);
@@ -3881,10 +3899,10 @@ abstract class CommonObject
 							dol_print_error($this->db, 'Failed to update line');
 						}
 
-						$this->total_tva = (float) price2num($this->total_tva - $diff, '', 1);
-						$this->total_ttc = (float) price2num($this->total_ttc - $diff, '', 1);
-						$total_tva_by_vats[$obj->vatrate] = (float) price2num($total_tva_by_vats[$obj->vatrate] - $diff, '', 1);
-						$total_ttc_by_vats[$obj->vatrate] = (float) price2num($total_ttc_by_vats[$obj->vatrate] - $diff, '', 1);
+						$this->total_tva = (float) price2num($this->total_tva - (float) $diff, '', 1);
+						$this->total_ttc = (float) price2num($this->total_ttc - (float) $diff, '', 1);
+						$total_tva_by_vats[$obj->vatrate] = (float) price2num($total_tva_by_vats[$obj->vatrate] - (float) $diff, '', 1);
+						$total_ttc_by_vats[$obj->vatrate] = (float) price2num($total_ttc_by_vats[$obj->vatrate] - (float) $diff, '', 1);
 					}
 				}
 
@@ -5502,7 +5520,7 @@ abstract class CommonObject
 	 *    Delete a link to resource line
 	 *
 	 *    @param	int		$rowid			Id of resource line to delete
-	 *    @param	int		$element		element name (for trigger) TODO: use $this->element into commonobject class
+	 *    @param	string	$element		element name (for trigger) TODO: use $this->element into commonobject class
 	 *    @param	int		$notrigger		Disable all triggers
 	 *    @return   int						>0 if OK, <0 if KO
 	 */
@@ -7269,7 +7287,7 @@ abstract class CommonObject
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
-				$out = $doleditor->Create(1, '', true, '', '', '', $morecss);
+				$out = (string) $doleditor->Create(1, '', true, '', '', '', $morecss);
 			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
@@ -7277,7 +7295,7 @@ abstract class CommonObject
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor') && $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, '90%');
-				$out = $doleditor->Create(1, '', true, '', '', $moreparam, $morecss);
+				$out = (string) $doleditor->Create(1, '', true, '', '', $moreparam, $morecss);
 			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
@@ -7413,7 +7431,7 @@ abstract class CommonObject
 
 						// current object id can be use into filter
 						if (strpos($InfoFieldList[4], '$ID$') !== false && !empty($objectid)) {
-							$InfoFieldList[4] = str_replace('$ID$', $objectid, $InfoFieldList[4]);
+							$InfoFieldList[4] = str_replace('$ID$', (string) $objectid, $InfoFieldList[4]);
 						} else {
 							$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 						}
@@ -7592,7 +7610,7 @@ abstract class CommonObject
 
 						// current object id can be use into filter
 						if (strpos($InfoFieldList[4], '$ID$') !== false && !empty($objectid)) {
-							$InfoFieldList[4] = str_replace('$ID$', $objectid, $InfoFieldList[4]);
+							$InfoFieldList[4] = str_replace('$ID$', (string) $objectid, $InfoFieldList[4]);
 						} else {
 							$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 						}
@@ -10135,7 +10153,7 @@ abstract class CommonObject
 							}
 						} else {
 							$error++;
-							$this->errors[] = "You defined a cascade delete on an object $childObject but there is no method deleteByParentField for it";
+							$this->errors[] = "You defined a cascade delete on an object $className/$this->id but there is no method deleteByParentField for it";
 							break;
 						}
 					} else {
@@ -10376,6 +10394,9 @@ abstract class CommonObject
 
 			if (!$error) {
 				$this->status = $status;
+				if (property_exists($this, 'statut')) {	// For backward compatibility
+					$this->statut = $status;
+				}
 				$this->db->commit();
 				return 1;
 			} else {

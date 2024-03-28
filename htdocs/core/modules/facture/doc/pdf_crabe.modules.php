@@ -11,6 +11,7 @@
  * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2022		Anthony Berton		<anthony.berton@bb2a.fr>
  * Copyright (C) 2022		Charlene Benke		<charlene@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,9 +217,9 @@ class pdf_crabe extends ModelePDFFactures
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
-		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
+		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
-			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
 			$outputlangsbis->loadLangs(array("main", "bills", "products", "dict", "companies"));
 		}
 
@@ -1354,9 +1355,9 @@ class pdf_crabe extends ModelePDFFactures
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$outputlangsbis = null;
-		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
+		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
-			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
 			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
 			$default_font_size--;
 		}
@@ -1413,8 +1414,8 @@ class pdf_crabe extends ModelePDFFactures
 							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 							$tvacompl = '';
-							if (preg_match('/\*/', $tvakey)) {
-								$tvakey = str_replace('*', '', $tvakey);
+							if (preg_match('/\*/', (string) $tvakey)) {
+								$tvakey = str_replace('*', '', (string) $tvakey);
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
 
@@ -1447,8 +1448,8 @@ class pdf_crabe extends ModelePDFFactures
 							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 							$tvacompl = '';
-							if (preg_match('/\*/', $tvakey)) {
-								$tvakey = str_replace('*', '', $tvakey);
+							if (preg_match('/\*/', (string) $tvakey)) {
+								$tvakey = str_replace('*', '', (string) $tvakey);
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
 							$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT2", $mysoc->country_code) : '');
@@ -1511,8 +1512,8 @@ class pdf_crabe extends ModelePDFFactures
 							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 							$tvacompl = '';
-							if (preg_match('/\*/', $tvakey)) {
-								$tvakey = str_replace('*', '', $tvakey);
+							if (preg_match('/\*/', (string) $tvakey)) {
+								$tvakey = str_replace('*', '', (string) $tvakey);
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
 							$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).' ';
@@ -1543,8 +1544,8 @@ class pdf_crabe extends ModelePDFFactures
 						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 						$tvacompl = '';
-						if (preg_match('/\*/', $tvakey)) {
-							$tvakey = str_replace('*', '', $tvakey);
+						if (preg_match('/\*/', (string) $tvakey)) {
+							$tvakey = str_replace('*', '', (string) $tvakey);
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 						}
 						$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
@@ -1679,8 +1680,8 @@ class pdf_crabe extends ModelePDFFactures
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		float|int	$tab_top		Top position of table
+	 *   @param		float|int	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title

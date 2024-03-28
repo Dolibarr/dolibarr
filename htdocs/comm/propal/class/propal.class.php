@@ -308,7 +308,7 @@ class Propal extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -413,8 +413,8 @@ class Propal extends CommonObject
 	 *  $this->thirdparty should be loaded
 	 *
 	 * 	@param  int		$idproduct       	Product Id to add
-	 * 	@param  int		$qty             	Quantity
-	 * 	@param  int		$remise_percent  	Discount effected on Product
+	 * 	@param  float	$qty             	Quantity
+	 * 	@param  float	$remise_percent  	Discount effected on Product
 	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 *
 	 *	TODO	Replace calls to this function by generation object Ligne
@@ -554,7 +554,7 @@ class Propal extends CommonObject
 	 * 		@param    	string		$desc				Description of line
 	 * 		@param    	float		$pu_ht				Unit price
 	 * 		@param    	float		$qty             	Quantity
-	 * 		@param    	float		$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
+	 * 		@param    	float|string	$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
 	 * 		@param		float		$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
 	 *  	@param		float		$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *		@param    	int			$fk_product      	Product/Service ID predefined
@@ -612,7 +612,7 @@ class Propal extends CommonObject
 			$pu_ht = price2num($pu_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
 			$pu_ttc = price2num($pu_ttc);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
 			}
 			$txlocaltax1 = price2num($txlocaltax1);
@@ -694,9 +694,9 @@ class Propal extends CommonObject
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
 			$remise = 0;
-			if ($remise_percent > 0) {
-				$remise = round(($pu * $remise_percent / 100), 2);
-				$price = $pu - $remise;
+			if ((float) $remise_percent > 0) {
+				$remise = round(((float) $pu * (float) $remise_percent / 100), 2);
+				$price = (float) $pu - $remise;
 			}
 
 			// Insert line
@@ -805,7 +805,7 @@ class Propal extends CommonObject
 	 *  @param      float		$pu		     	  	Unit price (HT or TTC depending on price_base_type)
 	 *  @param      float		$qty            	Quantity
 	 *  @param      float		$remise_percent  	Discount on line
-	 *  @param      float		$txtva	          	VAT Rate (Can be '1.23' or '1.23 (ABC)')
+	 *  @param      float|string	$txtva	          	VAT Rate (Can be '1.23' or '1.23 (ABC)')
 	 * 	@param	  	float		$txlocaltax1		Local tax 1 rate
 	 *  @param	  	float		$txlocaltax2		Local tax 2 rate
 	 *  @param      string		$desc            	Description
@@ -840,7 +840,7 @@ class Propal extends CommonObject
 		$qty = price2num($qty);
 		$pu = price2num($pu);
 		$pu_ht_devise = price2num($pu_ht_devise);
-		if (!preg_match('/\((.*)\)/', $txtva)) {
+		if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 			$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 		}
 		$txlocaltax1 = price2num($txlocaltax1);
@@ -901,9 +901,9 @@ class Propal extends CommonObject
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
 			$remise = 0;
-			if ($remise_percent > 0) {
-				$remise = round(($pu * $remise_percent / 100), 2);
-				$price = $pu - $remise;
+			if ((float) $remise_percent > 0) {
+				$remise = round(((float) $pu * (float) $remise_percent / 100), 2);
+				$price = (float) $pu - $remise;
 			}
 
 			//Fetch current line from the database and then clone the object and set it in $oldline property
@@ -3615,7 +3615,7 @@ class Propal extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/propale/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if (!$mybool) {
@@ -3680,7 +3680,7 @@ class Propal extends CommonObject
 				$langs->load('project');
 				if (empty($this->project)) {
 					$res = $this->fetch_project();
-					if ($res > 0) {
+					if ($res > 0 && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
 					}
 				}
@@ -4528,10 +4528,8 @@ class PropaleLigne extends CommonObjectLine
 		}
 		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
 		$sql .= ", buy_price_ht=".price2num($this->pa_ht);
-		if (strlen($this->special_code)) {
-			$sql .= ", special_code=".$this->special_code;
-		}
-		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
+		$sql .= ", special_code=".((int) $this->special_code);
+		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? (int) $this->fk_parent_line : "null");
 		if (!empty($this->rang)) {
 			$sql .= ", rang=".((int) $this->rang);
 		}

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2020-2024 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,6 +187,8 @@ if ($objecttype) {
 		print 'Failed to load class for type '.$objecttype.'. Class path not found.';
 	}
 }
+
+'@phan-var-force CommonObject $object';
 
 // Security check
 $socid = 0;
@@ -390,6 +393,7 @@ if ($action == 'viewgraph') {
 // Get all possible values of fields when a 'group by' is set, and save this into $arrayofvaluesforgroupby
 // $arrayofvaluesforgroupby will be used to forge lael of each grouped series
 if (is_array($search_groupby) && count($search_groupby)) {
+	$fieldtocount = '';
 	foreach ($search_groupby as $gkey => $gval) {
 		$gvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $gval);
 

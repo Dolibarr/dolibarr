@@ -8,6 +8,7 @@
  * Copyright (C) 2017       Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2023  Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2021       Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -872,7 +873,7 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 
 $title = $langs->trans("ThirdParty");
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name." - ".$langs->trans('PaymentInformation');
 }
 $help_url = '';
@@ -1974,7 +1975,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 
 	// Show fields of bank account
 	$bankaccount = $companybankaccount;
-	// Code here is similare than into bank.php for users
+	// Code here is similar as in bank.php for users
 	foreach ($bankaccount->getFieldsToShow(1) as $val) {
 		$require = false;
 		$tooltip = '';

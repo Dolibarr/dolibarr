@@ -520,6 +520,7 @@ if (empty($reshook)) {
 		}
 	}
 
+	// If we add a line by click on product (invoice exists here because it was created juste before if it didn't exists)
 	if ($action == "addline" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		$prod = new Product($db);
 		$prod->fetch($idproduct);
@@ -567,6 +568,7 @@ if (empty($reshook)) {
 				echo "</script>";
 
 				if ($nbofsuggested > 0) {
+					$quantityToBeDelivered = 0;
 					echo "<center>".$langs->trans("SearchIntoBatch").": <b> $nbofsuggested </b></center><br><table>";
 					foreach ($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch as $dbatch) {	// $dbatch is instance of Productbatch
 						$batchStock = + $dbatch->qty; // To get a numeric
@@ -710,6 +712,7 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
+	// If we add a line by submitting freezone form (invoice exists here because it was created juste before if it didn't exists)
 	if ($action == "freezone" && $user->hasRight('takepos', 'run')) {
 		$customer = new Societe($db);
 		$customer->fetch($invoice->socid);
@@ -727,7 +730,10 @@ if (empty($reshook)) {
 		$localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
 		$localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
 
-		$invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', getDolGlobalInt('TAKEPOS_DISCOUNT_TTC') ? ($number >= 0 ? 'HT' : 'TTC') : (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT') ? 'HT' : 'TTC'), $number, 0, -1, 0, '', 0, 0, null, '', '', 0, 100, '', null, 0);
+		$res = $invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', getDolGlobalInt('TAKEPOS_DISCOUNT_TTC') ? ($number >= 0 ? 'HT' : 'TTC') : (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT') ? 'HT' : 'TTC'), $number, 0, -1, 0, '', 0, 0, null, '', '', 0, 100, '', null, 0);
+		if ($res < 0) {
+			dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+		}
 		$invoice->fetch($placeid);
 	}
 
@@ -1506,7 +1512,7 @@ if (!empty($conf->use_javascript_ajax)) {
 
 $usediv = (GETPOST('format') == 'div');
 
-print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' usediv='.$usediv.', mobilepage='.(empty($mobilepage) ? '' : $mobilepage).' $_SESSION["basiclayout"]='.(empty($_SESSION["basiclayout"]) ? '' : $_SESSION["basiclayout"]).' conf TAKEPOS_BAR_RESTAURANT='.getDolGlobalString('TAKEPOS_BAR_RESTAURANT').' -->'."\n";
+print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' usediv='.json_encode($usediv).', mobilepage='.(empty($mobilepage) ? '' : $mobilepage).' $_SESSION["basiclayout"]='.(empty($_SESSION["basiclayout"]) ? '' : $_SESSION["basiclayout"]).' conf TAKEPOS_BAR_RESTAURANT='.getDolGlobalString('TAKEPOS_BAR_RESTAURANT').' -->'."\n";
 print '<div class="div-table-responsive-no-min invoice">';
 if ($usediv) {
 	print '<div id="tablelines">';
@@ -1560,6 +1566,9 @@ if ($reshook < 0) {
 print $hookmanager->resPrint;
 
 if (empty($_SESSION["basiclayout"]) || $_SESSION["basiclayout"] != 1) {
+	if (getDolGlobalInt("TAKEPOS_SHOW_SUBPRICE")) {
+		print '<td class="linecolqty right">'.$langs->trans('PriceUHT').'</td>';
+	}
 	print '<td class="linecolqty right">'.$langs->trans('ReductionShort').'</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 	if (getDolGlobalString('TAKEPOS_SHOW_HT')) {
@@ -1604,6 +1613,7 @@ if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$categorie = new Categorie($db);
 		$categories = $categorie->get_full_arbo('product');
+		$htmlforlines = '';
 		foreach ($categories as $row) {
 			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 				$htmlforlines .= '<div class="leftcat"';
@@ -1817,6 +1827,9 @@ if ($placeid > 0) {
 				}
 				$htmlforlines .= $hookmanager->resPrint;
 
+				if (getDolGlobalInt("TAKEPOS_SHOW_SUBPRICE")) {
+					$htmlforlines .= '<td class="right">'.price($line->subprice).'</td>';
+				}
 				$htmlforlines .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
 				$htmlforlines .= '<td class="right">';
 				if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'lire')) {
@@ -1832,8 +1845,11 @@ if ($placeid > 0) {
 						$sql .= " AND ps.fk_product = ".((int) $line->fk_product);
 						$resql = $db->query($sql);
 						if ($resql) {
+							$stock_real = 0;
 							$obj = $db->fetch_object($resql);
-							$stock_real = price2num($obj->reel, 'MS');
+							if ($obj) {
+								$stock_real = price2num($obj->reel, 'MS');
+							}
 							$htmlforlines .= $line->qty;
 							if ($line->qty && $line->qty > $stock_real) {
 								$htmlforlines .= '<span style="color: var(--amountremaintopaycolor)">';

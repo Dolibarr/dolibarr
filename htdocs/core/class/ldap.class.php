@@ -27,6 +27,7 @@
  *  Note:
  *  LDAP_ESCAPE_FILTER is to escape char  array('\\', '*', '(', ')', "\x00")
  *  LDAP_ESCAPE_DN is to escape char  array('\\', ',', '=', '+', '<', '>', ';', '"', '#')
+ *  @phan-file-suppress PhanTypeMismatchArgumentInternal (notifications concern 'resource)
  */
 
 /**

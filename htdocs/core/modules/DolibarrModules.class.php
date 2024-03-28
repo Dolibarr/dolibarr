@@ -696,7 +696,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$pathoffile = $this->getDescLongReadmeFound();
 
 		if ($pathoffile) {     // Mostly for external modules
-			$content = file_get_contents($pathoffile);
+			$content = file_get_contents($pathoffile, false, null, 0, 1024 * 1024);	// Max size loaded 1Mb
 
 			if ((float) DOL_VERSION >= 6.0) {
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
@@ -806,6 +806,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			} else {
 				$content = nl2br($content);
 			}
+		} else {
+			$content = '';
 		}
 
 		return $content;
@@ -1124,7 +1126,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 *
 	 * @param  	string 	$reldir 			Relative directory where to scan files. Example: '/install/mysql/' or '/module/sql/'
 	 * @param	string	$onlywithsuffix		Only with the defined suffix
-	 * @return 	int             			Return integer <=0 if KO, >0 if OK
+	 * @return 	int<0,1>             			Return integer <=0 if KO, >0 if OK
 	 */
 	protected function _load_tables($reldir, $onlywithsuffix = '')
 	{
@@ -1133,6 +1135,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$error = 0;
 		$dirfound = 0;
+		$ok = 1;
 
 		if (empty($reldir)) {
 			return 1;
@@ -1140,9 +1143,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-		$ok = 1;
 		foreach ($conf->file->dol_document_root as $dirroot) {
-			if ($ok) {
+			if ($ok == 1) {
 				$dirsql = $dirroot.$reldir;
 				$ok = 0;
 
@@ -1293,7 +1295,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		}
 
 		if (!$dirfound) {
-			dol_syslog("A module ask to load sql files into ".$reldir." but this directory was not found.", LOG_WARNING);
+			dol_syslog("A module wants to load sql files from ".$reldir." but this directory was not found.", LOG_WARNING);
 		}
 		return $ok;
 	}

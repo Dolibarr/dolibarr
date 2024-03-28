@@ -117,7 +117,7 @@ class Cronjob extends CommonObject
 	public $lastoutput;
 
 	/**
-	 * @var string 			Unit frequency of job execution
+	 * @var string 			Unit frequency of job execution ('60', '86400', 'd', 'm', ...)
 	 */
 	public $unitfrequency;
 
@@ -729,7 +729,7 @@ class Cronjob extends CommonObject
 			$this->note_private = trim($this->note_private);
 		}
 		if (isset($this->nbrun)) {
-			$this->nbrun = (is_numeric($this->nbrun)) ? (int) trim($this->nbrun) : 0;
+			$this->nbrun = (is_numeric($this->nbrun)) ? (int) trim((string) $this->nbrun) : 0;
 		}
 		if (isset($this->libname)) {
 			$this->libname = trim($this->libname);
@@ -957,7 +957,7 @@ class Cronjob extends CommonObject
 		$this->id = 0;
 		$this->ref = '';
 		$this->entity = 0;
-		$this->tms = dol_now();
+		$this->date_modification = dol_now();
 		$this->datec = '';
 		$this->label = '';
 		$this->jobtype = '';
@@ -976,7 +976,7 @@ class Cronjob extends CommonObject
 		$this->datelastresult = '';
 		$this->lastoutput = '';
 		$this->lastresult = '';
-		$this->unitfrequency = '';
+		$this->unitfrequency = '86400';
 		$this->frequency = 0;
 		$this->status = 0;
 		$this->processing = 0;
@@ -1473,27 +1473,27 @@ class Cronjob extends CommonObject
 
 		if (empty($this->datenextrun)) {
 			if (empty($this->datestart)) {
-				if ($this->unitfrequency == 2678400) {
+				if (!is_numeric($this->frequency) || (int) $this->unitfrequency == 2678400) {
 					$this->datenextrun = dol_time_plus_duree($now, $this->frequency, 'm');
 				} else {
-					$this->datenextrun = $now + ($this->frequency * $this->unitfrequency);
+					$this->datenextrun = $now + ($this->frequency * (int) $this->unitfrequency);
 				}
 			} else {
-				if ($this->unitfrequency == 2678400) {
+				if (!is_numeric($this->frequency) || (int) $this->unitfrequency == 2678400) {
 					$this->datenextrun = dol_time_plus_duree($this->datestart, $this->frequency, 'm');
 				} else {
-					$this->datenextrun = $this->datestart + ($this->frequency * $this->unitfrequency);
+					$this->datenextrun = $this->datestart + ($this->frequency * (int) $this->unitfrequency);
 				}
 			}
 		}
 
-		if ($this->datenextrun < $now && $this->frequency > 0 && $this->unitfrequency > 0) {
+		if ($this->datenextrun < $now && $this->frequency > 0 && !empty($this->unitfrequency)) {
 			// Loop until date is after future
 			while ($this->datenextrun < $now) {
-				if ($this->unitfrequency == 2678400) {
+				if (!is_numeric($this->unitfrequency) || (int) $this->unitfrequency == 2678400 || (int) $this->unitfrequency <= 0) {
 					$this->datenextrun = dol_time_plus_duree($this->datenextrun, $this->frequency, 'm');
 				} else {
-					$this->datenextrun += ($this->frequency * $this->unitfrequency);
+					$this->datenextrun += ($this->frequency * (int) $this->unitfrequency);
 				}
 			}
 		} else {

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021 NextGestion  <contact@nextgestion.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +92,7 @@ class PartnershipUtils
 		dol_syslog(get_class($this)."::doCancelStatusOfMemberPartnership cancel expired partnerships with grace delay of ".$gracedelay);
 
 		$now = dol_now();
-		$datetotest = dol_time_plus_duree($now, -1 * abs($gracedelay), 'd');
+		$datetotest = dol_time_plus_duree($now, -1 * abs((float) $gracedelay), 'd');
 
 		$this->db->begin();
 
@@ -366,8 +367,8 @@ class PartnershipUtils
 					if (!$backlinkfound) {
 						$tmpcount = $object->count_last_url_check_error + 1;
 
-						$nbminbacklinkerrorforcancel = getDolGlobalString('PARTNERSHIP_MIN_BACKLINK_ERROR_FOR_CANCEL', 3);
-						$nbmaxbacklinkerrorforcancel = getDolGlobalString('PARTNERSHIP_MAX_BACKLINK_ERROR_FOR_CANCEL', $nbminbacklinkerrorforcancel + 2);
+						$nbminbacklinkerrorforcancel = (int) getDolGlobalString('PARTNERSHIP_MIN_BACKLINK_ERROR_FOR_CANCEL', 3);
+						$nbmaxbacklinkerrorforcancel = (int) getDolGlobalString('PARTNERSHIP_MAX_BACKLINK_ERROR_FOR_CANCEL', (int) $nbminbacklinkerrorforcancel + 2);
 
 						// If $nbminbacklinkerrorforemail = 0, no autoemail
 						if ($nbminbacklinkerrorforcancel > 0) {

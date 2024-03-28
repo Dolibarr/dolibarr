@@ -172,7 +172,7 @@ if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned')
 	$idtoremove = GETPOST('removedassigned');
 
 	if (!empty($_SESSION['assignedtouser'])) {
-		$tmpassigneduserids = json_decode($_SESSION['assignedtouser'], 1);
+		$tmpassigneduserids = json_decode($_SESSION['assignedtouser'], true);
 	} else {
 		$tmpassigneduserids = array();
 	}
@@ -199,7 +199,7 @@ if (empty($reshook) && (GETPOST('removedassignedresource') || GETPOST('removedas
 	$idtoremove = GETPOST('removedassignedresource');
 
 	if (!empty($_SESSION['assignedtoresource'])) {
-		$tmpassignedresourceids = json_decode($_SESSION['assignedtoresource'], 1);
+		$tmpassignedresourceids = json_decode($_SESSION['assignedtoresource'], true);
 	} else {
 		$tmpassignedresourceids = array();
 	}
@@ -495,10 +495,10 @@ if (empty($reshook) && $action == 'add') {
 			$selectedrecurrulefreq = $reg1[1];
 		}
 		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY(\d+)/i', $object->recurrule, $reg2)) {
-			$selectedrecurrulebymonthday = $reg2[1];
+			$selectedrecurrulebymonthday = (int) $reg2[1];
 		}
 		if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg3)) {
-			$selectedrecurrulebyday = $reg3[1];
+			$selectedrecurrulebyday = (int) $reg3[1];
 		}
 
 		// Is event recurrent ?
@@ -1300,10 +1300,10 @@ if ($action == 'create') {
 			$selectedrecurrulefreq = $reg[1];
 		}
 		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY(\d+)/i', $object->recurrule, $reg)) {
-			$selectedrecurrulebymonthday = $reg[1];
+			$selectedrecurrulebymonthday = (int) $reg[1];
 		}
 		if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg)) {
-			$selectedrecurrulebyday = $reg[1];
+			$selectedrecurrulebyday = (int) $reg[1];
 		}
 
 		print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq, 0, 0, 0, '', 0, 0, 0, '', 'marginrightonly');
@@ -1916,9 +1916,9 @@ if ($id > 0) {
 		*/
 		print '</td><td td colspan="3">';
 		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
-		print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
+		print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span> ';
-		print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
+		print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		print '</td></tr>';
 
 		print '<tr><td class="">&nbsp;</td><td></td></tr>';

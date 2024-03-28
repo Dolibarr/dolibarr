@@ -55,7 +55,7 @@ $mesCasesCochees = GETPOST('toselect', 'array');
 
 // Search Getpost
 $search_societe = GETPOST('search_societe', 'alpha');
-$search_lineid = GETPOSTINT('search_lineid');
+$search_lineid = GETPOST('search_lineid', 'alpha');		// Can be '> 100'
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_invoice = GETPOST('search_invoice', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
@@ -452,6 +452,7 @@ if ($result) {
 	);
 	//if ($user->hasRight('mymodule', 'supprimer')) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+	$massactionbutton = '';
 	if ($massaction !== 'set_default_account') {
 		$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
 	}

@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
 
@@ -77,15 +79,14 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	/**
 	 * 	Return if configuration is valid
 	 *
-	 * 	@return	array		Array of errors. Empty array if ok.
+	 * 	@return	bool		True if ok.
 	 */
 	public function checkConfiguration()
 	{
-		global $conf, $langs;
+		global $langs;
 
-		$errors = array();
+		$facility = constant(getDolGlobalString('SYSLOG_FACILITY'));
 
-		$facility = constant($conf->global->SYSLOG_FACILITY);
 		if ($facility) {
 			// Only LOG_USER supported on Windows
 			if (!empty($_SERVER["WINDIR"])) {
@@ -93,11 +94,11 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 			}
 
 			dol_syslog("admin/syslog: facility ".$facility);
+			return true;
 		} else {
-			$errors[] = $langs->trans("ErrorUnknownSyslogConstant", $facility);
+			$this->errors[] = $langs->trans("ErrorUnknownSyslogConstant", $facility);
+			return false;
 		}
-
-		return $errors;
 	}
 
 	/**

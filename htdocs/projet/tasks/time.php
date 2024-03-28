@@ -81,8 +81,8 @@ $search_duration = GETPOSTINT('search_duration');
 $search_value = GETPOSTINT('search_value');
 $search_task_ref = GETPOST('search_task_ref', 'alpha');
 $search_task_label = GETPOST('search_task_label', 'alpha');
-$search_user = GETPOSTINT('search_user');
-$search_valuebilled = GETPOSTINT('search_valuebilled');
+$search_user = GETPOST('search_user', 'intcomma');
+$search_valuebilled = GETPOST('search_valuebilled', 'intcomma');
 $search_product_ref = GETPOST('search_product_ref', 'alpha');
 $search_company = GETPOST('$search_company', 'alpha');
 $search_company_alias = GETPOST('$search_company_alias', 'alpha');
@@ -1288,6 +1288,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
 
 		$arrayfields = dol_sort_array($arrayfields, 'position');
+		'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 		$param = '';
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {

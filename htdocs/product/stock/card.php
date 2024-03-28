@@ -8,6 +8,7 @@
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2022-2023	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,7 +165,7 @@ if (empty($reshook)) {
 					$categories = GETPOST('categories', 'array');
 					$object->setCategories($categories);
 					if (!empty($backtopage)) {
-						$backtopage = str_replace("__ID__", $id, $backtopage);
+						$backtopage = str_replace("__ID__", (string) $id, $backtopage);
 						header("Location: ".$backtopage);
 						exit;
 					} else {

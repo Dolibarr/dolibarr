@@ -319,6 +319,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
 $socid = GETPOSTINT('socid');
@@ -916,10 +917,10 @@ foreach ($searchCategorySupplierList as $searchCategorySupplier) {
 	$param .= "&search_category_supplier_list[]=".urlencode($searchCategorySupplier);
 }
 if ($search_sale > 0) {
-	$param .= '&search_sale='.urlencode((string) ($search_sale));
+	$param .= '&search_sale='.((int) $search_sale);
 }
 if ($search_id > 0) {
-	$param .= "&search_id=".urlencode($search_id);
+	$param .= "&search_id=".((int) $search_id);
 }
 if ($search_nom != '') {
 	$param .= "&search_nom=".urlencode($search_nom);

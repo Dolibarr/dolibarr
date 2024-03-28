@@ -173,22 +173,22 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	}
 	//Change the behavior of PHP over data-interval when the result of this function is Feb 29 (non-leap years), 30 or Feb 31 (so php returns March 1, 2 or 3 respectively)
 	if ($ruleforendofmonth == 1 && $duration_unit == 'm') {
-		$timeyear = dol_print_date($time, '%Y');
-		$timemonth = dol_print_date($time, '%m');
+		$timeyear = (int) dol_print_date($time, '%Y');
+		$timemonth = (int) dol_print_date($time, '%m');
 		$timetotalmonths = (($timeyear * 12) + $timemonth);
 
 		$monthsexpected = ($timetotalmonths + $duration_value);
 
 		$newtime = $date->getTimestamp();
 
-		$newtimeyear = dol_print_date($newtime, '%Y');
-		$newtimemonth = dol_print_date($newtime, '%m');
-		$newtimetotalmonths = (($newtimeyear * 12) + $newtimemonth);
+		$newtimeyear = (int) dol_print_date($newtime, '%Y');
+		$newtimemonth = (int) dol_print_date($newtime, '%m');
+		$newtimetotalmonths = (($newtimeyear * 12) +  $newtimemonth);
 
 		if ($monthsexpected < $newtimetotalmonths) {
-			$newtimehours = dol_print_date($newtime, '%H');
-			$newtimemins = dol_print_date($newtime, '%M');
-			$newtimesecs = dol_print_date($newtime, '%S');
+			$newtimehours = (int) dol_print_date($newtime, '%H');
+			$newtimemins = (int) dol_print_date($newtime, '%M');
+			$newtimesecs = (int) dol_print_date($newtime, '%S');
 
 			$datelim = dol_mktime($newtimehours, $newtimemins, $newtimesecs, $newtimemonth, 1, $newtimeyear);
 			$datelim -= (3600 * 24);
@@ -688,8 +688,8 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
 	//print 'start_week='.$start_week.' tmparray[wday]='.$tmparray['wday'].' day offset='.$days.' seconds offset='.$seconds.'<br>';
 
 	//Get first day of week
-	$tmpdaytms = date($tmparray[0]) - $seconds; // $tmparray[0] is day of parameters
-	$tmpday = date("d", $tmpdaytms);
+	$tmpdaytms = (int) date($tmparray[0]) - $seconds; // $tmparray[0] is day of parameters
+	$tmpday = (int) date("d", $tmpdaytms);
 
 	//Check first day of week is in same month than current day or not
 	if ($tmpday > $day) {
@@ -795,9 +795,9 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$ferie = false;
 		$specialdayrule = array();
 
-		$jour  = gmdate("d", $timestampStart);
-		$mois  = gmdate("m", $timestampStart);
-		$annee = gmdate("Y", $timestampStart);
+		$jour  = (int) gmdate("d", $timestampStart);
+		$mois  = (int) gmdate("m", $timestampStart);
+		$annee = (int) gmdate("Y", $timestampStart);
 
 		//print "jour=".$jour." month=".$mois." year=".$annee." includesaturday=".$includesaturday." includesunday=".$includesunday."\n";
 
@@ -1005,7 +1005,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
  *	@param	   int			$timestampEnd       Timestamp end UTC
  *	@param     int			$lastday            Last day is included, 0: no, 1:yes
  *	@return    int								Number of days
- *  @seealso num_public_holiday(), num_open_day()
+ *  @see also num_public_holiday(), num_open_day()
  */
 function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 {
@@ -1016,6 +1016,8 @@ function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 			$bit = 1;
 		}
 		$nbjours = (int) floor(($timestampEnd - $timestampStart) / (60 * 60 * 24)) + 1 - $bit;
+	} else {
+		$nbjours = 0;
 	}
 	//print ($timestampEnd - $timestampStart) - $lastday;
 	return $nbjours;
@@ -1089,7 +1091,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
  *
  *	@param	Translate	$outputlangs	Object langs
  *  @param	int			$short			0=Return long label, 1=Return short label
- *	@return array						Month string or array if selected < 0
+ *	@return array<int<1,12>,string>		String of months in normal or short string format
  */
 function monthArray($outputlangs, $short = 0)
 {
@@ -1132,7 +1134,7 @@ function monthArray($outputlangs, $short = 0)
  *
  *	@param	int 		$month			Month number
  *  @param	int			$year			Year number
- *	@return array						Week numbers
+ *	@return string[]					Week numbers (week 1 is '01')
  */
 function getWeekNumbersOfMonth($month, $year)
 {
@@ -1147,9 +1149,9 @@ function getWeekNumbersOfMonth($month, $year)
 /**
  *	Return array of first day of weeks.
  *
- *	@param	array 		$TWeek			array of week numbers
+ *	@param	string[] 	$TWeek			array of week numbers (week 1 must be '01')
  *  @param	int			$year			Year number
- *	@return array						First day of week
+ *	@return string[]					First day of week (day 1 is '01')
  */
 function getFirstDayOfEachWeek($TWeek, $year)
 {
@@ -1165,9 +1167,9 @@ function getFirstDayOfEachWeek($TWeek, $year)
 /**
  *	Return array of last day of weeks.
  *
- *	@param	array 		$TWeek			array of week numbers
+ *	@param	string[] 	$TWeek			array of week numbers
  *  @param	int			$year			Year number
- *	@return array						Last day of week
+ *	@return string[]					Last day of week (day 1 is '01')
  */
 function getLastDayOfEachWeek($TWeek, $year)
 {
@@ -1183,11 +1185,11 @@ function getLastDayOfEachWeek($TWeek, $year)
  *	@param	int 		$day			Day number
  *	@param	int 		$month			Month number
  *  @param	int			$year			Year number
- *	@return int							Week number
+ *	@return string						Week number as two digits (week 1 is '01')
  */
 function getWeekNumber($day, $month, $year)
 {
 	$date = new DateTime($year.'-'.$month.'-'.$day);
 	$week = $date->format("W");
-	return (int) $week;
+	return $week;
 }

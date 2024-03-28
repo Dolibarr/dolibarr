@@ -7,6 +7,7 @@
  * Copyright (C) 2015-2016  Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,19 +85,21 @@ if (empty($account->userid)) {
 }
 
 // Define value to know what current user can do on users
-$canadduser = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write);
-$canreaduser = (!empty($user->admin) || $user->rights->user->user->lire || $user->rights->hrm->read_personal_information->read);
-$permissiontoaddbankaccount = ($user->hasRight('salaries', 'write') || $user->hasRight('hrm', 'employee', 'write') || $user->hasRight('user', 'creer'));
+$selfpermission = ($user->id == $id && $user->hasRight('user', 'self', 'creer'));
+$canadduser = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write') );
+$canreaduser = (!empty($user->admin) || $user->hasRight('user', 'user', 'lire') || $user->hasRight('hrm', 'read_personal_information', 'read') );
+$permissiontoaddbankaccount = ($user->hasRight('salaries', 'write') || $user->hasRight('hrm', 'employee', 'write') || $user->hasRight('user', 'user', 'creer') || $selfpermission);
 $permissiontoreadhr = $user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write');
 $permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'write');
+$permissiontosimpleedit = ($selfpermission || $canadduser);
 
-// Ok if user->hasRight('salaries', 'read') or user->hasRight('hrm', 'read')
+// Ok if user->hasRight('salaries', 'readall') or user->hasRight('hrm', 'read')
 //$result = restrictedArea($user, 'salaries|hrm', $object->id, 'user&user', $feature2);
 $ok = false;
 if ($user->id == $id) {
 	$ok = true; // A user can always read its own card
 }
-if ($user->hasRight('salaries', 'read')) {
+if ($user->hasRight('salaries', 'readall')) {
 	$ok = true;
 }
 if ($user->hasRight('hrm', 'read')) {
@@ -200,7 +203,7 @@ if ($action == 'setbirth' && $canadduser && !$cancel) {
 }
 
 // update personal email
-if ($action == 'setpersonal_email' && $canadduser && !$cancel) {
+if ($action == 'setpersonal_email' && $permissiontosimpleedit && !$cancel) {
 	$object->personal_email = (string) GETPOST('personal_email', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) {
@@ -209,7 +212,7 @@ if ($action == 'setpersonal_email' && $canadduser && !$cancel) {
 }
 
 // update personal mobile
-if ($action == 'setpersonal_mobile' && $canadduser && !$cancel) {
+if ($action == 'setpersonal_mobile' && $permissiontosimpleedit && !$cancel) {
 	$object->personal_mobile = (string) GETPOST('personal_mobile', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) {
@@ -281,7 +284,7 @@ llxHeader('', $title, $help_url);
 
 $head = user_prepare_head($object);
 
-if ($id && $bankid && $action == 'edit' && ($user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'))) {
+if ($id && $bankid && $action == 'edit' && !$cancel && $permissiontoaddbankaccount) {
 	if ($conf->use_javascript_ajax) {
 		print "\n<script>";
 		print 'jQuery(document).ready(function () {
@@ -302,7 +305,7 @@ if ($id && $bankid && $action == 'edit' && ($user->hasRight('user', 'user', 'cre
 	print '<input type="hidden" name="id" value="'.GETPOSTINT("id").'">';
 	print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
-if ($id && $action == 'create' && $user->hasRight('user', 'user', 'creer')) {
+if ($id && $action == 'create' && !$cancel && $permissiontoaddbankaccount) {
 	if ($conf->use_javascript_ajax) {
 		print "\n<script>";
 		print 'jQuery(document).ready(function () {
@@ -492,7 +495,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Personal email
-	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
+	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write') || $permissiontosimpleedit) {
 		print '<tr class="nowrap">';
 		print '<td>';
 		print $form->editfieldkey("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'));
@@ -503,7 +506,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Personal phone
-	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
+	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write') || $permissiontosimpleedit) {
 		print '<tr class="nowrap">';
 		print '<td>';
 		print $form->editfieldkey("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'));
@@ -894,7 +897,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 }
 
 // Edit
-if ($id && ($action == 'edit' || $action == 'create') && $user->hasRight('user', 'user', 'creer')) {
+if ($id && ($action == 'edit' || $action == 'create') && $permissiontoaddbankaccount) {
 	$title = $langs->trans("User");
 	print dol_get_fiche_head($head, 'bank', $title, 0, 'user');
 
@@ -957,7 +960,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->hasRight('user',
 
 	// Show fields of bank account
 	$bankaccount = $account;
-	// Code here is similare than into paymentmodes.php for third-parties
+	// Code here is similar as in paymentmodes.php for third-parties
 	foreach ($bankaccount->getFieldsToShow(1) as $val) {
 		$require = false;
 		$tooltip = '';
@@ -1029,11 +1032,11 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->hasRight('user',
 	print $form->buttonsSaveCancel($action == 'create' ? "Create" : "Modify");
 }
 
-if ($id && $action == 'edit' && $user->hasRight('user', 'user', 'creer')) {
+if ($id && $action == 'edit' && $permissiontoaddbankaccount) {
 	print '</form>';
 }
 
-if ($id && $action == 'create' && $user->hasRight('user', 'user', 'creer')) {
+if ($id && $action == 'create' && $permissiontoaddbankaccount) {
 	print '</form>';
 }
 

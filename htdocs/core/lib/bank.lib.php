@@ -189,7 +189,7 @@ function bank_admin_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @param   Object	$num		val to account statement
+ * @param   string	$num		val to account statement
  * @return  array				Array of tabs to shoc
  */
 function account_statement_prepare_head($object, $num)
@@ -447,7 +447,7 @@ function checkES($IentOfi, $InumCta)
 	$sum = 0;
 
 	for ($i = 2; $i < 10; $i++) {
-		$sum += $values[$i] * substr($IentOfi, $i - 2, 1);
+		$sum += $values[$i] * (int) substr($IentOfi, $i - 2, 1);
 	}
 
 	$key = 11 - $sum % 11;

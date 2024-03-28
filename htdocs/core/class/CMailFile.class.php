@@ -34,6 +34,7 @@
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 
+
 /**
  *	Class to send emails (with attachments or not)
  *  Usage: $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to,$css,$trackid,$moreinheader,$sendcontext,$replyto);
@@ -292,7 +293,7 @@ class CMailFile
 				// This convert an embedded file with src="data:image... into a cid link + attached file
 				$resultImageData = $this->findHtmlImagesIsSrcData($upload_dir_tmp);
 				if ($resultImageData < 0) {
-					dol_syslog("CMailFile::CMailfile: Error on findHtmlImagesInSrcData");
+					dol_syslog("CMailFile::CMailfile: Error on findHtmlImagesInSrcData code=".$resultImageData." upload_dir_tmp=".$upload_dir_tmp);
 					$this->error = 'ErrorInAddAttachementsImageBaseOnMedia';
 					return;
 				}
@@ -530,7 +531,7 @@ class CMailFile
 					$this->buildCSS();
 				}
 				$msg = $this->html;
-				$msg = $this->checkIfHTML($msg);
+				$msg = $this->checkIfHTML($msg);		// This add a header and a body including custom CSS to the HTML content
 			}
 
 			// Replace . alone on a new line with .. to avoid to have SMTP interpret this as end of message
@@ -671,7 +672,7 @@ class CMailFile
 					$this->buildCSS();
 				}
 				$msg = $this->html;
-				$msg = $this->checkIfHTML($msg);
+				$msg = $this->checkIfHTML($msg);		// This add a header and a body including custom CSS to the HTML content
 			}
 
 			if ($this->atleastoneimage) {
@@ -1635,7 +1636,7 @@ class CMailFile
 			$strContentAltText = trim(wordwrap($strContentAltText, 75, !getDolGlobalString('MAIN_FIX_FOR_BUGGED_MTA') ? "\r\n" : "\n"));
 
 			// Check if html header already in message, if not complete the message
-			$strContent = $this->checkIfHTML($strContent);
+			$strContent = $this->checkIfHTML($strContent);		// This add a header and a body including custom CSS to the HTML content
 		}
 
 		// Make RFC2045 Compliant, split lines
@@ -1980,8 +1981,15 @@ class CMailFile
 	{
 		global $conf;
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 		// Build the array of image extensions
 		$extensions = array_keys($this->image_types);
+
+		if (empty($images_dir)) {
+			//$images_dir = $conf->admin->dir_output.'/temp/'.uniqid('cmailfile');
+			$images_dir = $conf->admin->dir_output.'/temp/cmailfile';
+		}
 
 		if ($images_dir && !dol_is_dir($images_dir)) {
 			dol_mkdir($images_dir, DOL_DATA_ROOT);
@@ -2005,7 +2013,7 @@ class CMailFile
 		if (!empty($matches) && !empty($matches[1])) {
 			if (empty($images_dir)) {
 				// No temp directory provided, so we are not able to support conversion of data:image into physical images.
-				$this->error = 'NoTempDirProvidedInCMailConstructorSoCantConvertDataImgOnDisk';
+				$this->errors[] = 'NoTempDirProvidedInCMailConstructorSoCantConvertDataImgOnDisk';
 				return -1;
 			}
 
@@ -2027,7 +2035,7 @@ class CMailFile
 						dolChmod($destfiletmp);
 					} else {
 						$this->errors[] = "Failed to open file '".$destfiletmp."' for write";
-						return -1;
+						return -2;
 					}
 				}
 

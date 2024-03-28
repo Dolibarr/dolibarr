@@ -64,7 +64,7 @@ class InterfaceStripe extends DolibarrTriggers
 	 * @param 	Conf 			$conf 		Object conf
 	 * @return 	int              			Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		// Put here code you want to execute when a Dolibarr business event occurs.
 		// Data and type of action are stored into $object and $action
@@ -87,7 +87,7 @@ class InterfaceStripe extends DolibarrTriggers
 		}
 
 		// If customer is linked to Stripe, we update/delete Stripe too
-		if ($action == 'COMPANY_MODIFY') {
+		if ($action == 'COMPANY_MODIFY' && $object instanceof Societe) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$stripeacc = $stripe->getStripeAccount($service); // No need of network access for this. May return '' if no Oauth defined.
@@ -129,10 +129,10 @@ class InterfaceStripe extends DolibarrTriggers
 					if (($customer->tax_exempt == 'exempt' && !$object->tva_assuj) || (!$customer->tax_exempt == 'exempt' && empty($object->tva_assuj))) {
 						$changerequested++;
 					}
-					if (!isset($customer->tax_ids['data']) && !is_null($vatcleaned)) {
+					if (!isset($customer->tax_ids->data) && !is_null($vatcleaned)) {
 						$changerequested++;
-					} elseif (isset($customer->tax_ids['data'])) {
-						$taxinfo = reset($customer->tax_ids['data']);
+					} elseif (isset($customer->tax_ids->data)) {
+						$taxinfo = reset($customer->tax_ids->data);
 						if (empty($taxinfo) && !empty($vatcleaned)) {
 							$changerequested++;
 						}
@@ -183,7 +183,7 @@ class InterfaceStripe extends DolibarrTriggers
 				}
 			}
 		}
-		if ($action == 'COMPANY_DELETE') {
+		if ($action == 'COMPANY_DELETE' && $object instanceof Societe) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			if (getDolGlobalString('STRIPE_DELETE_STRIPE_ACCOUNT_WHEN_DELETING_THIRDPARTY')) {
@@ -209,7 +209,7 @@ class InterfaceStripe extends DolibarrTriggers
 		if ($action == 'COMPANYPAYMENTMODE_CREATE' && $object->type == 'card') {
 			// For creation of credit card, we do not create in Stripe automatically
 		}
-		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
+		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card' && $object instanceof CompanyPaymentMode) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			if (!empty($object->stripe_card_ref)) {
@@ -242,7 +242,7 @@ class InterfaceStripe extends DolibarrTriggers
 				}
 			}
 		}
-		if ($action == 'COMPANYPAYMENTMODE_DELETE' && $object->type == 'card') {
+		if ($action == 'COMPANYPAYMENTMODE_DELETE' && $object->type == 'card' && $object instanceof CompanyPaymentMode) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			if (!empty($object->stripe_card_ref)) {

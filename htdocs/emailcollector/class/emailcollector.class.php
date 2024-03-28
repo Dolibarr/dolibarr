@@ -94,7 +94,7 @@ class EmailCollector extends CommonObject
 	protected $childtables = array();
 
 	/**
-	 * @var array	List of child tables. To know object to delete on cascade.
+	 * @var string[]	List of child tables. To know object to delete on cascade.
 	 */
 	protected $childtablesoncascade = array('emailcollector_emailcollectorfilter', 'emailcollector_emailcollectoraction');
 
@@ -120,20 +120,20 @@ class EmailCollector extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'         => array('type' => 'integer', 'label' => 'TechnicalID', 'visible' => 2, 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'index' => 1),
 		'entity'        => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'default' => 1, 'notnull' => 1, 'index' => 1, 'position' => 20),
 		'ref'           => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1, 'help' => 'Example: MyCollector1', 'csslist' => 'tdoverflowmax200'),
-		'label'         => array('type' => 'varchar(255)', 'label' => 'Label', 'visible' => 1, 'enabled' => 1, 'position' => 30, 'notnull' => -1, 'searchall' => 1, 'help' => 'Example: My Email collector', 'csslist' => 'tdoverflowmax150'),
+		'label'         => array('type' => 'varchar(255)', 'label' => 'Label', 'visible' => 1, 'enabled' => 1, 'position' => 30, 'notnull' => -1, 'searchall' => 1, 'help' => 'Example: My Email collector', 'csslist' => 'tdoverflowmax150', 'tdcss'=>'titlefieldmiddle'),
 		'description'   => array('type' => 'text', 'label' => 'Description', 'visible' => -1, 'enabled' => 1, 'position' => 60, 'notnull' => -1, 'cssview' => 'small', 'csslist' => 'small tdoverflowmax200'),
 		'host'          => array('type' => 'varchar(255)', 'label' => 'EMailHost', 'visible' => 1, 'enabled' => 1, 'position' => 90, 'notnull' => 1, 'searchall' => 1, 'comment' => "IMAP server", 'help' => 'Example: imap.gmail.com', 'csslist' => 'tdoverflowmax125'),
 		'port'          => array('type' => 'varchar(10)', 'label' => 'EMailHostPort', 'visible' => 1, 'enabled' => 1, 'position' => 91, 'notnull' => 1, 'searchall' => 0, 'comment' => "IMAP server port", 'help' => 'Example: 993', 'csslist' => 'tdoverflowmax50', 'default' => '993'),
-		'hostcharset'   => array('type' => 'varchar(16)', 'label' => 'HostCharset', 'visible' => -1, 'enabled' => 1, 'position' => 92, 'notnull' => 0, 'searchall' => 0, 'comment' => "IMAP server charset", 'help' => 'Example: "UTF-8" (May be "US-ASCII" with some Office365)', 'default' => 'UTF-8'),
-		'imap_encryption'  => array('type' => 'varchar(16)', 'label' => 'ImapEncryption', 'visible' => -1, 'enabled' => 1, 'position' => 93, 'searchall' => 0, 'comment' => "IMAP encryption", 'help' => 'ImapEncryptionHelp', 'arrayofkeyval' => array('ssl' => 'SSL', 'tls' => 'TLS', 'notls' => 'NOTLS'), 'default' => 'ssl'),
+		'imap_encryption'  => array('type' => 'varchar(16)', 'label' => 'ImapEncryption', 'visible' => -1, 'enabled' => 1, 'position' => 92, 'searchall' => 0, 'comment' => "IMAP encryption", 'help' => 'ImapEncryptionHelp', 'arrayofkeyval' => array('ssl' => 'SSL', 'tls' => 'TLS', 'notls' => 'NOTLS'), 'default' => 'ssl'),
+		'hostcharset'   => array('type' => 'varchar(16)', 'label' => 'HostCharset', 'visible' => -1, 'enabled' => 1, 'position' => 93, 'notnull' => 0, 'searchall' => 0, 'comment' => "IMAP server charset", 'help' => 'Example: "UTF-8" (May be "US-ASCII" with some Office365)', 'default' => 'UTF-8'),
 		'norsh'  => array('type' => 'integer', 'label' => 'NoRSH', 'visible' => -1, 'enabled' => "!getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position' => 94, 'searchall' => 0, 'help' => 'NoRSHHelp', 'arrayofkeyval' => array(0 => 'No', 1 => 'Yes'), 'default' => 0),
-		'acces_type'     => array('type' => 'integer', 'label' => 'accessType', 'visible' => -1, 'enabled' => "getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position' => 101, 'notnull' => 1, 'index' => 1, 'comment' => "IMAP login type", 'arrayofkeyval' => array('0' => 'loginPassword', '1' => 'oauthToken'), 'default' => '0', 'help' => ''),
+		'acces_type'     => array('type' => 'integer', 'label' => 'AuthenticationMethod', 'visible' => -1, 'enabled' => "getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position' => 101, 'notnull' => 1, 'index' => 1, 'comment' => "IMAP login type", 'arrayofkeyval' => array('0' => 'loginPassword', '1' => 'oauthToken'), 'default' => '0', 'help' => ''),
 		'login'         => array('type' => 'varchar(128)', 'label' => 'Login', 'visible' => -1, 'enabled' => 1, 'position' => 102, 'notnull' => -1, 'index' => 1, 'comment' => "IMAP login", 'help' => 'Example: myaccount@gmail.com'),
 		'password'      => array('type' => 'password', 'label' => 'Password', 'visible' => -1, 'enabled' => "1", 'position' => 103, 'notnull' => -1, 'comment' => "IMAP password", 'help' => 'WithGMailYouCanCreateADedicatedPassword'),
 		'oauth_service' => array('type' => 'varchar(128)', 'label' => 'oauthService', 'visible' => -1, 'enabled' => "getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position' => 104, 'notnull' => 0, 'index' => 1, 'comment' => "IMAP login oauthService", 'arrayofkeyval' => array(), 'help' => 'TokenMustHaveBeenCreated'),
@@ -1174,6 +1174,7 @@ class EmailCollector extends CommonObject
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 
 					$expire = true;
+					// TODO
 					// Is token expired or will token expire in the next 30 seconds
 					// if (is_object($tokenobj)) {
 					// 	$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
@@ -1290,6 +1291,8 @@ class EmailCollector extends CommonObject
 				if (strpos($rule['rulevalue'], '!') === 0) {
 					// The value start with !, so we exclude the criteria
 					$not = 'NOT ';
+					// Then remove the ! from the string for next filters
+					$rule['rulevalue'] = substr($rule['rulevalue'], 1);
 				}
 
 				if ($rule['type'] == 'from') {
@@ -1428,6 +1431,8 @@ class EmailCollector extends CommonObject
 				if (strpos($rule['rulevalue'], '!') === 0) {
 					// The value start with !, so we exclude the criteria
 					$not = 'NOT ';
+					// Then remove the ! from the string for next filters
+					$rule['rulevalue'] = substr($rule['rulevalue'], 1);
 				}
 
 				if ($rule['type'] == 'from') {
@@ -1562,8 +1567,21 @@ class EmailCollector extends CommonObject
 			try {
 				//$criteria = [['ALL']];
 				//$Query = $client->getFolders()[0]->messages()->where($criteria);
+
+				// Uncomment this to output debug info
+				//$client->getConnection()->enableDebug();
+
 				$f = $client->getFolders(false, $sourcedir);
-				$Query = $f[0]->messages()->where($criteria);
+				if ($f) {
+					$folder = $f[0];
+					if ($folder instanceof Webklex\PHPIMAP\Folder) {
+						$Query = $folder->messages()->where($criteria);
+					} else {
+						return -1;
+					}
+				} else {
+					return -1;
+				}
 			} catch (InvalidWhereQueryCriteriaException $e) {
 				$this->error = $e->getMessage();
 				$this->errors[] = $this->error;
@@ -1803,6 +1821,8 @@ class EmailCollector extends CommonObject
 				} else {
 					$this->getmsg($connection, $imapemail);	// This set global var $charset, $htmlmsg, $plainmsg, $attachments
 				}
+				'@phan-var-force Webklex\PHPIMAP\Attachment[] $attachments';
+
 				//print $plainmsg;
 				//var_dump($plainmsg); exit;
 
@@ -2410,10 +2430,25 @@ class EmailCollector extends CommonObject
 										if ($operation['type'] == 'loadthirdparty') {
 											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found");
 
-											$errorforactions++;
-											$langs->load("errors");
-											$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, $emailtouseforthirdparty, $nametouseforthirdparty, $namealiastouseforthirdparty);
-											$this->errors[] = $this->error;
+											//search into contacts of thirdparty
+											$resultContact = $contactstatic->fetch('', '', '', $emailtouseforthirdparty);
+											if ($resultContact > 0) {
+												$idtouseforthirdparty = $contactstatic->socid;
+												$result = $thirdpartystatic->fetch($idtouseforthirdparty);
+												if ($result > 0) {
+													dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was found thanks to linked contact search");
+												} else {
+													$errorforactions++;
+													$langs->load("errors");
+													$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, $emailtouseforthirdparty, $nametouseforthirdparty, $namealiastouseforthirdparty);
+													$this->errors[] = $this->error;
+												}
+											} else {
+												$errorforactions++;
+												$langs->load("errors");
+												$this->error = $langs->trans('ErrorFailedToLoadThirdParty', $idtouseforthirdparty, $emailtouseforthirdparty, $nametouseforthirdparty, $namealiastouseforthirdparty);
+												$this->errors[] = $this->error;
+											}
 										} elseif ($operation['type'] == 'loadandcreatethirdparty') {
 											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found. We try to create it.");
 
@@ -3042,6 +3077,7 @@ class EmailCollector extends CommonObject
 								$tickettocreate->severity_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE') ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_severity', 'use_default', 'code', 1));
 								$tickettocreate->origin_email = $from;
 								$tickettocreate->origin_replyto = (!empty($replyto) ? $replyto : null);
+								$tickettocreate->origin_references = (!empty($headers['References']) ? $headers['References'] : null);
 								$tickettocreate->fk_user_create = $user->id;
 								$tickettocreate->datec = dol_now();
 								$tickettocreate->fk_project = $projectstatic->id;
@@ -3425,7 +3461,7 @@ class EmailCollector extends CommonObject
 		//$h = imap_header($mbox,$mid);
 		// add code here to get date, from, to, cc, subject...
 
-		// BODY
+		// BODY @phan-suppress-next-line PhanTypeMismatchArgumentInternal
 		$s = imap_fetchstructure($mbox, $mid, FT_UID);
 
 
@@ -3473,8 +3509,8 @@ class EmailCollector extends CommonObject
 
 		// DECODE DATA
 		$data = ($partno) ?
-		imap_fetchbody($mbox, $mid, $partno, FT_UID) : // multipart
-		imap_body($mbox, $mid, FT_UID); // simple
+		imap_fetchbody($mbox, $mid, $partno, FT_UID) : // multipart @phan-suppress-current-line PhanTypeMismatchArgumentInternal
+		imap_body($mbox, $mid, FT_UID); // simple @phan-suppress-current-line PhanTypeMismatchArgumentInternal
 		// Any part may be encoded, even plain text messages, so check everything.
 		if ($p->encoding == 4) {
 			$data = quoted_printable_decode($data);
@@ -3495,6 +3531,7 @@ class EmailCollector extends CommonObject
 				$params[strtolower($x->attribute)] = $x->value;
 			}
 		}
+		'@phan-var-force array{filename?:string,name?:string,charset?:string} $params';
 
 		// ATTACHMENT
 		// Any part with a filename is an attachment,

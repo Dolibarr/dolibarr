@@ -166,7 +166,7 @@ class Societe extends CommonObject
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -188,7 +188,7 @@ class Societe extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
@@ -1373,7 +1373,7 @@ class Societe extends CommonObject
 		$this->address		= trim((string) $this->address);
 		$this->zip 			= trim((string) $this->zip);
 		$this->town 		= trim((string) $this->town);
-		$this->state_id 	= (is_numeric($this->state_id)) ? (int) trim($this->state_id) : 0;
+		$this->state_id 	= (is_numeric($this->state_id)) ? (int) trim((string) $this->state_id) : 0;
 		$this->country_id 	= ($this->country_id > 0) ? $this->country_id : 0;
 		$this->phone		= trim((string) $this->phone);
 		$this->phone		= preg_replace("/\s/", "", $this->phone);
@@ -1399,7 +1399,7 @@ class Societe extends CommonObject
 		$this->order_min_amount = price2num($this->order_min_amount);
 		$this->supplier_order_min_amount = price2num($this->supplier_order_min_amount);
 
-		$this->tva_assuj			= (is_numeric($this->tva_assuj)) ? (int) trim($this->tva_assuj) : 0;
+		$this->tva_assuj			= (is_numeric($this->tva_assuj)) ? (int) trim((string) $this->tva_assuj) : 0;
 		$this->tva_intra			= dol_sanitizeFileName($this->tva_intra, '');
 		$this->vat_reverse_charge	= empty($this->vat_reverse_charge) ? 0 : 1;
 		if (empty($this->status)) {
@@ -1421,10 +1421,10 @@ class Societe extends CommonObject
 		$this->localtax1_value = trim($this->localtax1_value);
 		$this->localtax2_value = trim($this->localtax2_value);
 
-		$this->capital = ($this->capital != '') ? (float) price2num(trim($this->capital)) : null;
+		$this->capital = ($this->capital != '') ? (float) price2num(trim((string) $this->capital)) : null;
 
-		$this->effectif_id = trim($this->effectif_id);
-		$this->forme_juridique_code = trim($this->forme_juridique_code);
+		$this->effectif_id = trim((string) $this->effectif_id);
+		$this->forme_juridique_code = trim((string) $this->forme_juridique_code);
 
 		//Gencod
 		$this->barcode = trim($this->barcode);
@@ -2469,12 +2469,12 @@ class Societe extends CommonObject
 
 			if ($price_base_type == 'TTC') {
 				$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num($remise, 'MT');
-				$discount->amount_ht = $discount->multicurrency_amount_ht = price2num($remise / (1 + $vatrate / 100), 'MT');
-				$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($discount->amount_ttc - $discount->amount_ht, 'MT');
+				$discount->amount_ht = $discount->multicurrency_amount_ht = price2num((float) $remise / (1 + (float) $vatrate / 100), 'MT');
+				$discount->amount_tva = $discount->multicurrency_amount_tva = price2num((float) $discount->amount_ttc - (float) $discount->amount_ht, 'MT');
 			} else {
 				$discount->amount_ht = $discount->multicurrency_amount_ht = price2num($remise, 'MT');
-				$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($remise * $vatrate / 100, 'MT');
-				$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num($discount->amount_ht + $discount->amount_tva, 'MT');
+				$discount->amount_tva = $discount->multicurrency_amount_tva = price2num((float) $remise * (float) $vatrate / 100, 'MT');
+				$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num((float) $discount->amount_ht + (float) $discount->amount_tva, 'MT');
 			}
 
 			$discount->tva_tx = price2num($vatrate);
@@ -3111,8 +3111,8 @@ class Societe extends CommonObject
 	/**
 	 *    Return list of contacts emails existing for third party
 	 *
-	 *	  @param	  int		$addthirdparty		1=Add also a record for thirdparty email, 2=Same than 1 but add text ThirdParty in grey
-	 *    @return     array       					Array of contacts emails
+	 *	  @param	int		$addthirdparty		1=Add also a record for thirdparty email, 2=Same than 1 but add text ThirdParty in grey
+	 *    @return   array  	    				Array of contacts emails
 	 */
 	public function thirdparty_and_contact_email_array($addthirdparty = 0)
 	{
@@ -3120,12 +3120,14 @@ class Societe extends CommonObject
 		global $langs;
 
 		$contact_emails = $this->contact_property_array('email', 1);
+
 		if ($this->email && $addthirdparty) {
 			if (empty($this->name)) {
 				$this->name = $this->nom;
 			}
 			$contact_emails['thirdparty'] = ($addthirdparty == 2 ? '<span class="opacitymedium">' : '').$langs->transnoentitiesnoconv("ThirdParty").($addthirdparty == 2 ? '</span>' : '').': '.dol_trunc($this->name, 16)." <".$this->email.">";
 		}
+
 		//var_dump($contact_emails)
 		return $contact_emails;
 	}
@@ -5217,7 +5219,7 @@ class Societe extends CommonObject
 	 *  @param		array		$arraydata				Array of data
 	 *  @return		string								HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '', $arraydata = null)
+	public function getKanbanView($option = '', $arraydata = array())
 	{
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
@@ -5351,8 +5353,8 @@ class Societe extends CommonObject
 			$this->db->begin();
 
 			// Recopy some data
-			$this->client = $this->client | $soc_origin->client;
-			$this->fournisseur = $this->fournisseur | $soc_origin->fournisseur;
+			$this->client |= $soc_origin->client;
+			$this->fournisseur |= $soc_origin->fournisseur;
 			$listofproperties = array(
 				'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_mobile', 'fax', 'email', 'socialnetworks', 'url', 'barcode',
 				'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',

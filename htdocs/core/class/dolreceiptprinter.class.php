@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Andreu Bisquerra    <jove@bisquerra.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -635,7 +636,7 @@ class dolReceiptPrinter extends Printer
 
 		$now = dol_now('tzuser');
 		// tags a remplacer par leur valeur avant de parser (dol_value_xxx)
-		$this->template = str_replace('{dol_value_object_id}', $object->id, $this->template);
+		$this->template = str_replace('{dol_value_object_id}', (string) $object->id, $this->template);
 		$this->template = str_replace('{dol_value_object_ref}', $object->ref, $this->template);
 		//$this->template = str_replace('<dol_value_object_points>', $object->points, $this->template);
 		$this->template = str_replace('{dol_value_date}', dol_print_date($object->date, 'day'), $this->template);
@@ -676,7 +677,7 @@ class dolReceiptPrinter extends Printer
 		$this->template = str_replace('{dol_value_mysoc_idprof5}', $mysoc->idprof5, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_idprof6}', $mysoc->idprof6, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_tva_intra}', $mysoc->tva_intra, $this->template);
-		$this->template = str_replace('{dol_value_mysoc_capital}', $mysoc->capital, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_capital}', (string) $mysoc->capital, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_url}', $mysoc->url, $this->template);
 
 		$this->template = str_replace('{dol_value_vendor_firstname}', $user->firstname, $this->template);
@@ -729,12 +730,12 @@ class dolReceiptPrinter extends Printer
 					case 'DOL_PRINT_OBJECT_LINES':
 						foreach ($object->lines as $line) {
 							if ($line->fk_product) {
-								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - strlen($line->subprice) - 10 - 1;
+								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen((string) $line->qty) - strlen(price($line->subprice)) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->ref . $spaces . $line->qty . str_pad(price($line->subprice), 10, ' ', STR_PAD_LEFT) . ' ' . str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT) . "\n");
 								$this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n \n");
 							} else {
-								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen($line->qty) - strlen($line->subprice) - 10 - 1;
+								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen((string) $line->qty) - strlen(price($line->subprice)) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->description.$spaces.$line->qty.' '.str_pad(price($line->subprice), 10, ' ', STR_PAD_LEFT).' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 							}
@@ -743,15 +744,15 @@ class dolReceiptPrinter extends Printer
 					case 'DOL_PRINT_OBJECT_LINES_WITH_NOTES':
 						foreach ($object->lines as $line) {
 							if ($line->fk_product) {
-								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
+								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen((string) $line->qty) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 								$this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n");
-								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen($line->qty) - 10 - 1;
+								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen((string) $line->qty) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->description."\n");
 							} else {
-								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen($line->qty) - 10 - 1;
+								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen((string) $line->qty) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->description.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 							}
@@ -898,7 +899,7 @@ class dolReceiptPrinter extends Printer
 					case 'DOL_PRINT_ORDER_LINES':
 						foreach ($object->lines as $line) {
 							if ($line->special_code == $this->orderprinter) {
-								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
+								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen((string) $line->qty) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 								$this->printer->text(strip_tags(htmlspecialchars_decode($line->desc))."\n");

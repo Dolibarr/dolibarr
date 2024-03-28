@@ -72,7 +72,7 @@ $date_stopMonth = GETPOSTINT('date_stopmonth');
 $date_stopYear = GETPOSTINT('date_stopyear');
 $date_stop = dol_mktime(23, 59, 59, $date_stopMonth, $date_stopDay, $date_stopYear, 'tzuserrel');
 $action = GETPOST('action', 'aZ09');
-$projectid = (GETPOSTINT('projectid') ? GETPOSTINT('projectid') : 0);
+$projectid = GETPOSTINT('projectid');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('comptafileslist', 'globallist'));
@@ -667,7 +667,7 @@ foreach ($listofchoices as $choice => $val) {
 		$disabled = ' disabled';
 	}
 	$checked = (((!GETPOSTISSET('search') && $action != 'searchfiles') || GETPOST($choice)) ? ' checked="checked"' : '');
-	print '<div class="'.($i > 0 ? 'paddingleft marginleftonly' : '').' inline-block marginrightonly paddingright"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.$disabled.'><label for="'.$choice.'"> ';
+	print '<div class="inline-block marginrightonlylarge paddingright margintoponly"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.$disabled.'><label for="'.$choice.'"> ';
 	print img_picto($langs->trans($val['label']), $val['picto'], 'class=""').' '.$langs->trans($val['label']);
 	print '</label></div>';
 	$i++;
@@ -701,7 +701,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 
 	echo dol_print_date($date_start, 'day', 'tzuserrel')." - ".dol_print_date($date_stop, 'day', 'tzuserrel');
 
-	print '<a class="marginleftonly small'.(empty($TData) ? ' butActionRefused' : ' butAction').'" href="'.$_SERVER["PHP_SELF"].'?action=dl&token='.currentToken().'&projectid='.$projectid.'&output=file&file='.urlencode($filename).$param.'"';
+	print '<a class="marginleftonly small'.(empty($TData) ? ' butActionRefused' : ' butAction').'" href="'.$_SERVER["PHP_SELF"].'?action=dl&token='.currentToken().'&projectid='.((int) $projectid).'&output=file&file='.urlencode($filename).$param.'"';
 	if (empty($TData)) {
 		print " disabled";
 	}

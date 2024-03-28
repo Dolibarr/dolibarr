@@ -411,7 +411,7 @@ if (empty($reshook)) {
 
 							if (getDolGlobalString('MAILING_DELAY')) {
 								dol_syslog("Wait a delay of MAILING_DELAY=".((float) $conf->global->MAILING_DELAY));
-								usleep((float) $conf->global->MAILING_DELAY * 1000000);
+								usleep((int) ((float) $conf->global->MAILING_DELAY * 1000000));
 							}
 
 							//test if CHECK READ change statut prospect contact
@@ -1123,7 +1123,7 @@ if ($action == 'create') {
 				print $text;
 				if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
 					if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
-						print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING').')</span>';
+						print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING', getDolGlobalString('MAIN_MAIL_SMTP_SERVER')).')</span>';
 					}
 				} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
 					print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER').')</span>';
@@ -1491,6 +1491,7 @@ if ($action == 'create') {
 				print '<td colspan="3">';
 				// List of files
 				$listofpaths = dol_dir_list($upload_dir, 'all', 0, '', '', 'name', SORT_ASC, 0);
+				$out = '';
 
 				// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 				$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";

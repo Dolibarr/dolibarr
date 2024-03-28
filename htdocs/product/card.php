@@ -703,8 +703,8 @@ if (empty($reshook)) {
 				$object->setCategories($categories);
 
 				if (!empty($backtopage)) {
-					$backtopage = preg_replace('/__ID__/', $object->id, $backtopage); // New method to autoselect parent project after a New on another form object creation
-					$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect parent after a New on another form object creation
+					$backtopage = preg_replace('/__ID__/', (string) $object->id, $backtopage); // New method to autoselect parent project after a New on another form object creation
+					$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $backtopage); // New method to autoselect parent after a New on another form object creation
 					if (preg_match('/\?/', $backtopage)) {
 						$backtopage .= '&productid='.$object->id; // Old method
 					}
@@ -2429,7 +2429,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print dol_get_fiche_head($head, 'card', $titre, -1, $picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-			$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
+			$object->next_prev_filter = "fk_product_type:=:".((int) $object->type);
 
 			$shownav = 1;
 			if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {

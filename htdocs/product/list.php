@@ -308,6 +308,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
 if ($search_type == '0') {
@@ -497,6 +498,11 @@ if (isModEnabled('variants')) {
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units cu ON cu.rowid = p.fk_unit";
 }
+
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($sall) {
@@ -868,11 +874,11 @@ if ($type === "") {
 	$params['forcenohideoftext'] = 1;
 }
 $newcardbutton .= dolGetButtonTitleSeparator();
-if ($type === "" || $type == Product::TYPE_PRODUCT) {
+if ((isModEnabled('product') && $type === "") || $type == Product::TYPE_PRODUCT) {
 	$label = 'NewProduct';
 	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', $perm, $params);
 }
-if ($type === "" || $type == Product::TYPE_SERVICE) {
+if ((isModEnabled('service') && $type === "") || $type == Product::TYPE_SERVICE) {
 	$label = 'NewService';
 	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=1', '', $perm, $params);
 }

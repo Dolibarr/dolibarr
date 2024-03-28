@@ -254,7 +254,7 @@ class FactureFournisseur extends CommonInvoice
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'ref' => array('type' => 'varchar(255)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 15),
 		'ref_supplier' => array('type' => 'varchar(255)', 'label' => 'RefSupplier', 'enabled' => 1, 'visible' => -1, 'position' => 20),
-		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 25, 'index' => 1),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 25, 'index' => 1),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 30),
 		'type' => array('type' => 'smallint(6)', 'label' => 'Type', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 35),
 		'subtype' => array('type' => 'smallint(6)', 'label' => 'InvoiceSubtype', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 36),
@@ -887,6 +887,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " t.note_private,";
 		$sql .= " t.note_public,";
 		$sql .= " t.model_pdf,";
+		$sql .= " t.last_main_doc,";
 		$sql .= " t.import_key,";
 		$sql .= " t.extraparams,";
 		$sql .= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_label, cr.libelle_facture as cond_reglement_doc,";
@@ -967,6 +968,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->note_private			= $obj->note_private;
 				$this->note_public          = $obj->note_public;
 				$this->model_pdf            = $obj->model_pdf;
+				$this->last_main_doc = $obj->last_main_doc;
 				$this->import_key           = $obj->import_key;
 
 				//Incoterms
@@ -2102,7 +2104,7 @@ class FactureFournisseur extends CommonInvoice
 			$remise_percent = price2num($remise_percent);
 			$qty = price2num($qty);
 			$pu = price2num($pu);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
 			}
 			$txlocaltax1 = price2num($txlocaltax1);
@@ -2224,7 +2226,7 @@ class FactureFournisseur extends CommonInvoice
 			$supplierinvoiceline->desc = $desc;
 			$supplierinvoiceline->ref_supplier = $ref_supplier;
 
-			$supplierinvoiceline->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs($qty) : $qty); // For credit note, quantity is always positive and unit price negative
+			$supplierinvoiceline->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs((float) $qty) : $qty); // For credit note, quantity is always positive and unit price negative
 			$supplierinvoiceline->subprice = ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ht) : $pu_ht); // For credit note, unit price always negative, always positive otherwise
 
 			$supplierinvoiceline->vat_src_code = $vat_src_code;
@@ -2377,9 +2379,9 @@ class FactureFournisseur extends CommonInvoice
 
 		// Clean vat code
 		$vat_src_code = '';
-		if (preg_match('/\((.*)\)/', $vatrate, $reg)) {
+		if (preg_match('/\((.*)\)/', (string) $vatrate, $reg)) {
 			$vat_src_code = $reg[1];
-			$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate); // Remove code into vatrate.
+			$vatrate = preg_replace('/\s*\(.*\)/', '', (string) $vatrate); // Remove code into vatrate.
 		}
 
 		$tabprice = calcul_price_total($qty, $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_devise);
@@ -2424,7 +2426,7 @@ class FactureFournisseur extends CommonInvoice
 		$line->description = $desc;
 		$line->desc = $desc;
 
-		$line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs($qty) : $qty); // For credit note, quantity is always positive and unit price negative
+		$line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs((float) $qty) : $qty); // For credit note, quantity is always positive and unit price negative
 		$line->subprice = ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ht) : $pu_ht); // For credit note, unit price always negative, always positive otherwise
 		$line->pu_ht = ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ht) : $pu_ht); // For credit note, unit price always negative, always positive otherwise
 		$line->pu_ttc = ($this->type == self::TYPE_CREDIT_NOTE ? -abs($pu_ttc) : $pu_ttc); // For credit note, unit price always negative, always positive otherwise
@@ -2963,7 +2965,7 @@ class FactureFournisseur extends CommonInvoice
 			$dir = dol_buildpath($reldir."core/modules/supplier_invoice/");
 
 			// Load file with numbering class (if found)
-			$mybool |= @include_once $dir.$file;
+			$mybool = ((bool) @include_once $dir.$file) || $mybool;
 		}
 
 		if ($mybool === false) {

@@ -94,7 +94,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		dol_copy($pathoffiletoedittarget, $pathoffiletoedittarget.'.back', $newmask, 1);
 
 		// Edit class files
-		$contentclass = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
+		$contentclass = file_get_contents(dol_osencode($pathoffiletoeditsrc));
 
 		// Update ->fields (to add or remove entries defined into $addfieldentry)
 		if (count($object->fields)) {
@@ -321,7 +321,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	// Backup old file
 	dol_copy($pathoffiletoedittarget, $pathoffiletoedittarget.'.back', $newmask, 1);
 
-	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
+	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc));
 
 	$i = 0;
 	$texttoinsert = '-- BEGIN MODULEBUILDER FIELDS'."\n";
@@ -389,7 +389,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	$pathoffiletoedittarget = preg_replace('/\.sql$/', '.key.sql', $pathoffiletoedittarget);
 	$pathoffiletoedittarget = preg_replace('/\.sql.new$/', '.key.sql.new', $pathoffiletoedittarget);
 
-	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
+	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc));
 
 	$i = 0;
 	$texttoinsert = '-- BEGIN MODULEBUILDER INDEXES'."\n";
@@ -547,12 +547,12 @@ function compareFirstValue($a, $b)
 /**
  * Rewriting all permissions after any actions
  * @param string      $file            filename or path
- * @param array       $permissions     permissions existing in file
+ * @param array<int,string[]> $permissions permissions existing in file
  * @param int|null    $key             key for permission needed
  * @param array|null  $right           $right to update or add
  * @param string|null $objectname      name of object
  * @param string|null $module          name of module
- * @param int         $action          0 for delete, 1 for add, 2 for update, -1 when delete object completely, -2 for generate rights after add
+ * @param int<-2,2>   $action          0 for delete, 1 for add, 2 for update, -1 when delete object completely, -2 for generate rights after add
  * @return int                         1 if OK,-1 if KO
  */
 function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $module, $action)
@@ -606,10 +606,11 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 	} else {
 		$error++;
 	}
+	'@phan-var-force array<int,string[]> $permissions';
 	if (!$error) {
 		// prepare permissions array
 		$count_perms = count($permissions);
-		for ($i = 0;$i < $count_perms;$i++) {
+		foreach (array_keys($permissions) as $i) {
 			$permissions[$i][0] = "\$this->rights[\$r][0] = \$this->numero . sprintf('%02d', \$r + 1)";
 			$permissions[$i][1] = "\$this->rights[\$r][1] = '".$permissions[$i][1]."'";
 			$permissions[$i][4] = "\$this->rights[\$r][4] = '".$permissions[$i][4]."'";
@@ -898,7 +899,7 @@ function writePermsInAsciiDoc($file, $destfile)
 	$array = explode(";", $content);
 	$permissions = array_filter($array);
 	// delete  occurrences "$r++" and ID
-	$permissions = str_replace('$r++', 1, $permissions);
+	$permissions = str_replace('$r++', '1', $permissions);
 
 	$permsN = array();
 	foreach ($permissions as $i => $element) {
@@ -1287,12 +1288,12 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	}
 
 	$columns = array(
-		'rowid' => array('type' => 'integer(11)'),
-		'code' => array('type' => 'varchar(255) NOT NULL'),
-		'label' => array('type' => 'varchar(255) NOT NULL'),
-		'position' => array('type' => 'integer(11) NULL'),
-		'use_default' => array('type' => 'varchar(255) DEFAULT 1'),
-		'active' => array('type' => 'integer')
+		'rowid' => array('type' => 'integer', 'value' => 11, 'extra' => 'AUTO_INCREMENT PRIMARY KEY'),
+		'code' => array('type' => 'varchar', 'value' => 255, 'null'=>'NOT NULL'),
+		'label' => array('type' => 'varchar', 'value' => 255, 'null'=>'NOT NULL'),
+		'position' => array('type' => 'integer', 'value' => 11, 'null'=>'NULL'),
+		'use_default' => array('type' => 'varchar', 'value' => 11, 'default'=>'1'),
+		'active' => array('type' => 'integer', 'value' => 3)
 	);
 
 
@@ -1307,14 +1308,16 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 			break;
 		}
 	}
+
 	// check if tablename exist in Database and create it if not
-	$query = "SHOW TABLES LIKE '" . MAIN_DB_PREFIX.strtolower($namedic) . "'";
+	// @FIXME We must use $db->DDLDescTable($table) to know if a table exists.
+	$query = "SHOW TABLES LIKE '" . $db->escape(MAIN_DB_PREFIX.strtolower($namedic)) . "'";
 	$checkTable = $db->query($query);
 	if ($checkTable && $db->num_rows($checkTable) > 0) {
 		setEventMessages($langs->trans("ErrorTableExist", $namedic), null, 'errors');
 		return;
 	} else {
-		$_results = $db->DDLCreateTable(MAIN_DB_PREFIX.strtolower($namedic), $columns, $primaryKey, "InnoDB");
+		$_results = $db->DDLCreateTable(MAIN_DB_PREFIX.strtolower($namedic), $columns, $primaryKey, "");
 		if ($_results < 0) {
 			dol_print_error($db);
 			$langs->load("errors");

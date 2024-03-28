@@ -94,12 +94,12 @@ $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST('search_state', 'alpha');
 $search_country = GETPOSTINT('search_country');
 $search_type_thirdparty = GETPOSTINT('search_type_thirdparty');
-$search_user = GETPOSTINT('search_user');
-$search_sale = GETPOSTINT('search_sale');
+$search_user = GETPOST('search_user', 'intcomma');
+$search_sale = GETPOST('search_sale', 'intcomma');
 $search_total_ht  = GETPOST('search_total_ht', 'alpha');
 $search_total_vat = GETPOST('search_total_vat', 'alpha');
 $search_total_ttc = GETPOST('search_total_ttc', 'alpha');
-$search_warehouse = GETPOSTINT('search_warehouse');
+$search_warehouse = GETPOST('search_warehouse', 'intcomma');
 
 $search_multicurrency_code = GETPOST('search_multicurrency_code', 'alpha');
 $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
@@ -227,6 +227,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 
 // Security check
@@ -2614,8 +2615,8 @@ while ($i < $imaxinloop) {
 
 		// Note public
 		if (!empty($arrayfields['c.note_public']['checked'])) {
-			print '<td class="center">';
-			print dol_string_nohtmltag($obj->note_public);
+			print '<td class="sensiblehtmlcontent center">';
+			print dolPrintHTML($obj->note_public);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2624,8 +2625,8 @@ while ($i < $imaxinloop) {
 
 		// Note private
 		if (!empty($arrayfields['c.note_private']['checked'])) {
-			print '<td class="center">';
-			print dol_string_nohtmltag($obj->note_private);
+			print '<td class="sensiblehtmlcontent center">';
+			print dolPrintHTML($obj->note_private);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2740,7 +2741,11 @@ while ($i < $imaxinloop) {
 
 		// Billed
 		if (!empty($arrayfields['c.facture']['checked'])) {
-			print '<td class="center">'.yn($obj->billed, 4).'</td>';
+			print '<td class="center">';
+			if ($obj->billed) {
+				print yn($obj->billed, 4);
+			}
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

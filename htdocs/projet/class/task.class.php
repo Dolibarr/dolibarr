@@ -1207,7 +1207,7 @@ class Task extends CommonObjectLine
 	{
 		$arrayroles = array();
 
-		dol_syslog(get_class($this)."::getUserRolesForProjectsOrTasks userp=".is_object($userp)." usert=".is_object($usert)." projectid=".$projectid." taskid=".$taskid);
+		dol_syslog(get_class($this)."::getUserRolesForProjectsOrTasks userp=".json_encode(is_object($userp))." usert=".json_encode(is_object($usert))." projectid=".$projectid." taskid=".$taskid);
 
 		// We want role of user for a projet or role of user for a task. Both are not possible.
 		if (empty($userp) && empty($usert)) {
@@ -2051,9 +2051,10 @@ class Task extends CommonObjectLine
 			$this->error = $clone_task->error;
 			$error++;
 		}
-
 		// End
-		if (!$error) {
+		if ($error) {
+			$clone_task_id = 0;  // For static tool check
+		} else {
 			$clone_task_id = $clone_task->id;
 			$clone_task_ref = $clone_task->ref;
 

@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2016 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -423,7 +424,7 @@ class RemiseCheque extends CommonObject
 
 				// Load file with numbering class (if found)
 				if (is_file($dir.$file) && is_readable($dir.$file)) {
-					$mybool |= include_once $dir.$file;
+					$mybool = (include_once $dir.$file) || $mybool;
 				}
 			}
 
@@ -438,7 +439,7 @@ class RemiseCheque extends CommonObject
 
 					// Load file with numbering class (if found)
 					if (is_file($dir.$file) && is_readable($dir.$file)) {
-						$mybool |= include_once $dir.$file;
+						$mybool = (include_once $dir.$file) || $mybool;
 					}
 				}
 			}

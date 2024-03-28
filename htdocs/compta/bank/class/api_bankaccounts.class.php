@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright (C) 2016 Xebax Christy <xebax@wanadoo.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -265,7 +266,7 @@ class BankAccounts extends DolibarrApi
 		 */
 
 		if (!$error) {
-			$bank_line_id_from = $accountfrom->addline($date, $typefrom, $description, -1 * price2num($amount), '', '', $user, $cheque_number);
+			$bank_line_id_from = $accountfrom->addline($date, $typefrom, $description, -1 * (float) price2num($amount), '', '', $user, $cheque_number);
 		}
 		if (!($bank_line_id_from > 0)) {
 			$error++;

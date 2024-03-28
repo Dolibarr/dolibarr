@@ -177,6 +177,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($user->socid && $socid) {
@@ -722,13 +723,13 @@ if (empty($reshook)) {
 
 $tmpforcreatebutton = dol_getdate(dol_now(), true);
 
-$newparam = '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
+$newparam = '&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
 
 $url = DOL_URL_ROOT.'/comm/action/card.php?action=create';
 $url .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'].'&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
 $url .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
 
-$newcardbutton = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, '', $user->rights->agenda->myactions->create || $user->hasRight('agenda', 'allactions', 'create'));
+$newcardbutton = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create'));
 
 $param .= '&mode='.urlencode($mode);
 

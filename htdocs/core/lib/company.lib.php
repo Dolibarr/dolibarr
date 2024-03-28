@@ -321,9 +321,14 @@ function societe_prepare_head(Societe $object)
 			if (!is_null($dataretrieved)) {
 				$nbNotif = $dataretrieved;
 			} else {
+				// List of notifications enabled for contacts of the third party
 				$sql = "SELECT COUNT(n.rowid) as nb";
-				$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
-				$sql .= " WHERE fk_soc = ".((int) $object->id);
+				$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
+				$sql .= " ".MAIN_DB_PREFIX."notify_def as n,";
+				$sql .= " ".MAIN_DB_PREFIX."socpeople as c";
+				$sql .= " WHERE a.rowid = n.fk_action";
+				$sql .= " AND c.rowid = n.fk_contact";
+				$sql .= " AND c.fk_soc = ".((int) $object->id);
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -1165,7 +1170,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'visible' => 3, 'position' => 35),
 		'role'      => array('type' => 'checkbox', 'label' => 'Role', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 4, 'index' => 1, 'position' => 40),
 		'birthday' 	=> array('type' => 'date', 'label' => 'Birthday', 'enabled' => 1, 'visible' => -1, 'notnull' => 0, 'position' => 45),
-		'statut'    => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'default' => 0, 'index' => 1, 'position' => 50, 'arrayofkeyval' => array(0 => $contactstatic->LibStatut(0, 1), 1 => $contactstatic->LibStatut(1, 1))),
+		'statut'    => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'default' => '0', 'index' => 1, 'position' => 50, 'arrayofkeyval' => array(0 => $contactstatic->LibStatut(0, 1), 1 => $contactstatic->LibStatut(1, 1))),
 	);
 
 	// Definition of fields for list

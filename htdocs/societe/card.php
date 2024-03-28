@@ -142,9 +142,7 @@ if ($socid > 0) {
 }
 
 if (!($object->id > 0) && $action == 'view') {
-	$langs->load("errors");
-	print($langs->trans('ErrorRecordNotFound'));
-	exit;
+	recordNotFound();
 }
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
@@ -600,7 +598,7 @@ if (empty($reshook)) {
 					}
 
 					if (!empty($backtopage)) {
-						$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
+						$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
 						if (preg_match('/\?/', $backtopage)) {
 							$backtopage .= '&socid='.$object->id; // Old method
 						}
@@ -875,7 +873,7 @@ $title = $langs->trans("ThirdParty");
 if ($action == 'create') {
 	$title = $langs->trans("NewThirdParty");
 }
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name." - ".$langs->trans('Card');
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Geschäftspartner';
@@ -1541,9 +1539,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$i = 1;
 			$j = 0;
 			$NBCOLS = ($conf->browser->layout == 'phone' ? 1 : 2);
-			while ($i <= 6) {
+			$NBPROFIDMIN = getDolGlobalInt('THIRDPARTY_MIN_NB_PROF_ID', 2);
+			$NBPROFIDMAX = getDolGlobalInt('THIRDPARTY_MAX_NB_PROF_ID', 6);
+			while ($i <= $NBPROFIDMAX) {
 				$idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
-				if ($idprof != '-') {
+				if ($idprof != '-' && ($i <= $NBPROFIDMIN || !empty($langs->tab_translate['ProfId'.$i.$object->country_code]))) {
 					$key = 'idprof'.$i;
 
 					if (($j % $NBCOLS) == 0) {
@@ -2283,9 +2283,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$i = 1;
 				$j = 0;
 				$NBCOLS = ($conf->browser->layout == 'phone' ? 1 : 2);
-				while ($i <= 6) {
+				$NBPROFIDMIN = getDolGlobalInt('THIRDPARTY_MIN_NB_PROF_ID', 2);
+				$NBPROFIDMAX = getDolGlobalInt('THIRDPARTY_MAX_NB_PROF_ID', 6);
+				while ($i <= $NBPROFIDMAX) {
 					$idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
-					if ($idprof != '-') {
+					if ($idprof != '-' && ($i <= $NBPROFIDMIN || !empty($langs->tab_translate['ProfId'.$i.$object->country_code]))) {
 						$key = 'idprof'.$i;
 
 						if (($j % $NBCOLS) == 0) {
@@ -2707,10 +2709,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// Prof ids
 			$i = 1;
 			$j = 0;
-			while ($i <= 6) {
+			$NBPROFIDMIN = getDolGlobalInt('THIRDPARTY_MIN_NB_PROF_ID', 2);
+			$NBPROFIDMAX = getDolGlobalInt('THIRDPARTY_MAX_NB_PROF_ID', 6);
+			while ($i <= $NBPROFIDMAX) {
 				$idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
-				if ($idprof != '-') {
-					//if (($j % 2) == 0) print '<tr>';
+				if ($idprof != '-' && ($i <= $NBPROFIDMIN || !empty($langs->tab_translate['ProfId'.$i.$object->country_code]))) {
 					print '<tr>';
 					print '<td>'.$idprof.'</td><td>';
 					$key = 'idprof'.$i;
@@ -2725,13 +2728,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						}
 					}
 					print '</td>';
-					//if (($j % 2) == 1) print '</tr>';
 					print '</tr>';
 					$j++;
 				}
 				$i++;
 			}
-			//if ($j % 2 == 1)  print '<td colspan="2"></td></tr>';
 
 
 			// This fields are used to know VAT to include in an invoice when the thirdparty is making a sale, so when it is a supplier.

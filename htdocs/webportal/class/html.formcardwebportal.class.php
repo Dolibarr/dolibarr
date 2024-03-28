@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -403,7 +404,7 @@ class FormCardWebPortal
 				if ($result >= 0) {
 					$action = 'view';
 					$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
-					$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
+					$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
 					if ($urltogo && empty($noback)) {
 						header("Location: " . $urltogo);
 						exit;

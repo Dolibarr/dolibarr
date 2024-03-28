@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013 	   Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,15 +49,15 @@ if ($id > 0 || !empty($ref)) {
 
 	if (!empty($object->origin)) {
 		$origin = $object->origin;
+		$typeobject = $object->origin;
 
 		$object->fetch_origin();
-		$typeobject = $object->origin;
 	}
 
 	// Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && isModEnabled("supplier_order")) {
+	if ($origin == 'order_supplier' && $object->origin_object->id && isModEnabled("supplier_order")) {
 		$objectsrc = new CommandeFournisseur($db);
-		$objectsrc->fetch($object->$typeobject->id);
+		$objectsrc->fetch($object->origin_object->id);
 	}
 }
 

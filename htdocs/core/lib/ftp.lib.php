@@ -55,13 +55,13 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 		$connecttimeout = (!getDolGlobalString('FTP_CONNECT_TIMEOUT') ? 40 : $conf->global->FTP_CONNECT_TIMEOUT);
 		if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
 			dol_syslog('Try to connect with ssh2_connect');
-			$tmp_conn_id = ssh2_connect($ftp_server, $ftp_port);
+			$tmp_conn_id = ssh2_connect($ftp_server, (int) $ftp_port);
 		} elseif (getDolGlobalString('FTP_CONNECT_WITH_SSL')) {
 			dol_syslog('Try to connect with ftp_ssl_connect');
-			$connect_id = ftp_ssl_connect($ftp_server, $ftp_port, $connecttimeout);
+			$connect_id = ftp_ssl_connect($ftp_server, (int) $ftp_port, $connecttimeout);
 		} else {
 			dol_syslog('Try to connect with ftp_connect');
-			$connect_id = ftp_connect($ftp_server, $ftp_port, $connecttimeout);
+			$connect_id = ftp_connect($ftp_server, (int) $ftp_port, $connecttimeout);
 		}
 		if (!empty($connect_id) || !empty($tmp_conn_id)) {
 			if ($ftp_user) {

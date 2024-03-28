@@ -255,13 +255,14 @@ abstract class ModeleAccountancyCode extends CommonNumRefGenerator
 	 *  @param	DoliDB	$db             Database handler
 	 *  @param  Societe	$societe        Third party object
 	 *  @param  string	$type			'customer' or 'supplier'
-	 *  @return	int						>=0 if OK, <0 if KO
+	 *  @return	int<-1,1>				>=0 if success, -1 if failure
 	 */
 	public function get_code($db, $societe, $type = '')
 	{
 		// phpcs:enable
 		global $langs;
 
-		return $langs->trans("NotAvailable");
+		dol_syslog(get_class($this)."::get_code".$langs->trans("NotAvailable"), LOG_ERR);
+		return -1;
 	}
 }
