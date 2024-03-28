@@ -590,18 +590,22 @@ if (!$user->hasRight('fournisseur', 'lire')) {
 }
 // Search on sale representative
 if (!empty($search_sale) && $search_sale != '-1') {
+	if (!is_array($search_sale)) {
+		$search_sale = explode(',', $search_sale);
+	}
 	$search_sale_req = array_filter($search_sale, function($value) {
 		return $value >= 0;
 	});
+	$search_sale_req = implode(',', $search_sale_req);
+
 	if (count($search_sale) == 1 && in_array('-2', $search_sale)) {
 		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid)";
 	} elseif (count($search_sale) > 0 && !in_array('-2', $search_sale)) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user IN (".implode(',', $search_sale_req)."))";
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user IN (".$search_sale_req."))";
 	} elseif (count($search_sale) > 0 && in_array('-2', $search_sale)) {
-		$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user IN (".implode(',', $search_sale_req)."))";
+		$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user IN (".$search_sale_req."))";
 		$sql .= " OR NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid))";
 	}
-
 }
 
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
@@ -844,7 +848,6 @@ $sql .= $db->order($sortfield, $sortorder);
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
-print $sql;
 $resql = $db->query($sql);
 if (!$resql) {
 	dol_print_error($db);
@@ -923,8 +926,8 @@ foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 foreach ($searchCategorySupplierList as $searchCategorySupplier) {
 	$param .= "&search_category_supplier_list[]=".urlencode($searchCategorySupplier);
 }
-if ($search_sale > 0) {
-	$param .= '&search_sale='.((string) $search_sale);
+if (!empty($search_sale)) {
+	$param .= '&commercial=' . (implode(',', $search_sale));
 }
 if ($search_id > 0) {
 	$param .= "&search_id=".((int) $search_id);
