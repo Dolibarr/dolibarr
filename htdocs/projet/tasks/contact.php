@@ -502,7 +502,7 @@ if ($id > 0 || !empty($ref)) {
 					$userstatic->photo = $tab[$i]['photo'];
 					$userstatic->login = $tab[$i]['login'];
 					$userstatic->email = $tab[$i]['email'];
-					$userstatic->statut = $tab[$i]['statuscontact'];
+					$userstatic->status = $tab[$i]['statuscontact'];
 
 					print $userstatic->getNomUrl(-1);
 				}
