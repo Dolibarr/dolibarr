@@ -117,7 +117,7 @@ class printing_printipp extends PrintingDriver
 		$this->port = getDolGlobalString('PRINTIPP_PORT');
 		$this->user = getDolGlobalString('PRINTIPP_USER');
 		$this->password = getDolGlobalString('PRINTIPP_PASSWORD');
-		$this->ssl = getDolGlobalString('PRINTIPP_SSL');
+		$this->ssl = getDolGlobalInt('PRINTIPP_SSL');
 		$this->conf[] = array('varname'=>'PRINTIPP_HOST', 'required'=>1, 'example'=>'localhost', 'type'=>'text');
 		$this->conf[] = array('varname'=>'PRINTIPP_PORT', 'required'=>1, 'example'=>'631', 'type'=>'text');
 		$this->conf[] = array('varname'=>'PRINTIPP_USER', 'required'=>0, 'example'=>'', 'type'=>'text', 'moreattributes'=>'autocomplete="off"');
@@ -146,7 +146,7 @@ class printing_printipp extends PrintingDriver
 		$ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log', 'file', 3); // logging very verbose
 		$ipp->setHost($this->host);
 		$ipp->setPort($this->port);
-		$ipp->ssl = (boolean) $this->ssl;
+		$ipp->ssl = $this->ssl;
 		$ipp->setJobName($file, true);
 		$ipp->setUserName($this->userid);
 		// Set default number of copy
