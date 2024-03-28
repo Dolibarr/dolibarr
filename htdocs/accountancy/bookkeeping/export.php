@@ -765,7 +765,7 @@ if ($action == 'export_file') {
 		$form_question['separator3'] = array('name'=>'separator3', 'type'=>'separator');
 	}
 
-	// add documents in an archive for accountancy export (Quadratus)
+	// add documents in an archive for some accountancy export format
 	if (getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_QUADRATUS
 		|| getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_FEC
 		|| getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_FEC2
