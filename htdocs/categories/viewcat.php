@@ -507,6 +507,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var Product[] $prods */
+			'@phan-var-force Product[] $prods';
 			// Form to add record into the category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -594,6 +595,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var Societe[] $socs */
+			'@phan-var-force Societe[] $socs';
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -680,6 +682,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var Fournisseur[] $socs */
+			'@phan-var-force Fournisseur[] $socs';
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -769,6 +772,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var Adherent[] $members */
+			'@phan-var-force Adherent[] $members';
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -857,6 +861,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var Contact[] $contacts */
+			'@phan-var-force Contact[] $contacts';
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -950,6 +955,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var Account[] $accounts */
+			'@phan-var-force Account[] $accounts';
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -1039,6 +1045,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var Project $object */
+			'@phan-var-force Project $object';
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -1126,6 +1133,7 @@ if ($type == Categorie::TYPE_USER) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var User[] $users */
+			'@phan-var-force User[] $users';
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {
@@ -1212,6 +1220,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var Entrepot[] $objects */
+			'@phan-var-force Entrepot[] $objects';
 			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
@@ -1279,6 +1288,7 @@ if ($type == Categorie::TYPE_TICKET) {
 			dol_print_error($db, $object->error, $object->errors);
 		} else {
 			/** @var Ticket[] $tickets */
+			'@phan-var-force Ticket[] $tickets';
 			// Form to add record into a category
 			$showclassifyform = 1;
 			if ($showclassifyform) {

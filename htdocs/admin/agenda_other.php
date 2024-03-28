@@ -137,6 +137,7 @@ if ($action == 'set') {
 		require_once $file;
 
 		$module = new $classname($db, $commande);
+		'@phan-var-force pdf_standard_actions $module';
 
 		if ($module->write_file($commande, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");

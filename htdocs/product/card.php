@@ -1364,7 +1364,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$object->country = $tmparray['label'];
 		}
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head();
 
 		// Call Hook tabContentCreateProduct
 		$parameters = array();
@@ -3032,7 +3032,7 @@ if (getDolGlobalString('PRODUCT_ADD_FORM_ADD_TO') && $object->id && ($action == 
 
 		print load_fiche_titre($langs->trans("AddToDraft"), '', '');
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head();
 
 		$html .= '<tr><td class="nowrap">'.$langs->trans("Quantity").' ';
 		$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td>';

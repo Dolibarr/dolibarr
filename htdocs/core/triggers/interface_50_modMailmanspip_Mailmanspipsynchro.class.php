@@ -117,7 +117,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 			if (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid)) {
 				if (is_object($object->oldcopy) && (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid))) {    // If email has changed or if list has changed we delete mailman subscription for old email
 					// $object->oldcopy may be a stdClass and not original object depending on copy type, so we realod a new object to run the del_to_abo()
-					$tmpmember = new Adherent($db);
+					$tmpmember = new Adherent($this->db);
 					$tmpmember->fetch($object->oldcopy->id);
 					if ($tmpmember->del_to_abo() < 0) {
 						$this->errors = $tmpmember->errors;

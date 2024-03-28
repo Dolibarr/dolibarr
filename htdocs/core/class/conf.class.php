@@ -81,19 +81,32 @@ class Conf extends stdClass
 	//! Used to store current currency (ISO code like 'USD', 'EUR', ...). To get the currency symbol: $langs->getCurrencySymbol($this->currency)
 	public $currency;
 
-	//! Used to store current css (from theme)
+	/**
+	 * @var string
+	 */
 	public $theme; // Contains current theme ("eldy", "auguria", ...)
+	//! Used to store current css (from theme)
+	/**
+	 * @var string
+	 */
 	public $css; // Contains full path of css page ("/theme/eldy/style.css.php", ...)
 
 	public $email_from;
 
 	//! Used to store current menu handler
 	public $standard_menu;
-	// List of activated modules
+	/**
+	 * @var array<string,string>  List of activated modules
+	 */
 	public $modules;
+	/**
+	 * @var array<string,array<string,string|array>>  List of activated modules
+	 */
 	public $modules_parts;
 
-	// An array to store cache results ->cache['nameofcache']=...
+	/**
+	 * @var array<string,mixed> An array to store cache results ->cache['nameofcache']=...
+	 */
 	public $cache;
 
 	/**
@@ -107,13 +120,17 @@ class Conf extends stdClass
 	public $logbuffer = array();
 
 	/**
-	 * @var LogHandlerInterface[]
+	 * @var LogHandler[]
 	 */
 	public $loghandlers = array();
 
-	//! Used to store running instance for multi-company (default 1)
+	/**
+	 * @var int Used to store running instance for multi-company (default 1)
+	 */
 	public $entity = 1;
-	//! Used to store list of entities to use for each element
+	/**
+	 * @var int[] Used to store list of entities to use for each element
+	 */
 	public $entities = array();
 
 	public $dol_hide_topmenu; // Set if we force param dol_hide_topmenu into login url
