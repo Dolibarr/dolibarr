@@ -115,7 +115,7 @@ if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0) {
 print '</td></tr>';
 print '<tr><td>GET and POST support</td><td>';
 
-if (!isset($_GET["testget"]) && !isset($_POST["testpost"]) && !isset($_GET["mainmenu"])) {	// We must keep $_GET and $_POST here
+if (!isset($_GET["testget"]) && !isset($_POST["testpost"]) && !isset($_GET["mainmenu"])) {	// We must keep $_GET and $_POST here. This is a specific test.
 	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("PHPSupportPOSTGETKo");
 	print ' (<a href="'.$_SERVER["PHP_SELF"].'?testget=ok">'.$langs->trans("Recheck").'</a>)';
 } else {

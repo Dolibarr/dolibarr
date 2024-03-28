@@ -106,8 +106,6 @@ class modTcpdfbarcode extends ModeleBarCode
 	 */
 	public function buildBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
-		global $_GET;
-
 		$tcpdfEncoding = $this->getTcpdfEncodingType($encoding);
 		if (empty($tcpdfEncoding)) {
 			return -1;

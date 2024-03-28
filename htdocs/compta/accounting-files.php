@@ -27,7 +27,7 @@
  *  \brief      Page to show portoflio and files of a thirdparty and download it
  */
 
-if ((array_key_exists('action', $_GET) && $_GET['action'] == 'dl') || (array_key_exists('action', $_POST) && $_POST['action'] == 'dl')) {	// To not replace token when downloading file
+if ((array_key_exists('action', $_GET) && $_GET['action'] == 'dl') || (array_key_exists('action', $_POST) && $_POST['action'] == 'dl')) {	// To not replace token when downloading file. Keep $_GET and $_POST here
 	if (!defined('NOTOKENRENEWAL')) {
 		define('NOTOKENRENEWAL', '1');
 	}

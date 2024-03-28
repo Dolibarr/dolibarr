@@ -281,8 +281,8 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 }
 
 if ($action == 'addthumb' || $action == 'addthumbsquarred') {  // Regenerate thumbs
-	if (file_exists($conf->mycompany->dir_output.'/logos/'.$_GET["file"])) {
-		$isimage = image_format_supported($_GET["file"]);
+	if (file_exists($conf->mycompany->dir_output.'/logos/'.GETPOST("file"))) {
+		$isimage = image_format_supported(GETPOST("file"));
 
 		// Create thumbs of logo
 		if ($isimage > 0) {
@@ -297,7 +297,7 @@ if ($action == 'addthumb' || $action == 'addthumbsquarred') {  // Regenerate thu
 			//$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retrieve value with get...
 
 			// Create small thumb. Used on logon for example
-			$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthsmall, $maxheightsmall, '_small', $quality);
+			$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.GETPOST("file"), $maxwidthsmall, $maxheightsmall, '_small', $quality);
 			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbSmall, $reg)) {
 				$imgThumbSmall = $reg[1]; // Save only basename
 				dolibarr_set_const($db, $constant."_SMALL", $imgThumbSmall, 'chaine', 0, '', $conf->entity);
@@ -306,7 +306,7 @@ if ($action == 'addthumb' || $action == 'addthumbsquarred') {  // Regenerate thu
 			}
 
 			// Create mini thumbs. Used on menu or for setup page for example
-			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthmini, $maxheightmini, '_mini', $quality);
+			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.GETPOST("file"), $maxwidthmini, $maxheightmini, '_mini', $quality);
 			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbMini, $reg)) {
 				$imgThumbMini = $reg[1]; // Save only basename
 				dolibarr_set_const($db, $constant."_MINI", $imgThumbMini, 'chaine', 0, '', $conf->entity);

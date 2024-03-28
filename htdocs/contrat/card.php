@@ -707,7 +707,7 @@ if (empty($reshook)) {
 		if (!empty($date_start_update) && !empty($date_end_update) && $date_start_update > $date_end_update) {
 			setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
 			$action = 'editline';
-			$_GET['rowid'] = GETPOST('elrowid');
+			$_GET['rowid'] = GETPOST('elrowid');	// Keep $_GET here. Used by GETPOST('rowid') later
 			$error++;
 		}
 

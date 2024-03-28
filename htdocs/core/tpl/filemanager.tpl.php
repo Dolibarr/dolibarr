@@ -62,7 +62,7 @@ if (!isset($section)) {
 // Confirm remove file (for non javascript users)
 if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->use_javascript_ajax)) {
 	// TODO Add website, pageid, filemanager if defined
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
 }
 
 // Start container of all panels
