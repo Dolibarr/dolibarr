@@ -946,7 +946,7 @@ class Expedition extends CommonObject
 					$isavirtualproduct = ($product->hasFatherOrChild(1) > 0);
 					// The product is qualified for a check of quantity (must be enough in stock to be added into shipment).
 					if (!$isavirtualproduct || !getDolGlobalString('PRODUIT_SOUSPRODUITS') || ($isavirtualproduct && !getDolGlobalString('STOCK_EXCLUDE_VIRTUAL_PRODUCTS'))) {  // If STOCK_EXCLUDE_VIRTUAL_PRODUCTS is set, we do not manage stock for kits/virtual products.
-						if ($product_stock < $qty) {
+						if ($product_stock < $qty && $product->stockable_product == Product::ENABLED_STOCK) {
 							$langs->load("errors");
 							$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $product->ref);
 							$this->errorhidden = 'ErrorStockIsNotEnoughToAddProductOnShipment';
@@ -1601,7 +1601,9 @@ class Expedition extends CommonObject
 		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang";
 		$sql .= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
 		$sql .= ", p.ref as product_ref, p.label as product_label, p.fk_product_type, p.barcode as product_barcode";
-		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch";
+		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units";
+		$sql .= ", p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy";
+		$sql .= ", p.tobatch as product_tobatch, p.stockable_product";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
 		$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
@@ -1660,6 +1662,7 @@ class Expedition extends CommonObject
 
 				$line->fk_expedition    = $this->id; // id of parent
 
+				$line->stockable_product = $obj->stockable_product;
 				$line->product_type     = $obj->product_type;
 				$line->fk_product     	= $obj->fk_product;
 				$line->fk_product_type	= $obj->fk_product_type;
@@ -1686,8 +1689,9 @@ class Expedition extends CommonObject
 				$line->surface        	= $obj->surface;
 				$line->surface_units = $obj->surface_units;
 				$line->volume         	= $obj->volume;
-				$line->volume_units   	= $obj->volume_units;
-				$line->fk_unit = $obj->fk_unit;
+				$line->volume_units         = $obj->volume_units;
+				$line->stockable_product    = $obj->stockable_product;
+				$line->fk_unit              = $obj->fk_unit;
 
 				$line->pa_ht = $obj->pa_ht;
 
@@ -2770,6 +2774,13 @@ class ExpeditionLigne extends CommonObjectLine
 	*/
 	public $volume;
 	public $volume_units;
+
+	/**
+	 * 0=This service or product is not managed in stock, 1=This service or product is managed in stock
+	 *
+	 * @var boolean
+	 */
+	public $stockable_product = 1;
 
 	// Invoicing
 	public $remise_percent;

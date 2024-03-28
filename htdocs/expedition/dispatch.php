@@ -572,7 +572,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 		//$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, SUM(l.qty) as qty,";
 		$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, '' AS sref, l.qty as qty,";
-		$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse, p.barcode";
+		$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse, p.barcode, p.stockable_product";
 		// Enable hooks to alter the SQL query (SELECT)
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks(
@@ -901,13 +901,19 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 								// Warehouse
 								print '<td class="right">';
-								if (count($listwarehouses) > 1) {
-									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
-								} elseif (count($listwarehouses) == 1) {
-									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+								if ($objp->stockable_product == Product::ENABLED_STOCK){
+									if (count($listwarehouses) > 1) {
+										print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+									} elseif (count($listwarehouses) == 1) {
+										print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_entrepot, "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
+									} else {
+										$langs->load("errors");
+										print $langs->trans("ErrorNoWarehouseDefined");
+									}
 								} else {
-									$langs->load("errors");
-									print $langs->trans("ErrorNoWarehouseDefined");
+									// on force l'entrepot pour passer le test d'ajout de ligne dans expedition.class.php
+									print '<input id="entrepot'.$suffix.'" name="entrepot'.$suffix.'" type="hidden" value="'.$objd->fk_entrepot.'">';
+									print img_warning().' '.$langs->trans('StockDisabled') ;
 								}
 								print "</td>\n";
 

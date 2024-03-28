@@ -437,3 +437,7 @@ AllowStockMovementVariantParent=Enregistre également les mouvements de stock su
 AllowStockMovementVariantParentHelp=Par défaut, un parent d'une variante est un produit virtuel, donc aucun stock n'est géré pour celui-ci. En activant cette option, un stock sera géré pour les produits parents et à chaque fois qu'une quantité de stock est modifiée pour une variante de produit, la même quantité sera modifiée pour le produit parent. Vous ne devriez pas avoir besoin de cette option, sauf si vous utilisez une variante pour gérer le même produit que le parent (mais avec des descriptions, des prix différents...)
 ConfirmSetToDraftInventory=Êtes-vous sûr de vouloir revenir à l'état de brouillon ?<br>Les quantités actuellement définies dans l'inventaire seront réinitialisées.
 PriceLabel=Libellé du prix
+StockableProduct=Activer la gestion des stocks
+StockableProductDescription=Si cette option est désactivée, la modification du stock pour cet élément n'est pas prise en compte. Les mouvements de stock ne seront pas pris en compte dans les commandes client, commande fournisseur, expédition, réception, ordre de fabrication.<br /> Dans les faits, cette option se comporte comme une activation/désactivation du module stock mais à l'échelle du produit/service
+StockDisabled=Stock désactivé
+StockEnabled=Stock activé
