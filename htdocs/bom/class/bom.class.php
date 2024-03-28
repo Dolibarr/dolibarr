@@ -264,7 +264,7 @@ class BOM extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -296,7 +296,7 @@ class BOM extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  int 	$notrigger false=launch triggers after, true=disable triggers
+	 * @param  int  $notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 1)
@@ -486,13 +486,13 @@ class BOM extends CommonObject
 	/**
 	 * Load list of objects in memory from the database.
 	 *
-	 * @param  string      		$sortorder    Sort Order
-	 * @param  string      		$sortfield    Sort field
-	 * @param  int         		$limit        Limit
-	 * @param  int         		$offset       Offset
-	 * @param  string   		$filter       Filter USF
-	 * @param  string      		$filtermode   Filter mode (AND or OR)
-	 * @return array|int        			  int <0 if KO, array of pages if OK
+	 * @param  string               $sortorder    Sort Order
+	 * @param  string               $sortfield    Sort field
+	 * @param  int                  $limit        Limit
+	 * @param  int                  $offset       Offset
+	 * @param  string               $filter       Filter USF
+	 * @param  string               $filtermode   Filter mode (AND or OR)
+	 * @return array|int                              int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -508,7 +508,6 @@ class BOM extends CommonObject
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
-
 		// Manage filter
 		$errormessage = '';
 		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
@@ -550,7 +549,7 @@ class BOM extends CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @param  int  $notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 1)
@@ -565,9 +564,9 @@ class BOM extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       	User that deletes
-	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 * @return int             	Return integer <0 if KO, >0 if OK
+	 * @param User $user		User that deletes
+	 * @param int  $notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 1)
 	{
@@ -586,7 +585,7 @@ class BOM extends CommonObject
 	 * @param	int		$position				Position of BOM-Line in BOM-Lines
 	 * @param	int		$fk_bom_child			Id of BOM Child
 	 * @param	string	$import_key				Import Key
-	 * @param	int 	$fk_unit				Unit
+	 * @param	int		$fk_unit				Unit
 	 * @param	array	$array_options			extrafields array
 	 * @param	int		$fk_default_workstation	Default workstation
 	 * @return	int								Return integer <0 if KO, Id of created object if OK
@@ -1077,7 +1076,7 @@ class BOM extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		$langs->loadLangs(['product', 'mrp']);
 
@@ -1119,7 +1118,7 @@ class BOM extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $db, $conf, $langs, $hookmanager;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1324,7 +1323,7 @@ class BOM extends CommonObject
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
+	 /**
 	 *  Return if at least one photo is available
 	 *
 	 * @param  string $sdir Directory to scan
@@ -1437,8 +1436,7 @@ class BOM extends CommonObject
 							$this->error = $tmpproduct->error;
 							return -1;
 						}
-						$unit_cost = (!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp;
-						$line->unit_cost = (float) price2num($unit_cost);
+						$line->unit_cost = (float) price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
 						if (empty($line->unit_cost)) {
 							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
 								if ($productFournisseur->fourn_remise_percent != "0") {
@@ -1449,17 +1447,14 @@ class BOM extends CommonObject
 							}
 						}
 
-						$line->total_cost = (float) price2num($line->qty * $line->unit_cost, 'MT');
-
-						$this->total_cost += $line->total_cost;
+						$line->total_cost = (float) price2num($line->qty * $line->unit_cost / $line->efficiency, 'MT');
 					} else {
 						$bom_child = new BOM($this->db);
 						$res = $bom_child->fetch($line->fk_bom_child);
-						if ($res > 0) {
+						if ($res > 0 && $bom_child->qty > 0) {
 							$bom_child->calculateCosts();
-							$line->childBom[] = $bom_child;
-							$this->total_cost += (float) price2num($bom_child->total_cost * $line->qty, 'MT');
-							$this->total_cost += $line->total_cost;
+							$line->childBom = $bom_child;
+							$line->total_cost = (float) price2num($bom_child->total_cost * $line->qty / ($bom_child->qty*$line->efficiency), 'MT');
 						} else {
 							$this->error = $bom_child->error;
 							return -2;
@@ -1469,6 +1464,17 @@ class BOM extends CommonObject
 					// Convert qty of line into hours
 					$unitforline = measuringUnitString($line->fk_unit, '', '', 1);
 					$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
+
+					$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+					if (empty($line->unit_cost)) {
+						if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
+							if ($productFournisseur->fourn_remise_percent != "0") {
+								$line->unit_cost = $productFournisseur->fourn_unitprice_with_discount;
+							} else {
+								$line->unit_cost = $productFournisseur->fourn_unitprice;
+							}
+						}
+					}
 
 					if (isModEnabled('workstation') && !empty($line->fk_default_workstation)) {
 						$workstation = new Workstation($this->db);
@@ -1489,14 +1495,13 @@ class BOM extends CommonObject
 						}
 
 						if ($qtyhourservice) {
-							$line->total_cost = (float) price2num($qtyhourforline / $qtyhourservice * $tmpproduct->cost_price, 'MT');
+							$line->total_cost = price2num($qtyhourforline / $qtyhourservice * $line->unit_cost, 'MT');
 						} else {
-							$line->total_cost = (float) price2num($line->qty * $tmpproduct->cost_price, 'MT');
+							$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
 						}
 					}
-
-					$this->total_cost += $line->total_cost;
 				}
+				$this->total_cost += $line->total_cost;
 			}
 
 			$this->total_cost = (float) price2num($this->total_cost, 'MT');
@@ -1531,8 +1536,8 @@ class BOM extends CommonObject
 	/**
 	 * Get Net needs by product
 	 *
-	 * @param array	$TNetNeeds Array of ChildBom and infos linked to
-	 * @param float	$qty       qty needed
+	 * @param array $TNetNeeds	Array of ChildBom and infos linked to
+	 * @param float $qty		qty needed
 	 * @return void
 	 */
 	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0)
@@ -1540,9 +1545,7 @@ class BOM extends CommonObject
 		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
 				if (!empty($line->childBom)) {
-					foreach ($line->childBom as $childBom) {
-						$childBom->getNetNeeds($TNetNeeds, $line->qty * $qty);
-					}
+					$line->childBom->getNetNeeds($TNetNeeds, $line->qty * $qty / $this->qty);
 				} else {
 					if (empty($TNetNeeds[$line->fk_product])) {
 						$TNetNeeds[$line->fk_product] = 0;
@@ -1556,9 +1559,9 @@ class BOM extends CommonObject
 	/**
 	 * Get Net needs Tree by product or bom
 	 *
-	 * @param array $TNetNeeds Array of ChildBom and infos linked to
-	 * @param float	$qty       qty needed
-	 * @param int   $level     level of recursivity
+	 * @param array $TNetNeeds	Array of ChildBom and infos linked to
+	 * @param float $qty		qty needed
+	 * @param int   $level		level of recursivity
 	 * @return void
 	 */
 	public function getNetNeedsTree(&$TNetNeeds = array(), $qty = 0, $level = 0)
@@ -1566,13 +1569,11 @@ class BOM extends CommonObject
 		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
 				if (!empty($line->childBom)) {
-					foreach ($line->childBom as $childBom) {
-						$TNetNeeds[$childBom->id]['bom'] = $childBom;
-						$TNetNeeds[$childBom->id]['parentid'] = $this->id;
-						$TNetNeeds[$childBom->id]['qty'] = $line->qty * $qty;
-						$TNetNeeds[$childBom->id]['level'] = $level;
-						$childBom->getNetNeedsTree($TNetNeeds, $line->qty * $qty, $level + 1);
-					}
+					$TNetNeeds[$line->childBom->id]['bom'] = $line->childBom;
+					$TNetNeeds[$line->childBom->id]['parentid'] = $this->id;
+					$TNetNeeds[$line->childBom->id]['qty'] = $line->qty * $qty;
+					$TNetNeeds[$line->childBom->id]['level'] = $level;
+					$line->childBom->getNetNeedsTree($TNetNeeds, $line->qty * $qty / $this->qty, $level+1);
 				} else {
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] += $line->qty * $qty;
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['level'] = $level;
@@ -1624,7 +1625,7 @@ class BOM extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $db,$langs;
+		global $langs;
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
@@ -1729,8 +1730,7 @@ class BOMLine extends CommonObjectLine
 		'fk_unit' => array('type' => 'integer', 'label' => 'Unit', 'enabled' => 1, 'visible' => 1, 'position' => 120, 'notnull' => -1,),
 		'position' => array('type' => 'integer', 'label' => 'Rank', 'enabled' => 1, 'visible' => 0, 'default' => '0', 'position' => 200, 'notnull' => 1,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 1000, 'notnull' => -1,),
-		'fk_default_workstation' => array('type' => 'integer', 'label' => 'DefaultWorkstation', 'enabled' => 1, 'visible' => 1, 'notnull' => 0, 'position' => 1050)
-	);
+		'fk_default_workstation' => array('type' => 'integer', 'label' => 'DefaultWorkstation', 'enabled' => 1, 'visible' => 1, 'notnull' => 0, 'position' => 1050));
 
 	/**
 	 * @var int rowid
@@ -1789,24 +1789,25 @@ class BOMLine extends CommonObjectLine
 	// END MODULEBUILDER PROPERTIES
 
 	/**
-	 * @var float		Calculated cost for the BOM line
+	 * @var float			Calculated cost for the BOM line
 	 */
 	public $total_cost = 0;
 
 	/**
-	 * @var float		Line unit cost based on product cost price or pmp
+	 * @var float			Line unit cost based on product cost price or pmp
 	 */
 	public $unit_cost = 0;
 
 	/**
-	 * @var array     array of Bom in line
+	 * @var BOM				 Reference to Bom in line
 	 */
-	public $childBom = array();
+	public $childBom = null;
 
 	/**
-	 * @var int|null                ID of the unit of measurement (rowid in llx_c_units table)
+	 * * @var int|null		ID of the unit of measurement (rowid in llx_c_units table)
 	 * @see measuringUnitString()
 	 * @see getLabelOfUnit()
+
 	 */
 	public $fk_unit;
 
@@ -1824,7 +1825,7 @@ class BOMLine extends CommonObjectLine
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -1855,9 +1856,9 @@ class BOMLine extends CommonObjectLine
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, Id of created object if OK
+	 * @param  User $user		User that creates
+	 * @param  int  $notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int				Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -1865,7 +1866,40 @@ class BOMLine extends CommonObjectLine
 			$this->efficiency = 1;
 		}
 
+		// check for circular BOM dependency
+		if ($this->checkCircular($this->fk_bom_child)<0) {
+			return -1;
+		}
+
 		return $this->createCommon($user, $notrigger);
+	}
+
+	/**
+	 * Check for circular BOM dependency
+	 *
+	 * @param int $id			ID of BOM object to check children
+	 * @return int				Return integer <0 if KO, >0 if OK
+	 */
+	public function checkCircular($id)
+	{
+		// check for circular BOM dependency
+		$sql = 'SELECT rowid, fk_bom_child as child, fk_product as product, qty as quantity FROM '.MAIN_DB_PREFIX.'bom_bomline';
+		$sql.= ' WHERE fk_bom ='. (int) $id;
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			// Loop on all the sub-BOM lines if they exist
+			while ($obj = $this->db->fetch_object($result)) {
+				if (!empty($obj->child)) {
+					if ($obj->child==$this->fk_bom) {
+						$this->error = 'Found BOM circular dependency';
+						return -1;
+					} elseif (!$this->checkCircular($obj->child)) return -1;
+				}
+			}
+		}
+
+		return 1;
 	}
 
 	/**
@@ -1885,14 +1919,14 @@ class BOMLine extends CommonObjectLine
 	/**
 	 * Load list of objects in memory from the database.
 	 *
-	 * @param  string      	$sortorder    	Sort Order
-	 * @param  string      	$sortfield    	Sort field
-	 * @param  int         	$limit        	limit
-	 * @param  int         	$offset       	Offset
-	 * @param  string		$filter       	Filter as an Universal Search string.
-	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
-	 * @param  string		$filtermode		No more used
-	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 * @param  string       $sortorder      Sort Order
+	 * @param  string       $sortfield      Sort field
+	 * @param  int          $limit          limit
+	 * @param  int          $offset         Offset
+	 * @param  string       $filter         Filter as an Universal Search string.
+	 *                                      Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string       $filtermode     No more used
+	 * @return array|int                    int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -1908,7 +1942,6 @@ class BOMLine extends CommonObjectLine
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
-
 		// Manage filter
 		$errormessage = '';
 		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
@@ -1943,6 +1976,7 @@ class BOMLine extends CommonObjectLine
 			$this->errors[] = 'Error '.$this->db->lasterror();
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
+
 			return -1;
 		}
 	}
@@ -1951,7 +1985,7 @@ class BOMLine extends CommonObjectLine
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  int	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @param  int  $notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
@@ -1966,9 +2000,10 @@ class BOMLine extends CommonObjectLine
 	/**
 	 * Delete object in database
 	 *
-	 * @param User 	$user       User that deletes
-	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 * @return int             	Return integer <0 if KO, >0 if OK
+	 * @param User  $user       User that deletes
+	 * @param int   $notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int              Return integer <0 if KO, >0 if OK
+
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -1988,7 +2023,7 @@ class BOMLine extends CommonObjectLine
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $db, $conf, $langs, $hookmanager;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
