@@ -838,7 +838,7 @@ if ($nb) {
 				let amount = Number(pfd.getAttribute('amount'));
 				total_checked += amount;
 			})
-			$('#total_checked').val(total_checked);
+			$('#total_checked').val(Math.round(total_checked * 100) / 100.0);
 		}
 
 		$('[id^="cb"]').change(computeTotalChecked);
