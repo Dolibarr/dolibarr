@@ -213,7 +213,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 			print '</tr></table>';
 			print '</td>';
 
-            $cssview = !empty($extrafields->attributes[$object->table_element]['cssview'][$tmpkeyextra]) ? ($extrafields->attributes[$object->table_element]['cssview'][$tmpkeyextra] . ' ') : '';
+			$cssview = !empty($extrafields->attributes[$object->table_element]['cssview'][$tmpkeyextra]) ? ($extrafields->attributes[$object->table_element]['cssview'][$tmpkeyextra] . ' ') : '';
 			$html_id = !empty($object->id) ? $object->element.'_extras_'.$tmpkeyextra.'_'.$object->id : '';
 
 			print '<td id="' . $html_id . '" class="valuefield ' . $cssview . $object->element . '_extras_' . $tmpkeyextra . ' wordbreakimp"' . (!empty($cols) ? ' colspan="' . $cols . '"' : '') . '>';
