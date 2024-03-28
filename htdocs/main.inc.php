@@ -2243,7 +2243,12 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		}
 
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-			$text = '<span class="aversion"><span class="hideonsmartphone small">'.DOL_VERSION.'</span></span>';
+			if (! empty($conf->global->EASYA_VERSION)) {
+				$appli = $langs->trans("Easya") . ' '. $conf->global->EASYA_VERSION;
+				$text = '<span class="aversion"><span class="hideonsmartphone small">'.$conf->global->EASYA_VERSION.'</span></span>';
+			} else {
+				$text = '<span class="aversion"><span class="hideonsmartphone small">'.DOL_VERSION.'</span></span>';
+			}
 			$toprightmenu .= $form->textwithtooltip('', $appli, 2, 1, $text, 'login_block_elem', 2);
 		}
 
