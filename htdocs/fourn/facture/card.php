@@ -1239,12 +1239,12 @@ if (empty($reshook)) {
 									0, // localtax1_tx
 									0, // localtax2_tx
 									1, // quantity
-									(!getDolGlobalString('INVOICE_PRODUCTID_DEPOSIT') ? 0 : $conf->global->INVOICE_PRODUCTID_DEPOSIT), // fk_product
+									getDolGlobalInt('SUPPLIER_INVOICE_PRODUCTID_DEPOSIT', getDolGlobalInt('INVOICE_PRODUCTID_DEPOSIT')), // fk_product
 									0, // remise_percent
 									0, // date_start
 									0, // date_end
 									0,
-									$lines[$i]->info_bits, // info_bits
+									0, // info_bits
 									'HT',
 									0, // product_type
 									1,
@@ -1254,7 +1254,7 @@ if (empty($reshook)) {
 									$object->origin,
 									0,
 									'',
-									$lines[$i]->special_code,
+									'0', // special_code
 									0,
 									0
 									//,$langs->trans('Deposit') //Deprecated

@@ -6059,15 +6059,6 @@ class FactureLigne extends CommonInvoiceLine
 	public $remise_percent;
 
 	/**
-	 * List of special options to define line:
-	 * 1: shipment cost lines
-	 * 2: ecotaxe
-	 * 3: ??
-	 * idofmodule: a meaning for the module
-	 */
-	public $special_code;
-
-	/**
 	 * @var string		To store the batch to consume in stock when using a POS module
 	 */
 	public $batch;
