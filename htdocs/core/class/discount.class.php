@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -505,8 +506,8 @@ class DiscountAbsolute extends CommonObject
 	/**
 	 *  Return amount (with tax) of discounts currently available for a company, user or other criteria
 	 *
-	 *	@param		Societe		$company		Object third party for filter
-	 *	@param		User		$user			Filtre sur un user auteur des remises
+	 *	@param		?Societe	$company		Object third party for filter
+	 *	@param		?User		$user			Filtre sur un user auteur des remises
 	 * 	@param		string		$filter			Filter other. Warning: Do not use a user input value here.
 	 * 	@param		int			$maxvalue		Filter on max value for discount
 	 *  @param      int			$discount_type  0 => customer discount, 1 => supplier discount
