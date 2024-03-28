@@ -390,7 +390,6 @@ if ($action == 'dopayment') {
 			$action = '';
 		}
 
-		//var_dump($_POST);
 		if (empty($mesg)) {
 			dol_syslog("newpayment.php call paypal api and do redirect", LOG_DEBUG);
 

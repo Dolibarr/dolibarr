@@ -327,15 +327,15 @@ require_once 'filefunc.inc.php';
 // If there is a POST parameter to tell to save automatically some POST parameters into cookies, we do it.
 // This is used for example by form of boxes to save personalization of some options.
 // DOL_AUTOSET_COOKIE=cookiename:val1,val2 and  cookiename_val1=aaa cookiename_val2=bbb will set cookie_name with value json_encode(array('val1'=> , ))
-if (!empty($_POST["DOL_AUTOSET_COOKIE"])) {
-	$tmpautoset = explode(':', $_POST["DOL_AUTOSET_COOKIE"], 2);
+if (GETPOST("DOL_AUTOSET_COOKIE")) {
+	$tmpautoset = explode(':', GETPOST("DOL_AUTOSET_COOKIE"), 2);
 	$tmplist = explode(',', $tmpautoset[1]);
 	$cookiearrayvalue = array();
 	foreach ($tmplist as $tmpkey) {
 		$postkey = $tmpautoset[0].'_'.$tmpkey;
-		//var_dump('tmpkey='.$tmpkey.' postkey='.$postkey.' value='.$_POST[$postkey]);
-		if (!empty($_POST[$postkey])) {
-			$cookiearrayvalue[$tmpkey] = $_POST[$postkey];
+		//var_dump('tmpkey='.$tmpkey.' postkey='.$postkey.' value='.GETPOST($postkey);
+		if (GETPOST($postkey)) {
+			$cookiearrayvalue[$tmpkey] = GETPOST($postkey);
 		}
 	}
 	$cookiename = $tmpautoset[0];
@@ -764,7 +764,6 @@ if (!defined('NOLOGIN')) {
 		$dol_optimize_smallscreen = GETPOSTINT('dol_optimize_smallscreen', 3);
 		$dol_no_mouse_hover = GETPOSTINT('dol_no_mouse_hover', 3);
 		$dol_use_jmobile = GETPOSTINT('dol_use_jmobile', 3); // 0=default, 1=to say we use app from a webview app, 2=to say we use app from a webview app and keep ajax
-		//dol_syslog("POST key=".join(array_keys($_POST),',').' value='.join($_POST,','));
 
 		// If in demo mode, we check we go to home page through the public/demo/index.php page
 		if (!empty($dolibarr_main_demo) && $_SERVER['PHP_SELF'] == DOL_URL_ROOT.'/index.php') {  // We ask index page

@@ -316,7 +316,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 
 		$_POST['modulepart'] = $module;
 		$_POST['openeddir'] = GETPOST('openeddir');
-		$_POST['dir'] = empty($_POST['dir']) ? '/' : $_POST['dir'];
+		$_POST['dir'] = empty($_POST['dir']) ? '/' : GETPOST('dir');
 
 		// Show filemanager tree (will be filled by direct include of ajaxdirtree.php in mode noajax, this will return all dir - all levels - to show)
 		print '<div id="filetree" class="ecmfiletree">';

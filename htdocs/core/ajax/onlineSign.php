@@ -61,7 +61,7 @@ $signature = GETPOST('signaturebase64');
 $ref = GETPOST('ref', 'aZ09');
 $mode = GETPOST('mode', 'aZ09');    // 'proposal', ...
 $SECUREKEY = GETPOST("securekey"); // Secure key
-$online_sign_name = GETPOST("onlinesignname") ? GETPOST("onlinesignname") : '';
+$online_sign_name = GETPOST("onlinesignname");
 
 $error = 0;
 $response = "";
