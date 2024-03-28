@@ -1129,6 +1129,100 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 	return $result;
 }
 
+
+/**
+ * Rename a file or a name, with overwrite.
+ *
+ * The PHP rename method works differently between Linux and Windows platforms.
+ * This method aims to match the linux implementation
+ *
+ * @param	string  $oldname            Source file or directory
+ * @param   string	$newname            Destination file or directory
+ * @return  bool    true if success
+ */
+function dol_rename($oldname, $newname)
+{
+	if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+		// On Windows, use custom function to rename directories
+		if (is_dir($oldname)) {
+			return dol_win_dir_rename($oldname, $newname);
+		}
+	}
+	// By default use the rename method directly
+	return (bool) @rename($oldname, $newname);
+}
+
+
+/**
+ * Rename a directory on windows platform similar to Linux
+ *
+ * On Linux a rename to an empty directory works, but not on windows.
+ * This is a replacement for rename to achieve the same behavior on windows.
+ *
+ * @param	string  $oldname            Source directory
+ * @param   string	$newname            Destination directory
+ * @return  bool    true if success
+ */
+function dol_win_dir_rename($oldname, $newname)
+{
+	if (!is_dir($oldname)) {
+		return false;
+	}
+
+	if (file_exists($newname)) {
+		// "File exists", so it may be a directory or a file or link.
+		// On linux, rename to empty directory works, but
+		// not on windows.  So if on windows, we try to
+		// remove the existing directory before proceeding with
+		// a standard rename
+		// We fail if the newname is not a directory or
+		// if we can not remove the directory (rmdir only removes empty
+		// directories)
+
+		if (!is_dir($newname)) {
+			return false;
+		} else {
+			//
+			// Check if the paths are on the same device before proceeding.
+			// To do this the device numbers are compared.
+			// We abort if we can't compare (the destination directory exists
+			// but we can't ensure that source and destination are on the same
+			// device).
+
+			// Get the device number of the first path
+			$stat_old = @stat($oldname);
+			if ($stat_old === false) {
+				return false; // Unable to get device number for oldname
+			}
+			$dev_old = $stat_old['dev'];
+
+			// Get the device number of the second path
+			$stat_new = @stat($newname);
+			if ($stat_new === false) {
+				return false; // Unable to get device number for newname
+			}
+			$dev_new = $stat_new['dev'];
+
+			// Compare the device numbers
+			if ($dev_old !== $dev_new) {
+				// Different devices, not moving.
+				return false;
+			} elseif (!(bool) @rmdir($newname)) {
+				// Failed to remove target directory (not empty or no rights or other).
+				return false;
+			}
+		}
+	}
+
+	// At this point the target path should not exist anymore so
+	// we can just rename the directory.
+	// We call the original rename function so that it fails when this
+	// is a cross device change.
+	// Regular rename will work
+	return (bool) @rename($oldname, $newname);
+}
+
+
 /**
  * Move a directory into another name.
  *
@@ -1139,7 +1233,7 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
  * @param	int		$renamedircontent	Also rename contents inside srcdir after the move to match new destination name.
  *
  * @return boolean 	True if OK, false if KO
-*/
+ */
 function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase = 1, $renamedircontent = 1)
 {
 	$result = false;
@@ -1150,7 +1244,7 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 	$destexists = dol_is_dir($destdir);
 
 	if (!$srcexists) {
-		dol_syslog("files.lib.php::dol_move_dir srcdir does not exists. we ignore the move request.");
+		dol_syslog("files.lib.php::dol_move_dir srcdir does not exist. Move fails.");
 		return false;
 	}
 
@@ -1158,9 +1252,9 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 		$newpathofsrcdir = dol_osencode($srcdir);
 		$newpathofdestdir = dol_osencode($destdir);
 
-		$result = @rename($newpathofsrcdir, $newpathofdestdir);
+		$result = dol_rename($newpathofsrcdir, $newpathofdestdir);
 
-		// Now we rename also contents inside dir after the move to match new destination name
+		// Now rename contents in the directory after the move to match the new destination name
 		if ($result && $renamedircontent) {
 			if (file_exists($newpathofdestdir)) {
 				$destbasename = basename($newpathofdestdir);

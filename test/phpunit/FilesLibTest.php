@@ -509,13 +509,13 @@ class FilesLibTest extends CommonClassTest
 		dol_delete_dir_recursive($dirdestpath, 0, 1);
 		$result = dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
 		print __METHOD__." result=".$result."\n";
-		$this->assertTrue($result, 'move of directory with empty directory');
+		$this->assertTrue($result, "Move of directory $dirsrcpath to $dirdestpath with empty directory");
 
 		// To test a move on existing directory with overwrite
 		dol_mkdir($dirsrcpath);
 		$result = dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
 		print __METHOD__." result=".$result."\n";
-		$this->assertTrue($result, "move of directory on existing directory with empty directory");
+		$this->assertTrue($result, "Move of directory $dirsrcpath on existing directory $dirdestpath with empty directory");
 
 		// To test a move on existing directory without overwrite
 		dol_mkdir($dirsrcpath);
