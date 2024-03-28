@@ -1197,6 +1197,7 @@ class Invoices extends DolibarrApi
 			}
 
 			$discount->fk_soc = $this->invoice->socid;
+			$discount->socid = $this->invoice->socid;
 			$discount->fk_facture_source = $this->invoice->id;
 
 			$error = 0;

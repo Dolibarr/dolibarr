@@ -2464,6 +2464,7 @@ class Societe extends CommonObject
 
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fk_soc = $this->id;
+			$discount->socid = $this->id;
 
 			$discount->discount_type = $discount_type;
 

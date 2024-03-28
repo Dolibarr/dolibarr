@@ -1750,6 +1750,7 @@ if (empty($reshook)) {
 
 										$discount = new DiscountAbsolute($db);
 										$discount->fk_soc = $object->socid;
+										$discount->socid = $object->socid;
 										$discount->amount_ht = abs($lines[$i]->total_ht);
 										$discount->amount_tva = abs($lines[$i]->total_tva);
 										$discount->amount_ttc = abs($lines[$i]->total_ttc);
