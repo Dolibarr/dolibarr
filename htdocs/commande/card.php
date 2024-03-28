@@ -2194,8 +2194,11 @@ if ($action == 'create' && $usercancreate) {
 			if (isModEnabled('notification')) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 				$notify = new Notify($db);
-				$text .= '<br>';
+				$text .= '<br>Pre order validation will send:<br>';
 				$text .= $notify->confirmMessage('ORDER_VALIDATE', $object->socid, $object);
+				$post_notify = new Notify($db);
+				$text .= '<br>Post order validation will send:<br>';
+				$text .= $post_notify->confirmMessage('ORDER_POST_VALIDATE', $object->socid, $object);
 			}
 
 			$qualified_for_stock_change = 0;
