@@ -2574,6 +2574,7 @@ if ($action == 'create') {
 				if ($action != 'editline') {
 					print '<td class="right"></td>';
 					print '<td class="right"></td>';
+					print '<td></td>';
 				}
 
 				print '<td class="center inputbuttons">';
