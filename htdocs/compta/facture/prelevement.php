@@ -102,7 +102,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == "new" && usercancreate) {
+	if ($action == "new" && $usercancreate) {
 		if (price2num(GETPOST('remaintopaylesspendingdebit', 'alpha')) > 0 && price2num(GETPOST('withdraw_request_amount', 'alpha')) <= price2num(GETPOST('remaintopaylesspendingdebit', 'alpha'))) {
 			if ($object->id > 0) {
 				$db->begin();
