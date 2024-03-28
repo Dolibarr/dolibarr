@@ -614,6 +614,7 @@ if ($resql) {
 		while ($i < $num && $i < $limit) {
 			$obj = $db->fetch_object($resql);
 
+			$bankaccountstatic = new Account($db);
 			$bac = new CompanyBankAccount($db);	// Must include the new in loop so the fetch is clean
 			// $bac->fetch(0, $obj->socid);
 			$datelimit = $db->jdate($obj->datelimite);
