@@ -384,6 +384,7 @@ JuridicalStatus200=Independent
 DeleteFile=Delete file
 ConfirmDeleteFile=Are you sure you want to delete this file <b>%s</b>?
 AllocateCommercial=Assigned to sales representative
+UnallocateCommercial = De-assigning a sales representative
 Organization=Organization
 FiscalYearInformation=Fiscal Year
 FiscalMonthStart=Starting month of the fiscal year
