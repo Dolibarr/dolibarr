@@ -57,7 +57,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'co
 $mode = GETPOST('mode', 'alpha');
 
 if ($contextpage == 'poslist') {
-	$_GET['optioncss'] = 'print';
+	$optioncss = 'print';
 }
 
 // Security check

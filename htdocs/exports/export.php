@@ -219,11 +219,11 @@ if ($action == 'selectfield') {     // Selection of field at step 2
 	}
 }
 if ($action == 'unselectfield') {
-	if ($_GET["field"] == 'all') {
+	if (GETPOST("field") == 'all') {
 		$array_selected = array();
 		$_SESSION["export_selected_fields"] = $array_selected;
 	} else {
-		unset($array_selected[$_GET["field"]]);
+		unset($array_selected[GETPOST("field")]);
 		// Renumber fields of array_selected (from 1 to nb_elements)
 		asort($array_selected);
 		$i = 0;
@@ -238,7 +238,7 @@ if ($action == 'unselectfield') {
 }
 
 if ($action == 'downfield' || $action == 'upfield') {
-	$pos = $array_selected[$_GET["field"]];
+	$pos = $array_selected[GETPOST("field")];
 	if ($action == 'downfield') {
 		$newpos = $pos + 1;
 	}
@@ -253,9 +253,9 @@ if ($action == 'downfield' || $action == 'upfield') {
 			break;
 		}
 	}
-	//print("Switch pos=$pos (code=".$_GET["field"].") and newpos=$newpos (code=$newcode)");
+	//print("Switch pos=$pos (code=".GETPOST("field").") and newpos=$newpos (code=$newcode)");
 	if ($newcode) {   // Si newcode trouve (protection contre resoumission de page)
-		$array_selected[$_GET["field"]] = $newpos;
+		$array_selected[GETPOST("field")] = $newpos;
 		$array_selected[$newcode] = $pos;
 		$_SESSION["export_selected_fields"] = $array_selected;
 	}
@@ -290,7 +290,7 @@ if ($action == 'builddoc') {
 
 // Delete file
 if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes') {
-	$file = $upload_dir."/".GETPOST('file'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$file = $upload_dir."/".GETPOST('file');
 
 	$ret = dol_delete_file($file);
 	if ($ret) {

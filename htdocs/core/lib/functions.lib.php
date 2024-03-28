@@ -2036,7 +2036,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 
 		//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
 		// If html log tag enabled and url parameter log defined, we show output log on HTML comments
-		if (getDolGlobalString('MAIN_ENABLE_LOG_INLINE_HTML') && !empty($_GET["log"])) {
+		if (getDolGlobalString('MAIN_ENABLE_LOG_INLINE_HTML') && GETPOSTINT("log")) {
 			print "\n\n<!-- Log start\n";
 			print dol_escape_htmltag($message)."\n";
 			print "Log end -->\n";

@@ -404,7 +404,7 @@ if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex")
 		}
 	} else {
 		setEventMessages($result, null, 'errors');
-		$_GET['file'] = $_POST["file"];
+		//$_GET['file'] = $_POST["file"];
 		$action = '';
 	}
 }
@@ -467,7 +467,7 @@ if ($action == 'confirm_crop') {
 		}
 	} else {
 		setEventMessages($result, null, 'errors');
-		$_GET['file'] = $_POST["file"];
+		//$_GET['file'] = $_POST["file"];
 		$action = '';
 	}
 }

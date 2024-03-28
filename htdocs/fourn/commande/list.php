@@ -730,8 +730,8 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];
-			$_GET["originid"] = $_POST["originid"];
+			$_GET["origin"] = $_POST["origin"];		// Keep this ?
+			$_GET["originid"] = $_POST["originid"];	// Keep this ?
 			setEventMessages("Error", null, 'errors');
 			$error++;
 		}

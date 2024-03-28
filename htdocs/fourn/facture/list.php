@@ -137,7 +137,6 @@ $socid = GETPOSTINT('socid');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
-	$_GET["action"] = '';
 	$socid = $user->socid;
 }
 
