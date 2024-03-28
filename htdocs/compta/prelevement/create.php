@@ -838,7 +838,7 @@ if ($nb) {
 				let amount = Number(pfd.getAttribute('amount'));
 				total_checked += amount;
 			})
-			let precision = Number(10^<?= getDolGlobalInt('MAIN_MAX_DECIMALS_TOT') ?>)
+			let precision = Math.pow(10, <?= getDolGlobalInt('MAIN_MAX_DECIMALS_TOT') ?>);
 			$('#total_checked').val(Math.round(total_checked * precision) / precision);
 		}
 
