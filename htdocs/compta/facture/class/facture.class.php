@@ -1127,8 +1127,6 @@ class Facture extends CommonInvoice
 	 */
 	public function createFromCurrent(User $user, $invertdetail = 0)
 	{
-		global $conf;
-
 		// Source invoice load
 		$facture = new Facture($this->db);
 
@@ -1153,6 +1151,7 @@ class Facture extends CommonInvoice
 		$facture->note_public       = $this->note_public;
 		$facture->note_private      = $this->note_private;
 		$facture->ref_client        = $this->ref_client;
+		$facture->ref_customer      = $this->ref_customer;
 		$facture->model_pdf         = $this->model_pdf;
 		$facture->fk_project        = $this->fk_project;
 		$facture->cond_reglement_id = $this->cond_reglement_id;
@@ -1174,6 +1173,7 @@ class Facture extends CommonInvoice
 		$facture->retained_warranty_date_limit = $this->retained_warranty_date_limit;
 
 		$facture->fk_user_author = $user->id;
+		$facture->user_creation_id = $user->id;
 
 
 		// Loop on each line of new invoice
