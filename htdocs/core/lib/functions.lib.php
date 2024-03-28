@@ -12150,7 +12150,7 @@ function getElementProperties($elementType)
 	}
 
 	// Object lines will use parent classpath and module ref
-	if (substr($element_type, -3) == 'det') {
+	if (substr($elementType, -3) == 'det') {
 		$module = preg_replace('/det$/', '', $element);
 		$subelement = preg_replace('/det$/', '', $subelement);
 		$classpath = $module.'/class';
