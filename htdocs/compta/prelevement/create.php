@@ -838,7 +838,8 @@ if ($nb) {
 				let amount = Number(pfd.getAttribute('amount'));
 				total_checked += amount;
 			})
-			$('#total_checked').val(Math.round(total_checked * 100) / 100.0);
+			let precision = Number(10^<?= getDolGlobalInt('MAIN_MAX_DECIMALS_TOT') ?>)
+			$('#total_checked').val(Math.round(total_checked * precision) / precision);
 		}
 
 		$('[id^="cb"]').change(computeTotalChecked);
