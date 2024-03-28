@@ -1,0 +1,26 @@
+apiVersion: v2
+appVersion: 19.0.0
+description: A modern software package to manage your company or foundation's activity
+home: https://www.dolibarr.org/
+icon: https://raw.githubusercontent.com/Dolibarr/dolibarr/develop/doc/images/dolibarr_256x256_color.svg
+maintainers:
+  - name: sebastien-prudhomme
+    email: sebastien.prudhomme@gmail.com
+name: dolibarr
+sources:
+  - https://github.com/Dolibarr/dolibarr
+  - https://github.com/cowboysysop/charts/tree/master/charts/dolibarr
+version: 5.1.0
+dependencies:
+  - name: common
+    version: 2.19.0
+    repository: https://charts.bitnami.com/bitnami/
+  - name: mariadb
+    version: 17.0.1
+    repository: https://charts.bitnami.com/bitnami/
+    condition: mariadb.enabled
+annotations:
+  artifacthub.io/signKey: |
+    fingerprint: 9E57D2479D48B84463EF491F66D280CE667AD6C8
+    url: https://cowboysysop.github.io/charts/pgp-public-key-2022-02-19.asc
+  kubeVersion: ">=1.24"
