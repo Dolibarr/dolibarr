@@ -2062,19 +2062,19 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param      int         $origin_id              id origin document
 	 *	@param      double      $pu_devise              Amount in currency
 	 *	@param      string      $ref_supplier           Supplier ref
-	 *	@param      string      $special_code           Special code
+	 *	@param      int         $special_code           Special code
 	 *	@param      int         $fk_parent_line         Parent line id
 	 *	@param      int         $fk_remise_except       Id discount used
 	 *	@return     int                                 >0 if OK, <0 if KO
 	 */
-	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = 0, $date_end = 0, $fk_code_ventilation = 0, $info_bits = 0, $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = 0, $array_options = [], $fk_unit = null, $origin_id = 0, $pu_devise = 0, $ref_supplier = '', $special_code = '', $fk_parent_line = 0, $fk_remise_except = 0)
+	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = 0, $date_end = 0, $fk_code_ventilation = 0, $info_bits = 0, $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = 0, $array_options = [], $fk_unit = null, $origin_id = 0, $pu_devise = 0, $ref_supplier = '', $special_code = 0, $fk_parent_line = 0, $fk_remise_except = 0)
 	{
 		global $langs, $mysoc;
 
 		dol_syslog(get_class($this)."::addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$fk_code_ventilation,$info_bits,$price_base_type,$type,$fk_unit,fk_remise_except=$fk_remise_except", LOG_DEBUG);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			// Clean parameters
 			if (empty($remise_percent)) {
 				$remise_percent = 0;
@@ -2253,7 +2253,7 @@ class FactureFournisseur extends CommonInvoice
 			$supplierinvoiceline->fk_remise_except = $fk_remise_except;
 
 
-			$supplierinvoiceline->special_code = (string) $special_code;
+			$supplierinvoiceline->special_code = (int) $special_code;
 			$supplierinvoiceline->fk_parent_line = $fk_parent_line;
 			$supplierinvoiceline->origin = $this->origin;
 			$supplierinvoiceline->origin_id = $origin_id;
@@ -3917,6 +3917,9 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public $fk_parent_line;
 
+	/**
+	 * @var int special code
+	 */
 	public $special_code;
 
 	/**

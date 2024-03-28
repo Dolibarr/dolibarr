@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,11 +124,11 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	$data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
 	foreach ($fulltree as $key => $val) {
 		$userstatic->id = $val['id'];
-		$userstatic->ref = $val['id'];
+		$userstatic->ref = (string) $val['id'];
 		$userstatic->login = $val['login'];
 		$userstatic->firstname = $val['firstname'];
 		$userstatic->lastname = $val['lastname'];
-		$userstatic->statut = $val['statut'];
+		$userstatic->status = $val['statut'];
 		$userstatic->email = $val['email'];
 		$userstatic->gender = $val['gender'];
 		$userstatic->socid = $val['fk_soc'];

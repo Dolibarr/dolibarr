@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -320,7 +320,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 				$userstatic->firstname = $obj->firstname;
 				$userstatic->email = $obj->email;
 				$userstatic->login = $obj->login;
-				$userstatic->statut = $obj->user_status;
+				$userstatic->status = $obj->user_status;
 				$userstatic->photo = $obj->photo;
 
 				print '<tr class="oddeven">';

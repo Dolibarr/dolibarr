@@ -579,7 +579,7 @@ class FormOther
 				$userstatic->lastname = $obj_usr->lastname;
 				$userstatic->firstname = $obj_usr->firstname;
 				$userstatic->photo = $obj_usr->photo;
-				$userstatic->statut = $obj_usr->status;
+				$userstatic->status = $obj_usr->status;
 				$userstatic->entity = $obj_usr->entity;
 				$userstatic->admin = $obj_usr->admin;
 

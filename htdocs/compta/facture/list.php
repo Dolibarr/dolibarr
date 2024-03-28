@@ -17,6 +17,7 @@
  * Copyright (C) 2023	   Nick Fragoulis
  * Copyright (C) 2023	   Joachim Kueter		 <git-jk@bloxera.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2419,7 +2420,6 @@ if ($num > 0) {
 			$userstatic->lastname = $obj->lastname;
 			$userstatic->firstname = $obj->firstname;
 			$userstatic->email = $obj->user_email;
-			$userstatic->statut = $obj->user_statut;	// deprecated
 			$userstatic->status = $obj->user_statut;
 			$userstatic->entity = $obj->entity;
 			$userstatic->photo = $obj->photo;
@@ -2462,7 +2462,6 @@ if ($num > 0) {
 							$userstatic->lastname = $val['lastname'];
 							$userstatic->firstname = $val['firstname'];
 							$userstatic->email = $val['email'];
-							$userstatic->statut = $val['statut'];	// deprecated
 							$userstatic->status = $val['statut'];
 							$userstatic->entity = $val['entity'];
 							$userstatic->photo = $val['photo'];

@@ -2879,6 +2879,9 @@ class SupplierProposalLine extends CommonObjectLine
 	public $marge_tx;
 	public $marque_tx;
 
+	/**
+	 * @var int special code
+	 */
 	public $special_code; // Tag for special lines (exclusive tags)
 	// 1: frais de port
 	// 2: ecotaxe

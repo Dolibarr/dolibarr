@@ -2137,7 +2137,7 @@ class Form
 					$userstatic->lastname = $obj->lastname;
 					$userstatic->firstname = $obj->firstname;
 					$userstatic->photo = $obj->photo;
-					$userstatic->statut = $obj->status;
+					$userstatic->status = $obj->status;
 					$userstatic->entity = $obj->entity;
 					$userstatic->admin = $obj->admin;
 
