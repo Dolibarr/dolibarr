@@ -38,8 +38,8 @@ class Microsoft extends AbstractService
     const SCOPE_APPLICATIONS = 'applications';
     const SCOPE_APPLICATIONS_CREATE = 'applications_create';
     const SCOPE_IMAP = 'imap';
-    const SOCPE_IMAP_ACCESSASUSERALL = 'https://outlook.office365.com/IMAP.AccessAsUser.All';
-    const SOCPE_SMTPSEND = 'https://outlook.office365.com/SMTP.Send';
+    const SOCPE_IMAP_ACCESSASUSERALL = 'https://outlook.office.com/.default';
+    const SOCPE_SMTPSEND = 'https://outlook.office.com/.default';
     const SOCPE_USERREAD = 'User.Read';
     const SOCPE_MAILREAD = 'Mail.Read';
     const SOCPE_MAILSEND = 'Mail.Send';
@@ -82,11 +82,11 @@ class Microsoft extends AbstractService
      */
     public function getAuthorizationEndpoint()
     {
-    	$tenant = $this->storage->getTenant();
+        $tenant = $this->storage->getTenant();
 
-    	//return new Uri('https://login.live.com/oauth20_authorize.srf');
+        //return new Uri('https://login.live.com/oauth20_authorize.srf');
         //return new Uri('https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize');
-        return new Uri('https://login.microsoftonline.com/'.$tenant.'/oauth2/v2.0/authorize');
+        return new Uri('https://login.microsoftonline.com/' . $tenant . '/oauth2/v2.0/authorize');
     }
 
     /**
@@ -94,11 +94,11 @@ class Microsoft extends AbstractService
      */
     public function getAccessTokenEndpoint()
     {
-    	$tenant = $this->storage->getTenant();
+        $tenant = $this->storage->getTenant();
 
         //return new Uri('https://login.live.com/oauth20_token.srf');
         //return new Uri('https://login.microsoftonline.com/organizations/oauth2/v2.0/token');
-        return new Uri('https://login.microsoftonline.com/'.$tenant.'/oauth2/v2.0/token');
+        return new Uri('https://login.microsoftonline.com/' . $tenant . '/oauth2/v2.0/token');
     }
 
     /**
