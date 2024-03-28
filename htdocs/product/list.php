@@ -1310,12 +1310,12 @@ if (!empty($arrayfields['p.duration']['checked'])) {
 }
 if (!empty($arrayfields['pac.fk_product_parent']['checked'])) {
 	print_liste_field_titre($arrayfields['pac.fk_product_parent']['label'], $_SERVER["PHP_SELF"], "pac.fk_product_parent", "", $param, '', $sortfield, $sortorder, '', empty($arrayfields['pac.fk_product_parent']['help']) ? '' : $arrayfields['pac.fk_product_parent']['help']);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.finished']['checked'])) {
 	print_liste_field_titre($arrayfields['p.finished']['label'], $_SERVER["PHP_SELF"], "p.finished", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-
 if (!empty($arrayfields['p.weight']['checked'])) {
 	print_liste_field_titre($arrayfields['p.weight']['label'], $_SERVER['PHP_SELF'], 'p.weight', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
@@ -2017,6 +2017,9 @@ while ($i < $imaxinloop) {
 				}
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// VAT or Sell Tax Rate
@@ -2036,6 +2039,9 @@ while ($i < $imaxinloop) {
 				print '<span class="amount">'.price($product_static->pmp, 1, $langs)."</span>";
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Cost price
 		if (!empty($arrayfields['p.cost_price']['checked'])) {
@@ -2045,6 +2051,9 @@ while ($i < $imaxinloop) {
 				print '<span class="amount">'.price($obj->cost_price).' '.$langs->trans("HT").'</span>';
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Limit alert

@@ -586,7 +586,7 @@ if (!$error && $massaction == 'confirm_presend') {
 								if ($objectclass == 'CommandeFournisseur') $actiontypecode='AC_SUP_ORD';
 								if ($objectclass == 'FactureFournisseur') $actiontypecode='AC_SUP_INV';*/
 
-								$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
+								$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
 								if ($message) {
 									if ($sendtocc) {
 										$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);

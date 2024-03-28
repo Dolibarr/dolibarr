@@ -2255,14 +2255,14 @@ while ($i < $imaxinloop) {
 		}
 		// Total margin rate
 		if (!empty($arrayfields['total_margin_rate']['checked'])) {
-			print '<td class="right nowrap">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], 0, null, null, null, 2).'%').'</td>';
+			print '<td class="right nowrap">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], 0, '', 0, 0, 2).'%').'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Total mark rate
 		if (!empty($arrayfields['total_mark_rate']['checked'])) {
-			print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], 0, null, null, null, 2).'%').'</td>';
+			print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], 0, '', 0, 0, 2).'%').'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

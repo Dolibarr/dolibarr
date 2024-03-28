@@ -8,6 +8,7 @@
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -327,7 +328,7 @@ $messagemandatory = '<span class="">' . $langs->trans("FieldsWithAreMandatory", 
 //print '<br><span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
 //print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
-print dol_get_fiche_head('');
+print dol_get_fiche_head();
 
 print '<script type="text/javascript">
 jQuery(document).ready(function () {
