@@ -178,7 +178,7 @@ if ($reshook < 0) {
 	llxFooterVierge();
 } elseif (empty($reshook)) {
 	// Check exportkey
-	if (empty($_GET["exportkey"]) || getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY') != $_GET["exportkey"]) {
+	if (!GETPOST("exportkey") || getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY') != GETPOST("exportkey")) {
 		$user->getrights();
 
 		top_httphead();
@@ -328,13 +328,13 @@ if ($format == 'rss') {
 	$result = $agenda->build_exportfile($format, $type, $cachedelay, $filename, $filters, $exportholidays);
 	if ($result >= 0) {
 		$attachment = false;
-		if (isset($_GET["attachment"])) {
-			$attachment = $_GET["attachment"];
+		if (GETPOSTISSET("attachment")) {
+			$attachment = GETPOST("attachment");
 		}
 		//$attachment = false;
 		$contenttype = 'application/rss+xml';
-		if (isset($_GET["contenttype"])) {
-			$contenttype = $_GET["contenttype"];
+		if (GETPOSTISSET("contenttype")) {
+			$contenttype = GETPOST("contenttype");
 		}
 		//$contenttype='text/plain';
 		$outputencoding = 'UTF-8';

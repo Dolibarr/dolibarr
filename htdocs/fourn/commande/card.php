@@ -1420,7 +1420,7 @@ if (empty($reshook)) {
 				$langs->load("errors");
 				$db->rollback();
 				$action = 'create';
-				$_GET['socid'] = $_POST['socid'];
+				//$_GET['socid'] = $_POST['socid'];
 			} else {
 				$db->commit();
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".urlencode((string) ($id)));
