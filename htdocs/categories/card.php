@@ -6,6 +6,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -240,7 +241,7 @@ if ($user->hasRight('categorie', 'creer')) {
 
 		print load_fiche_titre($langs->trans("CreateCat"));
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head();
 
 		print '<table width="100%" class="border">';
 
@@ -282,7 +283,7 @@ if ($user->hasRight('categorie', 'creer')) {
 
 		print '</table>';
 
-		print dol_get_fiche_end('');
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button b" value="'.$langs->trans("CreateThisCat").'" name="creation" />';

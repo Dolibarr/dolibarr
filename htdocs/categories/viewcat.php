@@ -221,7 +221,7 @@ if ($elemid && $action == 'addintocategory' &&
 		$newobject = new Account($db);
 		$elementtype = 'bank_account';
 	} else {
-		dol_print_error("Not supported value of type = ".$type);
+		dol_print_error(null, "Not supported value of type = ".$type);
 	}
 	$result = $newobject->fetch($elemid);
 
