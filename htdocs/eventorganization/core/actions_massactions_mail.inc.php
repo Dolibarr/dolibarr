@@ -223,7 +223,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 
 					dol_syslog("Try to insert email event into agenda for objid=" . $attendees->id . " => objectobj=" . get_class($attendees));
 
-					$actionmsg = $langs->transnoentities('MailSentBy') . ' ' . $from . ' ' . $langs->transnoentities('To') . ' ' . $sendto;
+					$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
 					if ($message) {
 						if ($sendtocc) {
 							$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
