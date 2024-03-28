@@ -145,6 +145,7 @@ if ($action == 'specimen') {
 		require_once $file;
 
 		$module = new $classname($db);
+		'@phan-var-force ModelePDFDeliveryOrder $module';
 
 		if ($module->write_file($sending, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=delivery&file=SPECIMEN.pdf");

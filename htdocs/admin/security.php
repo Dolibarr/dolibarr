@@ -207,6 +207,7 @@ if (is_resource($handle)) {
 			require_once $dir.'/'.$file;
 
 			$obj = new $classname($db, $conf, $langs, $user);
+			'@phan-var-force ModeleGenPassword $obj';
 			$arrayhandler[$obj->id] = $obj;
 			$i++;
 		}

@@ -24,6 +24,7 @@ return [
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
+        'htdocs/adherents/admin/member.php' => ['PhanParamTooMany'],
         'htdocs/adherents/type.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/admin/receiptprinter.php' => ['PhanRedefineFunctionInternal'],
         'htdocs/api/class/api_documents.class.php' => ['PhanPluginDuplicateExpressionBinaryOp'],

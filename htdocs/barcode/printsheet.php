@@ -179,6 +179,7 @@ if (empty($reshook)) {
 			// Load barcode class for generating barcode image
 			$classname = "mod".ucfirst($generator);
 			$module = new $classname($db);
+			'@phan-var-force ModeleBarCode $module';
 			if ($generator != 'tcpdfbarcode') {
 				// May be phpbarcode
 				$template = 'standardlabel';
