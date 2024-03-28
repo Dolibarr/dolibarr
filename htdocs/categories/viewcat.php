@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
  * Copyright (C) 2020		Josep Lluís Amador  <joseplluis@lliuretic.cat>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -220,7 +221,7 @@ if ($elemid && $action == 'addintocategory' &&
 		$newobject = new Account($db);
 		$elementtype = 'bank_account';
 	} else {
-		dol_print_error("Not supported value of type = ".$type);
+		dol_print_error(null, "Not supported value of type = ".$type);
 	}
 	$result = $newobject->fetch($elemid);
 
