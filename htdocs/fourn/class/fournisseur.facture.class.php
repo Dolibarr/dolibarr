@@ -2062,7 +2062,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param      int         $origin_id              id origin document
 	 *	@param      double      $pu_devise              Amount in currency
 	 *	@param      string      $ref_supplier           Supplier ref
-	 *	@param      string      $special_code           Special code
+	 *	@param      int         $special_code           Special code
 	 *	@param      int         $fk_parent_line         Parent line id
 	 *	@param      int         $fk_remise_except       Id discount used
 	 *	@return     int                                 >0 if OK, <0 if KO
@@ -2253,7 +2253,7 @@ class FactureFournisseur extends CommonInvoice
 			$supplierinvoiceline->fk_remise_except = $fk_remise_except;
 
 
-			$supplierinvoiceline->special_code = (string) $special_code;
+			$supplierinvoiceline->special_code = (int) $special_code;
 			$supplierinvoiceline->fk_parent_line = $fk_parent_line;
 			$supplierinvoiceline->origin = $this->origin;
 			$supplierinvoiceline->origin_id = $origin_id;
@@ -3917,6 +3917,9 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public $fk_parent_line;
 
+	/**
+	 * @var int special code
+	 */
 	public $special_code;
 
 	/**
