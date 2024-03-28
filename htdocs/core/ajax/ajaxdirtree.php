@@ -96,7 +96,7 @@ if ($modulepart == 'ecm') {
 if (preg_match('/\.\./', $fullpathselecteddir) || preg_match('/[<>|]/', $fullpathselecteddir)) {
 	dol_syslog("Refused to deliver file ".$original_file);
 	// Do no show plain path in shown error message
-	dol_print_error(0, $langs->trans("ErrorFileNameInvalid", GETPOST("file")));
+	dol_print_error(null, $langs->trans("ErrorFileNameInvalid", GETPOST("file")));
 	exit;
 }
 
