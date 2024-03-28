@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "dolibarr.tests.fullname" . }}
+  labels:
+    {{- include "dolibarr.tests.labels" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+  annotations:
+    helm.sh/hook: test
+    {{- if .Values.commonAnnotations }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+    {{- end }}
+data:
+  test_all.py: |
+    import requests
+
+
+    def test_service_connection():
+        url = "http://{{ include "dolibarr.fullname" . }}:{{ .Values.service.ports.http }}/"
+
+        response = requests.get(url)
+
+        assert response.status_code == 200
