@@ -6,7 +6,7 @@
 
 global:
   ## @param global.imageRegistry Global Docker image registry
-  imageRegistry: ""
+  imageRegistry: "iyedbnaissa/dolibarr_build"
 
   ## @param global.imagePullSecrets Global Docker registry secret names as an array
   imagePullSecrets: []
@@ -45,10 +45,10 @@ image:
   registry: docker.io
 
   ## @param image.repository Image repository
-  repository: tuxgasy/dolibarr
+  repository: iyedbnaissa/dolibarr_build
 
   ## @param image.tag Image tag
-  tag: 19.0.0
+  tag: ${env.BUILD_NUMBER}
 
   ## @param image.digest Image digest
   digest: ""
