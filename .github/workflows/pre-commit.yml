@@ -10,6 +10,10 @@ on:
         type: string
   workflow_dispatch:
 
+concurrency:
+  group: pre-commit-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref
+    }}
+  cancel-in-progress: true
 env:
   gh_event: ${{ inputs.gh_event || github.event_name }}
 jobs:
@@ -115,7 +119,7 @@ jobs:
           ls -l ~/.cache/pre-commit/
 
       - name: Convert Raw Log to Annotations
-        uses: mdeweerd/logToCheckStyle@v2024.3.4
+        uses: mdeweerd/logToCheckStyle@v2024.3.5
         if: ${{ failure() }}
         with:
           in: ${{ env.RAW_LOG }}
@@ -135,4 +139,3 @@ jobs:
           path: |
             ${{ env.RAW_LOG }}
             ${{ env.CS_XML }}
-          retention-days: 2

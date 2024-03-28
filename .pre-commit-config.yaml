@@ -231,3 +231,13 @@ repos:
     hooks:
       - id: shellcheck
         args: [-W, "100"]
+
+  - repo: https://github.com/sqlfluff/sqlfluff
+    rev: 3.0.3
+    hooks:
+      - id: sqlfluff-lint
+        exclude: (?x)^
+          (htdocs/includes/
+          |htdocs/install/doctemplates/websites/.*_template
+          )
+        args: [--dialect=mysql]
