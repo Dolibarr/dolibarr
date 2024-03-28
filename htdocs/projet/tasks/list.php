@@ -40,7 +40,7 @@ $langs->loadLangs(array('projects', 'users', 'companies'));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOSTINT('show_files');
+//$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'aZ09');
@@ -49,7 +49,7 @@ $mode = GETPOST('mode', 'aZ');
 $id = GETPOSTINT('id');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_categ = GETPOSTINT("search_categ");
+$search_categ = GETPOST("search_categ", 'intcomma');
 $search_projectstatus = GETPOST('search_projectstatus', 'intcomma');
 $search_project_ref = GETPOST('search_project_ref');
 $search_project_title = GETPOST('search_project_title');
@@ -57,8 +57,8 @@ $search_task_ref = GETPOST('search_task_ref');
 $search_task_label = GETPOST('search_task_label');
 $search_task_description = GETPOST('search_task_description');
 $search_task_ref_parent = GETPOST('search_task_ref_parent');
-$search_project_user = GETPOSTINT('search_project_user');
-$search_task_user = GETPOSTINT('search_task_user');
+$search_project_user = GETPOST('search_project_user', 'intcomma');
+$search_task_user = GETPOST('search_task_user', 'intcomma');
 $search_task_progress = GETPOST('search_task_progress');
 $search_task_budget_amount = GETPOST('search_task_budget_amount');
 $search_societe = GETPOST('search_societe');
@@ -1581,6 +1581,8 @@ if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) 
 	}
 }
 
+// Show total line
+//include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['totalplannedworkloadfield']) || isset($totalarray['totalprogress_calculatedfield'])
 	|| isset($totalarray['totaltobill']) || isset($totalarray['totalbilled']) || isset($totalarray['totalbudget'])) {
 	print '<tr class="liste_total">';
@@ -1588,11 +1590,23 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 	while ($i < $totalarray['nbfield']) {
 		$i++;
 		if ($i == 1) {
+			if ((is_null($limit) || $num < $limit) && empty($offset)) {
+				print '<td>'.$langs->trans("Total").'</td>';
+			} else {
+				print '<td>';
+				if (is_object($form)) {
+					print $form->textwithpicto($langs->trans("Total"), $langs->transnoentitiesnoconv("Totalforthispage"));
+				} else {
+					print $langs->trans("Totalforthispage");
+				}
+				print '</td>';
+			}
+			/*
 			if ($num < $limit && empty($offset)) {
 				print '<td class="left">'.$langs->trans("Total").'</td>';
 			} else {
 				print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-			}
+			}*/
 		} elseif (isset($totalarray['totalplannedworkloadfield']) && $totalarray['totalplannedworkloadfield'] == $i) {
 			print '<td class="center">'.convertSecondToTime($totalarray['totalplannedworkload'], $plannedworkloadoutputformat).'</td>';
 		} elseif (isset($totalarray['totaldurationeffectivefield']) && $totalarray['totaldurationeffectivefield'] == $i) {
