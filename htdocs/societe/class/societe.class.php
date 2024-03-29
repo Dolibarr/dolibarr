@@ -2520,7 +2520,7 @@ class Societe extends CommonObject
 		}
 		return -1;
 	}
-	// Spécifique client ajout de massaction de désaffectation de commercial
+	// Backport develop
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Add link to sales representative
@@ -2580,7 +2580,7 @@ class Societe extends CommonObject
 
 		return 0;
 	}
-	// fin spécifique
+	// fin backport
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
