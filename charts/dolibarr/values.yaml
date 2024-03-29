@@ -6,7 +6,7 @@
 
 global:
   ## @param global.imageRegistry Global Docker image registry
-  imageRegistry: "iyedbnaissa/dolibarr_build"
+  imageRegistry: ""
 
   ## @param global.imagePullSecrets Global Docker registry secret names as an array
   imagePullSecrets: []
