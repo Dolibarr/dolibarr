@@ -432,26 +432,24 @@ class SimpleOpenID
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * ValidateWithServer
+	 * validateWithServer
 	 *
 	 * @return	boolean
 	 */
-	public function ValidateWithServer()
+	public function validateWithServer()
 	{
-		// phpcs:enable
 		$params = array(
-			'openid.assoc_handle' => urlencode($_GET['openid_assoc_handle']),
-			'openid.signed' => urlencode($_GET['openid_signed']),
-			'openid.sig' => urlencode($_GET['openid_sig'])
+			'openid.assoc_handle' => urlencode(GETPOST('openid_assoc_handle')),
+			'openid.signed' => urlencode(GETPOST('openid_signed')),
+			'openid.sig' => urlencode(GETPOST('openid_sig'))
 		);
 		// Send only required parameters to confirm validity
-		$arr_signed = explode(",", str_replace('sreg.', 'sreg_', $_GET['openid_signed']));
+		$arr_signed = explode(",", str_replace('sreg.', 'sreg_', GETPOST('openid_signed')));
 		$num = count($arr_signed);
 		for ($i = 0; $i < $num; $i++) {
 			$s = str_replace('sreg_', 'sreg.', $arr_signed[$i]);
-			$c = $_GET['openid_'.$arr_signed[$i]];
+			$c = GETPOST('openid_'.$arr_signed[$i]);
 			// if ($c != ""){
 			$params['openid.'.$s] = urlencode($c);
 			// }

@@ -396,7 +396,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 				$sql = preg_replace('/__DATABASE__/i', $db->escape($database), $sql);
 			}
 
-			$newsql = preg_replace('/__ENTITY__/i', (!empty($entity) ? $entity : $conf->entity), $sql);
+			$newsql = preg_replace('/__ENTITY__/i', (!empty($entity) ? $entity : (string) $conf->entity), $sql);
 
 			// Add log of request
 			if (!$silent) {
@@ -646,7 +646,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 
 	// Check parameters
 	if (empty($name)) {
-		dol_print_error($db, "Error: Call to function dolibarr_set_const with wrong parameters", LOG_ERR);
+		dol_print_error($db, "Error: Call to function dolibarr_set_const with wrong parameters");
 		exit;
 	}
 

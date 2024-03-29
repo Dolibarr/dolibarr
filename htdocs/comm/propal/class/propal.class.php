@@ -4012,10 +4012,13 @@ class PropaleLigne extends CommonObjectLine
 	public $marge_tx;
 	public $marque_tx;
 
+	/**
+	 * 1: frais de port
+	 * 2: ecotaxe
+	 * 3: option line (when qty = 0)
+	 * @var int special code
+	 */
 	public $special_code; // Tag for special lines (exclusive tags)
-	// 1: frais de port
-	// 2: ecotaxe
-	// 3: option line (when qty = 0)
 
 	public $info_bits = 0; // Some other info:
 	// Bit 0: 	0 si TVA normal - 1 if TVA NPR

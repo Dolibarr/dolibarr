@@ -170,6 +170,7 @@ class CodingPhpTest extends CommonClassTest
 			}
 
 			if (preg_match('/\.class\.php$/', $file['relativename']) && ! in_array($file['relativename'], array(
+				'adherents/class/adherent.class.php',
 				'adherents/canvas/actions_adherentcard_common.class.php',
 				'contact/canvas/actions_contactcard_common.class.php',
 				'compta/facture/class/facture.class.php',
@@ -183,6 +184,7 @@ class CodingPhpTest extends CommonClassTest
 				'core/class/html.formsms.class.php',
 				'core/class/html.formticket.class.php',
 				'core/class/utils.class.php',
+				'core/class/openid.class.php',
 				'fourn/class/fournisseur.facture.class.php',
 				'societe/canvas/actions_card_common.class.php',
 				'societe/canvas/individual/actions_card_individual.class.php',

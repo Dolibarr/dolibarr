@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2017-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018		Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2018		Eric Seigne	            <eric.seigne@cap-rel.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
@@ -393,7 +393,6 @@ if ($result) {
 					$userstatic->email = $tabuser[$obj->rowid]['email'];
 					$userstatic->firstname = $tabuser[$obj->rowid]['firstname'];
 					$userstatic->lastname = $tabuser[$obj->rowid]['lastname'];
-					$userstatic->statut = $tabuser[$obj->rowid]['status'];
 					$userstatic->status = $tabuser[$obj->rowid]['status'];
 					$userstatic->accountancy_code = $tabuser[$obj->rowid]['accountancy_code'];
 					if ($userstatic->id > 0) {
@@ -478,7 +477,7 @@ if ($result) {
 						$userstatic->email = $tmpsalary->user->email;
 						$userstatic->firstname = $tmpsalary->user->firstname;
 						$userstatic->lastname = $tmpsalary->user->lastname;
-						$userstatic->statut = $tmpsalary->user->status;
+						$userstatic->status = $tmpsalary->user->status;
 						$userstatic->accountancy_code = $tmpsalary->user->accountancy_code;
 
 						if ($userstatic->id > 0) {
