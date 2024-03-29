@@ -1544,7 +1544,7 @@ if (!$error && ($massaction == 'affectcommercial' || ($action == 'affectcommerci
 	}
 }
 
-if (!$error && ($massaction == 'Unassigncommercial' || ($action == 'Unassigncommercial' && $confirm == 'yes')) && $permissiontoadd) {
+if (!$error && ($massaction == 'unassigncommercial' || ($action == 'unassigncommercial' && $confirm == 'yes')) && $permissiontoadd) {
 	$db->begin();
 
 	$objecttmp = new $objectclass($db);
