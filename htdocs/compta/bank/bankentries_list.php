@@ -1798,7 +1798,8 @@ if ($resql) {
 					if ($objp->num_releve) {
 						print '&nbsp;';
 					}
-					print '<input class="flat" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(!empty($_POST['rowid'][$objp->rowid]) ? ' checked' : '').'>';
+					$tmparray = GETPOST('rowid', 'array:int');
+					print '<input class="flat" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
 				}
 			}
 			print '</td>';

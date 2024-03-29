@@ -11,6 +11,7 @@
  * Copyright (C) 2020-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Benjamin Grembi         <benjamin@oarces.fr>
  * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +118,7 @@ $usercancreate = $user->hasRight('ficheinter', 'creer');
  * Actions
  */
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -292,8 +293,8 @@ if (empty($reshook)) {
 
 				// Possibility to add external linked objects with hooks
 				$object->linked_objects[$object->origin] = $object->origin_id;
-				if (is_array($_POST['other_linked_objects']) && !empty($_POST['other_linked_objects'])) {
-					$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
+				if (GETPOSTISARRAY('other_linked_objects')) {
+					$object->linked_objects = array_merge($object->linked_objects, GETPOST('other_linked_objects', 'array:int'));
 				}
 
 				// Extrafields
@@ -1185,7 +1186,7 @@ if ($action == 'create') {
 	}
 
 	if (!$formconfirm) {
-		$parameters = array('formConfirm' => $formconfirm, 'lineid'=>$lineid);
+		$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			$formconfirm .= $hookmanager->resPrint;
@@ -1204,8 +1205,8 @@ if ($action == 'create') {
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer
-	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('ficheinter', 'creer'), 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('ficheinter', 'creer'), 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('ficheinter', 'creer'), 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('ficheinter', 'creer'), 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
 	// Project

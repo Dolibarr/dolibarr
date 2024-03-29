@@ -346,6 +346,7 @@ class Contrat extends CommonObject
 			}
 
 			$obj = new $classname();
+			'@phan-var-force CommonNumRefGenerator $obj';
 			$numref = $obj->getNextValue($soc, $this);
 
 			if ($numref != "") {
@@ -1064,6 +1065,7 @@ class Contrat extends CommonObject
 			$result = dol_include_once('/core/modules/contract/'.$module.'.php');
 			if ($result > 0) {
 				$modCodeContract = new $module();
+				'@phan-var-force CommonNumRefGenerator $modCodeContrat';
 
 				if (!empty($modCodeContract->code_auto)) {
 					// Force the ref to a draft value if numbering module is an automatic numbering
@@ -2686,6 +2688,7 @@ class Contrat extends CommonObject
 		require_once DOL_DOCUMENT_ROOT."/core/modules/contract/" . getDolGlobalString('CONTRACT_ADDON').'.php';
 		$obj = getDolGlobalString('CONTRACT_ADDON');
 		$modContract = new $obj();
+		'@phan-var-force CommonNumRefGenerator $modContrat';
 		$clonedObj->ref = $modContract->getNextValue($objsoc, $clonedObj);
 
 		// get extrafields so they will be clone
@@ -2966,17 +2969,18 @@ class Contrat extends CommonObject
 		}
 		if (!empty($arraydata['thirdparty'])) {
 			$tmpthirdparty = $arraydata['thirdparty'];
-			$return .= '<br><div class="info-box-label inline-block">'.$tmpthirdparty->getNomUrl(1).'</div>';
+			$return .= '<br><div class="info-box-label inline-block valignmiddle">'.$tmpthirdparty->getNomUrl(1).'</div>';
 		}
 		if (property_exists($this, 'date_contrat')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateContract").' : </span><span class="info-box-label">'.dol_print_date($this->date_contrat, 'day').'</span>';
+			$return .= '<br><span class="opacitymedium valignmiddle">'.$langs->trans("DateContract").' : </span><span class="info-box-label valignmiddle">'.dol_print_date($this->date_contrat, 'day').'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(7).'</div>';
+			$return .= '<br><div class="info-box-status valignmiddle">'.$this->getLibStatut(7).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+
 		return $return;
 	}
 

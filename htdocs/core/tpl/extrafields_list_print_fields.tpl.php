@@ -19,6 +19,10 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 
 		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
 			if (!empty($arrayfields[$extrafieldsobjectprefix.$key]['checked'])) {
+				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
+					continue;
+				}
+
 				$cssclass = $extrafields->getAlignFlag($key, $extrafieldsobjectkey);
 
 				$tmpkey = 'options_'.$key;

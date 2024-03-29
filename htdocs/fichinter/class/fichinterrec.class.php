@@ -110,6 +110,10 @@ class FichinterRec extends Fichinter
 	 * int rank
 	 */
 	public $rang;
+
+	/**
+	 * @var int special code
+	 */
 	public $special_code;
 
 	public $usenewprice = 0;
