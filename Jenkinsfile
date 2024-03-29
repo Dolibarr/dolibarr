@@ -34,6 +34,8 @@ podTemplate(label: 'helm-pod', serviceAccount: 'jenkins', containers: [
         stage('Deploy Image to k8s'){
             container('helm'){
                 withKubeConfig([credentialsId: 'kubeconfig']) {
+                    sh 'helm repo add bitnami https://charts.bitnami.com/bitnami'
+                    sh 'helm repo update'
                     sh 'helm list -n dolibarr'
                     sh "helm dependency update ./${HELM_CHART_DIRECTORY}"
                     sh "helm lint ./${HELM_CHART_DIRECTORY}"
