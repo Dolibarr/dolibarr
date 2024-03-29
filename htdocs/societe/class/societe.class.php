@@ -2593,7 +2593,7 @@ class Societe extends CommonObject
 	{
 		// phpcs:enable
 		$error = 0;
-		$this->context = array('commercial_modified'=>$commid);
+		$this->context = array('commercial_modified' => $commid);
 
 		$result = $this->call_trigger('COMPANY_UNLINK_SALE_REPRESENTATIVE', $user);
 		if ($result < 0) {
@@ -2605,8 +2605,14 @@ class Societe extends CommonObject
 			$sql .= " WHERE fk_soc = ".((int) $this->id)." AND fk_user = ".((int) $commid);
 
 			if (!$this->db->query($sql)) {
+				$error++;
 				dol_syslog(get_class($this)."::del_commercial Erreur");
 			}
+		}
+		if ($error) {
+			return -1;
+		} else {
+			return 1;
 		}
 	}
 
