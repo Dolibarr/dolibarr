@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017-2024 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,9 @@
 
 /**
  *	\file			htdocs/core/website.inc.php
- *  \brief			Common file loaded by all website pages (after master.inc.php). It set the new object $weblangs, using parameter 'l'.
- *  				This file is included in top of all container pages and is run only when a web page is called.
+ *  \brief			Common file loaded by all website pages (after master.inc.php). It sets the new object $weblangs.
+ *  				This file is included in top of all container pages (in edit mode, in dolibarr web server mode and in external web server mode).
+ *  				It is run only when a web page is called.
  *  			    The global variable $websitekey must be defined.
  */
 
@@ -70,7 +71,26 @@ if (!is_object($pagelangs)) {
 if (!empty($pageid) && $pageid > 0) {
 	$websitepage->fetch($pageid);
 
-	$weblangs->setDefaultLang(GETPOSTISSET('lang') ? GETPOST('lang', 'aZ09') : (empty($_COOKIE['weblangs-shortcode']) ? 'auto' : preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['weblangs-shortcode'])));
+	// Rule to define weblang of visitor:
+	// 1 - Take parameter lang
+	// 2 - Cookie lang of website (set by a possible js lang selector)
+	// 3 - XX/... found in url page
+	// 4 - auto (so web browser lang)
+	$srclang = GETPOSTISSET('lang') ? GETPOST('lang', 'aZ09') : '';
+	if (empty($srclang)) {
+		$srclang = (empty($_COOKIE['weblangs-shortcode']) ? '' : preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['weblangs-shortcode']));
+	}
+	if (empty($srclang)) {
+		$reg = array();
+		if (preg_match('/^(\w\w)\//', $_GET['pageref'], $reg)) {	// We reuse $_GET['pageref'] because $pageref may have been cleaned already from the language code.
+			$srclang = $reg[1];
+		}
+	}
+	if (empty($srclang)) {
+		$srclang= 'auto';
+	}
+	$weblangs->setDefaultLang($srclang);
+
 	$pagelangs->setDefaultLang($websitepage->lang ? $websitepage->lang : $weblangs->shortlang);
 
 	if (!defined('USEDOLIBARREDITOR') && (in_array($websitepage->type_container, array('menu', 'other')) || empty($websitepage->status) && !defined('USEDOLIBARRSERVER'))) {
