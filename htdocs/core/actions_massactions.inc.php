@@ -1577,9 +1577,9 @@ if (!$error && ($massaction == 'Unassigncommercial' || ($action == 'Unassigncomm
 
 	if (!$error) {
 		if ($nbok > 1) {
-			setEventMessages($langs->trans("CommercialsAffected", $nbok), null, 'mesgs');
+			setEventMessages($langs->trans("CommercialsDisaffected", $nbok), null, 'mesgs');
 		} else {
-			setEventMessages($langs->trans("CommercialAffected"), null, 'mesgs');
+			setEventMessages($langs->trans("CommercialDisaffected"), null, 'mesgs');
 		}
 		$db->commit();
 	} else {
