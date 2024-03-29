@@ -12164,6 +12164,17 @@ function getElementProperties($elementType)
 		$subelement = $regs[2];
 	}
 
+	// Object lines will use parent classpath and module ref
+	if (substr($elementType, -3) == 'det') {
+		$module = preg_replace('/det$/', '', $element);
+		$subelement = preg_replace('/det$/', '', $subelement);
+		$classpath = $module.'/class';
+		$classfile = $module;
+		$classname = preg_replace('/det$/', 'Line', $element);
+		if (in_array($module, array('expedition', 'propale', 'facture', 'contrat', 'fichinter', 'commandefournisseur'))) {
+			$classname = preg_replace('/det$/', 'Ligne', $element);
+		}
+	}
 	// For compatibility and to work with non standard path
 	if ($elementType == "action") {
 		$classpath = 'comm/action/class';
