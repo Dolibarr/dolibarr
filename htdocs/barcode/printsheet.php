@@ -24,6 +24,7 @@
  *	\brief		Page to print sheets with barcodes using the document templates into core/modules/printsheets
  */
 
+// Do not use GETPOST, the function does not exists yet.
 if (!empty($_POST['mode']) && $_POST['mode'] === 'label') {	// Page is called to build a PDF and output, we must not renew the token.
 	if (!defined('NOTOKENRENEWAL')) {
 		define('NOTOKENRENEWAL', '1'); // Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)

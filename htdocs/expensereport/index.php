@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2019       Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2019       Frédéric FRANCE      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -243,7 +243,7 @@ if ($result) {
 			$userstatic->lastname = $obj->lastname;
 			$userstatic->firstname = $obj->firstname;
 			$userstatic->login = $obj->login;
-			$userstatic->statut = $obj->user_status;
+			$userstatic->status = $obj->user_status;
 			$userstatic->photo = $obj->photo;
 
 			print '<tr class="oddeven">';

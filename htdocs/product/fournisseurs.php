@@ -66,8 +66,8 @@ $extrafields = new ExtraFields($db);
 
 // If socid provided by ajax company selector
 if (GETPOSTINT('search_fourn_id')) {
-	$_GET['id_fourn'] = GETPOSTINT('search_fourn_id');
-	$_POST['id_fourn'] = GETPOSTINT('search_fourn_id');
+	$_GET['id_fourn'] = GETPOSTINT('search_fourn_id');	// Keep set to $_GET an $_POST. Used later.
+	$_POST['id_fourn'] = GETPOSTINT('search_fourn_id');	// Keep set to $_GET an $_POST. Used later.
 }
 
 // Security check

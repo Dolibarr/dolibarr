@@ -82,6 +82,9 @@ if ($origin) {
 if ($catorigin && $type == Categorie::TYPE_PRODUCT) {
 	$idCatOrigin = $catorigin;
 }
+if (!GETPOSTISSET('parent') && $catorigin) {
+	$parent = $catorigin;
+}
 
 $object = new Categorie($db);
 
@@ -166,7 +169,6 @@ if (empty($reshook)) {
 			$result = $object->create($user);
 			if ($result > 0) {
 				$action = 'confirmed';
-				$_POST["addcat"] = '';
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -221,14 +223,13 @@ llxHeader("", $langs->trans("Categories"), $help_url);
 
 if ($user->hasRight('categorie', 'creer')) {
 	// Create or add
-	if ($action == 'create' || GETPOST("addcat") == 'addcat') {
+	if ($action == 'create' || $action == 'add') {
 		dol_set_focus('#label');
 
 		print '<form action="'.$_SERVER['PHP_SELF'].'?type='.$type.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="urlfrom" value="'.$urlfrom.'">';
 		print '<input type="hidden" name="action" value="add">';
-		print '<input type="hidden" name="addcat" value="addcat">';
 		print '<input type="hidden" name="id" value="'.GETPOST('origin', 'alpha').'">';
 		print '<input type="hidden" name="type" value="'.$type.'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -270,7 +271,7 @@ if ($user->hasRight('categorie', 'creer')) {
 		// Parent category
 		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 		print img_picto($langs->trans("ParentCategory"), 'category', 'class="pictofixedwidth"');
-		print $form->select_all_categories($type, $catorigin, 'parent');
+		print $form->select_all_categories($type, $parent, 'parent');
 		print ajax_combobox('parent');
 		print '</td></tr>';
 

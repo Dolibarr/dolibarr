@@ -6,7 +6,7 @@
  * Copyright (C) 2012       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016-2023  Ferran Marcet           <fmarcet@2byte.es>
@@ -682,8 +682,8 @@ if (empty($reshook)) {
 			$db->rollback();
 
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];
-			$_GET["originid"] = $_POST["originid"];
+			$_GET["origin"] = $_POST["origin"];		// Keep GET and POST here ?
+			$_GET["originid"] = $_POST["originid"]; // Keep GET and POST here ?
 			if (!empty($errors)) {
 				setEventMessages(null, $errors, 'errors');
 			} else {
@@ -2503,7 +2503,7 @@ while ($i < $imaxinloop) {
 						$userstatic->lastname = $val['lastname'];
 						$userstatic->firstname = $val['firstname'];
 						$userstatic->email = $val['email'];
-						$userstatic->statut = $val['statut'];
+						$userstatic->status = $val['statut'];
 						$userstatic->entity = $val['entity'];
 						$userstatic->photo = $val['photo'];
 						$userstatic->login = $val['login'];

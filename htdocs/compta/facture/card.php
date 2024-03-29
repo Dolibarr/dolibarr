@@ -1547,8 +1547,8 @@ if (empty($reshook)) {
 						}
 					}
 
-					if (is_array($_POST['other_linked_objects']) && !empty($_POST['other_linked_objects'])) {
-						$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
+					if (GETPOSTISARRAY('other_linked_objects')) {
+						$object->linked_objects = array_merge($object->linked_objects, GETPOST('other_linked_objects', 'array:int'));
 					}
 
 					$id = $object->create($user); // This include class to add_object_linked() and add add_contact()
@@ -2080,8 +2080,8 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];
-			$_GET["originid"] = $_POST["originid"];
+			$_GET["origin"] = $_POST["origin"];		// Keep GET and POST here ?
+			$_GET["originid"] = $_POST["originid"]; // Keep GET and POST here ?
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('vatforalllines', 'alpha') !== '') {

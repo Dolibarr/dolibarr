@@ -2941,7 +2941,7 @@ if ($dirins && $action == "update_menu" && GETPOSTINT('menukey') && GETPOST('tab
 			}
 		}
 	} else {
-		$_POST['type'] = '';
+		$_POST['type'] = '';	// TODO Use a var here and later
 		$_POST['titre'] = '';
 		$_POST['fk_menu'] = '';
 		$_POST['leftmenu'] = '';

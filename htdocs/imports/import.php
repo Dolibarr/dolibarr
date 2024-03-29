@@ -184,41 +184,6 @@ if (empty($array_match_file_to_database)) {
  * Actions
  */
 
-/*
-if ($action=='downfield' || $action=='upfield')
-{
-	$pos=$array_match_file_to_database[$_GET["field"]];
-	if ($action=='downfield') $newpos=$pos+1;
-	if ($action=='upfield') $newpos=$pos-1;
-	// Recherche code avec qui switcher
-	$newcode="";
-	foreach($array_match_file_to_database as $code=>$value)
-	{
-		if ($value == $newpos)
-		{
-			$newcode=$code;
-			break;
-		}
-	}
-	//print("Switch pos=$pos (code=".$_GET["field"].") and newpos=$newpos (code=$newcode)");
-	if ($newcode)   // Si newcode trouve (protection contre resoumission de page)
-	{
-		$array_match_file_to_database[$_GET["field"]]=$newpos;
-		$array_match_file_to_database[$newcode]=$pos;
-		$_SESSION["dol_array_match_file_to_database"]=$serialized_array_match_file_to_database;
-	}
-}
-*/
-// if ($action == 'builddoc') {
-// 	// Build import file
-// 	$result = $objimport->build_file($user, GETPOST('model', 'alpha'), $datatoimport, $array_match_file_to_database);
-// 	if ($result < 0) {
-// 		setEventMessages($objimport->error, $objimport->errors, 'errors');
-// 	} else {
-// 		setEventMessages($langs->trans("FileSuccessfullyBuilt"), null, 'mesgs');
-// 	}
-// }
-
 if ($action == 'deleteprof') {
 	if (GETPOSTINT("id")) {
 		$objimport->fetch(GETPOSTINT("id"));
@@ -286,7 +251,7 @@ if ($step == 3 && $datatoimport) {
 			$param .= '&endatlinenb='.urlencode($endatlinenb);
 		}
 
-		$file = $conf->import->dir_temp.'/'.GETPOST('urlfile'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+		$file = $conf->import->dir_temp.'/'.GETPOST('urlfile');
 		$ret = dol_delete_file($file);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
@@ -2085,7 +2050,7 @@ if ($step == 6 && $datatoimport) {
 		$obj->import_close_file();
 	}
 
-	$nboflines = (!empty($_GET["nboflines"]) ? $_GET["nboflines"] : dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport));
+	$nboflines = GETPOST("nboflines", dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport));
 
 	$param = '&format='.$format.'&datatoimport='.urlencode($datatoimport).'&filetoimport='.urlencode($filetoimport).'&nboflines='.urlencode($nboflines);
 	if ($excludefirstline) {

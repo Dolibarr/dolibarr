@@ -30,7 +30,7 @@
  *  \brief      Page to activate/disable all modules
  */
 
-if (!defined('CSRFCHECK_WITH_TOKEN') && (empty($_GET['action']) || $_GET['action'] != 'reset')) {	// We force security except to disable modules so we can do it if problem of a module
+if (!defined('CSRFCHECK_WITH_TOKEN') && (empty($_GET['action']) || $_GET['action'] != 'reset')) {	// We force security except to disable modules so we can do it if a problem occurs on a module
 	define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
 }
 

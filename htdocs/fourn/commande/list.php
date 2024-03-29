@@ -6,7 +6,7 @@
  * Copyright (C) 2014      Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2014      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2018-2021 Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2018-2022 Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2019      Nicolas Zabouri		<info@inovea-conseil.com>
  * Copyright (C) 2021-2023 Alexandre Spangaro   <aspangaro@open-dsi.fr>
@@ -730,8 +730,8 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];
-			$_GET["originid"] = $_POST["originid"];
+			$_GET["origin"] = $_POST["origin"];		// Keep this ?
+			$_GET["originid"] = $_POST["originid"];	// Keep this ?
 			setEventMessages("Error", null, 'errors');
 			$error++;
 		}
@@ -1804,7 +1804,7 @@ if ($resql) {
 			$userstatic->login = $obj->login;
 			$userstatic->photo = $obj->photo;
 			$userstatic->email = $obj->user_email;
-			$userstatic->statut = $obj->user_status;
+			$userstatic->status = $obj->user_status;
 			if (!empty($arrayfields['u.login']['checked'])) {
 				print '<td class="tdoverflowmax150">';
 				if ($userstatic->id) {
