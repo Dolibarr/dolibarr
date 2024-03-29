@@ -91,7 +91,11 @@ $search_idprof4 = trim(GETPOST('search_idprof4', 'alpha'));
 $search_idprof5 = trim(GETPOST('search_idprof5', 'alpha'));
 $search_idprof6 = trim(GETPOST('search_idprof6', 'alpha'));
 $search_vat = trim(GETPOST('search_vat', 'alpha'));
-$search_sale = GETPOST("search_sale", 'alphanohtml');
+if (GETPOSTISARRAY('search_sale')) {
+	$search_sale = GETPOST('search_sale', 'array:int');
+} else if (GETPOSTISSET('search_sale')) {
+	$search_sale = array(GETPOSTINT('search_sale'));
+}
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
 $search_categ_sup = GETPOST("search_categ_sup", 'int');
 $search_country = GETPOST("search_country", 'intcomma');
