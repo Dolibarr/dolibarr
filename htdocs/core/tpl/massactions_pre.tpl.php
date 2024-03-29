@@ -384,6 +384,7 @@ if ($massaction == 'presetcommercial') {
 			'value' => $form->multiselectarray('commercial', $userlist, null, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1));
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmAllocateCommercial"), $langs->trans("ConfirmAllocateCommercialQuestion", count($toselect)), "affectcommercial", $formquestion, 1, 0, 200, 500, 1);
 }
+// Spécifique client ajout de massaction de désaffectation de commercial
 if ($massaction == 'unsetcommercial') {
 	$formquestion = array();
 	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
@@ -393,6 +394,7 @@ if ($massaction == 'unsetcommercial') {
 		'value' => $form->multiselectarray('commercial', $userlist, null, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1));
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmUnallocateCommercial"), $langs->trans("ConfirmUnallocateCommercialQuestion", count($toselect)), "unassigncommercial", $formquestion, 1, 0, 200, 500, 1);
 }
+// fin spécifique
 if ($massaction == 'preapproveleave') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassLeaveApproval"), $langs->trans("ConfirmMassLeaveApprovalQuestion", count($toselect)), "approveleave", null, 'yes', 0, 200, 500, 1);
 }

@@ -91,11 +91,13 @@ $search_idprof4 = trim(GETPOST('search_idprof4', 'alpha'));
 $search_idprof5 = trim(GETPOST('search_idprof5', 'alpha'));
 $search_idprof6 = trim(GETPOST('search_idprof6', 'alpha'));
 $search_vat = trim(GETPOST('search_vat', 'alpha'));
+// Spécifique client multiselect search des commerciaux sur la liste des tiers
 if (GETPOSTISARRAY('search_sale')) {
 	$search_sale = GETPOST('search_sale', 'array:int');
 } else if (GETPOSTISSET('search_sale')) {
 	$search_sale = array(GETPOSTINT('search_sale'));
 }
+// fin Spécifique
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
 $search_categ_sup = GETPOST("search_categ_sup", 'int');
 $search_country = GETPOST("search_country", 'intcomma');
@@ -524,7 +526,7 @@ $sql .= " WHERE s.entity IN (".getEntity('societe').")";
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
-
+// Spécifique client multiselect search des commerciaux sur la liste des tiers
 if (!empty($search_sale) && $search_sale != '-1') {
 	$search_sale_req = array_filter($search_sale, function (string $value): bool {
 		$value = intval($value);
@@ -541,7 +543,7 @@ if (!empty($search_sale) && $search_sale != '-1') {
 		$sql .= " OR NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid))";
 	}
 }
-
+// fin Spécifique
 if (empty($user->rights->fournisseur->lire)) {
 	$sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
 }
@@ -831,12 +833,14 @@ if ($search_categ_cus > 0) {
 if ($search_categ_sup > 0) {
 	$param .= '&search_categ_sup='.urlencode($search_categ_sup);
 }
+// Spécifique client multiselect search des commerciaux sur la liste des tiers
 if (is_array($search_sale)) {
 	$param .= '&search_sale='.((int) $search_sale);
 	foreach ($search_sale as $sale_id) {
 		$param .= '&search_sale[]=' . urlencode($sale_id);
 	}
 }
+// Fin Spécifique
 if ($search_id > 0) {
 	$param .= "&search_id=".urlencode($search_id);
 }
@@ -972,7 +976,9 @@ if ($user->hasRight("societe", "creer")) {
 }
 if ($user->hasRight("societe", "creer")) {
 	$arrayofmassactions['presetcommercial'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("AllocateCommercial");
+    // Spécifique client ajout de massaction de désaffectation de commercial
 	$arrayofmassactions['unsetcommercial'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("UnallocateCommercial");
+    // Fin spécifique
 }
 if ($user->hasRight('societe', 'supprimer')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -1095,6 +1101,8 @@ if (empty($type) || $type == 'f') {
 }
 
 // If the user can view prospects other than his'
+
+// Spécifique client multiselect search des commerciaux sur la liste des tiers
 $userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
 $userlist[-2] = $langs->trans("NoSalesRepresentativeAffected");
 if ($user->hasRight("societe", "client", "voir") || $socid) {
@@ -1104,6 +1112,7 @@ if ($user->hasRight("societe", "client", "voir") || $socid) {
 	$moreforfilter .= $form->multiselectarray('search_sale', $userlist, $search_sale, 0, 0, '', 0, 300, '', '', $langs->trans('SalesRepresentatives'), 1);
 	$moreforfilter .= '</div>';
 }
+// Fin Spécifique
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;

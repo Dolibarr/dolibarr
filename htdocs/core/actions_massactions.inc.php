@@ -1556,7 +1556,7 @@ if (!$error && ($massaction == 'affectcommercial' || ($action == 'affectcommerci
 		$db->rollback();
 	}
 }
-
+// Spécifique client ajout de massaction de désaffectation de commercial
 if (!$error && ($massaction == 'unassigncommercial' || ($action == 'unassigncommercial' && $confirm == 'yes')) && $permissiontoadd) {
 	$db->begin();
 
@@ -1598,6 +1598,7 @@ if (!$error && ($massaction == 'unassigncommercial' || ($action == 'unassigncomm
 		$db->rollback();
 	}
 }
+// fin spécifique
 // Approve for leave only
 if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $confirm == 'yes')) && $permissiontoapprove) {
 	$db->begin();
