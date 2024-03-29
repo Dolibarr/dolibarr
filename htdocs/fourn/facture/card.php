@@ -801,7 +801,7 @@ if (empty($reshook)) {
 			if (empty($dateinvoice)) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('DateInvoice')), null, 'errors');
 				$action = 'create';
-				$_GET['socid'] = $_POST['socid'];
+				//$_GET['socid'] = $_POST['socid'];
 				$error++;
 			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
@@ -867,7 +867,7 @@ if (empty($reshook)) {
 			if (empty($dateinvoice)) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('DateInvoice')), null, 'errors');
 				$action = 'create';
-				$_GET['socid'] = $_POST['socid'];
+				//$_GET['socid'] = $_POST['socid'];
 				$error++;
 			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
@@ -878,7 +878,7 @@ if (empty($reshook)) {
 			if (!GETPOST('ref_supplier')) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('RefSupplierBill')), null, 'errors');
 				$action = 'create';
-				$_GET['socid'] = $_POST['socid'];
+				//$_GET['socid'] = $_POST['socid'];
 				$error++;
 			}
 
@@ -1035,7 +1035,7 @@ if (empty($reshook)) {
 			if (empty($dateinvoice)) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('DateInvoice')), null, 'errors');
 				$action = 'create';
-				$_GET['socid'] = $_POST['socid'];
+				//$_GET['socid'] = $_POST['socid'];
 				$error++;
 			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
@@ -1046,7 +1046,7 @@ if (empty($reshook)) {
 			if (!GETPOST('ref_supplier')) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('RefSupplierBill')), null, 'errors');
 				$action = 'create';
-				$_GET['socid'] = $_POST['socid'];
+				//$_GET['socid'] = $_POST['socid'];
 				$error++;
 			}
 
@@ -1405,7 +1405,7 @@ if (empty($reshook)) {
 
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'create';
-			$_GET['socid'] = $_POST['socid'];
+			//$_GET['socid'] = $_POST['socid'];
 		} else {
 			$db->commit();
 

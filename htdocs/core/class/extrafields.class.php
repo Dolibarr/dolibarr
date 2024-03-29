@@ -2129,7 +2129,7 @@ class ExtraFields
 	 */
 	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '', $todefaultifmissing = 0)
 	{
-		global $conf, $_POST, $langs;
+		global $langs;
 
 		$nofillrequired = 0; // For error when required field left blank
 		$error_field_required = array();

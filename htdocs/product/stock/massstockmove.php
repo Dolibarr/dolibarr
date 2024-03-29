@@ -519,7 +519,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
 		$param .= '&endatlinenb='.urlencode($endatlinenb);
 	}
 
-	$file = $conf->stock->dir_temp.'/'.GETPOST('urlfile'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$file = $conf->stock->dir_temp.'/'.GETPOST('urlfile');
 	$ret = dol_delete_file($file);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');

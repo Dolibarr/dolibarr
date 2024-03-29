@@ -48,7 +48,7 @@ if (!defined('NOIPCHECK')) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
-$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));	// Keep $_GET and $_POST here. GETPOST not yet defined.
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
@@ -61,7 +61,7 @@ $signature = GETPOST('signaturebase64');
 $ref = GETPOST('ref', 'aZ09');
 $mode = GETPOST('mode', 'aZ09');    // 'proposal', ...
 $SECUREKEY = GETPOST("securekey"); // Secure key
-$online_sign_name = GETPOST("onlinesignname") ? GETPOST("onlinesignname") : '';
+$online_sign_name = GETPOST("onlinesignname");
 
 $error = 0;
 $response = "";

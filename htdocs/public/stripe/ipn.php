@@ -31,6 +31,7 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -58,8 +59,8 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 
 // You can find your endpoint's secret in your webhook settings
-if (isset($_GET['connect'])) {
-	if (isset($_GET['test'])) {
+if (GETPOSTISSET('connect')) {
+	if (GETPOSTISSET('test')) {
 		$endpoint_secret = getDolGlobalString('STRIPE_TEST_WEBHOOK_CONNECT_KEY');
 		$service = 'StripeTest';
 		$servicestatus = 0;
@@ -69,7 +70,7 @@ if (isset($_GET['connect'])) {
 		$servicestatus = 1;
 	}
 } else {
-	if (isset($_GET['test'])) {
+	if (GETPOSTISSET('test')) {
 		$endpoint_secret = getDolGlobalString('STRIPE_TEST_WEBHOOK_KEY');
 		$service = 'StripeTest';
 		$servicestatus = 0;

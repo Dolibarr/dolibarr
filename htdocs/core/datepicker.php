@@ -108,10 +108,10 @@ print '<body>'."\n";
 
 $qualified = true;
 
+// TODO Replace with GETPOST
 if (!isset($_GET["sd"])) {
 	$_GET["sd"] = "00000000";
 }
-
 if (!isset($_GET["m"]) || !isset($_GET["y"])) {
 	$qualified = false;
 }
@@ -126,7 +126,6 @@ if (isset($_GET["m"]) && isset($_GET["y"])) {
 
 // If parameters provided, we show calendar
 if ($qualified) {
-	//print $_GET["cm"].",".$_GET["sd"].",".$_GET["m"].",".$_GET["y"];exit;
 	displayBox(GETPOSTINT("sd"), GETPOSTINT("m"), GETPOSTINT("y"));
 } else {
 	dol_print_error(null, 'ErrorBadParameters');

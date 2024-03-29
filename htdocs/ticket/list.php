@@ -107,9 +107,9 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-if (GETPOST('search_fk_status', 'alpha') == 'non_closed') {
+/*if (GETPOST('search_fk_status', 'alpha') == 'non_closed') {
 	$_GET['search_fk_statut'][] = 'openall'; // For backward compatibility
-}
+}*/
 
 // Initialize array of search criteria
 $search_all = (GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') : GETPOST('sall'));

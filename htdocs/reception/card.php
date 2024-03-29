@@ -450,7 +450,7 @@ if (empty($reshook)) {
 			exit;
 		} else {
 			$db->rollback();
-			$_GET["commande_id"] = GETPOSTINT('commande_id');
+			//$_GET["commande_id"] = GETPOSTINT('commande_id');
 			$action = 'create';
 		}
 	} elseif ($action == 'confirm_valid' && $confirm == 'yes' && $permissiontovalidate) {
