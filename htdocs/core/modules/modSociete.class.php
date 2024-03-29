@@ -202,7 +202,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][0] = 130;
 		$this->rights[$r][1] = 'Modify thirdparty information payment';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'thirdparty_paymentinformation_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][4] = 'thirdparty_paymentinformation';
 		$this->rights[$r][5] = 'write';
 
 		// 262 : Restrict access to sales representative
