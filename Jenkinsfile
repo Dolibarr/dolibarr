@@ -35,6 +35,7 @@ podTemplate(label: 'helm-pod', serviceAccount: 'jenkins', containers: [
             container('helm'){
                 withKubeConfig([credentialsId: 'kubeconfig']) {
                     sh 'helm list -n dolibarr'
+                    sh "helm dependency update ./${HELM_CHART_DIRECTORY}"
                     sh "helm lint ./${HELM_CHART_DIRECTORY}"
                     sh "helm upgrade --install --wait --set image.tag=${BUILD_NUMBER} ${HELM_APP_NAME} ./${HELM_CHART_DIRECTORY}"
                     sh "helm list | grep ${HELM_APP_NAME}"
