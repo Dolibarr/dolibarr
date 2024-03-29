@@ -1,17 +1,7 @@
-podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [ 
-    containerTemplate(
-      name: 'docker', 
-      image: 'docker', 
-      command: 'cat', 
-      resourceRequestCpu: '100m',
-      resourceLimitCpu: '300m',
-      resourceRequestMemory: '300Mi',
-      resourceLimitMemory: '500Mi',
-      ttyEnabled: true
-    ),
+podTemplate(label: 'helm-pod', serviceAccount: 'jenkins', containers: [ 
     containerTemplate(
       name: 'kubectl', 
-      image: 'amaceog/kubectl',
+      image: 'bitnami/kubectl',
       resourceRequestCpu: '100m',
       resourceLimitCpu: '300m',
       resourceRequestMemory: '300Mi',
@@ -21,7 +11,7 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
     ),
     containerTemplate(
       name: 'helm', 
-      image: 'alpine/helm:3.10.2', 
+      image: 'alpine/helm', 
       resourceRequestCpu: '100m',
       resourceLimitCpu: '300m',
       resourceRequestMemory: '300Mi',
@@ -30,13 +20,8 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
       command: 'cat'
     )
   ],
-
-  volumes: [
-    hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
-    hostPathVolume(mountPath: '/usr/local/bin/helm', hostPath: '/usr/local/bin/helm')
-  ]
   ) {
-    node('mypod') {
+    node('helm-pod') {
 
         def REPOSITORY_URI = "iyedbnaissa/dolibarr_build"
         def HELM_APP_NAME= "dolibarr-chart"
@@ -44,30 +29,16 @@ podTemplate(label: 'mypod', serviceAccount: 'jenkins', containers: [
 
         stage('Get latest version of code') {
           checkout scm
-        }
-        stage('Check running containers') {
-            container('docker') {  
-                sh 'hostname'
-                sh 'hostname -i' 
-                sh 'docker ps'
-                sh 'ls'
-            }
-            container('kubectl') { 
-                sh 'kubectl get pods -n default'  
-            }
-            container('helm') { 
-                sh 'helm version'
-                sh 'helm list'     
-            }
-        }    
+        }  
 
         stage('Deploy Image to k8s'){
             container('helm'){
-                sh 'helm list -n dolibarr'
-                sh "helm lint ./${HELM_CHART_DIRECTORY}"
-                sh "helm upgrade --install --wait --set image.tag=${BUILD_NUMBER} ${HELM_APP_NAME} ./${HELM_CHART_DIRECTORY}"
-                sh "helm list | grep ${HELM_APP_NAME}"
-
+                withKubeConfig([credentialsId: 'kubeconfig']) {
+                    sh 'helm list -n dolibarr'
+                    sh "helm lint ./${HELM_CHART_DIRECTORY}"
+                    sh "helm upgrade --install --wait --set image.tag=${BUILD_NUMBER} ${HELM_APP_NAME} ./${HELM_CHART_DIRECTORY}"
+                    sh "helm list | grep ${HELM_APP_NAME}"
+                }
             }
         }                 
     }
