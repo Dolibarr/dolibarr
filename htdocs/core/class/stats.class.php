@@ -159,19 +159,18 @@ abstract class Stats
 			if (!dol_is_dir($conf->user->dir_temp)) {
 				dol_mkdir($conf->user->dir_temp);
 			}
-			$fp = fopen($newpathofdestfile, 'w');
+			$fp = @fopen($newpathofdestfile, 'w');
 			if ($fp) {
 				fwrite($fp, json_encode($data));
 				fclose($fp);
 			} else {
-				dol_syslog("Failed to save cache file ".$newpathofdestfile, LOG_WARNING);
+				dol_syslog("Failed to save cache file ".$newpathofdestfile, LOG_ERR);
 			}
 			dolChmod($newpathofdestfile);
 
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
 
-		// return array(array('Month',val1,val2,val3),...)
 		return $data;
 	}
 
@@ -262,14 +261,15 @@ abstract class Stats
 			if (!dol_is_dir($conf->user->dir_temp)) {
 				dol_mkdir($conf->user->dir_temp);
 			}
-			$fp = fopen($newpathofdestfile, 'w');
+			$fp = @fopen($newpathofdestfile, 'w');
 			if ($fp) {
 				fwrite($fp, json_encode($data));
 				fclose($fp);
-				dolChmod($newpathofdestfile);
 			} else {
-				dol_syslog("Failed to write cache file", LOG_ERR);
+				dol_syslog("Failed to save cache file ".$newpathofdestfile, LOG_ERR);
 			}
+			dolChmod($newpathofdestfile);
+
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
 
@@ -370,12 +370,15 @@ abstract class Stats
 			if (!dol_is_dir($conf->user->dir_temp)) {
 				dol_mkdir($conf->user->dir_temp);
 			}
-			$fp = fopen($newpathofdestfile, 'w');
+			$fp = @fopen($newpathofdestfile, 'w');
 			if ($fp) {
 				fwrite($fp, json_encode($data));
 				fclose($fp);
-				dolChmod($newpathofdestfile);
+			} else {
+				dol_syslog("Failed to save cache file ".$newpathofdestfile, LOG_ERR);
 			}
+			dolChmod($newpathofdestfile);
+
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
 

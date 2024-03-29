@@ -998,23 +998,23 @@ if ($action == 'edit') {
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail') {
 			if (getDolGlobalString('MAIN_EXTERNAL_MAIL_SPF_STRING_TO_ADD')) {
 				// List of string to add in SPF if the setup use the mail method. Example 'include:sendgrid.net include:spf.mydomain.com'
-				$text .= ($text ? '<br><br>' : '').'<!-- MAIN_EXTERNAL_MAIL_SPF_STRING_TO_ADD -->'.$langs->trans("WarningPHPMailSPF", getDolGlobalString('MAIN_EXTERNAL_MAIL_SPF_STRING_TO_ADD'));
+				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMailSPF", getDolGlobalString('MAIN_EXTERNAL_MAIL_SPF_STRING_TO_ADD'));
 			} else {
 				// MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS is list of IPs where email is sent from. Example: '1.2.3.4, [aaaa:bbbb:cccc:dddd]'.
 				if (getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS')) {
 					// List of IP show as record to add in SPF if we use the mail method
-					$text .= ($text ? '<br><br>' : '').'<!-- MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS -->'.$langs->trans("WarningPHPMailSPF", getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS'));
+					$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMailSPF", getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS'));
 				}
 			}
 		} else {
 			if (getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS')) {
 				// List of IP show as record to add as allowed IP if we use the smtp method. Value is '1.2.3.4, [aaaa:bbbb:cccc:dddd]'
 				// TODO Add a key to allow to show the IP/name of server detected dynamically
-				$text .= ($text ? '<br><br>' : '').'<!-- MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS -->'.$langs->trans("WarningPHPMail2", getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS'));
+				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMail2", getDolGlobalString('MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS'));
 			}
 			if (getDolGlobalString('MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD')) {	// Should be required only if you have preset the Dolibarr to use your own SMTP and you want to warn users to update their domain name to match your SMTP server.
 				// List of string to add in SPF if we use the smtp method. Example 'include:spf.mydomain.com'
-				$text .= ($text ? '<br><br>' : '').'<!-- MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD -->'.$langs->trans("WarningPHPMailSPF", getDolGlobalString('MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD'));
+				$text .= ($text ? '<br><br>' : '').$langs->trans("WarningPHPMailSPF", getDolGlobalString('MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD'));
 			}
 		}
 		// Test SPF email company

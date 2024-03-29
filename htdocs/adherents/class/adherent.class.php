@@ -674,6 +674,7 @@ class Adherent extends CommonObject
 						require_once $modfile;
 						$modname = getDolGlobalString('MEMBER_CODEMEMBER_ADDON');
 						$modCodeMember = new $modname();
+						'@phan-var-force ModeleNumRefMembers $modCodeMember';
 						$this->ref = $modCodeMember->getNextValue($mysoc, $this);
 					} catch (Exception $e) {
 						dol_syslog($e->getMessage(), LOG_ERR);
@@ -1836,8 +1837,8 @@ class Adherent extends CommonObject
 
 				// Possibility to add external linked objects with hooks
 				$invoice->linked_objects['subscription'] = $subscriptionid;
-				if (!empty($_POST['other_linked_objects']) && is_array($_POST['other_linked_objects'])) {
-					$invoice->linked_objects = array_merge($invoice->linked_objects, $_POST['other_linked_objects']);
+				if (GETPOSTISARRAY('other_linked_objects')) {
+					$invoice->linked_objects = array_merge($invoice->linked_objects, GETPOST('other_linked_objects', 'array:int'));
 				}
 
 				$result = $invoice->create($user);
@@ -3138,7 +3139,7 @@ class Adherent extends CommonObject
 								$extraparams = '';
 
 								$actionmsg = '';
-								$actionmsg2 = $langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from, 4, 0, 1).' '.$langs->transnoentities('To').' '.CMailFile::getValidAddress($sendto, 4, 0, 1);
+								$actionmsg2 = $langs->transnoentities('MailSentByTo', CMailFile::getValidAddress($from, 4, 0, 1), CMailFile::getValidAddress($sendto, 4, 0, 1));
 								if ($message) {
 									$actionmsg = $langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
 									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));

@@ -35,7 +35,7 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
-if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {
+if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {	// Keep $_GET here, GETPOST is not yet defined
 	define('NOREQUIREHTML', '1');
 }
 
@@ -67,7 +67,6 @@ restrictedArea($user, 'produit|service|commande|propal|facture', 0, 'product&pro
  */
 
 // print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
-// print_r($_GET);
 
 if ($action == 'fetch' && !empty($id)) {
 	// action='fetch' is used to get product information on a product. So when action='fetch', id must be the product id.

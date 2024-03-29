@@ -144,8 +144,6 @@ $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $sear
 $search_categ_cus = GETPOSTINT("search_categ_cus");
 $search_product_category = GETPOSTINT('search_product_category');
 $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
-$search_btn = GETPOST('button_search', 'alpha');
-$search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
 $search_late = GETPOST('search_late');
 if ($search_late == 'late') {
@@ -2614,14 +2612,14 @@ if ($num > 0) {
 			}
 			// Total margin rate
 			if (!empty($arrayfields['total_margin_rate']['checked'])) {
-				print '<td class="right nowrap">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], 0, null, null, null, 2).'%').'</td>';
+				print '<td class="right nowrap">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], 0, '', 0, 0, 2).'%').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			// Total mark rate
 			if (!empty($arrayfields['total_mark_rate']['checked'])) {
-				print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], 0, null, null, null, 2).'%').'</td>';
+				print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], 0, '', 0, 0, 2).'%').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 					$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';

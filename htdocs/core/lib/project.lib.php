@@ -2937,7 +2937,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 
 
 	$out .= '</span>';
-	$out .= '    <div class="progress sm '.$spaced.'">';
+	$out .= '    <div class="progress sm'.($spaced ? $spaced : '').'">';
 	$diffval = (float) $task->progress - (float) $progressCalculated;
 	if ($diffval >= 0) {
 		// good

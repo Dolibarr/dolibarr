@@ -135,7 +135,6 @@ class modPhpbarcode extends ModeleBarCode
 	 */
 	public function buildBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
-		global $_GET, $_SERVER;
 		global $conf;
 		global $genbarcode_loc, $bar_color, $bg_color, $text_color, $font_loc;
 

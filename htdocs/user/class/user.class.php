@@ -11,9 +11,9 @@
  * Copyright (C) 2013-2015  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       charlene Benke          <charlie@patas-monkey.com>
- * Copyright (C) 2018-2021       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
+ * Copyright (C) 2018-2021	Nicolas ZABOURI				<info@inovea-conseil.com>
+ * Copyright (C) 2019-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2019       Abbes Bahfir				<dolipar@dolipar.org>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -112,7 +112,7 @@ class User extends CommonObject
 	public $fullname;
 
 	/**
-	 * @var string gender
+	 * @var string|int<-1,-1> gender (man|woman|other)
 	 */
 	public $gender;
 
@@ -337,7 +337,7 @@ class User extends CommonObject
 	public $lastsearch_values; // To store last saved search criteria for user
 
 	/**
-	 *	@var array<int,User>|array<int,array{rowid:int,id:int,fk_user:int,fk_soc:int,firstname:string,lastname:string,login:string,statut:int,entity:string,email:string,gender:int,admin:string,photo:string,fullpath:string,fullname:string,level:int}>  Array of User (filled from fetchAll) or Array with hierarchy of user information (filled with get_full_tree()
+	 *	@var array<int,User>|array<int,array{rowid:int,id:int,fk_user:int,fk_soc:int,firstname:string,lastname:string,login:string,statut:int,entity:int,email:string,gender:string|int<-1,-1>,admin:int<0,1>,photo:string,fullpath:string,fullname:string,level:int}>  Array of User (filled from fetchAll) or Array with hierarchy of user information (filled with get_full_tree()
 	 */
 	public $users = array();
 	public $parentof; // To store an array of all parents for all ids.
@@ -589,7 +589,6 @@ class User extends CommonObject
 				$this->admin		= $obj->admin;
 				$this->note_public = $obj->note_public;
 				$this->note_private = $obj->note_private;
-				$this->note			= $obj->note_private;	// deprecated
 
 				$this->statut		= $obj->status;			// deprecated
 				$this->status		= $obj->status;
@@ -1745,7 +1744,7 @@ class User extends CommonObject
 		$this->civility_code = $contact->civility_code;
 		$this->lastname = $contact->lastname;
 		$this->firstname = $contact->firstname;
-		//$this->gender = $contact->gender;		// contact ha sno gender
+		//$this->gender = $contact->gender;		// contact has no gender
 		$this->email = $contact->email;
 		$this->socialnetworks = $contact->socialnetworks;
 		$this->office_phone = $contact->phone_pro;
@@ -2067,7 +2066,7 @@ class User extends CommonObject
 		$sql .= ", employee = ".(int) $this->employee;
 		$sql .= ", login = '".$this->db->escape($this->login)."'";
 		$sql .= ", api_key = ".($this->api_key ? "'".$this->db->escape(dolEncrypt($this->api_key, '', '', 'dolibarr'))."'" : "null");
-		$sql .= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null"); // 'man' or 'woman'
+		$sql .= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null"); // 'man' or 'woman' or 'other'
 		$sql .= ", birth=".(strval($this->birth) != '' ? "'".$this->db->idate($this->birth, 'tzserver')."'" : 'null');
 		if (!empty($user->admin)) {
 			$sql .= ", admin = ".(int) $this->admin; // admin flag can be set/unset only by an admin user
@@ -3706,7 +3705,7 @@ class User extends CommonObject
 	 *
 	 *  @param      int		$deleteafterid      Removed all users including the leaf $deleteafterid (and all its child) in user tree.
 	 *  @param		string	$filter				SQL filter on users. This parameter must not come from user input.
-	 *	@return		int<-1,-1>|array<int,array{rowid:int,id:int,fk_user:int,fk_soc:int,firstname:string,lastname:string,login:string,statut:int,entity:string,email:string,gender:int,admin:string,photo:string,fullpath:string,fullname:string,level:int}>  Array of user information (also: $this->users). Note: $this->parentof is also set.
+	 *	@return		int<-1,-1>|array<int,array{rowid:int,id:int,fk_user:int,fk_soc:int,firstname:string,lastname:string,login:string,statut:int,entity:int,email:string,gender:string|int<-1,-1>,admin:int<0,1>,photo:string,fullpath:string,fullname:string,level:int}>  Array of user information (also: $this->users). Note: $this->parentof is also set.
 	 */
 	public function get_full_tree($deleteafterid = 0, $filter = '')
 	{

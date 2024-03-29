@@ -2000,7 +2000,15 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 */
 	public $info_bits = 0;
 
-	public $special_code = 0;
+	/**
+	 * List of special options to define line:
+	 * '1': shipment cost lines
+	 * '2': ecotaxe
+	 * '3': ??
+	 * 'idorcodeofmodule': a meaning for the module
+	 *  @var string
+	 */
+	public $special_code = '';
 
 	/**
 	 * @deprecated	Use user_creation_id

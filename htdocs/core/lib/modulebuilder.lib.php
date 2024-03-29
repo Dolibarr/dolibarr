@@ -1288,7 +1288,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	}
 
 	$columns = array(
-		'rowid' => array('type' => 'integer', 'value' => 11, 'extra' => 'AUTO_INCREMENT PRIMARY KEY'),
+		'rowid' => array('type' => 'integer', 'value' => 11, 'extra' => 'AUTO_INCREMENT'),
 		'code' => array('type' => 'varchar', 'value' => 255, 'null'=>'NOT NULL'),
 		'label' => array('type' => 'varchar', 'value' => 255, 'null'=>'NOT NULL'),
 		'position' => array('type' => 'integer', 'value' => 11, 'null'=>'NULL'),
@@ -1310,9 +1310,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	}
 
 	// check if tablename exist in Database and create it if not
-	// @FIXME We must use $db->DDLDescTable($table) to know if a table exists.
-	$query = "SHOW TABLES LIKE '" . $db->escape(MAIN_DB_PREFIX.strtolower($namedic)) . "'";
-	$checkTable = $db->query($query);
+	$checkTable = $db->DDLDescTable(MAIN_DB_PREFIX.strtolower($namedic));
 	if ($checkTable && $db->num_rows($checkTable) > 0) {
 		setEventMessages($langs->trans("ErrorTableExist", $namedic), null, 'errors');
 		return;
