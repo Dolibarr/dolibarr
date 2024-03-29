@@ -345,10 +345,10 @@ if (empty($reshook)) {
 						setEventMessages($objecttmp->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
 					}
 
-					if ($objecttmp->statut == FactureFournisseur::STATUS_DRAFT) {
+					if ($objecttmp->status == FactureFournisseur::STATUS_DRAFT) {
 						$error++;
 						setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
-					} elseif ($objecttmp->paye || $objecttmp->resteapayer == 0) {
+					} elseif ($objecttmp->paid || $objecttmp->resteapayer == 0) {
 						$error++;
 						setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
 					} elseif ($objecttmp->resteapayer < 0) {
@@ -1589,6 +1589,7 @@ while ($i < $imaxinloop) {
 	$facturestatic->alreadypaid = ($paiement ? $paiement : 0);
 
 	$facturestatic->paye = $obj->paye;
+	$facturestatic->paid = $obj->paye;
 
 	$facturestatic->date = $db->jdate($obj->datef);
 

@@ -1764,7 +1764,7 @@ if (empty($reshook)) {
 					0,
 					$pu_devise,
 					GETPOST('fourn_ref', 'alpha'),
-					''
+					0
 				);
 			}
 			if ($idprod == -99 || $idprod == 0) {
