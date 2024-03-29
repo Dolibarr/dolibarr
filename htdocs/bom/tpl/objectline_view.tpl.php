@@ -121,11 +121,18 @@ if (!function_exists('print_line')) {
 		// Yes, it is a quantity, not a price, but we just want the formatting role of function price
 		$column[] = '<td class="linecolqty nowrap right">'.price(price2num($bomline->qty * $quantity, 'MS')).'</td>';
 
+		if (!empty($bomline->fk_unit)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+			$tmpunit = new CUnits($bomline->db);
+			$tmpunit->fetch($bomline->fk_unit);
+			$unit = isset($tmpunit->code) ? $langs->trans('unit'.$tmpunit->code) : '';
+		} else {
+			$unit = '';
+		}
+
 		if ($filtertype != 1) {
 			if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-				$label = measuringUnitString($bomline->fk_unit, '', '', 1);
-				$column[] = '<td class="linecoluseunit nowrap left">'.
-					(($label !== '') ? $langs->trans($label) : '').'</td>';
+				$column[] = '<td class="linecoluseunit nowrap left">'.$unit.'</td>';
 			}
 
 			$column[] = '<td class="linecolqtyfrozen nowrap right">'.
@@ -137,13 +144,6 @@ if (!function_exists('print_line')) {
 			$column[] = '<td class="linecolefficiency nowrap right">'.$bomline->efficiency.'</td>';
 		} else {
 			// Unit
-			$unit = '?';
-			if (!empty($bomline->fk_unit)) {
-				require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
-				$unit = new CUnits($bomline->db);
-				$unit->fetch($bomline->fk_unit);
-				$unit = isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '';
-			}
 			$column[] = '<td class="linecolunit nowrap right">'.$unit.'</td>';
 
 			// Work station
