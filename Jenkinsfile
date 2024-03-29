@@ -24,7 +24,7 @@ podTemplate(label: 'helm-pod', serviceAccount: 'jenkins', containers: [
     node('helm-pod') {
 
         def REPOSITORY_URI = "iyedbnaissa/dolibarr_build"
-        def HELM_APP_NAME= "dolibarr-chart"
+        def HELM_APP_NAME= "dolibarr"
         def HELM_CHART_DIRECTORY= "charts/dolibarr"
 
         stage('Get latest version of code') {
