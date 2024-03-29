@@ -2696,12 +2696,16 @@ function top_menu_quickadd()
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 	// accesskey is for Mac:               CTRL + key for all browsers
 	$stringforfirstkey = $langs->trans("KeyboardShortcut");
-	if ($conf->browser->name == 'chrome') {
-		$stringforfirstkey .= ' ALT +';
-	} elseif ($conf->browser->name == 'firefox') {
-		$stringforfirstkey .= ' ALT + SHIFT +';
-	} else {
+	if ($conf->browser->os === 'macintosh') {
 		$stringforfirstkey .= ' CTL +';
+	} else {
+		if ($conf->browser->name == 'chrome') {
+			$stringforfirstkey .= ' ALT +';
+		} elseif ($conf->browser->name == 'firefox') {
+			$stringforfirstkey .= ' ALT + SHIFT +';
+		} else {
+			$stringforfirstkey .= ' CTL +';
+		}
 	}
 
 	$html .= '<!-- div for quick add link -->
@@ -2727,10 +2731,18 @@ function top_menu_quickadd()
 
             // Key map shortcut
             $(document).keydown(function(event){
-                  if ( event.which === 76 && event.ctrlKey && event.shiftKey ){
-                     console.log(\'control + shift + l : trigger open quick add dropdown\');
-                     openQuickAddDropDown(event);
-                  }
+				var ostype = "'.$conf->browser->os.'";
+				if (ostype === "macintosh") {
+					if ( event.which === 65 && event.ctrlKey ) {
+						console.log(\'control + a : trigger open quick add dropdown\');
+						openQuickAddDropDown(event);
+					}
+				} else {
+					if ( event.which === 65 && event.ctrlKey && event.shiftKey ) {
+						console.log(\'control + shift + a : trigger open quick add dropdown\');
+						openQuickAddDropDown(event);
+					}
+				}
             });
 
             var openQuickAddDropDown = function(event) {
@@ -2943,12 +2955,16 @@ function top_menu_bookmark()
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 	// accesskey is for Mac:               CTRL + key for all browsers
 	$stringforfirstkey = $langs->trans("KeyboardShortcut");
-	if ($conf->browser->name == 'chrome') {
-		$stringforfirstkey .= ' ALT +';
-	} elseif ($conf->browser->name == 'firefox') {
-		$stringforfirstkey .= ' ALT + SHIFT +';
-	} else {
+	if ($conf->browser->os === 'macintosh') {
 		$stringforfirstkey .= ' CTL +';
+	} else {
+		if ($conf->browser->name == 'chrome') {
+			$stringforfirstkey .= ' ALT +';
+		} elseif ($conf->browser->name == 'firefox') {
+			$stringforfirstkey .= ' ALT + SHIFT +';
+		} else {
+			$stringforfirstkey .= ' CTL +';
+		}
 	}
 
 	if (!defined('JS_JQUERY_DISABLE_DROPDOWN') && !empty($conf->use_javascript_ajax)) {	    // This may be set by some pages that use different jquery version to avoid errors
@@ -2986,11 +3002,19 @@ function top_menu_bookmark()
 	            });
 
 	            // Key map shortcut
-	            jQuery(document).keydown(function(event){
-	                  if( event.which === 77 && event.ctrlKey && event.shiftKey ){
-	                     console.log("Click on control + shift + m : trigger open bookmark dropdown");
-	                     openBookMarkDropDown(event);
-	                  }
+	            jQuery(document).keydown(function(event) {
+					var ostype = "'.$conf->browser->os.'";
+					if (ostype === "macintosh") {
+						if ( event.which === 66 && event.ctrlKey ) {
+							console.log("Click on control + b : trigger open bookmark dropdown");
+							openBookMarkDropDown(event);
+						}
+					} else {
+						if ( event.which === 66 && event.ctrlKey && event.shiftKey ) {
+							console.log("Click on control + shift + b : trigger open bookmark dropdown");
+							openBookMarkDropDown(event);
+						}
+					}
 	            });
 
 	            var openBookMarkDropDown = function(event) {
