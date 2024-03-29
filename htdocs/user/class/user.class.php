@@ -84,7 +84,7 @@ class User extends CommonObject
 	public $id = 0;
 
 	/**
-	 * @var User old copy of User
+	 * @var static old copy of User
 	 */
 	public $oldcopy;
 
