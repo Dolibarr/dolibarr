@@ -1001,7 +1001,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$listetype = $adht->liste_array(1);
 		print img_picto('', $adht->picto, 'class="pictofixedwidth"');
 		if (count($listetype)) {
-			print $form->selectarray("typeid", $listetype, (GETPOSTINT('typeid') ? GETPOSTINT('typeid') : $typeid), (count($listetype) > 1 ? 1 : 0), 0, 0, '', 0, 0, 0, '', '', 1);
+			print $form->selectarray("typeid", $listetype, (GETPOSTINT('typeid') ? GETPOSTINT('typeid') : $typeid), (count($listetype) > 1 ? 1 : 0), 0, 0, '', 0, 0, 0, '', 'minwidth150', 1);
 		} else {
 			print '<span class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</span>';
 		}

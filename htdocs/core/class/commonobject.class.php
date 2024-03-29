@@ -5636,7 +5636,7 @@ abstract class CommonObject
 	 * Common function for all objects extending CommonObject for generating documents
 	 *
 	 * @param 	string 		$modelspath 	Relative folder where generators are placed
-	 * @param 	string 		$modele 		Generator to use. Caller must set it to obj->model_pdf or $_POST for example.
+	 * @param 	string 		$modele 		Generator to use. Caller must set it to from obj->model_pdf or from GETPOST for example.
 	 * @param 	Translate 	$outputlangs 	Output language to use
 	 * @param 	int 		$hidedetails 	1 to hide details. 0 by default
 	 * @param 	int 		$hidedesc 		1 to hide product description. 0 by default
@@ -6016,8 +6016,6 @@ abstract class CommonObject
 	 **/
 	public function getDefaultCreateValueFor($fieldname, $alternatevalue = null, $type = 'alphanohtml')
 	{
-		global $_POST;
-
 		// If param here has been posted, we use this value first.
 		if (GETPOSTISSET($fieldname)) {
 			return GETPOST($fieldname, $type, 3);
@@ -6176,8 +6174,6 @@ abstract class CommonObject
 	 */
 	public function setValuesForExtraLanguages($onlykey = '')
 	{
-		global $_POST, $langs;
-
 		// Get extra fields
 		foreach ($_POST as $postfieldkey => $postfieldvalue) {
 			$tmparray = explode('-', $postfieldkey);

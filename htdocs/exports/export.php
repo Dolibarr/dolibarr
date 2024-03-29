@@ -400,7 +400,6 @@ if ($step == 4 && $action == 'submitFormField') {
 				$filterqualified = 0;
 			}
 			if ($filterqualified) {
-				//print 'Filter on '.$newcode.' type='.$type.' value='.$_POST[$newcode]."\n";
 				$objexport->array_export_FilterValue[0][$code] = GETPOST($newcode, $check);
 			}
 		}

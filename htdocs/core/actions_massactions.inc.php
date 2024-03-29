@@ -167,7 +167,7 @@ if (!$error && $massaction == 'confirm_presend') {
 			$receiver = array($receiver);
 		}
 	}
-	if (!trim($_POST['sendto']) && count($receiver) == 0 && count($listofobjectthirdparties) == 1) {	// if only one recipient, receiver is mandatory
+	if (!trim(GETPOST('sendto', 'alphawithlgt')) && count($receiver) == 0 && count($listofobjectthirdparties) == 1) {	// if only one recipient, receiver is mandatory
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Recipient")), null, 'warnings');
 		$massaction = 'presend';
@@ -195,7 +195,7 @@ if (!$error && $massaction == 'confirm_presend') {
 
 			// Define $sendto
 			$tmparray = array();
-			if (trim($_POST['sendto'])) {
+			if (trim(GETPOST('sendto', 'alphawithlgt'))) {
 				// Recipients are provided into free text
 				$tmparray[] = trim(GETPOST('sendto', 'alphawithlgt'));
 			}
@@ -222,7 +222,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				}
 			}
 			$tmparray = array();
-			if (trim($_POST['sendtocc'])) {
+			if (trim(GETPOST('sendtocc', 'alphawithlgt'))) {
 				$tmparray[] = trim(GETPOST('sendtocc', 'alphawithlgt'));
 			}
 			if (count($receivercc) > 0) {
