@@ -155,20 +155,20 @@ if (empty($user->socid)) {
 }
 
 $arrayfields = array(
+	't.ref' => array('label' => "RefTask", 'checked' => 1, 'position' => 50),
 	't.fk_task_parent' => array('label' => "RefTaskParent", 'checked' => 0, 'position' => 70),
-	't.ref' => array('label' => "RefTask", 'checked' => 1, 'position' => 80),
-	't.label' => array('label' => "LabelTask", 'checked' => 1, 'position' => 80),
+	't.label' => array('label' => "LabelTask", 'checked' => 1, 'position' => 75),
 	't.description' => array('label' => "Description", 'checked' => 0, 'position' => 80),
 	't.dateo' => array('label' => "DateStart", 'checked' => 1, 'position' => 100),
 	't.datee' => array('label' => "Deadline", 'checked' => 1, 'position' => 101),
 	'p.ref' => array('label' => "ProjectRef", 'checked' => 1, 'position' => 151),
 	'p.title' => array('label' => "ProjectLabel", 'checked' => 0, 'position' => 152),
-	's.nom' => array('label' => "ThirdParty", 'checked' => 1, 'csslist' => 'tdoverflowmax125', 'position' => 200),
+	's.nom' => array('label' => "ThirdParty", 'checked' => -1, 'csslist' => 'tdoverflowmax125', 'position' => 200),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => 0, 'csslist' => 'tdoverflowmax125', 'position' => 201),
 	'p.fk_statut' => array('label' => "ProjectStatus", 'checked' => 1, 'position' => 205),
 	't.planned_workload' => array('label' => "PlannedWorkload", 'checked' => 1, 'position' => 302),
 	't.duration_effective' => array('label' => "TimeSpent", 'checked' => 1, 'position' => 303),
-	't.progress_calculated' => array('label' => "ProgressCalculated", 'checked' => 1, 'position' => 304),
+	't.progress_calculated' => array('label' => "ProgressCalculated", 'checked' => -1, 'position' => 304),
 	't.progress' => array('label' => "ProgressDeclared", 'checked' => 1, 'position' => 305),
 	't.progress_summary' => array('label' => "TaskProgressSummary", 'checked' => 1, 'position' => 306),
 	't.budget_amount' => array('label' => "Budget", 'checked' => 0, 'position' => 307),
@@ -746,7 +746,7 @@ $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create', '', $permissiontocreate);
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/projet/tasks/list.php'), '', $permissiontocreate);
 
 
 // Show description of content
@@ -853,14 +853,14 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print $searchpicto;
 	print '</td>';
 }
-if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_task_ref_parent" value="'.dol_escape_htmltag($search_task_ref_parent).'" size="4">';
-	print '</td>';
-}
 if (!empty($arrayfields['t.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'" size="4">';
+	print '</td>';
+}
+if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_task_ref_parent" value="'.dol_escape_htmltag($search_task_ref_parent).'" size="4">';
 	print '</td>';
 }
 if (!empty($arrayfields['t.label']['checked'])) {
@@ -1011,12 +1011,12 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
-	print_liste_field_titre($arrayfields['t.fk_task_parent']['label'], $_SERVER["PHP_SELF"], "t.fk_task_parent", "", $param, "", $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
 if (!empty($arrayfields['t.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
+	print_liste_field_titre($arrayfields['t.fk_task_parent']['label'], $_SERVER["PHP_SELF"], "t.fk_task_parent", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.label']['checked'])) {
@@ -1141,7 +1141,6 @@ while ($i < $imaxinloop) {
 	$object->ref = $obj->ref;
 	$object->label = $obj->label;
 	$object->description = $obj->description;
-	$object->fk_statut = $obj->status;
 	$object->status = $obj->status;
 	$object->progress = $obj->progress;
 	$object->budget_amount = $obj->budget_amount;
@@ -1207,6 +1206,18 @@ while ($i < $imaxinloop) {
 					$totalarray['nbfield']++;
 				}
 			}
+			// Ref
+			if (!empty($arrayfields['t.ref']['checked'])) {
+				print '<td class="nowraponall">';
+				print $object->getNomUrl(1, 'withproject');
+				if ($object->hasDelay()) {
+					print img_warning("Late");
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
 			// Ref Parent
 			if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
 				print '<td class="nowraponall">';
@@ -1221,18 +1232,6 @@ while ($i < $imaxinloop) {
 							print img_warning("Late");
 						}
 					}
-				}
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Ref
-			if (!empty($arrayfields['t.ref']['checked'])) {
-				print '<td class="nowraponall">';
-				print $object->getNomUrl(1, 'withproject');
-				if ($object->hasDelay()) {
-					print img_warning("Late");
 				}
 				print '</td>';
 				if (!$i) {
@@ -1383,6 +1382,15 @@ while ($i < $imaxinloop) {
 				} else {
 					print '</a>';
 				}
+				if (empty($arrayfields['t.progress_calculated']['checked'])) {
+					if ($obj->planned_workload || $obj->duration_effective) {
+						if ($obj->planned_workload) {
+							print ' <span class="opacitymedium">('.round(100 * $obj->duration_effective / $obj->planned_workload, 2).' %)</span>';
+						} else {
+							print $form->textwithpicto('', $langs->trans('WorkloadNotDefined'), 1, 'help');
+						}
+					}
+				}
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1448,9 +1456,9 @@ while ($i < $imaxinloop) {
 			// Progress summary
 			if (!empty($arrayfields['t.progress_summary']['checked'])) {
 				print '<td class="center">';
-				if ($obj->progress != '' && $obj->duration_effective) {
+				//if ($obj->progress != '') {
 					print getTaskProgressView($object, false, false);
-				}
+				//}
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1620,7 +1628,7 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 		} elseif (isset($totalarray['totalbilledfield']) && $totalarray['totalbilledfield'] == $i) {
 			print '<td class="center">'.convertSecondToTime($totalarray['totalbilled'], $plannedworkloadoutputformat).'</td>';
 		} elseif (isset($totalarray['totalbudget_amountfield']) && $totalarray['totalbudget_amountfield'] == $i) {
-			print '<td class="center">'.price($totalarray['totalbudgetamount'], 0, $langs, 1, 0, 0, $conf->currency).'</td>';
+			print '<td class="center">'.price((float) $totalarray['totalbudgetamount'], 0, $langs, 1, 0, 0, $conf->currency).'</td>';
 		} elseif (!empty($totalarray['pos'][$i])) {
 			print '<td class="right">';
 			if (isset($totalarray['type']) && $totalarray['type'][$i] == 'duration') {

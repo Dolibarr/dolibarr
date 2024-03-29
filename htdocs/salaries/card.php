@@ -561,7 +561,7 @@ if ($action == 'create' && $permissiontoadd) {
 		print '</script>'."\n";
 	}
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 

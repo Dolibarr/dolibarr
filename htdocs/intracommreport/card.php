@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015       ATM Consulting          <support@atm-consulting.fr>
  * Copyright (C) 2019-2020  Open-DSI                <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -234,7 +235,7 @@ if ($id > 0 && $action != 'edit') {
 	 */
 	//$head = intracommreport_prepare_head($object);
 
-	print dol_get_fiche_head("", 'general', $langs->trans("IntracommReport"), -1, 'user');
+	print dol_get_fiche_head(array(), 'general', $langs->trans("IntracommReport"), -1, 'user');
 
 	// Confirm remove report
 	if ($action == 'delete') {

@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Rafael San José     <rsanjose@alxarafe.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,10 +116,13 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 			// Add user into some linked tools (mailman, spip, etc...)
 			if (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid)) {
 				if (is_object($object->oldcopy) && (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid))) {    // If email has changed or if list has changed we delete mailman subscription for old email
-					if ($object->oldcopy->del_to_abo() < 0) {
-						$this->errors = $object->oldcopy->errors;
-						if (!empty($object->oldcopy->error)) {
-							$this->errors[] = $object->oldcopy->error;
+					// $object->oldcopy may be a stdClass and not original object depending on copy type, so we realod a new object to run the del_to_abo()
+					$tmpmember = new Adherent($this->db);
+					$tmpmember->fetch($object->oldcopy->id);
+					if ($tmpmember->del_to_abo() < 0) {
+						$this->errors = $tmpmember->errors;
+						if (!empty($tmpmember->error)) {
+							$this->errors[] = $tmpmember->error;
 						}
 						$return = -1;
 					} else {

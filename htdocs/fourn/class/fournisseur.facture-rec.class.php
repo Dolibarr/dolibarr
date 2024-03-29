@@ -2027,6 +2027,10 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	public $date_start;
 	public $date_end;
 	public $info_bits;
+
+	/**
+	 * @var int special code
+	 */
 	public $special_code;
 	public $rang;
 

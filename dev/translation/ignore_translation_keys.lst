@@ -45,6 +45,7 @@ IPP_Device
 InstallChoiceRecommanded
 IsInPackage
 MailNoChangePossible
+MailSentBy
 ModuleBuilderDesc2
 ModulesMarketPlaceDesc
 MoveField
