@@ -518,6 +518,7 @@ class DoliDBMysqli extends DoliDB
 	 */
 	public function escapeforlike($stringtoencode)
 	{
+		// We must first replace the \ char into \\, then we can replace _ and % into \_ and \%
 		return str_replace(array('\\', '_', '%'), array('\\\\', '\_', '\%'), (string) $stringtoencode);
 	}
 
