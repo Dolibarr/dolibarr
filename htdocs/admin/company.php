@@ -643,7 +643,7 @@ print '<input name="capital" id="capital" class="maxwidth100" value="'.dol_escap
 // Juridical Status
 print '<tr class="oddeven"><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';
 if ($mysoc->country_code) {
-	print $formcompany->select_juridicalstatus($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE, $mysoc->country_code, '', 'forme_juridique_code');
+	print $formcompany->select_juridicalstatus($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE ?? '', $mysoc->country_code, '', 'forme_juridique_code');
 } else {
 	print $countrynotdefined;
 }
