@@ -1555,8 +1555,8 @@ if (!$error && ($massaction == 'unassigncommercial' || ($action == 'unassigncomm
 		if ($result > 0) {
 			if (in_array($objecttmp->element, array('societe'))) {
 				$TCommercial = GETPOST("commercial", "alpha");
-				if (is_array($TCommercial)){
-					foreach ($TCommercial as $commercial){
+				if (is_array($TCommercial)) {
+					foreach ($TCommercial as $commercial) {
 						$result = $objecttmp->del_commercial($user, $commercial);
 					}
 				}

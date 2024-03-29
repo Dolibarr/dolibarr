@@ -8436,7 +8436,7 @@ class Form
 		if ($value_as_key) {
 			$array = array_combine($array, $array);
 		}
-
+q
 		$out = '';
 
 		if ($addjscombo < 0) {
