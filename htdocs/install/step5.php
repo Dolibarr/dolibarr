@@ -161,7 +161,12 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 	$conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey) ? $dolibarr_main_db_cryptkey : '';
 
 	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
-
+	
+	$easya_version = file_get_contents(__DIR__.'/../VERSION');
+	if ($easya_version) {
+		dolibarr_set_const($db, "EASYA_VERSION", $easya_version, 'chaine', 0, '', $conf->entity);
+	}
+	
 	// Create the global $hookmanager object
 	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 	$hookmanager = new HookManager($db);

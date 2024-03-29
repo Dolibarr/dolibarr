@@ -76,7 +76,12 @@ print load_fiche_titre($title, '', 'title_setup');
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("CurrentVersion").' ('.$langs->trans("Programs").')</td><td>'.DOL_VERSION;
+if (! empty($conf->global->EASYA_VERSION)) {
+	print '<tr class="oddeven"><td>'.$langs->trans("Easya").'</td><td>'.$conf->global->EASYA_VERSION . '('. $langs->trans('Dolibarr') . ' ' .  DOL_VERSION . ')';
+} else {
+	print '<tr class="oddeven"><td>'.$langs->trans("CurrentVersion").' ('.$langs->trans("Programs").')</td><td>'.DOL_VERSION;
+}
+
 // If current version differs from last upgrade
 if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) {
 	// Compare version with last install database version (upgrades never occured)
