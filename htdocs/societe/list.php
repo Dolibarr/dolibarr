@@ -590,7 +590,7 @@ if (!$user->hasRight('fournisseur', 'lire')) {
 }
 // Search on sale representative
 if (!empty($search_sale) && $search_sale != '-1') {
-	$search_sale_req = array_filter($search_sale, function (string $value) :bool{
+	$search_sale_req = array_filter($search_sale, function (string $value) : bool {
         $value = intval($value);
 		return $value >= 0;
 	});
