@@ -82,7 +82,12 @@ if (!empty($pageid) && $pageid > 0) {
 	}
 	if (empty($srclang)) {
 		$reg = array();
-		if (preg_match('/^(\w\w)\//', $_GET['pageref'], $reg)) {	// We reuse $_GET['pageref'] because $pageref may have been cleaned already from the language code.
+		// With Dolibarr server, url is in parameter pageref
+		if (defined('USEDOLIBARRSERVER') && !empty($_GET['pageref']) && preg_match('/^\/?(\w\w)\//', $_GET['pageref'], $reg) && $reg[1] != 'js') {	// We reuse $_GET['pageref'] because $pageref may have been cleaned already from the language code.
+			$srclang = $reg[1];
+		}
+		// With External server, url is in parameter pageref
+		if (defined('USEEXTERNALSERVER') && !empty($_SERVER['PHP_SELF']) && preg_match('/^\/?(\w\w)\//', $_SERVER['PHP_SELF'], $reg) && $reg[1] != 'js') {
 			$srclang = $reg[1];
 		}
 	}
