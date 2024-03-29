@@ -2464,6 +2464,7 @@ class Societe extends CommonObject
 
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fk_soc = $this->id;
+			$discount->socid = $this->id;
 
 			$discount->discount_type = $discount_type;
 
@@ -2497,7 +2498,7 @@ class Societe extends CommonObject
 	/**
 	 * 	Returns amount of included taxes of the current discounts/credits available from the company
 	 *
-	 *	@param	User	$user			Filter on a user author of discounts
+	 *	@param	?User	$user			Filter on a user author of discounts
 	 * 	@param	string	$filter			Other filter
 	 * 	@param	integer	$maxvalue		Filter on max value for discount
 	 * 	@param	int		$discount_type	0 => customer discount, 1 => supplier discount

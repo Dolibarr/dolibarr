@@ -107,9 +107,9 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-if (GETPOST('search_fk_status', 'alpha') == 'non_closed') {
+/*if (GETPOST('search_fk_status', 'alpha') == 'non_closed') {
 	$_GET['search_fk_statut'][] = 'openall'; // For backward compatibility
-}
+}*/
 
 // Initialize array of search criteria
 $search_all = (GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') : GETPOST('sall'));
@@ -681,39 +681,39 @@ if ($contractid > 0) {
 }
 if ($search_date_start) {
 	$tmparray = dol_getdate($search_date_start);
-	$param .= '&search_date_startday='.urlencode($tmparray['mday']);
-	$param .= '&search_date_startmonth='.urlencode($tmparray['mon']);
-	$param .= '&search_date_startyear='.urlencode($tmparray['year']);
+	$param .= '&search_date_startday='.((int) $tmparray['mday']);
+	$param .= '&search_date_startmonth='.((int) $tmparray['mon']);
+	$param .= '&search_date_startyear='.((int) $tmparray['year']);
 }
 if ($search_date_end) {
 	$tmparray = dol_getdate($search_date_end);
-	$param .= '&search_date_endday='.urlencode($tmparray['mday']);
-	$param .= '&search_date_endmonth='.urlencode($tmparray['mon']);
-	$param .= '&search_date_endyear='.urlencode($tmparray['year']);
+	$param .= '&search_date_endday='.((int) $tmparray['mday']);
+	$param .= '&search_date_endmonth='.((int) $tmparray['mon']);
+	$param .= '&search_date_endyear='.((int) $tmparray['year']);
 }
 if ($search_dateread_start) {
 	$tmparray = dol_getdate($search_dateread_start);
-	$param .= '&search_dateread_startday='.urlencode($tmparray['mday']);
-	$param .= '&search_dateread_startmonth='.urlencode($tmparray['mon']);
-	$param .= '&search_dateread_startyear='.urlencode($tmparray['year']);
+	$param .= '&search_dateread_startday='.((int) $tmparray['mday']);
+	$param .= '&search_dateread_startmonth='.((int) $tmparray['mon']);
+	$param .= '&search_dateread_startyear='.((int) $tmparray['year']);
 }
 if ($search_dateread_end) {
 	$tmparray = dol_getdate($search_dateread_end);
-	$param .= '&search_dateread_endday='.urlencode($tmparray['mday']);
-	$param .= '&search_dateread_endmonth='.urlencode($tmparray['mon']);
-	$param .= '&search_dateread_endyear='.urlencode($tmparray['year']);
+	$param .= '&search_dateread_endday='.((int) $tmparray['mday']);
+	$param .= '&search_dateread_endmonth='.((int) $tmparray['mon']);
+	$param .= '&search_dateread_endyear='.((int) $tmparray['year']);
 }
 if ($search_dateclose_start) {
 	$tmparray = dol_getdate($search_dateclose_start);
-	$param .= '&search_dateclose_startday='.urlencode($tmparray['mday']);
-	$param .= '&search_dateclose_startmonth='.urlencode($tmparray['mon']);
-	$param .= '&search_dateclose_startyear='.urlencode($tmparray['year']);
+	$param .= '&search_dateclose_startday='.((int) $tmparray['mday']);
+	$param .= '&search_dateclose_startmonth='.((int) $tmparray['mon']);
+	$param .= '&search_dateclose_startyear='.((int) $tmparray['year']);
 }
 if ($search_dateclose_end) {
 	$tmparray = dol_getdate($search_dateclose_end);
-	$param .= '&search_date_endday='.urlencode($tmparray['mday']);
-	$param .= '&search_date_endmonth='.urlencode($tmparray['mon']);
-	$param .= '&search_date_endyear='.urlencode($tmparray['year']);
+	$param .= '&search_date_endday='.((int) $tmparray['mday']);
+	$param .= '&search_date_endmonth='.((int) $tmparray['mon']);
+	$param .= '&search_date_endyear='.((int) $tmparray['year']);
 }
 // List of mass actions available
 $arrayofmassactions = array(

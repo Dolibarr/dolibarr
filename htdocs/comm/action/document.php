@@ -52,7 +52,6 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 if ($user->socid > 0) {
-	unset($_GET["action"]);
 	$action = '';
 }
 

@@ -68,8 +68,8 @@ $search_amount_no_tax = GETPOST("search_amount_no_tax", "alpha");
 $search_amount_all_tax = GETPOST("search_amount_all_tax", "alpha");
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refsupplier = GETPOST('search_refsupplier', 'alpha');
-$search_type = GETPOSTINT('search_type');
-$search_subtype = GETPOSTINT('search_subtype');
+$search_type = GETPOST('search_type', 'intcomma');
+$search_subtype = GETPOST('search_subtype', 'intcomma');
 $search_project = GETPOST('search_project', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_company_alias = GETPOST('search_company_alias', 'alpha');
@@ -85,8 +85,8 @@ $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'a
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_status = GETPOST('search_status', 'intcomma');	// Can be '' or a numeric
-$search_paymentmode = GETPOSTINT('search_paymentmode');
-$search_paymentcond = GETPOSTINT('search_paymentcond');
+$search_paymentmode = GETPOST('search_paymentmode', 'intcomma');
+$search_paymentcond = GETPOST('search_paymentcond', 'intcomma');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
@@ -137,7 +137,6 @@ $socid = GETPOSTINT('socid');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
-	$_GET["action"] = '';
 	$socid = $user->socid;
 }
 
@@ -1095,20 +1094,13 @@ if (!empty($arrayfields['f.ref_supplier']['checked'])) {
 // Type
 if (!empty($arrayfields['f.type']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone">';
-	$listtype = array(
+	$typearray = array(
 		FactureFournisseur::TYPE_STANDARD => $langs->trans("InvoiceStandard"),
 		FactureFournisseur::TYPE_REPLACEMENT => $langs->trans("InvoiceReplacement"),
 		FactureFournisseur::TYPE_CREDIT_NOTE => $langs->trans("InvoiceAvoir"),
 		FactureFournisseur::TYPE_DEPOSIT => $langs->trans("InvoiceDeposit"),
 	);
-	/*
-	 if (!empty($conf->global->INVOICE_USE_SITUATION))
-	 {
-	 $listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
-	 }
-	 */
-	//$listtype[Facture::TYPE_PROFORMA]=$langs->trans("InvoiceProForma");     // A proformat invoice is not an invoice but must be an order.
-	print $form->selectarray('search_type', $listtype, $search_type, 1, 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth100');
+	print $form->selectarray('search_type', $typearray, $search_type, 1, 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth100');
 	print '</td>';
 }
 // Invoice Subtype

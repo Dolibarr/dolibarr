@@ -291,7 +291,7 @@ function getContact($authentication, $id, $ref_ext)
 		$fuser->getrights();
 
 		$contact = new Contact($db);
-		$result = $contact->fetch($id, 0, $ref_ext);
+		$result = $contact->fetch($id, null, $ref_ext);
 		if ($result > 0) {
 			// Only internal user who have contact read permission
 			// Or for external user who have contact read permission, with restrict on socid
@@ -655,7 +655,7 @@ function updateContact($authentication, $contact)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		$object = new Contact($db);
-		$result = $object->fetch($contact['id'], 0, $contact['ref_ext']);
+		$result = $object->fetch($contact['id'], null, $contact['ref_ext']);
 
 		if (!empty($object->id)) {
 			$objectfound = true;
