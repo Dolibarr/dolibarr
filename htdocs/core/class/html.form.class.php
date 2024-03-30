@@ -2205,7 +2205,7 @@ class Form
 					if (!empty($disableline)) {
 						$out .= ' disabled';
 					}
-					if ((is_object($selected) && $selected->id == $obj->rowid) || (!is_object($selected) && in_array($obj->rowid, $selected))) {
+					if ((is_object($selected[0]) && $selected[0]->id == $obj->rowid) || (!is_object($selected) && in_array($obj->rowid, $selected))) {
 						$out .= ' selected';
 					}
 					$out .= ' data-html="';
