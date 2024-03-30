@@ -845,7 +845,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			}
 		} else {
 			$stock = $prod->stock_reel;
-			$stockwarehouse = $prod->stock_warehouse[$fk_entrepot]->real;
+			if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) {
+				$stockwarehouse = $prod->stock_warehouse[$fk_entrepot]->real;
+			}
 		}
 
 		// Force call prod->load_stats_xxx to choose status to count (otherwise it is loaded by load_stock function)
