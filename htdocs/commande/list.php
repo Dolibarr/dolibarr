@@ -1734,14 +1734,6 @@ if (!empty($arrayfields['total_mark_rate']['checked'])) {
 	print '</td>';
 }
 
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-
-// Fields from hook
-$parameters = array('arrayfields' => $arrayfields);
-$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-print $hookmanager->resPrint;
-
 // Date creation
 if (!empty($arrayfields['c.datec']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1785,17 +1777,28 @@ if (!empty($arrayfields['shippable']['checked'])) {
 	}
 	print '</td>';
 }
+
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
+// Fields from hook
+$parameters = array('arrayfields' => $arrayfields);
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
 // Status billed
 if (!empty($arrayfields['c.facture']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	print $form->selectyesno('search_billed', $search_billed, 1, 0, 1, 1);
 	print '</td>';
 }
+
 // Import key
 if (!empty($arrayfields['c.import_key']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	print '</td>';
 }
+
 // Status
 if (!empty($arrayfields['c.fk_statut']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
@@ -1970,13 +1973,6 @@ if (!empty($arrayfields['total_mark_rate']['checked'])) {
 	$totalarray['nbfield']++;
 }
 
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
-
-// Hook fields
-$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-print $hookmanager->resPrint;
 if (!empty($arrayfields['c.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['c.datec']['label'], $_SERVER["PHP_SELF"], "c.date_creation", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
@@ -2001,6 +1997,14 @@ if (!empty($arrayfields['shippable']['checked'])) {
 	print_liste_field_titre($arrayfields['shippable']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+
+// Hook fields
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
 if (!empty($arrayfields['c.facture']['checked'])) {
 	print_liste_field_titre($arrayfields['c.facture']['label'], $_SERVER["PHP_SELF"], 'c.facture', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
@@ -2577,13 +2581,6 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		// Extra fields
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-		// Fields from hook
-		$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
-		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-
 		// Date creation
 		if (!empty($arrayfields['c.datec']['checked'])) {
 			print '<td align="center" class="nowrap">';
@@ -2739,6 +2736,13 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+
+		// Extra fields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+		// Fields from hook
+		$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 
 		// Billed
 		if (!empty($arrayfields['c.facture']['checked'])) {
