@@ -3353,7 +3353,7 @@ class Commande extends CommonOrder
 		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
 		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
-		$sql .= " fk_user_author=".(isset($this->user_author_id) ? $this->user_author_id : "null").",";
+		$sql .= " fk_user_modif=".(isset($user->id) ? $user->id : "null").",";
 		$sql .= " fk_user_valid=".((isset($this->user_validation_id) && $this->user_validation_id > 0) ? $this->user_validation_id : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
@@ -4428,7 +4428,7 @@ class OrderLine extends CommonOrderLine
 
 			dol_syslog("OrderLine::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if ($resql) {
+			if (!$resql) {
 				$this->error = $this->db->lasterror();
 				$error++;
 			}

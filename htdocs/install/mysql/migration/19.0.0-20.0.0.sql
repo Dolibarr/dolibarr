@@ -47,6 +47,8 @@ ALTER TABLE llx_resource ADD INDEX idx_resource_fk_state (fk_state);
 
 UPDATE llx_c_type_contact SET element = 'stocktransfer' WHERE element = 'StockTransfer';
 
+DELETE FROM llx_boxes WHERE box_id IN (SELECT rowid FROM llx_boxes_def WHERE file = 'box_members.php');
+DELETE FROM llx_boxes_def WHERE file = 'box_members.php';
 
 -- Use unique keys for extrafields
 ALTER TABLE llx_actioncomm_extrafields DROP INDEX idx_actioncomm_extrafields;
@@ -286,3 +288,5 @@ ALTER TABLE llx_expeditiondet ADD COLUMN element_type varchar(50) DEFAULT 'order
 
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commande fk_element integer;
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commandefourndet fk_elementdet integer;
+
+ALTER TABLE llx_supplier_proposaldet MODIFY ref_fourn VARCHAR(128) NULL;

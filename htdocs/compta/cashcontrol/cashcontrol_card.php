@@ -66,7 +66,7 @@ if (!$sortorder) {
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartylist';
 
 if ($contextpage == 'takepos') {
-	$_GET['optioncss'] = 'print';
+	$optioncss = 'print';
 }
 
 $arrayofpaymentmode = array('cash' => 'Cash', 'cheque' => 'Cheque', 'card' => 'CreditCard');

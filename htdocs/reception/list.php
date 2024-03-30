@@ -410,6 +410,7 @@ if (empty($reshook)) {
 							// Negative line, we create a discount line
 							$discount = new DiscountAbsolute($db);
 							$discount->fk_soc = $objecttmp->socid;
+							$discount->socid = $objecttmp->socid;
 							$discount->amount_ht = abs($lines[$i]->total_ht);
 							$discount->amount_tva = abs($lines[$i]->total_tva);
 							$discount->amount_ttc = abs($lines[$i]->total_ttc);
@@ -486,7 +487,7 @@ if (empty($reshook)) {
 								$product_type,
 								$rang,
 								false,
-								0,
+								array(),
 								null,
 								$lines[$i]->rowid,
 								0,
@@ -570,8 +571,8 @@ if (empty($reshook)) {
 			$db->rollback();
 
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];
-			$_GET["originid"] = $_POST["originid"];
+			$_GET["origin"] = $_POST["origin"];		// Keep this ?
+			$_GET["originid"] = $_POST["originid"];	// Keep this ?
 			setEventMessages($object->error, $errors, 'errors');
 			$error++;
 		}

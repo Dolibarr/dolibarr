@@ -118,7 +118,9 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 		$newdiscount1->fk_user = $discount->fk_user;
 		$newdiscount2->fk_user = $discount->fk_user;
 		$newdiscount1->fk_soc = $discount->fk_soc;
+		$newdiscount1->socid = $discount->socid;
 		$newdiscount2->fk_soc = $discount->fk_soc;
+		$newdiscount2->socid = $discount->socid;
 		$newdiscount1->discount_type = $discount->discount_type;
 		$newdiscount2->discount_type = $discount->discount_type;
 		$newdiscount1->datec = $discount->datec;

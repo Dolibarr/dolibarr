@@ -3411,7 +3411,7 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * Returns the rights used for this class
-	 * @return stdClass
+	 * @return int
 	 */
 	public function getRights()
 	{
@@ -3774,6 +3774,10 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	public $fk_facture;
 
 	public $rang = 0;
+
+	/**
+	 * @var int special code
+	 */
 	public $special_code = 0;
 
 	/**
@@ -4014,7 +4018,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 			$sql .= "null,";
 		}
 		$sql .= "'".$this->db->escape($this->product_type)."',";
-		$sql .= "'".$this->db->escape($this->special_code)."',";
+		$sql .= (int) $this->special_code . ",";
 		$sql .= "'".$this->db->escape($this->rang)."',";
 		$sql .= "'".$this->db->escape($this->qty)."', ";
 		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape($this->vat_src_code)."'").",";

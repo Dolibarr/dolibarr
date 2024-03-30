@@ -705,7 +705,6 @@ CloseWindow=Close window
 Response=Response
 Priority=Priority
 SendByMail=Send by email
-MailSentBy=Email sent by
 MailSentByTo=Email sent by %s to %s
 NotSent=Not sent
 TextUsedInTheMessageBody=Email body

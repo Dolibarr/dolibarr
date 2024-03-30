@@ -95,12 +95,12 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete' && $_GET["file"] && $confirm == 'yes' && $user->hasRight('categorie', 'creer')) {
-		$object->delete_photo($upload_dir."/".$_GET["file"]);
+	if ($action == 'confirm_delete' && GETPOST("file") && $confirm == 'yes' && $user->hasRight('categorie', 'creer')) {
+		$object->delete_photo($upload_dir."/".GETPOST("file"));
 	}
 
-	if ($action == 'addthumb' && $_GET["file"]) {
-		$object->addThumbs($upload_dir."/".$_GET["file"]);
+	if ($action == 'addthumb' && GETPOST("file")) {
+		$object->addThumbs($upload_dir."/".GETPOST("file"));
 	}
 }
 
@@ -133,10 +133,10 @@ if ($object->id) {
 	dol_banner_tab($object, 'label', $linkback, ($user->socid ? 0 : 1), 'label', 'label', $morehtmlref, '&type='.$type, 0, '', '', 1);
 
 	/*
-	 * Confirmation de la suppression de photo
-	*/
+	 * Confirmation deletion of picture
+	 */
 	if ($action == 'delete') {
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.urlencode($type).'&file='.urlencode(GETPOST("file")), $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
 	}
 
 	print '<br>';

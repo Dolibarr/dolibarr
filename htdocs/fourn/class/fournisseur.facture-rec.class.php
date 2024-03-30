@@ -382,7 +382,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$result_insert = $this->addline(
 						$facfourn_src->lines[$i]->fk_product,
 						$facfourn_src->lines[$i]->ref_supplier,
-						$facfourn_src->lines[$i]->label,
+						$facfourn_src->lines[$i]->product_label,
 						$facfourn_src->lines[$i]->desc ? $facfourn_src->lines[$i]->desc : $facfourn_src->lines[$i]->description,
 						$facfourn_src->lines[$i]->pu_ht,
 						$facfourn_src->lines[$i]->pu_ttc,
@@ -2032,6 +2032,10 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	public $date_start;
 	public $date_end;
 	public $info_bits;
+
+	/**
+	 * @var int special code
+	 */
 	public $special_code;
 	public $rang;
 

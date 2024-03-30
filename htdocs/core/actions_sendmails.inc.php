@@ -190,12 +190,12 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 		}
 
 		$tmparray = array();
-		if (trim($_POST['sendto'])) {
+		if (trim(GETPOST('sendto', 'alphawithlgt'))) {
 			// Recipients are provided into free text field
 			$tmparray[] = trim(GETPOST('sendto', 'alphawithlgt'));
 		}
 
-		if (isset($_POST['tomail']) && trim($_POST['tomail'])) {
+		if (trim(GETPOST('tomail', 'alphawithlgt'))) {
 			// Recipients are provided into free hidden text field
 			$tmparray[] = trim(GETPOST('tomail', 'alphawithlgt'));
 		}
@@ -238,7 +238,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			}
 		}
 		$tmparray = array();
-		if (trim($_POST['sendtocc'])) {
+		if (trim(GETPOST('sendtocc', 'alphawithlgt'))) {
 			$tmparray[] = trim(GETPOST('sendtocc', 'alphawithlgt'));
 		}
 		if (count($receivercc) > 0) {
@@ -395,7 +395,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						$object->sendtoid = $sendtoid; // To link to contact-addresses. This is an array.
 						$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 						$object->actionmsg = $message; // Long text
-						$object->actionmsg2 = $actionmsg2; // Short text ($langs->transnoentities('MailSentBy')...);
+						$object->actionmsg2 = $actionmsg2; // Short text ($langs->transnoentities('MailSentByTo')...);
 						if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
 							$object->actionmsg2		= $subject; // Short text
 						}

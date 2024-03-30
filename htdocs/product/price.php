@@ -893,7 +893,7 @@ $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
 print dol_get_fiche_head($head, 'price', $titre, -1, $picto);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 $shownav = 1;
@@ -1417,7 +1417,7 @@ if ($action == 'edit_vat' && ($user->hasRight('produit', 'creer') || $user->hasR
 	print '<input type="hidden" name="action" value="update_vat">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -1446,7 +1446,7 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 		print '<input type="hidden" name="action" value="update_price">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head();
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="border centpercent">';
@@ -1582,7 +1582,7 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 		print '<input type="hidden" name="action" value="update_price">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-		//print dol_get_fiche_head('', '', '', -1);
+		//print dol_get_fiche_head(array(), '', '', -1);
 
 		if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) && getDolGlobalString('PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL')) {
 			print $langs->trans('UseMultipriceRules').' <input type="checkbox" id="usePriceRules" name="usePriceRules" '.($object->price_autogen ? 'checked' : '').'><br><br>';
