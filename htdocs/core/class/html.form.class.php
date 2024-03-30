@@ -1973,10 +1973,10 @@ class Form
 	 * @param string $selected Id user preselected
 	 * @param string $htmlname Field name in form
 	 * @param int<0,1> $show_empty 0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 * @param array $exclude Array list of users id to exclude
+	 * @param int[] $exclude Array list of users id to exclude
 	 * @param int<0,1> $disabled If select list must be disabled
 	 * @param int[]|string $include Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
-	 * @param array|int $enableonly Array list of users id to be enabled. All other must be disabled
+	 * @param int[]|int $enableonly Array list of users id to be enabled. All other must be disabled
 	 * @param string $force_entity '0' or Ids of environment to force
 	 * @return    void
 	 * @deprecated        Use select_dolusers instead
@@ -2291,9 +2291,11 @@ class Form
 		$userstatic = new User($this->db);
 		$out = '';
 
-		$assignedtouser = array();
 		if (!empty($_SESSION['assignedtouser'])) {
 			$assignedtouser = json_decode($_SESSION['assignedtouser'], true);
+		}
+		if (!is_array($assignedtouser)) {
+			$assignedtouser = array();
 		}
 		$nbassignetouser = count($assignedtouser);
 
