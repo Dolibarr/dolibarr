@@ -8992,8 +8992,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
  *  $mesg = make_substitutions($mesg, $substitutionarray, $langs);
  *
  *  @param	string		$text	      					Source string in which we must do substitution
- *  @param  array		$substitutionarray				Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal', ...)
- *  @param	Translate	$outputlangs					Output language
+ *  @param  array<string,string>	$substitutionarray	Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal', ...)
+ *  @param	?Translate	$outputlangs					Output language
  *  @param	int			$converttextinhtmlifnecessary	0=Convert only value into HTML if text is already in HTML
  *  													1=Will also convert initial $text into HTML if we try to insert one value that is HTML
  * 	@return string  		    						Output string after substitutions
