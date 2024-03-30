@@ -661,7 +661,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	if ($exifAngle) {
 		$rotated = false;
 
-		if ($infoImg[2] === 'IMAGETYPE_PNG') { // In fact there is no exif on PNG but just in case
+		if ($infoImg[2] === IMAGETYPE_PNG) { // In fact there is no exif on PNG but just in case
 			imagealphablending($img, false);
 			imagesavealpha($img, true);
 			$rotated = imagerotate($img, $exifAngle, imagecolorallocatealpha($img, 0, 0, 0, 127));
