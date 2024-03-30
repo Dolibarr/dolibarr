@@ -203,7 +203,7 @@ ingress:
   enabled: false
 
   ## @param ingress.ingressClassName IngressClass that will be be used to implement the Ingress
-  ingressClassName: ""
+  ingressClassName: "nginx"
 
   ## @param ingress.pathType Ingress path type
   pathType: ImplementationSpecific
