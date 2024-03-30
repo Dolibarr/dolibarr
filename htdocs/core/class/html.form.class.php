@@ -70,7 +70,9 @@ class Form
 	public $errors = array();
 
 	// Some properties used to return data by some methods
+	/** @var array<string,int> */
 	public $result;
+	/** @var int */
 	public $num;
 
 	// Cache arrays
@@ -213,7 +215,7 @@ class Form
 	 * @param string 	$formatfunc 	Call a specific method of $object->$formatfunc to output field in view mode (For example: 'dol_print_email')
 	 * @param string 	$paramid 		Key of parameter for id ('id', 'socid')
 	 * @param string 	$gm 			'auto' or 'tzuser' or 'tzuserrel' or 'tzserver' (when $typeofdata is a date)
-	 * @param array 	$moreoptions 	Array with more options. For example array('addnowlink'=>1), array('valuealreadyhtmlescaped'=>1)
+	 * @param array<string,int> 	$moreoptions 	Array with more options. For example array('addnowlink'=>1), array('valuealreadyhtmlescaped'=>1)
 	 * @param string 	$editaction 	[=''] use GETPOST default action or set action to edit mode
 	 * @return string                   HTML edit field
 	 */
@@ -408,7 +410,7 @@ class Form
 	 * Output edit in place form
 	 *
 	 * @param 	string 	$fieldname 	Name of the field
-	 * @param 	object 	$object 	Object
+	 * @param 	CommonObject	$object Object
 	 * @param 	boolean $perm 		Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
 	 * @param 	string 	$typeofdata Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
 	 * @param 	string 	$check 		Same coe than $check parameter of GETPOST()
@@ -814,7 +816,7 @@ class Form
 	 * Generate select HTML to choose massaction
 	 *
 	 * @param string 	$selected 		Value auto selected when at least one record is selected. Not a preselected value. Use '0' by default.
-	 * @param array 	$arrayofaction 	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
+	 * @param array<string,string> 	$arrayofaction 	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
 	 * @param int 		$alwaysvisible 	1=select button always visible
 	 * @param string 	$name 			Name for massaction
 	 * @param string 	$cssclass 		CSS class used to check for select
@@ -927,10 +929,10 @@ class Form
 	 * @param string 		$morecss 				More css class
 	 * @param string 		$usecodeaskey 			''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
 	 * @param int<0,1>|string 	$showempty 				Show empty choice
-	 * @param int 			$disablefavorites 		1=Disable favorites,
-	 * @param int 			$addspecialentries 		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
-	 * @param array 		$exclude_country_code 	Array of country code (iso2) to exclude
-	 * @param int 			$hideflags 				Hide flags
+	 * @param int<0,1>		$disablefavorites 		1=Disable favorites,
+	 * @param int<0,1> 		$addspecialentries 		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
+	 * @param string[] 		$exclude_country_code 	Array of country code (iso2) to exclude
+	 * @param int<0,1>		$hideflags 				Hide flags
 	 * @return string       	                	HTML string with select
 	 */
 	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array(), $hideflags = 0)
@@ -1061,9 +1063,9 @@ class Form
 	 * @param 	string 	$page 					Defined the form action
 	 * @param 	string 	$htmlname 				Name of html select object
 	 * @param 	string 	$htmloption 			Options html on select object
-	 * @param 	int 	$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
-	 * @param 	array 	$events 				Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 * @param 	int 	$disableautocomplete 	Disable autocomplete
+	 * @param 	int<0,1>	$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
+	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 				Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param 	int<0,1>	$disableautocomplete 	Disable autocomplete
 	 * @return 	string                       	HTML string with select and input
 	 */
 	public function select_incoterms($selected = '', $location_incoterms = '', $page = '', $htmlname = 'incoterm_id', $htmloption = '', $forcecombo = 1, $events = array(), $disableautocomplete = 0)
@@ -1306,16 +1308,16 @@ class Form
 	 * @param string|int<1,1> 	$showempty 	Add an empty field (Can be '1' or text key to use on empty line like 'SelectThirdParty')
 	 * @param int 		$showtype 			Show third party type in combolist (customer, prospect or supplier)
 	 * @param int 		$forcecombo 		Force to load all values and output a standard combobox (with no beautification)
-	 * @param array 	$events 			Ajax event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Ajax event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param int 		$limit 				Maximum number of elements
 	 * @param string 	$morecss 			Add more css styles to the SELECT component
 	 * @param string 	$moreparam 			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 * @param string 	$selected_input_value 	Value of preselected input text (for use with ajax)
-	 * @param int 		$hidelabel 			Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
-	 * @param array 	$ajaxoptions 		Options for ajax_autocompleter
+	 * @param int<0,3>	$hidelabel 			Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 * @param array<string,string|string[]>	$ajaxoptions 		Options for ajax_autocompleter
 	 * @param bool 		$multiple 			add [] in the name of element and add 'multiple' attribute (not working with ajax_autocompleter)
-	 * @param array 	$excludeids 		Exclude IDs from the select combo
-	 * @param int 		$showcode 			Show code
+	 * @param string[] 	$excludeids 		Exclude IDs from the select combo
+	 * @param int<0,1>	$showcode 			Show code
 	 * @return string  		                HTML string with select box for thirdparty.
 	 */
 	public function select_company($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $limit = 0, $morecss = 'minwidth100', $moreparam = '', $selected_input_value = '', $hidelabel = 1, $ajaxoptions = array(), $multiple = false, $excludeids = array(), $showcode = 0)
@@ -1384,16 +1386,16 @@ class Form
 	 * @param string|int<0,1> 	$showempty 	Add an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
 	 * @param int<0,1>	$showtype 		Show third party type in combolist (customer, prospect or supplier)
 	 * @param int 		$forcecombo 	Force to use standard HTML select component without beautification
-	 * @param array 	$events 		Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param string 	$filterkey 		Filter on key value
-	 * @param int 		$outputmode 	0=HTML select string, 1=Array
+	 * @param int<0,1>	$outputmode 	0=HTML select string, 1=Array
 	 * @param int 		$limit 			Limit number of answers
 	 * @param string 	$morecss 		Add more css styles to the SELECT component
 	 * @param string 	$moreparam 		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 * @param bool 		$multiple 		add [] in the name of element and add 'multiple' attribute
-	 * @param array 	$excludeids 	Exclude IDs from the select combo
-	 * @param int 		$showcode 		Show code in list
-	 * @return array|string            	HTML string with
+	 * @param string[] 	$excludeids 	Exclude IDs from the select combo
+	 * @param int<0,1>	$showcode 		Show code in list
+	 * @return array<int,array{key:int,value:string,label:string,labelhtml:string}>|string            	HTML string with
 	 */
 	public function select_thirdparty_list($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $filterkey = '', $outputmode = 0, $limit = 0, $morecss = 'minwidth100', $moreparam = '', $multiple = false, $excludeids = array(), $showcode = 0)
 	{
@@ -1727,7 +1729,7 @@ class Form
 	 * @param string 	$morecss 		Add more class to class style
 	 * @param integer 	$showsoc 		Add company into label
 	 * @param int 		$forcecombo 	Force to use combo box
-	 * @param array 	$events 		Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param bool 		$options_only 	Return options only (for ajax treatment)
 	 * @param string 	$moreparam 		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 * @param string 	$htmlid 		Html id to use instead of htmlname
@@ -1758,7 +1760,7 @@ class Form
 	 * @param bool 			$options_only 		Return options only (for ajax treatment)
 	 * @param integer 		$showsoc 			Add company into label
 	 * @param int 			$forcecombo 		Force to use combo box (so no ajax beautify effect)
-	 * @param array 		$events 			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param string 		$moreparam 			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 * @param string 		$htmlid 			Html id to use instead of htmlname
 	 * @param bool 			$multiple 			add [] in the name of element and add 'multiple' attribute
@@ -1970,10 +1972,10 @@ class Form
 	 *
 	 * @param string $selected Id user preselected
 	 * @param string $htmlname Field name in form
-	 * @param int $show_empty 0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 * @param int<0,1> $show_empty 0=liste sans valeur nulle, 1=ajoute valeur inconnue
 	 * @param array $exclude Array list of users id to exclude
-	 * @param int $disabled If select list must be disabled
-	 * @param array|string $include Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
+	 * @param int<0,1> $disabled If select list must be disabled
+	 * @param int[]|string $include Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
 	 * @param array|int $enableonly Array list of users id to be enabled. All other must be disabled
 	 * @param string $force_entity '0' or Ids of environment to force
 	 * @return    void
@@ -1991,25 +1993,25 @@ class Form
 	/**
 	 *    Return select list of users
 	 *
-	 * @param string|int	$selected 		User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1 or '', keep unselected (if empty is allowed)
+	 * @param string|int|User	$selected 	User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1 or '', keep unselected (if empty is allowed)
 	 * @param string 		$htmlname 		Field name in form
-	 * @param int|string 	$show_empty 	0=list with no empty value, 1=add also an empty value into list
-	 * @param array|null	$exclude 		Array list of users id to exclude
+	 * @param int<0,1>|string 	$show_empty 	0=list with no empty value, 1=add also an empty value into list
+	 * @param int[]|null	$exclude 		Array list of users id to exclude
 	 * @param int 			$disabled 		If select list must be disabled
-	 * @param array|string 	$include 		Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
+	 * @param int[]|string 	$include 		Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
 	 * @param array|string	$enableonly 	Array list of users id to be enabled. If defined, it means that others will be disabled
 	 * @param string 		$force_entity 	'0' or list of Ids of environment to force separated by a coma
 	 * @param int 			$maxlength 		Maximum length of string into list (0=no limit)
-	 * @param int 			$showstatus 	0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+	 * @param int<-1,1>		$showstatus 	0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 * @param string 		$morefilter 	Add more filters into sql request (Example: 'employee = 1'). This value must not come from user input.
 	 * @param integer 		$show_every 	0=default list, 1=add also a value "Everybody" at beginning of list
 	 * @param string 		$enableonlytext If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
 	 * @param string 		$morecss 		More css
-	 * @param int 			$notdisabled 	Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
-	 * @param int 			$outputmode 	0=HTML select string, 1=Array
+	 * @param int<0,1> 		$notdisabled 	Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
+	 * @param int<0,2>		$outputmode 	0=HTML select string, 1=Array
 	 * @param bool 			$multiple 		add [] in the name of element and add 'multiple' attribute
-	 * @param int 			$forcecombo 	Force the component to be a simple combo box without ajax
-	 * @return array|string                    HTML select string
+	 * @param int<0,1> 			$forcecombo 	Force the component to be a simple combo box without ajax
+	 * @return string|array<int,string|array{id:int,label:string,labelhtml:string,color:string,picto:string}>	HTML select string
 	 * @see select_dolgroups()
 	 */
 	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
@@ -2265,19 +2267,19 @@ class Form
 	 *
 	 * @param string 	$action 			Value for $action
 	 * @param string 	$htmlname			Field name in form
-	 * @param int 		$show_empty 		0=list without the empty value, 1=add empty value
-	 * @param array 	$exclude 			Array list of users id to exclude
-	 * @param int 		$disabled 			If select list must be disabled
-	 * @param array 	$include 			Array list of users id to include or 'hierarchy' to have only supervised users
-	 * @param array|int	$enableonly 		Array list of users id to be enabled. All other must be disabled
+	 * @param int<0,1> 	$show_empty 		0=list without the empty value, 1=add empty value
+	 * @param int[] 	$exclude 			Array list of users id to exclude
+	 * @param int<0,1>	$disabled 			If select list must be disabled
+	 * @param int[]|string 	$include 			Array list of users id to include or 'hierarchy' to have only supervised users
+	 * @param int[]|int	$enableonly 		Array list of users id to be enabled. All other must be disabled
 	 * @param string	$force_entity 		'0' or Ids of environment to force
 	 * @param int 		$maxlength 			Maximum length of string into list (0=no limit)
-	 * @param int 		$showstatus 		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+	 * @param int<0,1>	$showstatus 		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 * @param string 	$morefilter 		Add more filters into sql request
 	 * @param int 		$showproperties 	Show properties of each attendees
-	 * @param array 	$listofuserid 		Array with properties of each user
-	 * @param array 	$listofcontactid 	Array with properties of each contact
-	 * @param array 	$listofotherid 		Array with properties of each other contact
+	 * @param int[] 	$listofuserid 		Array with properties of each user
+	 * @param int[] 	$listofcontactid 	Array with properties of each contact
+	 * @param int[] 	$listofotherid 		Array with properties of each other contact
 	 * @return    string                    HTML select string
 	 * @see select_dolgroups()
 	 */
@@ -5094,10 +5096,10 @@ class Form
 	 *                                 	    	 	- int (id of category)
 	 *                                 		 		- string (categories ids separated by comma)
 	 * 	                                  	 		- array (list of categories ids)
-	 * @param 	int 				$outputmode 	0=HTML select string, 1=Array with full label only, 2=Array extended, 3=Array with full picto + label
-	 * @param 	int 				$include 		[=0] Removed or 1=Keep only
+	 * @param 	int<0,3>			$outputmode 	0=HTML select string, 1=Array with full label only, 2=Array extended, 3=Array with full picto + label
+	 * @param 	int<0,1>			$include 		[=0] Removed or 1=Keep only
 	 * @param 	string 				$morecss 		More CSS
-	 * @return  string|array						String list or Array of categories
+	 * @return	string|array<int,string>|array<int,array{id:int,fulllabel:string,color:string,picto:string}>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>		String list or Array of categories
 	 * @see select_categories()
 	 */
 	public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0, $morecss = '')
@@ -5175,6 +5177,7 @@ class Form
 		$output .= "\n";
 
 		if ($outputmode == 2) {
+			// TODO: handle error when $cate_arbo is not an array
 			return $cate_arbo;
 		} elseif ($outputmode == 1) {
 			return $outarray;
@@ -6208,7 +6211,7 @@ class Form
 	 * @param string|int<0,1> 	$showempty 		Add an empty field (Can be '1' or text key to use on empty line like 'SelectThirdParty')
 	 * @param int<0,1>	$showtype 				Show third party type in combolist (customer, prospect or supplier)
 	 * @param int<0,1>	$forcecombo 			Force to use combo box
-	 * @param array 	$events 				Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param int 		$nooutput 				No print output. Return it only.
 	 * @param array 	$excludeids 			Exclude IDs from the select combo
 	 * @param string 	$textifnothirdparty 	Text to show if no thirdparty
@@ -6773,9 +6776,9 @@ class Form
 	 * @param int 					$m 				1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
 	 * @param int 					$empty 			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
 	 * @param string 				$form_name 		Not used
-	 * @param int 					$d 				1=Show days, month, years
-	 * @param int 					$addnowlink 	Add a link "Now", 1 with server time, 2 with local computer time
-	 * @param int 					$disabled 		Disable input fields
+	 * @param int<0,1> 				$d 				1=Show days, month, years
+	 * @param int<0,2>				$addnowlink 	Add a link "Now", 1 with server time, 2 with local computer time
+	 * @param int<0,1> 				$disabled 		Disable input fields
 	 * @param int|string			$fullday 		When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
 	 * @param string 				$addplusone 	Add a link "+1 hour". Value must be name of another selectDate field.
 	 * @param int|string|array      $adddateof 		Add a link "Date of ..." using the following date. Must be array(array('adddateof'=>..., 'labeladddateof'=>...))
