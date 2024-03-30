@@ -221,7 +221,7 @@ class Facture extends CommonInvoice
 	public $tab_next_situation_invoice = array();
 
 	/**
-	 * @var Facture object oldcopy
+	 * @var static object oldcopy
 	 */
 	public $oldcopy;
 

@@ -337,7 +337,7 @@ class Contact extends CommonObject
 
 	/**
 	 * Old copy
-	 * @var Contact
+	 * @var static
 	 */
 	public $oldcopy; // To contains a clone of this when we need to save old properties of object
 
