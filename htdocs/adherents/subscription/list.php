@@ -613,7 +613,6 @@ while ($i < $imaxinloop) {
 	$adherent->firstname = $obj->firstname;
 	$adherent->ref = $obj->rowid;
 	$adherent->id = $obj->rowid;
-	$adherent->statut = $obj->status;
 	$adherent->status = $obj->status;
 	$adherent->login = $obj->login;
 	$adherent->photo = $obj->photo;
