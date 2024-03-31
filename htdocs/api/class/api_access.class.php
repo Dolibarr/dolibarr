@@ -176,7 +176,7 @@ class DolibarrApiAccess implements iAuthenticate
 			}
 
 			// Check if user status is enabled
-			if ($fuser->statut != $fuser::STATUS_ENABLED) {
+			if ($fuser->status != $fuser::STATUS_ENABLED) {
 				// Status is disabled
 				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': The user has been disabled", LOG_NOTICE);
 				sleep(1); // Anti brute force protection. Must be same delay when user and password are not valid.
