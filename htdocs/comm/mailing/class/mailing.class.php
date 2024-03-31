@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,12 +87,6 @@ class Mailing extends CommonObject
 	 * @var string background image
 	 */
 	public $bgimage;
-
-	/**
-	 * @var int status
-	 * @deprecated Use $status
-	 */
-	public $statut; // Status 0=Draft, 1=Validated, 2=Sent partially, 3=Sent completely
 
 	/**
 	 * @var int status
@@ -370,7 +364,6 @@ class Mailing extends CommonObject
 				$this->title = $obj->title;
 				$this->messtype = $obj->messtype;
 
-				$this->statut = $obj->status;	// deprecated
 				$this->status = $obj->status;
 
 				$this->nbemail = $obj->nbemail;
@@ -438,7 +431,6 @@ class Mailing extends CommonObject
 		$object->fetch($fromid);
 		$object->id = 0;
 		$object->status = 0;
-		$object->statut = 0;
 
 		// Clear fields
 		$object->title = $langs->trans("CopyOf").' '.$object->title.' '.dol_print_date(dol_now());
