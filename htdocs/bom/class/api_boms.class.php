@@ -3,6 +3,7 @@
  * Copyright (C) 2019 Maxime Kohlhaas <maxime@atm-consulting.fr>
  * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2022		Christian Humpel		<christian.humpel@live.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -495,8 +496,9 @@ class Boms extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Object  $object     Object to clean
-	 * @return  Object              Object with cleaned properties
+	 * @template T of CommonObject
+	 * @param   T  $object     Object to clean
+	 * @return  T              Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -510,7 +512,7 @@ class Boms extends DolibarrApi
 		unset($object->lastname);
 		unset($object->firstname);
 		unset($object->civility_id);
-		unset($object->statut);
+		unset($object->status);
 		unset($object->state);
 		unset($object->state_id);
 		unset($object->state_code);
