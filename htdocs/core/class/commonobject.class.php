@@ -474,13 +474,13 @@ abstract class CommonObject
 	 * @deprecated  Use $cond_reglement_id instead - Kept for compatibility
 	 * @see $cond_reglement_id
 	 *
-	 * Note: cond_reglement can not be aliased to cond_reglement!!!
+	 * Note: cond_reglement_id can not be aliased to cond_reglement!!!
 	 */
 	private $cond_reglement;  // Private to call DolDeprecationHandler
 	/**
 	 * @var int|string Internal to detect deprecated access
 	 */
-	protected $depr_cond_reglement;  // Internal value for deprecation
+	protected $depr_cond_reglement;  // Internal value to detect deprecation
 
 	/**
 	 * @var int 		Delivery address ID
@@ -878,14 +878,16 @@ abstract class CommonObject
 	{
 		return array(
 			'alreadypaid' => 'totalpaid',
-			'cond_reglement' => 'depr_cond_reglement',
-			//'note' => 'note_private',		// Some classes needs ->note and others need ->note_public/private so we can't manage deprecation for this field with dolDeprecationHandler
+			'cond_reglement' => 'depr_cond_reglement',  // Map to internal value
+			//'note' => 'note_private',		// Some classes need ->note and others need ->note_public/private so we can't manage deprecation for this field with dolDeprecationHandler
+			'modelpdf' => 'model_pdf',
 			'commandeFournisseur' => 'origin_object',
 			'expedition' => 'origin_object',
 			'fk_project' => 'fk_project',
 			'livraison' => 'origin_object',
 			'projet' => 'project',
 			'statut' => 'status',
+			'rowid' => 'id',
 		);
 	}
 
@@ -10951,9 +10953,6 @@ abstract class CommonObject
 
 			if (!$error) {
 				$this->status = $status;
-				if (property_exists($this, 'statut')) {	// For backward compatibility
-					$this->statut = $status;
-				}
 				$this->db->commit();
 				return 1;
 			} else {
