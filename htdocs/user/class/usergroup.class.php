@@ -217,7 +217,9 @@ class UserGroup extends CommonObject
 					$newgroup->fetch($obj->rowid, '', $load_members);
 					$ret[$obj->rowid] = $newgroup;
 				}
-
+				if (!is_array($ret[$obj->rowid]->usergroup_entity)) {
+					$ret[$obj->rowid]->usergroup_entity = array();
+				}
 				$ret[$obj->rowid]->usergroup_entity[] = $obj->usergroup_entity;
 			}
 
