@@ -122,9 +122,9 @@ abstract class CommonClassTest extends TestCase
 	 *	This method is called when a test fails
 	 *
 	 *  @param	Throwable	$t		Throwable object
-	 *  @return void
+	 *  @return never
 	 */
-	protected function onNotSuccessfulTest(Throwable $t): void
+	protected function onNotSuccessfulTest(Throwable $t): never
 	{
 
 		// Get the lines that were added since the start of the test
