@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +50,7 @@ class LignePrelevement
 	/**
 	 * @var int Status of the line
 	 */
-	public $statut;
+	public $status;
 
 	/**
 	 * @var string Ref of bon
@@ -122,7 +123,7 @@ class LignePrelevement
 				$this->id              = $obj->rowid;
 				$this->amount          = $obj->amount;
 				$this->socid           = $obj->fk_soc;
-				$this->statut          = $obj->statut;
+				$this->status          = $obj->statut;
 				$this->bon_ref         = $obj->ref;
 				$this->bon_rowid       = $obj->bon_rowid;
 			} else {
@@ -148,7 +149,7 @@ class LignePrelevement
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
