@@ -7,6 +7,7 @@
  * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
  * Copyright (C) 2023      William Mead         <william.mead@manchenumerique.fr>
  * Copyright (C) 2024      Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,7 +214,7 @@ class Notify
 			$texte = img_object($langs->trans("Notifications"), 'email', 'class="pictofixedwidth"').$langs->trans("NoNotificationsWillBeSent");
 		} elseif ($nb == 1) {
 			$texte = img_object($langs->trans("Notifications"), 'email', 'class="pictofixedwidth"').$langs->trans("ANotificationsWillBeSent");
-		} elseif ($nb >= 2) {
+		} else { // Always >= 2 if ($nb >= 2) {
 			$texte = img_object($langs->trans("Notifications"), 'email', 'class="pictofixedwidth"').$langs->trans("SomeNotificationsWillBeSent", $nb);
 		}
 
@@ -485,7 +486,7 @@ class Notify
 							$newval2 = trim($obj->email);
 							$isvalid = isValidEmail($newval2);
 							if (empty($resarray[$newval2])) {
-								$resarray[$newval2] = array('type'=> 'tocontact', 'code'=>trim($obj->code), 'emaildesc'=>'Contact id '.$obj->rowid, 'email'=>$newval2, 'contactid'=>$obj->rowid, 'isemailvalid'=>$isvalid);
+								$resarray[$newval2] = array('type' => 'tocontact', 'code' => trim($obj->code), 'emaildesc' => 'Contact id '.$obj->rowid, 'email' => $newval2, 'contactid' => $obj->rowid, 'isemailvalid' => $isvalid);
 							}
 						}
 						$i++;
@@ -524,7 +525,7 @@ class Notify
 							$newval2 = trim($obj->email);
 							$isvalid = isValidEmail($newval2);
 							if (empty($resarray[$newval2])) {
-								$resarray[$newval2] = array('type'=> 'touser', 'code'=>trim($obj->code), 'emaildesc'=>'User id '.$obj->rowid, 'email'=>$newval2, 'userid'=>$obj->rowid, 'isemailvalid'=>$isvalid);
+								$resarray[$newval2] = array('type' => 'touser', 'code' => trim($obj->code), 'emaildesc' => 'User id '.$obj->rowid, 'email' => $newval2, 'userid' => $obj->rowid, 'isemailvalid' => $isvalid);
 							}
 						}
 						$i++;
@@ -575,7 +576,7 @@ class Notify
 						if ($newval2) {
 							$isvalid = isValidEmail($newval2, 0);
 							if (empty($resarray[$newval2])) {
-								$resarray[$newval2] = array('type'=> 'tofixedemail', 'code'=>trim($key), 'emaildesc'=>trim($val2), 'email'=>$newval2, 'isemailvalid'=>$isvalid);
+								$resarray[$newval2] = array('type' => 'tofixedemail', 'code' => trim($key), 'emaildesc' => trim($val2), 'email' => $newval2, 'isemailvalid' => $isvalid);
 							}
 						}
 					}
@@ -889,7 +890,7 @@ class Notify
 								$dir_output = $conf->$object_type->multidir_output[$object->entity ? $object->entity : $conf->entity]."/".get_exdir(0, 0, 0, 1, $object, $object_type);
 								$template = $notifcode.'_TEMPLATE';
 								$mesg = $outputlangs->transnoentitiesnoconv('Notify_'.$notifcode).' '.$newref.' '.$dir_output;
-							break;
+								break;
 						}
 
 						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -915,7 +916,7 @@ class Notify
 
 						$ref = dol_sanitizeFileName($newref);
 						$pdf_path = $dir_output."/".$ref.".pdf";
-						if (!dol_is_file($pdf_path)||(is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0 && !$arraydefaultmessage->joinfiles)) {
+						if (!dol_is_file($pdf_path) || (is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0 && !$arraydefaultmessage->joinfiles)) {
 							// We can't add PDF as it is not generated yet.
 							$filepdf = '';
 						} else {
@@ -944,7 +945,7 @@ class Notify
 							$sendto = preg_replace('/[\s,]+$/', '', $sendto); // Clean end of string
 						}
 
-						$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list, 'outputlangs'=>$outputlangs, 'labeltouse'=>$labeltouse);
+						$parameters = array('notifcode' => $notifcode, 'sendto' => $sendto, 'replyto' => $replyto, 'file' => $filename_list, 'mimefile' => $mimetype_list, 'filename' => $mimefilename_list, 'outputlangs' => $outputlangs, 'labeltouse' => $labeltouse);
 						if (!isset($action)) {
 							$action = '';
 						}
@@ -1210,7 +1211,7 @@ class Notify
 				}
 
 				if ($sendto) {
-					$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list, 'subject'=>&$subject, 'message'=>&$message);
+					$parameters = array('notifcode' => $notifcode, 'sendto' => $sendto, 'replyto' => $replyto, 'file' => $filename_list, 'mimefile' => $mimetype_list, 'filename' => $mimefilename_list, 'subject' => &$subject, 'message' => &$message);
 					$reshook = $hookmanager->executeHooks('formatNotificationMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 					if (empty($reshook)) {
 						if (!empty($hookmanager->resArray['files'])) {
