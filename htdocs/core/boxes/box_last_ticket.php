@@ -114,7 +114,6 @@ class box_last_ticket extends ModeleBoxes
 					$ticket->id = $objp->id;
 					$ticket->track_id = $objp->track_id;
 					$ticket->ref = $objp->ref;
-					$ticket->fk_statut = $objp->status;
 					$ticket->status = $objp->status;
 					$ticket->subject = $objp->subject;
 					if ($objp->fk_soc > 0) {
