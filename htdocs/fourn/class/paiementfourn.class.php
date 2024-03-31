@@ -54,7 +54,7 @@ class PaiementFourn extends Paiement
 	 */
 	public $picto = 'payment';
 
-	public $statut; //Status of payment. 0 = unvalidated; 1 = validated
+	public $status; //Status of payment. 0 = unvalidated; 1 = validated
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
 
@@ -142,7 +142,7 @@ class PaiementFourn extends Paiement
 				$this->type_code            = $obj->payment_code;
 				$this->type_label           = $obj->payment_type;
 				$this->fk_paiement           = $obj->fk_paiement;
-				$this->statut               = $obj->statut;
+				$this->status               = $obj->statut;
 
 				$error = 1;
 			} else {
@@ -605,7 +605,7 @@ class PaiementFourn extends Paiement
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
