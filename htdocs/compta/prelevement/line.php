@@ -178,9 +178,9 @@ if ($id) {
 
 		print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($lipre->amount).'</span></td></tr>';
 
-		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$lipre->LibStatut($lipre->statut, 1).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$lipre->LibStatut($lipre->status, 1).'</td></tr>';
 
-		if ($lipre->statut == 3) {
+		if ($lipre->status == 3) {
 			$rej = new RejetPrelevement($db, $user, $type);
 			$resf = $rej->fetch($lipre->id);
 			if ($resf == 0) {
@@ -267,8 +267,8 @@ if ($id) {
 	print '<div class="tabsAction">';
 
 	if ($action == '') {
-		if (is_object($bon) && $bon->statut == BonPrelevement::STATUS_CREDITED) {
-			if ($lipre->statut == 2) {
+		if (is_object($bon) && $bon->status == BonPrelevement::STATUS_CREDITED) {
+			if ($lipre->status == 2) {
 				if ($user->hasRight('prelevement', 'bons', 'credit')) {
 					print '<a class="butActionDelete" href="line.php?action=rejet&type='.$type.'&id='.$lipre->id.'">'.$langs->trans("StandingOrderReject").'</a>';
 				} else {
