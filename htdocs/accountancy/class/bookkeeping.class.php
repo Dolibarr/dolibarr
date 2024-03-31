@@ -2815,7 +2815,6 @@ class BookKeeping extends CommonObject
 		$error = 0;
 		$this->db->begin();
 
-		$fiscal_period->statut = Fiscalyear::STATUS_CLOSED;
 		$fiscal_period->status = Fiscalyear::STATUS_CLOSED; // Actually not used
 		$result = $fiscal_period->update($user);
 		if ($result < 0) {
