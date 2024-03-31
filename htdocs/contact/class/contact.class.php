@@ -214,7 +214,7 @@ class Contact extends CommonObject
 	/**
 	 * @var int  Status 0=inactive, 1=active
 	 */
-	public $statut;
+	public $status;
 
 	public $code;
 
@@ -365,7 +365,7 @@ class Contact extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->statut = 1; // By default, status is enabled
+		$this->status = 1; // By default, status is enabled
 		$this->ismultientitymanaged = 1;
 		$this->isextrafieldmanaged = 1;
 
@@ -480,8 +480,8 @@ class Contact extends CommonObject
 		if (empty($this->priv)) {
 			$this->priv = 0;
 		}
-		if (empty($this->statut)) {
-			$this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
+		if (empty($this->status)) {
+			$this->status = 0; // This is to convert '' into '0' to avoid bad sql request
 		}
 
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
@@ -514,7 +514,7 @@ class Contact extends CommonObject
 		$sql .= " ".($user->id > 0 ? ((int) $user->id) : "null").",";
 		$sql .= " ".((int) $this->priv).",";
 		$sql .= " 0,";
-		$sql .= " ".((int) $this->statut).",";
+		$sql .= " ".((int) $this->status).",";
 		$sql .= " ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null").",";
 		$sql .= " ".((int) $this->entity).",";
 		$sql .= "'".$this->db->escape($this->ref_ext)."',";
@@ -603,8 +603,8 @@ class Contact extends CommonObject
 		$this->zip = (empty($this->zip) ? '' : trim($this->zip));
 		$this->town = (empty($this->town) ? '' : trim($this->town));
 		$this->country_id = (empty($this->country_id) || $this->country_id < 0) ? 0 : $this->country_id;
-		if (empty($this->statut)) {
-			$this->statut = 0;
+		if (empty($this->status)) {
+			$this->status = 0;
 		}
 		if (empty($this->civility_code) && !is_numeric($this->civility_id)) {
 			$this->civility_code = $this->civility_id; // For backward compatibility
@@ -645,7 +645,7 @@ class Contact extends CommonObject
 		if (isset($this->stcomm_id)) {
 			$sql .= ", fk_stcommcontact = ".($this->stcomm_id > 0 || $this->stcomm_id == -1 ? $this->stcomm_id : "0");
 		}
-		$sql .= ", statut = ".((int) $this->statut);
+		$sql .= ", statut = ".((int) $this->status);
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "NULL");
 		$sql .= ", default_lang=".($this->default_lang ? "'".$this->db->escape($this->default_lang)."'" : "NULL");
 		$sql .= ", entity = ".((int) $this->entity);
@@ -1073,7 +1073,7 @@ class Contact extends CommonObject
 				$this->socid		= $obj->fk_soc;		// Both fk_soc and socid are used
 				$this->socname		= $obj->socname;
 				$this->poste		= $obj->poste;
-				$this->statut		= $obj->statut;
+				$this->status		= $obj->statut;
 
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
@@ -1624,7 +1624,7 @@ class Contact extends CommonObject
 	 */
 	public function getLibStatut($mode)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1731,7 +1731,7 @@ class Contact extends CommonObject
 		$this->note_private = 'This is a comment (private)';
 
 		$this->socid = $socid;
-		$this->statut = 1;
+		$this->status = 1;
 
 		return 1;
 	}
@@ -1749,17 +1749,17 @@ class Contact extends CommonObject
 		$error = 0;
 
 		// Check parameters
-		if ($this->statut == $status) {
+		if ($this->status == $status) {
 			return 0;
 		} else {
-			$this->statut = $status;
+			$this->status = $status;
 		}
 
 		$this->db->begin();
 
 		// User disable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople";
-		$sql .= " SET statut = ".((int) $this->statut);
+		$sql .= " SET statut = ".((int) $this->status);
 		$sql .= ", fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 		$result = $this->db->query($sql);
