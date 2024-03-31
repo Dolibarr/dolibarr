@@ -71,7 +71,7 @@ RUN apt-get update -y \
 # Get Dolibarr
 COPY htdocs/* /var/www/html/
 COPY scripts /var/www/
-RUN a2enmod php8.1
+RUN a2enmod php
 RUN ln -s /var/www/html /var/www/htdocs && \
     rm -rf /tmp/* && \
     mkdir -p /var/www/documents && \
