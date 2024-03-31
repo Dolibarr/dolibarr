@@ -351,7 +351,6 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 				$facstatic->total_ttc = $obj->total_ttc;
 				$facstatic->statut = $obj->status;
 				$facstatic->status = $obj->status;
-				$facstatic->paye = $obj->paye;
 				$facstatic->paid = $obj->paye;
 				$facstatic->type = $obj->type;
 				$facstatic->ref_supplier = $obj->ref_supplier;
