@@ -71,7 +71,7 @@ class RestAPIUserTest extends AbstractRestAPITest
 		$this->assertEquals('', $result['curl_error_no'], "$test should have no error");
 		$object = json_decode($result['content'], true);
 		$this->assertNotNull($object, "$test Parsing of JSON result must not be null");
-		$this->assertEquals(1, $object['statut']);
+		$this->assertEquals(1, $object['statut'] ?? $object['status']);
 
 		return $object['id'];
 	}
