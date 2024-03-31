@@ -1879,7 +1879,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			if ($obj !== null && !empty($obj->value) && !empty($this->rights)) {
 				include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-				// TODO right parameters with an integer is deprecated
+				// TODO rights parameters with integer indexes are deprecated
 				// $this->rights[$key][0] = $this->rights[$key][Rights::KEY_ID]
 				// $this->rights[$key][1] = $this->rights[$key][Rights::KEY_LABEL]
 				// $this->rights[$key][3] = $this->rights[$key][Rights::KEY_DEFAULT]
@@ -1901,7 +1901,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 					$r_type		= isset($this->rights[$key][2]) ? $this->rights[$key][2] : '';	// TODO deprecated
 
-					$r_default	= (empty($this->rights[$key][Rights::KEY_OLD_DEFAULT]) ? (!isset($this->rights[$key][Rights::KEY_DEFAULT]) ? 0 : ((int) $this->rights[$key][Rights::KEY_DEFAULT])) : ((int) $this->rights[$key][3]));
+					$r_default	= (empty($this->rights[$key][Rights::KEY_OLD_DEFAULT]) ? (!isset($this->rights[$key][Rights::KEY_DEFAULT]) ? 0 : ((int) $this->rights[$key][Rights::KEY_DEFAULT])) : ((int) $this->rights[$key][Rights::KEY_OLD_DEFAULT]));
 					$r_perms	= (isset($this->rights[$key][Rights::KEY_OLD_FIRST_LEVEL]) ? $this->rights[$key][Rights::KEY_OLD_FIRST_LEVEL] : $this->rights[$key][Rights::KEY_FIRST_LEVEL]);
 					$r_subperms	= (isset($this->rights[$key][Rights::KEY_OLD_SECOND_LEVEL]) ? $this->rights[$key][Rights::KEY_OLD_SECOND_LEVEL] : (isset($this->rights[$key][Rights::KEY_SECOND_LEVEL]) ? $this->rights[$key][Rights::KEY_SECOND_LEVEL] : ''));
 
