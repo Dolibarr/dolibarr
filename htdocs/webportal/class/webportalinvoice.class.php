@@ -125,10 +125,10 @@ class WebPortalInvoice extends Facture
 	//public $multicurrency_total_tva;
 	//public $multicurrency_total_ttc;
 
-	/**
+	/*
 	 * @var int status
 	 */
-	public $fk_statut;
+	//public $fk_statut; // Managed in parent
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -311,7 +311,7 @@ class WebPortalInvoice extends Facture
 	 */
 	public function getLabelStatus($mode = 0)
 	{
-		return $this->LibStatut($this->paye, $this->fk_statut, $mode, -1, $this->type);
+		return $this->LibStatut($this->paye, $this->status, $mode, -1, $this->type);
 	}
 
 	/**
@@ -323,7 +323,7 @@ class WebPortalInvoice extends Facture
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
-		return $this->LibStatut($this->paye, $this->fk_statut, $mode, $alreadypaid, $this->type);
+		return $this->LibStatut($this->paye, $this->status, $mode, $alreadypaid, $this->type);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
