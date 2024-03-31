@@ -1,19 +1,19 @@
 <?php
-/* Copyright (c) 2002-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (c) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
- * Copyright (c) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
- * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2005       Lionel Cousteix         <etm_ltd@tiscali.co.uk>
- * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
- * Copyright (C) 2013-2019  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2013-2015  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018       charlene Benke          <charlie@patas-monkey.com>
+/* Copyright (c) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (c) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
+ * Copyright (c) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2005		Lionel Cousteix			<etm_ltd@tiscali.co.uk>
+ * Copyright (C) 2011		Herve Prot				<herve.prot@symeos.com>
+ * Copyright (C) 2013-2019	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2015	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2018		charlene Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2018-2021	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2019-2024  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2019       Abbes Bahfir			<dolipar@dolipar.org>
+ * Copyright (C) 2019-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2019		Abbes Bahfir			<dolipar@dolipar.org>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
@@ -403,11 +403,8 @@ class User extends CommonObject
 		'national_registration_number' => array('type' => 'varchar(50)', 'label' => 'NationalRegistrationNumber', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 40, 'searchall' => 1)
 	);
 
-
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
-
-
 
 	/**
 	 *    Constructor of the class
@@ -4178,4 +4175,26 @@ class User extends CommonObject
 
 		return $this->findUserIdByEmailCache[$email];
 	}
+}
+
+/**
+ *	Class to manage Dolibarr users rights
+ */
+class Rights
+{
+	const KEY_ID = 'id';
+	const KEY_LABEL = 'label';
+	const KEY_FIRST_LEVEL = 'perms';
+	const KEY_SECOND_LEVEL = 'subperms';
+	const KEY_DEFAULT = 'default';
+	const KEY_ENTITY = 'entity';
+	const KEY_MODULE = 'module';
+	const KEY_ENABLED = 'enabled';
+
+	// deprecated values
+	const KEY_OLD_ID = 0;
+	const KEY_OLD_LABEL = 1;
+	const KEY_OLD_FIRST_LEVEL = 3;
+	const KEY_OLD_SECOND_LEVEL = 4;
+	const KEY_OLD_DEFAULT = 5;
 }

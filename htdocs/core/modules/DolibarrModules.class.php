@@ -1880,29 +1880,29 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 				// TODO right parameters with an integer is deprecated
-				// $this->rights[$key][0] = $this->rights[$key]['id']
-				// $this->rights[$key][1] = $this->rights[$key]['label']
-				// $this->rights[$key][3] = $this->rights[$key]['default']
-				// $this->rights[$key][4] = $this->rights[$key]['perms']
-				// $this->rights[$key][5] = $this->rights[$key]['subperms']
+				// $this->rights[$key][0] = $this->rights[$key][Rights::KEY_ID]
+				// $this->rights[$key][1] = $this->rights[$key][Rights::KEY_LABEL]
+				// $this->rights[$key][3] = $this->rights[$key][Rights::KEY_DEFAULT]
+				// $this->rights[$key][4] = $this->rights[$key][Rights::KEY_FIRST_LEVEL]
+				// $this->rights[$key][5] = $this->rights[$key][Rights::KEY_SECOND_LEVEL]
 
 				// new parameters
-				// $this->rights[$key]['entity']	// possibility to define user right for all entities (entity 0) (default: current entity id)
-				// $this->rights[$key]['module']	// possibility to define user right for an another module (default: current module name)
-				// $this->rights[$key]['enabled']	// condition to show or hide a user right (default: 1) (eg isModEnabled('anothermodule'))
+				// $this->rights[$key][Rights::KEY_ENTITY]	// possibility to define user right for all entities (entity 0) (default: current entity id)
+				// $this->rights[$key][Rights::KEY_MODULE]	// possibility to define user right for an another module (default: current module name)
+				// $this->rights[$key][Rights::KEY_ENABLED]	// condition to show or hide a user right (default: 1) (eg isModEnabled('anothermodule'))
 
 				// If the module is active
 				foreach ($this->rights as $key => $value) {
-					$r_id	= (isset($this->rights[$key][0]) ? $this->rights[$key][0] : $this->rights[$key]['id']);	// permission id in llx_rights_def (not unique because primary key is couple id-entity)
+					$r_id	= (isset($this->rights[$key][0]) ? $this->rights[$key][0] : $this->rights[$key][Rights::KEY_ID]);	// permission id in llx_rights_def (not unique because primary key is couple id-entity)
 
 					// Add label with the current language (with specific language key or with PermissionXXX)
-					$labelkey = (isset($this->rights[$key][1]) ? $this->rights[$key][1] : $this->rights[$key]['label']);
+					$labelkey = (isset($this->rights[$key][1]) ? $this->rights[$key][1] : $this->rights[$key][Rights::KEY_LABEL]);
 					$r_label = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$r_id) != "PermissionAdvanced".$r_id) ? $langs->trans("PermissionAdvanced".$r_id) : (($langs->trans("Permission".$r_id) != "Permission".$r_id) ? $langs->trans("Permission".$r_id) : $langs->trans($labelkey)));
 
 					$r_type		= isset($this->rights[$key][2]) ? $this->rights[$key][2] : '';	// deprecated
-					$r_default	= (empty($this->rights[$key][3]) ? (!isset($this->rights[$key]['default']) ? 0 : ((int) $this->rights[$key]['default'])) : ((int) $this->rights[$key][3]));
-					$r_perms	= (isset($this->rights[$key][4]) ? $this->rights[$key][4] : $this->rights[$key]['perms']);
-					$r_subperms	= (isset($this->rights[$key][5]) ? $this->rights[$key][5] : (isset($this->rights[$key]['subperms']) ? $this->rights[$key]['subperms'] : ''));
+					$r_default	= (empty($this->rights[$key][3]) ? (!isset($this->rights[$key][Rights::KEY_DEFAULT]) ? 0 : ((int) $this->rights[$key]['default'])) : ((int) $this->rights[$key][3]));
+					$r_perms	= (isset($this->rights[$key][4]) ? $this->rights[$key][4] : $this->rights[$key][Rights::KEY_FIRST_LEVEL]);
+					$r_subperms	= (isset($this->rights[$key][5]) ? $this->rights[$key][5] : (isset($this->rights[$key][Rights::KEY_SECOND_LEVEL]) ? $this->rights[$key]['subperms'] : ''));
 
 					// if subperms is defined but perms is not defined, subperms must be empty
 					if (empty($r_perms)) {
@@ -1915,17 +1915,17 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					// name of the module from which the right comes (default: empty)
 					$r_module_origin = '';
 
-					if (isset($this->rights[$key]['module'])) {
+					if (isset($this->rights[$key][Rights::KEY_MODULE])) {
 						// name of the module to which the right must be applied
-						$r_module = $this->rights[$key]['module'];
+						$r_module = $this->rights[$key][Rights::KEY_MODULE];
 						// name of the module from which the right comes
 						$r_module_origin = (empty($this->rights_class) ? strtolower($this->name) : $this->rights_class);
 					}
 
 					// entity for this right ((default: current entity id)
-					$r_entity = ((isset($this->rights[$key]['entity']) && ($this->rights[$key]['entity'] == 0 || $this->rights[$key]['entity'] == 'all' )) ? 0 : $entity);
+					$r_entity = ((isset($this->rights[$key][Rights::KEY_ENTITY]) && ($this->rights[$key][Rights::KEY_ENTITY] == 0 || $this->rights[$key][Rights::KEY_ENTITY] == 'all' )) ? 0 : $entity);
 					// condition to show or hide a user right (default: 1) (eg isModEnabled('anothermodule') or ($conf->global->MAIN_FEATURES_LEVEL > 0) or etc..)
-					$r_enabled	= (isset($this->rights[$key]['enabled']) ? $this->rights[$key]['enabled'] : '1');
+					$r_enabled	= (isset($this->rights[$key][Rights::KEY_ENABLED]) ? $this->rights[$key][Rights::KEY_ENABLED] : '1');
 
 					if (empty($r_type)) {
 						$r_type = 'w';	// deprecated
