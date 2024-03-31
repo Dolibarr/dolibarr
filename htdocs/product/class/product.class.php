@@ -2933,7 +2933,6 @@ class Product extends CommonObject
 				$this->url = $obj->url;
 				$this->note_public = $obj->note_public;
 				$this->note_private = $obj->note_private;
-				$this->note = $obj->note_private; // deprecated
 
 				$this->type = $obj->fk_product_type;
 				$this->price_label = $obj->price_label;
