@@ -90,12 +90,6 @@ class Mailing extends CommonObject
 
 	/**
 	 * @var int status
-	 * @deprecated
-	 */
-	public $statut; // Status 0=Draft, 1=Validated, 2=Sent partially, 3=Sent completely
-
-	/**
-	 * @var int status
 	 */
 	public $status; // Status 0=Draft, 1=Validated, 2=Sent partially, 3=Sent completely
 
@@ -370,7 +364,6 @@ class Mailing extends CommonObject
 				$this->title = $obj->title;
 				$this->messtype = $obj->messtype;
 
-				$this->statut = $obj->status;	// deprecated
 				$this->status = $obj->status;
 
 				$this->nbemail = $obj->nbemail;
@@ -438,7 +431,6 @@ class Mailing extends CommonObject
 		$object->fetch($fromid);
 		$object->id = 0;
 		$object->status = 0;
-		$object->statut = 0;
 
 		// Clear fields
 		$object->title = $langs->trans("CopyOf").' '.$object->title.' '.dol_print_date(dol_now());
