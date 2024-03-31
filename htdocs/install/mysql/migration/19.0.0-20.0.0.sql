@@ -290,3 +290,6 @@ ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commande fk_element integer;
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commandefourndet fk_elementdet integer;
 
 ALTER TABLE llx_supplier_proposaldet MODIFY ref_fourn VARCHAR(128) NULL;
+
+ALTER TABLE llx_rights_def ADD COLUMN module_origin varchar(64) AFTER module;
+ALTER TABLE llx_rights_def ADD COLUMN enabled text NULL AFTER bydefault;

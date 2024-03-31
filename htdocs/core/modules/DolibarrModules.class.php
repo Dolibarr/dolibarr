@@ -1861,7 +1861,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$sql_del = "SELECT ".$this->db->decrypt('value')." as value";
 		$sql_del .= " FROM ".MAIN_DB_PREFIX."const";
 		$sql_del .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
-		$sql_del .= " AND entity IN (0,".$entity.")";
+		$sql_del .= " AND entity IN (0,".((int) $entity).")";
 
 		$resql = $this->db->query($sql_del);
 
@@ -1871,46 +1871,82 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			if ($obj !== null && !empty($obj->value) && !empty($this->rights)) {
 				include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
+				// TODO right parameters with an integer is deprecated
+				// $this->rights[$key][0] = $this->rights[$key]['id']
+				// $this->rights[$key][1] = $this->rights[$key]['label']
+				// $this->rights[$key][3] = $this->rights[$key]['default']
+				// $this->rights[$key][4] = $this->rights[$key]['perms']
+				// $this->rights[$key][5] = $this->rights[$key]['subperms']
+
+				// new parameters
+				// $this->rights[$key]['entity']	// possibility to define user right for all entities (entity 0) (default: current entity id)
+				// $this->rights[$key]['module']	// possibility to define user right for an another module (default: current module name)
+				// $this->rights[$key]['enabled']	// condition to show or hide a user right (default: 1) (eg isModEnabled('anothermodule'))
+
 				// If the module is active
 				foreach ($this->rights as $key => $value) {
-					$r_id       = $this->rights[$key][0];	// permission id in llx_rights_def (not unique because primary key is couple id-entity)
-					$r_desc     = $this->rights[$key][1];
-					$r_type     = isset($this->rights[$key][2]) ? $this->rights[$key][2] : '';
-					$r_def      = empty($this->rights[$key][3]) ? 0 : $this->rights[$key][3];
-					$r_perms    = $this->rights[$key][4];
-					$r_subperms = isset($this->rights[$key][5]) ? $this->rights[$key][5] : '';
-					$r_modul = empty($this->rights_class) ? strtolower($this->name) : $this->rights_class;
+					$r_id		= (isset($this->rights[$key][0]) ? $this->rights[$key][0] : $this->rights[$key]['id']);	// permission id in llx_rights_def (not unique because primary key is couple id-entity)
+					$r_label	= (isset($this->rights[$key][1]) ? $this->rights[$key][1] : $this->rights[$key]['label']);
+					$r_type		= isset($this->rights[$key][2]) ? $this->rights[$key][2] : '';	// deprecated
+					$r_default	= (empty($this->rights[$key][3]) ? (!isset($this->rights[$key]['default']) ? 0 : ((int) $this->rights[$key]['default'])) : ((int) $this->rights[$key][3]));
+					$r_perms	= (isset($this->rights[$key][4]) ? $this->rights[$key][4] : $this->rights[$key]['perms']);
+					$r_subperms	= (isset($this->rights[$key][5]) ? $this->rights[$key][5] : (isset($this->rights[$key]['subperms']) ? $this->rights[$key]['subperms'] : ''));
+
+					if (empty($r_perms)) {
+						$r_subperms	= '';
+					}
+
+					$r_module	= (empty($this->rights_class) ? strtolower($this->name) : $this->rights_class);
+
+					$r_module_origin = '';
+					if (isset($this->rights[$key]['module'])) {
+						$r_module = $this->rights[$key]['module'];
+						$r_module_origin = (empty($this->rights_class) ? strtolower($this->name) : $this->rights_class);
+					}
+
+					$r_entity = ((isset($this->rights[$key]['entity']) && ($this->rights[$key]['entity'] == 0 || $this->rights[$key]['entity'] == 'all' )) ? 0 : $entity);
+					$r_enabled	= (isset($this->rights[$key]['enabled']) ? $this->rights[$key]['enabled'] : '1');
 
 					if (empty($r_type)) {
-						$r_type = 'w';
+						$r_type = 'w';	// deprecated
 					}
 
 					// Search if perm already present
 					$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";
-					$sql .= " WHERE id = ".((int) $r_id)." AND entity = ".((int) $entity);
+					$sql .= " WHERE entity IN (0,".((int) $entity).")";
+					$sql .= " AND id = ".((int) $r_id);
 
 					$resqlselect = $this->db->query($sql);
 					if ($resqlselect) {
 						$objcount = $this->db->fetch_object($resqlselect);
 						if ($objcount && $objcount->nb == 0) {
-							if (dol_strlen($r_perms)) {
-								if (dol_strlen($r_subperms)) {
-									$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
-									$sql .= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
-									$sql .= " VALUES ";
-									$sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$this->db->escape($r_modul)."','".$this->db->escape($r_type)."',".$r_def.",'".$this->db->escape($r_perms)."','".$this->db->escape($r_subperms)."')";
-								} else {
-									$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
-									$sql .= " (id, entity, libelle, module, type, bydefault, perms)";
-									$sql .= " VALUES ";
-									$sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$this->db->escape($r_modul)."','".$this->db->escape($r_type)."',".$r_def.",'".$this->db->escape($r_perms)."')";
-								}
-							} else {
-								$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-								$sql .= " (id, entity, libelle, module, type, bydefault)";
-								$sql .= " VALUES ";
-								$sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$this->db->escape($r_modul)."','".$this->db->escape($r_type)."',".$r_def.")";
-							}
+							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def (";
+
+							$sql .= "id,";
+							$sql .= ", entity";
+							$sql .= ", libelle,";
+							$sql .= ", module,";
+							$sql .= ", module_origin,";
+							$sql .= ", type,";	// deprecated
+							$sql .= ", bydefault,";
+							$sql .= ", perms,";
+							$sql .= ", subperms";
+							$sql .= ", enabled";
+
+							$sql .= ") VALUES (";
+
+							$sql .= ((int) $r_id);
+							$sql .= ",".((int) $r_entity);
+							$sql .= ", '".$this->db->escape($r_label)."'";
+							$sql .= ", '".$this->db->escape($r_module)."'";
+							$sql .= ", '".$this->db->escape($r_module_origin)."'";
+							$sql .= ", '".$this->db->escape($r_type)."'";	// deprecated
+							$sql .= ", ".((int) $r_default);
+							$sql .= ", '".$this->db->escape($r_perms)."'";
+							$sql .= ", '".$this->db->escape($r_subperms)."'";
+							$sql .= ", '".$this->db->escape($r_enabled)."'";
+
+							$sql.= ")";
 
 							$resqlinsert = $this->db->query($sql, 1);
 
@@ -1931,7 +1967,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					}
 
 					// If we want to init permissions on admin users
-					if ($reinitadminperms) {
+					if (!empty($reinitadminperms)) {
 						$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE admin = 1";
 						dol_syslog(get_class($this)."::insert_permissions Search all admin users", LOG_DEBUG);
 
@@ -1959,7 +1995,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					}
 				}
 
-				if ($reinitadminperms && !empty($user->admin)) {  // Reload permission for current user if defined
+				if (!empty($reinitadminperms) && !empty($user->admin)) {  // Reload permission for current user if defined
 					// We reload permissions
 					$user->clearrights();
 					$user->getrights();
@@ -1988,9 +2024,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$err = 0;
 
+		$module = empty($this->rights_class) ? strtolower($this->name) : $this->rights_class;
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def";
-		$sql .= " WHERE module = '".$this->db->escape(empty($this->rights_class) ? strtolower($this->name) : $this->rights_class)."'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " WHERE entity IN (0,".((int) $conf->entity).")";
+		$sql .= " AND (module = '".$this->db->escape($module)."' OR module_origin = '".$this->db->escape($module)."')";
 		dol_syslog(get_class($this)."::delete_permissions", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();
