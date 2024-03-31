@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright (C) 2023 Marc Chenebaux <marc.chenebaux@maj44.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@ class Salaries extends DolibarrApi
 	/**
 	 * @var array $FIELDS Mandatory fields, checked when creating an object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'fk_user',
 		'label',
 		'amount',
@@ -42,7 +43,7 @@ class Salaries extends DolibarrApi
 	/**
 	 * array $FIELDS Mandatory fields, checked when creating an object
 	 */
-	static $FIELDSPAYMENT = array(
+	public static $FIELDSPAYMENT = array(
 		"paiementtype",
 		'datepaye',
 		'chid',
@@ -444,7 +445,9 @@ class Salaries extends DolibarrApi
 	{
 		$paymentsalary = array();
 		$fields = Salaries::$FIELDSPAYMENT;
-		if (isModEnabled("bank")) array_push($fields, "accountid");
+		if (isModEnabled("bank")) {
+			array_push($fields, "accountid");
+		}
 		foreach ($fields as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
@@ -456,10 +459,13 @@ class Salaries extends DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object datas
+	 * Clean sensitive data from object
 	 *
-	 * @param   Object  $object     Object to clean
-	 * @return  Object              Object with cleaned properties
+	 * @template T of \CommonObject
+	 * @param   T  $object     Object to clean
+	 * @phan-param CommonObject  $object
+	 * @return  T              Object with cleaned properties
+	 * @phan-return CommonObject
 	 */
 	protected function _cleanObjectDatas($object)
 	{
