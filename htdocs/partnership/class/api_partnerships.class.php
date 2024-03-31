@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -208,7 +209,7 @@ class Partnerships extends DolibarrApi
 		// Clean data
 		// $this->partnership->abc = sanitizeVal($this->partnership->abc, 'alphanohtml');
 
-		if ($this->partnership->create(DolibarrApiAccess::$user)<0) {
+		if ($this->partnership->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating Partnership", array_merge(array($this->partnership->error), $this->partnership->errors));
 		}
 		return $this->partnership->id;
@@ -302,10 +303,13 @@ class Partnerships extends DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object datas
+	 * Clean sensitive data from object
 	 *
-	 * @param   Object  $object     Object to clean
-	 * @return  Object              Object with cleaned properties
+	 * @template T of \CommonObject
+	 * @param   T  $object     Object to clean
+	 * @phan-param CommonObject  $object
+	 * @return  T              Object with cleaned properties
+	 * @phan-return CommonObject
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -366,8 +370,8 @@ class Partnerships extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param	array		$data   Array of data to validate
-	 * @return	array
+	 * @param	array<string,mixed>		$data   Array of data to validate
+	 * @return	array<string,mixed>
 	 *
 	 * @throws	RestException
 	 */

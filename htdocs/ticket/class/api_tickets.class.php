@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016   Jean-François Ferry     <hello@librethic.io>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
@@ -486,10 +487,13 @@ class Tickets extends DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object datas
+	 * Clean sensitive data from object
 	 *
-	 * @param   Object  $object     Object to clean
-	 * @return  Object              Object with cleaned properties
+	 * @template T of \CommonObject
+	 * @param   T  $object     Object to clean
+	 * @phan-param CommonObject  $object
+	 * @return  T              Object with cleaned properties
+	 * @phan-return CommonObject
 	 *
 	 * @todo use an array for properties to clean
 	 *
