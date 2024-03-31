@@ -63,9 +63,9 @@ abstract class CommonInvoice extends CommonObject
 	public $socid;
 
 	/**
-	 * @var int<0,1>
+	 * @var int<0,1> 1 if the invoice is fully paid.
 	 */
-	public $paye;
+	public $paid;
 
 	/**
 	 * Invoice date (date)
@@ -264,6 +264,19 @@ abstract class CommonInvoice extends CommonObject
 	 * - CLOSECODE_REPLACED
 	 */
 	const STATUS_ABANDONED = 3;
+
+
+	/**
+	 * Provide list of deprecated properties and replacements
+	 *
+	 * @return array<string,string>  Deprecated to replacement mapping
+	 */
+	protected function deprecatedProperties()
+	{
+		return array(
+			'paye' => 'paid',
+		) + parent::deprecatedProperties();
+	}
 
 
 
@@ -848,7 +861,7 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
-		return $this->LibStatut($this->paye, $this->status, $mode, $alreadypaid, $this->type);
+		return $this->LibStatut($this->paid, $this->status, $mode, $alreadypaid, $this->type);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1051,7 +1064,7 @@ abstract class CommonInvoice extends CommonObject
 
 		dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
 
-		if ($this->status > self::STATUS_DRAFT && $this->paye == 0) {
+		if ($this->status > self::STATUS_DRAFT && $this->paid == 0) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);
 			$bac->fetch(0, '', $this->socid);
@@ -1147,7 +1160,7 @@ abstract class CommonInvoice extends CommonObject
 			}
 		} else {
 			$this->error = "Status of invoice does not allow this";
-			dol_syslog(get_class($this)."::demandeprelevement ".$this->error." $this->status, $this->paye, $this->mode_reglement_id");
+			dol_syslog(get_class($this)."::demandeprelevement ".$this->error." $this->status, $this->paid, $this->mode_reglement_id");
 			return -3;
 		}
 	}
@@ -1204,7 +1217,7 @@ abstract class CommonInvoice extends CommonObject
 
 		dol_syslog(get_class($this)."::makeStripeSepaRequest start did=".$did." type=".$type." service=".$service." sourcetype=".$sourcetype." forcestripe=".$forcestripe, LOG_DEBUG);
 
-		if ($this->status > self::STATUS_DRAFT && $this->paye == 0) {
+		if ($this->status > self::STATUS_DRAFT && $this->paid == 0) {
 			// Get the default payment mode for BAN payment of the third party
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);	// Table societe_rib
@@ -1693,7 +1706,7 @@ abstract class CommonInvoice extends CommonObject
 			}
 		} else {
 			$this->error = "Status of invoice does not allow this";
-			dol_syslog(get_class($this)."::makeStripeSepaRequest ".$this->error." ".$this->status." ,".$this->paye.", ".$this->mode_reglement_id, LOG_WARNING);
+			dol_syslog(get_class($this)."::makeStripeSepaRequest ".$this->error." ".$this->status." ,".$this->paid.", ".$this->mode_reglement_id, LOG_WARNING);
 			return -3;
 		}
 	}
