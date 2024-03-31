@@ -45,7 +45,7 @@ RUN apt-get update -y \
     && apt-get dist-upgrade -y \
     && apt-get install -y --no-install-recommends \
         libc-client-dev \
-        libapache2-mod-php\
+        libapache2-mod-php \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
         libkrb5-dev \
