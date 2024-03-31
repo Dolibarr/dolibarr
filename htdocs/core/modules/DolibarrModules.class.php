@@ -1,14 +1,14 @@
 <?php
-/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
- * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2003-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
+ * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2014		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018		Josep Lluís Amador		<joseplluis@lliuretic.cat>
+ * Copyright (C) 2019-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1850,7 +1850,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public function insert_permissions($reinitadminperms = 0, $force_entity = null, $notrigger = 0)
 	{
 		// phpcs:enable
-		global $conf, $user;
+		global $conf, $user, $langs;
+
+		if (is_array($this->langfiles)) {
+			foreach ($this->langfiles as $val) {
+				if ($val) {
+					$langs->load($val);
+				}
+			}
+		}
 
 		$err = 0;
 		$entity = (!empty($force_entity) ? $force_entity : $conf->entity);
@@ -1886,7 +1894,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				// If the module is active
 				foreach ($this->rights as $key => $value) {
 					$r_id		= (isset($this->rights[$key][0]) ? $this->rights[$key][0] : $this->rights[$key]['id']);	// permission id in llx_rights_def (not unique because primary key is couple id-entity)
-					$r_label	= (isset($this->rights[$key][1]) ? $this->rights[$key][1] : $this->rights[$key]['label']);
+
+					// Add label with the current language (with specific language key or with PermissionXXX)
+					$labelkey = (isset($this->rights[$key][1]) ? $this->rights[$key][1] : $this->rights[$key]['label']);
+					$r_label = ($langs->trans($labelkey) != $labelkey ? $langs->trans($labelkey) : '');
+					if (!empty($r_label)) {
+						$r_label = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$r_id) != "PermissionAdvanced".$r_id) ? $langs->trans("PermissionAdvanced".$r_id) : (($langs->trans("Permission".$r_id) != "Permission".$r_id) ? $langs->trans("Permission".$r_id) : $langs->trans($labelkey)));
+					}
+
 					$r_type		= isset($this->rights[$key][2]) ? $this->rights[$key][2] : '';	// deprecated
 					$r_default	= (empty($this->rights[$key][3]) ? (!isset($this->rights[$key]['default']) ? 0 : ((int) $this->rights[$key]['default'])) : ((int) $this->rights[$key][3]));
 					$r_perms	= (isset($this->rights[$key][4]) ? $this->rights[$key][4] : $this->rights[$key]['perms']);
