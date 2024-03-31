@@ -129,9 +129,10 @@ class DolibarrApi
 	/**
 	 * Filter properties that will be returned on object
 	 *
-	 * @param   Object  $object			Object to clean
-	 * @param   String  $properties		Comma separated list of properties names
-	 * @return	Object					Object with cleaned properties
+	 * @template T of object
+	 * @param   T		$object			Object to clean
+	 * @param   string  $properties		Comma separated list of properties names
+	 * @return	T						Object with cleaned properties
 	 */
 	protected function _filterObjectProperties($object, $properties)
 	{
@@ -187,7 +188,7 @@ class DolibarrApi
 	protected function _cleanObjectDatas($object)
 	{
 		// phpcs:enable
-		// Remove $db object property for object
+		// Remove $db object property from object
 		unset($object->db);
 		unset($object->isextrafieldmanaged);
 		unset($object->ismultientitymanaged);
@@ -216,11 +217,11 @@ class DolibarrApi
 
 		unset($object->mode_reglement);		// We use mode_reglement_id now
 		unset($object->cond_reglement);		// We use cond_reglement_id now
-		unset($object->note);				// We use note_public or note_private now
+		// unset($object->note);				// We use note_public or note_private now - disabled now because unsetting note unsets note_private.
 		unset($object->contact);			// We use contact_id now
 		unset($object->thirdparty);			// We use thirdparty_id or fk_soc or socid now
 
-		unset($object->projet); // Should be fk_project
+		// unset($object->projet); // Should be fk_project // already unset by next line
 		unset($object->project); // Should be fk_project
 		unset($object->fk_projet); // Should be fk_project
 		unset($object->author); // Should be fk_user_author
@@ -238,7 +239,7 @@ class DolibarrApi
 		unset($object->name_bis);
 		unset($object->newref);
 		unset($object->oldref);
-		unset($object->alreadypaid);
+		// unset($object->alreadypaid);  // Disable unset because it also unsets totalpaid
 		unset($object->openid);
 		unset($object->fk_bank);
 		unset($object->showphoto_on_popup);
