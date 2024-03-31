@@ -94,7 +94,7 @@ class Deplacement extends CommonObject
 	/**
 	 * @var int Status 0=draft, 1=validated, 2=Refunded
 	 */
-	public $statut;
+	public $status;
 	/**
 	 * @var array<string,string>  (Encoded as JSON in database)
 	 */
@@ -239,7 +239,7 @@ class Deplacement extends CommonObject
 		$sql .= " SET km = ".((float) $this->km); // This is a distance or amount
 		$sql .= " , dated = '".$this->db->idate($this->date)."'";
 		$sql .= " , type = '".$this->db->escape($this->type)."'";
-		$sql .= " , fk_statut = '".$this->db->escape($this->statut)."'";
+		$sql .= " , fk_statut = '".$this->db->escape($this->status)."'";
 		$sql .= " , fk_user = ".((int) $this->fk_user);
 		$sql .= " , fk_user_modif = ".((int) $user->id);
 		$sql .= " , fk_soc = ".($this->socid > 0 ? $this->socid : 'null');
@@ -290,7 +290,7 @@ class Deplacement extends CommonObject
 			$this->socid		= $obj->fk_soc;
 			$this->km = $obj->km;
 			$this->type			= $obj->type;
-			$this->statut	    = $obj->fk_statut;
+			$this->status	    = $obj->fk_statut;
 			$this->note_private = $obj->note_private;
 			$this->note_public	= $obj->note_public;
 			$this->fk_project	= $obj->fk_project;
@@ -339,7 +339,7 @@ class Deplacement extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
