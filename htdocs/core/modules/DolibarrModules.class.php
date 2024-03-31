@@ -1893,16 +1893,17 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 				// If the module is active
 				foreach ($this->rights as $key => $value) {
-					$r_id	= (isset($this->rights[$key][0]) ? $this->rights[$key][0] : $this->rights[$key][Rights::KEY_ID]);	// permission id in llx_rights_def (not unique because primary key is couple id-entity)
+					$r_id	= (isset($this->rights[$key][Rights::KEY_OLD_ID]) ? $this->rights[$key][Rights::KEY_OLD_ID] : $this->rights[$key][Rights::KEY_ID]);	// permission id in llx_rights_def (not unique because primary key is couple id-entity)
 
 					// Add label with the current language (with specific language key or with PermissionXXX)
-					$labelkey = (isset($this->rights[$key][1]) ? $this->rights[$key][1] : $this->rights[$key][Rights::KEY_LABEL]);
+					$labelkey = (isset($this->rights[$key][Rights::KEY_OLD_LABEL]) ? $this->rights[$key][Rights::KEY_OLD_LABEL] : $this->rights[$key][Rights::KEY_LABEL]);
 					$r_label = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$r_id) != "PermissionAdvanced".$r_id) ? $langs->trans("PermissionAdvanced".$r_id) : (($langs->trans("Permission".$r_id) != "Permission".$r_id) ? $langs->trans("Permission".$r_id) : $langs->trans($labelkey)));
 
-					$r_type		= isset($this->rights[$key][2]) ? $this->rights[$key][2] : '';	// deprecated
-					$r_default	= (empty($this->rights[$key][3]) ? (!isset($this->rights[$key][Rights::KEY_DEFAULT]) ? 0 : ((int) $this->rights[$key]['default'])) : ((int) $this->rights[$key][3]));
-					$r_perms	= (isset($this->rights[$key][4]) ? $this->rights[$key][4] : $this->rights[$key][Rights::KEY_FIRST_LEVEL]);
-					$r_subperms	= (isset($this->rights[$key][5]) ? $this->rights[$key][5] : (isset($this->rights[$key][Rights::KEY_SECOND_LEVEL]) ? $this->rights[$key]['subperms'] : ''));
+					$r_type		= isset($this->rights[$key][2]) ? $this->rights[$key][2] : '';	// TODO deprecated
+
+					$r_default	= (empty($this->rights[$key][Rights::KEY_OLD_DEFAULT]) ? (!isset($this->rights[$key][Rights::KEY_DEFAULT]) ? 0 : ((int) $this->rights[$key][Rights::KEY_DEFAULT])) : ((int) $this->rights[$key][3]));
+					$r_perms	= (isset($this->rights[$key][Rights::KEY_OLD_FIRST_LEVEL]) ? $this->rights[$key][Rights::KEY_OLD_FIRST_LEVEL] : $this->rights[$key][Rights::KEY_FIRST_LEVEL]);
+					$r_subperms	= (isset($this->rights[$key][Rights::KEY_OLD_SECOND_LEVEL]) ? $this->rights[$key][Rights::KEY_OLD_SECOND_LEVEL] : (isset($this->rights[$key][Rights::KEY_SECOND_LEVEL]) ? $this->rights[$key][Rights::KEY_SECOND_LEVEL] : ''));
 
 					// if subperms is defined but perms is not defined, subperms must be empty
 					if (empty($r_perms)) {
@@ -1928,7 +1929,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$r_enabled	= (isset($this->rights[$key][Rights::KEY_ENABLED]) ? $this->rights[$key][Rights::KEY_ENABLED] : '1');
 
 					if (empty($r_type)) {
-						$r_type = 'w';	// deprecated
+						$r_type = 'w';	// TODO deprecated
 					}
 
 					// Search if perm already present
@@ -1947,7 +1948,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= ", libelle";
 							$sql .= ", module";
 							$sql .= ", module_origin";
-							$sql .= ", type";	// deprecated
+							$sql .= ", type";	// TODO deprecated
 							$sql .= ", bydefault";
 							$sql .= ", perms";
 							$sql .= ", subperms";
@@ -1960,7 +1961,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= ", '".$this->db->escape($r_label)."'";
 							$sql .= ", '".$this->db->escape($r_module)."'";
 							$sql .= ", '".$this->db->escape($r_module_origin)."'";
-							$sql .= ", '".$this->db->escape($r_type)."'";	// deprecated
+							$sql .= ", '".$this->db->escape($r_type)."'";	// TODO deprecated
 							$sql .= ", ".((int) $r_default);
 							$sql .= ", '".$this->db->escape($r_perms)."'";
 							$sql .= ", '".$this->db->escape($r_subperms)."'";
