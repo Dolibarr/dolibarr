@@ -1566,7 +1566,6 @@ class ExpenseReport extends CommonObject
 			$sql .= " fk_user_approve = NULL";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			if ($this->db->query($sql)) {
-				$this->fk_statut = 99; // deprecated
 				$this->status = 99;
 				$this->fk_user_refuse = $fuser->id;
 				$this->detail_refuse = $details;
