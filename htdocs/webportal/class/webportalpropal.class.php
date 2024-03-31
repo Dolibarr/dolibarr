@@ -121,10 +121,10 @@ class WebPortalPropal extends Propal
 	//public $multicurrency_total_tva;
 	//public $multicurrency_total_ttc;
 
-	/**
+	/*
 	 * @var int status
 	 */
-	public $fk_statut;
+	//public $fk_statut; // Managed in parent
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -301,7 +301,7 @@ class WebPortalPropal extends Propal
 	 */
 	public function getLabelStatus($mode = 0)
 	{
-		return $this->LibStatut($this->fk_statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	/**
@@ -312,7 +312,7 @@ class WebPortalPropal extends Propal
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->fk_statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
