@@ -169,11 +169,11 @@ class Facture extends CommonInvoice
 	public $resteapayer;
 
 	/**
-	 *
 	 * @var int<0,1> 1 if invoice paid COMPLETELY, 0 otherwise
-	 * @deprecated * Use statut and close_code)
+	 *
+	 * @deprecated Use $status and close_code
 	 */
-	public $paye;
+	public $paid;
 
 	/**
 	 * @var string key of module source when invoice generated from a dedicated module ('cashdesk', 'takepos', ...)
@@ -500,7 +500,6 @@ class Facture extends CommonInvoice
 			$this->mode_reglement_id = 0;
 		}
 		$this->status = self::STATUS_DRAFT;
-		$this->statut = self::STATUS_DRAFT;	// deprecated
 
 		if (!empty($this->multicurrency_code)) {
 			// Multicurrency (test on $this->multicurrency_tx because we should take the default rate of multicurrency_code only if not using original rate)
@@ -613,7 +612,6 @@ class Facture extends CommonInvoice
 				$this->mode_reglement_id = 0;
 			}
 			$this->status = self::STATUS_DRAFT;
-			$this->statut = self::STATUS_DRAFT;	// deprecated
 
 			$this->linked_objects = $_facrec->linkedObjectsIds;
 			// We do not add link to template invoice or next invoice will be linked to all generated invoices
@@ -1292,7 +1290,6 @@ class Facture extends CommonInvoice
 		}
 
 		$object->id = 0;
-		$object->statut = self::STATUS_DRAFT;
 		$object->status = self::STATUS_DRAFT;
 
 		// Clear fields
@@ -2250,7 +2247,6 @@ class Facture extends CommonInvoice
 				$this->fk_project = $obj->fk_project;
 				$this->project = null; // Clear if another value was already set by fetch_projet
 
-				$this->statut = $obj->status;	// deprecated
 				$this->status = $obj->status;
 
 				$this->date_lim_reglement = $this->db->jdate($obj->dlr);
@@ -3634,7 +3630,6 @@ class Facture extends CommonInvoice
 			// Set new ref and define current status
 			if (!$error) {
 				$this->ref = $num;
-				$this->statut = self::STATUS_VALIDATED;	// deprecated
 				$this->status = self::STATUS_VALIDATED;
 				$this->date_validation = $now;
 				$i = 0;
@@ -3788,16 +3783,14 @@ class Facture extends CommonInvoice
 			}
 
 			if ($error == 0) {
-				$old_statut = $this->status;
-				$this->statut = self::STATUS_DRAFT;	// deprecated
+				$old_status = $this->status;
 				$this->status = self::STATUS_DRAFT;
 
 				// Call trigger
 				$result = $this->call_trigger('BILL_UNVALIDATE', $user);
 				if ($result < 0) {
 					$error++;
-					$this->statut = $old_statut; // deprecated
-					$this->status = $old_statut;
+					$this->status = $old_status;
 				}
 				// End call triggers
 			} else {
@@ -4362,7 +4355,7 @@ class Facture extends CommonInvoice
 				return -1;
 			}
 		} else {
-			$this->error = "Invoice statut makes operation forbidden";
+			$this->error = "Invoice status makes operation forbidden";
 			return -2;
 		}
 	}
@@ -5053,7 +5046,6 @@ class Facture extends CommonInvoice
 
 			while ($obj = $this->db->fetch_object($resql)) {
 				$generic_facture->date_lim_reglement = $this->db->jdate($obj->datefin);
-				$generic_facture->statut = $obj->status;
 				$generic_facture->status = $obj->status;
 
 				$response->nbtodo++;
