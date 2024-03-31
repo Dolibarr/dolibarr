@@ -124,7 +124,7 @@ class Ticket extends CommonObject
 	 * @deprecated use status
 	 * @see $status
 	 */
-	public $fk_statut;
+	private $fk_statut;
 
 	/**
 	 * @var int Ticket status
@@ -338,6 +338,18 @@ class Ticket extends CommonObject
 	);
 	// END MODULEBUILDER PROPERTIES
 
+
+	/**
+	 * Provide list of deprecated properties and replacements
+	 *
+	 * @return array<string,string>
+	 */
+	protected function deprecatedProperties()
+	{
+		return array(
+			'fk_statut' => 'status',
+		) + parent::deprecatedProperties();
+	}
 
 	/**
 	 *  Constructor
@@ -563,7 +575,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isDolTms($this->email_date) ? 'NULL' : "'".$this->db->idate($this->email_date)."'").",";
 			$sql .= " ".(!isset($this->subject) ? 'NULL' : "'".$this->db->escape($this->subject)."'").",";
 			$sql .= " ".(!isset($this->message) ? 'NULL' : "'".$this->db->escape($this->message)."'").",";
-			$sql .= " ".(!isset($this->status) ? '0' : ((int) $this->status)).",";
+			$sql .= " ".(!isset($this->status) ? '0' : (int) $this->status).",";
 			$sql .= " ".(!isset($this->resolution) ? 'NULL' : ((int) $this->resolution)).",";
 			$sql .= " ".(!isset($this->progress) ? '0' : ((int) $this->progress)).",";
 			$sql .= " ".(!isset($this->timing) ? 'NULL' : "'".$this->db->escape($this->timing)."'").",";
@@ -752,7 +764,6 @@ class Ticket extends CommonObject
 				$this->ip = $obj->ip;
 
 				$this->status = $obj->status;
-				$this->fk_statut = $this->status; // For backward compatibility
 
 				$this->resolution = $obj->resolution;
 				$this->progress = $obj->progress;
@@ -947,7 +958,6 @@ class Ticket extends CommonObject
 
 					$line->subject = $obj->subject;
 					$line->message = $obj->message;
-					$line->fk_statut = $obj->status;
 					$line->status = $obj->status;
 					$line->resolution = $obj->resolution;
 					$line->progress = $obj->progress;
@@ -1271,7 +1281,6 @@ class Ticket extends CommonObject
 
 		// Clear fields
 		$object->id = 0;
-		$object->statut = 0;
 		$object->status = 0;
 
 		// Create clone
@@ -1873,7 +1882,7 @@ class Ticket extends CommonObject
 			if (!empty($contacts)) {
 				// Ensure that contact is active and select first active contact
 				foreach ($contacts as $contact) {
-					if ((int) $contact->statut == 1) {
+					if ((int) $contact->status == 1) {
 						$actioncomm->contact_id = $contact->id;
 						break;
 					}
@@ -2022,14 +2031,14 @@ class Ticket extends CommonObject
 						foreach ($this->linkedObjectsIds['fichinter'] as $fichinter_id) {
 							$fichinter = new Fichinter($this->db);
 							$fichinter->fetch($fichinter_id);
-							if ($fichinter->statut == 0) {
+							if ($fichinter->status == 0) {
 								$result = $fichinter->setValid($user);
 								if (!$result) {
 									$this->errors[] = $fichinter->error;
 									$error++;
 								}
 							}
-							if ($fichinter->statut < 3) {
+							if ($fichinter->status < 3) {
 								$result = $fichinter->setStatut(3);
 								if (!$result) {
 									$this->errors[] = $fichinter->error;
