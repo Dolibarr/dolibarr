@@ -391,7 +391,6 @@ class Adherent extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->statut = self::STATUS_DRAFT;
 		$this->status = self::STATUS_DRAFT;
 		// l'adherent n'est pas public par default
 		$this->public = 0;
@@ -808,7 +807,7 @@ class Adherent extends CommonObject
 		$sql .= ", note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", photo = ".($this->photo ? "'".$this->db->escape($this->photo)."'" : "null");
 		$sql .= ", public = ".(int) $this->public;
-		$sql .= ", statut = ".(int) $this->statut;
+		$sql .= ", statut = ".(int) $this->status;
 		$sql .= ", default_lang = ".(!empty($this->default_lang) ? "'".$this->db->escape($this->default_lang)."'" : "null");
 		$sql .= ", fk_adherent_type = ".(int) $this->typeid;
 		$sql .= ", morphy = '".$this->db->escape($this->morphy)."'";
@@ -1492,7 +1491,6 @@ class Adherent extends CommonObject
 				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
 
 				$this->photo = $obj->photo;
-				$this->statut = $obj->statut;
 				$this->status = $obj->statut;
 				$this->public = $obj->public;
 
@@ -1989,7 +1987,7 @@ class Adherent extends CommonObject
 		$now = dol_now();
 
 		// Check parameters
-		if ($this->statut == self::STATUS_VALIDATED) {
+		if ($this->status == self::STATUS_VALIDATED) {
 			dol_syslog(get_class($this)."::validate statut of member does not allow this", LOG_WARNING);
 			return 0;
 		}
@@ -2005,7 +2003,7 @@ class Adherent extends CommonObject
 		dol_syslog(get_class($this)."::validate", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			$this->statut = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_VALIDATED;
 
 			// Call trigger
 			$result = $this->call_trigger('MEMBER_VALIDATE', $user);
@@ -2041,7 +2039,7 @@ class Adherent extends CommonObject
 		$error = 0;
 
 		// Check parameters
-		if ($this->statut == self::STATUS_RESILIATED) {
+		if ($this->status == self::STATUS_RESILIATED) {
 			dol_syslog(get_class($this)."::resiliate statut of member does not allow this", LOG_WARNING);
 			return 0;
 		}
@@ -2055,7 +2053,7 @@ class Adherent extends CommonObject
 
 		$result = $this->db->query($sql);
 		if ($result) {
-			$this->statut = self::STATUS_RESILIATED;
+			$this->status = self::STATUS_RESILIATED;
 
 			// Call trigger
 			$result = $this->call_trigger('MEMBER_RESILIATE', $user);
@@ -2089,7 +2087,7 @@ class Adherent extends CommonObject
 		$error = 0;
 
 		// Check parameters
-		if ($this->statut == self::STATUS_EXCLUDED) {
+		if ($this->status == self::STATUS_EXCLUDED) {
 			dol_syslog(get_class($this)."::resiliate statut of member does not allow this", LOG_WARNING);
 			return 0;
 		}
@@ -2103,7 +2101,7 @@ class Adherent extends CommonObject
 
 		$result = $this->db->query($sql);
 		if ($result) {
-			$this->statut = self::STATUS_EXCLUDED;
+			$this->status = self::STATUS_EXCLUDED;
 
 			// Call trigger
 			$result = $this->call_trigger('MEMBER_EXCLUDE', $user);
@@ -2393,7 +2391,7 @@ class Adherent extends CommonObject
 		}
 		if (($withpictoimg > -2 && $withpictoimg != 2) || $withpictoimg == -4) {
 			if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				$result .= '<span class="nopadding valignmiddle'.((!isset($this->statut) || $this->statut) ? '' : ' strikefordisabled').
+				$result .= '<span class="nopadding valignmiddle'.((!isset($this->status) || $this->status) ? '' : ' strikefordisabled').
 				($morecss ? ' usertext'.$morecss : '').'">';
 			}
 			if ($mode == 'login') {
@@ -2440,7 +2438,7 @@ class Adherent extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $this->need_subscription, $this->datefin, $mode);
+		return $this->LibStatut($this->status, $this->need_subscription, $this->datefin, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2595,7 +2593,7 @@ class Adherent extends CommonObject
 				$response->nbtodo++;
 
 				$adherentstatic->datefin = $this->db->jdate($obj->datefin);
-				$adherentstatic->statut = $obj->statut;
+				$adherentstatic->status = $obj->statut;
 
 				if ($adherentstatic->hasDelay()) {
 					$response->nbtodolate++;
@@ -2690,7 +2688,6 @@ class Adherent extends CommonObject
 		$this->birth = $now;
 		$this->photo = '';
 		$this->public = 1;
-		$this->statut = self::STATUS_DRAFT;
 		$this->status = self::STATUS_DRAFT;
 
 		$this->datefin = $now;
@@ -2839,8 +2836,8 @@ class Adherent extends CommonObject
 		if ($this->birth && getDolGlobalString('LDAP_MEMBER_FIELD_BIRTHDATE')) {
 			$info[getDolGlobalString('LDAP_MEMBER_FIELD_BIRTHDATE')] = dol_print_date($this->birth, 'dayhourldap');
 		}
-		if (isset($this->statut) && getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')) {
-			$info[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')] = $this->statut;
+		if (isset($this->status) && getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')) {
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')] = $this->status;
 		}
 		if ($this->datefin && getDolGlobalString('LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION')) {
 			$info[getDolGlobalString('LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION')] = dol_print_date($this->datefin, 'dayhourldap');
@@ -2998,7 +2995,7 @@ class Adherent extends CommonObject
 		global $conf;
 
 		//Only valid members
-		if ($this->statut != self::STATUS_VALIDATED) {
+		if ($this->status != self::STATUS_VALIDATED) {
 			return false;
 		}
 		if (!$this->datefin) {
