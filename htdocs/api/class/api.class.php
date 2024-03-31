@@ -2,6 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,16 +108,41 @@ class DolibarrApi
 	 */
 	protected function _filterObjectProperties($object, $properties)
 	{
+		// phpcs:enable
 		// If properties is empty, we return all properties
 		if (empty($properties)) {
 			return $object;
 		}
-		// Else we filter properties
+
+		// Copy of exploded array for efficiency
+		$arr_properties = explode(',', $properties);
+		$magic_properties = array();
+		$real_properties = get_object_vars($object);
+
+		// Unsetting real properties may unset magic properties.
+		// We keep a copy of the requested magic properties
+		foreach ($arr_properties as $key) {
+			if (!array_key_exists($key, $real_properties)) {
+				// Not a real property,
+				// check if $key is a magic property (we want to keep '$obj->$key')
+				if (property_exists($object, $key) && isset($object->$key)) {
+					$magic_properties[$key] = $object->$key;
+				}
+			}
+		}
+
+		// Filter real properties (may indirectly unset magic properties)
 		foreach (get_object_vars($object) as $key => $value) {
-			if (!in_array($key, explode(',', $properties))) {
+			if (!in_array($key, $arr_properties)) {
 				unset($object->$key);
 			}
 		}
+
+		// Restore the magic properties
+		foreach ($magic_properties as $key => $value) {
+			$object->$key = $value;
+		}
+
 		return $object;
 	}
 
