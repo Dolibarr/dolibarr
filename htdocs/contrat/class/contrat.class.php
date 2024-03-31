@@ -127,12 +127,6 @@ class Contrat extends CommonObject
 	public $societe;
 
 	/**
-	 * Status of the contract
-	 * @var int
-	 * @deprecated
-	 */
-	public $statut = 0;
-	/**
 	 * Status of the contract (0=Draft, 1=Validated)
 	 * @var int
 	 */
@@ -429,7 +423,7 @@ class Contrat extends CommonObject
 
 		foreach ($this->lines as $contratline) {
 			// Open lines not already open
-			if ($contratline->statut != ContratLigne::STATUS_OPEN) {
+			if ($contratline->status != ContratLigne::STATUS_OPEN) {
 				$contratline->context = $this->context;
 
 				$result = $contratline->active_line($user, $date_start, !empty($date_end) ? $date_end : -1, $comment);	// This call trigger LINECONTRACT_ACTIVATE
@@ -442,7 +436,7 @@ class Contrat extends CommonObject
 			}
 		}
 
-		if (!$error && $this->statut == 0) {
+		if (!$error && $this->status == 0) {
 			$result = $this->validate($user, '', $notrigger);
 			if ($result < 0) {
 				$error++;
@@ -480,11 +474,11 @@ class Contrat extends CommonObject
 
 		foreach ($this->lines as $contratline) {
 			// Close lines not already closed
-			if ($contratline->statut != ContratLigne::STATUS_CLOSED) {
+			if ($contratline->status != ContratLigne::STATUS_CLOSED) {
 				$contratline->date_end_real = $now;
 				$contratline->date_cloture = $now;	// For backward compatibility
 				$contratline->user_closing_id = $user->id;
-				$contratline->statut = ContratLigne::STATUS_CLOSED;
+				$contratline->status = ContratLigne::STATUS_CLOSED;
 				$result = $contratline->close_line($user, $now, $comment, $notrigger);
 				if ($result < 0) {
 					$error++;
@@ -495,7 +489,7 @@ class Contrat extends CommonObject
 			}
 		}
 
-		if (!$error && $this->statut == 0) {
+		if (!$error && $this->status == 0) {
 			$result = $this->validate($user, '', $notrigger);
 			if ($result < 0) {
 				$error++;
@@ -621,7 +615,6 @@ class Contrat extends CommonObject
 			if (!$error) {
 				$this->ref = $num;
 				$this->status = self::STATUS_VALIDATED;
-				$this->statut = self::STATUS_VALIDATED;	// deprecated
 				$this->date_validation = $now;
 			}
 		} else {
@@ -681,7 +674,6 @@ class Contrat extends CommonObject
 
 		// Set new ref and define current status
 		if (!$error) {
-			$this->statut = self::STATUS_DRAFT;
 			$this->status = self::STATUS_DRAFT;
 			$this->date_validation = $now;
 		}
@@ -754,7 +746,6 @@ class Contrat extends CommonObject
 					$this->ref_supplier = $obj->ref_supplier;
 					$this->ref_ext = $obj->ref_ext;
 					$this->entity = $obj->entity;
-					$this->statut = $obj->status;
 					$this->status = $obj->status;
 					$this->signed_status = $obj->signed_status;
 
@@ -896,7 +887,6 @@ class Contrat extends CommonObject
 				$line->localtax1_type	= $objp->localtax1_type;
 				$line->localtax2_type	= $objp->localtax2_type;
 				$line->subprice			= $objp->subprice;
-				$line->statut = $objp->status;
 				$line->status = $objp->status;
 				$line->remise_percent	= $objp->remise_percent;
 				$line->price_ht			= $objp->price_ht;
@@ -965,16 +955,16 @@ class Contrat extends CommonObject
 				//dol_syslog("1 ".$line->desc);
 				//dol_syslog("2 ".$line->product_desc);
 
-				if ($line->statut == ContratLigne::STATUS_INITIAL) {
+				if ($line->status == ContratLigne::STATUS_INITIAL) {
 					$this->nbofserviceswait++;
 				}
-				if ($line->statut == ContratLigne::STATUS_OPEN && (empty($line->date_end) || $line->date_end >= $now)) {
+				if ($line->status == ContratLigne::STATUS_OPEN && (empty($line->date_end) || $line->date_end >= $now)) {
 					$this->nbofservicesopened++;
 				}
-				if ($line->statut == ContratLigne::STATUS_OPEN && (!empty($line->date_end) && $line->date_end < $now)) {
+				if ($line->status == ContratLigne::STATUS_OPEN && (!empty($line->date_end) && $line->date_end < $now)) {
 					$this->nbofservicesexpired++;
 				}
-				if ($line->statut == ContratLigne::STATUS_CLOSED) {
+				if ($line->status == ContratLigne::STATUS_CLOSED) {
 					$this->nbofservicesclosed++;
 				}
 
@@ -1363,9 +1353,6 @@ class Contrat extends CommonObject
 		if (isset($this->entity)) {
 			$this->entity = (int) $this->entity;
 		}
-		if (isset($this->statut)) {
-			$this->statut = (int) $this->statut;
-		}
 		if (isset($this->status)) {
 			$this->status = (int) $this->status;
 		}
@@ -1399,7 +1386,7 @@ class Contrat extends CommonObject
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " entity=".$conf->entity.",";
 		$sql .= " date_contrat=".(dol_strlen($this->date_contrat) != 0 ? "'".$this->db->idate($this->date_contrat)."'" : 'null').",";
-		$sql .= " statut=".(isset($this->statut) ? $this->statut : (isset($this->status) ? $this->status : "null")).",";
+		$sql .= " statut=".(isset($this->status) ? (int) $this->status : "null").",";
 		$sql .= " fk_soc=".($this->socid > 0 ? $this->socid : "null").",";
 		$sql .= " fk_projet=".($this->fk_project > 0 ? $this->fk_project : "null").",";
 		$sql .= " fk_commercial_signature=".(isset($this->fk_commercial_signature) ? $this->fk_commercial_signature : "null").",";
@@ -1485,7 +1472,7 @@ class Contrat extends CommonObject
 			return -1;
 		}
 
-		if ($this->statut >= 0) {
+		if ($this->status >= 0) {
 			// Clean parameters
 			$pu_ht = price2num($pu_ht);
 			$pu_ttc = price2num($pu_ttc);
@@ -1885,7 +1872,7 @@ class Contrat extends CommonObject
 	{
 		$error = 0;
 
-		if ($this->statut >= 0) {
+		if ($this->status >= 0) {
 			// Call trigger
 			$this->context['line_id'] = $idline;
 			$result = $this->call_trigger('LINECONTRACT_DELETE', $user);
@@ -1946,7 +1933,7 @@ class Contrat extends CommonObject
 		dol_syslog(__METHOD__." is deprecated", LOG_WARNING);
 
 		// If draft, we keep it (should not happen)
-		if ($this->statut == 0) {
+		if ($this->status == 0) {
 			return 1;
 		}
 
@@ -1971,7 +1958,7 @@ class Contrat extends CommonObject
 	 */
 	public function getLibStatut($mode)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2051,7 +2038,7 @@ class Contrat extends CommonObject
 		if ($user->hasRight('contrat', 'lire')) {
 			$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Contract").'</u>';
 			/* Status of a contract is status of all services, so disabled
-			if (isset($this->statut)) {
+			if (isset($this->status)) {
 				$label .= ' '.$this->getLibStatut(5);
 			}*/
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.($this->ref ? $this->ref : $this->id);
@@ -2637,7 +2624,7 @@ class Contrat extends CommonObject
 		$objsoc->fetch($clonedObj->socid);
 
 		// Clean data
-		$clonedObj->statut = 0;
+		$clonedObj->status = 0;
 		// Clean extrafields
 		if (is_array($clonedObj->array_options) && count($clonedObj->array_options) > 0) {
 			$extrafields->fetch_name_optionals_label($this->table_element);
@@ -2810,7 +2797,7 @@ class Contrat extends CommonObject
 
 						$someinvoicenotpaid = 0;
 						foreach ($object->linkedObjects['facture'] as $idinvoice => $invoice) {
-							if ($invoice->statut == Facture::STATUS_DRAFT) {
+							if ($invoice->status == Facture::STATUS_DRAFT) {
 								continue;
 							}	// Draft invoice are not invoice not paid
 
