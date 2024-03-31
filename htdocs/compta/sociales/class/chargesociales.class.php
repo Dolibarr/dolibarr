@@ -99,8 +99,7 @@ class ChargeSociales extends CommonObject
 	/**
 	 * @var int<0,1>
 	 */
-	public $paye;
-
+	public $paid;
 	/**
 	 * @deprecated Use $period
 	 * @var int|string
@@ -178,6 +177,18 @@ class ChargeSociales extends CommonObject
 	 */
 	const STATUS_PAID = 1;
 
+
+	/**
+	 * Provide list of deprecated properties and replacements
+	 *
+	 * @return array<string,string>  Old property to new property mapping
+	 */
+	protected function deprecatedProperties()
+	{
+		return array(
+			'paye' => 'paid',
+		) + parent::deprecatedProperties();
+	}
 
 	/**
 	 * Constructor
