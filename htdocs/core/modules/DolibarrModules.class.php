@@ -1897,10 +1897,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 					// Add label with the current language (with specific language key or with PermissionXXX)
 					$labelkey = (isset($this->rights[$key][1]) ? $this->rights[$key][1] : $this->rights[$key]['label']);
-					$r_label = ($langs->trans($labelkey) != $labelkey ? $langs->trans($labelkey) : '');
-					if (empty($r_label)) {
-						$r_label = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$r_id) != "PermissionAdvanced".$r_id) ? $langs->trans("PermissionAdvanced".$r_id) : (($langs->trans("Permission".$r_id) != "Permission".$r_id) ? $langs->trans("Permission".$r_id) : $langs->trans($labelkey)));
-					}
+					$r_label = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$r_id) != "PermissionAdvanced".$r_id) ? $langs->trans("PermissionAdvanced".$r_id) : (($langs->trans("Permission".$r_id) != "Permission".$r_id) ? $langs->trans("Permission".$r_id) : $langs->trans($labelkey)));
 
 					$r_type		= isset($this->rights[$key][2]) ? $this->rights[$key][2] : '';	// deprecated
 					$r_default	= (empty($this->rights[$key][3]) ? (!isset($this->rights[$key]['default']) ? 0 : ((int) $this->rights[$key]['default'])) : ((int) $this->rights[$key][3]));
