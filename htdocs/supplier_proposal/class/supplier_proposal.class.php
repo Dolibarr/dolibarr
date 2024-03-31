@@ -113,11 +113,6 @@ class SupplierProposal extends CommonObject
 	 */
 	public $ref_supplier; //Reference saisie lors de l'ajout d'une ligne à la demande
 
-	/**
-	 * @var int
-	 * @deprecated
-	 */
-	public $statut; // 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
 
 	/**
 	 * @var int|string Date of proposal
@@ -489,7 +484,7 @@ class SupplierProposal extends CommonObject
 			return -1;
 		}
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
 
 			if ($fk_product > 0) {
@@ -892,7 +887,7 @@ class SupplierProposal extends CommonObject
 	{
 		global $user;
 
-		if ($this->statut == 0) {
+		if ($this->status == 0) {
 			$line = new SupplierProposalLine($this->db);
 
 			// For triggers
@@ -1180,7 +1175,7 @@ class SupplierProposal extends CommonObject
 		}
 
 		$this->id = 0;
-		$this->statut = 0;
+		$this->status = 0;
 
 		if (!getDolGlobalString('SUPPLIER_PROPOSAL_ADDON') || !is_readable(DOL_DOCUMENT_ROOT."/core/modules/supplier_proposal/" . getDolGlobalString('SUPPLIER_PROPOSAL_ADDON').".php")) {
 			$this->error = 'ErrorSetupNotComplete';
@@ -1291,7 +1286,6 @@ class SupplierProposal extends CommonObject
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
-				$this->statut               = (int) $obj->fk_statut;
 				$this->status               = (int) $obj->fk_statut;
 				$this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
@@ -1529,7 +1523,6 @@ class SupplierProposal extends CommonObject
 				}
 
 				$this->ref = $num;
-				$this->statut = self::STATUS_VALIDATED;
 				$this->status = self::STATUS_VALIDATED;
 				$this->user_validation_id = $user->id;
 				$this->datev = $now;
@@ -1671,11 +1664,11 @@ class SupplierProposal extends CommonObject
 	{
 		global $langs, $conf;
 
-		$this->statut = $statut;
+		$this->status = $statut;
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
-		$sql .= " SET fk_statut = ".((int) $this->statut).",";
+		$sql .= " SET fk_statut = ".((int) $this->status).",";
 		if (!empty($note)) {
 			$sql .= " note_private = '".$this->db->escape($note)."',";
 		}
@@ -1732,7 +1725,7 @@ class SupplierProposal extends CommonObject
 		$hidedetails = 0;
 		$hidedesc = 0;
 		$hideref = 0;
-		$this->statut = $status;
+		$this->status = $status;
 		$error = 0;
 		$now = dol_now();
 
@@ -1933,7 +1926,7 @@ class SupplierProposal extends CommonObject
 
 		$error = 0;
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			dol_syslog(get_class($this)."::setDraft already draft status", LOG_WARNING);
 			return 0;
 		}
@@ -1957,7 +1950,6 @@ class SupplierProposal extends CommonObject
 
 			if (!$error) {
 				$this->status = self::STATUS_DRAFT;
-				$this->statut = self::STATUS_DRAFT;	// deprecated
 				$this->db->commit();
 				return 1;
 			} else {
@@ -2202,7 +2194,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut((isset($this->statut) ? $this->statut : $this->status), $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
