@@ -364,8 +364,9 @@ class AgendaEvents extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Object  $object     Object to clean
-	 * @return  Object              Object with cleaned properties
+	 * @template T of \CommonObject
+	 * @param   T  $object     Object to clean
+	 * @return  T              Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -384,7 +385,7 @@ class AgendaEvents extends DolibarrApi
 		unset($object->origin);
 		unset($object->origin_id);
 		unset($object->ref_ext);
-		unset($object->statut);
+		unset($object->status);
 		unset($object->state_code);
 		unset($object->state_id);
 		unset($object->state);
