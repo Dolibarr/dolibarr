@@ -1,8 +1,7 @@
 <?php
-/* Copyright (C) 2024		MDW	<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2013-2016	Jean-François FERRY			<jfefe@aternatik.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- */
-/*  Copyright (C) 2013-2016    Jean-François FERRY    <jfefe@aternatik.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -712,7 +711,7 @@ if ($action == "view_ticketlist") {
 						}
 					}
 
-					// Statut
+					// Status
 					if (!empty($arrayfields['t.fk_statut']['checked'])) {
 						print '<td class="nowraponall">';
 						$object->status = $obj->fk_statut;
