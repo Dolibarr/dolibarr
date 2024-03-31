@@ -134,7 +134,7 @@ class Task extends CommonObjectLine
 	 * @deprecated use status instead
 	 * @see $status
 	 */
-	public $fk_statut;
+	private $fk_statut;
 
 	/**
 	 * @var int ID
@@ -372,6 +372,18 @@ class Task extends CommonObjectLine
 	 */
 	const STATUS_CANCELED = 9;
 
+	/**
+	 * Provide list of deprecated properties and replacements
+	 *
+	 * @return array<string,string>
+	 */
+	protected function deprecatedProperties()
+	{
+		return array(
+			'fk_statut' => 'status',
+		) + parent::deprecatedProperties();
+	}
+
 
 	/**
 	 *  Constructor
@@ -565,7 +577,6 @@ class Task extends CommonObjectLine
 				$this->date_end = $this->db->jdate($obj->date_end);
 				$this->fk_user_creat		= $obj->fk_user_creat;
 				$this->fk_user_valid		= $obj->fk_user_valid;
-				$this->fk_statut		    = $obj->status;
 				$this->status			    = $obj->status;
 				$this->progress				= $obj->progress;
 				$this->budget_amount		= $obj->budget_amount;
@@ -1332,7 +1343,6 @@ class Task extends CommonObjectLine
 					}
 
 					$tasks[$i]->progress		= $obj->progress;
-					$tasks[$i]->fk_statut		= $obj->status;
 					$tasks[$i]->status 		    = $obj->status;
 					$tasks[$i]->public = $obj->public;
 					$tasks[$i]->date_start = $this->db->jdate($obj->date_start);
@@ -2613,7 +2623,6 @@ class Task extends CommonObjectLine
 
 				$task_static->projectstatus = $obj->projectstatus;
 				$task_static->progress = $obj->progress;
-				$task_static->fk_statut = $obj->status;
 				$task_static->status = $obj->status;
 				$task_static->date_start = $this->db->jdate($obj->date_start);
 				$task_static->date_end = $this->db->jdate($obj->date_end);
