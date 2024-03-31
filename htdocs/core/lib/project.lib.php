@@ -1246,7 +1246,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 			$projectstatic->public = $lines[$i]->public;
 			$projectstatic->status = $lines[$i]->project->status;
 
-			$taskstatic->id = $lines[$i]->fk_statut;
+			$taskstatic->id = $lines[$i]->status;
 			$taskstatic->ref = ($lines[$i]->task_ref ? $lines[$i]->task_ref : $lines[$i]->task_id);
 			$taskstatic->label = $lines[$i]->task_label;
 			$taskstatic->date_start = $lines[$i]->date_start;
