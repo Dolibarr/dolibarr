@@ -2260,7 +2260,6 @@ class Facture extends CommonInvoice
 				$this->fk_account = ($obj->fk_account > 0) ? $obj->fk_account : null;
 				$this->fk_facture_source	= $obj->fk_facture_source;
 				$this->fk_fac_rec_source	= $obj->fk_fac_rec_source;
-				$this->note = $obj->note_private; // deprecated
 				$this->note_private = $obj->note_private;
 				$this->note_public			= $obj->note_public;
 				$this->user_creation_id     = $obj->fk_user_author;
@@ -2528,11 +2527,8 @@ class Facture extends CommonInvoice
 		if (isset($this->close_note)) {
 			$this->close_note = trim($this->close_note);
 		}
-		if (isset($this->note) || isset($this->note_private)) {
-			$this->note = (isset($this->note) ? trim($this->note) : trim($this->note_private)); // deprecated
-		}
-		if (isset($this->note) || isset($this->note_private)) {
-			$this->note_private = (isset($this->note_private) ? trim($this->note_private) : trim($this->note));
+		if (isset($this->note_private)) {
+			$this->note_private = trim($this->note_private);
 		}
 		if (isset($this->note_public)) {
 			$this->note_public = trim($this->note_public);
