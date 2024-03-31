@@ -1922,7 +1922,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						if ($objcount && $objcount->nb == 0) {
 							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def (";
 
-							$sql .= "id,";
+							$sql .= "id";
 							$sql .= ", entity";
 							$sql .= ", libelle";
 							$sql .= ", module";
@@ -1936,7 +1936,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= ") VALUES (";
 
 							$sql .= ((int) $r_id);
-							$sql .= ",".((int) $r_entity);
+							$sql .= ", ".((int) $r_entity);
 							$sql .= ", '".$this->db->escape($r_label)."'";
 							$sql .= ", '".$this->db->escape($r_module)."'";
 							$sql .= ", '".$this->db->escape($r_module_origin)."'";
