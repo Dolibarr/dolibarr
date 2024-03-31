@@ -3093,7 +3093,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 		$morehtmlstatus .= $tmptxt;
 	} elseif ($object->element == 'contrat' || $object->element == 'contract') {
-		if ($object->statut == 0) {
+		if ($object->status == 0) {
 			$morehtmlstatus .= $object->getLibStatut(5);
 		} else {
 			$morehtmlstatus .= $object->getLibStatut(4);
@@ -3106,14 +3106,11 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlstatus .= $object->getLibStatut(5);
 		}
 	} elseif ($object->element == 'project_task') {
-		$object->fk_statut = 1;
 		$object->status = 1;
 		if ($object->progress > 0) {
-			$object->fk_statut = 2;
 			$object->status = 2;
 		}
 		if ($object->progress >= 100) {
-			$object->fk_statut = 3;
 			$object->status = 3;
 		}
 		$tmptxt = $object->getLibStatut(5);
