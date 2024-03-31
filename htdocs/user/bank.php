@@ -356,7 +356,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	print '<table class="border centpercent tableforfield">';
 
 	print '<tr><td class="titlefieldmiddle">'.$langs->trans("Login").'</td>';
-	if (!empty($object->ldap_sid) && $object->statut == 0) {
+	if (!empty($object->ldap_sid) && $object->status == 0) {
 		print '<td class="error">';
 		print $langs->trans("LoginAccountDisableInDolibarr");
 		print '</td>';
@@ -642,7 +642,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 				$salary->label = $objp->label;
 				$salary->datesp = $db->jdate($objp->datesp);
 				$salary->dateep = $db->jdate($objp->dateep);
-				$salary->paye = $objp->paye;
+				$salary->paid = $objp->paye;
 				$salary->amount = $objp->amount;
 
 				$payment_salary->id = !empty($objp->rowid) ? $objp->rowid : 0;
@@ -702,7 +702,6 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 				$holiday->ref = $objp->rowid;
 
 				$holiday->fk_type = $objp->fk_type;
-				$holiday->statut = $objp->status;
 				$holiday->status = $objp->status;
 
 				$nbopenedday = num_open_day($db->jdate($objp->date_debut, 'gmt'), $db->jdate($objp->date_fin, 'gmt'), 0, 1, $objp->halfday);
