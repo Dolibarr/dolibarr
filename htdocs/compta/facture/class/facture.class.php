@@ -2236,7 +2236,7 @@ class Facture extends CommonInvoice
 				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ttc			= $obj->total_ttc;
 				$this->revenuestamp         = $obj->revenuestamp;
-				$this->paye                 = $obj->paye;
+				$this->paid                 = $obj->paye;
 				$this->close_code			= $obj->close_code;
 				$this->close_note			= $obj->close_note;
 
@@ -2559,7 +2559,7 @@ class Facture extends CommonInvoice
 		$sql .= " datef=".(strval($this->date) != '' ? "'".$this->db->idate($this->date)."'" : 'null').",";
 		$sql .= " date_pointoftax=".(strval($this->date_pointoftax) != '' ? "'".$this->db->idate($this->date_pointoftax)."'" : 'null').",";
 		$sql .= " date_valid=".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
-		$sql .= " paye=".(isset($this->paye) ? $this->db->escape($this->paye) : 0).",";
+		$sql .= " paye=".(isset($this->paid) ? (int) $this->paid : 0).",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
 		$sql .= " total_tva=".(isset($this->total_tva) ? (float) $this->total_tva : "null").",";
@@ -2929,9 +2929,9 @@ class Facture extends CommonInvoice
 
 					// On efface le repertoire de pdf provisoire
 					$ref = dol_sanitizeFileName($this->ref);
-					if ($conf->facture->dir_output && !empty($this->ref)) {
-						$dir = $conf->facture->dir_output."/".$ref;
-						$file = $conf->facture->dir_output."/".$ref."/".$ref.".pdf";
+					if ($conf->invoice->dir_output && !empty($this->ref)) {
+						$dir = $conf->invoice->dir_output."/".$ref;
+						$file = $conf->invoice->dir_output."/".$ref."/".$ref.".pdf";
 						if (file_exists($file)) {	// We must delete all files before deleting directory
 							$ret = dol_delete_preview($this);
 
@@ -2976,7 +2976,7 @@ class Facture extends CommonInvoice
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Tag the invoice as paid completely (if close_code is filled) => this->fk_statut=2, this->paye=1
+	 *  Tag the invoice as paid completely (if close_code is filled) => this->fk_statut=2, this->paid=1
 	 *  or partially (if close_code filled) + appel trigger BILL_PAYED => this->fk_statut=2, this->paye stay 0
 	 *
 	 *	@deprecated
@@ -2995,8 +2995,8 @@ class Facture extends CommonInvoice
 
 	/**
 	 *  Tag the invoice as :
-	 *  - paid completely (if close_code is not filled) => this->fk_statut=2, this->paye=1
-	 *  - or partially (if close_code filled) + appel trigger BILL_PAYED => this->fk_statut=2, this->paye stay 0
+	 *  - paid completely (if close_code is not filled) => this->fk_statut=2, this->paid=1
+	 *  - or partially (if close_code filled) + appel trigger BILL_PAYED => this->fk_statut=2, this->paid stay 0
 	 *
 	 *  @param	User	$user      	Object user that modify
 	 *	@param  string	$close_code	Code set when forcing to set the invoice as fully paid while in practice it is incomplete (because of a discount (fr:escompte) for instance)
@@ -3007,7 +3007,7 @@ class Facture extends CommonInvoice
 	{
 		$error = 0;
 
-		if ($this->paye != 1) {
+		if ($this->paid != 1) {
 			$this->db->begin();
 
 			$now = dol_now();
@@ -3585,15 +3585,15 @@ class Facture extends CommonInvoice
 					// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 					$oldref = dol_sanitizeFileName($this->ref);
 					$newref = dol_sanitizeFileName($num);
-					$dirsource = $conf->facture->dir_output.'/'.$oldref;
-					$dirdest = $conf->facture->dir_output.'/'.$newref;
+					$dirsource = $conf->invoice->dir_output.'/'.$oldref;
+					$dirdest = $conf->invoice->dir_output.'/'.$newref;
 					if (!$error && file_exists($dirsource)) {
 						dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
 
 						if (@rename($dirsource, $dirdest)) {
 							dol_syslog("Rename ok");
 							// Rename docs starting with $oldref with $newref
-							$listoffiles = dol_dir_list($conf->facture->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+							$listoffiles = dol_dir_list($conf->invoice->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 							foreach ($listoffiles as $fileentry) {
 								$dirsource = $fileentry['name'];
 								$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
@@ -5017,7 +5017,7 @@ class Facture extends CommonInvoice
 			$now = dol_now();
 
 			$response = new WorkboardResponse();
-			$response->warning_delay = $conf->facture->client->warning_delay / 60 / 60 / 24;
+			$response->warning_delay = $conf->invoice->client->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("CustomerBillsUnpaid");
 			$response->labelShort = $langs->trans("Unpaid");
 			$response->url = DOL_URL_ROOT.'/compta/facture/list.php?search_status=1&mainmenu=billing&leftmenu=customers_bills';
@@ -5126,7 +5126,6 @@ class Facture extends CommonInvoice
 
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
-		$this->note = 'This is a comment (private)';
 
 		$this->fk_user_author = $user->id;
 
@@ -5514,15 +5513,15 @@ class Facture extends CommonInvoice
 			return false;
 		}
 
-		$hasDelay = $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
+		$hasDelay = $this->date_lim_reglement < ($now - $conf->invoice->client->warning_delay);
 		if ($hasDelay && !empty($this->retained_warranty) && !empty($this->retained_warranty_date_limit)) {
 			$totalpaid = $this->getSommePaiement();
 			$totalpaid = (float) $totalpaid;
 			$RetainedWarrantyAmount = $this->getRetainedWarrantyAmount();
 			if ($totalpaid >= 0 && $RetainedWarrantyAmount >= 0) {
-				if (($totalpaid < $this->total_ttc - $RetainedWarrantyAmount) && $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay)) {
+				if (($totalpaid < $this->total_ttc - $RetainedWarrantyAmount) && $this->date_lim_reglement < ($now - $conf->invoice->client->warning_delay)) {
 					$hasDelay = 1;
-				} elseif ($totalpaid < $this->total_ttc && $this->retained_warranty_date_limit < ($now - $conf->facture->client->warning_delay)) {
+				} elseif ($totalpaid < $this->total_ttc && $this->retained_warranty_date_limit < ($now - $conf->invoice->client->warning_delay)) {
 					$hasDelay = 1;
 				} else {
 					$hasDelay = 0;
