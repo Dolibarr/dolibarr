@@ -559,12 +559,12 @@ if ($object->datefin) {
 		print $langs->trans("SubscriptionNotNeeded");
 	} elseif (!$adht->subscription) {
 		print $langs->trans("SubscriptionNotRecorded");
-		if (Adherent::STATUS_VALIDATED == $object->statut) {
+		if (Adherent::STATUS_VALIDATED == $object->status) {
 			print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft, not excluded and not resiliated
 		}
 	} else {
 		print $langs->trans("SubscriptionNotReceived");
-		if (Adherent::STATUS_VALIDATED == $object->statut) {
+		if (Adherent::STATUS_VALIDATED == $object->status) {
 			print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft, not excluded and not resiliated
 		}
 	}
