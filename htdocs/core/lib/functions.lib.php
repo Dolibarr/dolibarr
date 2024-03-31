@@ -1368,6 +1368,41 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 }
 
 /**
+ *	Get properties for an object - including magic properties when requested
+ *
+ *	Only returns properties that exist
+ *
+ *	@param	object		$obj		Object to get properties from
+ *	@param	string[]	$properties	Optional list of properties to get.
+ *  								When empty, only gets public properties.
+ *	@return array<string,mixed>		Hash for retrieved values (key=name)
+ */
+function dol_get_object_properties($obj, $properties = [])
+{
+	// Get real properties using get_object_vars() if $properties is empty
+	if (empty($properties)) {
+		return get_object_vars($obj);
+	}
+
+	$existingProperties = [];
+	$realProperties = get_object_vars($obj);
+
+	// Get the real or magic property values
+	foreach ($properties as $property) {
+		if (array_key_exists($property, $realProperties)) {
+			// Real property, add the value
+			$existingProperties[$property] = $obj->{$property};
+		} elseif (property_exists($obj, $property)) {
+			// Magic property
+			$existingProperties[$property] = $obj->{$property};
+		}
+	}
+
+	return $existingProperties;
+}
+
+
+/**
  *	Create a clone of instance of object (new instance with same value for each properties)
  *  With native = 0: Property that are reference are different memory area in the new object (full isolation clone). This means $this->db of new object may not be valid.
  *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db of new object is still valid but point to same this->db than original object.
