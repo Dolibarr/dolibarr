@@ -440,7 +440,7 @@ class Subscription extends CommonObject
 		$langs->load("members");
 
 		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Subscription").'</u>';
-		/*if (isset($this->statut)) {
+		/*if (isset($this->status)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}*/
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
