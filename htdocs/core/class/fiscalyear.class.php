@@ -89,13 +89,6 @@ class Fiscalyear extends CommonObject
 
 	/**
 	 * @var int status 0=open, 1=closed
-	 * @deprecated
-	 * @see $status
-	 */
-	public $statut;
-
-	/**
-	 * @var int status 0=open, 1=closed
 	 */
 	public $status;
 
