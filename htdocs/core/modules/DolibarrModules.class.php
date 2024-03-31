@@ -1925,7 +1925,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= "id,";
 							$sql .= ", entity";
 							$sql .= ", libelle";
-							$sql .= ", module,";
+							$sql .= ", module";
 							$sql .= ", module_origin";
 							$sql .= ", type";	// deprecated
 							$sql .= ", bydefault";
