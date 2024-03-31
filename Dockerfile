@@ -45,6 +45,7 @@ RUN apt-get update -y \
     && apt-get dist-upgrade -y \
     && apt-get install -y --no-install-recommends \
         libc-client-dev \
+        libapache2-mod-php\
         libfreetype6-dev \
         libjpeg62-turbo-dev \
         libkrb5-dev \
@@ -71,7 +72,7 @@ RUN apt-get update -y \
 # Get Dolibarr
 COPY htdocs/* /var/www/html/
 COPY scripts /var/www/
-
+RUN a2enmod rewrite
 RUN ln -s /var/www/html /var/www/htdocs && \
     rm -rf /tmp/* && \
     mkdir -p /var/www/documents && \
