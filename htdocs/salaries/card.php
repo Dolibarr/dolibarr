@@ -207,7 +207,7 @@ if ($action == 'setfk_user' && $permissiontoadd) {
 
 if ($action == 'reopen' && $permissiontoadd) {
 	$result = $object->fetch($id);
-	if ($object->paye) {
+	if ($object->paid) {
 		$result = $object->set_unpaid($user);
 		if ($result > 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
@@ -409,7 +409,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 	$object->fetch($id);
 
 	if ($object->id > 0) {
-		$object->paye = 0;
+		$object->paid = 0;
 		$object->id = 0;
 		$object->ref = '';
 
