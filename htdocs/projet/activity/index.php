@@ -504,7 +504,6 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_SHO
 
 			$taskstatic->projectstatus = $obj->projectstatus;
 			$taskstatic->progress = $obj->progress;
-			$taskstatic->fk_statut = $obj->status;
 			$taskstatic->status = $obj->status;
 			$taskstatic->date_start = $db->jdate($obj->date_start);
 			$taskstatic->date_end = $db->jdate($obj->date_end);
