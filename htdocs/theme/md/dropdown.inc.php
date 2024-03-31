@@ -40,11 +40,6 @@ div#topmenu-bookmark-dropdown {
 	<?php echo $right; ?>: 55px;
 	top: 0px;
 }
-div#topmenu-login-dropdown {
-	position: fixed;
-	<?php echo $right; ?>: 20px;
-	top: 0px;
-}
 
 #topmenu-login-dropdown .dropdown-toggle:after {
 	display: none;
@@ -220,7 +215,7 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 	max-width: 100%;
 }
 
-div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown, div#topmenu-login-dropdown {
+div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
 	line-height: <?php echo(getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 ? '35' : '46'); ?>px;
 }
 a.top-menu-dropdown-link {
