@@ -1601,7 +1601,6 @@ while ($i < $imaxinloop) {
 
 	$facturestatic->alreadypaid = ($paiement ? $paiement : 0);
 
-	$facturestatic->paye = $obj->paye;
 	$facturestatic->paid = $obj->paye;
 
 	$facturestatic->date = $db->jdate($obj->datef);
