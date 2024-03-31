@@ -95,12 +95,6 @@ class Holiday extends CommonObject
 	public $halfday = '';
 
 	/**
-	 * @var int Status 1=draft, 2=validated, 3=approved, 4 canceled, 5 refused
-	 * @deprecated
-	 */
-	public $statut = 0;
-
-	/**
 	 * @var int 	ID of user that must approve. Real user for approval is fk_user_valid (old version) or fk_user_approve (new versions)
 	 */
 	public $fk_validator;
