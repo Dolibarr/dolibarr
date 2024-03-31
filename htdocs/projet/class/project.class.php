@@ -206,12 +206,6 @@ class Project extends CommonObject
 	public $max_attendees;
 
 	/**
-	 * @var int status
-	 * @deprecated Use $status
-	 */
-	public $statut; // 0=draft, 1=opened, 2=closed
-
-	/**
 	 * @var int opportunity status
 	 */
 	public $opp_status; // opportunity status, into table llx_c_lead_status
@@ -789,7 +783,6 @@ class Project extends CommonObject
 				$this->user_modification_id = $obj->fk_user_modif;
 				$this->user_closing_id = $obj->fk_user_close;
 				$this->public = $obj->public;
-				$this->statut = $obj->status; // deprecated
 				$this->status = $obj->status;
 				$this->opp_status = $obj->fk_opp_status;
 				$this->opp_amount	= $obj->opp_amount;
@@ -1259,7 +1252,6 @@ class Project extends CommonObject
 			}
 
 			if (!$error) {
-				$this->statut = 1;
 				$this->status = 1;
 				$this->db->commit();
 				return 1;
@@ -1311,7 +1303,7 @@ class Project extends CommonObject
 				// End call triggers
 
 				if (!$error) {
-					$this->status = 2;
+					$this->status = self::STATUS_CLOSED;
 					$this->db->commit();
 					return 1;
 				} else {
@@ -1338,7 +1330,7 @@ class Project extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut(isset($this->status) ? $this->status : $this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2332,7 +2324,6 @@ class Project extends CommonObject
 			while ($obj = $this->db->fetch_object($resql)) {
 				$response->nbtodo++;
 
-				$project_static->statut = $obj->status;
 				$project_static->status = $obj->status;
 				$project_static->opp_status = $obj->fk_opp_status;
 				$project_static->date_end = $this->db->jdate($obj->datee);
