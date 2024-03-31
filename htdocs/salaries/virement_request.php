@@ -475,7 +475,7 @@ $sql .= " ORDER BY pfd.date_demande DESC";
 $resql = $db->query($sql);
 
 $hadRequest = $db->num_rows($resql);
-if ($object->paye == 0 && $hadRequest == 0) {
+if ($object->paid == 0 && $hadRequest == 0) {
 	if ($resteapayer > 0) {
 		if ($user_perms) {
 			print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -512,7 +512,7 @@ if ($object->paye == 0 && $hadRequest == 0) {
 	}
 } else {
 	if ($hadRequest == 0) {
-		if ($object->paye > 0) {
+		if ($object->paid > 0) {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPaid")).'">'.$buttonlabel.'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("Draft")).'">'.$buttonlabel.'</a>';
@@ -571,7 +571,6 @@ if ($resql) {
 			$tmpuser->email = $obj->email;
 			$tmpuser->lastname = $obj->lastname;
 			$tmpuser->firstname = $obj->firstname;
-			$tmpuser->statut = $obj->user_status;
 			$tmpuser->status = $obj->user_status;
 
 			print '<tr class="oddeven">';
@@ -607,7 +606,6 @@ if ($resql) {
 				$withdrawreceipt->date_trans = $db->jdate($obj->date_trans);
 				$withdrawreceipt->date_credit = $db->jdate($obj->date_credit);
 				$withdrawreceipt->date_creation = $db->jdate($obj->datec);
-				$withdrawreceipt->statut = $obj->status;
 				$withdrawreceipt->status = $obj->status;
 				$withdrawreceipt->amount = $obj->pb_amount;
 				//$withdrawreceipt->credite = $db->jdate($obj->credite);
@@ -688,7 +686,6 @@ if ($resql) {
 			$tmpuser->email = $obj->email;
 			$tmpuser->lastname = $obj->lastname;
 			$tmpuser->firstname = $obj->firstname;
-			$tmpuser->statut = $obj->user_status;
 			$tmpuser->status = $obj->user_status;
 
 			print '<tr class="oddeven">';
@@ -721,7 +718,6 @@ if ($resql) {
 				$withdrawreceipt->date_trans = $db->jdate($obj->date_trans);
 				$withdrawreceipt->date_credit = $db->jdate($obj->date_credit);
 				$withdrawreceipt->date_creation = $db->jdate($obj->datec);
-				$withdrawreceipt->statut = $obj->status;
 				$withdrawreceipt->status = $obj->status;
 				$withdrawreceipt->fk_bank_account = $obj->fk_bank_account;
 				$withdrawreceipt->amount = $obj->pb_amount;
