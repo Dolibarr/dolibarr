@@ -68,11 +68,6 @@ class Entrepot extends CommonObject
 	public $description;
 
 	/**
-	 * @var int
-	 */
-	public $statut;
-
-	/**
 	 * @var string Place
 	 */
 	public $lieu;
@@ -357,7 +352,7 @@ class Entrepot extends CommonObject
 		$sql .= ", fk_parent = ".(($this->fk_parent > 0) ? $this->fk_parent : "NULL");
 		$sql .= ", fk_project = ".(($this->fk_project > 0) ? $this->fk_project : "NULL");
 		$sql .= ", description = '".$this->db->escape($this->description)."'";
-		$sql .= ", statut = ".((int) $this->statut);
+		$sql .= ", statut = ".((int) $this->status);
 		$sql .= ", lieu = '".$this->db->escape($this->lieu)."'";
 		$sql .= ", address = '".$this->db->escape($this->address)."'";
 		$sql .= ", zip = '".$this->db->escape($this->zip)."'";
@@ -541,7 +536,7 @@ class Entrepot extends CommonObject
 				$this->ref            = $obj->label;
 				$this->label          = $obj->label;
 				$this->description    = $obj->description;
-				$this->statut         = $obj->statut;
+				$this->status         = $obj->statut;
 				$this->lieu           = $obj->lieu;
 				$this->address        = $obj->address;
 				$this->zip            = $obj->zip;
@@ -724,7 +719,7 @@ class Entrepot extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -773,7 +768,7 @@ class Entrepot extends CommonObject
 			return ['optimize' => $langs->trans("Warehouse")];
 		}
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Warehouse").'</u>';
-		if (!empty($this->statut)) {
+		if (!empty($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.(empty($this->ref) ? $this->label : $this->ref);
@@ -897,7 +892,7 @@ class Entrepot extends CommonObject
 		$this->id = 0;
 		$this->label = 'WAREHOUSE SPECIMEN';
 		$this->description = 'WAREHOUSE SPECIMEN '.dol_print_date($now, 'dayhourlog');
-		$this->statut = 1;
+		$this->status = 1;
 		$this->specimen = 1;
 
 		$this->lieu = 'Location test';
