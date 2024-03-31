@@ -1127,7 +1127,7 @@ if (getDolGlobalString('PROJECT_TIMES_SPENT_FORMAT')) {
 // --------------------------------------------------------------------
 $i = 0;
 $savnbfield = $totalarray['nbfield'];
-$totalarray = array();
+
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
