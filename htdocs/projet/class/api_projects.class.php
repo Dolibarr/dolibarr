@@ -106,7 +106,7 @@ class Projects extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$result = $this->project->fetch('',$ref);
+		$result = $this->project->fetch('', $ref);
 		if (!$result) {
 			throw new RestException(404, 'Project with supplied ref not found');
 		}
@@ -137,7 +137,7 @@ class Projects extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$result = $this->project->fetch('','','',$email_msgid);
+		$result = $this->project->fetch('', '', '', $email_msgid);
 		if (!$result) {
 			throw new RestException(404, 'Project with supplied email_msgid not found');
 		}
