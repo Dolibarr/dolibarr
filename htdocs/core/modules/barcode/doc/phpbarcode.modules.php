@@ -188,12 +188,22 @@ class modPhpbarcode extends ModeleBarCode
 
 		dol_mkdir($conf->barcode->dir_temp);
 		if (!is_writable($conf->barcode->dir_temp)) {
+			if ($langs instanceof Translate) {
+				$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->barcode->dir_temp);
+			} else {
+				$this->error = "ErrorFailedToWriteInTempDirectory ".$conf->barcode->dir_temp;
+			}
 			$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->barcode->dir_temp);
 			dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 			return -1;
 		}
 
-		$file = $conf->barcode->dir_temp . '/barcode_' . $code . '_' . $encoding . '.png';
+		$newcode = $code;
+		if (!preg_match('/^\w+$/', $code) || dol_strlen($code) > 32) {
+			$newcode = dol_hash($newcode, 'md5');	// No need for security here, we can use md5
+		}
+
+		$file = $conf->barcode->dir_temp . '/barcode_' . $newcode . '_' . $encoding . '.png';
 
 		$filebarcode = $file; // global var to be used in barcode_outimage called by barcode_print in buildBarCode
 

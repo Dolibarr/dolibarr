@@ -216,6 +216,8 @@ body {
 	font-weight: 400;
 	background-color: var(--colorbackbody);
 	<?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
+	/*transform: scale(1.2);
+	transform-origin: 0 0;*/
 }
 
 /* Style used to protect html content in output to avoid attack by replacing full page with js content */
@@ -3280,6 +3282,7 @@ span.userimg div.userphoto {
 	width: 1.4em;
 	height: 1.4em;
 	padding-top: 1px;
+	display: inline-block;
 }
 img.userphotosmall {			/* size for user photo in lists */
 	border-radius: 0.6em;

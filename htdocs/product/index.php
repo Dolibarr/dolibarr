@@ -78,6 +78,8 @@ if (GETPOST('addbox')) {
 	}
 }
 
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
+
 
 /*
  * View
@@ -304,15 +306,14 @@ if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODU
  * Latest modified products
  */
 if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
-	$max = 15;
 	$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
 	$sql .= " p.entity,";
 	$sql .= " p.tms as datem";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 	$sql .= " WHERE p.entity IN (".getEntity($product_static->element, 1).")";
-	if ($type != '') {
+	/*if ($type != '') {
 		$sql .= " AND p.fk_product_type = ".((int) $type);
-	}
+	}*/
 	// Add where from hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $product_static); // Note that $action and $object may have been modified by hook
@@ -330,10 +331,10 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 
 		if ($num > 0) {
 			$transRecordedType = $langs->trans("LastModifiedProductsAndServices", $max);
-			if (GETPOSTISSET("type") && GETPOST("type") == '0') {
+			if (!isModEnabled('service')) {
 				$transRecordedType = $langs->trans("LastRecordedProducts", $max);
 			}
-			if (GETPOSTISSET("type") && GETPOST("type") == '1') {
+			if (!isModEnabled('product')) {
 				$transRecordedType = $langs->trans("LastRecordedServices", $max);
 			}
 
@@ -346,7 +347,15 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 			}
 
 			$lastmodified .= '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th>';
-			$lastmodified .= '<th class="right" colspan="3"><a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+			$lastmodified .= '<th class="right" colspan="3">';
+			$lastmodified .= '<a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC&type=0">';
+			//$lastmodified .= $langs->trans("FullList");
+			$lastmodified .= img_picto($langs->trans("FullList").' - '.$langs->trans("Products"), 'product');
+			$lastmodified .= '</a> &nbsp; ';
+			$lastmodified .= '<a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC&type=1">';
+			//$langs->trans("FullList").'</a>';
+			$lastmodified .= img_picto($langs->trans("FullList").' - '.$langs->trans("Services"), 'service');
+			$lastmodified .= '</th>';
 			$lastmodified .= '</tr>';
 
 			while ($i < $num) {
@@ -436,6 +445,104 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 }
 
 
+$latestmovement = '';
+if (isModEnabled('product')) {
+	$producttmp = new Product($db);
+	$warehouse = new Entrepot($db);
+
+	// Latest movements
+	$sql = "SELECT p.rowid, p.label as produit, p.tobatch, p.tosell, p.tobuy,";
+	$sql .= " e.ref as warehouse_ref, e.rowid as warehouse_id, e.ref as warehouse_label, e.lieu, e.statut as warehouse_status,";
+	$sql .= " m.rowid as mid, m.value as qty, m.datem, m.batch, m.eatby, m.sellby";
+	$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+	$sql .= ", ".MAIN_DB_PREFIX."stock_mouvement as m";
+	$sql .= ", ".MAIN_DB_PREFIX."product as p";
+	$sql .= " WHERE m.fk_product = p.rowid";
+	$sql .= " AND m.fk_entrepot = e.rowid";
+	$sql .= " AND e.entity IN (".getEntity('stock').")";
+	if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+		$sql .= " AND p.fk_product_type = ".Product::TYPE_PRODUCT;
+	}
+	$sql .= $db->order("datem", "DESC");
+	$sql .= $db->plimit($max, 0);
+
+	dol_syslog("Index:list stock movements", LOG_DEBUG);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+
+		$latestmovement .= '<div class="div-table-responsive-no-min">';
+		$latestmovement .= '<table class="noborder centpercent">';
+		$latestmovement .= '<tr class="liste_titre">';
+		$latestmovement .= '<th>'.$langs->trans("LastMovements", min($num, $max)).'</th>';
+		$latestmovement .= '<th>'.$langs->trans("Product").'</th>';
+		if (isModEnabled('productbatch')) {
+			$latestmovement .= '<th>'.$langs->trans("Batch").'</th>';
+		}
+		$latestmovement .= '<th>'.$langs->trans("Warehouse").'</th>';
+		$latestmovement .= '<th class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/movement_list.php">';
+		$latestmovement .= img_picto($langs->trans("FullList"), 'movement');
+		$latestmovement .= '</a></th>';
+		$latestmovement .= "</tr>\n";
+
+		$tmplotstatic = new Productlot($db);
+
+		$i = 0;
+		while ($i < min($num, $max)) {
+			$objp = $db->fetch_object($resql);
+
+			$producttmp->id = $objp->rowid;
+			$producttmp->ref = $objp->produit;
+			$producttmp->status_batch = $objp->tobatch;
+			$producttmp->status_sell = $objp->tosell;
+			$producttmp->status_buy = $objp->tobuy;
+
+			$warehouse->id = $objp->warehouse_id;
+			$warehouse->ref = $objp->warehouse_ref;
+			$warehouse->statut = $objp->warehouse_status;
+			$warehouse->label = $objp->warehouse_label;
+			$warehouse->lieu = $objp->lieu;
+
+			$tmplotstatic->batch = $objp->batch;
+			$tmplotstatic->sellby = $objp->sellby;
+			$tmplotstatic->eatby = $objp->eatby;
+
+			$latestmovement .= '<tr class="oddeven">';
+			$latestmovement .= '<td class="nowraponall">'.img_picto($langs->trans("Ref").' '.$objp->mid, 'movement', 'class="pictofixedwidth"').dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
+			$latestmovement .= '<td class="tdoverflowmax150">';
+			$latestmovement .= $producttmp->getNomUrl(1);
+			$latestmovement .= "</td>\n";
+			if (isModEnabled('productbatch')) {
+				$latestmovement .= '<td>';
+				$latestmovement .= $tmplotstatic->getNomUrl(0, 'nolink');
+				$latestmovement .= '</td>';
+				/*if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+				 print '<td>'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
+				 }
+				 if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+				 print '<td>'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
+				 }*/
+			}
+			$latestmovement .= '<td class="tdoverflowmax150">';
+			$latestmovement .= $warehouse->getNomUrl(1);
+			$latestmovement .= "</td>\n";
+			$latestmovement .= '<td class="right">';
+			if ($objp->qty > 0) {
+				$latestmovement .= '+';
+			}
+			$latestmovement .= $objp->qty.'</td>';
+			$latestmovement .= "</tr>\n";
+			$i++;
+		}
+		$db->free($resql);
+
+		$latestmovement .= "</table>";
+		$latestmovement .= '</div>';
+	} else {
+		dol_print_error($db);
+	}
+}
+
 // TODO Move this into a page that should be available into menu "accountancy - report - turnover - per quarter"
 // Also method used for counting must provide the 2 possible methods like done by all other reports into menu "accountancy - report - turnover":
 // "commitment engagement" method and "cash accounting" method
@@ -468,6 +575,7 @@ $boxlist .= "</div>\n";
 
 $boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 $boxlist .= $lastmodified;
+$boxlist .= $latestmovement;
 $boxlist .= $resultboxes['boxlistb'];
 $boxlist .= '</div>'."\n";
 
