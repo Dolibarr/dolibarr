@@ -261,7 +261,12 @@ class SupplierInvoices extends DolibarrApi
 				$this->invoice->context['caller'] = $request_data['caller'];
 				continue;
 			}
-
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->invoice->array_options[$index] = $val;
+				}
+				continue;
+			}
 			$this->invoice->$field = $this->_checkValForAPI($field, $value, $this->invoice);
 		}
 
