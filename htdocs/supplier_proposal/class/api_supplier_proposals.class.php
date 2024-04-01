@@ -52,6 +52,38 @@ class SupplierProposals extends DolibarrApi
 	}
 
 	/**
+	 * Delete commercial proposal
+	 *
+	 * @param   int     $id         Supplier proposal ID
+	 * @return  array
+	 */
+	public function delete($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'supprimer')) {
+			throw new RestException(403);
+		}
+		$result = $this->supplier_proposal->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Supplier Proposal not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('supplier_proposal', $this->supplier_proposal->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if (!$this->supplier_proposal->delete(DolibarrApiAccess::$user)) {
+			throw new RestException(500, 'Error when delete Supplier Proposal : '.$this->supplier_proposal->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Supplier Proposal deleted'
+			)
+		);
+	}
+
+	/**
 	 * Get properties of a supplier proposal (price request) object
 	 *
 	 * Return an array with supplier proposal information
@@ -78,6 +110,99 @@ class SupplierProposals extends DolibarrApi
 
 		$this->supplier_proposal->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->supplier_proposal);
+	}
+
+	/**
+	 * Create supplier proposal (price request) object
+	 *
+	 * @param   array   $request_data   Request data
+	 * @return  int     ID of supplier proposal
+	 */
+	public function post($request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'creer')) {
+			throw new RestException(401, "Insuffisant rights");
+		}
+		// Check mandatory fields
+		$result = $this->_validate($request_data);
+
+		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->supplier_proposal->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
+			$this->supplier_proposal->$field = $value;
+		}
+		/*if (isset($request_data["lines"])) {
+		  $lines = array();
+		  foreach ($request_data["lines"] as $line) {
+			array_push($lines, (object) $line);
+		  }
+		  $this->propal->lines = $lines;
+		}*/
+		if ($this->supplier_proposal->create(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, "Error creating supplier proposal", array_merge(array($this->supplier_proposal->error), $this->supplier_proposal->errors));
+		}
+
+		return $this->supplier_proposal->id;
+	}
+
+	/**
+	 * Update supplier proposal general fields (won't touch lines of supplier proposal)
+	 *
+	 * @param	int		$id             Id of supplier proposal to update
+	 * @param	array	$request_data   Datas
+	 * @return	Object					Object with cleaned properties
+	 */
+	public function put($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->supplier_proposal->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Supplier proposal not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('supplier_proposal', $this->supplier_proposal->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') {
+				continue;
+			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->supplier_proposal->context['caller'] = $request_data['caller'];
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->supplier_proposal->array_options[$index] = $val;
+				}
+				continue;
+			}
+			$this->supplier_proposal->$field = $value;
+		}
+
+		// update end of validity date
+		if (empty($this->supplier_proposal->fin_validite) && !empty($this->supplier_proposal->duree_validite) && !empty($this->supplier_proposal->date_creation)) {
+			$this->supplier_proposal->fin_validite = $this->supplier_proposal->date_creation + ($this->supplier_proposal->duree_validite * 24 * 3600);
+		}
+		if (!empty($this->supplier_proposal->fin_validite)) {
+			if ($this->supplier_proposal->set_echeance(DolibarrApiAccess::$user, $this->supplier_proposal->fin_validite) < 0) {
+				throw new RestException(500, $this->supplier_proposal->error);
+			}
+		}
+
+		if ($this->supplier_proposal->update(DolibarrApiAccess::$user) > 0) {
+			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->supplier_proposal->error);
+		}
 	}
 
 	/**
