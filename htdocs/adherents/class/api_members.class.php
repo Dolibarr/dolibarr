@@ -476,7 +476,6 @@ class Members extends DolibarrApi
 		}
 
 		if ($object instanceof AdherentType) {
-			unset($object->array_options);
 			unset($object->linkedObjectsIds);
 			unset($object->context);
 			unset($object->canvas);
@@ -795,7 +794,12 @@ class Members extends DolibarrApi
 				$membertype->context['caller'] = $request_data['caller'];
 				continue;
 			}
-
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$membertype->array_options[$index] = $val;
+				}
+				continue;
+			}
 			// Process the status separately because it must be updated using
 			// the validate(), resiliate() and exclude() methods of the class AdherentType.
 			$membertype->$field = $value;
