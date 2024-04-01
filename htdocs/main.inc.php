@@ -2522,10 +2522,19 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	}
 
 	if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		if (getDolGlobalString('MAIN_THEME') != 'md') {
+			if (empty($user->photo)) {
+				$userLogin = '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">' . dol_trunc($user->firstname ? $user->firstname : $user->login, 10) . '</span>';
+			} else {
+				$userLogin = '';
+			}
+		} else {
+			$userLogin = '';
+		}
 		$btnUser = '<!-- div for user link -->
 	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
-	            '.$userImage.(empty($user->photo) ? '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'
+	            '.$userImage.$userLogin.'
 	        </a>
 	        <div class="dropdown-menu">
 	            <!-- User image -->
