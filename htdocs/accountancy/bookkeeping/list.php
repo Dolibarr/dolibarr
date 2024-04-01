@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2022  		Lionel Vessiller        <lvessiller@open-dsi.fr>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2022       Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022  		Progiseize         		<a.bisotti@progiseize.fr>
@@ -1293,7 +1293,7 @@ while ($i < min($num, $limit)) {
 	}
 
 	if (!empty($arrayfields['t.import_key']['checked'])) {
-		print '<td class="tdoverflowmax100">'.$obj->import_key."</td>\n";
+		print '<td class="center">'.$obj->import_key."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
