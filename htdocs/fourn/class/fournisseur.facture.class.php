@@ -1165,8 +1165,8 @@ class FactureFournisseur extends CommonInvoice
 		if (isset($this->close_note)) {
 			$this->close_note = trim($this->close_note);
 		}
-		if (isset($this->localtax1)) {
-			$this->localtax1 = trim($this->localtax1);
+		if (isset($this->total_localtax1)) {
+			$this->total_localtax1 = trim($this->total_localtax1);
 		}
 		if (isset($this->total_localtax2)) {
 			$this->total_localtax2 = trim($this->total_localtax2);
@@ -1242,7 +1242,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " paye=".(isset($this->paye) ? ((int) $this->paye) : "0").",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
-		$sql .= " localtax1=".(isset($this->localtax1) ? ((float) $this->localtax1) : "null").",";
+		$sql .= " localtax1=".(isset($this->total_localtax1) ? ((float) $this->total_localtax1) : "null").",";
 		$sql .= " localtax2=".(isset($this->total_localtax2) ? ((float) $this->total_localtax2) : "null").",";
 		$sql .= " total_ht=".(isset($this->total_ht) ? ((float) $this->total_ht) : "null").",";
 		$sql .= " total_tva=".(isset($this->total_tva) ? ((float) $this->total_tva) : "null").",";
