@@ -462,7 +462,12 @@ class Tasks extends DolibarrApi
 				$this->task->context['caller'] = $request_data['caller'];
 				continue;
 			}
-
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->task->array_options[$index] = $val;
+				}
+				continue;
+			}
 			$this->task->$field = $value;
 		}
 
