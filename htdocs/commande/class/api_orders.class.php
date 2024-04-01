@@ -652,7 +652,12 @@ class Orders extends DolibarrApi
 				$this->commande->context['caller'] = $request_data['caller'];
 				continue;
 			}
-
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->commande->array_options[$index] = $val;
+				}
+				continue;
+			}
 			$this->commande->$field = $value;
 		}
 
