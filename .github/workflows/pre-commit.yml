@@ -115,7 +115,7 @@ jobs:
           ls -l ~/.cache/pre-commit/
 
       - name: Convert Raw Log to Annotations
-        uses: mdeweerd/logToCheckStyle@v2024.3.4
+        uses: mdeweerd/logToCheckStyle@v2024.3.5
         if: ${{ failure() }}
         with:
           in: ${{ env.RAW_LOG }}
