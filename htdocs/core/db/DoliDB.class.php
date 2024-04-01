@@ -106,6 +106,17 @@ abstract class DoliDB implements Database
 	}
 
 	/**
+	 * Return SQL string to aggregate using the Standard Deviation of population
+	 *
+	 * @param	string	$nameoffield	Name of field
+	 * @return	string					SQL string
+	 */
+	public function stddevPop($nameoffield)
+	{
+		return 'STDDEV_POP('.$nameoffield.')';
+	}
+
+	/**
 	 * Return SQL string to force an index
 	 *
 	 * @param	string	$nameofindex	Name of index

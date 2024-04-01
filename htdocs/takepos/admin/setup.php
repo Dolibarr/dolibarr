@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 // If socid provided by ajax company selector
-if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id'])) {
+if (GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha')) {
 	$_GET['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 	$_POST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 	$_REQUEST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');

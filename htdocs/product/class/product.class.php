@@ -16,7 +16,7 @@
  * Copyright (C) 2017		Gustavo Novaro
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ class Product extends CommonObject
 	public $fk_element = 'fk_product';
 
 	/**
-	 * @var Product
+	 * @var static
 	 */
 	public $oldcopy;
 
@@ -777,6 +777,7 @@ class Product extends CommonObject
 				}
 				dol_include_once('/core/modules/product/'.$module.'.php');
 				$modCodeProduct = new $module();
+				'@phan-var-force ModeleProductCode $modCodeProduct';
 				if (!empty($modCodeProduct->code_auto)) {
 					$this->ref = $modCodeProduct->getNextValue($this, $this->type);
 				}
@@ -1048,6 +1049,7 @@ class Product extends CommonObject
 			}
 
 			$mod = new $module();
+			'@phan-var-force ModeleNumRefBarCode $mod';
 
 			dol_syslog(get_class($this)."::check_barcode value=".$valuetotest." type=".$typefortest." module=".$module);
 			$result = $mod->verif($this->db, $valuetotest, $this, 0, $typefortest);
@@ -6358,6 +6360,7 @@ class Product extends CommonObject
 			}
 			$var = getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM');
 			$mod = new $var();
+			'@phan-var-force ModeleNumRefBarCode $module';
 
 			$result = $mod->getNextValue($object, $type);
 
@@ -6704,7 +6707,7 @@ class Product extends CommonObject
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		if (property_exists($this, 'label')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
+			$return .= '<br><span class="info-box-label opacitymedium inline-block tdoverflowmax150 valignmiddle" title="'.dol_escape_htmltag($this->label).'">'.dol_escape_htmltag($this->label).'</span>';
 		}
 		if (property_exists($this, 'price') && property_exists($this, 'price_ttc')) {
 			if ($this->price_base_type == 'TTC') {

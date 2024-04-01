@@ -444,7 +444,7 @@ if (empty($reshook)) {
 			exit;
 		} else {
 			$db->rollback();
-			$_GET["commande_id"] = GETPOSTINT('commande_id');
+			//$_GET["commande_id"] = GETPOSTINT('commande_id');
 			$action = 'create';
 		}
 	} elseif ($action == 'create_delivery' && getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'creer')) {

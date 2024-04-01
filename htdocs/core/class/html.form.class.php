@@ -70,7 +70,9 @@ class Form
 	public $errors = array();
 
 	// Some properties used to return data by some methods
+	/** @var array<string,int> */
 	public $result;
+	/** @var int */
 	public $num;
 
 	// Cache arrays
@@ -213,7 +215,7 @@ class Form
 	 * @param string 	$formatfunc 	Call a specific method of $object->$formatfunc to output field in view mode (For example: 'dol_print_email')
 	 * @param string 	$paramid 		Key of parameter for id ('id', 'socid')
 	 * @param string 	$gm 			'auto' or 'tzuser' or 'tzuserrel' or 'tzserver' (when $typeofdata is a date)
-	 * @param array 	$moreoptions 	Array with more options. For example array('addnowlink'=>1), array('valuealreadyhtmlescaped'=>1)
+	 * @param array<string,int> 	$moreoptions 	Array with more options. For example array('addnowlink'=>1), array('valuealreadyhtmlescaped'=>1)
 	 * @param string 	$editaction 	[=''] use GETPOST default action or set action to edit mode
 	 * @return string                   HTML edit field
 	 */
@@ -408,7 +410,7 @@ class Form
 	 * Output edit in place form
 	 *
 	 * @param 	string 	$fieldname 	Name of the field
-	 * @param 	object 	$object 	Object
+	 * @param 	CommonObject	$object Object
 	 * @param 	boolean $perm 		Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
 	 * @param 	string 	$typeofdata Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
 	 * @param 	string 	$check 		Same coe than $check parameter of GETPOST()
@@ -814,7 +816,7 @@ class Form
 	 * Generate select HTML to choose massaction
 	 *
 	 * @param string 	$selected 		Value auto selected when at least one record is selected. Not a preselected value. Use '0' by default.
-	 * @param array 	$arrayofaction 	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
+	 * @param array<string,string> 	$arrayofaction 	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
 	 * @param int 		$alwaysvisible 	1=select button always visible
 	 * @param string 	$name 			Name for massaction
 	 * @param string 	$cssclass 		CSS class used to check for select
@@ -926,11 +928,11 @@ class Form
 	 * @param integer 		$maxlength 				Max length for labels (0=no limit)
 	 * @param string 		$morecss 				More css class
 	 * @param string 		$usecodeaskey 			''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
-	 * @param int|string 	$showempty 				Show empty choice
-	 * @param int 			$disablefavorites 		1=Disable favorites,
-	 * @param int 			$addspecialentries 		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
-	 * @param array 		$exclude_country_code 	Array of country code (iso2) to exclude
-	 * @param int 			$hideflags 				Hide flags
+	 * @param int<0,1>|string 	$showempty 				Show empty choice
+	 * @param int<0,1>		$disablefavorites 		1=Disable favorites,
+	 * @param int<0,1> 		$addspecialentries 		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
+	 * @param string[] 		$exclude_country_code 	Array of country code (iso2) to exclude
+	 * @param int<0,1>		$hideflags 				Hide flags
 	 * @return string       	                	HTML string with select
 	 */
 	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array(), $hideflags = 0)
@@ -1061,9 +1063,9 @@ class Form
 	 * @param 	string 	$page 					Defined the form action
 	 * @param 	string 	$htmlname 				Name of html select object
 	 * @param 	string 	$htmloption 			Options html on select object
-	 * @param 	int 	$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
-	 * @param 	array 	$events 				Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 * @param 	int 	$disableautocomplete 	Disable autocomplete
+	 * @param 	int<0,1>	$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
+	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 				Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param 	int<0,1>	$disableautocomplete 	Disable autocomplete
 	 * @return 	string                       	HTML string with select and input
 	 */
 	public function select_incoterms($selected = '', $location_incoterms = '', $page = '', $htmlname = 'incoterm_id', $htmloption = '', $forcecombo = 1, $events = array(), $disableautocomplete = 0)
@@ -1148,7 +1150,7 @@ class Form
 	 *
 	 * @param 	string 		$selected 	Preselected type
 	 * @param 	string 		$htmlname 	Name of field in html form
-	 * @param 	int 		$showempty 	Add an empty field
+	 * @param 	int<0,1> 	$showempty 	Add an empty field
 	 * @param 	int 		$hidetext 	Do not show label 'Type' before combo box (used only if there is at least 2 choices to select)
 	 * @param 	integer 	$forceall 	1=Force to show products and services in combo list, whatever are activated modules, 0=No force, 2=Force to show only Products, 3=Force to show only services, -1=Force none (and set hidden field to 'service')
 	 * @return  void
@@ -1303,19 +1305,19 @@ class Form
 	 * @param string 	$selected 			Preselected type
 	 * @param string 	$htmlname 			Name of field in form
 	 * @param string 	$filter 			Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here. Example: ((s.client:IN:1,3) AND (s.status:=:1)). Do not use a filter coming from input of users.
-	 * @param string 	$showempty 			Add an empty field (Can be '1' or text key to use on empty line like 'SelectThirdParty')
+	 * @param string|int<1,1> 	$showempty 	Add an empty field (Can be '1' or text key to use on empty line like 'SelectThirdParty')
 	 * @param int 		$showtype 			Show third party type in combolist (customer, prospect or supplier)
 	 * @param int 		$forcecombo 		Force to load all values and output a standard combobox (with no beautification)
-	 * @param array 	$events 			Ajax event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Ajax event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param int 		$limit 				Maximum number of elements
 	 * @param string 	$morecss 			Add more css styles to the SELECT component
 	 * @param string 	$moreparam 			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 * @param string 	$selected_input_value 	Value of preselected input text (for use with ajax)
-	 * @param int 		$hidelabel 			Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
-	 * @param array 	$ajaxoptions 		Options for ajax_autocompleter
+	 * @param int<0,3>	$hidelabel 			Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 * @param array<string,string|string[]>	$ajaxoptions 		Options for ajax_autocompleter
 	 * @param bool 		$multiple 			add [] in the name of element and add 'multiple' attribute (not working with ajax_autocompleter)
-	 * @param array 	$excludeids 		Exclude IDs from the select combo
-	 * @param int 		$showcode 			Show code
+	 * @param string[] 	$excludeids 		Exclude IDs from the select combo
+	 * @param int<0,1>	$showcode 			Show code
 	 * @return string  		                HTML string with select box for thirdparty.
 	 */
 	public function select_company($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $limit = 0, $morecss = 'minwidth100', $moreparam = '', $selected_input_value = '', $hidelabel = 1, $ajaxoptions = array(), $multiple = false, $excludeids = array(), $showcode = 0)
@@ -1381,19 +1383,19 @@ class Form
 	 * @param string 	$filter 		Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>] are allowed here, example: 's.rowid <> x'
 	 * 									If you need parenthesis, use the Universal Filter Syntax, example: '(s.client:in:1,3)'
 	 * 									Do not use a filter coming from input of users.
-	 * @param string 	$showempty 		Add an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
-	 * @param int 		$showtype 		Show third party type in combolist (customer, prospect or supplier)
+	 * @param string|int<0,1> 	$showempty 	Add an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
+	 * @param int<0,1>	$showtype 		Show third party type in combolist (customer, prospect or supplier)
 	 * @param int 		$forcecombo 	Force to use standard HTML select component without beautification
-	 * @param array 	$events 		Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param string 	$filterkey 		Filter on key value
-	 * @param int 		$outputmode 	0=HTML select string, 1=Array
+	 * @param int<0,1>	$outputmode 	0=HTML select string, 1=Array
 	 * @param int 		$limit 			Limit number of answers
 	 * @param string 	$morecss 		Add more css styles to the SELECT component
 	 * @param string 	$moreparam 		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 * @param bool 		$multiple 		add [] in the name of element and add 'multiple' attribute
-	 * @param array 	$excludeids 	Exclude IDs from the select combo
-	 * @param int 		$showcode 		Show code in list
-	 * @return array|string            	HTML string with
+	 * @param string[] 	$excludeids 	Exclude IDs from the select combo
+	 * @param int<0,1>	$showcode 		Show code in list
+	 * @return array<int,array{key:int,value:string,label:string,labelhtml:string}>|string            	HTML string with
 	 */
 	public function select_thirdparty_list($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $filterkey = '', $outputmode = 0, $limit = 0, $morecss = 'minwidth100', $moreparam = '', $multiple = false, $excludeids = array(), $showcode = 0)
 	{
@@ -1720,14 +1722,14 @@ class Form
 	 * @param int 		$socid 			Id of third party or 0 for all
 	 * @param string 	$selected 		Id of preselected contact
 	 * @param string 	$htmlname 		Name of HTML field ('none' for a not editable field)
-	 * @param int 		$showempty 		0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
+	 * @param int<0,3>	$showempty 		0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
 	 * @param string 	$exclude 		List of contacts id to exclude
 	 * @param string 	$limitto 		Disable answers that are not id in this array list
 	 * @param integer 	$showfunction 	Add function into label
 	 * @param string 	$morecss 		Add more class to class style
 	 * @param integer 	$showsoc 		Add company into label
 	 * @param int 		$forcecombo 	Force to use combo box
-	 * @param array 	$events 		Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param bool 		$options_only 	Return options only (for ajax treatment)
 	 * @param string 	$moreparam 		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 * @param string 	$htmlid 		Html id to use instead of htmlname
@@ -1750,7 +1752,7 @@ class Form
 	 * @param int 			$socid 				Id of third party or 0 for all or -1 for empty list
 	 * @param array|int 	$selected 			Array of ID of preselected contact id
 	 * @param string 		$htmlname 			Name of HTML field ('none' for a not editable field)
-	 * @param int|string 	$showempty 			0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
+	 * @param int<0,3>|string	$showempty		0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
 	 * @param string 		$exclude 			List of contacts id to exclude
 	 * @param string 		$limitto 			Disable answers that are not id in this array list
 	 * @param integer 		$showfunction 		Add function into label
@@ -1758,7 +1760,7 @@ class Form
 	 * @param bool 			$options_only 		Return options only (for ajax treatment)
 	 * @param integer 		$showsoc 			Add company into label
 	 * @param int 			$forcecombo 		Force to use combo box (so no ajax beautify effect)
-	 * @param array 		$events 			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param string 		$moreparam 			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 * @param string 		$htmlid 			Html id to use instead of htmlname
 	 * @param bool 			$multiple 			add [] in the name of element and add 'multiple' attribute
@@ -1970,11 +1972,11 @@ class Form
 	 *
 	 * @param string $selected Id user preselected
 	 * @param string $htmlname Field name in form
-	 * @param int $show_empty 0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 * @param array $exclude Array list of users id to exclude
-	 * @param int $disabled If select list must be disabled
-	 * @param array|string $include Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
-	 * @param array|int $enableonly Array list of users id to be enabled. All other must be disabled
+	 * @param int<0,1> $show_empty 0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 * @param int[] $exclude Array list of users id to exclude
+	 * @param int<0,1> $disabled If select list must be disabled
+	 * @param int[]|string $include Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
+	 * @param int[]|int $enableonly Array list of users id to be enabled. All other must be disabled
 	 * @param string $force_entity '0' or Ids of environment to force
 	 * @return    void
 	 * @deprecated        Use select_dolusers instead
@@ -1991,25 +1993,25 @@ class Form
 	/**
 	 *    Return select list of users
 	 *
-	 * @param string|int	$selected 		User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1 or '', keep unselected (if empty is allowed)
+	 * @param string|int|User	$selected 	User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1 or '', keep unselected (if empty is allowed)
 	 * @param string 		$htmlname 		Field name in form
-	 * @param int|string 	$show_empty 	0=list with no empty value, 1=add also an empty value into list
-	 * @param array|null	$exclude 		Array list of users id to exclude
+	 * @param int<0,1>|string 	$show_empty 	0=list with no empty value, 1=add also an empty value into list
+	 * @param int[]|null	$exclude 		Array list of users id to exclude
 	 * @param int 			$disabled 		If select list must be disabled
-	 * @param array|string 	$include 		Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
+	 * @param int[]|string 	$include 		Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
 	 * @param array|string	$enableonly 	Array list of users id to be enabled. If defined, it means that others will be disabled
 	 * @param string 		$force_entity 	'0' or list of Ids of environment to force separated by a coma
 	 * @param int 			$maxlength 		Maximum length of string into list (0=no limit)
-	 * @param int 			$showstatus 	0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+	 * @param int<-1,1>		$showstatus 	0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 * @param string 		$morefilter 	Add more filters into sql request (Example: 'employee = 1'). This value must not come from user input.
 	 * @param integer 		$show_every 	0=default list, 1=add also a value "Everybody" at beginning of list
 	 * @param string 		$enableonlytext If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
 	 * @param string 		$morecss 		More css
-	 * @param int 			$notdisabled 	Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
-	 * @param int 			$outputmode 	0=HTML select string, 1=Array
+	 * @param int<0,1> 		$notdisabled 	Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
+	 * @param int<0,2>		$outputmode 	0=HTML select string, 1=Array
 	 * @param bool 			$multiple 		add [] in the name of element and add 'multiple' attribute
-	 * @param int 			$forcecombo 	Force the component to be a simple combo box without ajax
-	 * @return array|string                    HTML select string
+	 * @param int<0,1> 			$forcecombo 	Force the component to be a simple combo box without ajax
+	 * @return string|array<int,string|array{id:int,label:string,labelhtml:string,color:string,picto:string}>	HTML select string
 	 * @see select_dolgroups()
 	 */
 	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
@@ -2137,7 +2139,7 @@ class Form
 					$userstatic->lastname = $obj->lastname;
 					$userstatic->firstname = $obj->firstname;
 					$userstatic->photo = $obj->photo;
-					$userstatic->statut = $obj->status;
+					$userstatic->status = $obj->status;
 					$userstatic->entity = $obj->entity;
 					$userstatic->admin = $obj->admin;
 
@@ -2205,7 +2207,7 @@ class Form
 					if (!empty($disableline)) {
 						$out .= ' disabled';
 					}
-					if ((is_object($selected) && $selected->id == $obj->rowid) || (!is_object($selected) && in_array($obj->rowid, $selected))) {
+					if ((!empty($selected[0]) && is_object($selected[0])) ? $selected[0]->id == $obj->rowid : in_array($obj->rowid, $selected)) {
 						$out .= ' selected';
 					}
 					$out .= ' data-html="';
@@ -2265,19 +2267,19 @@ class Form
 	 *
 	 * @param string 	$action 			Value for $action
 	 * @param string 	$htmlname			Field name in form
-	 * @param int 		$show_empty 		0=list without the empty value, 1=add empty value
-	 * @param array 	$exclude 			Array list of users id to exclude
-	 * @param int 		$disabled 			If select list must be disabled
-	 * @param array 	$include 			Array list of users id to include or 'hierarchy' to have only supervised users
-	 * @param array|int	$enableonly 		Array list of users id to be enabled. All other must be disabled
+	 * @param int<0,1> 	$show_empty 		0=list without the empty value, 1=add empty value
+	 * @param int[] 	$exclude 			Array list of users id to exclude
+	 * @param int<0,1>	$disabled 			If select list must be disabled
+	 * @param int[]|string 	$include 			Array list of users id to include or 'hierarchy' to have only supervised users
+	 * @param int[]|int	$enableonly 		Array list of users id to be enabled. All other must be disabled
 	 * @param string	$force_entity 		'0' or Ids of environment to force
 	 * @param int 		$maxlength 			Maximum length of string into list (0=no limit)
-	 * @param int 		$showstatus 		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+	 * @param int<0,1>	$showstatus 		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 * @param string 	$morefilter 		Add more filters into sql request
 	 * @param int 		$showproperties 	Show properties of each attendees
-	 * @param array 	$listofuserid 		Array with properties of each user
-	 * @param array 	$listofcontactid 	Array with properties of each contact
-	 * @param array 	$listofotherid 		Array with properties of each other contact
+	 * @param int[] 	$listofuserid 		Array with properties of each user
+	 * @param int[] 	$listofcontactid 	Array with properties of each contact
+	 * @param int[] 	$listofotherid 		Array with properties of each other contact
 	 * @return    string                    HTML select string
 	 * @see select_dolgroups()
 	 */
@@ -2289,9 +2291,13 @@ class Form
 		$userstatic = new User($this->db);
 		$out = '';
 
-		$assignedtouser = array();
 		if (!empty($_SESSION['assignedtouser'])) {
 			$assignedtouser = json_decode($_SESSION['assignedtouser'], true);
+			if (!is_array($assignedtouser)) {
+				$assignedtouser = array();
+			}
+		} else {
+			$assignedtouser = array();
 		}
 		$nbassignetouser = count($assignedtouser);
 
@@ -2360,16 +2366,16 @@ class Form
 	 * @param string 	$action 			Value for $action
 	 * @param string 	$htmlname			Field name in form
 	 * @param int 		$show_empty 		0=list without the empty value, 1=add empty value
-	 * @param array 	$exclude 			Array list of users id to exclude
-	 * @param int 		$disabled 			If select list must be disabled
-	 * @param array 	$include 			Array list of users id to include or 'hierarchy' to have only supervised users
-	 * @param array 	$enableonly 		Array list of users id to be enabled. All other must be disabled
+	 * @param int[] 	$exclude 			Array list of users id to exclude
+	 * @param int<0,1>	$disabled 			If select list must be disabled
+	 * @param int[]|string 	$include 		Array list of users id to include or 'hierarchy' to have only supervised users
+	 * @param int[] 	$enableonly 		Array list of users id to be enabled. All other must be disabled
 	 * @param string	$force_entity 		'0' or Ids of environment to force
 	 * @param int 		$maxlength 			Maximum length of string into list (0=no limit)
-	 * @param int 		$showstatus 		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+	 * @param int<-1,1>	$showstatus 		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 * @param string 	$morefilter 		Add more filters into sql request
 	 * @param int 		$showproperties 	Show properties of each attendees
-	 * @param array 	$listofresourceid 	Array with properties of each resource
+	 * @param array<int,array{transparency:bool|int<0,1>}> $listofresourceid 	Array with properties of each resource
 	 * @return    string                    HTML select string
 	 */
 	public function select_dolresources_forevent($action = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = array(), $enableonly = array(), $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $showproperties = 0, $listofresourceid = array())
@@ -2383,9 +2389,13 @@ class Form
 		$resourcestatic = new Dolresource($this->db);
 
 		$out = '';
-		$assignedtoresource = array();
 		if (!empty($_SESSION['assignedtoresource'])) {
 			$assignedtoresource = json_decode($_SESSION['assignedtoresource'], true);
+			if (!is_array($assignedtoresource)) {
+				$assignedtoresource = array();
+			}
+		} else {
+			$assignedtoresource = array();
 		}
 		$nbassignetoresource = count($assignedtoresource);
 
@@ -2433,7 +2443,7 @@ class Form
 
 			$events = array();
 			$out .= img_picto('', 'resource', 'class="pictofixedwidth"');
-			$out .= $formresources->select_resource_list(0, $htmlname, [], 1, 1, 0, $events, '', 2, 0);
+			$out .= $formresources->select_resource_list(0, $htmlname, [], 1, 1, 0, $events, array(), 2, 0);
 			//$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
 			$out .= ' <input type="submit" disabled class="button valignmiddle smallpaddingimp reposition" id="' . $action . 'assignedtoresource" name="' . $action . 'assignedtoresource" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
 			$out .= '<br>';
@@ -2456,19 +2466,19 @@ class Form
 	 *  @param		int			$finished				2=all, 1=finished, 0=raw material
 	 *  @param		string		$selected_input_value	Value of preselected input text (for use with ajax)
 	 *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
-	 *  @param		array		$ajaxoptions			Options for ajax_autocompleter
+	 *  @param		array<string,string|string[]>	$ajaxoptions			Options for ajax_autocompleter
 	 *  @param      int			$socid					Thirdparty Id (to get also price dedicated to this customer)
-	 *  @param		string		$showempty				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 *  @param		string|int<0,1>	$showempty			'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * 	@param		int			$forcecombo				Force to use combo box
 	 *  @param      string      $morecss                Add more css on select
-	 *  @param      int         $hidepriceinlabel       1=Hide prices in label
+	 *  @param      int<0,1>	$hidepriceinlabel       1=Hide prices in label
 	 *  @param      string      $warehouseStatus        Warehouse status filter to count the quantity in stock. Following comma separated filter options can be used
 	 *										            'warehouseopen' = count products from open warehouses,
 	 *										            'warehouseclosed' = count products from closed warehouses,
 	 *										            'warehouseinternal' = count products from warehouses for internal correct/transfer only
-	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
-	 *  @param		int 		$nooutput				No print if 1, return the output into a string
-	 *  @param		int			$status_purchase		Purchase status: -1=No filter on purchase status, 0=Products not on purchase, 1=Products on purchase
+	 *  @param 		?mixed[]	$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
+	 *  @param		int<0,1> 	$nooutput				No print if 1, return the output into a string
+	 *  @param		int<-1,1>	$status_purchase		Purchase status: -1=No filter on purchase status, 0=Products not on purchase, 1=Products on purchase
 	 *  @return		void|string
 	 */
 	public function select_produits($selected = 0, $htmlname = 'productid', $filtertype = '', $limit = 0, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = null, $nooutput = 0, $status_purchase = -1)
@@ -2618,17 +2628,17 @@ class Form
 	/**
 	 *  Return list of BOM for customer in Ajax if Ajax activated or go to select_produits_list
 	 *
-	 * @param string $selected Preselected BOM id
-	 * @param string $htmlname Name of HTML select field (must be unique in page).
-	 * @param int $limit Limit on number of returned lines
-	 * @param int $status Sell status -1=Return all bom, 0=Draft BOM, 1=Validated BOM
-	 * @param int $type type of the BOM (-1=Return all BOM, 0=Return disassemble BOM, 1=Return manufacturing BOM)
-	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param string $morecss Add more css on select
-	 * @param string $nooutput No print, return the output into a string
-	 * @param int $forcecombo Force to use combo box
-	 * @param array $TProducts Add filter on a defined product
-	 * @return        void|string
+	 * @param string	$selected Preselected BOM id
+	 * @param string	$htmlname Name of HTML select field (must be unique in page).
+	 * @param int		$limit Limit on number of returned lines
+	 * @param int		$status Sell status -1=Return all bom, 0=Draft BOM, 1=Validated BOM
+	 * @param int		$type type of the BOM (-1=Return all BOM, 0=Return disassemble BOM, 1=Return manufacturing BOM)
+	 * @param string|int<0,1>	$showempty	'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param string	$morecss Add more css on select
+	 * @param string	$nooutput No print, return the output into a string
+	 * @param int		$forcecombo Force to use combo box
+	 * @param string[]	$TProducts Add filter on a defined product
+	 * @return void|string
 	 */
 	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 0, $showempty = '1', $morecss = '', $nooutput = '', $forcecombo = 0, $TProducts = [])
 	{
@@ -2709,7 +2719,7 @@ class Form
 	 * @param 	int 		$finished 				Filter on finished field: 2=No filter
 	 * @param 	int 		$outputmode 			0=HTML select string, 1=Array
 	 * @param 	int 		$socid 					Thirdparty Id (to get also price dedicated to this customer)
-	 * @param 	string 		$showempty 				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param 	string|int<0,1>	$showempty 			'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param 	int 		$forcecombo 			Force to use combo box
 	 * @param 	string 		$morecss 				Add more css on select
 	 * @param 	int 		$hidepriceinlabel	 	1=Hide prices in label
@@ -2952,7 +2962,7 @@ class Form
 
 			$num = $this->db->num_rows($result);
 
-			$events = null;
+			$events = array();
 
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
@@ -3036,7 +3046,7 @@ class Form
 							$objp->price = $price_result;
 							$objp->unitprice = $price_result;
 							//Calculate the VAT
-							$objp->price_ttc = price2num($objp->price) * (1 + ($objp->tva_tx / 100));
+							$objp->price_ttc = (float) price2num($objp->price) * (1 + ($objp->tva_tx / 100));
 							$objp->price_ttc = price2num($objp->price_ttc, 'MU');
 						}
 					}
@@ -3073,14 +3083,14 @@ class Form
 	 * This define value for &$opt and &$optJson.
 	 * This function is called by select_produits_list().
 	 *
-	 * @param object 	$objp 			Resultset of fetch
+	 * @param stdClass 	$objp 			Resultset of fetch
 	 * @param string 	$opt 			Option (var used for returned value in string option format)
-	 * @param array 	$optJson 		Option (var used for returned value in json format)
+	 * @param array{key:string,value:string,label:string,label2:string,desc:string,type:string,price_ht:string,price_ttc:string,price_ht_locale:string,price_ttc_locale:string,pricebasetype:string,tva_tx:string,default_vat_code:string,qty:string,discount:string,duration_value:string,duration_unit:string,pbq:string,labeltrans:string,desctrans:string,ref_customer:string}	$optJson 		Option (var used for returned value in json format)
 	 * @param int 		$price_level 	Price level
 	 * @param int 		$selected 		Preselected value
-	 * @param int 		$hidepriceinlabel Hide price in label
+	 * @param int<0,1> 	$hidepriceinlabel Hide price in label
 	 * @param string 	$filterkey 		Filter key to highlight
-	 * @param int 		$novirtualstock Do not load virtual stock, even if slow option STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO is on.
+	 * @param int<0,1>	$novirtualstock Do not load virtual stock, even if slow option STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO is on.
 	 * @return    void
 	 */
 	protected function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected, $hidepriceinlabel = 0, $filterkey = '', $novirtualstock = 0)
@@ -3416,9 +3426,9 @@ class Form
 	 * @param string 	$htmlname 		Name of HTML Select
 	 * @param string 	$filtertype 	Filter on product type (''=nofilter, 0=product, 1=service)
 	 * @param string 	$filtre 		For a SQL filter
-	 * @param array 	$ajaxoptions 	Options for ajax_autocompleter
-	 * @param int 		$hidelabel 		Hide label (0=no, 1=yes)
-	 * @param int 		$alsoproductwithnosupplierprice 1=Add also product without supplier prices
+	 * @param array<string,string|string[]>	$ajaxoptions 	Options for ajax_autocompleter
+	 * @param int<0,1>	$hidelabel 		Hide label (0=no, 1=yes)
+	 * @param int<0,1>	$alsoproductwithnosupplierprice 1=Add also product without supplier prices
 	 * @param string 	$morecss 		More CSS
 	 * @param string 	$placeholder 	Placeholder
 	 * @return    void
@@ -3833,7 +3843,7 @@ class Form
 					'type' => $outtype,
 					'duration_value' => $outdurationvalue,
 					'duration_unit' => $outdurationunit,
-					'disabled' => (empty($objp->idprodfournprice) ? true : false),
+					'disabled' => empty($objp->idprodfournprice),
 					'description' => $objp->description
 				);
 				if (isModEnabled('multicurrency')) {
@@ -3872,7 +3882,7 @@ class Form
 					'type' => $outtype,
 					'duration_value' => $outdurationvalue,
 					'duration_unit' => $outdurationunit,
-					'disabled' => (empty($objp->idprodfournprice) ? true : false),
+					'disabled' => empty($objp->idprodfournprice),
 					'description' => $objp->description
 				);
 				if (isModEnabled('multicurrency')) {
@@ -4838,13 +4848,13 @@ class Form
 	}
 
 	/**
-	 *      Creates HTML units selector (code => label)
+	 * Creates HTML units selector (code => label)
 	 *
-	 * @param string $selected Preselected Unit ID
-	 * @param string $htmlname Select name
-	 * @param int $showempty Add a nempty line
-	 * @param string $unit_type Restrict to one given unit type
-	 * @return    string                  HTML select
+	 * @param	string		$selected	Preselected Unit ID
+	 * @param	string		$htmlname	Select name
+	 * @param	int<0,1>	$showempty	Add an empty line
+	 * @param	string		$unit_type	Restrict to one given unit type
+	 * @return	string					HTML select
 	 */
 	public function selectUnits($selected = '', $htmlname = 'units', $showempty = 0, $unit_type = '')
 	{
@@ -5094,10 +5104,10 @@ class Form
 	 *                                 	    	 	- int (id of category)
 	 *                                 		 		- string (categories ids separated by comma)
 	 * 	                                  	 		- array (list of categories ids)
-	 * @param 	int 				$outputmode 	0=HTML select string, 1=Array with full label only, 2=Array extended, 3=Array with full picto + label
-	 * @param 	int 				$include 		[=0] Removed or 1=Keep only
+	 * @param 	int<0,3>			$outputmode 	0=HTML select string, 1=Array with full label only, 2=Array extended, 3=Array with full picto + label
+	 * @param 	int<0,1>			$include 		[=0] Removed or 1=Keep only
 	 * @param 	string 				$morecss 		More CSS
-	 * @return  string|array						String list or Array of categories
+	 * @return	string|array<int,string>|array<int,array{id:int,fulllabel:string,color:string,picto:string}>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>		String list or Array of categories
 	 * @see select_categories()
 	 */
 	public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0, $morecss = '')
@@ -5175,6 +5185,7 @@ class Form
 		$output .= "\n";
 
 		if ($outputmode == 2) {
+			// TODO: handle error when $cate_arbo is not an array
 			return $cate_arbo;
 		} elseif ($outputmode == 1) {
 			return $outarray;
@@ -5193,7 +5204,7 @@ class Form
 	 * @param string $title Title
 	 * @param string $question Question
 	 * @param string $action Action
-	 * @param array $formquestion An array with forms complementary inputs
+	 * @param array<array{label:string,type:string,size:string,morecss:string,moreattr:string,style:string}>	$formquestion 	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>'autofocus' or 'style=...'))
 	 * @param string $selectedchoice "" or "no" or "yes"
 	 * @param int|string $useajax 0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
 	 * @param int $height Force height of box
@@ -5224,9 +5235,9 @@ class Form
 	 * @param string 		$title 				Title
 	 * @param string 		$question 			Question
 	 * @param string 		$action 			Action
-	 * @param array|string 	$formquestion 		An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>'autofocus' or 'style=...'))
-	 *                                   		'type' can be 'text', 'password', 'checkbox', 'radio', 'date', 'datetime', 'select', 'multiselect', 'morecss',
-	 *                                   		'other', 'onecolumn' or 'hidden'...
+	 * @param array<array{name:string,value:string,values:string[],default:string,label:string,type:string,size:string,morecss:string,moreattr:string,style:string,inputko?:int<0,1>}>|string|null 	$formquestion 		An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>'autofocus' or 'style=...'))
+	 *                                                                                                                                                                                                                  'type' can be 'text', 'password', 'checkbox', 'radio', 'date', 'datetime', 'select', 'multiselect', 'morecss',
+	 *                                                                                                                                                                                                                  'other', 'onecolumn' or 'hidden'...
 	 * @param int|string 	$selectedchoice 	'' or 'no', or 'yes' or '1', 1, '0' or 0
 	 * @param int|string 	$useajax 			0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
 	 * @param int|string 	$height 			Force height of box (0 = auto)
@@ -5434,7 +5445,7 @@ class Form
 						}
 					}
 					// Add name of fields to propagate with the GET when submitting the form with button KO.
-					if (isset($input['inputko']) && $input['inputko'] == 1) {
+					if (isset($input['inputko']) && $input['inputko'] == 1 && isset($input['name'])) {
 						array_push($inputko, $input['name']);
 					}
 				}
@@ -5448,7 +5459,7 @@ class Form
 			if (!empty($more)) {
 				$formconfirm .= '<div class="confirmquestions">' . $more . '</div>' . "\n";
 			}
-			$formconfirm .= ($question ? '<div class="confirmmessage">' . img_help('', '') . ' ' . $question . '</div>' : '');
+			$formconfirm .= ($question ? '<div class="confirmmessage">' . img_help(0, '') . ' ' . $question . '</div>' : '');
 			$formconfirm .= '</div>' . "\n";
 
 			$formconfirm .= "\n<!-- begin code of popup for formconfirm page=" . $page . " -->\n";
@@ -5877,8 +5888,8 @@ class Form
 	 * @param string $page Page
 	 * @param string $selected Id of user preselected
 	 * @param string $htmlname Name of input html field. If 'none', we just output the user link.
-	 * @param array $exclude List of users id to exclude
-	 * @param array $include List of users id to include
+	 * @param int[] $exclude List of users id to exclude
+	 * @param int[] $include List of users id to include
 	 * @return    void
 	 */
 	public function form_users($page, $selected = '', $htmlname = 'userid', $exclude = array(), $include = array())
@@ -6205,12 +6216,12 @@ class Form
 	 * @param string 	$selected 				Id preselected
 	 * @param string 	$htmlname 				Name of HTML select
 	 * @param string	$filter 				Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here (example: 's.rowid <> x', 's.client IN (1,3)'). Do not use a filter coming from input of users.
-	 * @param int 		$showempty 				Add an empty field
-	 * @param int 		$showtype 				Show third party type in combolist (customer, prospect or supplier)
-	 * @param int 		$forcecombo 			Force to use combo box
-	 * @param array 	$events 				Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param string|int<0,1> 	$showempty 		Add an empty field (Can be '1' or text key to use on empty line like 'SelectThirdParty')
+	 * @param int<0,1>	$showtype 				Show third party type in combolist (customer, prospect or supplier)
+	 * @param int<0,1>	$forcecombo 			Force to use combo box
+	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param int 		$nooutput 				No print output. Return it only.
-	 * @param array 	$excludeids 			Exclude IDs from the select combo
+	 * @param int[] 	$excludeids 			Exclude IDs from the select combo
 	 * @param string 	$textifnothirdparty 	Text to show if no thirdparty
 	 * @return    string                        HTML output or ''
 	 */
@@ -6773,9 +6784,9 @@ class Form
 	 * @param int 					$m 				1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
 	 * @param int 					$empty 			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
 	 * @param string 				$form_name 		Not used
-	 * @param int 					$d 				1=Show days, month, years
-	 * @param int 					$addnowlink 	Add a link "Now", 1 with server time, 2 with local computer time
-	 * @param int 					$disabled 		Disable input fields
+	 * @param int<0,1> 				$d 				1=Show days, month, years
+	 * @param int<0,2>				$addnowlink 	Add a link "Now", 1 with server time, 2 with local computer time
+	 * @param int<0,1> 				$disabled 		Disable input fields
 	 * @param int|string			$fullday 		When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
 	 * @param string 				$addplusone 	Add a link "+1 hour". Value must be name of another selectDate field.
 	 * @param int|string|array      $adddateof 		Add a link "Date of ..." using the following date. Must be array(array('adddateof'=>..., 'labeladddateof'=>...))
@@ -7223,7 +7234,7 @@ class Form
 	 *
 	 * @param string $prefix Prefix
 	 * @param string $selected Selected duration type
-	 * @param array $excludetypes Array of duration types to exclude. Example array('y', 'm')
+	 * @param string[] $excludetypes Array of duration types to exclude. Example array('y', 'm')
 	 * @return  string                    HTML select string
 	 */
 	public function selectTypeDuration($prefix, $selected = 'i', $excludetypes = array())
@@ -7325,7 +7336,7 @@ class Form
 
 		if ($typehour == 'select' || $typehour == 'textselect') {
 			$retstring .= '<select class="flat" id="select_' . $prefix . 'min" name="' . $prefix . 'min"' . ($disabled ? ' disabled' : '') . '>';
-			for ($min = 0; $min <= 55; $min = $min + 5) {
+			for ($min = 0; $min <= 55; $min += 5) {
 				$retstring .= '<option value="' . $min . '"';
 				if (is_numeric($minSelected) && $minSelected == $min) {
 					$retstring .= ' selected';
@@ -7355,21 +7366,21 @@ class Form
 	/**
 	 *  Return list of tickets in Ajax if Ajax activated or go to selectTicketsList
 	 *
-	 * @param string $selected Preselected tickets
-	 * @param string $htmlname Name of HTML select field (must be unique in page).
-	 * @param string $filtertype To add a filter
-	 * @param int $limit Limit on number of returned lines
-	 * @param int $status Ticket status
-	 * @param string $selected_input_value Value of preselected input text (for use with ajax)
-	 * @param int $hidelabel Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
-	 * @param array $ajaxoptions Options for ajax_autocompleter
-	 * @param int $socid Thirdparty Id (to get also price dedicated to this customer)
-	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param int $forcecombo Force to use combo box
-	 * @param string $morecss Add more css on select
-	 * @param array $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
-	 * @param int $nooutput No print, return the output into a string
-	 * @return        string
+	 * @param	string		$selected		Preselected tickets
+	 * @param	string		$htmlname		Name of HTML select field (must be unique in page).
+	 * @param	string		$filtertype		To add a filter
+	 * @param	int			$limit			Limit on number of returned lines
+	 * @param	int			$status			Ticket status
+	 * @param	string		$selected_input_value Value of preselected input text (for use with ajax)
+	 * @param	int<0,3>	$hidelabel		Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 * @param	array<string,string|string[]>	$ajaxoptions	Options for ajax_autocompleter
+	 * @param	int			$socid Thirdparty Id (to get also price dedicated to this customer)
+	 * @param	string|int<0,1>	$showempty	'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param	int<0,1>	$forcecombo	Force to use combo box
+	 * @param	string		$morecss		Add more css on select
+	 * @param	array<string,string>	$selected_combinations	Selected combinations. Format: array([attrid] => attrval, [...])
+	 * @param	int<0,1>	$nooutput		No print, return the output into a string
+	 * @return	string
 	 */
 	public function selectTickets($selected = '', $htmlname = 'ticketid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0)
 	{
@@ -7409,7 +7420,7 @@ class Form
 				$out .= img_picto($langs->trans("Search"), 'search');
 			}
 		} else {
-			$out .= $this->selectTicketsList($selected, $htmlname, $filtertype, $limit, $status, 0, $socid, $showempty, $forcecombo, $morecss);
+			$out .= $this->selectTicketsList($selected, $htmlname, $filtertype, $limit, '', $status, 0, $showempty, $forcecombo, $morecss);
 		}
 
 		if (empty($nooutput)) {
@@ -7422,20 +7433,20 @@ class Form
 
 
 	/**
-	 *    Return list of tickets.
+	 * Return list of tickets.
 	 *  Called by selectTickets.
 	 *
-	 * @param string $selected Preselected ticket
-	 * @param string $htmlname Name of select html
-	 * @param string $filtertype Filter on ticket type
-	 * @param int $limit Limit on number of returned lines
-	 * @param string $filterkey Filter on ticket ref or subject
-	 * @param int $status Ticket status
-	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param	string		$selected		Preselected ticket
+	 * @param	string		$htmlname		Name of select html
+	 * @param	string		$filtertype		Filter on ticket type
+	 * @param	int			$limit Limit on number of returned lines
+	 * @param	string		$filterkey		Filter on ticket ref or subject
+	 * @param	int			$status			Ticket status
+	 * @param	int			$outputmode		0=HTML select string, 1=Array
+	 * @param	string|int<0,1> $showempty	'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param int $forcecombo Force to use combo box
-	 * @param string $morecss Add more css on select
-	 * @return     array|string                Array of keys for json or HTML component
+	 * @param	string $morecss Add more css on select
+	 * @return	array|string				Array of keys for json or HTML component
 	 */
 	public function selectTicketsList($selected = '', $htmlname = 'ticketid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
 	{
@@ -7486,7 +7497,7 @@ class Form
 
 			$num = $this->db->num_rows($result);
 
-			$events = null;
+			$events = array();
 
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
@@ -7550,7 +7561,7 @@ class Form
 	 *
 	 * @param object 	$objp 		Result set of fetch
 	 * @param string 	$opt 		Option (var used for returned value in string option format)
-	 * @param array 	$optJson 	Option (var used for returned value in json format)
+	 * @param mixed[] 	$optJson 	Option (var used for returned value in json format)
 	 * @param string 	$selected 	Preselected value
 	 * @param string 	$filterkey 	Filter key to highlight
 	 * @return    void
@@ -7587,14 +7598,14 @@ class Form
 	 * @param 	int 	$limit 					Limit on number of returned lines
 	 * @param 	int 	$status 				Ticket status
 	 * @param 	string 	$selected_input_value 	Value of preselected input text (for use with ajax)
-	 * @param 	int		$hidelabel 				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
-	 * @param 	array 	$ajaxoptions 			Options for ajax_autocompleter
+	 * @param 	int<0,3>	$hidelabel 				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 * @param 	array<string,string|string[]>	$ajaxoptions 			Options for ajax_autocompleter
 	 * @param 	int 	$socid 					Thirdparty Id (to get also price dedicated to this customer)
-	 * @param 	string 	$showempty 				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param 	int 	$forcecombo 			Force to use combo box
+	 * @param 	string|int<0,1>	$showempty 		'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param 	int<0,1> 	$forcecombo 			Force to use combo box
 	 * @param 	string 	$morecss 				Add more css on select
-	 * @param 	array 	$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
-	 * @param 	int 	$nooutput 				No print, return the output into a string
+	 * @param 	array<string,string> $selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
+	 * @param 	int<0,1>	$nooutput 				No print, return the output into a string
 	 * @return 	string
 	 */
 	public function selectProjects($selected = '', $htmlname = 'projectid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0)
@@ -7635,7 +7646,7 @@ class Form
 				$out .= img_picto($langs->trans("Search"), 'search');
 			}
 		} else {
-			$out .= $this->selectProjectsList($selected, $htmlname, $filtertype, $limit, $status, 0, $socid, $showempty, $forcecombo, $morecss);
+			$out .= $this->selectProjectsList($selected, $htmlname, $filtertype, $limit, '', $status, 0, $showempty, $forcecombo, $morecss);
 		}
 
 		if (empty($nooutput)) {
@@ -7657,7 +7668,7 @@ class Form
 	 * @param string $filterkey Filter on project ref or subject
 	 * @param int $status Ticket status
 	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param int $forcecombo Force to use combo box
 	 * @param string $morecss Add more css on select
 	 * @return     array|string                Array of keys for json or HTML component
@@ -7711,7 +7722,7 @@ class Form
 
 			$num = $this->db->num_rows($result);
 
-			$events = null;
+			$events = array();
 
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
@@ -7773,9 +7784,9 @@ class Form
 	 * constructProjectListOption.
 	 * This define value for &$opt and &$optJson.
 	 *
-	 * @param object 	$objp 		Result set of fetch
+	 * @param stdClass 	$objp 		Result set of fetch
 	 * @param string 	$opt 		Option (var used for returned value in string option format)
-	 * @param array 	$optJson 	Option (var used for returned value in json format)
+	 * @param array{key:string,value:string,type:string}	$optJson 	Option (var used for returned value in json format)
 	 * @param string 	$selected 	Preselected value
 	 * @param string 	$filterkey 	Filter key to highlight
 	 * @return    void
@@ -7816,14 +7827,14 @@ class Form
 	 * @param int $limit Limit on number of returned lines
 	 * @param int $status Ticket status
 	 * @param string $selected_input_value Value of preselected input text (for use with ajax)
-	 * @param int $hidelabel Hide label (0=no, 1=yes, 2=show search icon before and placeholder, 3 search icon after)
-	 * @param array $ajaxoptions Options for ajax_autocompleter
+	 * @param int<0,3> $hidelabel Hide label (0=no, 1=yes, 2=show search icon before and placeholder, 3 search icon after)
+	 * @param array<string,string|string[]> $ajaxoptions Options for ajax_autocompleter
 	 * @param int $socid Thirdparty Id (to get also price dedicated to this customer)
-	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param int $forcecombo Force to use combo box
 	 * @param string $morecss Add more css on select
-	 * @param array $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
-	 * @param int	$nooutput No print, return the output into a string
+	 * @param array<string,string> $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
+	 * @param int<0,1>	$nooutput No print, return the output into a string
 	 * @return        string
 	 */
 	public function selectMembers($selected = '', $htmlname = 'adherentid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0)
@@ -7889,7 +7900,7 @@ class Form
 	 * @param string $filterkey Filter on member status
 	 * @param int $status Member status
 	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param int $forcecombo Force to use combo box
 	 * @param string $morecss Add more css on select
 	 * @return     array|string                Array of keys for json or HTML string component
@@ -7945,7 +7956,7 @@ class Form
 
 			$num = $this->db->num_rows($result);
 
-			$events = null;
+			$events = array();
 
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
@@ -8010,7 +8021,7 @@ class Form
 	 *
 	 * @param object 	$objp 			Result set of fetch
 	 * @param string 	$opt 			Option (var used for returned value in string option format)
-	 * @param array 	$optJson 		Option (var used for returned value in json format)
+	 * @param mixed[] 	$optJson 		Option (var used for returned value in json format)
 	 * @param string 	$selected 		Preselected value
 	 * @param string 	$filterkey 		Filter key to highlight
 	 * @return    void
@@ -8042,18 +8053,18 @@ class Form
 	 * Can use autocomplete with ajax after x key pressed or a full combo, depending on setup.
 	 * This is the generic method that will replace all specific existing methods.
 	 *
-	 * @param 	string $objectdesc           'ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'. For hard coded custom needs. Try to prefer method using $objectfield instead of $objectdesc.
-	 * @param 	string $htmlname             Name of HTML select component
-	 * @param 	int    $preSelectedValue     Preselected value (ID of element)
-	 * @param 	string $showempty            ''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
-	 * @param 	string $searchkey            Search criteria
-	 * @param 	string $placeholder          Place holder
-	 * @param 	string $morecss              More CSS
-	 * @param 	string $moreparams           More params provided to ajax call
-	 * @param 	int    $forcecombo           Force to load all values and output a standard combobox (with no beautification)
-	 * @param 	int    $disabled             1=Html component is disabled
-	 * @param 	string $selected_input_value Value of preselected input text (for use with ajax)
-	 * @param	string $objectfield          Object:Field that contains the definition (in table $fields or $extrafields). Example: 'Object:xxx' or 'Module_Object:xxx' or 'Object:options_xxx' or 'Module_Object:options_xxx'
+	 * @param	string	$objectdesc           'ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'. For hard coded custom needs. Try to prefer method using $objectfield instead of $objectdesc.
+	 * @param	string	$htmlname             Name of HTML select component
+	 * @param 	int		$preSelectedValue     Preselected value (ID of element)
+	 * @param 	string|int<0,1> $showempty	''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
+	 * @param 	string	$searchkey            Search criteria
+	 * @param	string	$placeholder          Place holder
+	 * @param	string	$morecss              More CSS
+	 * @param	string	$moreparams           More params provided to ajax call
+	 * @param 	int		$forcecombo           Force to load all values and output a standard combobox (with no beautification)
+	 * @param 	int<0,1>	$disabled             1=Html component is disabled
+	 * @param	string	$selected_input_value Value of preselected input text (for use with ajax)
+	 * @param	string	$objectfield          Object:Field that contains the definition (in table $fields or $extrafields). Example: 'Object:xxx' or 'Module_Object:xxx' or 'Object:options_xxx' or 'Module_Object:options_xxx'
 	 * @return  string	                      	Return HTML string
 	 * @see selectForFormsList(), select_thirdparty_list()
 	 */
@@ -8064,6 +8075,8 @@ class Form
 		$objectdescorig = $objectdesc;
 		$objecttmp = null;
 		$InfoFieldList = array();
+		$filter = '';  // Ensure filter has value (for static analysis)
+		$sortfield = '';  // Ensure filter has value (for static analysis)
 
 		if ($objectfield) {	// We must retrieve the objectdesc from the field or extrafield
 			// Example: $objectfield = 'product:options_package'
@@ -8138,6 +8151,7 @@ class Form
 			dol_syslog('selectForForms: Error bad setup of field objectdescorig=' . $objectdescorig.', objectfield='.$objectfield, LOG_WARNING);
 			return 'selectForForms: Error bad setup of field objectdescorig=' . $objectdescorig.', objectfield='.$objectfield;
 		}
+		'@phan-var-force CommonObject $objecttmp';
 
 		//var_dump($filter);
 		$prefixforautocompletemode = $objecttmp->element;
@@ -8201,7 +8215,7 @@ class Form
 	 * @param Object 		$objecttmp 			Object to know the table to scan for combo.
 	 * @param string 		$htmlname 			Name of HTML select component
 	 * @param int 			$preselectedvalue 	Preselected value (ID of element)
-	 * @param string 		$showempty 			''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
+	 * @param string|int<0,1>	$showempty 		''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
 	 * @param string 		$searchkey 			Search value
 	 * @param string 		$placeholder 		Place holder
 	 * @param string 		$morecss 			More CSS
@@ -8386,7 +8400,7 @@ class Form
 
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, null, getDolGlobalInt($confkeyforautocompletemode, 0));
+				$out .= ajax_combobox($htmlname, array(), getDolGlobalInt($confkeyforautocompletemode, 0));
 			}
 		} else {
 			dol_print_error($this->db);
@@ -8406,15 +8420,15 @@ class Form
 	 *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
 	 *
 	 * @param string 		$htmlname 			Name of html select area. Try to start name with "multi" or "search_multi" if this is a multiselect
-	 * @param array 		$array 				Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
-	 * @param string|string[] $id				Preselected key or preselected keys for multiselect. Use 'ifone' to autoselect record if there is only one record.
-	 * @param int|string 	$show_empty 		0 no empty value allowed, 1 or string to add an empty value into list (If 1: key is -1 and value is '' or '&nbsp;', If placeholder string: key is -1 and value is the string), <0 to add an empty value with key that is this value.
-	 * @param int 			$key_in_label 		1 to show key into label with format "[key] value"
-	 * @param int 			$value_as_key 		1 to use value as key
+	 * @param array{label:string,data-html:string,disable?:int<0,1>,css?:string}	$array 	Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
+	 * @param string|string[] $id				Preselected key or array of preselected keys for multiselect. Use 'ifone' to autoselect record if there is only one record.
+	 * @param int<0,1>|string 	$show_empty 		0 no empty value allowed, 1 or string to add an empty value into list (If 1: key is -1 and value is '' or '&nbsp;', If placeholder string: key is -1 and value is the string), <0 to add an empty value with key that is this value.
+	 * @param int<0,1>		$key_in_label 		1 to show key into label with format "[key] value"
+	 * @param int<0,1>		$value_as_key 		1 to use value as key
 	 * @param string 		$moreparam 			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
-	 * @param int 			$translate 			1=Translate and encode value
+	 * @param int<0,1>		$translate 			1=Translate and encode value
 	 * @param int 			$maxlen 			Length maximum for labels
-	 * @param int 			$disabled 			Html select box is disabled
+	 * @param int<0,1>		$disabled 			Html select box is disabled
 	 * @param string 		$sort 				'ASC' or 'DESC' = Sort on label, '' or 'NONE' or 'POS' = Do not sort, we keep original order
 	 * @param string 		$morecss 			Add more class to css styles
 	 * @param int 			$addjscombo 		Add js combo
@@ -8436,6 +8450,7 @@ class Form
 		if ($value_as_key) {
 			$array = array_combine($array, $array);
 		}
+		'@phan-var-force array{label:string,data-html:string,disable?:int<0,1>,css?:string}	$array'; // Array combine breaks information
 
 		$out = '';
 
@@ -8662,16 +8677,16 @@ class Form
 	 *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
 	 *
 	 * @param string 	$htmlname 				Name of html select area
-	 * @param array 	$array 					Array (key=>array('text'=>'A text', 'url'=>'An url'), ...)
+	 * @param array<string,array{text:string,url:string}> 	$array 	Array (key=>array('text'=>'A text', 'url'=>'An url'), ...)
 	 * @param string 	$id 					Preselected key
 	 * @param string 	$moreparam 				Add more parameters onto the select tag
-	 * @param int 		$disableFiltering 		If set to 1, results are not filtered with searched string
-	 * @param int 		$disabled 				Html select box is disabled
+	 * @param int<0,1>	$disableFiltering 		If set to 1, results are not filtered with searched string
+	 * @param int<0,1>	$disabled 				Html select box is disabled
 	 * @param int 		$minimumInputLength 	Minimum Input Length
 	 * @param string 	$morecss 				Add more class to css styles
-	 * @param int 		$callurlonselect 		If set to 1, some code is added so an url return by the ajax is called when value is selected.
+	 * @param int<0,1>	$callurlonselect 		If set to 1, some code is added so an url return by the ajax is called when value is selected.
 	 * @param string 	$placeholder 			String to use as placeholder
-	 * @param integer 	$acceptdelayedhtml 		1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
+	 * @param int<0,1> 	$acceptdelayedhtml 		1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
 	 * @param string	$textfortitle			Text to show on title.
 	 * @return	string      					HTML select string
 	 * @see selectArrayAjax(), ajax_combobox() in ajax.lib.php
@@ -8785,15 +8800,15 @@ class Form
 	 * @param 	string 		$htmlname 		Name of select
 	 * @param 	array<string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}>	$array 			Array(key=>value) or Array(key=>array('id'=>key, 'label'=>value, 'color'=> , 'picto'=> , 'labelhtml'=> ))
 	 * @param 	string[]	$selected 		Array of keys preselected
-	 * @param 	int 		$key_in_label 	1 to show key like in "[key] value"
-	 * @param 	int 		$value_as_key 	1 to use value as key
+	 * @param 	int<0,1>	$key_in_label 	1 to show key like in "[key] value"
+	 * @param 	int<0,1>	$value_as_key 	1 to use value as key
 	 * @param 	string 		$morecss 		Add more css style
-	 * @param 	int 		$translate 		Translate and encode value
+	 * @param 	int<0,1> 	$translate 		Translate and encode value
 	 * @param 	int|string 	$width 			Force width of select box. May be used only when using jquery couch. Example: 250, '95%'
 	 * @param 	string 		$moreattrib 	Add more options on select component. Example: 'disabled'
 	 * @param 	string 		$elemtype 		Type of element we show ('category', ...). Will execute a formatting function on it. To use in readonly mode if js component support HTML formatting.
 	 * @param 	string 		$placeholder 	String to use as placeholder
-	 * @param 	int 		$addjscombo 	Add js combo
+	 * @param 	int<-1,1> 	$addjscombo 	Add js combo
 	 * @return 	string                      HTML multiselect string
 	 * @see selectarray(), selectArrayAjax(), selectArrayFilter()
 	 */
@@ -8938,7 +8953,7 @@ class Form
 	 * Show a multiselect dropbox from an array. If a saved selection of fields exists for user (into $user->conf->MAIN_SELECTEDFIELDS_contextofpage), we use this one instead of default.
 	 *
 	 * @param string 	$htmlname 	Name of HTML field
-	 * @param array 	$array 		Array with array of fields we could show. This array may be modified according to setup of user.
+	 * @param array<string,array{label:string,checked:string,enabled?:string,type?:string,langfile?:string}> 	$array 	Array with array of fields we could show. This array may be modified according to setup of user.
 	 * @param string 	$varpage 	Id of context for page. Can be set by caller with $varpage=(empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage);
 	 * @param string 	$pos 		Position colon on liste value 'left' or '' (meaning 'right').
 	 * @return string            	HTML multiselect string
@@ -9059,8 +9074,8 @@ class Form
 	 *
 	 * @param int 		$id 		Id of object
 	 * @param string 	$type 		Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
-	 * @param int 		$rendermode 0=Default, use multiselect. 1=Emulate multiselect (recommended)
-	 * @param int 		$nolink 	1=Do not add html links
+	 * @param int<0,1>	$rendermode 0=Default, use multiselect. 1=Emulate multiselect (recommended)
+	 * @param int<0,1> 	$nolink 	1=Do not add html links
 	 * @return string               String with categories
 	 */
 	public function showCategories($id, $type, $rendermode = 0, $nolink = 0)
@@ -9088,7 +9103,7 @@ class Form
 				$arrayselected[] = $c->id;
 			}
 
-			return $this->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%', 'disabled', 'category');
+			return $this->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, '', 0, '100%', 'disabled', 'category');
 		}
 
 		return 'ErrorBadValueForParameterRenderMode'; // Should not happened
@@ -9099,9 +9114,9 @@ class Form
 	 *
 	 * @param 	CommonObject 	$object 						Object we want to show links to
 	 * @param 	string 			$morehtmlright 					More html to show on right of title
-	 * @param 	array 			$compatibleImportElementsList 	Array of compatibles elements object for "import from" action
+	 * @param 	array<int,string>	$compatibleImportElementsList 	Array of compatibles elements object for "import from" action
 	 * @param 	string 			$title 							Title
-	 * @return  int                                             Return integer <0 if KO, >=0 if OK
+	 * @return  int                                             Return Number of different types
 	 */
 	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = array(), $title = 'RelatedObjects')
 	{
@@ -9257,8 +9272,8 @@ class Form
 	 *  Show block with links to link to other objects.
 	 *
 	 * @param 	CommonObject 	$object 			Object we want to show links to
-	 * @param 	array 			$restrictlinksto 	Restrict links to some elements, for example array('order') or array('supplier_order'). null or array() if no restriction.
-	 * @param 	array 			$excludelinksto 	Do not show links of this type, for example array('order') or array('supplier_order'). null or array() if no exclusion.
+	 * @param 	string[] 			$restrictlinksto 	Restrict links to some elements, for example array('order') or array('supplier_order'). null or array() if no restriction.
+	 * @param 	string[] 			$excludelinksto 	Do not show links of this type, for example array('order') or array('supplier_order'). null or array() if no exclusion.
 	 * @return  string                              HTML block
 	 */
 	public function showLinkToObjectBlock($object, $restrictlinksto = array(), $excludelinksto = array())
@@ -9361,6 +9376,7 @@ class Form
 			$possiblelinks['order_supplier']['sql'] = "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix().'commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.entity IN ('.getEntity('commande_fournisseur').')';
 		}
 
+		$reshook = 0; // Ensure $reshook is defined for static analysis
 		if (!empty($listofidcompanytoscan)) {  // If empty, we don't have criteria to scan the object we can link to
 			// Can complete the possiblelink array
 			$hookmanager->initHooks(array('commonobject'));
@@ -9606,15 +9622,15 @@ class Form
 	 * Return a HTML area with the reference of object and a navigation bar for a business object
 	 * Note: To complete search with a particular filter on select, you can set $object->next_prev_filter set to define SQL criteria.
 	 *
-	 * @param object 	$object 		Object to show.
+	 * @param CommonObject	$object 		Object to show.
 	 * @param string 	$paramid 		Name of parameter to use to name the id into the URL next/previous link.
 	 * @param string 	$morehtml 		More html content to output just before the nav bar.
-	 * @param int 		$shownav 		Show Condition (navigation is shown if value is 1).
+	 * @param int<0,1>	$shownav 		Show Condition (navigation is shown if value is 1).
 	 * @param string 	$fieldid 		Name of field id into database to use for select next and previous (we make the select max and min on this field compared to $object->ref). Use 'none' to disable next/prev.
 	 * @param string 	$fieldref 		Name of field ref of object (object->ref) to show or 'none' to not show ref.
 	 * @param string 	$morehtmlref 	More html to show after ref.
 	 * @param string 	$moreparam 		More param to add in nav link url. Must start with '&...'.
-	 * @param int 		$nodbprefix 	Do not include DB prefix to forge table name.
+	 * @param int<0,1>	$nodbprefix 	Do not include DB prefix to forge table name.
 	 * @param string 	$morehtmlleft 	More html code to show before ref.
 	 * @param string 	$morehtmlstatus More html code to show under navigation arrows (status place).
 	 * @param string 	$morehtmlright 	More html code to show after ref.
@@ -9849,16 +9865,16 @@ class Form
 	 * Return HTML code to output a photo
 	 *
 	 * @param string 	$modulepart 				Key to define module concerned ('societe', 'userphoto', 'memberphoto')
-	 * @param object 	$object 					Object containing data to retrieve file name
+	 * @param Societe|Adherent|Contact|User|CommonObject	$object	Object containing data to retrieve file name
 	 * @param int 		$width 						Width of photo
 	 * @param int 		$height 					Height of photo (auto if 0)
-	 * @param int 		$caneditfield 				Add edit fields
+	 * @param int<0,1>	$caneditfield 				Add edit fields
 	 * @param string 	$cssclass 					CSS name to use on img for photo
 	 * @param string 	$imagesize 					'mini', 'small' or '' (original)
-	 * @param int 		$addlinktofullsize 			Add link to fullsize image
-	 * @param int 		$cache 						1=Accept to use image in cache
+	 * @param int<0,1>	$addlinktofullsize 			Add link to fullsize image
+	 * @param int<0,1>	$cache 						1=Accept to use image in cache
 	 * @param string 	$forcecapture 				'', 'user' or 'environment'. Force parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
-	 * @param int		$noexternsourceoverwrite 	No overwrite image with extern source (like 'gravatar' or other module)
+	 * @param int<0,1>	$noexternsourceoverwrite 	No overwrite image with extern source (like 'gravatar' or other module)
 	 * @return string                            	HTML code to output photo
 	 * @see getImagePublicURLOfObject()
 	 */
@@ -9996,7 +10012,7 @@ class Form
 				$nophoto = '/public/theme/common/nophoto.png';
 				$defaultimg = 'identicon';        // For gravatar
 				if (in_array($modulepart, array('societe', 'userphoto', 'contact', 'memberphoto'))) {    // For modules that need a special image when photo not found
-					if ($modulepart == 'societe' || ($modulepart == 'memberphoto' && !empty($object->morphy) && strpos($object->morphy, 'mor')) !== false) {
+					if ($modulepart == 'societe' || ($modulepart == 'memberphoto' && !empty($object->morphy) && strpos($object->morphy, 'mor') !== false)) {
 						$nophoto = 'company';
 					} else {
 						$nophoto = '/public/theme/common/user_anonymous.png';
@@ -10053,15 +10069,15 @@ class Form
 	 *
 	 * @param int|object|object[] 	$selected 		Id group or group(s) preselected
 	 * @param string 				$htmlname 		Field name in form
-	 * @param int 					$show_empty 	0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 * @param string|array 			$exclude 		Array list of groups id to exclude
-	 * @param int 					$disabled 		If select list must be disabled
-	 * @param string|array 			$include 		Array list of groups id to include
-	 * @param array 				$enableonly 	Array list of groups id to be enabled. All other must be disabled
+	 * @param int<0,1> 				$show_empty 	0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 * @param string|int[] 			$exclude 		Array list of groups id to exclude
+	 * @param int<0,1> 				$disabled 		If select list must be disabled
+	 * @param string|int[] 			$include 		Array list of groups id to include
+	 * @param int[] 				$enableonly 	Array list of groups id to be enabled. All other must be disabled
 	 * @param string 				$force_entity 	'0' or Ids of environment to force
 	 * @param bool 					$multiple 		add [] in the name of element and add 'multiple' attribute (not working with ajax_autocompleter)
 	 * @param string 				$morecss 		More css to add to html component
-	 * @return    string							HTML Componont to select a group
+	 * @return	string								HTML Componont to select a group
 	 * @see select_dolusers()
 	 */
 	public function select_dolgroups($selected = 0, $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = array(), $force_entity = '0', $multiple = false, $morecss = '')
@@ -10251,12 +10267,12 @@ class Form
 	 *
 	 * @param string 	$selected 		preselected category
 	 * @param string 	$htmlname 		name of HTML select list
-	 * @param integer 	$useempty 		1=Add empty line
-	 * @param array 	$excludeid 		id to exclude
+	 * @param int<0,1>	$useempty 		1=Add empty line
+	 * @param int[] 	$excludeid 		id to exclude
 	 * @param string 	$target 		htmlname of target select to bind event
 	 * @param int 		$default_selected default category to select if fk_c_type_fees change = EX_KME
-	 * @param array 	$params 		param to give
-	 * @param int 		$info_admin 	Show the tooltip help picto to setup list
+	 * @param array<string,int|string>	$params	param to give
+	 * @param int<0,1>	$info_admin 	Show the tooltip help picto to setup list
 	 * @return    string
 	 */
 	public function selectExpenseCategories($selected = '', $htmlname = 'fk_c_exp_tax_cat', $useempty = 0, $excludeid = array(), $target = '', $default_selected = 0, $params = array(), $info_admin = 1)
@@ -10484,7 +10500,7 @@ class Form
 			// Use select2 selector
 			if (!empty($conf->use_javascript_ajax)) {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
+				$comboenhancement = ajax_combobox($htmlname, array(), 0, $forcefocus);
 				$out .= $comboenhancement;
 				$morecss = 'minwidth200imp maxwidth500';
 			}
@@ -10607,7 +10623,7 @@ class Form
 			// Use select2 selector
 			if (!empty($conf->use_javascript_ajax)) {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
+				$comboenhancement = ajax_combobox($htmlname, array(), 0, $forcefocus);
 				$out .= $comboenhancement;
 				$morecss = 'minwidth200imp maxwidth500';
 			}
@@ -10673,9 +10689,9 @@ class Form
 	/**
 	 * Output the component to make advanced search criteries
 	 *
-	 * @param 	array 	$arrayofcriterias 					Array of available search criteria. Example: array($object->element => $object->fields, 'otherfamily' => otherarrayoffields, ...)
-	 * @param 	array 	$search_component_params 			Array of selected search criteria
-	 * @param 	array 	$arrayofinputfieldsalreadyoutput 	Array of input fields already inform. The component will not generate a hidden input field if it is in this list.
+	 * @param 	array<array<string,array{type:string}>>	$arrayofcriterias 					Array of available search criteria. Example: array($object->element => $object->fields, 'otherfamily' => otherarrayoffields, ...)
+	 * @param 	array<int,string> 	$search_component_params Array of selected search criteria
+	 * @param 	string[] $arrayofinputfieldsalreadyoutput 	Array of input fields already inform. The component will not generate a hidden input field if it is in this list.
 	 * @param 	string 	$search_component_params_hidden 	String with $search_component_params criteria
 	 * @return	string                                    	HTML component for advanced search
 	 */
@@ -10825,11 +10841,11 @@ class Form
 	/**
 	 * selectModelMail
 	 *
-	 * @param 	string 	$prefix 		Prefix
-	 * @param	string 	$modelType 		Model type
-	 * @param 	int 	$default 		1=Show also Default mail template
-	 * @param 	int 	$addjscombo 	Add js combobox
-	 * @return  string                	HTML select string
+	 * @param	string		$prefix			Prefix
+	 * @param	string		$modelType		Model type
+	 * @param	int<0,1>	$default		1=Show also Default mail template
+	 * @param	int<0,1>	$addjscombo		Add js combobox
+	 * @return	string						HTML select string
 	 */
 	public function selectModelMail($prefix, $modelType = '', $default = 0, $addjscombo = 0)
 	{
@@ -10873,7 +10889,7 @@ class Form
 	 *
 	 * @param 	string 	$save_label 		Alternative label for save button
 	 * @param 	string 	$cancel_label 		Alternative label for cancel button
-	 * @param 	array 	$morebuttons 		Add additional buttons between save and cancel
+	 * @param 	array<array{addclass?:string,name?:string,label_key?:string}> $morebuttons 		Add additional buttons between save and cancel
 	 * @param 	bool 	$withoutdiv 		Option to remove enclosing centered div
 	 * @param 	string 	$morecss 			More CSS
 	 * @param 	string 	$dol_openinpopup 	If the button are shown in a context of a page shown inside a popup, we put here the string name of popup.
@@ -10982,10 +10998,10 @@ class Form
 	/**
 	* Return list of invoice subtypes.
 	*
-	* @param int    $selected     	Id of invoice subtype to preselect by default
-	* @param string $htmlname     	Select field name
-	* @param int    $addempty     	Add an empty entry
-	* @param int    $noinfoadmin  	0=Add admin info, 1=Disable admin info
+	* @param int		$selected     	Id of invoice subtype to preselect by default
+	* @param string		$htmlname     	Select field name
+	* @param int<0,1>	$addempty     	Add an empty entry
+	* @param int<0,1>	$noinfoadmin  	0=Add admin info, 1=Disable admin info
 	* @param string $morecss       	Add more CSS on select tag
 	* @return string  				String for the HTML select component
 	*/

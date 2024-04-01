@@ -24,6 +24,9 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 
 		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
 			if (!empty($arrayfields[$extrafieldsobjectprefix.$key]['checked'])) {
+				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
+					continue;
+				}
 				$cssclass = $extrafields->getAlignFlag($key, $extrafieldsobjectkey);
 				$typeofextrafield = $extrafields->attributes[$extrafieldsobjectkey]['type'][$key];
 

@@ -6,7 +6,7 @@
  * Copyright (C) 2012       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016-2023  Ferran Marcet           <fmarcet@2byte.es>
@@ -439,6 +439,7 @@ if (empty($reshook)) {
 							// Negative line, we create a discount line
 							$discount = new DiscountAbsolute($db);
 							$discount->fk_soc = $objecttmp->socid;
+							$discount->socid = $objecttmp->socid;
 							$discount->amount_ht = abs($lines[$i]->total_ht);
 							$discount->amount_tva = abs($lines[$i]->total_tva);
 							$discount->amount_ttc = abs($lines[$i]->total_ttc);
@@ -495,6 +496,7 @@ if (empty($reshook)) {
 							$rang = ($nbOrders > 1) ? -1 : $lines[$i]->rang;
 							//there may already be rows from previous orders
 							if (!empty($createbills_onebythird)) {
+								$TFactThirdNbLines[$cmd->socid]++;
 								$rang = $TFactThirdNbLines[$cmd->socid];
 							}
 
@@ -530,9 +532,6 @@ if (empty($reshook)) {
 							);
 							if ($result > 0) {
 								$lineid = $result;
-								if (!empty($createbills_onebythird)) { //increment rang to keep order
-									$TFactThirdNbLines[$cmd->socid]++;
-								}
 							} else {
 								$lineid = 0;
 								$error++;
@@ -681,8 +680,8 @@ if (empty($reshook)) {
 			$db->rollback();
 
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];
-			$_GET["originid"] = $_POST["originid"];
+			$_GET["origin"] = $_POST["origin"];		// Keep GET and POST here ?
+			$_GET["originid"] = $_POST["originid"]; // Keep GET and POST here ?
 			if (!empty($errors)) {
 				setEventMessages(null, $errors, 'errors');
 			} else {
@@ -1733,14 +1732,6 @@ if (!empty($arrayfields['total_mark_rate']['checked'])) {
 	print '</td>';
 }
 
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-
-// Fields from hook
-$parameters = array('arrayfields' => $arrayfields);
-$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-print $hookmanager->resPrint;
-
 // Date creation
 if (!empty($arrayfields['c.datec']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1784,17 +1775,28 @@ if (!empty($arrayfields['shippable']['checked'])) {
 	}
 	print '</td>';
 }
+
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
+// Fields from hook
+$parameters = array('arrayfields' => $arrayfields);
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
 // Status billed
 if (!empty($arrayfields['c.facture']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	print $form->selectyesno('search_billed', $search_billed, 1, 0, 1, 1);
 	print '</td>';
 }
+
 // Import key
 if (!empty($arrayfields['c.import_key']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	print '</td>';
 }
+
 // Status
 if (!empty($arrayfields['c.fk_statut']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
@@ -1969,13 +1971,6 @@ if (!empty($arrayfields['total_mark_rate']['checked'])) {
 	$totalarray['nbfield']++;
 }
 
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
-
-// Hook fields
-$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-print $hookmanager->resPrint;
 if (!empty($arrayfields['c.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['c.datec']['label'], $_SERVER["PHP_SELF"], "c.date_creation", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
@@ -2000,6 +1995,14 @@ if (!empty($arrayfields['shippable']['checked'])) {
 	print_liste_field_titre($arrayfields['shippable']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+
+// Hook fields
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
 if (!empty($arrayfields['c.facture']['checked'])) {
 	print_liste_field_titre($arrayfields['c.facture']['label'], $_SERVER["PHP_SELF"], 'c.facture', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
@@ -2502,7 +2505,7 @@ while ($i < $imaxinloop) {
 						$userstatic->lastname = $val['lastname'];
 						$userstatic->firstname = $val['firstname'];
 						$userstatic->email = $val['email'];
-						$userstatic->statut = $val['statut'];
+						$userstatic->status = $val['statut'];
 						$userstatic->entity = $val['entity'];
 						$userstatic->photo = $val['photo'];
 						$userstatic->login = $val['login'];
@@ -2552,7 +2555,7 @@ while ($i < $imaxinloop) {
 
 		// Total margin rate
 		if (!empty($arrayfields['total_margin_rate']['checked'])) {
-			print '<td class="right nowrap">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], 0, null, null, null, 2).'%').'</td>';
+			print '<td class="right nowrap">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], 0, '', 0, 0, 2).'%').'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2560,7 +2563,7 @@ while ($i < $imaxinloop) {
 
 		// Total mark rate
 		if (!empty($arrayfields['total_mark_rate']['checked'])) {
-			print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], 0, null, null, null, 2).'%').'</td>';
+			print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], 0, '', 0, 0, 2).'%').'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2575,13 +2578,6 @@ while ($i < $imaxinloop) {
 				}
 			}
 		}
-
-		// Extra fields
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-		// Fields from hook
-		$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
-		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
 
 		// Date creation
 		if (!empty($arrayfields['c.datec']['checked'])) {
@@ -2738,6 +2734,13 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+
+		// Extra fields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+		// Fields from hook
+		$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 
 		// Billed
 		if (!empty($arrayfields['c.facture']['checked'])) {

@@ -552,8 +552,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$connectstringtarget = $connectstringserver.$object->getEncodedUtf7($targetdir);
 					}
 
-					$timeoutconnect = getDolGlobalString('MAIN_USE_CONNECT_TIMEOUT', 5);
-					$timeoutread = getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT', 20);
+					$timeoutconnect = getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5);
+					$timeoutread = getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 20);
 
 					dol_syslog("imap_open connectstring=".$connectstringsource." login=".$object->login." password=".$object->password." timeoutconnect=".$timeoutconnect." timeoutread=".$timeoutread);
 

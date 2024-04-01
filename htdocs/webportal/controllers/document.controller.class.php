@@ -110,7 +110,7 @@ class DocumentController extends Controller
 		if (preg_match('/\.(html|htm)$/i', $original_file)) {
 			$attachment = false;
 		}
-		if (isset($_GET["attachment"])) {
+		if (GETPOSTISSET("attachment")) {
 			$attachment = GETPOST("attachment", 'alpha') ? true : false;
 		}
 		if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {

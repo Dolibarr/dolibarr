@@ -31,9 +31,9 @@
  *  @param	string      $objectname		Name of object
  * 	@param	string		$newmask		New mask
  *  @param	string      $readdir		Directory source (use $destdir when not defined)
- *  @param	array		$addfieldentry	Array of 1 field entry to add array('key'=>,'type'=>,''label'=>,'visible'=>,'enabled'=>,'position'=>,'notnull'=>','index'=>,'searchall'=>,'comment'=>,'help'=>,'isameasure')
+ *  @param	array{}|array{name:string,key:string,type:string,label:string,picot?:string,enabled:int<0,1>,notnull:int<0,1>,position:int,visible:int,noteditable?:int<0,1>,alwayseditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,1>,disabled?:int<0,1>,autofocusoncreate?:int<0,1>,arrayofkeyval?:array<string,string>,validate?:int<0,1>,comment?:string}	$addfieldentry	Array of 1 field entry to add
  *  @param	string		$delfieldentry	Id of field to remove
- * 	@return	int|object					Return integer <=0 if KO, Object if OK
+ * 	@return	int<-7,-1>|CommonObject		Return integer <=0 if KO, Object if OK
  *  @see rebuildObjectSql()
  */
 function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir = '', $addfieldentry = array(), $delfieldentry = '')
@@ -89,6 +89,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		} else {
 			return -4;
 		}
+		'@phan-var-force CommonObject $object';
 
 		// Backup old file
 		dol_copy($pathoffiletoedittarget, $pathoffiletoedittarget.'.back', $newmask, 1);
@@ -138,7 +139,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				if (!empty($val['alwayseditable'])) {
 					$texttoinsert .= ' "alwayseditable"=>"'.dol_escape_php($val['alwayseditable']).'",';
 				}
-				if (!empty($val['default']) || (isset($val['default']) && $val['default'] === '0')) {
+				if (array_key_exists('default', $val) && (!empty($val['default']) || $val['default'] === '0')) {
 					$texttoinsert .= ' "default"=>"'.dol_escape_php($val['default']).'",';
 				}
 				if (!empty($val['index'])) {
@@ -549,11 +550,11 @@ function compareFirstValue($a, $b)
  * @param string      $file            filename or path
  * @param array<int,string[]> $permissions permissions existing in file
  * @param int|null    $key             key for permission needed
- * @param array|null  $right           $right to update or add
+ * @param array{0:string,1:string}|null  $right           $right to update or add
  * @param string|null $objectname      name of object
  * @param string|null $module          name of module
  * @param int<-2,2>   $action          0 for delete, 1 for add, 2 for update, -1 when delete object completely, -2 for generate rights after add
- * @return int                         1 if OK,-1 if KO
+ * @return int<-1,1>                   1 if OK,-1 if KO
  */
 function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $module, $action)
 {
@@ -672,7 +673,7 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
  * Converts a formatted properties string into an associative array.
  *
  * @param string $string The formatted properties string.
- * @return array The resulting associative array.
+ * @return array<string,bool|int|float|string|mixed[]> The resulting associative array.
  */
 function parsePropertyString($string)
 {
@@ -874,7 +875,7 @@ function getFromFile($file, $start, $end)
  * Write all permissions of each object in AsciiDoc format
  * @param  string   $file           path of the class
  * @param  string   $destfile       file where write table of permissions
- * @return int                      1 if OK, -1 if KO
+ * @return int<-1,1>				1 if OK, -1 if KO
  */
 function writePermsInAsciiDoc($file, $destfile)
 {
@@ -959,9 +960,9 @@ function writePermsInAsciiDoc($file, $destfile)
  *
  * @param	string	$srcfile		Source file to use as example
  * @param  	string 	$file           Path of modified file
- * @param  	array  	$objects        Array of objects in the module
+ * @param  	string[]	$objects	Array of objects in the module
  * @param  	string 	$modulename     Name of module
- * @return 	int                    	Return 1 if OK, -1 if KO
+ * @return 	int<-1,1>              	Return 1 if OK, -1 if KO
  */
 function addObjectsToApiFile($srcfile, $file, $objects, $modulename)
 {
@@ -1044,9 +1045,9 @@ function addObjectsToApiFile($srcfile, $file, $objects, $modulename)
  * Remove 	Object variables and methods from API_Module File
  *
  * @param 	string   	$file         	File api module
- * @param  	array  		$objects        Array of objects in the module
+ * @param  	string[] 	$objects        Array of objects in the module
  * @param 	string   	$objectname   	Name of object want to remove
- * @return 	int                    		1 if OK, -1 if KO
+ * @return 	int<-1,1> 					1 if OK, -1 if KO
  */
 function removeObjectFromApiFile($file, $objects, $objectname)
 {
@@ -1091,12 +1092,12 @@ function removeObjectFromApiFile($file, $objects, $objectname)
 
 
 /**
- * @param    string         $file       path of filename
- * @param    mixed          $menus      all menus for module
- * @param    mixed|null     $menuWantTo  menu get for do actions
- * @param    int|null       $key        key for the concerned menu
- * @param    int            $action     for specify what action (0 = delete, 1 = add, 2 = update, -1 = when delete object)
- * @return   int            1 if OK, -1 if KO
+ * @param	string         $file       path of filename
+ * @param	array<int,array{fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int,enabled:int,perms:string,target:string,user:int}>		$menus      all menus for module
+ * @param	mixed|null     $menuWantTo  menu get for do actions
+ * @param	int|null       $key        key for the concerned menu
+ * @param	int<-1,2>      $action     for specify what action (0 = delete, 1 = add, 2 = update, -1 = when delete object)
+ * @return	int<-1,1>					1 if OK, -1 if KO
  */
 function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 {
@@ -1194,7 +1195,7 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
  *
  * @param string $module The name of the module.
  * @param string $file The path to the module descriptor file.
- * @param array $dicts The dictionary data to be updated.
+ * @param array<string,string|array<string,int|string>> $dicts The dictionary data to be updated.
  * @return int Returns the number of replacements made in the file.
  */
 function updateDictionaryInFile($module, $file, $dicts)
@@ -1267,8 +1268,8 @@ function updateDictionaryInFile($module, $file, $dicts)
  * @param string $modulename The lowercase name of the module for which the dictionary table is being created.
  * @param string $file The file path to the Dolibarr module builder file where the dictionaries are defined.
  * @param string $namedic The name of the dictionary, which will also be used as the base for the table name.
- * @param array|null $dictionnaires An optional array containing pre-existing dictionary data, including 'tabname', 'tablib', 'tabsql', etc.
- * @return int|void Return int < 0 if error, return nothing on success
+ * @param array<string,string|array<string,int|string>>	$dictionnaires An optional array containing pre-existing dictionary data, including 'tabname', 'tablib', 'tabsql', etc.
+ * @return int<-1,-1>|void Return int < 0 if error, return nothing on success
  */
 function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = null)
 {
@@ -1288,11 +1289,11 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	}
 
 	$columns = array(
-		'rowid' => array('type' => 'integer', 'value' => 11, 'extra' => 'AUTO_INCREMENT PRIMARY KEY'),
-		'code' => array('type' => 'varchar', 'value' => 255, 'null'=>'NOT NULL'),
-		'label' => array('type' => 'varchar', 'value' => 255, 'null'=>'NOT NULL'),
-		'position' => array('type' => 'integer', 'value' => 11, 'null'=>'NULL'),
-		'use_default' => array('type' => 'varchar', 'value' => 11, 'default'=>'1'),
+		'rowid' => array('type' => 'integer', 'value' => 11, 'extra' => 'AUTO_INCREMENT'),
+		'code' => array('type' => 'varchar', 'value' => 255, 'null' => 'NOT NULL'),
+		'label' => array('type' => 'varchar', 'value' => 255, 'null' => 'NOT NULL'),
+		'position' => array('type' => 'integer', 'value' => 11, 'null' => 'NULL'),
+		'use_default' => array('type' => 'varchar', 'value' => 11, 'default' => '1'),
 		'active' => array('type' => 'integer', 'value' => 3)
 	);
 
@@ -1310,9 +1311,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	}
 
 	// check if tablename exist in Database and create it if not
-	// @FIXME We must use $db->DDLDescTable($table) to know if a table exists.
-	$query = "SHOW TABLES LIKE '" . $db->escape(MAIN_DB_PREFIX.strtolower($namedic)) . "'";
-	$checkTable = $db->query($query);
+	$checkTable = $db->DDLDescTable(MAIN_DB_PREFIX.strtolower($namedic));
 	if ($checkTable && $db->num_rows($checkTable) > 0) {
 		setEventMessages($langs->trans("ErrorTableExist", $namedic), null, 'errors');
 		return;
@@ -1350,7 +1349,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
  *
  * @param string $file_api   filename or path of api
  * @param string $file_doc   filename or path of documentation
- * @return int               -1 if KO, 1 if OK, 0 if nothing change
+ * @return int<-1,1>         -1 if KO, 1 if OK, 0 if nothing change
  */
 function writeApiUrlsInDoc($file_api, $file_doc)
 {
