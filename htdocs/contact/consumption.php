@@ -111,7 +111,7 @@ $formother = new FormOther($db);
 $productstatic = new Product($db);
 $objsoc = new Societe($db);
 
-$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$title = $langs->trans("ContactsRelatedItems");
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
