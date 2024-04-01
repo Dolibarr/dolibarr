@@ -78,7 +78,7 @@ if (empty($reshook)) {
 
 $now = dol_now();
 
-$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$title = $langs->trans("Notes");
 
 $form = new Form($db);
 
