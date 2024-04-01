@@ -72,15 +72,16 @@ RUN docker-php-ext-install mysqli
 
 
 # Get Dolibarr
-COPY htdocs/* /var/www/html/
-COPY scripts /var/www/
-
-RUN ln -s /var/www/html /var/www/htdocs && \
+RUN curl -fLSs https://github.com/Dolibarr/dolibarr/archive/${DOLI_VERSION}.tar.gz |\
+    tar -C /tmp -xz && \
+    cp -r /tmp/dolibarr-${DOLI_VERSION}/htdocs/* /var/www/html/ && \
+    ln -s /var/www/html /var/www/htdocs && \
+    cp -r /tmp/dolibarr-${DOLI_VERSION}/scripts /var/www/ && \
     rm -rf /tmp/* && \
     mkdir -p /var/www/documents && \
     mkdir -p /var/www/html/custom && \
     chown -R www-data:www-data /var/www
-
+    
 EXPOSE 80
 VOLUME /var/www/documents
 VOLUME /var/www/html/custom
