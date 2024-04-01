@@ -465,7 +465,12 @@ class Projects extends DolibarrApi
 				$this->project->context['caller'] = $request_data['caller'];
 				continue;
 			}
-
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->project->array_options[$index] = $val;
+				}
+				continue;
+			}
 			$this->project->$field = $value;
 		}
 
