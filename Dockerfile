@@ -69,7 +69,7 @@ RUN apt-get update -y \
     && rm -rf /var/lib/apt/lists/*
     
 RUN docker-php-ext-install mysqli
-COPY ./src /var/www/html
+
 
 # Get Dolibarr
 COPY htdocs/* /var/www/html/
