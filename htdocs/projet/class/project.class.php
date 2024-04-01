@@ -680,13 +680,12 @@ class Project extends CommonObject
 	 *
 	 * 	@param      int		$id       		Id of object to load
 	 * 	@param		string	$ref			Ref of project
-	 * 	@param		string	$ref_ext		Ref ext of project
 	 *  @param		string	$email_msgid	Email msgid
 	 * 	@return     int      		   		>0 if OK, 0 if not found, <0 if KO
 	 */
-	public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '')
+	public function fetch($id, $ref = '', $email_msgid = '')
 	{
-		if (empty($id) && empty($ref) && empty($ref_ext) && empty($email_msgid)) {
+		if (empty($id) && empty($ref) && empty($email_msgid)) {
 			dol_syslog(get_class($this)."::fetch Bad parameters", LOG_WARNING);
 			return -1;
 		}
@@ -702,8 +701,6 @@ class Project extends CommonObject
 			$sql .= " WHERE entity IN (".getEntity('project').")";
 			if (!empty($ref)) {
 				$sql .= " AND ref = '".$this->db->escape($ref)."'";
-			} elseif (!empty($ref_ext)) {
-				$sql .= " AND ref_ext = '".$this->db->escape($ref_ext)."'";
 			} else {
 				$sql .= " AND email_msgid = '".$this->db->escape($email_msgid)."'";
 			}
