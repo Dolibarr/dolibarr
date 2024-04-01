@@ -2906,7 +2906,7 @@ class EmailCollector extends CommonObject
 						} elseif ($operation['type'] == 'project') {
 							// Create project / lead
 							$projecttocreate = new Project($this->db);
-							$alreadycreated = $projecttocreate->fetch(0, '', '', $msgid);
+							$alreadycreated = $projecttocreate->fetch(0, '', $msgid);
 							if ($alreadycreated == 0) {
 								if ($thirdpartystatic->id > 0) {
 									$projecttocreate->socid = $thirdpartystatic->id;
