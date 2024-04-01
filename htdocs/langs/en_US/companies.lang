@@ -276,6 +276,7 @@ Contacts=Contacts/Addresses
 ContactsNote=Note
 ContactPersonalData=Personal data
 ContactRelatedItems=Related items
+ContactLinkedFiles=Linked files
 ContactId=Contact id
 ContactsAddresses=Contacts/Addresses
 FromContactName=Name:
