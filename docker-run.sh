@@ -49,9 +49,9 @@ session.use_strict_mode = 1
 disable_functions = pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,passthru,shell_exec,system,proc_open,popen
 EOF
 
-if [[ ! -f /var/www/html/conf/conf.php ]]; then
+if [[ ! -f /var/www/html/conf.php ]]; then
     echo "[INIT] => update Dolibarr Config ..."
-    cat > /var/www/html/conf/conf.php << EOF
+    cat > /var/www/html/conf.php << EOF
 <?php
 \$dolibarr_main_url_root='${DOLI_URL_ROOT}';
 \$dolibarr_main_document_root='/var/www/html';
@@ -74,7 +74,7 @@ EOF
     fi
     if [[ ${DOLI_AUTH} =~ .*ldap.* ]]; then
       echo "[INIT] => update Dolibarr Config with LDAP entries ..."
-      cat >> /var/www/html/conf/conf.php << EOF
+      cat >> /var/www/html/conf.php << EOF
 \$dolibarr_main_auth_ldap_host='${DOLI_LDAP_HOST}';
 \$dolibarr_main_auth_ldap_port='${DOLI_LDAP_PORT}';
 \$dolibarr_main_auth_ldap_version='${DOLI_LDAP_VERSION}';
@@ -90,11 +90,11 @@ EOF
   fi
 
   echo "[INIT] => update ownership for file in Dolibarr Config ..."
-  chown www-data:www-data /var/www/html/conf/conf.php
+  chown www-data:www-data /var/www/html/conf.php
   if [[ ${DOLI_DB_TYPE} == "pgsql" && ! -f /var/www/documents/install.lock ]]; then
-    chmod 600 /var/www/html/conf/conf.php
+    chmod 600 /var/www/html/conf.php
   else
-    chmod 400 /var/www/html/conf/conf.php
+    chmod 400 /var/www/html/conf.php
   fi
 
   if [[ ${CURRENT_UID} -ne ${WWW_USER_ID} || ${CURRENT_GID} -ne ${WWW_GROUP_ID} ]]; then
