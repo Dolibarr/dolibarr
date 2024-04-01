@@ -85,6 +85,9 @@ $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
  * View
  */
 
+$producttmp = new Product($db);
+$warehouse = new Entrepot($db);
+
 $transAreaType = $langs->trans("ProductsAndServicesArea");
 
 $helpurl = '';
@@ -444,12 +447,75 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 	}
 }
 
+$latestwarehouse = '';
+if (isModEnabled('stock')) {
+	$sql = "SELECT e.rowid, e.ref as label, e.lieu, e.statut as status";
+	$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+	$sql .= " WHERE e.statut in (".Entrepot::STATUS_CLOSED.",".Entrepot::STATUS_OPEN_ALL.")";
+	$sql .= " AND e.entity IN (".getEntity('stock').")";
+	$sql .= $db->order('e.tms', 'DESC');
+	$sql .= $db->plimit($max + 1, 0);
+
+	$result = $db->query($sql);
+
+	if ($result) {
+		$num = $db->num_rows($result);
+
+		$latestwarehouse .= '<div class="div-table-responsive-no-min">';
+		$latestwarehouse .= '<table class="noborder centpercent">';
+		$latestwarehouse .= '<tr class="liste_titre">';
+		$latestwarehouse .= '<th>';
+		$latestwarehouse .= $langs->trans("LatestModifiedWarehouses", $max);
+		//$latestwarehouse .= '<a href="'.DOL_URL_ROOT.'/product/stock/list.php">';
+		// TODO: "search_status" on "/product/stock/list.php" currently only accept a single integer value
+		//print '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?search_status='.Entrepot::STATUS_CLOSED.','.Entrepot::STATUS_OPEN_ALL.'">';
+		//$latestwarehouse .= '<span class="badge">'.$num.'</span>';
+		$latestwarehouse .= '</th><th class="right">';
+		$latestwarehouse .= '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?sortfield=p.tms&sortorder=DESC">';
+		$latestwarehouse .= img_picto($langs->trans("FullList"), 'stock');
+		$latestwarehouse .= '</a>';
+		$latestwarehouse .= '</th>';
+		$latestwarehouse .= '</tr>';
+
+		$i = 0;
+		if ($num) {
+			while ($i < min($max, $num)) {
+				$objp = $db->fetch_object($result);
+
+				$warehouse->id = $objp->rowid;
+				$warehouse->statut = $objp->status;
+				$warehouse->label = $objp->label;
+				$warehouse->lieu = $objp->lieu;
+
+				$latestwarehouse .= '<tr class="oddeven">';
+				$latestwarehouse .= '<td>';
+				$latestwarehouse .= $warehouse->getNomUrl(1);
+				$latestwarehouse .= '</td>'."\n";
+				$latestwarehouse .= '<td class="right">';
+				$latestwarehouse .= $warehouse->getLibStatut(5);
+				$latestwarehouse .= '</td>';
+				$latestwarehouse .= "</tr>\n";
+				$i++;
+			}
+			$db->free($result);
+		} else {
+			$latestwarehouse .= '<tr><td>'.$langs->trans("None").'</td><td></td></tr>';
+		}
+		/*if ($num > $max) {
+			$latestwarehouse .= '<tr><td><span class="opacitymedium">'.$langs->trans("More").'...</span></td><td></td></tr>';
+		}*/
+
+		$latestwarehouse .= "</table>";
+		$latestwarehouse .= '</div>';
+		$latestwarehouse .= '<br>';
+	} else {
+		dol_print_error($db);
+	}
+}
+
 
 $latestmovement = '';
 if (isModEnabled('product')) {
-	$producttmp = new Product($db);
-	$warehouse = new Entrepot($db);
-
 	// Latest movements
 	$sql = "SELECT p.rowid, p.label as produit, p.tobatch, p.tosell, p.tobuy,";
 	$sql .= " e.ref as warehouse_ref, e.rowid as warehouse_id, e.ref as warehouse_label, e.lieu, e.statut as warehouse_status,";
@@ -527,10 +593,16 @@ if (isModEnabled('product')) {
 			$latestmovement .= $warehouse->getNomUrl(1);
 			$latestmovement .= "</td>\n";
 			$latestmovement .= '<td class="right">';
+			if ($objp->qty < 0) {
+				$latestmovement .= '<span class="stockmovementexit">';
+			}
 			if ($objp->qty > 0) {
+				$latestmovement .= '<span class="stockmovemententry">';
 				$latestmovement .= '+';
 			}
-			$latestmovement .= $objp->qty.'</td>';
+			$latestmovement .= $objp->qty;
+			$latestmovement .= '</span>';
+			$latestmovement .= '</td>';
 			$latestmovement .= "</tr>\n";
 			$i++;
 		}
@@ -538,6 +610,7 @@ if (isModEnabled('product')) {
 
 		$latestmovement .= "</table>";
 		$latestmovement .= '</div>';
+		$latestmovement .= '<br>';
 	} else {
 		dol_print_error($db);
 	}
@@ -575,6 +648,7 @@ $boxlist .= "</div>\n";
 
 $boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 $boxlist .= $lastmodified;
+$boxlist .= $latestwarehouse;
 $boxlist .= $latestmovement;
 $boxlist .= $resultboxes['boxlistb'];
 $boxlist .= '</div>'."\n";

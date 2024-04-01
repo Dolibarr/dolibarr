@@ -2121,7 +2121,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		// Warehouse
 		if (isModEnabled('stock')) {
 			$langs->load("stocks");
-			$newmenu->add("/product/stock/index.php?leftmenu=stock", $langs->trans("Warehouses"), 0, $user->hasRight('stock', 'lire'), '', $mainmenu, 'stock', 0, '', '', '', img_picto('', 'stock', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/product/index.php?leftmenu=stock", $langs->trans("Warehouses"), 0, $user->hasRight('stock', 'lire'), '', $mainmenu, 'stock', 0, '', '', '', img_picto('', 'stock', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/product/stock/card.php?action=create", $langs->trans("MenuNewWarehouse"), 1, $user->hasRight('stock', 'creer'));
 			$newmenu->add("/product/stock/list.php", $langs->trans("List"), 1, $user->hasRight('stock', 'lire'));
 			$newmenu->add("/product/stock/movement_list.php", $langs->trans("Movements"), 1, $user->hasRight('stock', 'mouvement', 'lire'));
