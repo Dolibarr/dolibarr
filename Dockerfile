@@ -1,4 +1,4 @@
-FROM php:apache
+FROM php:8.2-apache-buster
 
 ENV DOLI_VERSION 19.0.0
 ENV DOLI_INSTALL_AUTO 1
@@ -71,8 +71,7 @@ RUN apt-get update -y \
 # Get Dolibarr
 COPY htdocs/* /var/www/html/
 COPY scripts /var/www/
-RUN a2enmod rewrite
-RUN a2enmod mime
+
 RUN ln -s /var/www/html /var/www/htdocs && \
     rm -rf /tmp/* && \
     mkdir -p /var/www/documents && \
