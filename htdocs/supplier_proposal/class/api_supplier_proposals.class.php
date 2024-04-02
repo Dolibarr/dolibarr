@@ -68,7 +68,7 @@ class SupplierProposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('supplier_proposal', $this->supplier_proposal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->supplier_proposal->delete(DolibarrApiAccess::$user)) {
