@@ -32,6 +32,11 @@ trait DolDeprecationHandler
 	//
 	// protected $enableDynamicProperties = true;
 
+	// Define the following in the class using the trait
+	// to disallow Dolibarr deprecation warnings.
+	//
+	// protected $enableDeprecatedReporting = false;
+
 	/**
 	 * Get deprecated property
 	 *
@@ -43,7 +48,7 @@ trait DolDeprecationHandler
 		$deprecatedProperties = $this->deprecatedProperties();
 		if (isset($deprecatedProperties[$name])) {
 			$newProperty = $deprecatedProperties[$name];
-			$msg = "Accessing deprecated property '$name'. Use '$newProperty' instead.".self::getCallerInfoString();
+			$msg = "DolDeprecationHandler: Accessing deprecated property '$name'. Use '$newProperty' instead.".self::getCallerInfoString();
 			dol_syslog($msg);
 			if ($this->isDeprecatedReportingEnabled()) {
 				trigger_error($msg, E_USER_DEPRECATED);
@@ -53,7 +58,7 @@ trait DolDeprecationHandler
 		if ($this->isDynamicPropertiesEnabled()) {
 			return null;  // If the property is set, then __get is not called.
 		}
-		$msg = "Undefined property '$name'".self::getCallerInfoString();
+		$msg = "DolDeprecationHandler: Undefined property '$name'".self::getCallerInfoString();
 		dol_syslog($msg);
 		trigger_error($msg, E_USER_NOTICE);
 		return $this->$name;  // Returning value anyway (graceful degradation)
@@ -71,7 +76,7 @@ trait DolDeprecationHandler
 		$deprecatedProperties = $this->deprecatedProperties();
 		if (isset($deprecatedProperties[$name])) {
 			$newProperty = $deprecatedProperties[$name];
-			$msg = "Setting value to deprecated property '$name'. Use '$newProperty' instead.".self::getCallerInfoString();
+			$msg = "DolDeprecationHandler: Setting value to deprecated property '$name'. Use '$newProperty' instead.".self::getCallerInfoString();
 			dol_syslog($msg);
 			if ($this->isDeprecatedReportingEnabled()) {
 				trigger_error($msg, E_USER_DEPRECATED);
@@ -81,7 +86,7 @@ trait DolDeprecationHandler
 			return;
 		}
 		if (!$this->isDynamicPropertiesEnabled()) {
-			$msg = "Undefined property '$name'".self::getCallerInfoString();
+			$msg = "DolDeprecationHandler: Undefined property '$name'".self::getCallerInfoString();
 			trigger_error("Undefined property '$name'".self::getCallerInfoString(), E_USER_NOTICE);
 			$this->$name = $value;  // Setting anyway for graceful degradation
 		} else {
@@ -100,7 +105,7 @@ trait DolDeprecationHandler
 		$deprecatedProperties = $this->deprecatedProperties();
 		if (isset($deprecatedProperties[$name])) {
 			$newProperty = $deprecatedProperties[$name];
-			$msg = "Unsetting deprecated property '$name'. Use '$newProperty' instead.".self::getCallerInfoString();
+			$msg = "DolDeprecationHandler: Unsetting deprecated property '$name'. Use '$newProperty' instead.".self::getCallerInfoString();
 			dol_syslog($msg);
 			if ($this->isDeprecatedReportingEnabled()) {
 				trigger_error($msg, E_USER_DEPRECATED);
@@ -109,7 +114,7 @@ trait DolDeprecationHandler
 			return;
 		}
 		if (!$this->isDynamicPropertiesEnabled()) {
-			$msg = "Undefined property '$name'".self::getCallerInfoString();
+			$msg = "DolDeprecationHandler: Undefined property '$name'".self::getCallerInfoString();
 			dol_syslog($msg);
 			trigger_error($msg, E_USER_NOTICE);
 		}
@@ -126,7 +131,7 @@ trait DolDeprecationHandler
 		$deprecatedProperties = $this->deprecatedProperties();
 		if (isset($deprecatedProperties[$name])) {
 			$newProperty = $deprecatedProperties[$name];
-			$msg = "Accessing deprecated property '$name'. Use '$newProperty' instead.".self::getCallerInfoString();
+			$msg = "DolDeprecationHandler: Accessing deprecated property '$name'. Use '$newProperty' instead.".self::getCallerInfoString();
 			dol_syslog($msg);
 			if ($this->isDeprecatedReportingEnabled()) {
 				trigger_error($msg, E_USER_DEPRECATED);
@@ -135,7 +140,7 @@ trait DolDeprecationHandler
 		} elseif ($this->isDynamicPropertiesEnabled()) {
 			return isset($this->$name);
 		}
-		$msg = "Undefined property '$name'.".self::getCallerInfoString();
+		$msg = "DolDeprecationHandler: Undefined property '$name'.".self::getCallerInfoString();
 		dol_syslog($msg);
 		// trigger_error("Undefined property '$name'.".self::getCallerInfoString(), E_USER_NOTICE);
 		return isset($this->$name);
@@ -167,12 +172,19 @@ trait DolDeprecationHandler
 
 
 	/**
-	 * Indicate if deprecations should be reported
+	 * Indicate if deprecations should be reported. Depends on ->enableDeprecatedReporting. If not set, depends on PHP setup.
 	 *
 	 * @return bool
 	 */
 	private function isDeprecatedReportingEnabled()
 	{
+		// By default, if enableDeprecatedReporting is set, use that value.
+
+		if (property_exists($this, 'enableDeprecatedReporting')) {
+			// If the property exists, then we use it.
+			return (bool) $this->enableDeprecatedReporting;
+		}
+
 		return (error_reporting() & E_DEPRECATED) === E_DEPRECATED;
 	}
 
