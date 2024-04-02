@@ -1901,7 +1901,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 					$r_type		= isset($this->rights[$key][2]) ? $this->rights[$key][2] : '';	// TODO deprecated
 
-					$r_default	= (empty($this->rights[$key][Rights::KEY_OLD_DEFAULT]) ? (!isset($this->rights[$key][Rights::KEY_DEFAULT]) ? 0 : ((int) $this->rights[$key][Rights::KEY_DEFAULT])) : ((int) $this->rights[$key][Rights::KEY_OLD_DEFAULT]));
+					$r_default	= (isset($this->rights[$key][Rights::KEY_OLD_DEFAULT]) ? ((int) $this->rights[$key][Rights::KEY_OLD_DEFAULT]) : (isset($this->rights[$key][Rights::KEY_DEFAULT]) ? ((int) $this->rights[$key][Rights::KEY_DEFAULT]) : 0));
 					$r_perms	= (isset($this->rights[$key][Rights::KEY_OLD_FIRST_LEVEL]) ? $this->rights[$key][Rights::KEY_OLD_FIRST_LEVEL] : $this->rights[$key][Rights::KEY_FIRST_LEVEL]);
 					$r_subperms	= (isset($this->rights[$key][Rights::KEY_OLD_SECOND_LEVEL]) ? $this->rights[$key][Rights::KEY_OLD_SECOND_LEVEL] : (isset($this->rights[$key][Rights::KEY_SECOND_LEVEL]) ? $this->rights[$key][Rights::KEY_SECOND_LEVEL] : ''));
 
