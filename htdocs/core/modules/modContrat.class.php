@@ -162,17 +162,17 @@ class modContrat extends DolibarrModules
 		$this->export_icon[$r] = 'contract';
 		$this->export_permission[$r] = array(array("contrat", "export"));
 		$this->export_fields_array[$r] = array('s.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'c.code'=>'CountryCode',
-		's.phone'=>'Phone', 's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode',
+		's.email'=>'Email', 's.phone'=>'Phone', 's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode',
 		's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
 		'co.rowid'=>"Id", 'co.ref'=>"Ref", 'co.datec'=>"DateCreation", 'co.date_contrat'=>"DateContract",
-		'co.fin_validite'=>"ContractEndDate", 'co.date_cloture'=>"Closing", 'co.note_private'=>"NotePrivate", 'co.note_public'=>"NotePublic",
+		'co.fin_validite'=>"ContractEndDate", 'co.date_cloture'=>"DateClosing", 'co.note_private'=>"NotePrivate", 'co.note_public'=>"NotePublic",
 		'cod.rowid'=>'LineId', 'cod.label'=>"LineLabel", 'cod.description'=>"LineDescription", 'cod.price_ht'=>"LineUnitPrice", 'cod.tva_tx'=>"LineVATRate",
 		'cod.qty'=>"LineQty", 'cod.total_ht'=>"LineTotalHT", 'cod.total_tva'=>"LineTotalVAT", 'cod.total_ttc'=>"LineTotalTTC",
 		'cod.date_ouverture'=>"DateStart", 'cod.date_ouverture_prevue'=>"DateStartPlanned", 'cod.date_fin_validite'=>"DateEndPlanned", 'cod.date_cloture'=>"DateEnd",
 		'p.rowid'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel');
 
 		$this->export_entities_array[$r] = array('s.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company',
-		's.town'=>'company', 'c.code'=>'company', 's.phone'=>'company', 's.siren'=>'company', 's.siret'=>'company', 's.ape'=>'company',
+		's.town'=>'company', 'c.code'=>'company', 's.email'=>'company', 's.phone'=>'company', 's.siren'=>'company', 's.siret'=>'company', 's.ape'=>'company',
 		's.idprof4'=>'company', 's.code_compta'=>'company', 's.code_compta_fournisseur'=>'company', 's.tva_intra'=>'company',
 		'co.rowid'=>"contract", 'co.ref'=>"contract", 'co.datec'=>"contract", 'co.date_contrat'=>"contract",
 		'co.fin_validite'=>"contract", 'co.date_cloture'=>"contract", 'co.note_private'=>"contract", 'co.note_public'=>"contract",
@@ -182,7 +182,7 @@ class modContrat extends DolibarrModules
 		'p.rowid'=>'product', 'p.ref'=>'product', 'p.label'=>'product');
 
 		$this->export_TypeFields_array[$r] = array('s.rowid'=>"Numeric", 's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text',
-		's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text',
+		's.email'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text',
 		's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
 		'co.ref'=>"Text", 'co.datec'=>"Date", 'co.date_contrat'=>"Date",
 		'co.fin_validite'=>"Date", 'co.date_cloture'=>"Date", 'co.note_private'=>"Text", 'co.note_public'=>"Text",

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
@@ -24,6 +24,7 @@
  *       \brief      Main project home page
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
@@ -40,7 +41,7 @@ $hookmanager->initHooks(array('projectsindex'));
 $langs->loadLangs(array('projects', 'companies'));
 
 $action = GETPOST('action', 'aZ09');
-$search_project_user = GETPOST('search_project_user', 'int');
+$search_project_user = GETPOSTINT('search_project_user');
 $mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
 if ($mine == 0 && $search_project_user === '') {
 	$search_project_user = (empty($user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX) ? '' : $user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX);
@@ -51,15 +52,15 @@ if ($search_project_user == $user->id) {
 
 // Security check
 $socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-if (!$user->rights->projet->lire) {
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
+if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 
-$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 
 
 /*
@@ -73,7 +74,7 @@ if ($reshook < 0) {
 }
 if (empty($reshook)) {
 	if ($action == 'refresh_search_project_user') {
-		$search_project_user = GETPOST('search_project_user', 'int');
+		$search_project_user = GETPOSTINT('search_project_user');
 		$tabparam = array("MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX" => $search_project_user);
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -91,7 +92,7 @@ $projectstatic = new Project($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-$projectset = ($mine ? $mine : (empty($user->rights->projet->all->lire) ? 0 : 2));
+$projectset = ($mine ? $mine : (!$user->hasRight('projet', 'all', 'lire') ? 0 : 2));
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projectset, 1);
 //var_dump($projectsListId);
 
@@ -108,7 +109,7 @@ llxHeader('', $title, $help_url);
 
 // Title for combo list see all projects
 $titleall = $langs->trans("AllAllowedProjects");
-if (!empty($user->rights->projet->all->lire) && !$socid) {
+if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 	$titleall = $langs->trans("AllProjects");
 } else {
 	$titleall = $langs->trans("AllAllowedProjects").'<br><br>';
@@ -118,17 +119,18 @@ $morehtml = '';
 $morehtml .= '<form name="projectform" method="POST">';
 $morehtml .= '<input type="hidden" name="token" value="'.newToken().'">';
 $morehtml .= '<input type="hidden" name="action" value="refresh_search_project_user">';
-$morehtml .= '<SELECT name="search_project_user">';
+$morehtml .= '<SELECT name="search_project_user" id="search_project_user">';
 $morehtml .= '<option name="all" value="0"'.($mine ? '' : ' selected').'>'.$titleall.'</option>';
 $morehtml .= '<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id) ? ' selected' : '').'>'.$langs->trans("ProjectsImContactFor").'</option>';
 $morehtml .= '</SELECT>';
+$morehtml .= ajax_combobox("search_project_user", array(), 0, 0, 'resolve', '-1', 'small');
 $morehtml .= '<input type="submit" class="button smallpaddingimp" name="refresh" value="'.$langs->trans("Refresh").'">';
 $morehtml .= '</form>';
 
 if ($mine) {
 	$tooltiphelp = $langs->trans("MyProjectsDesc");
 } else {
-	if (!empty($user->rights->projet->all->lire) && !$socid) {
+	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 		$tooltiphelp = $langs->trans("ProjectsDesc");
 	} else {
 		$tooltiphelp = $langs->trans("ProjectsPublicDesc");
@@ -187,20 +189,18 @@ if ($resql) {
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-/*
- * Statistics
- */
+
+// Statistics
 include DOL_DOCUMENT_ROOT.'/projet/graph_opportunities.inc.php';
 
-
 // List of draft projects
-print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppstatus, array('projectlabel', 'plannedworkload', 'declaredprogress', 'prospectionstatus', 'projectstatus'));
+print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppstatus, array('projectlabel', 'plannedworkload', 'declaredprogress', 'prospectionstatus', 'projectstatus'), $max);
 
 
 print '</div><div class="fichetwothirdright">';
 
 // Latest modified projects
-$sql = "SELECT p.rowid, p.ref, p.title, p.dateo, p.datee, p.fk_statut as status, p.tms as datem";
+$sql = "SELECT p.rowid, p.ref, p.title, p.dateo as date_start, p.datee as date_end, p.fk_statut as status, p.tms as datem";
 $sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 $sql .= ", s.code_client, s.code_compta, s.client";
 $sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
@@ -209,7 +209,7 @@ $sql .= ", s.canvas, s.status as thirdpartystatus";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
-if ($mine || empty($user->rights->projet->all->lire)) {
+if ($mine || !$user->hasRight('projet', 'all', 'lire')) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // If we have this test true, it also means projectset is not 2
 }
 if ($socid) {
@@ -241,6 +241,8 @@ if ($resql) {
 			$projectstatic->title = $obj->title;
 			$projectstatic->thirdparty_name = $obj->name;
 			$projectstatic->status = $obj->status;
+			$projectstatic->date_start = $db->jdate($obj->date_start);
+			$projectstatic->date_end = $db->jdate($obj->date_end);
 
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
@@ -258,7 +260,7 @@ if ($resql) {
 			$companystatic->status = $obj->thirdpartystatus;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td width="96" class="nobordernopadding nowrap">';
+			print '<td width="96" class="nobordernopadding nowraponall">';
 			print $projectstatic->getNomUrl(1);
 			print '</td>';
 
@@ -268,7 +270,7 @@ if ($resql) {
 
 			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 			$filename = dol_sanitizeFileName($obj->ref);
-			$filedir = $conf->commande->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+			$filedir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($obj->ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($projectstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
@@ -277,11 +279,11 @@ if ($resql) {
 
 			// Label
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->title).'">';
-			print $projectstatic->title;
+			print dol_escape_htmltag($projectstatic->title);
 			print '</td>';
 
 			// Thirdparty
-			print '<td class="nowrap">';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name).'">';
 			if ($companystatic->id > 0) {
 				print $companystatic->getNomUrl(1, 'company', 16);
 			}
@@ -309,7 +311,7 @@ if ($resql) {
 
 $companystatic = new Societe($db); // We need a clean new object for next loop because current one has some properties set.
 
-
+// List of open projects per thirdparty
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
 $sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 $sql .= ", s.code_client, s.code_compta, s.client";
@@ -320,7 +322,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
 $sql .= " AND p.fk_statut = 1";
-if ($mine || empty($user->rights->projet->all->lire)) {
+if ($mine || !$user->hasRight('projet', 'all', 'lire')) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // If we have this test true, it also means projectset is not 2
 }
 if ($socid > 0) {
@@ -344,7 +346,7 @@ if ($resql) {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("OpenedProjectsByThirdparties", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder);
-		print_liste_field_titre("NbOfProjects", $_SERVER["PHP_SELF"], "nb", "", "", '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre("Number", $_SERVER["PHP_SELF"], "nb", "", "", '', $sortfield, $sortorder, 'right ');
 		print "</tr>\n";
 	}
 
@@ -394,7 +396,7 @@ if ($resql) {
 	if ($othernb) {
 		print '<tr class="oddeven">';
 		print '<td class="nowrap">';
-		print '<span class="opacitymedium">...</span>';
+		print '<span class="opacitymedium">'.$langs->trans("More").'...</span>';
 		print '</td>';
 		print '<td class="nowrap right">';
 		print $othernb;
@@ -412,10 +414,9 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-if (empty($conf->global->PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA)) {
-	// This list can be very long, so we allow to hide it to prefer to use the list page.
-	// Add constant PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA to hide this list
-
+if ((!getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') || getDolGlobalInt('PROJECT_SHOW_OPEN_PROJECTS_LIST_ON_PROJECT_AREA')) && !getDolGlobalInt('PROJECT_HIDE_OPEN_PROJECTS_LIST_ON_PROJECT_AREA')) {
+	// This list is surely very long and useless when we are using opportunities, so we hide it for this use case, but we allow to show it if
+	// we really want it and to allow interface backward compatibility.
 	print '<br>';
 
 	print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());

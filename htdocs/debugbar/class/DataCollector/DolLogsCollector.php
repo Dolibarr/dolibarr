@@ -1,4 +1,25 @@
 <?php
+/* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *	\file       htdocs/debugbar/class/DataCollector/DolLogsCollector.php
+ *	\brief      Class for debugbar collection
+ *	\ingroup    debugbar
+ */
 
 use DebugBar\DataCollector\MessagesCollector;
 use Psr\Log\LogLevel;
@@ -21,6 +42,11 @@ class DolLogsCollector extends MessagesCollector
 	protected $maxnboflines;
 
 	/**
+	 * @var int number of lines
+	 */
+	protected $nboflines;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $path     Path
@@ -28,12 +54,10 @@ class DolLogsCollector extends MessagesCollector
 	 */
 	public function __construct($path = null, $name = 'logs')
 	{
-		global $conf;
-
 		parent::__construct($name);
 
 		$this->nboflines = 0;
-		$this->maxnboflines = empty($conf->global->DEBUGBAR_LOGS_LINES_NUMBER) ? 250 : $conf->global->DEBUGBAR_LOGS_LINES_NUMBER; // High number slows seriously output
+		$this->maxnboflines = getDolGlobalInt('DEBUGBAR_LOGS_LINES_NUMBER', 250); // High number slows seriously output
 
 		$this->path = $path ?: $this->getLogsFile();
 	}
@@ -111,8 +135,8 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 * Get logs
 	 *
-	 * @param string $path     Path
-	 * @return array
+	 * @param 	string 	$path     	Path
+	 * @return 	void
 	 */
 	public function getStorageLogs($path)
 	{
@@ -166,7 +190,7 @@ class DolLogsCollector extends MessagesCollector
 	}
 
 	/**
-	 * Search a string for log entries
+	 * Search a string for log entries into the log file. Used when debug bar scan log file (very slow).
 	 *
 	 * @param  string  $file       File
 	 * @return array               Lines of logs
@@ -175,6 +199,7 @@ class DolLogsCollector extends MessagesCollector
 	{
 		$pattern = "/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.*/";
 		$log_levels = $this->getLevels();
+		$matches = array();
 		preg_match_all($pattern, $file, $matches);
 		$log = array();
 		foreach ($matches as $lines) {

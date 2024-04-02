@@ -26,6 +26,7 @@
  *	\brief      Page of template invoice statistics for a product
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
@@ -35,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'supplier_proposal'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
@@ -52,10 +53,10 @@ $hookmanager->initHooks(array('productstatsinvoice'));
 $showmessage = GETPOST('showmessage');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -69,8 +70,8 @@ if (!$sortfield) {
 	$sortfield = "f.datec";
 }
 
-$search_month = GETPOST('search_month', 'int');
-$search_year = GETPOST('search_year', 'int');
+$search_month = GETPOSTINT('search_month');
+$search_year = GETPOSTINT('search_year');
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$search_month = '';
@@ -96,7 +97,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$object = $product;
 
-	$parameters = array('id'=>$id);
+	$parameters = array('id' => $id);
 	$reshook = $hookmanager->executeHooks('doActions', $parameters, $product, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -131,7 +132,7 @@ if ($id > 0 || !empty($ref)) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
-		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+		if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 			$shownav = 0;
 		}
 
@@ -147,23 +148,23 @@ if ($id > 0 || !empty($ref)) {
 		print "</table>";
 
 		print '</div>';
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 
 		if ($showmessage && $nboflines > 1) {
 			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
-		} elseif ($user->rights->facture->lire) {
+		} elseif ($user->hasRight('facture', 'lire')) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
-			$sql .= "f.titre, f.datec, f.rowid as facid,";
+			$sql .= "f.titre as title, f.datec, f.rowid as facid, f.suspended as suspended,";
 			$sql .= " d.rowid, d.total_ht as total_ht, d.qty"; // We must keep the d.rowid here to not loose record because of the distinct used to ignore duplicate line when link on societe_commerciaux is used
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			}
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."facture_rec as f";
 			$sql .= ", ".MAIN_DB_PREFIX."facturedet_rec as d";
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE f.fk_soc = s.rowid";
@@ -176,7 +177,7 @@ if ($id > 0 || !empty($ref)) {
 			if (!empty($search_year)) {
 				$sql .= ' AND YEAR(f.datec) IN ('.$db->sanitize($search_year).')';
 			}
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($socid) {
@@ -190,7 +191,7 @@ if ($id > 0 || !empty($ref)) {
 
 			// Count total nb of records
 			$totalofrecords = '';
-			if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+			if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 				$result = $db->query($sql);
 				$totalofrecords = $db->num_rows($result);
 			}
@@ -201,16 +202,16 @@ if ($id > 0 || !empty($ref)) {
 			if ($result) {
 				$num = $db->num_rows($result);
 
-				$option .= '&id='.$product->id;
+				$option = '&id='.$product->id;
 
 				if ($limit > 0 && $limit != $conf->liste_limit) {
-					$option .= '&limit='.urlencode($limit);
+					$option .= '&limit='.((int) $limit);
 				}
 				if (!empty($search_month)) {
-					$option .= '&search_month='.urlencode($search_month);
+					$option .= '&search_month='.urlencode((string) ($search_month));
 				}
 				if (!empty($search_year)) {
-					$option .= '&search_year='.urlencode($search_year);
+					$option .= '&search_year='.urlencode((string) ($search_year));
 				}
 
 				print '<form method="post" action="'.$_SERVER ['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
@@ -222,10 +223,11 @@ if ($id > 0 || !empty($ref)) {
 					print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				print_barre_liste($langs->trans("CustomersInvoices"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
 				if (!empty($page)) {
-					$option .= '&page='.urlencode($page);
+					$option .= '&page='.urlencode((string) ($page));
 				}
 
 				print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -250,7 +252,7 @@ if ($id > 0 || !empty($ref)) {
 				print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datec", "", $option, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "d.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
-				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.suspended", "", $option, 'align="right"', $sortfield, $sortorder);
 				print "</tr>\n";
 
 				if ($num > 0) {
@@ -265,7 +267,7 @@ if ($id > 0 || !empty($ref)) {
 						$total_qty += $objp->qty;
 
 						$invoicestatic->id = $objp->facid;
-						$invoicestatic->ref = $objp->titre;
+						$invoicestatic->ref = $objp->title;
 						$societestatic->fetch($objp->socid);
 						$paiement = $invoicestatic->getSommePaiement();
 
@@ -279,7 +281,7 @@ if ($id > 0 || !empty($ref)) {
 						print dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>";
 						print '<td class="center">'.$objp->qty."</td>\n";
 						print '<td align="right">'.price($objp->total_ht)."</td>\n";
-						print '<td align="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5, $paiement, $objp->type).'</td>';
+						print '<td align="right">'.$invoicestatic->LibStatut(1, $objp->suspended, 5, $paiement, $objp->type).'</td>';
 						print "</tr>\n";
 						$i++;
 					}

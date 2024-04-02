@@ -45,9 +45,9 @@ require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
  * Parameters
  */
 
-define(GEN_NUMBER_FACTURE, 1);
+define('GEN_NUMBER_FACTURE', $argv[1] ?? 1);
 $year = 2016;
-$dates = array (mktime(12, 0, 0, 1, 3, $year),
+$dates = array(mktime(12, 0, 0, 1, 3, $year),
 	mktime(12, 0, 0, 1, 9, $year),
 	mktime(12, 0, 0, 2, 13, $year),
 	mktime(12, 0, 0, 2, 23, $year),
@@ -168,7 +168,8 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0) {
 
 		$result=$object->validate($fuser);
 		if ($result) {
-			print " OK with ref ".$object->ref."\n";;
+			print " OK with ref ".$object->ref."\n";
+			;
 		} else {
 			dol_print_error($db, $object->error);
 		}

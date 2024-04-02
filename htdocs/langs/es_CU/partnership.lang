@@ -1,0 +1,24 @@
+# Dolibarr language file - Source file is en_US - partnership
+ModulePartnershipName=Gestión de alianzas
+PartnershipDescription=Módulo Gestión de socios
+PartnershipDescriptionLong=Módulo Gestión de socios
+Partnership=Camaradería
+CancelPartnershipForExpiredMembers=Asociación: cancelar la asociación de miembros con suscripciones vencidas
+PartnershipCheckBacklink=Asociación: comprobar el vínculo de retroceso de referencia
+NewPartnership=Nueva asociación
+ListOfPartnerships=Lista de asociaciones
+PartnershipSetup=Configuración de asociación
+PartnershipAbout=Acerca de la asociación
+PartnershipAboutPage=Asociación acerca de la página
+PARTNERSHIP_BACKLINKS_TO_CHECK=Vínculos de retroceso para comprobar
+ReferingWebsiteCheck=Comprobación del sitio web de referencia
+DatePartnershipEnd=Fecha final
+ReasonDecline=Motivo de rechazo
+ManagePartnership=Administrar asociación
+PartnershipType=tipo de asociación
+PartnershipCanceled=Cancelado
+PartnershipManagedFor=Los socios son
+SendingEmailOnPartnershipWillSoonBeCanceled=La asociación pronto será cancelada
+YourPartnershipWillSoonBeCanceledTopic=La asociación pronto será cancelada
+CountLastUrlCheckError=Número de errores en la última comprobación de URL
+LastCheckBacklink=Fecha de la última comprobación de URL

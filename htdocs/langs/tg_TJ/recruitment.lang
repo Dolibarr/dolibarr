@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Маъракаҳои ҷалбкуниро барои ҷ�
 # Admin page
 #
 RecruitmentSetup = Танзими кадрӣ
-Settings = Танзимот
 RecruitmentSetupPage = Танзимоти имконоти асосии модули ҷалбкуниро дар ин ҷо ворид кунед
 RecruitmentArea=Минтақаи қабул
 PublicInterfaceRecruitmentDesc=Саҳифаҳои оммавии ҷойҳои корӣ URLҳои оммавӣ барои нишон додан ва ҷавоб додан ба ҷойҳои кушод мебошанд. Барои ҳар як кори кушод як истиноди гуногун мавҷуд аст, ки дар ҳар дафтарчаи корӣ мавҷуд аст.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Саҳифаҳои оммавии ҷойҳои ко
 #
 # About page
 #
-About = Дар бораи
 RecruitmentAbout = Дар бораи ҷалби кадрҳо
 RecruitmentAboutPage = Ҷалб дар бораи саҳифа
 NbOfEmployeesExpected=Шумораи интизории кормандон
@@ -57,15 +55,16 @@ EmailRecruiter=Иштироки почтаи электронӣ
 ToUseAGenericEmail=Барои истифодаи почтаи электронӣ. Агар номаълум набошад, почтаи электронии масъули ҷалбкунӣ истифода мешавад
 NewCandidature=Барномаи нав
 ListOfCandidatures=Рӯйхати барномаҳо
-RequestedRemuneration=Музди дархостшуда
-ProposedRemuneration=Мукофоти пешниҳодшуда
+Remuneration=Salary
+RequestedRemuneration=Requested salary
+ProposedRemuneration=Proposed salary
 ContractProposed=Шартнома таклиф этилди
 ContractSigned=Шартнома ба имзо расид
 ContractRefused=Шартнома рад кард
 RecruitmentCandidature=Ариза
 JobPositions=Ҷойҳои корӣ
 RecruitmentCandidatures=Барномаҳо
-InterviewToDo=Мусоҳиба кардан
+InterviewToDo=Contacts to follow
 AnswerCandidature=Ҷавоби ариза
 YourCandidature=Аризаи шумо
 YourCandidatureAnswerMessage=Ташаккур ба шумо барои дархостатон. <br> ...
@@ -74,3 +73,8 @@ JobClosedTextCanceled=Вазифаи корӣ баста аст.
 ExtrafieldsJobPosition=Хусусиятҳои иловагӣ (мансабҳои корӣ)
 ExtrafieldsApplication=Хусусиятҳои иловагӣ (дархостҳои корӣ)
 MakeOffer=Пешниҳод кунед
+WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
+NoPositionOpen=No positions open at the moment
+ConfirmClose=Confirm cancellation
+ConfirmCloseAsk=Are you sure you want to cancel this recruitment candidature
+recruitment=Recruitment

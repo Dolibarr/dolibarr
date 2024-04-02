@@ -16,77 +16,83 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+ModulePartnershipName=Upravljanje partnerstva
+PartnershipDescription=Modul Partnerski management
+PartnershipDescriptionLong= Modul Partnerski management
+Partnership=Partnerstvo
+Partnerships=Partnerstva
+AddPartnership=Dodajte partnerstvo
+CancelPartnershipForExpiredMembers=Partnerstvo: Prekličite partnerstvo članov s potečeno naročnino
+PartnershipCheckBacklink=Partnerstvo: Preverite napotitveno povratno povezavo
 
 #
 # Menu
 #
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
+NewPartnership=Novo partnerstvo
+NewPartnershipbyWeb=Vaša zahteva za partnerstvo je bila uspešno dodana. Morda vas kmalu kontaktiramo ...
+ListOfPartnerships=Seznam partnerstev
 
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PartnershipSetup=Postavitev partnerstva
+PartnershipAbout=O partnerstvu
+PartnershipAboutPage=Partnerstvo o strani
+partnershipforthirdpartyormember=Status partnerja mora biti nastavljen na "tretja oseba" ali "član"
+PARTNERSHIP_IS_MANAGED_FOR=Partnerstvo upravlja za
+PARTNERSHIP_BACKLINKS_TO_CHECK=Povratne povezave za preverjanje
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Število dni pred preklicem statusa partnerstva, ko je naročnina potekla
+ReferingWebsiteCheck=Preverjanje napotitve na spletno stran
+ReferingWebsiteCheckDesc=Omogočite lahko funkcijo za preverjanje, ali so vaši partnerji dodali povratno povezavo do domen vašega spletnega mesta na svojem spletnem mestu.
+PublicFormRegistrationPartnerDesc=Dolibarr vam lahko zagotovi javni URL/spletno mesto, ki zunanjim obiskovalcem omogoča, da zaprosijo za sodelovanje v partnerskem programu.
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
+DeletePartnership=Izbrišite partnerstvo
+PartnershipDedicatedToThisThirdParty=Partnerstvo, namenjeno tej tretji osebi
+PartnershipDedicatedToThisMember=Partnerstvo posvečeno temu članu
 DatePartnershipStart=Začetni datum
 DatePartnershipEnd=Končni datum
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
+ReasonDecline=Razlog za zavrnitev
+ReasonDeclineOrCancel=Reason for refusal or cancellation
+PartnershipAlreadyExist=Partnerstvo že obstaja
+ManagePartnership=Upravljajte partnerstvo
+BacklinkNotFoundOnPartnerWebsite=Povratne povezave ni mogoče najti na partnerskem spletnem mestu
+ConfirmClosePartnershipAsk=Ali ste prepričani, da želite preklicati to partnerstvo?
+PartnershipType=Vrsta partnerstva
+PartnershipRefApproved=Partnerstvo %s odobreno
+KeywordToCheckInWebsite=Če želite preveriti, ali je določena ključna beseda prisotna na spletnem mestu posameznega partnerja, to ključno besedo definirajte tukaj
+PartnershipDraft=Osnutek
+PartnershipAccepted=Sprejeto
+PartnershipRefused=Zavrnjeno
+PartnershipCanceled=Preklicano
+PartnershipManagedFor=Partnerji so
 
 #
 # Template Mail
 #
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
+SendingEmailOnPartnershipWillSoonBeCanceled=Partnerstvo bo kmalu preklicano
+SendingEmailOnPartnershipRefused=Partnerstvo zavrnjeno
+SendingEmailOnPartnershipAccepted=Partnerstvo sprejeto
+SendingEmailOnPartnershipCanceled=Partnerstvo preklicano
 
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
+YourPartnershipWillSoonBeCanceledTopic=Partnerstvo bo kmalu preklicano
+YourPartnershipRefusedTopic=Partnerstvo zavrnjeno
+YourPartnershipAcceptedTopic=Partnerstvo sprejeto
+YourPartnershipCanceledTopic=Partnerstvo preklicano
 
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
+YourPartnershipWillSoonBeCanceledContent=Obveščamo vas, da bo naše partnerstvo kmalu prekinjeno (nismo dobili podaljšanja ali pa ni bil izpolnjen predpogoj za naše partnerstvo). Prosimo, kontaktirajte nas, če ste to prejeli zaradi napake.
+YourPartnershipRefusedContent=Obveščamo vas, da je bila vaša prošnja za partnerstvo zavrnjena. Predpogoji niso izpolnjeni. Kontaktirajte nas, če potrebujete več informacij.
+YourPartnershipAcceptedContent=Obveščamo vas, da je bila vaša prošnja za partnerstvo sprejeta.
+YourPartnershipCanceledContent=Obveščamo vas, da je naše partnerstvo preklicano. Prosimo, kontaktirajte nas, če potrebujete več informacij.
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
+CountLastUrlCheckError=Število napak pri zadnjem preverjanju URL-ja
+LastCheckBacklink=Datum zadnjega preverjanja URL-ja
 
-#
-# Status
-#
-PartnershipDraft=Osnutek
-PartnershipAccepted=Accepted
-PartnershipRefused=Zavrnjeno
-PartnershipCanceled=Preklicano
-PartnershipManagedFor=Partners are
+NewPartnershipRequest=Nova zahteva za partnerstvo
+NewPartnershipRequestDesc=Ta obrazec vam omogoča, da zaprosite za sodelovanje v enem od naših partnerskih programov. Če potrebujete pomoč pri izpolnjevanju tega obrazca, se obrnite na e-pošto <b> %s </b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Ta stran mora vsebovati vsaj eno povezavo do ene od naslednjih domen: %s
+
+IPOfApplicant=IP prijavitelja
+

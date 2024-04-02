@@ -1,39 +1,41 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
-ActionsOnResource=Events about this resource
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+MenuResourceIndex=መርጃዎች
+MenuResourceAdd=አዲስ መርጃ
+DeleteResource=ሀብትን ሰርዝ
+ConfirmDeleteResourceElement=የዚህን ንጥረ ነገር ምንጭ መሰረዝን ያረጋግጡ
+NoResourceInDatabase=በመረጃ ቋት ውስጥ ምንም ግብዓት የለም።
+NoResourceLinked=ምንም ምንጭ አልተገናኘም።
+ActionsOnResource=ስለዚህ ሀብት ክስተቶች
+ResourcePageIndex=የመርጃዎች ዝርዝር
+ResourceSingular=ምንጭ
+ResourceCard=የንብረት ካርድ
+AddResource=ምንጭ ይፍጠሩ
+ResourceFormLabel_ref=የንብረት ስም
+ResourceType=የንብረት አይነት
+ResourceFormLabel_description=የንብረት መግለጫ
 
-ResourcesLinkedToElement=Resources linked to element
+ResourcesLinkedToElement=ከኤለመንት ጋር የተገናኙ መርጃዎች
 
-ShowResource=Show resource
+ShowResource=ምንጭ አሳይ
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ResourceElementPage=የንጥረ ነገሮች ሀብቶች
+ResourceCreatedWithSuccess=ሃብት በተሳካ ሁኔታ ተፈጥሯል።
+RessourceLineSuccessfullyDeleted=የመርጃ መስመር በተሳካ ሁኔታ ተሰርዟል።
+RessourceLineSuccessfullyUpdated=የመርጃ መስመር በተሳካ ሁኔታ ዘምኗል
+ResourceLinkedWithSuccess=ምንጭ ከስኬት ጋር የተገናኘ
 
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+ConfirmDeleteResource=ይህንን ግብዓት ለመሰረዝ ያረጋግጡ
+RessourceSuccessfullyDeleted=ሃብት በተሳካ ሁኔታ ተሰርዟል።
+DictionaryResourceType=የንብረቶች አይነት
 
-SelectResource=Select resource
+SelectResource=መርጃ ይምረጡ
 
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
-ImportDataset_resource_1=Resources
+IdResource=የመታወቂያ ምንጭ
+AssetNumber=ተከታታይ ቁጥር
+ResourceTypeCode=የንብረት አይነት ኮድ
+ImportDataset_resource_1=መርጃዎች
 
-ErrorResourcesAlreadyInUse=Some resources are in use
-ErrorResourceUseInEvent=%s used in %s event
+ErrorResourcesAlreadyInUse=አንዳንድ ሀብቶች ጥቅም ላይ ይውላሉ
+ErrorResourceUseInEvent=%s በ%s ክስተት ውስጥ ጥቅም ላይ ውሏል
+
+MaxUsers=Maximum users (places, seats, etc.)

@@ -20,24 +20,25 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 ?>
 
 <!-- BEGIN PHP TEMPLATE originproductline.tpl.php -->
 <?php
+'@phan-var-force CommonObject $this';
 print '<tr data-id="'.$this->tpl['id'].'" class="oddeven'.(empty($this->tpl['strike']) ? '' : ' strikefordisabled').'">';
 print '<td class="linecolref">'.$this->tpl['label'].'</td>';
 print '<td class="linecoldescription">'.$this->tpl['description'].'</td>';
 print '<td class="linecolvat right">'.$this->tpl['vat_rate'].'</td>';
 print '<td class="linecoluht right">'.$this->tpl['price'].'</td>';
-if (!empty($conf->multicurrency->enabled)) {
+if (isModEnabled("multicurrency")) {
 	print '<td class="linecoluht_currency right">'.$this->tpl['multicurrency_price'].'</td>';
 }
 
 print '<td class="linecolqty right">'.$this->tpl['qty'].'</td>';
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<td class="linecoluseunit left">'.$langs->trans($this->tpl['unit']).'</td>';
 }
 

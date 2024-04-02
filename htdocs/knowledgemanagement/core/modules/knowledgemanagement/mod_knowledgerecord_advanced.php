@@ -54,7 +54,7 @@ class mod_knowledgerecord_advanced extends ModeleNumRefKnowledgeRecord
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{
@@ -68,7 +68,7 @@ class mod_knowledgerecord_advanced extends ModeleNumRefKnowledgeRecord
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
-		$texte .= '<input type="hidden" name="maskconstBom" value="KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADVANCED_MASK">';
+		$texte .= '<input type="hidden" name="maskconst" value="KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADVANCED_MASK">';
 		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("KnowledgeRecord"), $langs->transnoentities("KnowledgeRecord"));
@@ -123,7 +123,7 @@ class mod_knowledgerecord_advanced extends ModeleNumRefKnowledgeRecord
 	 * 	Return next free value
 	 *
 	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @return string|0      			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{

@@ -15,7 +15,7 @@ class AccountService extends \Stripe\Service\AbstractService
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Collection
+     * @return \Stripe\Collection<\Stripe\Account>
      */
     public function all($params = null, $opts = null)
     {
@@ -33,7 +33,7 @@ class AccountService extends \Stripe\Service\AbstractService
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Collection
+     * @return \Stripe\Collection<\Stripe\Capability>
      */
     public function allCapabilities($parentId, $params = null, $opts = null)
     {
@@ -49,7 +49,7 @@ class AccountService extends \Stripe\Service\AbstractService
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Collection
+     * @return \Stripe\Collection<\Stripe\BankAccount|\Stripe\Card>
      */
     public function allExternalAccounts($parentId, $params = null, $opts = null)
     {
@@ -67,7 +67,7 @@ class AccountService extends \Stripe\Service\AbstractService
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Collection
+     * @return \Stripe\Collection<\Stripe\Person>
      */
     public function allPersons($parentId, $params = null, $opts = null)
     {
@@ -79,6 +79,12 @@ class AccountService extends \Stripe\Service\AbstractService
      * your users. To do this, you’ll first need to <a
      * href="https://dashboard.stripe.com/account/applications/settings">register your
      * platform</a>.
+     *
+     * If you’ve already collected information for your connected accounts, you <a
+     * href="/docs/connect/best-practices#onboarding">can pre-fill that information</a>
+     * when creating the account. Connect Onboarding won’t ask for the pre-filled
+     * information during account onboarding. You can pre-fill any information on the
+     * account.
      *
      * @param null|array $params
      * @param null|array|\Stripe\Util\RequestOptions $opts
@@ -146,11 +152,12 @@ class AccountService extends \Stripe\Service\AbstractService
     }
 
     /**
-     * With <a href="/docs/connect">Connect</a>, you can delete Custom or Express
-     * accounts you manage.
+     * With <a href="/docs/connect">Connect</a>, you can delete accounts you manage.
      *
-     * Accounts created using test-mode keys can be deleted at any time. Accounts
-     * created using live-mode keys can only be deleted once all balances are zero.
+     * Accounts created using test-mode keys can be deleted at any time. Standard
+     * accounts created using live-mode keys cannot be deleted. Custom or Express
+     * accounts created using live-mode keys can only be deleted once all balances are
+     * zero.
      *
      * If you want to delete your own account, use the <a
      * href="https://dashboard.stripe.com/account">account information tab in your
@@ -278,11 +285,15 @@ class AccountService extends \Stripe\Service\AbstractService
     }
 
     /**
-     * Updates a connected <a href="/docs/connect/accounts">Express or Custom
-     * account</a> by setting the values of the parameters passed. Any parameters not
-     * provided are left unchanged. Most parameters can be changed only for Custom
-     * accounts. (These are marked <strong>Custom Only</strong> below.) Parameters
-     * marked <strong>Custom and Express</strong> are supported by both account types.
+     * Updates a <a href="/docs/connect/accounts">connected account</a> by setting the
+     * values of the parameters passed. Any parameters not provided are left unchanged.
+     *
+     * For Custom accounts, you can update any information on the account. For other
+     * accounts, you can update all information until that account has started to go
+     * through Connect Onboarding. Once you create an <a
+     * href="/docs/api/account_links">Account Link</a> for a Standard or Express
+     * account, some parameters can no longer be changed. These are marked as
+     * <strong>Custom Only</strong> or <strong>Custom and Express</strong> below.
      *
      * To update your own account, use the <a
      * href="https://dashboard.stripe.com/account">Dashboard</a>. Refer to our <a
@@ -320,10 +331,10 @@ class AccountService extends \Stripe\Service\AbstractService
     }
 
     /**
-     * Updates the metadata, account holder name, and account holder type of a bank
-     * account belonging to a <a href="/docs/connect/custom-accounts">Custom
-     * account</a>, and optionally sets it as the default for its currency. Other bank
-     * account details are not editable by design.
+     * Updates the metadata, account holder name, account holder type of a bank account
+     * belonging to a <a href="/docs/connect/custom-accounts">Custom account</a>, and
+     * optionally sets it as the default for its currency. Other bank account details
+     * are not editable by design.
      *
      * You can re-enable a disabled bank account by performing an update call without
      * providing any arguments or changes.

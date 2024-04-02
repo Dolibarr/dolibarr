@@ -1,5 +1,5 @@
 ﻿/*
- Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+ Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
  For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
 CKEDITOR.plugins.setLang("a11yhelp","sk",{title:"Inštrukcie prístupnosti",contents:"Pomocný obsah. Pre zatvorenie tohto okna, stlačte ESC.",legend:[{name:"Všeobecne",items:[{name:"Lišta nástrojov editora",legend:"Stlačením ${toolbarFocus} prejdete na panel nástrojov. Medzi ďalšou a predchádzajúcou skupinou sa pohybujete s TAB a SHIFT+TAB. Medzi ďalším a predchádzajúcim tlačidlom na panelu nástrojov sa pohybujete s ŠÍPKA VPRAVO a ŠÍPKA VĽAVO. Stlačte medzerník alebo ENTER pre aktiváciu tlačidla lišty nástrojov. Po aktivácii tlačidla sa fókus presunie späť do editačnej oblasti."},

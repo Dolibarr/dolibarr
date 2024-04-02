@@ -5,7 +5,6 @@ ECMCreationDate=Fecha de creación
 ECMNbOfFilesInSubDir=Número de archivos en subdirectorios
 ECMArea=Área de DMS/ECM
 ECMAreaDesc=El área SGD/GCE (Sistema de Gestión de Documentos / Gestión de Contenido Electrónico) le permite guardar, compartir y buscar rápidamente todo tipo de documentos en Dolibarr.
-ECMAreaDesc2=* Los directorios automáticos se rellenan automáticamente al agregar documentos desde la tarjeta de un elemento. <br> * Los directorios manuales se pueden utilizar para guardar documentos no vinculados a un elemento en particular.
 ECMSectionWasRemoved=Se ha eliminado el directorio <b>%s</b>.
 ECMSectionWasCreated=Directorio <b>%s</b> ha sido creado.
 ECMSearchByKeywords=Búsqueda por palabras clave

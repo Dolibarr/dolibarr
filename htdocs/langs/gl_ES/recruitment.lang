@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Xestionar e seguir campañas de contratación para novos
 # Admin page
 #
 RecruitmentSetup = Configuración da contratación
-Settings = Configuracións
 RecruitmentSetupPage = Introduza aquí a configuración das principais opcións para o módulo de contratación
 RecruitmentArea=Área de contratación
 PublicInterfaceRecruitmentDesc=As páxinas públicas dos postos de traballo son URL públicas para mostrar e responder aos traballos dispoñibles. Hai un enlace diferente para cada traballo dispoñible, que se atopa en cada rexistro de traballo.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Activar páxinas públicas de traballos dispoñible
 #
 # About page
 #
-About = Acerca de
 RecruitmentAbout = Acerca de contratación
 RecruitmentAboutPage = Páxina acerca de contratación
 NbOfEmployeesExpected=Número solicitado de empregados
@@ -57,15 +55,16 @@ EmailRecruiter=Correo electrónico do responsable de contratación
 ToUseAGenericEmail=Para usar un correo electrónico xenérico. Se non se define, utilizarase o correo electrónico do responsable de contratación
 NewCandidature=Nova candidatura
 ListOfCandidatures=Listaxe de candidaturas
-RequestedRemuneration=Remuneración solicitada
-ProposedRemuneration=Proposta de remuneración
+Remuneration=Salario
+RequestedRemuneration=Salario solicitado
+ProposedRemuneration=Salario proposto
 ContractProposed=Proposta de contrato
 ContractSigned=Contrato asinado
 ContractRefused=Rexeitouse o contrato
 RecruitmentCandidature=Candidatura
 JobPositions=Postos de traballo
 RecruitmentCandidatures=Candidaturas
-InterviewToDo=Entrevista a realizar
+InterviewToDo=Contactos a seguir
 AnswerCandidature=Resposta da solicitude
 YourCandidature=A súa candidatura
 YourCandidatureAnswerMessage=Grazas pola súa candidatura.<br>...
@@ -74,5 +73,8 @@ JobClosedTextCanceled=O posto de traballo está pechado
 ExtrafieldsJobPosition=Atributos complementarios (postos de traballo)
 ExtrafieldsApplication=Atributos complementarios (candidaturas)
 MakeOffer=Facer unha oferta
-WeAreRecruiting=Estamos contratanto. Esta é unha lista de prazas abertas para cubrir...
+WeAreRecruiting=Estamos contratando. Esta é unha lista de prazas abertas para cubrir...
 NoPositionOpen=Non hai postos laborais libres polo momento
+ConfirmClose=Confirmar cancelación
+ConfirmCloseAsk=Está certo de querer cancelar esta candidatura de contratación?
+recruitment=Contratación

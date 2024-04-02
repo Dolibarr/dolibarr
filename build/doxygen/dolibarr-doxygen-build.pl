@@ -1,9 +1,9 @@
 #!/usr/bin/perl
 #--------------------------------------------------------------------
-# Lance la generation de la doc dev doxygen
+# Start the generation of the development documentation with doxygen
 #--------------------------------------------------------------------
 
-# Detecte repertoire du script
+# Determine the patho of this script
 ($DIR=$0) =~ s/([^\/\\]+)$//;
 $DIR||='.';
 $DIR =~ s/([^\/\\])[\\\/]+$/$1/;

@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - bills
+PaymentTypeCHQ=Vérifier
+PaymentTypeShortCHQ=Vérifier
+CheckBank=Vérifier

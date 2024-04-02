@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Xml\Property;
 
 use Sabre\Xml\Element\XmlFragment;
@@ -15,8 +17,8 @@ use Sabre\Xml\Reader;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Complex extends XmlFragment {
-
+class Complex extends XmlFragment
+{
     /**
      * The deserialize method is called during xml parsing.
      *
@@ -35,16 +37,16 @@ class Complex extends XmlFragment {
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $xml = $reader->readInnerXml();
 
-        if ($reader->nodeType === Reader::ELEMENT && $reader->isEmptyElement) {
+        if (Reader::ELEMENT === $reader->nodeType && $reader->isEmptyElement) {
             // Easy!
             $reader->next();
+
             return null;
         }
         // Now we have a copy of the inner xml, we need to traverse it to get
@@ -56,21 +58,19 @@ class Complex extends XmlFragment {
         $text = '';
 
         while (true) {
-
             switch ($reader->nodeType) {
-                case Reader::ELEMENT :
+                case Reader::ELEMENT:
                     $nonText = true;
                     $reader->next();
                     continue 2;
-                case Reader::TEXT :
-                case Reader::CDATA :
+                case Reader::TEXT:
+                case Reader::CDATA:
                     $text .= $reader->value;
                     break;
-                case Reader::END_ELEMENT :
+                case Reader::END_ELEMENT:
                     break 2;
             }
             $reader->read();
-
         }
 
         // Make sure we advance the cursor one step further.
@@ -78,12 +78,10 @@ class Complex extends XmlFragment {
 
         if ($nonText) {
             $new = new self($xml);
+
             return $new;
         } else {
             return $text;
         }
-
     }
-
-
 }

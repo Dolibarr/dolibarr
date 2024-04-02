@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Víctor Ortiz Pérez   <victor@accett.com.mx>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +17,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  * or see https://www.gnu.org/
  */
+
 /**
  *  \file			htdocs/core/lib/functionsnumtoword.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
  */
-
 
 /**
  * Function to return a number into a text.
@@ -42,11 +43,11 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 		return false;
 	}
 
-	if ($centimes && strlen($num) == 1) {
+	if ($centimes && strlen((string) $num) == 1) {
 		$num = $num * 10;
 	}
 
-	if (!empty($conf->global->MAIN_MODULE_NUMBERWORDS)) {
+	if (isModEnabled('numberwords')) {
 		if ($currency) {
 			$type = '1';
 		} else {
@@ -56,7 +57,7 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 		$concatWords = $langs->getLabelFromNumber($num, $type);
 		return $concatWords;
 	} else {
-		$TNum = explode('.', $num);
+		$TNum = explode('.', (string) $num);
 
 		$num = (int) $TNum[0];
 		$words = array();
@@ -104,7 +105,7 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 			$langs->transnoentitiesnoconv('quadrillion')
 		);
 
-		$num_length = strlen($num);
+		$num_length = strlen((string) $num);
 		$levels = (int) (($num_length + 2) / 3);
 		$max_length = $levels * 3;
 		$num = substr('00'.$num, -$max_length);
@@ -163,7 +164,7 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
  * @param	float 	    $numero			Number to convert
  * @param	Translate	$langs			Language
  * @param	string	    $numorcurrency	'number' or 'amount'
- * @return 	string  	       			Text of the number or -1 in case TOO LONG (more than 1000000000000.99)
+ * @return 	string|int  	       			Text of the number or -1 in case TOO LONG (more than 1000000000000.99)
  */
 function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 {
@@ -187,7 +188,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 
 	/*In dolibarr 3.6.2 (my current version) doesn't have $langs->default and
 	in case exist why ask $lang like a parameter?*/
-	if (((is_object($langs) && $langs->default == 'es_MX') || (!is_object($langs) && $langs == 'es_MX')) && $numorcurrency == 'currency') {
+	if (((is_object($langs) && $langs->getDefaultLang(0) == 'es_MX') || (!is_object($langs) && $langs == 'es_MX')) && $numorcurrency == 'currency') {
 		if ($numero >= 1 && $numero < 2) {
 			return ("UN PESO ".$parte_decimal." / 100 M.N.");
 		} elseif ($numero >= 0 && $numero < 1) {
@@ -247,6 +248,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 		}
 		return $entexto;
 	}
+	return -1;
 }
 
 /**

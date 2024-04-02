@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CardDAV;
 
 use Sabre\DAV;
 
 /**
- * AddressBook interface
+ * AddressBook interface.
  *
  * Implement this interface to allow a node to be recognized as an addressbook.
  *
@@ -13,6 +15,6 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IAddressBook extends DAV\ICollection {
-
+interface IAddressBook extends DAV\ICollection
+{
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Xml\Request;
 
 use Sabre\CalDAV\Plugin;
@@ -9,7 +11,7 @@ use Sabre\Xml\Reader;
 use Sabre\Xml\XmlDeserializable;
 
 /**
- * FreeBusyQueryReport
+ * FreeBusyQueryReport.
  *
  * This class parses the {DAV:}free-busy-query REPORT, as defined in:
  *
@@ -19,19 +21,19 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class FreeBusyQueryReport implements XmlDeserializable {
-
+class FreeBusyQueryReport implements XmlDeserializable
+{
     /**
-     * Starttime of report
+     * Starttime of report.
      *
-     * @var DateTime|null
+     * @var \DateTime|null
      */
     public $start;
 
     /**
-     * End time of report
+     * End time of report.
      *
-     * @var DateTime|null
+     * @var \DateTime|null
      */
     public $end;
 
@@ -53,23 +55,22 @@ class FreeBusyQueryReport implements XmlDeserializable {
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
-        $timeRange = '{' . Plugin::NS_CALDAV . '}time-range';
+    public static function xmlDeserialize(Reader $reader)
+    {
+        $timeRange = '{'.Plugin::NS_CALDAV.'}time-range';
 
         $start = null;
         $end = null;
 
-        foreach ((array)$reader->parseInnerTree([]) as $elem) {
-
-            if ($elem['name'] !== $timeRange) continue;
+        foreach ((array) $reader->parseInnerTree([]) as $elem) {
+            if ($elem['name'] !== $timeRange) {
+                continue;
+            }
 
             $start = empty($elem['attributes']['start']) ?: $elem['attributes']['start'];
             $end = empty($elem['attributes']['end']) ?: $elem['attributes']['end'];
-
         }
         if (!$start && !$end) {
             throw new BadRequest('The freebusy report must have a time-range element');
@@ -85,7 +86,5 @@ class FreeBusyQueryReport implements XmlDeserializable {
         $result->end = $end;
 
         return $result;
-
     }
-
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
+// Copyright (C) 2011-2023	Laurent Destailleur	<eldy@users.sourceforge.net>
 // Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
 // Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
 //
@@ -25,9 +25,11 @@
 
 $(document).ready(function () {
 
-    var timezone = jstz.determine();
-	console.log("Timezone detected for user: "+timezone.name());
-	
+    //var timezone = jstz.determine(); // old method using jstimezonedetect library
+	//console.log("Timezone detected for user: "+timezone.name());
+	var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+	console.log("Timezone detected by Intl for user: "+timezone);
+
     // Detect and save TZ and DST
 	var rightNow = new Date();
 	var jan1 = new Date(rightNow.getFullYear(), 0, 1, 0, 0, 0, 0);
@@ -49,8 +51,8 @@ $(document).ready(function () {
 	var dst_first=DisplayDstSwitchDates('first');
 	var dst_second=DisplayDstSwitchDates('second');
 	//alert(dst);
+    $('#tz_string').val(timezone);										// returns TZ string
 	$('#tz').val(std_time_offset);   				  					// returns TZ
-    $('#tz_string').val(timezone.name());		// returns TZ string
 	$('#dst_observed').val(dst);   				  						// returns if DST is observed on summer
 	$('#dst_first').val(dst_first);   									// returns DST first switch in year
 	$('#dst_second').val(dst_second);   								// returns DST second switch in year
@@ -69,7 +71,7 @@ function DisplayDstSwitchDates(firstsecond)
     var lastOffset = 99;
 
     // Loop through every month of the current year
-    for (i = 0; i < 12; i++)
+    for (let i = 0; i < 12; i++)
     {
         // Fetch the timezone value for the month
         var newDate = new Date(Date.UTC(year, i, 0, 0, 0, 0, 0));
@@ -109,7 +111,7 @@ function FindDstSwitchDate(year, month)
     var dstDate;
 
     // Loop to find the exact day a timezone adjust occurs
-    for (day = 0; day < 50; day++)
+    for (let day = 0; day < 50; day++)
     {
         var tmpDate = new Date(Date.UTC(year, month, day, 0, 0, 0, 0));
         var tmpOffset = -1 * tmpDate.getTimezoneOffset() / 60;

@@ -11,6 +11,7 @@ div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status {
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time,
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-memory,
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count,
+div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link,
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type {
   float: right;
   margin-left: 8px;
@@ -19,6 +20,7 @@ div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type {
 div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status span.phpdebugbar-widgets-render-time,
 div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status span.phpdebugbar-widgets-memory,
 div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status span.phpdebugbar-widgets-param-count,
+div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status a.phpdebugbar-widgets-editor-link,
 div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status span.phpdebugbar-widgets-type {
   color: #555;
 }
@@ -26,11 +28,16 @@ div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time:before,
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-memory:before,
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count:before,
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type:before,
+div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before,
 div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 {
   font-family: PhpDebugbarFontAwesome;
   margin-right: 4px;
   font-size: 12px;
+}
+div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:hover
+{
+    color: #ffffff;
 }
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time:before {
   content: "\f017";

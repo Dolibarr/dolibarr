@@ -17,7 +17,6 @@ CronCommand=Mando
 CronList=Trabajos programados
 CronDelete=Eliminar trabajos programados
 CronConfirmDelete=¿Seguro que quieres eliminar estos trabajos programados?
-CronExecute=Lanzar trabajo programado
 CronConfirmExecute=¿Estás seguro de que deseas ejecutar estos trabajos programados ahora?
 CronInfo=El módulo de trabajo programado permite programar trabajos para ejecutarlos automáticamente. Los trabajos también se pueden iniciar manualmente.
 CronTask=Trabajo

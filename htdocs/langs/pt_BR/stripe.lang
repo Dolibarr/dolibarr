@@ -1,8 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Configuração do módulo de boleto
 StripeOrCBDoPayment=Pagar com cartão de crédito ou boleto
-STRIPE_PAYONLINE_SENDEMAIL=Notificação por e-mail após uma tentativa de pagamento (sucesso ou falha)
-StripeDoPayment=Pague com Stripe
 YouWillBeRedirectedOnStripe=Você será redirecionado na página de boleto protegida para inserir as informações do cartão de crédito
 ToOfferALinkForOnlinePayment=URL para %s pagamento
 ToOfferALinkForOnlinePaymentOnOrder=URL para oferecer uma página de pagamentos on-line de %s para pedidos de vendas
@@ -22,7 +20,7 @@ STRIPE_LIVE_SECRET_KEY=Chave ao vivo secreta
 STRIPE_LIVE_PUBLISHABLE_KEY=Chave editável
 StripeLiveEnabled=Boleto ativado (caso contrário teste / modo cx)
 StripeImportPayment=Importação de pagamentos de franquia
-ExampleOfTestCreditCard=Exemplo de cartão de crédito para teste: %s => válido, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
 StripeAccount=Conta Stripe
 StripeTransactionList=Lista de transações Stripe
 LocalID=ID local
@@ -35,5 +33,4 @@ StripeUserAccountForActions=Conta de usuário a ser usada para notificação por
 StripePayoutList=Lista de pagamentos do Stripe
 ToOfferALinkForTestWebhook=Link para configurar o Stripe WebHook para chamar o IPN (modo de teste)
 ToOfferALinkForLiveWebhook=Link para configurar Stripe WebHook para chamar o IPN (modo ao vivo)
-PaymentWillBeRecordedForNextPeriod=O pagamento será registrado para o próximo período.
 ClickHereToTryAgain=<a href="%s"> Clique aqui para tentar novamente ... </a>

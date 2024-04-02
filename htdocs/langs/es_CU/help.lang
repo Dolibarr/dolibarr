@@ -1,0 +1,18 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Soporte de foro/wiki
+EMailSupport=Soporte de correos electrónicos
+RemoteControlSupport=Soporte en línea en tiempo real / remoto
+OtherSupport=Otro apoyo
+ToSeeListOfAvailableRessources=Para contactar/ver recursos disponibles:
+HelpCenter=Centro de ayuda
+DolibarrHelpCenter=Centro de ayuda y soporte de Dolibarr
+ToGoBackToDolibarr=De lo contrario, <a href="%s"> haga clic aquí para continuar usando Dolibarr </a>.
+TypeOfSupport=Tipo de apoyo
+TypeSupportCommunauty=Comunidad (gratis)
+Efficiency=Eficiencia
+TypeHelpOnly=solo ayuda
+BackToHelpCenter=De lo contrario, <a href="%s"> vuelva a la página de inicio del Centro de ayuda </a> .
+LinkToGoldMember=Puede llamar a uno de los entrenadores preseleccionados por Dolibarr para su idioma (%s) haciendo clic en su Widget (el estado y el precio máximo se actualizan automáticamente):
+PossibleLanguages=Idiomas admitidos
+SubscribeToFoundation=Ayuda al proyecto Dolibarr, suscríbete a la fundación
+SeeOfficalSupport=Para soporte oficial de Dolibarr en su idioma: <br> <b> <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> </b>

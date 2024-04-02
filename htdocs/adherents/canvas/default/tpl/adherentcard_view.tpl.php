@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
- * Copyright (C) 2012      Philippe Grand <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2022 Philippe Grand <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
@@ -124,16 +124,16 @@ if (!empty($this->control->tpl['action_delete'])) {
 if (empty($user->socid)) {
 	echo '<div class="tabsAction">';
 
-	if ($user->rights->adherent->creer) {
+	if ($user->hasRight('adherent', 'creer')) {
 		echo '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';
 	}
 
-	if (!$this->control->tpl['user_id'] && $user->rights->user->user->creer) {
+	if (!$this->control->tpl['user_id'] && $user->hasRight('user', 'user', 'creer')) {
 		echo '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=create_user&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans("CreateDolibarrLogin").'</a>';
 	}
 
-	if ($user->rights->adherent->supprimer) {
-		echo '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
+	if ($user->hasRight('adherent', 'supprimer')) {
+		print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.$canvas, 'delete', $user->hasRight('adherent', 'supprimer'));
 	}
 
 	echo '</div><br>';

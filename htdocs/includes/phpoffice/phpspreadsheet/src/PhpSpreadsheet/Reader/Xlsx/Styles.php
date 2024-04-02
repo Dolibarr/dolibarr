@@ -8,6 +8,7 @@ use PhpOffice\PhpSpreadsheet\Style\Borders;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Font;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Style\Protection;
 use PhpOffice\PhpSpreadsheet\Style\Style;
 
@@ -68,6 +69,17 @@ class Styles extends BaseParserClass
             if ($verticalAlign === 'subscript') {
                 $fontStyle->setSubscript(true);
             }
+        }
+    }
+
+    private static function readNumberFormat(NumberFormat $numfmtStyle, \SimpleXMLElement $numfmtStyleXml)
+    {
+        if ($numfmtStyleXml->count() === 0) {
+            return;
+        }
+        $numfmt = $numfmtStyleXml->attributes();
+        if ($numfmt->count() > 0 && isset($numfmt['formatCode'])) {
+            $numfmtStyle->setFormatCode((string) $numfmt['formatCode']);
         }
     }
 
@@ -149,7 +161,11 @@ class Styles extends BaseParserClass
 
     private function readStyle(Style $docStyle, $style)
     {
-        $docStyle->getNumberFormat()->setFormatCode($style->numFmt);
+        if ($style->numFmt instanceof \SimpleXMLElement) {
+            self::readNumberFormat($docStyle->getNumberFormat(), $style->numFmt);
+        } else {
+            $docStyle->getNumberFormat()->setFormatCode($style->numFmt);
+        }
 
         if (isset($style->font)) {
             self::readFontStyle($docStyle->getFont(), $style->font);
@@ -163,7 +179,7 @@ class Styles extends BaseParserClass
             self::readBorderStyle($docStyle->getBorders(), $style->border);
         }
 
-        if (isset($style->alignment)) {
+        if (isset($style->alignment->alignment)) {
             self::readAlignmentStyle($docStyle->getAlignment(), $style->alignment);
         }
 
@@ -260,6 +276,6 @@ class Styles extends BaseParserClass
 
     private static function getArrayItem($array, $key = 0)
     {
-        return isset($array[$key]) ? $array[$key] : null;
+        return $array[$key] ?? null;
     }
 }

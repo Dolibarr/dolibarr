@@ -27,7 +27,7 @@ create table llx_extrafields
 	type            varchar(8),
 	size            varchar(8) DEFAULT NULL,
 	fieldcomputed   text,
-	fielddefault    varchar(255),
+	fielddefault    text,
 	fieldunique     integer DEFAULT 0,
 	fieldrequired   integer DEFAULT 0,
 	perms			varchar(255),								-- not used yet

@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = 支払いが開始されたローンの�
 CantModifyInterestIfScheduleIsUsed = スケジュールを使用する場合、利息を変更することはできない
 # Admin
 ConfigLoan=モジュールローンの構成
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=デフォルトの勘定科目資本
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=デフォルトの勘定科目利息
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=デフォルトの勘定科目保険
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=デフォルトで資本に使用されるアカウント (勘定科目表から) (ローンモジュール)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=デフォルトで利子に使用される口座 (勘定科目表から) (ローン モジュール)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=デフォルトで保険に使用される口座 (勘定科目表から) (ローン モジュール)
 CreateCalcSchedule=財政的コミットメントを編集する

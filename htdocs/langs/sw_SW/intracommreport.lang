@@ -1,40 +1,40 @@
-Module68000Name = Intracomm report
-Module68000Desc = Intracomm report management (Support for French DEB/DES format)
-IntracommReportSetup = Intracommreport module setup
-IntracommReportAbout = About intracommreport
+Module68000Name = Ripoti ya Intracomm
+Module68000Desc = Usimamizi wa ripoti ya Intracomm (Msaada kwa umbizo la Kifaransa DEB/DES)
+IntracommReportSetup = Usanidi wa moduli ya taarifa ya ndani
+IntracommReportAbout = Kuhusu intracommreport
 
 # Setup
 INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
+INTRACOMMREPORT_TYPE_ACTEUR=Aina d'acteur
 INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
 INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Jamii ya huduma za aina "Frais de port"
 
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de declarant
 
 # Menu
-MenuIntracommReport=Intracomm report
-MenuIntracommReportNew=New declaration
-MenuIntracommReportList=List
+MenuIntracommReport=Ripoti ya Intracomm
+MenuIntracommReportNew=Tamko jipya
+MenuIntracommReportList=Orodha
 
 # View
-NewDeclaration=New declaration
-Declaration=Declaration
-AnalysisPeriod=Analysis period
-TypeOfDeclaration=Type of declaration
-DEB=Goods exchange declaration (DEB)
-DES=Services exchange declaration (DES)
+NewDeclaration=Tamko jipya
+Declaration=Tamko
+AnalysisPeriod=Kipindi cha uchambuzi
+TypeOfDeclaration=Aina ya tamko
+DEB=Tamko la ubadilishaji wa bidhaa (DEB)
+DES=Tamko la ubadilishaji wa huduma (DES)
 
 # Export page
-IntracommReportTitle=Preparation of an XML file in ProDouane format
+IntracommReportTitle=Maandalizi ya faili ya XML katika umbizo la ProDouane
 
 # List
-IntracommReportList=List of generated declarations
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
-IntracommReportTypeDeclaration=Type of declaration
-IntracommReportDownload=download XML file
+IntracommReportList=Orodha ya matamko yaliyotolewa
+IntracommReportNumber=Idadi ya tamko
+IntracommReportPeriod=Kipindi cha uchambuzi
+IntracommReportTypeDeclaration=Aina ya tamko
+IntracommReportDownload=pakua faili ya XML
 
 # Invoice
-IntracommReportTransportMode=Transport mode
+IntracommReportTransportMode=Hali ya usafiri

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,7 +35,7 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 @set_time_limit(0); // No timeout for this script
@@ -56,12 +56,19 @@ $version = DOL_VERSION;
 $error = 0;
 $forcecommit = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
+/*
+ * Main
+ */
+
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 if (!isset($argv[1]) || $argv[1] != 'user') {
 	print "Usage:  $script_file user\n";
-	exit(-1);
+	exit(1);
 }
 
 print '--- start'."\n";

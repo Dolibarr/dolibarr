@@ -136,7 +136,7 @@ class FormWebsite
 					} else {
 						print '<option value="'.$obj->code.'">';
 					}
-					print $obj->label;
+					print $langs->trans($obj->label);
 					print '</option>';
 					$i++;
 				}
@@ -175,7 +175,6 @@ class FormWebsite
 		$langs->load("admin");
 
 		$listofsamples = dol_dir_list(DOL_DOCUMENT_ROOT.'/website/samples', 'files', 0, '^page-sample-.*\.html$');
-
 		$arrayofsamples = array();
 		$arrayofsamples['empty'] = 'EmptyPage'; // Always this one first
 		foreach ($listofsamples as $sample) {
@@ -191,7 +190,7 @@ class FormWebsite
 		}
 
 		$out = '';
-		$out .= '<select id="select'.$htmlname.'" class="selectSampleOfContainer'.($morecss? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+		$out .= '<select id="select'.$htmlname.'" class="selectSampleOfContainer'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 
 		if ($useempty == 1 || $useempty == 2) {
 			$out .= '<option value="-1">&nbsp;</option>';
@@ -231,6 +230,8 @@ class FormWebsite
 	 */
 	public function selectContainer($website, $htmlname = 'pageid', $pageid = 0, $showempty = 0, $action = '', $morecss = 'minwidth200', $excludeids = null)
 	{
+		global $conf, $langs;
+
 		$this->num = 0;
 
 		$atleastonepage = (is_array($website->lines) && count($website->lines) > 0);
@@ -239,12 +240,17 @@ class FormWebsite
 		if ($atleastonepage && $action != 'editsource') {
 			$out .= '<select name="'.$htmlname.'" id="'.$htmlname.'" class="maxwidth300'.($morecss ? ' '.$morecss : '').'">';
 		} else {
-			$out .= '<select name="pageidbis" id="pageid" class="maxwidth300'.($morecss ? ' '.$morecss : '').'" disabled="disabled">';
+			$out .= '<select name="pageidbis" id="pageid" class="maxwidth300'.($morecss ? ' '.$morecss : '').'"'.($action == 'editsource' ? ' disabled="disabled"' : '').'>';
 		}
 
 		if ($showempty || !$atleastonepage) {
-			$out .= '<option value="-1">&nbsp;</option>';
+			$out .= '<option class="optiongrey" value="-1">'.(is_numeric($showempty) ? '&nbsp;' : $showempty).'</option>';
 		}
+
+		/*if (!empty($conf->use_javascript_ajax)) {
+			$valueoption = '<span class="classlink">'.img_picto('', 'add', 'class="paddingrightonly"').$langs->trans("AddPage").'</span>';
+			$out .= '<option value="-2" data-html="'.dol_escape_htmltag($valueoption).'">'.$valueoption.'</option>';
+		}*/
 
 		if ($atleastonepage) {
 			if (empty($pageid) && $action != 'createcontainer') {      // Page id is not defined, we try to take one
@@ -275,7 +281,7 @@ class FormWebsite
 				}
 				if ($website->fk_default_home && $key == $website->fk_default_home) {
 					//$valueforoption .= ' <span class="opacitymedium">('.$langs->trans("HomePage").')</span>';
-					$valueforoption .= ' <span class="opacitymedium fa fa-home"></span>';
+					$valueforoption .= ' <span class="opacitymedium fas fa-home"></span>';
 				}
 
 				$out .= '<option value="'.$key.'"';
@@ -298,6 +304,87 @@ class FormWebsite
 			$out .= '<input type="hidden" name="'.$htmlname.'" value="'.$pageid.'">';
 			$out .= ajax_combobox($htmlname);
 		}
+		return $out;
+	}
+
+
+	/**
+	 * Return HTML code for selection of page layout
+	 * @param   string      $htmlContent    HTML name of WYSIWIG field
+	 * @return 	string      HTML for model page boxes
+	 */
+	public function getContentPageTemplate($htmlContent = 'message')
+	{
+		global $user, $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
+
+		$listofsamples = dol_dir_list(DOL_DOCUMENT_ROOT.'/website/samples', 'files', 0, '^page-sample-.*\.html$');
+		$arrayofsamples = array();
+		$arrayofsamples['empty'] = 'EmptyPage'; // Always this one first
+		foreach ($listofsamples as $sample) {
+			$reg = array();
+			if (preg_match('/^page-sample-(.*)\.html$/', $sample['name'], $reg)) {
+				$key = $reg[1];
+				$labelkey = ucfirst($key);
+				if ($key == 'empty') {
+					$labelkey = 'EmptyPage';
+				}
+				$arrayofsamples[$key] = $labelkey;
+			}
+		}
+		$out = '<div id="template-selector" class="template-container hidden">';
+
+		$templates = array(
+			'empty' => 'empty',
+			'text' => 'dynamic',
+			'basic' => 'basic',
+			//'news'  => 'news',
+			//'commerce' => 'commerce',
+		);
+
+
+
+		foreach ($templates as $template => $templateFunction) {
+			if ($template == 'text') {
+				$substitutionarray = array();
+				$substitutionarray['__WEBSITE_CREATED_BY__'] = $user->getFullName($langs);
+
+				$pathtoTemplateFile = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.dol_sanitizeFileName(strtolower($arrayofsamples['dynamiccontent'])).'.html';
+				$contentHtml = file_exists($pathtoTemplateFile) ? make_substitutions(@file_get_contents($pathtoTemplateFile), $substitutionarray) : '';
+			} else {
+				$contentHtml = getHtmlOfLayout($template);
+			}
+
+			$out .= '<div class="template-option" data-template="'.$template.'" data-content="'.htmlentities($contentHtml).'">';
+			$out .= '<img class="maillayout" alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/maillayout/'.$template.'.png" />';
+			$out .= '<span class="template-option-text">'.($template != 'text'  ? ucfirst($template) : ucfirst($templateFunction)).'</span>';
+			$out .= '</div>';
+		}
+		$out .= '<input type="hidden" name="sample" value="" />';
+		$out .= '</div>';
+
+		$out .= '<script type="text/javascript">
+				$(document).ready(function() {
+					$(".template-option").click(function() {
+						console.log("We choose a layout for website");
+
+						$(".template-option").removeClass("selected");
+						$(this).addClass("selected");
+
+						var template = $(this).data("template");
+						var contentHtml = $(this).data("content");
+
+						jQuery("#'.$htmlContent.'").val(contentHtml);
+						jQuery("#'.$htmlContent.'preview").val(contentHtml);
+						var editorInstance = CKEDITOR.instances.'.$htmlContent.'preview;
+						if (editorInstance) {
+							editorInstance.setData(contentHtml);
+						}
+					});
+				});
+		</script>';
+
 		return $out;
 	}
 }

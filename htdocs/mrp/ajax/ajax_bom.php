@@ -26,9 +26,6 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -42,19 +39,27 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 
 $idbom = GETPOST('idbom', 'alpha');
-$action = GETPOST('action', 'aZ09');
+//$action = GETPOST('action', 'aZ09');
+
+$object = new BOM($db);
+$result = $object->fetch($idbom);
+
+// Security check
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'bom', $object, $object->table_element, '', '', 'rowid', $isdraft);
 
 
 /*
  * View
  */
 
-$object = new BOM($db);
-$result = $object->fetch($idbom);
+top_httphead('application/json');
+
 if ($result > 0) {
 	// We remove properties we don't need in answer
 	unset($object->fields);

@@ -1,8 +1,7 @@
 # Dolibarr language file - Source file is en_US - trips
-TripsAndExpensesStatistics=Expense report statistics
-FeesKilometersOrAmout=Amount or Miles
-TripNDF=Information expense report
-TF_METRO=Tube
-ErrorDoubleDeclaration=You have submitted another expense report in a similar date range.
 BrouillonnerTrip=Move expense report status back to "Draft"
 ConfirmBrouillonnerTrip=Are you sure you want to move this expense report status back to "Draft"?
+ErrorDoubleDeclaration=You have submitted another expense report in a similar date range.
+FeesKilometersOrAmout=Amount or Miles
+TripsAndExpensesStatistics=Expense report statistics
+TF_METRO=Tube

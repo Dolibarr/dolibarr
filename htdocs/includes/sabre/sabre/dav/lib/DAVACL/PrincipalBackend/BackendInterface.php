@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAVACL\PrincipalBackend;
 
 /**
@@ -13,8 +15,8 @@ namespace Sabre\DAVACL\PrincipalBackend;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface BackendInterface {
-
+interface BackendInterface
+{
     /**
      * Returns a list of principals based on a prefix.
      *
@@ -29,9 +31,10 @@ interface BackendInterface {
      *     you have an email address, use this property.
      *
      * @param string $prefixPath
+     *
      * @return array
      */
-    function getPrincipalsByPrefix($prefixPath);
+    public function getPrincipalsByPrefix($prefixPath);
 
     /**
      * Returns a specific principal, specified by it's path.
@@ -39,12 +42,13 @@ interface BackendInterface {
      * getPrincipalsByPrefix.
      *
      * @param string $path
+     *
      * @return array
      */
-    function getPrincipalByPath($path);
+    public function getPrincipalByPath($path);
 
     /**
-     * Updates one ore more webdav properties on a principal.
+     * Updates one or more webdav properties on a principal.
      *
      * The list of mutations is stored in a Sabre\DAV\PropPatch object.
      * To do the actual updates, you must tell this object which properties
@@ -56,10 +60,8 @@ interface BackendInterface {
      * Read the PropPatch documentation for more info and examples.
      *
      * @param string $path
-     * @param \Sabre\DAV\PropPatch $propPatch
-     * @return void
      */
-    function updatePrincipal($path, \Sabre\DAV\PropPatch $propPatch);
+    public function updatePrincipal($path, \Sabre\DAV\PropPatch $propPatch);
 
     /**
      * This method is used to search for principals matching a set of
@@ -86,11 +88,11 @@ interface BackendInterface {
      * from working.
      *
      * @param string $prefixPath
-     * @param array $searchProperties
      * @param string $test
+     *
      * @return array
      */
-    function searchPrincipals($prefixPath, array $searchProperties, $test = 'allof');
+    public function searchPrincipals($prefixPath, array $searchProperties, $test = 'allof');
 
     /**
      * Finds a principal by its URI.
@@ -107,25 +109,28 @@ interface BackendInterface {
      *
      * @param string $uri
      * @param string $principalPrefix
-     * @return string
+     *
+     * @return string|null
      */
-    function findByUri($uri, $principalPrefix);
+    public function findByUri($uri, $principalPrefix);
 
     /**
-     * Returns the list of members for a group-principal
+     * Returns the list of members for a group-principal.
      *
      * @param string $principal
+     *
      * @return array
      */
-    function getGroupMemberSet($principal);
+    public function getGroupMemberSet($principal);
 
     /**
-     * Returns the list of groups a principal is a member of
+     * Returns the list of groups a principal is a member of.
      *
      * @param string $principal
+     *
      * @return array
      */
-    function getGroupMembership($principal);
+    public function getGroupMembership($principal);
 
     /**
      * Updates the list of group members for a group principal.
@@ -133,9 +138,6 @@ interface BackendInterface {
      * The principals should be passed as a list of uri's.
      *
      * @param string $principal
-     * @param array $members
-     * @return void
      */
-    function setGroupMemberSet($principal, array $members);
-
+    public function setGroupMemberSet($principal, array $members);
 }

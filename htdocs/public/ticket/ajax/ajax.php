@@ -19,6 +19,9 @@
 /**
  *	\file       htdocs/public/ticket/ajax/ajax.php
  *	\brief      Ajax component for Ticket.
+ *
+ *  This ajax component is called only by the create ticket public page. And only if TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST is set.
+ *  This option TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST has been removed because it is a security hole.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -33,14 +36,10 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
-// Do not check anti CSRF attack test
+// You can get information if module "Agenda" has been enabled by reading the
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
-// If there is no need to load and show top and left menu
 if (!defined("NOLOGIN")) {
 	define("NOLOGIN", '1');
 }
@@ -54,16 +53,16 @@ if (!defined('NOBROWSERNOTIF')) {
 include_once '../../../main.inc.php'; // Load $user and permissions
 
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $email = GETPOST('email', 'custom', 0, FILTER_VALIDATE_EMAIL);
 
 
 if (!isModEnabled('ticket')) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Ticket not enabled');
 }
 
-if (empty($conf->global->TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST)) {
-	accessforbidden('', 0, 0, 1);
+if (!getDolGlobalString('TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST')) {
+	httponly_accessforbidden('Option TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST of module ticket is not enabled');
 }
 
 
@@ -83,9 +82,18 @@ if ($action == 'getContacts') {
 		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 
 		$ticket = new Ticket($db);
-		$contacts = $ticket->searchContactByEmail($email);
-		if (is_array($contacts)) {
-			$return['contacts'] = $contacts;
+		$arrayofcontacts = $ticket->searchContactByEmail($email);
+		if (is_array($arrayofcontacts)) {
+			$arrayofminimalcontacts = array();
+			foreach ($arrayofcontacts as $tmpval) {
+				$tmpresult = new stdClass();
+				$tmpresult->id = $tmpval->id;
+				$tmpresult->firstname = $tmpval->firstname;
+				$tmpresult->lastname = $tmpval->lastname;
+				$arrayofminimalcontacts[] = $tmpresult;
+			}
+
+			$return['contacts'] = $arrayofminimalcontacts;
 		} else {
 			$return['error'] = $ticket->errorsToString();
 		}

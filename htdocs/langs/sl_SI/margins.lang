@@ -16,30 +16,30 @@ MarginDetails=Podatki o marži
 ProductMargins=Marže proizvoda
 CustomerMargins=Marže kupcev
 SalesRepresentativeMargins=Marža prodajnega predstavnika
-ContactOfInvoice=Contact of invoice
+ContactOfInvoice=Kontakt računa
 UserMargins=Marže uporabnikov
 ProductService=Proizvod ali storitev
 AllProducts=Vsi proizvodi in storitve
 ChooseProduct/Service=Izberi proizvod ali storitev
-ForceBuyingPriceIfNull=Force buying/cost price to selling price if not defined
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+ForceBuyingPriceIfNull=Vsili nakupno/stroškovno ceno na prodajno ceno, če ni definirana
+ForceBuyingPriceIfNullDetails=Če nakupna/stroškovna cena ni podana, ko dodamo novo vrstico, in je ta možnost "ON", bo marža v novi vrstici 0%% (nakupna/stroščna cena = prodajna cena). Če je ta možnost »IZKLOPLJENA« (priporočeno), bo marža enaka privzeto predlagani vrednosti (in je lahko 100%%, če privzete vrednosti ni mogoče najti).
 MARGIN_METHODE_FOR_DISCOUNT=Metoda marž pri globalnih popustih
 UseDiscountAsProduct=Kot proizvod
 UseDiscountAsService=Kot storitev
 UseDiscountOnTotal=V delni vsoti
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Določa, če se globalni popust smatra kot proizvod, storitev, ali samo delna vsota pri izračunu marže.
 MARGIN_TYPE=Privzeto predlagana nabavna cena s stroški za izračun marže
-MargeType1=Margin on Best vendor price
+MargeType1=Marža na najugodnejšo ceno
 MargeType2=Marža na uravnoteženo povprečno ceno (WAP)
-MargeType3=Margin on Cost Price
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best vendor price if WAP not yet defined
+MargeType3=Marža na lastno ceno
+MarginTypeDesc=* Marža na najboljšo nakupno ceno = Prodajna cena – Cena najboljšega prodajalca, določena na kartici izdelka <br> * Marža na tehtano povprečno ceno (WAP) = Prodajna cena – Tehtana povprečna cena izdelka (WAP) ali cena najboljšega prodajalca, če WAP še ni določen <br> * Marža na Stroškovna cena = Prodajna cena - Stroška cena, določena na kartici izdelka ali WAP, če lastna cena ni določena, ali najboljša cena prodajalca, če WAP še ni določen
 CostPrice=Stroškovna cena
 UnitCharges=Stroški po enoti
 Charges=Stroški
 AgentContactType=Tip kontakta komercialnega agenta
-AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitely on the invoices.
+AgentContactTypeDetails=Določite, kateri tip kontakta (povezan na računih) bo uporabljen za poročilo o maržah na kontakt/naslov. Upoštevajte, da branje statističnih podatkov o stiku ni zanesljivo, saj v večini primerov stik morda ni izrecno opredeljen na računih.
 rateMustBeNumeric=Stopnja mora biti numerična vrednost
 markRateShouldBeLesserThan100=Označena vrednost mora biti manjša od 100
 ShowMarginInfos=Prikaži informacije o marži
-CheckMargins=Margins detail
-MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any dedicated sale representative and some third parties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+CheckMargins=Podrobnosti o robovih
+MarginPerSaleRepresentativeWarning=Poročilo o marži na uporabnika uporablja povezavo med tretjimi osebami in prodajnimi zastopniki za izračun marže vsakega prodajnega zastopnika. Ker nekatere tretje osebe morda nimajo nobenega namenskega prodajnega zastopnika in so nekatere tretje osebe morda povezane z več, nekateri zneski morda ne bodo vključeni v to poročilo (če ni prodajnega zastopnika), nekateri pa se lahko pojavijo v različnih vrsticah (za vsakega prodajnega zastopnika) .

@@ -23,6 +23,7 @@
  *  \brief      Page for statistics of module trips and expenses
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacementstats.class.php';
@@ -33,13 +34,13 @@ $langs->loadLangs(array('trips', 'companies'));
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid = GETPOST('userid', 'int'); if ($userid < 0) {
+$userid = GETPOSTINT('userid'); if ($userid < 0) {
 	$userid = 0;
 }
-$socid = GETPOST('socid', 'int'); if ($socid < 0) {
+$socid = GETPOSTINT('socid'); if ($socid < 0) {
 	$socid = 0;
 }
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 // Security check
 if ($user->socid > 0) {
@@ -55,18 +56,18 @@ $result = restrictedArea($user, 'deplacement', $id, '');
 $childids = $user->getAllChildIds();
 $childids[] = $user->id;
 if ($userid > 0) {
-	if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous) && !in_array($userid, $childids)) {
+	if (!$user->hasRight('deplacement', 'readall') && !$user->hasRight('deplacement', 'lire_tous') && !in_array($userid, $childids)) {
 		accessforbidden();
 		exit;
 	}
 }
 
-$nowyear = strftime("%Y", dol_now());
-$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
-$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
+$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$year = GETPOST('year') > 0 ? GETPOST('year') : $nowyear;
+$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
-$mode = GETPOST("mode") ?GETPOST("mode") : 'customer';
+$mode = GETPOST("mode") ? GETPOST("mode") : 'customer';
 
 
 /*
@@ -88,7 +89,7 @@ dol_mkdir($dir);
 $useridtofilter = $userid; // Filter from parameters
 if (empty($useridtofilter)) {
 	$useridtofilter = $childids;
-	if (!empty($user->rights->deplacement->readall) || !empty($user->rights->deplacement->lire_tous)) {
+	if ($user->hasRight('deplacement', 'readall') || $user->hasRight('deplacement', 'lire_tous')) {
 		$useridtofilter = 0;
 	}
 }
@@ -163,7 +164,7 @@ if (!$mesg) {
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
 		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
@@ -241,14 +242,13 @@ print '<table class="border centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-$filter = '';
 print img_picto('', 'company', 'class="pictofixedwidth"');
-print $form->select_company($socid, 'socid', $filter, 1, 1, 0, array(), 0, 'widthcentpercentminusx maxwidth300', '');
+print $form->select_company($socid, 'socid', '', 1, 1, 0, array(), 0, 'widthcentpercentminusx maxwidth300', '');
 print '</td></tr>';
 // User
 print '<tr><td>'.$langs->trans("User").'</td><td>';
 $include = '';
-if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) {
+if (!$user->hasRight('deplacement', 'readall') && !$user->hasRight('deplacement', 'lire_tous')) {
 	$include = 'hierarchy';
 }
 print img_picto('', 'user', 'class="pictofixedwidth"');
@@ -320,7 +320,7 @@ print '</td></tr></table>';
 
 
 print '</div></div>';
-print '<div style="clear:both"></div>';
+print '<div class="clearboth"></div>';
 
 
 print dol_get_fiche_end();

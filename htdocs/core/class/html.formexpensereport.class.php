@@ -50,8 +50,8 @@ class FormExpenseReport
 
 
 	/**
-	 *    Retourne la liste deroulante des differents etats d'une note de frais.
-	 *    Les valeurs de la liste sont les id de la table c_expensereport_statuts
+	 *    Return the combobox for the different statuses of an expense report
+	 *    The list values are the ids from the labelStatus.
 	 *
 	 *    @param    int     $selected       preselect status
 	 *    @param    string  $htmlname       Name of HTML select
@@ -59,31 +59,33 @@ class FormExpenseReport
 	 *    @param    int     $useshortlabel  Use short labels
 	 *    @return   string                  HTML select with status
 	 */
-	public function selectExpensereportStatus($selected = '', $htmlname = 'fk_statut', $useempty = 1, $useshortlabel = 0)
+	public function selectExpensereportStatus($selected = 0, $htmlname = 'fk_statut', $useempty = 1, $useshortlabel = 0)
 	{
 		global $langs;
 
 		$tmpep = new ExpenseReport($this->db);
 
-		print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+		$html = '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
 		if ($useempty) {
-			print '<option value="-1">&nbsp;</option>';
+			$html.='<option value="-1">&nbsp;</option>';
 		}
-		$arrayoflabels = $tmpep->statuts;
+		$arrayoflabels = $tmpep->labelStatus;
 		if ($useshortlabel) {
-			$arrayoflabels = $tmpep->statuts_short;
+			$arrayoflabels = $tmpep->labelStatusShort;
 		}
 		foreach ($arrayoflabels as $key => $val) {
-			if ($selected != '' && $selected == $key) {
-				print '<option value="'.$key.'" selected>';
+			if (!empty($selected) && $selected == $key) {
+				$html .= '<option value="'.$key.'" selected>';
 			} else {
-				print '<option value="'.$key.'">';
+				$html .=  '<option value="'.$key.'">';
 			}
-			print $langs->trans($val);
-			print '</option>';
+			$html .= $langs->trans($val);
+			$html .= '</option>';
 		}
-		print '</select>';
-		print ajax_combobox($htmlname);
+		$html .= '</select>';
+		$html .= ajax_combobox($htmlname);
+		print $html;
+		return $html;
 	}
 
 	/**
@@ -95,7 +97,7 @@ class FormExpenseReport
 	 *  @param      int     $active         1=Active only, 0=Unactive only, -1=All
 	 *  @return     string                  Select html
 	 */
-	public function selectTypeExpenseReport($selected = '', $htmlname = 'type', $showempty = 0, $active = 1)
+	public function selectTypeExpenseReport($selected = 0, $htmlname = 'type', $showempty = 0, $active = 1)
 	{
 		// phpcs:enable
 		global $langs, $user;

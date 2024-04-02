@@ -22,12 +22,13 @@
  *		\brief      Tab payment of a donation
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
@@ -35,7 +36,7 @@ if (!empty($conf->banque->enabled)) {
 $langs->loadLangs(array("bills", "banks", "companies", "donations"));
 
 // Security check
-$id = GETPOST('rowid') ? GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$id = GETPOST('rowid') ? GETPOSTINT('rowid') : GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 if ($user->socid) {
@@ -58,7 +59,7 @@ if ($id > 0) {
  */
 
 // Delete payment
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->don->supprimer) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('don', 'supprimer')) {
 	$db->begin();
 
 	$result = $object->delete($user);
@@ -77,8 +78,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->don->supp
 /*
  * View
  */
-
-llxHeader();
+$title = $langs->trans("Payment");
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-donation page-payment_card');
 
 $don = new Don($db);
 $form = new Form($db);
@@ -115,16 +116,16 @@ print '<tr><td class="titlefield">'.$langs->trans('Date').'</td><td>'.dol_print_
 print '<tr><td>'.$langs->trans('Mode').'</td><td>'.$langs->trans("PaymentType".$object->type_code).'</td></tr>';
 
 // Number
-print '<tr><td>'.$langs->trans('Numero').'</td><td>'.$object->num_payment.'</td></tr>';
+print '<tr><td>'.$langs->trans('Numero').'</td><td>'.dol_escape_htmltag($object->num_payment).'</td></tr>';
 
 // Amount
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note public
-print '<tr><td>'.$langs->trans('Note').'</td><td>'.nl2br($object->note_public).'</td></tr>';
+print '<tr><td>'.$langs->trans('Note').'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlcleanlastbr($object->note_public)).'</td></tr>';
 
 // Bank account
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("bank")) {
 	if ($object->bank_account) {
 		$bankline = new AccountLine($db);
 		$bankline->fetch($object->bank_line);
@@ -180,7 +181,7 @@ if ($resql) {
 			// Expected to pay
 			print '<td class="right">'.price($objp->d_amount).'</td>';
 			// Status
-			print '<td class="center">'.$don->getLibStatut(4, $objp->amount).'</td>';
+			print '<td class="center">'.$don->getLibStatut(4).'</td>';
 			// Amount paid
 			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
@@ -211,11 +212,11 @@ print dol_get_fiche_end();
 print '<div class="tabsAction">';
 
 if (empty($action)) {
-	if ($user->rights->don->supprimer) {
+	if ($user->hasRight('don', 'supprimer')) {
 		if (!$disable_delete) {
-			print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
+			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', 1);
 		} else {
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
+			print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans('Delete'), '', $_SERVER["PHP_SELF"].'?id='.$object->id.'#', '', 1, [ 'attr' => ['classOverride' => 'butActionRefused']]);
 		}
 	}
 }

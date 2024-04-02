@@ -34,7 +34,7 @@ if (!empty($permissioncreate) && empty($permissiontoadd)) {
 }
 
 // Build doc
-if ($action == 'builddoc' && $permissiontoadd) {
+if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) {
 	if (is_numeric(GETPOST('model', 'alpha'))) {
 		$error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Model"));
 	} else {
@@ -43,7 +43,7 @@ if ($action == 'builddoc' && $permissiontoadd) {
 		$ret = $object->fetch_thirdparty();
 		/*if (empty($object->id) || ! $object->id > 0)
 		{
-			dol_print_error('Object must have been loaded by a fetch');
+			dol_print_error(null, 'Object must have been loaded by a fetch');
 			exit;
 		}*/
 
@@ -55,9 +55,9 @@ if ($action == 'builddoc' && $permissiontoadd) {
 		// Special case to force bank account
 		//if (property_exists($object, 'fk_bank'))
 		//{
-		if (GETPOST('fk_bank', 'int')) {
+		if (GETPOSTINT('fk_bank')) {
 			// this field may come from an external module
-			$object->fk_bank = GETPOST('fk_bank', 'int');
+			$object->fk_bank = GETPOSTINT('fk_bank');
 		} elseif (!empty($object->fk_account)) {
 			$object->fk_bank = $object->fk_account;
 		}
@@ -66,13 +66,13 @@ if ($action == 'builddoc' && $permissiontoadd) {
 		$outputlangs = $langs;
 		$newlang = '';
 
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && isset($object->thirdparty->default_lang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($object->thirdparty->default_lang)) {
 			$newlang = $object->thirdparty->default_lang; // for proposal, order, invoice, ...
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && isset($object->default_lang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($object->default_lang)) {
 			$newlang = $object->default_lang; // for thirdparty
 		}
 		if (!empty($newlang)) {

@@ -25,6 +25,7 @@
  *   \ingroup    societe
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -34,7 +35,7 @@ $action = GETPOST('action', 'aZ09');
 // Load translation files required by the page
 $langs->load("companies");
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $object = new Contact($db);
 if ($id > 0) {
@@ -50,7 +51,7 @@ if ($user->socid > 0) {
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 
-$permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('societe', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 // $hookmanager->initHooks(array('contactcard')); -> Name conflict with product/card.php
@@ -60,7 +61,9 @@ $hookmanager->initHooks(array('contactnote'));
 /*
  * Actions
  */
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -75,7 +78,7 @@ if (empty($reshook)) {
 
 $now = dol_now();
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$title = $langs->trans("ContactNotes");
 
 $form = new Form($db);
 
@@ -86,7 +89,7 @@ if ($id > 0) {
 	/*
 	 * Affichage onglets
 	 */
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 
@@ -101,15 +104,14 @@ if ($id > 0) {
 	$morehtmlref .= '</a>';
 
 	$morehtmlref .= '<div class="refidno">';
-	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 		$objsoc = new Societe($db);
 		$objsoc->fetch($object->socid);
 		// Thirdparty
-		$morehtmlref .= $langs->trans('ThirdParty').' : ';
 		if ($objsoc->id > 0) {
 			$morehtmlref .= $objsoc->getNomUrl(1);
 		} else {
-			$morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+			$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("ContactNotLinkedToCompany").'</span>';
 		}
 	}
 	$morehtmlref .= '</div>';

@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,11 +73,14 @@ function dolStripPhpCode($str, $replacewith = '')
  *
  * @param 	string	$str			String to clean
  * @return 	string					Result string with php code only
- * @see dolStripPhpCode()
+ * @see dolStripPhpCode(), checkPHPCode()
  */
 function dolKeepOnlyPhpCode($str)
 {
 	$str = str_replace('<?=', '<?php', $str);
+	$str = str_replace('<?php', '__LTINTPHP__', $str);
+	$str = str_replace('<?', '<?php', $str);			// replace the short_open_tag. It is recommended to set this is Off in php.ini
+	$str = str_replace('__LTINTPHP__', '<?php', $str);
 
 	$newstr = '';
 
@@ -105,24 +110,24 @@ function dolKeepOnlyPhpCode($str)
 
 /**
  * Convert a page content to have correct links (based on DOL_URL_ROOT) into an html content. It replaces also dynamic content with '...php...'
- * Used to ouput the page on the Preview from backoffice.
+ * Used to output the page on the Preview from backoffice.
  *
  * @param	Website		$website			Web site object
  * @param	string		$content			Content to replace
  * @param	int			$removephppart		0=Replace PHP sections with a PHP badge. 1=Remove completely PHP sections.
  * @param	string		$contenttype		Content type
  * @param	int			$containerid 		Contenair id
- * @return	boolean							True if OK
+ * @return	string							html content
  * @see dolWebsiteOutput() for function used to replace content in a web server context
  */
-function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $contenttype = 'html', $containerid = '')
+function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $contenttype = 'html', $containerid = 0)
 {
 	$nbrep = 0;
 
 	dol_syslog('dolWebsiteReplacementOfLinks start (contenttype='.$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR') ? '1' : '')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER') ? '1' : '').')', LOG_DEBUG);
 	//if ($contenttype == 'html') { print $content;exit; }
 
-	// Replace php code. Note $content may come from database and does not contains body tags.
+	// Replace php code. Note $content may come from database and does not contain body tags.
 	$replacewith = '...php...';
 	if ($removephppart) {
 		$replacewith = '';
@@ -163,12 +168,14 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 		if (preg_last_error() == PREG_JIT_STACKLIMIT_ERROR) $content = 'preg_replace error (when removing php tags) PREG_JIT_STACKLIMIT_ERROR';
 	}*/
 	$content = dolStripPhpCode($content, $replacewith);
-	//var_dump($content);
 
 	// Protect the link styles.css.php to any replacement that we make after.
 	$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
+	$content = str_replace('src="javascript.js.php', 'src="!~!~!~javascript.js.php', $content);
 	$content = str_replace('href="http', 'href="!~!~!~http', $content);
+	$content = str_replace('xlink:href="', 'xlink:href="!~!~!~', $content);
 	$content = str_replace('href="//', 'href="!~!~!~//', $content);
+	$content = str_replace('src="//', 'src="!~!~!~//', $content);
 	$content = str_replace('src="viewimage.php', 'src="!~!~!~/viewimage.php', $content);
 	$content = str_replace('src="/viewimage.php', 'src="!~!~!~/viewimage.php', $content);
 	$content = str_replace('src="'.DOL_URL_ROOT.'/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
@@ -218,8 +225,55 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 }
 
 /**
+ * Converts smiley string into the utf8 sequence.
+ * @param	string		$content			Content to replace
+ * @return	string							Replacement of all smiley strings with their utf8 code
+ * @see dolWebsiteOutput()
+ */
+function dolReplaceSmileyCodeWithUTF8($content)
+{
+	$map = array(
+		":face_with_tears_of_joy:" => "\xF0\x9F\x98\x82",
+		":grinning_face_with_smiling_eyes:" => "\xF0\x9F\x98\x81",
+		":smiling_face_with_open_mouth:" => "\xF0\x9F\x98\x83",
+		":smiling_face_with_open_mouth_and_cold_sweat:" => "\xF0\x9F\x98\x85",
+		":smiling_face_with_open_mouth_and_tightly_closed_eyes:" => "\xF0\x9F\x98\x86",
+		":winking_face:" => "\xF0\x9F\x98\x89",
+		":smiling_face_with_smiling_eyes:" => "\xF0\x9F\x98\x8A",
+		":face_savouring_delicious_food:" => "\xF0\x9F\x98\x8B",
+		":relieved_face:" => "\xF0\x9F\x98\x8C",
+		":smiling_face_with_heart_shaped_eyes:" => "\xF0\x9F\x98\x8D",
+		":smiling_face_with_sunglasses:" => "\xF0\x9F\x98\x8E",
+		":smirking_face:" => "\xF0\x9F\x98\x8F",
+		":neutral_face:" => "\xF0\x9F\x98\x90",
+		":expressionless_face:" => "\xF0\x9F\x98\x91",
+		":unamused_face:" => "\xF0\x9F\x98\x92",
+		":face_with_cold_sweat:" => "\xF0\x9F\x98\x93",
+		":pensive_face:" => "\xF0\x9F\x98\x94",
+		":confused_face:" => "\xF0\x9F\x98\x95",
+		":confounded_face:" => "\xF0\x9F\x98\x96",
+		":kissing_face:" => "\xF0\x9F\x98\x97",
+		":face_throwing_a_kiss:" => "\xF0\x9F\x98\x98",
+		":kissing_face_with_smiling_eyes:" => "\xF0\x9F\x98\x99",
+		":kissing_face_with_closed_eyes:" => "\xF0\x9F\x98\x9A",
+		":face_with_stuck_out_tongue:" => "\xF0\x9F\x98\x9B",
+		":face_with_stuck_out_tongue_and_winking_eye:" => "\xF0\x9F\x98\x9C",
+		":face_with_stuck_out_tongue_and_tightly_closed_eyes:" => "\xF0\x9F\x98\x9D",
+		":disappointed_face:" => "\xF0\x9F\x98\x9E",
+		":worried_face:" => "\xF0\x9F\x98\x9F",
+		":angry_face:" => "\xF0\x9F\x98\xA0",
+		":face_with_symbols_on_mouth:" => "\xF0\x9F\x98\xA1",
+	);
+	foreach ($map as $key => $value) {
+		$content = str_replace($key, $value, $content);
+	}
+	return $content;
+}
+
+
+/**
  * Render a string of an HTML content and output it.
- * Used to ouput the page when viewed from a server (Dolibarr or Apache).
+ * Used to output the page when viewed from a server (Dolibarr or Apache).
  *
  * @param   string  $content    	Content string
  * @param	string	$contenttype	Content type
@@ -227,7 +281,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
  * @return  void
  * @see	dolWebsiteReplacementOfLinks()  for function used to replace content in the backoffice context.
  */
-function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
+function dolWebsiteOutput($content, $contenttype = 'html', $containerid = 0)
 {
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
@@ -254,11 +308,15 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		}
 	} elseif (defined('USEDOLIBARRSERVER')) {	// REPLACEMENT OF LINKS When page called from Dolibarr server
 		$content = str_replace('<link rel="stylesheet" href="/styles.css', '<link rel="stylesheet" href="styles.css', $content);
+		$content = str_replace(' async src="/javascript.js', ' async src="javascript.js', $content);
 
 		// Protect the link styles.css.php to any replacement that we make after.
 		$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
+		$content = str_replace('src="javascript.css.php', 'src="!~!~!~javascript.css.php', $content);
 		$content = str_replace('href="http', 'href="!~!~!~http', $content);
+		$content = str_replace('xlink:href="', 'xlink:href="!~!~!~', $content);
 		$content = str_replace('href="//', 'href="!~!~!~//', $content);
+		$content = str_replace('src="//', 'src="!~!~!~//', $content);
 		$content = str_replace(array('src="viewimage.php', 'src="/viewimage.php'), 'src="!~!~!~/viewimage.php', $content);
 		$content = str_replace('src="'.DOL_URL_ROOT.'/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
 		$content = str_replace(array('href="document.php', 'href="/document.php'), 'href="!~!~!~/document.php', $content);
@@ -307,8 +365,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		if (empty($includehtmlcontentopened)) {
 			$content = str_replace('!~!~!~', '', $content);
 		}
-	} else // REPLACEMENT OF LINKS When page called from virtual host web server
-	{
+	} else { // REPLACEMENT OF LINKS When page called from virtual host web server
 		$symlinktomediaexists = 1;
 		if ($website->virtualhost) {
 			$content = preg_replace('/^(<link[^>]*rel="canonical" href=")\//m', '\1'.$website->virtualhost.'/', $content, -1, $nbrep);
@@ -369,13 +426,51 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		$content = str_replace(' contenteditable="true"', ' contenteditable="false"', $content);
 	}
 
-	if (!empty($conf->global->WEBSITE_ADD_CSS_TO_BODY)) {
-		$content = str_replace('<body id="bodywebsite" class="bodywebsite', '<body id="bodywebsite" class="bodywebsite '.$conf->global->WEBSITE_ADD_CSS_TO_BODY, $content);
+	if (getDolGlobalString('WEBSITE_ADD_CSS_TO_BODY')) {
+		$content = str_replace('<body id="bodywebsite" class="bodywebsite', '<body id="bodywebsite" class="bodywebsite ' . getDolGlobalString('WEBSITE_ADD_CSS_TO_BODY'), $content);
 	}
+
+	$content = dolReplaceSmileyCodeWithUTF8($content);
 
 	dol_syslog("dolWebsiteOutput end");
 
 	print $content;
+}
+
+/**
+ * Increase the website counter of page access.
+ *
+ * @param   int		$websiteid			ID of website
+ * @param	string	$websitepagetype	Type of page ('blogpost', 'page', ...)
+ * @param	int		$websitepageid		ID of page
+ * @return  int							Return integer <0 if KO, >0 if OK
+ */
+function dolWebsiteIncrementCounter($websiteid, $websitepagetype, $websitepageid)
+{
+	if (!getDolGlobalInt('WEBSITE_PERF_DISABLE_COUNTERS')) {
+		//dol_syslog("dolWebsiteIncrementCounter websiteid=".$websiteid." websitepagetype=".$websitepagetype." websitepageid=".$websitepageid);
+		if (in_array($websitepagetype, array('blogpost', 'page'))) {
+			global $db;
+
+			$tmpnow = dol_getdate(dol_now('gmt'), true, 'gmt');
+
+			$sql = "UPDATE ".$db->prefix()."website SET ";
+			$sql .= " pageviews_total = pageviews_total + 1,";
+			$sql .= " pageviews_month = pageviews_month + 1,";
+			// if last access was done during previous month, we save pageview_month into pageviews_previous_month
+			$sql .= " pageviews_previous_month = ".$db->ifsql("lastaccess < '".$db->idate(dol_mktime(0, 0, 0, $tmpnow['mon'], 1, $tmpnow['year'], 'gmt', 0), 'gmt')."'", 'pageviews_month', 'pageviews_previous_month').",";
+			$sql .= " lastaccess = '".$db->idate(dol_now('gmt'), 'gmt')."',";
+			$sql .= " lastpageid = ".((int) $websitepageid);
+			$sql .= " WHERE rowid = ".((int) $websiteid);
+
+			$resql = $db->query($sql);
+			if (! $resql) {
+				return -1;
+			}
+		}
+	}
+
+	return 1;
 }
 
 
@@ -426,6 +521,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 	if ($containeraliasalt) {
 		include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 		$tmpwebsitepage = new WebsitePage($db);
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$result = $tmpwebsitepage->fetch(0, $website->id, '', $containeraliasalt);
 		if ($result > 0) {
 			$containerref = $tmpwebsitepage->pageurl;
@@ -449,11 +545,12 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		if (!$containeraliasalt) {	// If containeraliasalt set, we already did the test
 			include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 			$tmpwebsitepage = new WebsitePage($db);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$result = $tmpwebsitepage->fetch(0, $website->id, $containerref);
 			unset($tmpwebsitepage);
 		}
 		if ($result > 0) {
-			$currenturi = $_SERVER["REQUEST_URI"];
+			$currenturi = $_SERVER["REQUEST_URI"];	// Example: /public/website/index.php?website=mywebsite.com&pageref=mywebsite-home&nocache=1708177483
 			$regtmp = array();
 			if (preg_match('/&pageref=([^&]+)/', $currenturi, $regtmp)) {
 				if ($regtmp[0] == $containerref) {
@@ -466,16 +563,16 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 				$newurl = $currenturi.'&pageref='.urlencode($containerref);
 			}
 		}
-	} else // When page called from virtual host server
-	{
+	} else { // When page called from virtual host server
 		$newurl = '/'.$containerref.'.php';
+		$newurl = $newurl.(empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
 	}
 
 	if ($newurl) {
 		if ($permanent) {
 			header("Status: 301 Moved Permanently", false, 301);
 		}
-		header("Location: ".$newurl.(empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]));
+		header("Location: ".$newurl);
 		exit;
 	} else {
 		print "Error, page contains a redirect to the alias page '".$containerref."' that does not exists in web site (".$website->id." / ".$website->ref.")";
@@ -506,7 +603,7 @@ function includeContainer($containerref)
 	$fullpathfile = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$websitekey.'/'.$containerref;
 
 	if (empty($includehtmlcontentopened)) {
-		$includehtmlcontentopened = 0;
+		$includehtmlcontentopened = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 	}
 	$includehtmlcontentopened++;
 	if ($includehtmlcontentopened > $MAXLEVEL) {
@@ -521,7 +618,7 @@ function includeContainer($containerref)
 	//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
 
 	ob_start();
-	$res = include $fullpathfile; // Include because we want to execute code content
+	$res = @include $fullpathfile; // Include because we want to execute code content
 	$tmpoutput = ob_get_contents();
 	ob_end_clean();
 
@@ -547,13 +644,13 @@ function includeContainer($containerref)
  */
 function getStructuredData($type, $data = array())
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs; // Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs; // Very important. Required to have var available when running included containers.
 
 	$type = strtolower($type);
 
 	if ($type == 'software') {
 		$ret = '<!-- Add structured data for entry in a software annuary -->'."\n";
-		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '<script nonce="'.getNonce().'" type="application/ld+json">'."\n";
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "SoftwareApplication",
@@ -581,17 +678,17 @@ function getStructuredData($type, $data = array())
 		$url = $mysoc->url;
 
 		$ret = '<!-- Add structured data for organization -->'."\n";
-		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '<script nonce="'.getNonce().'" type="application/ld+json">'."\n";
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "Organization",
-			"name": "'.dol_escape_json($data['name'] ? $data['name'] : $companyname).'",
-			"url": "'.dol_escape_json($data['url'] ? $data['url'] : $url).'",
+			"name": "'.dol_escape_json(!empty($data['name']) ? $data['name'] : $companyname).'",
+			"url": "'.dol_escape_json(!empty($data['url']) ? $data['url'] : $url).'",
 			"logo": "'.($data['logo'] ? dol_escape_json($data['logo']) : '/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo)).'",
 			"contactPoint": {
 				"@type": "ContactPoint",
 				"contactType": "Contact",
-				"email": "'.dol_escape_json($data['email'] ? $data['email'] : $mysoc->email).'"
+				"email": "'.dol_escape_json(!empty($data['email']) ? $data['email'] : $mysoc->email).'"
 			}'."\n";
 		if (is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
 			$ret .= ",\n";
@@ -633,7 +730,7 @@ function getStructuredData($type, $data = array())
 			$description = str_replace('__WEBSITE_KEY__', $website->ref, $description);
 
 			$ret = '<!-- Add structured data for blog post -->'."\n";
-			$ret .= '<script type="application/ld+json">'."\n";
+			$ret .= '<script nonce="'.getNonce().'" type="application/ld+json">'."\n";
 			$ret .= '{
 				  "@context": "https://schema.org",
 				  "@type": "NewsArticle",
@@ -677,11 +774,11 @@ function getStructuredData($type, $data = array())
 			$ret .= "\n".'}'."\n";
 			$ret .= '</script>'."\n";
 		} else {
-			$ret .= '<!-- no structured data inserted inline inside blogpost because no author_alias defined -->'."\n";
+			$ret = '<!-- no structured data inserted inline inside blogpost because no author_alias defined -->'."\n";
 		}
 	} elseif ($type == 'product') {
 		$ret = '<!-- Add structured data for product -->'."\n";
-		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '<script nonce="'.getNonce().'" type="application/ld+json">'."\n";
 		$ret .= '{
 				"@context": "https://schema.org/",
 				"@type": "Product",
@@ -716,7 +813,7 @@ function getStructuredData($type, $data = array())
 		$ret .= '</script>'."\n";
 	} elseif ($type == 'qa') {
 		$ret = '<!-- Add structured data for QA -->'."\n";
-		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '<script nonce="'.getNonce().'" type="application/ld+json">'."\n";
 		$ret .= '{
 				"@context": "https://schema.org/",
 				"@type": "QAPage",
@@ -740,6 +837,8 @@ function getStructuredData($type, $data = array())
 				}
 			}'."\n";
 		$ret .= '</script>'."\n";
+	} else {
+		$ret = '';
 	}
 	return $ret;
 }
@@ -752,7 +851,7 @@ function getStructuredData($type, $data = array())
  */
 function getSocialNetworkHeaderCards($params = null)
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 
 	$out = '';
 
@@ -779,7 +878,7 @@ function getSocialNetworkHeaderCards($params = null)
 
 		$fullurl = $website->virtualhost.'/'.$websitepage->pageurl.'.php';
 		$canonicalurl = $website->virtualhost.(($websitepage->id == $website->fk_default_home) ? '/' : (($shortlangcode != substr($website->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$websitepage->pageurl.'.php'));
-		$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
+		$hashtags = trim(implode(' #', array_map('trim', explode(',', $websitepage->keywords))));
 
 		// Open Graph
 		$out .= '<meta name="og:type" content="website">'."\n";	// TODO If blogpost, use type article
@@ -826,20 +925,20 @@ function getSocialNetworkHeaderCards($params = null)
  */
 function getSocialNetworkSharingLinks()
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 
 	$out = '<!-- section for social network sharing of page -->'."\n";
 
 	if ($website->virtualhost) {
 		$fullurl = $website->virtualhost.'/'.$websitepage->pageurl.'.php';
-		$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
+		$hashtags = trim(implode(' #', array_map('trim', explode(',', $websitepage->keywords))));
 
 		$out .= '<div class="dol-social-share">'."\n";
 
 		// Twitter
 		$out .= '<div class="dol-social-share-tw">'."\n";
 		$out .= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
-		$out .= '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
+		$out .= '<script nonce="'.getNonce().'">!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
 		$out .= '</div>'."\n";
 
 		// Reddit
@@ -852,7 +951,7 @@ function getSocialNetworkSharingLinks()
 		// Facebook
 		$out .= '<div class="dol-social-share-fbl">'."\n";
 		$out .= '<div id="fb-root"></div>'."\n";
-		$out .= '<script>(function(d, s, id) {
+		$out .= '<script nonce="'.getNonce().'">(function(d, s, id) {
 				  var js, fjs = d.getElementsByTagName(s)[0];
 				  if (d.getElementById(id)) return;
 				  js = d.createElement(s); js.id = id;
@@ -878,6 +977,119 @@ function getSocialNetworkSharingLinks()
 	return $out;
 }
 
+
+/**
+ * Return HTML content to add structured data for an article, news or Blog Post.
+ *
+ * @param	Object	$object		Object
+ * @return  int					HTML img content or '' if no image found
+ * @see getImagePublicURLOfObject()
+ */
+function getNbOfImagePublicURLOfObject($object)
+{
+	global $db;
+
+	$nb = 0;
+
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+	$regexforimg = getListOfPossibleImageExt(0);
+	$regexforimg = '('.$regexforimg.')$';
+
+	$sql = "SELECT COUNT(rowid) as nb";
+	$sql .= " FROM ".MAIN_DB_PREFIX."ecm_files";
+	$sql .= " WHERE entity IN (".getEntity($object->element).")";
+	$sql .= " AND src_object_type = '".$db->escape($object->element)."' AND src_object_id = ".((int) $object->id);	// Filter on object
+	$sql .= " AND ".$db->regexpsql('filename', $regexforimg, 1);
+	$sql .= " AND share IS NOT NULL";	// Only image that are public
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj) {
+			$nb = $obj->nb;
+		}
+	}
+
+	return $nb;
+}
+
+/**
+ * Return HTML content to add structured data for an article, news or Blog Post.
+ *
+ * @param	Object	$object			Object
+ * @param	int		$no				Numero of image (if there is several images. 1st one by default)
+ * @param   string  $extName        Extension to differentiate thumb file name ('', '_small', '_mini')
+ * @return  string					HTML img content or '' if no image found
+ * @see getNbOfImagePublicURLOfObject()
+ */
+function getImagePublicURLOfObject($object, $no = 1, $extName = '')
+{
+	global $db;
+
+	$image_path = '';
+
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+	$regexforimg = getListOfPossibleImageExt(0);
+	$regexforimg = '('.$regexforimg.')$';
+
+	$sql = "SELECT rowid, ref, share, filename, cover, position";
+	$sql .= " FROM ".MAIN_DB_PREFIX."ecm_files";
+	$sql .= " WHERE entity IN (".getEntity($object->element).")";
+	$sql .= " AND src_object_type = '".$db->escape($object->element)."' AND src_object_id = ".((int) $object->id);	// Filter on object
+	$sql .= " AND ".$db->regexpsql('filename', $regexforimg, 1);
+	$sql .= $db->order("cover,position,rowid", "ASC,ASC,ASC");
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		$found = 0;
+		$foundnotshared = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				if (empty($obj->share)) {
+					$foundnotshared++;
+				} else {
+					$found++;
+
+					if (defined('USEDOLIBARRSERVER') || defined('USEDOLIBARREDITOR')) {
+						$image_path = DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($obj->share);
+					} else {
+						$image_path = '/wrapper.php?hashp='.urlencode($obj->share);
+					}
+					if ($extName) {
+						//getImageFileNameForSize($dir.$file, '_small')
+						$image_path .= '&extname='.urlencode($extName);
+					}
+				}
+			}
+			if ($found >= $no) {
+				break;
+			}
+			$i++;
+		}
+		if (!$found && $foundnotshared) {
+			if (defined('USEDOLIBARRSERVER') || defined('USEDOLIBARREDITOR')) {
+				$image_path = DOL_URL_ROOT.'/viewimage.php?modulepart=common&file=nophotopublic.png';
+			} else {
+				$image_path = '/wrapper.php?modulepart=common&file=nophotopublic.png';
+			}
+		}
+	}
+
+	if (empty($image_path)) {
+		if (defined('USEDOLIBARRSERVER') || defined('USEDOLIBARREDITOR')) {
+			$image_path = DOL_URL_ROOT.'/viewimage.php?modulepart=common&file=nophoto.png';
+		} else {
+			$image_path = '/wrapper.php?modulepart=common&file=nophoto.png';
+		}
+	}
+
+	return $image_path;
+}
+
+
 /**
  * Return list of containers object that match a criteria.
  * WARNING: This function can be used by websites.
@@ -893,12 +1105,12 @@ function getSocialNetworkSharingLinks()
  * @param	int			$status				0 or 1, or -1 for both
  * @return  array							Array with results of search
  */
-function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = 'null', $status = 1)
+function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = [], $status = 1)
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 
 	$error = 0;
-	$arrayresult = array('code'=>'', 'list'=>array());
+	$arrayresult = array('code' => '', 'list' => array());
 
 	if (!is_object($weblangs)) {
 		$weblangs = $langs;
@@ -1006,22 +1218,22 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 
 		$filecontent = file_get_contents($filehtmlheader);
 		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent)) {
-			$arrayresult['list'][] = array('type'=>'website_htmlheadercontent');
+			$arrayresult['list'][] = array('type' => 'website_htmlheadercontent');
 		}
 
 		$filecontent = file_get_contents($filecss);
 		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent)) {
-			$arrayresult['list'][] = array('type'=>'website_csscontent');
+			$arrayresult['list'][] = array('type' => 'website_csscontent');
 		}
 
 		$filecontent = file_get_contents($filejs);
 		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent)) {
-			$arrayresult['list'][] = array('type'=>'website_jscontent');
+			$arrayresult['list'][] = array('type' => 'website_jscontent');
 		}
 
 		$filerobot = file_get_contents($filerobot);
 		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent)) {
-			$arrayresult['list'][] = array('type'=>'website_robotcontent');
+			$arrayresult['list'][] = array('type' => 'website_robotcontent');
 		}
 
 		$searchdone = 1;
@@ -1050,10 +1262,10 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
  *
  * @param 	Website	 	$object			Object website
  * @param 	WebsitePage	$objectpage		Object website page
- * @param 	string		$urltograb		URL to grab (exemple: http://www.nltechno.com/ or http://www.nltechno.com/dir1/ or http://www.nltechno.com/dir1/mapage1)
+ * @param 	string		$urltograb		URL to grab (example: http://www.nltechno.com/ or http://www.nltechno.com/dir1/ or http://www.nltechno.com/dir1/mapage1)
  * @param 	string		$tmp			Content to parse
  * @param 	string		$action			Var $action
- * @param	string		$modifylinks	0=Do not modify content, 1=Replace links with a link to viewimage
+ * @param	int 		$modifylinks	0=Do not modify content, 1=Replace links with a link to viewimage
  * @param	int			$grabimages		0=Do not grab images, 1=Grab images
  * @param	string		$grabimagesinto	'root' or 'subpage'
  * @return	void
@@ -1108,10 +1320,6 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 		$filetosave = preg_replace('/\/[^\/]+\/\.\./', '', $filetosave);
 		$filename = preg_replace('/\/[^\/]+\/\.\./', '', $filename);
 
-		//var_dump($filetosave);
-		//var_dump($filename);
-		//exit;
-
 		if (empty($alreadygrabbed[$urltograbbis])) {
 			if ($grabimages) {
 				$tmpgeturl = getURLContent($urltograbbis, 'GET', '', 1, array(), array('http', 'https'), 0);
@@ -1124,16 +1332,14 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 					$action = 'create';
 				} else {
-					$alreadygrabbed[$urltograbbis] = 1; // Track that file was alreay grabbed.
+					$alreadygrabbed[$urltograbbis] = 1; // Track that file was already grabbed.
 
 					dol_mkdir(dirname($filetosave));
 
 					$fp = fopen($filetosave, "w");
-					fputs($fp, $tmpgeturl['content']);
+					fwrite($fp, $tmpgeturl['content']);
 					fclose($fp);
-					if (!empty($conf->global->MAIN_UMASK)) {
-						@chmod($filetosave, octdec($conf->global->MAIN_UMASK));
-					}
+					dolChmod($filetosave);
 				}
 			}
 		}
@@ -1179,10 +1385,6 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 		$filetosave = preg_replace('/\/[^\/]+\/\.\./', '', $filetosave);
 		$filename = preg_replace('/\/[^\/]+\/\.\./', '', $filename);
 
-		//var_dump($filetosave);
-		//var_dump($filename);
-		//exit;
-
 		if (empty($alreadygrabbed[$urltograbbis])) {
 			if ($grabimages) {
 				$tmpgeturl = getURLContent($urltograbbis, 'GET', '', 1, array(), array('http', 'https'), 0);
@@ -1195,16 +1397,14 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 					$action = 'create';
 				} else {
-					$alreadygrabbed[$urltograbbis] = 1; // Track that file was alreay grabbed.
+					$alreadygrabbed[$urltograbbis] = 1; // Track that file was already grabbed.
 
 					dol_mkdir(dirname($filetosave));
 
 					$fp = fopen($filetosave, "w");
-					fputs($fp, $tmpgeturl['content']);
+					fwrite($fp, $tmpgeturl['content']);
 					fclose($fp);
-					if (!empty($conf->global->MAIN_UMASK)) {
-						@chmod($filetosave, octdec($conf->global->MAIN_UMASK));
-					}
+					dolChmod($filetosave);
 				}
 			}
 		}

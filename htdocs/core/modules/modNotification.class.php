@@ -17,11 +17,12 @@
  */
 
 /**
- *	\defgroup   notification	Module email notification
- *	\brief      Module pour gerer les notifications (par mail ou autre)
- *	\file       htdocs/core/modules/modNotification.class.php
- *	\ingroup    notification
- *	\brief      Description and activation file for the module Notification
+ *  \defgroup   notification	Module notification
+ *  \brief      Module for managing notifications (by e-mail or other means)
+ *
+ *  \file       htdocs/core/modules/modNotification.class.php
+ *  \ingroup    notification
+ *  \brief      Description and activation file for the module Notification
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -30,7 +31,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modNotification extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -63,7 +63,7 @@ class modNotification extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array("mails");
 
 		// Config pages

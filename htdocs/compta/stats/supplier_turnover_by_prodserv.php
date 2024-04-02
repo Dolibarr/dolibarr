@@ -20,6 +20,7 @@
  *	   \brief	   Page reporting purchase turnover by Products & Services
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
@@ -31,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 $langs->loadLangs(array("products", "categories", "errors", 'accountancy'));
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta = $conf->global->ACCOUNTING_MODE;
+$modecompta = getDolGlobalString('ACCOUNTING_MODE');
 if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
@@ -46,14 +47,14 @@ if (!$sortfield) {
 }
 
 // Category
-$selected_cat = (int) GETPOST('search_categ', 'int');
-$selected_soc = (int) GETPOST('search_soc', 'int');
+$selected_cat = GETPOSTINT('search_categ');
+$selected_soc = GETPOSTINT('search_soc');
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
 	$subcat = true;
 }
 // product/service
-$selected_type = GETPOST('search_type', 'int');
+$selected_type = GETPOSTINT('search_type');
 if ($selected_type == '') {
 	$selected_type = -1;
 }
@@ -83,10 +84,10 @@ $date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_star
 $date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOST("q", "int");
+	$q = GETPOSTINT("q");
 	if (empty($q)) {
 		// We define date_start and date_end
-		$month_start = GETPOST("month") ?GETPOST("month") : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+		$month_start = GETPOST("month") ? GETPOST("month") : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		$year_end = $year_start;
 		$month_end = $month_start;
 		if (!GETPOST("month")) {	// If month not forced
@@ -187,12 +188,13 @@ $allparams = array_merge($commonparams, $headerparams, $tableparams);
 $headerparams = array_merge($commonparams, $headerparams);
 $tableparams = array_merge($commonparams, $tableparams);
 
+$paramslink = '';
 foreach ($allparams as $key => $value) {
 	$paramslink .= '&'.$key.'='.$value;
 }
 
 // Security pack (data & check)
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 
 if ($user->socid > 0) {
 	$socid = $user->socid;
@@ -232,7 +234,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$builddate = dol_now();
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("PurchaseTurnoverCollected").', '.$langs->trans("ByProductsAndServices");
-	$calcmode = $langs->trans("CalcModeEngagement");
+	$calcmode = $langs->trans("CalcModePayment");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$description = $langs->trans("RulesPurchaseTurnoverIn");
 
@@ -250,7 +252,9 @@ if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 	$periodlink = '';
 }
 
-report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
+$exportlink = '';
+
+report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
@@ -259,6 +263,9 @@ if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 
 
 $name = array();
+$amount = array();
+$amount_ht = array();
+$qty = array();
 
 // SQL request
 $catotal = 0;
@@ -308,20 +315,23 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= $db->order($sortfield, $sortorder);
 
 	dol_syslog("supplier_turnover_by_prodserv", LOG_DEBUG);
-	$result = $db->query($sql);
-	if ($result) {
-		$num = $db->num_rows($result);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
 		$i = 0;
 		while ($i < $num) {
-			$obj = $db->fetch_object($result);
+			$obj = $db->fetch_object($resql);
+
 			$amount_ht[$obj->rowid] = $obj->amount;
 			$amount[$obj->rowid] = $obj->amount_ttc;
 			$qty[$obj->rowid] = $obj->qty;
 			$name[$obj->rowid] = $obj->ref.'&nbsp;-&nbsp;'.$obj->label;
 			$type[$obj->rowid] = $obj->product_type;
+
 			$catotal_ht += $obj->amount;
 			$catotal += $obj->amount_ttc;
 			$qtytotal += $obj->qty;
+
 			$i++;
 		}
 	} else {
@@ -370,7 +380,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '</td></tr>';
 
 	// Array header
-	print "<tr class=\"liste_titre\">";
+	print '<tr class="liste_titre">';
 	print_liste_field_titre(
 		$langs->trans("Product"),
 		$_SERVER["PHP_SELF"],
@@ -406,7 +416,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$_SERVER["PHP_SELF"],
 		"amount",
 		"",
-		$classslink,
+		$paramslink,
 		'class="right"',
 		$sortfield,
 		$sortorder

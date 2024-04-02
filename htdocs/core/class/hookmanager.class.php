@@ -69,15 +69,15 @@ class HookManager
 
 
 	/**
-	 *	Init array $this->hooks with instantiated action controlers.
+	 *	Init array $this->hooks with instantiated action controllers.
 	 *  First, a hook is declared by a module by adding a constant MAIN_MODULE_MYMODULENAME_HOOKS with value 'nameofcontext1:nameofcontext2:...' into $this->const of module descriptor file.
 	 *  This makes $conf->hooks_modules loaded with an entry ('modulename'=>array(nameofcontext1,nameofcontext2,...))
-	 *  When initHooks function is called, with initHooks(list_of_contexts), an array $this->hooks is defined with instance of controler
+	 *  When initHooks function is called, with initHooks(list_of_contexts), an array $this->hooks is defined with instance of controller
 	 *  class found into file /mymodule/class/actions_mymodule.class.php (if module has declared the context as a managed context).
 	 *  Then when a hook executeHooks('aMethod'...) is called, the method aMethod found into class will be executed.
 	 *
 	 *	@param	string[]	$arraycontext	    Array list of searched hooks tab/features. For example: 'thirdpartycard' (for hook methods into page card thirdparty), 'thirdpartydao' (for hook methods into Societe), ...
-	 *	@return	int							    Always 1
+	 *	@return	int								0 or 1
 	 */
 	public function initHooks($arraycontext)
 	{
@@ -85,7 +85,7 @@ class HookManager
 
 		// Test if there is hooks to manage
 		if (!is_array($conf->modules_parts['hooks']) || empty($conf->modules_parts['hooks'])) {
-			return;
+			return 0;
 		}
 
 		// For backward compatibility
@@ -127,12 +127,15 @@ class HookManager
 				}
 			}
 		}
+		// Log the init of hook but only for hooks there are declared to be managed
 		if (count($arraytolog) > 0) {
-			dol_syslog(get_class($this)."::initHooks Loading hooks: ".join(', ', $arraytolog), LOG_DEBUG);
+			dol_syslog(get_class($this)."::initHooks Loading hooks: ".implode(', ', $arraytolog), LOG_DEBUG);
 		}
 
-		if (!empty($this->hooks[$context])) {
-			ksort($this->hooks[$context], SORT_NATURAL);
+		foreach ($arraycontext as $context) {
+			if (!empty($this->hooks[$context])) {
+				ksort($this->hooks[$context], SORT_NATURAL);
+			}
 		}
 
 		return 1;
@@ -145,102 +148,68 @@ class HookManager
 	 *  @param		array	$parameters		Array of parameters
 	 *  @param		Object	$object			Object to use hooks on
 	 *  @param		string	$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
-	 *  @return		mixed					For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
+	 *  @return		int						For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
 	 *                                      For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0 if we want to keep standard actions, >0 uf we want to stop/replace standard actions (at least one > 0 and replacement will be done), <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
-	 *                                      All types can also return some values into an array ->results that will be finaly merged into this->resArray for caller.
+	 *                                      All types can also return some values into an array ->results that will be merged into this->resArray for caller.
 	 *                                      $this->error or this->errors are also defined by class called by this function if error.
 	 */
-	public function executeHooks($method, $parameters = array(), &$object = '', &$action = '')
+	public function executeHooks($method, $parameters = array(), &$object = null, &$action = '')
 	{
 		if (!is_array($this->hooks) || empty($this->hooks)) {
 			return 0; // No hook available, do nothing.
 		}
+		if (!is_array($parameters)) {
+			dol_syslog('executeHooks was called with a non array $parameters. Surely a bug.', LOG_WARNING);
+			$parameters = array();
+		}
 
-		$parameters['context'] = join(':', $this->contextarray);
+		$parameters['context'] = implode(':', $this->contextarray);
 		//dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
 
 		// Define type of hook ('output' or 'addreplace').
-		// TODO Remove hooks with type 'output' (exemple getNomUrl). All hooks must be converted into 'addreplace' hooks.
-		$hooktype = 'output';
-		if (in_array(
-			$method,
-			array(
-				'addCalendarChoice',
-				'addCalendarView',
-				'addMoreActionsButtons',
-				'addMoreMassActions',
-				'addSearchEntry',
-				'addStatisticLine',
-				'addSectionECMAuto',
-				'checkSecureAccess',
-				'createDictionaryFieldlist',
-				'editDictionaryFieldlist',
-				'getFormMail',
-				'deleteFile',
-				'doActions',
-				'doMassActions',
-				'formatEvent',
-				'formConfirm',
-				'formCreateThirdpartyOptions',
-				'formObjectOptions',
-				'formattachOptions',
-				'formBuilddocLineOptions',
-				'formatNotificationMessage',
-				'formConfirm',
-				'getAccessForbiddenMessage',
-				'getDirList',
-				'hookGetEntity',
-				'getFormMail',
-				'getFormatedCustomerRef',
-				'getFormatedSupplierRef',
-				'getIdProfUrl',
-				'getInputIdProf',
-				'menuDropdownQuickaddItems',
-				'menuLeftMenuItems',
-				'moveUploadedFile',
-				'moreHtmlStatus',
-				'pdf_build_address',
-				'pdf_writelinedesc',
-				'pdf_getlinenum',
-				'pdf_getlineref',
-				'pdf_getlineref_supplier',
-				'pdf_getlinevatrate',
-				'pdf_getlineupexcltax',
-				'pdf_getlineupwithtax',
-				'pdf_getlineqty',
-				'pdf_getlineqty_asked',
-				'pdf_getlineqty_shipped',
-				'pdf_getlineqty_keeptoship',
-				'pdf_getlineunit',
-				'pdf_getlineremisepercent',
-				'pdf_getlineprogress',
-				'pdf_getlinetotalexcltax',
-				'pdf_getlinetotalwithtax',
-				'paymentsupplierinvoices',
-				'printAddress',
-				'printEmail',
-				'printSearchForm',
-				'printTabsHead',
-				'printObjectLine',
-				'printObjectSubLine',
-				'restrictedArea',
-				'sendMail',
-				'sendMailAfter',
-				'showOptionals',
-				'showLinkToObjectBlock',
-				'setContentSecurityPolicy',
-				'setHtmlTitle',
-				'completeTabsHead',
-				'formDolBanner',
-				'displayMarginInfos',
-				)
-		)) {
-			$hooktype = 'addreplace';
+		$hooktype = 'addreplace';
+		// TODO Remove hooks with type 'output' (example createFrom). All hooks must be converted into 'addreplace' hooks.
+		if (in_array($method, array(
+			'createFrom',
+			'dashboardAccountancy',
+			'dashboardActivities',
+			'dashboardCommercials',
+			'dashboardContracts',
+			'dashboardDonation',
+			'dashboardEmailings',
+			'dashboardExpenseReport',
+			'dashboardHRM',
+			'dashboardInterventions',
+			'dashboardMRP',
+			'dashboardMembers',
+			'dashboardOpensurvey',
+			'dashboardOrders',
+			'dashboardOrdersSuppliers',
+			'dashboardProductServices',
+			'dashboardProjects',
+			'dashboardPropals',
+			'dashboardSpecialBills',
+			'dashboardSupplierProposal',
+			'dashboardThirdparties',
+			'dashboardTickets',
+			'dashboardUsersGroups',
+			'dashboardWarehouse',
+			'dashboardWarehouseReceptions',
+			'dashboardWarehouseSendings',
+			'insertExtraHeader',
+			'insertExtraFooter',
+			'printLeftBlock',
+			'formAddObjectLine',
+			'formBuilddocOptions',
+			'showSocinfoOnPrint'
+		))) {
+			$hooktype = 'output';
 		}
 
 		// Init return properties
-		$this->resPrint = '';
-		$this->resArray = array();
+		$localResPrint = '';
+		$localResArray = array();
+
 		$this->resNbOfHooks = 0;
 
 		// Here, the value for $method and $hooktype are given.
@@ -270,10 +239,13 @@ class HookManager
 					$modulealreadyexecuted[$module] = $module;
 
 					// Clean class (an error may have been set from a previous call of another method for same module/hook)
-					$actionclassinstance->error = 0;
+					$actionclassinstance->error = '';
 					$actionclassinstance->errors = array();
 
-					dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".get_class($actionclassinstance).'->'.$method.", context=".$context.", module=".$module.", action=".$action.((is_object($object) && property_exists($object, 'id')) ? ', object id='.$object->id : '').((is_object($object) && property_exists($object, 'element')) ? ', object element='.$object->element : ''), LOG_DEBUG);
+					if (getDolGlobalInt('MAIN_HOOK_DEBUG')) {
+						// This his too much verbose, enabled if const enabled only
+						dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".get_class($actionclassinstance).'->'.$method.", context=".$context.", module=".$module.", action=".$action.((is_object($object) && property_exists($object, 'id')) ? ', object id='.$object->id : '').((is_object($object) && property_exists($object, 'element')) ? ', object element='.$object->element : ''), LOG_DEBUG);
+					}
 
 					// Add current context to avoid method execution in bad context, you can add this test in your method : eg if($currentcontext != 'formfile') return;
 					// Note: The hook can use the $currentcontext in its code to avoid to be ran twice or be ran for one given context only
@@ -287,21 +259,22 @@ class HookManager
 							$error++;
 							$this->error = $actionclassinstance->error;
 							$this->errors = array_merge($this->errors, (array) $actionclassinstance->errors);
-							dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error) ? '' : " ".$this->error).(empty($this->errors) ? '' : " ".join(",", $this->errors)), LOG_ERR);
+							dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error) ? '' : " ".$this->error).(empty($this->errors) ? '' : " ".implode(",", $this->errors)), LOG_ERR);
 						}
 
 						if (isset($actionclassinstance->results) && is_array($actionclassinstance->results)) {
 							if ($resactiontmp > 0) {
-								$this->resArray = $actionclassinstance->results;
+								$localResArray = $actionclassinstance->results;
 							} else {
-								$this->resArray = array_merge($this->resArray, $actionclassinstance->results);
+								$localResArray = array_merge_recursive($localResArray, $actionclassinstance->results);
 							}
 						}
+
 						if (!empty($actionclassinstance->resprints)) {
 							if ($resactiontmp > 0) {
-								$this->resPrint = $actionclassinstance->resprints;
+								$localResPrint = $actionclassinstance->resprints;
 							} else {
-								$this->resPrint .= $actionclassinstance->resprints;
+								$localResPrint .= $actionclassinstance->resprints;
 							}
 						}
 					} else {
@@ -312,28 +285,31 @@ class HookManager
 							continue;
 						}
 
-						//dol_syslog("Call method ".$method." of class ".get_class($actionclassinstance).", module=".$module.", hooktype=".$hooktype, LOG_DEBUG);
+						if (getDolGlobalInt('MAIN_HOOK_DEBUG')) {
+							dol_syslog("Call method ".$method." of class ".get_class($actionclassinstance).", module=".$module.", hooktype=".$hooktype, LOG_DEBUG);
+						}
+
 						$resactiontmp = $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
 						$resaction += $resactiontmp;
 
 						if (!empty($actionclassinstance->results) && is_array($actionclassinstance->results)) {
-							$this->resArray = array_merge($this->resArray, $actionclassinstance->results);
+							$localResArray = array_merge_recursive($localResArray, $actionclassinstance->results);
 						}
 						if (!empty($actionclassinstance->resprints)) {
-							$this->resPrint .= $actionclassinstance->resprints;
+							$localResPrint .= $actionclassinstance->resprints;
 						}
 						if (is_numeric($resactiontmp) && $resactiontmp < 0) {
 							$error++;
 							$this->error = $actionclassinstance->error;
 							$this->errors = array_merge($this->errors, (array) $actionclassinstance->errors);
-							dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error) ? '' : " ".$this->error).(empty($this->errors) ? '' : " ".join(",", $this->errors)), LOG_ERR);
+							dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error) ? '' : " ".$this->error).(empty($this->errors) ? '' : " ".implode(",", $this->errors)), LOG_ERR);
 						}
 
 						// TODO dead code to remove (do not disable this, but fix your hook instead): result must not be a string but an int. you must use $actionclassinstance->resprints to return a string
 						if (!is_array($resactiontmp) && !is_numeric($resactiontmp)) {
 							dol_syslog('Error: Bug into hook '.$method.' of module class '.get_class($actionclassinstance).'. Method must not return a string but an int (0=OK, 1=Replace, -1=KO) and set string into ->resprints', LOG_ERR);
 							if (empty($actionclassinstance->resprints)) {
-								$this->resPrint .= $resactiontmp;
+								$localResPrint .= $resactiontmp;
 							}
 						}
 					}
@@ -345,6 +321,9 @@ class HookManager
 				}
 			}
 		}
+
+		$this->resPrint = $localResPrint;
+		$this->resArray = $localResArray;
 
 		return ($error ? -1 : $resaction);
 	}

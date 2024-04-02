@@ -247,10 +247,13 @@ CountryJE=Jersey
 CountryME=Montenegro
 CountryBL=Saint-Barthélemy
 CountryMF=Saint Martin
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=Fru
+CivilityMMEShort=Fru
 CivilityMR=Herr
+CivilityMRShort=Herr
 CivilityMLE=Frk.
 CivilityMTRE=Master
 CivilityDR=Doktor

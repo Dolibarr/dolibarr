@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Aktywny klucz webhooka
 ONLINE_PAYMENT_WAREHOUSE=Zapasy do wykorzystania w celu zmniejszenia zapasów po dokonaniu płatności online <br> (DO ZROBIENIA Kiedy opcja zmniejszenia zapasów jest realizowana na podstawie faktury i płatność online generuje fakturę?)
 StripeLiveEnabled=Stripe na żywo włączony (w przeciwnym razie tryb testowy / piaskownicy)
 StripeImportPayment=Importuj płatności Stripe
-ExampleOfTestCreditCard=Przykład karty kredytowej do testu: %s => ważna, %s => błąd CVC, %s => wygasła, %s => opłata nie powiodła się
+ExampleOfTestCreditCard=Example of credit card for a test payment: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Bramy Stripe
 OAUTH_STRIPE_TEST_ID=Identyfikator klienta Stripe Connect (ca _...)
 OAUTH_STRIPE_LIVE_ID=Identyfikator klienta Stripe Connect (ca _...)
@@ -50,6 +51,7 @@ StripeAccount=Konto Stripe
 StripeChargeList=Lista opłat Stripe
 StripeTransactionList=Lista transakcji Stripe
 StripeCustomerId=Identyfikator klienta Stripe
+StripePaymentId=Stripe payment id
 StripePaymentModes=Tryby płatności Stripe
 LocalID=Lokalny identyfikator
 StripeID=Stripe ID
@@ -61,6 +63,7 @@ DeleteACard=Usuń kartę
 ConfirmDeleteCard=Czy na pewno chcesz usunąć tę kartę kredytową lub debetową?
 CreateCustomerOnStripe=Utwórz klienta w Stripe
 CreateCardOnStripe=Utwórz kartę w Stripe
+CreateBANOnStripe=Create bank on Stripe
 ShowInStripe=Pokaż w Stripe
 StripeUserAccountForActions=Konto użytkownika używane do powiadamiania e-mailem o niektórych wydarzeniach Stripe (wypłaty Stripe)
 StripePayoutList=Lista wypłat Stripe
@@ -68,4 +71,9 @@ ToOfferALinkForTestWebhook=Łącze do konfiguracji Stripe WebHook w celu wywoła
 ToOfferALinkForLiveWebhook=Łącze do konfiguracji Stripe WebHook w celu wywołania IPN (tryb na żywo)
 PaymentWillBeRecordedForNextPeriod=Płatność zostanie zarejestrowana za następny okres.
 ClickHereToTryAgain= <a href="%s"> Kliknij tutaj, aby spróbować ponownie ... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Ze względu na zasady silnego uwierzytelniania klienta, karta musi zostać utworzona z backoffice Stripe. Możesz kliknąć tutaj, aby włączyć rekord klienta Stripe: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe back office. You can click here to switch on Stripe customer record: %s
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
+RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+StripeConnect_Mode=Stripe Connect mode

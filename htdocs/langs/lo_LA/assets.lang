@@ -1,4 +1,4 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,52 +16,170 @@
 #
 # Generic
 #
-Assets = ຊັບສິນ
-NewAsset = ຊັບສິນໃ່
-AccountancyCodeAsset = ລະຫັດບັນຊີ (ຊັບສິນ)
-AccountancyCodeDepreciationAsset = ລະຫັດບັນຊີ (ບັນຊີຊັບສິນເສື່ອມລາຄາ)
-AccountancyCodeDepreciationExpense = ລະຫັດບັນຊີ (ບັນຊີລາຍຈ່າຍຄ່າເສື່ອມລາຄາ)
-NewAssetType=ປະເພດຊັບສິນໃ່
-AssetsTypeSetup=ການຕັ້ງຄ່າປະເພດຂອງຊັບສິນ
-AssetTypeModified=ປະເພດຊັບສິນຖືກແກ້ໄຂແລ້ວ
-AssetType=ປະເພດຊັບສິນ
+NewAsset=ຊັບສິນໃ່
+AccountancyCodeAsset=ລະຫັດບັນຊີ (ຊັບສິນ)
+AccountancyCodeDepreciationAsset=ລະຫັດບັນຊີ (ບັນຊີຊັບສິນເສື່ອມລາຄາ)
+AccountancyCodeDepreciationExpense=ລະຫັດບັນຊີ (ບັນຊີລາຍຈ່າຍຄ່າເສື່ອມລາຄາ)
 AssetsLines=ຊັບສິນ
 DeleteType=ລຶບ
-DeleteAnAssetType=ລຶບປະເພດຊັບສິນ
-ConfirmDeleteAssetType=ເຈົ້າແນ່ໃຈບໍ່ວ່າເຈົ້າຕ້ອງການລຶບປະເພດເນື້ອຫານີ້?
-ShowTypeCard=ສະແດງປະເພດ '%s'
+DeleteAnAssetType=ລຶບຮູບແບບຊັບສິນ
+ConfirmDeleteAssetType=ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບຮູບແບບຊັບສິນນີ້?
+ShowTypeCard=ສະແດງຮູບແບບ '%s'
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = ຊັບສິນ
+ModuleAssetsName=ຊັບສິນ
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = ລາຍລະອຽດຊັບສິນ
+ModuleAssetsDesc=ລາຍລະອຽດຊັບສິນ
 
 #
 # Admin page
 #
-AssetsSetup = ການຕັ້ງຄ່າຊັບສິນ
-Settings = ການຕັ້ງຄ່າ
-AssetsSetupPage = ໜ້າ ການຕັ້ງຄ່າຊັບສິນ
-ExtraFieldsAssetsType = ຄຸນສົມບັດເພີ່ມເຕີມ (ປະເພດເນື້ອຫາ)
-AssetsType=ປະເພດຊັບສິນ
-AssetsTypeId=id ປະເພດເນື້ອຫາ
-AssetsTypeLabel=ປ້າຍ ກຳ ກັບປະເພດຊັບສິນ
-AssetsTypes=ປະເພດຊັບສິນ
+AssetSetup=ການ​ຕັ້ງ​ຄ່າ​ຊັບ​ສິນ​
+AssetSetupPage=ໜ້າຕັ້ງຄ່າຊັບສິນ
+ExtraFieldsAssetModel=ຄຸນສົມບັດເສີມ (ຕົວແບບຂອງຊັບສິນ)
+
+AssetsType=ຮູບແບບຊັບສິນ
+AssetsTypeId=ID ຮູບແບບຊັບສິນ
+AssetsTypeLabel=ປ້າຍແບບຈໍາລອງຊັບສິນ
+AssetsTypes=ຮູບແບບຊັບສິນ
+ASSET_ACCOUNTANCY_CATEGORY=ກຸ່ມບັນຊີຊັບສິນຄົງທີ່
 
 #
 # Menu
 #
-MenuAssets = ຊັບສິນ
-MenuNewAsset = ຊັບສິນໃ່
-MenuTypeAssets = ປະເພດຊັບສິນ
-MenuListAssets = ລາຍການ
-MenuNewTypeAssets = ໃຫມ່
-MenuListTypeAssets = ລາຍການ
+MenuAssets=ຊັບສິນ
+MenuNewAsset=ຊັບສິນໃ່
+MenuAssetModels=ຊັບສິນຕົວແບບ
+MenuListAssets=ລາຍການ
+MenuNewAssetModel=ຮູບແບບຂອງຊັບສິນໃຫມ່
+MenuListAssetModels=ລາຍການ
 
 #
 # Module
 #
+ConfirmDeleteAsset=ທ່ານຕ້ອງການລຶບຊັບສິນນີ້ແທ້ໆບໍ?
+
+#
+# Tab
+#
+AssetDepreciationOptions=ຕົວເລືອກຄ່າເສື່ອມລາຄາ
+AssetAccountancyCodes=Accounting accounts
+AssetDepreciation=ການ​ເສື່ອມ​ຄຸນ​ຄ່າ
+
+#
+# Asset
+#
 Asset=ຊັບສິນ
-NewAssetType=ປະເພດຊັບສິນໃ່
-NewAsset=ຊັບສິນໃ່
-ConfirmDeleteAsset=ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບເນື້ອຫານີ້ອອກ?
+Assets=ຊັບສິນ
+AssetReversalAmountHT=ຈຳນວນເງິນຄືນ (ບໍ່ເສຍພາສີ)
+AssetAcquisitionValueHT=ຈຳນວນທີ່ໄດ້ມາ (ບໍ່ເສຍພາສີ)
+AssetRecoveredVAT=ກູ້ VAT ແລ້ວ
+AssetReversalDate=ວັນທີປີ້ນກັບກັນ
+AssetDateAcquisition=ວັນທີທີ່ໄດ້ມາ
+AssetDateStart=ວັນທີເລີ່ມຕົ້ນ
+AssetAcquisitionType=ປະເພດຂອງການໄດ້ມາ
+AssetAcquisitionTypeNew=ໃຫມ່
+AssetAcquisitionTypeOccasion=ໃຊ້ແລ້ວ
+AssetType=ປະເພດຂອງຊັບສິນ
+AssetTypeIntangible=ບໍ່ມີຕົວຕົນ
+AssetTypeTangible=ຈັບໄດ້
+AssetTypeInProgress=ກຳລັງດຳເນີນຢູ່
+AssetTypeFinancial=ການເງິນ
+AssetNotDepreciated=ບໍ່ໄດ້ຫຼຸດລາຄາ
+AssetDisposal=ການຖິ້ມຂີ້ເຫຍື້ອ
+AssetConfirmDisposalAsk=ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການຖິ້ມຊັບສິນ <b> %s</b>?
+AssetConfirmReOpenAsk=ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການເປີດຊັບສິນ <b> %s</b>?
+
+#
+# Asset status
+#
+AssetInProgress=ກຳລັງດຳເນີນຢູ່
+AssetDisposed=ຖິ້ມແລ້ວ
+AssetRecorded=ບັນຊີ
+
+#
+# Asset disposal
+#
+AssetDisposalDate=ວັນທີຂອງການກໍາຈັດ
+AssetDisposalAmount=ມູນຄ່າການກໍາຈັດ
+AssetDisposalType=ປະເພດຂອງການກໍາຈັດ
+AssetDisposalDepreciated=ຫຼຸດລາຄາປີຂອງການໂອນ
+AssetDisposalSubjectToVat=ການກໍາຈັດແມ່ນຂຶ້ນກັບອາກອນມູນຄ່າເພີ່ມ
+
+#
+# Asset model
+#
+AssetModel=ຕົວແບບຂອງຊັບສິນ
+AssetModels=ຕົວແບບຂອງຊັບສິນ
+
+#
+# Asset depreciation options
+#
+AssetDepreciationOptionEconomic=ຄ່າເສື່ອມລາຄາທາງເສດຖະກິດ
+AssetDepreciationOptionAcceleratedDepreciation=ເລັ່ງຄ່າເສື່ອມລາຄາ (ອາກອນ)
+AssetDepreciationOptionDepreciationType=ປະເພດຄ່າເສື່ອມລາຄາ
+AssetDepreciationOptionDepreciationTypeLinear=ເສັ້ນ
+AssetDepreciationOptionDepreciationTypeDegressive=ຜິດປົກກະຕິ
+AssetDepreciationOptionDepreciationTypeExceptional=ພິເສດ
+AssetDepreciationOptionDegressiveRate=ອັດ​ຕາ​ການ​ຊຸດ​ໂຊມ​
+AssetDepreciationOptionDuration=ໄລຍະເວລາ
+AssetDepreciationOptionDurationType=ໄລຍະເວລາປະເພດ
+AssetDepreciationOptionDurationTypeAnnual=ປະຈໍາປີ
+AssetDepreciationOptionDurationTypeMonthly=ປະຈໍາເດືອນ
+AssetDepreciationOptionDurationTypeDaily=ປະຈໍາວັນ
+AssetDepreciationOptionRate=ອັດຕາ (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=ພື້ນຖານຄ່າເສື່ອມລາຄາ (ບໍ່ລວມອາກອນມູນຄ່າເພີ່ມ)
+AssetDepreciationOptionAmountBaseDeductibleHT=ພື້ນຖານການຫັກອອກໄດ້ (ບໍ່ລວມອາກອນມູນຄ່າເພີ່ມ)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=ຈຳນວນທັງໝົດຄ່າເສື່ອມລາຄາສຸດທ້າຍ (ບໍ່ລວມອາກອນມູນຄ່າເພີ່ມ)
+
+#
+# Asset accountancy codes
+#
+AssetAccountancyCodeDepreciationEconomic=ຄ່າເສື່ອມລາຄາທາງເສດຖະກິດ
+AssetAccountancyCodeAsset=ຊັບສິນ
+AssetAccountancyCodeDepreciationAsset=ການ​ເສື່ອມ​ຄຸນ​ຄ່າ
+AssetAccountancyCodeDepreciationExpense=ຄ່າເສື່ອມລາຄາ
+AssetAccountancyCodeValueAssetSold=ມູນຄ່າຂອງຊັບສິນທີ່ຖືກຖິ້ມ
+AssetAccountancyCodeReceivableOnAssignment=ຮັບເມື່ອກຳຈັດ
+AssetAccountancyCodeProceedsFromSales=ລາຍຮັບຈາກການກໍາຈັດ
+AssetAccountancyCodeVatCollected=ເກັບອາກອນມູນຄ່າເພີ່ມ
+AssetAccountancyCodeVatDeductible=ກູ້ VAT ຈາກຊັບສິນ
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=ເລັ່ງຄ່າເສື່ອມລາຄາ (ອາກອນ)
+AssetAccountancyCodeAcceleratedDepreciation=ບັນຊີ
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=ຄ່າເສື່ອມລາຄາ
+AssetAccountancyCodeProvisionAcceleratedDepreciation=ການຍຶດຄືນ/ການສະໜອງ
+
+#
+# Asset depreciation
+#
+AssetBaseDepreciationHT=ພື້ນຖານຄ່າເສື່ອມລາຄາ (ບໍ່ລວມອາກອນມູນຄ່າເພີ່ມ)
+AssetDepreciationBeginDate=ການເລີ່ມຕົ້ນຂອງຄ່າເສື່ອມລາຄາໃນວັນທີ
+AssetDepreciationDuration=ໄລຍະເວລາ
+AssetDepreciationRate=ອັດຕາ (%%)
+AssetDepreciationDate=ວັນທີຫຼຸດລາຄາ
+AssetDepreciationHT=ຄ່າເສື່ອມລາຄາ (ບໍ່ລວມອາກອນມູນຄ່າເພີ່ມ)
+AssetCumulativeDepreciationHT=ຄ່າເສື່ອມລາຄາສະສົມ (ບໍ່ລວມອາກອນມູນຄ່າເພີ່ມ)
+AssetResidualHT=ມູນຄ່າທີ່ເຫຼືອ (ບໍ່ລວມອາກອນມູນຄ່າເພີ່ມ)
+AssetDispatchedInBookkeeping=ບັນທຶກຄ່າເສື່ອມລາຄາແລ້ວ
+AssetFutureDepreciationLine=ຄ່າເສື່ອມລາຄາໃນອະນາຄົດ
+AssetDepreciationReversal=ປີ້ນກັບກັນ
+
+#
+# Errors
+#
+AssetErrorAssetOrAssetModelIDNotProvide=ID ຂອງຊັບສິນ ຫຼືຮູບແບບທີ່ພົບເຫັນບໍ່ໄດ້ຖືກສະໜອງໃຫ້
+AssetErrorFetchAccountancyCodesForMode=ເກີດຄວາມຜິດພາດໃນການດຶງຂໍ້ມູນບັນຊີສຳລັບຮູບແບບການເສື່ອມລາຄາ '%s'
+AssetErrorDeleteAccountancyCodesForMode=ເກີດຄວາມຜິດພາດໃນເວລາລຶບບັນຊີບັນຊີອອກຈາກໂໝດການເສື່ອມລາຄາ '%s'
+AssetErrorInsertAccountancyCodesForMode=ຜິດພາດໃນເວລາໃສ່ບັນຊີບັນຊີຂອງໂໝດຄ່າເສື່ອມລາຄາ '%s'
+AssetErrorFetchDepreciationOptionsForMode=ເກີດຄວາມຜິດພາດໃນການດຶງຂໍ້ມູນຕົວເລືອກສຳລັບໂໝດຄ່າເສື່ອມລາຄາ '%s'
+AssetErrorDeleteDepreciationOptionsForMode=ຜິດພາດໃນເວລາລຶບ '%s' ຕົວເລືອກຮູບແບບການເສື່ອມລາຄາ
+AssetErrorInsertDepreciationOptionsForMode=ເກີດຄວາມຜິດພາດໃນການໃສ່ຕົວເລືອກໂໝດການເສື່ອມລາຄາ '%s'
+AssetErrorFetchDepreciationLines=ເກີດຄວາມຜິດພາດໃນການດຶງຂໍ້ມູນເສັ້ນຄ່າເສື່ອມລາຄາທີ່ບັນທຶກໄວ້
+AssetErrorClearDepreciationLines=ຜິດພາດໃນເວລາລຶບສາຍຄ່າເສື່ອມລາຄາທີ່ບັນທຶກໄວ້ (ປີ້ນກັບກັນ ແລະອະນາຄົດ)
+AssetErrorAddDepreciationLine=ເກີດຄວາມຜິດພາດໃນການເພີ່ມເສັ້ນຄ່າເສື່ອມລາຄາ
+AssetErrorCalculationDepreciationLines=ຜິດພາດໃນເວລາຄິດໄລ່ຄ່າເສື່ອມລາຄາ (ການຟື້ນຕົວ ແລະອະນາຄົດ)
+AssetErrorReversalDateNotProvidedForMode=ວັນທີປີ້ນກັບບໍ່ໄດ້ລະບຸໄວ້ສໍາລັບວິທີການເສື່ອມລາຄາ '%s'
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=ວັນທີປີ້ນກັບຈະຕ້ອງໃຫຍ່ກວ່າ ຫຼືເທົ່າກັບຈຸດເລີ່ມຕົ້ນຂອງປີງົບປະມານປັດຈຸບັນສຳລັບ '%s' ວິທີການເສື່ອມລາຄາ
+AssetErrorReversalAmountNotProvidedForMode=ຈໍານວນການກັບຄືນບໍ່ໄດ້ສະຫນອງໃຫ້ສໍາລັບຮູບແບບຄ່າເສື່ອມລາຄາ '%s'.
+AssetErrorFetchCumulativeDepreciation=ເກີດຄວາມຜິດພາດໃນການດຶງຂໍ້ມູນຄ່າເສື່ອມລາຄາສະສົມຈາກເສັ້ນຄ່າເສື່ອມລາຄາ
+AssetErrorSetLastCumulativeDepreciation=ຜິດພາດໃນເວລາບັນທຶກຈຳນວນຄ່າເສື່ອມລາຄາສະສົມຫຼ້າສຸດ

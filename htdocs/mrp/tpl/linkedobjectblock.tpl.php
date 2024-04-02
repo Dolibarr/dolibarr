@@ -21,12 +21,12 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 print "<!-- BEGIN PHP TEMPLATE mrp/tpl/linkedobjectblock.tpl.php -->\n";
 
-global $user, $db;
+global $user, $db, $hookmanager;
 global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
@@ -44,41 +44,47 @@ if ($object->element == 'mo') {
 	$res = $mo_static->fetch($object->id);
 	$TMoChilds = $mo_static->getMoChilds();
 
+	$hookmanager->initHooks('LinesLinkedObjectBlock');
+	$parameters = array('TMoChilds' => $TMoChilds);
+	$reshook = $hookmanager->executeHooks('LinesLinkedObjectBlock', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) {
+		foreach ($TMoChilds as $key => $objectlink) {
+			$ilink++;
 
-	foreach ($TMoChilds as $key => $objectlink) {
-		$ilink++;
+			$trclass = 'oddeven';
 
-		$trclass = 'oddeven';
+			echo '<tr class="' . $trclass . '" >';
+			echo '<td class="linkedcol-element tdoverflowmax100">' . $langs->trans("ManufacturingOrder");
+			if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
+				print '<a class="objectlinked_importbtn" href="' . $objectlink->getNomUrl(0, '', 0, 1) . '&amp;action=selectlines" data-element="' . $objectlink->element . '" data-id="' . $objectlink->id . '"  > <i class="fa fa-indent"></i> </a';
+			}
+			echo '</td>';
+			echo '<td class="linkedcol-name nowraponall" >' . $objectlink->getNomUrl(1) . '</td>';
 
-		echo '<tr class="' . $trclass . '" >';
-		echo '<td class="linkedcol-element tdoverflowmax100">' . $langs->trans("ManufacturingOrder");
-		if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
-			print '<a class="objectlinked_importbtn" href="' . $objectlink->getNomUrl(0, '', 0, 1) . '&amp;action=selectlines" data-element="' . $objectlink->element . '" data-id="' . $objectlink->id . '"  > <i class="fa fa-indent"></i> </a';
+			echo '<td class="linkedcol-ref center">';
+			//  $result = $product_static->fetch($objectlink->fk_product);
+			print '</td>';
+			echo '<td class="linkedcol-date center">' . dol_print_date($objectlink->date_creation, 'day') . '</td>';
+			echo '<td class="linkedcol-amount right">-</td>';
+			echo '<td class="linkedcol-statut right">' . $objectlink->getLibStatut(3) . '</td>';
+			echo '<td class="linkedcol-action right">';
+
+			// we want to make the link via element_element for delete action
+			$sql = " Select rowid from " . MAIN_DB_PREFIX . "element_element";
+			$sql .= " WHERE  fk_source = " . (int) $object->id . " and fk_target = '" . dol_escape_htmltag($key) . "'";
+
+			$resql = $db->query($sql);
+			$k = 0;
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if ($obj->rowid && $obj->rowid > 0) {
+					$k = $obj->rowid;
+				}
+			}
+			echo '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=dellink&token=' . newToken() . '&dellinkid=' . $k . '">' . img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink') . '</a>';
+			echo '</td>';
+			echo "</tr>\n";
 		}
-		echo '</td>';
-		echo '<td class="linkedcol-name tdoverflowmax150">' . $objectlink->getNomUrl(1) . '</td>';
-
-		echo '<td class="linkedcol-ref center">';
-		//  $result = $product_static->fetch($objectlink->fk_product);
-		print '</td>';
-		echo '<td class="linkedcol-date center">' . dol_print_date($objectlink->date_creation, 'day') . '</td>';
-		echo '<td class="linkedcol-amount right">-</td>';
-		echo '<td class="linkedcol-statut right">' . $objectlink->getLibStatut(3) . '</td>';
-		echo '<td class="linkedcol-action right">';
-
-		// we want to make the link via element_element for delete action
-		$sql = " Select rowid from " . MAIN_DB_PREFIX . "element_element";
-		$sql .= " WHERE  fk_source = " . (int) $object->id . " and fk_target = '" . dol_escape_htmltag($key) . "'";
-
-		$resql = $db->query($sql);
-		$k = 0;
-		if ($resql) {
-			$obj = $db->fetch_object($resql);
-			if ($obj->rowid && $obj->rowid > 0) $k = $obj->rowid;
-		}
-		echo '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=dellink&token=' . newToken() . '&dellinkid=' . $k . '">' . img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink') . '</a>';
-		echo '</td>';
-		echo "</tr>\n";
 	}
 } else {
 	$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);

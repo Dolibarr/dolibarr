@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=نالج مینجمنٹ (KM) یا ہیلپ ڈیس�
 # Admin page
 #
 KnowledgeManagementSetup = نالج مینجمنٹ سسٹم سیٹ اپ
-Settings = ترتیبات
 KnowledgeManagementSetupPage = نالج مینجمنٹ سسٹم سیٹ اپ صفحہ
 
 
 #
 # About page
 #
-About = کے بارے میں
 KnowledgeManagementAbout = نالج مینجمنٹ کے بارے میں
 KnowledgeManagementAboutPage = صفحہ کے بارے میں علم کا انتظام
 
 KnowledgeManagementArea = نالج مینجمنٹ
 MenuKnowledgeRecord = علم کی بنیاد
+MenuKnowledgeRecordShort = علم کی بنیاد
 ListKnowledgeRecord = مضامین کی فہرست
 NewKnowledgeRecord = نیا مضمون
 ValidateReply = حل کی توثیق کریں۔
@@ -46,9 +45,15 @@ KnowledgeRecords = مضامین
 KnowledgeRecord = مضمون
 KnowledgeRecordExtraFields = آرٹیکل کے لیے ایکسٹرا فیلڈز
 GroupOfTicket=ٹکٹوں کا گروپ
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=جب گروپ ہوتا ہے تو ٹکٹوں کے لیے تجویز کیا جاتا ہے۔
+YouCanLinkArticleToATicketCategory=آپ مضمون کو ٹکٹ گروپ سے جوڑ سکتے ہیں (لہذا مضمون کو اس گروپ کے کسی بھی ٹکٹ پر نمایاں کیا جائے گا)
+SuggestedForTicketsInGroup=ٹکٹ بنانے کی تجویز
 
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+SetObsolete=متروک کے طور پر سیٹ کریں۔
+ConfirmCloseKM=کیا آپ اس مضمون کے متروک ہونے کی تصدیق کرتے ہیں؟
+ConfirmReopenKM=کیا آپ اس مضمون کو "تصدیق شدہ" کی حیثیت پر بحال کرنا چاہتے ہیں؟
+BoxLastKnowledgerecordDescription=آخری %s مضامین
+BoxLastKnowledgerecord=آخری مضامین
+BoxLastKnowledgerecordContent=آخری مضامین
+BoxLastKnowledgerecordModifiedContent=آخری ترمیم شدہ مضامین
+BoxLastModifiedKnowledgerecordDescription=آخری %s ترمیم شدہ مضامین
+BoxLastModifiedKnowledgerecord=آخری ترمیم شدہ مضامین

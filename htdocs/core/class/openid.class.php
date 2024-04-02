@@ -178,13 +178,13 @@ class SimpleOpenID
 	/**
 	 * SetOpenIDServer
 	 *
-	 * @return	void
+	 * @return	array
 	 */
 	public function GetError()
 	{
 		// phpcs:enable
 		$e = $this->error;
-		return array('code'=>$e[0], 'description'=>$e[1]);
+		return array('code' => $e[0], 'description' => $e[1]);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -198,6 +198,7 @@ class SimpleOpenID
 	public function ErrorStore($code, $desc = null)
 	{
 		// phpcs:enable
+		$errs = array();
 		$errs['OPENID_NOSERVERSFOUND'] = 'Cannot find OpenID Server TAG on Identity page.';
 		if ($desc == null) {
 			$desc = $errs[$code];
@@ -225,7 +226,7 @@ class SimpleOpenID
 	 * splitResponse
 	 *
 	 * @param	string	$response		Server
-	 * @return	void
+	 * @return	array
 	 */
 	public function splitResponse($response)
 	{
@@ -335,7 +336,8 @@ class SimpleOpenID
 		// phpcs:enable
 		$get = array();
 
-		$matches1 = array(); $matches2 = array();
+		$matches1 = array();
+		$matches2 = array();
 
 		// Get details of their OpenID server and (optional) delegate
 		preg_match_all('/<link[^>]*rel=[\'"]openid.server[\'"][^>]*href=[\'"]([^\'"]+)[\'"][^>]*\/?>/i', $content, $matches1);
@@ -358,7 +360,7 @@ class SimpleOpenID
 	 * Get openid server
 	 *
 	 * @param	string	$url	Url to found endpoint
-	 * @return 	string			Endpoint
+	 * @return 	string|false	Endpoint, of false if error
 	 */
 	public function GetOpenIDServer($url = '')
 	{
@@ -367,7 +369,7 @@ class SimpleOpenID
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		if (empty($url)) {
-			$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+			$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL');
 		}
 
 		$response = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'));
@@ -422,7 +424,7 @@ class SimpleOpenID
 		// phpcs:enable
 		$redirect_to = $this->GetRedirectURL();
 		if (headers_sent()) { // Use JavaScript to redirect if content has been previously sent (not recommended, but safe)
-			echo '<script type="text/javascript">window.location=\'';
+			echo '<script nonce="'.getNonce().'" type="text/javascript">window.location=\'';
 			echo $redirect_to;
 			echo '\';</script>';
 		} else {	// Default Header Redirect
@@ -430,26 +432,24 @@ class SimpleOpenID
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * ValidateWithServer
+	 * validateWithServer
 	 *
 	 * @return	boolean
 	 */
-	public function ValidateWithServer()
+	public function validateWithServer()
 	{
-		// phpcs:enable
 		$params = array(
-			'openid.assoc_handle' => urlencode($_GET['openid_assoc_handle']),
-			'openid.signed' => urlencode($_GET['openid_signed']),
-			'openid.sig' => urlencode($_GET['openid_sig'])
+			'openid.assoc_handle' => urlencode(GETPOST('openid_assoc_handle')),
+			'openid.signed' => urlencode(GETPOST('openid_signed')),
+			'openid.sig' => urlencode(GETPOST('openid_sig'))
 		);
 		// Send only required parameters to confirm validity
-		$arr_signed = explode(",", str_replace('sreg.', 'sreg_', $_GET['openid_signed']));
+		$arr_signed = explode(",", str_replace('sreg.', 'sreg_', GETPOST('openid_signed')));
 		$num = count($arr_signed);
 		for ($i = 0; $i < $num; $i++) {
 			$s = str_replace('sreg_', 'sreg.', $arr_signed[$i]);
-			$c = $_GET['openid_'.$arr_signed[$i]];
+			$c = GETPOST('openid_'.$arr_signed[$i]);
 			// if ($c != ""){
 			$params['openid.'.$s] = urlencode($c);
 			// }
@@ -484,7 +484,7 @@ class SimpleOpenID
 	 * Get XRDS response and set possible servers.
 	 *
 	 * @param	string	$url	Url of endpoint to request
-	 * @return 	string			First endpoint OpenID server found. False if it failed to found.
+	 * @return 	string|false	First endpoint OpenID server found. False if it failed to found.
 	 */
 	public function sendDiscoveryRequestToGetXRDS($url = '')
 	{
@@ -492,7 +492,7 @@ class SimpleOpenID
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		if (empty($url)) {
-			$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+			$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL');
 		}
 
 		dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS get XRDS');

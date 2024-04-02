@@ -50,6 +50,7 @@ if (!defined('NOREQUIREMENU')) {
 
 require_once '../main.inc.php';
 
+
 /*
  * Actions
  */
@@ -128,11 +129,11 @@ if (GETPOST('search_task') != '') {
 }
 
 if (GETPOST('search_user') != '') {
-	header("Location: ".DOL_URL_ROOT.'/user/list.php?mode=search&sall='.urlencode(GETPOST('search_user')));
+	header("Location: ".DOL_URL_ROOT.'/user/list.php?search_all='.urlencode(GETPOST('search_user')));
 	exit;
 }
 if (GETPOST('search_group') != '') {
-	header("Location: ".DOL_URL_ROOT.'/user/group/list.php?mode=search&sall='.urlencode(GETPOST('search_group')));
+	header("Location: ".DOL_URL_ROOT.'/user/group/list.php?search_all='.urlencode(GETPOST('search_group')));
 	exit;
 }
 

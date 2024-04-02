@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Xml\Notification;
 
 use Sabre\CalDAV\Plugin;
 use Sabre\Xml\Writer;
 
 /**
- * SystemStatus notification
+ * SystemStatus notification.
  *
  * This notification can be used to indicate to the user that the system is
  * down.
@@ -15,14 +17,14 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SystemStatus implements NotificationInterface {
-
+class SystemStatus implements NotificationInterface
+{
     const TYPE_LOW = 1;
     const TYPE_MEDIUM = 2;
     const TYPE_HIGH = 3;
 
     /**
-     * A unique id
+     * A unique id.
      *
      * @var string
      */
@@ -50,7 +52,7 @@ class SystemStatus implements NotificationInterface {
     protected $href;
 
     /**
-     * Notification Etag
+     * Notification Etag.
      *
      * @var string
      */
@@ -64,18 +66,17 @@ class SystemStatus implements NotificationInterface {
      *
      * @param string $id
      * @param string $etag
-     * @param int $type
+     * @param int    $type
      * @param string $description
      * @param string $href
      */
-    function __construct($id, $etag, $type = self::TYPE_HIGH, $description = null, $href = null) {
-
+    public function __construct($id, $etag, $type = self::TYPE_HIGH, $description = null, $href = null)
+    {
         $this->id = $id;
         $this->type = $type;
         $this->description = $description;
         $this->href = $href;
         $this->etag = $etag;
-
     }
 
     /**
@@ -89,81 +90,71 @@ class SystemStatus implements NotificationInterface {
      *
      * Important note 2: If you are writing any new elements, you are also
      * responsible for closing them.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         switch ($this->type) {
-            case self::TYPE_LOW :
+            case self::TYPE_LOW:
                 $type = 'low';
                 break;
-            case self::TYPE_MEDIUM :
+            case self::TYPE_MEDIUM:
                 $type = 'medium';
                 break;
-            default :
-            case self::TYPE_HIGH :
+            default:
+            case self::TYPE_HIGH:
                 $type = 'high';
                 break;
         }
 
-        $writer->startElement('{' . Plugin::NS_CALENDARSERVER . '}systemstatus');
+        $writer->startElement('{'.Plugin::NS_CALENDARSERVER.'}systemstatus');
         $writer->writeAttribute('type', $type);
         $writer->endElement();
-
     }
 
     /**
      * This method serializes the entire notification, as it is used in the
      * response body.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerializeFull(Writer $writer) {
-
-        $cs = '{' . Plugin::NS_CALENDARSERVER . '}';
+    public function xmlSerializeFull(Writer $writer)
+    {
+        $cs = '{'.Plugin::NS_CALENDARSERVER.'}';
         switch ($this->type) {
-            case self::TYPE_LOW :
+            case self::TYPE_LOW:
                 $type = 'low';
                 break;
-            case self::TYPE_MEDIUM :
+            case self::TYPE_MEDIUM:
                 $type = 'medium';
                 break;
-            default :
-            case self::TYPE_HIGH :
+            default:
+            case self::TYPE_HIGH:
                 $type = 'high';
                 break;
         }
 
-        $writer->startElement($cs . 'systemstatus');
+        $writer->startElement($cs.'systemstatus');
         $writer->writeAttribute('type', $type);
 
-
         if ($this->description) {
-            $writer->writeElement($cs . 'description', $this->description);
+            $writer->writeElement($cs.'description', $this->description);
         }
         if ($this->href) {
             $writer->writeElement('{DAV:}href', $this->href);
         }
 
         $writer->endElement(); // systemstatus
-
     }
 
     /**
-     * Returns a unique id for this notification
+     * Returns a unique id for this notification.
      *
      * This is just the base url. This should generally be some kind of unique
      * id.
      *
      * @return string
      */
-    function getId() {
-
+    public function getId()
+    {
         return $this->id;
-
     }
 
     /*
@@ -173,10 +164,8 @@ class SystemStatus implements NotificationInterface {
      *
      * @return string
      */
-    function getETag() {
-
+    public function getETag()
+    {
         return $this->etag;
-
     }
-
 }

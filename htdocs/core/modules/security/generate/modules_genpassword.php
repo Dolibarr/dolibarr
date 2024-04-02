@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +30,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
  */
 abstract class ModeleGenPassword
 {
+	public $picto = 'generic';
+
 	/**
-	 * Flag to 1 if we must clean ambiguous charaters for the autogeneration of password (List of ambiguous char is in $this->Ambi)
+	 * Flag to 1 if we must clean ambiguous characters for the autogeneration of password (List of ambiguous char is in $this->Ambi)
 	 *
 	 * @var integer
 	 */
@@ -40,6 +43,40 @@ abstract class ModeleGenPassword
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
+
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	/**
+	 * @var Conf dolibarr conf
+	 */
+	public $conf;
+
+	/**
+	 * @var Translate Translate Object
+	 */
+	public $langs;
+
+	/**
+	 * @var User user
+	 */
+	public $user;
+
+	/**
+	 * Minimum length (text visible by end user)
+	 *
+	 * @var string
+	 */
+	public $length;
+
+	/**
+	 * Minimum length in number of characters
+	 *
+	 * @var integer
+	 */
+	public $length2;
 
 	/**
 	 * 		Return if a module can be used or not

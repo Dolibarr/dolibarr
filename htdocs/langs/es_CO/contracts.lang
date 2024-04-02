@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Área de contratos
 ListOfContracts=Lista de contratos
-ContractCard=Tarjeta de contrato
 ContractStatusNotRunning=Inactivo
 ServiceStatusRunning=Corriendo
 ServiceStatusNotLate=Corriendo, no caducado
@@ -59,7 +58,6 @@ ConfirmDeleteContractLine=¿Está seguro de que desea eliminar esta línea de co
 MoveToAnotherContract=Mueva el servicio a otro contrato.
 ConfirmMoveToAnotherContract=Elegí un nuevo contrato de destino y confirmo que quiero trasladar este servicio a este contrato.
 ConfirmMoveToAnotherContractQuestion=Elija en qué contrato existente (del mismo tercero), desea trasladar este servicio?
-PaymentRenewContractId=Renovar línea de contrato (número %s)
 ExpiredSince=Fecha de caducidad
 NoExpiredServices=No hay servicios activos caducados
 ListOfServicesToExpireWithDuration=Lista de servicios que vencen en %s días
@@ -75,3 +73,5 @@ TypeContact_contrat_internal_SALESREPFOLL=Contrato de seguimiento del representa
 TypeContact_contrat_external_BILLING=Contacto con el cliente de facturación
 TypeContact_contrat_external_CUSTOMER=Contacto de seguimiento con el cliente
 TypeContact_contrat_external_SALESREPSIGN=Firma de contrato de contacto con el cliente
+UserStartingService=Servicio de inicio de usuario
+UserClosingService=Servicio de cierre de usuario

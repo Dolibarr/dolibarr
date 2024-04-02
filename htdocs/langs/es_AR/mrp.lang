@@ -9,6 +9,5 @@ LatestBOMModified=Ultimas %s Lista de materiales modificada
 LatestMOModified=Ultimas %s Ordenes de Fabricación modificadas
 Bom=Listas de materiales
 BOMsSetup=Configuración de módulo de BOM
-ListOfBOMs=Lista de Listas de materiales - BOM
-ListOfManufacturingOrders=Lista de Ordenes de Fabricación
+ListOfManufacturingOrders=Ordenes de Fabricación
 MenuMRP=Ordenes de Fabricación

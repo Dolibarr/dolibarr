@@ -24,6 +24,7 @@
  *      \brief      Page with statistics on withdrawals
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -34,7 +35,7 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 $type = GETPOST('type', 'aZ09');
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -117,29 +118,36 @@ if ($resql) {
 	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 
-		print '<tr class="oddeven"><td>';
+		print '<tr class="oddeven">';
 
+		print '<td>';
 		print $ligne->LibStatut($row[2], 1);
 		//print $st[$row[2]];
-		print '</td><td align="center">';
+		print '</td>';
+
+		print '<td class="center nowraponall">';
 		print $row[1];
+		print '</td>';
 
-		print '</td><td class="right">';
-		print round($row[1] / $nbtotal * 100, 2)." %";
+		print '<td class="right nowraponall">';
+		print price2num($row[1] / $nbtotal * 100, 2)." %";
+		print '</td>';
 
-		print '</td><td class="right">';
-
+		print '<td class="right amount nowraponall">';
 		print price($row[0]);
+		print '</td>';
 
-		print '</td><td class="right">';
-		print round($row[0] / $total * 100, 2)." %";
-		print '</td></tr>';
+		print '<td class="right nowraponall">';
+		print price2num($row[0] / $total * 100, 2)." %";
+		print '</td>';
+
+		print '</tr>';
 
 		$i++;
 	}
 
 	print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td>';
-	print '<td class="center">'.$nbtotal.'</td><td>&nbsp;</td><td class="right">';
+	print '<td class="center nowraponall">'.$nbtotal.'</td><td>&nbsp;</td><td class="right nowraponall">';
 	print price($total);
 	print '</td><td class="right">&nbsp;</td>';
 	print "</tr></table>";
@@ -221,17 +229,19 @@ if ($resql) {
 
 		print '<tr class="oddeven"><td>';
 		print $Rejet->motifs[$row[2]];
+		print '</td>';
 
-		print '</td><td align="center">'.$row[1];
+		print '<td class="center">'.$row[1];
+		print '</td>';
 
-		print '</td><td class="right">';
-		print round($row[1] / $nbtotal * 100, 2)." %";
+		print '<td class="right">';
+		print price2num($row[1] / $nbtotal * 100, 2)." %";
 
 		print '</td><td class="right">';
 		print price($row[0]);
 
 		print '</td><td class="right">';
-		print round($row[0] / $total * 100, 2)." %";
+		print price2num($row[0] / $total * 100, 2)." %";
 
 		print '</td></tr>';
 

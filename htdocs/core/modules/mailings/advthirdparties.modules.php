@@ -30,19 +30,14 @@ class mailing_advthirdparties extends MailingTargets
 	public $desc = "Third parties";
 	public $require_admin = 0;
 
-	public $require_module = array("none"); // This module should not be displayed as Selector in mailling
+	public $require_module = array("none"); // This module should not be displayed as Selector in mailing
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'company';
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $enabled = '$conf->societe->enabled';
+	public $enabled = 'isModEnabled("societe")';
 
 
 	/**
@@ -64,7 +59,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *    @param	array	$socid  		Array of id soc to add
 	 *    @param	int		$type_of_target	Defined in advtargetemailing.class.php
 	 *    @param	array	$contactid 		Array of contact id to add
-	 *    @return   int 					<0 if error, number of emails added if ok
+	 *    @return   int 					Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target_spec($mailing_id, $socid, $type_of_target, $contactid)
 	{
@@ -82,6 +77,9 @@ class mailing_advthirdparties extends MailingTargets
 				$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields se ON se.fk_object=s.rowid";
 				$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 				$sql .= " AND s.rowid IN (".$this->db->sanitize(implode(',', $socid)).")";
+				if (empty($this->evenunsubscribe)) {
+					$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
+				}
 				$sql .= " ORDER BY email";
 
 				// Stock recipients emails into targets table
@@ -131,6 +129,9 @@ class mailing_advthirdparties extends MailingTargets
 				}
 				if (count($socid) > 0) {
 					$sql .= " AND socp.fk_soc IN (".$this->db->sanitize(implode(',', $socid)).")";
+				}
+				if (empty($this->evenunsubscribe)) {
+					$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = socp.email and mu.entity = ".((int) $conf->entity).")";
 				}
 				$sql .= " ORDER BY email";
 
@@ -187,7 +188,7 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	public function getSqlArrayForStats()
 	{
-		// CHANGE THIS: Optionnal
+		// CHANGE THIS: Optional
 
 		//var $statssql=array();
 		//$this->statssql[0]="SELECT field1 as label, count(distinct(email)) as nb FROM mytable WHERE email IS NOT NULL";
@@ -211,6 +212,9 @@ class mailing_advthirdparties extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE s.email != ''";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
+		}
 
 		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
@@ -244,7 +248,7 @@ class mailing_advthirdparties extends MailingTargets
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			if (empty($conf->categorie->enabled)) {
+			if (!isModEnabled("category")) {
 				$num = 0; // Force empty list if category module is not enabled
 			}
 
@@ -299,5 +303,6 @@ class mailing_advthirdparties extends MailingTargets
 			$contactstatic->fetch($id);
 			return $contactstatic->getNomUrl(0, '', 0, '', -1, 1);
 		}
+		return "";
 	}
 }

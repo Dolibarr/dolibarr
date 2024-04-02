@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@ if (!function_exists('json_encode')) {
 	 *
 	 * @param	mixed	$elements		PHP Object to json encode
 	 * @return 	string					Json encoded string
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function json_encode($elements)
 	{
@@ -36,9 +38,12 @@ if (!function_exists('json_encode')) {
 	}
 }
 
+
 /**
  * Implement json_encode for PHP that does not support it.
  * Use json_encode and json_decode in your code !
+ * Note: We can found some special chars into a json string:
+ * Quotation mark (") = \", Backslash (\) = \\, Slash (/) =	\/, Backspace = \b, Form feed = \f, New line =\n, Carriage return =\r, Horizontal tab = \t
  *
  * @param	mixed	$elements		PHP Object to json encode
  * @return 	string					Json encoded string
@@ -112,7 +117,7 @@ function dol_json_encode($elements)
  * Return text according to type
  *
  * @param 	mixed	$val	Value to show
- * @return	string			Formated value
+ * @return	string			Formatted value
  */
 function _val($val)
 {
@@ -223,6 +228,7 @@ if (!function_exists('json_decode')) {
 	 * @param	string	$json		Json encoded to PHP Object or Array
 	 * @param	bool	$assoc		False return an object, true return an array
 	 * @return 	mixed				Object or Array
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function json_decode($json, $assoc = false)
 	{
@@ -261,7 +267,8 @@ function dol_json_decode($json, $assoc = false)
 		} else {
 			$out .= $json[$i];
 		}
-		if ($json[$i] == '"' && $json[($i - 1)] != "\\") {
+		// @phan-suppress-next-line PhanCompatibleNegativeStringOffset
+		if ($i >= 1 && $json[$i] == '"' && $json[$i - 1] != "\\") {
 			$comment = !$comment;
 		}
 	}
@@ -273,9 +280,10 @@ function dol_json_decode($json, $assoc = false)
 	// Return an array
 	if ($out != '') {
 		try {
+			// @phan-suppress-next-line PhanPluginUnsafeEval
 			eval('$array = '.$out.';');
 		} catch (Exception $e) {
-			$array = array();
+			$array = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		}
 	}
 
@@ -305,7 +313,7 @@ function dol_json_decode($json, $assoc = false)
  * Return text according to type
  *
  * @param   string  $val    Value to decode
- * @return  string          Formated value
+ * @return  string          Formatted value
  */
 function _unval($val)
 {
@@ -324,7 +332,7 @@ function _unval($val)
  *
  * Normally should be handled by mb_convert_encoding, but
  * provides a slower PHP-only method for installations
- * that lack the multibye string extension.
+ * that lack the multibyte string extension.
  *
  * @param    string  $utf16		UTF-16 character
  * @return   string  			UTF-8 character
@@ -367,7 +375,7 @@ function utf162utf8($utf16)
  *
  * Normally should be handled by mb_convert_encoding, but
  * provides a slower PHP-only method for installations
- * that lack the multibye string extension.
+ * that lack the multibyte string extension.
  *
  * @param    string  $utf8		UTF-8 character
  * @return   string  			UTF-16 character

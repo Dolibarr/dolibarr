@@ -165,43 +165,27 @@ If you use any other printer with this code, please [let us know](https://github
 ### Include the library
 
 #### Composer
-If you are using composer, then add `mike42/escpos-php` as a dependency:
+
+This library is designed for use with the `composer` PHP dependency manager. Simply add the `mike42/escpos-php` package to get started:
 
 ```bash
 composer require mike42/escpos-php
 ```
 
-In this case, you would include composer's auto-loader at the top of your source files:
-
-```php
-<?php
-require __DIR__ . '/vendor/autoload.php';
-```
-
-#### Manually
-If you don't have composer available, then simply download the code and include `autoload.php`:
-
-```bash
-git clone https://github.com/mike42/escpos-php vendor/mike42/escpos-php
-```
-
-```php
-<?php
-require __DIR__ . '/vendor/mike42/escpos-php/autoload.php';
-```
+If you haven't used `composer` before, you can read about it at [getcomposer.org](https://getcomposer.org/).
 
 #### Requirements
 
-To maintain compatibility with as many systems as possible, this driver has few
-hard dependencies:
+This project has few hard dependencies:
 
-- PHP 5.4 or above.
-- `mbstring` extension, since the driver accepts UTF-8 encoding.
+- PHP 7.0 or newer.
+- `json` extension, used to load bundled printer definitions (see [documentation](https://www.php.net/manual/en/book.json.php))
+- `intl` extension, used for character encoding (see [documentation](https://www.php.net/manual/en/book.intl.php))
+- `zlib` extension, used for de-compressing bundled resources (see [documentation](https://www.php.net/manual/en/book.zlib.php)).
 
-It is also suggested that you install either `imagick` or `gd`, so that you can
-print images.
+It is also suggested that you install either `imagick` or `gd`, as these can be used to speed up image processing.
 
-A number of optional packages can be added to enable more specific features. These
+A number of optional extensions can be added to enable more specific features. These
 are described in the "suggest" section of [composer.json](https://github.com/mike42/escpos-php/tree/master/composer.json).
 
 ### The 'Hello World' receipt
@@ -272,6 +256,7 @@ try {
 ```
 
 While a serial printer might use:
+
 ```php
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\Printer;
@@ -279,7 +264,7 @@ $connector = new FilePrintConnector("/dev/ttyS0");
 $printer = new Printer($connector);
 ```
 
-For each OS/interface combination that's supported, there are examples in the compatibility section of how a `PrintConnector` would be constructed. If you can't get a `PrintConnector` to work, then be sure to include the working print command in bug.
+For each OS/interface combination that's supported, there are examples in the compatibility section of how a `PrintConnector` would be constructed. If you can't get a `PrintConnector` to work, then be sure to include the working print command in your issue.
 
 ### Using a CapabilityProfile
 
@@ -308,6 +293,7 @@ $printer = new Printer($connector, $profile);
 For a list of available profiles, or to have support for your printer improved, please see the upstream [receipt-print-hq/escpos-printer-db](https://github.com/receipt-print-hq/escpos-printer-db) project.
 
 ### Tips & examples
+
 On Linux, your printer device file will be somewhere like `/dev/lp0` (parallel), `/dev/usb/lp1` (USB), `/dev/ttyUSB0` (USB-Serial), `/dev/ttyS0` (serial).
 
 On Windows, the device files will be along the lines of `LPT1` (parallel) or `COM1` (serial). Use the `WindowsPrintConnector` to tap into system printing on Windows (eg. [Windows USB](https://github.com/mike42/escpos-php/tree/master/example/interface/windows-usb.php), [SMB](https://github.com/mike42/escpos-php/tree/master/example/interface/smb.php) or [Windows LPT](https://github.com/mike42/escpos-php/tree/master/example/interface/windows-lpt.php)) - this submits print jobs via a queue rather than communicating directly with the printer.
@@ -564,9 +550,9 @@ Posts I've written up for people who are learning how to use receipt printers:
 
 This code is MIT licensed, and you are encouraged to contribute any modifications back to the project.
 
-For development, it's suggested that you load `imagick`, `gd` and `Xdebug` PHP exensions, and install `composer`.
+For development, it's suggested that you load `imagick`, `gd` and `Xdebug` PHP extensions.
 
-The tests are executed on [Travis CI](https://travis-ci.org/mike42/escpos-php) over PHP 5.4, 5.5, 5.6, 7.0, 7.1 and 7.2, plus the latest LTS version of HHVM, 3.21. Older versions of PHP are not supported in current releases.
+The tests are executed on [Travis CI](https://travis-ci.org/mike42/escpos-php) over PHP 7.0, 7.1, 7.2 and 7.3. Older versions of PHP are not supported in current release, nor is HHVM.
 
 Fetch a copy of this code and load dependencies with composer:
 

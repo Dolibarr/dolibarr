@@ -38,10 +38,8 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
@@ -52,10 +50,12 @@ restrictedArea($user, 'salaries');
  * View
  */
 
-$fk_user = GETPOST('fk_user', 'int');
+top_httphead('application/json');
+
+$fk_user = GETPOSTINT('fk_user');
 $return_arr = array();
 
-if (!empty(GETPOST('fk_user', 'int'))) {
+if (!empty(GETPOSTINT('fk_user'))) {
 	$sql = "SELECT s.amount, s.rowid FROM ".MAIN_DB_PREFIX."salary as s";
 	$sql .= " WHERE s.fk_user = ".((int) $fk_user);
 	$sql .= " AND s.paye = 1";
@@ -65,6 +65,7 @@ if (!empty(GETPOST('fk_user', 'int'))) {
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		$label = "Salary amount";
+		$row_array = array();
 		$row_array['label'] = $label;
 		$row_array['value'] = price2num($obj->amount, 'MT');
 		$row_array['key'] = "Amount";
@@ -72,8 +73,8 @@ if (!empty(GETPOST('fk_user', 'int'))) {
 		array_push($return_arr, $row_array);
 		echo json_encode($return_arr);
 	} else {
-		echo json_encode(array('nom'=>'Error', 'label'=>'Error', 'key'=>'Error', 'value'=>'Error'));
+		echo json_encode(array('nom' => 'Error', 'label' => 'Error', 'key' => 'Error', 'value' => 'Error'));
 	}
 } else {
-	echo json_encode(array('nom'=>'ErrorBadParameter', 'label'=>'ErrorBadParameter', 'key'=>'ErrorBadParameter', 'value'=>'ErrorBadParameter'));
+	echo json_encode(array('nom' => 'ErrorBadParameter', 'label' => 'ErrorBadParameter', 'key' => 'ErrorBadParameter', 'value' => 'ErrorBadParameter'));
 }

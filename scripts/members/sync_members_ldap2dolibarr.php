@@ -35,7 +35,7 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 require_once $path."../../htdocs/master.inc.php";
@@ -51,6 +51,9 @@ $version = constant('DOL_VERSION');
 $error = 0;
 $forcecommit = 0;
 $confirmed = 0;
+
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -95,10 +98,10 @@ $required_fields = array_unique(array_values(array_filter($required_fields, "dol
 
 if (!isset($argv[2]) || !is_numeric($argv[2])) {
 	print "Usage:  $script_file (nocommitiferror|commitiferror) id_member_type  [--server=ldapserverhost] [-y]\n";
-	exit(-1);
+	exit(1);
 }
 
-$typeid = $argv[2];
+$typeid = (int) $argv[2];
 foreach ($argv as $key => $val) {
 	if ($val == 'commitiferror') {
 		$forcecommit = 1;
@@ -115,15 +118,15 @@ print "Mails sending disabled (useless in batch mode)\n";
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1; // On bloque les mails
 print "\n";
 print "----- Synchronize all records from LDAP database:\n";
-print "host=".$conf->global->LDAP_SERVER_HOST."\n";
-print "port=".$conf->global->LDAP_SERVER_PORT."\n";
-print "login=".$conf->global->LDAP_ADMIN_DN."\n";
-print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
-print "DN to extract=".$conf->global->LDAP_MEMBER_DN."\n";
-if (!empty($conf->global->LDAP_MEMBER_FILTER)) {
-	print 'Filter=('.$conf->global->LDAP_MEMBER_FILTER.')'."\n"; // Note: filter is defined into function getRecords
+print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";
+print "port=" . getDolGlobalString('LDAP_SERVER_PORT')."\n";
+print "login=" . getDolGlobalString('LDAP_ADMIN_DN')."\n";
+print "pass=".preg_replace('/./i', '*', getDolGlobalString('LDAP_ADMIN_PASS'))."\n";
+print "DN to extract=" . getDolGlobalString('LDAP_MEMBER_DN')."\n";
+if (getDolGlobalString('LDAP_MEMBER_FILTER')) {
+	print 'Filter=(' . getDolGlobalString('LDAP_MEMBER_FILTER').')'."\n"; // Note: filter is defined into function getRecords
 } else {
-	print 'Filter=('.$conf->global->LDAP_KEY_MEMBERS.'=*)'."\n";
+	print 'Filter=(' . getDolGlobalString('LDAP_KEY_MEMBERS').'=*)'."\n";
 }
 print "----- To Dolibarr database:\n";
 print "type=".$conf->db->type."\n";
@@ -137,9 +140,9 @@ print "Mapped LDAP fields=".join(',', $required_fields)."\n";
 print "\n";
 
 // Check parameters
-if (empty($conf->global->LDAP_MEMBER_DN)) {
+if (!getDolGlobalString('LDAP_MEMBER_DN')) {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for members not defined inside Dolibarr")."\n";
-	exit(-1);
+	exit(1);
 }
 if ($typeid <= 0) {
 	print $langs->trans("Error").': Parameter id_member_type is not a valid ref of an existing member type'."\n";
@@ -148,7 +151,7 @@ if ($typeid <= 0) {
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-onyl mode\n";
-	exit(-1);
+	exit(1);
 }
 
 if (!$confirmed) {
@@ -180,18 +183,19 @@ if ($resql) {
 	}
 } else {
 	dol_print_error($db);
-	exit(-1);
+	exit(1);
 }
 
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result >= 0) {
 	$justthese = array();
-
+	$pricefirst = 0;
+	$pricelast = 0;
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_MEMBER_ACTIVE = 0;
 
-	$ldaprecords = $ldap->getRecords('*', $conf->global->LDAP_MEMBER_DN, $conf->global->LDAP_KEY_MEMBERS, $required_fields, 'member'); // Fiter on 'member' filter param
+	$ldaprecords = $ldap->getRecords('*', getDolGlobalString('LDAP_MEMBER_DN'), getDolGlobalString('LDAP_KEY_MEMBERS'), $required_fields, 'member'); // Filter on 'member' filter param
 	if (is_array($ldaprecords)) {
 		$db->begin();
 
@@ -200,35 +204,35 @@ if ($result >= 0) {
 			$member = new Adherent($db);
 
 			// Propriete membre
-			$member->firstname = $ldapuser[$conf->global->LDAP_FIELD_FIRSTNAME];
-			$member->lastname = $ldapuser[$conf->global->LDAP_FIELD_NAME];
-			$member->login = $ldapuser[$conf->global->LDAP_FIELD_LOGIN];
-			$member->pass = $ldapuser[$conf->global->LDAP_FIELD_PASSWORD];
+			$member->firstname = $ldapuser[getDolGlobalString('LDAP_FIELD_FIRSTNAME')];
+			$member->lastname = $ldapuser[getDolGlobalString('LDAP_FIELD_NAME')];
+			$member->login = $ldapuser[getDolGlobalString('LDAP_FIELD_LOGIN')];
+			$member->pass = $ldapuser[getDolGlobalString('LDAP_FIELD_PASSWORD')];
 
 			// $member->societe;
-			$member->address = $ldapuser[$conf->global->LDAP_FIELD_ADDRESS];
-			$member->zip = $ldapuser[$conf->global->LDAP_FIELD_ZIP];
-			$member->town = $ldapuser[$conf->global->LDAP_FIELD_TOWN];
-			$member->country = $ldapuser[$conf->global->LDAP_FIELD_COUNTRY];
+			$member->address = $ldapuser[getDolGlobalString('LDAP_FIELD_ADDRESS')];
+			$member->zip = $ldapuser[getDolGlobalString('LDAP_FIELD_ZIP')];
+			$member->town = $ldapuser[getDolGlobalString('LDAP_FIELD_TOWN')];
+			$member->country = $ldapuser[getDolGlobalString('LDAP_FIELD_COUNTRY')];
 			$member->country_id = $countries[$hashlib2rowid[strtolower($member->country)]]['rowid'];
 			$member->country_code = $countries[$hashlib2rowid[strtolower($member->country)]]['code'];
 
-			$member->phone = $ldapuser[$conf->global->LDAP_FIELD_PHONE];
-			$member->phone_perso = $ldapuser[$conf->global->LDAP_FIELD_PHONE_PERSO];
-			$member->phone_mobile = $ldapuser[$conf->global->LDAP_FIELD_MOBILE];
-			$member->email = $ldapuser[$conf->global->LDAP_FIELD_MAIL];
+			$member->phone = $ldapuser[getDolGlobalString('LDAP_FIELD_PHONE')];
+			$member->phone_perso = $ldapuser[getDolGlobalString('LDAP_FIELD_PHONE_PERSO')];
+			$member->phone_mobile = $ldapuser[getDolGlobalString('LDAP_FIELD_MOBILE')];
+			$member->email = $ldapuser[getDolGlobalString('LDAP_FIELD_MAIL')];
 
-			$member->note = $ldapuser[$conf->global->LDAP_FIELD_DESCRIPTION];
+			$member->note = $ldapuser[getDolGlobalString('LDAP_FIELD_DESCRIPTION')];
 			$member->morphy = 'phy';
 			$member->photo = '';
 			$member->public = 1;
-			$member->birth = dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_BIRTHDATE]);
+			$member->birth = dol_stringtotime($ldapuser[getDolGlobalString('LDAP_FIELD_BIRTHDATE')]);
 
-			$member->statut = - 1;
-			if (isset($ldapuser[$conf->global->LDAP_FIELD_MEMBER_STATUS])) {
-				$member->datec = dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
-				$member->datevalid = dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
-				$member->statut = $ldapuser[$conf->global->LDAP_FIELD_MEMBER_STATUS];
+			$member->statut = -1;
+			if (isset($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')])) {
+				$member->datec = dol_stringtotime($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')]);
+				$member->datevalid = dol_stringtotime($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')]);
+				$member->statut = $ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')];
 			}
 			// if ($member->statut > 1) $member->statut=1;
 
@@ -252,18 +256,18 @@ if ($result >= 0) {
 			// print_r($member);
 
 			$datefirst = '';
-			if ($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE) {
-				$datefirst = dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
-				$pricefirst = price2num($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT]);
+			if (getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')) {
+				$datefirst = dol_stringtotime($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')]);
+				$pricefirst = price2num($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT')]);
 			}
 
 			$datelast = '';
-			if ($conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE) {
-				$datelast = dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE]);
-				$pricelast = price2num($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT]);
-			} elseif ($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION) {
-				$datelast = dol_time_plus_duree(dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION]), - 1, 'y') + 60 * 60 * 24;
-				$pricelast = price2num($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT]);
+			if (getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE')) {
+				$datelast = dol_stringtotime($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE')]);
+				$pricelast = price2num($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT')]);
+			} elseif (getDolGlobalString('LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION')) {
+				$datelast = dol_time_plus_duree(dol_stringtotime($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION')]), -1, 'y') + 60 * 60 * 24;
+				$pricelast = price2num($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT')]);
 
 				// Cas special ou date derniere <= date premiere
 				if ($datefirst && $datelast && $datelast <= $datefirst) {
@@ -303,11 +307,11 @@ if ($result >= 0) {
 		}
 		print "\n";
 	} else {
-		dol_print_error('', $ldap->error);
+		dol_print_error(null, $ldap->error);
 		$error++;
 	}
 } else {
-	dol_print_error('', $ldap->error);
+	dol_print_error(null, $ldap->error);
 	$error++;
 }
 

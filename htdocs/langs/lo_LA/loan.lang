@@ -23,12 +23,12 @@ AddLoan=ສ້າງເງິນກູ້
 FinancialCommitment=ຄໍາຫມັ້ນສັນຍາທາງດ້ານການເງິນ
 InterestAmount=ດອກເບ້ຍ
 CapitalRemain=ທຶນຍັງຄົງຢູ່
-TermPaidAllreadyPaid = ໄລຍະນີ້ແມ່ນໄດ້ຈ່າຍເງິນົດແລ້ວ
-CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+TermPaidAllreadyPaid = ໄລຍະນີ້ແມ່ນຈ່າຍແລ້ວ
+CantUseScheduleWithLoanStartedToPaid = ບໍ່​ສາ​ມາດ​ສ້າງ​ກໍາ​ນົດ​ເວ​ລາ​ສໍາ​ລັບ​ການ​ກູ້​ຢືມ​ເງິນ​ທີ່​ມີ​ການ​ຊໍາ​ລະ​ເລີ່ມ​ຕົ້ນ​
 CantModifyInterestIfScheduleIsUsed = ເຈົ້າບໍ່ສາມາດແກ້ໄຂຄວາມສົນໃຈໄດ້ຖ້າເຈົ້າໃຊ້ ກຳ ນົດເວລາ
 # Admin
 ConfigLoan=ການ ກຳ ນົດຄ່າເງິນກູ້ຂອງໂມດູນ
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=ບັນຊີທຶນບັນຊີຕາມຄ່າເລີ່ມຕົ້ນ
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=ອັດຕາດອກເບ້ຍບັນຊີຕາມຄ່າເລີ່ມຕົ້ນ
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=ການປະກັນບັນຊີບັນຊີຕາມຄ່າເລີ່ມຕົ້ນ
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ໂດຍຄ່າເລີ່ມຕົ້ນສໍາລັບທຶນ (ໂມດູນເງິນກູ້)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ໂດຍຄ່າເລີ່ມຕົ້ນສໍາລັບດອກເບ້ຍ (ໂມດູນເງິນກູ້)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=ບັນຊີ (ຈາກຕາຕະລາງບັນຊີ) ທີ່ຈະໃຊ້ໂດຍຄ່າເລີ່ມຕົ້ນສໍາລັບການປະກັນໄພ (ໂມດູນເງິນກູ້)
 CreateCalcSchedule=ແກ້ໄຂ ຄຳ commitmentັ້ນສັນຍາດ້ານການເງິນ

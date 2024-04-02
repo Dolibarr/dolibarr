@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	echo "Load permissions for admin user nb 1\n";
@@ -45,68 +47,35 @@ $conf->global->MAIN_UMASK = '0666';
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
+class RestAPIDocumentTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
 	protected $api_url;
 	protected $api_key;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables.
-	 *
-	 * @return DateLibTest
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
-
-		echo __METHOD__.' db->type='.$db->type.' user->id='.$user->id;
-		//print " - db ".$db->db;
-		echo "\n";
-	}
 
 	/**
 	 * setUpBeforeClass
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-		echo __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass()
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
+		if (!isModEnabled('api')) {
+			print __METHOD__." module api must be enabled.\n";
+			die(1);
+		}
 
 		echo __METHOD__."\n";
 	}
 
 	/**
 	 * Init phpunit tests.
+	 *
 	 * @return void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
@@ -119,28 +88,21 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 		$login = 'admin';
 		$password = 'admin';
 		$url = $this->api_url.'/login?login='.$login.'&password='.$password;
-		// Call the API login method to save api_key for this test class
+		// Call the API login method to save api_key for this test class.
+		// At first call, if token is not defined a random value is generated and returned.
 		$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
-		echo __METHOD__.' result = '.var_export($result, true)."\n";
-		echo __METHOD__.' curl_error_no: '.$result['curl_error_no']."\n";
+		print __METHOD__." result = ".var_export($result, true)."\n";
+		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
 		$this->assertEquals($result['curl_error_no'], '');
-		$object = json_decode($result['content'], true);
-		$this->assertNotNull($object, 'Parsing of json result must no be null');
+		$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
+
+		$this->assertNotNull($object, "Parsing of json result must not be null");
+		$this->assertNotEquals(500, (empty($object['error']['code']) ? 0 : $object['error']['code']), 'Error'.(empty($object['error']['message']) ? '' : ' '.$object['error']['message']));
 		$this->assertEquals('200', $object['success']['code']);
 
 		$this->api_key = $object['success']['token'];
+
 		echo __METHOD__." api_key: $this->api_key \n";
-
-		echo __METHOD__."\n";
-	}
-
-	/**
-	 * End phpunit tests.
-	 * @return void
-	 */
-	protected function tearDown()
-	{
-		echo __METHOD__."\n";
 	}
 
 	/**
@@ -163,13 +125,13 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 
 		//$data = '{ "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "mysubdir1/mysubdir2", "filecontent": "content text", "fileencoding": "" }';
 		$data = array(
-			'filename'=>"mynewfile.txt",
-			'modulepart'=>"medias",
-			'subdir'=>"tmpphpunit/tmpphpunit1",
-			'filecontent'=>"content text",
-			'fileencoding'=>"",
-			'overwriteifexists'=>0,
-			'createdirifnotexists'=>0
+			'filename' => "mynewfile.txt",
+			'modulepart' => "medias",
+			'subdir' => "tmpphpunit/tmpphpunit1",
+			'filecontent' => "content text",
+			'fileencoding' => "",
+			'overwriteifexists' => 0,
+			'createdirifnotexists' => 0
 		);
 
 		$param = '';
@@ -182,8 +144,8 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 		echo __METHOD__.' curl_error_no: '.$result['curl_error_no']."\n";
 		$object = json_decode($result['content'], true);
 		$this->assertNotNull($object, 'Parsing of json result must not be null');
-		$this->assertEquals('401', $result['http_code'], 'Return code is not 401');
-		$this->assertEquals('401', empty($object['error']['code']) ? '' : $object['error']['code'], 'Error code is not 401');
+		$this->assertEquals('400', $result['http_code'], 'Test to push a document on a non existing dir does not return 400');
+		$this->assertEquals('400', (empty($object['error']['code']) ? '' : $object['error']['code']), 'Test to push a document on a non existing dir does not return 400');
 
 
 		// Send to existent directory
@@ -192,14 +154,14 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 		dol_mkdir(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit2');
 
 		$data = array(
-			'filename'=>"mynewfile.txt",
-			'modulepart'=>"medias",
-			'ref'=>"",
-			'subdir'=>"tmpphpunit/tmpphpunit2",
-			'filecontent'=>"content text",
-			'fileencoding'=>"",
-			'overwriteifexists'=>0,
-			'createdirifnotexists'=>0
+			'filename' => "mynewfile.txt",
+			'modulepart' => "medias",
+			'ref' => "",
+			'subdir' => "tmpphpunit/tmpphpunit2",
+			'filecontent' => "content text",
+			'fileencoding' => "",
+			'overwriteifexists' => 0,
+			'createdirifnotexists' => 0
 		);
 
 		$param = '';
@@ -220,14 +182,14 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 		dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit3');
 
 		$data = array(
-			'filename'=>"mynewfile.txt",
-			'modulepart'=>"medias",
-			'ref'=>"",
-			'subdir'=>"tmpphpunit/tmpphpunit3",
-			'filecontent'=>"content text",
-			'fileencoding'=>"",
-			'overwriteifexists'=>0,
-			'createdirifnotexists'=>1
+			'filename' => "mynewfile.txt",
+			'modulepart' => "medias",
+			'ref' => "",
+			'subdir' => "tmpphpunit/tmpphpunit3",
+			'filecontent' => "content text",
+			'fileencoding' => "",
+			'overwriteifexists' => 0,
+			'createdirifnotexists' => 1
 		);
 
 		$param = '';
@@ -246,5 +208,7 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 
 
 		dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit');
+
+		return 0;
 	}
 }

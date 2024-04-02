@@ -15,8 +15,8 @@ namespace Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Settings {
-
+class Settings
+{
     /**
      * The minimum date we accept for various calculations with dates, such as
      * recurrences.
@@ -25,7 +25,7 @@ class Settings {
      * use-cases. In particular, it covers birthdates for virtually everyone
      * alive on earth, which is less than 5 people at the time of writing.
      */
-    static $minDate = '1900-01-01';
+    public static $minDate = '1900-01-01';
 
     /**
      * The maximum date we accept for various calculations with dates, such as
@@ -34,7 +34,7 @@ class Settings {
      * The choice of 2100 is pretty arbitrary, but should cover most
      * appointments made for many years to come.
      */
-    static $maxDate = '2100-01-01';
+    public static $maxDate = '2100-01-01';
 
     /**
      * The maximum number of recurrences that will be generated.
@@ -46,11 +46,10 @@ class Settings {
      * specific events that recur many, many times, potentially DDOSing the
      * server.
      *
-     * The default (3500) allows creation of a dialy event that goes on for 10
+     * The default (3500) allows creation of a daily event that goes on for 10
      * years, which is hopefully long enough for most.
      *
      * Set this value to -1 to disable this control altogether.
      */
-    static $maxRecurrences = 3500;
-
+    public static $maxRecurrences = 3500;
 }

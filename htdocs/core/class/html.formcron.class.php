@@ -19,7 +19,7 @@
 
 /**
  *      \file       htdocs/core/class/html.formcron.class.php
- *      \brief      Fichier de la classe des fonctions predefinie de composants html cron
+ *      \brief      Fichier de la class des functions predefinie de composants html cron
  */
 
 
@@ -95,6 +95,9 @@ class FormCron extends Form
 			$out .= '<OPTION value="method" '.$selected_attr.'>'.$langs->trans('CronType_method').'</OPTION>';
 
 			$out .= '</SELECT>';
+		}
+		if (empty($readonly)) {
+			$out .= ajax_combobox($htmlname);
 		}
 
 		return $out;

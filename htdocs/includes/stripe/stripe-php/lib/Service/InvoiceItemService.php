@@ -15,7 +15,7 @@ class InvoiceItemService extends \Stripe\Service\AbstractService
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Collection
+     * @return \Stripe\Collection<\Stripe\InvoiceItem>
      */
     public function all($params = null, $opts = null)
     {

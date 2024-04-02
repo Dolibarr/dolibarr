@@ -21,18 +21,24 @@
  */
 
 /**
- *		\file       htdocs/fourn/product/list.php
- *		\ingroup    produit
- *		\brief      Page to list supplier products and services
+ *    \file       htdocs/fourn/product/list.php
+ *    \ingroup    product
+ *    \brief      Page to list supplier products and services
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.class.php';
 
-$langs->loadLangs(array("products", "suppliers"));
 
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'suppliers'));
+
+
+// Get Parameters
 $sref = GETPOST('sref', 'alphanohtml');
 $sRefSupplier = GETPOST('srefsupplier');
 $snom = GETPOST('snom', 'alphanohtml');
@@ -40,10 +46,10 @@ $type = GETPOST('type', 'alphanohtml');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -68,11 +74,12 @@ $catid = GETPOST('catid', 'intcomma');
 $hookmanager->initHooks(array('supplierpricelist'));
 $extrafields = new ExtraFields($db);
 
-if (empty($user->rights->produit->lire) && empty($user->rights->service->lire)) {
+if (!$user->hasRight("produit", "lire") && !$user->hasRight("service", "lire")) {
 	accessforbidden();
 }
 
-$permissiontoadd = ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'));
+// Permissions
+$permissiontoadd = ($user->hasRight('product', 'read') || $user->hasRight('service', 'read'));
 
 
 /*
@@ -80,7 +87,8 @@ $permissiontoadd = ($user->hasRight('produit', 'lire') || $user->hasRight('servi
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -105,11 +113,12 @@ if (empty($reshook)) {
 		$search_field1 = '';
 		$search_field2 = '';
 		$search_date_creation = '';
-		$search_date_update = '';
+		$search_date_modification = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
 }
+
 
 /*
  * View
@@ -133,7 +142,7 @@ $arrayofmassactions = array(
 	'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
-if ($user->rights->mymodule->supprimer) {
+if ($user->hasRight('mymodule', 'supprimer')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (in_array($massaction, array('presend', 'predelete'))) {
@@ -152,6 +161,9 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 $sql .= $hookmanager->resPrint;
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 if ($catid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
@@ -163,7 +175,7 @@ if ($sRefSupplier) {
 	$sql .= natural_search('ppf.ref_fourn', $sRefSupplier);
 }
 if (GETPOST('type')) {
-	$sql .= " AND p.fk_product_type = ".GETPOST('type', 'int');
+	$sql .= " AND p.fk_product_type = ".GETPOSTINT('type');
 }
 if ($sref) {
 	$sql .= natural_search('p.ref', $sref);
@@ -186,20 +198,32 @@ if ($reshook < 0) {
 }
 $sql .= $hookmanager->resPrint;
 
-$sql .= $db->order($sortfield, $sortorder);
-
-// Count total nb of records without orderby and limit
+// Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 dol_syslog("fourn/product/list.php:", LOG_DEBUG);
 $resql = $db->query($sql);

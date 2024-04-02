@@ -17,7 +17,4 @@ AddLoan=Crear préstamo
 FinancialCommitment=Compromiso financiero
 InterestAmount=Interes
 ConfigLoan=Configuración del módulo préstamo
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Capital de cuenta contable por defecto
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Interés de la cuenta contable por defecto
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Seguro de cuenta contable por defecto
 CreateCalcSchedule=Edita el compromiso financiero

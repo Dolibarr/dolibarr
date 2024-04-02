@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,11 @@ class Deplacement extends CommonObject
 	 */
 	public $ismultientitymanaged = 0;
 
+
+	public $fk_soc;
+	public $date;
+	public $type;
+
 	/**
 	 * Date creation record (datec)
 	 *
@@ -83,7 +88,7 @@ class Deplacement extends CommonObject
 	public $fk_user;
 
 	/**
-	 * @var string km value formatted
+	 * @var float km value formatted
 	 */
 	public $km;
 
@@ -97,10 +102,6 @@ class Deplacement extends CommonObject
 	 */
 	public $statut;
 	public $extraparams = array();
-
-	public $statuts = array();
-	public $statuts_short = array();
-	public $statuts_logo = array();
 
 
 	/**
@@ -126,10 +127,6 @@ class Deplacement extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
-
-		$this->statuts_short = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
-		$this->statuts = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
-		$this->statuts_logo = array(0 => 'status0', 1=>'status4', 2 => 'status1', 4 => 'status6', 5 => 'status4', 6 => 'status6', 99 => 'status5');
 	}
 
 	/**
@@ -137,7 +134,7 @@ class Deplacement extends CommonObject
 	 * TODO Add ref number
 	 *
 	 * @param	User	$user	User that creates
-	 * @return 	int				<0 if KO, >0 if OK
+	 * @return 	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -213,14 +210,12 @@ class Deplacement extends CommonObject
 	 *	Update record
 	 *
 	 *	@param	User	$user		User making update
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user)
 	{
-		global $langs;
-
 		// Clean parameters
-		$this->km = price2num($this->km);
+		$this->km = (float) price2num($this->km);
 
 		// Check parameters
 		if (!is_numeric($this->km)) {
@@ -271,7 +266,7 @@ class Deplacement extends CommonObject
 	 *
 	 * @param	int		$id		Id of record to load
 	 * @param	string	$ref	Ref of record
-	 * @return	int				<0 if KO, >0 if OK
+	 * @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -314,7 +309,7 @@ class Deplacement extends CommonObject
 	 *	Delete record
 	 *
 	 *	@param	User	$user		USer that Delete
-	 *	@return	int				<0 if KO, >0 if OK
+	 *	@return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -338,10 +333,10 @@ class Deplacement extends CommonObject
 
 
 	/**
-	 * Retourne le libelle du statut
+	 *  Return the label of the status
 	 *
-	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 * @return  string   		   	Libelle
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -350,23 +345,32 @@ class Deplacement extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status     Id status
-	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *  @return string      		Libelle
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
 		global $langs;
 
-		$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
-		$labelStatusShort = $langs->transnoentitiesnoconv($this->statuts_short[$status]);
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+			global $langs;
+			//$langs->load("mymodule@mymodule");
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatus[self::STATUS_REFUNDED] = $langs->transnoentitiesnoconv('Refunded');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatusShort[self::STATUS_REFUNDED] = $langs->transnoentitiesnoconv('Refunded');
+		}
 
-		$statusType = $this->statuts_logo[$status];
+		$status_logo = array(0 => 'status0', 1=>'status4', 2 => 'status1', 4 => 'status6', 5 => 'status4', 6 => 'status6', 99 => 'status5');
+		$statusType = $status_logo[$status];
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**
@@ -453,6 +457,7 @@ class Deplacement extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_author;

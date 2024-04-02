@@ -87,6 +87,12 @@ class CActionComm
 
 
 	/**
+	 * @var array	Used to return value by some methods
+	 */
+	public $liste_array;
+
+
+	/**
 	 *  Constructor
 	 *
 	 *  @param	DoliDB		$db		Database handler
@@ -148,7 +154,7 @@ class CActionComm
 	 *  @param  int         $onlyautoornot  1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1 or -2=Keep details and add a combined line per calendar (Default, Auto, BoothConf, ...)
 	 *  @param  string      $morefilter     Add more SQL filter
 	 *  @param  int         $shortlabel     1=Get short label instead of long label
-	 *  @return mixed                       Array of all event types if OK, <0 if KO. Key of array is id or code depending on parameter $idorcode.
+	 *  @return array|int                   Array of all event types if OK, <0 if KO. Key of array is id or code depending on parameter $idorcode.
 	 */
 	public function liste_array($active = '', $idorcode = 'id', $excludetype = '', $onlyautoornot = 0, $morefilter = '', $shortlabel = 0)
 	{
@@ -156,9 +162,9 @@ class CActionComm
 		global $langs, $conf, $user;
 		$langs->load("commercial");
 
-		$repid = array();
-		$repcode = array();
-		$repall = array();
+		$rep_id = array();
+		$rep_code = array();
+		$rep_all = array();
 
 		$sql = "SELECT id, code, libelle as label, module, type, color, picto";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
@@ -172,14 +178,35 @@ class CActionComm
 		if ($morefilter) {
 			$sql .= " AND ".$morefilter;
 		}
-		$sql .= " ORDER BY type, position, module";
+		// If AGENDA_SORT_EVENT_TYPE_BY_POSITION_FIRST is defined, we use position as main sort criterion
+		// otherwise we use type as main sort criterion
+		if (getDolGlobalString('AGENDA_SORT_EVENT_TYPE_BY_POSITION_FIRST')) {
+			$sql .= " ORDER BY position, type, module";
+		} else {
+			$sql .= " ORDER BY type, position, module";
+		}
 
 		dol_syslog(get_class($this)."::liste_array", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$nump = $this->db->num_rows($resql);
 			if ($nump) {
-				$idforallfornewmodule = 97;
+				$idforallfornewmodule = 96;
+				$TSystem = array(
+					'id' => [],
+					'code' => [],
+					'all' => []
+				);
+				$TSystemAuto = array(
+					'id' => [],
+					'code' => [],
+					'all' => []
+				);
+				$TModule = array(
+					'id' => [],
+					'code' => [],
+					'all' => []
+				);
 				$i = 0;
 				while ($i < $nump) {
 					$obj = $this->db->fetch_object($resql);
@@ -195,30 +222,30 @@ class CActionComm
 					}
 
 					if ($qualified && !empty($obj->module)) {
-						//var_dump($obj->type.' '.$obj->module.' '); var_dump($user->rights->facture->lire);
+						//var_dump($obj->type.' '.$obj->module.' '); var_dump($user->hasRight('facture', 'lire'));
 						$qualified = 0;
 						// Special cases
-						if ($obj->module == 'invoice' && isModEnabled('facture') && !empty($user->rights->facture->lire)) {
+						if ($obj->module == 'invoice' && isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'order' && !empty($conf->commande->enabled) && empty($user->rights->commande->lire)) {
+						if ($obj->module == 'order' && isModEnabled('order') && !$user->hasRight('commande', 'lire')) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'propal' && !empty($conf->propal->enabled) && !empty($user->rights->propale->lire)) {
+						if ($obj->module == 'propal' && isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'invoice_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && !empty($user->rights->fournisseur->facture->lire)) || (!empty($conf->rights->supplier_invoice->enabled) && !empty($user->rights->supplier_invoice->lire)))) {
+						if ($obj->module == 'invoice_supplier' && ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire')))) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'order_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && !empty($user->rights->fournisseur->commande->lire)) || (empty($conf->rights->supplier_order->enabled) && !empty($user->rights->supplier_order->lire)))) {
+						if ($obj->module == 'order_supplier' && ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'commande', 'lire')) || (!isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')))) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'shipping' && !empty($conf->expedition->enabled) && !empty($user->rights->expedition->lire)) {
+						if ($obj->module == 'shipping' && isModEnabled("shipping") && $user->hasRight('expedition', 'lire')) {
 							$qualified = 1;
 						}
 						// For case module = 'myobject@eventorganization'
-						$tmparray = preg_split("/@/", $obj->module, -1);
-						if (count($tmparray) > 1 && $tmparray[1] == 'eventorganization' && !empty($conf->eventorganization->enabled)) {
+						$tmparray = explode("@", $obj->module);
+						if (count($tmparray) > 1 && $tmparray[1] == 'eventorganization' && isModEnabled('eventorganization')) {
 							$qualified = 1;
 						}
 						// For the generic case with type = 'module...' and module = 'myobject@mymodule'
@@ -228,7 +255,7 @@ class CActionComm
 								$tmpobject = $regs[1];
 								$tmpmodule = $regs[2];
 								//var_dump($user->$tmpmodule);
-								if ($tmpmodule && isset($conf->$tmpmodule) && !empty($conf->$tmpmodule->enabled) && (!empty($user->rights->$tmpmodule->read) || !empty($user->rights->$tmpmodule->lire) || !empty($user->rights->$tmpmodule->$tmpobject->read) || !empty($user->rights->$tmpmodule->$tmpobject->lire))) {
+								if ($tmpmodule && isset($conf->$tmpmodule) && isModEnabled($tmpmodule) && ($user->hasRight($tmpmodule, 'read') || $user->hasRight($tmpmodule, 'lire') || $user->hasRight($tmpmodule, $tmpobject, 'read') || $user->hasRight($tmpmodule, $tmpobject, 'lire'))) {
 									$qualified = 1;
 								}
 							}
@@ -237,7 +264,7 @@ class CActionComm
 						if (! in_array($obj->type, array('system', 'systemauto', 'module', 'moduleauto'))) {
 							$tmpmodule = $obj->module;
 							//var_dump($tmpmodule);
-							if ($tmpmodule && isset($conf->$tmpmodule) && !empty($conf->$tmpmodule->enabled)) {
+							if ($tmpmodule && isset($conf->$tmpmodule) && isModEnabled($tmpmodule)) {
 								$qualified = 1;
 							}
 						}
@@ -266,17 +293,18 @@ class CActionComm
 							$transcode = $langs->trans($keyfortrans);
 						}
 						$label = (($transcode != $keyfortrans) ? $transcode : $langs->trans($obj->label));
-						if (($onlyautoornot == -1 || $onlyautoornot == -2) && !empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
-							if ($typecalendar == 'system') {
+						if (($onlyautoornot == -1 || $onlyautoornot == -2) && getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
+							if ($typecalendar == 'system' || $typecalendar == 'user') {
 								$label = '&nbsp;&nbsp; '.$label;
-								$repid[-99] = $langs->trans("ActionAC_MANUAL");
-								$repcode['AC_NON_AUTO'] = '-- '.$langs->trans("ActionAC_MANUAL");
+								$TSystem['id'][-99] = $langs->trans("ActionAC_MANUAL");
+								$TSystem['code']['AC_NON_AUTO'] = '-- '.$langs->trans("ActionAC_MANUAL");
 							}
 							if ($typecalendar == 'systemauto') {
 								$label = '&nbsp;&nbsp; '.$label;
-								$repid[-98] = $langs->trans("ActionAC_AUTO");
-								$repcode['AC_ALL_AUTO'] = '-- '.$langs->trans("ActionAC_AUTO");
+								$TSystemAuto['id'][-98] = $langs->trans("ActionAC_AUTO");
+								$TSystemAuto['code']['AC_ALL_AUTO'] = '-- '.$langs->trans("ActionAC_AUTO");
 							}
+
 							if ($typecalendar == 'module') {
 								//TODO check if possible to push it between system and systemauto
 								if (preg_match('/@/', $obj->module)) {
@@ -285,32 +313,38 @@ class CActionComm
 									$module = $obj->module;
 								}
 								$label = '&nbsp;&nbsp; '.$label;
-								if (!isset($repcode['AC_ALL_'.strtoupper($module)])) {	// If first time for this module
+								if (!isset($rep_code['AC_ALL_'.strtoupper($module)])) {	// If first time for this module
 									$idforallfornewmodule--;
 								}
-								$repid[$idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($module));
-								$repcode['AC_ALL_'.strtoupper($module)] = '-- '.$langs->trans("Module").' '.ucfirst($module);
+								$TModule['id'][$idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($module));
+								$TModule['code']['AC_ALL_'.strtoupper($module)] = '-- '.$langs->trans("Module").' '.ucfirst($module);
 							}
 						}
-						$repid[$obj->id] = $label;
-						$repcode[$obj->code] = $label;
-						$repall[$obj->code] = array('id' => $label, 'label' => $label, 'type' => $typecalendar, 'color' => $obj->color, 'picto' => $obj->picto);
+						if ($typecalendar == 'system' || $typecalendar == 'user') {
+							$TSystem['id'][$obj->id] = $label;
+							$TSystem['code'][$obj->code] = $label;
+							$TSystem['all'][$obj->code] = array('id' => $label, 'label' => $label, 'type' => $typecalendar, 'color' => $obj->color, 'picto' => $obj->picto);
+						} elseif ($typecalendar == 'systemauto') {
+							$TSystemAuto['id'][$obj->id] = $label;
+							$TSystemAuto['code'][$obj->code] = $label;
+							$TSystemAuto['all'][$obj->code] = array('id' => $label, 'label' => $label, 'type' => $typecalendar, 'color' => $obj->color, 'picto' => $obj->picto);
+						}
+
 						if ($onlyautoornot > 0 && preg_match('/^module/', $obj->type) && $obj->module) {
-							$repcode[$obj->code] .= ' ('.$langs->trans("Module").': '.$obj->module.')';
-							$repall[$obj->code]['label'] .= ' ('.$langs->trans("Module").': '.$obj->module.')';
+							array_key_exists($obj->code, $TModule['code']) ? ($TModule['code'][$obj->code] .= ' ('.$langs->trans("Module").': '.$obj->module.')') : ($TModule['code'][$obj->code] = ' ('.$langs->trans("Module").': '.$obj->module.')');
+							array_key_exists($obj->code, $TModule['all']) ? ($TModule['all'][$obj->code]['label'] .= ' ('.$langs->trans("Module").': '.$obj->module.')') : ($TModule['all'][$obj->code]['label'] = ' ('.$langs->trans("Module").': '.$obj->module.')');
 						}
 					}
 					$i++;
 				}
 			}
 
-			if ($idorcode == 'id') {
-				$this->liste_array = $repid;
-			} elseif ($idorcode == 'code') {
-				$this->liste_array = $repcode;
-			} else {
-				$this->liste_array = $repall;
-			}
+			if (empty($idorcode)) $idorcode = 'all';
+			$TType = $TSystem[$idorcode];
+			if (! empty($TSystemAuto[$idorcode])) $TType = array_merge($TSystem[$idorcode], $TSystemAuto[$idorcode]);
+			if (! empty($TModule[$idorcode])) $TType = array_merge($TSystem[$idorcode], $TModule[$idorcode]);
+			$this->liste_array = $TType;
+
 
 			return $this->liste_array;
 		} else {
@@ -324,7 +358,7 @@ class CActionComm
 	 *  Return name of action type as a label translated
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Picto only
-	 *  @return string			      	Label of action type
+	 *  @return string|-1		      	Label of action type, or -1 if error
 	 */
 	public function getNomUrl($withpicto = 0)
 	{
@@ -335,5 +369,6 @@ class CActionComm
 		if ($transcode != "Action".$this->code) {
 			return $transcode;
 		}
+		return -1;
 	}
 }

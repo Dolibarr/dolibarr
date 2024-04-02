@@ -1,0 +1,88 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Gegevensprivacybeleid
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Module om gegevensprivacy te beheren (conformiteit met de AVG)
+
+#
+# Administration page
+#
+datapolicySetup = Module Gegevensprivacybeleid instellen
+Deletion = Verwijderen van gegevens
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+NB_MONTHS = %s maanden
+ONE_YEAR = 1 jaar
+NB_YEARS = %s jaar
+DATAPOLICY_TIERS_CLIENT = Afnemer
+DATAPOLICY_TIERS_PROSPECT = Prospect
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Prospect/Klant
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Noch prospect/noch klant
+DATAPOLICY_TIERS_FOURNISSEUR = Leverancier
+DATAPOLICY_CONTACT_CLIENT = Afnemer
+DATAPOLICY_CONTACT_PROSPECT = Prospect
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospect/Klant
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Noch prospect/noch klant
+DATAPOLICY_CONTACT_FOURNISSEUR = Leverancier
+DATAPOLICY_ADHERENT = Lid
+DATAPOLICY_Tooltip_SETUP = Type contact - Geef uw keuzes aan voor elk type.
+DATAPOLICYMail = E-mail instellen
+DATAPOLICYSUBJECTMAIL = Subject of the email
+DATAPOLICYCONTENTMAIL = Inhoud van de e-mail
+DATAPOLICYSUBSITUTION = U kunt de volgende variabelen in uw e-mail gebruiken (LINKACCEPT maakt het mogelijk om een link te maken die de instemming van de persoon vastlegt, LINKREFUSED maakt het mogelijk om de weigering van de persoon vast te leggen):
+DATAPOLICYACCEPT = Bericht na akkoord
+DATAPOLICYREFUSE = Message after disagreement
+SendAgreementText = U kunt een AVG-e-mail sturen naar al uw relevante contacten (die nog geen e-mail hebben ontvangen en waarvoor u niets hebt geregistreerd over hun AVG-overeenkomst). Gebruik hiervoor de volgende knop.
+SendAgreement = Stuur emails
+AllAgreementSend = Alle e-mails zijn verzonden
+TXTLINKDATAPOLICYACCEPT = Tekst voor de link "overeenkomst"
+TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
+
+
+#
+# Extrafields
+#
+DATAPOLICY_BLOCKCHECKBOX = AVG: Verwerking van persoonsgegevens
+DATAPOLICY_consentement = Toestemming verkregen voor de verwerking van persoonsgegevens
+DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
+DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
+
+#
+# Popup
+#
+DATAPOLICY_POPUP_ANONYME_TITLE = Anonimiseer een derde partij
+DATAPOLICY_POPUP_ANONYME_TEXTE = U kunt dit contact niet verwijderen uit Dolibarr omdat er gerelateerde items zijn. In overeenstemming met de AVG maakt u al deze gegevens anoniem om uw verplichtingen na te komen. Wil je verder gaan ?
+
+#
+# Button for portability
+#
+DATAPOLICY_PORTABILITE = Overdraagbaarheid AVG
+DATAPOLICY_PORTABILITE_TITLE = Exporteren van persoonsgegevens
+DATAPOLICY_PORTABILITE_CONFIRMATION = U wilt de persoonsgegevens van dit contact exporteren. Weet je het zeker ?
+
+#
+# Notes added during an anonymization
+#
+ANONYMISER_AT = De %s geanonimiseerd
+
+DATAPOLICY_date = Date of agreement/disagreement GDPR
+DATAPOLICY_send = Date agreement email sent
+DATAPOLICY_SEND = Stuur AVG-e-mail
+MailSent = De email is verzonden
+
+# ERROR
+=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
+NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

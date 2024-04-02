@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017		ATM Consulting			<support@atm-consulting.fr>
  * Copyright (C) 2017		Pierre-Henry Favre		<phf@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,20 +110,20 @@ class ExpenseReportRule extends CommonObject
 
 	/**
 	 * Attribute object linked with database
-	 * @var array
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid'=>array('type'=>'integer', 'index'=>true)
-		,'dates'=>array('type'=>'date')
-		,'datee'=>array('type'=>'date')
-		,'amount'=>array('type'=>'double')
-		,'restrictive'=>array('type'=>'integer')
-		,'fk_user'=>array('type'=>'integer')
-		,'fk_usergroup'=>array('type'=>'integer')
-		,'fk_c_type_fees'=>array('type'=>'integer')
-		,'code_expense_rules_type'=>array('type'=>'string')
-		,'is_for_all'=>array('type'=>'integer')
-		,'entity'=>array('type'=>'integer')
+		'rowid' => array('type' => 'integer', 'index' => 1)
+		,'dates' => array('type' => 'date')
+		,'datee' => array('type' => 'date')
+		,'amount' => array('type' => 'double')
+		,'restrictive' => array('type' => 'integer')
+		,'fk_user' => array('type' => 'integer')
+		,'fk_usergroup' => array('type' => 'integer')
+		,'fk_c_type_fees' => array('type' => 'integer')
+		,'code_expense_rules_type' => array('type' => 'string')
+		,'is_for_all' => array('type' => 'integer')
+		,'entity' => array('type' => 'integer')
 	);
 
 
@@ -141,10 +142,10 @@ class ExpenseReportRule extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		$resultcreate = $this->createCommon($user, $notrigger);
 
@@ -159,7 +160,7 @@ class ExpenseReportRule extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -172,13 +173,26 @@ class ExpenseReportRule extends CommonObject
 
 
 	/**
+	 * Load object lines in memory from the database
+	 *
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetchLines()
+	{
+		$this->lines = array();
+
+		$result = $this->fetchLinesCommon();
+		return $result;
+	}
+
+	/**
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		return $this->updateCommon($user, $notrigger);
 	}
@@ -186,11 +200,11 @@ class ExpenseReportRule extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param User 	$user       User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
@@ -201,11 +215,11 @@ class ExpenseReportRule extends CommonObject
 	 * Return all rules or filtered by something
 	 *
 	 * @param int	     $fk_c_type_fees	type of expense
-	 * @param integer	 $date			    date of expense
+	 * @param int|string $date			    date of expense
 	 * @param int        $fk_user		    user of expense
 	 * @return array                        Array with ExpenseReportRule
 	 */
-	public function getAllRule($fk_c_type_fees = '', $date = '', $fk_user = '')
+	public function getAllRule($fk_c_type_fees = 0, $date = '', $fk_user = 0)
 	{
 		$rules = array();
 

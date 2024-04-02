@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Dostawa
 DeliveryRef=Numer referencyjny dostawy
-DeliveryCard=Karta przyjęcia
+DeliveryCard=Stock receipt
 DeliveryOrder=Kwit dostawy
 DeliveryDate=Data dostawy
 CreateDeliveryOrder=Generuj przyjęcie dostawy
@@ -29,5 +29,5 @@ Shippable=Możliwa wysyłka
 NonShippable=Nie do wysyłki
 ShowShippableStatus=Pokaż status do wysyłki
 ShowReceiving=Pokaż przyjęte dostawy
-NonExistentOrder=Nieistniejący porządek
+NonExistentOrder=Nieistniejące zamówienie
 StockQuantitiesAlreadyAllocatedOnPreviousLines = Ilości magazynowe już przydzielone na poprzednich liniach

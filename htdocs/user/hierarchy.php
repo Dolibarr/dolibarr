@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2021  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,12 @@
  *      \brief      Page of hierarchy view of user module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 
 // Load translation files required by page
-$langs->loadLangs(array('users', 'companies'));
+$langs->loadLangs(array('users', 'companies', 'hrm', 'salaries'));
 
 // Security check (for external users)
 $socid = 0;
@@ -39,34 +40,48 @@ if ($user->socid > 0) {
 }
 
 $optioncss = GETPOST('optioncss', 'alpha');
-$contextpage = GETPOST('optioncss', 'aZ09');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userlist'; // To manage different context of search
+$mode = GETPOST("mode", 'alpha');
+if (empty($mode)) {
+	$mode = 'hierarchy';
+}
+
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 
-// Load mode employee
-$mode = GETPOST("mode", 'alpha');
 
-$search_statut = GETPOST('search_statut', 'int');
-
-if ($search_statut == '' || $search_statut == '0') {
-	$search_statut = '1';
+$search_status = GETPOST('search_status', 'intcomma');
+if ($search_status == '' || $search_status == '0') {
+	$search_status = '1';
 }
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
-	$search_statut = "";
+	$search_status = "";
+}
+
+if ($contextpage == 'employeelist') {
+	$search_employee = 1;
 }
 
 $userstatic = new User($db);
 
 // Define value to know what current user can do on users
-$canadduser = (!empty($user->admin) || $user->rights->user->user->creer);
+$canadduser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
 
-if (!$user->rights->user->user->lire && !$user->admin) {
-	accessforbidden();
+// Permission to list
+if (isModEnabled('salaries') && $contextpage == 'employeelist' && $search_employee == 1) {
+	if (!$user->hasRight("salaries", "read")) {
+		accessforbidden();
+	}
+} else {
+	if (!$user->hasRight("user", "user", "read") && empty($user->admin)) {
+		accessforbidden();
+	}
 }
 
 $childids = $user->getAllChildIds(1);
+
 
 
 /*
@@ -76,7 +91,11 @@ $childids = $user->getAllChildIds(1);
 $form = new Form($db);
 
 $help_url = 'EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios|DE:Modul_Benutzer';
-$title = $langs->trans("Users");
+if ($contextpage == 'employeelist' && $search_employee == 1) {
+	$title = $langs->trans("Employees");
+} else {
+	$title = $langs->trans("Users");
+}
 $arrayofjs = array(
 	'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
 	'/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js',
@@ -87,7 +106,7 @@ llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'bodyfor
 
 
 // Load hierarchy of users
-$user_arbo = $userstatic->get_full_tree(0, ($search_statut != '' && $search_statut >= 0) ? "statut = ".$search_statut : '');
+$user_arbo = $userstatic->get_full_tree(0, ($search_status != '' && $search_status >= 0) ? "statut = ".$search_status : '');
 
 
 // Count total nb of records
@@ -105,11 +124,11 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	$data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
 	foreach ($fulltree as $key => $val) {
 		$userstatic->id = $val['id'];
-		$userstatic->ref = $val['id'];
+		$userstatic->ref = (string) $val['id'];
 		$userstatic->login = $val['login'];
 		$userstatic->firstname = $val['firstname'];
 		$userstatic->lastname = $val['lastname'];
-		$userstatic->statut = $val['statut'];
+		$userstatic->status = $val['statut'];
 		$userstatic->email = $val['email'];
 		$userstatic->gender = $val['gender'];
 		$userstatic->socid = $val['fk_soc'];
@@ -121,7 +140,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 		$entitystring = '';
 
 		// TODO Set of entitystring should be done with a hook
-		if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+		if (isModEnabled('multicompany') && is_object($mc)) {
 			if (empty($entity)) {
 				$entitystring = $langs->trans("AllEntities");
 			} else {
@@ -131,10 +150,10 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 		}
 
 		$li = $userstatic->getNomUrl(-1, '', 0, 1);
-		if (!empty($conf->multicompany->enabled) && $userstatic->admin && !$userstatic->entity) {
-			$li .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
+		if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
+			$li .= img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
 		} elseif ($userstatic->admin) {
-			$li .= img_picto($langs->trans("Administrator"), 'star');
+			$li .= img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright paddingleft"');
 		}
 		$li .= ' <span class="opacitymedium">('.$val['login'].($entitystring ? ' - '.$entitystring : '').')</span>';
 
@@ -150,7 +169,8 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 
 	//var_dump($data);
 
-	$param = "&search_statut=".urlencode($search_statut);
+	$param = "&search_status=".urlencode($search_status);
+	$param = "&contextpage=".urlencode($contextpage);
 
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
@@ -177,37 +197,62 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="liste nohover centpercent">';
 
 	print '<tr class="liste_titre_filter">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch">';
+		$searchpicto = $form->showFilterAndCheckAddButtons(0);
+		print $searchpicto;
+		print '</td>';
+	}
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	// Status
 	print '<td class="liste_titre right">';
-	print $form->selectarray('search_statut', array('-1'=>'', '1'=>$langs->trans('Enabled')), $search_statut, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
+	print $form->selectarray('search_status', array('-1'=>'', '1'=>$langs->trans('Enabled')), $search_status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td>';
-	print '<td class="liste_titre maxwidthsearch">';
-	$searchpicto = $form->showFilterAndCheckAddButtons(0);
-	print $searchpicto;
-	print '</td>';
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch">';
+		$searchpicto = $form->showFilterAndCheckAddButtons(0);
+		print $searchpicto;
+		print '</td>';
+	}
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', '', '', 'maxwidthsearch ');
+	}
 	print_liste_field_titre("HierarchicView");
 	print_liste_field_titre('<div id="iddivjstreecontrol"><a href="#">'.img_picto('', 'folder', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("UndoExpandAll").'</span></a> | <a href="#">'.img_picto('', 'folder-open', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("ExpandAll").'</span></a></div>', $_SERVER['PHP_SELF'], "", '', "", 'align="center"');
-	print_liste_field_titre("Status", $_SERVER['PHP_SELF'], "", '', "", 'align="right"');
-	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', '', '', 'maxwidthsearch ');
+	print_liste_field_titre("Status", $_SERVER['PHP_SELF'], "", '', "", '', '', '', 'right ');
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', '', '', 'maxwidthsearch ');
+	}
 	print '</tr>';
 
 
 	$nbofentries = (count($data) - 1);
 
 	if ($nbofentries > 0) {
-		print '<tr><td colspan="3">';
+		print '<tr>';
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td></td>';
+		}
+		print '<td colspan="3">';
 		tree_recur($data, $data[0], 0);
 		print '</td>';
-		print '<td></td>';
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td></td>';
+		}
 		print '</tr>';
 	} else {
 		print '<tr class="oddeven">';

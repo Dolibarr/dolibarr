@@ -44,6 +44,13 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/authority.class.php';
 $user = new User($db);
 $user->fetch(1); //TODO conf user authority
 
+
+/*
+ * View
+ */
+
+top_httphead();
+
 $auth = new BlockedLogAuthority($db);
 
 $signature = GETPOST('s');

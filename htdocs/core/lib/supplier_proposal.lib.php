@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
 
 /**
  *	\file       htdocs/core/lib/propal.lib.php
- *	\brief      Ensemble de fonctions de base pour le module propal
+ *	\brief      Ensemble de functions de base pour le module propal
  *	\ingroup    propal
  */
 
@@ -44,7 +45,7 @@ function supplier_proposal_prepare_head($object)
 	$head[$h][2] = 'comm';
 	$h++;
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
@@ -59,9 +60,9 @@ function supplier_proposal_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal', 'add', 'core');
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = 0;
 		if (!empty($object->note_private)) {
 			$nbNote++;
@@ -96,19 +97,25 @@ function supplier_proposal_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal', 'add', 'external');
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_proposal', 'remove');
 
 	return $head;
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	        head array with tabs
  */
 function supplier_proposal_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('supplier_proposal');
+	$extrafields->fetch_name_optionals_label('supplier_proposaldet');
 
 	$h = 0;
 	$head = array();
@@ -126,11 +133,19 @@ function supplier_proposal_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/admin/supplier_proposal_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['supplier_proposal']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/admin/supplier_proposaldet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$nbExtrafields = $extrafields->attributes['supplier_proposaldet']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributeslines';
 	$h++;
 

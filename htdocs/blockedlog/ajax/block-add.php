@@ -38,9 +38,16 @@ if (!defined('NOREQUIREHTML')) {
 
 $res = require '../../main.inc.php';
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $element = GETPOST('element', 'alpha');
 $action = GETPOST('action', 'aZ09');
+
+
+/*
+ * View
+ */
+
+top_httphead();
 
 if ($element === 'facture') {
 	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';

@@ -4,7 +4,7 @@
 export DH_VERBOSE=1
 export DH_OPTIONS=-v
 
-#export DH_COMPAT=7    # This is the debhelper compatability version to use, now defined into compat file
+#export DH_COMPAT=7    # This is the debhelper compatibility version to use, now defined into compat file
 
 
 %:
@@ -18,6 +18,10 @@ override_dh_auto_clean:
 
 override_dh_auto_build:
 # Do nothing. Added to disable launchpad to use bugged dh_auto_build search for ant
+
+# Force the compression format for control files
+override_dh_builddeb:
+	dh_builddeb -- -Zxz
 
 #override_dh_compress:
 #	dh_compress --no-act -X.png
@@ -89,7 +93,6 @@ override_dh_install:
 	rm -fr build/zip
 	
 	# clean from all PHP embedded libraries (we use package dependencies instead)
-#	rm -fr htdocs/includes/adodbtime
 #	rm -fr htdocs/includes/geoip
 #	rm -fr htdocs/includes/nusoap
 #	rm -fr htdocs/includes/odtphp/zip/pclzip
@@ -125,4 +128,4 @@ override_dh_fixperms:
 	# Give rights to the webserver on the upload directory
 	chown www-data:www-data debian/dolibarr/var/lib/dolibarr/documents
 	chmod 2775 debian/dolibarr/var/lib/dolibarr/documents
-	
+

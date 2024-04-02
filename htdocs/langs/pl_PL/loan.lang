@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with
 CantModifyInterestIfScheduleIsUsed = Nie możesz modyfikować odsetek, jeśli używasz harmonogramu
 # Admin
 ConfigLoan=Konfiguracja modułu kredytu
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Domyśly kapitał konta rachunkowego
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Domyślnie odsetki od rachunku księgowego
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Domyślnie ubezpieczenie rachunku księgowego
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
 CreateCalcSchedule=Edytuj zobowiązanie finansowe

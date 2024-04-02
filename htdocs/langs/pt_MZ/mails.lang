@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - mails
 MailRecipient=Destinatário
+MailTo=Para
 MailingStatusDraft=Minuta
 MailingStatusValidated=Validada
+XEmailsDoneYActionsDone=%s e-mails qualificados, %s e-mails processados com sucesso (para registro %s/ações executadas)

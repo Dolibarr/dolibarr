@@ -12,3 +12,11 @@ Le client règle rapidement et on lui accorde un escompte de 3% (120 € * 3% = 
 411xxx      3,60 € TTC
 
 Et ça marche à l’inverse avec un fournisseur sauf que l’on est en 775000 au lieu de 665000 pour escompte obtenus.
+
+
+
+
+Un compte comptable de Tiers vente = Acount Receivable
+Un compte comptable de Tiers achat = Acount Payable
+
+ 

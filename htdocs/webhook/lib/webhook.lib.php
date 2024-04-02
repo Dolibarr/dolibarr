@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2022 SuperAdmin <test@dolibarr.com>
+/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
  */
 
 /**
- * \file    webhook/lib/webhook.lib.php
+ * \file    htdocs/webhook/lib/webhook.lib.php
  * \ingroup webhook
  * \brief   Library files with common functions for Webhook
  */
@@ -30,16 +31,14 @@ function webhookAdminPrepareHead()
 {
 	global $langs, $conf;
 
-	$langs->load("webhook@webhook");
-
 	$h = 0;
 	$head = array();
-	$head[$h][0] = dol_buildpath("/admin/webhook.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/admin/webhook.php';
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'settings';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/webhook/target_list.php?mode=modulesetup", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/webhook/target_list.php?mode=modulesetup';
 	$head[$h][1] = $langs->trans("Targets");
 	$head[$h][2] = 'targets';
 	$h++;
@@ -62,9 +61,9 @@ function webhookAdminPrepareHead()
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@webhook:/webhook/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'webhook@webhook');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'webhook');
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'webhook@webhook', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'webhook', 'remove');
 
 	return $head;
 }
