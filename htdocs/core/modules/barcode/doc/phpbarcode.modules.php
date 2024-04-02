@@ -193,7 +193,6 @@ class modPhpbarcode extends ModeleBarCode
 			} else {
 				$this->error = "ErrorFailedToWriteInTempDirectory ".$conf->barcode->dir_temp;
 			}
-			$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->barcode->dir_temp);
 			dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 			return -1;
 		}
