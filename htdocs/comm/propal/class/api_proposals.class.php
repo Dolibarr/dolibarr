@@ -697,7 +697,12 @@ class Proposals extends DolibarrApi
 				$this->propal->context['caller'] = $request_data['caller'];
 				continue;
 			}
-
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->propal->array_options[$index] = $val;
+				}
+				continue;
+			}
 			$this->propal->$field = $value;
 		}
 
