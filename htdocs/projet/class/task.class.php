@@ -2491,4 +2491,147 @@ class Task extends CommonObjectLine
 
 		return $return;
 	}
+
+	/**
+	 *    Merge a task with another one, deleting the given task.
+	 *    The task given in parameter will be removed.
+	 *
+	 *    @param	int     $task_origin_id		Task to merge the data from
+	 *    @return	int							-1 if error
+	 */
+	public function mergeTask($task_origin_id)
+	{
+		global $conf, $langs, $hookmanager, $user, $action;
+
+		$error = 0;
+		$task_origin = new Task($this->db);		// The thirdparty that we will delete
+
+		dol_syslog("mergeTask merge thirdparty id=".$task_origin_id." (will be deleted) into the thirdparty id=".$this->id);
+
+		if (!$error && $task_origin->fetch($task_origin_id) < 1) {
+			$this->error = $langs->trans('ErrorRecordNotFound');
+			$error++;
+		}
+
+		if (!$error) {
+			$this->db->begin();
+
+			// Recopy some data
+			$listofproperties = array(
+				'label', 'description', 'duration_effective', 'planned_workload', 'datec', 'date_start',
+				'date_end', 'fk_user_creat', 'fk_user_valid', 'fk_statut', 'progress', 'budget_amount',
+				'priority', 'rang', 'fk_projet', 'fk_task_parent'
+			);
+			foreach ($listofproperties as $property) {
+				if (empty($this->$property)) {
+					$this->$property = $task_origin->$property;
+				}
+			}
+
+			if ($this->typent_id == -1) {
+				$this->typent_id = $task_origin->typent_id;
+			}
+
+			// Concat some data
+			$listofproperties = array(
+				'note_public', 'note_private'
+			);
+			foreach ($listofproperties as $property) {
+				$this->$property = dol_concatdesc($this->$property, $task_origin->$property);
+			}
+
+			// Merge extrafields
+			if (is_array($task_origin->array_options)) {
+				foreach ($task_origin->array_options as $key => $val) {
+					if (empty($this->array_options[$key])) {
+						$this->array_options[$key] = $val;
+					}
+				}
+			}
+
+			// If alias name is not defined on target thirdparty, we can store in it the old name of company.
+			if (empty($this->name_bis) && $this->name != $task_origin->name) {
+				$this->name_bis = $this->name;
+			}
+
+			// Update
+			$result = $this->update($this->id, $user, 0, 1, 1, 'merge');
+
+			if ($result < 0) {
+				$error++;
+			}
+
+			// Move links
+			if (!$error) {
+				$objects = array(
+					'Societe' => '/societe/class/societe.class.php',
+					'Project' => '/projet/class/project.class.php',
+					'Contact' => '/contact/class/contact.class.php',
+				);
+
+				//First, all core objects must update their tables
+				foreach ($objects as $object_name => $object_file) {
+					if (is_array($object_file)) {
+						if (empty($object_file['enabled'])) {
+							continue;
+						}
+						$object_file = $object_file['file'];
+					}
+
+					require_once DOL_DOCUMENT_ROOT.$object_file;
+
+					/*if (!$error && !$object_name::replaceThirdparty($this->db, $task_origin->id, $this->id)) {
+						$error++;
+						$this->error = $this->db->lasterror();
+						break;
+					}*/
+				}
+			}
+
+			// External modules should update their ones too
+			if (!$error) {
+				$parameters = array('task_origin' => $task_origin->id, 'task_dest' => $this->id);
+				$reshook = $hookmanager->executeHooks('replaceThirdparty', $parameters, $this, $action);
+
+				if ($reshook < 0) {
+					$this->error = $hookmanager->error;
+					$this->errors = $hookmanager->errors;
+					$error++;
+				}
+			}
+
+
+			if (!$error) {
+				$this->context = array('merge' => 1, 'mergefromid' => $task_origin->id, 'mergefromref' => $task_origin->ref);
+
+				// Call trigger
+				$result = $this->call_trigger('TASK_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (!$error) {
+				// We finally remove the old task
+				if ($task_origin->delete($task_origin->id, $user) < 1) {
+					$this->error = $task_origin->error;
+					$this->errors = $task_origin->errors;
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				$this->db->commit();
+				return 0;
+			} else {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorsTaskMerge');
+				$this->db->rollback();
+				return -1;
+			}
+		}
+
+		return -1;
+	}
 }

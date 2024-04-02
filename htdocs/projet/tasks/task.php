@@ -141,7 +141,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'cree
 
 if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('projet', 'creer')) {
 	$task_origin_id = GETPOSTINT('task_origin');
-	$task_origin = new Task($db);		// The thirdparty that we will delete
+	$task_origin = new Task($db);		// The Task that we will delete
 
 	if ($task_origin_id <= 0) {
 		$langs->load('errors');
@@ -152,13 +152,13 @@ if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('projet',
 			$error++;
 		}
 		if (!$error) {
-			/*$result = $object->mergeCompany($task_origin_id);
+			$result = $object->mergeTask($task_origin_id);
 			if ($result < 0) {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
-				setEventMessages($langs->trans('ThirdpartiesMergeSuccess'), null, 'mesgs');
-			}*/
+				setEventMessages($langs->trans('TaskMergeSuccess'), null, 'mesgs');
+			}
 		}
 	}
 }
@@ -467,7 +467,6 @@ if ($id > 0 || !empty($ref)) {
 				'value' => $form->selectTasks('', 'task_origin', '', 'SelectTask', '', 'minwidth200', 1)
 			)
 		);
-
 		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("MergeTasks"), $langs->trans("ConfirmMergeTasks"), "confirm_merge", $formquestion, 'no', 1, 250);
 	}
 

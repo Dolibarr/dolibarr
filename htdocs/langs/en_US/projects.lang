@@ -308,3 +308,5 @@ SelectTask=Select a task
 ConfirmMergeTasks=Are you sure you want to merge the chosen task with the current one? All linked objects (invoices, orders, ...) will be moved to the current task, after which the chosen task will be deleted.
 MergeTasks=Merge tasks
 TaskMergeSuccess=Task have been merged
+ErrorTaskIdIsMandatory=Error: Task id is mandatory
+ErrorRecordNotFound=Error: Record not found

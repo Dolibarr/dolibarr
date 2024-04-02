@@ -5019,7 +5019,7 @@ class Form
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			if ($num) {
-				$out .= '<select id="select' . $htmlname . '" class="flat selecttasks' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '"' . ($moreattrib ? ' ' . $moreattrib : '') . '>';
+				$out .= '<select id="' . $htmlname . '" class="flat selecttasks' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '"' . ($moreattrib ? ' ' . $moreattrib : '') . '>';
 
 				$textifempty = (($showempty && !is_numeric($showempty)) ? $langs->trans($showempty) : '');
 				if ($showempty) {
@@ -5038,7 +5038,7 @@ class Form
 					$i++;
 				}
 				$out .= "</select>";
-				$out .= ajax_combobox('select' . $htmlname);
+				$out .= ajax_combobox($htmlname);
 			} else {
 				$out .= '<span class="opacitymedium">' . $langs->trans("NoTaskFound") . '</span>';
 			}
