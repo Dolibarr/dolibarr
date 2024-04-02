@@ -71,8 +71,8 @@ RUN apt-get update -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Get Dolibarr
-COPY htdocs/* /var/www/html/
-COPY scripts /var/www/
+COPY htdocs/ /var/www/html/
+COPY scripts/ /var/www/scripts/
 
 RUN ln -s /var/www/html /var/www/htdocs && \
     rm -rf /tmp/* && \
