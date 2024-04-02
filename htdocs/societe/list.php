@@ -203,7 +203,6 @@ if ($type == 'f') {
 		$search_type = '4';
 	}
 }
-
 // Initialize technical objects to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
@@ -1106,7 +1105,9 @@ if ($user->hasRight("societe", "creer")) {
 }
 if ($user->hasRight("societe", "creer")) {
 	$arrayofmassactions['presetcommercial'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("AllocateCommercial");
+	$arrayofmassactions['unsetcommercial'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("UnallocateCommercial");
 }
+
 if ($user->hasRight('societe', 'supprimer')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
