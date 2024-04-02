@@ -185,11 +185,11 @@ class Donations extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->don->context['caller'] = $request_data['caller'];
+				$this->don->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->don->$field = $value;
+			$this->don->$field = $this->_checkValForAPI($field, $value, $this->don);
 		}
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
@@ -233,11 +233,11 @@ class Donations extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->don->context['caller'] = $request_data['caller'];
+				$this->don->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->don->$field = $value;
+			$this->don->$field = $this->_checkValForAPI($field, $value, $this->don);
 		}
 
 		if ($this->don->update(DolibarrApiAccess::$user) > 0) {

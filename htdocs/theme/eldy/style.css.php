@@ -216,7 +216,7 @@ $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmpp
 if ($tmpval <= 460) {
 	$colortextbackvmenu = 'FFFFFF';
 } else {
-	$colortextbackvmenu = '000000';
+	$colortextbackvmenu = '222222';
 }
 
 $colortopbordertitle1 = implode(',', colorStringToArray($colortopbordertitle1)); // Normalize value to 'x,y,z'

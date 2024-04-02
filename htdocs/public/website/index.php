@@ -81,6 +81,11 @@ $error = 0;
 $websitekey = GETPOST('website', 'alpha');
 $pageid = GETPOST('page', 'alpha') ? GETPOST('page', 'alpha') : GETPOST('pageid', 'alpha');
 $pageref = GETPOST('pageref', 'alphanohtml') ? GETPOST('pageref', 'alphanohtml') : '';
+// If page is xx/pagename, xx is a language, we set $pageref to pagename
+$reg = array();
+if (preg_match('/^(\w\w)\/(.*)$/', $pageref, $reg)) {
+	$pageref = $reg[2];
+}
 
 $accessallowed = 1;
 $type = '';

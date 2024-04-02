@@ -345,10 +345,10 @@ if (empty($reshook)) {
 						setEventMessages($objecttmp->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
 					}
 
-					if ($objecttmp->statut == FactureFournisseur::STATUS_DRAFT) {
+					if ($objecttmp->status == FactureFournisseur::STATUS_DRAFT) {
 						$error++;
 						setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
-					} elseif ($objecttmp->paye || $objecttmp->resteapayer == 0) {
+					} elseif ($objecttmp->paid || $objecttmp->resteapayer == 0) {
 						$error++;
 						setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
 					} elseif ($objecttmp->resteapayer < 0) {
@@ -1094,20 +1094,13 @@ if (!empty($arrayfields['f.ref_supplier']['checked'])) {
 // Type
 if (!empty($arrayfields['f.type']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone">';
-	$listtype = array(
+	$typearray = array(
 		FactureFournisseur::TYPE_STANDARD => $langs->trans("InvoiceStandard"),
 		FactureFournisseur::TYPE_REPLACEMENT => $langs->trans("InvoiceReplacement"),
 		FactureFournisseur::TYPE_CREDIT_NOTE => $langs->trans("InvoiceAvoir"),
 		FactureFournisseur::TYPE_DEPOSIT => $langs->trans("InvoiceDeposit"),
 	);
-	/*
-	 if (!empty($conf->global->INVOICE_USE_SITUATION))
-	 {
-	 $listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
-	 }
-	 */
-	//$listtype[Facture::TYPE_PROFORMA]=$langs->trans("InvoiceProForma");     // A proformat invoice is not an invoice but must be an order.
-	print $form->selectarray('search_type', $listtype, $search_type, 1, 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth100');
+	print $form->selectarray('search_type', $typearray, $search_type, 1, 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth100');
 	print '</td>';
 }
 // Invoice Subtype
@@ -1596,6 +1589,7 @@ while ($i < $imaxinloop) {
 	$facturestatic->alreadypaid = ($paiement ? $paiement : 0);
 
 	$facturestatic->paye = $obj->paye;
+	$facturestatic->paid = $obj->paye;
 
 	$facturestatic->date = $db->jdate($obj->datef);
 

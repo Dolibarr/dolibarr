@@ -923,7 +923,7 @@ if (empty($reshook)) {
 				// We use native clone to keep this->db valid and allow to use later all the methods of object.
 				$clone = dol_clone($object, 1);
 
-				$clone->id = null;
+				$clone->id = 0;
 				$clone->ref = GETPOST('clone_ref', 'alphanohtml');
 				$clone->status = 0;
 				$clone->status_buy = 0;

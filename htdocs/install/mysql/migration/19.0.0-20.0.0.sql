@@ -288,3 +288,7 @@ ALTER TABLE llx_expeditiondet ADD COLUMN element_type varchar(50) DEFAULT 'order
 
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commande fk_element integer;
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commandefourndet fk_elementdet integer;
+
+ALTER TABLE llx_supplier_proposaldet MODIFY ref_fourn VARCHAR(128) NULL;
+
+ALTER TABLE llx_projet ADD COLUMN ref_ext varchar(50) after ref;

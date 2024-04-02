@@ -145,7 +145,7 @@ class Societe extends CommonObject
 	public $restrictiononfksoc = 1;
 
 	/**
-	 * @var Societe To store a cloned copy of object before to edit it and keep track of old properties
+	 * @var static To store a cloned copy of object before to edit it and keep track of old properties
 	 */
 	public $oldcopy;
 
@@ -2498,11 +2498,11 @@ class Societe extends CommonObject
 	/**
 	 * 	Returns amount of included taxes of the current discounts/credits available from the company
 	 *
-	 *	@param	?User	$user			Filter on a user author of discounts
-	 * 	@param	string	$filter			Other filter
-	 * 	@param	integer	$maxvalue		Filter on max value for discount
-	 * 	@param	int		$discount_type	0 => customer discount, 1 => supplier discount
-	 *	@return	int						Return integer <0 if KO, Credit note amount otherwise
+	 *	@param	?User		$user			Filter on a user author of discounts
+	 * 	@param	string		$filter			Other filter
+	 * 	@param	int			$maxvalue		Filter on max value for discount
+	 * 	@param	int<0,1>	$discount_type	0 => customer discount, 1 => supplier discount
+	 *	@return	float|int<-1,-1>		Return integer <0 if KO, Credit note amount otherwise
 	 */
 	public function getAvailableDiscounts($user = null, $filter = '', $maxvalue = 0, $discount_type = 0)
 	{

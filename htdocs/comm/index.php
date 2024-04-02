@@ -422,6 +422,8 @@ if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
  */
 
 if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight("fournisseur", "commande", "lire")) || (isModEnabled("supplier_order") && $user->hasRight("supplier_order", "lire"))) {
+	$supplierorderstatic = new CommandeFournisseur($db);
+
 	$sql = "SELECT cf.rowid, cf.ref, cf.ref_supplier, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -639,7 +641,7 @@ if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 		}
 
 		$num = $db->num_rows($resql);
-		startSimpleTable($langs->trans($header, min($max, $num)), "societe/list.php", "type=p,c", 1);
+		startSimpleTable($langs->trans($header, min($max, $num)), "societe/list.php", "type=p,c&sortfield=s.tms&sortorder=DESC", 1, -1, 'company');
 
 		if ($num) {
 			$i = 0;

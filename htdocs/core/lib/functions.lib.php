@@ -1073,6 +1073,9 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			}
 			break;
 		case 'intcomma':
+			if (is_array($out)) {
+				$out = implode(',', $out);
+			}
 			if (preg_match('/[^0-9,-]+/i', $out)) {
 				$out = '';
 			}
@@ -1370,9 +1373,11 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
  *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db of new object is still valid but point to same this->db than original object.
  *  With native = 2: Property that are reference are different memory area in the new object (full isolation clone). Only scalar and array values are cloned. This means method are not availables and $this->db of new object is not valid.
  *
- * 	@param	object	$object		Object to clone
+ *  @template T of object
+ *
+ * 	@param	T		$object		Object to clone
  *  @param	int		$native		0=Full isolation method, 1=Native PHP method, 2=Full isolation method keeping only scalar and array properties (recommended)
- *	@return object				Clone object
+ *	@return T					Clone object
  *  @see https://php.net/manual/language.oop5.cloning.php
  */
 function dol_clone($object, $native = 0)
@@ -8990,8 +8995,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
  *  $mesg = make_substitutions($mesg, $substitutionarray, $langs);
  *
  *  @param	string		$text	      					Source string in which we must do substitution
- *  @param  array		$substitutionarray				Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal', ...)
- *  @param	Translate	$outputlangs					Output language
+ *  @param  array<string,string>	$substitutionarray	Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal', ...)
+ *  @param	?Translate	$outputlangs					Output language
  *  @param	int			$converttextinhtmlifnecessary	0=Convert only value into HTML if text is already in HTML
  *  													1=Will also convert initial $text into HTML if we try to insert one value that is HTML
  * 	@return string  		    						Output string after substitutions
@@ -12164,6 +12169,17 @@ function getElementProperties($elementType)
 		$subelement = $regs[2];
 	}
 
+	// Object lines will use parent classpath and module ref
+	if (substr($elementType, -3) == 'det') {
+		$module = preg_replace('/det$/', '', $element);
+		$subelement = preg_replace('/det$/', '', $subelement);
+		$classpath = $module.'/class';
+		$classfile = $module;
+		$classname = preg_replace('/det$/', 'Line', $element);
+		if (in_array($module, array('expedition', 'propale', 'facture', 'contrat', 'fichinter', 'commandefournisseur'))) {
+			$classname = preg_replace('/det$/', 'Ligne', $element);
+		}
+	}
 	// For compatibility and to work with non standard path
 	if ($elementType == "action") {
 		$classpath = 'comm/action/class';
@@ -12588,16 +12604,17 @@ function getNonce()
 /**
  * Start a table with headers and a optional clickable number (don't forget to use "finishSimpleTable()" after the last table row)
  *
- * @param string	$header		The first left header of the table (automatic translated)
- * @param string	$link		(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
- * @param string	$arguments	(optional) Additional arguments for the link (e.g. "search_status=0")
- * @param integer	$emptyRows	(optional) The count of empty rows after the first header
- * @param integer	$number		(optional) The number that is shown right after the first header, when not set the link is shown on the right side of the header as "FullList"
+ * @param string	$header			The first left header of the table (automatic translated)
+ * @param string	$link			(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
+ * @param string	$arguments		(optional) Additional arguments for the link (e.g. "search_status=0")
+ * @param integer	$emptyRows		(optional) The count of empty columns after the first column
+ * @param integer	$number			(optional) The number that is shown right after the first header, when not set the link is shown on the right side of the header as "FullList"
+ * @param string	$pictofulllist 	(optional) The picto to use for the full list link
  * @return void
  *
  * @see finishSimpleTable()
  */
-function startSimpleTable($header, $link = "", $arguments = "", $emptyRows = 0, $number = -1)
+function startSimpleTable($header, $link = "", $arguments = "", $emptyRows = 0, $number = -1, $pictofulllist = '')
 {
 	global $langs;
 
@@ -12641,7 +12658,12 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyRows = 0, 
 			print '<a class="commonlink" href="'.DOL_URL_ROOT.'/'.$link.'">';
 		}
 
-		print $langs->trans("FullList");
+		if ($pictofulllist) {
+			print img_picto($langs->trans("FullList"), $pictofulllist);
+		} else {
+			print $langs->trans("FullList");
+		}
+
 		print '</a>';
 		print '</th>';
 	}

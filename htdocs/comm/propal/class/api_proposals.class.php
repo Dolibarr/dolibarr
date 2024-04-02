@@ -156,14 +156,12 @@ class Proposals extends DolibarrApi
 	 * @param int		$limit				Limit for list
 	 * @param int		$page				Page number
 	 * @param string	$thirdparty_ids		Thirdparty ids to filter commercial proposals (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
+	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'2016-01-01')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                       Array of order objects
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 			throw new RestException(403);
 		}
@@ -257,11 +255,11 @@ class Proposals extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->propal->context['caller'] = $request_data['caller'];
+				$this->propal->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->propal->$field = $value;
+			$this->propal->$field = $this->_checkValForAPI($field, $value, $this->propal);
 		}
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
@@ -696,11 +694,17 @@ class Proposals extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->propal->context['caller'] = $request_data['caller'];
+				$this->propal->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->propal->array_options[$index] = $this->_checkValForAPI($field, $val, $this->propal);
+				}
 				continue;
 			}
 
-			$this->propal->$field = $value;
+			$this->propal->$field = $this->_checkValForAPI($field, $value, $this->propal);
 		}
 
 		// update end of validity date
