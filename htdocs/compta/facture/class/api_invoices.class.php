@@ -671,7 +671,12 @@ class Invoices extends DolibarrApi
 				$this->invoice->context['caller'] = $request_data['caller'];
 				continue;
 			}
-
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->invoice->array_options[$index] = $val;
+				}
+				continue;
+			}
 			$this->invoice->$field = $value;
 
 			// If cond reglement => update date lim reglement
