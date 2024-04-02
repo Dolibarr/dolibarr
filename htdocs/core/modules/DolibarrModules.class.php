@@ -1851,16 +1851,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	{
 		// phpcs:enable
 		global $conf, $user;
-		//global $langs;
-
-		// TODO sql error : data too long for column 'libelle'
-		/*if (is_array($this->langfiles)) {
-			foreach ($this->langfiles as $val) {
-				if ($val) {
-					$langs->load($val);
-				}
-			}
-		}*/
 
 		$err = 0;
 		$entity = (!empty($force_entity) ? $force_entity : $conf->entity);
@@ -1897,16 +1887,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				foreach ($this->rights as $key => $value) {
 					$r_id = $this->rights[$key][Rights::KEY_ID];	// permission id in llx_rights_def (not unique because primary key is couple id-entity)
 					$r_label = $this->rights[$key][Rights::KEY_LABEL];
-
-					// TODO sql error : data too long for column 'libelle'
-					// Add label with the current language (with specific language key or with PermissionXXX)
-					//$labelkey = $this->rights[$key][Rights::KEY_LABEL];
-					//$r_label = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$r_id) != "PermissionAdvanced".$r_id) ? $langs->trans("PermissionAdvanced".$r_id) : (($langs->trans("Permission".$r_id) != "Permission".$r_id) ? $langs->trans("Permission".$r_id) : $langs->trans($labelkey)));
-
 					$r_type	= $this->rights[$key][Rights::KEY_TYPE] ?? 'w';	// TODO deprecated
-
 					$r_default = $this->rights[$key][Rights::KEY_DEFAULT] ?? 0;
-					$r_perms = $this->rights[$key][Rights::KEY_FIRST_LEVEL];
+					$r_perms = $this->rights[$key][Rights::KEY_FIRST_LEVEL] ?? '';
 					$r_subperms = $this->rights[$key][Rights::KEY_SECOND_LEVEL] ?? '';
 
 					// if subperms is defined but perms is not defined, subperms must be empty
