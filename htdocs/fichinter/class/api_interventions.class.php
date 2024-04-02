@@ -198,11 +198,11 @@ class Interventions extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->fichinter->context['caller'] = $request_data['caller'];
+				$this->fichinter->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->fichinter->$field = $value;
+			$this->fichinter->$field = $this->_checkValForAPI($field, $value, $this->fichinter);
 		}
 
 		if ($this->fichinter->create(DolibarrApiAccess::$user) < 0) {
@@ -267,11 +267,11 @@ class Interventions extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->fichinter->context['caller'] = $request_data['caller'];
+				$this->fichinter->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->fichinter->$field = $value;
+			$this->fichinter->$field = $this->_checkValForAPI($field, $value, $this->fichinter);
 		}
 
 		if (!$result) {

@@ -192,11 +192,11 @@ class Contracts extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->contract->context['caller'] = $request_data['caller'];
+				$this->contract->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->contract->$field = $value;
+			$this->contract->$field = $this->_checkValForAPI($field, $value, $this->contract);
 		}
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
@@ -504,16 +504,17 @@ class Contracts extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->contract->context['caller'] = $request_data['caller'];
+				$this->contract->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->contract->array_options[$index] = $val;
+					$this->contract->array_options[$index] = $this->_checkValForAPI($field, $val, $this->contract);;
 				}
 				continue;
 			}
-			$this->contract->$field = $value;
+
+			$this->contract->$field = $this->_checkValForAPI($field, $value, $this->contract);
 		}
 
 		if ($this->contract->update(DolibarrApiAccess::$user) > 0) {
