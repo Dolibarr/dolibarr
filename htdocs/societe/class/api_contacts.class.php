@@ -288,12 +288,12 @@ class Contacts extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->contact->context['caller'] = $request_data['caller'];
+				$this->contact->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->contact->array_options[$index] = $val;
+					$this->contact->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->contact);
 				}
 				continue;
 			}
@@ -337,12 +337,12 @@ class Contacts extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->contact->context['caller'] = $request_data['caller'];
+				$this->contact->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->contact->array_options[$index] = $val;
+					$this->contact->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->contact);
 				}
 				continue;
 			}
