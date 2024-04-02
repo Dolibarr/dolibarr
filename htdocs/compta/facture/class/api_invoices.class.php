@@ -146,7 +146,7 @@ class Invoices extends DolibarrApi
 		$this->invoice->remaintopay = price2num($this->invoice->total_ttc - $this->invoice->totalpaid - $this->invoice->totalcreditnotes - $this->invoice->totaldeposits, 'MT');
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		// Add external contacts ids
@@ -426,7 +426,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->invoice->getLinesArray();
 		$result = array();
@@ -462,7 +462,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$request_data = (object) $request_data;
@@ -538,7 +538,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('invoice', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->invoice->add_contact($contactid, $type, 'external');
@@ -582,7 +582,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('invoice', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$contacts = $this->invoice->liste_contact();
@@ -624,7 +624,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->invoice->fetch($id);
@@ -659,7 +659,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -717,7 +717,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->invoice->delete(DolibarrApiAccess::$user);
@@ -770,7 +770,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$request_data = (object) $request_data;
@@ -857,7 +857,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->invoice->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
@@ -871,7 +871,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->invoice);
@@ -905,7 +905,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->invoice->setDraft(DolibarrApiAccess::$user, $idwarehouse);
@@ -922,7 +922,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->invoice);
@@ -957,7 +957,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->invoice->validate(DolibarrApiAccess::$user, $force_number, $idwarehouse, $notrigger);
@@ -974,7 +974,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		// copy from order
@@ -1010,7 +1010,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->invoice->setPaid(DolibarrApiAccess::$user, $close_code, $close_note);
@@ -1028,7 +1028,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->invoice);
@@ -1059,7 +1059,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->invoice->setUnpaid(DolibarrApiAccess::$user);
@@ -1077,7 +1077,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->invoice);
@@ -1105,7 +1105,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$discountcheck = new DiscountAbsolute($this->db);
@@ -1148,7 +1148,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($this->invoice->paye) {
@@ -1319,7 +1319,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->invoice->fetch($id);
@@ -1366,7 +1366,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$discount = new DiscountAbsolute($this->db);
 		$result = $discount->fetch($discountid);
@@ -1405,7 +1405,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facture', $id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->invoice->fetch($id);
@@ -1817,7 +1817,7 @@ class Invoices extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('facturerec', $this->template_invoice->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		// Add external contacts ids

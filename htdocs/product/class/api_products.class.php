@@ -351,7 +351,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$oldproduct = dol_clone($this->product);
@@ -453,7 +453,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		// The Product::delete() method uses the global variable $user.
@@ -494,7 +494,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$childrenArbo = $this->product->getChildsArbo($id, 1);
@@ -532,7 +532,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->product->add_sousproduit($id, $subproduct_id, $qty, $incdec);
@@ -562,7 +562,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->product->del_sousproduit($id, $subproduct_id);
@@ -775,7 +775,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->productsupplier->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
@@ -832,7 +832,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->productsupplier->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$resultsupplier = 0;
@@ -987,7 +987,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$product_fourn_list = array();
@@ -2064,7 +2064,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!empty($includestockdata) && DolibarrApiAccess::$user->hasRight('stock', 'lire')) {

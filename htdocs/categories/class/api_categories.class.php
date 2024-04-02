@@ -99,7 +99,7 @@ class Categories extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($include_childs) {
@@ -234,7 +234,7 @@ class Categories extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -274,7 +274,7 @@ class Categories extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->category->delete(DolibarrApiAccess::$user)) {
@@ -767,7 +767,7 @@ class Categories extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->category->getObjectsInCateg($type, $onlyids);

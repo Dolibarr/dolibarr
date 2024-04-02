@@ -75,7 +75,7 @@ class Contracts extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->contract->fetchObjectLinked();
@@ -233,7 +233,7 @@ class Contracts extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->contract->getLinesArray();
 		$result = array();
@@ -265,7 +265,7 @@ class Contracts extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$request_data = (object) $request_data;
@@ -323,7 +323,7 @@ class Contracts extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$request_data = (object) $request_data;
@@ -386,7 +386,7 @@ class Contracts extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$updateRes = $this->contract->active_line(DolibarrApiAccess::$user, $lineid, $datestart, $dateend, $comment);
@@ -424,7 +424,7 @@ class Contracts extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$updateRes = $this->contract->close_line(DolibarrApiAccess::$user, $lineid, $datestart, $comment);
@@ -464,7 +464,7 @@ class Contracts extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		// TODO Check the lineid $lineid is a line of object
@@ -496,7 +496,7 @@ class Contracts extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -624,7 +624,7 @@ class Contracts extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->contract->closeAll(DolibarrApiAccess::$user, $notrigger);
