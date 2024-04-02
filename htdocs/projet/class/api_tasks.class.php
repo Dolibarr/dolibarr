@@ -462,6 +462,12 @@ class Tasks extends DolibarrApi
 				$this->task->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->task->array_options[$index] = $this->_checkValForAPI($field, $val, $this->task);;
+				}
+				continue;
+			}
 
 			$this->task->$field = $this->_checkValForAPI($field, $value, $this->task);
 		}
