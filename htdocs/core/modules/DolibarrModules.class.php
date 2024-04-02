@@ -1894,19 +1894,18 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				// If the module is active
 				foreach ($this->rights as $key => $value) {
 					$r_id	= $this->rights[$key][Rights::KEY_OLD_ID] ?? $this->rights[$key][Rights::KEY_ID];	// permission id in llx_rights_def (not unique because primary key is couple id-entity)
-
-					// Add label with the current language (with specific language key or with PermissionXXX)
 					$r_label = $this->rights[$key][Rights::KEY_OLD_LABEL] ?? $this->rights[$key][Rights::KEY_LABEL];
 
 					// TODO sql error : data too long for column 'libelle'
+					// Add label with the current language (with specific language key or with PermissionXXX)
 					//$labelkey = (isset($this->rights[$key][Rights::KEY_OLD_LABEL]) ? $this->rights[$key][Rights::KEY_OLD_LABEL] : $this->rights[$key][Rights::KEY_LABEL]);
 					//$r_label = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$r_id) != "PermissionAdvanced".$r_id) ? $langs->trans("PermissionAdvanced".$r_id) : (($langs->trans("Permission".$r_id) != "Permission".$r_id) ? $langs->trans("Permission".$r_id) : $langs->trans($labelkey)));
 
 					$r_type		= $this->rights[$key][2] ?? '';	// TODO deprecated
 
-					$r_default	= $this->rights[$key][Rights::KEY_OLD_DEFAULT] ?? (isset($this->rights[$key][Rights::KEY_DEFAULT]) ? ((int) $this->rights[$key][Rights::KEY_DEFAULT]) : 0);
+					$r_default	= $this->rights[$key][Rights::KEY_OLD_DEFAULT] ?? $this->rights[$key][Rights::KEY_DEFAULT] ?? : 0;
 					$r_perms	= $this->rights[$key][Rights::KEY_OLD_FIRST_LEVEL] ?? $this->rights[$key][Rights::KEY_FIRST_LEVEL];
-					$r_subperms	= $this->rights[$key][Rights::KEY_OLD_SECOND_LEVEL] ?? (isset($this->rights[$key][Rights::KEY_SECOND_LEVEL]) ? $this->rights[$key][Rights::KEY_SECOND_LEVEL] : '');
+					$r_subperms	= $this->rights[$key][Rights::KEY_OLD_SECOND_LEVEL] ?? $this->rights[$key][Rights::KEY_SECOND_LEVEL] ?? '';
 
 					// if subperms is defined but perms is not defined, subperms must be empty
 					if (empty($r_perms)) {
