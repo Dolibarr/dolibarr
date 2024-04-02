@@ -1906,7 +1906,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 					$r_default	= $this->rights[$key][Rights::KEY_OLD_DEFAULT] ?? (isset($this->rights[$key][Rights::KEY_DEFAULT]) ? ((int) $this->rights[$key][Rights::KEY_DEFAULT]) : 0);
 					$r_perms	= $this->rights[$key][Rights::KEY_OLD_FIRST_LEVEL] ?? $this->rights[$key][Rights::KEY_FIRST_LEVEL];
-					$r_subperms	= $this->rights[$key][Rights::KEY_OLD_SECOND_LEVEL] ?? (isset($this->rights[$key][Rights::KEY_SECOND_LEVEL]) ? $this->rights[$key][Rights::KEY_SECOND_LEVEL] : ''));
+					$r_subperms	= $this->rights[$key][Rights::KEY_OLD_SECOND_LEVEL] ?? (isset($this->rights[$key][Rights::KEY_SECOND_LEVEL]) ? $this->rights[$key][Rights::KEY_SECOND_LEVEL] : '');
 
 					// if subperms is defined but perms is not defined, subperms must be empty
 					if (empty($r_perms)) {
