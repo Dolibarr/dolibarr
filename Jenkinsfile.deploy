@@ -39,7 +39,7 @@ podTemplate(label: 'helm-pod', serviceAccount: 'jenkins', containers: [
                     sh 'helm list -n dolibarr'
                     sh "helm dependency build ./${HELM_CHART_DIRECTORY}"
                     sh "helm lint ./${HELM_CHART_DIRECTORY}"
-                    sh "helm upgrade --install ${HELM_APP_NAME} ./${HELM_CHART_DIRECTORY}"
+                    sh "helm upgrade --install ${HELM_APP_NAME} ./${HELM_CHART_DIRECTORY} --set ingress.enabled=true,ingress.hosts[0].host=dolibarr.hbenaissa.uk,ingress.hosts[0].paths[0]=/"
                     sh "helm list | grep ${HELM_APP_NAME}"
                 }
             }
