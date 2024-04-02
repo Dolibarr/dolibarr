@@ -4182,19 +4182,13 @@ class User extends CommonObject
  */
 class Rights
 {
-	const KEY_ID = 'id';
-	const KEY_LABEL = 'label';
-	const KEY_DEFAULT = 'default';
-	const KEY_FIRST_LEVEL = 'perms';
-	const KEY_SECOND_LEVEL = 'subperms';
-	const KEY_ENTITY = 'entity';
-	const KEY_MODULE = 'module';
-	const KEY_ENABLED = 'enabled';
-
-	// deprecated values
-	const KEY_OLD_ID = 0;
-	const KEY_OLD_LABEL = 1;
-	const KEY_OLD_DEFAULT = 3;
-	const KEY_OLD_FIRST_LEVEL = 4;
-	const KEY_OLD_SECOND_LEVEL = 5;
+	const KEY_ID = 0;
+	const KEY_LABEL = 1;
+	const KEY_TYPE = 2;	// deprecated
+	const KEY_DEFAULT = 3;
+	const KEY_FIRST_LEVEL = 4;
+	const KEY_SECOND_LEVEL = 5;
+	const KEY_ENTITY = 6;
+	const KEY_MODULE = 7;
+	const KEY_ENABLED = 8;
 }
