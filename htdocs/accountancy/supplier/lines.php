@@ -517,8 +517,8 @@ if ($result) {
 		*/
 
 		// Supplier invoice label
-		print '<td class="tdoverflowonsmartphone small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
-		print $objp->invoice_label;
+		print '<td class="tdoverflowmax200 small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
+		print dol_escape_htmltag($objp->invoice_label);
 		print '</td>';
 
 		// Date invoice
@@ -537,8 +537,8 @@ if ($result) {
 		}
 		print '</td>';
 
-		print '<td class="tdoverflowonsmartphone small">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description, 1));
+		print '<td class="tdoverflowmax200 small" title="'.dol_escape_htmltag($text).'">';
 		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
 		print '</td>';

@@ -2098,12 +2098,6 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	.divmainbodylarge { margin-left: 10px; margin-right: 10px; }
 
-	.tdoverflowonsmartphone {
-		max-width: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
 	.tdoverflowmax100onsmartphone {			/* For tdoverflow, the max-midth become a minimum ! */
 		max-width: 100px;
 		overflow: hidden;

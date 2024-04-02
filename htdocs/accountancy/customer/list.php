@@ -663,8 +663,8 @@ if ($result) {
 		print '</td>';
 
 		// Description of line
-		print '<td class="tdoverflowonsmartphone small">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facture_static_det->desc, 1));
+		print '<td class="tdoverflowmax200 small" title="'.dol_escape_htmltag($text).'">';
 		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $facture_static_det->desc);
 		print '</td>';
