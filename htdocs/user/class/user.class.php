@@ -4184,9 +4184,9 @@ class Rights
 {
 	const KEY_ID = 'id';
 	const KEY_LABEL = 'label';
+	const KEY_DEFAULT = 'default';
 	const KEY_FIRST_LEVEL = 'perms';
 	const KEY_SECOND_LEVEL = 'subperms';
-	const KEY_DEFAULT = 'default';
 	const KEY_ENTITY = 'entity';
 	const KEY_MODULE = 'module';
 	const KEY_ENABLED = 'enabled';
@@ -4194,7 +4194,7 @@ class Rights
 	// deprecated values
 	const KEY_OLD_ID = 0;
 	const KEY_OLD_LABEL = 1;
-	const KEY_OLD_FIRST_LEVEL = 3;
-	const KEY_OLD_SECOND_LEVEL = 4;
-	const KEY_OLD_DEFAULT = 5;
+	const KEY_OLD_DEFAULT = 3;
+	const KEY_OLD_FIRST_LEVEL = 4;
+	const KEY_OLD_SECOND_LEVEL = 5;
 }
