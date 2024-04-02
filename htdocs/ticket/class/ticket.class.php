@@ -3025,7 +3025,7 @@ class Ticket extends CommonObject
 				if (!empty($this->origin_references)) {		// $this->origin_references should be '<'.$this->origin_references.'>'
 					$references .= (empty($references) ? '' : ' ').$this->origin_references;
 				}
-				if (!empty($this->email_msgid) && !preg_match('/'.preg_quote('/', $this->email_msgid).'/', $references)) {
+				if (!empty($this->email_msgid) && !preg_match('/'.preg_quote($this->email_msgid, '/').'/', $references)) {
 					$references .= (empty($references) ? '' : ' ').'<'.$this->email_msgid.'>';
 				}
 				if ($references) {

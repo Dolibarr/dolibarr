@@ -671,6 +671,12 @@ class Invoices extends DolibarrApi
 				$this->invoice->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->invoice->array_options[$index] = $this->_checkValForAPI($field, $val, $this->invoice);
+				}
+				continue;
+			}
 
 			$this->invoice->$field = $this->_checkValForAPI($field, $value, $this->invoice);
 

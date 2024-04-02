@@ -697,6 +697,12 @@ class Proposals extends DolibarrApi
 				$this->propal->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->propal->array_options[$index] = $this->_checkValForAPI($field, $val, $this->propal);
+				}
+				continue;
+			}
 
 			$this->propal->$field = $this->_checkValForAPI($field, $value, $this->propal);
 		}
