@@ -875,14 +875,13 @@ abstract class CommonObject
 		return array(
 			'alreadypaid' => 'totalpaid',
 			'cond_reglement' => 'depr_cond_reglement',
-			'modelpdf' => 'model_pdf',
 			'note' => 'note_private',
 			'commandeFournisseur' => 'origin_object',
-			'expedition' => 'origin_object',
-			'fk_project' => 'fk_project',
+			//'expedition' => 'origin_object',
+			//'fk_project' => 'fk_project',
 			'livraison' => 'origin_object',
-			'projet' => 'project',
-			'statut' => 'status',
+			//'projet' => 'project',
+			//'statut' => 'status',
 		);
 	}
 
@@ -2047,24 +2046,24 @@ abstract class CommonObject
 	/**
 	 *	Read linked origin object.
 	 *	Set ->origin_object
-	 *	Set also ->expedition or ->livraison or ->commandFournisseur (deprecated)
+	 *	Set also ->expedition or ->livraison or ->commandeFournisseur (deprecated)
 	 *
 	 *	@return		void
 	 */
 	public function fetch_origin()
 	{
 		// phpcs:enable
-		if ($this->origin == 'shipping') {
-			$this->origin = 'expedition';
-		}
-		if ($this->origin == 'delivery') {
-			$this->origin = 'livraison';
-		}
-		if ($this->origin == 'order_supplier' || $this->origin == 'supplier_order') {
-			$this->origin = 'commandeFournisseur';
-		}
-
 		$origin = $this->origin ? $this->origin : $this->origin_type;
+
+		if ($origin == 'shipping') {
+			$origin = 'expedition';
+		}
+		if ($origin == 'delivery') {
+			$origin = 'livraison';
+		}
+		if ($origin == 'order_supplier' || $origin == 'supplier_order') {
+			$origin = 'commandeFournisseur';
+		}
 
 		$classname = ucfirst($origin);
 		$this->origin_object = new $classname($this->db);
