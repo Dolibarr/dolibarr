@@ -202,11 +202,11 @@ class Projects extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->project->context['caller'] = $request_data['caller'];
+				$this->project->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->project->$field = $value;
+			$this->project->$field = $this->_checkValForAPI($field, $value, $this->project);
 		}
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
@@ -462,11 +462,11 @@ class Projects extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->project->context['caller'] = $request_data['caller'];
+				$this->project->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->project->$field = $value;
+			$this->project->$field = $this->_checkValForAPI($field, $value, $this->project);
 		}
 
 		if ($this->project->update(DolibarrApiAccess::$user) >= 0) {

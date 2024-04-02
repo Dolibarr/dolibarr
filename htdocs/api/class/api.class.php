@@ -108,12 +108,13 @@ class DolibarrApi
 				}
 				// Others will use 'alphanohtml'
 			}
+
 			if (in_array($field, array('note', 'note_private', 'note_public', 'desc', 'description'))) {
 				return sanitizeVal($value, 'restricthtml');
 			} else {
 				return sanitizeVal($value, 'alphanohtml');
 			}
-		} else {
+		} else {	// Example when $field = 'extrafields' and $value = content of $object->array_options
 			$newarrayvalue = array();
 			foreach ($value as $tmpkey => $tmpvalue) {
 				$newarrayvalue[$tmpkey] = $this->_checkValForAPI($tmpkey, $tmpvalue, $object);

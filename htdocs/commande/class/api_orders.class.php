@@ -273,11 +273,11 @@ class Orders extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->commande->context['caller'] = $request_data['caller'];
+				$this->commande->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->commande->$field = $value;
+			$this->commande->$field = $this->_checkValForAPI($field, $value, $this->commande);
 		}
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
@@ -649,11 +649,11 @@ class Orders extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->commande->context['caller'] = $request_data['caller'];
+				$this->commande->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->commande->$field = $value;
+			$this->commande->$field = $this->_checkValForAPI($field, $value, $this->commande);
 		}
 
 		// Update availability

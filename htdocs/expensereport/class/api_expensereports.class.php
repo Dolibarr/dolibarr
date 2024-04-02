@@ -183,11 +183,11 @@ class ExpenseReports extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->expensereport->context['caller'] = $request_data['caller'];
+				$this->expensereport->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->expensereport->$field = $value;
+			$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->epensereport);
 		}
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
@@ -435,11 +435,11 @@ class ExpenseReports extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->expensereport->context['caller'] = $request_data['caller'];
+				$this->expensereport->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->expensereport->$field = $value;
+			$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
 		}
 
 		if ($this->expensereport->update(DolibarrApiAccess::$user) > 0) {

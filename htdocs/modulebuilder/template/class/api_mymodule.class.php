@@ -206,7 +206,14 @@ class MyModuleApi extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->myobject->context['caller'] = $request_data['caller'];
+				$this->myobject->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->contact->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->contact);
+				}
 				continue;
 			}
 
@@ -261,10 +268,8 @@ class MyModuleApi extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->myobject->array_options[$index] = $val;
+					$this->myobject->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->myobject);
 				}
-				$this->myobject->array_options = $this->_checkValForAPI('extrafields', $this->myobject->array_options, $this->myobject);
-
 				continue;
 			}
 
