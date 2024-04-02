@@ -325,7 +325,7 @@ class Users extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->useraccount->context['caller'] = $request_data['caller'];
+				$this->useraccount->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 			/*if ($field == 'pass') {
@@ -336,7 +336,7 @@ class Users extends DolibarrApi
 			}
 			*/
 
-			$this->useraccount->$field = $value;
+			$this->useraccount->$field = $this->_checkValForAPI($field, $value, $this->useraccount);
 		}
 
 		if ($this->useraccount->create(DolibarrApiAccess::$user) < 0) {
@@ -391,7 +391,7 @@ class Users extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->useraccount->context['caller'] = $request_data['caller'];
+				$this->useraccount->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -416,7 +416,7 @@ class Users extends DolibarrApi
 					throw new RestException(500, 'Error when updating status of user: '.$this->useraccount->error);
 				}
 			} else {
-				$this->useraccount->$field = $value;
+				$this->useraccount->$field = $this->_checkValForAPI($field, $value, $this->useraccount);
 			}
 		}
 

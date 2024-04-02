@@ -339,6 +339,7 @@ if ($modulepart == 'barcode') {
 
 	// Load barcode class
 	$classname = "mod".ucfirst($generator);
+
 	$module = new $classname($db);
 	if ($module->encodingIsSupported($encoding)) {
 		$result = $module->buildBarCode($code, $encoding, $readable);

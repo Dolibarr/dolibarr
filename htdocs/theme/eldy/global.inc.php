@@ -216,6 +216,8 @@ body {
 	font-weight: 400;
 	background-color: var(--colorbackbody);
 	<?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
+	/*transform: scale(1.2);
+	transform-origin: 0 0;*/
 }
 
 /* Style used to protect html content in output to avoid attack by replacing full page with js content */
@@ -3095,11 +3097,8 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	padding-left: 10px;
 	width: 14px;
 }
-.login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password {
-	font-size: 1em;
-}
-.login_table .tdinputlogin input#securitycode {
-	font-size: 1em;
+.login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password, .login_table .tdinputlogin input#securitycode {
+	font-size: 1.1em;
 }
 /* For the static info message */
 .login_main_home {
@@ -3280,6 +3279,7 @@ span.userimg div.userphoto {
 	width: 1.4em;
 	height: 1.4em;
 	padding-top: 1px;
+	display: inline-block;
 }
 img.userphotosmall {			/* size for user photo in lists */
 	border-radius: 0.6em;

@@ -1164,7 +1164,7 @@ class FormTicket
 	 */
 	public function selectSeveritiesTickets($selected = '', $htmlname = 'ticketseverity', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '')
 	{
-		global $langs, $user;
+		global $conf, $langs, $user;
 
 		$ticketstat = new Ticket($this->db);
 
@@ -1183,8 +1183,8 @@ class FormTicket
 			print '<option value="">&nbsp;</option>';
 		}
 
-		if (is_array($ticketstat->cache_severity_tickets) && count($ticketstat->cache_severity_tickets)) {
-			foreach ($ticketstat->cache_severity_tickets as $id => $arrayseverities) {
+		if (is_array($conf->cache['severity_tickets']) && count($conf->cache['severity_tickets'])) {
+			foreach ($conf->cache['severity_tickets'] as $id => $arrayseverities) {
 				// On passe si on a demande de filtrer sur des modes de paiments particuliers
 				if (count($filterarray) && !in_array($arrayseverities['type'], $filterarray)) {
 					continue;
