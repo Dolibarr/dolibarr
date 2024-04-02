@@ -78,7 +78,7 @@ if (empty($reshook)) {
 
 $now = dol_now();
 
-$title = $langs->trans("Notes");
+$title = $langs->trans("ContactNotes");
 
 $form = new Form($db);
 
