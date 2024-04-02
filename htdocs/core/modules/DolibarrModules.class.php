@@ -1850,15 +1850,17 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public function insert_permissions($reinitadminperms = 0, $force_entity = null, $notrigger = 0)
 	{
 		// phpcs:enable
-		global $conf, $user, $langs;
+		global $conf, $user;
+		//global $langs;
 
-		if (is_array($this->langfiles)) {
+		// TODO sql error : data too long for column 'libelle'
+		/*if (is_array($this->langfiles)) {
 			foreach ($this->langfiles as $val) {
 				if ($val) {
 					$langs->load($val);
 				}
 			}
-		}
+		}*/
 
 		$err = 0;
 		$entity = (!empty($force_entity) ? $force_entity : $conf->entity);
