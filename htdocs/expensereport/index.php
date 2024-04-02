@@ -66,6 +66,8 @@ if (!$sortfield) {
 }
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
+
 
 /*
  * View
@@ -190,8 +192,6 @@ print '</div>';
 print '</div><div class="fichetwothirdright">';
 
 
-$max = 10;
-
 $langs->load("boxes");
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo, u.email, u.admin,";
@@ -223,7 +223,11 @@ if ($result) {
 	print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 	print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 	print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
-	print '<th>&nbsp;</th>';
+	print '<th>';
+	print '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?sortfield=d.tms&sortorder=DESC">';
+	print img_picto($langs->trans("FullList"), 'expensereport');
+	print '</a>';
+	print '</th>';
 	print '</tr>';
 	if ($num) {
 		$total_ttc = $totalam = $total = 0;
