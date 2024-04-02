@@ -308,7 +308,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 
 		$db->commit();
 		setEventMessages($langs->trans("StockMovementRecorded"), null, 'mesgs');
-		header("Location: ".DOL_URL_ROOT.'/product/stock/index.php'); // Redirect to avoid pb when using back
+		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php'); // Redirect to avoid pb when using back
 		exit;
 	} else {
 		$db->rollback();

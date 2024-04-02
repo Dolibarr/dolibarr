@@ -223,8 +223,13 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 		print '<th colspan="3">'.$langs->trans("BoxTitleLastLeaveRequests", min($max, $num)).'</th>';
 		print '<th>'.$langs->trans("from").'</th>';
 		print '<th>'.$langs->trans("to").'</th>';
-		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/holiday/list.php?sortfield=cp.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
+		print '<th></th>';
+		print '<th class="right">';
+		print '<a href="'.DOL_URL_ROOT.'/holiday/list.php?sortfield=cp.tms&sortorder=DESC">';
+		print img_picto($langs->trans("FullList"), 'holiday');
+		print '</th>';
 		print '</tr>';
+
 		if ($num) {
 			while ($i < $num && $i < $max) {
 				$obj = $db->fetch_object($result);
@@ -300,11 +305,13 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
 		print '<th class="right">'.$langs->trans("TotalTTC").'</th>';
-		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/expensereport/list.php?sortfield=d.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
+		print '<th></th>';
+		print '<th class="right"><a href="'.DOL_URL_ROOT.'/expensereport/list.php?sortfield=d.tms&sortorder=DESC">';
+		print img_picto($langs->trans("FullList"), 'expensereport');
+		print '</th>';
 		print '</tr>';
-		if ($num) {
-			$total_ttc = $totalam = $total = 0;
 
+		if ($num) {
 			$expensereportstatic = new ExpenseReport($db);
 			$userstatic = new User($db);
 			while ($i < $num && $i < $max) {
@@ -377,7 +384,11 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 		print '<th colspan="3">';
 		print $langs->trans("BoxTitleLatestModifiedCandidatures", min($max, $num));
 		print '</th>';
-		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/recruitment/recruitmentcandidature_list.php?sortfield=t.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
+		print '<th></th>';
+		print '<th class="right"><a href="'.DOL_URL_ROOT.'/recruitment/recruitmentcandidature_list.php?sortfield=t.tms&sortorder=DESC">';
+		print img_picto($langs->trans("FullList"), 'recruitmentcandidature');
+		//print $langs->trans("FullList");
+		print '</th>';
 		print '</tr>';
 		if ($num) {
 			while ($i < $num) {

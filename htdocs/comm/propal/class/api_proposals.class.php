@@ -255,11 +255,11 @@ class Proposals extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->propal->context['caller'] = $request_data['caller'];
+				$this->propal->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->propal->$field = $value;
+			$this->propal->$field = $this->_checkValForAPI($field, $value, $this->propal);
 		}
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
@@ -694,11 +694,17 @@ class Proposals extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->propal->context['caller'] = $request_data['caller'];
+				$this->propal->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->propal->array_options[$index] = $this->_checkValForAPI($field, $val, $this->propal);
+				}
 				continue;
 			}
 
-			$this->propal->$field = $value;
+			$this->propal->$field = $this->_checkValForAPI($field, $value, $this->propal);
 		}
 
 		// update end of validity date
