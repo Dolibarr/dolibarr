@@ -73,8 +73,6 @@ class DolibarrApi
 	/**
 	 * Check and convert a string depending on its type/name.
 	 *
-	 * Display a short message an return a http code 200
-	 *
 	 * @param	string			$field		Field name
 	 * @param	string|array	$value		Value to check/clean
 	 * @param	Object			$object		Object
@@ -84,16 +82,44 @@ class DolibarrApi
 	{
 		// phpcs:enable
 		if (!is_array($value)) {
-			// TODO Use type detected in $object->fields if $object known and we can
+			// Sanitize the value using its type declared into ->fields of $object
+			if (!empty($object->fields) && !empty($object->fields[$field]) && !empty($object->fields[$field]['type'])) {
+				if (strpos($object->fields[$field]['type'], 'int') || strpos($object->fields[$field]['type'], 'double') || in_array($object->fields[$field]['type'], array('real', 'price', 'stock'))) {
+					return sanitizeVal($value, 'int');
+				}
+				if ($object->fields[$field]['type'] == 'html') {
+					return sanitizeVal($value, 'restricthtml');
+				}
+				if ($object->fields[$field]['type'] == 'select') {
+					// Check values are in the list of possible 'options'
+					// TODO
+				}
+				if ($object->fields[$field]['type'] == 'sellist' || $object->fields[$field]['type'] == 'checkbox') {
+					// TODO
+				}
+				if ($object->fields[$field]['type'] == 'boolean' || $object->fields[$field]['type'] == 'radio') {
+					// TODO
+				}
+				if ($object->fields[$field]['type'] == 'email') {
+					return sanitizeVal($value, 'email');
+				}
+				if ($object->fields[$field]['type'] == 'password') {
+					return sanitizeVal($value, 'none');
+				}
+				// Others will use 'alphanohtml'
+			}
 			if (in_array($field, array('note', 'note_private', 'note_public', 'desc', 'description'))) {
 				return sanitizeVal($value, 'restricthtml');
 			} else {
 				return sanitizeVal($value, 'alphanohtml');
 			}
 		} else {
-			// TODO Recall _checkValForAPI for each element of array
+			$newarrayvalue = array();
+			foreach ($value as $tmpkey => $tmpvalue) {
+				$newarrayvalue[$tmpkey] = $this->_checkValForAPI($tmpkey, $tmpvalue, $object);
+			}
 
-			return $value;
+			return $newarrayvalue;
 		}
 	}
 
