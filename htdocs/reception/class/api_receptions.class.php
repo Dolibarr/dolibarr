@@ -188,11 +188,11 @@ class Receptions extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->reception->context['caller'] = $request_data['caller'];
+				$this->reception->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->reception->$field = $value;
+			$this->reception->$field = $this->_checkValForAPI($field, $value, $this->reception);
 		}
 		if (isset($request_data["lines"])) {
 			$lines = array();
@@ -443,11 +443,11 @@ class Receptions extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->reception->context['caller'] = $request_data['caller'];
+				$this->reception->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->reception->$field = $value;
+			$this->reception->$field = $this->_checkValForAPI($field, $value, $this->reception);
 		}
 
 		if ($this->reception->update(DolibarrApiAccess::$user) > 0) {

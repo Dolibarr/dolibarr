@@ -256,7 +256,7 @@ class Thirdparties extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->company->context['caller'] = $request_data['caller'];
+				$this->company->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -301,7 +301,7 @@ class Thirdparties extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->company->context['caller'] = $request_data['caller'];
+				$this->company->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -1345,11 +1345,11 @@ class Thirdparties extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->company->context['caller'] = $request_data['caller'];
+				$this->company->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$account->$field = $value;
+			$account->$field = $this->_checkValForAPI('extrafields', $value, $account);
 		}
 
 		if ($account->create(DolibarrApiAccess::$user) < 0) {
@@ -1402,11 +1402,11 @@ class Thirdparties extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$account->context['caller'] = $request_data['caller'];
+				$account->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$account->$field = $value;
+			$account->$field = $this->_checkValForAPI($field, $value, $account);
 		}
 
 		if (empty($account->rum)) {
@@ -1654,11 +1654,11 @@ class Thirdparties extends DolibarrApi
 			foreach ($request_data as $field => $value) {
 				if ($field === 'caller') {
 					// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-					$account->context['caller'] = $request_data['caller'];
+					$account->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 					continue;
 				}
 
-				$account->$field = $value;
+				$account->$field = $this->_checkValForAPI($field, $value, $account);
 			}
 
 			if ($account->create(DolibarrApiAccess::$user) < 0) {
@@ -1717,11 +1717,11 @@ class Thirdparties extends DolibarrApi
 			foreach ($request_data as $field => $value) {
 				if ($field === 'caller') {
 					// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-					$account->context['caller'] = $request_data['caller'];
+					$account->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 					continue;
 				}
 
-				$account->$field = $value;
+				$account->$field = $this->_checkValForAPI($field, $value, $account);
 			}
 
 			$account->fk_soc = $id;
@@ -1756,11 +1756,11 @@ class Thirdparties extends DolibarrApi
 			foreach ($request_data as $field => $value) {
 				if ($field === 'caller') {
 					// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-					$account->context['caller'] = $request_data['caller'];
+					$account->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 					continue;
 				}
 
-				$account->$field = $value;
+				$account->$field = $this->_checkValForAPI($field, $value, $account);
 			}
 
 			if ($account->update(DolibarrApiAccess::$user) < 0) {
@@ -1818,11 +1818,11 @@ class Thirdparties extends DolibarrApi
 			foreach ($request_data as $field => $value) {
 				if ($field === 'caller') {
 					// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-					$account->context['caller'] = $request_data['caller'];
+					$account->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 					continue;
 				}
 
-				$account->$field = $value;
+				$account->$field = $this->_checkValForAPI($field, $value, $account);
 			}
 
 			if ($account->update(DolibarrApiAccess::$user) < 0) {

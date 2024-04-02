@@ -3097,11 +3097,8 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	padding-left: 10px;
 	width: 14px;
 }
-.login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password {
-	font-size: 1em;
-}
-.login_table .tdinputlogin input#securitycode {
-	font-size: 1em;
+.login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password, .login_table .tdinputlogin input#securitycode {
+	font-size: 1.1em;
 }
 /* For the static info message */
 .login_main_home {
