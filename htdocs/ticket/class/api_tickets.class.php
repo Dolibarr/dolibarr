@@ -315,7 +315,7 @@ class Tickets extends DolibarrApi
 	}
 
 	/**
-	 * Create ticket object
+	 * Add a new message to an existing ticket identified by property ->track_id into request.
 	 *
 	 * @param array $request_data   Request datas
 	 * @return int  ID of ticket
