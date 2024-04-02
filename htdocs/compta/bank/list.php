@@ -58,7 +58,7 @@ $mode = GETPOST('mode', 'aZ');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_number = GETPOST('search_number', 'alpha');
-$search_status = GETPOST('search_status') ? GETPOST('search_status', 'alpha') : 'opened'; // 'all' or '' means 'opened'
+$search_status = GETPOST('search_status', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $search_category_list = "";
@@ -212,10 +212,10 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) && is_arra
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
 }
 $sql .= " WHERE b.entity IN (".getEntity('bank_account').")";
-if ($search_status == 'opened') {
+if ($search_status === 'opened') {
 	$sql .= " AND clos = 0";
 }
-if ($search_status == 'closed') {
+if ($search_status === 'closed') {
 	$sql .= " AND clos = 1";
 }
 if ($search_ref != '') {
@@ -334,7 +334,7 @@ if ($search_label != '') {
 if ($search_number != '') {
 	$param .= '&search_number='.urlencode($search_number);
 }
-if ($search_status != '') {
+if ($search_status != '' && $search_status != '-1') {
 	$param .= '&search_status='.urlencode($search_status);
 }
 if ($show_files) {

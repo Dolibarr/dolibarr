@@ -589,7 +589,7 @@ if ($result) {
 		print '<tr class="oddeven trtohide_'.$obj->module.'"'.(!$isexpanded ? ' style="display:none"' : '').'>';
 
 		// Picto and label of module
-		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
+		print '<td class="maxwidthonsmartphone tdoverflowmax200">';
 		print '</td>';
 
 		// Permission and tick (2 columns)
