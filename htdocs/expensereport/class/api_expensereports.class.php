@@ -86,7 +86,7 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->expensereport->fetchObjectLinked();
@@ -187,7 +187,7 @@ class ExpenseReports extends DolibarrApi
 				continue;
 			}
 
-			$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->epensereport);
+			$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
 		}
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
@@ -225,7 +225,7 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->expensereport->getLinesArray();
 		$result = array();
@@ -259,7 +259,7 @@ class ExpenseReports extends DolibarrApi
 	  }
 
 		  if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
-			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			  throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 	  }
 
 	  $request_data = (object) $request_data;
@@ -327,7 +327,7 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$request_data = (object) $request_data;
@@ -391,7 +391,7 @@ class ExpenseReports extends DolibarrApi
 	  }
 
 		  if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
-			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			  throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 	  }
 
 	  // TODO Check the lineid $lineid is a line of object
@@ -427,7 +427,7 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -511,7 +511,7 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if( ! $this->expensereport->valid(DolibarrApiAccess::$user, $idwarehouse)) {
