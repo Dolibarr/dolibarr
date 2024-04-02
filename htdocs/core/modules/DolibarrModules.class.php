@@ -1893,20 +1893,20 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 				// If the module is active
 				foreach ($this->rights as $key => $value) {
-					$r_id	= (isset($this->rights[$key][Rights::KEY_OLD_ID]) ? $this->rights[$key][Rights::KEY_OLD_ID] : $this->rights[$key][Rights::KEY_ID]);	// permission id in llx_rights_def (not unique because primary key is couple id-entity)
+					$r_id	= $this->rights[$key][Rights::KEY_OLD_ID] ?? $this->rights[$key][Rights::KEY_ID];	// permission id in llx_rights_def (not unique because primary key is couple id-entity)
 
 					// Add label with the current language (with specific language key or with PermissionXXX)
-					$r_label = (isset($this->rights[$key][Rights::KEY_OLD_LABEL]) ? $this->rights[$key][Rights::KEY_OLD_LABEL] : $this->rights[$key][Rights::KEY_LABEL]);
+					$r_label = $this->rights[$key][Rights::KEY_OLD_LABEL] ?? $this->rights[$key][Rights::KEY_LABEL];
 
 					// TODO sql error : data too long for column 'libelle'
 					//$labelkey = (isset($this->rights[$key][Rights::KEY_OLD_LABEL]) ? $this->rights[$key][Rights::KEY_OLD_LABEL] : $this->rights[$key][Rights::KEY_LABEL]);
 					//$r_label = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$r_id) != "PermissionAdvanced".$r_id) ? $langs->trans("PermissionAdvanced".$r_id) : (($langs->trans("Permission".$r_id) != "Permission".$r_id) ? $langs->trans("Permission".$r_id) : $langs->trans($labelkey)));
 
-					$r_type		= isset($this->rights[$key][2]) ? $this->rights[$key][2] : '';	// TODO deprecated
+					$r_type		= $this->rights[$key][2] ?? '';	// TODO deprecated
 
-					$r_default	= (isset($this->rights[$key][Rights::KEY_OLD_DEFAULT]) ? ((int) $this->rights[$key][Rights::KEY_OLD_DEFAULT]) : (isset($this->rights[$key][Rights::KEY_DEFAULT]) ? ((int) $this->rights[$key][Rights::KEY_DEFAULT]) : 0));
-					$r_perms	= (isset($this->rights[$key][Rights::KEY_OLD_FIRST_LEVEL]) ? $this->rights[$key][Rights::KEY_OLD_FIRST_LEVEL] : $this->rights[$key][Rights::KEY_FIRST_LEVEL]);
-					$r_subperms	= (isset($this->rights[$key][Rights::KEY_OLD_SECOND_LEVEL]) ? $this->rights[$key][Rights::KEY_OLD_SECOND_LEVEL] : (isset($this->rights[$key][Rights::KEY_SECOND_LEVEL]) ? $this->rights[$key][Rights::KEY_SECOND_LEVEL] : ''));
+					$r_default	= $this->rights[$key][Rights::KEY_OLD_DEFAULT] ?? (isset($this->rights[$key][Rights::KEY_DEFAULT]) ? ((int) $this->rights[$key][Rights::KEY_DEFAULT]) : 0);
+					$r_perms	= $this->rights[$key][Rights::KEY_OLD_FIRST_LEVEL] ?? $this->rights[$key][Rights::KEY_FIRST_LEVEL];
+					$r_subperms	= $this->rights[$key][Rights::KEY_OLD_SECOND_LEVEL] ?? (isset($this->rights[$key][Rights::KEY_SECOND_LEVEL]) ? $this->rights[$key][Rights::KEY_SECOND_LEVEL] : ''));
 
 					// if subperms is defined but perms is not defined, subperms must be empty
 					if (empty($r_perms)) {
@@ -1929,7 +1929,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					// entity for this right ((default: current entity id)
 					$r_entity = ((isset($this->rights[$key][Rights::KEY_ENTITY]) && ($this->rights[$key][Rights::KEY_ENTITY] == 0 || $this->rights[$key][Rights::KEY_ENTITY] == 'all' )) ? 0 : $entity);
 					// condition to show or hide a user right (default: 1) (eg isModEnabled('anothermodule') or ($conf->global->MAIN_FEATURES_LEVEL > 0) or etc..)
-					$r_enabled	= (isset($this->rights[$key][Rights::KEY_ENABLED]) ? $this->rights[$key][Rights::KEY_ENABLED] : '1');
+					$r_enabled	= $this->rights[$key][Rights::KEY_ENABLED] ?? : '1';
 
 					if (empty($r_type)) {
 						$r_type = 'w';	// TODO deprecated
