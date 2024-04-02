@@ -514,7 +514,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	flex-grow : 1;
 	flex-shrink: 1;
 	flex-basis: auto;
-	width: 280px;
+	width: 290px;
 }
 .box-flex-item.filler {
 	height: 0;

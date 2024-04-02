@@ -191,11 +191,11 @@ class Shipments extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->shipment->context['caller'] = $request_data['caller'];
+				$this->shipment->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->shipment->$field = $value;
+			$this->shipment->$field = $this->_checkValForAPI($field, $value, $this->shipment);
 		}
 		if (isset($request_data["lines"])) {
 			$lines = array();
@@ -448,11 +448,11 @@ class Shipments extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->shipment->context['caller'] = $request_data['caller'];
+				$this->shipment->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->shipment->$field = $value;
+			$this->shipment->$field = $this->_checkValForAPI($field, $value, $this->shipment);
 		}
 
 		if ($this->shipment->update(DolibarrApiAccess::$user) > 0) {

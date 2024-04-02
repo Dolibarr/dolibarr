@@ -198,11 +198,11 @@ class Tasks extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->task->context['caller'] = $request_data['caller'];
+				$this->task->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->task->$field = $value;
+			$this->task->$field = $this->_checkValForAPI($field, $value, $this->task);
 		}
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
@@ -459,16 +459,17 @@ class Tasks extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->task->context['caller'] = $request_data['caller'];
+				$this->task->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->task->array_options[$index] = $val;
+					$this->task->array_options[$index] = $this->_checkValForAPI($field, $val, $this->task);;
 				}
 				continue;
 			}
-			$this->task->$field = $value;
+
+			$this->task->$field = $this->_checkValForAPI($field, $value, $this->task);
 		}
 
 		if ($this->task->update(DolibarrApiAccess::$user) > 0) {

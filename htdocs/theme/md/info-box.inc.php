@@ -567,7 +567,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	flex-shrink: 1;
 	flex-basis: auto;
 
-	width: 280px;
+	width: 290px;
 	margin: 5px 0px 0px 15px;
 }
 .box-flex-item.filler{
@@ -616,6 +616,3 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 		max-width: calc(100% - 82px);
 	}
 }
-
-
-
