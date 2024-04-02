@@ -1,4 +1,6 @@
-FROM php:8.2-apache-buster
+ARG ARCH=
+
+FROM ${ARCH}php:8.2-apache-buster
 
 ENV DOLI_VERSION 19.0.0
 ENV DOLI_INSTALL_AUTO 1
@@ -67,21 +69,17 @@ RUN apt-get update -y \
     && docker-php-ext-install imap \
     && mv ${PHP_INI_DIR}/php.ini-production ${PHP_INI_DIR}/php.ini \
     && rm -rf /var/lib/apt/lists/*
-    
-RUN docker-php-ext-install mysqli
-
 
 # Get Dolibarr
-RUN curl -fLSs https://github.com/Dolibarr/dolibarr/archive/${DOLI_VERSION}.tar.gz |\
-    tar -C /tmp -xz && \
-    cp -r /tmp/dolibarr-${DOLI_VERSION}/htdocs/* /var/www/html/ && \
-    ln -s /var/www/html /var/www/htdocs && \
-    cp -r /tmp/dolibarr-${DOLI_VERSION}/scripts /var/www/ && \
+COPY htdocs/ /var/www/html/
+COPY scripts/ /var/www/scripts/
+
+RUN ln -s /var/www/html /var/www/htdocs && \
     rm -rf /tmp/* && \
     mkdir -p /var/www/documents && \
     mkdir -p /var/www/html/custom && \
     chown -R www-data:www-data /var/www
-    
+
 EXPOSE 80
 VOLUME /var/www/documents
 VOLUME /var/www/html/custom
