@@ -216,7 +216,7 @@ ingress:
   ## @param ingress.hosts[0].host Hostname to your Dolibarr installation
   ## @param ingress.hosts[0].paths Paths within the url structure
   hosts:
-    - host: dolibarr.local
+    - host: dolibarr.hbenaissa.uk
       paths:
         - /
 
