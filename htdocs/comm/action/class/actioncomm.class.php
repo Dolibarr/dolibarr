@@ -132,17 +132,17 @@ class ActionComm extends CommonObject
 	private $libelle;
 
 	/**
-	 * @var integer Date creation record (datec)
+	 * @var int Date creation record (datec)
 	 */
 	public $datec;
 
 	/**
-	 * @var integer Duration (duree)
+	 * @var int Duration (duree)
 	 */
 	public $duree;
 
 	/**
-	 * @var integer Date modification record (tms)
+	 * @var int Date modification record (tms)
 	 */
 	public $datem;
 
@@ -171,27 +171,27 @@ class ActionComm extends CommonObject
 	public $usermodid;
 
 	/**
-	 * @var integer Date action start (datep)
+	 * @var int Date action start (datep)
 	 */
 	public $datep;
 
 	/**
-	 * @var integer Date action end (datef)
+	 * @var int Date action end (datef)
 	 */
 	public $datef;
 
 	/**
-	 * @var integer This is date start action (datep) but modified to not be outside calendar view.
+	 * @var int This is date start action (datep) but modified to not be outside calendar view.
 	 */
 	public $date_start_in_calendar;
 
 	/**
-	 * @var integer This is date end action (datef) but modified to not be outside calendar view.
+	 * @var int This is date end action (datef) but modified to not be outside calendar view.
 	 */
 	public $date_end_in_calendar;
 
 	/**
-	 * @var integer Date action end (datep2)
+	 * @var int Date action end (datep2)
 	 */
 	public $datep2;
 
@@ -212,7 +212,7 @@ class ActionComm extends CommonObject
 	public $ponctuel;
 
 	/**
-	 * @var int<0,100> Percentage
+	 * @var int<-1,100> Percentage
 	 */
 	public $percentage;
 
@@ -308,7 +308,7 @@ class ActionComm extends CommonObject
 	public $icalname;
 
 	/**
-	 * @var int<0,3> Ical color
+	 * @var string Ical color  (Hex value for color on 6 nibles)
 	 */
 	public $icalcolor;
 
@@ -1041,7 +1041,7 @@ class ActionComm extends CommonObject
 	 *
 	 *    @param	User		$user			User making the delete
 	 *    @param    int<0,1>	$notrigger		1 = disable triggers, 0 = enable triggers
-	 *    @return   int<-1,1> 					Return integer <0 if KO, >0 if OK
+	 *    @return   int<-2,1> 					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -1137,7 +1137,7 @@ class ActionComm extends CommonObject
 	 *
 	 *    @param    User		$user			Object user making change
 	 *    @param    int<0,1>	$notrigger		1 = disable triggers, 0 = enable triggers
-	 *    @return   int<-1,1>   				Return integer <0 if KO, >0 if OK
+	 *    @return   int<-2,1>   				Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
