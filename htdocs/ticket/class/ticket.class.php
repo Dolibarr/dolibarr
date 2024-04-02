@@ -269,7 +269,7 @@ class Ticket extends CommonObject
 	public $ip;
 
 	/**
-	 * @var Ticket $oldcopy  State of this ticket as it was stored before an update operation (for triggers)
+	 * @var static $oldcopy  State of this ticket as it was stored before an update operation (for triggers)
 	 */
 	public $oldcopy;
 
@@ -3020,20 +3020,22 @@ class Ticket extends CommonObject
 				if (!empty($this->email_msgid)) {
 					// We must also add 1 entry In-Reply-To: <$this->email_msgid> with Message-ID we respond from (See RFC5322).
 					$moreinheader .= 'In-Reply-To: <'.$this->email_msgid.'>'."\r\n";
+					// TODO We should now be able to give the in_reply_to as a dedicated parameter of new CMailFile() instead of into $moreinheader.
 				}
 
 				// We should add here also a header 'References:'
 				// According to RFC5322, we should add here all the References fields of the initial message concatenated with
 				// the Message-ID of the message we respond from (but each ID must be once).
 				$references = '';
-				if (empty($this->origin_references)) {
-					// TODO If No References is set, use the In-Reply-To for $references .= (empty($references) ? '' : ' ').Source In-reply-To
-				} else {
+				if (!empty($this->origin_references)) {		// $this->origin_references should be '<'.$this->origin_references.'>'
 					$references .= (empty($references) ? '' : ' ').$this->origin_references;
 				}
-				$references .= (empty($references) ? '' : ' ').'<'.$this->email_msgid.'>';
+				if (!empty($this->email_msgid) && !preg_match('/'.preg_quote('/', $this->email_msgid).'/', $references)) {
+					$references .= (empty($references) ? '' : ' ').'<'.$this->email_msgid.'>';
+				}
 				if ($references) {
 					$moreinheader .= 'References: '.$references."\r\n";
+					// TODO We should now be able to give the references as a dedicated parameter of new CMailFile() instead of into $moreinheader.
 				}
 
 				$mailfile = new CMailFile($subject, $receiver, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid, $moreinheader, 'ticket', '', $upload_dir_tmp);

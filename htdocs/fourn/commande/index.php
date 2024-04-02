@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Vinicius Nogueira	<viniciusvgn@gmail.com>
  * Copyright (C) 2019		Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -263,7 +264,7 @@ if ($resql) {
 			$userstatic->lastname = $obj->lastname;
 			$userstatic->firstname = $obj->firstname;
 			$userstatic->email = $obj->email;
-			$userstatic->statut = $obj->statut;
+			$userstatic->status = $obj->statut;
 			print $userstatic->getNomUrl(1);
 			print '</td>';
 			print "</tr>\n";

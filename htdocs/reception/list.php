@@ -487,7 +487,7 @@ if (empty($reshook)) {
 								$product_type,
 								$rang,
 								false,
-								0,
+								array(),
 								null,
 								$lines[$i]->rowid,
 								0,

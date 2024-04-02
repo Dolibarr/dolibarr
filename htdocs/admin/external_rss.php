@@ -7,6 +7,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -280,7 +281,7 @@ if ($resql) {
 		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("Status")."</td>";
 		print "<td>";
-		if ($result > 0 && empty($rss->error)) {
+		if ($result > 0 && empty($rssparser->error)) {
 			print '<span class="ok">'.$langs->trans("Online").'</div>';
 		} else {
 			print '<span class="error">'.$langs->trans("Offline");
