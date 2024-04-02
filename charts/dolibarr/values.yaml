@@ -310,7 +310,7 @@ dolibarr:
     password: admin
 
   ## @param dolibarr.externalUrl External URL
-  externalUrl: http://dolibarr.local
+  externalUrl: http://dolibarr.hbenaissa.uk
 
   cron:
     ## @param dolibarr.cron.enabled Enable cron for scheduled jobs
