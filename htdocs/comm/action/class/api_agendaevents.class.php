@@ -204,7 +204,7 @@ class AgendaEvents extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->actioncomm->context['caller'] = $request_data['caller'];
+				$this->actioncomm->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -261,7 +261,7 @@ class AgendaEvents extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->actioncomm->context['caller'] = $request_data['caller'];
+				$this->actioncomm->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 

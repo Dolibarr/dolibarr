@@ -329,7 +329,7 @@ class Recruitments extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->jobposition->context['caller'] = $request_data['caller'];
+				$this->jobposition->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -367,7 +367,7 @@ class Recruitments extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->jobposition->context['caller'] = $request_data['caller'];
+				$this->jobposition->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -415,7 +415,7 @@ class Recruitments extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->jobposition->context['caller'] = $request_data['caller'];
+				$this->jobposition->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -464,7 +464,7 @@ class Recruitments extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->candidature->context['caller'] = $request_data['caller'];
+				$this->candidature->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
