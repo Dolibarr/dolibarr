@@ -632,7 +632,7 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param	string			$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 * @param	bool			$gm			1=Input information are GMT values, otherwise local to server TZ
-	 * @return	int|string					Date TMS or ''
+	 * @return	int|''						Date TMS or ''
 	 */
 	public function jdate($string, $gm = false)
 	{
