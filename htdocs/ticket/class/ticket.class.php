@@ -229,11 +229,6 @@ class Ticket extends CommonObject
 	public $cache_category_tickets;
 
 	/**
-	 * @var array tickets severity
-	 */
-	public $cache_severity_tickets;
-
-	/**
 	 * @var array cache msgs ticket
 	 */
 	public $cache_msgs_ticket;
@@ -249,7 +244,7 @@ class Ticket extends CommonObject
 	public $labelStatusShort;
 
 	/**
-	 * @var int Notify thirdparty at create
+	 * @var int 	Notify thirdparty at create
 	 */
 	public $notify_tiers_at_create;
 
@@ -548,21 +543,21 @@ class Ticket extends CommonObject
 			$sql .= ") VALUES (";
 			$sql .= " ".(!isset($this->ref) ? '' : "'".$this->db->escape($this->ref)."'").",";
 			$sql .= " ".(!isset($this->track_id) ? 'NULL' : "'".$this->db->escape($this->track_id)."'").",";
-			$sql .= " ".($this->fk_soc > 0 ? $this->db->escape($this->fk_soc) : "null").",";
-			$sql .= " ".($this->fk_project > 0 ? $this->db->escape($this->fk_project) : "null").",";
-			$sql .= " ".($this->fk_contract > 0 ? $this->db->escape($this->fk_contract) : "null").",";
+			$sql .= " ".($this->fk_soc > 0 ? ((int) $this->fk_soc) : "null").",";
+			$sql .= " ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null").",";
+			$sql .= " ".($this->fk_contract > 0 ? ((int) $this->fk_contract) : "null").",";
 			$sql .= " ".(!isset($this->origin_email) ? 'NULL' : "'".$this->db->escape($this->origin_email)."'").",";
 			$sql .= " ".(!isset($this->origin_replyto) ? 'NULL' : "'".$this->db->escape($this->origin_replyto)."'").",";
 			$sql .= " ".(!isset($this->origin_references) ? 'NULL' : "'".$this->db->escape($this->origin_references)."'").",";
-			$sql .= " ".(!isset($this->fk_user_create) ? ($user->id > 0 ? $user->id : 'NULL') : ($this->fk_user_create > 0 ? $this->fk_user_create : 'NULL')).",";
-			$sql .= " ".($this->fk_user_assign > 0 ? $this->fk_user_assign : 'NULL').",";
+			$sql .= " ".(!isset($this->fk_user_create) ? ($user->id > 0 ? ((int) $user->id) : 'NULL') : ($this->fk_user_create > 0 ? ((int) $this->fk_user_create) : 'NULL')).",";
+			$sql .= " ".($this->fk_user_assign > 0 ? ((int) $this->fk_user_assign) : 'NULL').",";
 			$sql .= " ".(empty($this->email_msgid) ? 'NULL' : "'".$this->db->escape($this->email_msgid)."'").",";
 			$sql .= " ".(empty($this->email_date) ? 'NULL' : "'".$this->db->idate($this->email_date)."'").",";
 			$sql .= " ".(!isset($this->subject) ? 'NULL' : "'".$this->db->escape($this->subject)."'").",";
 			$sql .= " ".(!isset($this->message) ? 'NULL' : "'".$this->db->escape($this->message)."'").",";
-			$sql .= " ".(!isset($this->fk_statut) ? '0' : "'".$this->db->escape($this->fk_statut)."'").",";
-			$sql .= " ".(!isset($this->resolution) ? 'NULL' : "'".$this->db->escape($this->resolution)."'").",";
-			$sql .= " ".(!isset($this->progress) ? '0' : "'".$this->db->escape($this->progress)."'").",";
+			$sql .= " ".(!isset($this->fk_statut) ? '0' : ((int) $this->fk_statut)).",";
+			$sql .= " ".(!isset($this->resolution) ? 'NULL' : ((int) $this->resolution)).",";
+			$sql .= " ".(!isset($this->progress) ? '0' : ((int) $this->progress)).",";
 			$sql .= " ".(!isset($this->timing) ? 'NULL' : "'".$this->db->escape($this->timing)."'").",";
 			$sql .= " ".(!isset($this->type_code) ? 'NULL' : "'".$this->db->escape($this->type_code)."'").",";
 			$sql .= " ".(empty($this->category_code) || $this->category_code == '-1' ? 'NULL' : "'".$this->db->escape($this->category_code)."'").",";
@@ -571,7 +566,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->date_read) || dol_strlen($this->date_read) == 0 ? 'NULL' : "'".$this->db->idate($this->date_read)."'").",";
 			$sql .= " ".(!isset($this->date_close) || dol_strlen($this->date_close) == 0 ? 'NULL' : "'".$this->db->idate($this->date_close)."'");
 			$sql .= ", ".((int) $this->entity);
-			$sql .= ", ".(!isset($this->notify_tiers_at_create) ? '1' : "'".$this->db->escape($this->notify_tiers_at_create)."'");
+			$sql .= ", ".(!isset($this->notify_tiers_at_create) ? 1 : ((int) $this->notify_tiers_at_create));
 			$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 			$sql .= ", ".(!isset($this->ip) ? 'NULL' : "'".$this->db->escape($this->ip)."'");
 			$sql .= ")";
@@ -1432,12 +1427,12 @@ class Ticket extends CommonObject
 	 */
 	public function loadCacheSeveritiesTickets()
 	{
-		global $langs;
+		global $conf, $langs;
 
-		if (!empty($this->cache_severity_tickets) && count($this->cache_severity_tickets)) {
+		if (!empty($conf->cache['severity_tickets']) && count($conf->cache['severity_tickets'])) {
+			// Cache already loaded
 			return 0;
 		}
-		// Cache deja charge
 
 		$sql = "SELECT rowid, code, label, use_default, pos, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_severity";
@@ -1452,11 +1447,11 @@ class Ticket extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->cache_severity_tickets[$obj->rowid]['code'] = $obj->code;
+				$conf->cache['severity_tickets'][$obj->rowid]['code'] = $obj->code;
 				$label = ($langs->trans("TicketSeverityShort".$obj->code) != "TicketSeverityShort".$obj->code ? $langs->trans("TicketSeverityShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
-				$this->cache_severity_tickets[$obj->rowid]['label'] = $label;
-				$this->cache_severity_tickets[$obj->rowid]['use_default'] = $obj->use_default;
-				$this->cache_severity_tickets[$obj->rowid]['pos'] = $obj->pos;
+				$conf->cache['severity_tickets'][$obj->rowid]['label'] = $label;
+				$conf->cache['severity_tickets'][$obj->rowid]['use_default'] = $obj->use_default;
+				$conf->cache['severity_tickets'][$obj->rowid]['pos'] = $obj->pos;
 				$i++;
 			}
 			return $num;
