@@ -11,10 +11,11 @@
  * Copyright (C) 2013-2015  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       charlene Benke          <charlie@patas-monkey.com>
- * Copyright (C) 2018-2021	Nicolas ZABOURI				<info@inovea-conseil.com>
- * Copyright (C) 2019-2024  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2019       Abbes Bahfir				<dolipar@dolipar.org>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2021	Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2019-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2019       Abbes Bahfir			<dolipar@dolipar.org>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +84,7 @@ class User extends CommonObject
 	public $id = 0;
 
 	/**
-	 * @var User old copy of User
+	 * @var static old copy of User
 	 */
 	public $oldcopy;
 
@@ -380,6 +381,16 @@ class User extends CommonObject
 	public $fk_warehouse;
 
 	/**
+	 *@var int id of establishment
+	 */
+	public $fk_establishment;
+
+	/**
+	 *@var string label of establishment
+	 */
+	public $label_establishment;
+
+	/**
 	 * @var int egroupware id
 	 */
 	public $egroupware_id;
@@ -485,10 +496,12 @@ class User extends CommonObject
 		$sql .= " u.national_registration_number,";
 		$sql .= " u.ref_employee,";
 		$sql .= " c.code as country_code, c.label as country,";
-		$sql .= " d.code_departement as state_code, d.nom as state";
+		$sql .= " d.code_departement as state_code, d.nom as state,";
+		$sql .= " s.label as label_establishment, u.fk_establishment";
 		$sql .= " FROM ".$this->db->prefix()."user as u";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."c_country as c ON u.fk_country = c.rowid";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."c_departements as d ON u.fk_state = d.rowid";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."establishment as s ON u.fk_establishment = s.rowid";
 
 		if ($entity < 0) {
 			if ((!isModEnabled('multicompany') || !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) && (!empty($user->entity))) {
@@ -627,6 +640,8 @@ class User extends CommonObject
 				$this->default_range = $obj->default_range;
 				$this->default_c_exp_tax_cat = $obj->default_c_exp_tax_cat;
 				$this->fk_warehouse = $obj->fk_warehouse;
+				$this->fk_establishment = $obj->fk_establishment;
+				$this->label_establishment = $obj->label_establishment;
 
 				// Protection when module multicompany was set, admin was set to first entity and then, the module was disabled,
 				// in such case, this admin user must be admin for ALL entities.
@@ -2003,6 +2018,7 @@ class User extends CommonObject
 
 		$this->birth						= empty($this->birth) ? '' : $this->birth;
 		$this->fk_warehouse					= (int) $this->fk_warehouse;
+		$this->fk_establishment				= (int) $this->fk_establishment;
 
 		$this->setUpperOrLowerCase();
 
@@ -2117,6 +2133,7 @@ class User extends CommonObject
 		$sql .= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
 		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
 		$sql .= ", fk_warehouse = ".($this->fk_warehouse > 0 ? $this->fk_warehouse : "null");
+		$sql .= ", fk_establishment = ".($this->fk_establishment > 0 ? $this->fk_establishment : "null");
 		$sql .= ", lang = ".($this->lang ? "'".$this->db->escape($this->lang)."'" : "null");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 

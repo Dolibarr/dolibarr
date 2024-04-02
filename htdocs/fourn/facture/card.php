@@ -1764,7 +1764,7 @@ if (empty($reshook)) {
 					0,
 					$pu_devise,
 					GETPOST('fourn_ref', 'alpha'),
-					''
+					0
 				);
 			}
 			if ($idprod == -99 || $idprod == 0) {
@@ -2121,6 +2121,7 @@ if ($action == 'create') {
 			$classname = 'CommandeFournisseur';
 		}
 		$objectsrc = new $classname($db);
+		'@phan-var-force Project|Commande|Propal|Contrat|CommandeFournisseur|CommonObject $objectsrc';
 		$objectsrc->fetch($originid);
 		$objectsrc->fetch_thirdparty();
 
@@ -2222,8 +2223,8 @@ if ($action == 'create') {
 		$datetmp = dol_mktime(12, 0, 0, GETPOSTINT('echmonth'), GETPOSTINT('echday'), GETPOSTINT('echyear'));
 		$datedue = ($datetmp == '' ? -1 : $datetmp);
 
-		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
-			$currency_code = $soc->multicurrency_code;
+		if (isModEnabled("multicurrency") && !empty($societe->multicurrency_code)) {
+			$currency_code = $societe->multicurrency_code;
 		}
 	}
 
