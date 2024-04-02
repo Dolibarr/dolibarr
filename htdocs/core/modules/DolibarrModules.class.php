@@ -1929,7 +1929,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					// entity for this right ((default: current entity id)
 					$r_entity = ((isset($this->rights[$key][Rights::KEY_ENTITY]) && ($this->rights[$key][Rights::KEY_ENTITY] == 0 || $this->rights[$key][Rights::KEY_ENTITY] == 'all' )) ? 0 : $entity);
 					// condition to show or hide a user right (default: 1) (eg isModEnabled('anothermodule') or ($conf->global->MAIN_FEATURES_LEVEL > 0) or etc..)
-					$r_enabled	= $this->rights[$key][Rights::KEY_ENABLED] ?? : '1';
+					$r_enabled	= $this->rights[$key][Rights::KEY_ENABLED] ?? '1';
 
 					if (empty($r_type)) {
 						$r_type = 'w';	// TODO deprecated
