@@ -1138,7 +1138,7 @@ if (empty($action) || $action == 'view') {
 	// Button to write into Ledger
 	if (getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1'
 		|| getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1'
-		|| getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == "" || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1'
+		|| (isModEnabled("salary") && (getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == "" || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1'))
 		|| (isModEnabled("expensereport") && (getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT') == '-1'))) {
 
 
