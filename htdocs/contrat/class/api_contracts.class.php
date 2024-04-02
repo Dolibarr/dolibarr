@@ -507,6 +507,12 @@ class Contracts extends DolibarrApi
 				$this->contract->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->contract->array_options[$index] = $this->_checkValForAPI($field, $val, $this->contract);;
+				}
+				continue;
+			}
 
 			$this->contract->$field = $this->_checkValForAPI($field, $value, $this->contract);
 		}
