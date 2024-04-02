@@ -23,7 +23,6 @@ podTemplate(label: 'helm-pod', serviceAccount: 'jenkins', containers: [
   ) {
     node('helm-pod') {
 
-        def REPOSITORY_URI = "iyedbnaissa/dolibarr_build"
         def HELM_APP_NAME= "dolibarr"
         def HELM_CHART_DIRECTORY= "charts/dolibarr"
 
@@ -34,7 +33,6 @@ podTemplate(label: 'helm-pod', serviceAccount: 'jenkins', containers: [
         stage('Deploy Image to k8s'){
             container('helm'){
                 withKubeConfig([credentialsId: 'kubeconfig']) {
-                    sh 'helm repo add bitnami https://charts.bitnami.com/bitnami'
                     sh 'helm repo update'
                     sh 'helm list -n dolibarr'
                     sh "helm dependency build ./${HELM_CHART_DIRECTORY}"
