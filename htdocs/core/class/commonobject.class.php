@@ -877,11 +877,11 @@ abstract class CommonObject
 			'cond_reglement' => 'depr_cond_reglement',
 			'note' => 'note_private',
 			'commandeFournisseur' => 'origin_object',
-			//'expedition' => 'origin_object',
-			//'fk_project' => 'fk_project',
+			'expedition' => 'origin_object',
+			'fk_project' => 'fk_project',
 			'livraison' => 'origin_object',
-			//'projet' => 'project',
-			//'statut' => 'status',
+			'projet' => 'project',
+			'statut' => 'status',
 		);
 	}
 
