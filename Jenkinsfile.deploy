@@ -1,0 +1,49 @@
+podTemplate(label: 'helm-pod', serviceAccount: 'jenkins', containers: [ 
+    containerTemplate(
+      name: 'kubectl', 
+      image: 'bitnami/kubectl',
+      resourceRequestCpu: '100m',
+      resourceLimitCpu: '300m',
+      resourceRequestMemory: '300Mi',
+      resourceLimitMemory: '500Mi', 
+      ttyEnabled: true, 
+      command: 'cat'
+    ),
+    containerTemplate(
+      name: 'helm', 
+      image: 'alpine/helm', 
+      resourceRequestCpu: '100m',
+      resourceLimitCpu: '300m',
+      resourceRequestMemory: '300Mi',
+      resourceLimitMemory: '500Mi',
+      ttyEnabled: true, 
+      command: 'cat'
+    )
+  ],
+  ) {
+    node('helm-pod') {
+
+        def REPOSITORY_URI = "iyedbnaissa/dolibarr_build"
+        def HELM_APP_NAME= "dolibarr"
+        def HELM_CHART_DIRECTORY= "charts/dolibarr"
+
+        stage('Get latest version of code') {
+          checkout scm
+        }  
+
+        stage('Deploy Image to k8s'){
+            container('helm'){
+                withKubeConfig([credentialsId: 'kubeconfig']) {
+                    sh 'helm repo add bitnami https://charts.bitnami.com/bitnami'
+                    sh 'helm repo update'
+                    sh 'helm list -n dolibarr'
+                    sh "helm dependency build ./${HELM_CHART_DIRECTORY}"
+                    sh "helm lint ./${HELM_CHART_DIRECTORY}"
+                    sh "helm upgrade --install ${HELM_APP_NAME} ./${HELM_CHART_DIRECTORY} --set ingress.enabled=true"
+                    sh "helm list | grep ${HELM_APP_NAME}"
+                    
+                }
+            }
+        }                 
+    }
+}
