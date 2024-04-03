@@ -21,6 +21,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/doldeprecationhandler.class.php';
+
 /**
  *	\file       	htdocs/core/class/conf.class.php
  *	\ingroup		core
@@ -30,9 +32,17 @@
 
 /**
  *  Class to stock current configuration
+ *
  */
 class Conf extends stdClass
 {
+	use DolDeprecationHandler;
+	/**
+	 * When true, indicates to the DeprecationHandler that this
+	 * class supports dynamic properties.
+	 */
+	protected $enableDynamicProperties = true;
+
 	/**
 	 * @var Object 		Associative array with properties found in conf file
 	 */
@@ -113,7 +123,6 @@ class Conf extends stdClass
 	 * @var string Used to store current menu handler
 	 */
 	public $standard_menu;
-
 	/**
 	 * @var array<string,string>  List of activated modules
 	 */
@@ -242,26 +251,14 @@ class Conf extends stdClass
 	public $fournisseur;
 
 	/**
-	 * @var stdClass	Product
+	 * @var stdClass
 	 */
 	public $product;
-
-	/**
-	 * @var stdClass
-	 * @deprecated Use product
-	 */
-	public $produit;
 
 	/**
 	 * @var stdClass  	service
 	 */
 	public $service;
-
-	/**
-	 * @var stdClass
-	 * @deprecated Use contract
-	 */
-	public $contrat;
 
 	/**
 	 * @var stdClass Contract
@@ -285,7 +282,7 @@ class Conf extends stdClass
 
 	/**
 	 * @var stdClass
-	 * @deprecated Use order
+	 * @deprecated Use $order
 	 */
 	public $commande;
 
@@ -296,7 +293,7 @@ class Conf extends stdClass
 
 	/**
 	 * @var stdClass
-	 * @deprecated Use invoice
+	 * @deprecated Use $invoice
 	 */
 	public $facture;
 
@@ -312,7 +309,7 @@ class Conf extends stdClass
 
 	/**
 	 * @var stdClass
-	 * @deprecated Use member
+	 * @deprecated Use $member
 	 */
 	public $adherent;
 
@@ -352,10 +349,32 @@ class Conf extends stdClass
 	public $api;
 
 	/**
-	 * @var ?stdClass
-	 * @deprecated Use project
+	 * @var stdClass
 	 */
-	public $projet;
+	public $bank;
+
+	/**
+	 * @var stdClass
+	 */
+	public $notification;
+
+	/**
+	 * @var stdClass
+	 */
+	public $expensereport;
+
+	/**
+	 * @var stdClass
+	 */
+	public $productbatch;
+
+	/**
+	 * @var stdClass
+	 * @deprecated      Use $project
+	 * @see $project
+	 */
+	private $projet;
+
 
 	/**
 	 * @var ?stdClass
@@ -386,6 +405,34 @@ class Conf extends stdClass
 	 * @var ?stdClass
 	 */
 	public $mrp;
+
+	/**
+	 * @var stdClass
+	 * @deprecated      Use $category
+	 * @see $category
+	 */
+	private $categorie;
+
+	/**
+	 * @var stdClass
+	 * @deprecated      Use $supplier_proposal
+	 * @see $supplier_proposal
+	 */
+	private $supplierproposal;
+
+	/**
+	 * @var stdClass
+	 * @deprecated      Use $delivery_note
+	 * @see $delivery_note
+	 */
+	private $expedition;
+
+	/**
+	 * @var stdClass
+	 * @deprecated      Use $bank
+	 * @see $bank
+	 */
+	private $banque;
 
 	/**
 	 * Constructor
@@ -439,20 +486,45 @@ class Conf extends stdClass
 		$this->fournisseur = new stdClass();
 		$this->product = new stdClass();
 		$this->service = new stdClass();
-		$this->contrat = new stdClass();
+		$this->contract = new stdClass();
 		$this->actions = new stdClass();
 		$this->agenda = new stdClass();
-		$this->commande = new stdClass();
+		$this->order = new stdClass();
 		$this->propal = new stdClass();
-		$this->facture = new stdClass();
+		$this->invoice = new stdClass();
 		$this->user	= new stdClass();
-		$this->adherent = new stdClass();
+		$this->member = new stdClass();
 		$this->bank = new stdClass();
 		$this->mailing = new stdClass();
 		$this->notification = new stdClass();
 		$this->expensereport = new stdClass();
 		$this->productbatch = new stdClass();
 		$this->api = new stdClass();
+	}
+
+	/**
+	 * Provide list of deprecated properties and replacements
+	 *
+	 * @return array<string,string>
+	 */
+	protected function deprecatedProperties()
+	{
+		return MODULE_MAPPING
+		+ array(
+			// Previously detected module names, already in mapping
+			//'adherent' => 'member',
+			//'banque' => 'bank',
+			//'categorie' => 'category',
+			//'commande' => 'order',
+			//'contrat' => 'contract',
+			//'expedition' => 'delivery_note',
+			//'facture' => 'invoice',
+			//'projet' => 'project',
+
+			// Other, not deprecated module names
+			'produit' => 'product',
+			'supplierproposal' => 'supplier_proposal',
+		);
 	}
 
 
@@ -510,14 +582,14 @@ class Conf extends stdClass
 		$this->compta = new stdClass();
 		$this->product = new stdClass();
 		$this->service = new stdClass();
-		$this->contrat = new stdClass();
+		$this->contract = new stdClass();
 		$this->actions = new stdClass();
 		$this->agenda = new stdClass();
-		$this->commande = new stdClass();
+		$this->order = new stdClass();
 		$this->propal = new stdClass();
-		$this->facture = new stdClass();
+		$this->invoice = new stdClass();
 		$this->user	= new stdClass();
-		$this->adherent = new stdClass();
+		$this->member = new stdClass();
 		$this->bank = new stdClass();
 		$this->notification = new stdClass();
 		$this->expensereport = new stdClass();
@@ -624,12 +696,6 @@ class Conf extends stdClass
 							} elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i', $key, $reg)) {
 								// If this is a module constant (must be at end)
 								$modulename = strtolower($reg[1]);
-								if ($modulename == 'propale') {
-									$modulename = 'propal';
-								}
-								if ($modulename == 'supplierproposal') {
-									$modulename = 'supplier_proposal';
-								}
 								$this->modules[$modulename] = $modulename; // Add this module in list of enabled modules
 
 								// deprecated in php 8.2
@@ -640,7 +706,6 @@ class Conf extends stdClass
 								$this->$modulename->enabled = true;	// TODO Remove this
 
 								// Duplicate entry with the new name
-								/*
 								$mapping = $this->deprecatedProperties();
 								if (array_key_exists($modulename, $mapping)) {
 									$newmodulename = $mapping[$modulename];
@@ -651,7 +716,6 @@ class Conf extends stdClass
 									}
 									$this->$newmodulename->enabled = true;	// TODO Remove this
 								}
-								*/
 							}
 						}
 					}
@@ -884,12 +948,12 @@ class Conf extends stdClass
 			$this->productbatch->multidir_output = array($this->entity => $rootfordata."/productlot");
 			$this->productbatch->multidir_temp = array($this->entity => $rootfortemp."/productlot/temp");
 
-			// Module contrat
-			$this->contrat->multidir_output = array($this->entity => $rootfordata."/contract");
-			$this->contrat->multidir_temp = array($this->entity => $rootfortemp."/contract/temp");
+			// Module contract
+			$this->contract->multidir_output = array($this->entity => $rootfordata."/contract");
+			$this->contract->multidir_temp = array($this->entity => $rootfortemp."/contract/temp");
 			// For backward compatibility
-			$this->contrat->dir_output = $rootfordata."/contract";
-			$this->contrat->dir_temp = $rootfortemp."/contract/temp";
+			$this->contract->dir_output = $rootfordata."/contract";
+			$this->contract->dir_temp = $rootfortemp."/contract/temp";
 
 			// Module bank
 			$this->bank->multidir_output = array($this->entity => $rootfordata."/bank");
@@ -1207,14 +1271,14 @@ class Conf extends stdClass
 			// Avoid strict errors. TODO: Replace conf->xxx->warning_delay with a property conf->warning_delays['xxx']
 			if (isset($this->agenda)) {
 				$this->warning_delays['subscription'] = getDolGlobalInt('MAIN_DELAY_MEMBERS') * 86400;
-				$this->adherent->subscription = new stdClass();
-				$this->adherent->subscription->warning_delay = getDolGlobalInt('MAIN_DELAY_MEMBERS') * 86400;
+				$this->member->subscription = new stdClass();
+				$this->member->subscription->warning_delay = getDolGlobalInt('MAIN_DELAY_MEMBERS') * 86400;
 			}
 			if (isset($this->agenda)) {
 				$this->warning_delays['agenda'] = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO', 7) * 86400;
 				$this->agenda->warning_delay = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO', 7) * 86400;
 			}
-			if (isset($this->projet)) {
+			if (isset($this->project)) {
 				$this->warning_delays['project'] = (getDolGlobalInt('MAIN_DELAY_PROJECT_TO_CLOSE', 7) * 86400);
 				$this->warning_delays['task'] = (getDolGlobalInt('MAIN_DELAY_TASKS_TODO', 7) * 86400);
 				$this->projet->warning_delay = (getDolGlobalInt('MAIN_DELAY_PROJECT_TO_CLOSE', 7) * 86400);
@@ -1224,10 +1288,10 @@ class Conf extends stdClass
 			if (isset($this->commande)) {
 				$this->warning_delays['order'] = getDolGlobalInt('MAIN_DELAY_ORDERS_TO_PROCESS', 2) * 86400;
 				$this->warning_delays['purchase_order'] = getDolGlobalInt('MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS', 7) * 86400;
-				$this->commande->client = new stdClass();
-				$this->commande->fournisseur = new stdClass();
-				$this->commande->client->warning_delay = getDolGlobalInt('MAIN_DELAY_ORDERS_TO_PROCESS', 2) * 86400;
-				$this->commande->fournisseur->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS', 7) * 86400;
+				$this->order->client = new stdClass();
+				$this->order->fournisseur = new stdClass();
+				$this->order->client->warning_delay = getDolGlobalInt('MAIN_DELAY_ORDERS_TO_PROCESS', 2) * 86400;
+				$this->order->fournisseur->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS', 7) * 86400;
 			}
 			if (isset($this->propal)) {
 				$this->warning_delays['proposal_close'] = getDolGlobalInt('MAIN_DELAY_PROPALS_TO_CLOSE') * 86400;
@@ -1247,21 +1311,22 @@ class Conf extends stdClass
 				$this->supplier_proposal->facturation->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL') * 86400;
 			}
 			if (isset($this->facture)) {
+<<<<<<< HEAD
 				$this->warning_delays['invoice'] = getDolGlobalInt('MAIN_DELAY_CUSTOMER_BILLS_UNPAYED') * 86400;
 				$this->warning_delays['supplier_invoice'] = getDolGlobalInt('MAIN_DELAY_SUPPLIER_BILLS_TO_PAY') * 86400;
-				$this->facture->client = new stdClass();
-				$this->facture->fournisseur = new stdClass();
-				$this->facture->client->warning_delay = getDolGlobalInt('MAIN_DELAY_CUSTOMER_BILLS_UNPAYED') * 86400;
-				$this->facture->fournisseur->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_BILLS_TO_PAY') * 86400;
+				$this->invoice->client = new stdClass();
+				$this->invoice->fournisseur = new stdClass();
+				$this->invoice->client->warning_delay = getDolGlobalInt('MAIN_DELAY_CUSTOMER_BILLS_UNPAYED') * 86400;
+				$this->invoice->fournisseur->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_BILLS_TO_PAY') * 86400;
 			}
 			if (isset($this->contrat)) {
 				$this->warning_delays['contract_inactive'] = getDolGlobalInt('MAIN_DELAY_NOT_ACTIVATED_SERVICES') * 86400;
 				$this->warning_delays['contract_expired'] = getDolGlobalInt('MAIN_DELAY_RUNNING_SERVICES') * 86400;
-				$this->contrat->services = new stdClass();
-				$this->contrat->services->inactifs = new stdClass();
-				$this->contrat->services->expires = new stdClass();
-				$this->contrat->services->inactifs->warning_delay = getDolGlobalInt('MAIN_DELAY_NOT_ACTIVATED_SERVICES') * 86400;
-				$this->contrat->services->expires->warning_delay = getDolGlobalInt('MAIN_DELAY_RUNNING_SERVICES') * 86400;
+				$this->contract->services = new stdClass();
+				$this->contract->services->inactifs = new stdClass();
+				$this->contract->services->expires = new stdClass();
+				$this->contract->services->inactifs->warning_delay = getDolGlobalInt('MAIN_DELAY_NOT_ACTIVATED_SERVICES') * 86400;
+				$this->contract->services->expires->warning_delay = getDolGlobalInt('MAIN_DELAY_RUNNING_SERVICES') * 86400;
 			}
 
 			$this->warning_delays['bank_cheque_to_conciliate'] = getDolGlobalInt('MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE') * 86400;
@@ -1404,37 +1469,6 @@ class Conf extends stdClass
 				$this->tzuserinputkey = $this->global->MAIN_TZUSERINPUTKEY;	// 'tzserver' or 'tzuserrel'
 			}
 
-			// Simple deprecation management. We do not use DolDeprecationHandlet for $conf.
-
-			// product is new use
-			if (isset($this->product)) {
-				// For backward compatibility
-				$this->produit = $this->product;
-			}
-			// invoice is new use, facture is old use still initialised
-			if (isset($this->facture)) {
-				$this->invoice = $this->facture;
-			}
-			// order is new use, commande is old use still initialised
-			if (isset($this->commande)) {
-				$this->order = $this->commande;
-			}
-			// contract is new use, contrat is old use still initialised
-			if (isset($this->contrat)) {
-				$this->contract = $this->contrat;
-			}
-			// category is new use, categorie is old use still initialised
-			if (isset($this->categorie)) {
-				$this->category = $this->categorie;
-			}
-			// project is new use, projet is old use still initialised
-			if (isset($this->projet) && !isset($this->project)) {
-				$this->project = $this->projet;
-			}
-			// member is new use, adherent is old use still initialised
-			if (isset($this->adherent) && !isset($this->member)) {
-				$this->member = $this->adherent;
-			}
 
 			// Object $mc
 			if (!defined('NOREQUIREMC') && isModEnabled('multicompany')) {
