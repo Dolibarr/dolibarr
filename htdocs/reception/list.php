@@ -286,8 +286,8 @@ if (empty($reshook)) {
 					}
 
 					// try to get from source of reception (supplier order)
-					if (!empty($rcp->commandeFournisseur)) {
-						$supplierOrder = $rcp->commandeFournisseur;
+					if (!empty($rcp->origin_object)) {
+						$supplierOrder = $rcp->origin_object;
 						if (empty($cond_reglement_id) && !empty($supplierOrder->cond_reglement_id)) {
 							$cond_reglement_id = $supplierOrder->cond_reglement_id;
 						}
@@ -487,7 +487,7 @@ if (empty($reshook)) {
 								$product_type,
 								$rang,
 								false,
-								0,
+								array(),
 								null,
 								$lines[$i]->rowid,
 								0,
@@ -571,8 +571,8 @@ if (empty($reshook)) {
 			$db->rollback();
 
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];
-			$_GET["originid"] = $_POST["originid"];
+			$_GET["origin"] = $_POST["origin"];		// Keep this ?
+			$_GET["originid"] = $_POST["originid"];	// Keep this ?
 			setEventMessages($object->error, $errors, 'errors');
 			$error++;
 		}

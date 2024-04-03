@@ -337,7 +337,7 @@ class Contact extends CommonObject
 
 	/**
 	 * Old copy
-	 * @var Contact
+	 * @var static
 	 */
 	public $oldcopy; // To contains a clone of this when we need to save old properties of object
 
@@ -975,7 +975,7 @@ class Contact extends CommonObject
 	 *  Load object contact.
 	 *
 	 *  @param      int		$id         	Id of contact
-	 *  @param      User	$user       	Load also alerts of this user (subscribing to alerts) that want alerts about this contact
+	 *  @param      ?User	$user       	Load also alerts of this user (subscribing to alerts) that want alerts about this contact
 	 *  @param      string  $ref_ext    	External reference, not given by Dolibarr
 	 *  @param		string	$email			Email
 	 *  @param		int		$loadalsoroles	Load also roles. Try to always 0 here and load roles with a separate call of fetchRoles().

@@ -437,6 +437,7 @@ CardContent
 CardProduct0
 CardProduct1
 Cards
+Cart
 CashAccounts
 CashDeskBankCB
 CashDeskBankCash
@@ -2030,6 +2031,7 @@ Notify_MEMBER_MODIFY
 Notify_MEMBER_RESILIATE
 Notify_MEMBER_SUBSCRIPTION
 Notify_MEMBER_VALIDATE
+Notify_ORDER_CANCEL
 Notify_ORDER_CLOSE
 Notify_ORDER_SENTBYMAIL
 Notify_ORDER_SUPPLIER_APPROVE

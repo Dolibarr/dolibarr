@@ -801,7 +801,7 @@ if (empty($reshook)) {
 			if (empty($dateinvoice)) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('DateInvoice')), null, 'errors');
 				$action = 'create';
-				$_GET['socid'] = $_POST['socid'];
+				//$_GET['socid'] = $_POST['socid'];
 				$error++;
 			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
@@ -867,7 +867,7 @@ if (empty($reshook)) {
 			if (empty($dateinvoice)) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('DateInvoice')), null, 'errors');
 				$action = 'create';
-				$_GET['socid'] = $_POST['socid'];
+				//$_GET['socid'] = $_POST['socid'];
 				$error++;
 			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
@@ -878,7 +878,7 @@ if (empty($reshook)) {
 			if (!GETPOST('ref_supplier')) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('RefSupplierBill')), null, 'errors');
 				$action = 'create';
-				$_GET['socid'] = $_POST['socid'];
+				//$_GET['socid'] = $_POST['socid'];
 				$error++;
 			}
 
@@ -1035,7 +1035,7 @@ if (empty($reshook)) {
 			if (empty($dateinvoice)) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('DateInvoice')), null, 'errors');
 				$action = 'create';
-				$_GET['socid'] = $_POST['socid'];
+				//$_GET['socid'] = $_POST['socid'];
 				$error++;
 			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
@@ -1046,7 +1046,7 @@ if (empty($reshook)) {
 			if (!GETPOST('ref_supplier')) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('RefSupplierBill')), null, 'errors');
 				$action = 'create';
-				$_GET['socid'] = $_POST['socid'];
+				//$_GET['socid'] = $_POST['socid'];
 				$error++;
 			}
 
@@ -1405,7 +1405,7 @@ if (empty($reshook)) {
 
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'create';
-			$_GET['socid'] = $_POST['socid'];
+			//$_GET['socid'] = $_POST['socid'];
 		} else {
 			$db->commit();
 
@@ -1764,7 +1764,7 @@ if (empty($reshook)) {
 					0,
 					$pu_devise,
 					GETPOST('fourn_ref', 'alpha'),
-					''
+					0
 				);
 			}
 			if ($idprod == -99 || $idprod == 0) {
@@ -2121,6 +2121,7 @@ if ($action == 'create') {
 			$classname = 'CommandeFournisseur';
 		}
 		$objectsrc = new $classname($db);
+		'@phan-var-force Project|Commande|Propal|Facture|Contrat|CommandeFournisseur|CommonObject $objectsrc';
 		$objectsrc->fetch($originid);
 		$objectsrc->fetch_thirdparty();
 
@@ -2160,19 +2161,19 @@ if ($action == 'create') {
 					$objectsrc->fetch_origin();
 				}
 
-				if (!empty($objectsrc->commandeFournisseur)) {
-					$supplierOrder = $objectsrc->commandeFournisseur;
-					if (empty($cond_reglement_id) && !empty($supplierOrder->cond_reglement_id)) {
-						$cond_reglement_id = $supplierOrder->cond_reglement_id;
+				if (!empty($objectsrc->origin_object)) {
+					$originObject = $objectsrc->origin_object;
+					if (empty($cond_reglement_id) && !empty($originObject->cond_reglement_id)) {
+						$cond_reglement_id = $originObject->cond_reglement_id;
 					}
-					if (empty($mode_reglement_id) && !empty($supplierOrder->mode_reglement_id)) {
-						$mode_reglement_id = $supplierOrder->mode_reglement_id;
+					if (empty($mode_reglement_id) && !empty($originObject->mode_reglement_id)) {
+						$mode_reglement_id = $originObject->mode_reglement_id;
 					}
-					if (empty($fk_account) && !empty($supplierOrder->fk_account)) {
-						$fk_account = $supplierOrder->fk_account;
+					if (empty($fk_account) && !empty($originObject->fk_account)) {
+						$fk_account = $originObject->fk_account;
 					}
-					if (empty($transport_mode_id) && !empty($supplierOrder->transport_mode_id)) {
-						$transport_mode_id = $supplierOrder->transport_mode_id;
+					if (empty($transport_mode_id) && !empty($originObject->transport_mode_id)) {
+						$transport_mode_id = $originObject->transport_mode_id;
 					}
 				}
 			}
@@ -2222,8 +2223,8 @@ if ($action == 'create') {
 		$datetmp = dol_mktime(12, 0, 0, GETPOSTINT('echmonth'), GETPOSTINT('echday'), GETPOSTINT('echyear'));
 		$datedue = ($datetmp == '' ? -1 : $datetmp);
 
-		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
-			$currency_code = $soc->multicurrency_code;
+		if (isModEnabled("multicurrency") && !empty($societe->multicurrency_code)) {
+			$currency_code = $societe->multicurrency_code;
 		}
 	}
 

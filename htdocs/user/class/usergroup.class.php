@@ -218,6 +218,9 @@ class UserGroup extends CommonObject
 					$ret[$obj->rowid] = $newgroup;
 				}
 
+				if (!is_array($ret[$obj->rowid]->usergroup_entity)) {
+					$ret[$obj->rowid]->usergroup_entity = array();
+				}
 				$ret[$obj->rowid]->usergroup_entity[] = $obj->usergroup_entity;
 			}
 
@@ -293,6 +296,9 @@ class UserGroup extends CommonObject
 					}
 				}
 				if ($mode != 1 && !empty($obj->usergroup_entity)) {
+					if (!is_array($ret[$obj->rowid]->usergroup_entity)) {
+						$ret[$obj->rowid]->usergroup_entity = array();
+					}
 					$ret[$obj->rowid]->usergroup_entity[] = $obj->usergroup_entity;
 				}
 			}
