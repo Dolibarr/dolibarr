@@ -220,11 +220,7 @@ $sql .= $db->plimit($max, 0);
 
 $resql = $db->query($sql);
 if ($resql) {
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<th colspan="5">'.$langs->trans("LatestModifiedProjects", $max).'</th>';
-	print '</tr>';
+	startSimpleTable($langs->trans("LatestModifiedProjects", $max), "projet/list.php", "sortfield=p.tms&sortorder=DESC", 3, -1, 'project');
 
 	$num = $db->num_rows($resql);
 
@@ -303,7 +299,8 @@ if ($resql) {
 	} else {
 		print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
-	print "</table></div>";
+
+	finishSimpleTable(true);
 } else {
 	dol_print_error($db);
 }
