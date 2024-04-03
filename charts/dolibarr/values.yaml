@@ -48,7 +48,7 @@ image:
   repository: iyedbnaissa/dolibarr_build
 
   ## @param image.tag Image tag
-  tag: 26
+  tag: latest
 
   ## @param image.digest Image digest
   digest: ""
