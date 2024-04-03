@@ -9642,9 +9642,8 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
 }
 
 /**
- * 	Advanced sort array by second index function, which produces ascending (default)
- *  or descending output and uses optionally natural case insensitive sorting (which
- *  can be optionally case sensitive as well).
+ * 	Advanced sort array by the value of a given key, which produces ascending (default) or descending
+ *  output and uses optionally natural case insensitive sorting (which can be optionally case sensitive as well).
  *
  *  @param	array<string|int,mixed>	$array 	Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
  *  @param	string		$index				Key in array to use for sorting criteria
@@ -9653,7 +9652,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *                                          If values are numeric (I said value not type): 0=Use numeric order (even if type is string) so use a "natural" sort, 1=use "natural" sort too (same than 0), -1=Force alphabetical order
  *  @param	int			$case_sensitive		1=sort is case sensitive, 0=not case sensitive
  *  @param	int			$keepindex			If 0 and index key of array to sort is a numeric, then index will be rewritten. If 1 or index key is not numeric, key for index is kept after sorting.
- *  @return	array							Sorted array
+ *  @return	array							Return the sorted array (the source array is not modified !)
  */
 function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sensitive = 0, $keepindex = 0)
 {
@@ -9926,7 +9925,7 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
  * @param	string	$onlysimplestring	'0' (deprecated, do not use it anymore)=Accept all chars,
  * 										'1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
  * 										'2' (used for example for the compute property of extrafields)=Accept also '[]'
- * @return	mixed						Nothing or return result of eval
+ * @return	void|string					Nothing or return result of eval (even if type can be int, it is safer to assume string and find all potential typing issues as abs(dol_eval(...)).
  * @see verifCond()
  * @phan-suppress PhanPluginUnsafeEval
  */

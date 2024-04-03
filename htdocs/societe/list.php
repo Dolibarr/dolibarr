@@ -1199,6 +1199,7 @@ $objecttmp = new Societe($db);
 $trackid = 'thi'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+/*
 if (!empty($search_categ_cus) || !empty($search_categ_sup)) {
 	print "<div id='ways'>";
 	$c = new Categorie($db);
@@ -1206,6 +1207,7 @@ if (!empty($search_categ_cus) || !empty($search_categ_sup)) {
 	print " &gt; ".$ways[0]."<br>\n";
 	print "</div><br>";
 }
+*/
 
 if ($search_all) {
 	$setupstring = '';

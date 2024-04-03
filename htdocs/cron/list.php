@@ -619,8 +619,8 @@ if ($num > 0) {
 		} elseif ($obj->unitfrequency == "2678400") {
 			$s = ($obj->frequency)." ".($obj->frequency > 1 ? $langs->trans('DurationMonths') : $langs->trans('DurationMonth'));
 		}
-		print '<td class="tdoverflowmax125 center" title="'.$s.'">';
-		print $s;
+		print '<td class="tdoverflowmax125 center" title="'.dol_escape_htmltag($s).'">';
+		print dol_escape_htmltag($s);
 		print '</td>';
 
 		/*
@@ -720,9 +720,9 @@ if ($num > 0) {
 		}
 		if ($user->hasRight('cron', 'delete')) {
 			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"]."?id=".$obj->rowid.'&action=delete&token='.newToken().($page ? '&page='.$page : '').($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').$param;
-			print "\" title=\"".dol_escape_htmltag($langs->trans('CronDelete'))."\">".img_picto($langs->trans('CronDelete'), 'delete', '', false, 0, 0, '', 'marginleftonly')."</a> &nbsp; ";
+			print '" title="'.dol_escape_htmltag($langs->trans('CronDelete')).'">'.img_picto($langs->trans('CronDelete'), 'delete', '', false, 0, 0, '', 'marginleftonly').'</a> &nbsp; ';
 		} else {
-			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'), 'delete', '', false, 0, 0, '', 'marginleftonly')."</a> &nbsp; ";
+			print '<a href="#" title="'.dol_escape_htmltag($langs->trans('NotEnoughPermissions')).'">'.img_picto($langs->trans('NotEnoughPermissions'), 'delete', '', false, 0, 0, '', 'marginleftonly').'</a> &nbsp; ';
 		}
 		if ($user->hasRight('cron', 'execute')) {
 			if (!empty($obj->status)) {
