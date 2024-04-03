@@ -875,7 +875,6 @@ abstract class CommonObject
 		return array(
 			'alreadypaid' => 'totalpaid',
 			'cond_reglement' => 'depr_cond_reglement',
-			'modelpdf' => 'model_pdf',
 			'note' => 'note_private',
 			'commandeFournisseur' => 'origin_object',
 			'expedition' => 'origin_object',
@@ -2047,24 +2046,24 @@ abstract class CommonObject
 	/**
 	 *	Read linked origin object.
 	 *	Set ->origin_object
-	 *	Set also ->expedition or ->livraison or ->commandFournisseur (deprecated)
+	 *	Set also ->expedition or ->livraison or ->commandeFournisseur (deprecated)
 	 *
 	 *	@return		void
 	 */
 	public function fetch_origin()
 	{
 		// phpcs:enable
-		if ($this->origin == 'shipping') {
-			$this->origin = 'expedition';
-		}
-		if ($this->origin == 'delivery') {
-			$this->origin = 'livraison';
-		}
-		if ($this->origin == 'order_supplier' || $this->origin == 'supplier_order') {
-			$this->origin = 'commandeFournisseur';
-		}
-
 		$origin = $this->origin ? $this->origin : $this->origin_type;
+
+		if ($origin == 'shipping') {
+			$origin = 'expedition';
+		}
+		if ($origin == 'delivery') {
+			$origin = 'livraison';
+		}
+		if ($origin == 'order_supplier' || $origin == 'supplier_order') {
+			$origin = 'commandeFournisseur';
+		}
 
 		$classname = ucfirst($origin);
 		$this->origin_object = new $classname($this->db);
@@ -8300,7 +8299,12 @@ abstract class CommonObject
 			$value = '<span class="opacitymedium">'.$langs->trans("Encrypted").'</span>';
 			//$value = preg_replace('/./i', '*', $value);
 		} elseif ($type == 'array') {
-			$value = implode('<br>', $value);
+			if (is_array($value)) {
+				$value = implode('<br>', $value);
+			} else {
+				dol_syslog(__METHOD__.' Expected array from dol_eval, but got '.gettype($value), LOG_ERR);
+				return 'Error unexpected result from code evaluation';
+			}
 		} else {	// text|html|varchar
 			$value = dol_htmlentitiesbr($value);
 		}

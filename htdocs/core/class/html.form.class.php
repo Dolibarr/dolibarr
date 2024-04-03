@@ -8451,7 +8451,7 @@ class Form
 			$array = array_combine($array, $array);
 		}
 
-    '@phan-var-force array{label:string,data-html:string,disable?:int<0,1>,css?:string}	$array'; // Array combine breaks information
+		'@phan-var-force array{label:string,data-html:string,disable?:int<0,1>,css?:string}	$array'; // Array combine breaks information
 
 		$out = '';
 
