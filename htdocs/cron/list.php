@@ -570,7 +570,7 @@ if ($num > 0) {
 		print '<td class="minwidth125">';
 		if (!empty($object->label)) {
 			$object->ref = $langs->trans($object->label);
-			print '<div class="small twolinesmax classfortooltip" title="'.dol_escape_htmltag($langs->trans($object->label), 0, 0).'">';
+			print '<div class="small twolinesmax maxwidth200 classfortooltip" title="'.dol_escape_htmltag($langs->trans($object->label), 0, 0).'">';
 			print $object->getNomUrl(0, '', 1);
 			print '</div>';
 			$object->ref = $obj->rowid;
