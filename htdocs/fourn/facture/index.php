@@ -38,9 +38,8 @@ if (isset($user->socid) && $user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
-
 // Maximum elements of the tables
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 $maxDraftCount = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);
 $maxLatestEditCount = 5;
 $maxOpenCount = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);

@@ -158,7 +158,7 @@ class Conf extends stdClass
 	// TODO Remove this part.
 
 	/**
-	 * @var stdClass  Supplier
+	 * @var stdClass  	Supplier
 	 */
 	public $fournisseur;
 
@@ -582,10 +582,6 @@ class Conf extends stdClass
 							} elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i', $key, $reg)) {
 								// If this is a module constant (must be at end)
 								$modulename = strtolower($reg[1]);
-								$mapping = $this->deprecatedProperties();
-								if (array_key_exists($modulename, $mapping)) {
-									$modulename = $mapping[$modulename];
-								}
 								$this->modules[$modulename] = $modulename; // Add this module in list of enabled modules
 
 								// deprecated in php 8.2
@@ -594,7 +590,18 @@ class Conf extends stdClass
 									$this->$modulename = new stdClass();	// We need this to use the ->enabled and the ->multidir, ->dir...
 								}
 								$this->$modulename->enabled = true;	// TODO Remove this
-								//}
+
+								// Duplicate entry with the new name
+								$mapping = $this->deprecatedProperties();
+								if (array_key_exists($modulename, $mapping)) {
+									$newmodulename = $mapping[$modulename];
+									$this->modules[$newmodulename] = $newmodulename;
+
+									if (!isset($this->$newmodulename) || !is_object($this->$newmodulename)) {
+										$this->$newmodulename = new stdClass();	// We need this to use the ->enabled and the ->multidir, ->dir...
+									}
+									$this->$newmodulename->enabled = true;	// TODO Remove this
+								}
 							}
 						}
 					}

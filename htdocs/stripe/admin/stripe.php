@@ -474,7 +474,6 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 		print $form->selectarray("STRIPE_KLARNA", $arrval, $conf->global->STRIPE_KLARNA);
 	}
-	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForKlarnaCustomers").'</span>';
 	print '</td></tr>';
 }
 

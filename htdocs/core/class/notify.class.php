@@ -646,7 +646,7 @@ class Notify
 		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 			$application = getDolGlobalString('MAIN_APPLICATION_TITLE');
 		}
-		$replyto = $conf->notification->email_from;
+		$from = getDolGlobalString('NOTIFICATION_EMAIL_FROM');
 		$object_type = '';
 		$link = '';
 		$num = 0;
@@ -945,7 +945,7 @@ class Notify
 							$sendto = preg_replace('/[\s,]+$/', '', $sendto); // Clean end of string
 						}
 
-						$parameters = array('notifcode' => $notifcode, 'sendto' => $sendto, 'replyto' => $replyto, 'file' => $filename_list, 'mimefile' => $mimetype_list, 'filename' => $mimefilename_list, 'outputlangs' => $outputlangs, 'labeltouse' => $labeltouse);
+						$parameters = array('notifcode' => $notifcode, 'sendto' => $sendto, 'from' => $from, 'file' => $filename_list, 'mimefile' => $mimetype_list, 'filename' => $mimefilename_list, 'outputlangs' => $outputlangs, 'labeltouse' => $labeltouse);
 						if (!isset($action)) {
 							$action = '';
 						}
@@ -968,7 +968,7 @@ class Notify
 						$mailfile = new CMailFile(
 							$subject,
 							$sendto,
-							$replyto,
+							$from,
 							$message,
 							$filename_list,
 							$mimetype_list,
@@ -1211,7 +1211,7 @@ class Notify
 				}
 
 				if ($sendto) {
-					$parameters = array('notifcode' => $notifcode, 'sendto' => $sendto, 'replyto' => $replyto, 'file' => $filename_list, 'mimefile' => $mimetype_list, 'filename' => $mimefilename_list, 'subject' => &$subject, 'message' => &$message);
+					$parameters = array('notifcode' => $notifcode, 'sendto' => $sendto, 'from' => $from, 'file' => $filename_list, 'mimefile' => $mimetype_list, 'filename' => $mimefilename_list, 'subject' => &$subject, 'message' => &$message);
 					$reshook = $hookmanager->executeHooks('formatNotificationMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 					if (empty($reshook)) {
 						if (!empty($hookmanager->resArray['files'])) {
@@ -1229,7 +1229,7 @@ class Notify
 					$mailfile = new CMailFile(
 						$subject,
 						$sendto,
-						$replyto,
+						$from,
 						$message,
 						$filename_list,
 						$mimetype_list,

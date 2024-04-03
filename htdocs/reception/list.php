@@ -57,8 +57,8 @@ $search_company = GETPOST("search_company");
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
-$search_country = GETPOSTINT("search_country");
-$search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
+$search_country = GETPOST("search_country", 'aZ09');
+$search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
 $search_date_delivery_startday = GETPOSTINT('search_date_delivery_startday');
 $search_date_delivery_startmonth = GETPOSTINT('search_date_delivery_startmonth');
 $search_date_delivery_startyear = GETPOSTINT('search_date_delivery_startyear');
@@ -286,8 +286,8 @@ if (empty($reshook)) {
 					}
 
 					// try to get from source of reception (supplier order)
-					if (!empty($rcp->commandeFournisseur)) {
-						$supplierOrder = $rcp->commandeFournisseur;
+					if (!empty($rcp->origin_object)) {
+						$supplierOrder = $rcp->origin_object;
 						if (empty($cond_reglement_id) && !empty($supplierOrder->cond_reglement_id)) {
 							$cond_reglement_id = $supplierOrder->cond_reglement_id;
 						}
