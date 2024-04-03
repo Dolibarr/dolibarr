@@ -1544,6 +1544,48 @@ if (!$error && ($massaction == 'affectcommercial' || ($action == 'affectcommerci
 	}
 }
 
+if (!$error && ($massaction == 'unassigncommercial' || ($action == 'unassigncommercial' && $confirm == 'yes')) && $permissiontoadd) {
+	$db->begin();
+
+	$objecttmp = new $objectclass($db);
+	$nbok = 0;
+
+	foreach ($toselect as $toselectid) {
+		$result = $objecttmp->fetch($toselectid);
+		if ($result > 0) {
+			if (in_array($objecttmp->element, array('societe'))) {
+				$TCommercial = GETPOST("commercial", "alpha");
+				if (is_array($TCommercial)) {
+					foreach ($TCommercial as $commercial) {
+						$result = $objecttmp->del_commercial($user, $commercial);
+					}
+				}
+			}
+			if ($result <= 0) {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			} else {
+				$nbok++;
+			}
+		} else {
+			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			$error++;
+			break;
+		}
+	}
+
+	if (!$error) {
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("CommercialsDisaffected", $nbok), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("CommercialDisaffected"), null, 'mesgs');
+		}
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+}
 // Approve for leave only
 if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $confirm == 'yes')) && $permissiontoapprove) {
 	$db->begin();

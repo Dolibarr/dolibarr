@@ -452,7 +452,7 @@ if ($usevirtualstock) {
 		$sqlReceptionFourn = "(SELECT ".$db->ifsql("SUM(fd4.qty) IS NULL", "0", "SUM(fd4.qty)")." as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlReceptionFourn .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf4,";
 		$sqlReceptionFourn .= " ".MAIN_DB_PREFIX."receptiondet_batch as fd4";
-		$sqlReceptionFourn .= " WHERE fd4.fk_commande = cf4.rowid AND cf4.entity IN (".getEntity(getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'supplier_order').")";
+		$sqlReceptionFourn .= " WHERE fd4.fk_element = cf4.rowid AND cf4.entity IN (".getEntity(getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'supplier_order').")";
 		$sqlReceptionFourn .= " AND fd4.fk_product = p.rowid";
 		$sqlReceptionFourn .= " AND cf4.fk_statut IN (3,4))";
 	} else {

@@ -132,7 +132,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		// Add external contacts ids.
@@ -297,7 +297,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$sql = '';
@@ -339,7 +339,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$request_data = (object) $request_data;
@@ -405,7 +405,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$errors = [];
@@ -486,7 +486,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$request_data = (object) $request_data;
@@ -564,7 +564,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$updateRes = $this->propal->deleteLine($lineid, $id);
@@ -605,7 +605,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->propal->add_contact($contactid, $type, 'external');
@@ -649,7 +649,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$contacts = $this->propal->liste_contact();
@@ -686,7 +686,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -741,7 +741,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->propal->delete(DolibarrApiAccess::$user)) {
@@ -775,7 +775,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->propal->setDraft(DolibarrApiAccess::$user);
@@ -792,7 +792,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->propal->fetchObjectLinked();
@@ -831,7 +831,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->propal->valid(DolibarrApiAccess::$user, $notrigger);
@@ -848,7 +848,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->propal->fetchObjectLinked();
@@ -878,7 +878,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->propal->closeProposal(DolibarrApiAccess::$user, $status, $note_private, $notrigger);
@@ -895,7 +895,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->propal->fetchObjectLinked();
@@ -922,7 +922,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->propal->classifyBilled(DolibarrApiAccess::$user);
@@ -936,7 +936,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->propal->fetchObjectLinked();

@@ -85,7 +85,7 @@ class Zapier extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('hook', $this->hook->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->hook);
@@ -120,7 +120,7 @@ class Zapier extends DolibarrApi
 		// }
 
 		// if (! DolibarrApi::_checkAccessToResource('hook', $this->hook->id)) {
-		//     throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		//     throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		// }
 
 		return $arraychoices;
@@ -279,7 +279,7 @@ class Zapier extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('hook', $this->hook->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->hook->delete(DolibarrApiAccess::$user)) {

@@ -287,7 +287,7 @@ class Boms extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('bom', $this->bom->id, 'bom_bom')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->bom->delete(DolibarrApiAccess::$user)) {

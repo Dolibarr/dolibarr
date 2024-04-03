@@ -8524,6 +8524,7 @@ class Form
 		if ($value_as_key) {
 			$array = array_combine($array, $array);
 		}
+
 		'@phan-var-force array{label:string,data-html:string,disable?:int<0,1>,css?:string}	$array'; // Array combine breaks information
 
 		$out = '';

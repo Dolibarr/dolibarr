@@ -72,7 +72,7 @@ class Warehouses extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id, 'entrepot')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->warehouse);
@@ -204,7 +204,7 @@ class Warehouses extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -244,7 +244,7 @@ class Warehouses extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->warehouse->delete(DolibarrApiAccess::$user)) {

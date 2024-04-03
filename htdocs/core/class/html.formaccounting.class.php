@@ -98,7 +98,7 @@ class FormAccounting extends Form
 			$sql = "SELECT rowid, code, label, nature, entity, active";
 			$sql .= " FROM ".$this->db->prefix()."accounting_journal";
 			$sql .= " WHERE active = 1";
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " AND entity = ".((int) $conf->entity);
 			if ($nature && is_numeric($nature)) {
 				$sql .= " AND nature = ".((int) $nature);
 			}
