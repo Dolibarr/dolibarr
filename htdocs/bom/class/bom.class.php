@@ -264,7 +264,7 @@ class BOM extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -296,13 +296,18 @@ class BOM extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  int 	$notrigger false=launch triggers after, true=disable triggers
+	 * @param  int  $notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 1)
 	{
 		if ($this->efficiency <= 0 || $this->efficiency > 1) {
 			$this->efficiency = 1;
+		}
+
+		if ($this->qty <= 0) {
+			$this->error = 'Quantity must be greater than 0';
+			return -1;
 		}
 
 		return $this->createCommon($user, $notrigger);
@@ -486,14 +491,13 @@ class BOM extends CommonObject
 	/**
 	 * Load list of objects in memory from the database.
 	 *
-	 * @param  string      		$sortorder    Sort Order
-	 * @param  string      		$sortfield    Sort field
-	 * @param  int         		$limit        Limit
-	 * @param  int         		$offset       Offset
-	 * @param  string   		$filter       Filter USF
-	 * @param  string      		$filtermode   Filter mode (AND or OR)
-	 * @return array|int        			  int <0 if KO, array of pages if OK
-	 */
+	 * @param  string               $sortorder    Sort Order
+	 * @param  string               $sortfield    Sort field
+	 * @param  int                  $limit        Limit
+	 * @param  int                  $offset       Offset
+	 * @param  string               $filter       Filter USF
+	 * @param  string               $filtermode   Filter mode (AND or OR)
+	 * @return int<-1 ,-1>|BOM[]    int <0 if KO, array of pages if O	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -508,7 +512,6 @@ class BOM extends CommonObject
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
-
 		// Manage filter
 		$errormessage = '';
 		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
@@ -557,6 +560,11 @@ class BOM extends CommonObject
 	{
 		if ($this->efficiency <= 0 || $this->efficiency > 1) {
 			$this->efficiency = 1;
+		}
+
+		if ($this->qty <= 0) {
+			$this->error = 'Quantity must be greater than 0';
+			return -1;
 		}
 
 		return $this->updateCommon($user, $notrigger);
@@ -1077,7 +1085,7 @@ class BOM extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		$langs->loadLangs(['product', 'mrp']);
 
@@ -1119,7 +1127,7 @@ class BOM extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $db, $conf, $langs, $hookmanager;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1324,7 +1332,7 @@ class BOM extends CommonObject
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
+	 /**
 	 *  Return if at least one photo is available
 	 *
 	 * @param  string $sdir Directory to scan
@@ -1432,43 +1440,55 @@ class BOM extends CommonObject
 				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
 
 				if ($tmpproduct->type == $tmpproduct::TYPE_PRODUCT) {
-					if (empty($line->fk_bom_child)) {
-						if ($result < 0) {
-							$this->error = $tmpproduct->error;
-							return -1;
-						}
-						$unit_cost = (!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp;
-						$line->unit_cost = (float) price2num($unit_cost);
-						if (empty($line->unit_cost)) {
-							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
-								if ($productFournisseur->fourn_remise_percent != "0") {
-									$line->unit_cost = $productFournisseur->fourn_unitprice_with_discount;
-								} else {
-									$line->unit_cost = $productFournisseur->fourn_unitprice;
-								}
-							}
-						}
-
-						$line->total_cost = (float) price2num($line->qty * $line->unit_cost, 'MT');
-
-						$this->total_cost += $line->total_cost;
-					} else {
-						$bom_child = new BOM($this->db);
-						$res = $bom_child->fetch($line->fk_bom_child);
-						if ($res > 0) {
+					$bom_child = new BOM($this->db);
+					$bom_id = $line->fk_bom_child ?? $tmpproduct->fk_default_bom;
+					if ($bom_id > 0) {
+						$res = $bom_child->fetch($bom_id);
+						if ($res > 0 && $bom_child->qty > 0) {
 							$bom_child->calculateCosts();
-							$line->childBom[] = $bom_child;
-							$this->total_cost += (float) price2num($bom_child->total_cost * $line->qty, 'MT');
-							$this->total_cost += $line->total_cost;
+							if (getDolGlobalString('BOM_USE_PRICE_FOR_COSTING')) {
+								$line->unit_cost = (float) $bom_child->total_cost / $bom_child->qty;
+							}
 						} else {
 							$this->error = $bom_child->error;
 							return -2;
 						}
 					}
+
+					if (empty($line->fk_bom_child)) {
+						if ($result < 0) {
+							$this->error = $tmpproduct->error;
+							return -1;
+						}
+						if (empty($line->unit_cost)) {
+							$line->unit_cost = (float) ((!empty($tmpproduct->cost_price) && $tmpproduct->cost_price > 0) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+						}
+						if (empty($line->unit_cost)) {
+							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
+								$line->unit_cost = $productFournisseur->fourn_unitprice_with_discount;
+							}
+						}
+					} else {
+						if (!empty($bom_child) && $bom_child->qty > 0) {
+							$line->childBom = $bom_child;
+						} else {
+							$this->error = $bom_child->error;
+							return -2;
+						}
+					}
+					$line->unit_cost = (float) price2num($line->unit_cost, 'MU');
+					$line->total_cost = (float) price2num($line->unit_cost * $line->qty / $line->efficiency, 'MT');
 				} else {
 					// Convert qty of line into hours
 					$unitforline = measuringUnitString($line->fk_unit, '', '', 1);
 					$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
+
+					$line->unit_cost = (float) price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp, 'MU');
+					if (empty($line->unit_cost)) {
+						if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
+							$line->unit_cost = $productFournisseur->fourn_unitprice_with_discount;
+						}
+					}
 
 					if (isModEnabled('workstation') && !empty($line->fk_default_workstation)) {
 						$workstation = new Workstation($this->db);
@@ -1489,23 +1509,16 @@ class BOM extends CommonObject
 						}
 
 						if ($qtyhourservice) {
-							$line->total_cost = (float) price2num($qtyhourforline / $qtyhourservice * $tmpproduct->cost_price, 'MT');
+							$line->total_cost = price2num($qtyhourforline / $qtyhourservice * $line->unit_cost, 'MT');
 						} else {
-							$line->total_cost = (float) price2num($line->qty * $tmpproduct->cost_price, 'MT');
+							$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
 						}
 					}
-
-					$this->total_cost += $line->total_cost;
 				}
+				$this->total_cost += $line->total_cost;
 			}
 
-			$this->total_cost = (float) price2num($this->total_cost, 'MT');
-
-			if ($this->qty > 0) {
-				$this->unit_cost = (float) price2num($this->total_cost / $this->qty, 'MU');
-			} elseif ($this->qty < 0) {
-				$this->unit_cost = (float) price2num($this->total_cost * $this->qty, 'MU');
-			}
+			$this->unit_cost = (float) price2num($this->total_cost / $this->qty, 'MU');
 		}
 
 		return 1;
@@ -1535,14 +1548,12 @@ class BOM extends CommonObject
 	 * @param float	$qty       qty needed
 	 * @return void
 	 */
-	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0)
+	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0.0)
 	{
 		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
 				if (!empty($line->childBom)) {
-					foreach ($line->childBom as $childBom) {
-						$childBom->getNetNeeds($TNetNeeds, $line->qty * $qty);
-					}
+					$line->childBom->getNetNeeds($TNetNeeds, $line->qty * $qty / $this->qty);
 				} else {
 					if (empty($TNetNeeds[$line->fk_product])) {
 						$TNetNeeds[$line->fk_product] = 0;
@@ -1561,18 +1572,16 @@ class BOM extends CommonObject
 	 * @param int   $level     level of recursivity
 	 * @return void
 	 */
-	public function getNetNeedsTree(&$TNetNeeds = array(), $qty = 0, $level = 0)
+	public function getNetNeedsTree(&$TNetNeeds = array(), $qty = 0.0, $level = 0)
 	{
 		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
 				if (!empty($line->childBom)) {
-					foreach ($line->childBom as $childBom) {
-						$TNetNeeds[$childBom->id]['bom'] = $childBom;
-						$TNetNeeds[$childBom->id]['parentid'] = $this->id;
-						$TNetNeeds[$childBom->id]['qty'] = $line->qty * $qty;
-						$TNetNeeds[$childBom->id]['level'] = $level;
-						$childBom->getNetNeedsTree($TNetNeeds, $line->qty * $qty, $level + 1);
-					}
+					$TNetNeeds[$line->childBom->id]['bom'] = $line->childBom;
+					$TNetNeeds[$line->childBom->id]['parentid'] = $this->id;
+					$TNetNeeds[$line->childBom->id]['qty'] = $line->qty * $qty;
+					$TNetNeeds[$line->childBom->id]['level'] = $level;
+					$line->childBom->getNetNeedsTree($TNetNeeds, $line->qty * $qty / $this->qty, $level+1);
 				} else {
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] += $line->qty * $qty;
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['level'] = $level;
@@ -1624,7 +1633,7 @@ class BOM extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $db,$langs;
+		global $langs;
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
@@ -1789,31 +1798,31 @@ class BOMLine extends CommonObjectLine
 	// END MODULEBUILDER PROPERTIES
 
 	/**
-	 * @var float		Calculated cost for the BOM line
+	 * @var float	Calculated cost for the BOM line
 	 */
-	public $total_cost = 0;
+	public $total_cost = 0.0;
 
 	/**
-	 * @var float		Line unit cost based on product cost price or pmp
+	 * @var float	Line unit cost based on product cost price or pmp
 	 */
-	public $unit_cost = 0;
+	public $unit_cost = 0.0;
 
 	/**
-	 * @var array     array of Bom in line
+	 * @var ?BOM	Reference to Bom in line
 	 */
-	public $childBom = array();
+	public $childBom = null;
 
 	/**
-	 * @var int|null                ID of the unit of measurement (rowid in llx_c_units table)
+	 * @var ?int                ID of the unit of measurement (rowid in llx_c_units table)
 	 * @see measuringUnitString()
 	 * @see getLabelOfUnit()
 	 */
-	public $fk_unit;
+	public $fk_unit = null;
 
 	/**
-	 * @var int Service Workstation
+	 * @var ?int Service Workstation
 	 */
-	public $fk_default_workstation;
+	public $fk_default_workstation = null;
 
 
 
@@ -1824,7 +1833,7 @@ class BOMLine extends CommonObjectLine
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -1864,8 +1873,45 @@ class BOMLine extends CommonObjectLine
 		if ($this->efficiency < 0 || $this->efficiency > 1) {
 			$this->efficiency = 1;
 		}
+		if ($this->quantity <= 0) {
+			$this->error = 'Quantity must be greater than 0';
+			return -1;
+		}
+
+		// check for circular BOM dependency
+		if ($this->checkCircular($this->fk_bom_child)<0) {
+			return -1;
+		}
 
 		return $this->createCommon($user, $notrigger);
+	}
+
+	/**
+	 * Check for circular BOM dependency
+	 *
+	 * @param int $id			ID of BOM object to check children
+	 * @return int				Return integer <0 if KO, >0 if OK
+	 */
+	public function checkCircular($id)
+	{
+		// check for circular BOM dependency
+		$sql = 'SELECT rowid, fk_bom_child as child FROM '.MAIN_DB_PREFIX.'bom_bomline';
+		$sql.= ' WHERE fk_bom ='. (int) $id;
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			// Loop on all the sub-BOM lines if they exist
+			while ($obj = $this->db->fetch_object($result)) {
+				if (!empty($obj->child)) {
+					if ($obj->child==$this->fk_bom) {
+						$this->error = 'Found BOM circular dependency';
+						return -1;
+					} elseif (!$this->checkCircular($obj->child)) return -1;
+				}
+			}
+		}
+
+		return 1;
 	}
 
 	/**
@@ -1960,6 +2006,11 @@ class BOMLine extends CommonObjectLine
 			$this->efficiency = 1;
 		}
 
+		if ($this->quantity <= 0) {
+			$this->error = 'Quantity must be greater than 0';
+			return -1;
+		}
+
 		return $this->updateCommon($user, $notrigger);
 	}
 
@@ -1988,7 +2039,7 @@ class BOMLine extends CommonObjectLine
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $db, $conf, $langs, $hookmanager;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
