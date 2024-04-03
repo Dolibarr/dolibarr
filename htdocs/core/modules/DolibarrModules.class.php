@@ -1891,9 +1891,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$r_perms = $this->rights[$key][Rights::KEY_FIRST_LEVEL] ?? '';
 					$r_subperms = $this->rights[$key][Rights::KEY_SECOND_LEVEL] ?? '';
 
-					// if subperms is defined but perms is not defined, subperms must be empty
+					// KEY_FIRST_LEVEL (perms) must not be empty
 					if (empty($r_perms)) {
-						$r_subperms	= '';
+						continue;
 					}
 
 					// name of module (default: current module name)
