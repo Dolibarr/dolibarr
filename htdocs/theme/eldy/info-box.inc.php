@@ -20,7 +20,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 .info-box {
 	display: block;
 	position: relative;
-	min-height: 92px;	/* must be same height than info-box-icon */
+	min-height: 94px;	/* must be same height than info-box-icon */
 	background: var(--colorbacklineimpair2);
 	width: 100%;
 	box-shadow: 1px 1px 15px rgba(192, 192, 192, 0.2);
@@ -83,8 +83,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	display: block;
 	overflow: hidden;
 	float: left;
-	line-height: 92px;	/* must be same height as info-box */
-	height: 92px;	    /* must be same height as info-box */
+	line-height: 94px;	/* must be same height as min-height of .info-box */
+	height: 94px; 	    /* must be same height as min-height of .info-box */
 	width: 88px;
 	text-align: center;
 	font-size: 2.8em;
