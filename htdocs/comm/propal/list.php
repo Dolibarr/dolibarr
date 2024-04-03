@@ -1254,7 +1254,7 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 // Company type
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print '<td class="liste_titre maxwidth100onsmartphone" align="center">';
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'), 'maxwidth100', 1);
 	print ajax_combobox('search_type_thirdparty');
 	print '</td>';
 }
@@ -1525,27 +1525,27 @@ if (!empty($arrayfields['state.nom']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['country.code_iso']['checked'])) {
-	print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, 'class="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['typent.code']['checked'])) {
-	print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, 'class="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.date']['checked'])) {
-	print_liste_field_titre($arrayfields['p.date']['label'], $_SERVER["PHP_SELF"], 'p.datep', '', $param, 'class="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.date']['label'], $_SERVER["PHP_SELF"], 'p.datep', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.fin_validite']['checked'])) {
-	print_liste_field_titre($arrayfields['p.fin_validite']['label'], $_SERVER["PHP_SELF"], 'dfv', '', $param, 'class="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.fin_validite']['label'], $_SERVER["PHP_SELF"], 'dfv', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.date_livraison']['checked'])) {
-	print_liste_field_titre($arrayfields['p.date_livraison']['label'], $_SERVER["PHP_SELF"], 'p.date_livraison', '', $param, 'class="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.date_livraison']['label'], $_SERVER["PHP_SELF"], 'p.date_livraison', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.date_signature']['checked'])) {
-	print_liste_field_titre($arrayfields['p.date_signature']['label'], $_SERVER["PHP_SELF"], 'p.date_signature', '', $param, 'class="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.date_signature']['label'], $_SERVER["PHP_SELF"], 'p.date_signature', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['ava.rowid']['checked'])) {

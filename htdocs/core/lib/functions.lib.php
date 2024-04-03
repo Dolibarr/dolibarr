@@ -12641,14 +12641,14 @@ function getNonce()
  * @param string	$header			The first left header of the table (automatic translated)
  * @param string	$link			(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
  * @param string	$arguments		(optional) Additional arguments for the link (e.g. "search_status=0")
- * @param integer	$emptyRows		(optional) The count of empty columns after the first column
+ * @param integer	$emptyColumns	(optional) Number of empty columns to add after the first column
  * @param integer	$number			(optional) The number that is shown right after the first header, when not set the link is shown on the right side of the header as "FullList"
  * @param string	$pictofulllist 	(optional) The picto to use for the full list link
  * @return void
  *
  * @see finishSimpleTable()
  */
-function startSimpleTable($header, $link = "", $arguments = "", $emptyRows = 0, $number = -1, $pictofulllist = '')
+function startSimpleTable($header, $link = "", $arguments = "", $emptyColumns = 0, $number = -1, $pictofulllist = '')
 {
 	global $langs;
 
@@ -12656,7 +12656,7 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyRows = 0, 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 
-	print $emptyRows < 1 ? '<th>' : '<th colspan="'.($emptyRows + 1).'">';
+	print ($emptyColumns < 1) ? '<th>' : '<th colspan="'.($emptyColumns + 1).'">';
 
 	print $langs->trans($header);
 
