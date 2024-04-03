@@ -489,9 +489,6 @@ if ($optioncss != '') {
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-//print dol_get_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-//print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, $listofextcals, $actioncode, $usergroup, '', $resourceid);
-//print dol_get_fiche_end();
 
 $viewmode = '<div class="navmode inline-block">';
 

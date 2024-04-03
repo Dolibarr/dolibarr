@@ -1095,6 +1095,12 @@ i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender
 .stockmovement {
 	font-size: 1.4em;
 }
+.publisherlogoinline {
+	vertical-align: middle;
+	height: 14px;
+	width: 14px;
+	margin-left: 5px;
+}
 
 body[class*="colorblind-"] .text-warning{
 	color : <?php print $colorblind_deuteranopes_textWarning; ?>
@@ -1378,7 +1384,7 @@ ul.attendees li {
 	vertical-align: middle;
 }
 select.flat.selectlimit {
-	max-width: 62px;
+	width: 102px;
 	text-align: end;
 	border-bottom: 1px solid var(--inputbordercolor);
 	border-bottom-left-radius: 0;
@@ -1815,8 +1821,8 @@ maxscreenheightless200 {
 .width100p { width:100%; }
 
 
-/* Force values for small screen 1400 */
-@media only screen and (max-width: 1400px)
+/* Force values for small screen 1440 */
+@media only screen and (max-width: 1440px)
 {
 	.titlefield { /* width: 30% !important; */ }
 	.titlefieldcreate { width: 30% !important; }
@@ -1862,8 +1868,8 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 }
 
 
-/* Force values for small screen 767 */
-@media only screen and (max-width: 767px)
+/* Force values for small screen 768 */
+@media only screen and (max-width: 768px)
 {
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ((int) $fontsize + 3).'px' : $fontsize; ?> !important;
@@ -2393,7 +2399,7 @@ div.secondcolumn div.box {
 
 
 /* Force values on one column for small screen */
-@media only screen and (max-width: 1000px)
+@media only screen and (max-width: 1024px)
 {
 	div.fiche {
 		margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : ($dol_hide_leftmenu ? '6' : '20')); ?>px;
@@ -2436,7 +2442,7 @@ div.secondcolumn div.box {
 }
 
 /* Force values on one column for small screen */
-@media only screen and (max-width: 1499px)
+@media only screen and (max-width: 1440px)
 {
 	div.fichehalfleft-lg {
 		float: none;
@@ -2530,9 +2536,10 @@ span.widthpictotitle.pictotitle {
 }
 .pictofixedwidth {
 	text-align: start;
-	width: 21px;
+	width: 20px;
 	/* padding-right: 0; */
 }
+
 
 .colorthumb {
 	padding-left: 1px !important;
@@ -4687,7 +4694,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 
 
-@media only screen and (max-width: 767px)
+@media only screen and (max-width: 768px)
 {
 	.tabBar .arearef .pagination.paginationref {
 		max-width: calc(50%);
@@ -7279,7 +7286,7 @@ div.tabsElem a.tab {
 	padding-right: 10px;
 	padding-bottom: 2px;
 }
-@media only screen and (max-width: 767px)
+@media only screen and (max-width: 768px)
 {
 	.menu_choix1 a, .menu_choix2 a {
 		background-size: 36px 36px;
@@ -7319,7 +7326,7 @@ div.tabsElem a.tab {
 	color: var(--colortextbackvmenu);
 }
 
-@media only screen and (max-width: 767px)
+@media only screen and (max-width: 768px)
 {
 	.publicnewmemberform div.tabBarWithBottom {
 		padding: 10px;
@@ -7347,7 +7354,7 @@ div.tabsElem a.tab {
 	padding-right: 50px;
 	padding-top: 30px;
 }
-@media only screen and (max-width: 767px)
+@media only screen and (max-width: 768px)
 {
 	.ticketlargemargin {
 		padding-left: 5px; padding-right: 5px;
@@ -7878,7 +7885,7 @@ table.jPicker {
 	background-size: 22px auto;
 	top: 2px;
 }
-@media only screen and (max-width: 767px)
+@media only screen and (max-width: 768px)
 {
 	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
 

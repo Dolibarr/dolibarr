@@ -90,8 +90,8 @@ $search_paymentcond = GETPOST('search_paymentcond', 'intcomma');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
-$search_country = GETPOST("search_country", 'alpha');
-$search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
+$search_country = GETPOST("search_country", 'aZ09');
+$search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
 $search_user = GETPOST('search_user', 'intcomma');
 $search_sale = GETPOST('search_sale', 'intcomma');
 $search_date_start = GETPOSTDATE('search_date_start', '', 'tzserver');
@@ -104,8 +104,8 @@ $search_datelimit_endmonth = GETPOSTINT('search_datelimit_endmonth');
 $search_datelimit_endyear = GETPOSTINT('search_datelimit_endyear');
 $search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
 $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
-$search_categ_sup = GETPOSTINT("search_categ_sup");
-$search_product_category = GETPOSTINT('search_product_category');
+$search_categ_sup = GETPOST("search_categ_sup", 'intcomma');
+$search_product_category = GETPOST('search_product_category', 'intcomma');
 
 $option = GETPOST('search_option');
 if ($option == 'late') {
