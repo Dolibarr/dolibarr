@@ -48,7 +48,7 @@ image:
   repository: iyedbnaissa/dolibarr_build
 
   ## @param image.tag Image tag
-  tag: ${env.BUILD_NUMBER}
+  tag: 26
 
   ## @param image.digest Image digest
   digest: ""
