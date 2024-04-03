@@ -328,7 +328,7 @@ foreach ($demoprofiles as $profilearray) {
 		print '<div id="div'.$profilearray['key'].'" summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" class="center inline-block CTable CTableRow'.($i % 2 == 0 ? '1' : '0').'">'."\n";
 
 
-		print '<div id="a1'.$profilearray['key'].'" class="demobox '.(empty($profilearray['url']) ? 'modulelineshow cursorpointer' : 'nomodulelines').'">';
+		print '<div id="a1'.$profilearray['key'].'" class="demobox '.(empty($profilearray['url']) ? 'modulelineshow cursorpointer maxwidth1000' : 'nomodulelines').'">';
 
 		print '<a href="'.$urlwithmod.'" class="'.(empty($profilearray['url']) ? 'modulelineshow' : 'nomodulelines').'">';
 		print '<div style="padding: 10px;">';
@@ -347,9 +347,9 @@ foreach ($demoprofiles as $profilearray) {
 
 		// Modules (a profile you must choose modules)
 		if (empty($profilearray['url'])) {
-			print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="margin-left: 8px; margin-right: 8px; text-align: justify; font-size:0.75em; line-height: 130%; padding-bottom: 8px">';
+			print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="margin-left: 8px; margin-right: 8px; text-align: justify; font-size:0.75em; padding-bottom: 8px">';
 
-			print '<span class="opacitymedium">'.$langs->trans("ThisIsListOfModules").'</span><br><br>';
+			print '<span class="opacitymedium small">'.$langs->trans("ThisIsListOfModules").'</span><br><br>';
 
 			print '<div class="csscolumns">';
 
