@@ -593,7 +593,7 @@ if (($action == "create") || ($action == "edit")) {
 	print "<td>".$langs->trans($object->label);
 	print "</td></tr>";*/
 
-	print '<tr><td class="titlefield">';
+	print '<tr><td class="titlefieldmiddle">';
 	print $langs->trans('CronType')."</td><td>";
 	print $formCron->select_typejob('jobtype', $object->jobtype, 1);
 	print "</td></tr>";
@@ -660,7 +660,7 @@ if (($action == "create") || ($action == "edit")) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-	print '<tr><td class="titlefield">';
+	print '<tr><td class="titlefieldmiddle">';
 	print $langs->trans('CronEvery')."</td>";
 	print "<td>";
 	if ($object->unitfrequency == "60") {
@@ -741,7 +741,7 @@ if (($action == "create") || ($action == "edit")) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-	print '<tr><td class="titlefield">';
+	print '<tr><td class="titlefieldmiddle">';
 	print $langs->trans('CronDtLastLaunch')."</td><td>";
 	if (!empty($object->datelastrun)) {
 		print $form->textwithpicto(dol_print_date($object->datelastrun, 'dayhoursec'), $langs->trans("CurrentTimeZone"));

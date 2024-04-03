@@ -459,7 +459,7 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">';
 print '<input type="text" class="flat width75" name="search_label" value="'.$search_label.'">';
 print '</td>';
-print '<td class="liste_titre">&nbsp;</td>';
+//print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre"><input type="text" class="width50" name="search_module_name" value="'.$search_module_name.'"></td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
@@ -491,7 +491,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "t.rowid", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronLabel", $_SERVER["PHP_SELF"], "t.label", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("Priority", $_SERVER["PHP_SELF"], "t.priority", "", $param, '', $sortfield, $sortorder);
+//print_liste_field_titre("Priority", $_SERVER["PHP_SELF"], "t.priority", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronModule", $_SERVER["PHP_SELF"], "t.module_name", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("", '', '', "", $param, '', $sortfield, $sortorder, 'tdoverflowmax50 ');
 print_liste_field_titre("CronFrequency", '', "", "", $param, '', $sortfield, $sortorder);
@@ -567,7 +567,7 @@ if ($num > 0) {
 		print '</td>';
 
 		// Label
-		print '<td class="minwidth150">';
+		print '<td class="minwidth125">';
 		if (!empty($object->label)) {
 			$object->ref = $langs->trans($object->label);
 			print '<div class="small twolinesmax classfortooltip" title="'.dol_escape_htmltag($langs->trans($object->label), 0, 0).'">';
@@ -580,9 +580,9 @@ if ($num > 0) {
 		print '</td>';
 
 		// Priority
-		print '<td class="right">';
+		/*print '<td class="right">';
 		print dol_escape_htmltag($object->priority);
-		print '</td>';
+		print '</td>';*/
 
 		// Module
 		print '<td>';
@@ -694,7 +694,7 @@ if ($num > 0) {
 		if (!empty($obj->datenextrun)) {
 			$datenextrun = $db->jdate($obj->datenextrun);
 			if (empty($obj->status)) {
-				print '<span class="opacitymedium">';
+				print '<span class="opacitymedium strikefordisabled">';
 			}
 			print dol_print_date($datenextrun, 'dayhoursec');
 			if ($obj->status == Cronjob::STATUS_ENABLED) {
