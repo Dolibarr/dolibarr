@@ -415,14 +415,14 @@ if ($nolinesbefore) {
 		if (isModEnabled("service") && ($object->element == 'facturerec' || $object->element == 'invoice_supplier_rec')) {
 			echo '<div class="divlinefordates"><br>';
 			echo $langs->trans('AutoFillDateFrom').' ';
-			if (getDolGlobalString('INVOICE_REC_DATE_TO_YES')) {
+			if (getDolGlobalString('INVOICE_REC_DATE_TO_YES') && !empty($line)) {
 				$line->date_start_fill = 1;
 				$line->date_end_fill = 1;
 			}
-			echo $form->selectyesno('date_start_fill', $line->date_start_fill, 1);
+			echo $form->selectyesno('date_start_fill', $line->date_start_fill ?? null, 1);
 			echo ' - ';
 			echo $langs->trans('AutoFillDateTo').' ';
-			echo $form->selectyesno('date_end_fill', $line->date_end_fill, 1);
+			echo $form->selectyesno('date_end_fill', $line->date_end_fill ?? null, 1);
 			echo '</div>';
 		}
 		if (is_object($objectline)) {
