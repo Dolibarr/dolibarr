@@ -2121,7 +2121,7 @@ if ($action == 'create') {
 			$classname = 'CommandeFournisseur';
 		}
 		$objectsrc = new $classname($db);
-		'@phan-var-force Project|Commande|Propal|Contrat|CommandeFournisseur|CommonObject $objectsrc';
+		'@phan-var-force Project|Commande|Propal|Facture|Contrat|CommandeFournisseur|CommonObject $objectsrc';
 		$objectsrc->fetch($originid);
 		$objectsrc->fetch_thirdparty();
 
@@ -2161,19 +2161,19 @@ if ($action == 'create') {
 					$objectsrc->fetch_origin();
 				}
 
-				if (!empty($objectsrc->commandeFournisseur)) {
-					$supplierOrder = $objectsrc->commandeFournisseur;
-					if (empty($cond_reglement_id) && !empty($supplierOrder->cond_reglement_id)) {
-						$cond_reglement_id = $supplierOrder->cond_reglement_id;
+				if (!empty($objectsrc->origin_object)) {
+					$originObject = $objectsrc->origin_object;
+					if (empty($cond_reglement_id) && !empty($originObject->cond_reglement_id)) {
+						$cond_reglement_id = $originObject->cond_reglement_id;
 					}
-					if (empty($mode_reglement_id) && !empty($supplierOrder->mode_reglement_id)) {
-						$mode_reglement_id = $supplierOrder->mode_reglement_id;
+					if (empty($mode_reglement_id) && !empty($originObject->mode_reglement_id)) {
+						$mode_reglement_id = $originObject->mode_reglement_id;
 					}
-					if (empty($fk_account) && !empty($supplierOrder->fk_account)) {
-						$fk_account = $supplierOrder->fk_account;
+					if (empty($fk_account) && !empty($originObject->fk_account)) {
+						$fk_account = $originObject->fk_account;
 					}
-					if (empty($transport_mode_id) && !empty($supplierOrder->transport_mode_id)) {
-						$transport_mode_id = $supplierOrder->transport_mode_id;
+					if (empty($transport_mode_id) && !empty($originObject->transport_mode_id)) {
+						$transport_mode_id = $originObject->transport_mode_id;
 					}
 				}
 			}

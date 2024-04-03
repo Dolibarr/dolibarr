@@ -203,7 +203,6 @@ if ($type == 'f') {
 		$search_type = '4';
 	}
 }
-
 // Initialize technical objects to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
@@ -1106,7 +1105,9 @@ if ($user->hasRight("societe", "creer")) {
 }
 if ($user->hasRight("societe", "creer")) {
 	$arrayofmassactions['presetcommercial'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("AllocateCommercial");
+	$arrayofmassactions['unsetcommercial'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("UnallocateCommercial");
 }
+
 if ($user->hasRight('societe', 'supprimer')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
@@ -1198,6 +1199,7 @@ $objecttmp = new Societe($db);
 $trackid = 'thi'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+/*
 if (!empty($search_categ_cus) || !empty($search_categ_sup)) {
 	print "<div id='ways'>";
 	$c = new Categorie($db);
@@ -1205,6 +1207,7 @@ if (!empty($search_categ_cus) || !empty($search_categ_sup)) {
 	print " &gt; ".$ways[0]."<br>\n";
 	print "</div><br>";
 }
+*/
 
 if ($search_all) {
 	$setupstring = '';

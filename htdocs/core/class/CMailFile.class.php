@@ -52,7 +52,7 @@ class CMailFile
 	public $subject;
 	public $addr_from; // From:		Label and EMail of sender (must include '<>'). For example '<myemail@example.com>' or 'John Doe <myemail@example.com>' or '<myemail+trackingid@example.com>'). Note that with gmail smtps, value here is forced by google to account (but not the reply-to).
 	// Sender:      Who send the email ("Sender" has sent emails on behalf of "From").
-	//              Use it when the "From" is an email of a domain that is a SPF protected domain, and sending smtp server is not this domain. In such case, add Sender field with an email of the protected domain.
+	//              Use it when the "From" is an email of a domain that is a SPF protected domain, and the sending smtp server is not this domain. In such case, add Sender field with an email of the protected domain.
 	// Return-Path: Email where to send bounds.
 	public $reply_to; // Reply-To:	Email where to send replies from mailer software (mailer use From if reply-to not defined, Gmail use gmail account if reply-to not defined)
 	public $errors_to; // Errors-To:	Email where to send errors.
@@ -114,7 +114,19 @@ class CMailFile
 	 * @var string	Message-ID of the email to send (generated)
 	 */
 	public $msgid;
+
+	/**
+	 * @var string	Value to use in In-reply-to when email is set as an answer of another email (The Msg-Id of received email)
+	 */
+	public $in_reply_to;
+
+	/**
+	 * @var string	References to add to the email to send (generated from the email we answer)
+	 */
+	public $references;
+
 	public $headers;
+
 	public $message;
 
 	/**
@@ -172,10 +184,12 @@ class CMailFile
 	 *	@param	string	$trackid             Tracking string (contains type and id of related element)
 	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" at end of each line
 	 *  @param  string  $sendcontext      	 'standard', 'emailing', 'ticket', 'password', ... (used to define which sending mode and parameters to use)
-	 *  @param	string	$replyto			 Reply-to email (will be set to same value than From by default if not provided)
+	 *  @param	string	$replyto			 Reply-to email (will be set to the same value than From by default if not provided)
 	 *  @param	string	$upload_dir_tmp		 Temporary directory (used to convert images embedded as img src=data:image)
+	 *  @param	string	$in_reply_to		 Message-ID of the message we reply Token
+	 *  @param	string	$references			 String with list of Message-ID of the thread ('<123> <456> ...')
 	 */
-	public function __construct($subject, $to, $from, $msg, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = 0, $errors_to = '', $css = '', $trackid = '', $moreinheader = '', $sendcontext = 'standard', $replyto = '', $upload_dir_tmp = '')
+	public function __construct($subject, $to, $from, $msg, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = 0, $errors_to = '', $css = '', $trackid = '', $moreinheader = '', $sendcontext = 'standard', $replyto = '', $upload_dir_tmp = '', $in_reply_to = '', $references = '')
 	{
 		global $conf, $dolibarr_main_data_root, $user;
 
@@ -428,6 +442,8 @@ class CMailFile
 		$this->reply_to = dol_sanitizeEmail($replyto);
 		$this->errors_to = dol_sanitizeEmail($errors_to);
 		$this->trackid = $trackid;
+		$this->in_reply_to = $in_reply_to;
+		$this->references = $references;
 		// Set arrays with attached files info
 		$this->filename_list = $filename_list;
 		$this->mimetype_list = $mimetype_list;
@@ -462,7 +478,7 @@ class CMailFile
 			$text_body = "";
 			$files_encoded = "";
 
-			// Define smtp_headers (this also set ->msgid)
+			// Define smtp_headers (this also set SMTP headers from ->msgid, ->in_reply_to and ->references)
 			$smtp_headers = $this->write_smtpheaders();
 			if (!empty($moreinheader)) {
 				$smtp_headers .= $moreinheader; // $moreinheader contains the \r\n
@@ -516,14 +532,22 @@ class CMailFile
 			$smtps->setSubject($subjecttouse);
 			$smtps->setTO($this->getValidAddress($this->addr_to, 0, 1));
 			$smtps->setFrom($this->getValidAddress($this->addr_from, 0, 1));
-			$smtps->setTrackId($this->trackid);
 			$smtps->setReplyTo($this->getValidAddress($this->reply_to, 0, 1));
 
-			//X-Dolibarr-TRACKID is generated inside the smtps->getHeader
+			$smtps->setTrackId($this->trackid);
+
+			if (!empty($this->in_reply_to)) {
+				$smtps->setInReplyTo($this->in_reply_to);
+			}
+			if (!empty($this->references)) {
+				$smtps->setReferences($this->references);
+			}
 
 			if (!empty($moreinheader)) {
 				$smtps->setMoreInHeader($moreinheader);
 			}
+
+			//X-Dolibarr-TRACKID, In-Reply-To, References and $moreinheader will be added to header inside the smtps->getHeader
 
 			if (!empty($this->html)) {
 				if (!empty($css)) {
@@ -592,8 +616,14 @@ class CMailFile
 			$msgid = $headers->get('Message-ID');
 			$msgid->setId($headerID);
 
+			// Add 'In-Reply-To:' header
+			if (!empty($this->in_reply_to)) {
+				$headers->addIdHeader('In-Reply-To', $this->in_reply_to);
+			}
 			// Add 'References:' header
-			//$headers->addIdHeader('References', $headerID);
+			if (!empty($this->references)) {
+				$headers->addIdHeader('References', $this->references);
+			}
 
 			if (!empty($moreinheader)) {
 				$moreinheaderarray = preg_split('/[\r\n]+/', $moreinheader);
@@ -1543,14 +1573,21 @@ class CMailFile
 
 		$trackid = $this->trackid;
 		if ($trackid) {
-			// References is kept in response and Message-ID is returned into In-Reply-To:
 			$this->msgid = time().'.phpmail-dolibarr-'.$trackid.'@'.$host;
 			$out .= 'Message-ID: <'.$this->msgid.">".$this->eol2; // Uppercase seems replaced by phpmail
-			//$out .= 'References: <'.$this->msgid.">".$this->eol2;
 			$out .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host.$this->eol2;
 		} else {
 			$this->msgid = time().'.phpmail@'.$host;
 			$out .= 'Message-ID: <'.$this->msgid.">".$this->eol2;
+		}
+
+		// Add 'In-Reply-To:' header with the Message-Id we answer
+		if (!empty($this->in_reply_to)) {
+			$out .= 'In-Reply-To: <'.$this->in_reply_to.'>'.$this->eol2;
+		}
+		// Add 'References:' header with list of all Message-ID in thread history
+		if (!empty($this->references)) {
+			$out .= 'References: '.$this->references.$this->eol2;
 		}
 
 		if (!empty($_SERVER['REMOTE_ADDR'])) {

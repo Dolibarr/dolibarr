@@ -1073,6 +1073,9 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			}
 			break;
 		case 'intcomma':
+			if (is_array($out)) {
+				$out = implode(',', $out);
+			}
 			if (preg_match('/[^0-9,-]+/i', $out)) {
 				$out = '';
 			}
@@ -1363,6 +1366,41 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 
 	return $res;
 }
+
+/**
+ *	Get properties for an object - including magic properties when requested
+ *
+ *	Only returns properties that exist
+ *
+ *	@param	object		$obj		Object to get properties from
+ *	@param	string[]	$properties	Optional list of properties to get.
+ *  								When empty, only gets public properties.
+ *	@return array<string,mixed>		Hash for retrieved values (key=name)
+ */
+function dol_get_object_properties($obj, $properties = [])
+{
+	// Get real properties using get_object_vars() if $properties is empty
+	if (empty($properties)) {
+		return get_object_vars($obj);
+	}
+
+	$existingProperties = [];
+	$realProperties = get_object_vars($obj);
+
+	// Get the real or magic property values
+	foreach ($properties as $property) {
+		if (array_key_exists($property, $realProperties)) {
+			// Real property, add the value
+			$existingProperties[$property] = $obj->{$property};
+		} elseif (property_exists($obj, $property)) {
+			// Magic property
+			$existingProperties[$property] = $obj->{$property};
+		}
+	}
+
+	return $existingProperties;
+}
+
 
 /**
  *	Create a clone of instance of object (new instance with same value for each properties)
@@ -8992,8 +9030,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
  *  $mesg = make_substitutions($mesg, $substitutionarray, $langs);
  *
  *  @param	string		$text	      					Source string in which we must do substitution
- *  @param  array		$substitutionarray				Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal', ...)
- *  @param	Translate	$outputlangs					Output language
+ *  @param  array<string,string>	$substitutionarray	Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal', ...)
+ *  @param	?Translate	$outputlangs					Output language
  *  @param	int			$converttextinhtmlifnecessary	0=Convert only value into HTML if text is already in HTML
  *  													1=Will also convert initial $text into HTML if we try to insert one value that is HTML
  * 	@return string  		    						Output string after substitutions
@@ -9604,9 +9642,8 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
 }
 
 /**
- * 	Advanced sort array by second index function, which produces ascending (default)
- *  or descending output and uses optionally natural case insensitive sorting (which
- *  can be optionally case sensitive as well).
+ * 	Advanced sort array by the value of a given key, which produces ascending (default) or descending
+ *  output and uses optionally natural case insensitive sorting (which can be optionally case sensitive as well).
  *
  *  @param	array<string|int,mixed>	$array 	Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
  *  @param	string		$index				Key in array to use for sorting criteria
@@ -9615,7 +9652,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *                                          If values are numeric (I said value not type): 0=Use numeric order (even if type is string) so use a "natural" sort, 1=use "natural" sort too (same than 0), -1=Force alphabetical order
  *  @param	int			$case_sensitive		1=sort is case sensitive, 0=not case sensitive
  *  @param	int			$keepindex			If 0 and index key of array to sort is a numeric, then index will be rewritten. If 1 or index key is not numeric, key for index is kept after sorting.
- *  @return	array							Sorted array
+ *  @return	array							Return the sorted array (the source array is not modified !)
  */
 function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sensitive = 0, $keepindex = 0)
 {
@@ -9888,7 +9925,7 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
  * @param	string	$onlysimplestring	'0' (deprecated, do not use it anymore)=Accept all chars,
  * 										'1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
  * 										'2' (used for example for the compute property of extrafields)=Accept also '[]'
- * @return	mixed						Nothing or return result of eval
+ * @return	void|string					Nothing or return result of eval (even if type can be int, it is safer to assume string and find all potential typing issues as abs(dol_eval(...)).
  * @see verifCond()
  * @phan-suppress PhanPluginUnsafeEval
  */
@@ -12601,16 +12638,17 @@ function getNonce()
 /**
  * Start a table with headers and a optional clickable number (don't forget to use "finishSimpleTable()" after the last table row)
  *
- * @param string	$header		The first left header of the table (automatic translated)
- * @param string	$link		(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
- * @param string	$arguments	(optional) Additional arguments for the link (e.g. "search_status=0")
- * @param integer	$emptyRows	(optional) The count of empty rows after the first header
- * @param integer	$number		(optional) The number that is shown right after the first header, when not set the link is shown on the right side of the header as "FullList"
+ * @param string	$header			The first left header of the table (automatic translated)
+ * @param string	$link			(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
+ * @param string	$arguments		(optional) Additional arguments for the link (e.g. "search_status=0")
+ * @param integer	$emptyRows		(optional) The count of empty columns after the first column
+ * @param integer	$number			(optional) The number that is shown right after the first header, when not set the link is shown on the right side of the header as "FullList"
+ * @param string	$pictofulllist 	(optional) The picto to use for the full list link
  * @return void
  *
  * @see finishSimpleTable()
  */
-function startSimpleTable($header, $link = "", $arguments = "", $emptyRows = 0, $number = -1)
+function startSimpleTable($header, $link = "", $arguments = "", $emptyRows = 0, $number = -1, $pictofulllist = '')
 {
 	global $langs;
 
@@ -12654,7 +12692,12 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyRows = 0, 
 			print '<a class="commonlink" href="'.DOL_URL_ROOT.'/'.$link.'">';
 		}
 
-		print $langs->trans("FullList");
+		if ($pictofulllist) {
+			print img_picto($langs->trans("FullList"), $pictofulllist);
+		} else {
+			print $langs->trans("FullList");
+		}
+
 		print '</a>';
 		print '</th>';
 	}

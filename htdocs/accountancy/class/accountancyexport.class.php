@@ -116,14 +116,14 @@ class AccountancyExport
 	/**
 	 * Array with all export type available (key + label)
 	 *
-	 * @return array of type
+	 * @param	int		$mode		Mode of list: 0=flat list, 1=rich list
+	 * @return 						array of type
 	 */
-	public function getType()
+	public function getType($mode = 0)
 	{
 		global $langs, $hookmanager;
 
-		$listofexporttypes = array(
-			self::$EXPORT_TYPE_CONFIGURABLE => $langs->trans('Modelcsv_configurable'),
+		$listofspecialformatexport = array(
 			self::$EXPORT_TYPE_CEGID => $langs->trans('Modelcsv_CEGID'),
 			self::$EXPORT_TYPE_COALA => $langs->trans('Modelcsv_COALA'),
 			self::$EXPORT_TYPE_BOB50 => $langs->trans('Modelcsv_bob50'),
@@ -140,16 +140,36 @@ class AccountancyExport
 			self::$EXPORT_TYPE_LDCOMPTA10 => $langs->trans('Modelcsv_LDCompta10'),
 			self::$EXPORT_TYPE_GESTIMUMV3 => $langs->trans('Modelcsv_Gestinumv3'),
 			self::$EXPORT_TYPE_GESTIMUMV5 => $langs->trans('Modelcsv_Gestinumv5'),
-			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
-			self::$EXPORT_TYPE_FEC2 => $langs->trans('Modelcsv_FEC2'),
 			self::$EXPORT_TYPE_ISUITEEXPERT => 'Export iSuite Expert',
 		);
+
+		$listofgenericformatexport = array(
+			self::$EXPORT_TYPE_CONFIGURABLE => $langs->trans('Modelcsv_configurable'),
+			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
+			self::$EXPORT_TYPE_FEC2 => $langs->trans('Modelcsv_FEC2'),
+		);
+
+		if (empty($mode)) {
+			$listofexporttypes = $listofgenericformatexport + $listofspecialformatexport;
+			ksort($listofexporttypes, SORT_NUMERIC);
+		} else {
+			ksort($listofspecialformatexport, SORT_NUMERIC);
+			$listofexporttypes = array();
+			$i = 0;
+			foreach ($listofgenericformatexport as $key => $val) {
+				$i++;
+				$listofexporttypes[$key] = array('id' => $key, 'label' => $val, 'position' => $i);
+			}
+			$listofexporttypes['separator_'.$i] = array('id' => 0, 'label' => '----------------', 'position' => $i, 'disabled' => 'disabled');
+			foreach ($listofspecialformatexport as $key => $val) {
+				$i++;
+				$listofexporttypes[$key] = array('id' => $key, 'label' => $val, 'position' => $i);
+			}
+		}
 
 		// allow modules to define export formats
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('getType', $parameters, $listofexporttypes);
-
-		ksort($listofexporttypes, SORT_NUMERIC);
 
 		return $listofexporttypes;
 	}

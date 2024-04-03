@@ -1084,8 +1084,8 @@ while ($i < $imaxinloop) {
 
 	// Description
 	if (!empty($arrayfields['a.note']['checked'])) {
-		print '<td class="tdoverflowonsmartphone">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($actionstatic->note_private, 1));
+		print '<td class="tdoverflow200" title="'.dol_escape_htmltag($text).'">';
 		print $form->textwithtooltip(dol_trunc($text, 48), $actionstatic->note_private);
 		print '</td>';
 	}
