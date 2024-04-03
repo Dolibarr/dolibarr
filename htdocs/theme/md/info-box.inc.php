@@ -146,7 +146,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box {
 	display: block;
 	position: relative;
-	min-height: 90px;
+	min-height: 94px;
 	background: var(--colorbacklineimpair2);
 	width: 100%;
 	/* box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); */
@@ -197,11 +197,11 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	display: block;
 	overflow: hidden;
 	float: left;
-	/* height: 90px; */
-	width: 86px;
 	text-align: center;
 	font-size: 45px;
-	line-height: 90px;
+	line-height: 94px;;	/* must be same height as min-height of .info-box */
+	height: 94px;;		/* must be same height as min-height of .info-box */
+	width: 86px;
 	background: var(--colorbacktitle1) !important;
 	<?php if (isset($conf->global->THEME_SATURATE_RATIO)) { ?>
 		filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
