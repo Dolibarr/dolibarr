@@ -1329,6 +1329,32 @@ class Task extends CommonObjectLine
 		return $contactAlreadySelected;
 	}
 
+	/**
+	 * Merge contact of tasks
+	 *
+	 * @param 	int 	$origin_id 	Old task id
+	 * @param 	int 	$dest_id 	New task id
+	 * @return 	bool
+	 */
+	public function mergeContactTask($origin_id, $dest_id)
+	{
+		$error = 0;
+		$origintask = new Task($this->db);
+		$result = $origintask->fetch($origin_id);
+		if ($result <= 0) {
+			return false;
+		}
+
+		//Get list of origin contact
+		$arraycontactorigin = array_merge($origintask->liste_contact(-1, 'internal'), $origintask->liste_contact(-1, 'external'));
+		foreach ($arraycontactorigin as $key => $contact) {
+			$result = $this->add_contact($contact["id"], $contact["fk_c_type_contact"], $contact["source"]);
+			if ($result < 0) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	/**
 	 *  Add time spent
@@ -2506,7 +2532,7 @@ class Task extends CommonObjectLine
 		$error = 0;
 		$task_origin = new Task($this->db);		// The thirdparty that we will delete
 
-		dol_syslog("mergeTask merge thirdparty id=".$task_origin_id." (will be deleted) into the thirdparty id=".$this->id);
+		dol_syslog("mergeTask merge task id=".$task_origin_id." (will be deleted) into the task id=".$this->id);
 
 		if (!$error && $task_origin->fetch($task_origin_id) < 1) {
 			$this->error = $langs->trans('ErrorRecordNotFound');
@@ -2549,11 +2575,6 @@ class Task extends CommonObjectLine
 				}
 			}
 
-			// If alias name is not defined on target thirdparty, we can store in it the old name of company.
-			if (empty($this->name_bis) && $this->name != $task_origin->name) {
-				$this->name_bis = $this->name;
-			}
-
 			// Update
 			$result = $this->update($this->id, $user, 0, 1, 1, 'merge');
 
@@ -2561,13 +2582,18 @@ class Task extends CommonObjectLine
 				$error++;
 			}
 
+			//Merge contacts
+
+			if (!$error) {
+				$result = $this->mergeContactTask($task_origin_id, $this->id);
+				if ($result != true) {
+					$error++;
+				}
+			}
+
 			// Move links
 			if (!$error) {
-				$objects = array(
-					'Societe' => '/societe/class/societe.class.php',
-					'Project' => '/projet/class/project.class.php',
-					'Contact' => '/contact/class/contact.class.php',
-				);
+				$objects = array();
 
 				//First, all core objects must update their tables
 				foreach ($objects as $object_name => $object_file) {
@@ -2580,11 +2606,11 @@ class Task extends CommonObjectLine
 
 					require_once DOL_DOCUMENT_ROOT.$object_file;
 
-					/*if (!$error && !$object_name::replaceThirdparty($this->db, $task_origin->id, $this->id)) {
+					if (!$error && !$object_name::replaceThirdparty($this->db, $task_origin->id, $this->id)) {
 						$error++;
 						$this->error = $this->db->lasterror();
 						break;
-					}*/
+					}
 				}
 			}
 
