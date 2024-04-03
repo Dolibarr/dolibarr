@@ -620,7 +620,7 @@ if (isModEnabled('product')) {
 // Also method used for counting must provide the 2 possible methods like done by all other reports into menu "accountancy - report - turnover":
 // "commitment engagement" method and "cash accounting" method
 $activity = '';
-if (isModEnabled("invoice") && $user->hasRight('facture', 'lire') && getDolGlobalString('MAIN_SHOW_PRODUCT_ACTIVITY_TRIM')) {
+if (isModEnabled("facture") && $user->hasRight('facture', 'lire') && getDolGlobalString('MAIN_SHOW_PRODUCT_ACTIVITY_TRIM')) {
 	if (isModEnabled("product")) {
 		$activity .= activitytrim(0);
 	}
