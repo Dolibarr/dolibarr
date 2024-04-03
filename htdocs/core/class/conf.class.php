@@ -19,6 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 /**
  *	\file       	htdocs/core/class/conf.class.php
  *	\ingroup		core
@@ -169,8 +170,11 @@ class Conf extends stdClass
 	public $contract;
 	public $actions;
 	public $agenda;
-	public $commande;
 	public $propal;
+	/**
+	 * @deprecated Use order
+	 */
+	public $commande;
 	public $order;
 	/**
 	 * @deprecated Use invoice
@@ -1097,6 +1101,8 @@ class Conf extends stdClass
 			} else {
 				unset($this->global->MAIN_NO_CONCAT_DESCRIPTION);
 			}
+
+			// Simple deprecation management. We do not use DolDeprecationHandlet for $conf.
 
 			// product is new use
 			if (isset($this->product)) {
