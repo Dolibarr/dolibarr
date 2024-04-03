@@ -2536,9 +2536,10 @@ span.widthpictotitle.pictotitle {
 }
 .pictofixedwidth {
 	text-align: start;
-	width: 21px;
+	width: 20px;
 	/* padding-right: 0; */
 }
+
 
 .colorthumb {
 	padding-left: 1px !important;

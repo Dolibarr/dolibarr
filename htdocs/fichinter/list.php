@@ -884,7 +884,7 @@ while ($i < $imaxinloop) {
 		}
 		// Third party
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax125">';
 			print $companystatic->getNomUrl(1, '', 44);
 			print '</td>';
 			if (!$i) {
@@ -905,8 +905,9 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Contract
 		if (!empty($arrayfields['c.ref']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			$contratstatic->id = $obj->contrat_id;
 			$contratstatic->ref = $obj->contrat_ref;
 			$contratstatic->ref_customer = $obj->contrat_ref_customer;
