@@ -1345,7 +1345,7 @@ class Task extends CommonObjectLine
 			return false;
 		}
 
-		//Get list of origin contact
+		//Get list of origin contacts
 		$arraycontactorigin = array_merge($origintask->liste_contact(-1, 'internal'), $origintask->liste_contact(-1, 'external'));
 		foreach ($arraycontactorigin as $key => $contact) {
 			$result = $this->add_contact($contact["id"], $contact["fk_c_type_contact"], $contact["source"]);
