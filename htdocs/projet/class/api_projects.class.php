@@ -77,18 +77,78 @@ class Projects extends DolibarrApi
 
 		$result = $this->project->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Project not found');
+			throw new RestException(404, 'Project with supplied id not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->project->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->project);
 	}
 
+	/**
+	 * Get properties of a project object
+	 *
+	 * Return an array with project information
+	 *
+	 * @param	string	$ref			Ref of project
+	 * @return  Object					Object with cleaned properties
+	 *
+	 * @url GET ref/{ref}
+	 *
+	 * @throws	RestException
+	 */
+	public function getByRef($ref)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+			throw new RestException(403);
+		}
 
+		$result = $this->project->fetch('', $ref);
+		if (!$result) {
+			throw new RestException(404, 'Project with supplied ref not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$this->project->fetchObjectLinked();
+		return $this->_cleanObjectDatas($this->project);
+	}
+
+	/**
+	 * Get properties of a project object
+	 *
+	 * Return an array with project information
+	 *
+	 * @param	string	$email_msgid	Email msgid of project
+	 * @return  Object					Object with cleaned properties
+	 *
+	 * @url GET email_msgid/{email_msgid}
+	 *
+	 * @throws	RestException
+	 */
+	public function getByMsgId($email_msgid)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->project->fetch('', '', '', $email_msgid);
+		if (!$result) {
+			throw new RestException(404, 'Project with supplied email_msgid not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$this->project->fetchObjectLinked();
+		return $this->_cleanObjectDatas($this->project);
+	}
 
 	/**
 	 * List projects
@@ -202,11 +262,11 @@ class Projects extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->project->context['caller'] = $request_data['caller'];
+				$this->project->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->project->$field = $value;
+			$this->project->$field = $this->_checkValForAPI($field, $value, $this->project);
 		}
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
@@ -244,7 +304,7 @@ class Projects extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->project->getLinesArray(DolibarrApiAccess::$user);
 		$result = array();
@@ -284,7 +344,7 @@ class Projects extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
@@ -327,7 +387,7 @@ class Projects extends DolibarrApi
 		}
 
 		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$request_data = (object) $request_data;
@@ -394,7 +454,7 @@ class Projects extends DolibarrApi
 		}
 
 		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$request_data = (object) $request_data;
@@ -454,7 +514,7 @@ class Projects extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -462,11 +522,11 @@ class Projects extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->project->context['caller'] = $request_data['caller'];
+				$this->project->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->project->$field = $value;
+			$this->project->$field = $this->_checkValForAPI($field, $value, $this->project);
 		}
 
 		if ($this->project->update(DolibarrApiAccess::$user) >= 0) {
@@ -494,7 +554,7 @@ class Projects extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->project->delete(DolibarrApiAccess::$user)) {
@@ -538,7 +598,7 @@ class Projects extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->project->setValid(DolibarrApiAccess::$user, $notrigger);

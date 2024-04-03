@@ -334,7 +334,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 	$menu_arr[] = array(
 		'name' => 'Bank',
-		'link' => '/compta/bank/list.php?mainmenu=bank&amp;leftmenu=',
+		'link' => '/compta/bank/list.php?mainmenu=bank&amp;leftmenu=&amp;search_status=opened',
 		'title' =>  "MenuBankCash",
 		'level' => 0,
 		'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
@@ -1346,7 +1346,7 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
  */
 function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
 {
-	global $user, $conf, $langs;
+	global $user, $langs;
 
 	if ($mainmenu == 'commercial') {
 		$langs->load("companies");
@@ -1989,10 +1989,10 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 
 		// Bank-Cash account
 		if (isModEnabled('bank')) {
-			$newmenu->add("/compta/bank/list.php?leftmenu=bank&amp;mainmenu=bank", $langs->trans("MenuBankCash"), 0, $user->hasRight('banque', 'lire'), '', $mainmenu, 'bank', 0, '', '', '', img_picto('', 'bank_account', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/compta/bank/list.php?leftmenu=bank&amp;mainmenu=bank&amp;search_status=opened", $langs->trans("MenuBankCash"), 0, $user->hasRight('banque', 'lire'), '', $mainmenu, 'bank', 0, '', '', '', img_picto('', 'bank_account', 'class="paddingright pictofixedwidth"'));
 
 			$newmenu->add("/compta/bank/card.php?action=create", $langs->trans("MenuNewFinancialAccount"), 1, $user->hasRight('banque', 'configurer'));
-			$newmenu->add("/compta/bank/list.php?leftmenu=bank&amp;mainmenu=bank", $langs->trans("List"), 1, $user->hasRight('banque', 'lire'), '', $mainmenu, 'bank');
+			$newmenu->add("/compta/bank/list.php?leftmenu=bank&amp;mainmenu=bank&amp;search_status=opened", $langs->trans("List"), 1, $user->hasRight('banque', 'lire'), '', $mainmenu, 'bank');
 			$newmenu->add("/compta/bank/bankentries_list.php", $langs->trans("ListTransactions"), 1, $user->hasRight('banque', 'lire'));
 			$newmenu->add("/compta/bank/budget.php", $langs->trans("ListTransactionsByCategory"), 1, $user->hasRight('banque', 'lire'));
 
@@ -2069,7 +2069,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 	if ($mainmenu == 'products') {
 		// Products
 		if (isModEnabled('product')) {
-			$newmenu->add("/product/index.php?leftmenu=product&amp;type=0", $langs->trans("Products"), 0, $user->hasRight('product', 'read'), '', $mainmenu, 'product', 0, '', '', '', img_picto('', 'product', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/product/index.php?leftmenu=product", $langs->trans("Products"), 0, $user->hasRight('product', 'read'), '', $mainmenu, 'product', 0, '', '', '', img_picto('', 'product', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/product/card.php?leftmenu=product&amp;action=create&amp;type=0", $langs->trans("NewProduct"), 1, $user->hasRight('product', 'creer'));
 			$newmenu->add("/product/list.php?leftmenu=product&amp;type=0", $langs->trans("List"), 1, $user->hasRight('product', 'read'));
 			if (isModEnabled('stock')) {
@@ -2097,7 +2097,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 
 		// Services
 		if (isModEnabled('service')) {
-			$newmenu->add("/product/index.php?leftmenu=service&amp;type=1", $langs->trans("Services"), 0, $user->hasRight('service', 'read'), '', $mainmenu, 'service', 0, '', '', '', img_picto('', 'service', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/product/index.php?leftmenu=service", $langs->trans("Services"), 0, $user->hasRight('service', 'read'), '', $mainmenu, 'service', 0, '', '', '', img_picto('', 'service', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/product/card.php?leftmenu=service&amp;action=create&amp;type=1", $langs->trans("NewService"), 1, $user->hasRight('service', 'creer'));
 			$newmenu->add("/product/list.php?leftmenu=service&amp;type=1", $langs->trans("List"), 1, $user->hasRight('service', 'read'));
 
@@ -2121,7 +2121,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 		// Warehouse
 		if (isModEnabled('stock')) {
 			$langs->load("stocks");
-			$newmenu->add("/product/stock/index.php?leftmenu=stock", $langs->trans("Warehouses"), 0, $user->hasRight('stock', 'lire'), '', $mainmenu, 'stock', 0, '', '', '', img_picto('', 'stock', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/product/index.php?leftmenu=stock", $langs->trans("Warehouses"), 0, $user->hasRight('stock', 'lire'), '', $mainmenu, 'stock', 0, '', '', '', img_picto('', 'stock', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/product/stock/card.php?action=create", $langs->trans("MenuNewWarehouse"), 1, $user->hasRight('stock', 'creer'));
 			$newmenu->add("/product/stock/list.php", $langs->trans("List"), 1, $user->hasRight('stock', 'lire'));
 			$newmenu->add("/product/stock/movement_list.php", $langs->trans("Movements"), 1, $user->hasRight('stock', 'mouvement', 'lire'));

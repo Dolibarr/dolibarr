@@ -126,11 +126,6 @@ class Reception extends CommonObject
 	public $listmeths; // List of carriers
 
 	/**
-	 * @var ?CommandeFournisseur
-	 */
-	public $commandeFournisseur;
-
-	/**
 	 * @var CommandeFournisseurDispatch[]
 	 */
 	public $lines = array();
@@ -620,17 +615,17 @@ class Reception extends CommonObject
 		}
 
 		if (!$error) {
-			// Change status of order to "reception in process" or "totally received"
+			// Change status of purchase order to "reception in process" or "totally received"
 			$status = $this->getStatusDispatch();
 			if ($status < 0) {
 				$error++;
 			} else {
 				$trigger_key = '';
-				if ($status == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
-					$ret = $this->commandeFournisseur->Livraison($user, dol_now(), 'tot', '');
+				if ($this->origin_object instanceof CommandeFournisseur && $status == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
+					$ret = $this->origin_object->Livraison($user, dol_now(), 'tot', '');
 					if ($ret < 0) {
 						$error++;
-						$this->errors = array_merge($this->errors, $this->commandeFournisseur->errors);
+						$this->errors = array_merge($this->errors, $this->origin_object->errors);
 					}
 				} else {
 					$ret = $this->setStatut($status, $this->origin_id, 'commande_fournisseur', $trigger_key);
@@ -767,8 +762,8 @@ class Reception extends CommonObject
 					}
 				}
 
-				// qty wished in order supplier (origin)
-				foreach ($this->commandeFournisseur->lines as $origin_line) {
+				// qty wished in origin (purchase order, ...)
+				foreach ($this->origin_object->lines as $origin_line) {
 					// exclude lines not qualified for reception
 					if (!getDolGlobalInt('STOCK_SUPPORTS_SERVICES') && $origin_line->product_type > 0) {
 						continue;
@@ -1448,9 +1443,8 @@ class Reception extends CommonObject
 		$this->socid                = 1;
 
 		$this->origin_id            = 1;
-		$this->origin               = 'commande';
+		$this->origin_type          = 'supplier_order';
 		$this->origin_object        = $order;
-		$this->commandeFournisseur  = $order;	// deprecated
 
 		$this->note_private = 'Private note';
 		$this->note_public = 'Public note';

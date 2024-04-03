@@ -130,7 +130,7 @@ class Propal extends CommonObject
 	public $ref_customer;
 
 	/**
-	 * @var Propal oldcopy with propal properties
+	 * @var static oldcopy with propal properties
 	 */
 	public $oldcopy;
 

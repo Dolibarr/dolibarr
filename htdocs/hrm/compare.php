@@ -5,6 +5,7 @@
  * Copyright (C) 2021  Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021  Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,16 +154,16 @@ $fk_usergroup1 = GETPOST('fk_usergroup1');
 						</tr>
 						<tr>
 							<td><?php
-									echo $langs->trans('OrJobToCompare') . '</td><td>';
-									$j = new Job($db);
-									$jobs = $j->fetchAll();
-									$TJobs = array();
+							echo $langs->trans('OrJobToCompare') . '</td><td>';
+							$j = new Job($db);
+							$jobs = $j->fetchAll();
+							$TJobs = array();
 
 							foreach ($jobs as &$j) {
 								$TJobs[$j->id] = $j->label;
 							}
 
-									print img_picto('', 'jobprofile', 'class="pictofixedwidth"').$form->selectarray('fk_job', $TJobs, $fk_job, 1);
+							print img_picto('', 'jobprofile', 'class="pictofixedwidth"').$form->selectarray('fk_job', $TJobs, $fk_job, 1);
 							?></td>
 						</tr>
 					</table>
@@ -502,8 +503,8 @@ function displayUsersListWithPicto(&$TUser, $fk_usergroup = 0, $namelist = 'list
  *
  * 		Allow to get skill(s) of a user
  *
- * 		@param array $TUser array of employees we need to get skills
- * 		@return array|int
+ * 		@param int[] $TUser array of employees we need to get skills
+ * 		@return array<int,stdClass>
  */
 function getSkillForUsers($TUser)
 {
@@ -515,12 +516,12 @@ function getSkillForUsers($TUser)
 	}
 
 	$sql = 'SELECT sk.rowid, sk.label, sk.description, sk.skill_type, sr.fk_object, sr.objecttype, sr.fk_skill, ';
-	$sql.= ' MAX(sr.rankorder) as rankorder';
-	$sql.= ' FROM '.MAIN_DB_PREFIX.'hrm_skill sk';
-	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'hrm_skillrank sr ON (sk.rowid = sr.fk_skill)';
-	$sql.= " WHERE sr.objecttype = '".$db->escape(SkillRank::SKILLRANK_TYPE_USER)."'";
-	$sql.= ' AND sr.fk_object IN ('.$db->sanitize(implode(',', $TUser)).')';
-	$sql.= " GROUP BY sk.rowid, sk.label, sk.description, sk.skill_type, sr.fk_object, sr.objecttype, sr.fk_skill "; // group par competence
+	$sql .= ' MAX(sr.rankorder) as rankorder';
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'hrm_skill sk';
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'hrm_skillrank sr ON (sk.rowid = sr.fk_skill)';
+	$sql .= " WHERE sr.objecttype = '".$db->escape(SkillRank::SKILLRANK_TYPE_USER)."'";
+	$sql .= ' AND sr.fk_object IN ('.$db->sanitize(implode(',', $TUser)).')';
+	$sql .= " GROUP BY sk.rowid, sk.label, sk.description, sk.skill_type, sr.fk_object, sr.objecttype, sr.fk_skill "; // group par competence
 
 	$resql = $db->query($sql);
 	$Tab = array();
@@ -530,10 +531,10 @@ function getSkillForUsers($TUser)
 		$num = 0;
 		while ($obj = $db->fetch_object($resql)) {
 			$sql1 = "SELECT COUNT(rowid) as how_many_max FROM ".MAIN_DB_PREFIX."hrm_skillrank as sr";
-			$sql1.=" WHERE sr.rankorder = ".((int) $obj->rankorder);
-			$sql1.=" AND sr.objecttype = '".$db->escape(SkillRank::SKILLRANK_TYPE_USER)."'";
-			$sql1.=" AND sr.fk_skill = ".((int) $obj->fk_skill);
-			$sql1.=" AND sr.fk_object IN (".$db->sanitize(implode(',', $TUser)).")";
+			$sql1 .= " WHERE sr.rankorder = ".((int) $obj->rankorder);
+			$sql1 .= " AND sr.objecttype = '".$db->escape(SkillRank::SKILLRANK_TYPE_USER)."'";
+			$sql1 .= " AND sr.fk_skill = ".((int) $obj->fk_skill);
+			$sql1 .= " AND sr.fk_object IN (".$db->sanitize(implode(',', $TUser)).")";
 			$resql1 = $db->query($sql1);
 
 			$objMax = $db->fetch_object($resql1);
@@ -561,7 +562,7 @@ function getSkillForUsers($TUser)
  * 		Allow to get skill(s) of a job
  *
  * 		@param int $fk_job job we need to get required skills
- * 		@return array|int
+ * 		@return stdClass[]
  */
 function getSkillForJob($fk_job)
 {
@@ -572,12 +573,12 @@ function getSkillForJob($fk_job)
 	}
 
 	$sql = 'SELECT sk.rowid, sk.label, sk.description, sk.skill_type, sr.fk_object, sr.objecttype, sr.fk_skill,';
-	$sql.= " MAX(sr.rankorder) as rankorder";
-	$sql.=' FROM '.MAIN_DB_PREFIX.'hrm_skill as sk';
-	$sql.='	LEFT JOIN '.MAIN_DB_PREFIX.'hrm_skillrank as sr ON (sk.rowid = sr.fk_skill)';
-	$sql.="	WHERE sr.objecttype = '".SkillRank::SKILLRANK_TYPE_JOB."'";
-	$sql.=' AND sr.fk_object = '.((int) $fk_job);
-	$sql.=' GROUP BY sk.rowid, sk.label, sk.description, sk.skill_type, sr.fk_object, sr.objecttype, sr.fk_skill'; // group par competence*/
+	$sql .= " MAX(sr.rankorder) as rankorder";
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'hrm_skill as sk';
+	$sql .= '	LEFT JOIN '.MAIN_DB_PREFIX.'hrm_skillrank as sr ON (sk.rowid = sr.fk_skill)';
+	$sql .= "	WHERE sr.objecttype = '".SkillRank::SKILLRANK_TYPE_JOB."'";
+	$sql .= ' AND sr.fk_object = '.((int) $fk_job);
+	$sql .= ' GROUP BY sk.rowid, sk.label, sk.description, sk.skill_type, sr.fk_object, sr.objecttype, sr.fk_skill'; // group par competence*/
 
 	$resql = $db->query($sql);
 	$Tab = array();

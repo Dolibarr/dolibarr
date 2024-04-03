@@ -225,7 +225,7 @@ $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmpp
 if ($tmpval <= 460) {
 	$colortextbackvmenu = 'FFFFFF';
 } else {
-	$colortextbackvmenu = '000000';
+	$colortextbackvmenu = '222222';
 }
 
 $colortopbordertitle1 = implode(',', colorStringToArray($colortopbordertitle1)); // Normalize value to 'x,y,z'
@@ -363,7 +363,7 @@ print '*/'."\n";
 	--amountremaintopaybackcolor:none;
 	--productlinestockod: #002200;
 	--productlinestocktoolow: #884400;
-	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #2b2d2f, #2b2d2f, #2b2d2f, #e4efe8);
+	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 	--tablevalidbgcolor: rgb(252, 248, 227);
 	--butactionbg : #<?php print $butactionbg; ?>;
 	--textbutaction : #<?php print $textbutaction; ?>;
@@ -1273,6 +1273,12 @@ i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender
 .stockmovement {
 	font-size: 1.4em;
 }
+.publisherlogoinline {
+	vertical-align: middle;
+	height: 14px;
+	width: 14px;
+	margin-left: 5px;
+}
 
 .text-warning{
 	color : <?php print $textWarning; ?>
@@ -2098,12 +2104,6 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	.divmainbodylarge { margin-left: 10px; margin-right: 10px; }
 
-	.tdoverflowonsmartphone {
-		max-width: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
 	.tdoverflowmax100onsmartphone {			/* For tdoverflow, the max-midth become a minimum ! */
 		max-width: 100px;
 		overflow: hidden;
@@ -2655,7 +2655,7 @@ img.hideonsmartphone.pictoactionview {
 
 .pictofixedwidth {
 	text-align: <?php echo $left; ?>;
-	width: 20px;
+	width: 21px;
 	/* padding-right: 0; */
 }
 
@@ -3354,6 +3354,14 @@ img.userphoto {			/* size for user photo in lists */
 	height: 1.5em;
 	background-size: contain;
 	vertical-align: middle;
+}
+span.userimg div.userphoto {
+	background-color: #eee;
+	border-radius: 0.72em;
+	width: 1.4em;
+	height: 1.4em;
+	padding-top: 1px;
+	display: inline-block;
 }
 img.userphotosmall {			/* size for user photo in lists */
 	border-radius: 0.6em;

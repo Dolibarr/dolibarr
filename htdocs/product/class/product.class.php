@@ -72,7 +72,7 @@ class Product extends CommonObject
 	public $fk_element = 'fk_product';
 
 	/**
-	 * @var Product
+	 * @var static
 	 */
 	public $oldcopy;
 

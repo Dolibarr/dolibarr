@@ -361,13 +361,17 @@ llxHeader('', $langs->trans("Setup"), $help_url, '', '', '', $morejs, $morecss, 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs();
 
-$arrayofnatures = array('core' => $langs->transnoentitiesnoconv("NativeModules"), 'external' => $langs->transnoentitiesnoconv("External").' - ['.$langs->trans("AllPublishers").']');
+$arrayofnatures = array(
+	'core' => array('label' => $langs->transnoentitiesnoconv("NativeModules")),
+	'external' => array('label' => $langs->transnoentitiesnoconv("External").' - ['.$langs->trans("AllPublishers").']')
+);
 $arrayofwarnings = array(); // Array of warning each module want to show when activated
 $arrayofwarningsext = array(); // Array of warning each module want to show when we activate an external module
 $filename = array();
 $modules = array();
 $orders = array();
 $categ = array();
+$publisherlogoarray = array();
 
 $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
@@ -427,9 +431,16 @@ foreach ($modulesdir as $dir) {
 								$external = ($objMod->isCoreOrExternalModule() == 'external');
 								if ($external) {
 									if ($publisher) {
-										$arrayofnatures['external_'.$publisher] = $langs->trans("External").' - '.$publisher;
+										// Check if there is a logo forpublisher
+										/* Do not show the company logo in combo. Make combo list dirty.
+										if (!empty($objMod->editor_squarred_logo)) {
+											$publisherlogoarray['external_'.$publisher] = img_picto('', $objMod->editor_squarred_logo, 'class="publisherlogoinline"');
+										}
+										$publisherlogo = empty($publisherlogoarray['external_'.$publisher]) ? '' : $publisherlogoarray['external_'.$publisher];
+										*/
+										$arrayofnatures['external_'.$publisher] = array('label' => $langs->trans("External").' - '.$publisher, 'data-html' => $langs->trans("External").' - <span class="opacitymedium inine-block valignmiddle">'.$publisher.'</span>');
 									} else {
-										$arrayofnatures['external_'] = $langs->trans("External").' - '.$langs->trans("UnknownPublishers");
+										$arrayofnatures['external_'] = array('label' => $langs->trans("External").' - ['.$langs->trans("UnknownPublishers").']');
 									}
 								}
 								ksort($arrayofnatures);
@@ -641,7 +652,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= '</div>';
 	$moreforfilter .= ' ';
 	$moreforfilter .= '<div class="divsearchfield valignmiddle inline-block">';
-	$moreforfilter .= '<input type="submit" name="buttonsubmit" class="button small" value="'.dol_escape_htmltag($langs->trans("Refresh")).'">';
+	$moreforfilter .= '<input type="submit" name="buttonsubmit" class="button small nomarginleft" value="'.dol_escape_htmltag($langs->trans("Refresh")).'">';
 	if ($search_keyword || ($search_nature && $search_nature != '-1') || ($search_version && $search_version != '-1') || ($search_status && $search_status != '-1')) {
 		$moreforfilter .= ' ';
 		$moreforfilter .= '<input type="submit" name="buttonreset" class="buttonreset noborderbottom" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';

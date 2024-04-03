@@ -36,6 +36,14 @@ interface Database
 	 */
 	public function ifsql($test, $resok, $resko);
 
+	/**
+	 * Return SQL string to aggregate using the Standard Deviation of population
+	 *
+	 * @param	string	$nameoffield	Name of field
+	 * @return	string					SQL string
+	 */
+	public function stddevPop($nameoffield);
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return datas as an array
@@ -459,7 +467,7 @@ interface Database
 	 *
 	 * @param	string			$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 * @param	bool			$gm			1=Input information are GMT values, otherwise local to server TZ
-	 * @return	int|string					Date TMS or ''
+	 * @return	int|''						Date TMS or ''
 	 */
 	public function jdate($string, $gm = false);
 

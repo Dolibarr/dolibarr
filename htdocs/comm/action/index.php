@@ -489,9 +489,6 @@ if ($optioncss != '') {
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-//print dol_get_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-//print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, $listofextcals, $actioncode, $usergroup, '', $resourceid);
-//print dol_get_fiche_end();
 
 $viewmode = '<div class="navmode inline-block">';
 
@@ -916,7 +913,6 @@ if ($resql) {
 		$event->type = $obj->type_type;
 		$event->type_picto = $obj->type_picto;
 
-		$event->libelle = $obj->label; // deprecated
 		$event->label = $obj->label;
 		$event->percentage = $obj->percent;
 
@@ -2166,17 +2162,15 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
 							// Show title
 							$titletoshow = $daterange;
-							$titletoshow .= ($titletoshow ? ' ' : '').dol_escape_htmltag($event->label ? $event->label : $event->libelle);
+							$titletoshow .= ($titletoshow ? ' ' : '').dol_escape_htmltag($event->label);
 
 							if ($event->type_code != 'ICALEVENT') {
-								$savlabel = $event->label ? $event->label : $event->libelle;
+								$savlabel = $event->label;
 								$event->label = $titletoshow;
-								$event->libelle = $titletoshow;		// deprecatd
 								// Note: List of users are inside $event->userassigned. Link may be clickable depending on permissions of user.
 								$titletoshow = (($event->type_picto || $event->type_code) ? $event->getTypePicto() : '');
 								$titletoshow .= $event->getNomUrl(0, $maxnbofchar, 'cal_event cal_event_title valignmiddle', '', 0, 0);	// do not add 'inline-block' in css here: it makes the title transformed completely into '...'
 								$event->label = $savlabel;
-								$event->libelle = $savlabel;
 							}
 
 							// Loop on each assigned user
