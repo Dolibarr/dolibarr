@@ -1357,6 +1357,53 @@ class Task extends CommonObjectLine
 	}
 
 	/**
+	 * Merge time spent of tasks
+	 *
+	 * @param 	int 	$origin_id 	Old task id
+	 * @param 	int 	$dest_id 	New task id
+	 * @return 	bool
+	 */
+	public function mergeTimeSpentTask($origin_id, $dest_id)
+	{
+		global $user;
+
+		$error = 0;
+		$origintask = new Task($this->db);
+		$result = $origintask->fetch($origin_id);
+		if ($result <= 0) {
+			return false;
+		}
+
+		$result = $origintask->fetchTimeSpentOnTask();
+		if ($result <= 0) {
+			return false;
+		}
+		$timespentorigin = $origintask->lines;
+		foreach ($timespentorigin as $key => $timespent) {
+			$origintask->timespent_id = $timespent->timespent_line_id;
+
+			$this->timespent_date = $timespent->timespent_line_date;
+			$this->timespent_datehour = $timespent->timespent_line_datehour;
+			$this->timespent_withhour = $timespent->timespent_line_withhour;
+			$this->timespent_duration = $timespent->timespent_line_duration;
+			$this->timespent_fk_user = $timespent->timespent_line_fk_user;
+			$this->timespent_fk_product = $timespent->fk_project;
+			$this->timespent_note = $timespent->timespent_line_note;
+
+			$result = $this->addTimeSpent($user);
+			if ($result <= 0) {
+				return false;
+			}
+
+			$result = $origintask->delTimeSpent($user);
+			if ($result <= 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
 	 *  Add time spent
 	 *
 	 *  @param	User	$user           User object
@@ -2582,8 +2629,15 @@ class Task extends CommonObjectLine
 				$error++;
 			}
 
-			//Merge contacts
+			// Merge time spent
+			if (!$error) {
+				$result = $this->mergeTimeSpentTask($task_origin_id, $this->id);
+				if ($result != true) {
+					$error++;
+				}
+			}
 
+			// Merge contacts
 			if (!$error) {
 				$result = $this->mergeContactTask($task_origin_id, $this->id);
 				if ($result != true) {
