@@ -219,7 +219,7 @@ if (empty($reshook)) {
 	if ($action == 'setassujtva' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
 		$object->tva_assuj = GETPOST('assujtva_value');
-		$result = $object->update($object->id);
+		$result = $object->update($object->id, $user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}

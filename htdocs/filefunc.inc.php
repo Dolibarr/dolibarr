@@ -34,7 +34,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
 if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '19.0.0'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+	define('DOL_VERSION', '19.0.1'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 if (!defined('EURO')) {
@@ -82,7 +82,8 @@ $result = @include_once $conffile; // Keep @ because with some error reporting t
 $listofwrappers = stream_get_wrappers();
 // We need '.phar' for geoip2. TODO Replace phar in geoip with exploded files so we can disable phar by default.
 // phar stream does not auto unserialize content (possible code execution) since PHP 8.1
-$arrayofstreamtodisable = array('compress.zlib', 'compress.bzip2', 'ftp', 'ftps', 'glob', 'data', 'expect', 'ogg', 'rar', 'zip', 'zlib');
+// zip stream is necessary by excel import module
+$arrayofstreamtodisable = array('compress.zlib', 'compress.bzip2', 'ftp', 'ftps', 'glob', 'data', 'expect', 'ogg', 'rar', 'zlib');
 if (!empty($dolibarr_main_stream_to_disable) && is_array($dolibarr_main_stream_to_disable)) {
 	$arrayofstreamtodisable = $dolibarr_main_stream_to_disable;
 }

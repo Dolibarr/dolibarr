@@ -313,23 +313,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Label
 	print '<tr><td class="tdtop">';
-	print $form->editfieldkey("Label", 'label', $object->label, $object, 1, 'alpha:32');
+	print $form->editfieldkey("Label", 'label', $object->label, $object, 0, 'alpha:32');
 	print '</td><td colspan="2">';
-	print $form->editfieldval("Label", 'label', $object->label, $object, 1, 'alpha:32');
+	print $form->editfieldval("Label", 'label', $object->label, $object, 0, 'alpha:32');
 	print "</td></tr>";
 
 	// Date start
 	print '<tr><td>';
-	print $form->editfieldkey("DateStart", 'date_start', $object->date_start, $object, 1, 'datepicker');
+	print $form->editfieldkey("DateStart", 'date_start', $object->date_start, $object, 0, 'datepicker');
 	print '</td><td colspan="2">';
-	print $form->editfieldval("DateStart", 'date_start', $object->date_start, $object, 1, 'datepicker');
+	print $form->editfieldval("DateStart", 'date_start', $object->date_start, $object, 0, 'datepicker');
 	print '</td></tr>';
 
 	// Date end
 	print '<tr><td>';
-	print $form->editfieldkey("DateEnd", 'date_end', $object->date_end, $object, 1, 'datepicker');
+	print $form->editfieldkey("DateEnd", 'date_end', $object->date_end, $object, 0, 'datepicker');
 	print '</td><td colspan="2">';
-	print $form->editfieldval("DateEnd", 'date_end', $object->date_end, $object, 1, 'datepicker');
+	print $form->editfieldval("DateEnd", 'date_end', $object->date_end, $object, 0, 'datepicker');
 	print '</td></tr>';
 
 	// Status

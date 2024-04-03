@@ -416,12 +416,13 @@ class Categorie extends CommonObject
 	 *  Add category into database
 	 *
 	 *  @param	User	$user		Object user
+	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return	int 				-1 : SQL error
 	 *          					-2 : new ID unknown
 	 *          					-3 : Invalid category
 	 * 								-4 : category already exists
 	 */
-	public function create($user)
+	public function create($user, $notrigger = 0)
 	{
 		global $conf, $langs, $hookmanager;
 		$langs->load('categories');
@@ -505,7 +506,7 @@ class Categorie extends CommonObject
 					}
 				}
 
-				if (!$error) {
+				if (!$error && !$notrigger) {
 					// Call trigger
 					$result = $this->call_trigger('CATEGORY_CREATE', $user);
 					if ($result < 0) {
@@ -536,11 +537,12 @@ class Categorie extends CommonObject
 	 * 	Update category
 	 *
 	 *	@param	User	$user		Object user
+	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 * 	@return	int		 			1 : OK
 	 *          					-1 : SQL error
 	 *          					-2 : invalid category
 	 */
-	public function update(User $user)
+	public function update(User $user, $notrigger = 0)
 	{
 		global $langs;
 
@@ -586,7 +588,7 @@ class Categorie extends CommonObject
 				}
 			}
 
-			if (!$error) {
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('CATEGORY_MODIFY', $user);
 				if ($result < 0) {
@@ -1913,10 +1915,11 @@ class Categorie extends CommonObject
 	 *	Update ou cree les traductions des infos produits
 	 *
 	 *	@param	User	$user		Object user
+	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *
 	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
-	public function setMultiLangs($user)
+	public function setMultiLangs(User $user, $notrigger = 0)
 	{
 		global $langs;
 
@@ -1971,10 +1974,12 @@ class Categorie extends CommonObject
 		}
 
 		// Call trigger
-		$result = $this->call_trigger('CATEGORY_SET_MULTILANGS', $user);
-		if ($result < 0) {
-			$this->error = $this->db->lasterror();
-			return -1;
+		if (!$notrigger) {
+			$result = $this->call_trigger('CATEGORY_SET_MULTILANGS', $user);
+			if ($result < 0) {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
 		}
 		// End call triggers
 

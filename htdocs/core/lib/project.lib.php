@@ -268,9 +268,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		if ($nbConfOrBooth > 0 || $nbAttendees > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">';
 			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("ConferenceOrBooth")).'">'.$nbConfOrBooth.'</span>';
-			if ($nbConfOrBooth > 0 && $nbAttendees > 0) {
-				$head[$h][1] .= ' + ';
-			}
+			$head[$h][1] .= ' + ';
 			$head[$h][1] .= '<span title="'.dol_escape_htmltag($langs->trans("Attendees")).'">'.$nbAttendees.'</span>';
 			$head[$h][1] .= '</span>';
 		}

@@ -510,6 +510,8 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 			// TODO Use default language of $thirdparty->default_lang to build $outputlang
 
+			$outputlangs->loadLangs(array("eventorganization"));
+
 			// Get product to use for invoice
 			$productforinvoicerow = new Product($db);
 			$productforinvoicerow->id = 0;
@@ -629,7 +631,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$outputlangs = new Translate('', $conf);
 			$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
 			// Load traductions files required by page
-			$outputlangs->loadLangs(array("main", "members"));
+			$outputlangs->loadLangs(array("main", "members", "eventorganization"));
 			// Get email content from template
 			$arraydefaultmessage = null;
 
@@ -803,7 +805,7 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 
 		// Firstname
 		print '<tr><td><span class="fieldrequired">' . $langs->trans("Firstname") . '</span></td><td>';
-		print '<input type="text" name="firstname" maxlength="255" class="minwidth200 maxwidth300" value="' . dol_escape_htmltag($firstname) . '" required></td></tr>' . "\n";
+		print '<input type="text" name="firstname" maxlength="255" class="minwidth200 maxwidth300" value="' . dol_escape_htmltag($firstname) . '" required autofocus></td></tr>' . "\n";
 
 		// Lastname
 		print '<tr><td><span class="fieldrequired">' . $langs->trans("Lastname") . '</span></td><td>';

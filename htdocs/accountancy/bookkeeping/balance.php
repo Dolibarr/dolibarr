@@ -473,9 +473,12 @@ if ($action != 'export_csv') {
 		$resql = $db->query($sql);
 		$nrows = $resql->num_rows;
 		$opening_balances = array();
-		for ($i = 0; $i < $nrows; $i++) {
-			$arr = $resql->fetch_array();
-			$opening_balances["'" . $arr['numero_compte'] . "'"] = $arr['opening_balance'];
+		if ($resql) {
+			$nrows = $db->num_rows($resql);
+			for ($i = 0; $i < $nrows; $i++) {
+				$arr = $db->fetch_array($resql);
+				$opening_balances["'" . $arr['numero_compte'] . "'"] = $arr['opening_balance'];
+			}
 		}
 	}
 
@@ -546,7 +549,7 @@ if ($action != 'export_csv') {
 
 				// Show first line of a break
 				print '<tr class="trforbreak">';
-				print '<td colspan="'.($colspan+1).'" style="font-weight:bold; border-bottom: 1pt solid black;">'.$line->numero_compte.($root_account_description ? ' - '.$root_account_description : '').'</td>';
+				print '<td colspan="'.($colspan+1).'" class="tdforbreak">'.$root_account_number.($root_account_description ? ' - '.$root_account_description : '').'</td>';
 				print '</tr>';
 
 				$displayed_account = $root_account_number;

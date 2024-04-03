@@ -781,7 +781,7 @@ class ImportXlsx extends ModeleImports
 							// ...
 						}
 
-						// Define $listfields and $listvalues to build SQL request
+						// Define $listfields and $listvalues to build the SQL request
 						if (isModEnabled("socialnetworks") && strpos($fieldname, "socialnetworks") !== false) {
 							if (!in_array("socialnetworks", $listfields)) {
 								$listfields[] = "socialnetworks";
@@ -807,7 +807,7 @@ class ImportXlsx extends ModeleImports
 
 							// Note: arrayrecord (and 'type') is filled with ->import_read_record called by import.php page before calling import_insert
 							if (empty($newval) && $arrayrecord[($key)]['type'] < 0) {
-								$listvalues[] = ($newval == '0' ? $newval : "null");
+								$listvalues[] = ($newval == '0' ? (int) $newval : "null");
 							} elseif (empty($newval) && $arrayrecord[($key)]['type'] == 0) {
 								$listvalues[] = "''";
 							} else {
@@ -835,7 +835,7 @@ class ImportXlsx extends ModeleImports
 							$lastinsertid = (isset($last_insert_id_array[$tmp[1]])) ? $last_insert_id_array[$tmp[1]] : 0;
 							$keyfield = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $key);
 							$listfields[] = $keyfield;
-							$listvalues[] = $lastinsertid;
+							$listvalues[] = (int) $lastinsertid;
 							//print $key."-".$val."-".$listfields."-".$listvalues."<br>";exit;
 						} elseif (preg_match('/^const-/', $val)) {
 							$tmp = explode('-', $val, 2);
@@ -848,6 +848,7 @@ class ImportXlsx extends ModeleImports
 									$file = (empty($objimport->array_import_convertvalue[0][$fieldname]['classfile']) ? $objimport->array_import_convertvalue[0][$fieldname]['file'] : $objimport->array_import_convertvalue[0][$fieldname]['classfile']);
 									$class = $objimport->array_import_convertvalue[0][$fieldname]['class'];
 									$method = $objimport->array_import_convertvalue[0][$fieldname]['method'];
+									$type = $objimport->array_import_convertvalue[0][$fieldname]['type'];
 									$resultload = dol_include_once($file);
 									if (empty($resultload)) {
 										dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
@@ -859,8 +860,16 @@ class ImportXlsx extends ModeleImports
 									if (count($fieldArr) > 0) {
 										$fieldname = $fieldArr[1];
 									}
+
+									// Set $listfields and $listvalues
 									$listfields[] = $fieldname;
-									$listvalues[] = $res;
+									if ($type == 'int') {
+										$listvalues[] = (int) $res;
+									} elseif ($type == 'double') {
+										$listvalues[] = (float) $res;
+									} else {
+										$listvalues[] = "'".$this->db->escape($res)."'";
+									}
 								} else {
 									$this->errors[$error]['type'] = 'CLASSERROR';
 									$this->errors[$error]['lib'] = implode(
@@ -1004,9 +1013,9 @@ class ImportXlsx extends ModeleImports
 								$data = array_combine($listfields, $listvalues);
 								$set = array();
 								foreach ($data as $key => $val) {
-									$set[] = $key." = ".$val;
+									$set[] = $key." = ".$val;	// $val was escaped/sanitized previously
 								}
-								$sqlstart .= " SET " . implode(', ', $set);
+								$sqlstart .= " SET " . implode(', ', $set) . ", import_key = '" . $this->db->escape($importid) . "'";
 
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';

@@ -255,20 +255,6 @@ class Commande extends CommonOrder
 	 */
 	public $lines = array();
 
-	// Multicurrency
-	/**
-	 * @var int Currency ID
-	 */
-	public $fk_multicurrency;
-
-	/**
-	 * @var string multicurrency code
-	 */
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 
 	//! key of module source when order generated from a dedicated module ('cashdesk', 'takepos', ...)
 	public $module_source;
@@ -3369,7 +3355,7 @@ class Commande extends CommonOrder
 		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
 		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
-		$sql .= " fk_user_author=".(isset($this->user_author_id) ? $this->user_author_id : "null").",";
+		$sql .= " fk_user_modif=".(isset($user->id) ? $user->id : "null").",";
 		$sql .= " fk_user_valid=".((isset($this->user_validation_id) && $this->user_validation_id > 0) ? $this->user_validation_id : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
@@ -4395,20 +4381,20 @@ class OrderLine extends CommonOrderLine
 
 		$error = 0;
 
-		if (empty($this->id) && !empty($this->rowid)) {		// For backward compatibility
+		if (empty($this->id) && !empty($this->rowid)) {        // For backward compatibility
 			$this->id = $this->rowid;
 		}
 
 		// check if order line is not in a shipment line before deleting
-		$sqlCheckShipmentLine  = "SELECT";
+		$sqlCheckShipmentLine = "SELECT";
 		$sqlCheckShipmentLine .= " ed.rowid";
-		$sqlCheckShipmentLine .= " FROM ".MAIN_DB_PREFIX."expeditiondet ed";
-		$sqlCheckShipmentLine .= " WHERE ed.fk_origin_line = ".((int) $this->id);
+		$sqlCheckShipmentLine .= " FROM " . MAIN_DB_PREFIX . "expeditiondet ed";
+		$sqlCheckShipmentLine .= " WHERE ed.fk_origin_line = " . ((int) $this->id);
 
 		$resqlCheckShipmentLine = $this->db->query($sqlCheckShipmentLine);
 		if (!$resqlCheckShipmentLine) {
 			$error++;
-			$this->error    = $this->db->lasterror();
+			$this->error = $this->db->lasterror();
 			$this->errors[] = $this->error;
 		} else {
 			$langs->load('errors');
@@ -4416,56 +4402,58 @@ class OrderLine extends CommonOrderLine
 			if ($num > 0) {
 				$error++;
 				$objCheckShipmentLine = $this->db->fetch_object($resqlCheckShipmentLine);
-				$this->error = $langs->trans('ErrorRecordAlreadyExists').' : '.$langs->trans('ShipmentLine').' '.$objCheckShipmentLine->rowid;
+				$this->error = $langs->trans('ErrorRecordAlreadyExists') . ' : ' . $langs->trans('ShipmentLine') . ' ' . $objCheckShipmentLine->rowid;
 				$this->errors[] = $this->error;
 			}
 			$this->db->free($resqlCheckShipmentLine);
 		}
 		if ($error) {
-			dol_syslog(__METHOD__.'Error ; '.$this->error, LOG_ERR);
+			dol_syslog(__METHOD__ . 'Error ; ' . $this->error, LOG_ERR);
 			return -1;
 		}
 
 		$this->db->begin();
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid = ".((int) $this->id);
-
-		dol_syslog("OrderLine::delete", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			if (!$error && !$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('LINEORDER_DELETE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('LINEORDER_DELETE', $user);
+			if ($result < 0) {
+				$error++;
 			}
-
-			// Remove extrafields
-			if (!$error) {
-				$result = $this->deleteExtraFields();
-				if ($result < 0) {
-					$error++;
-					dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
-				}
-			}
-
-			if (!$error) {
-				$this->db->commit();
-				return 1;
-			}
-
-			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
-			$this->db->rollback();
-			return -1 * $error;
-		} else {
-			$this->error = $this->db->lasterror();
-			return -1;
+			// End call triggers
 		}
+
+		if (!$error) {
+			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . "commandedet WHERE rowid = " . ((int) $this->id);
+
+			dol_syslog("OrderLine::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				$error++;
+			}
+		}
+
+		// Remove extrafields
+		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$error++;
+				dol_syslog(get_class($this) . "::delete error -4 " . $this->error, LOG_ERR);
+			}
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 1;
+		}
+
+		foreach ($this->errors as $errmsg) {
+			dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+			$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+		}
+		$this->db->rollback();
+		return -1 * $error;
 	}
 
 	/**

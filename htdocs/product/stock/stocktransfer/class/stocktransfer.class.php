@@ -47,6 +47,11 @@ class StockTransfer extends CommonObject
 	public $table_element = 'stocktransfer_stocktransfer';
 
 	/**
+	 * @var string    Name of subtable line
+	 */
+	public $table_element_line = 'stocktransfer_stocktransferline';
+
+	/**
 	 * @var int  Does this object support multicompany module ?
 	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */

@@ -368,7 +368,7 @@ class modFacture extends DolibarrModules
 			'fd.remise_percent' => 'Reduc. (%)',
 			// remise
 			// fk_remise_except
-			// subprice
+			'fd.subprice' => 'UnitPriceHT',
 			// price
 			'fd.total_ht' => 'LineTotalHT',
 			'fd.total_tva' => 'LineTotalVAT',
@@ -433,7 +433,7 @@ class modFacture extends DolibarrModules
 			'fd.remise_percent' => '0',
 			// remise
 			// fk_remise_except
-			// subprice
+			'fd.subprice' => '100',
 			// price
 			'fd.total_ht' => '100',
 			'fd.total_tva' => '21',

@@ -238,7 +238,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'edit') {
 	// Label
 	print '<tr><td>'.$langs->trans("Label").'</td>';
 	print '<td class="valeur">';
-	print '<input type="text" class="flat" name="note" value="'.$object->note_private.'"></td></tr>';
+	print '<input type="text" class="flat" name="note" value="'.$object->note_public.'"></td></tr>';
 
 	// Bank line
 	if (isModEnabled("banque") && (getDolGlobalString('ADHERENT_BANK_USE') || $object->fk_bank)) {
@@ -334,7 +334,7 @@ if ($rowid && $action != 'edit') {
 	print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur"><span class="amount">'.price($object->amount).'</span></td></tr>';
 
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private)).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_public)).'</td></tr>';
 
 	// Bank line
 	if (isModEnabled("banque") && (getDolGlobalString('ADHERENT_BANK_USE') || $object->fk_bank)) {
@@ -371,7 +371,7 @@ if ($rowid && $action != 'edit') {
 
 	// Delete
 	if ($user->hasRight('adherent', 'cotisation', 'creer')) {
-		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>\n";
+		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"]."?rowid=".((int) $object->id).'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>\n";
 	}
 
 	print '</div>';

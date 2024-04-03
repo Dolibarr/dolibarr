@@ -460,7 +460,7 @@ if ($id > 0 || $ref) {
 	if ($salaryBonPl) {
 		$sql = "SELECT pl.rowid, pl.statut, pl.amount, pl.fk_user,";
 		$sql .= " u.rowid as socid, u.login as name";
-		$sql .=" FROM llx_prelevement_lignes as pl";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 		$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
 		$sql .= ", ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $id);

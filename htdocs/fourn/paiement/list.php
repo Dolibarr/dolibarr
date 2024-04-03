@@ -48,7 +48,7 @@ $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'vendorpaymentlist';
-
+$mode = GETPOST('mode', 'aZ');
 $socid = GETPOST('socid', 'int');
 
 $search_ref				= GETPOST('search_ref', 'alpha');

@@ -204,6 +204,8 @@ if ($action == "confirm_update") {
 		$result = $object->createStd($user, false, $mode);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+
+			$action = 'create';
 		} else {
 			if ($mode != '_tmp') {
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
@@ -404,6 +406,7 @@ if ($action == 'create') {
 	print '</form>';
 } else {
 	$object = new BookKeeping($db);
+
 	$result = $object->fetchPerMvt($piece_num, $mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');

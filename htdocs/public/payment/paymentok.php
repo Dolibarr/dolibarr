@@ -84,14 +84,14 @@ if (isModEnabled('paypal')) {
 	if (getDolGlobalString('PAYPAL_API_SANDBOX')) {
 		$PAYPAL_API_SANDBOX = $conf->global->PAYPAL_API_SANDBOX;
 	}
-	$PAYPAL_API_OK = "";
+	/*$PAYPAL_API_OK = "";
 	if ($urlok) {
 		$PAYPAL_API_OK = $urlok;
 	}
 	$PAYPAL_API_KO = "";
 	if ($urlko) {
 		$PAYPAL_API_KO = $urlko;
-	}
+	}*/
 
 	$PAYPALTOKEN = GETPOST('TOKEN');
 	if (empty($PAYPALTOKEN)) {
@@ -360,24 +360,24 @@ if ($reshook >= 0) {
 
 // If data not provided into callback url, search them into the session env
 if (empty($ipaddress)) {
-	$ipaddress       = $_SESSION['ipaddress'];
+	$ipaddress = $_SESSION['ipaddress'];
 }
 if (empty($TRANSACTIONID)) {
-	$TRANSACTIONID   = $_SESSION['TRANSACTIONID'];	// pi_... or ch_...
+	$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' :$_SESSION['TRANSACTIONID'];	// pi_... or ch_...
 	if (empty($TRANSACTIONID) && GETPOST('payment_intent', 'alphanohtml')) {
 		// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2
 		$TRANSACTIONID   = GETPOST('payment_intent', 'alphanohtml');
 	}
 }
 if (empty($FinalPaymentAmt)) {
-	$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
+	$FinalPaymentAmt = empty($_SESSION["FinalPaymentAmt"]) ? '' : $_SESSION["FinalPaymentAmt"];
 }
 if (empty($currencyCodeType)) {
-	$currencyCodeType = $_SESSION['currencyCodeType'];
+	$currencyCodeType = empty($_SESSION['currencyCodeType']) ? '' : $_SESSION['currencyCodeType'];
 }
-// Seems used onyl by Paypal
+// Seems used only by Paypal
 if (empty($paymentType)) {
-	$paymentType     = $_SESSION["paymentType"];
+	$paymentType = empty($_SESSION["paymentType"]) ? '' : $_SESSION["paymentType"];
 }
 
 $fulltag = $FULLTAG;
@@ -1286,9 +1286,10 @@ if ($ispaymentok) {
 						}
 					}
 
+					$attendeetovalidate = new ConferenceOrBoothAttendee($db);
+
 					if (!$error) {
 						// Validating the attendee
-						$attendeetovalidate = new ConferenceOrBoothAttendee($db);
 						$resultattendee = $attendeetovalidate->fetch((int) $tmptag['ATT']);
 						if ($resultattendee < 0) {
 							$error++;
@@ -1378,7 +1379,9 @@ if ($ispaymentok) {
 								$listofmimes = array(dol_mimetype($file));
 							}
 
-							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, $cc, '', 0, $ishtml);
+							$trackid = 'inv'.$object->id;
+
+							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, $cc, '', 0, $ishtml, '', '', $trackid, '', 'standard');
 
 							$result = $mailfile->sendfile();
 							if ($result) {
@@ -1569,8 +1572,9 @@ if ($ispaymentok) {
 										$urlback = $_SERVER["REQUEST_URI"];
 
 										$ishtml = dol_textishtml($texttosend); // May contain urls
+										$trackid = 'inv'.$invoice->id;
 
-										$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
+										$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml, '', '', $trackid, '', 'standard');
 
 										$result = $mailfile->sendfile();
 										if ($result) {
@@ -1745,9 +1749,9 @@ if ($ispaymentok) {
 	$onlinetoken        = empty($PAYPALTOKEN) ? $_SESSION['onlinetoken'] : $PAYPALTOKEN;
 	$payerID            = empty($PAYPALPAYERID) ? $_SESSION['payerID'] : $PAYPALPAYERID;
 	// Set by newpayment.php
-	$currencyCodeType   = $_SESSION['currencyCodeType'];
-	$FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
-	$paymentType        = $_SESSION['PaymentType'];	// Seems used by paypal only
+	$currencyCodeType   = empty($_SESSION['currencyCodeType']) ? '' : $_SESSION['currencyCodeType'];
+	$FinalPaymentAmt    = empty($_SESSION["FinalPaymentAmt"]) ? '': $_SESSION["FinalPaymentAmt"];
+	$paymentType        = empty($_SESSION['PaymentType']) ? '' : $_SESSION['PaymentType'];	// Seems used by paypal only
 
 	if (is_object($object) && method_exists($object, 'call_trigger')) {
 		// Call trigger
@@ -1777,10 +1781,7 @@ if ($ispaymentok) {
 		print $conf->global->$key;
 	}
 
-	$sendemail = '';
-	if (getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL')) {
-		$sendemail = $conf->global->ONLINE_PAYMENT_SENDEMAIL;
-	}
+	$sendemail = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL');
 
 	$tmptag = dolExplodeIntoArray($fulltag, '.', '=');
 
@@ -1860,9 +1861,10 @@ if ($ispaymentok) {
 
 
 		$ishtml = dol_textishtml($content); // May contain urls
+		$trackid = '';
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
+		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml, '', '', $trackid, '', 'standard');
 
 		$result = $mailfile->sendfile();
 		if ($result) {
@@ -1941,9 +1943,10 @@ if ($ispaymentok) {
 
 
 		$ishtml = dol_textishtml($content); // May contain urls
+		$trackid = '';
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
+		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml, '', '', $trackid, '', 'standard');
 
 		$result = $mailfile->sendfile();
 		if ($result) {

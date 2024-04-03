@@ -480,6 +480,7 @@ if (empty($reshook)) {
 							$rang = ($nbOrders > 1) ? -1 : $lines[$i]->rang;
 							//there may already be rows from previous orders
 							if (!empty($createbills_onebythird)) {
+								$TFactThirdNbLines[$cmd->socid]++;
 								$rang = $TFactThirdNbLines[$cmd->socid];
 							}
 
@@ -515,9 +516,6 @@ if (empty($reshook)) {
 							);
 							if ($result > 0) {
 								$lineid = $result;
-								if (!empty($createbills_onebythird)) { //increment rang to keep order
-									$TFactThirdNbLines[$cmd->socid]++;
-								}
 							} else {
 								$lineid = 0;
 								$error++;

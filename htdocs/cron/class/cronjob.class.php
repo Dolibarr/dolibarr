@@ -119,7 +119,7 @@ class Cronjob extends CommonObject
 	public $lastoutput;
 
 	/**
-	 * @var string 			Unit frequency of job execution
+	 * @var int 			Unit frequency of job execution (60, 86400, ...)
 	 */
 	public $unitfrequency;
 
@@ -1295,11 +1295,10 @@ class Cronjob extends CommonObject
 				} else {
 					$result = call_user_func_array(array($object, $this->methodename), $params_arr);
 				}
-
+				$errmsg = '';
 				if ($result === false || (!is_bool($result) && $result != 0)) {
 					$langs->load("errors");
 
-					$errmsg = '';
 					if (!is_array($object->errors) || !in_array($object->error, $object->errors)) {
 						$errmsg .= $object->error;
 					}
