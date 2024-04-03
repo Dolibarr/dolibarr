@@ -1,0 +1,7 @@
+# Change Log
+All notable changes to this project will be documented in this file.
+
+***** Ajout de spécifique client  *****
+
+- Remplacement du select search commerciaux par un multiselect
+- Ajout de la mass action de désafection de commercial sur les tiers

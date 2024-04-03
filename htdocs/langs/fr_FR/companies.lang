@@ -449,6 +449,7 @@ JuridicalStatus200=Indépendant
 DeleteFile=Suppression d'un fichier
 ConfirmDeleteFile=Êtes-vous sûr de vouloir supprimer ce fichier <b>%s</b> ?
 AllocateCommercial=Affecter un commercial
+UnallocateCommercial = Désaffecter un commercial
 Organization=Organisme
 FiscalYearInformation=Exercice fiscal
 FiscalMonthStart=Mois de début d'exercice

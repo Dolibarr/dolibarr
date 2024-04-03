@@ -2,6 +2,11 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** Ajout de spécifique client  *****
+- Remplacement du select search commerciaux par un multiselect
+- Ajout de la mass action de désafection de commercial sur les tiers
+
+
 ***** ChangeLog for 18.0.5 compared to 18.0.4 *****
 FIX: 17.0: deprecated field should only be a fallback
 FIX: 17.0 - php8 warnings: test for $field existence before checking if it is null or empty
