@@ -20,7 +20,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 .info-box {
 	display: block;
 	position: relative;
-	min-height: 90px;
+	min-height: 92px;	/* must be same height than info-box-icon */
 	background: var(--colorbacklineimpair2);
 	width: 100%;
 	box-shadow: 1px 1px 15px rgba(192, 192, 192, 0.2);
@@ -83,11 +83,11 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	display: block;
 	overflow: hidden;
 	float: left;
-	height: 90px;
+	line-height: 92px;	/* must be same height as info-box */
+	height: 92px;	    /* must be same height as info-box */
 	width: 88px;
 	text-align: center;
 	font-size: 2.8em;
-	line-height: 90px;
 	background: var(--colorbacktitle1) !important;
 }
 
@@ -540,11 +540,26 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	}
 }
 
-@media only screen and (max-width: 767px) {
+@media only screen and (max-width: 768px) {
 	.info-box-module {
 		min-width: 260px;
 	}
+	.box-flex-item {
+		width: 280px;
+	}
 }
+
+@media only screen and (max-width: 480px) {
+	.info-box-module {
+		min-width: 250px;
+	}
+	.box-flex-item {
+		width: 250px;
+	}
+}
+
+
+
 
 .info-box-module .info-box-content {
 	height: 98px;

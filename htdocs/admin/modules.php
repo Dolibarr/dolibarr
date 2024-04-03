@@ -641,7 +641,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= '</div>';
 	$moreforfilter .= ' ';
 	$moreforfilter .= '<div class="divsearchfield valignmiddle inline-block">';
-	$moreforfilter .= '<input type="submit" name="buttonsubmit" class="button small" value="'.dol_escape_htmltag($langs->trans("Refresh")).'">';
+	$moreforfilter .= '<input type="submit" name="buttonsubmit" class="button small nomarginleft" value="'.dol_escape_htmltag($langs->trans("Refresh")).'">';
 	if ($search_keyword || ($search_nature && $search_nature != '-1') || ($search_version && $search_version != '-1') || ($search_status && $search_status != '-1')) {
 		$moreforfilter .= ' ';
 		$moreforfilter .= '<input type="submit" name="buttonreset" class="buttonreset noborderbottom" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';
