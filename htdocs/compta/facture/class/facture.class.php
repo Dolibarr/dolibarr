@@ -1090,7 +1090,6 @@ class Facture extends CommonInvoice
 						if ($result < 0) {
 							$error++;
 						}
-						// End call triggers
 					}
 
 					if (!$error) {

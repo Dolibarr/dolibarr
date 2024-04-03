@@ -351,11 +351,12 @@ if ($resql) {
 			print '<span class="amount">'.price(price2num($sub_bom_product->pmp * $sub_bom_line->qty * (float) $line->qty, 'MT')).'</span></td>';
 			$total_cost .= $sub_bom_product->pmp * $sub_bom_line->qty * (float) $line->qty;
 		} else {	// Minimum purchase price if cost price and PMP aren't defined
-			$sql_supplier_price = 'SELECT MIN(price) AS min_price, quantity AS qty FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
-			$sql_supplier_price .= ' WHERE fk_product = '. (int) $sub_bom_product->id;
+			$sql_supplier_price = "SELECT MIN(price) AS min_price, quantity AS qty FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
+			$sql_supplier_price .= " WHERE fk_product = ". (int) $sub_bom_product->id;
+			$sql_supplier_price .= " GROUP BY quantity ORDER BY quantity ASC";
 			$resql_supplier_price = $object->db->query($sql_supplier_price);
 			if ($resql_supplier_price) {
-				$obj = $object->db->fetch_object($resql_supplier_price);
+				$obj = $object->db->fetch_object($resql_supplier_price);	// Take first value so the ref with the smaller minimum quantity
 				if (!empty($obj->qty) && !empty($sub_bom_line->qty) && !empty($line->qty)) {
 					$line_cost = $obj->min_price / $obj->qty * $sub_bom_line->qty * (float) $line->qty;
 				} else {

@@ -63,7 +63,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					$totalarray['nbfield']++;
 				}
 
-				if ($extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
+				if (!empty($extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key])) {
 					if (!$i) {
 						// we keep position for the first line
 						$totalarray['totalizable'][$key]['pos'] = $totalarray['nbfield'];
@@ -75,7 +75,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 						$totalarray['totalizable'][$key]['total'] += $obj->$tmpkey;
 					}
 				}
-				// key 'totalizable' if in extrafields same as 'isameasure' into ->$fields
+				// The key 'totalizable' on extrafields, is the same as 'isameasure' into ->fields
 				if (!empty($extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key] == 1) {
 					if (!$i) {
 						$totalarray['pos'][$totalarray['nbfield']] = $extrafieldsobjectprefix.$tmpkey;
@@ -86,7 +86,12 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					if (!isset($totalarray['val'][$extrafieldsobjectprefix.$tmpkey])) {
 						$totalarray['val'][$extrafieldsobjectprefix.$tmpkey] = 0;
 					}
-					$totalarray['val'][$extrafieldsobjectprefix.$tmpkey] += $obj->$tmpkey;
+					if (isset($obj->$tmpkey) && is_numeric($obj->$tmpkey)) {
+						if (!isset($totalarray['val'][$extrafieldsobjectprefix.$tmpkey])) {
+							$totalarray['val'][$extrafieldsobjectprefix.$tmpkey] = 0;
+						}
+						$totalarray['val'][$extrafieldsobjectprefix.$tmpkey] += $obj->$tmpkey;
+					}
 				}
 			}
 		}
