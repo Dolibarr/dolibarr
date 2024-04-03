@@ -804,3 +804,9 @@ ALTER TABLE llx_prelevement_bons ADD COLUMN fk_account integer DEFAULT NULL AFTE
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN fk_soc_rib integer DEFAULT NULL AFTER fk_user_demande;
 ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_soc_rib integer DEFAULT NULL AFTER amount;
 
+-- Backport Cronjobs
+ALTER TABLE llx_cronjob ADD COLUMN email_alert varchar(128);
+ALTER TABLE llx_cronjob MODIFY COLUMN label varchar(255) NOT NULL;
+ALTER TABLE llx_cronjob DROP INDEX uk_cronjob;
+ALTER TABLE llx_cronjob ADD UNIQUE INDEX uk_cronjob (label, entity);
+ALTER TABLE llx_cronjob ADD COLUMN pid integer;

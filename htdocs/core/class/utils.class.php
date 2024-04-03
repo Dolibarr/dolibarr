@@ -1168,4 +1168,74 @@ class Utils
 
 		return 1;
 	}
+
+	/**
+	 *  Clean unfinished cronjob in processing when pid is no longer present in the system
+	 *  CAN BE A CRON TASK
+	 *
+	 * @return    int                               0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
+	 * @throws Exception
+	 */
+	public function cleanUnfinishedCronjob()
+	{
+		global $db, $user;
+		dol_syslog("Utils::cleanUnfinishedCronjob Starting cleaning");
+
+		// Import Cronjob class if not present
+		require_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
+
+		// Get this job object
+		$this_job = new Cronjob($db);
+		$this_job->fetch(-1, 'Utils', 'cleanUnfinishedCronjob');
+		if (empty($this_job->id) || !empty($this_job->error)) {
+			dol_syslog("Utils::cleanUnfinishedCronjob Unable to fetch himself: ".$this_job->error, LOG_ERR);
+			return -1;
+		}
+
+		// Set this job processing to 0 to avoid being locked by his processing state
+		$this_job->processing = 0;
+		if ($this_job->update($user) < 0) {
+			dol_syslog("Utils::cleanUnfinishedCronjob Unable to update himself: ".implode(', ', $this_job->errors), LOG_ERR);
+			return -1;
+		}
+
+		$cron_job = new Cronjob($db);
+		$cron_job->fetch_all('DESC', 't.rowid', 100, 0, 1, [], 1);	// Fetch jobs that are currently running
+
+		// Iterate over all jobs in processing (this can't be this job since his state is set to 0 before)
+		foreach ($cron_job->lines as $job_line) {
+			// Avoid job with no PID
+			if (empty($job_line->pid)) {
+				dol_syslog("Utils::cleanUnfinishedCronjob Cronjob ".$job_line->id." don't have a PID", LOG_DEBUG);
+				continue;
+			}
+
+			$job = new Cronjob($db);
+			$job->fetch($job_line->id);
+			if (empty($job->id) || !empty($job->error)) {
+				dol_syslog("Utils::cleanUnfinishedCronjob Cronjob ".$job_line->id." can't be fetch: ".$job->error, LOG_ERR);
+				continue;
+			}
+
+			// Calling posix_kill with the 0 kill signal will return true if the process is running, false otherwise.
+			if (! posix_kill($job->pid, 0)) {
+				// Clean processing and pid values
+				$job->processing = 0;
+				$job->pid = null;
+
+				// Set last result as an error and add the reason on the last output
+				$job->lastresult = strval(-1);
+				$job->lastoutput = 'Job killed by job cleanUnfinishedCronjob';
+
+				if ($job->update($user) < 0) {
+					dol_syslog("Utils::cleanUnfinishedCronjob Cronjob ".$job_line->id." can't be updated: ".implode(', ', $job->errors), LOG_ERR);
+					continue;
+				}
+				dol_syslog("Utils::cleanUnfinishedCronjob Cronjob ".$job_line->id." cleaned");
+			}
+		}
+
+		dol_syslog("Utils::cleanUnfinishedCronjob Cleaning completed");
+		return 0;
+	}
 }
