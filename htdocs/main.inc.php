@@ -2674,7 +2674,7 @@ function top_menu_quickadd()
 
             // Key map shortcut
             $(document).keydown(function(event){
-				var ostype = "'.$conf->browser->os.'";
+				var ostype = \''.dol_escape_js($conf->browser->os).'\';
 				if (ostype === "macintosh") {
 					if ( event.which === 65 && event.ctrlKey ) {
 						console.log(\'control + a : trigger open quick add dropdown\');
@@ -2946,7 +2946,7 @@ function top_menu_bookmark()
 
 	            // Key map shortcut
 	            jQuery(document).keydown(function(event) {
-					var ostype = "'.$conf->browser->os.'";
+					var ostype = \''.dol_escape_js($conf->browser->os).'\';
 					if (ostype === "macintosh") {
 						if ( event.which === 66 && event.ctrlKey ) {
 							console.log("Click on control + b : trigger open bookmark dropdown");
