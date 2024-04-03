@@ -395,31 +395,6 @@ class Conf extends stdClass
 		$this->productbatch = new stdClass();
 	}
 
-	/**
-	 * Provide list of deprecated properties and replacements
-	 *
-	 * @return array<string,string>
-	 */
-	protected function deprecatedProperties()
-	{
-		return MODULE_MAPPING
-		+ array(
-			// Previously detected module names, already in mapping
-			//'adherent' => 'member',
-			//'banque' => 'bank',
-			//'categorie' => 'category',
-			//'commande' => 'order',
-			//'contrat' => 'contract',
-			//'expedition' => 'delivery_note',
-			//'facture' => 'invoice',
-			//'projet' => 'project',
-
-			// Other, not deprecated module names
-			'produit' => 'product',
-			'supplierproposal' => 'supplier_proposal',
-		);
-	}
-
 
 	/**
 	 * Load setup values into conf object (read llx_const) for a specified entity
