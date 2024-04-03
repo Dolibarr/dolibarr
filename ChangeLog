@@ -7,7 +7,7 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
-NEW: Compatibility with PHP 8.3
+NEW: Compatibility with PHP 8.2 (with no need to disable warnings)
 ...
 
 For developers or integrators:
@@ -34,6 +34,10 @@ The following changes may create regressions for some external modules, but were
   the deprecated field $fk_user_done in actioncomm table is removed. Please use $fk_user_action instead.
 * The table commande_fournisseur_dispatch has been renamed into receptiondet_batch to better match its goal and the field fk_commande
   and fk_commandefourndet were renamed into fk_element and fk_elementdet
+* Removed trigger BILLREC_CREATEBILL. This trigger was not a CRUD event. If you used it, you can already use the trigger BILL_CREATE and
+  test that ($object->fac_rec > 0) to know if creation trigger is from a recurring invoice or not. Also this old trigger was never enabled
+  into table llx_c_action_trigger.
+
 
 
 ***** ChangeLog for 19.0.1 compared to 19.0.0 *****
