@@ -631,7 +631,7 @@ if (($action == "create") || ($action == "edit")) {
 	print '<tr><td>';
 	print $langs->trans('CronNote')."</td><td>";
 	if (!is_null($object->note_private) && $object->note_private != '') {
-		print $langs->trans($object->note_private);
+		print '<span class="small">'.$langs->trans($object->note_private).'</small>';
 	}
 	print "</td></tr>";
 
