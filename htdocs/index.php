@@ -48,7 +48,7 @@ if (in_array('export', $conf->modules)) $nbmodulesnotautoenabled--;
 if (in_array('import', $conf->modules)) $nbmodulesnotautoenabled--;
 
 // Check if company name is defined (first install)
-if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || !getDolGlobalString('MAIN_INFO_SOCIETE_NOM')) {
+if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY')) {
 	header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
 	exit;
 }
