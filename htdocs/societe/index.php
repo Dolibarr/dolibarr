@@ -74,7 +74,7 @@ if (GETPOST('addbox')) {
 	}
 }
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 
 /*
