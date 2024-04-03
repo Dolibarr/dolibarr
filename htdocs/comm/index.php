@@ -923,7 +923,7 @@ if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $use
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
-		startSimpleTable($langs->trans("BoxTitleLastModifiedSuppliers", min($max, $num)), "societe/list.php", "type=f", 1);
+		startSimpleTable($langs->trans("BoxTitleLastModifiedSuppliers", min($max, $num)), "societe/list.php", "type=f", 1, -1, 'company');
 
 		if ($num) {
 			$i = 0;
