@@ -8299,7 +8299,12 @@ abstract class CommonObject
 			$value = '<span class="opacitymedium">'.$langs->trans("Encrypted").'</span>';
 			//$value = preg_replace('/./i', '*', $value);
 		} elseif ($type == 'array') {
-			$value = implode('<br>', $value);
+			if (is_array($value)) {
+				$value = implode('<br>', $value);
+			} else {
+				dol_syslog(__METHOD__.' Expected array from dol_eval, but got '.gettype($value), LOG_ERR);
+				return 'Error unexpected result from code evaluation';
+			}
 		} else {	// text|html|varchar
 			$value = dol_htmlentitiesbr($value);
 		}

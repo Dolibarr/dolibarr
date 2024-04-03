@@ -9925,7 +9925,7 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
  * @param	string	$onlysimplestring	'0' (deprecated, do not use it anymore)=Accept all chars,
  * 										'1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
  * 										'2' (used for example for the compute property of extrafields)=Accept also '[]'
- * @return	mixed						Nothing or return result of eval
+ * @return	void|string					Nothing or return result of eval (even if type can be int, it is safer to assume string and find all potential typing issues as abs(dol_eval(...)).
  * @see verifCond()
  * @phan-suppress PhanPluginUnsafeEval
  */
