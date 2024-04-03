@@ -4188,7 +4188,6 @@ class Rights
 	const KEY_DEFAULT = 3;
 	const KEY_FIRST_LEVEL = 4;
 	const KEY_SECOND_LEVEL = 5;
-	const KEY_ENTITY = 6;
-	const KEY_MODULE = 7;
-	const KEY_ENABLED = 8;
+	const KEY_MODULE = 6;
+	const KEY_ENABLED = 7;
 }

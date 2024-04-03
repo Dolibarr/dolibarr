@@ -1879,7 +1879,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				// $this->rights[$key][5] = $this->rights[$key][Rights::KEY_SECOND_LEVEL]
 
 				// new parameters
-				// $this->rights[$key][Rights::KEY_ENTITY]	// possibility to define user right for all entities (entity 0) (default: current entity id)
 				// $this->rights[$key][Rights::KEY_MODULE]	// possibility to define user right for an another module (default: current module name)
 				// $this->rights[$key][Rights::KEY_ENABLED]	// condition to show or hide a user right (default: 1) (eg isModEnabled('anothermodule'))
 
@@ -1910,14 +1909,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						$r_module_origin = (empty($this->rights_class) ? strtolower($this->name) : $this->rights_class);
 					}
 
-					// entity for this right ((default: current entity id)
-					$r_entity = ((isset($this->rights[$key][Rights::KEY_ENTITY]) && ($this->rights[$key][Rights::KEY_ENTITY] == 0 || $this->rights[$key][Rights::KEY_ENTITY] == 'all' )) ? 0 : $entity);
 					// condition to show or hide a user right (default: 1) (eg isModEnabled('anothermodule') or ($conf->global->MAIN_FEATURES_LEVEL > 0) or etc..)
 					$r_enabled	= $this->rights[$key][Rights::KEY_ENABLED] ?? '1';
 
 					// Search if perm already present
 					$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";
-					$sql .= " WHERE entity IN (0,".((int) $entity).")";
+					$sql .= " WHERE entity = ".((int) $entity);
 					$sql .= " AND id = ".((int) $r_id);
 
 					$resqlselect = $this->db->query($sql);
@@ -1940,7 +1937,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$sql .= ") VALUES (";
 
 							$sql .= ((int) $r_id);
-							$sql .= ", ".((int) $r_entity);
+							$sql .= ", ".((int) $entity);
 							$sql .= ", '".$this->db->escape($r_label)."'";
 							$sql .= ", '".$this->db->escape($r_module)."'";
 							$sql .= ", '".$this->db->escape($r_module_origin)."'";
@@ -2031,8 +2028,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$module = empty($this->rights_class) ? strtolower($this->name) : $this->rights_class;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def";
-		$sql .= " WHERE entity IN (0,".((int) $conf->entity).")";
-		$sql .= " AND (module = '".$this->db->escape($module)."' OR module_origin = '".$this->db->escape($module)."')";
+		$sql .= " WHERE (module = '".$this->db->escape($module)."' OR module_origin = '".$this->db->escape($module)."')";
+
+		// Delete all entities if core module
+		if (empty($this->core_enabled)) {
+			$sql .= " WHERE entity = ".((int) $conf->entity);
+		}
+
 		dol_syslog(get_class($this)."::delete_permissions", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();
