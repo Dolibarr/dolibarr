@@ -1384,7 +1384,7 @@ ul.attendees li {
 	vertical-align: middle;
 }
 select.flat.selectlimit {
-	max-width: 62px;
+	width: 102px;
 	text-align: end;
 	border-bottom: 1px solid var(--inputbordercolor);
 	border-bottom-left-radius: 0;

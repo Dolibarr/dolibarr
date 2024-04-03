@@ -6209,8 +6209,8 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 				$pagesizechoices = getDolGlobalString('MAIN_PAGESIZE_CHOICES');
 			}
 
-			print '<li class="pagination">';
-			print '<select class="flat selectlimit" name="limit" title="'.dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")).'">';
+			print '<li class="paginationxxx">';
+			print '<select class="flat selectlimit nopadding" id="limit" name="limit" title="'.dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")).'">';
 			$tmpchoice = explode(',', $pagesizechoices);
 			$tmpkey = $limit.':'.$limit;
 			if (!in_array($tmpkey, $tmpchoice)) {
@@ -6234,6 +6234,8 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 				}
 			}
 			print '</select>';
+			print ajax_combobox("limit");
+
 			if ($conf->use_javascript_ajax) {
 				print '<!-- JS CODE TO ENABLE select limit to launch submit of page -->
 	            		<script>
