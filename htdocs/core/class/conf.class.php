@@ -701,9 +701,17 @@ class Conf extends stdClass
 			$rootfortemp = empty($this->global->MAIN_TEMP_DIR) ? $rootfordata : $this->global->MAIN_TEMP_DIR;
 
 			// Define default dir_output and dir_temp for directories of modules
-			foreach ($this->modules as $module) {
+			// By default use the old names.
+			foreach (array_keys(MODULE_MAPPING) + $this->modules as $module) {
+				if (!empty($this->$module->dir_output)) {
+					continue;
+				}
 				//var_dump($module);
 				// For multicompany sharings
+				if (empty($this->$module)) {
+					$this->$module = new stdClass();
+				}
+
 				$this->$module->multidir_output = array($this->entity => $rootfordata."/".$module);
 				$this->$module->multidir_temp = array($this->entity => $rootfortemp."/".$module."/temp");
 				// For backward compatibility
