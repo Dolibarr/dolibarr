@@ -374,7 +374,6 @@ UndoExpandAll=Deshacer expandir
 Reason=Motivo
 FeatureNotYetSupported=Característica aún no admitida
 SendByMail=Enviar por email
-MailSentBy=Email enviado por
 TextUsedInTheMessageBody=Cuerpo del email
 SendAcknowledgementByMail=Enviar correo electrónico de confirmación
 SendMail=Enviar correo electrónico

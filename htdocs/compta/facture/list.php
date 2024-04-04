@@ -2057,7 +2057,7 @@ if ($num > 0) {
 				if (strpos($obj->ref, 'PROV') !== false) {
 					//If is a draft invoice, load var to be able to add products
 					$place = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
-					print 'parent.place=\''.$place.'\'';
+					print 'parent.place=\''.dol_escape_js($place).'\'';
 				}
 				print '});"';
 			}

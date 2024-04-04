@@ -305,14 +305,14 @@ class FormAccounting extends Form
 				}
 				$out .= '</select>';
 				//if ($user->admin && $help) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+
+				$out .= ajax_combobox($htmlname, array());
 			} else {
-				$out = $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code, $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("AccountingCategories"));
+				$out = '<span class="opacitymedium">'.$langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code, $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("AccountingCategories")).'</span>';
 			}
 		} else {
 			dol_print_error($this->db);
 		}
-
-		$out .= ajax_combobox($htmlname, array());
 
 		return $out;
 	}
