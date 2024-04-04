@@ -787,7 +787,7 @@ class pdf_standard_asset extends ModelePDFAsset
 				return 0;
 			}
 		} else {
-			$this->error = $langs->transnoentities("ErrorConstantNotDefined", "FAC_OUTPUTDIR");
+			$this->error = $langs->transnoentities("ErrorConstantNotDefined", "ASSET_OUTPUTDIR");
 			return 0;
 		}
 	}
