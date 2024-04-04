@@ -137,7 +137,7 @@ class Projects extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$result = $this->project->fetch('', $ref_ext);
+		$result = $this->project->fetch('', '', $ref_ext);
 		if (!$result) {
 			throw new RestException(404, 'Project with supplied ref_ext not found');
 		}
