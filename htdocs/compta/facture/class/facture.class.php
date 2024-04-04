@@ -1090,17 +1090,7 @@ class Facture extends CommonInvoice
 						if ($result < 0) {
 							$error++;
 						}
-
-						//special case for recurring invoices, moved from facture-rec.class.php
-						if (!$error && $this->fac_rec > 0) {
-							$result = $this->call_trigger('BILLREC_CREATEBILL', $user);
-							if ($result < 0) {
-								$error++;
-							}
-						}
-						// End call triggers
 					}
-
 
 					if (!$error) {
 						$this->db->commit();
