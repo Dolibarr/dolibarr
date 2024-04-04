@@ -2231,7 +2231,7 @@ class Commande extends CommonOrder
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expeditiondet as ed,';
 		$sql .= ' '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql .= ' WHERE';
-		$sql .= ' ed.fk_origin_line = cd.rowid';
+		$sql .= ' ed.fk_elementdet = cd.rowid';
 		$sql .= ' AND cd.fk_commande = '.((int) $this->id);
 		//print $sql;
 
@@ -2274,7 +2274,7 @@ class Commande extends CommonOrder
 		if ($filtre_statut >= 0) {
 			$sql .= ' ed.fk_expedition = e.rowid AND';
 		}
-		$sql .= ' ed.fk_origin_line = cd.rowid';
+		$sql .= ' ed.fk_elementdet = cd.rowid';
 		$sql .= ' AND cd.fk_commande = '.((int) $this->id);
 		if ($fk_product > 0) {
 			$sql .= ' AND cd.fk_product = '.((int) $fk_product);
@@ -4389,7 +4389,7 @@ class OrderLine extends CommonOrderLine
 		$sqlCheckShipmentLine = "SELECT";
 		$sqlCheckShipmentLine .= " ed.rowid";
 		$sqlCheckShipmentLine .= " FROM " . MAIN_DB_PREFIX . "expeditiondet ed";
-		$sqlCheckShipmentLine .= " WHERE ed.fk_origin_line = " . ((int) $this->id);
+		$sqlCheckShipmentLine .= " WHERE ed.fk_elementdet = " . ((int) $this->id);
 
 		$resqlCheckShipmentLine = $this->db->query($sqlCheckShipmentLine);
 		if (!$resqlCheckShipmentLine) {
