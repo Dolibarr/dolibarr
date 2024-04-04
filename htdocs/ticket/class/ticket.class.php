@@ -2630,7 +2630,7 @@ class Ticket extends CommonObject
 
 		if (!GETPOST("message")) {
 			$error++;
-			array_push($this->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("message")));
+			array_push($this->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")));
 			$action = 'add_message';
 		}
 
