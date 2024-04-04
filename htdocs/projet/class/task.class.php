@@ -2623,7 +2623,7 @@ class Task extends CommonObjectLine
 			}
 
 			// Update
-			$result = $this->update($this->id, $user, 0, 1, 1, 'merge');
+			$result = $this->update($user);
 
 			if ($result < 0) {
 				$error++;

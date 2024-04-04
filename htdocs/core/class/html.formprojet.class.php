@@ -334,9 +334,11 @@ class FormProjets extends Form
 	 * @param string $projectsListId ''=Automatic filter on project allowed. List of id=Filter on project ids.
 	 * @param string $showmore 'all' = Show project info, 'progress' = Show task progression, ''=Show nothing more
 	 * @param User $usertofilter User object to use for filtering
-	 * @return int                    Nbr of tasks if OK, <0 if KO
+	 * @param int 	$nooutput 		1=Return string, do not send to output
+	 * 
+	 * @return int|string                   Nbr of tasks if OK, <0 if KO. If nooutput=1: Return a HTML select string.
 	 */
-	public function selectTasks($socid = -1, $selected = 0, $htmlname = 'taskid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showmore = 'all', $usertofilter = null)
+	public function selectTasks($socid = -1, $selected = 0, $htmlname = 'taskid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showmore = 'all', $usertofilter = null, $nooutput = 0)
 	{
 		global $user, $conf, $langs;
 
@@ -504,10 +506,15 @@ class FormProjets extends Form
 			}
 
 			$this->nboftasks = $num;
-
-			print $out;
-
 			$this->db->free($resql);
+
+			// Output or return
+			if (empty($nooutput)) {
+				print $out;
+			} else {
+				return $out;
+			}
+
 			return $num;
 		} else {
 			dol_print_error($this->db);

@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
 // Load translation files required by the page
 $langs->loadlangs(array('projects', 'companies'));
@@ -252,6 +253,7 @@ if ($action == 'remove_file' && $user->hasRight('projet', 'creer')) {
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
+$formproject = new FormProjets($db);
 $result = $projectstatic->fetch($object->fk_project);
 
 $title = $object->ref;
@@ -464,7 +466,7 @@ if ($id > 0 || !empty($ref)) {
 				'name' => 'task_origin',
 				'label' => $langs->trans('MergeOriginTask'),
 				'type' => 'other',
-				'value' => $form->selectTasks('', 'task_origin', '', 'SelectTask', '', 'minwidth200', 1)
+				'value' => $formproject->selectTasks(-1, '', 'task_origin', 24, 0, $langs->trans('SelectTask'), 0, 0, 0, 'maxwidth500 minwidth200', '', '', null, 1)
 			)
 		);
 		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("MergeTasks"), $langs->trans("ConfirmMergeTasks"), "confirm_merge", $formquestion, 'no', 1, 250);

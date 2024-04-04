@@ -310,3 +310,4 @@ MergeTasks=Merge tasks
 TaskMergeSuccess=Task have been merged
 ErrorTaskIdIsMandatory=Error: Task id is mandatory
 ErrorRecordNotFound=Error: Record not found
+ErrorsTaskMerge=Error: An error occurred while merging tasks
