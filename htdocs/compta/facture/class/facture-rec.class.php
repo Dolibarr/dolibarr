@@ -1391,16 +1391,6 @@ class FactureRec extends CommonInvoice
 							$error++;
 						}
 					}
-					if (!$error && !$notrigger) {
-						// Call trigger
-						$result = $facturerec->call_trigger('BILLREC_CREATEBILL', $user);
-						if ($result < 0) {
-							$this->errors = $facturerec->errors;
-							$this->error = $facturerec->error;
-							$error++;
-						}
-						// End call triggers
-					}
 				} else {
 					$error++;
 					$this->error = "Failed to load invoice template with id=".$line->rowid.", entity=".$conf->entity."\n";

@@ -37,6 +37,12 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("suppliers", "orders"));
 
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('orderssuppliersindex'));
+
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 // Security check
 $orderid = GETPOST('orderid');
@@ -44,12 +50,6 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
-
-$hookmanager = new HookManager($db);
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('orderssuppliersindex'));
-
 
 
 /*
@@ -285,7 +285,6 @@ print '</div><div class="fichetwothirdright">';
 /*
  * Last modified orders
 */
-$max = 5;
 
 $sql = "SELECT c.rowid, c.ref, c.fk_statut as status, c.tms, c.billed, s.nom as name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";

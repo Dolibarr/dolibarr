@@ -315,11 +315,11 @@ class Products extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->product->context['caller'] = $request_data['caller'];
+				$this->product->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->product->$field = $value;
+			$this->product->$field = $this->_checkValForAPI($field, $value, $this->product);
 		}
 		if ($this->product->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating product", array_merge(array($this->product->error), $this->product->errors));
@@ -351,7 +351,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$oldproduct = dol_clone($this->product);
@@ -365,11 +365,11 @@ class Products extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->product->context['caller'] = $request_data['caller'];
+				$this->product->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->product->$field = $value;
+			$this->product->$field = $this->_checkValForAPI($field, $value, $this->product);
 		}
 
 		$updatetype = false;
@@ -453,7 +453,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		// The Product::delete() method uses the global variable $user.
@@ -494,7 +494,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$childrenArbo = $this->product->getChildsArbo($id, 1);
@@ -532,7 +532,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->product->add_sousproduit($id, $subproduct_id, $qty, $incdec);
@@ -562,7 +562,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->product->del_sousproduit($id, $subproduct_id);
@@ -775,7 +775,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->productsupplier->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
@@ -832,7 +832,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->productsupplier->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$resultsupplier = 0;
@@ -987,7 +987,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$product_fourn_list = array();
@@ -1281,11 +1281,11 @@ class Products extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$prodattr->context['caller'] = $request_data['caller'];
+				$prodattr->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$prodattr->$field = $value;
+			$prodattr->$field = $this->_checkValForAPI($field, $value, $prodattr);
 		}
 
 		if ($prodattr->update(DolibarrApiAccess::$user) > 0) {
@@ -1594,11 +1594,11 @@ class Products extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$objectval->context['caller'] = $request_data['caller'];
+				$objectval->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$objectval->$field = $value;
+			$objectval->$field = $this->_checkValForAPI($field, $value, $objectval);
 		}
 
 		if ($objectval->update(DolibarrApiAccess::$user) > 0) {
@@ -1861,11 +1861,11 @@ class Products extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$prodcomb->context['caller'] = $request_data['caller'];
+				$prodcomb->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$prodcomb->$field = $value;
+			$prodcomb->$field = $this->_checkValForAPI($field, $value, $prodcomb);
 		}
 
 		$result = $prodcomb->update(DolibarrApiAccess::$user);
@@ -2064,7 +2064,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!empty($includestockdata) && DolibarrApiAccess::$user->hasRight('stock', 'lire')) {

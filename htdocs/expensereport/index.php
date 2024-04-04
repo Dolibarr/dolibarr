@@ -41,13 +41,6 @@ $hookmanager->initHooks(array('expensereportindex'));
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'trips'));
 
-// Security check
-$socid = GETPOSTINT('socid');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'expensereport', '', '');
-
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -66,7 +59,14 @@ if (!$sortfield) {
 }
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+
+// Security check
+$socid = GETPOSTINT('socid');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'expensereport', '', '');
 
 
 /*

@@ -88,7 +88,7 @@ class Interventions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->fichinter->fetchObjectLinked();
@@ -198,11 +198,11 @@ class Interventions extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->fichinter->context['caller'] = $request_data['caller'];
+				$this->fichinter->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->fichinter->$field = $value;
+			$this->fichinter->$field = $this->_checkValForAPI($field, $value, $this->fichinter);
 		}
 
 		if ($this->fichinter->create(DolibarrApiAccess::$user) < 0) {
@@ -235,7 +235,7 @@ class Interventions extends DolibarrApi
 		}
 
 		if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->fichinter->getLinesArray();
 		$result = array();
@@ -267,11 +267,11 @@ class Interventions extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->fichinter->context['caller'] = $request_data['caller'];
+				$this->fichinter->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->fichinter->$field = $value;
+			$this->fichinter->$field = $this->_checkValForAPI($field, $value, $this->fichinter);
 		}
 
 		if (!$result) {
@@ -279,7 +279,7 @@ class Interventions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$updateRes = $this->fichinter->addLine(
@@ -314,7 +314,7 @@ class Interventions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->fichinter->delete(DolibarrApiAccess::$user)) {
@@ -355,7 +355,7 @@ class Interventions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->fichinter->setValid(DolibarrApiAccess::$user, $notrigger);
@@ -391,7 +391,7 @@ class Interventions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->fichinter->setStatut(3);
