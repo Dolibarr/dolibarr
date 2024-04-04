@@ -61,7 +61,7 @@ function showOnlineSignatureUrl($type, $ref, $obj = null)
  */
 function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $obj = null)
 {
-	global $conf, $dolibarr_main_url_root;
+	global $dolibarr_main_url_root;
 
 	if (empty($obj)) {
 		// For compatibility with 15.0 -> 19.0
