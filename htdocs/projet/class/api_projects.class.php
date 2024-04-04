@@ -124,6 +124,37 @@ class Projects extends DolibarrApi
 	 *
 	 * Return an array with project information
 	 *
+	 * @param	string	$ref_ext			Ref_Ext of project
+	 * @return  Object					Object with cleaned properties
+	 *
+	 * @url GET ref_ext/{ref_ext}
+	 *
+	 * @throws	RestException
+	 */
+	public function getByRefExt($ref_ext)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->project->fetch('', $ref_ext);
+		if (!$result) {
+			throw new RestException(404, 'Project with supplied ref_ext not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$this->project->fetchObjectLinked();
+		return $this->_cleanObjectDatas($this->project);
+	}
+
+	/**
+	 * Get properties of a project object
+	 *
+	 * Return an array with project information
+	 *
 	 * @param	string	$email_msgid	Email msgid of project
 	 * @return  Object					Object with cleaned properties
 	 *
