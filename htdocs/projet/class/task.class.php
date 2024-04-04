@@ -2694,7 +2694,7 @@ class Task extends CommonObjectLine
 
 			if (!$error) {
 				// We finally remove the old task
-				if ($task_origin->delete($task_origin->id, $user) < 1) {
+				if ($task_origin->delete($user) < 1) {
 					$this->error = $task_origin->error;
 					$this->errors = $task_origin->errors;
 					$error++;
