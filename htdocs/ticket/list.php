@@ -342,7 +342,17 @@ $user_temp = new User($db);
 $socstatic = new Societe($db);
 
 $help_url = '';
-$title = $langs->trans('Tickets');
+
+$moretitle = '';
+if ($socid > 0) {
+	$socstatic->fetch($socid);
+	$moretitle = $langs->trans("ThirdParty") . ' - ';
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $socstatic->name) {
+		$moretitle = $socstatic->name . ' - ';
+	}
+}
+
+$title = $moretitle . $langs->trans('Tickets');
 $morejs = array();
 $morecss = array();
 
