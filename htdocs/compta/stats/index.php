@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2017       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024       Benjamin B.             <b.crozon@trebisol.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -461,22 +462,22 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 			//var_dump($annee.' '.$year_end.' '.$mois.' '.$month_end);
 			if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
 				if ($annee_decalage > $minyear && $case <= $casenow) {
-					if (!empty($cum[$caseprev]) && !empty($cum[$case])) {
-						$percent = (round(($cum[$case] - $cum[$caseprev]) / $cum[$caseprev], 4) * 100);
-						//print "X $cum[$case] - $cum[$caseprev] - $cum[$caseprev] - $percent X";
+					if (!empty($cum_ht[$caseprev]) && !empty($cum_ht[$case])) {
+						$percent = (round(($cum_ht[$case] - $cum_ht[$caseprev]) / $cum_ht[$caseprev], 4) * 100);
+						//print "X $cum_ht[$case] - $cum_ht[$caseprev] - $cum_ht[$caseprev] - $percent X";
 						print($percent >= 0 ? "+$percent" : "$percent").'%';
 					}
-					if (!empty($cum[$caseprev]) && empty($cum[$case])) {
+					if (!empty($cum_ht[$caseprev]) && empty($cum_ht[$case])) {
 						print '-100%';
 					}
-					if (empty($cum[$caseprev]) && !empty($cum[$case])) {
+					if (empty($cum_ht[$caseprev]) && !empty($cum_ht[$case])) {
 						//print '<td class="right">+Inf%</td>';
 						print '-';
 					}
-					if (isset($cum[$caseprev]) && empty($cum[$caseprev]) && empty($cum[$case])) {
+					if (isset($cum_ht[$caseprev]) && empty($cum_ht[$caseprev]) && empty($cum_ht[$case])) {
 						print '+0%';
 					}
-					if (!isset($cum[$caseprev]) && empty($cum[$case])) {
+					if (!isset($cum_ht[$caseprev]) && empty($cum_ht[$case])) {
 						print '-';
 					}
 				} else {
@@ -501,9 +502,9 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 				$total_ht[$annee] += (empty($cum_ht[$case]) ? 0 : $cum_ht[$case]);
 			}
 			if (empty($total[$annee])) {
-				$total[$annee] = empty($cum[$case]) ? 0 : $cum[$case];
+				$total[$annee] = empty($cum_ht[$case]) ? 0 : $cum_ht[$case];
 			} else {
-				$total[$annee] += empty($cum[$case]) ? 0 : $cum[$case];
+				$total[$annee] += empty($cum_ht[$case]) ? 0 : $cum_ht[$case];
 			}
 		}
 	}
@@ -601,24 +602,24 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 
 	// Pourcentage total
 	if ($annee > $minyear && $annee <= max($nowyear, $maxyear)) {
-		if (!empty($total[$annee - 1]) && !empty($total[$annee])) {
-			$percent = (round(($total[$annee] - $total[$annee - 1]) / $total[$annee - 1], 4) * 100);
+		if (!empty($total_ht[$annee - 1]) && !empty($total_ht[$annee])) {
+			$percent = (round(($total_ht[$annee] - $total_ht[$annee - 1]) / $total_ht[$annee - 1], 4) * 100);
 			print '<td class="nowrap borderrightlight right">';
 			print($percent >= 0 ? "+$percent" : "$percent").'%';
 			print '</td>';
 		}
-		if (!empty($total[$annee - 1]) && empty($total[$annee])) {
+		if (!empty($total_ht[$annee - 1]) && empty($total_ht[$annee])) {
 			print '<td class="borderrightlight right">-100%</td>';
 		}
-		if (empty($total[$annee - 1]) && !empty($total[$annee])) {
+		if (empty($total_ht[$annee - 1]) && !empty($total_ht[$annee])) {
 			print '<td class="borderrightlight right">+'.$langs->trans('Inf').'%</td>';
 		}
-		if (empty($total[$annee - 1]) && empty($total[$annee])) {
+		if (empty($total_ht[$annee - 1]) && empty($total_ht[$annee])) {
 			print '<td class="borderrightlight right">+0%</td>';
 		}
 	} else {
 		print '<td class="borderrightlight right">';
-		if (!empty($total[$annee]) || ($minyear <= $annee && $annee <= max($nowyear, $maxyear))) {
+		if (!empty($total_ht[$annee]) || ($minyear <= $annee && $annee <= max($nowyear, $maxyear))) {
 			print '-';
 		} else {
 			print '&nbsp;';
