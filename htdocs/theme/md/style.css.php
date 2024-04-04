@@ -2654,8 +2654,8 @@ img.hideonsmartphone.pictoactionview {
 }
 
 .pictofixedwidth {
-	text-align: <?php echo $left; ?>;
-	width: 21px;
+	text-align: start;
+	width: 20px;
 	/* padding-right: 0; */
 }
 
