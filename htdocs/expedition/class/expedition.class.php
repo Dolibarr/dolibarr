@@ -638,7 +638,7 @@ class Expedition extends CommonObject
 				$this->shipping_method_id   = $obj->fk_shipping_method;
 				$this->shipping_method = $obj->shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
-				$this->origin               = ($obj->origin_type ? $obj->origin_type : 'commande');
+				$this->origin               = ($obj->origin_type ? $obj->origin_type : 'commande'); // For compatibility
 				$this->origin_type          = ($obj->origin_type ? $obj->origin_type : 'commande');
 				$this->origin_id            = $obj->origin_id;
 				$this->billed               = $obj->billed;
