@@ -265,8 +265,8 @@ $sql .= " ORDER BY dm";
 
 $minyearmonth = $maxyearmonth = 0;
 
-$cum = array();
-$cum_ht = array();
+$cumulative = array();
+$cumulative_ht = array();
 $total_ht = array();
 $total = array();
 
@@ -276,8 +276,8 @@ if ($result) {
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-		$cum_ht[$obj->dm] = empty($obj->amount) ? 0 : $obj->amount;
-		$cum[$obj->dm] = empty($obj->amount_ttc) ? 0 : $obj->amount_ttc;
+		$cumulative_ht[$obj->dm] = empty($obj->amount) ? 0 : $obj->amount;
+		$cumulative[$obj->dm] = empty($obj->amount_ttc) ? 0 : $obj->amount_ttc;
 		if ($obj->amount_ttc) {
 			$minyearmonth = ($minyearmonth ? min($minyearmonth, $obj->dm) : $obj->dm);
 			$maxyearmonth = max($maxyearmonth, $obj->dm);
@@ -309,10 +309,10 @@ if ($modecompta == 'RECETTES-DEPENSES') {
 		$i = 0;
 		while ($i < $num) {
 			$obj = $db->fetch_object($result);
-			if (empty($cum[$obj->dm])) {
-				$cum[$obj->dm] = $obj->amount_ttc;
+			if (empty($cumulative[$obj->dm])) {
+				$cumulative[$obj->dm] = $obj->amount_ttc;
 			} else {
-				$cum[$obj->dm] += $obj->amount_ttc;
+				$cumulative[$obj->dm] += $obj->amount_ttc;
 			}
 			if ($obj->amount_ttc) {
 				$minyearmonth = ($minyearmonth ? min($minyearmonth, $obj->dm) : $obj->dm);
@@ -421,9 +421,9 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 				// Value turnover of month w/o VAT
 				print '<td class="right">';
 				if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
-					if (!empty($cum_ht[$case])) {
+					if (!empty($cumulative_ht[$case])) {
 						$now_show_delta = 1; // On a trouve le premier mois de la premiere annee generant du chiffre.
-						print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price($cum_ht[$case], 1).'</a>';
+						print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price($cumulative_ht[$case], 1).'</a>';
 					} else {
 						if ($minyearmonth < $case && $case <= max($maxyearmonth, $nowyearmonth)) {
 							print '0';
@@ -438,12 +438,12 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 			// Value turnover of month
 			print '<td class="right">';
 			if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
-				if (!empty($cum[$case])) {
+				if (!empty($cumulative[$case])) {
 					$now_show_delta = 1; // On a trouve le premier mois de la premiere annee generant du chiffre.
 					if ($modecompta != 'BOOKKEEPING') {
 						print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">';
 					}
-					print price($cum[$case], 1);
+					print price($cumulative[$case], 1);
 					if ($modecompta != 'BOOKKEEPING') {
 						print '</a>';
 					}
@@ -462,22 +462,22 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 			//var_dump($annee.' '.$year_end.' '.$mois.' '.$month_end);
 			if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
 				if ($annee_decalage > $minyear && $case <= $casenow) {
-					if (!empty($cum_ht[$caseprev]) && !empty($cum_ht[$case])) {
-						$percent = (round(($cum_ht[$case] - $cum_ht[$caseprev]) / $cum_ht[$caseprev], 4) * 100);
-						//print "X $cum_ht[$case] - $cum_ht[$caseprev] - $cum_ht[$caseprev] - $percent X";
+					if (!empty($cumulative_ht[$caseprev]) && !empty($cumulative_ht[$case])) {
+						$percent = (round(($cumulative_ht[$case] - $cumulative_ht[$caseprev]) / $cumulative_ht[$caseprev], 4) * 100);
+						//print "X $cumulative_ht[$case] - $cumulative_ht[$caseprev] - $cumulative_ht[$caseprev] - $percent X";
 						print($percent >= 0 ? "+$percent" : "$percent").'%';
 					}
-					if (!empty($cum_ht[$caseprev]) && empty($cum_ht[$case])) {
+					if (!empty($cumulative_ht[$caseprev]) && empty($cumulative_ht[$case])) {
 						print '-100%';
 					}
-					if (empty($cum_ht[$caseprev]) && !empty($cum_ht[$case])) {
+					if (empty($cumulative_ht[$caseprev]) && !empty($cumulative_ht[$case])) {
 						//print '<td class="right">+Inf%</td>';
 						print '-';
 					}
-					if (isset($cum_ht[$caseprev]) && empty($cum_ht[$caseprev]) && empty($cum_ht[$case])) {
+					if (isset($cumulative_ht[$caseprev]) && empty($cumulative_ht[$caseprev]) && empty($cumulative_ht[$case])) {
 						print '+0%';
 					}
-					if (!isset($cum_ht[$caseprev]) && empty($cum_ht[$case])) {
+					if (!isset($cumulative_ht[$caseprev]) && empty($cumulative_ht[$case])) {
 						print '-';
 					}
 				} else {
@@ -497,14 +497,14 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 
 		if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
 			if (empty($total_ht[$annee])) {
-				$total_ht[$annee] = (empty($cum_ht[$case]) ? 0 : $cum_ht[$case]);
+				$total_ht[$annee] = (empty($cumulative_ht[$case]) ? 0 : $cumulative_ht[$case]);
 			} else {
-				$total_ht[$annee] += (empty($cum_ht[$case]) ? 0 : $cum_ht[$case]);
+				$total_ht[$annee] += (empty($cumulative_ht[$case]) ? 0 : $cumulative_ht[$case]);
 			}
 			if (empty($total[$annee])) {
-				$total[$annee] = empty($cum_ht[$case]) ? 0 : $cum_ht[$case];
+				$total[$annee] = empty($cumulative_ht[$case]) ? 0 : $cumulative_ht[$case];
 			} else {
-				$total[$annee] += empty($cum_ht[$case]) ? 0 : $cum_ht[$case];
+				$total[$annee] += empty($cumulative_ht[$case]) ? 0 : $cumulative_ht[$case];
 			}
 		}
 	}
@@ -527,10 +527,10 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 
  // Valeur CA du mois
  print '<td class="right">';
- if ($cum[$case])
+ if ($cumulative[$case])
  {
  $now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
- print '<a href="casoc.php?year='.$annee.'&month='.$mois.'">'.price($cum[$case],1).'</a>';
+ print '<a href="casoc.php?year='.$annee.'&month='.$mois.'">'.price($cumulative[$case],1).'</a>';
  }
  else
  {
@@ -541,22 +541,22 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 
  // Pourcentage du mois
  if ($annee > $minyear && $case <= $casenow) {
- if ($cum[$caseprev] && $cum[$case])
+ if ($cumulative[$caseprev] && $cumulative[$case])
  {
- $percent=(round(($cum[$case]-$cum[$caseprev])/$cum[$caseprev],4)*100);
- //print "X $cum[$case] - $cum[$caseprev] - $cum[$caseprev] - $percent X";
+ $percent=(round(($cumulative[$case]-$cumulative[$caseprev])/$cumulative[$caseprev],4)*100);
+ //print "X $cumulative[$case] - $cumulative[$caseprev] - $cumulative[$caseprev] - $percent X";
  print '<td class="right">'.($percent>=0?"+$percent":"$percent").'%</td>';
 
  }
- if ($cum[$caseprev] && ! $cum[$case])
+ if ($cumulative[$caseprev] && ! $cumulative[$case])
  {
  print '<td class="right">-100%</td>';
  }
- if (! $cum[$caseprev] && $cum[$case])
+ if (! $cumulative[$caseprev] && $cumulative[$case])
  {
  print '<td class="right">+Inf%</td>';
  }
- if (! $cum[$caseprev] && ! $cum[$case])
+ if (! $cumulative[$caseprev] && ! $cumulative[$case])
  {
  print '<td class="right">+0%</td>';
  }
@@ -569,7 +569,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
  print '</td>';
  }
 
- $total[$annee]+=$cum[$case];
+ $total[$annee]+=$cumulative[$case];
  if ($annee != $year_end) print '<td width="15">&nbsp;</td>';
  }
 
