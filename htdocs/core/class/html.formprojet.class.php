@@ -169,8 +169,7 @@ class FormProjets extends Form
 		if (getDolGlobalString('PROJECT_HIDE_UNSELECTABLES')) {
 			$hideunselectables = true;
 		}
-
-		if (getDolGlobalInt('MAIN_DISCARD_CLOSED_PROJECTS_IN_SELECT')) {
+		if (getDolGlobalInt('PROJECT_ALWAYS_DISCARD_CLOSED_PROJECTS_IN_SELECT')) {
 			$discard_closed = 1;
 		}
 
