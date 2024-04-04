@@ -7,7 +7,6 @@ EventOnFullDay=Evento todo el día (s)
 MenuToDoActions=Todos los eventos incompletos
 MenuDoneActions=Todos los eventos terminados
 ActionsAskedBy=Eventos reportados por
-ActionsDoneBy=Eventos hechos por
 ViewCal=Vista del mes
 ViewDay=Vista del día
 ViewWeek=Vista de la semana
