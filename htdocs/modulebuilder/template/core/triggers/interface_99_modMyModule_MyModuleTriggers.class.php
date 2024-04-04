@@ -217,7 +217,6 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'BILLREC_CREATE':
 			//case 'BILLREC_MODIFY':
 			//case 'BILLREC_DELETE':
-			//case 'BILLREC_AUTOCREATEBILL':
 			//case 'LINEBILLREC_MODIFY':
 			//case 'LINEBILLREC_DELETE':
 
