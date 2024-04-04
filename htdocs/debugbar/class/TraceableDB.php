@@ -40,7 +40,7 @@ class TraceableDB extends DoliDB
 	 */
 	public $queries;
 	/**
-	 * @var int Request start time
+	 * @var float Request start time
 	 */
 	protected $startTime;
 	/**
