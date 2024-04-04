@@ -1076,7 +1076,7 @@ if ($action == 'create') {
 				print '</td></tr>';
 			}
 
-			// Errors to
+			// Reply to
 			if ($object->messtype != 'sms') {
 				print '<tr><td>';
 				print $form->editfieldkey("MailReply", 'email_replyto', $object->email_replyto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
