@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2020 Frederic France      <frederic.france@netlogic.fr>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 					$staticmember->email = $obj->email;
 					$staticmember->photo = $obj->photo;
 					$staticmember->morphy = $obj->morphy;
-					$staticmember->statut = $obj->status;
+					$staticmember->status = $obj->status;
 					$staticmember->need_subscription = $obj->need_subscription;
 					$staticmember->datefin = $this->db->jdate($obj->date_end_subscription);
 					if (!empty($obj->fk_soc)) {

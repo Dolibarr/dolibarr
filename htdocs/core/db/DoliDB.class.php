@@ -106,6 +106,17 @@ abstract class DoliDB implements Database
 	}
 
 	/**
+	 * Return SQL string to aggregate using the Standard Deviation of population
+	 *
+	 * @param	string	$nameoffield	Name of field
+	 * @return	string					SQL string
+	 */
+	public function stddevPop($nameoffield)
+	{
+		return 'STDDEV_POP('.$nameoffield.')';
+	}
+
+	/**
 	 * Return SQL string to force an index
 	 *
 	 * @param	string	$nameofindex	Name of index
@@ -266,7 +277,7 @@ abstract class DoliDB implements Database
 	/**
 	 *	Return version of database server into an array
 	 *
-	 *	@return	        array  		Version array
+	 *	@return	        string[]  		Version array
 	 */
 	public function getVersionArray()
 	{
@@ -345,7 +356,7 @@ abstract class DoliDB implements Database
 	 *
 	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 *	@param	mixed				$gm			'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
-	 *	@return	int|string						Date TMS or ''
+	 *	@return	int|''							Date TMS or ''
 	 */
 	public function jdate($string, $gm = 'tzserver')
 	{

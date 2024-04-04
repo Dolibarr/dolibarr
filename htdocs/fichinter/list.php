@@ -9,6 +9,7 @@
  * Copyright (C) 2021-2023  Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2022		Charlène Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,6 +150,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
 $id = GETPOSTINT('id');
@@ -833,11 +835,12 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+
+		// Picto + Ref
 		if (!empty($arrayfields['f.ref']['checked'])) {
 			print "<td>";
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			// Picto + Ref
 			print '<td class="nobordernopadding nowraponall">';
 			print $objectstatic->getNomUrl(1);
 			print '</td>';
@@ -869,8 +872,9 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+
+		// Customer ref
 		if (!empty($arrayfields['f.ref_client']['checked'])) {
-			// Customer ref
 			print '<td class="nowrap tdoverflowmax200">';
 			print dol_escape_htmltag($obj->ref_client);
 			print '</td>';
@@ -878,16 +882,18 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Third party
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax125">';
 			print $companystatic->getNomUrl(1, '', 44);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Project ref
 		if (!empty($arrayfields['pr.ref']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			$projetstatic->id = $obj->projet_id;
 			$projetstatic->ref = $obj->projet_ref;
 			$projetstatic->title = $obj->projet_title;
@@ -899,8 +905,9 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Contract
 		if (!empty($arrayfields['c.ref']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			$contratstatic->id = $obj->contrat_id;
 			$contratstatic->ref = $obj->contrat_ref;
 			$contratstatic->ref_customer = $obj->contrat_ref_customer;
@@ -928,7 +935,7 @@ while ($i < $imaxinloop) {
 		print $hookmanager->resPrint;
 		// Date creation
 		if (!empty($arrayfields['f.datec']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
@@ -937,7 +944,7 @@ while ($i < $imaxinloop) {
 		}
 		// Date modification
 		if (!empty($arrayfields['f.tms']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
@@ -971,17 +978,24 @@ while ($i < $imaxinloop) {
 		}
 		// Fields of detail of line
 		if (!empty($arrayfields['fd.description']['checked'])) {
-			print '<td>'.dol_trunc(dolGetFirstLineOfText(dol_string_nohtmltag($obj->descriptiondetail, 1)), 48).'</td>';
+			$text = dolGetFirstLineOfText(dol_string_nohtmltag($obj->descriptiondetail, 1));
+			print '<td>';
+			print '<div class="classfortooltip tdoverflowmax250" title="'.dol_escape_htmltag($obj->descriptiondetail, 1, 1).'">';
+			print dol_escape_htmltag($text);
+			print '</div>';
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Date line
 		if (!empty($arrayfields['fd.date']['checked'])) {
 			print '<td class="center">'.dol_print_date($db->jdate($obj->dp), 'dayhour')."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Duration line
 		if (!empty($arrayfields['fd.duree']['checked'])) {
 			print '<td class="right">'.convertSecondToTime($obj->duree, 'allhourmin').'</td>';
 			if (!$i) {

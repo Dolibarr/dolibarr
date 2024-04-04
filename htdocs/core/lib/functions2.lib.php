@@ -1145,17 +1145,17 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		}	// If current month lower that month of return to zero, year is previous year
 
 		if ($yearlen == 4) {
-			$yearcomp = sprintf("%04d", (int) date("Y", $date) + $yearoffset);
+			$yearcomp = sprintf("%04d", idate("Y", $date) + $yearoffset);
 		} elseif ($yearlen == 2) {
-			$yearcomp = sprintf("%02d", (int) date("y", $date) + $yearoffset);
+			$yearcomp = sprintf("%02d", idate("y", $date) + $yearoffset);
 		} elseif ($yearlen == 1) {
-			$yearcomp = substr(date('y', $date), 1, 1) + $yearoffset;
+			$yearcomp = (int) substr(date('y', $date), 1, 1) + $yearoffset;
 		}
 		if ($monthcomp > 1 && empty($resetEveryMonth)) {	// Test with month is useless if monthcomp = 0 or 1 (0 is same as 1) (regis: $monthcomp can't equal 0)
 			if ($yearlen == 4) {
-				$yearcomp1 = sprintf("%04d", (int) date("Y", $date) + $yearoffset + 1);
+				$yearcomp1 = sprintf("%04d", idate("Y", $date) + $yearoffset + 1);
 			} elseif ($yearlen == 2) {
-				$yearcomp1 = sprintf("%02d", (int) date("y", $date) + $yearoffset + 1);
+				$yearcomp1 = sprintf("%02d", idate("y", $date) + $yearoffset + 1);
 			}
 
 			$sqlwhere .= "(";
@@ -1424,6 +1424,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskuser_maskafter = $maskuser_value;
 			$numFinal = str_replace($maskuser_maskbefore, $maskuser_maskafter, $numFinal);
 		}
+	} else {
+		$numFinal = "ErrorBadMode";
+		dol_syslog("functions2::get_next_value ErrorBadMode '$mode'", LOG_ERR);
 	}
 
 	dol_syslog("functions2::get_next_value return ".$numFinal, LOG_DEBUG);

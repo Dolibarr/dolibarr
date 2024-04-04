@@ -151,16 +151,16 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
+	print '<input class="flat" type="text" name="search_nom" value="'.GETPOST("search_nom").'"></td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';
 
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" size="10" name="search_code_client" value="'.$_GET["search_code_client"].'">';
+	print '<input class="flat" type="text" size="10" name="search_code_client" value="'.GETPOST("search_code_client").'">';
 	print '</td>';
 
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" size="10" name="search_compta" value="'.$_GET["search_compta"].'">';
+	print '<input class="flat" type="text" size="10" name="search_compta" value="'.GETPOST("search_compta").'">';
 	print '</td>';
 
 	print '<td colspan="2" class="liste_titre right">';

@@ -38,30 +38,33 @@
 class DolibarrModules // Can not be abstract, because we need to instantiate it into unActivateModule to be able to disable a module whose files were removed.
 {
 	/**
-	 * @var DoliDB Database handler
+	 * @var DoliDB	Database handler
 	 */
 	public $db;
 
 	/**
-	 * @var int Module unique ID
+	 * @var int 	Module unique ID
 	 * @see https://wiki.dolibarr.org/index.php/List_of_modules_id
 	 */
 	public $numero;
 
 	/**
-	 * @var   string Publisher name
-	 * @since 4.0.0
+	 * @var string 	Publisher name
 	 */
 	public $editor_name;
 
 	/**
-	 * @var   string URL of module at publisher site
-	 * @since 4.0.0
+	 * @var string 	URL of module at publisher site
 	 */
 	public $editor_url;
 
 	/**
-	 * @var string 	Family
+	 * @var string 	URL of logo of the publisher. Must be image filename into the module/img directory followed with @modulename. Example: 'myimage.png@mymodule'.
+	 */
+	public $editor_squarred_logo;
+
+	/**
+	 * @var	string	Family
 	 * @see $familyinfo
 	 *
 	 * Native values: 'crm', 'financial', 'hr', 'projects', 'products', 'ecm', 'technic', 'other'.
@@ -84,12 +87,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $familyinfo;
 
 	/**
-	 * @var string    Module position on 2 digits
+	 * @var string	Module position on 2 digits
 	 */
 	public $module_position = '50';
 
 	/**
-	 * @var string Module name
+	 * @var string 	Module name
 	 *
 	 * Only used if Module[ID]Name translation string is not found.
 	 *
@@ -500,7 +503,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$ignoreerror = $val['ignoreerror'];
 				}
 				// Add current entity id
-				$sql = str_replace('__ENTITY__', $conf->entity, $sql);
+				$sql = str_replace('__ENTITY__', (string) $conf->entity, $sql);
 
 				dol_syslog(get_class($this)."::_init ignoreerror=".$ignoreerror, LOG_DEBUG);
 				$result = $this->db->query($sql, $ignoreerror);
@@ -696,7 +699,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$pathoffile = $this->getDescLongReadmeFound();
 
 		if ($pathoffile) {     // Mostly for external modules
-			$content = file_get_contents($pathoffile);
+			$content = file_get_contents($pathoffile, false, null, 0, 1024 * 1024);	// Max size loaded 1Mb
 
 			if ((float) DOL_VERSION >= 6.0) {
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
@@ -806,6 +809,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			} else {
 				$content = nl2br($content);
 			}
+		} else {
+			$content = '';
 		}
 
 		return $content;
@@ -1124,7 +1129,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 *
 	 * @param  	string 	$reldir 			Relative directory where to scan files. Example: '/install/mysql/' or '/module/sql/'
 	 * @param	string	$onlywithsuffix		Only with the defined suffix
-	 * @return 	int             			Return integer <=0 if KO, >0 if OK
+	 * @return 	int<0,1>             			Return integer <=0 if KO, >0 if OK
 	 */
 	protected function _load_tables($reldir, $onlywithsuffix = '')
 	{
@@ -1133,6 +1138,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$error = 0;
 		$dirfound = 0;
+		$ok = 1;
 
 		if (empty($reldir)) {
 			return 1;
@@ -1140,9 +1146,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-		$ok = 1;
 		foreach ($conf->file->dol_document_root as $dirroot) {
-			if ($ok) {
+			if ($ok == 1) {
 				$dirsql = $dirroot.$reldir;
 				$ok = 0;
 
@@ -1293,7 +1298,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		}
 
 		if (!$dirfound) {
-			dol_syslog("A module ask to load sql files into ".$reldir." but this directory was not found.", LOG_WARNING);
+			dol_syslog("A module wants to load sql files from ".$reldir." but this directory was not found.", LOG_WARNING);
 		}
 		return $ok;
 	}

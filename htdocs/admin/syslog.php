@@ -3,6 +3,8 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,6 +64,7 @@ foreach ($dirsyslogs as $reldir) {
 					require_once $newdir.$file.'.php';
 
 					$module = new $file();
+					'@phan-var-force LogHandler $module';
 
 					// Show modules according to features level
 					if ($module->getVersion() == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -95,6 +98,7 @@ if ($action == 'set') {
 	foreach ($syslogModules as $syslogHandler) {
 		if (in_array($syslogHandler, $syslogModules)) {
 			$module = new $syslogHandler();
+			'@phan-var-force LogHandler $module';
 
 			if (in_array($syslogHandler, $selectedModules)) {
 				$newActiveModules[] = $syslogHandler;
@@ -112,11 +116,17 @@ if ($action == 'set') {
 
 	dolibarr_del_const($db, 'SYSLOG_HANDLERS', -1); // To be sure there is not a setup into another entity
 	dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine', 0, '', 0);
-
+	$error = 0;
+	$errors = [];
 	// Check configuration
 	foreach ($activeModules as $modulename) {
 		$module = new $modulename();
-		$error = $module->checkConfiguration();
+		'@phan-var-force LogHandler $module';
+		$res = $module->checkConfiguration();
+		if (!$res) {
+			$error++;
+			$errors = array_merge($errors, $module->errors);
+		}
 	}
 
 
@@ -125,7 +135,7 @@ if ($action == 'set') {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		$db->rollback();
-		setEventMessages($error, $errors, 'errors');
+		setEventMessages('', $errors, 'errors');
 	}
 }
 
@@ -204,6 +214,7 @@ print "</tr>\n";
 
 foreach ($syslogModules as $moduleName) {
 	$module = new $moduleName();
+	'@phan-var-force LogHandler $module';
 
 	$moduleactive = (int) $module->isActive();
 	//print $moduleName." = ".$moduleactive." - ".$module->getName()." ".($moduleactive == -1)."<br>\n";

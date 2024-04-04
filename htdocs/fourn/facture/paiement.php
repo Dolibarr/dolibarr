@@ -167,7 +167,7 @@ if (empty($reshook)) {
 				if (!empty($amounts[$cursorfacid])) {
 					$atleastonepaymentnotnull++;
 					if (is_numeric($amounts[$cursorfacid])) {
-						$totalpayment = $totalpayment + $amounts[$cursorfacid];
+						$totalpayment += (float) $amounts[$cursorfacid];
 					} else {
 						setEventMessages($langs->transnoentities("InputValueIsNotAnNumber", GETPOST($key)), null, 'warnings');
 					}
@@ -486,7 +486,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 				//Add js for AutoFill
 				print ' $(document).ready(function () {';
-				print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
+				print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){
 							$("input[name="+$(this).data(\'rowname\')+"]").val($(this).data("value")).trigger("change");
 						});';
 				print '	});'."\n";
@@ -579,7 +579,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							//Add js for AutoFill
 							print "\n".'<script type="text/javascript">';
 							print ' $(document).ready(function () {';
-							print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
+							print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){
 											$("input[name="+$(this).data(\'rowname\')+"]").val($(this).data("value"));
 										});';
 							print '	});'."\n";
@@ -698,7 +698,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 								print '<td class="right">';
 								if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-									print price($sign * $multicurrency_remaintopay);
+									print price($sign * (float) $multicurrency_remaintopay);
 								}
 								print '</td>';
 
@@ -709,7 +709,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
 									if ($action != 'add_paiement') {
 										if (!empty($conf->use_javascript_ajax)) {
-											print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
+											print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowname='".$namef."' data-value='".($sign * (float) $multicurrency_remaintopay)."'");
 										}
 										print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
 										print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
@@ -733,7 +733,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print '</td>';
 
 							print '<td class="right">';
-							print price($sign * $remaintopay);
+							print price($sign * (float) $remaintopay);
 							if (isModEnabled('paymentbybanktransfer')) {
 								$numdirectdebitopen = 0;
 								$totaldirectdebit = 0;
@@ -766,7 +766,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 							if ($action != 'add_paiement') {
 								if (!empty($conf->use_javascript_ajax)) {
-									print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
+									print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowname='".$namef."' data-value='".($sign * (float) $remaintopay)."'");
 								}
 								print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
 								print '<input type="text" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is required to be used by javascript callForResult();
@@ -804,7 +804,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								print '+'.price($totalrecudeposits);
 							}
 							print	'</b></td>';
-							print '<td class="right"><b>'.price($sign * price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits, 'MT')).'</b></td>';
+							print '<td class="right"><b>'.price($sign * (float) price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits, 'MT')).'</b></td>';
 							print '<td class="center" id="result" style="font-weight: bold;"></td>'; // Autofilled
 							print "</tr>\n";
 						}

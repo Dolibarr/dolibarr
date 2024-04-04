@@ -145,7 +145,7 @@ require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 $object->fetch_thirdparty();
 
 $title = $langs->trans("Agenda");
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contractrefonly/', $conf->global->MAIN_HTML_TITLE) && $object->ref) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contractrefonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->ref) {
 	$title = $object->ref." - ".$title;
 }
 $help_url = 'EN:Module_Contracts|FR:Module_Contrat';

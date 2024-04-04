@@ -2051,9 +2051,10 @@ class Task extends CommonObjectLine
 			$this->error = $clone_task->error;
 			$error++;
 		}
-
 		// End
-		if (!$error) {
+		if ($error) {
+			$clone_task_id = 0;  // For static tool check
+		} else {
 			$clone_task_id = $clone_task->id;
 			$clone_task_ref = $clone_task->ref;
 
@@ -2482,11 +2483,12 @@ class Task extends CommonObjectLine
 			//$return .= '<br><span class="info-box-label amount">'.$langs->trans("Budget").' : '.price($this->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
 		}
 		if (property_exists($this, 'duration_effective')) {
-			$return .= '<br><br><div class="info-box-label progressinkanban">'.getTaskProgressView($this, false, true).'</div>';
+			$return .= '<br><div class="info-box-label progressinkanban paddingtop">'.getTaskProgressView($this, false, true).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+
 		return $return;
 	}
 }

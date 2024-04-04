@@ -19,6 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 /**
  *	\file       	htdocs/core/class/conf.class.php
  *	\ingroup		core
@@ -70,19 +71,33 @@ class Conf extends stdClass
 	//! Used to store current currency (ISO code like 'USD', 'EUR', ...). To get the currency symbol: $langs->getCurrencySymbol($this->currency)
 	public $currency;
 
-	//! Used to store current css (from theme)
+	/**
+	 * @var string
+	 */
 	public $theme; // Contains current theme ("eldy", "auguria", ...)
+	//! Used to store current css (from theme)
+	/**
+	 * @var string
+	 */
 	public $css; // Contains full path of css page ("/theme/eldy/style.css.php", ...)
 
 	public $email_from;
 
 	//! Used to store current menu handler
 	public $standard_menu;
-	// List of activated modules
+
+	/**
+	 * @var array<string,string>  List of activated modules
+	 */
 	public $modules;
+	/**
+	 * @var array<string,array<string,string|array>>  List of activated modules
+	 */
 	public $modules_parts;
 
-	// An array to store cache results ->cache['nameofcache']=...
+	/**
+	 * @var array<string,mixed> An array to store cache results ->cache['nameofcache']=...
+	 */
 	public $cache;
 
 	/**
@@ -96,13 +111,17 @@ class Conf extends stdClass
 	public $logbuffer = array();
 
 	/**
-	 * @var LogHandlerInterface[]
+	 * @var LogHandler[]
 	 */
 	public $loghandlers = array();
 
-	//! Used to store running instance for multi-company (default 1)
+	/**
+	 * @var int Used to store running instance for multi-company (default 1)
+	 */
 	public $entity = 1;
-	//! Used to store list of entities to use for each element
+	/**
+	 * @var int[] Used to store list of entities to use for each element
+	 */
 	public $entities = array();
 
 	public $dol_hide_topmenu; // Set if we force param dol_hide_topmenu into login url
@@ -128,8 +147,17 @@ class Conf extends stdClass
 
 
 	// TODO Remove this part.
+
+	/**
+	 * @var stdClass  	Supplier
+	 */
 	public $fournisseur;
+
+	/**
+	 * @var stdClass	Product
+	 */
 	public $product;
+
 	/**
 	 * @deprecated Use product
 	 */
@@ -142,8 +170,11 @@ class Conf extends stdClass
 	public $contract;
 	public $actions;
 	public $agenda;
-	public $commande;
 	public $propal;
+	/**
+	 * @deprecated Use order
+	 */
+	public $commande;
 	public $order;
 	/**
 	 * @deprecated Use invoice
@@ -234,6 +265,7 @@ class Conf extends stdClass
 		$this->expensereport = new stdClass();
 		$this->productbatch = new stdClass();
 	}
+
 
 	/**
 	 * Load setup values into conf object (read llx_const) for a specified entity
@@ -410,7 +442,20 @@ class Conf extends stdClass
 									$this->$modulename = new stdClass();	// We need this to use the ->enabled and the ->multidir, ->dir...
 								}
 								$this->$modulename->enabled = true;	// TODO Remove this
-								//}
+
+								// Duplicate entry with the new name
+								/*
+								$mapping = $this->deprecatedProperties();
+								if (array_key_exists($modulename, $mapping)) {
+									$newmodulename = $mapping[$modulename];
+									$this->modules[$newmodulename] = $newmodulename;
+
+									if (!isset($this->$newmodulename) || !is_object($this->$newmodulename)) {
+										$this->$newmodulename = new stdClass();	// We need this to use the ->enabled and the ->multidir, ->dir...
+									}
+									$this->$newmodulename->enabled = true;	// TODO Remove this
+								}
+								*/
 							}
 						}
 					}
@@ -754,7 +799,7 @@ class Conf extends stdClass
 
 			// MAIN_HTML_TITLE
 			if (!isset($this->global->MAIN_HTML_TITLE)) {
-				$this->global->MAIN_HTML_TITLE = 'noapp,thirdpartynameonly,contactnameonly,projectnameonly';
+				$this->global->MAIN_HTML_TITLE = 'thirdpartynameonly,contactnameonly,projectnameonly';
 			}
 
 			// conf->liste_limit = constante de taille maximale des listes
@@ -1056,6 +1101,8 @@ class Conf extends stdClass
 			} else {
 				unset($this->global->MAIN_NO_CONCAT_DESCRIPTION);
 			}
+
+			// Simple deprecation management. We do not use DolDeprecationHandlet for $conf.
 
 			// product is new use
 			if (isset($this->product)) {

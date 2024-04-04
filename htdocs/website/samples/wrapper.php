@@ -62,7 +62,7 @@ $attachment = true;
 if (preg_match('/\.(html|htm)$/i', $original_file)) {
 	$attachment = false;
 }
-if (isset($_GET["attachment"])) {
+if (GETPOSTISSET("attachment")) {
 	$attachment = (GETPOST("attachment", 'alphanohtml') ? true : false);
 }
 if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS_WEBSITE')) {
@@ -183,13 +183,13 @@ if ($rss) {
 
 	if ($result >= 0) {
 		$attachment = false;
-		if (isset($_GET["attachment"])) {
-			$attachment = $_GET["attachment"];
+		if (GETPOSTISSET("attachment")) {
+			$attachment = GETPOST("attachment");
 		}
 		//$attachment = false;
 		$contenttype = 'application/rss+xml';
-		if (isset($_GET["contenttype"])) {
-			$contenttype = $_GET["contenttype"];
+		if (GETPOSTISSET("contenttype")) {
+			$contenttype = GETPOST("contenttype");
 		}
 		//$contenttype='text/plain';
 		$outputencoding = 'UTF-8';

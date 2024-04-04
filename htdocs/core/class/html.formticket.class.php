@@ -5,6 +5,7 @@
  * Copyright (C) 2021      Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2021      Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023      Charlene Benke	       <charlene.r@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,7 +139,7 @@ class FormTicket
 		$this->withcompany = !getDolGlobalInt("TICKETS_NO_COMPANY_ON_FORM") && isModEnabled("societe");
 		$this->withfromsocid = 0;
 		$this->withfromcontactid = 0;
-		$this->withreadid=0;
+		$this->withreadid = 0;
 		//$this->withtitletopic='';
 		$this->withnotifytiersatcreate = 0;
 		$this->withusercreate = 1;
@@ -911,8 +912,8 @@ class FormTicket
 		} elseif ($htmlname != '') {
 			$selectedgroups = array();
 			$groupvalue = "";
-			$groupticket=GETPOST($htmlname, 'aZ09');
-			$child_id=GETPOST($htmlname.'_child_id', 'aZ09') ? GETPOST($htmlname.'_child_id', 'aZ09') : 0;
+			$groupticket = GETPOST($htmlname, 'aZ09');
+			$child_id = GETPOST($htmlname.'_child_id', 'aZ09') ? GETPOST($htmlname.'_child_id', 'aZ09') : 0;
 			if (!empty($groupticket)) {
 				$tmpgroupticket = $groupticket;
 				$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code";
@@ -1025,7 +1026,7 @@ class FormTicket
 				if ($resql) {
 					$num_rows = $this->db->num_rows($resql);
 					$i = 0;
-					$arrayidused=array();
+					$arrayidused = array();
 					while ($i < $num_rows) {
 						$obj = $this->db->fetch_object($resql);
 						if ($obj) {
@@ -1054,7 +1055,7 @@ class FormTicket
 							}
 							$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
 							if (empty($tabscript[$groupcodefather])) {
-								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ? '_child_'.($levelid-1) : '').'").val() == "'.dol_escape_js($groupcodefather).'"){
+								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ? '_child_'.($levelid - 1) : '').'").val() == "'.dol_escape_js($groupcodefather).'"){
 									$(".'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'").show()
 									console.log("We show child tickets of '.$groupcodefather.' group ticket")
 								}else{
@@ -1068,11 +1069,11 @@ class FormTicket
 				} else {
 					dol_print_error($this->db);
 				}
-				$stringtoprint .='</select>';
+				$stringtoprint .= '</select>';
 
-				$stringtoprint .='<script nonce="'.getNonce().'">';
-				$stringtoprint .='arraynotparents = '.json_encode($arraycodenotparent).';';	// when the last visible combo list is number x, this is the array of group
-				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ? '_child_'.($levelid-1) : '').'").val())){
+				$stringtoprint .= '<script nonce="'.getNonce().'">';
+				$stringtoprint .= 'arraynotparents = '.json_encode($arraycodenotparent).';';	// when the last visible combo list is number x, this is the array of group
+				$stringtoprint .= 'if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ? '_child_'.($levelid - 1) : '').'").val())){
 					console.log("'.$htmlname.'_child_'.$levelid.'")
 					if($("#'.$htmlname.'_child_'.$levelid.'").val() == "" && ($("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")>'.$child_id.')){
 						$("#'.$htmlname.'_child_'.$levelid.'").hide();
@@ -1084,7 +1085,7 @@ class FormTicket
 						console.log("We choose '.$htmlname.' input and reload hidden input");
 					}
 				}
-				$("#'.$htmlname.($levelid > 1 ? '_child_'.($levelid-1) : '').'").change(function() {
+				$("#'.$htmlname.($levelid > 1 ? '_child_'.($levelid - 1) : '').'").change(function() {
 					child_id = $("#'.$htmlname.($levelid > 1 ? '_child_'.$levelid : '').'").attr("child_id");
 
 					/* Change of value to select this value*/
@@ -1128,11 +1129,11 @@ class FormTicket
 				foreach ($tabscript as $script) {
 					$stringtoprint .= $script;
 				}
-				$stringtoprint .='})';
-				$stringtoprint .='</script>';
+				$stringtoprint .= '})';
+				$stringtoprint .= '</script>';
 			}
-			$stringtoprint .='<script nonce="'.getNonce().'">';
-			$stringtoprint .='$("#'.$htmlname.'_child_'.$use_multilevel.'").change(function() {
+			$stringtoprint .= '<script nonce="'.getNonce().'">';
+			$stringtoprint .= '$("#'.$htmlname.'_child_'.$use_multilevel.'").change(function() {
 				$("#ticketcategory_select").val($(this).val());
 				$("#ticketcategory_select_child_id").val($(this).attr("child_id"));
 				tmpvalselect = $("#ticketcategory_select").val();
@@ -1141,7 +1142,7 @@ class FormTicket
 				}
 				console.log($("#ticketcategory_select").val());
 			})';
-			$stringtoprint .='</script>';
+			$stringtoprint .= '</script>';
 			$stringtoprint .= ajax_combobox($htmlname);
 
 			return $stringtoprint;
@@ -1163,7 +1164,7 @@ class FormTicket
 	 */
 	public function selectSeveritiesTickets($selected = '', $htmlname = 'ticketseverity', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '')
 	{
-		global $langs, $user;
+		global $conf, $langs, $user;
 
 		$ticketstat = new Ticket($this->db);
 
@@ -1182,8 +1183,8 @@ class FormTicket
 			print '<option value="">&nbsp;</option>';
 		}
 
-		if (is_array($ticketstat->cache_severity_tickets) && count($ticketstat->cache_severity_tickets)) {
-			foreach ($ticketstat->cache_severity_tickets as $id => $arrayseverities) {
+		if (is_array($conf->cache['severity_tickets']) && count($conf->cache['severity_tickets'])) {
+			foreach ($conf->cache['severity_tickets'] as $id => $arrayseverities) {
 				// On passe si on a demande de filtrer sur des modes de paiments particuliers
 				if (count($filterarray) && !in_array($arrayseverities['type'], $filterarray)) {
 					continue;

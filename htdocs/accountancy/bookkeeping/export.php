@@ -6,6 +6,7 @@
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022       Progiseize              <a.bisotti@progiseize.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,7 +166,7 @@ if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GE
 		$query .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."' limit 1";
 		$res = $db->query($query);
 
-		if ($res->num_rows > 0) {
+		if ($db->num_rows($res) > 0) {
 			$fiscalYear = $db->fetch_object($res);
 			$search_date_start = strtotime($fiscalYear->date_start);
 			$search_date_end = strtotime($fiscalYear->date_end);
@@ -321,17 +322,17 @@ if (empty($reshook)) {
 	if (!empty($search_date_start)) {
 		$filter['t.doc_date>='] = $search_date_start;
 		$tmp = dol_getdate($search_date_start);
-		$param .= '&search_date_startmonth='.urlencode($tmp['mon']).'&search_date_startday='.urlencode($tmp['mday']).'&search_date_startyear='.urlencode($tmp['year']);
+		$param .= '&search_date_startmonth='.((int) $tmp['mon']).'&search_date_startday='.((int) $tmp['mday']).'&search_date_startyear='.((int) $tmp['year']);
 	}
 	if (!empty($search_date_end)) {
 		$filter['t.doc_date<='] = $search_date_end;
 		$tmp = dol_getdate($search_date_end);
-		$param .= '&search_date_endmonth='.urlencode($tmp['mon']).'&search_date_endday='.urlencode($tmp['mday']).'&search_date_endyear='.urlencode($tmp['year']);
+		$param .= '&search_date_endmonth='.((int) $tmp['mon']).'&search_date_endday='.((int) $tmp['mday']).'&search_date_endyear='.((int) $tmp['year']);
 	}
 	if (!empty($search_doc_date)) {
 		$filter['t.doc_date'] = $search_doc_date;
 		$tmp = dol_getdate($search_doc_date);
-		$param .= '&doc_datemonth='.urlencode($tmp['mon']).'&doc_dateday='.urlencode($tmp['mday']).'&doc_dateyear='.urlencode($tmp['year']);
+		$param .= '&doc_datemonth='.((int) $tmp['mon']).'&doc_dateday='.((int) $tmp['mday']).'&doc_dateyear='.((int) $tmp['year']);
 	}
 	if (!empty($search_doc_type)) {
 		$filter['t.doc_type'] = $search_doc_type;
@@ -400,42 +401,42 @@ if (empty($reshook)) {
 	if (!empty($search_date_creation_start)) {
 		$filter['t.date_creation>='] = $search_date_creation_start;
 		$tmp = dol_getdate($search_date_creation_start);
-		$param .= '&search_date_creation_startmonth='.urlencode($tmp['mon']).'&search_date_creation_startday='.urlencode($tmp['mday']).'&search_date_creation_startyear='.urlencode($tmp['year']);
+		$param .= '&search_date_creation_startmonth='.((int) $tmp['mon']).'&search_date_creation_startday='.((int) $tmp['mday']).'&search_date_creation_startyear='.((int) $tmp['year']);
 	}
 	if (!empty($search_date_creation_end)) {
 		$filter['t.date_creation<='] = $search_date_creation_end;
 		$tmp = dol_getdate($search_date_creation_end);
-		$param .= '&search_date_creation_endmonth='.urlencode($tmp['mon']).'&search_date_creation_endday='.urlencode($tmp['mday']).'&search_date_creation_endyear='.urlencode($tmp['year']);
+		$param .= '&search_date_creation_endmonth='.((int) $tmp['mon']).'&search_date_creation_endday='.((int) $tmp['mday']).'&search_date_creation_endyear='.((int) $tmp['year']);
 	}
 	if (!empty($search_date_modification_start)) {
 		$filter['t.tms>='] = $search_date_modification_start;
 		$tmp = dol_getdate($search_date_modification_start);
-		$param .= '&search_date_modification_startmonth='.urlencode($tmp['mon']).'&search_date_modification_startday='.urlencode($tmp['mday']).'&search_date_modification_startyear='.urlencode($tmp['year']);
+		$param .= '&search_date_modification_startmonth='.((int) $tmp['mon']).'&search_date_modification_startday='.((int) $tmp['mday']).'&search_date_modification_startyear='.((int) $tmp['year']);
 	}
 	if (!empty($search_date_modification_end)) {
 		$filter['t.tms<='] = $search_date_modification_end;
 		$tmp = dol_getdate($search_date_modification_end);
-		$param .= '&search_date_modification_endmonth='.urlencode($tmp['mon']).'&search_date_modification_endday='.urlencode($tmp['mday']).'&search_date_modification_endyear='.urlencode($tmp['year']);
+		$param .= '&search_date_modification_endmonth='.((int) $tmp['mon']).'&search_date_modification_endday='.((int) $tmp['mday']).'&search_date_modification_endyear='.((int) $tmp['year']);
 	}
 	if (!empty($search_date_export_start)) {
 		$filter['t.date_export>='] = $search_date_export_start;
 		$tmp = dol_getdate($search_date_export_start);
-		$param .= '&search_date_export_startmonth='.urlencode($tmp['mon']).'&search_date_export_startday='.urlencode($tmp['mday']).'&search_date_export_startyear='.urlencode($tmp['year']);
+		$param .= '&search_date_export_startmonth='.((int) $tmp['mon']).'&search_date_export_startday='.((int) $tmp['mday']).'&search_date_export_startyear='.((int) $tmp['year']);
 	}
 	if (!empty($search_date_export_end)) {
 		$filter['t.date_export<='] = $search_date_export_end;
 		$tmp = dol_getdate($search_date_export_end);
-		$param .= '&search_date_export_endmonth='.urlencode($tmp['mon']).'&search_date_export_endday='.urlencode($tmp['mday']).'&search_date_export_endyear='.urlencode($tmp['year']);
+		$param .= '&search_date_export_endmonth='.((int) $tmp['mon']).'&search_date_export_endday='.((int) $tmp['mday']).'&search_date_export_endyear='.((int) $tmp['year']);
 	}
 	if (!empty($search_date_validation_start)) {
 		$filter['t.date_validated>='] = $search_date_validation_start;
 		$tmp = dol_getdate($search_date_validation_start);
-		$param .= '&search_date_validation_startmonth='.urlencode($tmp['mon']).'&search_date_validation_startday='.urlencode($tmp['mday']).'&search_date_validation_startyear='.urlencode($tmp['year']);
+		$param .= '&search_date_validation_startmonth='.((int) $tmp['mon']).'&search_date_validation_startday='.((int) $tmp['mday']).'&search_date_validation_startyear='.((int) $tmp['year']);
 	}
 	if (!empty($search_date_validation_end)) {
 		$filter['t.date_validated<='] = $search_date_validation_end;
 		$tmp = dol_getdate($search_date_validation_end);
-		$param .= '&search_date_validation_endmonth='.urlencode($tmp['mon']).'&search_date_validation_endday='.urlencode($tmp['mday']).'&search_date_validation_endyear='.urlencode($tmp['year']);
+		$param .= '&search_date_validation_endmonth='.((int) $tmp['mon']).'&search_date_validation_endday='.((int) $tmp['mday']).'&search_date_validation_endyear='.((int) $tmp['year']);
 	}
 	if (!empty($search_debit)) {
 		$filter['t.debit'] = $search_debit;
@@ -726,7 +727,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 		setEventMessages('', $accountancyexport->errors, 'errors');
 		header('Location: '.$_SERVER['PHP_SELF']);
 	}
-	exit(); // download or show errors
+	exit(0); // download or show errors
 }
 
 
@@ -835,8 +836,11 @@ if ($action == 'export_file') {
 		$form_question['separator3'] = array('name' => 'separator3', 'type' => 'separator');
 	}
 
-	// add documents in an archive for accountancy export (Quadratus)
-	if (getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_QUADRATUS) {
+	// add documents in an archive for some accountancy export format
+	if (getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_QUADRATUS
+		|| getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_FEC
+		|| getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_FEC2
+		) {
 		$form_question['notifiedexportfull'] = array(
 			'name' => 'notifiedexportfull',
 			'type' => 'checkbox',
@@ -845,7 +849,7 @@ if ($action == 'export_file') {
 		);
 	}
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").'...', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 420, 600);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").'...', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 390, 700);
 }
 
 // Print form confirm
@@ -924,12 +928,15 @@ if ($massactionbutton && $contextpage != 'poslist') {
 }
 
 $moreforfilter = '';
-$moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('AccountingCategory').': ';
-$moreforfilter .= '<div class="nowrap inline-block">';
-$moreforfilter .= $formaccounting->select_accounting_category($search_account_category, 'search_account_category', 1, 0, 0, 0);
-$moreforfilter .= '</div>';
-$moreforfilter .= '</div>';
+
+if (!empty($search_account_category)) {
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= $langs->trans('AccountingCategory').': ';
+	$moreforfilter .= '<div class="nowrap inline-block">';
+	$moreforfilter .= $formaccounting->select_accounting_category($search_account_category, 'search_account_category', 1, 0, 0, 0);
+	$moreforfilter .= '</div>';
+	$moreforfilter .= '</div>';
+}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -939,9 +946,11 @@ if (empty($reshook)) {
 	$moreforfilter = $hookmanager->resPrint;
 }
 
-print '<div class="liste_titre liste_titre_bydiv centpercent">';
-print $moreforfilter;
-print '</div>';
+if ($moreforfilter) {
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	print $moreforfilter;
+	print '</div>';
+}
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">';
@@ -999,10 +1008,10 @@ if (!empty($arrayfields['t.subledger_account']['checked'])) {
 	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
 		print '<div class="nowrap">';
 		//print $langs->trans('From').' ';
-		print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', $langs->trans('From'), 'maxwidth250', 'subledgeraccount');
+		print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', $langs->trans('From'), 'maxwidth150', 'subledgeraccount');
 		print '</div>';
 		print '<div class="nowrap">';
-		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', $langs->trans('to'), 'maxwidth250', 'subledgeraccount');
+		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', $langs->trans('to'), 'maxwidth150', 'subledgeraccount');
 		print '</div>';
 	} else {
 		print '<input type="text" class="maxwidth75" name="search_accountancy_aux_code" value="'.dol_escape_htmltag($search_accountancy_aux_code).'">';
@@ -1257,6 +1266,8 @@ while ($i < min($num, $limit)) {
 
 	// Document ref
 	if (!empty($arrayfields['t.doc_ref']['checked'])) {
+		$documentlink = '';
+		$objectstatic = null;
 		if ($line->doc_type == 'customer_invoice') {
 			$langs->loadLangs(array('bills'));
 
@@ -1265,10 +1276,12 @@ while ($i < min($num, $limit)) {
 			$objectstatic->fetch($line->fk_doc);
 			//$modulepart = 'facture';
 
-			$filename = dol_sanitizeFileName($line->doc_ref);
-			$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
-			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
-			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+			if ($objectstatic->id > 0) {
+				$filename = dol_sanitizeFileName($line->doc_ref);
+				$filedir = $conf->invoice->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
+				$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
+				$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+			}
 		} elseif ($line->doc_type == 'supplier_invoice') {
 			$langs->loadLangs(array('bills'));
 
@@ -1277,10 +1290,12 @@ while ($i < min($num, $limit)) {
 			$objectstatic->fetch($line->fk_doc);
 			//$modulepart = 'invoice_supplier';
 
-			$filename = dol_sanitizeFileName($line->doc_ref);
-			$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
-			$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
-			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $subdir, $filedir);
+			if ($objectstatic->id > 0) {
+				$filename = dol_sanitizeFileName($line->doc_ref);
+				$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
+				$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
+				$documentlink = $formfile->getDocumentsLink($objectstatic->element, $subdir, $filedir);
+			}
 		} elseif ($line->doc_type == 'expense_report') {
 			$langs->loadLangs(array('trips'));
 
@@ -1289,10 +1304,12 @@ while ($i < min($num, $limit)) {
 			$objectstatic->fetch($line->fk_doc);
 			//$modulepart = 'expensereport';
 
-			$filename = dol_sanitizeFileName($line->doc_ref);
-			$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
-			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
-			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+			if ($objectstatic->id > 0) {
+				$filename = dol_sanitizeFileName($line->doc_ref);
+				$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
+				$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
+				$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+			}
 		} elseif ($line->doc_type == 'bank') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$objectstatic = new AccountLine($db);
@@ -1303,10 +1320,14 @@ while ($i < min($num, $limit)) {
 
 		$labeltoshow = '';
 		$labeltoshowalt = '';
-		if ($line->doc_type == 'customer_invoice' || $line->doc_type == 'supplier_invoice' || $line->doc_type == 'expense_report') {
-			$labeltoshow .= $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
-			$labeltoshow .= $documentlink;
-			$labeltoshowalt .= $objectstatic->ref;
+		if (($objectstatic instanceof CommonObject)  && in_array($line->doc_type, array('customer_invoice', 'supplier_invoice', 'expense_report'))) {
+			if ($objectstatic->id > 0) {
+				$labeltoshow .= $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
+				$labeltoshow .= $documentlink;
+				$labeltoshowalt .= $objectstatic->ref;
+			} else {
+				$labeltoshow = '<span class="opacitymedium">'.$langs->trans("Deleted").'</span>';
+			}
 		} elseif ($line->doc_type == 'bank') {
 			$labeltoshow .= $objectstatic->getNomUrl(1);
 			$labeltoshowalt .= $objectstatic->ref;

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017-2024  Alexandre Spangaro   <aspangaro@easya.solutions>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,9 +186,9 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 	// Si verif ok et action add, on ajoute la ligne
 	if ($ok && GETPOST('actionadd', 'alpha')) {
+		$newid = 0;  // Initialise before if for static analysis
 		if ($tabrowid[$id]) {
 			// Get free id for insert
-			$newid = 0;
 			$sql = "SELECT MAX(".$db->sanitize($tabrowid[$id]).") newid FROM ".$db->sanitize($tabname[$id]);
 			$result = $db->query($sql);
 			if ($result) {
@@ -274,13 +275,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			setEventMessages($db->error(), null, 'errors');
 		}
 	}
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
-
-//if (GETPOST('actioncancel', 'alpha'))
-//{
-//	$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
-//}
 
 if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 	if ($tabrowid[$id]) {
@@ -362,6 +357,8 @@ $linkback = '';
 if ($id) {
 	$titre .= ' - '.$langs->trans($tablib[$id]);
 	$titlepicto = 'title_accountancy';
+} else {
+	$titlepicto = '';
 }
 
 print load_fiche_titre($titre, $linkback, $titlepicto);
@@ -688,11 +685,11 @@ $db->close();
 /**
  *	Show fields in insert/edit mode
  *
- *  @param      array   $fieldlist      Array of fields
- *  @param      Object  $obj            If we show a particular record, obj is filled with record fields
- *  @param      string  $tabname        Name of SQL table
- *  @param      string  $context        'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
- *  @return     void
+ *  @param	string[]	$fieldlist      Array of fields
+ *  @param	Object		$obj            If we show a particular record, obj is filled with record fields
+ *  @param	string		$tabname        Name of SQL table
+ *  @param	string		$context        'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
+ *  @return	void
  */
 function fieldListJournal($fieldlist, $obj = null, $tabname = '', $context = '')
 {

@@ -358,11 +358,11 @@ class SecurityTest extends CommonClassTest
 
 		$result = GETPOST("param2", 'alpha');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, $_GET["param2"], 'Test on param2');
+		$this->assertEquals($result, 'a/b#e(pr)qq-rr/cc', 'Test on param2');
 
 		$result = GETPOST("param3", 'alpha');  // Must return string sanitized from char "
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, 'na/b#e(pr)qq-rr\cc', 'Test on param3');
+		$this->assertEquals($result, 'na/b#e(pr)qq-rr/cc', 'Test on param3');
 
 		$result = GETPOST("param4a", 'alpha');  // Must return string sanitized from ../
 		print __METHOD__." result=".$result."\n";
@@ -987,6 +987,10 @@ class SecurityTest extends CommonClassTest
 		// Declare classes found into string to evaluate
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+
+		$result = dol_eval('1==\x01', 1, 0);	// Check that we can't make dol_eval on string containing \ char.
+		print "result0 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
 
 		$result = dol_eval('1==1', 1, 0);
 		print "result1 = ".$result."\n";

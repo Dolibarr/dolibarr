@@ -1142,7 +1142,7 @@ if (empty($reshook)) {
 		$value_unit_ht = price2num(GETPOST('value_unit_ht', 'alpha'), 'MU');
 		$value_unit = price2num(GETPOST('value_unit', 'alpha'), 'MU');
 		if (empty($value_unit)) {
-			$value_unit = price2num($value_unit_ht + ($value_unit_ht * $tmpvat / 100), 'MU');
+			$value_unit = price2num((float) $value_unit_ht + ((float) $value_unit_ht * (float) $tmpvat / 100), 'MU');
 		}
 
 		$fk_c_exp_tax_cat = GETPOSTINT('fk_c_exp_tax_cat');
@@ -1314,7 +1314,7 @@ if (empty($reshook)) {
 		$value_unit_ht = price2num(GETPOST('value_unit_ht', 'alpha'), 'MU');
 		$value_unit = price2num(GETPOST('value_unit', 'alpha'), 'MU');
 		if (empty($value_unit)) {
-			$value_unit = price2num($value_unit_ht + ($value_unit_ht * $tmpvat / 100), 'MU');
+			$value_unit = price2num((float) $value_unit_ht + ((float) $value_unit_ht * (float) $tmpvat / 100), 'MU');
 		}
 
 		if (!GETPOSTINT('fk_c_type_fees') > 0) {
@@ -2003,7 +2003,7 @@ if ($action == 'create') {
 					$totalpaid = price2num($totalpaid); // Round $totalpaid to fix floating problem after addition into loop
 				}
 
-				$remaintopay = price2num($object->total_ttc - $totalpaid);
+				$remaintopay = price2num($object->total_ttc - (float) $totalpaid);
 				$resteapayeraffiche = $remaintopay;
 
 				$cssforamountpaymentcomplete = 'amountpaymentcomplete';
@@ -2154,7 +2154,7 @@ if ($action == 'create') {
 							print price($line->value_unit_ht);
 						} else {
 							$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $line->vatrate));
-							$pricenettoshow = price2num($line->value_unit / (1 + $tmpvat / 100), 'MU');
+							$pricenettoshow = price2num((float) $line->value_unit / (1 + $tmpvat / 100), 'MU');
 							print price($pricenettoshow);
 						}
 						print '</td>';
@@ -2574,6 +2574,7 @@ if ($action == 'create') {
 				if ($action != 'editline') {
 					print '<td class="right"></td>';
 					print '<td class="right"></td>';
+					print '<td></td>';
 				}
 
 				print '<td class="center inputbuttons">';

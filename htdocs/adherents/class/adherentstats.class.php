@@ -3,6 +3,7 @@
  * Copyright (c) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2023      Waël Almoman         <info@almoman.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,15 +169,15 @@ class AdherentStats extends Stats
 	/**
 	 *	Return count of member by status group by adh type, total and average
 	 *
-	 *  @param		int		$numberYears    Number of years to scan (0 = all)
-	 * 	@return		array 					Array with total of draft, pending, uptodate, expired, resiliated for each member type
+	 *	@param	int		$numberYears    Number of years to scan (0 = all)
+	 *	@return	array<int|string,array{label:string,members_draft:int,members_pending:int,members_uptodate:int,members_expired:int,members_excluded:int,members_resiliated:int,all?:float|int,total_adhtag:float|int}>		Array with total of draft, pending, uptodate, expired, resiliated for each member type
 	 */
 	public function countMembersByTypeAndStatus($numberYears = 0)
 	{
 		global $user;
 
 		$now = dol_now();
-		$endYear = date('Y');
+		$endYear = (int) date('Y');
 		$startYear = $endYear - $numberYears;
 
 		$sql = "SELECT t.rowid as fk_adherent_type, t.libelle as label";
@@ -224,7 +225,7 @@ class AdherentStats extends Stats
 					'members_resiliated' => (int) $objp->members_resiliated
 				);
 				$totalrow = 0;
-				foreach ($MembersCountArray[$objp->fk_adherent_type] as $key=>$nb) {
+				foreach ($MembersCountArray[$objp->fk_adherent_type] as $key => $nb) {
 					if ($key != 'label') {
 						$totalrow += $nb;
 						$totalstatus[$key] += $nb;
@@ -244,16 +245,17 @@ class AdherentStats extends Stats
 	/**
 	 *	Return count of member by status group by adh type, total and average
 	 *
-	 * @param		int		$numberYears    Number of years to scan (0 = all)
-	 * @return		array 					Array with total of draft, pending, uptodate, expired, resiliated for each member tag
+	 * @param	int		$numberYears    Number of years to scan (0 = all)
+	 * @return	array<string,array{label:string,members_draft:int,members_pending:0,members_uptodate:int,members_expired:int,members_excluded:int,members_resiliated:int,all?:float|int,total_adhtag:float|int}>		Array with total of draft, pending, uptodate, expired, resiliated for each member tag
 	 */
 	public function countMembersByTagAndStatus($numberYears = 0)
 	{
 		global $user;
 
 		$now = dol_now();
-		$endYear = date('Y');
+		$endYear = (int) date('Y');
 		$startYear = $endYear - $numberYears;
+		$MembersCountArray = [];
 
 		$sql = "SELECT c.rowid as fk_categorie, c.label as label";
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_DRAFT, "'members_draft'", 'NULL').") as members_draft";
@@ -282,7 +284,6 @@ class AdherentStats extends Stats
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			$MembersCountArray = [];
 			$totalstatus = array(
 				'label' => 'Total',
 				'members_draft' => 0,
@@ -304,7 +305,7 @@ class AdherentStats extends Stats
 					'members_resiliated' => (int) $objp->members_resiliated
 				);
 				$totalrow = 0;
-				foreach ($MembersCountArray[$objp->fk_categorie] as $key=>$nb) {
+				foreach ($MembersCountArray[$objp->fk_categorie] as $key => $nb) {
 					if ($key != 'label') {
 						$totalrow += $nb;
 						$totalstatus[$key] += $nb;

@@ -130,7 +130,7 @@ class Propal extends CommonObject
 	public $ref_customer;
 
 	/**
-	 * @var Propal oldcopy with propal properties
+	 * @var static oldcopy with propal properties
 	 */
 	public $oldcopy;
 
@@ -694,9 +694,9 @@ class Propal extends CommonObject
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
 			$remise = 0;
-			if ($remise_percent > 0) {
-				$remise = round(($pu * $remise_percent / 100), 2);
-				$price = $pu - $remise;
+			if ((float) $remise_percent > 0) {
+				$remise = round(((float) $pu * (float) $remise_percent / 100), 2);
+				$price = (float) $pu - $remise;
 			}
 
 			// Insert line
@@ -901,9 +901,9 @@ class Propal extends CommonObject
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
 			$remise = 0;
-			if ($remise_percent > 0) {
-				$remise = round(($pu * $remise_percent / 100), 2);
-				$price = $pu - $remise;
+			if ((float) $remise_percent > 0) {
+				$remise = round(((float) $pu * (float) $remise_percent / 100), 2);
+				$price = (float) $pu - $remise;
 			}
 
 			//Fetch current line from the database and then clone the object and set it in $oldline property
@@ -3615,7 +3615,7 @@ class Propal extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/propale/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if (!$mybool) {
@@ -3680,7 +3680,7 @@ class Propal extends CommonObject
 				$langs->load('project');
 				if (empty($this->project)) {
 					$res = $this->fetch_project();
-					if ($res > 0) {
+					if ($res > 0 && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
 					}
 				}
@@ -4012,10 +4012,13 @@ class PropaleLigne extends CommonObjectLine
 	public $marge_tx;
 	public $marque_tx;
 
+	/**
+	 * 1: frais de port
+	 * 2: ecotaxe
+	 * 3: option line (when qty = 0)
+	 * @var int special code
+	 */
 	public $special_code; // Tag for special lines (exclusive tags)
-	// 1: frais de port
-	// 2: ecotaxe
-	// 3: option line (when qty = 0)
 
 	public $info_bits = 0; // Some other info:
 	// Bit 0: 	0 si TVA normal - 1 if TVA NPR

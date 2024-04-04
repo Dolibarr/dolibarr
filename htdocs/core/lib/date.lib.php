@@ -173,22 +173,22 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	}
 	//Change the behavior of PHP over data-interval when the result of this function is Feb 29 (non-leap years), 30 or Feb 31 (so php returns March 1, 2 or 3 respectively)
 	if ($ruleforendofmonth == 1 && $duration_unit == 'm') {
-		$timeyear = dol_print_date($time, '%Y');
-		$timemonth = dol_print_date($time, '%m');
+		$timeyear = (int) dol_print_date($time, '%Y');
+		$timemonth = (int) dol_print_date($time, '%m');
 		$timetotalmonths = (($timeyear * 12) + $timemonth);
 
 		$monthsexpected = ($timetotalmonths + $duration_value);
 
 		$newtime = $date->getTimestamp();
 
-		$newtimeyear = dol_print_date($newtime, '%Y');
-		$newtimemonth = dol_print_date($newtime, '%m');
-		$newtimetotalmonths = (($newtimeyear * 12) + $newtimemonth);
+		$newtimeyear = (int) dol_print_date($newtime, '%Y');
+		$newtimemonth = (int) dol_print_date($newtime, '%m');
+		$newtimetotalmonths = (($newtimeyear * 12) +  $newtimemonth);
 
 		if ($monthsexpected < $newtimetotalmonths) {
-			$newtimehours = dol_print_date($newtime, '%H');
-			$newtimemins = dol_print_date($newtime, '%M');
-			$newtimesecs = dol_print_date($newtime, '%S');
+			$newtimehours = (int) dol_print_date($newtime, '%H');
+			$newtimemins = (int) dol_print_date($newtime, '%M');
+			$newtimesecs = (int) dol_print_date($newtime, '%S');
 
 			$datelim = dol_mktime($newtimehours, $newtimemins, $newtimesecs, $newtimemonth, 1, $newtimeyear);
 			$datelim -= (3600 * 24);
@@ -688,8 +688,8 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
 	//print 'start_week='.$start_week.' tmparray[wday]='.$tmparray['wday'].' day offset='.$days.' seconds offset='.$seconds.'<br>';
 
 	//Get first day of week
-	$tmpdaytms = (int) date($tmparray[0]) - $seconds; // $tmparray[0] is day of parameters
-	$tmpday = (int) date("d", $tmpdaytms);
+	$tmpdaytms = (int) date((string) $tmparray['0']) - $seconds; // $tmparray[0] is day of parameters
+	$tmpday = idate("d", $tmpdaytms);
 
 	//Check first day of week is in same month than current day or not
 	if ($tmpday > $day) {
@@ -1005,7 +1005,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
  *	@param	   int			$timestampEnd       Timestamp end UTC
  *	@param     int			$lastday            Last day is included, 0: no, 1:yes
  *	@return    int								Number of days
- *  @seealso num_public_holiday(), num_open_day()
+ *  @see also num_public_holiday(), num_open_day()
  */
 function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 {
@@ -1016,6 +1016,8 @@ function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 			$bit = 1;
 		}
 		$nbjours = (int) floor(($timestampEnd - $timestampStart) / (60 * 60 * 24)) + 1 - $bit;
+	} else {
+		$nbjours = 0;
 	}
 	//print ($timestampEnd - $timestampStart) - $lastday;
 	return $nbjours;

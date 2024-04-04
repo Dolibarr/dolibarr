@@ -83,7 +83,7 @@ $formquestion = array();
 $usercanissuepayment = $user->hasRight('facture', 'paiement');
 
 $fieldid = 'rowid';
-$isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
+$isdraft = (($object->status == Facture::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', $fieldid, $isdraft);
 
 
@@ -115,8 +115,8 @@ if (empty($reshook)) {
 			if (substr($key, 0, 7) == 'amount_' && GETPOST($key) != '') {
 				$cursorfacid = substr($key, 7);
 				$amounts[$cursorfacid] = price2num(GETPOST($key));
-				$totalpayment = $totalpayment + $amounts[$cursorfacid];
 				if (!empty($amounts[$cursorfacid])) {
+					$totalpayment += (float) $amounts[$cursorfacid];
 					$atleastonepaymentnotnull++;
 				}
 				$result = $tmpinvoice->fetch($cursorfacid);
@@ -463,7 +463,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 			//Add js for AutoFill
 			print ' $(document).ready(function () {';
-			print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
+			print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){
 							$("input[name="+$(this).data(\'rowname\')+"]").val($(this).data("value")).trigger("change");
 						});';
 			print '	});'."\n";
@@ -730,7 +730,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						// Multicurrency remain to pay
 						print '<td class="right">';
 						if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-							print price($sign * $multicurrency_remaintopay);
+							print price($sign * (float) $multicurrency_remaintopay);
 						}
 						print '</td>';
 
@@ -743,7 +743,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
 							if ($action != 'add_paiement') {
 								if (!empty($conf->use_javascript_ajax)) {
-									print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
+									print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowname='".$namef."' data-value='".($sign * (float) $multicurrency_remaintopay)."'");
 								}
 								print '<input type="text" class="maxwidth75 multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
 								print '<input type="hidden" class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
@@ -770,7 +770,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 					// Remain to take or to pay back
 					print '<td class="right">';
-					print price($sign * $remaintopay);
+					print price($sign * (float) $remaintopay);
 					if (isModEnabled('prelevement')) {
 						$numdirectdebitopen = 0;
 						$totaldirectdebit = 0;
@@ -805,7 +805,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 					if ($action != 'add_paiement') {
 						if (!empty($conf->use_javascript_ajax)) {
-							print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
+							print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowname='".$namef."' data-value='".($sign * (float) $remaintopay)."'");
 						}
 						print '<input type="text" class="maxwidth75 amount" id="'.$namef.'" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
 						print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
@@ -856,7 +856,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						print '+'.price($totalrecudeposits);
 					}
 					print '</b></td>';
-					print '<td class="right"><b>'.price($sign * price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits, 'MT')).'</b></td>';
+					print '<td class="right"><b>'.price($sign * (float) price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits, 'MT')).'</b></td>';
 					print '<td class="right" id="result" style="font-weight: bold;"></td>'; // Autofilled
 					print '<td align="center">&nbsp;</td>';
 					print "</tr>\n";

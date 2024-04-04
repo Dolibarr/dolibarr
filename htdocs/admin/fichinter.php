@@ -96,6 +96,7 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $classname($db);
+		'@phan-var-force ModelePDFFicheinter $module';
 
 		if ($module->write_file($inter, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=ficheinter&file=SPECIMEN.pdf");

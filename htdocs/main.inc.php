@@ -220,10 +220,10 @@ function testSqlAndScriptInject($val, $type)
 /**
  * Return true if security check on parameters are OK, false otherwise.
  *
- * @param		string|array	$var		Variable name
- * @param		int				$type		1=GET, 0=POST, 2=PHP_SELF
- * @param		int				$stopcode	0=No stop code, 1=Stop code (default) if injection found
- * @return		boolean|null				True if there is no injection.
+ * @param		string|array<string,string>	$var		Variable name
+ * @param		int<0,2>		$type		1=GET, 0=POST, 2=PHP_SELF
+ * @param		int<0,1>		$stopcode	0=No stop code, 1=Stop code (default) if injection found
+ * @return		boolean						True if there is no injection.
  */
 function analyseVarsForSqlAndScriptsInjection(&$var, $type, $stopcode = 1)
 {
@@ -327,15 +327,15 @@ require_once 'filefunc.inc.php';
 // If there is a POST parameter to tell to save automatically some POST parameters into cookies, we do it.
 // This is used for example by form of boxes to save personalization of some options.
 // DOL_AUTOSET_COOKIE=cookiename:val1,val2 and  cookiename_val1=aaa cookiename_val2=bbb will set cookie_name with value json_encode(array('val1'=> , ))
-if (!empty($_POST["DOL_AUTOSET_COOKIE"])) {
-	$tmpautoset = explode(':', $_POST["DOL_AUTOSET_COOKIE"], 2);
+if (GETPOST("DOL_AUTOSET_COOKIE")) {
+	$tmpautoset = explode(':', GETPOST("DOL_AUTOSET_COOKIE"), 2);
 	$tmplist = explode(',', $tmpautoset[1]);
 	$cookiearrayvalue = array();
 	foreach ($tmplist as $tmpkey) {
 		$postkey = $tmpautoset[0].'_'.$tmpkey;
-		//var_dump('tmpkey='.$tmpkey.' postkey='.$postkey.' value='.$_POST[$postkey]);
-		if (!empty($_POST[$postkey])) {
-			$cookiearrayvalue[$tmpkey] = $_POST[$postkey];
+		//var_dump('tmpkey='.$tmpkey.' postkey='.$postkey.' value='.GETPOST($postkey);
+		if (GETPOST($postkey)) {
+			$cookiearrayvalue[$tmpkey] = GETPOST($postkey);
 		}
 	}
 	$cookiename = $tmpautoset[0];
@@ -764,7 +764,6 @@ if (!defined('NOLOGIN')) {
 		$dol_optimize_smallscreen = GETPOSTINT('dol_optimize_smallscreen', 3);
 		$dol_no_mouse_hover = GETPOSTINT('dol_no_mouse_hover', 3);
 		$dol_use_jmobile = GETPOSTINT('dol_use_jmobile', 3); // 0=default, 1=to say we use app from a webview app, 2=to say we use app from a webview app and keep ajax
-		//dol_syslog("POST key=".join(array_keys($_POST),',').' value='.join($_POST,','));
 
 		// If in demo mode, we check we go to home page through the public/demo/index.php page
 		if (!empty($dolibarr_main_demo) && $_SERVER['PHP_SELF'] == DOL_URL_ROOT.'/index.php') {  // We ask index page
@@ -1600,8 +1599,8 @@ if (!function_exists("llxHeader")) {
 /**
  *  Show HTTP header. Called by top_htmlhead().
  *
- *  @param  string  $contenttype    Content type. For example, 'text/html'
- *  @param	int		$forcenocache	Force disabling of cache for the page
+ *  @param  string  	$contenttype    Content type. For example, 'text/html'
+ *  @param	int<0,1>	$forcenocache	Force disabling of cache for the page
  *  @return	void
  */
 function top_httphead($contenttype = 'text/html', $forcenocache = 0)
@@ -1731,15 +1730,15 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
  * Output html header of a page. It calls also top_httphead()
  * This code is also duplicated into security2.lib.php::dol_loginfunction
  *
- * @param 	string 	$head			 Optional head lines
- * @param 	string 	$title			 HTML title
- * @param 	int    	$disablejs		 Disable js output
- * @param 	int    	$disablehead	 Disable head output
- * @param 	array  	$arrayofjs		 Array of complementary js files
- * @param 	array  	$arrayofcss		 Array of complementary css files
- * @param 	int    	$disableforlogin Do not load heavy js and css for login pages
- * @param   int     $disablenofollow Disable nofollow tag for meta robots
- * @param   int     $disablenoindex  Disable noindex tag for meta robots
+ * @param 	string		$head			 Optional head lines
+ * @param 	string		$title			 HTML title
+ * @param 	int<0,1>   	$disablejs		 Disable js output
+ * @param 	int<0,1>   	$disablehead	 Disable head output
+ * @param 	string[]	$arrayofjs		 Array of complementary js files
+ * @param 	string[]	$arrayofcss		 Array of complementary css files
+ * @param 	int<0,1>	$disableforlogin Do not load heavy js and css for login pages
+ * @param   int<0,1>	$disablenofollow Disable nofollow tag for meta robots
+ * @param   int<0,1>	$disablenoindex  Disable noindex tag for meta robots
  * @return	void
  */
 function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arrayofjs = array(), $arrayofcss = array(), $disableforlogin = 0, $disablenofollow = 0, $disablenoindex = 0)
@@ -1825,10 +1824,10 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		print '<title>';
 		$titletoshow = '';
-		if ($title && getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/noapp/', $conf->global->MAIN_HTML_TITLE)) {
-			$titletoshow = dol_htmlentities($title);
-		} elseif ($title) {
+		if ($title && preg_match('/showapp/', getDolGlobalString('MAIN_HTML_TITLE'))) {
 			$titletoshow = dol_htmlentities($appli.' - '.$title);
+		} elseif ($title) {
+			$titletoshow = dol_htmlentities($title);
 		} else {
 			$titletoshow = dol_htmlentities($appli);
 		}
@@ -2147,10 +2146,10 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
  *  @param      string			$head    			Lines in the HEAD
  *  @param      string			$title   			Title of web page
  *  @param      string			$target  			Target to use in menu links (Example: '' or '_top')
- *	@param		int				$disablejs			Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
- *	@param		int				$disablehead		Do not output head section
- *	@param		array			$arrayofjs			Array of js files to add in header
- *	@param		array			$arrayofcss			Array of css files to add in header
+ *	@param		int<0,1>		$disablejs			Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
+ *	@param		int<0,1>		$disablehead		Do not output head section
+ *	@param		string[]		$arrayofjs			Array of js files to add in header
+ *	@param		string[]		$arrayofcss			Array of css files to add in header
  *  @param		string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
  *  @param      string			$helppagename    	Name of wiki page for help ('' by default).
  * 				     		    		            Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
@@ -2413,7 +2412,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 /**
  * Build the tooltip on user login
  *
- * @param	int			$hideloginname		Hide login name. Show only the image.
+ * @param	int<0,1>	$hideloginname		Hide login name. Show only the image.
  * @param	string		$urllogout			URL for logout (Will use DOL_URL_ROOT.'/user/logout.php?token=...' if empty)
  * @return  string                  		HTML content
  */
@@ -2697,12 +2696,16 @@ function top_menu_quickadd()
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 	// accesskey is for Mac:               CTRL + key for all browsers
 	$stringforfirstkey = $langs->trans("KeyboardShortcut");
-	if ($conf->browser->name == 'chrome') {
-		$stringforfirstkey .= ' ALT +';
-	} elseif ($conf->browser->name == 'firefox') {
-		$stringforfirstkey .= ' ALT + SHIFT +';
-	} else {
+	if ($conf->browser->os === 'macintosh') {
 		$stringforfirstkey .= ' CTL +';
+	} else {
+		if ($conf->browser->name == 'chrome') {
+			$stringforfirstkey .= ' ALT +';
+		} elseif ($conf->browser->name == 'firefox') {
+			$stringforfirstkey .= ' ALT + SHIFT +';
+		} else {
+			$stringforfirstkey .= ' CTL +';
+		}
 	}
 
 	$html .= '<!-- div for quick add link -->
@@ -2728,10 +2731,18 @@ function top_menu_quickadd()
 
             // Key map shortcut
             $(document).keydown(function(event){
-                  if ( event.which === 76 && event.ctrlKey && event.shiftKey ){
-                     console.log(\'control + shift + l : trigger open quick add dropdown\');
-                     openQuickAddDropDown(event);
-                  }
+				var ostype = "'.$conf->browser->os.'";
+				if (ostype === "macintosh") {
+					if ( event.which === 65 && event.ctrlKey ) {
+						console.log(\'control + a : trigger open quick add dropdown\');
+						openQuickAddDropDown(event);
+					}
+				} else {
+					if ( event.which === 65 && event.ctrlKey && event.shiftKey ) {
+						console.log(\'control + shift + a : trigger open quick add dropdown\');
+						openQuickAddDropDown(event);
+					}
+				}
             });
 
             var openQuickAddDropDown = function(event) {
@@ -2944,12 +2955,16 @@ function top_menu_bookmark()
 	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 	// accesskey is for Mac:               CTRL + key for all browsers
 	$stringforfirstkey = $langs->trans("KeyboardShortcut");
-	if ($conf->browser->name == 'chrome') {
-		$stringforfirstkey .= ' ALT +';
-	} elseif ($conf->browser->name == 'firefox') {
-		$stringforfirstkey .= ' ALT + SHIFT +';
-	} else {
+	if ($conf->browser->os === 'macintosh') {
 		$stringforfirstkey .= ' CTL +';
+	} else {
+		if ($conf->browser->name == 'chrome') {
+			$stringforfirstkey .= ' ALT +';
+		} elseif ($conf->browser->name == 'firefox') {
+			$stringforfirstkey .= ' ALT + SHIFT +';
+		} else {
+			$stringforfirstkey .= ' CTL +';
+		}
 	}
 
 	if (!defined('JS_JQUERY_DISABLE_DROPDOWN') && !empty($conf->use_javascript_ajax)) {	    // This may be set by some pages that use different jquery version to avoid errors
@@ -2987,11 +3002,19 @@ function top_menu_bookmark()
 	            });
 
 	            // Key map shortcut
-	            jQuery(document).keydown(function(event){
-	                  if( event.which === 77 && event.ctrlKey && event.shiftKey ){
-	                     console.log("Click on control + shift + m : trigger open bookmark dropdown");
-	                     openBookMarkDropDown(event);
-	                  }
+	            jQuery(document).keydown(function(event) {
+					var ostype = "'.$conf->browser->os.'";
+					if (ostype === "macintosh") {
+						if ( event.which === 66 && event.ctrlKey ) {
+							console.log("Click on control + b : trigger open bookmark dropdown");
+							openBookMarkDropDown(event);
+						}
+					} else {
+						if ( event.which === 66 && event.ctrlKey && event.shiftKey ) {
+							console.log("Click on control + shift + b : trigger open bookmark dropdown");
+							openBookMarkDropDown(event);
+						}
+					}
 	            });
 
 	            var openBookMarkDropDown = function(event) {
@@ -3178,15 +3201,15 @@ function top_menu_search()
 /**
  *  Show left menu bar
  *
- *  @param  array	$menu_array_before 	       	Table of menu entries to show before entries of menu handler. This param is deprecated and must be provided to ''.
- *  @param  string	$helppagename    	       	Name of wiki page for help ('' by default).
- * 				     		                   	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
- * 									         	For other external page: http://server/url
- *  @param  string	$notused             		Deprecated. Used in past to add content into left menu. Hooks can be used now.
- *  @param  array	$menu_array_after           Table of menu entries to show after entries of menu handler
- *  @param  int		$leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
- *  @param  string	$title                      Title of web page
- *  @param  int  	$acceptdelayedhtml          1 if caller request to have html delayed content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
+ *  @param  string		$menu_array_before 	       	Table of menu entries to show before entries of menu handler. This param is deprecated and must be provided to ''.
+ *  @param  string		$helppagename    	       	Name of wiki page for help ('' by default).
+ *                                                  Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
+ *                                                  For other external page: http://server/url
+ *  @param  string		$notused             		Deprecated. Used in past to add content into left menu. Hooks can be used now.
+ *  @param  array		$menu_array_after           Table of menu entries to show after entries of menu handler
+ *  @param  int			$leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
+ *  @param  string		$title                      Title of web page
+ *  @param  int<0,1>	$acceptdelayedhtml          1 if caller request to have html delayed content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
  *  @return	void
  */
 function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_array_after = array(), $leftmenuwithoutmainarea = 0, $title = '', $acceptdelayedhtml = 0)
@@ -3500,7 +3523,7 @@ function main_area($title = '')
  *
  *  @param	string		$helppagename		Page name ('EN:xxx,ES:eee,FR:fff,DE:ddd...' or 'http://localpage')
  *  @param  Translate	$langs				Language
- *  @return	array		Array of help urls
+ *  @return	array{helpbaseurl:string,helppage:string,mode:string}	Array of help urls
  */
 function getHelpParamFor($helppagename, $langs)
 {

@@ -265,6 +265,7 @@ if ($mode == 'setup' && $user->admin) {
 			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=setup&amp;driver='.$driver.'" autocomplete="off">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setconst">';
+			print '<input type="hidden" name="page_y" value="">';
 
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">'."\n";
@@ -325,14 +326,14 @@ if ($mode == 'setup' && $user->admin) {
 			if (is_object($tokenobj)) {
 				//test on $storage->hasAccessToken($OAUTH_SERVICENAME) ?
 				if ($urltodelete) {
-					print '<a class="button smallpaddingimp" href="'.$urltodelete.'">'.$langs->trans('DeleteAccess').'</a><br>';
+					print '<a class="button smallpaddingimp reposition" href="'.$urltodelete.'">'.$langs->trans('DeleteAccess').'</a><br>';
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans('GoOnTokenProviderToDeleteToken').'</span><br>';
 				}
 			}
 			// Request remote token
 			if ($urltorenew) {
-				print '<a class="button smallpaddingimp" href="'.$urltorenew.'">'.$langs->trans('GetAccess').'</a>';
+				print '<a class="button smallpaddingimp reposition" href="'.$urltorenew.'">'.$langs->trans('GetAccess').'</a>';
 				print $form->textwithpicto('', $langs->trans('RequestAccess'));
 				print '<br>';
 			}

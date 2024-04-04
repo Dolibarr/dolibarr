@@ -31,9 +31,6 @@ CodePaymentTerm
 IdPaymentTerm
 LabelPaymentTerm
 
-# ticket
-TicketAnswered
-
 # website_template
 Message
 Map
@@ -43,6 +40,8 @@ Reservation
 ACCOUNTING_ACCOUNT_CUSTOMER
 ACCOUNTING_ACCOUNT_CUSTOMER_Desc
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY
+ACCOUNTING_ACCOUNT_EXPENSEREPORT
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc
 ACCOUNTING_ACCOUNT_SUPPLIER
 ACCOUNTING_ACCOUNT_SUPPLIER_Desc
 ACCOUNTING_ACCOUNT_SUSPENSE
@@ -275,6 +274,7 @@ Assigned
 AssociatedProductsNumber
 AttachJoinedDocumentsToObject
 AucuneLigne
+AuthenticationMethod
 AutoFillFormFieldBeforeSubmit
 AutomaticClosing
 Automation
@@ -437,6 +437,7 @@ CardContent
 CardProduct0
 CardProduct1
 Cards
+Cart
 CashAccounts
 CashDeskBankCB
 CashDeskBankCash
@@ -1019,6 +1020,8 @@ ErrorFeatureNeedJavascript
 ErrorFicheinterCompanyDoesNotExist
 ErrorFieldMustHaveXChar
 ErrorFileAlreadyExists
+ErrorInAddAttachmentsImageBaseIsSrcData
+ErrorInAddAttachmentsImageBaseOnMedia
 ErrorInvalidSubtype
 ErrorInvoiceLoadThirdParty
 ErrorInvoiceLoadThirdPartyKey
@@ -2028,6 +2031,7 @@ Notify_MEMBER_MODIFY
 Notify_MEMBER_RESILIATE
 Notify_MEMBER_SUBSCRIPTION
 Notify_MEMBER_VALIDATE
+Notify_ORDER_CANCEL
 Notify_ORDER_CLOSE
 Notify_ORDER_SENTBYMAIL
 Notify_ORDER_SUPPLIER_APPROVE
@@ -2652,9 +2656,7 @@ ProductsOrServicesTranslations
 ProductsPipeServices
 ProductsPricePerCustomer
 ProfId10
-ProfId10FR
 ProfId10Short
-ProfId10ShortFR
 ProfId1ShortCM
 ProfId1ShortFR
 ProfId2ShortCM
@@ -2665,14 +2667,15 @@ ProfId4ShortCM
 ProfId4ShortFR
 ProfId5ShortCM
 ProfId5ShortFR
-ProfId6ShortCM
-ProfId6ShortFR
+ProfId1Short
+ProfId2Short
+ProfId3Short
+ProfId4Short
+ProfId5Short
+ProfId6Short
 ProfId7Short
-ProfId7ShortFR
 ProfId8Short
-ProfId8ShortFR
 ProfId9Short
-ProfId9ShortFR
 ProformaBill
 ProjectCreatedByEmailCollector
 ProjectHasNoCategory
@@ -3685,8 +3688,3 @@ WebPortalSetupPage
 XSubsriptionErrors
 YouCanChooseAModelForYouMailContent
 YouCanMakeSomeInstructionForEmail
-helpWithAi
-ExtrafieldLinestringGeo
-ExtrafieldMultiPointGeo
-ExtrafieldPointGeo
-ExtrafieldPolygonGeo
