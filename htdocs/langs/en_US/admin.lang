@@ -1992,6 +1992,7 @@ BackgroundColor=Background color
 TopMenuBackgroundColor=Background color for Top menu
 TopMenuDisableImages=Icon or Text in Top menu
 LeftMenuBackgroundColor=Background color for Left menu
+LeftmenuId=Left menu ID
 BackgroundTableTitleColor=Background color for Table title line
 BackgroundTableTitleTextColor=Text color for Table title line
 BackgroundTableTitleTextlinkColor=Text color for Table title link line
