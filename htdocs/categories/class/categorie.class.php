@@ -1159,7 +1159,8 @@ class Categorie extends CommonObject
 		}
 
 		$this->cats = array();
-
+		$nbcateg = 0;
+		
 		// Init this->motherof that is array(id_son=>id_parent, ...)
 		$this->load_motherof();
 		$current_lang = $langs->getDefaultLang();
@@ -1203,7 +1204,7 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this)."::get_full_arbo call to buildPathFromId", LOG_DEBUG);
 		foreach ($this->cats as $key => $val) {
 			//print 'key='.$key.'<br>'."\n";
-			$this->buildPathFromId($key, (!empty($nbcateg) ? $nbcateg : 0)); // Process a branch from the root category key (this category has no parent)
+			$this->buildPathFromId($key, $nbcateg); // Process a branch from the root category key (this category has no parent)
 		}
 
 		// Include or exclude leaf including $markafterid from tree
