@@ -10,16 +10,8 @@ pipeline {
       steps {
         script {
           def scannerHome = tool name: 'SonarQube_scanner';
-          withSonarQubeEnv('SonarQube') {
-            sh "${scannerHome}/bin/sonar-scanner \
-                  -Dsonar.projectName='scan' \
-                  -Dsonar.projectKey=scan \
-                  -Dsonar.language=php \
-                  -Dsonar.sources= /htdocs\
-                  -Dsonar.php.phpstan.reportPaths=test-reports/phpstan-report.json \
-                  -Dsonar.php.psalm.reportPaths=test-reports/sonarqube.json \
-                  -Dsonar.externalIssuesReportPaths=test-reports/deptrac-report.json"
-
+          withSonarQubeEnv('SonarQube_scanner') {
+            sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar-project.properties "
           }
         }
       }
