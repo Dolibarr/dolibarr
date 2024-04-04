@@ -6,6 +6,11 @@ pipeline {
         kind: Pod
         spec:
           containers:
+          - name: sonar-scanner
+            image: sonarsource/sonar-scanner-cli:latest
+            command:
+            - cat
+            tty: true
           - name: git
             image: alpine/git:latest
             command:
@@ -32,6 +37,13 @@ pipeline {
         // Checkout your source code
         checkout scm
      }
+  }
+  stage ('SonarQube scan'){
+     steps {
+        container('sonar-scanner') {
+           sh 'sonar-scanner'
+        }
+    }
   }
   stage('Build Docker Image') {
       steps {
