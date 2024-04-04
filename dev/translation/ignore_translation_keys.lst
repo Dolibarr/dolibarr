@@ -436,9 +436,7 @@ FileDidAlreadyExist
 FileIsNotCorrect
 Filename
 FilteredFrom
-FiscalYear
 Flashy
-ForceEmailFrom
 ForcedByGlobalSetup
 Form for public lead registration has not been enabled
 Free
@@ -1143,8 +1141,6 @@ XSubsriptionError
 centimes
 email
 id
-leftmenu
-message
 multicurrency_buyPriceInCurrency
 multicurrency_modifyRateApplication
 ref
