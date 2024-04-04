@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,11 +75,35 @@ if (! defined("NOLOGIN")) {
 class CoreTest extends CommonClassTest
 {
 	/**
+	 * DataProvider for detectURLROOT test
+	 *
+	 * @return array<string,array{0:int}>
+	 */
+	public function detectUrlRootDataProvider()
+	{
+		global $dolibarr_main_document_root;
+		$tests = [
+			'/var/www/dolibarrnew' => [1],
+			'/var/www/aaa/htdocs' => [2],
+			'/home/ldestailleur/git/dolibarr/htdocs' => [3],
+			'/var/www/dolibarr' => [4],
+			'http://localhost/dolibarralias' => [5],
+		];
+		if (array_key_exists($dolibarr_main_document_root, $tests)) {
+			return [$dolibarr_main_document_root, $tests[$dolibarr_main_document_root]];
+		}
+		return [0 => [0]];
+	}
+
+	/**
 	 * testDetectURLROOT
 	 *
+	 * @dataProvider detectUrlRootDataProvider
+	 *
+	 * @param int $testtodo Test to do
 	 * @return	void
 	 */
-	public function testDetectURLROOT()
+	public function testDetectURLROOT($testtodo)
 	{
 		global $dolibarr_main_prod;
 
@@ -91,8 +116,6 @@ class CoreTest extends CommonClassTest
 		global $dolibarr_main_db_port;
 		global $dolibarr_main_db_type;
 		global $dolibarr_main_db_prefix;
-
-		$testtodo = 0;
 
 		// Case 1:
 		// Test for subdir dolibarrnew (that point to htdocs) in root directory /var/www
