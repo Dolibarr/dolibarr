@@ -368,7 +368,12 @@ class Products extends DolibarrApi
 				$this->product->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
-
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->product->array_options[$index] = $val;
+				}
+				continue;
+			}
 			$this->product->$field = $this->_checkValForAPI($field, $value, $this->product);
 		}
 
