@@ -9,7 +9,7 @@ pipeline {
     stage('SonarQube Analysis') {
       steps {
         script {
-          def scannerHome = tool name: 'SonarQube_scanner';
+          def scannerHome = tool 'SonarQube_scanner';
           withSonarQubeEnv('SonarQube_Server') {
             sh 'export SONAR_SCANNER_OPTS="-Xmx512m"'
             sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar-project.properties "
