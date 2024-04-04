@@ -208,7 +208,7 @@ if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED
 				SELECT SUM(ed3.qty) as qty
 				FROM " . MAIN_DB_PREFIX . "expeditiondet as ed3
 				LEFT JOIN " . MAIN_DB_PREFIX . "expedition as e3 ON e3.rowid = ed3.fk_expedition
-				LEFT JOIN " . MAIN_DB_PREFIX . "commandedet as cd3 ON ed3.fk_origin_line = cd3.rowid
+				LEFT JOIN " . MAIN_DB_PREFIX . "commandedet as cd3 ON ed3.fk_elementdet = cd3.rowid
 				LEFT JOIN " . MAIN_DB_PREFIX . "commande as c3 ON c3.rowid = cd3.fk_commande
 				WHERE e3.entity IN (1) AND cd3.fk_product = p.rowid AND c3.fk_statut IN (1,2) AND e3.fk_statut IN (1,2) AND ed3.qty <> 0
 			) IS NOT NULL
