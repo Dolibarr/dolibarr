@@ -121,6 +121,13 @@ if ($max_time && $max_time < $max_execution_time_for_deploy) {
 	@ini_set("max_execution_time", $max_execution_time_for_deploy); // This work only if safe mode is off. also web servers has timeout of 300
 }
 
+$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
+$allowonlineinstall = true;
+$allowfromweb = 1;
+if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
+	$allowonlineinstall = false;
+}
+
 
 /*
  * Actions
@@ -141,7 +148,7 @@ if (GETPOST('buttonreset', 'alpha')) {
 	$search_version = '';
 }
 
-if ($action == 'install') {
+if ($action == 'install' && $allowonlineinstall) {
 	$error = 0;
 
 	// $original_file should match format module_modulename-x.y[.z].zip
@@ -262,6 +269,8 @@ if ($action == 'install') {
 	if (!$error) {
 		setEventMessages($langs->trans("SetupIsReadyForUse", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules")), null, 'warnings');
 	}
+} elseif ($action == 'install' && !$allowonlineinstall) {
+	httponly_accessforbidden("You try to bypass the protection to disallow deployment of an external module. Hack attempt ?");
 }
 
 if ($action == 'set' && $user->admin) {
@@ -1174,13 +1183,6 @@ if ($mode == 'deploy') {
 	print dol_get_fiche_head($head, $mode, '', -1);
 
 	print $deschelp;
-
-	$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
-	$allowonlineinstall = true;
-	$allowfromweb = 1;
-	if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
-		$allowonlineinstall = false;
-	}
 
 	$fullurl = '<a href="'.$urldolibarrmodules.'" target="_blank" rel="noopener noreferrer">'.$urldolibarrmodules.'</a>';
 	$message = '';
