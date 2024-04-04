@@ -321,9 +321,9 @@ class FormAccounting extends Form
 	/**
 	 * Return select filter with date of transaction
 	 *
-	 * @param string $htmlname		Name of select field
-	 * @param string $selectedkey	Value
-	 * @return string|int<-1,-1>	HTML edit field, or -1 if error
+	 * @param 	string 				$htmlname       Name of select field
+	 * @param 	string 				$selectedkey    Value
+	 * @return 	string|int<-1,-1>					HTML edit field, or -1 if error
 	 */
 	public function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '')
 	{

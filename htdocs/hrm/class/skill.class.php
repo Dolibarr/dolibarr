@@ -408,7 +408,7 @@ class Skill extends CommonObject
 		$this->lines = array();
 		require_once __DIR__ . '/skilldet.class.php';
 		$skilldet = new Skilldet($this->db);
-		$this->lines = $skilldet->fetchAll('ASC', '', '', '', 'fk_skill:=:'.$this->id, '');
+		$this->lines = $skilldet->fetchAll('ASC', '', 0, 0, '(fk_skill:=:'.$this->id.')');
 
 		if (is_array($this->lines)) {
 			return (count($this->lines) > 0) ? $this->lines : array();
