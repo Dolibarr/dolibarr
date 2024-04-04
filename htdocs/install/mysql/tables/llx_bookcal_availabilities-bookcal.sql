@@ -17,7 +17,6 @@
 CREATE TABLE llx_bookcal_availabilities(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	entity integer DEFAULT 1 NOT NULL,
 	label varchar(255), 
 	description text, 
 	note_public text, 
