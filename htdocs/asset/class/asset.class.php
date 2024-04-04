@@ -158,7 +158,7 @@ class Asset extends CommonObject
 	public $status;
 
 	/**
-	 * @var Asset object oldcopy
+	 * @var static object oldcopy
 	 */
 	public $oldcopy;
 
