@@ -4,6 +4,7 @@
  * Copyright (C) 2018 Charlene Benke <charlie@patas-monkey.com>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -167,6 +168,10 @@ class FormProjets extends Form
 		$hideunselectables = false;
 		if (getDolGlobalString('PROJECT_HIDE_UNSELECTABLES')) {
 			$hideunselectables = true;
+		}
+
+		if (getDolGlobalInt('MAIN_DISCARD_CLOSED_PROJECTS_IN_SELECT')) {
+			$discard_closed = 1;
 		}
 
 		$projectsListId = false;
