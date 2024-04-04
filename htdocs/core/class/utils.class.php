@@ -96,14 +96,14 @@ class Utils
 			if ($choice == 'allfiles') {
 				// Delete all files (except install.lock, do not follow symbolic links)
 				if ($dolibarr_main_data_root) {
-					$filesarray = dol_dir_list($dolibarr_main_data_root, "all", 0, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "all", 0, '', '[\.lock|\.unlock]$', 'name', SORT_ASC, 0, 0, '', 1);
 				}
 			}
 
 			if ($choice == 'logfile' || $choice == 'logfiles') {
 				// Define files log
 				if ($dolibarr_main_data_root) {
-					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', '[\.lock|\.unlock]$', 'name', SORT_ASC, 0, 0, '', 1);
 				}
 
 				if (!empty($conf->syslog->enabled)) {
