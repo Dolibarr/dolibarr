@@ -9,6 +9,7 @@ MailRecipients=Recipients
 MailRecipient=Recipient
 MailTitle=Label
 MailFrom=From
+ForceEmailFrom=Default email From
 PhoneFrom=From
 MailErrorsTo=Errors to
 MailReply=Reply to
