@@ -2766,7 +2766,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 	if (GETPOST('type', 'alpha') == 'left' && !empty(GETPOST('lefmenu', 'alpha'))) {
 		if (!str_contains(GETPOST('leftmenu'), strtolower($module))) {
 			$error++;
-			setEventMessages($langs->trans("WarningFieldsMustContains", $langs->transnoentities("leftmenu")), null, 'errors');
+			setEventMessages($langs->trans("WarningFieldsMustContains", $langs->transnoentities("LeftmenuId")), null, 'errors');
 		}
 	}
 	$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
@@ -2776,7 +2776,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 	if (GETPOST('type', 'alpha') == 'left') {
 		if (empty(GETPOST('leftmenu')) && count($objects) > 0) {
 			$error++;
-			setEventMessages($langs->trans("ErrorCoherenceMenu", $langs->transnoentities("leftmenu"), $langs->transnoentities("type")), null, 'errors');
+			setEventMessages($langs->trans("ErrorCoherenceMenu", $langs->transnoentities("LeftmenuId"), $langs->transnoentities("type")), null, 'errors');
 		}
 	}
 	if (GETPOST('type', 'alpha') == 'top') {

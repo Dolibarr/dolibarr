@@ -34,7 +34,6 @@ TasksHistoryForThisContact=Eventos para este contacto
 LastProspectNeverContacted=Nunca contactado
 LastProspectContactInProcess=Contacto en proceso
 LastProspectContactDone=Contacto realizado
-ActionDoneBy=Evento realizado por
 ActionAC_FAX=Enviar fax
 ActionAC_PROP=Enviar cotizacion por email
 ActionAC_EMAIL=Enviar correo

@@ -55,7 +55,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "members", "paybox", "propal", "commercial"));
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "members", "paybox", "stripe", "propal", "commercial"));
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
