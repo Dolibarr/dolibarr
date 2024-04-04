@@ -1160,7 +1160,7 @@ class Categorie extends CommonObject
 
 		$this->cats = array();
 		$nbcateg = 0;
-		
+
 		// Init this->motherof that is array(id_son=>id_parent, ...)
 		$this->load_motherof();
 		$current_lang = $langs->getDefaultLang();
