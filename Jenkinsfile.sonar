@@ -9,12 +9,17 @@ pipeline {
     stage('SonarQube Analysis') {
       steps {
         script {
-          withCredentials([string(credentialsId: 'SonarQubeToken', variable: 'SONAR_TOKEN')]) 
-          sh "sonar-scanner -Dsonar.login=$SONAR_TOKEN"
-          def scannerHome = tool 'SonarQube_Scanner';
-          withSonarQubeEnv('SonarQube_Server') {
-            sh 'export SONAR_SCANNER_OPTS="-Xmx512m"'
-            sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar-project.properties"
+          // Wrap withCredentials around all steps requiring the credentials
+          withCredentials([string(credentialsId: 'SonarQubeToken', variable: 'SONAR_TOKEN')]) {
+            // Execute SonarScanner for analysis
+            sh "sonar-scanner -Dsonar.login=$SONAR_TOKEN"
+            
+            // Execute SonarQube analysis
+            def scannerHome = tool 'SonarQube_Scanner';
+            withSonarQubeEnv('SonarQube_Server') {
+              sh 'export SONAR_SCANNER_OPTS="-Xmx512m"'
+              sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar-project.properties"
+            }
           }
         }
       }
