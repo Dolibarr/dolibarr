@@ -12,7 +12,7 @@ pipeline {
           def scannerHome = tool 'SonarQube_Scanner';
           // Execute SonarQube analysis
           withSonarQubeEnv('SonarQube_Server') {
-            sh 'export SONAR_SCANNER_OPTS="-Xmx1024m -Xms512m"'
+            sh 'export SONAR_SCANNER_OPTS="-Xmx2048m -Xms512m"'
             sh 'export ANT_OPTS="-Xms512m -Xmx1800m"'
             sh 'export SONAR_RUNNER_OPTS="-Xmx1024m -XX:MaxPermSize=512m"'
             sh "${scannerHome}/bin/sonar-scanner -X -Dproject.settings=sonar-project.properties"
