@@ -752,7 +752,7 @@ foreach ($arrayofalerts as $key => $alert) {
 	}
 	$arrayofalerts[$key]['title'] = ($project ? "[".$project."] " : "").'Security alert - '.($yogosha ? ' Yogosha #'.$yogosha.' - ' : '').($cve ? 'CVE-'.$cve.' - ' : '');
 	$arrayofalerts[$key]['title'] .= 'Fix committed as: '.dol_trunc($alert['commitid'], 8);
-	$arrayofalerts[$key]['description'] = '<![CDATA[Security alert - '.($yogosha ? ' Yogosha #'.$yogosha.' - ' : '').($cve ? 'CVE-'.$cve.' - ' : '');
+	$arrayofalerts[$key]['description'] = '<![CDATA[Security alert<br>';
 
 	$html .= '<tr style="vertical-align: top;">';
 
