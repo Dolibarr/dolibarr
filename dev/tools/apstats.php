@@ -795,7 +795,7 @@ foreach ($arrayofalerts as $key => $alert) {
 	if (!empty($alert['issueidcve'])) {
 		$cve = preg_replace('/\s+/', '-', trim($alert['issueidcve']));
 		$html .= '<a target="_blank" href="'.$arrayofalerts[$key]['url_cve'].'">CVE-'.$cve.'</a>';
-		$arrayofalerts[$key]['description'] .= "\n".'CVE: <a href="'.$arrayofalerts[$key]['url_cve'].'">.CVE-'.$cve.'</a>';
+		$arrayofalerts[$key]['description'] .= "\n".'CVE: <a href="'.$arrayofalerts[$key]['url_cve'].'">CVE-'.$cve.'</a>';
 	}
 	$html .= '</td>';
 	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.dol_escape_htmltag($alert['title']).'</td>';
