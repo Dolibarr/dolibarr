@@ -370,7 +370,7 @@ class Products extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->product->array_options[$index] = $val;
+					$this->product->array_options[$index] = $this->_checkValForAPI($field, $val, $this->product);
 				}
 				continue;
 			}
