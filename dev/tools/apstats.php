@@ -759,13 +759,13 @@ foreach ($arrayofalerts as $key => $alert) {
 	// Add link to Github
 	$html .= '<td class="nowrap">';
 	$html .= '<a target="_blank" href="'.$arrayofalerts[$key]['url_commit'].'">'.dol_trunc($alert['commitid'], 8).'</a>';
-	$arrayofalerts[$key]['description'] .= "\n".'Commit ID: <a href="'.$arrayofalerts[$key]['url_commit'].'">'.dol_trunc($alert['commitid'], 8).'</a>';
+	$arrayofalerts[$key]['description'] .= "\n<br>".'Commit ID: <a href="'.$arrayofalerts[$key]['url_commit'].'">'.dol_trunc($alert['commitid'], 8).'</a>';
 
 	if (!empty($alert['commitidbis'])) {
 		$html .= ' <div class="more inline"><span class="seeothercommit badge">+</span><div class="morediv hidden">';
 		foreach ($alert['commitidbis'] as $tmpcommitidbis) {
 			$html .= '<a target="_blank" href="https://github.com/Dolibarr/dolibarr/commit/'.$tmpcommitidbis.'">'.dol_trunc($tmpcommitidbis, 8).'</a><br>';
-			$arrayofalerts[$key]['description'] .= "\n".'Commit ID: <a href="https://github.com/Dolibarr/dolibarr/commit/'.$tmpcommitidbis.'">'.dol_trunc($tmpcommitidbis, 8).'</a>';
+			$arrayofalerts[$key]['description'] .= "\n<br>".'Commit ID: <a href="https://github.com/Dolibarr/dolibarr/commit/'.$tmpcommitidbis.'">'.dol_trunc($tmpcommitidbis, 8).'</a>';
 		}
 		$html .= '</div></div>';
 	}
@@ -777,7 +777,7 @@ foreach ($arrayofalerts as $key => $alert) {
 	if (!empty($alert['issueidyogosha'])) {
 		//$html .= '<a target="_blank" href="https://yogosha.com?'.$alert['issueidyogosha'].'">';
 		$html .= '#yogosha'.$alert['issueidyogosha'];
-		$arrayofalerts[$key]['description'] .= "\n".'Yogosha ID #'.$alert['issueidyogosha'];
+		$arrayofalerts[$key]['description'] .= "\n<br>".'Yogosha ID #'.$alert['issueidyogosha'];
 		//$html .= '</a>';
 	} else {
 		//$html .= '<span class="opacitymedium">public issue</span>';
@@ -786,7 +786,7 @@ foreach ($arrayofalerts as $key => $alert) {
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['issueid'])) {
 		$html .= '<a target="_blank" href="'.$arrayofalerts[$key]['url_issue'].'">#'.$alert['issueid'].'</a>';
-		$arrayofalerts[$key]['description'] .= "\n".'GitHub ID <a href="'.$arrayofalerts[$key]['url_issue'].'" target="_blank">#'.$alert['issueid'].'</a>';
+		$arrayofalerts[$key]['description'] .= "\n<br>".'GitHub ID <a href="'.$arrayofalerts[$key]['url_issue'].'" target="_blank">#'.$alert['issueid'].'</a>';
 	} else {
 		//$html .= '<span class="opacitymedium">private</span>';
 	}
@@ -795,7 +795,7 @@ foreach ($arrayofalerts as $key => $alert) {
 	if (!empty($alert['issueidcve'])) {
 		$cve = preg_replace('/\s+/', '-', trim($alert['issueidcve']));
 		$html .= '<a target="_blank" href="'.$arrayofalerts[$key]['url_cve'].'">CVE-'.$cve.'</a>';
-		$arrayofalerts[$key]['description'] .= "\n".'CVE: <a href="'.$arrayofalerts[$key]['url_cve'].'">CVE-'.$cve.'</a>';
+		$arrayofalerts[$key]['description'] .= "\n<br>".'CVE: <a href="'.$arrayofalerts[$key]['url_cve'].'">CVE-'.$cve.'</a>';
 	}
 	$html .= '</td>';
 	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.dol_escape_htmltag($alert['title']).'</td>';
