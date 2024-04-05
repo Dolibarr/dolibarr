@@ -842,7 +842,7 @@ if ($fh) {
 
 		fwrite($fh, '<item>'."\n");
 		fwrite($fh, '<title>' . htmlspecialchars($alert['title']) . '</title>'."\n");
-		fwrite($fh, '<description>' . htmlspecialchars($alert['description']) . '</description>'."\n");
+		fwrite($fh, '<description>' . $alert['description'] . '</description>'."\n");	// no htmlspeciachars here
 		fwrite($fh, '<link>' . htmlspecialchars($alert['url_commit']) . '</link>'."\n");
 		fwrite($fh, '<pubDate>' . htmlspecialchars($alert['created_at']) . '</pubDate>'."\n");
 		fwrite($fh, '</item>'."\n");
