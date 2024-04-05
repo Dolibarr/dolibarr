@@ -200,15 +200,15 @@ class FactureFournisseur extends CommonInvoice
 	public $localtax1;
 	/** @var ?string */
 	public $localtax2;
-	/** @var float|int */
+	/** @var float */
 	public $total_ht;
-	/** @var float|int */
+	/** @var float */
 	public $total_tva;
-	/** @var float|int */
+	/** @var float */
 	public $total_localtax1;
-	/** @var float|int */
+	/** @var float */
 	public $total_localtax2;
-	/** @var float|int */
+	/** @var float */
 	public $total_ttc;
 
 	/**
@@ -1201,7 +1201,7 @@ class FactureFournisseur extends CommonInvoice
 			$this->statut = $this->status;
 		}
 		if (isset($this->author)) {  // TODO: user_creation_id?
-			$this->author = trim((string) $this->author);
+			$this->author = (int) $this->author;
 		}
 		if (isset($this->fk_user_valid)) {
 			$this->fk_user_valid = trim($this->fk_user_valid);
