@@ -285,7 +285,12 @@ class SupplierOrders extends DolibarrApi
 				$this->order->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
-
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->order->array_options[$index] = $this->_checkValForAPI($field, $val, $this->order);
+				}
+				continue;
+			}
 			$this->order->$field = $this->_checkValForAPI($field, $value, $this->order);
 		}
 
