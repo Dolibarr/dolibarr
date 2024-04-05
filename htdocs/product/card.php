@@ -2510,7 +2510,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print '&nbsp;<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 						print '</form>';
 					} else {
-						print showValueWithClipboardCPButton($object->barcode);
+						print showValueWithClipboardCPButton($object->barcode, 1, dol_trunc($object->barcode, 13));
 					}
 					print '</td></tr>'."\n";
 				}
