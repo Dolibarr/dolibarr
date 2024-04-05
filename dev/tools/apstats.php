@@ -74,6 +74,7 @@ $dirscc = '';
 $dirphpstan = '';
 $dir_phan = '';
 $datatable_script = '';
+$url_root = '';
 
 $i = 0;
 while ($i < $argc) {
@@ -84,6 +85,8 @@ while ($i < $argc) {
 		$dirphpstan = $reg[1];
 	} elseif (preg_match('/^--dir-phan=(.*)$/', $argv[$i], $reg)) {
 		$dir_phan = $reg[1];
+	} elseif (preg_match('/^--url-root=(.*)$/', $argv[$i], $reg)) {
+		$url_root = $reg[1];
 	}
 	$i++;
 }
@@ -723,18 +726,28 @@ if (count($output_phan_json) != 0) {
 
 
 // Last security errors
+$title_security = "Last security issues";
 
 $html .= '<section class="chapter" id="linesofcode">'."\n";
-$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Last security issues <span class="opacitymedium">(last '.($nbofmonth != 1 ? $nbofmonth.' months' : 'month').')</span></h2>'."\n";
+$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>'.$title_security.' <span class="opacitymedium">(last '.($nbofmonth != 1 ? $nbofmonth.' months' : 'month').')</span></h2>'."\n";
 
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="list_technical_debt centpercent">'."\n";
 $html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td></tr>'."\n";
 foreach ($arrayofalerts as $alert) {
+	$alert['url_commit'] = 'https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'];
+	if (!empty($alert['issueid'])) {
+		$alert['url_issue'] = 'https://github.com/Dolibarr/dolibarr/issues/'.$alert['issueid'];
+	}
+	if (!empty($alert['issueidcve'])) {
+		$cve = preg_replace('/\s+/', '-', trim($alert['issueidcve']));
+		$alert['url_cve'] = 'https://nvd.nist.gov/vuln/detail/CVE-'.$cve;
+	}
+
 	$html .= '<tr style="vertical-align: top;">';
 	$html .= '<td class="nowrap">';
-	$html .= '<a target="_blank" href="https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'].'">'.dol_trunc($alert['commitid'], 8).'</a>';
+	$html .= '<a target="_blank" href="'.$alert['url_commit'].'">'.dol_trunc($alert['commitid'], 8).'</a>';
 	if (!empty($alert['commitidbis'])) {
 		$html .= ' <div class="more inline"><span class="seeothercommit badge">+</span><div class="morediv hidden">';
 		foreach ($alert['commitidbis'] as $tmpcommitidbis) {
@@ -757,7 +770,7 @@ foreach ($arrayofalerts as $alert) {
 	$html .= '</td>';
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['issueid'])) {
-		$html .= '<a target="_blank" href="https://github.com/Dolibarr/dolibarr/issues/'.$alert['issueid'].'">#'.$alert['issueid'].'</a>';
+		$html .= '<a target="_blank" href="'.$alert['url_issue'].'">#'.$alert['issueid'].'</a>';
 	} else {
 		//$html .= '<span class="opacitymedium">private</span>';
 	}
@@ -765,7 +778,7 @@ foreach ($arrayofalerts as $alert) {
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['issueidcve'])) {
 		$cve = preg_replace('/\s+/', '-', trim($alert['issueidcve']));
-		$html .= '<a target="_blank" href="https://nvd.nist.gov/vuln/detail/CVE-'.$cve.'">CVE-'.$cve.'</a>';
+		$html .= '<a target="_blank" href="'.$alert['url_cve'].'">CVE-'.$cve.'</a>';
 	}
 	$html .= '</td>';
 	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.dol_escape_htmltag($alert['title']).'</td>';
@@ -778,6 +791,50 @@ $html .= '</div>';
 $html .= 'You can use this URL for RSS notifications: <a href="/'.$outputfilerss.'">'.$outputfilerss.'</a><br><br>';
 
 $html .= '</section>';
+
+
+// Generate the RSS file
+$fh = fopen($outputdir.'/'.$outputfilerss, 'w');
+if ($fh) {
+	$url_site = '';
+	$url_flux = '';
+	if ($url_root) {
+		$url_site = $url_root;
+		$url_flux = $url_root.'/'.$outputfilerss;
+	}
+
+	// Generation of the feed
+	fwrite($fh, '<?xml version="1.0" encoding="UTF-8" ?>');
+	fwrite($fh, '<rss version="2.0">');
+	fwrite($fh, '<channel>');
+	fwrite($fh, '<title>' . htmlspecialchars($title_security) . '</title>');
+	fwrite($fh, '<description>' . htmlspecialchars("Feed of the latest security reports on the project") . '</description>');
+	if ($url_site) {
+		fwrite($fh, '<link>' . htmlspecialchars($url_site) . '</link>');
+	}
+	if ($url_flux) {
+		fwrite($fh, '<atom:link href="' . htmlspecialchars($url_flux) . '" rel="self" type="application/rss+xml" />');
+	}
+
+	foreach ($arrayofalerts as $alert) {
+		fwrite($fh, '<item>');
+		fwrite($fh, '<title>' . htmlspecialchars($alert['titre']) . '</title>');
+		fwrite($fh, '<description>' . htmlspecialchars($alert['description']) . '</description>');
+		fwrite($fh, '<link>' . htmlspecialchars($alert['url_commit']) . '</link>');
+		fwrite($fh, '<pubDate>' . htmlspecialchars($alert['date']) . '</pubDate>');
+		fwrite($fh, '</item>');
+	}
+
+	fwrite($fh, '</channel>');
+	fwrite($fh, '</rss>');
+
+	fclose($fh);
+
+	print 'Generation of RSS output file '.$outputfilerss.' done.'."\n";
+} else {
+	print 'Failed to generate the RSS file '.$outputfilerss."\n";
+}
+
 
 
 // Technical debt PHPstan
