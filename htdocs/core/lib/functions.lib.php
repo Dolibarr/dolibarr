@@ -154,6 +154,7 @@ function getMultidirOutput($object, $module = '')
  * @param string $key 		key to return value, return $default if not set
  * @param string $default 	value to return
  * @return string
+ * @see getDolUserString()
  */
 function getDolGlobalString($key, $default = '')
 {
@@ -168,6 +169,7 @@ function getDolGlobalString($key, $default = '')
  * @param string 	$key 		key to return value, return 0 if not set
  * @param int 		$default 	value to return
  * @return int
+ * @see getDolUserInt()
  */
 function getDolGlobalInt($key, $default = 0)
 {
