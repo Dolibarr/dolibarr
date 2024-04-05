@@ -63,6 +63,7 @@ if (empty($argv[1])) {
 $outputpath = $argv[1];
 $outputdir = dirname($outputpath);
 $outputfile = basename($outputpath);
+$outputfilerss = preg_replace('/\.\w+$/i', '', $outputfile).'-security.rss';
 
 if (!is_dir($outputdir)) {
 	print 'Error: dir '.$outputdir.' does not exists or is not writable'."\n";
@@ -773,6 +774,9 @@ foreach ($arrayofalerts as $alert) {
 $html .= '</table>';
 $html .= '</div>';
 $html .= '</div>';
+
+$html .= 'You can use this URL for RSS notifications: <a href="/'.$outputfilerss.'">'.$outputfilerss.'</a><br><br>';
+
 $html .= '</section>';
 
 
