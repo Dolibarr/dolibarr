@@ -296,4 +296,5 @@ ALTER TABLE llx_projet ADD COLUMN ref_ext varchar(50) after ref;
 -- bookcal
 ALTER TABLE llx_bookcal_calendar ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 
+ALTER TABLE llx_projet_task ADD COLUMN status smallint DEFAULT 0 NOT NULL AFTER fk_statut;
 UPDATE llx_projet_task SET status = fk_statut;

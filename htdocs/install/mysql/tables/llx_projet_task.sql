@@ -39,7 +39,8 @@ create table llx_projet_task
   fk_user_creat			integer,						-- user who created the task
   fk_user_modif			integer,						-- user who modify the task
   fk_user_valid			integer,						-- user who validated the task
-  fk_statut				smallint DEFAULT 0 NOT NULL,    -- status of task
+  fk_statut				smallint DEFAULT 0 NOT NULL,    -- deprecated status of task
+  status				smallint DEFAULT 0 NOT NULL,    -- status of task
   note_private			text,
   note_public			text,
   rang                  integer DEFAULT 0,
