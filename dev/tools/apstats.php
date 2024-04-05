@@ -735,23 +735,27 @@ $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="list_technical_debt centpercent">'."\n";
 $html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td></tr>'."\n";
-foreach ($arrayofalerts as $alert) {
-	$alert['url_commit'] = 'https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'];
+foreach ($arrayofalerts as $key => $alert) {
+	$arrayofalerts[$key]['url_commit'] = 'https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'];
 	if (!empty($alert['issueid'])) {
-		$alert['url_issue'] = 'https://github.com/Dolibarr/dolibarr/issues/'.$alert['issueid'];
+		$arrayofalerts[$key]['url_issue'] = 'https://github.com/Dolibarr/dolibarr/issues/'.$alert['issueid'];
 	}
 	if (!empty($alert['issueidcve'])) {
 		$cve = preg_replace('/\s+/', '-', trim($alert['issueidcve']));
-		$alert['url_cve'] = 'https://nvd.nist.gov/vuln/detail/CVE-'.$cve;
+		$arrayofalerts[$key]['url_cve'] = 'https://nvd.nist.gov/vuln/detail/CVE-'.$cve;
 	}
+	$arrayofalerts[$key]['title'] = 'Security alert - '.($cve ? ' CVE-'.$cve.' - ' : '').'Fix committed as: '.dol_trunc($alert['commitid'], 8);
+	$arrayofalerts[$key]['description'] = 'Security alert '.($cve ? ' CVE-'.$cve.' - ' : '');
 
 	$html .= '<tr style="vertical-align: top;">';
 	$html .= '<td class="nowrap">';
 	$html .= '<a target="_blank" href="'.$alert['url_commit'].'">'.dol_trunc($alert['commitid'], 8).'</a>';
+	$arrayofalerts[$key]['description'] .= '<br>Commit ID: '.$alert['commitid'];
 	if (!empty($alert['commitidbis'])) {
 		$html .= ' <div class="more inline"><span class="seeothercommit badge">+</span><div class="morediv hidden">';
 		foreach ($alert['commitidbis'] as $tmpcommitidbis) {
 			$html .= '<a target="_blank" href="https://github.com/Dolibarr/dolibarr/commit/'.$tmpcommitidbis.'">'.dol_trunc($tmpcommitidbis, 8).'</a><br>';
+			$arrayofalerts[$key]['description'] .= '<br>Commit ID: '.$tmpcommitidbis;
 		}
 		$html .= '</div></div>';
 	}
@@ -818,11 +822,13 @@ if ($fh) {
 	}
 
 	foreach ($arrayofalerts as $alert) {
+		$alert['url_commit'] = 'https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'];
+
 		fwrite($fh, '<item>');
-		fwrite($fh, '<title>' . htmlspecialchars($alert['titre']) . '</title>');
+		fwrite($fh, '<title>' . htmlspecialchars($alert['title']) . '</title>');
 		fwrite($fh, '<description>' . htmlspecialchars($alert['description']) . '</description>');
 		fwrite($fh, '<link>' . htmlspecialchars($alert['url_commit']) . '</link>');
-		fwrite($fh, '<pubDate>' . htmlspecialchars($alert['date']) . '</pubDate>');
+		fwrite($fh, '<pubDate>' . htmlspecialchars($alert['created_at']) . '</pubDate>');
 		fwrite($fh, '</item>');
 	}
 
