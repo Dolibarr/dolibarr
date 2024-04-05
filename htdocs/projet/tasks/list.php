@@ -174,9 +174,9 @@ $arrayfields = array(
 	't.budget_amount' => array('label' => "Budget", 'checked' => 0, 'position' => 307),
 	't.tobill' => array('label' => "TimeToBill", 'checked' => 0, 'position' => 310),
 	't.billed' => array('label' => "TimeBilled", 'checked' => 0, 'position' => 311),
+	't.status'=>array('label'=>"TaskStatus", 'checked'=>1, 'position'=>312),
 	't.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
 	't.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 501),
-	//'t.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';

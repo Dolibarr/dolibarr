@@ -295,3 +295,21 @@ ALTER TABLE llx_projet ADD COLUMN ref_ext varchar(50) after ref;
 
 -- bookcal
 ALTER TABLE llx_bookcal_calendar ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+
+
+create table llx_societe_users
+(
+    rowid           integer AUTO_INCREMENT PRIMARY KEY,
+    entity          integer DEFAULT 1 NOT NULL,
+    date_creation           datetime NOT NULL,
+    fk_soc		        integer NOT NULL,
+    fk_c_type_contact	int NOT NULL,
+    fk_user        integer NOT NULL,
+    tms TIMESTAMP,
+    import_key VARCHAR(14)
+)ENGINE=innodb;
+
+ALTER TABLE llx_societe_users ADD UNIQUE INDEX idx_societe_users_idx1 (entity, fk_soc, fk_c_type_contact, fk_user);
+ALTER TABLE llx_societe_users ADD CONSTRAINT fk_societe_users_fk_c_type_contact FOREIGN KEY (fk_c_type_contact)  REFERENCES llx_c_type_contact(rowid);
+ALTER TABLE llx_societe_users ADD CONSTRAINT fk_societe_users_fk_soc FOREIGN KEY (fk_soc)  REFERENCES llx_societe(rowid);
+ALTER TABLE llx_societe_users ADD CONSTRAINT fk_societe_users_fk_user FOREIGN KEY (fk_user)  REFERENCES llx_user(rowid);
