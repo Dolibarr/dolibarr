@@ -736,6 +736,7 @@ $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="list_technical_debt centpercent">'."\n";
 $html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td></tr>'."\n";
 foreach ($arrayofalerts as $key => $alert) {
+	$cve = '';
 	$arrayofalerts[$key]['url_commit'] = 'https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'];
 	if (!empty($alert['issueid'])) {
 		$arrayofalerts[$key]['url_issue'] = 'https://github.com/Dolibarr/dolibarr/issues/'.$alert['issueid'];
@@ -749,7 +750,7 @@ foreach ($arrayofalerts as $key => $alert) {
 
 	$html .= '<tr style="vertical-align: top;">';
 	$html .= '<td class="nowrap">';
-	$html .= '<a target="_blank" href="'.$alert['url_commit'].'">'.dol_trunc($alert['commitid'], 8).'</a>';
+	$html .= '<a target="_blank" href="'.$arrayofalerts[$key]['url_commit'].'">'.dol_trunc($alert['commitid'], 8).'</a>';
 	$arrayofalerts[$key]['description'] .= '<br>Commit ID: '.$alert['commitid'];
 	if (!empty($alert['commitidbis'])) {
 		$html .= ' <div class="more inline"><span class="seeothercommit badge">+</span><div class="morediv hidden">';
@@ -774,7 +775,7 @@ foreach ($arrayofalerts as $key => $alert) {
 	$html .= '</td>';
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['issueid'])) {
-		$html .= '<a target="_blank" href="'.$alert['url_issue'].'">#'.$alert['issueid'].'</a>';
+		$html .= '<a target="_blank" href="'.$arrayofalerts[$key]['url_issue'].'">#'.$alert['issueid'].'</a>';
 	} else {
 		//$html .= '<span class="opacitymedium">private</span>';
 	}
