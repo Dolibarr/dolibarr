@@ -1,4 +1,27 @@
 <?php
+/* Copyright (C) 2023-2024 	Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+* \file       htdocs/webportal/class/context.class.php
+* \ingroup    webportal
+* \brief      File of context class for WebPortal
+*/
 
 require_once __DIR__ . '/controller.class.php';
 require_once __DIR__ . '/webPortalTheme.class.php';
@@ -20,10 +43,24 @@ class Context
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	public $title;
+
+	/**
+	 * @var string
+	 */
 	public $desc;
 
+	/**
+	 * @var string
+	 */
 	public $meta_title;
+
+	/**
+	 * @var string
+	 */
 	public $meta_desc;
 
 	/**
@@ -32,7 +69,14 @@ class Context
 	 */
 	public $appliName;
 
+	/**
+	 * @var string
+	 */
 	public $controller;
+
+	/**
+	 * @var boolean
+	 */
 	public $controller_found = false;
 
 	/**
@@ -132,7 +176,7 @@ class Context
 			$this->controller = 'default';
 		}
 
-		$this->appliName = !empty($conf->global->WEBPORTAL_TITLE) ? $conf->global->WEBPORTAL_TITLE : $conf->global->MAIN_INFO_SOCIETE_NOM;
+		$this->appliName = getDolGlobalString('WEBPORTAL_TITLE', getDolGlobalString('MAIN_INFO_SOCIETE_NOM'));
 
 		//$this->generateNewToken();
 
@@ -238,13 +282,13 @@ class Context
 	 *
 	 * @return  string  Web Portal root url
 	 */
-	static public function getRootConfigUrl()
+	public static function getRootConfigUrl()
 	{
 		global $conf;
 
 		// Init de l'url de base
-		if (!empty($conf->global->WEBPORTAL_ROOT_URL)) {
-			$rootUrl = $conf->global->WEBPORTAL_ROOT_URL;
+		if (getDolGlobalString('WEBPORTAL_ROOT_URL')) {
+			$rootUrl = getDolGlobalString('WEBPORTAL_ROOT_URL');
 			if (substr($rootUrl, -1) !== '/') {
 				$rootUrl .= '/';
 			}
@@ -264,7 +308,7 @@ class Context
 	 * @return	string
 	 * @deprecated see getControllerUrl()
 	 */
-	public function getRootUrl($controller = false, $moreParams = '', $addToken = true)
+	public function getRootUrl($controller = '', $moreParams = '', $addToken = true)
 	{
 		return self::getControllerUrl($controller, $moreParams, $addToken);
 	}
@@ -277,7 +321,7 @@ class Context
 	 * @param	bool			$addToken		Add token hash only if controller is set
 	 * @return	string
 	 */
-	public function getControllerUrl($controller = false, $moreParams = '', $addToken = true)
+	public function getControllerUrl($controller = '', $moreParams = '', $addToken = true)
 	{
 		// TODO : addToken parameter on auto to detect (create or edit) action and add token on url
 		$url = $this->rootUrl;
@@ -303,12 +347,12 @@ class Context
 	 * Used for external link (like email or web page)
 	 * so remove token and contextual behavior associate with current user
 	 *
-	 * @param 	bool			$controller				Controller
+	 * @param 	string			$controller				Controller
 	 * @param 	string|array	$moreParams				More parameters
 	 * @param	array			$Tparams				Parameters
 	 * @return	string
 	 */
-	static public function getPublicControllerUrl($controller = false, $moreParams = '', $Tparams = array())
+	public static function getPublicControllerUrl($controller = '', $moreParams = '', $Tparams = array())
 	{
 		$url = self::getRootConfigUrl();
 
@@ -321,7 +365,9 @@ class Context
 
 		// if $moreParams is an array
 		if (!empty($moreParams) && is_array($moreParams)) {
-			if (isset($moreParams['controller'])) unset($moreParams['controller']);
+			if (isset($moreParams['controller'])) {
+				unset($moreParams['controller']);
+			}
 			if (!empty($moreParams)) {
 				foreach ($moreParams as $paramKey => $paramVal) {
 					$Tparams[$paramKey] = $paramVal;
@@ -340,8 +386,12 @@ class Context
 		// if $moreParams is a string
 		if (!empty($moreParams) && !is_array($moreParams)) {
 			if (empty($Tparams)) {
-				if ($moreParams[0] !== '?') $url .= '?';
-				if ($moreParams[0] === '&') $moreParams = substr($moreParams, 1);
+				if ($moreParams[0] !== '?') {
+					$url .= '?';
+				}
+				if ($moreParams[0] === '&') {
+					$moreParams = substr($moreParams, 1);
+				}
 			}
 			$url .= $moreParams;
 		}
@@ -356,7 +406,7 @@ class Context
 	 * @param	bool	$use_forwarded_host		Use formatted host
 	 * @return 	string
 	 */
-	static public function urlOrigin($withRequestUri = true, $use_forwarded_host = false)
+	public static function urlOrigin($withRequestUri = true, $use_forwarded_host = false)
 	{
 		$s = $_SERVER;
 
@@ -410,10 +460,16 @@ class Context
 	 */
 	public function setError($errors)
 	{
-		if (!is_array($errors)) $errors = array($errors);
-		if (!isset($_SESSION['webportal_errors'])) $_SESSION['webportal_errors'] = array();
+		if (!is_array($errors)) {
+			$errors = array($errors);
+		}
+		if (!isset($_SESSION['webportal_errors'])) {
+			$_SESSION['webportal_errors'] = array();
+		}
 		foreach ($errors as $msg) {
-			if (!in_array($msg, $_SESSION['webportal_errors'])) $_SESSION['webportal_errors'][] = $msg;
+			if (!in_array($msg, $_SESSION['webportal_errors'])) {
+				$_SESSION['webportal_errors'][] = $msg;
+			}
 		}
 	}
 
@@ -550,14 +606,14 @@ class Context
 	{
 		$currentToken = $this->newToken();
 		// Creation of a token against CSRF vulnerabilities
-		if (!defined('NOTOKENRENEWAL') || empty($currentToken) ) {
+		if (!defined('NOTOKENRENEWAL') || empty($currentToken)) {
 			// Rolling token at each call ($_SESSION['token'] contains token of previous page)
 			if (isset($_SESSION['newtoken'])) {
 				$_SESSION['token'] = $_SESSION['newtoken'];
 			}
 
 			// Save what will be next token. Into forms, we will add param $context->newToken();
-			$token = dol_hash(uniqid(mt_rand(), true)); // Generate
+			$token = dol_hash(uniqid((string) mt_rand(), true)); // Generate
 			$_SESSION['newtoken'] = $token;
 
 			return $token;

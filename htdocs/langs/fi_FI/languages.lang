@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - languages
 Language_am_ET=Etiopialainen
 Language_af_ZA=afrikaans (Etelä-Afrikka)
-Language_en_AE=arabia (Yhdistyneet arabiemiirikunnat)
 Language_ar_AR=Arabia
 Language_ar_DZ=arabia (Algeria)
 Language_ar_EG=arabia (Egypti)
@@ -28,7 +27,7 @@ Language_de_CH=Saksa (Sveitsi)
 Language_de_LU=saksa (Luxemburg)
 Language_el_GR=Kreikkalainen
 Language_el_CY=Kreikka (Kypros)
-Language_en_AE=arabia (Yhdistyneet arabiemiirikunnat)
+Language_en_AE=English (United Arab Emirates)
 Language_en_AU=Englanti (Australia)
 Language_en_CA=Englanti (Kanada)
 Language_en_GB=Englanti (Yhdistynyt kuningaskunta)
@@ -57,7 +56,6 @@ Language_es_PE=Espanja (Peru)
 Language_es_PR=Espanja (Puerto Rico)
 Language_es_US=espanja (USA)
 Language_es_UY=Espanja (Uruguay)
-Language_es_GT=espanja (Guatemala)
 Language_es_VE=Espanja (Venezuela)
 Language_et_EE=Virolainen
 Language_eu_ES=Baski

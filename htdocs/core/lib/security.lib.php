@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2021 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -209,7 +210,7 @@ function dolDecrypt($chain, $key = '')
 			if (!empty($tmpexplode[1]) && is_string($tmpexplode[0])) {
 				$newchain = openssl_decrypt($tmpexplode[1], $ciphering, $key, 0, $tmpexplode[0]);
 			} else {
-				$newchain = openssl_decrypt($tmpexplode[0], $ciphering, $key, 0, null);
+				$newchain = openssl_decrypt((string) $tmpexplode[0], $ciphering, $key, 0, '');
 			}
 		} else {
 			dol_syslog("Error dolDecrypt openssl_decrypt is not available", LOG_ERR);
@@ -309,7 +310,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
 		$type = 'md5';
 	}
 
-	$salt = substr(sha1(time()), 0, 8);
+	$salt = substr(sha1((string) time()), 0, 8);
 
 	if ($type === 'md5') {
 		return '{MD5}' . base64_encode(hash("md5", $password, true)); //For OpenLdap with md5 (based on an unencrypted password in base)
@@ -363,7 +364,6 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  */
 function restrictedArea(User $user, $features, $object = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $mode = 0)
 {
-	global $conf;
 	global $hookmanager;
 
 	// Define $objectid
@@ -376,7 +376,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$objectid = 0;
 	}
 	if ($objectid) {
-		$objectid = preg_replace('/[^0-9\.\,]/', '', $objectid);	// For the case value is coming from a non sanitized user input
+		$objectid = preg_replace('/[^0-9\.\,]/', '', (string) $objectid);	// For the case value is coming from a non sanitized user input
 	}
 
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
@@ -448,7 +448,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
 	// Get more permissions checks from hooks
-	$parameters = array('features'=>$features, 'originalfeatures'=>$originalfeatures, 'objectid'=>$objectid, 'dbt_select'=>$dbt_select, 'idtype'=>$dbt_select, 'isdraft'=>$isdraft);
+	$parameters = array('features' => $features, 'originalfeatures' => $originalfeatures, 'objectid' => $objectid, 'dbt_select' => $dbt_select, 'idtype' => $dbt_select, 'isdraft' => $isdraft);
 	if (!empty($hookmanager)) {
 		$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
 
@@ -466,7 +466,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		}
 	}
 
-	// Features/modules to check
+	// Features/modules to check (to support the & and | operator)
 	$featuresarray = array($features);
 	if (preg_match('/&/', $features)) {
 		$featuresarray = explode("&", $features);
@@ -815,7 +815,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	// for this given object (link to company, is contact for project, ...)
 	if (!empty($objectid) && $objectid > 0) {
 		$ok = checkUserAccessToObject($user, $featuresarray, $object, $tableandshare, $feature2, $dbt_keyfield, $dbt_select, $parentfortableentity);
-		$params = array('objectid' => $objectid, 'features' => join(',', $featuresarray), 'features2' => $feature2);
+		$params = array('objectid' => $objectid, 'features' => implode(',', $featuresarray), 'features2' => $feature2);
 		//print 'checkUserAccessToObject ok='.$ok;
 		if ($mode) {
 			return $ok ? 1 : 0;
@@ -889,7 +889,10 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$feature = 'agenda';
 			$dbtablename = 'actioncomm';
 		}
-		if ($feature == 'payment_sc') {
+		if ($feature == 'payment_sc' && empty($parenttableforentity)) {
+			// If we check perm on payment page but $parenttableforentity not defined, we force value on parent table
+			$parenttableforentity = '';
+			$dbtablename = "chargesociales";
 			$feature = "chargesociales";
 			$objectid = $object->fk_charge;
 		}
@@ -897,7 +900,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		$checkonentitydone = 0;
 
 		// Array to define rules of checks to do
-		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales', 'knowledgemanagement'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for object Societe
 		$checkparentsoc = array('agenda', 'contact', 'contrat'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
@@ -963,7 +966,12 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				$sql .= ", ".MAIN_DB_PREFIX."societe as s)";
 				$sql .= " WHERE sc.fk_soc IN (".$db->sanitize($objectid, 1).")";
-				$sql .= " AND sc.fk_user = ".((int) $user->id);
+				$sql .= " AND (sc.fk_user = ".((int) $user->id);
+				if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+					$userschilds = $user->getAllChildIds();
+					$sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
+				}
+				$sql .= ")";
 				$sql .= " AND sc.fk_soc = s.rowid";
 				$sql .= " AND s.entity IN (".getEntity($sharedelement, 1).")";
 			} elseif (isModEnabled('multicompany')) {
@@ -1068,7 +1076,14 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 					$sql .= " AND sc.fk_soc = dbt.".$dbt_keyfield;
-					$sql .= " AND sc.fk_user = ".((int) $user->id);
+					$sql .= " AND (sc.fk_user = ".((int) $user->id);
+					if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+						$userschilds = $user->getAllChildIds();
+						foreach ($userschilds as $key => $value) {
+							$sql .= ' OR sc.fk_user = '.((int) $value);
+						}
+					}
+					$sql .= ')';
 				} else {
 					// On ticket, the thirdparty is not mandatory, so we need a special test to accept record with no thirdparties.
 					$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
@@ -1199,7 +1214,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 
 	$langs->loadLangs(array("main", "errors"));
 
-	if ($printheader) {
+	if ($printheader && !defined('NOHEADERNOFOOTER')) {
 		if (function_exists("llxHeader")) {
 			llxHeader('');
 		} elseif (function_exists("llxHeaderVierge")) {
@@ -1223,7 +1238,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 			$hookmanager->initHooks(array('main'));
 		}
 
-		$parameters = array('message'=>$message, 'params'=>$params);
+		$parameters = array('message' => $message, 'params' => $params);
 		$reshook = $hookmanager->executeHooks('getAccessForbiddenMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {
@@ -1237,7 +1252,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 			}
 		}
 	}
-	if ($printfooter && function_exists("llxFooter")) {
+	if ($printfooter && !defined('NOHEADERNOFOOTER') && function_exists("llxFooter")) {
 		print '</div>';
 		llxFooter();
 	}
@@ -1308,5 +1323,5 @@ function getMaxFileSizeArray()
 	//var_dump($maxphp.'-'.$maxphp2);
 	//var_dump($maxmin);
 
-	return array('max'=>$max, 'maxmin'=>$maxmin, 'maxphptoshow'=>$maxphptoshow, 'maxphptoshowparam'=>$maxphptoshowparam);
+	return array('max' => $max, 'maxmin' => $maxmin, 'maxphptoshow' => $maxphptoshow, 'maxphptoshowparam' => $maxphptoshowparam);
 }

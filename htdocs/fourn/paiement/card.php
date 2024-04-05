@@ -3,6 +3,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2006-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +41,7 @@ $langs->loadLangs(array('banks', 'bills', 'companies', 'suppliers'));
 
 
 // Get Parameters
-$id 		= GETPOST('id', 'int');
+$id 		= GETPOSTINT('id');
 $action		= GETPOST('action', 'alpha');
 $confirm 	= GETPOST('confirm', 'alpha');
 
@@ -90,7 +91,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight("fournis
 	$db->begin();
 
 	$object->fetch($id);
-	$result = $object->delete();
+	$result = $object->delete($user);
 	if ($result > 0) {
 		$db->commit();
 		header('Location: '.DOL_URL_ROOT.'/fourn/paiement/list.php');
@@ -130,7 +131,7 @@ if ($action == 'setnum_paiement' && GETPOST('num_paiement')) {
 
 if ($action == 'setdatep' && GETPOST('datepday')) {
 	$object->fetch($id);
-	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
+	$datepaye = dol_mktime(GETPOSTINT('datephour'), GETPOSTINT('datepmin'), GETPOSTINT('datepsec'), GETPOSTINT('datepmonth'), GETPOSTINT('datepday'), GETPOSTINT('datepyear'));
 	$res = $object->update_date($datepaye);
 	if ($res === 0) {
 		setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
@@ -221,7 +222,7 @@ if ($result > 0) {
 
 	// Amount
 	print '<tr><td>'.$langs->trans('Amount').'</td>';
-	print '<td><span class="amount">'.price($object->amount, '', $langs, 0, 0, -1, $conf->currency).'</span></td></tr>';
+	print '<td><span class="amount">'.price($object->amount, 0, $langs, 0, 0, -1, $conf->currency).'</span></td></tr>';
 
 	// Status of validation of payment
 	if (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION')) {
@@ -231,7 +232,7 @@ if ($result > 0) {
 
 	$allow_delete = 1;
 	// Bank account
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		if ($object->fk_account) {
 			$bankline = new AccountLine($db);
 			$bankline->fetch($object->bank_line);
@@ -309,6 +310,7 @@ if ($result > 0) {
 				$facturestatic->total_tva = $objp->total_tva;
 				$facturestatic->total_ttc = $objp->total_ttc;
 				$facturestatic->statut = $objp->status;
+				$facturestatic->status = $objp->status;
 				$facturestatic->alreadypaid = -1; // unknown
 
 				print '<tr class="oddeven">';

@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ */
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +48,7 @@ if (!defined('NOIPCHECK')) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
-$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));	// Keep $_GET and $_POST here. GETPOST not yet defined.
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
@@ -59,7 +61,7 @@ $signature = GETPOST('signaturebase64');
 $ref = GETPOST('ref', 'aZ09');
 $mode = GETPOST('mode', 'aZ09');    // 'proposal', ...
 $SECUREKEY = GETPOST("securekey"); // Secure key
-$online_sign_name = GETPOST("onlinesignname") ? GETPOST("onlinesignname") : '';
+$online_sign_name = GETPOST("onlinesignname");
 
 $error = 0;
 $response = "";
@@ -580,18 +582,15 @@ if ($action == "importSignature") {
 									$classname = 'pdf_' . $last_modelpdf;
 									break;
 								}
-								if ($filefound) {
-									break;
-								}
 							}
 
-							if (!$filefound) {
+							if ($filefound === '') {
 								$response = $langs->trans("Error") . ' Failed to load doc generator with modelpaths=' . $modelpath . ' - modele=' . $last_modelpdf;
 								dol_syslog($response, LOG_ERR);
 								$error++;
 							}
 
-							if (!$error) {
+							if (!$error && $classname !== '') {
 								// If PDF template class  was found
 								require_once $file;
 

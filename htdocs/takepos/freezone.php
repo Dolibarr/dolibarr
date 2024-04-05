@@ -51,7 +51,9 @@ $langs->loadLangs(array("bills", "cashdesk"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place is id of table for Bar or Restaurant
 
-$idline = GETPOST('idline', 'int');
+$invoiceid = GETPOST('invoiceid', 'int');
+
+$idline = GETPOSTINT('idline');
 $action = GETPOST('action', 'aZ09');
 
 if (!$user->hasRight('takepos', 'run')) {
@@ -60,11 +62,12 @@ if (!$user->hasRight('takepos', 'run')) {
 
 // get invoice
 $invoice = new Facture($db);
-if ($place > 0) {
-	$invoice->fetch($place);
+if ($invoiceid > 0) {
+	$invoice->fetch($invoiceid);
 } else {
 	$invoice->fetch('', '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$place.')');
 }
+
 
 // get default vat rate
 $constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION['takeposterminal'];
@@ -108,8 +111,8 @@ top_htmlhead('', '', 0, 0, $arrayofjs, $arrayofcss);
 	 * Save (validate)
 	 */
 	function Save() {
-		console.log("We click so we call page invoice.php with place=<?php echo $place; ?> tva_tx="+vatRate);
-		parent.$("#poslines").load("invoice.php?action=freezone&token=<?php echo newToken(); ?>&place=<?php echo $place; ?>&number="+$('#number').val()+"&tva_tx="+vatRate, {desc:$('#desc').val()});
+		console.log("We click so we call page invoice.php with invoiceid=<?php echo $invoiceid; ?>, place=<?php echo $place; ?>, amount="+$("#number").val()+", tva_tx="+vatRate);
+		parent.$("#poslines").load("invoice.php?action=freezone&token=<?php echo newToken(); ?>&invoiceid=<?php echo $invoiceid; ?>&place=<?php echo $place; ?>&number="+$("#number").val()+"&tva_tx="+vatRate, {desc:$("#desc").val()});
 		parent.$.colorbox.close();
 	}
 

@@ -63,7 +63,7 @@ class AgendaEvents extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->agenda->myactions->read) {
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'read')) {
 			throw new RestException(401, "Insufficient rights to read an event");
 		}
 		if ($id === 0) {
@@ -79,12 +79,12 @@ class AgendaEvents extends DolibarrApi
 			throw new RestException(404, 'Agenda Events not found');
 		}
 
-		if (!DolibarrApiAccess::$user->rights->agenda->allactions->read && $this->actioncomm->userownerid != DolibarrApiAccess::$user->id) {
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read') && $this->actioncomm->userownerid != DolibarrApiAccess::$user->id) {
 			throw new RestException(401, 'Insufficient rights to read event of this owner id. Your id is '.DolibarrApiAccess::$user->id);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('agenda', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		return $this->_cleanObjectDatas($this->actioncomm);
 	}
@@ -109,7 +109,7 @@ class AgendaEvents extends DolibarrApi
 
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->agenda->myactions->read) {
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'read')) {
 			throw new RestException(401, "Insufficient rights to read events");
 		}
 
@@ -191,7 +191,7 @@ class AgendaEvents extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->agenda->myactions->create) {
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'create')) {
 			throw new RestException(401, "Insufficient rights to create your Agenda Event");
 		}
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'create') && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
@@ -204,7 +204,7 @@ class AgendaEvents extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->actioncomm->context['caller'] = $request_data['caller'];
+				$this->actioncomm->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -229,14 +229,13 @@ class AgendaEvents extends DolibarrApi
 	/**
 	 * Update Agenda Event general fields
 	 *
-	 * @param int   $id             Id of Agenda Event to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   		$id             Id of Agenda Event to update
+	 * @param 	array 		$request_data   Datas
+	 * @return 	Object|false				Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->agenda->myactions->create) {
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'create')) {
 			throw new RestException(401, "Insufficient rights to create your Agenda Event");
 		}
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'create') && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
@@ -254,7 +253,7 @@ class AgendaEvents extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -262,7 +261,7 @@ class AgendaEvents extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->actioncomm->context['caller'] = $request_data['caller'];
+				$this->actioncomm->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -296,7 +295,7 @@ class AgendaEvents extends DolibarrApi
 			$this->actioncomm->oldcopy = clone $this->actioncomm;
 		}
 
-		if (!DolibarrApiAccess::$user->rights->agenda->allactions->delete && DolibarrApiAccess::$user->id != $this->actioncomm->userownerid) {
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'delete') && DolibarrApiAccess::$user->id != $this->actioncomm->userownerid) {
 			throw new RestException(401, "Insufficient rights to delete an Agenda Event of owner id ".$this->actioncomm->userownerid.' Your id is '.DolibarrApiAccess::$user->id);
 		}
 
@@ -305,7 +304,7 @@ class AgendaEvents extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->actioncomm->delete(DolibarrApiAccess::$user)) {

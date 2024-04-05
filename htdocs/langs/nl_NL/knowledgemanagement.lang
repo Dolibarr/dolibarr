@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=Beheer een Knowledge Management (KM) of helpdeskba
 # Admin page
 #
 KnowledgeManagementSetup = Kennisbeheersysteem instellen
-Settings = Instellingen
 KnowledgeManagementSetupPage = Kennisbeheersysteem opstartpagina
 
 
 #
 # About page
 #
-About = Over
 KnowledgeManagementAbout = Over Kennis Management
 KnowledgeManagementAboutPage = Over Kennis Management pagina
 
 KnowledgeManagementArea = Kennis Management
 MenuKnowledgeRecord = Kennis basis
+MenuKnowledgeRecordShort = Kennis basis
 ListKnowledgeRecord = Lijst met artikelen
 NewKnowledgeRecord = Nieuw artikel
 ValidateReply = Valideer oplossing

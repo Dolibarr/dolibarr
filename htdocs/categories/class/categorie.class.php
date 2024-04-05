@@ -10,8 +10,9 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,7 +131,7 @@ class Categorie extends CommonObject
 	public $MAP_CAT_TABLE = array(
 		'customer' => 'societe',
 		'supplier' => 'fournisseur',
-		'bank_account'=> 'account',
+		'bank_account' => 'account',
 	);
 
 	/**
@@ -148,7 +149,7 @@ class Categorie extends CommonObject
 		'account'  => 'Account', // old for bank account
 		'bank_account'  => 'Account',
 		'project'  => 'Project',
-		'warehouse'=> 'Entrepot',
+		'warehouse' => 'Entrepot',
 		'actioncomm' => 'ActionComm',
 		'website_page' => 'WebsitePage',
 		'ticket' => 'Ticket',
@@ -170,7 +171,7 @@ class Categorie extends CommonObject
 		'account' => 'AccountsCategoriesArea', // old for bank account
 		'bank_account' => 'AccountsCategoriesArea',
 		'project' => 'ProjectsCategoriesArea',
-		'warehouse'=> 'StocksCategoriesArea',
+		'warehouse' => 'StocksCategoriesArea',
 		'actioncomm' => 'ActioncommCategoriesArea',
 		'website_page' => 'WebsitePageCategoriesArea'
 	);
@@ -186,7 +187,7 @@ class Categorie extends CommonObject
 		'contact'  => 'socpeople',
 		'account'  => 'bank_account', // old for bank account
 		'project'  => 'projet',
-		'warehouse'=> 'entrepot',
+		'warehouse' => 'entrepot',
 		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord'
 	);
 
@@ -255,7 +256,7 @@ class Categorie extends CommonObject
 	public $type;
 
 	/**
-	 * @var array Categories table in memory
+	 * @var array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>  Categories table in memory
 	 */
 	public $cats = array();
 
@@ -270,7 +271,7 @@ class Categorie extends CommonObject
 	public $childs = array();
 
 	/**
-	 * @var array multilangs
+	 * @var array{string,array{label:string,description:string,note?:string}} multilangs
 	 */
 	public $multilangs;
 
@@ -386,7 +387,7 @@ class Categorie extends CommonObject
 				$this->position    	= $res['position'];
 				$this->socid		= (int) $res['fk_soc'];
 				$this->visible = (int) $res['visible'];
-				$this->type = (int) $res['type'];
+				$this->type = $res['type'];
 				$this->ref_ext = $res['ref_ext'];
 				$this->entity = (int) $res['entity'];
 				$this->date_creation = $this->db->jdate($res['date_creation']);
@@ -422,12 +423,13 @@ class Categorie extends CommonObject
 	 *  Add category into database
 	 *
 	 *  @param	User	$user		Object user
+	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return	int 				-1 : SQL error
 	 *          					-2 : new ID unknown
 	 *          					-3 : Invalid category
 	 * 								-4 : category already exists
 	 */
-	public function create($user)
+	public function create($user, $notrigger = 0)
 	{
 		global $conf, $langs, $hookmanager;
 		$langs->load('categories');
@@ -446,7 +448,7 @@ class Categorie extends CommonObject
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
 		$this->color = trim($this->color);
-		$this->position = trim($this->position);
+		$this->position = (int) $this->position;
 		$this->import_key = trim($this->import_key);
 		$this->ref_ext = trim($this->ref_ext);
 		if (empty($this->visible)) {
@@ -514,7 +516,7 @@ class Categorie extends CommonObject
 					}
 				}
 
-				if (!$error) {
+				if (!$error && !$notrigger) {
 					// Call trigger
 					$result = $this->call_trigger('CATEGORY_CREATE', $user);
 					if ($result < 0) {
@@ -545,11 +547,12 @@ class Categorie extends CommonObject
 	 * 	Update category
 	 *
 	 *	@param	User	$user		Object user
+	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 * 	@return	int		 			1 : OK
 	 *          					-1 : SQL error
 	 *          					-2 : invalid category
 	 */
-	public function update(User $user)
+	public function update(User $user, $notrigger = 0)
 	{
 		global $langs;
 
@@ -596,7 +599,7 @@ class Categorie extends CommonObject
 				}
 			}
 
-			if (!$error) {
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('CATEGORY_MODIFY', $user);
 				if ($result < 0) {
@@ -777,7 +780,7 @@ class Categorie extends CommonObject
 			}
 
 			// Call trigger
-			$this->context = array('linkto'=>$obj); // Save object we want to link category to into category instance to provide information to trigger
+			$this->context = array('linkto' => $obj); // Save object we want to link category to into category instance to provide information to trigger
 			$result = $this->call_trigger('CATEGORY_LINK', $user);
 			if ($result < 0) {
 				$error++;
@@ -837,7 +840,7 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this).'::del_type', LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			// Call trigger
-			$this->context = array('unlinkoff'=>$obj); // Save object we want to link category to into category instance to provide information to trigger
+			$this->context = array('unlinkoff' => $obj); // Save object we want to link category to into category instance to provide information to trigger
 			$result = $this->call_trigger('CATEGORY_UNLINK', $user);
 			if ($result < 0) {
 				$error++;
@@ -861,18 +864,19 @@ class Categorie extends CommonObject
 	/**
 	 * Return list of fetched instance of elements having this category
 	 *
-	 * @param   string     	$type       Type of category ('customer', 'supplier', 'contact', 'product', 'member', 'knowledge_management', ...)
-	 * @param   int        	$onlyids    Return only ids of objects (consume less memory)
-	 * @param	int			$limit		Limit
-	 * @param	int			$offset		Offset
-	 * @param	string		$sortfield	Sort fields
-	 * @param	string		$sortorder	Sort order ('ASC' or 'DESC');
-	 * @param   array       $filter     Filter array. Example array('field'=>'valueforlike', 'customsql'=>...)
-	 * @param   string      $filtermode Filter mode (AND or OR)
-	 * @return  CommonObject[]|int[]|int              	Return -1 if KO, array of instance of object if OK
+	 * @param   string     	$type       	Type of category ('customer', 'supplier', 'contact', 'product', 'member', 'knowledge_management', ...)
+	 * @param   int        	$onlyids    	Return only ids of objects (consume less memory)
+	 * @param	int			$limit			Limit
+	 * @param	int			$offset			Offset
+	 * @param	string		$sortfield		Sort fields
+	 * @param	string		$sortorder		Sort order ('ASC' or 'DESC');
+	 * @param  	string		$filter       	Filter as an Universal Search string.
+	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  	string      $filtermode   	No more used
+	 * @return  CommonObject[]|int[]|int    Return -1 if KO, array of instance of object if OK
 	 * @see containsObject()
 	 */
-	public function getObjectsInCateg($type, $onlyids = 0, $limit = 0, $offset = 0, $sortfield = '', $sortorder = 'ASC', $filter = array(), $filtermode = 'AND')
+	public function getObjectsInCateg($type, $onlyids = 0, $limit = 0, $offset = 0, $sortfield = '', $sortorder = 'ASC', $filter = '', $filtermode = 'AND')
 	{
 		global $user;
 
@@ -896,20 +900,15 @@ class Categorie extends CommonObject
 		if (($type == 'customer' || $type == 'supplier') && $user->socid > 0) {
 			$sql .= " AND o.rowid = ".((int) $user->socid);
 		}
-		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 'o.rowid') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;
-				}
-			}
+
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
-		if (count($sqlwhere) > 0) {
-			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
-		}
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit > 0 || $offset > 0) {
 			$sql .= $this->db->plimit($limit + 1, $offset);
@@ -971,7 +970,7 @@ class Categorie extends CommonObject
 	 * @param	string	$sortorder	Sort order
 	 * @param	int		$limit		Limit for list
 	 * @param	int		$page		Page number
-	 * @return	array|int			Array of categories, 0 if no cat, -1 on error
+	 * @return  int<-1,0>|array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array{string,array{label:string,description:string,note?:string}}}> Array of categories, 0 if no cat, -1 on error
 	 */
 	public function getListForItem($id, $type = 'customer', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
@@ -1011,7 +1010,7 @@ class Categorie extends CommonObject
 			$nbtotalofrecords = $this->db->num_rows($result);
 			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 				$page = 0;
-				$offset = 0;
+				$offset = 0; // @phan-suppress-current-line PhanPluginRedundantAssignment
 			}
 		}
 
@@ -1140,7 +1139,7 @@ class Categorie extends CommonObject
 	 *                                                  - string (categories ids separated by comma)
 	 *                                                  - array (list of categories ids)
 	 * @param   int                 $include            [=0] Removed or 1=Keep only
-	 * @return  array|int              					Array of categories. this->cats and this->motherof are set, -1 on error
+	 * @return  int<-1,-1>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>              					Array of categories. this->cats and this->motherof are set, -1 on error
 	 */
 	public function get_full_arbo($type, $markafterid = 0, $include = 0)
 	{
@@ -1223,9 +1222,10 @@ class Categorie extends CommonObject
 			$keyfilter2 = '_'.$keyfiltercatid.'$';
 			$keyfilter3 = '^'.$keyfiltercatid.'_';
 			$keyfilter4 = '_'.$keyfiltercatid.'_';
-			foreach ($this->cats as $key => $val) {
-				$test = (preg_match('/'.$keyfilter1.'/', $val['fullpath']) || preg_match('/'.$keyfilter2.'/', $val['fullpath'])
-					|| preg_match('/'.$keyfilter3.'/', $val['fullpath']) || preg_match('/'.$keyfilter4.'/', $val['fullpath']));
+			foreach (array_keys($this->cats) as $key) {
+				$fullpath = (string) $this->cats[$key]['fullpath'];
+				$test = (preg_match('/'.$keyfilter1.'/', $fullpath) || preg_match('/'.$keyfilter2.'/', $fullpath)
+					|| preg_match('/'.$keyfilter3.'/', $fullpath) || preg_match('/'.$keyfilter4.'/', $fullpath));
 
 				if (($test && !$include) || (!$test && $include)) {
 					unset($this->cats[$key]);
@@ -1246,7 +1246,7 @@ class Categorie extends CommonObject
 	 *
 	 * 	@param		int		$id_categ		id_categ entry to update
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop
-	 *	@return		int						Return integer <0 if KO, >0 if OK
+	 *	@return		int<-1,1>				Return integer <0 if KO, >0 if OK
 	 *  @see get_full_arbo()
 	 */
 	private function buildPathFromId($id_categ, $protection = 1000)
@@ -1646,6 +1646,36 @@ class Categorie extends CommonObject
 	}
 
 	/**
+	 *  Return if at least one photo is available
+	 *
+	 * @param  string $sdir Directory to scan
+	 * @return boolean                 True if at least one photo is available, False if not
+	 */
+	public function isAnyPhotoAvailable($sdir)
+	{
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
+
+		$sdir .= '/' . get_exdir($this->id, 2, 0, 0, $this, 'category') . $this->id . "/photos/";
+
+		$dir_osencoded = dol_osencode($sdir);
+		if (file_exists($dir_osencoded)) {
+			$handle = opendir($dir_osencoded);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					if (!utf8_check($file)) {
+						$file = mb_convert_encoding($file, 'UTF-8', 'ISO-8859-1'); // To be sure data is stored in UTF8 in memory
+					}
+					if (dol_is_file($sdir . $file) && image_format_supported($file) >= 0) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * getTooltipContentArray
 	 * @param array $params params to construct tooltip data
 	 * @since v18
@@ -1668,15 +1698,22 @@ class Categorie extends CommonObject
 	 *	Return name and link of category (with picto)
 	 *  Use ->id, ->ref, ->label, ->color
 	 *
-	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param		string	$option			Sur quoi pointe le lien ('', 'xyz')
-	 * 	@param		int		$maxlength		Max length of text
-	 *  @param		string	$moreparam		More param on URL link
+	 *	@param		int		$withpicto				0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param		string	$option					On what the link point to ('nolink', ...)
+	 * 	@param		int		$maxlength				Max length of text
+	 *  @param		string	$moreparam				More param on URL link
+	 *  @param  	int     $notooltip      		1=Disable tooltip
+	 *  @param  	string  $morecss                Add more css on link
+	 *  @param  	int     $save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return		string					Chaine avec URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $moreparam = '')
+	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $moreparam = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = 0)
 	{
-		global $hookmanager;
+		global $conf, $langs, $hookmanager;
+
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 		$params = [
@@ -1694,6 +1731,19 @@ class Categorie extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
+		$url = DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam ? '?'.$moreparam : ''));
+
+		if ($option !== 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($url && $add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
+
 		// Check contrast with background and correct text color
 		$forced_color = 'categtextwhite';
 		if ($this->color) {
@@ -1701,27 +1751,46 @@ class Categorie extends CommonObject
 				$forced_color = 'categtextblack';
 			}
 		}
-		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam ? '?'.$moreparam : ''));
-		$link .= '"'.$dataparams;
-		$link .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
-		$link .= ' class="'.$classfortooltip.' '.$forced_color.'">';
-		$linkend = '</a>';
 
-		$picto = 'category';
+		$linkclose = '';
+		if (empty($notooltip)) {
+			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+				$label = $langs->trans("ShowMyObject");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.' '.$forced_color.($morecss ? ' '.$morecss : '').'"';
+		} else {
+			$linkclose = ($morecss ? ' class="'.$forced_color.($morecss ? ' '.$morecss : '').'"' : '');
+		}
 
+		if ($option == 'nolink' || empty($url)) {
+			$linkstart = '<span';
+		} else {
+			$linkstart = '<a href="'.$url.'"';
+		}
+		$linkstart .= $linkclose.'>';
+		if ($option == 'nolink' || empty($url)) {
+			$linkend = '</span>';
+		} else {
+			$linkend = '</a>';
+		}
+
+		$result .= $linkstart;
 
 		if ($withpicto) {
-			$result .= ($link.img_object($label, $picto, $dataparams.' class="'.$classfortooltip.'"').$linkend);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
-		if ($withpicto && $withpicto != 2) {
-			$result .= ' ';
-		}
+
 		if ($withpicto != 2) {
-			$result .= $link.dol_trunc(($this->ref ? $this->ref : $this->label), $maxlength).$linkend;
+			$result .= dol_trunc(($this->ref ? $this->ref : $this->label), $maxlength);
 		}
+
+		$result .= $linkend;
+
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1755,7 +1824,7 @@ class Categorie extends CommonObject
 		if (file_exists($dir)) {
 			if (is_array($file['name']) && count($file['name']) > 0) {
 				$nbfile = count($file['name']);
-				for ($i = 0; $i <= $nbfile; $i++) {
+				for ($i = 0; $i < $nbfile; $i++) {
 					$originImage = $dir.$file['name'][$i];
 
 					// Cree fichier en taille origine
@@ -1782,9 +1851,9 @@ class Categorie extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Return tableau de toutes les photos de la categorie
+	 *    Return an array with all photos inside the directory
 	 *
-	 *    @param      string	$dir        Repertoire a scanner
+	 *    @param      string	$dir        Dir to scan
 	 *    @param      int		$nbmax      Nombre maximum de photos (0=pas de max)
 	 *    @return     array       			Tableau de photos
 	 */
@@ -1886,10 +1955,11 @@ class Categorie extends CommonObject
 	 *	Update ou cree les traductions des infos produits
 	 *
 	 *	@param	User	$user		Object user
+	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *
 	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
-	public function setMultiLangs($user)
+	public function setMultiLangs(User $user, $notrigger = 0)
 	{
 		global $langs;
 
@@ -1944,10 +2014,12 @@ class Categorie extends CommonObject
 		}
 
 		// Call trigger
-		$result = $this->call_trigger('CATEGORY_SET_MULTILANGS', $user);
-		if ($result < 0) {
-			$this->error = $this->db->lasterror();
-			return -1;
+		if (!$notrigger) {
+			$result = $this->call_trigger('CATEGORY_SET_MULTILANGS', $user);
+			if ($result < 0) {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
 		}
 		// End call triggers
 
@@ -2004,7 +2076,7 @@ class Categorie extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return	int
 	 */
 	public function initAsSpecimen()
 	{
@@ -2018,6 +2090,8 @@ class Categorie extends CommonObject
 		$this->description = 'This is a description';
 		$this->socid = 1;
 		$this->type = self::TYPE_PRODUCT;
+
+		return 1;
 	}
 
 	/**

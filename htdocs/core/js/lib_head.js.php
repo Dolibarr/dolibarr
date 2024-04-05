@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2018  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,8 +195,7 @@ var select2arrayoflanguage = {
 	noResults: function () { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2NotFound")); ?>"; },
 	inputTooShort: function (input) {
 		var n = input.minimum;
-		/*console.log(input);
-		console.log(input.minimum);*/
+		/*console.log(input); console.log(input.minimum);*/
 		if (n > 1) return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters")); ?>";
 			else return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter")); ?>"
 		},
@@ -274,7 +274,7 @@ function formatDate(date,format)
 
 	var result="";
 
-	var year=date.getYear()+""; if (year.length < 4) { year=""+(year-0+1900); }
+	var year=date.getYear()+""; if (year.length < 4) { year=""+(year-0+2000); } /* #28334 */
 	var month=date.getMonth()+1;
 	var day=date.getDate();
 	var hour=date.getHours();
@@ -344,7 +344,7 @@ function getDateFromFormat(val,format)
 	if (val == '') return 0;
 
 	var now=new Date();
-	var year=now.getYear(); if (year.length < 4) { year=""+(year-0+1900); }
+	var year=now.getYear(); if (year.length < 4) { year=""+(year-0+2000); } /*  #28334 */
 	var month=now.getMonth()+1;
 	var day=now.getDate();
 	var hour=now.getHours();
@@ -369,7 +369,7 @@ function getDateFromFormat(val,format)
 
 		// alert('substr='+substr);
 		if (substr == "yyyy") year=getIntegerInString(val,d,4,4);
-		if (substr == "yy")   year=""+(getIntegerInString(val,d,2,2)-0+1900);
+		if (substr == "yy")   year=""+(getIntegerInString(val,d,2,2)-0+2000); /*  #28334 */
 		if (substr == "MM" ||substr == "M")
 		{
 			month=getIntegerInString(val,d,1,2);
@@ -1163,7 +1163,7 @@ function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + deci
  *
  */
 function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
-	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalInt('MAIN_MAX_DECIMALS_SHOWN')); ?>;
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN')); ?>;
 	var main_rounding_unit = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'); ?>;
 	var main_rounding_tot = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'); ?>;
 	var main_decimal_separator = <?php echo json_encode($dec) ?>;
@@ -1241,7 +1241,7 @@ function price2numjs(amount) {
 	var dec = <?php echo json_encode($dec) ?>;
 	var thousand = <?php echo json_encode($thousand) ?>;
 
-	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalInt('MAIN_MAX_DECIMALS_SHOWN')); ?>;
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN')); ?>;
 	var main_rounding_unit = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'); ?>;
 	var main_rounding_tot = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'); ?>;
 

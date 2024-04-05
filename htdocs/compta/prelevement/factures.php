@@ -35,20 +35,20 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals', 'suppliers'));
+$langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals', 'salaries', 'suppliers'));
 
 // Get supervariables
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
-$userid = GETPOST('userid', 'int');
+$socid = GETPOSTINT('socid');
+$userid = GETPOSTINT('userid');
 $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -274,10 +274,10 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
+	$param = "&id=".((int) $id);
 	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param.='&limit='.((int) $limit);
+		$param .= '&limit='.((int) $limit);
 	}
-	$param = "&id=".urlencode($id);
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -325,10 +325,14 @@ if ($resql) {
 
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
-		if ($salaryBonPl) {
+		$itemurl = '';
+		$partyurl = '';
+		if ($salaryBonPl && ($salarytmp instanceof Salary) && ($user instanceof User)) {
 			$salarytmp->fetch($obj->salaryid);
 			$usertmp->fetch($obj->userid);
-		} else {
+			$itemurl = $salarytmp->getNomUrl(1);
+			$partyurl = $usertmp->getNomUrl(1);
+		} elseif ($invoicetmp instanceof Facture && $invoicetmpsupplier instanceof FactureFournisseur) {
 			if ($obj->type == 'bank-transfer') {
 				$invoicetmp = $invoicetmpsupplier;
 			} else {
@@ -337,22 +341,24 @@ if ($resql) {
 			$invoicetmp->fetch($obj->facid);
 
 			$thirdpartytmp->fetch($obj->socid);
+			$itemurl = $invoicetmp->getNomUrl(1);
+			$partyurl = $thirdpartytmp->getNomUrl(1);
 		}
 
 		print '<tr class="oddeven">';
 
 		print '<td class="nowraponall">';
-		print ($salaryBonPl ? $salarytmp->getNomUrl(1) : $invoicetmp->getNomUrl(1));
+		print $itemurl;
 		print "</td>\n";
 
-		if ($object->type == 'bank-transfer' && !$salaryBonPl) {
+		if ($object->type == 'bank-transfer' && !$salaryBonPl && $invoicetmp instanceof Facture) {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($invoicetmp->ref_supplier).'">';
 			print dol_escape_htmltag($invoicetmp->ref_supplier);
 			print "</td>\n";
 		}
 
 		print '<td class="tdoverflowmax125">';
-		print($salaryBonPl ? $usertmp->getNomUrl(-1) : $thirdpartytmp->getNomUrl(1));
+		print $partyurl;
 		print "</td>\n";
 
 		// Amount of invoice

@@ -49,7 +49,7 @@ SetHereVirtualHost=<u>Sử dụng với Apache/NGinx/...</u><br>Tạo trên máy
 ExampleToUseInApacheVirtualHostConfig=Ví dụ để sử dụng trong thiết lập máy chủ ảo Apache:
 YouCanAlsoTestWithPHPS=<u>Sử dụng với máy chủ nhúng PHP</u> <br> Trên môi trường phát triển, bạn có thể muốn kiểm tra trang web với máy chủ web nhúng PHP (yêu cầu PHP 5.5) bằng cách chạy <br> <strong>php -S 0.0.0.0:8080 -t %s</strong>
 YouCanAlsoDeployToAnotherWHP=<u>Chạy trang web của bạn với một nhà cung cấp dịch vụ lưu trữ Dolibarr Hosting khác</u><br>Nếu bạn không có sẵn máy chủ web như Apache hoặc NGinx trên internet, bạn có thể xuất và nhập trang web của mình vào một phiên bản Dolibarr khác do nhà cung cấp dịch vụ lưu trữ Dolibarr khác cung cấp tích hợp đầy đủ với mô-đun Trang web. Bạn có thể tìm thấy danh sách một số nhà cung cấp dịch vụ lưu trữ Dolibarr trên <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
-CheckVirtualHostPerms=Ngoài ra, hãy kiểm tra xem người dùng máy chủ ảo (ví dụ: www-data) có <strong>%s</strong>  quyền đối với các tệp vào<br><strong>%s<span lớp ='notranslate'></strong></span>
+CheckVirtualHostPerms=Check also that the virtual host user (for example www-data) has <strong>%s</strong> permissions on files into<br><strong>%s</strong>
 ReadPerm=Đọc
 WritePerm=Viết
 TestDeployOnWeb=Kiểm tra / triển khai trên web
@@ -60,11 +60,11 @@ NoPageYet=Chưa có trang nào
 YouCanCreatePageOrImportTemplate=Bạn có thể tạo một trang mới hoặc nhập một mẫu trang web đầy đủ
 SyntaxHelp=Trợ giúp về các mẹo cú pháp cụ thể
 YouCanEditHtmlSourceckeditor=Bạn có thể chỉnh sửa mã nguồn HTML bằng nút "Nguồn" trong trình chỉnh sửa.
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper.<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper.<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Đối với hình ảnh được chia sẻ bằng liên kết chia sẻ (truy cập mở bằng khóa băm chia sẻ của tệp), cú pháp là:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong> <br>
-YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
-YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
+YouCanEditHtmlSource3=Để lấy URL hình ảnh của một đối tượng PHP, hãy sử dụng<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>Các ví dụ khác về HTML hoặc mã động có sẵn trên <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">tài liệu wiki</a>.<br>
 ClonePage=Nhân bản Trang  / vùng chứa
 CloneSite=Nhân bản trang web
 SiteAdded=Đã thêm trang web
@@ -121,7 +121,6 @@ ReplaceString=Chuỗi mới
 CSSContentTooltipHelp=Nhập vào đây nội dung CSS. Để tránh mọi xung đột với CSS của ứng dụng, hãy đảm bảo thêm trước tất cả khai báo với lớp .bodywebsite. Ví dụ: <br><br> #mycssselector, input.myclass:hover {...} <br> cần phải <br> .bodywebsite #mycssselector, .bodywebsite input.myclass: hover {...} <br><br> Lưu ý: Nếu bạn có một tệp lớn không có tiền tố này, bạn có thể sử dụng 'lessc' để chuyển đổi nó để nối thêm tiền tố .bodywebsite ở mọi nơi.
 LinkAndScriptsHereAreNotLoadedInEditor=Cảnh báo: Nội dung này chỉ được xuất ra khi trang web được truy cập từ máy chủ. Nó không được sử dụng trong chế độ Chỉnh sửa, vì vậy nếu bạn cũng cần tải các tệp JavaScript ở chế độ chỉnh sửa, chỉ cần thêm thẻ 'script src=...' vào trang.
 Dynamiccontent=Mẫu của một trang có nội dung động
-ImportSite=Nhập mẫu trang web
 EditInLineOnOff=Chế độ 'Chỉnh sửa nội tuyến' là %s
 ShowSubContainersOnOff=Chế độ thực thi 'nội dung động' là %s
 GlobalCSSorJS=Tệp CSS / JS / Tiêu đề toàn cục của trang web
@@ -158,9 +157,81 @@ Booking=Đặt trước
 Reservation=Sự đặt chỗ
 PagesViewedPreviousMonth=Các trang đã xem (tháng trước)
 PagesViewedTotal=Số trang đã xem (tổng cộng)
-Visibility=Hiển thị
 Everyone=Mọi người
 AssignedContacts=Địa chỉ liên hệ được chỉ định
 WebsiteTypeLabel=Loại trang web
-WebsiteTypeDolibarrWebsite=Trang web (CMS Dolibarr)
-WebsiteTypeDolibarrPortal=Cổng thông tin Dolibarr bản địa
+WebsiteTypeDolibarrWebsite=Web site (Module WebSites CMS)
+WebsiteTypeDolibarrPortal=Native and ready to use web portal (Module Web Portal)
+WebPortalURL=Web portal URL
+NewWebsiteAccount=New accounts for websites
+ModuleWebPortalName=Web portal
+ModuleWebPortalDesc=A ready to use native web portal for customers, suppliers, partners or members
+WebPortalDescription=Public web portal module for membership and partnership
+WebPortalSetup=WebPortal setup
+WebPortalCSS=Web portal CSS
+WebPortalSetupPage=WebPortal setup page
+WEBPORTAL_TITLE=Brand name on header of public page
+UserAccountForWebPortalAreInThirdPartyTabHelp=Users accounts for WebPortal can be set on each third party card in Website accounts tab
+WebPortalAccessHidden=Đã ẩn
+WebPortalAccessVisible=Visible
+WebPortalAccessEdit=Editable
+WEBPORTAL_MEMBER_CARD_ACCESS=Enable access to the membership record
+WebPortalMemberCardAccessHelp=Enable access to the membership record (Hidden / Visible or Editable)
+WEBPORTAL_PARTNERSHIP_CARD_ACCESS=Enable access to the partnership record
+WebPortalPartnerShipCardAccessHelp=Enable access to the partnership record (Hidden / Visible or Editable)
+WEBPORTAL_PROPAL_LIST_ACCESS=Enable access to the proposals
+WEBPORTAL_ORDER_LIST_ACCESS=Enable access to the orders
+WEBPORTAL_INVOICE_LIST_ACCESS=Enable access to the invoices
+WEBPORTAL_USER_LOGGED=Select an anonymous user
+WebPortalUserLoggedHelp=This user is used to update cards
+WebPortalHomeTitle=Welcome
+WebPortalHomeDesc=Welcome to the public interface
+WebPortalPropalListMenu=Đơn hàng đề xuất
+WebPortalPropalListTitle=List of proposals
+WebPortalPropalListDesc=List of proposals
+WebPortalPropalListNothing=Proposals not found
+WebPortalOrderListMenu=Đơn hàng
+WebPortalOrderListTitle=Danh sách đơn hàng
+WebPortalOrderListDesc=Danh sách đơn hàng
+WebPortalOrderListNothing=Orders not found
+WebPortalInvoiceListMenu=Hoá đơn
+WebPortalInvoiceListTitle=List of invoices
+WebPortalInvoiceListDesc=List of invoices
+WebPortalInvoiceListNothing=Invoices not found
+WebPortalMemberCardMenu=Thành viên
+WebPortalMemberCardTitle=Thẻ thành viên
+WebPortalMemberCardDesc=Thẻ thành viên
+WebPortalPartnershipCardMenu=Partnership
+WebPortalPartnershipCardTitle=Partnership card
+WebPortalPartnershipCardDesc=Partnership card
+loginWebportalUserName=User name / email
+loginWebportalPassword=Mật khẩu
+LoginNow=Login now
+RemoveSearchFilters=Remove search filters
+WEBPORTAL_PRIMARY_COLOR=Primary color
+WEBPORTAL_SECONDARY_COLOR=Secondary color
+WEBPORTAL_LOGIN_LOGO_URL=Login logo image URL
+WEBPORTAL_MENU_LOGO_URL=Menu logo image URL
+WEBPORTAL_MENU_LOGO_URLTooltip=Leave empty to use login logo
+WEBPORTAL_LOGIN_BACKGROUND=Background login image URL
+WEBPORTAL_BANNER_BACKGROUND=Background for banner
+WEBPORTAL_BANNER_BACKGROUND_IS_DARK=Use dark theme for banner
+AriaPrevPage=Previous page
+AriaNextPage=Next page
+AriaPageX=Page %s
+WebPortalError404=Page not found
+WebPortalErrorPageNotExist=Page not exist
+WebPortalErrorFetchThirdPartyAccountFromLogin=Error when loading third-party account (login : %s)
+WebPortalErrorAuthentication=Authentication error
+WebPortalErrorFetchLoggedThirdPartyAccount=Error when loading third-party account (login : %s)
+WebPortalErrorFetchLoggedUser=Error when loading user (Id : %s)
+WebPortalErrorFetchLoggedThirdParty=Error when loading third-party (Id : %s)
+WebPortalErrorFetchLoggedMember=Error when loading member (Id : %s)
+WebPortalErrorFetchLoggedPartnership=Error when loading partnership (Third-party Id : %s, Member Id : %s)
+ExportIntoGIT=Export into sources
+WebPortalMember=Membership
+WebPortalOrder=Sale Order
+WebPortalPartnership=Partnership
+WebPortalPropal=Đơn hàng đề xuất
+WebPortalGroupMenuAdmin=Administration
+WebPortalGroupMenuTechnical=Hệ thống

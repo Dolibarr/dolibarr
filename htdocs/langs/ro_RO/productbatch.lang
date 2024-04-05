@@ -6,6 +6,9 @@ ProductStatusNotOnBatch=Nu (Lot / Număr de serie nefolosit)
 ProductStatusOnBatchShort=Lot
 ProductStatusOnSerialShort=Serie
 ProductStatusNotOnBatchShort=Nu
+BatchSellOrEatByMandatoryList=Setare %s sau %s obligatoriu
+BatchSellOrEatByMandatoryNone=Niciunul
+BatchSellOrEatByMandatoryAll=%s și %s
 Batch=Lot / Serie
 atleast1batchfield=Data expirării sau data vânzării sau  lot / serie
 batch_number=Lot / Număr serie
@@ -45,3 +48,5 @@ OutOfOrder=Indisponibil
 InWorkingOrder=În stare de funcționare
 ToReplace=De înlocuit
 CantMoveNonExistantSerial=Eroare. Soliciţi o mutare pe o înregistrare pentru o serie care nu mai există. Este posibil să iei aceiași serie pe același depozit de mai multe ori în aceiași expediere sau a fost folosită de o altă livrare. Înlătură această livrare și pregăteşte alta.
+TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Tabela de loturi incompletă rulează reparare cu parametrul '...repair.php?standard=confirmed'
+IlligalQtyForSerialNumbers= Este necesară corectarea stocului datorită numărului de serie unic.

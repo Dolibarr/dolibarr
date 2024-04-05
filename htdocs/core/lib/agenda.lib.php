@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2022-2024  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2024	Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,24 +28,25 @@
 /**
  * Show filter form in agenda view
  *
- * @param	Form			$form			Form object
- * @param	int				$canedit		Can edit filter fields
- * @param	int				$status			Status
- * @param 	int				$year			Year
- * @param 	int				$month			Month
- * @param 	int				$day			Day
- * @param 	int				$showbirthday	Show birthday
- * @param 	string			$filtera		Filter on create by user
- * @param 	string			$filtert		Filter on assigned to user
- * @param 	string			$filtered		Filter of done by user
- * @param 	int				$pid			Product id
- * @param 	int				$socid			Third party id
- * @param	string			$action			Action string
- * @param	array			$showextcals	Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
- * @param	string|array	$actioncode		Preselected value(s) of actioncode for filter on event type
- * @param	int				$usergroupid	Id of group to filter on users
- * @param	string			$excludetype	A type to exclude ('systemauto', 'system', '')
- * @param	int   			$resourceid	    Preselected value of resource for filter on resource
+ * @param	Form			$form				Form object
+ * @param	int				$canedit			Can edit filter fields
+ * @param	int				$status				Status
+ * @param 	int				$year				Year
+ * @param 	int				$month				Month
+ * @param 	int				$day				Day
+ * @param 	int				$showbirthday		Show birthday
+ * @param 	string			$filtera			Filter on create by user
+ * @param 	string			$filtert			Filter on assigned to user
+ * @param 	string			$filtered			Filter of done by user
+ * @param 	int				$pid				Product id
+ * @param 	int				$socid				Third party id
+ * @param	string			$action				Action string
+ * @param	array			$showextcals		Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
+ * @param	string|array	$actioncode			Preselected value(s) of actioncode for filter on event type
+ * @param	int				$usergroupid		Id of group to filter on users
+ * @param	string			$excludetype		A type to exclude ('systemauto', 'system', '')
+ * @param	int   			$resourceid			Preselected value of resource for filter on resource
+ * @param	int     		$search_categ_cus	Tag id
  * @return	void
  */
 function print_actions_filter(
@@ -66,7 +67,8 @@ function print_actions_filter(
 	$actioncode = '',
 	$usergroupid = 0,
 	$excludetype = '',
-	$resourceid = 0
+	$resourceid = 0,
+	$search_categ_cus = 0
 ) {
 	global $user, $langs, $db, $hookmanager;
 	global $massaction;
@@ -117,7 +119,7 @@ function print_actions_filter(
 			// Resource
 			print '<div class="divsearchfield">';
 			print img_picto($langs->trans("Resource"), 'object_resource', 'class="pictofixedwidth inline-block"');
-			print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2, 0, 'maxwidth500');
+			print $formresource->select_resource_list($resourceid, "search_resourceid", [], 1, 0, 0, null, '', 2, 0, 'maxwidth500');
 			print '</div>';
 		}
 	}
@@ -129,13 +131,25 @@ function print_actions_filter(
 		print '</div>';
 	}
 
-	if (isModEnabled('projet') && $user->hasRight('projet', 'lire')) {
+	if (isModEnabled('project') && $user->hasRight('projet', 'lire')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 		$formproject = new FormProjets($db);
 
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth inline-block"');
 		print $formproject->select_projects($socid ? $socid : -1, $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth500');
+		print '</div>';
+	}
+
+	if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+		$formother = new FormOther($db);
+		$langs->load('categories');
+
+		print '<div class="divsearchfield">';
+		print img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
+		print $formother->select_categories('actioncomm', $search_categ_cus, 'search_categ_cus', 1, $langs->trans('ActionCommCategoriesArea'));
 		print '</div>';
 	}
 

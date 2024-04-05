@@ -161,7 +161,6 @@ MAIN_MAIL_AUTOCOPY_TO=Automatische Blindkopie (BCC) aller gesendeten Mails an:
 MAIN_DISABLE_ALL_MAILS=Deaktiviere alle E-Mail-Funktionen (für Test- oder Demozwecke)
 MAIN_MAIL_FORCE_SENDTO=Sende alle Emails an diese Adresse zum Test (statt an die echten Empfänger)
 MAIN_MAIL_ENABLED_USER_DEST_SELECT=E-Mails von Mitarbeitern (sofern definiert) beim Schreiben einer neuen E-Mail in die Liste der vordefinierten Empfänger vorschlagen
-MAIN_MAIL_SENDMODE=Methode zum Senden von E-Mails
 MAIN_MAIL_SMTPS_ID=SMTP - Benutzer (wenn Authentifizierung durch Ausgangsserver erforderlich)
 MAIN_MAIL_SMTPS_PW=SMTP - Passwort (wenn Authentifizierung durch Ausgangsserver erforderlich)
 MAIN_MAIL_EMAIL_TLS=TLS (SSL)-Verschlüsselung verwenden

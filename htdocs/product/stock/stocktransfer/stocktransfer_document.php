@@ -37,14 +37,14 @@ $langs->loadLangs(array("stocks", "companies", "other", "mails"));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
-$id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
+$id = (GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id'));
 $ref = GETPOST('ref', 'alpha');
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -80,7 +80,7 @@ if ($id > 0 || !empty($ref)) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'stocktransfer', $object->id);
 
-$permissiontoadd = $user->rights->stocktransfer->stocktransfer->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd = $user->hasRight('stocktransfer', 'stocktransfer', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 
 
@@ -182,10 +182,6 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'stocktransfer';
-	//$permission = $user->rights->stocktransfer->stocktransfer->write;
-	$permission = 1;
-	//$permtoedit = $user->rights->stocktransfer->stocktransfer->write;
-	$permtoedit = 1;
 	$param = '&id='.$object->id;
 
 	//$relativepathwithnofile='stocktransfer/' . dol_sanitizeFileName($object->id).'/';

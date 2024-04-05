@@ -249,7 +249,7 @@ LatestProjects=%s neueste Projekte
 LatestModifiedProjects=Zuletzt bearbeitete Projekte (maximal %s)
 OtherFilteredTasks=Andere gefilterte Aufgaben
 NoAssignedTasks=Keine zugewiesenen Aufgaben gefunden (dem aktuellen Benutzer über das obere Auswahlfeld Projekt / Aufgaben zuweisen, um die Zeit einzugeben)
-ThirdPartyRequiredToGenerateInvoice=Für das Projekt muss ein Drittanbieter definiert werden, um es in Rechnung stellen zu können.
+ThirdPartyRequiredToGenerateIntervention=Ein Geschäftspartner muss für das Projekt definiert werden, um einen Serviceauftrag erstellen zu können.
 ThirdPartyRequiredToGenerateInvoice=Für das Projekt muss ein Drittanbieter definiert werden, um es in Rechnung stellen zu können.
 ChooseANotYetAssignedTask=Wählen Sie eine Aufgabe, die Ihnen noch nicht zugewiesen ist
 # Comments trans

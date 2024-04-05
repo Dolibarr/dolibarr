@@ -65,7 +65,7 @@ if (empty($reshook)) {
 		if (!dolibarr_set_const($db, 'LDAP_SERVER_TYPE', GETPOST("type", 'aZ09'), 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
-		if (!dolibarr_set_const($db, 'LDAP_USERACCOUNTCONTROL', GETPOST("userAccountControl", 'int'), 'chaine', 0, '', $conf->entity)) {
+		if (!dolibarr_set_const($db, 'LDAP_USERACCOUNTCONTROL', GETPOSTINT("userAccountControl"), 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
 		if (!dolibarr_set_const($db, 'LDAP_SERVER_PROTOCOLVERSION', GETPOST("LDAP_SERVER_PROTOCOLVERSION", 'aZ09'), 'chaine', 0, '', $conf->entity)) {
@@ -77,7 +77,7 @@ if (empty($reshook)) {
 		if (!dolibarr_set_const($db, 'LDAP_SERVER_HOST_SLAVE', GETPOST("slave", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
-		if (!dolibarr_set_const($db, 'LDAP_SERVER_PORT', GETPOST("port", 'int'), 'chaine', 0, '', $conf->entity)) {
+		if (!dolibarr_set_const($db, 'LDAP_SERVER_PORT', GETPOSTINT("port"), 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
 		if (!dolibarr_set_const($db, 'LDAP_SERVER_DN', GETPOST("dn", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
@@ -169,14 +169,14 @@ if (isModEnabled('societe')) {
 }
 
 // Synchro member active
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	print '<tr class="oddeven"><td>' . $langs->trans("LDAPDnMemberActive") . '</td><td>';
 	print $formldap->selectLdapDnSynchroActive(getDolGlobalInt('LDAP_MEMBER_ACTIVE'), 'activemembers', array(), 2);
 	print '</td><td><span class="opacitymedium">' . $langs->trans("LDAPDnMemberActiveExample") . '</span></td></tr>';
 }
 
 // Synchro member type active
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	print '<tr class="oddeven"><td>' . $langs->trans("LDAPDnMemberTypeActive") . '</td><td>';
 	print $formldap->selectLdapDnSynchroActive(getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE'), 'activememberstypes', array(), 2);
 	print '</td><td><span class="opacitymedium">' . $langs->trans("LDAPDnMemberTypeActiveExample") . '</span></td></tr>';
@@ -279,7 +279,7 @@ if (function_exists("ldap_connect")) {
 	if ($action == 'test') {
 		$ldap = new Ldap(); // The parameters are provided and recovered through $conf
 
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 		if ($result > 0) {
 			// Test ldap connect and bind
 			print img_picto('', 'info').' ';

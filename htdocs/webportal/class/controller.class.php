@@ -1,4 +1,26 @@
 <?php
+/* Copyright (C) 2023-2024 	Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+ /**
+ * \file       htdocs/webportal/class/controller.class.php
+ * \ingroup    webportal
+ * \brief      File of controller class for WebPortal
+ */
 
 /**
  *  Class to manage pages
@@ -54,11 +76,13 @@ class Controller
 	 * Action method is called before html output
 	 * can be used to manage security and change context
 	 *
-	 * @return  int     Return integer < 0 on error, 0 on success, 1 to replace standard code
+	 * @return  int     Return integer < 0 on error, > 0 on success
 	 */
 	public function action()
 	{
-		return $this->hookDoAction();
+		$resHook = $this->hookDoAction();
+
+		return ($resHook < 0 ? -1 : 1);
 	}
 
 	/**
@@ -119,7 +143,7 @@ class Controller
 	 * Execute hook doActions
 	 *
 	 * @param	array		$parameters		Parameters
-	 * @return  int			Return integer < 0 on error, 0 on success, 1 to replace standard code
+	 * @return  int							Return integer < 0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function hookDoAction($parameters = array())
 	{
@@ -142,7 +166,7 @@ class Controller
 	 * Execute hook PrintPageView
 	 *
 	 * @param	array		$parameters		Parameters
-	 * @return	int			Return integer < 0 on error, 0 on success, 1 to replace standard code
+	 * @return	int							Return integer < 0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function hookPrintPageView($parameters = array())
 	{
@@ -162,15 +186,15 @@ class Controller
 	}
 
 	/**
-	 * Load a template
+	 * Load a template .tpl file
 	 *
-	 * @param	string	$templateName	Template name
+	 * @param	string	$templateName	Template file name (without the .tpl.php)
 	 * @param	mixed	$vars			Data to transmit to template
-	 * @return	bool	True if template found, else false
+	 * @return	bool					True if template found, else false
 	 */
 	public function loadTemplate($templateName, $vars = false)
 	{
-		global $conf, $langs, $hookmanager, $db; // load for tpl
+		global $conf, $langs, $hookmanager, $db; // may be used into the tpl
 
 		$context = Context::getInstance(); // load for tpl
 

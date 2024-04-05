@@ -42,14 +42,14 @@ $langs->loadLangs(array('companies', 'other', 'bills', 'orders'));
 
 $action		= GETPOST('action', 'aZ09');
 $confirm	= GETPOST('confirm');
-$id			= GETPOST('id', 'int');
+$id			= GETPOSTINT('id');
 $ref		= GETPOST('ref');
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -80,6 +80,10 @@ $permissiontoadd = $usercancreate;
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('orderdocument', 'globalcard'));
+
 $result = restrictedArea($user, 'commande', $id, '');
 
 
@@ -175,8 +179,8 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 		$modulepart = 'commande';
-		$permissiontoadd = $user->rights->commande->creer;
-		$permtoedit = $user->rights->commande->creer;
+		$permissiontoadd = $user->hasRight('commande', 'creer');
+		$permtoedit = $user->hasRight('commande', 'creer');
 		$param = '&id='.$object->id.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity);
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	} else {

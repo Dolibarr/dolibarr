@@ -41,7 +41,7 @@ $hookmanager->initHooks(array('projectsindex'));
 $langs->loadLangs(array('projects', 'companies'));
 
 $action = GETPOST('action', 'aZ09');
-$search_project_user = GETPOST('search_project_user', 'int');
+$search_project_user = GETPOSTINT('search_project_user');
 $mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
 if ($mine == 0 && $search_project_user === '') {
 	$search_project_user = (empty($user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX) ? '' : $user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX);
@@ -50,17 +50,17 @@ if ($search_project_user == $user->id) {
 	$mine = 1;
 }
 
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+
 // Security check
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
-
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
-
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 
 
 /*
@@ -74,7 +74,7 @@ if ($reshook < 0) {
 }
 if (empty($reshook)) {
 	if ($action == 'refresh_search_project_user') {
-		$search_project_user = GETPOST('search_project_user', 'int');
+		$search_project_user = GETPOSTINT('search_project_user');
 		$tabparam = array("MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX" => $search_project_user);
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -92,7 +92,7 @@ $projectstatic = new Project($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-$projectset = ($mine ? $mine : (empty($user->rights->projet->all->lire) ? 0 : 2));
+$projectset = ($mine ? $mine : (!$user->hasRight('projet', 'all', 'lire') ? 0 : 2));
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projectset, 1);
 //var_dump($projectsListId);
 
@@ -220,11 +220,7 @@ $sql .= $db->plimit($max, 0);
 
 $resql = $db->query($sql);
 if ($resql) {
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<th colspan="5">'.$langs->trans("LatestModifiedProjects", $max).'</th>';
-	print '</tr>';
+	startSimpleTable($langs->trans("LatestModifiedProjects", $max), "projet/list.php", "sortfield=p.tms&sortorder=DESC", 3, -1, 'project');
 
 	$num = $db->num_rows($resql);
 
@@ -279,11 +275,11 @@ if ($resql) {
 
 			// Label
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->title).'">';
-			print $projectstatic->title;
+			print dol_escape_htmltag($projectstatic->title);
 			print '</td>';
 
 			// Thirdparty
-			print '<td class="nowrap">';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name).'">';
 			if ($companystatic->id > 0) {
 				print $companystatic->getNomUrl(1, 'company', 16);
 			}
@@ -303,7 +299,8 @@ if ($resql) {
 	} else {
 		print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
-	print "</table></div>";
+
+	finishSimpleTable(true);
 } else {
 	dol_print_error($db);
 }
@@ -346,7 +343,7 @@ if ($resql) {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("OpenedProjectsByThirdparties", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder);
-		print_liste_field_titre("NbOfProjects", $_SERVER["PHP_SELF"], "nb", "", "", '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre("Number", $_SERVER["PHP_SELF"], "nb", "", "", '', $sortfield, $sortorder, 'right ');
 		print "</tr>\n";
 	}
 

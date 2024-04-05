@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=שותפות המוקדשת לחבר זה
 DatePartnershipStart=תאריך התחלה
 DatePartnershipEnd=תאריך סיום
 ReasonDecline=סיבת דחייה
-ReasonDeclineOrCancel=סיבת דחייה
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=השותפות כבר קיימת
 ManagePartnership=ניהול שותפות
 BacklinkNotFoundOnPartnerWebsite=קישור נכנס לא נמצא באתר השותף
@@ -89,7 +89,6 @@ YourPartnershipCanceledContent=ברצוננו להודיע לך שהשותפות
 
 CountLastUrlCheckError=מספר השגיאות עבור בדיקת כתובת האתר האחרונה
 LastCheckBacklink=תאריך בדיקת כתובת האתר האחרונה
-ReasonDeclineOrCancel=סיבת דחייה
 
 NewPartnershipRequest=בקשת שותפות חדשה
 NewPartnershipRequestDesc=טופס זה מאפשר לך לבקש להיות חלק מתוכנית השותפות שלנו. אם אתה זקוק לעזרה למילוי טופס זה, אנא צור קשר בדוא"ל <b>%s</b> span>.

@@ -1,87 +1,115 @@
-#!/bin/sh
+#!/bin/bash
 # Recursively deduplicate file lines on a per file basis
 # Useful to deduplicate language files
 #
 # Needs awk 4.0 for the inplace fixing command
 #
-# Raphaël Doursenaud - rdoursenaud@gpcsolutions.fr
-
-# shellcheck disable=2006,2027,2044,2045,2046,2086,2155,2166,2268
+# Copyright (C) 2016		Raphaël Doursenaud					<rdoursenaud@gpcsolutions.fr>
+# Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
 
 # Syntax
-if [ "x$1" != "xlist" -a "x$1" != "xfix" ]
+if  [ "$1" != "list" ] && [ "$1" != "fix" ]
 then
-	echo "Scan alternate language files and remove entries found into parent file"
-	echo "Usage: fixaltlanguages.sh (list|fix) (all|file.lang) [xx_XX]"
-	exit
+	echo "Scan alternate language files and remove entries found in parent file"
+	echo "Usage: fixaltlanguages.sh (list|fix) (all|file.lang) [ll_CC]"
+	exit 1
 fi
-if [ "x$2" = "x" ]
+if [ "$2" = "" ]
 then
-	echo "Scan alternate language files and remove entries found into parent file"
-	echo "Usage: fixaltlanguages.sh (list|fix) (all|file.lang) [xx_XX]"
-	exit
+	echo "Scan alternate language files and remove entries found in parent file"
+	echo "Usage: fixaltlanguages.sh (list|fix) (all|file.lang) [ll_CC]"
+	exit 1
+fi
+
+ACTION=$1
+LANGFILE=$2
+LANG=$3
+exit_code=0
+
+
+if [ -r "$LANGFILE" ] ; then
+	if [ "$LANG" = "" ] ; then
+		LANG=$(basename "$(dirname "$LANGFILE")")
+	fi
+	LANGFILE=$(basename "$LANGFILE")
 fi
 
 # To detect
-if [ "x$1" = "xlist" ]
+if [ "$ACTION" = "list" ]
 then
 	echo Feature not available
+	exit_code=1
 fi
 
+echo "$ACTION $LANGFILE $LANG"
+
 # To fix
-if [ "x$1" = "xfix" ]
+if [ "$ACTION" = "fix" ]
 then
-	for dir in `find htdocs/langs/$3* -type d`
+	for dir in htdocs/langs/"$LANG"*/
 	do
-		dirshort=`basename $dir`
+		dirshort=$(basename "$dir")
 
-		#echo $dirshort
+		# echo $dirshort
 
-		export aa=`echo $dirshort | nawk -F"_" '{ print $1 }'`
-		export bb=`echo $dirshort | nawk -F"_" '{ print $2 }'`
-		aaupper=`echo $dirshort | nawk -F"_" '{ print toupper($1) }'`
-		if [ $aaupper = "EN" ]
+		aa="$(echo "$dirshort" | cut -d_ -f1)"
+		bb="$(echo "$dirshort" | cut -d_ -f2)"
+		export aa ; export bb
+		aaupper=$(echo "$dirshort" | awk -F_ '{ print toupper($1) }')
+		if [ "$aaupper" = "EN" ]
 		then
 			aaupper="US"
 		fi
-		if [ $aaupper = "EL" ]
+		if [ "$aaupper" = "EL" ]
 		then
 			aaupper="GR"
 		fi
-		if [ $bb = "EG" ]
+		if [ "${bb}" = "EG" ]
 		then
 			aaupper="SA"
 		fi
-		if [ $bb = "IQ" ]
+		if [ "${bb}" = "IQ" ]
 		then
 			aaupper="SA"
 		fi
 
-		bblower=`echo $dirshort | nawk -F"_" '{ print tolower($2) }'`
+		bblower=$(echo "$dirshort" | awk -F_ '{ print tolower($2) }')
 
-		echo "***** Process language "$aa"_"$bb
-		if [ "$aa" != "$bblower" -a "$dirshort" != "en_US" ]
+		echo "***** Process language '${aa}_${bb}'"
+		if [ "$aa" != "$bblower" ] && [ "$dirshort" != "en_US" ]
 		then
-			reflang="htdocs/langs/"$aa"_"$aaupper
-			echo $reflang" "$aa"_"$bb != $aa"_"$aaupper
+			reflang="htdocs/langs/${aa}_$aaupper"
+			echo "$reflang '${aa}_${bb}' != '${aa}_$aaupper'"
 
 			# If $reflang is a main language to use to sanitize the alternative file
-			if [ -d $reflang ]
+			if [ -d "$reflang" ]
 			then
-				if [ $aa"_"$bb != $aa"_"$aaupper ]
+				if [ "${aa}_${bb}" != "${aa}_$aaupper" ]
 				then
-					echo "***** Search original into "$reflang
-					echo $dirshort is an alternative language of $reflang
-					echo ./dev/translation/strip_language_file.php $aa"_"$aaupper $aa"_"$bb $2
-					./dev/translation/strip_language_file.php $aa"_"$aaupper $aa"_"$bb $2
-					for fic in `ls htdocs/langs/${aa}_${bb}/*.delta`; do f=`echo $fic | sed -e 's/\.delta//'`; echo $f; mv $f.delta $f; done
-					for fic in `ls htdocs/langs/${aa}_${bb}/*.lang`;
-					do f=`cat $fic | wc -l`;
+					echo "***** Search original in $reflang"
+					echo "$dirshort is an alternative language of $reflang"
+					echo "./dev/translation/strip_language_file.php '${aa}_$aaupper' '${aa}_${bb}' '$LANGFILE'"
+					RESULT=$(./dev/translation/strip_language_file.php "${aa}_${aaupper}" "${aa}_${bb}" "$LANGFILE")
+					changed=0
+					for fic in htdocs/langs/"${aa}_${bb}"/*.delta ; do
+						# No delta file found ('*' surely still present)
+						if [ ! -r "$fic" ] ; then break ; fi
+						f=${fic//\.delta/}
+						if diff -q "$f" "$f.delta" >/dev/null ; then
+							rm "$f.delta"
+						else
+							mv "$f.delta" "$f" ; changed=1 ; exit_code=1
+						fi
+					done
+					[ "$changed" != "0" ] && echo "$RESULT"
+					for fic in htdocs/langs/"${aa}_${bb}"/*.lang ;
+					do f=$(wc -l < "$fic");
 						#echo $f lines into file $fic;
-						if [ $f = 1 ]
+						if [ "$f" = 1 ]
 						then
-							echo "Only one line remaining into file '$fic', we delete it";
-							rm $fic
+							exit_code=1
+							echo "Only one line remaining in file '$fic', we delete it";
+							rm "$fic"
 						fi;
 					done
 				fi
@@ -89,3 +117,5 @@ then
 		fi
 	done;
 fi
+
+exit $exit_code

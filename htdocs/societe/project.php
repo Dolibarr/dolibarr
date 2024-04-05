@@ -49,7 +49,7 @@ $toselect = GETPOST('toselect', 'array');
 
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -92,7 +92,7 @@ if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
 	$arrayofmassactions = array();
 }
 
@@ -119,14 +119,11 @@ if ($socid) {
 	$result = $object->fetch($socid);
 
 	$title = $langs->trans("Projects");
-	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
 	llxHeader('', $title);
 
-	if (isModEnabled('notification')) {
-		$langs->load("mails");
-	}
 	$head = societe_prepare_head($object);
 
 	print dol_get_fiche_head($head, 'project', $langs->trans("ThirdParty"), -1, 'company');

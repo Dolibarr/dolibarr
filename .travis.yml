@@ -29,6 +29,11 @@ env:
   # Set to true for very verbose output
   - DEBUG=true
 
+cache:
+  directories:
+    - ~/.cache
+
+
 jobs:
   fast_finish: true
   allow_failures:
@@ -356,16 +361,17 @@ script:
     echo "Checking coding style (only for 1 version to not overload travis and avoid duplicate tests)"
     # Ensure we catch errors
     set -e
+    CACHE_OPT="--cache=${HOME}/.cache/dolibarr-phpcs-${TRAVIS_PHP_VERSION}.cache"
     # Exclusions are defined in the ruleset.xml file
     #if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
     if [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
-      phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;
+      phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --severity=1 ${CACHE_OPT} --runtime-set ignore_warnings_on_exit true .;
     fi
     if [ "$TRAVIS_PHP_VERSION" = "8.2" ]; then
-      phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;
+      phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --severity=1 ${CACHE_OPT} --runtime-set ignore_warnings_on_exit true .;
     fi
     if [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
-      phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;
+      phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --severity=1 ${CACHE_OPT} --runtime-set ignore_warnings_on_exit true .;
     fi
     set +e
     echo
@@ -550,18 +556,18 @@ after_failure:
     # Show upgrade log files
     #for ficlog in `ls $TRAVIS_BUILD_DIR/*.log`
     #do
-      #echo "Debugging informations for file $ficlog"
+      #echo "Debugging information for file $ficlog"
       #cat $ficlog
     #done
     # Show Apache log file
-    echo "Debugging informations for file apache error.log"
+    echo "Debugging information for file apache error.log"
     sudo tail -n 200 /var/log/apache2/travis_error_log
     if [ "$DEBUG" = true ]; then
       # Dolibarr log file
-      echo "Debugging informations for file dolibarr.log (latest 50 lines)"
+      echo "Debugging information for file dolibarr.log (latest 50 lines)"
       tail -n 200 $TRAVIS_BUILD_DIR/documents/dolibarr.log
       # Database log file
-      echo "Debugging informations for file mysql error.log"
+      echo "Debugging information for file mysql error.log"
       sudo tail -n 200 /var/log/mysql/error.log
       # TODO: PostgreSQL log file
       echo

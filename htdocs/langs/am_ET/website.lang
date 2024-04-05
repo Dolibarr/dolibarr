@@ -32,7 +32,7 @@ AddWebsite=ድር ጣቢያ ያክሉ
 Webpage=ድረ-ገጽ/መያዣ
 AddPage=ገጽ/መያዣ ያክሉ
 PageContainer=ገጽ
-PreviewOfSiteNotYetAvailable=የድረ-ገጽህ ቅድመ እይታ <strong>%s</strong></span.> ገና አይገኝም። መጀመሪያ '<span class='notranslate'><strong>ሙሉ ድህረ ገጽ አብነት አስመጣ</strong>' ወይም ልክ 'b0e</c7843947 span>ገጽ/ኮንቴይነር አክል<span class='notranslate'></strong>'
+PreviewOfSiteNotYetAvailable=The preview of your website <strong>%s</strong> is not yet available. You must first '<strong>Import a full website template</strong>' or just '<strong>Add a page/container</strong>'.
 RequestedPageHasNoContentYet=የተጠየቀው ገጽ መታወቂያ %s እስካሁን ምንም ይዘት የለውም፣ ወይም የመሸጎጫ ፋይል .tpl.php ተወግዷል። ይህንን ለመፍታት የገጹን ይዘት ያርትዑ።
 SiteDeleted=ድር ጣቢያ '%s ተሰርዟል
 PageContent=ገጽ/ኮንቴናየር
@@ -48,23 +48,23 @@ VirtualhostDesc=የቨርቹዋል አስተናጋጅ ወይም ጎራ ስም (�
 SetHereVirtualHost=<u>በApache/NGinx/...</u><br> በ ላይCrete የእርስዎ የድር አገልጋይ (Apache, Nginx, ...) የተወሰነ ምናባዊ አስተናጋጅ በ PHP የነቃ እና በ<br> ላይ ያለው Root directory<strong> %s</strong>
 ExampleToUseInApacheVirtualHostConfig=በApache ምናባዊ አስተናጋጅ ማዋቀር ውስጥ ለመጠቀም ምሳሌ፡-
 YouCanAlsoTestWithPHPS=<u>በPHP ከተከተተ አገልጋይ ጋር ተጠቀም</u><br>አካባቢን ማዳበር ትችላለህ። <br><strong>php -S 0.0.0.0 ን በማሄድ ጣቢያውን በPHP በተካተተ የድር አገልጋይ (PHP 5.5 ያስፈልጋል) መሞከርን እመርጣለሁ። :8080 -t %s</strong>
-YouCanAlsoDeployToAnotherWHP=<u>የእርስዎን ድረ-ገጽ ከሌላ Dolibarr ማስተናገጃ አቅራቢ ጋር ያሂዱ</u><br> ከሆነ</span እንደ Apache ወይም NGinx ያለ ድረ-ገጽ በበይነ መረብ ላይ የሎትም፣ ድህረ ገጽዎን ወደ ሌላ የዶሊባርር ምሳሌ ወደ ውጭ መላክ እና ከድህረ ገጹ ሞጁል ጋር ሙሉ ውህደት በሚያቀርብ ሌላ የዶሊባርር ማስተናገጃ አቅራቢ ላይ ማስገባት ይችላሉ። የአንዳንድ ዶሊባርር ማስተናገጃ አቅራቢዎችን ዝርዝር በ<span class='notranslate'><a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a> ላይ ማግኘት ትችላለህ
-CheckVirtualHostPerms=የቨርቹዋል አስተናጋጅ ተጠቃሚ (ለምሳሌ www-data) <strong>%sb0a65d071f6fc9 እንዳለው ያረጋግጡ።  ፈቃዶች በፋይሎች ላይ ወደ<br><strong>%s<span ='notranslate'></strong></span>
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site with another Dolibarr Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on internet, you can export and import your web site onto another Dolibarr instance provided by another Dolibarr hosting provider that provide full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+CheckVirtualHostPerms=Check also that the virtual host user (for example www-data) has <strong>%s</strong> permissions on files into<br><strong>%s</strong>
 ReadPerm=አንብብ
 WritePerm=ጻፍ
 TestDeployOnWeb=በድር ላይ ሞክር/አሰማር
-PreviewSiteServedByWebServer=<u>ቅድመ እይታ %s በአዲስ ትር ውስጥ።</u><span class='span>ክፍል notranslate'><br></span><br>የ %s በውጫዊ የድር አገልጋይ (እንደ Apache, Nginx ያሉ) ይቀርባል. ). ወደ ማውጫው ከመጠቆምዎ በፊት ይህን አገልጋይ መጫን እና ማዋቀር አለብዎት፡<br><strong>b0ecb2ec87f49fez0 span><span class='notranslate'></strong><br>ዩአርኤል በውጫዊ አገልጋይ የቀረበ፡<br><span ='notranslate'><strong></span>%s</strong>
-PreviewSiteServedByDolibarr=<u>ቅድመ እይታ %s በአዲስ ትር ውስጥ።</u><span class='span>ክፍል notranslate'><br></span><br>የ%s በዶሊባርር አገልጋይ ስለሚቀርብ ምንም ተጨማሪ የድር አገልጋይ አያስፈልገውም። (እንደ Apache, Nginx, IIS) መጫን አለበት.<br>የማይመችው የገጾቹ ዩአርኤሎች ለተጠቃሚ ምቹ አለመሆኑ እና በዶሊባርር መንገድ መጀመራቸው ነው።<br>ዩአርኤል በ Dolibarr የቀረበ፡<br><strong><spanec2class'06bz0</span><ecf2 class'06775570749 /span></strong><br><br>የራስህን ውጫዊ ድር አገልጋይ ለመጠቀም ይህንን ድረ-ገጽ አገልግሉ፣ በድር አገልጋይዎ ላይ ማውጫ ላይ የሚጠቁም ምናባዊ አስተናጋጅ ይፍጠሩ<br><strong>%s</strong><br>ከዚያም የዚህን ቨርቹዋል አገልጋይ ስም በዚህ ድህረ ገጽ ባህሪያት ውስጥ አስገባና ጠቅ አድርግ። አገናኝ "ሙከራ/በድሩ ላይ አሰማራ"።
+PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before to point to directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
+PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To use your own external web server to serve this web site, create a virtual host on your web server that points on directory<br><strong>%s</strong><br>then enter the name of this virtual server in the properties of this website and click on the link "Test/Deploy on the web".
 VirtualHostUrlNotDefined=በውጫዊ የድር አገልጋይ የሚቀርበው የቨርቹዋል አስተናጋጅ ዩአርኤል አልተገለጸም።
 NoPageYet=እስካሁን ምንም ገጾች የሉም
 YouCanCreatePageOrImportTemplate=አዲስ ገጽ መፍጠር ወይም ሙሉ የድር ጣቢያ አብነት ማስመጣት ይችላሉ።
 SyntaxHelp=በተወሰኑ የአገባብ ምክሮች ላይ እገዛ
 YouCanEditHtmlSourceckeditor=በአርታዒ ውስጥ ያለውን "ምንጭ" ቁልፍን በመጠቀም የኤችቲኤምኤል ምንጭ ኮድን ማርትዕ ይችላሉ።
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> ወደዚህ ምንጭ በመጠቀም PHP ኮድ ማካተት ትችላለህ span class='notranslate'><strong></span>&lt;?php ?&gt;&lt;? </span> የሚከተሉት አለምአቀፍ ተለዋዋጮች ይገኛሉ፡$conf፣$db፣$mysoc፣$user፣$website፣$websitepage፣$weblangs፣$pagelangs።<br><span class='notranslate ‹<br></span><span class="fa fa-bug"></span> እንዲሁም የሌላ ገጽ/መያዣ ይዘት ከሚከተለው አገባብ ጋር ማካተት ትችላለህ፡<s class='notranslate'><br></span><strong>&lt;? php መያዣ_('alias_of) ?&gt;</strong><br><span class>fczda49 /span><span class="fa fa-bug"></span> በሚከተለው አገባብ ወደ ሌላ ገጽ/መያዣ ማዘዋወር ይችላሉ (ማስታወሻ፡ ምንም አታስወጡ ይዘት ከመዛወሪያ በፊት):<br><strong>&lt;የቀጥታ መመሪያ? የመያዣው_ቅፅል_ወደ_መምራት_); ?&gt;</strong><br><span class>fczda49 /span><span class="fa fa-link"></span> ወደ ሌላ ገጽ አገናኝ ለማከል አገባቡን ይጠቀሙ፡b0342fccfda1 <strong>&lt;a href="alias_of_page_to_link_to.php"700 >mylink<span class='notranslate'>&lt;a&gt;</strong>='span><span class' <br><br><span class="fa fa-download">b014f1b507d ወደ</span class = 'notranslate'>b014f1b507d ='notranslate'><strong></span>የማውረድ አገናኝ</strong> ፋይል ወደ <strong><spando classdo'> notranslate'></strong> ማውጫ፣ የ<strong>document ይጠቀሙ። ><br></span>ለምሳሌ፣ ለሰነድ/ኢ.ሲ.ኤም ፋይል (መመዝገብ አለበት)፣ አገባብ የሚከተለው ነው፡<br>b0e7843947c06 ><span class='notranslate'>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"b0012c><7dcbe087z0 class='notranslate'></strong></span><br>ለሰነድ/ሚዲያ (ክፍት ማውጫ ለሕዝብ መዳረሻ)፣ አገባብ እንዲህ ነው፡ <br><strong>&lt;a href="/document.php?modulepart=media&fiative. ext"&gt;</strong><br>ለፋይል ማጋራት የፋይል መጋሪያ ሃሽ ቁልፍን በመጠቀም ክፈት መዳረሻ)፣ አገባብ ነው፡<br><strong>b03900df07d /span>a href="/document.php?hashp=publicharekeyoffile"<span class='notranslate'>&gt;</strong> <br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image"></span> ለማካተት <spanlate> ክፍል='notranslate' <strong></span>image</strong> ወደ <strong>ሰነዶች<spanlate'f>706ዳይሬክተር=06ዳይሬክተር=069992226 , የ<strong>viewimage.php</strong> wrapper ይጠቀሙ።b0342fccfda19b>b0342fccfda19 ምስል ወደ ሰነዶች/መገናኛዎች (ክፍት ማውጫ ለህዝብ ተደራሽነት)፣ አገባብ ነው፡<span class='notranslate'><br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"<span class='00000 </span></strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper.<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=ከማጋራት አገናኝ ጋር ለተጋራ ምስል (የፋይል ማጋሪያ ሃሽ ቁልፍን በመጠቀም ክፈት መዳረሻ)፣ አገባብ የሚከተለው ነው፡<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;<span class='070translate'd </span><br>
-YouCanEditHtmlSource3=የPHP ነገርን ምስል URL ለማግኘት<br><strong>&lt; ይጠቀሙ span>img src="<span class='notranslate'>&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;span class='notranslate'>&gt;</strong><br>
-YouCanEditHtmlSourceMore=<br>ተጨማሪ የኤችቲኤምኤል ምሳሌዎች ወይም ተለዋዋጭ ኮድ በ<a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentationb0e40dc607d</span8 >.<span class='notranslate'><br>
+YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=ክሎን ገጽ/መያዣ
 CloneSite=Clone ጣቢያ
 SiteAdded=ድህረ ገጽ ታክሏል።
@@ -110,7 +110,7 @@ ThisPageIsTranslationOf=ይህ ገጽ/ኮንቴይነር ትርጉም ነው።
 ThisPageHasTranslationPages=ይህ ገጽ/ኮንቴይነር ትርጉም አለው።
 NoWebSiteCreateOneFirst=እስካሁን ምንም ድር ጣቢያ አልተፈጠረም። መጀመሪያ አንድ ይፍጠሩ.
 GoTo=መሄድ
-DynamicPHPCodeContainsAForbiddenInstruction=የPHP መመሪያን የያዘ ተለዋዋጭ ፒኤችፒ ኮድ አክለዋል '<strong>%s<span class='notranslate'>b0a65d071f6fc9z በነባሪነት እንደ ተለዋዋጭ ይዘት የተከለከለ ነው (የተፈቀዱትን ትዕዛዞች ዝርዝር ለመጨመር የተደበቁ አማራጮችን WEBSITE_PHP_ALLOW_xxx ይመልከቱ)።
+DynamicPHPCodeContainsAForbiddenInstruction=You add dynamic PHP code that contains the PHP instruction '<strong>%s</strong>' that is forbidden by default as dynamic content (see hidden options WEBSITE_PHP_ALLOW_xxx to increase list of allowed commands).
 NotAllowedToAddDynamicContent=በድር ጣቢያዎች ውስጥ የPHP ተለዋዋጭ ይዘትን ለመጨመር ወይም ለማርትዕ ፍቃድ የለዎትም። ፍቃድ ይጠይቁ ወይም ኮድ ሳይሻሻል በ php መለያዎች ውስጥ ያስቀምጡ።
 ReplaceWebsiteContent=የድር ጣቢያ ይዘት ይፈልጉ ወይም ይተኩ
 DeleteAlsoJs=እንዲሁም ለዚህ ድህረ ገጽ የተለዩ ሁሉም የጃቫ ስክሪፕት ፋይሎች ይሰረዙ?
@@ -118,10 +118,9 @@ DeleteAlsoMedias=እንዲሁም ለዚህ ድህረ ገጽ የተለዩ ሁሉ�
 MyWebsitePages=የእኔ ድረ-ገጽ ገፆች
 SearchReplaceInto=ፍለጋ | ወደ ውስጥ ይተኩ
 ReplaceString=አዲስ ሕብረቁምፊ
-CSSContentTooltipHelp=እዚህ የሲኤስኤስ ይዘት ያስገቡ። ከማመልከቻው CSS ጋር ምንም አይነት ግጭት ለማስቀረት፣ ሁሉንም መግለጫዎች ከ.bodywebsite ክፍል ጋር አስቀድመው ማዘጋጀትዎን ያረጋግጡ። ለምሳሌ፡<br><br>#mycssselector, input.myclass:ማንዣበብ { ... } <br>መሆን አለበት<br>.bodywebsite #mycssselector, .bodywebsite input.myclass:ማንዣበብ { ... }b0342f</spanz>b0342f <span class='notranslate'><br>ማስታወሻ፡ ያለዚህ ቅድመ ቅጥያ ትልቅ ፋይል ካለህ የ .bodywebsite ቅድመ ቅጥያ በሁሉም ቦታ ላይ ለመጨመር 'lessc' ን መጠቀም ትችላለህ።
+CSSContentTooltipHelp=Enter here CSS content. To avoid any conflict with the CSS of the application, be sure to prepend all declaration with the .bodywebsite class. For example:<br><br>#mycssselector, input.myclass:hover { ... }<br>must be<br>.bodywebsite #mycssselector, .bodywebsite input.myclass:hover { ... }<br><br>Note: If you have a large file without this prefix, you can use 'lessc' to convert it to append the .bodywebsite prefix everywhere.
 LinkAndScriptsHereAreNotLoadedInEditor=ማስጠንቀቂያ፡ ይህ ይዘት የሚወጣው ጣቢያ ከአገልጋይ ሲደረስ ብቻ ነው። በአርትዖት ሁነታ ላይ ጥቅም ላይ አይውልም ስለዚህ የጃቫ ስክሪፕት ፋይሎችን በአርትዖት ሁነታ ላይ መጫን ከፈለጉ በቀላሉ 'script src=...' መለያዎን ወደ ገጹ ያክሉት።
 Dynamiccontent=ተለዋዋጭ ይዘት ያለው ገጽ ናሙና
-ImportSite=የድር ጣቢያ አብነት አስመጣ
 EditInLineOnOff=ሁነታ 'ኢንላይን አርትዕ' %s ነው
 ShowSubContainersOnOff=ተለዋዋጭ ይዘትን ለማስፈጸም ሁነታ %s ነው
 GlobalCSSorJS=ዓለም አቀፍ CSS/JS/የድር ጣቢያ ራስጌ ፋይል
@@ -158,9 +157,81 @@ Booking=ቦታ ማስያዝ
 Reservation=ቦታ ማስያዝ
 PagesViewedPreviousMonth=የታዩ ገጾች (ያለፈው ወር)
 PagesViewedTotal=የታዩ ገጾች (ጠቅላላ)
-Visibility=ታይነት
 Everyone=ሁሉም ሰው
 AssignedContacts=የተመደቡ እውቂያዎች
 WebsiteTypeLabel=የድረ-ገጽ አይነት
-WebsiteTypeDolibarrWebsite=ድር ጣቢያ (ሲኤምኤስ ዶሊባርር)
-WebsiteTypeDolibarrPortal=ቤተኛ የዶሊባርር ፖርታል
+WebsiteTypeDolibarrWebsite=Web site (Module WebSites CMS)
+WebsiteTypeDolibarrPortal=Native and ready to use web portal (Module Web Portal)
+WebPortalURL=Web portal URL
+NewWebsiteAccount=New accounts for websites
+ModuleWebPortalName=Web portal
+ModuleWebPortalDesc=A ready to use native web portal for customers, suppliers, partners or members
+WebPortalDescription=Public web portal module for membership and partnership
+WebPortalSetup=WebPortal setup
+WebPortalCSS=Web portal CSS
+WebPortalSetupPage=WebPortal setup page
+WEBPORTAL_TITLE=Brand name on header of public page
+UserAccountForWebPortalAreInThirdPartyTabHelp=Users accounts for WebPortal can be set on each third party card in Website accounts tab
+WebPortalAccessHidden=Hidden
+WebPortalAccessVisible=Visible
+WebPortalAccessEdit=Editable
+WEBPORTAL_MEMBER_CARD_ACCESS=Enable access to the membership record
+WebPortalMemberCardAccessHelp=Enable access to the membership record (Hidden / Visible or Editable)
+WEBPORTAL_PARTNERSHIP_CARD_ACCESS=Enable access to the partnership record
+WebPortalPartnerShipCardAccessHelp=Enable access to the partnership record (Hidden / Visible or Editable)
+WEBPORTAL_PROPAL_LIST_ACCESS=Enable access to the proposals
+WEBPORTAL_ORDER_LIST_ACCESS=Enable access to the orders
+WEBPORTAL_INVOICE_LIST_ACCESS=Enable access to the invoices
+WEBPORTAL_USER_LOGGED=Select an anonymous user
+WebPortalUserLoggedHelp=This user is used to update cards
+WebPortalHomeTitle=Welcome
+WebPortalHomeDesc=Welcome to the public interface
+WebPortalPropalListMenu=Proposals
+WebPortalPropalListTitle=List of proposals
+WebPortalPropalListDesc=List of proposals
+WebPortalPropalListNothing=Proposals not found
+WebPortalOrderListMenu=Orders
+WebPortalOrderListTitle=List of orders
+WebPortalOrderListDesc=List of orders
+WebPortalOrderListNothing=Orders not found
+WebPortalInvoiceListMenu=Invoices
+WebPortalInvoiceListTitle=List of invoices
+WebPortalInvoiceListDesc=List of invoices
+WebPortalInvoiceListNothing=Invoices not found
+WebPortalMemberCardMenu=Member
+WebPortalMemberCardTitle=Member card
+WebPortalMemberCardDesc=Member card
+WebPortalPartnershipCardMenu=Partnership
+WebPortalPartnershipCardTitle=Partnership card
+WebPortalPartnershipCardDesc=Partnership card
+loginWebportalUserName=User name / email
+loginWebportalPassword=Password
+LoginNow=Login now
+RemoveSearchFilters=Remove search filters
+WEBPORTAL_PRIMARY_COLOR=Primary color
+WEBPORTAL_SECONDARY_COLOR=Secondary color
+WEBPORTAL_LOGIN_LOGO_URL=Login logo image URL
+WEBPORTAL_MENU_LOGO_URL=Menu logo image URL
+WEBPORTAL_MENU_LOGO_URLTooltip=Leave empty to use login logo
+WEBPORTAL_LOGIN_BACKGROUND=Background login image URL
+WEBPORTAL_BANNER_BACKGROUND=Background for banner
+WEBPORTAL_BANNER_BACKGROUND_IS_DARK=Use dark theme for banner
+AriaPrevPage=Previous page
+AriaNextPage=Next page
+AriaPageX=Page %s
+WebPortalError404=Page not found
+WebPortalErrorPageNotExist=Page not exist
+WebPortalErrorFetchThirdPartyAccountFromLogin=Error when loading third-party account (login : %s)
+WebPortalErrorAuthentication=Authentication error
+WebPortalErrorFetchLoggedThirdPartyAccount=Error when loading third-party account (login : %s)
+WebPortalErrorFetchLoggedUser=Error when loading user (Id : %s)
+WebPortalErrorFetchLoggedThirdParty=Error when loading third-party (Id : %s)
+WebPortalErrorFetchLoggedMember=Error when loading member (Id : %s)
+WebPortalErrorFetchLoggedPartnership=Error when loading partnership (Third-party Id : %s, Member Id : %s)
+ExportIntoGIT=Export into sources
+WebPortalMember=Membership
+WebPortalOrder=Sale Order
+WebPortalPartnership=Partnership
+WebPortalPropal=Proposal
+WebPortalGroupMenuAdmin=Administration
+WebPortalGroupMenuTechnical=System

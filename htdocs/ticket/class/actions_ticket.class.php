@@ -216,6 +216,9 @@ class ActionsTicket extends CommonHookActions
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$uselocalbrowser = true;
 			$ckeditorenabledforticket = getDolGlobalString('FCKEDITOR_ENABLE_TICKET');
+			if (!$ckeditorenabledforticket) {
+				$msg = dol_string_nohtmltag($msg, 2);
+			}
 			$doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser, $ckeditorenabledforticket, ROWS_9, '95%');
 			$doleditor->Create();
 		} else {
@@ -467,7 +470,11 @@ class ActionsTicket extends CommonHookActions
 		// Exclude status which requires specific method
 		$exclude_status = array(Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED);
 		// Exclude actual status
-		$exclude_status = array_merge($exclude_status, array(intval($object->fk_statut)));
+		$exclude_status = array_merge($exclude_status, array((int) $object->status));
+		// Exclude also the Waiting/Pending/Suspended status
+		if (!getDolGlobalString('TICKET_INCLUDE_SUSPENDED_STATUS')) {
+			$exclude_status[] = $object::STATUS_WAITING;
+		}
 
 		// Sort results to be similar to status object list
 		//sort($exclude_status);

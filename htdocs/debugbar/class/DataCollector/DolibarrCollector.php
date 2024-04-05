@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,6 @@
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
-use DebugBar\DebugBarException;
 
 /**
  * DolibarrCollector class
@@ -64,6 +64,7 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 		$info  = $langs->trans('Host').': <strong>'.$conf->db->host.'</strong><br>';
 		$info .= $langs->trans('Port').': <strong>'.$conf->db->port.'</strong><br>';
 		$info .= $langs->trans('Name').': <strong>'.$conf->db->name.'</strong><br>';
+		// @phan-suppress-next-line PhanTypeSuspiciousStringExpression
 		$info .= $langs->trans('User').': <strong>'.$conf->db->user.'</strong><br>';
 		$info .= $langs->trans('Type').': <strong>'.$conf->db->type.'</strong><br>';
 		$info .= $langs->trans('Prefix').': <strong>'.$conf->db->prefix.'</strong><br>';

@@ -62,7 +62,6 @@ ChooseFileToImport=Carregueu el fitxer i feu clic a la icona %s per a selecciona
 SourceFileFormat=Format de l'arxiu origen
 FieldsInSourceFile=Camps en el fitxer origen
 FieldsInTargetDatabase=Camps destinació a la base de dades Dolibarr (*=obligatori)
-Field=Camp
 NoFields=Cap camp
 MoveField=Moure camp columna número %s
 ExampleOfImportFile=Exemple_de_fitxer_importacio
@@ -145,3 +144,4 @@ SelectImportFieldsSource = Trieu els camps del fitxer d'origen que voleu importa
 MandatoryTargetFieldsNotMapped=Alguns camps de destinació obligatoris no estan assignats
 AllTargetMandatoryFieldsAreMapped=S'assignen tots els camps de destinació que necessiten un valor obligatori
 ResultOfSimulationNoError=Resultat de la simulació: Sense error
+NumberOfLinesLimited=Nombre de línies limitat

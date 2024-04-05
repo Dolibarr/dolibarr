@@ -27,7 +27,7 @@ if (!defined('NOBROWSERNOTIF')) {
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 // DDOS protection
@@ -108,7 +108,7 @@ if (!isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) {
 	$conf->global->THEME_ELDY_TOPMENU_BACK1 = $colorbackhmenu1;
 }
 $colorbackhmenu1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TOPMENU_BACK1') ? $colorbackhmenu1 : $conf->global->THEME_ELDY_TOPMENU_BACK1) : (empty($user->conf->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $user->conf->THEME_ELDY_TOPMENU_BACK1);
-$colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
+$colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
 
 print "<!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->\n";
 
@@ -204,7 +204,7 @@ if ($disablenofollow) {
 } ?>
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user"></span>
-<input type="text" id="username" maxlength="255" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
+<input type="text" id="username" maxlength="255" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" autocapitalize="off" autocomplete="on" spellcheck="false" autocorrect="off" />
 </div>
 </div>
 
@@ -374,7 +374,7 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 	 */
 
 	print '<input type="hidden" name="beforeoauthloginredirect" id="beforeoauthloginredirect" value="">';
-	print '<a class="alogin" href="#" onclick="jQuery(\'#beforeoauthloginredirect\').val(1); $(this).closest(\'form\').submit();">';
+	print '<a class="alogin" href="#" onclick="jQuery(\'#beforeoauthloginredirect\').val(\'google\'); $(this).closest(\'form\').submit();">';
 	print '<div class="loginbuttonexternal">';
 	print img_picto('', 'google', 'class="pictofixedwidth"');
 	print $langs->trans("LoginWith", "Google");
@@ -402,9 +402,9 @@ if (!empty($_SESSION['dol_loginmesg'])) {
 	$message = $_SESSION['dol_loginmesg'];	// By default this is an error message
 	if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
 		$message = str_replace('<!-- warning -->', '', $message);
-		print '<div class="warning">';
+		print '<div class="warning" role="alert">';
 	} else {
-		print '<div class="error">';
+		print '<div class="error" role="alert">';
 	}
 	print dol_escape_htmltag($message);
 	print '</div>'; ?>
@@ -424,6 +424,7 @@ if (getDolGlobalString('MAIN_EASTER_EGG_COMMITSTRIP')) {
 		if (LIBXML_VERSION < 20900) {
 			// Avoid load of external entities (security problem).
 			// Required only if LIBXML_VERSION < 20900
+			// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 			libxml_disable_entity_loader(true);
 		}
 

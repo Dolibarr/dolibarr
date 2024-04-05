@@ -89,15 +89,17 @@ class DocumentController extends Controller
 		$action = GETPOST('action', 'aZ09');
 		$original_file = GETPOST('file', 'alphanohtml'); // Do not use urldecode here ($_GET are already decoded by PHP).
 		$modulepart = GETPOST('modulepart', 'alpha');
-		$entity = GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity;
-		$socId = (int) GETPOST('soc_id', 'int');
+		$entity = GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity;
+		$socId = GETPOSTINT('soc_id');
 
 		// Security check
 		if (empty($modulepart)) {
 			httponly_accessforbidden('Bad link. Bad value for parameter modulepart', 400);
+			exit;
 		}
 		if (empty($original_file)) {
 			httponly_accessforbidden('Bad link. Missing identification to find file (original_file)', 400);
+			exit;
 		}
 
 		// get original file
@@ -108,10 +110,10 @@ class DocumentController extends Controller
 		if (preg_match('/\.(html|htm)$/i', $original_file)) {
 			$attachment = false;
 		}
-		if (isset($_GET["attachment"])) {
+		if (GETPOSTISSET("attachment")) {
 			$attachment = GETPOST("attachment", 'alpha') ? true : false;
 		}
-		if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) {
+		if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 			$attachment = false;
 		}
 
@@ -206,7 +208,7 @@ class DocumentController extends Controller
 		$object = new stdClass();
 		$reshook = $hookmanager->executeHooks('downloadDocument', $parameters, $object, $action); // Note that $action and $object may have been
 		if ($reshook < 0) {
-			$errors = $hookmanager->error . (is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '') . join(', ', $hookmanager->errors) : '');
+			$errors = $hookmanager->error . (is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '') . implode(', ', $hookmanager->errors) : '');
 			dol_syslog("document.php - Errors when executing the hook 'downloadDocument' : " . $errors);
 			print "ErrorDownloadDocumentHooks: " . $errors;
 			exit;
@@ -240,13 +242,13 @@ class DocumentController extends Controller
 	 * Action method is called before html output
 	 * can be used to manage security and change context
 	 *
-	 * @return  void
+	 * @return  int     Return integer < 0 on error, > 0 on success
 	 */
 	public function action()
 	{
 		$context = Context::getInstance();
 		if (!$context->controllerInstance->checkAccess()) {
-			return;
+			return -1;
 		}
 
 		//$context = Context::getInstance();
@@ -255,6 +257,8 @@ class DocumentController extends Controller
 		//$context->doNotDisplayHeaderBar=1;// hide default header
 
 		$this->init();
+
+		return 1;
 	}
 
 	/**

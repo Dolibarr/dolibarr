@@ -8,7 +8,6 @@ NewSupplierInvoice = Uusi ostolasku
 History=Historia
 ListOfSuppliers=Lista myyjistä
 ShowSupplier=Näytä Toimittaja
-OrderDate=Tilauspäivä
 BuyingPriceMin=Alhaisin ostohinta
 BuyingPriceMinShort=Alhaisin ostohinta
 TotalBuyingPriceMinShort=Alatuotteiden ostohinta yhteensä

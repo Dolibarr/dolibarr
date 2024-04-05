@@ -38,15 +38,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $langs->loadLangs(array('companies', 'orders'));
 
 // Get parameters
-$id = GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('socid', 'int');
+$id = GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (!$sortorder) {
 	$sortorder = "ASC";
 }
@@ -82,7 +82,7 @@ if ($action == 'addcontact' && $user->hasRight('societe', 'creer')) {
 	$result = $object->fetch($id);
 
 	if ($result > 0 && $id > 0) {
-		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
@@ -101,14 +101,14 @@ if ($action == 'addcontact' && $user->hasRight('societe', 'creer')) {
 } elseif ($action == 'swapstatut' && $user->hasRight('societe', 'creer')) {
 	// bascule du statut d'un contact
 	if ($object->fetch($id)) {
-		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
+		$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 	} else {
 		dol_print_error($db);
 	}
 } elseif ($action == 'deletecontact' && $user->hasRight('societe', 'creer')) {
 	// Efface un contact
 	$object->fetch($id);
-	$result = $object->delete_contact(GETPOST("lineid", 'int'));
+	$result = $object->delete_contact(GETPOSTINT("lineid"));
 
 	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -205,7 +205,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 
 		// additional list with adherents of company
-		if (isModEnabled('adherent') && $user->hasRight('adherent', 'lire')) {
+		if (isModEnabled('member') && $user->hasRight('adherent', 'lire')) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 

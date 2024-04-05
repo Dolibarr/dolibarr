@@ -36,12 +36,12 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 if (!isset($argv[1]) || !$argv[1]) {
 	print "Usage: ".$script_file." now\n";
-	exit(-1);
+	exit(1);
 }
 
 $now = $argv[1];
@@ -68,13 +68,13 @@ dol_syslog($script_file." launched with arg ".join(',', $argv));
 /*
  * if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE')) {
  * print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
- * exit(-1);
+ * exit(1);
  * }
  */
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-onyl mode\n";
-	exit(-1);
+	exit(1);
 }
 
 
@@ -87,7 +87,7 @@ if ($resql) {
 	$i = 0;
 
 	$ldap = new Ldap();
-	$result = $ldap->connect_bind();
+	$result = $ldap->connectBind();
 
 	if ($result > 0) {
 		while ($i < $num) {

@@ -1,5 +1,4 @@
 BlockedLog=Muuttamat lokit
-Field=Kenttä
 BlockedLogDesc=Tämä moduuli seuraa joitakin tapahtumia muuttumattomaan Loki-muotoon (jota ei voi muokata kerran tallennettuna) lohkoketjuksi reaaliajassa. Tämä moduuli tarjoaa yhteensopivuuden joidenkin maiden lakien (kuten Ranskan Finance 2016 - Norme NF525) lakien kanssa.
 Fingerprints=Arkistoidut tapahtumat ja sormenjälkeä
 FingerprintsDesc=Tämä on työkalu, jolla voit selata tai purkaa muuttumattomia lokeja. Muuttamattomia lokeja luodaan ja ja ne arkistoidaan paikallisesti omaan taulukkoon reaaliajassa, kun tallennat liiketoimintatapahtuman. Tämän työkalun avulla voit viedä tämän arkiston ja tallentaa sen ulkoiseen tukeen (jotkut maat, kuten Ranska, pyytävät sinua tekemään sen joka vuosi). Huomaa, että ei ole ominaisuutta tämän Loki ja poistamiseen, jokainen muutos yritettiin tehdä suoraan tähän Loki (esimerkiksi hakkerin toimesta) ilmoitetaan kelpaamattomalla sormenjäljellä. Jos sinun on todella tyhjennettävä tämä taulukko, koska käytit sovellustasi esittely-/testaustarkoituksiin ja haluat puhdistaa tietosi tuotannon aloittamiseksi, voit pyytää jälleenmyyjää tai integraattoria nollaa tietokanta (kaikki tietosi poistetaan).
@@ -13,18 +12,15 @@ OkCheckFingerprintValidity=Arkistoitu Loki-tietue on kelvollinen. Tämän rivin 
 OkCheckFingerprintValidityButChainIsKo=Arkistoitu Loki näyttää kelvolliselta verrattuna edelliseen, mutta ketju oli vioittunut aiemmin.
 AddedByAuthority=Tallennettu etävaltuutukseen
 NotAddedByAuthorityYet=Ei vielä tallennettu etävaltuutukseen
-ShowDetails=Näytä tallennetut tiedot
 BlockedLogBillDownload=Asiakaslaskujen lataus
 BlockedLogBillPreview=Asiakaslaskun esikatselu
 BlockedlogInfoDialog=Loki Tiedot
 ListOfTrackedEvents=Luettelo seuratuista tapahtumista
 Fingerprint=Sormenjälki
 DownloadLogCSV=Vie arkistoidut lokit (CSV)
-logDOC_PREVIEW=Vahvistetun asiakirjan esikatselu tulostamista tai lataamista varten
-logDOC_DOWNLOAD=Vahvistetun asiakirjan lataaminen tulostamista tai lähettämistä varten
 DataOfArchivedEvent=Täydelliset tiedot arkistoidusta tapahtumasta
 ImpossibleToReloadObject=Alkuperäistä objektia (tyyppi %s, tunnus %s) ei ole linkitetty (katso "Täydelliset tiedot" -sarake saadaksesi muuttumattomia tallennettuja tietoja)
-BlockedLogAreRequiredByYourCountryLegislation=Maasi lainsäädäntö saattaa edellyttää muuttumattomien lokien moduulia. Tämän moduulin poistaminen käytöstä voi tehdä tulevista tapahtumista mitättömiä ja laillisten ohjelmistojen käytön kannalta, koska niitä ei voi vahvistaa <span class='notranslate'>vero<. /span> tarkastus.
+BlockedLogAreRequiredByYourCountryLegislation=Unalterable Logs module may be required by the legislation of your country. Disabling this module may render any future transactions invalid with respect to the law and the use of legal software as they can not be validated by a tax audit.
 BlockedLogActivatedBecauseRequiredByYourCountryLegislation=Muuttamattomat lokit -moduuli otettiin käyttöön maasi lainsäädännön vuoksi. Tämän moduulin poistaminen käytöstä voi tehdä tulevista tapahtumista mitättömiä ja laillisten ohjelmistojen käytön kannalta, koska niitä ei voi vahvistaa vero. span> tarkastus.
 BlockedLogDisableNotAllowedForCountry=Luettelo maista, joissa tämän moduulin käyttö on pakollista (että moduulia ei voida poistaa käytöstä virheellisesti, jos maasi on tässä luettelossa, moduulin poistaminen käytöstä ei ole mahdollista muokkaamatta ensin tätä luetteloa. Huomaa myös, että tämän moduulin käyttöönotto/poistaminen käytöstä seurata muuttumatonta Loki).
 OnlyNonValid=Ei kelvollinen

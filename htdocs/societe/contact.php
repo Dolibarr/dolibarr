@@ -10,6 +10,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,14 +44,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
 
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	$langs->load("categories");
 }
 if (isModEnabled('incoterm')) {
@@ -60,7 +61,8 @@ if (isModEnabled('notification')) {
 	$langs->load("mails");
 }
 
-$mesg = ''; $error = 0; $errors = array();
+$error = 0;
+$errors = array();
 
 
 // Get parameters
@@ -68,7 +70,7 @@ $action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
 $cancel 	= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm 	= GETPOST('confirm');
-$socid 		= GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int');
+$socid 		= GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id');
 
 if ($user->socid) {
 	$socid = $user->socid;
@@ -133,6 +135,29 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 }
 
+if ($action == 'confirm_delete' && $user->hasRight('societe', 'contact', 'delete')) {
+	$id = GETPOST('id', 'int');
+	if (!empty($id) && $socid > 0) {
+		$db->begin();
+
+		$sql = "DELETE t, et FROM ".MAIN_DB_PREFIX."socpeople AS t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields AS et ON t.rowid = et.fk_object";
+		$sql .= " WHERE t.fk_soc = ".((int) $socid);
+		$sql .= " AND t.rowid = ".((int) $id);
+		$sql .= " AND ((t.fk_user_creat = ".((int) $user->id)." AND t.priv = 1) OR t.priv = 0)";
+
+		$result = $db->query($sql);
+		if (!$result) {
+			setEventMessages($db->lasterror(), null, 'errors');
+			$db->rollback();
+		} else {
+			$db->commit();
+			setEventMessages('ContactDeleted', null, 'mesgs');
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$socid);
+			exit();
+		}
+	}
+}
 
 /*
  *  View
@@ -151,7 +176,7 @@ if ($socid > 0 && empty($object->id)) {
 }
 
 $title = $langs->trans("ThirdParty");
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name." - ".$langs->trans('ContactsAddresses');
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -183,6 +208,18 @@ if ($action != 'presend') {
 	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 		$result = show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1);
 	}
+}
+if ($action == 'delete') {
+	$formconfirm = $form->formconfirm(
+		$_SERVER["PHP_SELF"].'?id='.GETPOST('id').'&socid='.$object->id,
+		$langs->trans('Delete'),
+		$langs->trans('ConfirmDeleteContact', GETPOST('id', 'alpha')),
+		'confirm_delete',
+		'',
+		0,
+		1
+	);
+	print $formconfirm;
 }
 
 // End of page

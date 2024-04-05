@@ -45,6 +45,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -67,9 +68,9 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 $langs->loadLangs(array('companies', 'other', 'mails', 'ticket'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$msg_id = GETPOST('msg_id', 'int');
-$socid = GETPOST('socid', 'int');
+$id = GETPOSTINT('id');
+$msg_id = GETPOSTINT('msg_id');
+$socid = GETPOSTINT('socid');
 $suffix = "";
 
 $action = GETPOST('action', 'aZ09');
@@ -111,7 +112,7 @@ if ($reshook < 0) {
 // Add file in email form
 if (empty($reshook)) {
 	if ($cancel) {
-		$backtopage = DOL_URL_ROOT.'/public/ticket/index.php';
+		$backtopage = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', DOL_URL_ROOT.'/public/ticket/');
 
 		header("Location: ".$backtopage);
 		exit;
@@ -335,6 +336,9 @@ if (empty($reshook)) {
 			$object->ref = $object->getDefaultRef();
 
 			$object->context['disableticketemail'] = 1; // Disable emails sent by ticket trigger when creation is done from this page, emails are already sent later
+			$object->context['contactid'] = GETPOSTINT('contactid'); // Disable emails sent by ticket trigger when creation is done from this page, emails are already sent later
+
+			$object->context['createdfrompublicinterface'] = 1; // To make a difference between a ticket created from the public interface and a ticket directly created from dolibarr
 
 			if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
 				$error++;
@@ -392,7 +396,7 @@ if (empty($reshook)) {
 						$message  = (getDolGlobalString('TICKET_MESSAGE_MAIL_NEW') !== '' ? getDolGlobalString('TICKET_MESSAGE_MAIL_NEW') : $langs->transnoentities('TicketNewEmailBody')).'<br><br>';
 						$message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket').'<br>';
 
-						$url_public_ticket = (getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') !== '' ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
+						$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.$object->track_id;
 						$infos_new_ticket = $langs->transnoentities('TicketNewEmailBodyInfosTrackId', '<a href="'.$url_public_ticket.'" rel="nofollow noopener">'.$object->track_id.'</a>').'<br>';
 						$infos_new_ticket .= $langs->transnoentities('TicketNewEmailBodyInfosTrackUrl').'<br><br>';
 
@@ -505,7 +509,8 @@ if (!getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 }
 
 $arrayofjs = array();
-$arrayofcss = array('/opensurvey/css/style.css', '/ticket/css/styles.css.php');
+
+$arrayofcss = array('/opensurvey/css/style.css', getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/ticket/').'css/styles.css.php');
 
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 

@@ -62,8 +62,8 @@ class Warehouses extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->stock->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->warehouse->fetch($id);
@@ -72,7 +72,7 @@ class Warehouses extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id, 'entrepot')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->warehouse);
@@ -100,8 +100,8 @@ class Warehouses extends DolibarrApi
 
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->stock->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$sql = "SELECT t.rowid";
@@ -163,8 +163,8 @@ class Warehouses extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->stock->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'creer')) {
+			throw new RestException(403);
 		}
 
 		// Check mandatory fields
@@ -173,11 +173,11 @@ class Warehouses extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->warehouse->context['caller'] = $request_data['caller'];
+				$this->warehouse->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->warehouse->$field = $value;
+			$this->warehouse->$field = $this->_checkValForAPI($field, $value, $this->warehouse);
 		}
 		if ($this->warehouse->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating warehouse", array_merge(array($this->warehouse->error), $this->warehouse->errors));
@@ -188,14 +188,14 @@ class Warehouses extends DolibarrApi
 	/**
 	 * Update warehouse
 	 *
-	 * @param int   $id             Id of warehouse to update
-	 * @param array $request_data   Datas
-	 * @return int
+	 * @param 	int   	$id             	Id of warehouse to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->stock->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->warehouse->fetch($id);
@@ -204,7 +204,7 @@ class Warehouses extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -213,18 +213,18 @@ class Warehouses extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->warehouse->context['caller'] = $request_data['caller'];
+				$this->warehouse->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->warehouse->$field = $value;
+			$this->warehouse->$field = $this->_checkValForAPI($field, $value, $this->warehouse);
 		}
 
 		if ($this->warehouse->update($id, DolibarrApiAccess::$user)) {
 			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->warehouse->error);
 		}
-
-		return false;
 	}
 
 	/**
@@ -235,8 +235,8 @@ class Warehouses extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->stock->supprimer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'supprimer')) {
+			throw new RestException(403);
 		}
 		$result = $this->warehouse->fetch($id);
 		if (!$result) {
@@ -244,7 +244,7 @@ class Warehouses extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->warehouse->delete(DolibarrApiAccess::$user)) {

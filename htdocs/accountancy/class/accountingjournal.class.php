@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017-2022  OpenDSI     <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,11 +76,6 @@ class AccountingJournal extends CommonObject
 	 * @var int is active or not
 	 */
 	public $active;
-
-	/**
-	 * @var array array of lines
-	 */
-	public $lines;
 
 	/**
 	 * @var array 		Accounting account cached
@@ -159,75 +155,6 @@ class AccountingJournal extends CommonObject
 	}
 
 	/**
-	 * Load object in memory from the database
-	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int $limit offset limit
-	 * @param int $offset offset limit
-	 * @param array $filter filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int Return integer <0 if KO, >0 if OK
-	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
-	{
-		$sql = "SELECT rowid, code, label, nature, active";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.code' || $key == 't.label' || $key == 't.nature') {
-					$sqlwhere[] = $key.'\''.$this->db->escape($value).'\'';
-				} elseif ($key == 't.rowid' || $key == 't.active') {
-					$sqlwhere[] = $key.'='.$value;
-				}
-			}
-		}
-		$sql .= ' WHERE 1 = 1';
-		$sql .= " AND entity IN (".getEntity('accountancy').")";
-		if (count($sqlwhere) > 0) {
-			$sql .= " AND ".implode(" ".$filtermode." ", $sqlwhere);
-		}
-
-		if (!empty($sortfield)) {
-			$sql .= $this->db->order($sortfield, $sortorder);
-		}
-		if (!empty($limit)) {
-			$sql .= $this->db->plimit($limit + 1, $offset);
-		}
-		$this->lines = array();
-
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-
-			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new self($this->db);
-
-				$line->id = $obj->rowid;
-				$line->code = $obj->code;
-				$line->label = $obj->label;
-				$line->nature = $obj->nature;
-				$line->active = $obj->active;
-
-				$this->lines[] = $line;
-			}
-
-			$this->db->free($resql);
-
-			return $num;
-		} else {
-			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
-
-			return -1;
-		}
-	}
-
-	/**
 	 * Return clickable name (with picto eventually)
 	 *
 	 * @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
@@ -239,7 +166,7 @@ class AccountingJournal extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0)
 	{
-		global $langs, $conf, $user, $hookmanager;
+		global $langs, $conf, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -285,7 +212,7 @@ class AccountingJournal extends CommonObject
 			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$langs->transnoentities($this->label).($nourl ? '</span>' : '');
 		}
 		if ($withlabel == 2 && !empty($this->nature)) {
-			$key = $langs->trans("AccountingJournalType".strtoupper($this->nature));
+			$key = $langs->trans("AccountingJournalType".$this->nature);
 			$transferlabel = ($this->nature && $key != "AccountingJournalType".strtoupper($langs->trans($this->nature)) ? $key : $this->label);
 			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$transferlabel.($nourl ? '</span>' : '');
 		}
@@ -301,7 +228,7 @@ class AccountingJournal extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('accountingjournaldao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -407,12 +334,12 @@ class AccountingJournal extends CommonObject
 				case 1: // Various Journal
 					$data = $this->getAssetData($user, $type, $date_start, $date_end, $in_bookkeeping);
 					break;
-				//              case 2: // Sells Journal
-				//              case 3: // Purchases Journal
-				//              case 4: // Bank Journal
-				//              case 5: // Expense reports Journal
-				//              case 8: // Inventory Journal
-				//              case 9: // hasnew Journal
+					//              case 2: // Sells Journal
+					//              case 3: // Purchases Journal
+					//              case 4: // Bank Journal
+					//              case 5: // Expense reports Journal
+					//              case 8: // Inventory Journal
+					//              case 9: // hasnew Journal
 			}
 		}
 

@@ -10,6 +10,8 @@
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -522,13 +524,13 @@ class FormOther
 		if (!empty($user->socid)) {
 			$sql_usr .= " AND u.fk_soc = ".((int) $user->socid);
 		}
-		if (!empty($conf->global->USER_HIDE_NONEMPLOYEE_IN_COMBOBOX)) {
+		if (getDolGlobalString('USER_HIDE_NONEMPLOYEE_IN_COMBOBOX')) {
 			$sql_usr .= " AND u.employee <> 0";
 		}
-		if (!empty($conf->global->USER_HIDE_EXTERNAL_IN_COMBOBOX)) {
+		if (getDolGlobalString('USER_HIDE_EXTERNAL_IN_COMBOBOX')) {
 			$sql_usr .= " AND u.fk_soc IS NULL";
 		}
-		if (!empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) {
+		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX')) {
 			$sql_usr .= " AND u.statut <> 0";
 		}
 
@@ -577,7 +579,7 @@ class FormOther
 				$userstatic->lastname = $obj_usr->lastname;
 				$userstatic->firstname = $obj_usr->firstname;
 				$userstatic->photo = $obj_usr->photo;
-				$userstatic->statut = $obj_usr->status;
+				$userstatic->status = $obj_usr->status;
 				$userstatic->entity = $obj_usr->entity;
 				$userstatic->admin = $obj_usr->admin;
 
@@ -662,7 +664,7 @@ class FormOther
 	 *  @param	string	$morecss				More css
 	 *  @return	void
 	 */
-	public function selectProjectTasks($selectedtask = '', $projectid = 0, $htmlname = 'task_parent', $modeproject = 0, $modetask = 0, $mode = 0, $useempty = 0, $disablechildoftaskid = 0, $filteronprojstatus = '', $morecss = '')
+	public function selectProjectTasks($selectedtask = 0, $projectid = 0, $htmlname = 'task_parent', $modeproject = 0, $modetask = 0, $mode = 0, $useempty = 0, $disablechildoftaskid = 0, $filteronprojstatus = '', $morecss = '')
 	{
 		global $user, $langs;
 
@@ -834,7 +836,7 @@ class FormOther
 	 *  @deprecated Use instead selectColor
 	 *  @see selectColor()
 	 */
-	public function select_color($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '')
+	public function select_color($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = [])
 	{
 		// phpcs:enable
 		print $this->selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
@@ -854,7 +856,7 @@ class FormOther
 	 *  @return	string
 	 *  @see showColor()
 	 */
-	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = array(), $morecss = '', $setpropertyonselect = '', $default = '')
+	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = [], $morecss = '', $setpropertyonselect = '', $default = '')
 	{
 		// Deprecation warning
 		if ($form_name) {
@@ -989,7 +991,7 @@ class FormOther
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Creae an image for color
+	 *	Create an image for color
 	 *
 	 *	@param	string	$color		Color of image
 	 *	@param	string	$module 	Name of module
@@ -998,7 +1000,7 @@ class FormOther
 	 *	@param	int		$y      	Hauteur de l'image en pixels
 	 *	@return	void
 	 */
-	public function CreateColorIcon($color, $module, $name, $x = '12', $y = '12')
+	public function CreateColorIcon($color, $module, $name, $x = 12, $y = 12)
 	{
 		// phpcs:enable
 		global $conf;
@@ -1042,13 +1044,13 @@ class FormOther
 		global $langs;
 
 		$week = array(
-			0=>$langs->trans("Day0"),
-			1=>$langs->trans("Day1"),
-			2=>$langs->trans("Day2"),
-			3=>$langs->trans("Day3"),
-			4=>$langs->trans("Day4"),
-			5=>$langs->trans("Day5"),
-			6=>$langs->trans("Day6")
+			0 => $langs->trans("Day0"),
+			1 => $langs->trans("Day1"),
+			2 => $langs->trans("Day2"),
+			3 => $langs->trans("Day3"),
+			4 => $langs->trans("Day4"),
+			5 => $langs->trans("Day5"),
+			6 => $langs->trans("Day6")
 		);
 
 		$select_week = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
@@ -1163,7 +1165,7 @@ class FormOther
 	{
 		$out = '';
 
-		$currentyear = date("Y") + $offset;
+		$currentyear = idate("Y") + $offset;
 		$max_year = $currentyear + $max_year;
 		$min_year = $currentyear - $min_year;
 		if (empty($selected) && empty($useempty)) {
@@ -1213,7 +1215,7 @@ class FormOther
 	 *  Class 'Form' must be known.
 	 *
 	 * 	@param	   User         $user		 Object User
-	 * 	@param	   String       $areacode    Code of area for pages - 0 = Home page ... See getListOfPagesForBoxes()
+	 * 	@param	   string       $areacode    Code of area for pages - 0 = Home page ... See getListOfPagesForBoxes()
 	 *	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
 	 */
 	public static function getBoxesArea($user, $areacode)
@@ -1251,7 +1253,7 @@ class FormOther
 				if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone') {
 					$label = $label.' <span class="fas fa-chart-bar"></span>';
 				}
-				$arrayboxtoactivatelabel[$box->id] = array('label'=>$label, 'data-html'=>img_picto('', $box->boximg, 'class="pictofixedwidth"').$langs->trans($label)); // We keep only boxes not shown for user, to show into combo list
+				$arrayboxtoactivatelabel[$box->id] = array('label' => $label, 'data-html' => img_picto('', $box->boximg, 'class="pictofixedwidth"').$langs->trans($label)); // We keep only boxes not shown for user, to show into combo list
 			}
 			foreach ($boxidactivatedforuser as $boxid) {
 				if (empty($boxorder)) {
@@ -1270,7 +1272,7 @@ class FormOther
 			$selectboxlist .= '<input type="hidden" name="userid" value="'.$user->id.'">';
 			$selectboxlist .= '<input type="hidden" name="areacode" value="'.$areacode.'">';
 			$selectboxlist .= '<input type="hidden" name="boxorder" value="'.$boxorder.'">';
-			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone hideonprint', 0, 'hidden selected', 0, 0);
+			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth300 hideonprint', 0, 'hidden selected', 0, 0);
 			if (empty($conf->use_javascript_ajax)) {
 				$selectboxlist .= ' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
 			}
@@ -1432,7 +1434,7 @@ class FormOther
 			$boxlistb .= "<!-- End box right container -->\n";
 		}
 
-		return array('selectboxlist'=>count($boxactivated) ? $selectboxlist : '', 'boxactivated'=>$boxactivated, 'boxlista'=>$boxlista, 'boxlistb'=>$boxlistb);
+		return array('selectboxlist' => count($boxactivated) ? $selectboxlist : '', 'boxactivated' => $boxactivated, 'boxlista' => $boxlista, 'boxlistb' => $boxlistb);
 	}
 
 

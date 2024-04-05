@@ -10,6 +10,7 @@
  * Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,7 @@ if (!function_exists('is_countable')) {
 	 * function is_countable (to remove when php version supported will be >= 7.3)
 	 * @param mixed $c data to check if countable
 	 * @return bool
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function is_countable($c)
 	{
@@ -192,9 +194,9 @@ if (session_id() && !empty($_SESSION["dol_entity"])) {
 } elseif (!empty($_ENV["dol_entity"])) {
 	// Entity inside a CLI script
 	$conf->entity = $_ENV["dol_entity"];
-} elseif (GETPOSTISSET("loginfunction") && (GETPOST("entity", 'int') || GETPOST("switchentity", 'int'))) {
+} elseif (GETPOSTISSET("loginfunction") && (GETPOSTINT("entity") || GETPOSTINT("switchentity"))) {
 	// Just after a login page
-	$conf->entity = (GETPOSTISSET("entity") ? GETPOST("entity", 'int') : GETPOST("switchentity", 'int'));
+	$conf->entity = (GETPOSTISSET("entity") ? GETPOSTINT("entity") : GETPOSTINT("switchentity"));
 } elseif (defined('DOLENTITY') && is_numeric(constant('DOLENTITY'))) {
 	// For public page with MultiCompany module
 	$conf->entity = constant('DOLENTITY');

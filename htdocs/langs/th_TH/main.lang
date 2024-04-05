@@ -9,7 +9,7 @@ DIRECTION=ltr
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
+# freeserif is for Tamil or Ethiopian
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
@@ -172,7 +172,7 @@ Close=ใกล้
 CloseAs=ตั้งสถานะเป็น
 CloseBox=ลบวิดเจ็ตออกจากแดชบอร์ดของคุณ
 Confirm=ยืนยัน
-ConfirmSendCardByMail=คุณต้องการส่งเนื้อหาของการ์ดนี้ทางไปรษณีย์ไปที่ <b>%s<span class='notranslate'></b>< /ช่วง>?
+ConfirmSendCardByMail=Do you really want to send the content of this card by mail to <b>%s</b>?
 Delete=ลบ
 Remove=เอาออก
 Resiliate=ยุติ
@@ -420,6 +420,8 @@ TotalTTCShort=รวม (รวมภาษี).
 TotalHT=รวม (ไม่รวมภาษี)
 TotalHTforthispage=ยอดรวม (ไม่รวมภาษี) สำหรับหน้านี้
 Totalforthispage=รวมสำหรับหน้านี้
+GrandTotal=Grand total
+TotalforAllPages=Total for all pages
 TotalTTC=รวม (รวมภาษี).
 TotalTTCToYourCredit=รวม (inc. ภาษี) เพื่อเครดิตของคุณ
 TotalVAT=รวมภาษี
@@ -647,6 +649,7 @@ ReportName=ชื่อรายงาน
 ReportPeriod=ระยะเวลาที่รายงาน
 ReportDescription=ลักษณะ
 Report=รายงาน
+Reports=รายงาน
 Keyword=คำสำคัญ
 Origin=ต้นทาง
 Legend=ตำนาน
@@ -963,6 +966,7 @@ AutomaticallyCalculated=คำนวณโดยอัตโนมัติ
 TitleSetToDraft=กลับไปที่ร่าง
 ConfirmSetToDraft=คุณแน่ใจหรือไม่ว่าต้องการกลับไปสู่สถานะฉบับร่าง
 ImportId=รหัสนำเข้า
+Event=เหตุการณ์
 Events=เหตุการณ์ที่เกิดขึ้น
 EMailTemplates=เทมเพลตอีเมล
 FileNotShared=ไฟล์ไม่ได้แชร์กับสาธารณะภายนอก
@@ -1180,7 +1184,6 @@ ConfirmAffectUserQuestion=คุณแน่ใจหรือไม่ว่า
 ConfirmSetSupervisorQuestion=คุณแน่ใจหรือไม่ว่าต้องการตั้งค่าหัวหน้างานเป็น %s ระเบียนที่เลือก
 ConfirmUpdatePriceQuestion=คุณแน่ใจหรือไม่ว่าต้องการอัปเดตราคาของระเบียนที่เลือก %s
 CategTypeNotFound=ไม่พบประเภทแท็กสำหรับประเภทของบันทึก
-Rate=ประเมิน
 SupervisorNotFound=ไม่พบผู้ดูแล
 CopiedToClipboard=คัดลอกไปยังคลิปบอร์ดแล้ว
 InformationOnLinkToContract=จำนวนเงินนี้เป็นเพียงผลรวมของบรรทัดทั้งหมดของสัญญา ไม่มีการพิจารณาเรื่องเวลา
@@ -1213,6 +1216,7 @@ CanceledHidden=ยกเลิกการซ่อนแล้ว
 CanceledShown=ยกเลิกการแสดง
 Terminate=ยุติ
 Terminated=สิ้นสุด
+Position=ตำแหน่ง
 AddLineOnPosition=เพิ่มบรรทัดบนตำแหน่ง (ตอนท้ายถ้าว่าง)
 ConfirmAllocateCommercial=กำหนดการยืนยันตัวแทนฝ่ายขาย
 ConfirmAllocateCommercialQuestion=คุณแน่ใจหรือไม่ว่าต้องการกำหนด %s ระเบียนที่เลือก
@@ -1230,6 +1234,7 @@ ExternalUser=ผู้ใช้ภายนอก
 NoSpecificContactAddress=ไม่มีการติดต่อหรือที่อยู่เฉพาะ
 NoSpecificContactAddressBis=แท็บนี้มีไว้เพื่อบังคับผู้ติดต่อหรือที่อยู่เฉพาะสำหรับออบเจ็กต์ปัจจุบัน ใช้เฉพาะในกรณีที่คุณต้องการกำหนดผู้ติดต่อหรือที่อยู่เฉพาะหนึ่งรายการหรือหลายรายการสำหรับออบเจ็กต์ เมื่อข้อมูลของบุคคลที่สามไม่เพียงพอหรือไม่ถูกต้อง
 HideOnVCard=ซ่อน %s
+ShowOnVCard=Show %s
 AddToContacts=เพิ่มที่อยู่ในรายชื่อติดต่อของฉัน
 LastAccess=การเข้าถึงครั้งสุดท้าย
 UploadAnImageToSeeAPhotoHere=อัปโหลดรูปภาพจากแท็บ %s เพื่อดูรูปภาพที่นี่
@@ -1259,4 +1264,7 @@ AmountSalary=จำนวนเงินเดือน
 InvoiceSubtype=ประเภทย่อยของใบแจ้งหนี้
 ConfirmMassReverse=การยืนยันการย้อนกลับจำนวนมาก
 ConfirmMassReverseQuestion=คุณแน่ใจหรือไม่ว่าต้องการย้อนกลับระเบียนที่เลือก %s
-
+ElementType=Element type
+ElementId=Element Id
+Encrypted=Encrypted
+Settings=Settings

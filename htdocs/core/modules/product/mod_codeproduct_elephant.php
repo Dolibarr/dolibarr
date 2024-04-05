@@ -3,6 +3,8 @@
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,42 +35,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
  */
 class mod_codeproduct_elephant extends ModeleProductCode
 {
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Elephant';
-
-	/**
-	 * @var string model name
-	 */
+	// variables inherited from ModelProductCode class
 	public $name = 'Elephant';
+	public $version = 'dolibarr';
 
-	public $code_modifiable; // Code modifiable
-
-	public $code_modifiable_invalide; // Code modifiable si il est invalid
-
-	public $code_modifiable_null; // Code modifiables si il est null
-
-	public $code_null; // Code facultatif
+	// variables not inherited
 
 	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
+	 *  @var string			String de recherche
 	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
+	public $searchcode;
 
 	/**
-	 * @var int Automatic numbering
+	 *  @var int			Nombre de chiffres du compteur
 	 */
-	public $code_auto;
-
-	public $searchcode; // String de recherche
-
-	public $numbitcounter; // Nombre de chiffres du compteur
-
-	public $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
+	public $numbitcounter;
 
 
 	/**
@@ -137,12 +118,12 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate	$langs		Object langs
-	 * @param	Product		$objproduct		Object product
-	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-	 * @return	string					Return string example
+	 * @param	Translate		$langs		Object langs
+	 * @param	Product|string	$objproduct	Object product
+	 * @param	int				$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objproduct = null, $type = -1)
+	public function getExample($langs, $objproduct = '', $type = -1)
 	{
 		$exampleproduct = $exampleservice = '';
 
@@ -181,7 +162,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 *
 	 * @param	Product		$objproduct     Object product
 	 * @param  	int		    $type       Produit ou service (0:product, 1:service)
-	 * @return 	string      			Value if OK, '' if module not configured, <0 if KO
+	 * @return 	string|-1      			Value if OK, '' if module not configured, -1 if KO
 	 */
 	public function getNextValue($objproduct = null, $type = -1)
 	{
@@ -275,7 +256,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$code = strtoupper(trim($code));
 
 		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
-			$result = 0;
+			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		} else {

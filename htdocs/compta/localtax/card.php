@@ -32,19 +32,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'banks', 'bills'));
 
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 $action = GETPOST("action", "aZ09");
 $cancel = GETPOST('cancel', 'aZ09');
 
-$refund = GETPOST("refund", "int");
+$refund = GETPOSTINT("refund");
 if (empty($refund)) {
 	$refund = 0;
 }
 
-$lttype = GETPOST('localTaxType', 'int');
+$lttype = GETPOSTINT('localTaxType');
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -87,7 +87,7 @@ if ($action == 'add' && !$cancel) {
 	} else {
 		$db->rollback();
 		setEventMessages($object->error, $object->errors, 'errors');
-		$_GET["action"] = "create";
+		$action = "create";
 	}
 }
 
@@ -164,12 +164,12 @@ if ($action == 'create') {
 	// Date of payment
 	print "<tr>";
 	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-	print $form->selectDate($datep, "datep", '', '', '', 'add', 1, 1);
+	print $form->selectDate($datep, "datep", 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// End date of period
 	print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
-	print $form->selectDate($datev, "datev", '', '', '', 'add', 1, 1);
+	print $form->selectDate($datev, "datev", 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// Label
@@ -178,7 +178,7 @@ if ($action == 'create') {
 	// Amount
 	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
 
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		// Type payment
 		print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
 		print $form->select_types_paiements(GETPOST("paiementtype"), "paiementtype", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusx', 1);
@@ -186,9 +186,9 @@ if ($action == 'create') {
 		print "</tr>";
 
 		// Bank account
-		print '<tr><td class="fieldrequired" id="label_fk_account">'.$langs->trans("Account").'</td><td>';
+		print '<tr><td class="fieldrequired" id="label_fk_account">'.$langs->trans("BankAccount").'</td><td>';
 		print img_picto('', 'bank_account', 'pictofixedwidth');
-		$form->select_comptes(GETPOST("accountid", "int"), "accountid", 0, "courant=1", 2, '', 0, 'maxwidth500 widthcentpercentminusx'); // Affiche liste des comptes courant
+		$form->select_comptes(GETPOSTINT("accountid"), "accountid", 0, "courant=1", 2, '', 0, 'maxwidth500 widthcentpercentminusx'); // Affiche liste des comptes courant
 		print '</td></tr>';
 
 		// Number
@@ -215,6 +215,7 @@ if ($action == 'create') {
 // View mode
 if ($id) {
 	$h = 0;
+	$head = array();
 	$head[$h][0] = DOL_URL_ROOT.'/compta/localtax/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Card');
 	$head[$h][2] = 'card';
@@ -247,7 +248,7 @@ if ($id) {
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
 
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		if ($object->fk_account > 0) {
 			$bankline = new AccountLine($db);
 			$bankline->fetch($object->fk_bank);

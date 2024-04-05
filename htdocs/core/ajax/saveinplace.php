@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011-2012 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,7 +127,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 		$newelement = $element;
 	}
 
-	$_POST['action'] = 'update'; // Hack so restrictarea will test permissions on write too
+	$_POST['action'] = 'update'; // Keep this. It is a hack so restrictarea will test permissions on write too
 
 	$feature = $newelement;
 	$feature2 = $subelement;
@@ -169,7 +170,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				$return['error'] = $langs->trans('ErrorBadValue');
 			}
 		} elseif ($type == 'datepicker') {
-			$timestamp = GETPOST('timestamp', 'int', 2);
+			$timestamp = GETPOSTINT('timestamp', 2);
 			$format = 'date';
 			$newvalue = ($timestamp / 1000);
 		} elseif ($type == 'select') {

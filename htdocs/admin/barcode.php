@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +71,7 @@ if ($action == 'setbarcodethirdpartyon') {
 
 if ($action == 'setcoder') {
 	$coder = GETPOST('coder', 'alpha');
-	$code_id = GETPOST('code_id', 'int');
+	$code_id = GETPOSTINT('code_id');
 	$sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
 	$sqlp .= " SET coder = '".$db->escape($coder)."'";
 	$sqlp .= " WHERE rowid = ".((int) $code_id);
@@ -189,7 +190,7 @@ foreach ($dirbarcode as $reldir) {
 		}
 	}
 }
-
+'@phan-var-force array<string,ModeleBarCode> $barcodelist';
 
 
 // Select barcode numbering module
@@ -224,6 +225,7 @@ if (isModEnabled('product')) {
 					}
 
 					$modBarCode = new $file();
+					'@phan-var-force ModeleNumRefBarCode $modBarCode';
 
 					print '<tr class="oddeven">';
 					print '<td>'.(isset($modBarCode->name) ? $modBarCode->name : $modBarCode->nom)."</td><td>\n";

@@ -51,14 +51,14 @@ $result = restrictedArea($user, 'produit|service');
 //checks if a product has been ordered
 
 $action = GETPOST('action', 'aZ09');
-$type = GETPOST('type', 'int');
+$type = GETPOSTINT('type');
 $mode = GETPOST('mode', 'alpha');
 
 $date = '';
 $dateendofday = '';
 if (GETPOSTISSET('dateday') && GETPOSTISSET('datemonth') && GETPOSTISSET('dateyear')) {
-	$date = dol_mktime(0, 0, 0, GETPOST('datemonth', 'int'), GETPOST('dateday', 'int'), GETPOST('dateyear', 'int'));
-	$dateendofday = dol_mktime(23, 59, 59, GETPOST('datemonth', 'int'), GETPOST('dateday', 'int'), GETPOST('dateyear', 'int'));
+	$date = dol_mktime(0, 0, 0, GETPOSTINT('datemonth'), GETPOSTINT('dateday'), GETPOSTINT('dateyear'));
+	$dateendofday = dol_mktime(23, 59, 59, GETPOSTINT('datemonth'), GETPOSTINT('dateday'), GETPOSTINT('dateyear'));
 }
 
 $search_ref = GETPOST('search_ref', 'alphanohtml');
@@ -66,15 +66,15 @@ $search_nom = GETPOST('search_nom', 'alphanohtml');
 
 $now = dol_now();
 
-$productid = GETPOST('productid', 'int');
+$productid = GETPOSTINT('productid');
 if (GETPOSTISARRAY('search_fk_warehouse')) {
 	$search_fk_warehouse = GETPOST('search_fk_warehouse', 'array:int');
 } else {
-	$search_fk_warehouse = array(GETPOST('search_fk_warehouse', 'int'));
+	$search_fk_warehouse = array(GETPOSTINT('search_fk_warehouse'));
 }
 // For backward compatibility
-if (GETPOST('fk_warehouse', 'int')) {
-	$search_fk_warehouse = array(GETPOST('fk_warehouse', 'int'));
+if (GETPOSTINT('fk_warehouse')) {
+	$search_fk_warehouse = array(GETPOSTINT('fk_warehouse'));
 }
 // Clean value -1
 foreach ($search_fk_warehouse as $key => $val) {
@@ -85,11 +85,11 @@ foreach ($search_fk_warehouse as $key => $val) {
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $offset = $limit * $page;
 if (!$sortfield) {
 	$sortfield = 'p.ref';
@@ -155,7 +155,7 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 		$sql .= " AND ps.fk_product = ".((int) $productid);
 	}
 	if (! empty($search_fk_warehouse)) {
-		$sql .= " AND ps.fk_entrepot IN (".$db->sanitize(join(",", $search_fk_warehouse)).")";
+		$sql .= " AND ps.fk_entrepot IN (".$db->sanitize(implode(",", $search_fk_warehouse)).")";
 	}
 	if ($search_ref) {
 		$sql .= natural_search("p.ref", $search_ref);
@@ -217,7 +217,7 @@ if ($date && $dateIsValid) {
 		$sql .= " AND sm.fk_product = ".((int) $productid);
 	}
 	if (!empty($search_fk_warehouse)) {
-		$sql .= " AND sm.fk_entrepot IN (".$db->sanitize(join(",", $search_fk_warehouse)).")";
+		$sql .= " AND sm.fk_entrepot IN (".$db->sanitize(implode(",", $search_fk_warehouse)).")";
 	}
 	if ($search_ref) {
 		$sql .= " AND p.ref LIKE '%".$db->escape($search_ref)."%' ";
@@ -288,7 +288,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if (!empty($search_fk_warehouse)) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot IN ('.$db->sanitize(join(",", $search_fk_warehouse)).")";
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot IN ('.$db->sanitize(implode(",", $search_fk_warehouse)).")";
 }
 // Add fields from hooks
 $parameters = array();
@@ -429,14 +429,14 @@ if (!empty($search_fk_warehouse)) {
 if ($productid > 0) {
 	$param .= '&productid='.(int) $productid;
 }
-if (GETPOST('dateday', 'int') > 0) {
-	$param .= '&dateday='.GETPOST('dateday', 'int');
+if (GETPOSTINT('dateday') > 0) {
+	$param .= '&dateday='.GETPOSTINT('dateday');
 }
-if (GETPOST('datemonth', 'int') > 0) {
-	$param .= '&datemonth='.GETPOST('datemonth', 'int');
+if (GETPOSTINT('datemonth') > 0) {
+	$param .= '&datemonth='.GETPOSTINT('datemonth');
 }
-if (GETPOST('dateyear', 'int') > 0) {
-	$param .= '&dateyear='.GETPOST('dateyear', 'int');
+if (GETPOSTINT('dateyear') > 0) {
+	$param .= '&dateyear='.GETPOSTINT('dateyear');
 }
 
 // TODO Move this into the title line ?

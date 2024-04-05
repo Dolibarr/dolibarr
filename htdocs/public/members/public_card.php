@@ -40,7 +40,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -53,14 +53,14 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Security check
-if (!isModEnabled('adherent')) {
+if (!isModEnabled('member')) {
 	httponly_accessforbidden('Module Membership not enabled');
 }
 
 
 $langs->loadLangs(array("main", "members", "companies", "other"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 

@@ -68,7 +68,7 @@ class Dolistore
 
 		$langtmp    = explode('_', $langs->defaultlang);
 		$lang       = $langtmp[0];
-		$lang_array = array('en'=>1, 'fr'=>2, 'es'=>3, 'it'=>4, 'de'=>5); // Into table ps_lang of Prestashop - 1
+		$lang_array = array('en' => 1, 'fr' => 2, 'es' => 3, 'it' => 4, 'de' => 5); // Into table ps_lang of Prestashop - 1
 		if (!in_array($lang, array_keys($lang_array))) {
 			$lang = 'en';
 		}
@@ -270,7 +270,7 @@ class Dolistore
 
 			// add image or default ?
 			if ($product->id_default_image != '') {
-				$image_url = DOL_URL_ROOT.'/admin/dolistore/ajax/image.php?id_product='.urlencode(((int) $product->id)).'&id_image='.urlencode(((int) $product->id_default_image));
+				$image_url = DOL_URL_ROOT.'/admin/dolistore/ajax/image.php?id_product='.urlencode((string) (((int) $product->id))).'&id_image='.urlencode((string) (((int) $product->id_default_image)));
 				$images = '<a href="'.$image_url.'" class="documentpreview" target="_blank" rel="noopener noreferrer" mime="image/png" title="'.dol_escape_htmltag($product->name->language[$this->lang - 1].', '.$langs->trans('Version').' '.$product->module_version).'">';
 				$images .= '<img src="'.$image_url.'&quality=home_default" style="max-height:250px;max-width: 210px;" alt="" /></a>';
 			} else {

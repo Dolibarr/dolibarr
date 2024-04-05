@@ -19,7 +19,6 @@
  */
 
 use Luracast\Restler\RestException;
-use Luracast\Restler\Format\UploadFormat;
 
 require_once DOL_DOCUMENT_ROOT.'/main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
@@ -63,7 +62,7 @@ class Documents extends DolibarrApi
 	 * @url GET /download
 	 *
 	 * @throws	RestException	400		Bad value for parameter modulepart or original_file
-	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		File not found
 	 */
 	public function index($modulepart, $original_file = '')
@@ -97,10 +96,10 @@ class Documents extends DolibarrApi
 		$original_file = $check_access['original_file'];
 
 		if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		if (!$accessallowed) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$filename = basename($original_file);
@@ -132,8 +131,7 @@ class Documents extends DolibarrApi
 	 * @url PUT /builddoc
 	 *
 	 * @throws	RestException	400		Bad value for parameter modulepart or original_file
-	 * @throws	RestException	401		Access denied
-	 * @throws	RestException	403		Generation not available for this modulepart
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Invoice, Order, Proposal, Contract or Shipment not found
 	 * @throws	RestException	500		Error generating document
 	 * @throws	RestException	501		File not found
@@ -175,10 +173,10 @@ class Documents extends DolibarrApi
 		$original_file              = $check_access['original_file'];
 
 		if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		if (!$accessallowed) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		// --- Generates the document
@@ -300,8 +298,7 @@ class Documents extends DolibarrApi
 	 * @url GET /
 	 *
 	 * @throws	RestException	400		Bad value for parameter modulepart, id or ref
-	 * @throws	RestException	401		Access denied
-	 * @throws	RestException	403		Generation not available for this modulepart
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Thirdparty, User, Member, Order, Invoice or Proposal not found
 	 * @throws	RestException	500		Error while fetching object
 	 * @throws	RestException	503		Error when retrieve ecm list
@@ -326,7 +323,7 @@ class Documents extends DolibarrApi
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 			if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
-				throw new RestException(401);
+				throw new RestException(403);
 			}
 
 			$object = new Societe($this->db);
@@ -340,8 +337,8 @@ class Documents extends DolibarrApi
 			require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 			// Can get doc if has permission to read all user or if it is user itself
-			if (!DolibarrApiAccess::$user->rights->user->user->lire && DolibarrApiAccess::$user->id != $id) {
-				throw new RestException(401);
+			if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && DolibarrApiAccess::$user->id != $id) {
+				throw new RestException(403);
 			}
 
 			$object = new User($this->db);
@@ -354,8 +351,8 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'adherent' || $modulepart == 'member') {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->adherent->lire) {
-				throw new RestException(401);
+			if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
+				throw new RestException(403);
 			}
 
 			$object = new Adherent($this->db);
@@ -369,7 +366,7 @@ class Documents extends DolibarrApi
 			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
 			if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
-				throw new RestException(401);
+				throw new RestException(403);
 			}
 
 			$object = new Propal($this->db);
@@ -382,8 +379,8 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'supplier_proposal') {
 			require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->supplier_proposal->read) {
-				throw new RestException(401);
+			if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'read')) {
+				throw new RestException(403);
 			}
 
 			$object = new Propal($this->db);
@@ -397,7 +394,7 @@ class Documents extends DolibarrApi
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 			if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
-				throw new RestException(401);
+				throw new RestException(403);
 			}
 
 			$object = new Commande($this->db);
@@ -412,8 +409,8 @@ class Documents extends DolibarrApi
 
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
-			if (empty(DolibarrApiAccess::$user->rights->fournisseur->commande->lire) && empty(DolibarrApiAccess::$user->rights->supplier_order->lire)) {
-				throw new RestException(401);
+			if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'commande', 'lire') && !DolibarrApiAccess::$user->hasRight('supplier_order', 'lire')) {
+				throw new RestException(403);
 			}
 
 			$object = new CommandeFournisseur($this->db);
@@ -426,8 +423,8 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'shipment' || $modulepart == 'expedition') {
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->expedition->lire) {
-				throw new RestException(401);
+			if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
+				throw new RestException(403);
 			}
 
 			$object = new Expedition($this->db);
@@ -441,7 +438,7 @@ class Documents extends DolibarrApi
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 			if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
-				throw new RestException(401);
+				throw new RestException(403);
 			}
 
 			$object = new Facture($this->db);
@@ -456,8 +453,8 @@ class Documents extends DolibarrApi
 
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
-			if (empty(DolibarrApiAccess::$user->rights->fournisseur->facture->lire) && empty(DolibarrApiAccess::$user->rights->supplier_invoice->lire)) {
-				throw new RestException(401);
+			if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'facture', 'lire') && !DolibarrApiAccess::$user->hasRight('supplier_invoice', 'lire')) {
+				throw new RestException(403);
 			}
 
 			$object = new FactureFournisseur($this->db);
@@ -470,8 +467,8 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'produit' || $modulepart == 'product') {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->produit->lire) {
-				throw new RestException(401);
+			if (!DolibarrApiAccess::$user->hasRight('produit', 'lire')) {
+				throw new RestException(403);
 			}
 
 			$object = new Product($this->db);
@@ -486,8 +483,8 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->agenda->myactions->read && !DolibarrApiAccess::$user->rights->agenda->allactions->read) {
-				throw new RestException(401);
+			if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'read') && !DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read')) {
+				throw new RestException(403);
 			}
 
 			$object = new ActionComm($this->db);
@@ -500,8 +497,8 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'expensereport') {
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->expensereport->read && !DolibarrApiAccess::$user->rights->expensereport->read) {
-				throw new RestException(401);
+			if (!DolibarrApiAccess::$user->hasRight('expensereport', 'read') && !DolibarrApiAccess::$user->hasRight('expensereport', 'read')) {
+				throw new RestException(403);
 			}
 
 			$object = new ExpenseReport($this->db);
@@ -515,7 +512,7 @@ class Documents extends DolibarrApi
 			require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 
 			if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read') && !DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
-				throw new RestException(401);
+				throw new RestException(403);
 			}
 
 			$object = new KnowledgeRecord($this->db);
@@ -528,8 +525,8 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'categorie' || $modulepart == 'category') {
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->categorie->lire) {
-				throw new RestException(401);
+			if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
+				throw new RestException(403);
 			}
 
 			$object = new Categorie($this->db);
@@ -543,8 +540,8 @@ class Documents extends DolibarrApi
 			throw new RestException(500, 'Modulepart Ecm not implemented yet.');
 			// require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
-			// if (!DolibarrApiAccess::$user->rights->ecm->read) {
-			// 	throw new RestException(401);
+			// if (!DolibarrApiAccess::$user->hasRight('ecm', 'read')) {
+			// 	throw new RestException(403);
 			// }
 
 			// // $object = new EcmDirectory($this->db);
@@ -647,7 +644,7 @@ class Documents extends DolibarrApi
 	 * @url POST /upload
 	 *
 	 * @throws	RestException	400		Bad Request
-	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Object not found
 	 * @throws	RestException	500		Error on file operationw
 	 */
@@ -764,6 +761,7 @@ class Documents extends DolibarrApi
 
 			if (is_object($object)) {
 				if ($fetchbyid) {
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$result = $object->fetch($ref);
 				} else {
 					$result = $object->fetch('', $ref);
@@ -793,7 +791,7 @@ class Documents extends DolibarrApi
 				$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
 			} else {
 				if (!DolibarrApiAccess::$user->hasRight('ecm', 'upload')) {
-					throw new RestException(401, 'Missing permission to upload files in ECM module');
+					throw new RestException(403, 'Missing permission to upload files in ECM module');
 				}
 				$upload_dir = $conf->medias->multidir_output[$conf->entity];
 			}
@@ -816,14 +814,14 @@ class Documents extends DolibarrApi
 				$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
 			} else {
 				if (!DolibarrApiAccess::$user->hasRight('ecm', 'upload')) {
-					throw new RestException(401, 'Missing permission to upload files in ECM module');
+					throw new RestException(403, 'Missing permission to upload files in ECM module');
 				}
 				$upload_dir = $conf->medias->multidir_output[$conf->entity];
 			}
 
 			if (empty($upload_dir) || $upload_dir == '/') {
 				if (!empty($tmp['error'])) {
-					throw new RestException(401, 'Error returned by dol_check_secure_access_document: '.$tmp['error']);
+					throw new RestException(403, 'Error returned by dol_check_secure_access_document: '.$tmp['error']);
 				} else {
 					throw new RestException(400, 'This value of modulepart ('.$modulepart.') is not allowed with this value of subdir ('.$relativefile.')');
 				}
@@ -875,8 +873,8 @@ class Documents extends DolibarrApi
 		if (empty($disablevirusscan) && file_exists($src_file)) {
 			$checkvirusarray = dolCheckVirus($src_file, $dest_file);
 			if (count($checkvirusarray)) {
-				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.join(',', $checkvirusarray), LOG_WARNING);
-				throw new RestException(500, 'ErrorFileIsInfectedWithAVirus: '.join(',', $checkvirusarray));
+				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.implode(',', $checkvirusarray), LOG_WARNING);
+				throw new RestException(500, 'ErrorFileIsInfectedWithAVirus: '.implode(',', $checkvirusarray));
 			}
 		}
 
@@ -935,7 +933,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @throws	RestException	400  Bad value for parameter modulepart
 	 * @throws	RestException	400  Bad value for parameter original_file
-	 * @throws	RestException	401  Access denied
+	 * @throws	RestException	403  Access denied
 	 * @throws	RestException	404  File not found
 	 * @throws	RestException	500  Error on file operation
 	 */
@@ -970,10 +968,10 @@ class Documents extends DolibarrApi
 		$original_file = $check_access['original_file'];
 
 		if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		if (!$accessallowed) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$filename = basename($original_file);
@@ -993,7 +991,7 @@ class Documents extends DolibarrApi
 			);
 		}
 
-		throw new RestException(401);
+		throw new RestException(403);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName

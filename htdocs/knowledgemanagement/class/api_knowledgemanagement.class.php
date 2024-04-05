@@ -65,13 +65,13 @@ class KnowledgeManagement extends DolibarrApi
 	 *
 	 * @url	GET knowledgerecords/{id}
 	 *
-	 * @throws RestException 401 Not allowed
+	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
 	 */
 	public function get($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->knowledgerecord->fetch($id);
@@ -80,7 +80,7 @@ class KnowledgeManagement extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('knowledgerecord', $this->knowledgerecord->id, 'knowledgemanagement_knowledgerecord')) {
-			throw new RestException(401, 'Access to instance id='.$this->knowledgerecord->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access to instance id='.$this->knowledgerecord->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->knowledgerecord);
@@ -101,8 +101,8 @@ class KnowledgeManagement extends DolibarrApi
 	 */
 	public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$categories = new Categorie($this->db);
@@ -110,7 +110,7 @@ class KnowledgeManagement extends DolibarrApi
 		$result = $categories->getListForItem($id, 'knowledgemanagement', $sortfield, $sortorder, $limit, $page);
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve category list : '.join(',', array_merge(array($categories->error), $categories->errors)));
+			throw new RestException(503, 'Error when retrieve category list : '.implode(',', array_merge(array($categories->error), $categories->errors)));
 		}
 
 		return $result;
@@ -140,7 +140,7 @@ class KnowledgeManagement extends DolibarrApi
 		$tmpobject = new KnowledgeRecord($this->db);
 
 		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
@@ -149,7 +149,7 @@ class KnowledgeManagement extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if ($restrictonsocid && !DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
+		if ($restrictonsocid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -229,7 +229,7 @@ class KnowledgeManagement extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'write')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		// Check mandatory fields
@@ -238,7 +238,7 @@ class KnowledgeManagement extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->knowledgerecord->context['caller'] = $request_data['caller'];
+				$this->knowledgerecord->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -257,9 +257,9 @@ class KnowledgeManagement extends DolibarrApi
 	/**
 	 * Update knowledgerecord
 	 *
-	 * @param int   $id             Id of knowledgerecord to update
-	 * @param array $request_data   Datas
-	 * @return int
+	 * @param 	int   	$id             	Id of knowledgerecord to update
+	 * @param 	array 	$request_data  		Datas
+	 * @return 	Object						Updated object
 	 *
 	 * @throws RestException
 	 *
@@ -268,7 +268,7 @@ class KnowledgeManagement extends DolibarrApi
 	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'write')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$result = $this->knowledgerecord->fetch($id);
@@ -286,7 +286,7 @@ class KnowledgeManagement extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->knowledgerecord->context['caller'] = $request_data['caller'];
+				$this->knowledgerecord->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -316,7 +316,7 @@ class KnowledgeManagement extends DolibarrApi
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'delete')) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 		$result = $this->knowledgerecord->fetch($id);
 		if (!$result) {

@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -52,11 +52,11 @@ if ($mode == 'supplier' && !$user->hasRight('fournisseur', 'facture', 'lire')) {
 }
 
 $object_status = GETPOST('object_status', 'intcomma');
-$typent_id = GETPOST('typent_id', 'int');
-$categ_id = GETPOST('categ_id', 'categ_id');
+$typent_id = GETPOSTINT('typent_id');
+$categ_id = GETPOSTINT('categ_id');
 
-$userid = GETPOST('userid', 'int');
-$socid = GETPOST('socid', 'int');
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
 $custcats = GETPOST('custcats', 'array');
 // Security check
 if ($user->socid > 0) {
@@ -65,7 +65,7 @@ if ($user->socid > 0) {
 }
 
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
+$year = GETPOST('year') > 0 ? GETPOSTINT('year') : $nowyear;
 $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
@@ -73,7 +73,7 @@ $endyear = $year;
 /*
  * View
  */
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	$langs->load('categories');
 }
 $form = new Form($db);
@@ -263,7 +263,7 @@ if ($mode == 'supplier') {
 
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
-print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'byyear', '', -1);
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -298,7 +298,7 @@ if ($user->admin) {
 print '</td></tr>';
 
 // Category
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	if ($mode == 'customer') {
 		$cat_type = Categorie::TYPE_CUSTOMER;
 		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));

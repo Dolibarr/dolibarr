@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 
-$invoiceid = GETPOST('invoiceid', 'int');
+$invoiceid = GETPOSTINT('invoiceid');
 
 if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
@@ -171,6 +171,7 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString
 	function ValidateReduction()
 	{
 		console.log('ValidateReduction');
+		reductionTotal = jQuery('#reduction_total').val();
 
 		if (reductionTotal.length <= 0) {
 			console.error('Error no reduction');

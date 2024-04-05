@@ -133,7 +133,20 @@ class modProjet extends DolibarrModules
 			3=>array('file'=>'box_validated_projects.php', 'enabledbydefaulton'=>'Home'),	// task without timespent
 			4=>array('file'=>'box_funnel_of_prospection.php', 'enabledbydefaulton'=>'Home'),
 		);
-
+		// Cronjobs
+		$this->cronjobs[] = array(
+			'label' => 'WeeklyWorkingHoursReport',
+			'jobtype' => 'method',
+			'class' => 'projet/class/project.class.php',
+			'objectname' => 'Project',
+			'method' => 'createWeeklyReport',
+			'parameters' => '',
+			'comment' => 'Generates and sends a weekly report on time worked',
+			'frequency' => 1,
+			'unitfrequency' => 86400 * 7,
+			'status' => 0,
+			'test' => '$conf->projet->enabled',
+		);
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'projet';

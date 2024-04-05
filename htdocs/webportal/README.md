@@ -14,7 +14,7 @@ It provides an interface to read or modify its data. This is for example, the li
 If the Thirdparty module is enabled:
 * Read/modify Name, phone, email, addresses of thirdparty
 
-If the Patnership module is enabled:
+If the Partnership module is enabled:
 * Read properties (status, start date, end date) of its partnership.
 
 If the Proposal module is enabled:
@@ -41,4 +41,3 @@ Documentation
 -------------
 
 [Module Web Portal](https://wiki.dolibarr.org/index.php/Module_Web_Portal)
-

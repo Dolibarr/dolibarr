@@ -8,7 +8,6 @@ NewSupplierInvoice = Nov prejeti račun
 History=Zgodovina
 ListOfSuppliers=Seznam dobaviteljev
 ShowSupplier=Prikaži dobavitelja
-OrderDate=Datum naročila
 BuyingPriceMin=Najboljša nakupna cena
 BuyingPriceMinShort=Najboljša nakupna cena
 TotalBuyingPriceMinShort=Seštevek nabavnih cen pod-proizvodov

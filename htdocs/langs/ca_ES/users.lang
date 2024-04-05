@@ -133,4 +133,4 @@ HideAllPerms=Amaga totes les files de permís
 UserPublicPageDesc=Podeu habilitar una targeta virtual per a aquest usuari. Hi haurà disponible una URL amb el perfil d'usuari i un codi de barres per a permetre que qualsevol persona amb un telèfon intel·ligent pugui escanejar-lo i afegir el vostre contacte a la seva llibreta d'adreces.
 EnablePublicVirtualCard=Habilita la targeta de visita virtual de l'usuari
 UserEnabledDisabled=L'estat de l'usuari ha canviat: %s
-AlternativeEmailForOAuth2=Alternative Email for OAuth2 login
+AlternativeEmailForOAuth2=Correu electrònic alternatiu per a l'inici de sessió OAuth2

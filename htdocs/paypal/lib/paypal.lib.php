@@ -233,16 +233,16 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 		$paymentType = 'Sale';
 	}
 
-	$nvpstr = $nvpstr."&AMT=".urlencode($paymentAmount); // Total for all elements
+	$nvpstr = $nvpstr."&AMT=".urlencode((string) ($paymentAmount)); // Total for all elements
 
 	$nvpstr = $nvpstr."&".$paypalprefix."INVNUM=".urlencode($tag);
-	$nvpstr = $nvpstr."&".$paypalprefix."AMT=".urlencode($paymentAmount); // AMT deprecated by paypal -> PAYMENTREQUEST_n_AMT
-	$nvpstr = $nvpstr."&".$paypalprefix."ITEMAMT=".urlencode($paymentAmount); // AMT deprecated by paypal -> PAYMENTREQUEST_n_AMT
+	$nvpstr = $nvpstr."&".$paypalprefix."AMT=".urlencode((string) ($paymentAmount)); // AMT deprecated by paypal -> PAYMENTREQUEST_n_AMT
+	$nvpstr = $nvpstr."&".$paypalprefix."ITEMAMT=".urlencode((string) ($paymentAmount)); // AMT deprecated by paypal -> PAYMENTREQUEST_n_AMT
 	$nvpstr = $nvpstr."&".$paypalprefix."PAYMENTACTION=".urlencode($paymentType); // PAYMENTACTION deprecated by paypal -> PAYMENTREQUEST_n_PAYMENTACTION
 	$nvpstr = $nvpstr."&".$paypalprefix."CURRENCYCODE=".urlencode($currencyCodeType); // CURRENCYCODE deprecated by paypal -> PAYMENTREQUEST_n_CURRENCYCODE
 
 	$nvpstr = $nvpstr."&".$paypalprefix."L_PAYMENTREQUEST_0_QTY0=1";
-	$nvpstr = $nvpstr."&".$paypalprefix."L_PAYMENTREQUEST_0_AMT0=".urlencode($paymentAmount);
+	$nvpstr = $nvpstr."&".$paypalprefix."L_PAYMENTREQUEST_0_AMT0=".urlencode((string) ($paymentAmount));
 	$nvpstr = $nvpstr."&".$paypalprefix."L_PAYMENTREQUEST_0_NAME0=".urlencode($desc);
 	$nvpstr = $nvpstr."&".$paypalprefix."L_PAYMENTREQUEST_0_NUMBER0=0";
 

@@ -2,6 +2,8 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,10 +144,10 @@ class FormListWebPortal
 		// set form list
 		$this->action = GETPOST('action', 'aZ09');
 		$this->object = $object;
-		$this->limit = GETPOSTISSET('limit') ? (int) GETPOST('limit', 'int') : -1;
+		$this->limit = GETPOSTISSET('limit') ? GETPOSTINT('limit') : -1;
 		$this->sortfield = GETPOST('sortfield', 'aZ09comma');
 		$this->sortorder = GETPOST('sortorder', 'aZ09comma');
-		$this->page = GETPOSTISSET('page') ? (int) GETPOST('page', 'int') : 1;
+		$this->page = GETPOSTISSET('page') ? GETPOSTINT('page') : 1;
 		$this->titleKey = $objectclass . 'ListTitle';
 
 		// Initialize array of search criteria
@@ -189,7 +191,7 @@ class FormListWebPortal
 				$arrayfields['t.' . $key] = array(
 					'label' => $val['label'],
 					'checked' => (($visible < 0) ? 0 : 1),
-					'enabled' => (abs($visible) != 3 && dol_eval($val['enabled'], 1)),
+					'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
 					'position' => $val['position'],
 					'help' => isset($val['help']) ? $val['help'] : ''
 				);
@@ -299,11 +301,11 @@ class FormListWebPortal
 
 		$sql .= " FROM " . $this->db->prefix() . $object->table_element . " as t";
 		// Add table from hooks
-		$parameters = array();
+		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		if ($object->ismultientitymanaged == 1) {
-			$sql .= " WHERE t.entity IN (" . getEntity($object->element, (GETPOST('search_current_entity', 'int') ? 0 : 1)) . ")";
+			$sql .= " WHERE t.entity IN (" . getEntity($object->element, (GETPOSTINT('search_current_entity') ? 0 : 1)) . ")";
 		} else {
 			$sql .= " WHERE 1 = 1";
 		}
@@ -342,7 +344,7 @@ class FormListWebPortal
 		//    $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 		//}
 		// Add where from hooks
-		$parameters = array();
+		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 
@@ -413,15 +415,15 @@ class FormListWebPortal
 					}
 				}
 			} elseif (preg_match('/(_dtstart|_dtend)$/', $key) && !empty($val)) {
-				$param .= '&search_' . $key . 'month=' . ((int) GETPOST('search_' . $key . 'month', 'int'));
-				$param .= '&search_' . $key . 'day=' . ((int) GETPOST('search_' . $key . 'day', 'int'));
-				$param .= '&search_' . $key . 'year=' . ((int) GETPOST('search_' . $key . 'year', 'int'));
+				$param .= '&search_' . $key . 'month=' . (GETPOSTINT('search_' . $key . 'month'));
+				$param .= '&search_' . $key . 'day=' . (GETPOSTINT('search_' . $key . 'day'));
+				$param .= '&search_' . $key . 'year=' . (GETPOSTINT('search_' . $key . 'year'));
 			} elseif ($search[$key] != '') {
 				$param .= '&search_' . $key . '=' . urlencode($search[$key]);
 			}
 		}
 		// Add $param from hooks
-		$parameters = array();
+		$parameters = array();  // @phan-suppress-current-line PhanPluginRedundantAssignment
 		$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$param .= $hookmanager->resPrint;
 
@@ -524,7 +526,7 @@ class FormListWebPortal
 			$tableKey = 't.' . $key;
 			if (!empty($arrayfields[$tableKey]['checked'])) {
 				$tableOrder = '';
-				if (key_exists($tableKey, $sortList)) {
+				if (array_key_exists($tableKey, $sortList)) {
 					$tableOrder = strtolower($sortList[$tableKey]);
 				}
 				$url_param = $url_file . '&sortfield=' . $tableKey . '&sortorder=' . ($tableOrder == 'desc' ? 'asc' : 'desc') . $param;
@@ -539,14 +541,14 @@ class FormListWebPortal
 		// Remain to pay
 		if (!empty($arrayfields['remain_to_pay']['checked'])) {
 			$html .= '<th scope="col">';
-			$html .= $langs->trans($arrayfields['remain_to_pay']['label']);;
+			$html .= $langs->trans($arrayfields['remain_to_pay']['label']);
 			$html .= '</th>';
 			$totalarray['nbfield']++;
 		}
 		// Download link
 		if (!empty($arrayfields['download_link']['checked'])) {
 			$html .= '<th scope="col">';
-			$html .= $langs->trans($arrayfields['download_link']['label']);;
+			$html .= $langs->trans($arrayfields['download_link']['label']);
 			$html .= '</th>';
 			$totalarray['nbfield']++;
 		}
@@ -580,12 +582,12 @@ class FormListWebPortal
 			if ($elementEn == 'invoice') {
 				// store company
 				$idCompany = (int) $obj->fk_soc;
-				if (!isset($companyStaticList[$obj->fk_soc])) {
+				if (!isset($this->companyStaticList[$obj->fk_soc])) {
 					$companyStatic = new Societe($this->db);
 					$companyStatic->fetch($idCompany);
-					$companyStaticList[$idCompany] = $companyStatic;
+					$this->companyStaticList[$idCompany] = $companyStatic;
 				}
-				$companyStatic = $companyStaticList[$obj->fk_soc];
+				$companyStatic = $this->companyStaticList[$obj->fk_soc];
 
 				// paid sum
 				$payment = $object->getSommePaiement();

@@ -53,18 +53,18 @@ $result = restrictedArea($user, 'produit|service');
 //checks if a product has been ordered
 
 $action = GETPOST('action', 'aZ09');
-$id_product = GETPOST('productid', 'int');
-$id_sw = GETPOST('id_sw', 'int');
-$id_tw = GETPOST('id_tw', 'int');
+$id_product = GETPOSTINT('productid');
+$id_sw = GETPOSTINT('id_sw');
+$id_tw = GETPOSTINT('id_tw');
 $batch = GETPOST('batch');
 $qty = GETPOST('qty');
 $idline = GETPOST('idline');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -308,7 +308,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 
 		$db->commit();
 		setEventMessages($langs->trans("StockMovementRecorded"), null, 'mesgs');
-		header("Location: ".DOL_URL_ROOT.'/product/stock/index.php'); // Redirect to avoid pb when using back
+		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php'); // Redirect to avoid pb when using back
 		exit;
 	} else {
 		$db->rollback();
@@ -519,7 +519,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
 		$param .= '&endatlinenb='.urlencode($endatlinenb);
 	}
 
-	$file = $conf->stock->dir_temp.'/'.GETPOST('urlfile'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$file = $conf->stock->dir_temp.'/'.GETPOST('urlfile');
 	$ret = dol_delete_file($file);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');

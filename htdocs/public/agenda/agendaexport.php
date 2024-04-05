@@ -18,7 +18,7 @@
 /**
  * 	\file       htdocs/public/agenda/agendaexport.php
  * 	\ingroup    agenda
- * 	\brief      Page to export agenda
+ * 	\brief      Page to export agenda into a vcal, ical or rss
  * 				http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=vcal&exportkey=cle
  * 				http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=ical&type=event&exportkey=cle
  * 				http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=rss&exportkey=cle
@@ -74,6 +74,7 @@ function llxFooterVierge()
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -101,17 +102,17 @@ if (GETPOST("type", 'alpha')) {
 }
 
 $filters = array();
-if (GETPOST("year", 'int')) {
-	$filters['year'] = GETPOST("year", 'int');
+if (GETPOSTINT("year")) {
+	$filters['year'] = GETPOSTINT("year");
 }
-if (GETPOST("id", 'int')) {
-	$filters['id'] = GETPOST("id", 'int');
+if (GETPOSTINT("id")) {
+	$filters['id'] = GETPOSTINT("id");
 }
-if (GETPOST("idfrom", 'int')) {
-	$filters['idfrom'] = GETPOST("idfrom", 'int');
+if (GETPOSTINT("idfrom")) {
+	$filters['idfrom'] = GETPOSTINT("idfrom");
 }
-if (GETPOST("idto", 'int')) {
-	$filters['idto'] = GETPOST("idto", 'int');
+if (GETPOSTINT("idto")) {
+	$filters['idto'] = GETPOSTINT("idto");
 }
 if (GETPOST("project", 'alpha')) {
 	$filters['project'] = GETPOST("project", 'alpha');
@@ -128,16 +129,16 @@ if (GETPOST("notactiontype", 'alpha')) {
 if (GETPOST("actiontype", 'alpha')) {
 	$filters['actiontype'] = GETPOST("actiontype", 'alpha');
 }
-if (GETPOST("notolderthan", 'int')) {
-	$filters['notolderthan'] = GETPOST("notolderthan", "int");
+if (GETPOSTINT("notolderthan")) {
+	$filters['notolderthan'] = GETPOSTINT("notolderthan");
 } else {
 	$filters['notolderthan'] = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY');
 }
 if (GETPOST("module", 'alpha')) {
 	$filters['module'] = GETPOST("module", 'alpha');
 }
-if (GETPOST("status", 'int')) {
-	$filters['status'] = GETPOST("status", 'int');
+if (GETPOSTINT("status")) {
+	$filters['status'] = GETPOSTINT("status");
 }
 
 // Security check
@@ -154,6 +155,8 @@ if (!isModEnabled('agenda')) {
 if (!getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
 	$user->getrights();
 
+	top_httphead();
+
 	llxHeaderVierge();
 	print '<div class="error">Module Agenda was not configured properly.</div>';
 	llxFooterVierge();
@@ -165,6 +168,8 @@ $hookmanager->initHooks(array('agendaexport'));
 
 $reshook = $hookmanager->executeHooks('doActions', $filters); // Note that $action and $object may have been modified by some
 if ($reshook < 0) {
+	top_httphead();
+
 	llxHeaderVierge();
 	if (!empty($hookmanager->errors) && is_array($hookmanager->errors)) {
 		print '<div class="error">'.implode('<br>', $hookmanager->errors).'</div>';
@@ -174,8 +179,10 @@ if ($reshook < 0) {
 	llxFooterVierge();
 } elseif (empty($reshook)) {
 	// Check exportkey
-	if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_GET["exportkey"]) {
+	if (!GETPOST("exportkey") || getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY') != GETPOST("exportkey")) {
 		$user->getrights();
+
+		top_httphead();
 
 		llxHeaderVierge();
 		print '<div class="error">Bad value for key.</div>';
@@ -205,6 +212,7 @@ foreach ($filters as $key => $value) {
 	}
 	if ($key == 'project') {
 		$filename .= '-project'.$value;
+		$shortfilename .= '-project'.$value;
 	}
 	if ($key == 'logina') {
 		$filename .= '-logina'.$value; // Author
@@ -220,6 +228,11 @@ foreach ($filters as $key => $value) {
 	}
 	if ($key == 'module') {
 		$filename .= '-module'.$value;
+		if ($value == 'project@eventorganization') {
+			$shortfilename .= '-project';
+		} elseif ($value == 'conforbooth@eventorganization') {
+			$shortfilename .= '-conforbooth';
+		}
 	}
 	if ($key == 'status') {
 		$filename .= '-status'.$value;
@@ -240,6 +253,9 @@ if ($format == 'rss') {
 }
 if ($shortfilename == 'dolibarrcalendar') {
 	$langs->load("errors");
+
+	top_httphead();
+
 	llxHeaderVierge();
 	print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX", 'format').'</div>';
 	llxFooterVierge();
@@ -253,20 +269,25 @@ if (getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE')) {
 	$cachedelay = getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE');
 }
 
-$exportholidays = GETPOST('includeholidays', 'int');
+$exportholidays = GETPOSTINT('includeholidays');
 
 // Build file
 if ($format == 'ical' || $format == 'vcal') {
+	// For export of conforbooth, we disable the filter 'notolderthan'
+	if (!empty($filters['project']) && !empty($filters['module']) && ($filters['module'] == 'project@eventorganization' || $filters['module'] == 'conforbooth@eventorganization')) {
+		$filters['notolderthan'] = null;
+	}
+
 	$result = $agenda->build_exportfile($format, $type, $cachedelay, $filename, $filters, $exportholidays);
 	if ($result >= 0) {
 		$attachment = true;
-		if (isset($_GET["attachment"])) {
-			$attachment = $_GET["attachment"];
+		if (GETPOSTISSET("attachment")) {
+			$attachment = GETPOST("attachment");
 		}
 		//$attachment = false;
 		$contenttype = 'text/calendar';
-		if (isset($_GET["contenttype"])) {
-			$contenttype = $_GET["contenttype"];
+		if (GETPOSTISSET("contenttype")) {
+			$contenttype = GETPOST("contenttype");
 		}
 		//$contenttype='text/plain';
 		$outputencoding = 'UTF-8';
@@ -284,6 +305,8 @@ if ($format == 'ical' || $format == 'vcal') {
 			header('Cache-Control: private, must-revalidate');
 		}
 
+		header("X-Frame-Options: SAMEORIGIN"); // By default, frames allowed only if on same domain (stop some XSS attacks)
+
 		// Clean parameters
 		$outputfile = $conf->agenda->dir_temp.'/'.$filename;
 		$result = readfile($outputfile);
@@ -294,6 +317,8 @@ if ($format == 'ical' || $format == 'vcal') {
 		//header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
 	} else {
+		top_httphead();
+
 		print 'Error '.$agenda->error;
 
 		exit;
@@ -304,13 +329,13 @@ if ($format == 'rss') {
 	$result = $agenda->build_exportfile($format, $type, $cachedelay, $filename, $filters, $exportholidays);
 	if ($result >= 0) {
 		$attachment = false;
-		if (isset($_GET["attachment"])) {
-			$attachment = $_GET["attachment"];
+		if (GETPOSTISSET("attachment")) {
+			$attachment = GETPOST("attachment");
 		}
 		//$attachment = false;
 		$contenttype = 'application/rss+xml';
-		if (isset($_GET["contenttype"])) {
-			$contenttype = $_GET["contenttype"];
+		if (GETPOSTISSET("contenttype")) {
+			$contenttype = GETPOST("contenttype");
 		}
 		//$contenttype='text/plain';
 		$outputencoding = 'UTF-8';
@@ -331,6 +356,8 @@ if ($format == 'rss') {
 			header('Cache-Control: private, must-revalidate');
 		}
 
+		header("X-Frame-Options: SAMEORIGIN"); // By default, frames allowed only if on same domain (stop some XSS attacks)
+
 		// Clean parameters
 		$outputfile = $conf->agenda->dir_temp.'/'.$filename;
 		$result = readfile($outputfile);
@@ -341,12 +368,16 @@ if ($format == 'rss') {
 		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
 	} else {
+		top_httphead();
+
 		print 'Error '.$agenda->error;
 
 		exit;
 	}
 }
 
+
+top_httphead();
 
 llxHeaderVierge();
 print '<div class="error">'.$agenda->error.'</div>';

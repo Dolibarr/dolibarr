@@ -83,7 +83,7 @@ dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
 $langs->loadLangs(array("mymodule@mymodule", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
@@ -136,8 +136,8 @@ if ($id > 0 || !empty($ref)) {
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
 if ($enablepermissioncheck) {
-	$permissiontoread = $user->rights->mymodule->myobject->read;
-	$permissiontoadd = $user->rights->mymodule->myobject->write;
+	$permissiontoread = $user->hasRight('mymodule', 'myobject', 'read');
+	$permissiontoadd = $user->hasRight('mymodule', 'myobject', 'write');
 } else {
 	$permissiontoread = 1;
 	$permissiontoadd = 1;

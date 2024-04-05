@@ -39,7 +39,7 @@
  */
 function check_user_password_googleoauth($usertotest, $passwordtotest, $entitytotest)
 {
-	global $_POST, $conf;
+	global $conf;
 
 	dol_syslog("functions_googleoauth::check_user_password_googleoauth usertotest=".$usertotest." GETPOST('actionlogin')=".GETPOST('actionlogin'));
 
@@ -53,7 +53,7 @@ function check_user_password_googleoauth($usertotest, $passwordtotest, $entityto
 
 			// We save data of form into a variable
 			$_SESSION['datafromloginform'] = array(
-				'entity'=>GETPOST('entity', 'int'),
+				'entity'=>GETPOSTINT('entity'),
 				'backtopage'=>GETPOST('backtopage'),
 				'tz'=>GETPOST('tz'),
 				'tz_string'=>GETPOST('tz_string'),

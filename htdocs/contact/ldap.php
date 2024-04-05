@@ -36,7 +36,7 @@ $langs->load("admin");
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -56,7 +56,7 @@ if ($action == 'dolibarr2ldap') {
 	$db->begin();
 
 	$ldap = new Ldap();
-	$result = $ldap->connect_bind();
+	$result = $ldap->connectBind();
 
 	$info = $object->_load_ldap_info();
 	$dn = $object->_load_ldap_dn($info);
@@ -161,7 +161,7 @@ print '</tr>';
 
 // Lecture LDAP
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result > 0) {
 	$info = $object->_load_ldap_info();
 	$dn = $object->_load_ldap_dn($info, 1);

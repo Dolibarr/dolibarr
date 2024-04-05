@@ -45,6 +45,11 @@ require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
 
+
+/*
+ * View
+ */
+
 top_httphead();
 
 //get data from AJAX
@@ -54,14 +59,24 @@ $jsonData = json_decode($rawData, true);
 if (is_null($jsonData)) {
 	dol_print_error('data with format JSON valide.');
 }
-$chatGPT = new Ai($db);
+$ai = new Ai($db);
 
+$function = 'textgeneration';
 $instructions = dol_string_nohtmltag($jsonData['instructions'], 1, 'UTF-8');
+$format = empty($jsonData['instructions']) ? '' : $jsonData['instructions'];
 
-$generatedContent = $chatGPT->generateContent($instructions);
+$generatedContent = $ai->generateContent($instructions, 'auto', $function, $format);
 
 if (is_array($generatedContent) && $generatedContent['error']) {
-	print "Error : " . $generatedContent['message'];
+	// Output error
+	if (!empty($generatedContent['code']) && $generatedContent['code'] == 429) {
+		print "Quota or allowed period exceeded. Retry Later !";
+	} elseif ($generatedContent['code'] >= 400) {
+		print "Error : " . $generatedContent['message'];
+		print '<br><a href="'.DOL_MAIN_URL_ROOT.'/ai/admin/setup.php">'.$langs->trans('ErrorGoToModuleSetup').'</a>';
+	} else {
+		print "Error returned by API call: " . $generatedContent['message'];
+	}
 } else {
 	print $generatedContent;
 }

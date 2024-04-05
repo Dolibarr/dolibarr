@@ -6,6 +6,7 @@
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "admin", "accountancy", "salaries", "loan"));
+$langs->loadLangs(array("compta", "bills", "admin", "accountancy", "salaries", "trips", "loan"));
 
 // Security check
 if (!$user->hasRight('accounting', 'chartofaccount')) {
@@ -50,6 +51,10 @@ $list_account_main = array(
 	'ACCOUNTING_ACCOUNT_SUPPLIER',
 	'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
 );
+
+if (isModEnabled('expensereport')) {
+	$list_account_main[] = 'ACCOUNTING_ACCOUNT_EXPENSEREPORT';
+}
 
 $list_account = array();
 
@@ -92,7 +97,7 @@ if (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) {
 	$list_account[] = 'ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT';
 	$list_account[] = 'ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT';
 }
-if (isModEnabled('banque')) {
+if (isModEnabled('bank')) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH';
 }
 if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
@@ -101,7 +106,7 @@ if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 if (isModEnabled('don')) {
 	$list_account[] = 'DONATION_ACCOUNTINGACCOUNT';
 }
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	$list_account[] = 'ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT';
 }
 if (isModEnabled('loan')) {
@@ -143,13 +148,13 @@ if ($action == 'update') {
 	}
 
 	$constname = 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT';
-	$constvalue = GETPOST($constname, 'int');
+	$constvalue = GETPOSTINT($constname);
 	if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 		$error++;
 	}
 
 	$constname = 'ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT';
-	$constvalue = GETPOST($constname, 'int');
+	$constvalue = GETPOSTINT($constname);
 	if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 		$error++;
 	}
@@ -163,7 +168,7 @@ if ($action == 'update') {
 }
 
 if ($action == 'setACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT') {
-	$setDisableAuxiliaryAccountOnCustomerDeposit = GETPOST('value', 'int');
+	$setDisableAuxiliaryAccountOnCustomerDeposit = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT", $setDisableAuxiliaryAccountOnCustomerDeposit, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -177,7 +182,7 @@ if ($action == 'setACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT') {
 }
 
 if ($action == 'setACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT') {
-	$setDisableAuxiliaryAccountOnSupplierDeposit = GETPOST('value', 'int');
+	$setDisableAuxiliaryAccountOnSupplierDeposit = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "ACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT", $setDisableAuxiliaryAccountOnSupplierDeposit, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -239,7 +244,7 @@ foreach ($list_account_main as $key) {
 	// Value
 	print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
 	$key_value = getDolGlobalString($key);
-	print $formaccounting->select_account($key_value, $key, 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accountsmain');
+	print $formaccounting->select_account($key_value, $key, 1, [], 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accountsmain');
 	print '</td>';
 	print '</tr>';
 }
@@ -285,7 +290,7 @@ foreach ($list_account as $key) {
 		print '</td>';
 		// Value
 		print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
-		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
+		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, [], 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
 		print '</td>';
 		print '</tr>';
 	}
@@ -300,7 +305,7 @@ print img_picto('', 'bill', 'class="pictofixedwidth"') . $langs->trans('ACCOUNTI
 print '</td>';
 // Value
 print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
-print $formaccounting->select_account(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT', 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
+print $formaccounting->select_account(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT', 1, [], 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
 print '</td>';
 print '</tr>';
 
@@ -327,7 +332,7 @@ print img_picto('', 'supplier_invoice', 'class="pictofixedwidth"') . $langs->tra
 print '</td>';
 // Value
 print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
-print $formaccounting->select_account(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 'ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT', 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
+print $formaccounting->select_account(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 'ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT', 1, [], 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
 print '</td>';
 print '</tr>';
 

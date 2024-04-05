@@ -35,7 +35,7 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 @set_time_limit(0); // No timeout for this script
@@ -68,7 +68,7 @@ dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 if (!isset($argv[1]) || $argv[1] != 'product') {
 	print "Usage:  $script_file product\n";
-	exit(-1);
+	exit(1);
 }
 
 print '--- start'."\n";

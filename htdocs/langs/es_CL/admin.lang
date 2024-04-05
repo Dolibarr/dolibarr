@@ -159,7 +159,6 @@ ModulesMarketPlaces=Buscar aplicaciones / módulos externos
 ModulesDevelopYourModule=Desarrolla tu propia aplicación / módulos
 ModulesDevelopDesc=También puede desarrollar su propio módulo o encontrar un socio para desarrollar uno para usted.
 DOLISTOREdescriptionLong=En lugar de <a href="https://www.dolistore.com">activar</a> el sitio web <a href="https://www.dolistore.com">www.dolistore.com</a> para encontrar un módulo externo, puede utilizar esta herramienta integrada que realizará la búsqueda en el mercado externo para usted (puede ser lento, necesita un acceso a Internet) ...
-NewModule=Nuevo modulo
 NotCompatible=Este módulo no parece compatible con su Dolibarr %s (Min. %s - Max. %s).
 CompatibleAfterUpdate=Este módulo requiere una actualización de su Dolibarr %s (Min. %s - Max. %s).
 SeeInMarkerPlace=Ver en Market place
@@ -206,7 +205,6 @@ MAIN_MAIL_AUTOCOPY_TO=Copiar (Bcc) todos los correos electrónicos enviados a
 MAIN_DISABLE_ALL_MAILS=Deshabilitar todo el envío de correo electrónico (para propósitos de prueba o demostraciones)
 MAIN_MAIL_FORCE_SENDTO=Enviar todos los correos electrónicos a (en lugar de destinatarios reales, para fines de prueba)
 MAIN_MAIL_ENABLED_USER_DEST_SELECT=Sugerir correos electrónicos de empleados (si están definidos) en la lista de destinatarios predefinidos al escribir un nuevo correo electrónico
-MAIN_MAIL_SENDMODE=Método de envío de correo electrónico
 MAIN_MAIL_SMTPS_ID=ID de SMTP (si el servidor de envío requiere autenticación)
 MAIN_MAIL_SMTPS_PW=Contraseña SMTP (si el servidor de envío requiere autenticación)
 MAIN_MAIL_EMAIL_TLS=Utilizar cifrado TLS (SSL)

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +64,7 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 		$entitytotest = 1;
 	}
 
-	dol_syslog("checkLoginPassEntity usertotest=".$usertotest." entitytotest=".$entitytotest." authmode=".join(',', $authmode));
+	dol_syslog("checkLoginPassEntity usertotest=".$usertotest." entitytotest=".$entitytotest." authmode=".implode(',', $authmode));
 	$login = '';
 
 	// Validation of login/pass/entity with standard modules
@@ -149,7 +150,7 @@ if (!function_exists('dol_loginfunction')) {
 
 		// Title
 		$appli = constant('DOL_APPLICATION_TITLE');
-		$title = $appli.' '.constant('DOL_VERSION');
+		$title = $appli.(getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '' : ' '.constant('DOL_VERSION'));
 		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 			$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
 		}
@@ -209,7 +210,7 @@ if (!function_exists('dol_loginfunction')) {
 					session_set_cookie_params($sessioncookieparams);
 				}
 
-				setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", null, (empty($dolibarr_main_force_https) ? false : true), true);
+				setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', (empty($dolibarr_main_force_https) ? false : true), true);
 			}
 		}
 
@@ -234,17 +235,17 @@ if (!function_exists('dol_loginfunction')) {
 		}
 
 		// Execute hook getLoginPageOptions (for table)
-		$parameters = array('entity' => GETPOST('entity', 'int'), 'switchentity' => GETPOST('switchentity', 'int'));
+		$parameters = array('entity' => GETPOSTINT('entity'), 'switchentity' => GETPOSTINT('switchentity'));
 		$reshook = $hookmanager->executeHooks('getLoginPageOptions', $parameters); // Note that $action and $object may have been modified by some hooks.
 		$morelogincontent = $hookmanager->resPrint;
 
 		// Execute hook getLoginPageExtraOptions (eg for js)
-		$parameters = array('entity' => GETPOST('entity', 'int'), 'switchentity' => GETPOST('switchentity', 'int'));
+		$parameters = array('entity' => GETPOSTINT('entity'), 'switchentity' => GETPOSTINT('switchentity'));
 		$reshook = $hookmanager->executeHooks('getLoginPageExtraOptions', $parameters); // Note that $action and $object may have been modified by some hooks.
 		$moreloginextracontent = $hookmanager->resPrint;
 
 		//Redirect after connection
-		$parameters = array('entity' => GETPOST('entity', 'int'), 'switchentity' => GETPOST('switchentity', 'int'));
+		$parameters = array('entity' => GETPOSTINT('entity'), 'switchentity' => GETPOSTINT('switchentity'));
 		$reshook = $hookmanager->executeHooks('redirectAfterConnection', $parameters); // Note that $action and $object may have been modified by some hooks.
 		$php_self = $hookmanager->resPrint;
 
@@ -318,11 +319,11 @@ if (!function_exists('dol_loginfunction')) {
 		}
 
 		// Set dol_hide_topmenu, dol_hide_leftmenu, dol_optimize_smallscreen, dol_no_mouse_hover
-		$dol_hide_topmenu = GETPOST('dol_hide_topmenu', 'int');
-		$dol_hide_leftmenu = GETPOST('dol_hide_leftmenu', 'int');
-		$dol_optimize_smallscreen = GETPOST('dol_optimize_smallscreen', 'int');
-		$dol_no_mouse_hover = GETPOST('dol_no_mouse_hover', 'int');
-		$dol_use_jmobile = GETPOST('dol_use_jmobile', 'int');
+		$dol_hide_topmenu = GETPOSTINT('dol_hide_topmenu');
+		$dol_hide_leftmenu = GETPOSTINT('dol_hide_leftmenu');
+		$dol_optimize_smallscreen = GETPOSTINT('dol_optimize_smallscreen');
+		$dol_no_mouse_hover = GETPOSTINT('dol_no_mouse_hover');
+		$dol_use_jmobile = GETPOSTINT('dol_use_jmobile');
 
 		// Include login page template
 		include $template_dir.'login.tpl.php';
@@ -455,7 +456,7 @@ function encodedecode_dbpassconf($level = 0)
 		// Write new conf file
 		$file = DOL_DOCUMENT_ROOT.'/conf/conf.php';
 		if ($fp = @fopen($file, 'w')) {
-			fputs($fp, $config);
+			fwrite($fp, $config);
 			fflush($fp);
 			fclose($fp);
 			clearstatcache();

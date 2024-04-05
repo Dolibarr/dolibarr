@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ class CompanyPaymentMode extends CommonObject
 	public $table_element = 'societe_rib';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
+	 * @var string  Does this object support multicompany module ?
 	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 'fk_soc@societe';
@@ -82,47 +83,47 @@ class CompanyPaymentMode extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'Rowid', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>10),
-		'fk_soc' =>array('type'=>'integer', 'label'=>'Fk soc', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15),
-		'label' =>array('type'=>'varchar(30)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-2, 'position'=>30),
-		'bank' =>array('type'=>'varchar(255)', 'label'=>'Bank', 'enabled'=>1, 'visible'=>-2, 'position'=>35),
-		'code_banque' =>array('type'=>'varchar(128)', 'label'=>'Code banque', 'enabled'=>1, 'visible'=>-2, 'position'=>40),
-		'code_guichet' =>array('type'=>'varchar(6)', 'label'=>'Code guichet', 'enabled'=>1, 'visible'=>-2, 'position'=>45),
-		'number' =>array('type'=>'varchar(255)', 'label'=>'Number', 'enabled'=>1, 'visible'=>-2, 'position'=>50),
-		'cle_rib' =>array('type'=>'varchar(5)', 'label'=>'Cle rib', 'enabled'=>1, 'visible'=>-2, 'position'=>55),
-		'bic' =>array('type'=>'varchar(20)', 'label'=>'Bic', 'enabled'=>1, 'visible'=>-2, 'position'=>60),
-		'iban_prefix' =>array('type'=>'varchar(34)', 'label'=>'Iban prefix', 'enabled'=>1, 'visible'=>-2, 'position'=>65),
-		'domiciliation' =>array('type'=>'varchar(255)', 'label'=>'Domiciliation', 'enabled'=>1, 'visible'=>-2, 'position'=>70),
-		'proprio' =>array('type'=>'varchar(60)', 'label'=>'Proprio', 'enabled'=>1, 'visible'=>-2, 'position'=>75),
-		'owner_address' =>array('type'=>'text', 'label'=>'Owner address', 'enabled'=>1, 'visible'=>-2, 'position'=>80),
-		'default_rib' =>array('type'=>'tinyint(4)', 'label'=>'Default rib', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>85),
-		'rum' =>array('type'=>'varchar(32)', 'label'=>'Rum', 'enabled'=>1, 'visible'=>-2, 'position'=>90),
-		'date_rum' =>array('type'=>'date', 'label'=>'Date rum', 'enabled'=>1, 'visible'=>-2, 'position'=>95),
-		'frstrecur' =>array('type'=>'varchar(16)', 'label'=>'Frstrecur', 'enabled'=>1, 'visible'=>-2, 'position'=>100),
-		'type' =>array('type'=>'varchar(32)', 'label'=>'Type', 'enabled'=>1, 'visible'=>-2, 'position'=>110),
-		'last_four' =>array('type'=>'varchar(4)', 'label'=>'Last four', 'enabled'=>1, 'visible'=>-2, 'position'=>115),
-		'card_type' =>array('type'=>'varchar(255)', 'label'=>'Card type', 'enabled'=>1, 'visible'=>-2, 'position'=>120),
-		'cvn' =>array('type'=>'varchar(255)', 'label'=>'Cvn', 'enabled'=>1, 'visible'=>-2, 'position'=>125),
-		'exp_date_month' =>array('type'=>'integer', 'label'=>'Exp date month', 'enabled'=>1, 'visible'=>-2, 'position'=>130),
-		'exp_date_year' =>array('type'=>'integer', 'label'=>'Exp date year', 'enabled'=>1, 'visible'=>-2, 'position'=>135),
-		'country_code' =>array('type'=>'varchar(10)', 'label'=>'Country code', 'enabled'=>1, 'visible'=>-2, 'position'=>140),
-		'approved' =>array('type'=>'integer', 'label'=>'Approved', 'enabled'=>1, 'visible'=>-2, 'position'=>145),
-		'email' =>array('type'=>'varchar(255)', 'label'=>'Email', 'enabled'=>1, 'visible'=>-2, 'position'=>150),
-		'max_total_amount_of_all_payments' =>array('type'=>'double(24,8)', 'label'=>'Max total amount of all payments', 'enabled'=>1, 'visible'=>-2, 'position'=>155),
-		'preapproval_key' =>array('type'=>'varchar(255)', 'label'=>'Preapproval key', 'enabled'=>1, 'visible'=>-2, 'position'=>160),
-		'total_amount_of_all_payments' =>array('type'=>'double(24,8)', 'label'=>'Total amount of all payments', 'enabled'=>1, 'visible'=>-2, 'position'=>165),
-		'stripe_card_ref' =>array('type'=>'varchar(128)', 'label'=>'ExternalSystemID', 'enabled'=>1, 'visible'=>-2, 'position'=>170, 'help'=>'IDOfPaymentInAnExternalSystem'),
-		'stripe_account' =>array('type'=>'varchar(128)', 'label'=>'ExternalSystemCustomerAccount', 'enabled'=>1, 'visible'=>-2, 'position'=>171, 'help'=>'IDOfCustomerInAnExternalSystem'),
-		'ext_payment_site' =>array('type'=>'varchar(128)', 'label'=>'ExternalSystem', 'enabled'=>1, 'visible'=>-2, 'position'=>172, 'help'=>'NameOfExternalSystem'),
-		'status' =>array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>175),
-		'starting_date' =>array('type'=>'date', 'label'=>'Starting date', 'enabled'=>1, 'visible'=>-2, 'position'=>180),
-		'ending_date' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>1, 'visible'=>-2, 'position'=>185),
-		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>20),
-		'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>25),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>-2, 'position'=>105),
+		'rowid' => array('type' => 'integer', 'label' => 'Rowid', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 10),
+		'fk_soc' => array('type' => 'integer', 'label' => 'Fk soc', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15),
+		'label' => array('type' => 'varchar(30)', 'label' => 'Label', 'enabled' => 1, 'visible' => -2, 'position' => 30),
+		'bank' => array('type' => 'varchar(255)', 'label' => 'Bank', 'enabled' => 1, 'visible' => -2, 'position' => 35),
+		'code_banque' => array('type' => 'varchar(128)', 'label' => 'Code banque', 'enabled' => 1, 'visible' => -2, 'position' => 40),
+		'code_guichet' => array('type' => 'varchar(6)', 'label' => 'Code guichet', 'enabled' => 1, 'visible' => -2, 'position' => 45),
+		'number' => array('type' => 'varchar(255)', 'label' => 'Number', 'enabled' => 1, 'visible' => -2, 'position' => 50),
+		'cle_rib' => array('type' => 'varchar(5)', 'label' => 'Cle rib', 'enabled' => 1, 'visible' => -2, 'position' => 55),
+		'bic' => array('type' => 'varchar(20)', 'label' => 'Bic', 'enabled' => 1, 'visible' => -2, 'position' => 60),
+		'iban_prefix' => array('type' => 'varchar(34)', 'label' => 'Iban prefix', 'enabled' => 1, 'visible' => -2, 'position' => 65),
+		'domiciliation' => array('type' => 'varchar(255)', 'label' => 'Domiciliation', 'enabled' => 1, 'visible' => -2, 'position' => 70),
+		'proprio' => array('type' => 'varchar(60)', 'label' => 'Proprio', 'enabled' => 1, 'visible' => -2, 'position' => 75),
+		'owner_address' => array('type' => 'text', 'label' => 'Owner address', 'enabled' => 1, 'visible' => -2, 'position' => 80),
+		'default_rib' => array('type' => 'tinyint(4)', 'label' => 'Default rib', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 85),
+		'rum' => array('type' => 'varchar(32)', 'label' => 'Rum', 'enabled' => 1, 'visible' => -2, 'position' => 90),
+		'date_rum' => array('type' => 'date', 'label' => 'Date rum', 'enabled' => 1, 'visible' => -2, 'position' => 95),
+		'frstrecur' => array('type' => 'varchar(16)', 'label' => 'Frstrecur', 'enabled' => 1, 'visible' => -2, 'position' => 100),
+		'type' => array('type' => 'varchar(32)', 'label' => 'Type', 'enabled' => 1, 'visible' => -2, 'position' => 110),
+		'last_four' => array('type' => 'varchar(4)', 'label' => 'Last four', 'enabled' => 1, 'visible' => -2, 'position' => 115),
+		'card_type' => array('type' => 'varchar(255)', 'label' => 'Card type', 'enabled' => 1, 'visible' => -2, 'position' => 120),
+		'cvn' => array('type' => 'varchar(255)', 'label' => 'Cvn', 'enabled' => 1, 'visible' => -2, 'position' => 125),
+		'exp_date_month' => array('type' => 'integer', 'label' => 'Exp date month', 'enabled' => 1, 'visible' => -2, 'position' => 130),
+		'exp_date_year' => array('type' => 'integer', 'label' => 'Exp date year', 'enabled' => 1, 'visible' => -2, 'position' => 135),
+		'country_code' => array('type' => 'varchar(10)', 'label' => 'Country code', 'enabled' => 1, 'visible' => -2, 'position' => 140),
+		'approved' => array('type' => 'integer', 'label' => 'Approved', 'enabled' => 1, 'visible' => -2, 'position' => 145),
+		'email' => array('type' => 'varchar(255)', 'label' => 'Email', 'enabled' => 1, 'visible' => -2, 'position' => 150),
+		'max_total_amount_of_all_payments' => array('type' => 'double(24,8)', 'label' => 'Max total amount of all payments', 'enabled' => 1, 'visible' => -2, 'position' => 155),
+		'preapproval_key' => array('type' => 'varchar(255)', 'label' => 'Preapproval key', 'enabled' => 1, 'visible' => -2, 'position' => 160),
+		'total_amount_of_all_payments' => array('type' => 'double(24,8)', 'label' => 'Total amount of all payments', 'enabled' => 1, 'visible' => -2, 'position' => 165),
+		'stripe_card_ref' => array('type' => 'varchar(128)', 'label' => 'ExternalSystemID', 'enabled' => 1, 'visible' => -2, 'position' => 170, 'help' => 'IDOfPaymentInAnExternalSystem'),
+		'stripe_account' => array('type' => 'varchar(128)', 'label' => 'ExternalSystemCustomerAccount', 'enabled' => 1, 'visible' => -2, 'position' => 171, 'help' => 'IDOfCustomerInAnExternalSystem'),
+		'ext_payment_site' => array('type' => 'varchar(128)', 'label' => 'ExternalSystem', 'enabled' => 1, 'visible' => -2, 'position' => 172, 'help' => 'NameOfExternalSystem'),
+		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 175),
+		'starting_date' => array('type' => 'date', 'label' => 'Starting date', 'enabled' => 1, 'visible' => -2, 'position' => 180),
+		'ending_date' => array('type' => 'date', 'label' => 'Ending date', 'enabled' => 1, 'visible' => -2, 'position' => 185),
+		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'position' => 20),
+		'tms' => array('type' => 'timestamp', 'label' => 'Tms', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 25),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'Import key', 'enabled' => 1, 'visible' => -2, 'position' => 105),
 		//'aaa' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>0, 'visible'=>-2, 'position'=>185),
 	);
 
@@ -197,13 +198,6 @@ class CompanyPaymentMode extends CommonObject
 	 * @var integer
 	 */
 	public $datec;
-
-	/**
-	 * Date modification record (tms)
-	 *
-	 * @var integer
-	 */
-	public $tms;
 
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
@@ -559,10 +553,10 @@ class CompanyPaymentMode extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
-		$this->initAsSpecimenCommon();
+		return $this->initAsSpecimenCommon();
 	}
 }

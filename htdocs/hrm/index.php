@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ $hookmanager->initHooks('hrmindex');
 $langs->loadLangs(array('users', 'holiday', 'trips', 'boxes'));
 
 // Get Parameters
-$socid = GETPOST("socid", "int");
+$socid = GETPOSTINT("socid");
 
 // Protection if external user
 if ($user->socid > 0) {
@@ -72,7 +72,7 @@ if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_IN
 	$setupcompanynotcomplete = 1;
 }
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 
 /*
@@ -197,7 +197,7 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 	$sql .= " WHERE u.rowid = x.fk_user";
 	$sql .= " AND x.entity = ".$conf->entity;
 	if (!$user->hasRight('holiday', 'readall')) {
-		$sql .= ' AND x.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
+		$sql .= ' AND x.fk_user IN ('.$db->sanitize(implode(',', $childids)).')';
 	}
 	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".((int) $socid);
@@ -223,8 +223,13 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 		print '<th colspan="3">'.$langs->trans("BoxTitleLastLeaveRequests", min($max, $num)).'</th>';
 		print '<th>'.$langs->trans("from").'</th>';
 		print '<th>'.$langs->trans("to").'</th>';
-		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/holiday/list.php?sortfield=cp.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
+		print '<th></th>';
+		print '<th class="right">';
+		print '<a href="'.DOL_URL_ROOT.'/holiday/list.php?sortfield=cp.tms&sortorder=DESC">';
+		print img_picto($langs->trans("FullList"), 'holiday');
+		print '</th>';
 		print '</tr>';
+
 		if ($num) {
 			while ($i < $num && $i < $max) {
 				$obj = $db->fetch_object($result);
@@ -282,7 +287,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 	$sql .= " WHERE u.rowid = x.fk_user_author";
 	$sql .= " AND x.entity = ".$conf->entity;
 	if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')) {
-		$sql .= ' AND x.fk_user_author IN ('.$db->sanitize(join(',', $childids)).')';
+		$sql .= ' AND x.fk_user_author IN ('.$db->sanitize(implode(',', $childids)).')';
 	}
 	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".((int) $socid);
@@ -300,11 +305,13 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
 		print '<th class="right">'.$langs->trans("TotalTTC").'</th>';
-		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/expensereport/list.php?sortfield=d.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
+		print '<th></th>';
+		print '<th class="right"><a href="'.DOL_URL_ROOT.'/expensereport/list.php?sortfield=d.tms&sortorder=DESC">';
+		print img_picto($langs->trans("FullList"), 'expensereport');
+		print '</th>';
 		print '</tr>';
-		if ($num) {
-			$total_ttc = $totalam = $total = 0;
 
+		if ($num) {
 			$expensereportstatic = new ExpenseReport($db);
 			$userstatic = new User($db);
 			while ($i < $num && $i < $max) {
@@ -320,7 +327,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 				$userstatic->firstname = $obj->firstname;
 				$userstatic->email = $obj->email;
 				$userstatic->login = $obj->login;
-				$userstatic->statut = $obj->user_status;
+				$userstatic->status = $obj->user_status;
 				$userstatic->photo = $obj->photo;
 
 				print '<tr class="oddeven">';
@@ -377,7 +384,11 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 		print '<th colspan="3">';
 		print $langs->trans("BoxTitleLatestModifiedCandidatures", min($max, $num));
 		print '</th>';
-		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/recruitment/recruitmentcandidature_list.php?sortfield=t.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
+		print '<th></th>';
+		print '<th class="right"><a href="'.DOL_URL_ROOT.'/recruitment/recruitmentcandidature_list.php?sortfield=t.tms&sortorder=DESC">';
+		print img_picto($langs->trans("FullList"), 'recruitmentcandidature');
+		//print $langs->trans("FullList");
+		print '</th>';
 		print '</tr>';
 		if ($num) {
 			while ($i < $num) {

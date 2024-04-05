@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Asociación dedicada a este miembro
 DatePartnershipStart=Fecha de inicio
 DatePartnershipEnd=Fecha de fin
 ReasonDecline=Razón de rechazo
-ReasonDeclineOrCancel=Razón de rechazo
+ReasonDeclineOrCancel=Motivo del rechazo o cancelación
 PartnershipAlreadyExist=La asociación ya existe
 ManagePartnership=Gestionar la asociación
 BacklinkNotFoundOnPartnerWebsite=Vínculo de retroceso no encontrado en el sitio web del socio
@@ -89,7 +89,6 @@ YourPartnershipCanceledContent=Nos gustaría informarle que nuestra asociación 
 
 CountLastUrlCheckError=Número de errores para la última verificación de URL
 LastCheckBacklink=Fecha de la última verificación de URL
-ReasonDeclineOrCancel=Razón de rechazo
 
 NewPartnershipRequest=Nueva solicitud de asociación
 NewPartnershipRequestDesc=Este formulario le permite solicitar ser parte de uno de nuestros programas de asociación. Si necesita ayuda para completar este formulario, comuníquese por correo electrónico <b> %s </b>.

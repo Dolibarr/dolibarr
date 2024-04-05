@@ -20,7 +20,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 .info-box {
 	display: block;
 	position: relative;
-	min-height: 90px;
+	min-height: 94px;	/* must be same height than info-box-icon */
 	background: var(--colorbacklineimpair2);
 	width: 100%;
 	box-shadow: 1px 1px 15px rgba(192, 192, 192, 0.2);
@@ -83,11 +83,11 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	display: block;
 	overflow: hidden;
 	float: left;
-	height: 90px;
+	line-height: 94px;	/* must be same height as min-height of .info-box */
+	height: 94px; 	    /* must be same height as min-height of .info-box */
 	width: 88px;
 	text-align: center;
 	font-size: 2.8em;
-	line-height: 90px;
 	background: var(--colorbacktitle1) !important;
 }
 
@@ -316,7 +316,7 @@ if (!isset($conf->global->THEME_SATURATE_RATIO)) {
 	$conf->global->THEME_SATURATE_RATIO = 0.7;
 }
 if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
-	$conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
+	$conf->global->THEME_SATURATE_RATIO = GETPOSTINT('THEME_SATURATE_RATIO');
 }
 
 ?>
@@ -514,7 +514,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	flex-grow : 1;
 	flex-shrink: 1;
 	flex-basis: auto;
-	width: 280px;
+	width: 290px;
 }
 .box-flex-item.filler {
 	height: 0;
@@ -540,11 +540,26 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	}
 }
 
-@media only screen and (max-width: 767px) {
+@media only screen and (max-width: 768px) {
 	.info-box-module {
 		min-width: 260px;
 	}
+	.box-flex-item {
+		width: 280px;
+	}
 }
+
+@media only screen and (max-width: 480px) {
+	.info-box-module {
+		min-width: 250px;
+	}
+	.box-flex-item {
+		width: 250px;
+	}
+}
+
+
+
 
 .info-box-module .info-box-content {
 	height: 98px;

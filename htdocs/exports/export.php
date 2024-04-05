@@ -58,7 +58,7 @@ $entitytoicon = array(
 	'other'        => 'generic',
 	'account'      => 'account',
 	'product'      => 'product',
-	'virtualproduct'=>'product',
+	'virtualproduct' => 'product',
 	'subproduct'   => 'product',
 	'product_supplier_ref'      => 'product',
 	'stock'        => 'stock',
@@ -67,11 +67,11 @@ $entitytoicon = array(
 	'stockbatch'   => 'stock',
 	'category'     => 'category',
 	'shipment'     => 'sending',
-	'shipment_line'=> 'sending',
-	'reception'=> 'sending',
-	'reception_line'=> 'sending',
-	'expensereport'=> 'trip',
-	'expensereport_line'=> 'trip',
+	'shipment_line' => 'sending',
+	'reception' => 'sending',
+	'reception_line' => 'sending',
+	'expensereport' => 'trip',
+	'expensereport_line' => 'trip',
 	'holiday'      => 'holiday',
 	'contract_line' => 'contract',
 	'translation'  => 'generic',
@@ -114,16 +114,16 @@ $entitytolang = array(
 	'other'        => 'Other',
 	'trip'         => 'TripsAndExpenses',
 	'shipment'     => 'Shipments',
-	'shipment_line'=> 'ShipmentLine',
+	'shipment_line' => 'ShipmentLine',
 	'project'      => 'Projects',
 	'projecttask'  => 'Tasks',
 	'task_time'    => 'TaskTimeSpent',
 	'action'       => 'Event',
-	'expensereport'=> 'ExpenseReport',
-	'expensereport_line'=> 'ExpenseReportLine',
+	'expensereport' => 'ExpenseReport',
+	'expensereport_line' => 'ExpenseReportLine',
 	'holiday'      => 'TitreRequestCP',
 	'contract'     => 'Contract',
-	'contract_line'=> 'ContractLine',
+	'contract_line' => 'ContractLine',
 	'translation'  => 'Translation',
 	'bom'          => 'BOM',
 	'bomline'      => 'BOMLine',
@@ -135,10 +135,10 @@ $array_filtervalue = isset($_SESSION["export_filtered_fields"]) ? $_SESSION["exp
 $datatoexport = GETPOST("datatoexport", "aZ09");
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$step = GETPOST("step", "int") ? GETPOST("step", "int") : 1;
+$step = GETPOSTINT("step") ? GETPOSTINT("step") : 1;
 $export_name = GETPOST("export_name", "alphanohtml");
 $hexa = GETPOST("hexa", "alpha");
-$exportmodelid = GETPOST("exportmodelid", "int");
+$exportmodelid = GETPOSTINT("exportmodelid");
 $field = GETPOST("field", "alpha");
 
 $objexport = new Export($db);
@@ -219,11 +219,11 @@ if ($action == 'selectfield') {     // Selection of field at step 2
 	}
 }
 if ($action == 'unselectfield') {
-	if ($_GET["field"] == 'all') {
+	if (GETPOST("field") == 'all') {
 		$array_selected = array();
 		$_SESSION["export_selected_fields"] = $array_selected;
 	} else {
-		unset($array_selected[$_GET["field"]]);
+		unset($array_selected[GETPOST("field")]);
 		// Renumber fields of array_selected (from 1 to nb_elements)
 		asort($array_selected);
 		$i = 0;
@@ -238,7 +238,7 @@ if ($action == 'unselectfield') {
 }
 
 if ($action == 'downfield' || $action == 'upfield') {
-	$pos = $array_selected[$_GET["field"]];
+	$pos = $array_selected[GETPOST("field")];
 	if ($action == 'downfield') {
 		$newpos = $pos + 1;
 	}
@@ -253,9 +253,9 @@ if ($action == 'downfield' || $action == 'upfield') {
 			break;
 		}
 	}
-	//print("Switch pos=$pos (code=".$_GET["field"].") and newpos=$newpos (code=$newcode)");
+	//print("Switch pos=$pos (code=".GETPOST("field").") and newpos=$newpos (code=$newcode)");
 	if ($newcode) {   // Si newcode trouve (protection contre resoumission de page)
-		$array_selected[$_GET["field"]] = $newpos;
+		$array_selected[GETPOST("field")] = $newpos;
 		$array_selected[$newcode] = $pos;
 		$_SESSION["export_selected_fields"] = $array_selected;
 	}
@@ -290,7 +290,7 @@ if ($action == 'builddoc') {
 
 // Delete file
 if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes') {
-	$file = $upload_dir."/".GETPOST('file'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$file = $upload_dir."/".GETPOST('file');
 
 	$ret = dol_delete_file($file);
 	if ($ret) {
@@ -303,8 +303,8 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes') {
 }
 
 if ($action == 'deleteprof') {
-	if (GETPOST("id", 'int')) {
-		$objexport->fetch(GETPOST('id', 'int'));
+	if (GETPOSTINT("id")) {
+		$objexport->fetch(GETPOSTINT('id'));
 		$result = $objexport->delete($user);
 	}
 }
@@ -400,7 +400,6 @@ if ($step == 4 && $action == 'submitFormField') {
 				$filterqualified = 0;
 			}
 			if ($filterqualified) {
-				//print 'Filter on '.$newcode.' type='.$type.' value='.$_POST[$newcode]."\n";
 				$objexport->array_export_FilterValue[0][$code] = GETPOST($newcode, $check);
 			}
 		}
@@ -1020,7 +1019,7 @@ if ($step == 4 && $datatoexport) {
 		print '<tr class="oddeven">';
 		print '<td><input name="export_name" value=""></td>';
 		print '<td>';
-		$arrayvisibility = array('private'=>$langs->trans("Private"), 'all'=>$langs->trans("Everybody"));
+		$arrayvisibility = array('private' => $langs->trans("Private"), 'all' => $langs->trans("Everybody"));
 		print $form->selectarray('visibility', $arrayvisibility, 'private');
 		print '</td>';
 		print '<td class="right">';
@@ -1124,7 +1123,7 @@ if ($step == 5 && $datatoexport) {
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table width="100%" class="border tableforfield">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
@@ -1203,6 +1202,7 @@ if ($step == 5 && $datatoexport) {
 		$htmltabloflibs .= '<td>'.img_picto_common($key, $objmodelexport->getPictoForKey($key)).' ';
 		$text = $objmodelexport->getDriverDescForKey($key);
 		$label = $listeall[$key];
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$htmltabloflibs .= $form->textwithpicto($label, $text).'</td>';
 		$htmltabloflibs .= '<td>'.$objmodelexport->getLibLabelForKey($key).'</td>';
 		$htmltabloflibs .= '<td class="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';

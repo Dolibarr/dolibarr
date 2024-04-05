@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = ניהול ומעקב אחר קמפיינים לגיוס
 # Admin page
 #
 RecruitmentSetup = הגדרת גיוס
-Settings = הגדרות
 RecruitmentSetupPage = היכנס כאן להגדרת האפשרויות העיקריות למודול הגיוס
 RecruitmentArea=תחום הגיוס
 PublicInterfaceRecruitmentDesc=דפים ציבוריים של משרות הם כתובות URL ציבוריות להצגה ותשובות למשרות פתוחות. יש קישור אחד אחר לכל משרה פתוחה, שנמצא בכל רשומת משרה.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=אפשר דפים ציבוריים של משרות 
 #
 # About page
 #
-About = על אודות
 RecruitmentAbout = לגבי גיוס עובדים
 RecruitmentAboutPage = גיוס אודות עמוד
 NbOfEmployeesExpected=מספר עובדים צפוי

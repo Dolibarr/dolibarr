@@ -21,14 +21,14 @@ class DefaultController extends Controller
 	 * Action method is called before html output
 	 * can be used to manage security and change context
 	 *
-	 * @return	void
+	 * @return  int     Return integer < 0 on error, > 0 on success
 	 */
 	public function action()
 	{
 		global $langs;
 		$context = Context::getInstance();
 		if (!$context->controllerInstance->checkAccess()) {
-			return;
+			return -1;
 		}
 
 		$hookRes = $this->hookDoAction();
@@ -37,6 +37,8 @@ class DefaultController extends Controller
 			$context->desc = $langs->trans('WebPortalHomeDesc');
 			//$context->doNotDisplayHeaderBar=1;// hide default header
 		}
+
+		return 1;
 	}
 
 	/**

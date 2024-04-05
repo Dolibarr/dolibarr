@@ -8,9 +8,10 @@
  * Copyright (C) 2014-2022  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2015-2016  Abbes Bahfir            <bafbes@gmail.com>
  * Copyright (C) 2018-2022 	Philippe Grand       	<philippe.grand@atoo-net.com>
- * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Benjamin Grembi         <benjamin@oarces.fr>
  * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT."/core/class/html.formcontract.class.php";
 	require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
 }
@@ -56,11 +57,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'interventions', 'stocks'));
 
-$id			= GETPOST('id', 'int');
+$id			= GETPOSTINT('id');
 $ref		= GETPOST('ref', 'alpha');
 $ref_client	= GETPOST('ref_client', 'alpha');
-$socid = (int) GETPOST('socid', 'int');
-$contratid = (int) GETPOST('contratid', 'int');
+$socid = GETPOSTINT('socid');
+$contratid = GETPOSTINT('contratid');
 $action		= GETPOST('action', 'alpha');
 $cancel		= GETPOST('cancel', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
@@ -71,14 +72,14 @@ $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOSTINT('originid') ? GETPOSTINT('originid') : GETPOSTINT('origin_id')); // For backward compatibility
 $note_public = GETPOST('note_public', 'restricthtml');
 $note_private = GETPOST('note_private', 'restricthtml');
-$lineid = GETPOST('line_id', 'int');
+$lineid = GETPOSTINT('line_id');
 
 $error = 0;
 
 //PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
+$hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
+$hidedesc = (GETPOSTINT('hidedesc') ? GETPOSTINT('hidedesc') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
+$hideref = (GETPOSTINT('hideref') ? GETPOSTINT('hideref') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('interventioncard', 'globalcard'));
@@ -117,7 +118,7 @@ $usercancreate = $user->hasRight('ficheinter', 'creer');
  * Actions
  */
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -253,9 +254,9 @@ if (empty($reshook)) {
 	} elseif ($action == 'add' && $user->hasRight('ficheinter', 'creer')) {
 		$selectedLines = GETPOST('toselect', 'array');
 		$object->socid = $socid;
-		$object->duration = (int) GETPOST('duration', 'int');
-		$object->fk_project = (int) GETPOST('projectid', 'int');
-		$object->fk_contrat = (int) GETPOST('contratid', 'int');
+		$object->duration = GETPOSTINT('duration');
+		$object->fk_project = GETPOSTINT('projectid');
+		$object->fk_contrat = GETPOSTINT('contratid');
 		$object->author = $user->id;
 		$object->description = GETPOST('description', 'restricthtml');
 		$object->ref = $ref;
@@ -292,8 +293,8 @@ if (empty($reshook)) {
 
 				// Possibility to add external linked objects with hooks
 				$object->linked_objects[$object->origin] = $object->origin_id;
-				if (is_array($_POST['other_linked_objects']) && !empty($_POST['other_linked_objects'])) {
-					$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
+				if (GETPOSTISARRAY('other_linked_objects')) {
+					$object->linked_objects = array_merge($object->linked_objects, GETPOST('other_linked_objects', 'array:int'));
 				}
 
 				// Extrafields
@@ -338,7 +339,7 @@ if (empty($reshook)) {
 
 								if ($product_type == Product::TYPE_SERVICE || getDolGlobalString('FICHINTER_PRINT_PRODUCTS')) { //only services except if config includes products
 									$duration = 3600; // Default to one hour
-
+									$desc = '';
 									// Predefined products & services
 									if ($lines[$i]->fk_product > 0) {
 										$prod = new Product($db);
@@ -472,8 +473,8 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'update' && $user->hasRight('ficheinter', 'creer')) {
 		$object->socid = $socid;
-		$object->fk_project = (int) GETPOST('projectid', 'int');
-		$object->fk_contrat = (int) GETPOST('contratid', 'int');
+		$object->fk_project = GETPOSTINT('projectid');
+		$object->fk_contrat = GETPOSTINT('contratid');
 		$object->author = $user->id;
 		$object->description = GETPOST('description', 'restricthtml');
 		$object->ref = $ref;
@@ -485,13 +486,13 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'classin' && $user->hasRight('ficheinter', 'creer')) {
 		// Set into a project
-		$result = $object->setProject(GETPOST('projectid', 'int'));
+		$result = $object->setProject(GETPOSTINT('projectid'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
 	} elseif ($action == 'setcontract' && $user->hasRight('contrat', 'creer')) {
 		// Set into a contract
-		$result = $object->set_contrat($user, GETPOST('contratid', 'int'));
+		$result = $object->set_contrat($user, GETPOSTINT('contratid'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
@@ -520,11 +521,11 @@ if (empty($reshook)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description"));
 			$error++;
 		}
-		if (!getDolGlobalString('FICHINTER_WITHOUT_DURATION') && !GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int')) {
+		if (!getDolGlobalString('FICHINTER_WITHOUT_DURATION') && !GETPOSTINT('durationhour') && !GETPOSTINT('durationmin')) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Duration"));
 			$error++;
 		}
-		if (!getDolGlobalString('FICHINTER_WITHOUT_DURATION') && GETPOST('durationhour', 'int') >= 24 && GETPOST('durationmin', 'int') > 0) {
+		if (!getDolGlobalString('FICHINTER_WITHOUT_DURATION') && GETPOSTINT('durationhour') >= 24 && GETPOSTINT('durationmin') > 0) {
 			$mesg = $langs->trans("ErrorValueTooHigh");
 			$error++;
 		}
@@ -532,8 +533,8 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$desc = GETPOST('np_desc', 'restricthtml');
-			$date_intervention = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
-			$duration = !getDolGlobalString('FICHINTER_WITHOUT_DURATION') ? convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int')) : 0;
+			$date_intervention = dol_mktime(GETPOSTINT('dihour'), GETPOSTINT('dimin'), 0, GETPOSTINT('dimonth'), GETPOSTINT('diday'), GETPOSTINT('diyear'));
+			$duration = !getDolGlobalString('FICHINTER_WITHOUT_DURATION') ? convertTime2Seconds(GETPOSTINT('durationhour'), GETPOSTINT('durationmin')) : 0;
 
 			// Extrafields
 			$extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -617,8 +618,8 @@ if (empty($reshook)) {
 		$object->fetch_thirdparty();
 
 		$desc = GETPOST('np_desc', 'restricthtml');
-		$date_inter = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
-		$duration = convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int'));
+		$date_inter = dol_mktime(GETPOSTINT('dihour'), GETPOSTINT('dimin'), 0, GETPOSTINT('dimonth'), GETPOSTINT('diday'), GETPOSTINT('diyear'));
+		$duration = convertTime2Seconds(GETPOSTINT('durationhour'), GETPOSTINT('durationmin'));
 
 		$objectline->date = $date_inter;
 		$objectline->desc = $desc;
@@ -663,7 +664,7 @@ if (empty($reshook)) {
 			dol_print_error($db);
 			exit;
 		}
-		$result = $objectline->deleteline($user);
+		$result = $objectline->deleteLine($user);
 
 		if ($object->fetch($objectline->fk_fichinter) <= 0) {
 			dol_print_error($db);
@@ -744,7 +745,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->ficheinter->dir_output;
-	$permissiontoadd = $user->rights->ficheinter->creer;
+	$permissiontoadd = $user->hasRight('ficheinter', 'creer');
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'update_extras') {
@@ -773,7 +774,7 @@ if (empty($reshook)) {
 	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $user->hasRight('ficheinter', 'creer')) {
 		if ($action == 'addcontact') {
 			if ($result > 0 && $id > 0) {
-				$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+				$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 				$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 			}
@@ -791,10 +792,10 @@ if (empty($reshook)) {
 			}
 		} elseif ($action == 'swapstatut') {
 			// bascule du statut d'un contact
-			$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
+			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 		} elseif ($action == 'deletecontact') {
 			// Efface un contact
-			$result = $object->delete_contact(GETPOST('lineid', 'int'));
+			$result = $object->delete_contact(GETPOSTINT('lineid'));
 
 			if ($result >= 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -813,7 +814,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	$formcontract = new FormContract($db);
 }
 if (isModEnabled('project')) {
@@ -842,7 +843,7 @@ if ($action == 'create') {
 		$res = $soc->fetch($socid);
 	}
 
-	if (GETPOST('origin', 'alphanohtml') && GETPOST('originid', 'int')) {
+	if (GETPOSTINT('origin') && GETPOSTINT('originid')) {
 		// Parse element/subelement (ex: project_task)
 		$regs = array();
 		$element = $subelement = GETPOST('origin', 'alphanohtml');
@@ -852,7 +853,7 @@ if ($action == 'create') {
 		}
 
 		if ($element == 'project') {
-			$projectid = GETPOST('originid', 'int');
+			$projectid = GETPOSTINT('originid');
 		} else {
 			// For compatibility
 			if ($element == 'order' || $element == 'commande') {
@@ -892,7 +893,7 @@ if ($action == 'create') {
 			$srccontactslist = $objectsrc->liste_contact(-1, 'external', 1);
 		}
 	} else {
-		$projectid = GETPOST('projectid', 'int');
+		$projectid = GETPOSTINT('projectid');
 	}
 
 	if (!$conf->global->FICHEINTER_ADDON) {
@@ -959,10 +960,10 @@ if ($action == 'create') {
 		}
 
 		// Contract
-		if (isModEnabled('contrat')) {
+		if (isModEnabled('contract')) {
 			$langs->load("contracts");
 			print '<tr><td>'.$langs->trans("Contract").'</td><td>';
-			$numcontrat = $formcontract->select_contract($soc->id, GETPOST('contratid', 'int'), 'contratid', 0, 1, 1);
+			$numcontrat = $formcontract->select_contract($soc->id, GETPOSTINT('contratid'), 'contratid', 0, 1, 1);
 			if ($numcontrat == 0) {
 				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddContract").'"></span></a>';
 			}
@@ -1179,13 +1180,13 @@ if ($action == 'create') {
 							// 1),
 							// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
 							// => 1),
-							array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '', '', 0, 0, null, 0, 'minwidth200')));
+							array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', '', '', 0, 0, null, 0, 'minwidth200')));
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneIntervention', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
 	if (!$formconfirm) {
-		$parameters = array('formConfirm' => $formconfirm, 'lineid'=>$lineid);
+		$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			$formconfirm .= $hookmanager->resPrint;
@@ -1204,8 +1205,8 @@ if ($action == 'create') {
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer
-	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('ficheinter', 'creer'), 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('ficheinter', 'creer'), 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('ficheinter', 'creer'), 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('ficheinter', 'creer'), 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
 	// Project
@@ -1272,7 +1273,7 @@ if ($action == 'create') {
 	print '</tr>';
 
 	// Contract
-	if (isModEnabled('contrat')) {
+	if (isModEnabled('contract')) {
 		$langs->load('contracts');
 		print '<tr>';
 		print '<td>';
@@ -1350,7 +1351,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		if ($action == 'editline') {
 			print '<input type="hidden" name="action" value="updateline">';
-			print '<input type="hidden" name="line_id" value="'.GETPOST('line_id', 'int').'">';
+			print '<input type="hidden" name="line_id" value="'.GETPOSTINT('line_id').'">';
 		} else {
 			print '<input type="hidden" name="action" value="addline">';
 		}
@@ -1392,7 +1393,7 @@ if ($action == 'create') {
 				$objp = $db->fetch_object($resql);
 
 				// Ligne en mode visu
-				if ($action != 'editline' || GETPOST('line_id', 'int') != $objp->rowid) {
+				if ($action != 'editline' || GETPOSTINT('line_id') != $objp->rowid) {
 					print '<tr class="oddeven">';
 
 					// No.
@@ -1460,7 +1461,7 @@ if ($action == 'create') {
 				}
 
 				// Line in update mode
-				if ($object->statut == 0 && $action == 'editline' && $user->hasRight('ficheinter', 'creer') && GETPOST('line_id', 'int') == $objp->rowid) {
+				if ($object->statut == 0 && $action == 'editline' && $user->hasRight('ficheinter', 'creer') && GETPOSTINT('line_id') == $objp->rowid) {
 					print '<tr class="oddeven nohover">';
 
 					// No.
@@ -1579,14 +1580,14 @@ if ($action == 'create') {
 				print '<td class="center nowrap">';
 				$now = dol_now();
 				$timearray = dol_getdate($now);
-				if (!GETPOST('diday', 'int')) {
+				if (!GETPOSTINT('diday')) {
 					if (getDolGlobalInt('FICHINTER_DATE_WITHOUT_HOUR')) {
 						$timewithnohour = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
 					} else {
 						$timewithnohour = dol_mktime($timearray['hours'], $timearray['minutes'], 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
 					}
 				} else {
-					$timewithnohour = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
+					$timewithnohour = dol_mktime(GETPOSTINT('dihour'), GETPOSTINT('dimin'), 0, GETPOSTINT('dimonth'), GETPOSTINT('diday'), GETPOSTINT('diyear'));
 				}
 				if (getDolGlobalInt('FICHINTER_DATE_WITHOUT_HOUR')) {
 					print $form->selectDate($timewithnohour, 'di', 0, 0, 0, "addinter");
@@ -1602,7 +1603,7 @@ if ($action == 'create') {
 					if (getDolGlobalString('INTERVENTION_ADDLINE_FREEDUREATION')) {
 						$selectmode = 'text';
 					}
-					$form->select_duration('duration', (!GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int')) ? 3600 : (60 * 60 * GETPOST('durationhour', 'int') + 60 * GETPOST('durationmin', 'int')), 0, $selectmode);
+					$form->select_duration('duration', (!GETPOSTINT('durationhour') && !GETPOSTINT('durationmin')) ? 3600 : (60 * 60 * GETPOSTINT('durationhour') + 60 * GETPOSTINT('durationmin')), 0, $selectmode);
 				}
 				print '</td>';
 
@@ -1701,7 +1702,7 @@ if ($action == 'create') {
 				}
 
 				// Invoicing
-				if (isModEnabled('facture') && $object->statut > Fichinter::STATUS_DRAFT) {
+				if (isModEnabled('invoice') && $object->statut > Fichinter::STATUS_DRAFT) {
 					$langs->load("bills");
 					if ($object->statut < Fichinter::STATUS_BILLED) {
 						if ($user->hasRight('facture', 'creer')) {
@@ -1747,8 +1748,8 @@ if ($action == 'create') {
 		$filename = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->ficheinter->dir_output."/".$filename;
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-		$genallowed = $user->rights->ficheinter->lire;
-		$delallowed = $user->rights->ficheinter->creer;
+		$genallowed = $user->hasRight('ficheinter', 'lire');
+		$delallowed = $user->hasRight('ficheinter', 'creer');
 		print $formfile->showdocuments('ficheinter', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 		// Show links to link elements

@@ -22,7 +22,7 @@ if (!isset($conf->global->THEME_SATURATE_RATIO)) {
 	$conf->global->THEME_SATURATE_RATIO = 0.7;
 }
 if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
-	$conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
+	$conf->global->THEME_SATURATE_RATIO = GETPOSTINT('THEME_SATURATE_RATIO');
 }
 
 ?>
@@ -146,7 +146,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box {
 	display: block;
 	position: relative;
-	min-height: 90px;
+	min-height: 94px;
 	background: var(--colorbacklineimpair2);
 	width: 100%;
 	/* box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); */
@@ -197,11 +197,11 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	display: block;
 	overflow: hidden;
 	float: left;
-	/* height: 90px; */
-	width: 86px;
 	text-align: center;
 	font-size: 45px;
-	line-height: 90px;
+	line-height: 94px;;	/* must be same height as min-height of .info-box */
+	height: 94px;;		/* must be same height as min-height of .info-box */
+	width: 86px;
 	background: var(--colorbacktitle1) !important;
 	<?php if (isset($conf->global->THEME_SATURATE_RATIO)) { ?>
 		filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
@@ -417,7 +417,7 @@ if (!isset($conf->global->THEME_SATURATE_RATIO)) {
 	$conf->global->THEME_SATURATE_RATIO = 0.7;
 }
 if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
-	$conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
+	$conf->global->THEME_SATURATE_RATIO = GETPOSTINT('THEME_SATURATE_RATIO');
 }
 ?>
 .bg-infobox-project i.fa{
@@ -567,7 +567,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	flex-shrink: 1;
 	flex-basis: auto;
 
-	width: 280px;
+	width: 290px;
 	margin: 5px 0px 0px 15px;
 }
 .box-flex-item.filler{
@@ -595,7 +595,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 		max-width: 315px;
 	}
 }
-@media only screen and (max-width: 767px) {
+@media only screen and (max-width: 768px) {
 	.info-box-module {
 		min-width: 260px;
 	}
@@ -617,5 +617,11 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	}
 }
 
-
-
+@media only screen and (max-width: 480px) {
+	.info-box-module {
+		min-width: 250px;
+	}
+	.box-flex-item {
+		width: 250px;
+	}
+}

@@ -40,8 +40,8 @@ global $conf, $db, $langs, $user;
 $langs->loadLangs(array('stocks', 'other', 'productbatch'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$lineid = GETPOST('lineid', 'int');
+$id = GETPOSTINT('id');
+$lineid = GETPOSTINT('lineid');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
@@ -72,15 +72,15 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 $batch = GETPOST('batch', 'alpha');
-$productid = GETPOST('productid', 'int');
+$productid = GETPOSTINT('productid');
 $ref = GETPOST('ref', 'alpha'); // ref is productid_batch
 
-$search_entity = GETPOST('search_entity', 'int');
-$search_fk_product = GETPOST('search_fk_product', 'int');
+$search_entity = GETPOSTINT('search_entity');
+$search_fk_product = GETPOSTINT('search_fk_product');
 $search_batch = GETPOST('search_batch', 'alpha');
-$search_fk_user_creat = GETPOST('search_fk_user_creat', 'int');
-$search_fk_user_modif = GETPOST('search_fk_user_modif', 'int');
-$search_import_key = GETPOST('search_import_key', 'int');
+$search_fk_user_creat = GETPOSTINT('search_fk_user_creat');
+$search_fk_user_modif = GETPOSTINT('search_fk_user_modif');
+$search_import_key = GETPOSTINT('search_import_key');
 
 if (empty($action) && empty($id) && empty($ref)) {
 	$action = 'list';
@@ -153,7 +153,7 @@ if (empty($reshook)) {
 	$backurlforlist = dol_buildpath('/product/stock/productlot_list.php', 1);
 
 	if ($action == 'seteatby' && $user->hasRight('stock', 'creer') && ! GETPOST('cancel', 'alpha')) {
-		$newvalue = dol_mktime(12, 0, 0, GETPOST('eatbymonth', 'int'), GETPOST('eatbyday', 'int'), GETPOST('eatbyyear', 'int'));
+		$newvalue = dol_mktime(12, 0, 0, GETPOSTINT('eatbymonth'), GETPOSTINT('eatbyday'), GETPOSTINT('eatbyyear'));
 
 		// check parameters
 		$object->eatby = $newvalue;
@@ -178,7 +178,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setsellby' && $user->hasRight('stock', 'creer') && ! GETPOST('cancel', 'alpha')) {
-		$newvalue = dol_mktime(12, 0, 0, GETPOST('sellbymonth', 'int'), GETPOST('sellbyday', 'int'), GETPOST('sellbyyear', 'int'));
+		$newvalue = dol_mktime(12, 0, 0, GETPOSTINT('sellbymonth'), GETPOSTINT('sellbyday'), GETPOSTINT('sellbyyear'));
 
 		// check parameters
 		$object->sellby = $newvalue;
@@ -203,7 +203,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'seteol_date' && $user->hasRight('stock', 'creer') && ! GETPOST('cancel', 'alpha')) {
-		$newvalue = dol_mktime(12, 0, 0, GETPOST('eol_datemonth', 'int'), GETPOST('eol_dateday', 'int'), GETPOST('eol_dateyear', 'int'));
+		$newvalue = dol_mktime(12, 0, 0, GETPOSTINT('eol_datemonth'), GETPOSTINT('eol_dateday'), GETPOSTINT('eol_dateyear'));
 		$result = $object->setValueFrom('eol_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
@@ -214,7 +214,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setmanufacturing_date' && $user->hasRight('stock', 'creer') && ! GETPOST('cancel', 'alpha')) {
-		$newvalue = dol_mktime(12, 0, 0, GETPOST('manufacturing_datemonth', 'int'), GETPOST('manufacturing_dateday', 'int'), GETPOST('manufacturing_dateyear', 'int'));
+		$newvalue = dol_mktime(12, 0, 0, GETPOSTINT('manufacturing_datemonth'), GETPOSTINT('manufacturing_dateday'), GETPOSTINT('manufacturing_dateyear'));
 		$result = $object->setValueFrom('manufacturing_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
@@ -225,7 +225,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setscrapping_date' && $user->hasRight('stock', 'creer') && ! GETPOST('cancel', 'alpha')) {
-		$newvalue = dol_mktime(12, 0, 0, GETPOST('scrapping_datemonth', 'int'), GETPOST('scrapping_dateday', 'int'), GETPOST('scrapping_dateyear', 'int'));
+		$newvalue = dol_mktime(12, 0, 0, GETPOSTINT('scrapping_datemonth'), GETPOSTINT('scrapping_dateday'), GETPOSTINT('scrapping_dateyear'));
 		$result = $object->setValueFrom('scrapping_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');

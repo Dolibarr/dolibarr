@@ -44,7 +44,7 @@ $langs->loadLangs(array('mrp', 'other'));
 
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -53,8 +53,8 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'mo
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $TBomLineId = GETPOST('bomlineid', 'array');
-$lineid   = GETPOST('lineid', 'int');
-$socid = GETPOST("socid", 'int');
+$lineid   = GETPOSTINT('lineid');
+$socid = GETPOSTINT("socid");
 
 // Initialize technical objects
 $object = new Mo($db);
@@ -85,8 +85,8 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-if (GETPOST('fk_bom', 'int') > 0) {
-	$objectbom->fetch(GETPOST('fk_bom', 'int'));
+if (GETPOSTINT('fk_bom') > 0) {
+	$objectbom->fetch(GETPOSTINT('fk_bom'));
 
 	if ($action != 'add') {
 		// We force calling parameters if we are not in the submit of creation of MO
@@ -105,9 +105,9 @@ $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'mrp', $object->id, 'mrp_mo', '', 'fk_soc', 'rowid', $isdraft);
 
 // Permissions
-$permissionnote = $user->rights->mrp->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->mrp->write; // Used by the include of actions_dellink.inc.php
-$permissiontoadd = $user->rights->mrp->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissionnote = $user->hasRight('mrp', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('mrp', 'write'); // Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('mrp', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
 
@@ -172,7 +172,7 @@ if (empty($reshook)) {
 			$res = $object->add_object_linked('mo', $mo_parent->id);
 		}
 
-		header("Location: ".dol_buildpath('/mrp/mo_card.php?id='.((int) $moline->fk_mo), 1));
+		header("Location: ".dol_buildpath('/mrp/mo_card.php?id='.((int) $mo_parent->id), 1));
 		exit;
 	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && !empty($permissiontoadd)) {
 		$also_cancel_consumed_and_produced_lines = (GETPOST('alsoCancelConsumedAndProducedLines', 'alpha') ? 1 : 0);
@@ -203,7 +203,7 @@ if (empty($reshook)) {
 		}
 
 		$error = 0;
-		$deleteChilds = GETPOST('deletechilds', 'boolean');
+		$deleteChilds = GETPOST('deletechilds', 'aZ');
 
 		// Start the database transaction
 		$db->begin();
@@ -269,10 +269,10 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	// Actions to send emails
@@ -332,7 +332,7 @@ llxHeader('', $title, '');
 
 // Part to create
 if ($action == 'create') {
-	if (GETPOST('fk_bom', 'int') > 0) {
+	if (GETPOSTINT('fk_bom') > 0) {
 		$titlelist = $langs->trans("ToConsume");
 		if ($objectbom->bomtype == 1) {
 			$titlelist = $langs->trans("ToObtain");
@@ -432,7 +432,20 @@ if ($action == 'create') {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
-		$object->lines = $objectbom->lines;
+		$arrayOfMoLines = array();
+		foreach ($objectbom->lines as $key => $val) {
+			$moLine = new MoLine($db);
+			$moLine->id = $objectbom->lines[$key]->id;
+			$moLine->position = $objectbom->lines[$key]->position;
+			$moLine->fk_product = $objectbom->lines[$key]->fk_product;
+			$moLine->fk_unit = $objectbom->lines[$key]->fk_unit;
+			$moLine->qty = $objectbom->lines[$key]->qty;
+			$moLine->qty_frozen = $objectbom->lines[$key]->qty_frozen;
+			$moLine->disable_stock_change = $objectbom->lines[$key]->disable_stock_change;
+
+			$arrayOfMoLines[] = $moLine;
+		}
+		$object->lines = $arrayOfMoLines;
 		$object->mrptype = $objectbom->bomtype;
 		$object->bom = $objectbom;
 
@@ -675,7 +688,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		//$result = $object->getLinesArray();
 		$object->fetchLines();
 
-		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOSTINT('lineid')).'" method="POST">
     	<input type="hidden" name="token" value="' . newToken().'">
     	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
     	<input type="hidden" name="mode" value="">
@@ -837,7 +850,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$relativepath = $objref.'/'.$objref.'.pdf';
 		$filedir = $conf->mrp->dir_output.'/'.$objref;
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-		$genallowed = $user->rights->mrp->read; // If you can read, you can build the PDF to read content
+		$genallowed = $user->hasRight('mrp', 'read'); // If you can read, you can build the PDF to read content
 		$delallowed = $user->hasRight("mrp", "creer"); // If you can create/edit, you can remove a file on card
 		print $formfile->showdocuments('mrp:mo', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $mysoc->default_lang);
 

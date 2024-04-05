@@ -88,6 +88,7 @@ class GlobalToFunction extends AbstractRector
 	public function refactor(Node $node)
 	{
 		if ($node instanceof Node\Expr\Assign) {
+			// var is left of = and expr is right
 			if (!isset($node->var)) {
 				return;
 			}

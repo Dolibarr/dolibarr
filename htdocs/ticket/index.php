@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) - 2013-2016    Jean-François FERRY     <hello@librethic.io>
- * Copyright (C) - 2019         Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2021		Frédéric France				<frederic.france@netlogic.fr>
+/* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2021-2024	Frédéric France				<frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,8 +44,8 @@ $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$msg_id = GETPOST('msg_id', 'int');
+$id = GETPOSTINT('id');
+$msg_id = GETPOSTINT('msg_id');
 
 $action = GETPOST('action', 'aZ09');
 
@@ -56,7 +57,7 @@ $userid = $user->id;
 
 $nowarray = dol_getdate(dol_now(), true);
 $nowyear = $nowarray['year'];
-$year = GETPOST('year', 'int') > 0 ? GETPOST('year', 'int') : $nowyear;
+$year = GETPOSTINT('year') > 0 ? GETPOSTINT('year') : $nowyear;
 $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
@@ -103,7 +104,7 @@ $param_shownb = 'DOLUSERCOOKIE_ticket_by_status_shownb';
 $param_showtot = 'DOLUSERCOOKIE_ticket_by_status_showtot';
 $autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
 if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
-	$endyear = GETPOST($param_year, 'int');
+	$endyear = GETPOSTINT($param_year);
 	$shownb = GETPOST($param_shownb, 'alpha');
 	$showtot = GETPOST($param_showtot, 'alpha');
 } elseif (!empty($_COOKIE['DOLUSERCOOKIE_ticket_by_status'])) {
@@ -207,7 +208,7 @@ if ($result) {
 		}
 	}
 
-	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';	// This define $badgeStatusX
 
 	$dataseries = array();
 	$colorseries = array();
@@ -220,8 +221,10 @@ if ($result) {
 	$colorseries[Ticket::STATUS_ASSIGNED] = $badgeStatus3;
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_IN_PROGRESS]), 'data' => round($tick['inprogress']));
 	$colorseries[Ticket::STATUS_IN_PROGRESS] = $badgeStatus4;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_WAITING]), 'data' => round($tick['waiting']));
-	$colorseries[Ticket::STATUS_WAITING] = '-'.$badgeStatus4;
+	if (getDolGlobalString('TICKET_INCLUDE_SUSPENDED_STATUS')) {
+		$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_WAITING]), 'data' => round($tick['waiting']));
+		$colorseries[Ticket::STATUS_WAITING] = '-'.$badgeStatus4;
+	}
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_NEED_MORE_INFO]), 'data' => round($tick['needmoreinfo']));
 	$colorseries[Ticket::STATUS_NEED_MORE_INFO] = '-'.$badgeStatus3;
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_CANCELED]), 'data' => round($tick['canceled']));
@@ -374,7 +377,6 @@ if ($user->hasRight('ticket', 'read')) {
 				$object->id = $objp->rowid;
 				$object->ref = $objp->ref;
 				$object->track_id = $objp->track_id;
-				$object->fk_statut = $objp->status;
 				$object->status = $objp->status;
 				$object->progress = $objp->progress;
 				$object->subject = $objp->subject;
@@ -404,7 +406,7 @@ if ($user->hasRight('ticket', 'read')) {
 
 				// Category
 				print '<td class="nowrap">';
-				if (!empty($obp->category_code)) {
+				if (!empty($objp->category_code)) {
 					$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$objp->category_code, 'c_ticket_category', 'code', 'label', $objp->category_code);
 					print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
 				}

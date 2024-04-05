@@ -76,7 +76,7 @@ class modWebServicesClient extends DolibarrModules
 
 		// Permissions
 		$this->rights = array();
-		$this->rights_class = 'syncsupplierwebservices';
+		$this->rights_class = 'webservicesclient';
 		$r = 0;
 	}
 }

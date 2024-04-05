@@ -37,8 +37,8 @@ if (!$user->hasRight('ticket', 'read')) {
 
 $object_status = GETPOST('object_status', 'intcomma');
 
-$userid = GETPOST('userid', 'int');
-$socid = GETPOST('socid', 'int');
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
@@ -46,8 +46,8 @@ if ($user->socid > 0) {
 }
 
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
-$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
+$year = GETPOST('year') > 0 ? GETPOSTINT('year') : $nowyear;
+$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalInt('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
 // Load translation files required by the page
@@ -121,73 +121,6 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-/*if (empty($user->rights->societe->client->voir) || $user->socid) {
-	$filenameamount = $dir.'/ticketsamountinyear-'.$user->id.'-'.$year.'.png';
-	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=ticketstats&file=ticketsamountinyear-'.$user->id.'-'.$year.'.png';
-} else {
-	$filenameamount = $dir.'/ticketsamountinyear-'.$year.'.png';
-	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=ticketstats&file=ticketsamountinyear-'.$year.'.png';
-}
-
-$px2 = new DolGraph();
-$mesg = $px2->isGraphKo();
-if (!$mesg) {
-	$px2->SetData($data);
-	$i = $startyear; $legend = array();
-	while ($i <= $endyear) {
-		$legend[] = $i;
-		$i++;
-	}
-	$px2->SetLegend($legend);
-	$px2->SetMaxValue($px2->GetCeilMaxValue());
-	$px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
-	$px2->SetWidth($WIDTH);
-	$px2->SetHeight($HEIGHT);
-	$px2->SetYLabel($langs->trans("AmountOfTickets"));
-	$px2->SetShading(3);
-	$px2->SetHorizTickIncrement(1);
-	$px2->mode = 'depth';
-	$px2->SetTitle($langs->trans("AmountOfTicketsByMonthHT"));
-
-	$px2->draw($filenameamount, $fileurlamount);
-}
-
-
-$data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
-
-if (empty($user->rights->societe->client->voir) || $user->socid) {
-	$filename_avg = $dir.'/ticketsaverage-'.$user->id.'-'.$year.'.png';
-	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=ticketstats&file=ticketsaverage-'.$user->id.'-'.$year.'.png';
-} else {
-	$filename_avg = $dir.'/ticketsaverage-'.$year.'.png';
-	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=ticketstats&file=ticketsaverage-'.$year.'.png';
-}
-
-$px3 = new DolGraph();
-$mesg = $px3->isGraphKo();
-if (!$mesg) {
-	$px3->SetData($data);
-	$i = $startyear; $legend = array();
-	while ($i <= $endyear) {
-		$legend[] = $i;
-		$i++;
-	}
-	$px3->SetLegend($legend);
-	$px3->SetYLabel($langs->trans("AmountAverage"));
-	$px3->SetMaxValue($px3->GetCeilMaxValue());
-	$px3->SetMinValue($px3->GetFloorMinValue());
-	$px3->SetWidth($WIDTH);
-	$px3->SetHeight($HEIGHT);
-	$px3->SetShading(3);
-	$px3->SetHorizTickIncrement(1);
-	$px3->mode = 'depth';
-	$px3->SetTitle($langs->trans("AmountAverage"));
-
-	$px3->draw($filename_avg, $fileurl_avg);
-}*/
-
-
-
 // Show array
 $data = $stats->getAllByYear();
 $arrayyears = array();
@@ -211,7 +144,7 @@ $type = 'ticket_stats';
 
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
-print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'byyear', '', -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

@@ -93,19 +93,19 @@ abstract class ActionsCardCommon
 			$this->assign_post($action);
 		}
 
-		if ($_GET["type"] == 'f') {
+		if (GETPOST("type") == 'f') {
 			$this->object->fournisseur = 1;
 		}
-		if ($_GET["type"] == 'c') {
+		if (GETPOST("type") == 'c') {
 			$this->object->client = 1;
 		}
-		if ($_GET["type"] == 'p') {
+		if (GETPOST("type") == 'p') {
 			$this->object->client = 2;
 		}
-		if ($_GET["type"] == 'cp') {
+		if (GETPOST("type") == 'cp') {
 			$this->object->client = 3;
 		}
-		if ($_REQUEST["private"] == 1) {
+		if (GETPOST("private") == 1) {
 			$this->object->particulier = 1;
 		}
 
@@ -298,8 +298,9 @@ abstract class ActionsCardCommon
 			$this->tpl['country'] = ($img ? $img.' ' : '').$this->object->country;
 
 			$this->tpl['phone'] 	= dol_print_phone($this->object->phone, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
+			$this->tpl['phone_mobile'] 	= dol_print_phone($this->object->phone_mobile, $this->object->country_code, 0, $this->object->id, 'AC_MOB');
 			$this->tpl['fax'] 		= dol_print_phone($this->object->fax, $this->object->country_code, 0, $this->object->id, 'AC_FAX');
-			$this->tpl['email'] 	= dol_print_email($this->object->email, 0, $this->object->id, 'AC_EMAIL');
+			$this->tpl['email'] 	= dol_print_email($this->object->email, 0, $this->object->id, 1);
 			$this->tpl['url'] 		= dol_print_url($this->object->url);
 
 			$this->tpl['tva_assuj'] = yn($this->object->tva_assuj);
@@ -344,7 +345,7 @@ abstract class ActionsCardCommon
 			}
 
 			// Linked member
-			if (isModEnabled('adherent')) {
+			if (isModEnabled('member')) {
 				$langs->load("members");
 				$adh = new Adherent($this->db);
 				$result = $adh->fetch('', '', $this->object->id);
@@ -401,7 +402,8 @@ abstract class ActionsCardCommon
 		$this->object->town					= GETPOST("town");
 		$this->object->country_id = GETPOST("country_id") ? GETPOST("country_id") : $mysoc->country_id;
 		$this->object->state_id = GETPOST("state_id");
-		$this->object->phone				= GETPOST("tel");
+		$this->object->phone				= GETPOST("phone");
+		$this->object->phone_mobile			= GETPOST("phone_mobile");
 		$this->object->fax					= GETPOST("fax");
 		$this->object->email				= GETPOST("email", 'alphawithlgt');
 		$this->object->url					= GETPOST("url");

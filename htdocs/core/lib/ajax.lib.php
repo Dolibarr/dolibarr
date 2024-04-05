@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,12 +36,12 @@
  * @param string	$urloption			More parameters on URL request
  * @param int		$minLength			Minimum number of chars to trigger that Ajax search
  * @param int		$autoselect			Automatic selection if just one value (trigger("change") on field is done if search return only 1 result)
- * @param array		$ajaxoptions		Multiple options array
- *                                      - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
- *                                      - Ex: array('disabled'=> )
- *                                      - Ex: array('show'=> )
- *                                      - Ex: array('update_textarea'=> )
- *                                      - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
+ * @param array<string,string|string[]>	$ajaxoptions	Multiple options array
+ *                                                      - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
+ *                                                      - Ex: array('disabled'=> )
+ *                                                      - Ex: array('show'=> )
+ *                                                      - Ex: array('update_textarea'=> )
+ *                                                      - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
  * @param string	$moreparams			More params provided to ajax call
  * @return string   					Script
  */
@@ -161,6 +162,14 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												 price_ttc: item.price_ttc,
 												 price_unit_ht: item.price_unit_ht,
 												 price_unit_ht_locale: item.price_unit_ht_locale,
+		';
+	if (isModEnabled('multicurrency')) {
+		$script .= '
+												multicurrency_code: item.multicurrency_code,
+												multicurrency_unitprice: item.multicurrency_unitprice,
+		';
+	}
+	$script .= '
 												 description : item.description,
 												 ref_customer: item.ref_customer,
 												 tva_tx: item.tva_tx,
@@ -192,6 +201,13 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 							$("#'.$htmlnamejquery.'").attr("data-tvatx", ui.item.tva_tx);
 							$("#'.$htmlnamejquery.'").attr("data-default-vat-code", ui.item.default_vat_code);
 	';
+	if (isModEnabled('multicurrency')) {
+		$script .= '
+							// For multi-currency values
+							$("#'.$htmlnamejquery.'").attr("data-multicurrency-code", ui.item.multicurrency_code);
+							$("#'.$htmlnamejquery.'").attr("data-multicurrency-unitprice", ui.item.multicurrency_unitprice);
+		';
+	}
 	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 		$script .= '
 							// For customer price when PRODUIT_CUSTOMER_PRICES_BY_QTY is on
@@ -511,7 +527,9 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 						if ($(data.element).attr("data-html") != undefined) {
 							/* If property html set, we decode html entities and use this. */
 							/* Note that HTML content must have been sanitized from js with dol_escape_htmltag(xxx, 0, 0, \'\', 0, 1) when building the select option. */
-							return htmlEntityDecodeJs($(data.element).attr("data-html"));
+							if (typeof htmlEntityDecodeJs === "function") {
+								return htmlEntityDecodeJs($(data.element).attr("data-html"));
+							}
 						}
 						return data.text;
 					},
@@ -611,19 +629,19 @@ function ajax_event($htmlname, $events)
 /**
  * 	On/off button for constant
  *
- * 	@param	string	$code					Name of constant
- * 	@param	array	$input					Array of complementary actions to do if success ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
- * 	@param	int		$entity					Entity. Current entity is used if null.
- *  @param	int		$revertonoff			1=Revert on/off
- *  @param	int		$strict					Use only "disabled" with delConstant and "enabled" with setConstant
- *  @param	int		$forcereload			Force to reload page if we click/change value (this is supported only when there is no 'alert' option in input)
- *  @param	int		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin.
- *  @param	int		$forcenoajax			1 = Force to use a ahref link instead of ajax code.
- *  @param	int		$setzeroinsteadofdel	1 = Set constantto '0' instead of deleting it
- *  @param	string	$suffix					Suffix to use on the name of the switch_on picto. Example: '', '_red'
- *  @param	string	$mode					Add parameter &mode= to the href link (Used for href link)
- *  @param	string	$morecss				More CSS
- * 	@return	string
+ * 	@param  string      $code                   Name of constant
+ * 	@param  array       $input                  Array of complementary actions to do if success ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
+ * 	@param  int|null    $entity                 Entity. Current entity is used if null.
+ *  @param  int         $revertonoff            1=Revert on/off
+ *  @param  int	        $strict                 Use only "disabled" with delConstant and "enabled" with setConstant
+ *  @param  int         $forcereload            Force to reload page if we click/change value (this is supported only when there is no 'alert' option in input)
+ *  @param  int         $marginleftonlyshort    1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin.
+ *  @param  int	        $forcenoajax            1 = Force to use a ahref link instead of ajax code.
+ *  @param  int         $setzeroinsteadofdel    1 = Set constantto '0' instead of deleting it
+ *  @param  string      $suffix                 Suffix to use on the name of the switch_on picto. Example: '', '_red'
+ *  @param  string      $mode                   Add parameter &mode= to the href link (Used for href link)
+ *  @param  string      $morecss                More CSS
+ * 	@return string
  */
 function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '', $morecss = 'inline-block')
 {
@@ -673,9 +691,9 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 						confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict, userid, token);
 					} else {';
 		if (empty($setzeroinsteadofdel)) {
-			$out .=' 	delConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token);';
+			$out .= ' 	delConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token);';
 		} else {
-			$out .=' 	setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 0);';
+			$out .= ' 	setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 0);';
 		}
 		$out .= '	}
 				});

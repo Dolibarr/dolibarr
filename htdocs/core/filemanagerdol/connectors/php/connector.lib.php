@@ -2,6 +2,7 @@
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * == BEGIN LICENSE ==
  *
@@ -242,14 +243,11 @@ function GetFoldersAndFiles($resourceType, $currentFolder)
  */
 function CreateFolder($resourceType, $currentFolder)
 {
-	if (!isset($_GET)) {
-		global $_GET;
-	}
 	$sErrorNumber = '0';
 	$sErrorMsg = '';
 
 	if (isset($_GET['NewFolderName'])) {
-		$sNewFolderName = $_GET['NewFolderName'];
+		$sNewFolderName = GETPOST('NewFolderName');
 		$sNewFolderName = SanitizeFolderName($sNewFolderName);
 
 		if (strpos($sNewFolderName, '..') !== false) {
@@ -265,7 +263,7 @@ function CreateFolder($resourceType, $currentFolder)
 
 				switch ($sErrorMsg) {
 					case '':
-						$sErrorNumber = '0';
+						$sErrorNumber = '0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
 						break;
 					case 'Invalid argument':
 					case 'No such file or directory':
@@ -550,8 +548,8 @@ function GetParentFolder($folderPath)
 /**
  * CreateServerFolder
  *
- * @param 	string	$folderPath		Folder
- * @param 	string	$lastFolder		Folder
+ * @param 	string	$folderPath		Folder - Folder to create (recursively)
+ * @param 	?string	$lastFolder		Internal - Child Folder we are creating, prevents recursion
  * @return	string					''=success, error message otherwise
  */
 function CreateServerFolder($folderPath, $lastFolder = null)
@@ -584,6 +582,7 @@ function CreateServerFolder($folderPath, $lastFolder = null)
 			return "Can't create $folderPath directory";
 		}
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$sErrorMsg = CreateServerFolder($sParent, $folderPath);
 		if ($sErrorMsg != '') {
 			return $sErrorMsg;
@@ -739,9 +738,6 @@ function IsAllowedCommand($sCommand)
  */
 function GetCurrentFolder()
 {
-	if (!isset($_GET)) {
-		global $_GET;
-	}
 	$sCurrentFolder = isset($_GET['CurrentFolder']) ? GETPOST('CurrentFolder', '', 1) : '/';
 
 	// Check the current folder syntax (must begin and start with a slash).
@@ -954,10 +950,9 @@ function IsHtmlExtension($ext, $formExtensions)
 /**
  * Detect HTML in the first KB to prevent against potential security issue with
  * IE/Safari/Opera file type auto detection bug.
- * Returns true if file contain insecure HTML code at the beginning.
  *
  * @param string $filePath absolute path to file
- * @return boolean
+ * @return bool|-1		Returns true if the file contains insecure HTML code at the beginning, or -1 if error
  */
 function DetectHtml($filePath)
 {
@@ -1015,11 +1010,10 @@ function DetectHtml($filePath)
 /**
  * Check file content.
  * Currently this function validates only image files.
- * Returns false if file is invalid.
  *
  * @param 	string 	$filePath 		Absolute path to file
  * @param 	string 	$extension 		File extension
- * @return 	boolean					True or false
+ * @return 	bool|-1					Returns true if the file is valid, false if the file is invalid, -1 if error.
  */
 function IsImageValid($filePath, $extension)
 {

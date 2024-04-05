@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2024 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +70,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 			$hookmanager->initHooks(array('index'));
 			$object = new stdClass();
 			$action = '';
-			$parameters =array();
+			$parameters = array();
 			$hookmanager->executeHooks('addStatisticLine', $parameters, $object, $action);
 			$boxstatItems = array();
 			$boxstatFromHook = '';
@@ -102,7 +103,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 			);
 			$conditions = array(
 				'users' => $user->hasRight('user', 'user', 'lire'),
-				'members' => isModEnabled('adherent') && $user->hasRight('adherent', 'lire'),
+				'members' => isModEnabled('member') && $user->hasRight('adherent', 'lire'),
 				'customers' => isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS_STATS'),
 				'prospects' => isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS_STATS'),
 				'suppliers' => (
@@ -115,11 +116,11 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'products' => isModEnabled('product') && $user->hasRight('product', 'read'),
 				'services' => isModEnabled('service') && $user->hasRight('service', 'read'),
 				'proposals' => isModEnabled('propal') && $user->hasRight('propal', 'read'),
-				'orders' => isModEnabled('commande') && $user->hasRight('commande', 'lire'),
-				'invoices' => isModEnabled('facture') && $user->hasRight('facture', 'lire'),
+				'orders' => isModEnabled('order') && $user->hasRight('commande', 'lire'),
+				'invoices' => isModEnabled('invoice') && $user->hasRight('facture', 'lire'),
 				'donations' => isModEnabled('don') && $user->hasRight('don', 'lire'),
-				'contracts' => isModEnabled('contrat') && $user->hasRight('contrat', 'lire'),
-				'interventions' => isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire'),
+				'contracts' => isModEnabled('contract') && $user->hasRight('contrat', 'lire'),
+				'interventions' => isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire'),
 				'supplier_orders' => isModEnabled('supplier_order') && $user->hasRight('fournisseur', 'commande', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS'),
 				'supplier_invoices' => isModEnabled('supplier_invoice') && $user->hasRight('fournisseur', 'facture', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS'),
 				'supplier_proposals' => isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS'),
@@ -254,6 +255,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 
 						$board = new $class($this->db);
 						if (method_exists($board, 'load_state_board')) {
+							// @phan-suppress-next-line PhanUndeclaredMethod  (Legacy, not present in core).
 							$board->load_state_board();
 						} elseif (method_exists($board, 'loadStateBoard')) {
 							$board->loadStateBoard();

@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=Verwalten einer Datenbasis für Wissensmanagement 
 # Admin page
 #
 KnowledgeManagementSetup = Einstellungen des Wissensmanagement-Systems
-Settings = Einstellungen
 KnowledgeManagementSetupPage = Einstellungen für das Modul Wissensmanagement
 
 
 #
 # About page
 #
-About = Über
 KnowledgeManagementAbout = Über Wissensmanagement
 KnowledgeManagementAboutPage = Über Wissensmanagement Seite
 
 KnowledgeManagementArea = Wissensmanagement
 MenuKnowledgeRecord = Wissensbasis
+MenuKnowledgeRecordShort = Wissensbasis
 ListKnowledgeRecord = Liste der Artikel
 NewKnowledgeRecord = Neuer Artikel
 ValidateReply = Lösung bestätigen
@@ -47,8 +46,14 @@ KnowledgeRecord = Artikel
 KnowledgeRecordExtraFields = Extrafelder für Artikel
 GroupOfTicket=Ticket-Themengruppe
 YouCanLinkArticleToATicketCategory=Sie können einen Artikel mit einer Ticket-Themengruppe verknüpfen (so wird auf den Artikel bei der Erfassung neuer Tickets hingewiesen)
-SuggestedForTicketsInGroup=Vorschlagen für Tickets der Gruppe
+SuggestedForTicketsInGroup=Bei der Ticketerstellung vorschlagen
 
 SetObsolete=Als veraltet festlegen
 ConfirmCloseKM=Bestätigen Sie das Schließen dieses Artikels als veraltet?
 ConfirmReopenKM=Möchten Sie diesen Artikel auf den Status "freigegeben" zurücksetzen?
+BoxLastKnowledgerecordDescription=Letzte %s Artikel
+BoxLastKnowledgerecord=Letzte Artikel
+BoxLastKnowledgerecordContent=Letzte Artikel
+BoxLastKnowledgerecordModifiedContent=Zuletzt geänderte Artikel
+BoxLastModifiedKnowledgerecordDescription=Letzte %s geänderte Artikel
+BoxLastModifiedKnowledgerecord=Zuletzt geänderte Artikel

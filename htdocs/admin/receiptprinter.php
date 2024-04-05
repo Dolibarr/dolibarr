@@ -44,12 +44,12 @@ $action = GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha');
 
 $printername = GETPOST('printername', 'alpha');
-$printerid = GETPOST('printerid', 'int');
+$printerid = GETPOSTINT('printerid');
 $parameter = GETPOST('parameter', 'alpha');
 
 $template = GETPOST('template', 'alphanohtml');
 $templatename = GETPOST('templatename', 'alpha');
-$templateid = GETPOST('templateid', 'int');
+$templateid = GETPOSTINT('templateid');
 
 $printer = new dolReceiptPrinter($db);
 
@@ -64,6 +64,7 @@ if (!function_exists('gzdecode')) {
 	 *
 	 * @param string    $data   data to deflate
 	 * @return string           data deflated
+	 * @phan-suppress PhanRedefineFunctionInternal
 	 */
 	function gzdecode($data)
 	{
@@ -89,7 +90,7 @@ if ($action == 'addprinter' && $user->admin) {
 
 	if (!$error) {
 		$db->begin();
-		$result = $printer->addPrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter);
+		$result = $printer->addPrinter($printername, GETPOSTINT('printertypeid'), GETPOSTINT('printerprofileid'), $parameter);
 		if ($result > 0) {
 			$error++;
 		}
@@ -139,7 +140,7 @@ if ($action == 'updateprinter' && $user->admin) {
 
 	if (!$error) {
 		$db->begin();
-		$result = $printer->updatePrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter, $printerid);
+		$result = $printer->updatePrinter($printername, GETPOSTINT('printertypeid'), GETPOSTINT('printerprofileid'), $parameter, $printerid);
 		if ($result > 0) {
 			$error++;
 		}
@@ -392,11 +393,11 @@ if ($mode == 'config' && $user->admin) {
 				print img_picto($langs->trans("Delete"), 'delete', 'class="paddingright"');
 				print '</a>';
 				// test icon
-				print '<a class="marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=config&action=testprinter&token='.newToken().'&printerid='.$printer->listprinters[$line]['rowid'].'&printername='.urlencode($printer->listprinters[$line]['name']).'">';
+				print '<a class="marginrightonly nowraponall" href="'.$_SERVER['PHP_SELF'].'?mode=config&action=testprinter&token='.newToken().'&printerid='.$printer->listprinters[$line]['rowid'].'&printername='.urlencode($printer->listprinters[$line]['name']).'">';
 				print img_picto($langs->trans("TestPrinterDesc"), 'printer', 'class="paddingright paddingleft"').'TXT';
 				print '</a>';
 				// test icon
-				print '<a class="marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=config&action=testprinter2&token='.newToken().'&printerid='.$printer->listprinters[$line]['rowid'].'&printername='.urlencode($printer->listprinters[$line]['name']).'">';
+				print '<a class="marginrightonly nowraponall" href="'.$_SERVER['PHP_SELF'].'?mode=config&action=testprinter2&token='.newToken().'&printerid='.$printer->listprinters[$line]['rowid'].'&printername='.urlencode($printer->listprinters[$line]['name']).'">';
 				print img_picto($langs->trans("TestPrinterDesc2"), 'printer', 'class="paddingright paddingleft"').'IMG';
 				print '</a>';
 				print '</td>';

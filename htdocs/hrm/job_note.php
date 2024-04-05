@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_job.lib.php';
 $langs->loadLangs(array('hrm', 'companies'));
 
 // Get parameters
-$id     = GETPOST('id', 'int');
+$id     = GETPOSTINT('id');
 $ref    = GETPOST('ref', 'alpha');
 
 $action     = GETPOST('action', 'aZ09');
@@ -59,8 +59,8 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Permissions
-$permissiontoread = $user->rights->hrm->all->read;
-$permissionnote = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoread = $user->hasRight('hrm', 'all', 'read');
+$permissionnote = $user->hasRight('hrm', 'all', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();

@@ -106,6 +106,17 @@ abstract class DoliDB implements Database
 	}
 
 	/**
+	 * Return SQL string to aggregate using the Standard Deviation of population
+	 *
+	 * @param	string	$nameoffield	Name of field
+	 * @return	string					SQL string
+	 */
+	public function stddevPop($nameoffield)
+	{
+		return 'STDDEV_POP('.$nameoffield.')';
+	}
+
+	/**
 	 * Return SQL string to force an index
 	 *
 	 * @param	string	$nameofindex	Name of index
@@ -188,7 +199,7 @@ abstract class DoliDB implements Database
 				dol_syslog("BEGIN Transaction".($textinlog ? ' '.$textinlog : ''), LOG_DEBUG);
 				dol_syslog('', 0, 1);
 			}
-			return $ret;
+			return (int) $ret;
 		} else {
 			$this->transaction_opened++;
 			dol_syslog('', 0, 1);
@@ -266,7 +277,7 @@ abstract class DoliDB implements Database
 	/**
 	 *	Return version of database server into an array
 	 *
-	 *	@return	        array  		Version array
+	 *	@return	        string[]  		Version array
 	 */
 	public function getVersionArray()
 	{
@@ -296,7 +307,7 @@ abstract class DoliDB implements Database
 			$oldsortorder = '';
 			$return = '';
 			$fields = explode(',', $sortfield);
-			$orders = explode(',', $sortorder);
+			$orders = (!empty($sortorder) ? explode(',', $sortorder) : array());
 			$i = 0;
 			foreach ($fields as $val) {
 				if (!$return) {
@@ -345,7 +356,7 @@ abstract class DoliDB implements Database
 	 *
 	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 *	@param	mixed				$gm			'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
-	 *	@return	int|string						Date TMS or ''
+	 *	@return	int|''							Date TMS or ''
 	 */
 	public function jdate($string, $gm = 'tzserver')
 	{
@@ -381,10 +392,11 @@ abstract class DoliDB implements Database
 	{
 		$sql .= ' LIMIT 1';
 
-		$res = $this->query($sql);
-		if ($res) {
-			$obj = $this->fetch_object($res);
+		$resql = $this->query($sql);
+		if ($resql) {
+			$obj = $this->fetch_object($resql);
 			if ($obj) {
+				$this->free($resql);
 				return $obj;
 			} else {
 				return 0;
@@ -395,24 +407,28 @@ abstract class DoliDB implements Database
 	}
 
 	/**
-	 * Return all results from query as an array of objects
-	 * Note : This method executes a given SQL query and retrieves all row of results as an array of objects. It should only be used with SELECT queries
-	 * be careful with this method use it only with some limit of results to avoid performances loss.
+	 * Return all results from query as an array of objects. Using this is a bad practice and is discouraged.
+	 * Note : It should only be used with SELECT queries and with a limit. If you are not able to defined/know what can be the limit, it
+	 * just means this function is not what you need. Do not use it.
 	 *
-	 * @param 	string 		$sql 		The sql query string
-	 * @return 	bool|array				Result
-	 * @deprecated
+	 * @param 	string 			$sql 	The sql query string. Must end with "... LIMIT x"
+	 * @return  bool|array              Result
 	 */
 	public function getRows($sql)
 	{
-		$res = $this->query($sql);
-		if ($res) {
+		if (! preg_match('/LIMIT \d+$/', $sql)) {
+			return false;
+		}
+
+		$resql = $this->query($sql);
+		if ($resql) {
 			$results = array();
-			if ($this->num_rows($res) > 0) {
-				while ($obj = $this->fetch_object($res)) {
+			if ($this->num_rows($resql) > 0) {
+				while ($obj = $this->fetch_object($resql)) {
 					$results[] = $obj;
 				}
 			}
+			$this->free($resql);
 			return $results;
 		}
 

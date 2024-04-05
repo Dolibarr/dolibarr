@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,7 +117,7 @@ function dolKeepOnlyPhpCode($str)
  * @param	int			$removephppart		0=Replace PHP sections with a PHP badge. 1=Remove completely PHP sections.
  * @param	string		$contenttype		Content type
  * @param	int			$containerid 		Contenair id
- * @return	boolean							True if OK
+ * @return	string							html content
  * @see dolWebsiteOutput() for function used to replace content in a web server context
  */
 function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $contenttype = 'html', $containerid = 0)
@@ -457,8 +459,10 @@ function dolWebsiteIncrementCounter($websiteid, $websitepagetype, $websitepageid
 			$sql .= " pageviews_month = pageviews_month + 1,";
 			// if last access was done during previous month, we save pageview_month into pageviews_previous_month
 			$sql .= " pageviews_previous_month = ".$db->ifsql("lastaccess < '".$db->idate(dol_mktime(0, 0, 0, $tmpnow['mon'], 1, $tmpnow['year'], 'gmt', 0), 'gmt')."'", 'pageviews_month', 'pageviews_previous_month').",";
-			$sql .= " lastaccess = '".$db->idate(dol_now('gmt'), 'gmt')."'";
+			$sql .= " lastaccess = '".$db->idate(dol_now('gmt'), 'gmt')."',";
+			$sql .= " lastpageid = ".((int) $websitepageid);
 			$sql .= " WHERE rowid = ".((int) $websiteid);
+
 			$resql = $db->query($sql);
 			if (! $resql) {
 				return -1;
@@ -517,6 +521,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 	if ($containeraliasalt) {
 		include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 		$tmpwebsitepage = new WebsitePage($db);
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$result = $tmpwebsitepage->fetch(0, $website->id, '', $containeraliasalt);
 		if ($result > 0) {
 			$containerref = $tmpwebsitepage->pageurl;
@@ -540,11 +545,12 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		if (!$containeraliasalt) {	// If containeraliasalt set, we already did the test
 			include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 			$tmpwebsitepage = new WebsitePage($db);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$result = $tmpwebsitepage->fetch(0, $website->id, $containerref);
 			unset($tmpwebsitepage);
 		}
 		if ($result > 0) {
-			$currenturi = $_SERVER["REQUEST_URI"];
+			$currenturi = $_SERVER["REQUEST_URI"];	// Example: /public/website/index.php?website=mywebsite.com&pageref=mywebsite-home&nocache=1708177483
 			$regtmp = array();
 			if (preg_match('/&pageref=([^&]+)/', $currenturi, $regtmp)) {
 				if ($regtmp[0] == $containerref) {
@@ -559,13 +565,14 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		}
 	} else { // When page called from virtual host server
 		$newurl = '/'.$containerref.'.php';
+		$newurl = $newurl.(empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
 	}
 
 	if ($newurl) {
 		if ($permanent) {
 			header("Status: 301 Moved Permanently", false, 301);
 		}
-		header("Location: ".$newurl.(empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]));
+		header("Location: ".$newurl);
 		exit;
 	} else {
 		print "Error, page contains a redirect to the alias page '".$containerref."' that does not exists in web site (".$website->id." / ".$website->ref.")";
@@ -596,7 +603,7 @@ function includeContainer($containerref)
 	$fullpathfile = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$websitekey.'/'.$containerref;
 
 	if (empty($includehtmlcontentopened)) {
-		$includehtmlcontentopened = 0;
+		$includehtmlcontentopened = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
 	}
 	$includehtmlcontentopened++;
 	if ($includehtmlcontentopened > $MAXLEVEL) {
@@ -611,7 +618,7 @@ function includeContainer($containerref)
 	//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
 
 	ob_start();
-	$res = include $fullpathfile; // Include because we want to execute code content
+	$res = @include $fullpathfile; // Include because we want to execute code content
 	$tmpoutput = ob_get_contents();
 	ob_end_clean();
 
@@ -675,13 +682,13 @@ function getStructuredData($type, $data = array())
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "Organization",
-			"name": "'.dol_escape_json($data['name'] ? $data['name'] : $companyname).'",
-			"url": "'.dol_escape_json($data['url'] ? $data['url'] : $url).'",
+			"name": "'.dol_escape_json(!empty($data['name']) ? $data['name'] : $companyname).'",
+			"url": "'.dol_escape_json(!empty($data['url']) ? $data['url'] : $url).'",
 			"logo": "'.($data['logo'] ? dol_escape_json($data['logo']) : '/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo)).'",
 			"contactPoint": {
 				"@type": "ContactPoint",
 				"contactType": "Contact",
-				"email": "'.dol_escape_json($data['email'] ? $data['email'] : $mysoc->email).'"
+				"email": "'.dol_escape_json(!empty($data['email']) ? $data['email'] : $mysoc->email).'"
 			}'."\n";
 		if (is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
 			$ret .= ",\n";
@@ -830,6 +837,8 @@ function getStructuredData($type, $data = array())
 				}
 			}'."\n";
 		$ret .= '</script>'."\n";
+	} else {
+		$ret = '';
 	}
 	return $ret;
 }
@@ -869,7 +878,7 @@ function getSocialNetworkHeaderCards($params = null)
 
 		$fullurl = $website->virtualhost.'/'.$websitepage->pageurl.'.php';
 		$canonicalurl = $website->virtualhost.(($websitepage->id == $website->fk_default_home) ? '/' : (($shortlangcode != substr($website->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$websitepage->pageurl.'.php'));
-		$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
+		$hashtags = trim(implode(' #', array_map('trim', explode(',', $websitepage->keywords))));
 
 		// Open Graph
 		$out .= '<meta name="og:type" content="website">'."\n";	// TODO If blogpost, use type article
@@ -922,7 +931,7 @@ function getSocialNetworkSharingLinks()
 
 	if ($website->virtualhost) {
 		$fullurl = $website->virtualhost.'/'.$websitepage->pageurl.'.php';
-		$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
+		$hashtags = trim(implode(' #', array_map('trim', explode(',', $websitepage->keywords))));
 
 		$out .= '<div class="dol-social-share">'."\n";
 
@@ -972,8 +981,8 @@ function getSocialNetworkSharingLinks()
 /**
  * Return HTML content to add structured data for an article, news or Blog Post.
  *
- * @param	Object	$object			Object
- * @return  string					HTML img content or '' if no image found
+ * @param	Object	$object		Object
+ * @return  int					HTML img content or '' if no image found
  * @see getImagePublicURLOfObject()
  */
 function getNbOfImagePublicURLOfObject($object)
@@ -1096,12 +1105,12 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
  * @param	int			$status				0 or 1, or -1 for both
  * @return  array							Array with results of search
  */
-function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = 'null', $status = 1)
+function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = [], $status = 1)
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 
 	$error = 0;
-	$arrayresult = array('code'=>'', 'list'=>array());
+	$arrayresult = array('code' => '', 'list' => array());
 
 	if (!is_object($weblangs)) {
 		$weblangs = $langs;
@@ -1209,22 +1218,22 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 
 		$filecontent = file_get_contents($filehtmlheader);
 		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent)) {
-			$arrayresult['list'][] = array('type'=>'website_htmlheadercontent');
+			$arrayresult['list'][] = array('type' => 'website_htmlheadercontent');
 		}
 
 		$filecontent = file_get_contents($filecss);
 		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent)) {
-			$arrayresult['list'][] = array('type'=>'website_csscontent');
+			$arrayresult['list'][] = array('type' => 'website_csscontent');
 		}
 
 		$filecontent = file_get_contents($filejs);
 		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent)) {
-			$arrayresult['list'][] = array('type'=>'website_jscontent');
+			$arrayresult['list'][] = array('type' => 'website_jscontent');
 		}
 
 		$filerobot = file_get_contents($filerobot);
 		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent)) {
-			$arrayresult['list'][] = array('type'=>'website_robotcontent');
+			$arrayresult['list'][] = array('type' => 'website_robotcontent');
 		}
 
 		$searchdone = 1;
@@ -1256,7 +1265,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
  * @param 	string		$urltograb		URL to grab (example: http://www.nltechno.com/ or http://www.nltechno.com/dir1/ or http://www.nltechno.com/dir1/mapage1)
  * @param 	string		$tmp			Content to parse
  * @param 	string		$action			Var $action
- * @param	string		$modifylinks	0=Do not modify content, 1=Replace links with a link to viewimage
+ * @param	int 		$modifylinks	0=Do not modify content, 1=Replace links with a link to viewimage
  * @param	int			$grabimages		0=Do not grab images, 1=Grab images
  * @param	string		$grabimagesinto	'root' or 'subpage'
  * @return	void
@@ -1311,10 +1320,6 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 		$filetosave = preg_replace('/\/[^\/]+\/\.\./', '', $filetosave);
 		$filename = preg_replace('/\/[^\/]+\/\.\./', '', $filename);
 
-		//var_dump($filetosave);
-		//var_dump($filename);
-		//exit;
-
 		if (empty($alreadygrabbed[$urltograbbis])) {
 			if ($grabimages) {
 				$tmpgeturl = getURLContent($urltograbbis, 'GET', '', 1, array(), array('http', 'https'), 0);
@@ -1332,7 +1337,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					dol_mkdir(dirname($filetosave));
 
 					$fp = fopen($filetosave, "w");
-					fputs($fp, $tmpgeturl['content']);
+					fwrite($fp, $tmpgeturl['content']);
 					fclose($fp);
 					dolChmod($filetosave);
 				}
@@ -1380,10 +1385,6 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 		$filetosave = preg_replace('/\/[^\/]+\/\.\./', '', $filetosave);
 		$filename = preg_replace('/\/[^\/]+\/\.\./', '', $filename);
 
-		//var_dump($filetosave);
-		//var_dump($filename);
-		//exit;
-
 		if (empty($alreadygrabbed[$urltograbbis])) {
 			if ($grabimages) {
 				$tmpgeturl = getURLContent($urltograbbis, 'GET', '', 1, array(), array('http', 'https'), 0);
@@ -1401,7 +1402,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					dol_mkdir(dirname($filetosave));
 
 					$fp = fopen($filetosave, "w");
-					fputs($fp, $tmpgeturl['content']);
+					fwrite($fp, $tmpgeturl['content']);
 					fclose($fp);
 					dolChmod($filetosave);
 				}

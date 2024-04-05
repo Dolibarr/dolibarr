@@ -1,6 +1,7 @@
 <?php
 /* Copyright (c) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,11 +50,11 @@ class DolGraph
 	public $cssprefix = ''; // To add into css styles
 
 	/**
-	 * @var int|string 		Width of graph. It can be a numeric for pixels or a string like '100%'
+	 * @var int|string 		Width of graph. It can be a numeric for pixels or a string like '100%' or "100px'
 	 */
 	public $width = 380;
 	/**
-	 * @var int 			Height of graph
+	 * @var int|string 	Height of graph. It can be a numeric for pixels or a string like '100%' or "100px'
 	 */
 	public $height = 200;
 
@@ -241,7 +242,7 @@ class DolGraph
 	/**
 	 * Set width
 	 *
-	 * @param 	int|string		$w			Width (Example: 320 or '100%')
+	 * @param 	int|string		$w			Width (Example: 320 or '100%' or '10px')
 	 * @return	void
 	 */
 	public function SetWidth($w)
@@ -440,7 +441,7 @@ class DolGraph
 	/**
 	 * Set height
 	 *
-	 * @param 	int		$h				Height
+	 * @param 	int|string		$h		Height int or '90%' or '10px'
 	 * @return	void
 	 */
 	public function SetHeight($h)
@@ -700,7 +701,7 @@ class DolGraph
 		}
 
 		//print "max=".$max." res=".$res;
-		return $res;
+		return (int) $res;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -781,7 +782,7 @@ class DolGraph
 		// phpcs:enable
 		global $langs;
 
-		dol_syslog(get_class($this) . "::draw_jflot this->type=" . join(',', $this->type) . " this->MaxValue=" . $this->MaxValue);
+		dol_syslog(get_class($this) . "::draw_jflot this->type=" . implode(',', $this->type) . " this->MaxValue=" . $this->MaxValue);
 
 		if (empty($this->width) && empty($this->height)) {
 			print 'Error width or height not set';
@@ -1068,7 +1069,7 @@ class DolGraph
 		// phpcs:enable
 		global $langs;
 
-		dol_syslog(get_class($this) . "::draw_chart this->type=" . join(',', $this->type) . " this->MaxValue=" . $this->MaxValue);
+		dol_syslog(get_class($this) . "::draw_chart this->type=" . implode(',', $this->type) . " this->MaxValue=" . $this->MaxValue);
 
 		if (empty($this->width) && empty($this->height)) {
 			print 'Error width or height not set';
@@ -1158,12 +1159,12 @@ class DolGraph
 		if (count($this->data) > 20) {
 			$dolxaxisvertical = 'dol-xaxis-vertical';
 		}
-		// No height for the pie grah
+		// No height for the pie graph
 		$cssfordiv = 'dolgraphchart';
 		if (isset($this->type[$firstlot])) {
 			$cssfordiv .= ' dolgraphchar' . $this->type[$firstlot];
 		}
-		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="min-height: '.$this->height.(strpos($this->height, '%') > 0 ? '' : 'px').'; max-height: '.(strpos($this->height, '%') > 0 ? $this->height : ($this->height + 100) . 'px').'; width:'.$this->width.(strpos($this->width, '%') > 0 ? '' : 'px').';" class="'.$cssfordiv.' dolgraph'.(empty($dolxaxisvertical) ? '' : ' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center">'."\n";
+		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="min-height: '.$this->height.(strpos((string) $this->height, '%') > 0 ? '' : 'px').'; max-height: '.(strpos((string) $this->height, '%') > 0 ? $this->height : ((int) $this->height + 100) . 'px').'; width:'.$this->width.(strpos((string) $this->width, '%') > 0 ? '' : 'px').';" class="'.$cssfordiv.' dolgraph'.(empty($dolxaxisvertical) ? '' : ' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center">'."\n";
 		$this->stringtoshow .= '<canvas id="canvas_'.$tag.'"></canvas></div>'."\n";
 
 		$this->stringtoshow .= '<script nonce="'.getNonce().'" id="' . $tag . '">' . "\n";
@@ -1288,7 +1289,6 @@ class DolGraph
 			$this->stringtoshow .= '],
 					datasets: [';
 			$i = 0;
-			$i = 0;
 			while ($i < $nblot) {	// Loop on each series
 				$color = 'rgb(' . $this->datacolor[$i][0] . ', ' . $this->datacolor[$i][1] . ', ' . $this->datacolor[$i][2] . ')';
 
@@ -1310,11 +1310,7 @@ class DolGraph
 			$type = 'bar';
 			$xaxis = '';
 
-			if (!isset($this->type[$firstlot]) || $this->type[$firstlot] == 'bars') {
-				$type = 'bar';
-			}
 			if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'horizontalbars') {
-				$type = 'bar';
 				$xaxis = "indexAxis: 'y', ";
 			}
 			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$firstlot] == 'linesnopoint')) {
@@ -1348,7 +1344,7 @@ class DolGraph
 				$this->stringtoshow .= 'tooltip: { mode: \'nearest\',
 					callbacks: {';
 				if (is_array($this->tooltipsTitles)) {
-					$this->stringtoshow .='
+					$this->stringtoshow .= '
 							title: function(tooltipItem, data) {
 								var tooltipsTitle ='.json_encode($this->tooltipsTitles).'
 								return tooltipsTitle[tooltipItem[0].datasetIndex];
@@ -1360,7 +1356,7 @@ class DolGraph
 								return tooltipslabels[tooltipItem.datasetIndex]
 							}';
 				}
-				$this->stringtoshow .='}},';
+				$this->stringtoshow .= '}},';
 			}
 			$this->stringtoshow .= "}, \n";
 
@@ -1388,7 +1384,7 @@ class DolGraph
 				$this->stringtoshow .= 'tooltips: { mode: \'nearest\',
 					callbacks: {';
 				if (is_array($this->tooltipsTitles)) {
-					$this->stringtoshow .='
+					$this->stringtoshow .= '
 							title: function(tooltipItem, data) {
 								var tooltipsTitle ='.json_encode($this->tooltipsTitles).'
 								return tooltipsTitle[tooltipItem[0].datasetIndex];
@@ -1400,7 +1396,7 @@ class DolGraph
 								return tooltipslabels[tooltipItem.datasetIndex]
 							}';
 				}
-				$this->stringtoshow .='}},';
+				$this->stringtoshow .= '}},';
 			}
 			$this->stringtoshow .= '};';
 			$this->stringtoshow .= '
@@ -1428,6 +1424,7 @@ class DolGraph
 					datasets: [';
 
 			global $theme_datacolor;
+			'@phan-var-force array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int},3:array{0:int,1:int,2:int}} $theme_datacolor';
 			//var_dump($arrayofgroupslegend);
 			$i = 0;
 			$iinstack = 0;
@@ -1540,7 +1537,7 @@ class DolGraph
 	/**
 	 * Output HTML string to total value
 	 *
-	 * @return	string							HTML string to total value
+	 * @return	float|int							HTML string to total value
 	 */
 	public function total()
 	{
@@ -1587,16 +1584,16 @@ class DolGraph
 	public static function getDefaultGraphSizeForStats($direction, $defaultsize = '')
 	{
 		global $conf;
+		$defaultsize = (int) $defaultsize;
 
 		if ($direction == 'width') {
 			if (empty($conf->dol_optimize_smallscreen)) {
-				return ($defaultsize ? $defaultsize : '500');
+				return ($defaultsize ? $defaultsize : 500);
 			} else {
-				return (empty($_SESSION['dol_screenwidth']) ? '280' : ($_SESSION['dol_screenwidth'] - 40));
+				return (empty($_SESSION['dol_screenwidth']) ? 280 : ($_SESSION['dol_screenwidth'] - 40));
 			}
-		}
-		if ($direction == 'height') {
-			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : '220') : '200');
+		} elseif ($direction == 'height') {
+			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : 220) : 200);
 		}
 		return 0;
 	}

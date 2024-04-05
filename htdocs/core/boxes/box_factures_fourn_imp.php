@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,6 +138,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 					//$alreadypaid = $facturestatic->getSommePaiement();
 
 					$facturestatic->paye = $objp->paye;
+					$facturestatic->paid = $objp->paye;
 					$facturestatic->alreadypaid = $objp->am;
 
 					$thirdpartystatic->id = $objp->socid;
@@ -158,6 +160,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {
+						// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day', 'tzuserrel')));
 					}
 
@@ -166,7 +169,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="nowraponall"',
 						'text' => $facturestatic->getNomUrl(1),
-						'text2'=> $late,
+						'text2' => $late,
 						'asis' => 1,
 					);
 
@@ -201,7 +204,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=> '<span class="opacitymedium">'.$langs->trans("NoUnpaidSupplierBills").'</span>',
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoUnpaidSupplierBills").'</span>',
 					);
 				}
 
@@ -238,7 +241,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}

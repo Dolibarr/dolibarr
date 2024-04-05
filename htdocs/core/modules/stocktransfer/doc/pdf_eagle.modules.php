@@ -5,6 +5,7 @@
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2021 		Gauthier VERDOL 	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +87,9 @@ class pdf_eagle extends ModelePDFStockTransfer
 	public $posxwarehousedestination;
 
 	/**
-	 * @var int at Least One Batch
+	 * @var bool        True if at least one line of the StockTransfer object has a batch set.
+	 *                  Populated by $pdf_eagle->atLeastOneBatch()
+	 * @see atLeastOneBatch()
 	 */
 	public $atLeastOneBatch;
 
@@ -275,7 +278,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -320,6 +323,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// New page
@@ -418,7 +422,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
-				$TCacheEntrepots=array();
+				$TCacheEntrepots = array();
 				// Loop on each lines
 				for ($i = 0; $i < $nblines; $i++) {
 					$curY = $nexY;
@@ -614,10 +618,10 @@ class pdf_eagle extends ModelePDFStockTransfer
 					// Add line
 					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);
-						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
+						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY - 1, $this->page_largeur - $this->marge_droite, $nexY - 1);
-						$pdf->SetLineStyle(array('dash'=>0));
+						$pdf->SetLineStyle(array('dash' => 0));
 					}
 
 					// Detect if some page were added automatically and output _tableau for past pages
@@ -679,7 +683,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -689,7 +693,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 				dolChmod($file);
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {
@@ -707,7 +711,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	PDF				$pdf            Object PDF
+	 *	@param	TCPDF			$pdf            Object PDF
 	 *	@param  StockTransfer	$object         Object invoice
 	 *	@param  int				$deja_regle     Montant deja regle
 	 *	@param	int				$posy			Position depart
@@ -753,7 +757,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 		$totalQty = 0;
 		if (!empty($object->lines)) {
 			foreach ($object->lines as $line) {
-				$totalQty+=$line->qty;
+				$totalQty += $line->qty;
 			}
 		}
 		// Set trueVolume and volume_units not currently stored into database
@@ -821,8 +825,8 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		float|int	$tab_top		Top position of table
+	 *   @param		float|int	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
@@ -890,8 +894,8 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 		$pdf->line($this->posxwarehousedestination - 1, $tab_top, $this->posxwarehousedestination - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
-			$pdf->SetXY($this->posxwarehousedestination-2.5, $tab_top + 1);
-			$pdf->MultiCell(($this->posxpuht - $this->posxwarehousedestination+4), 2, $outputlangs->transnoentities("WarehouseTarget"), '', 'C');
+			$pdf->SetXY($this->posxwarehousedestination - 2.5, $tab_top + 1);
+			$pdf->MultiCell(($this->posxpuht - $this->posxwarehousedestination + 4), 2, $outputlangs->transnoentities("WarehouseTarget"), '', 'C');
 		}
 
 		/*if (!empty($conf->global->STOCKTRANSFER_PDF_DISPLAY_AMOUNT_HT)) {
@@ -916,7 +920,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 *
 	 * @param	StockTransfer	$object	Stock Transfer object
 	 * @return	boolean			true if at least one line has batch set, false if not
-￼	 */
+	 */
 	public function atLeastOneBatch($object)
 	{
 		global $conf;
@@ -944,12 +948,12 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 *  @param  StockTransfer	$object     	Object to show
 	 *  @param  int	    		$showaddress    0=no, 1=yes
 	 *  @param  Translate		$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   	Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf, $langs, $mysoc;
+		global $conf, $langs;
 
 		$langs->load("orders");
 
@@ -1004,12 +1008,6 @@ class pdf_eagle extends ModelePDFStockTransfer
 		}
 
 		$pdf->SetDrawColor(128, 128, 128);
-		if (isModEnabled('barcode')) {
-			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
-			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
-			//$pdf->Image($logo,10, 5, 0, 24);
-		}
-
 
 		$posx = $this->page_largeur - $w - $this->marge_droite;
 		$posy = $this->marge_haute;
@@ -1211,13 +1209,15 @@ class pdf_eagle extends ModelePDFStockTransfer
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show footer of page. Need this->emetteur object
 	 *
-	 *  @param	PDF				$pdf     			PDF
+	 *  @param	TCPDF			$pdf     			PDF
 	 *  @param	StockTransfer	$object				Object to show
 	 *  @param	Translate		$outputlangs		Object lang for output
 	 *  @param	int				$hidefreetext		1=Hide free text

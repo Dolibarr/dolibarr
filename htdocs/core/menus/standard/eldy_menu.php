@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +77,7 @@ class MenuManager
 			$_SESSION["mainmenu"] = GETPOST("mainmenu", 'aZ09');
 		}
 		if (GETPOSTISSET("idmenu")) {
-			$_SESSION["idmenu"] = GETPOST("idmenu", 'int');
+			$_SESSION["idmenu"] = GETPOSTINT("idmenu");
 		}
 
 		// Read now mainmenu and leftmenu that define which menu to show
@@ -184,16 +185,24 @@ class MenuManager
 					$substitarray['__USERID__'] = $user->id; // For backward compatibility
 					$val['url'] = make_substitutions($val['url'], $substitarray);
 
-					$relurl = dol_buildpath($val['url'], 1);
+					if (!preg_match('/^http/', $val['url'])) {
+						$relurl = dol_buildpath($val['url'], 1);
+					} else {
+						$relurl = $val['url'];
+					}
+
 					$canonurl = preg_replace('/\?.*$/', '', $val['url']);
 
 					print '<a class="alilevel0" href="#">';
 
 					// Add font-awesome
 					if ($val['level'] == 0 && !empty($val['prefix'])) {
-						print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
+						if (preg_match('/^fa\-[a-zA-Z0-9\-_]+$/', $val['prefix'])) {
+							print '<span class="fas '.$val['prefix'].' paddingright pictofixedwidth"></span>';
+						} else {
+							print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
+						}
 					}
-
 					print $val['titre'];
 					print '</a>'."\n";
 
@@ -292,6 +301,7 @@ class MenuManager
 								$disabled = " vsmenudisabled";
 							}
 
+							// @phan-suppress-next-line PhanParamSuspiciousOrder
 							print str_pad('', $val2['level'] + 1);
 							print '<li class="lilevel'.($val2['level'] + 1);
 							if ($val2['level'] == 0) {
@@ -323,11 +333,7 @@ class MenuManager
 
 							print $val2['titre'];
 							if ($relurl2) {
-								if ($val2['enabled']) {	// Allowed
-									print '</a>';
-								} else {
-									print '</a>';
-								}
+								print '</a>';
 							}
 							print '</li>'."\n";
 						}

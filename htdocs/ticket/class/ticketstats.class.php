@@ -67,7 +67,7 @@ class TicketStats extends Stats
 			$this->where .= " AND fk_soc = ".((int) $this->socid);
 		}
 		if (is_array($this->userid) && count($this->userid) > 0) {
-			$this->where .= ' AND fk_user_create IN ('.$this->db->sanitize(join(',', $this->userid)).')';
+			$this->where .= ' AND fk_user_create IN ('.$this->db->sanitize(implode(',', $this->userid)).')';
 		} elseif ($this->userid > 0) {
 			$this->where .= " AND fk_user_create = ".((int) $this->userid);
 		}
@@ -91,7 +91,7 @@ class TicketStats extends Stats
 	/**
 	 *  Return the number of tickets per month for a given year
 	 *
-	 *  @param  string 	$year 		Year to scan
+	 *  @param  int 	$year 		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 *  @return array            	Array of values
 	 */

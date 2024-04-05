@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019 Maxime Kohlhaas <maxime@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,8 +64,8 @@ class Mos extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->mrp->read) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('mrp', 'read')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->mo->fetch($id);
@@ -73,7 +74,7 @@ class Mos extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->mo);
@@ -97,10 +98,8 @@ class Mos extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
-		if (!DolibarrApiAccess::$user->rights->mrp->read) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('mrp', 'read')) {
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -112,7 +111,7 @@ class Mos extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if ($restrictonsocid && !DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
+		if ($restrictonsocid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -179,8 +178,8 @@ class Mos extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->mrp->write) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('mrp', 'write')) {
+			throw new RestException(403);
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -188,11 +187,11 @@ class Mos extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->mo->context['caller'] = $request_data['caller'];
+				$this->mo->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->mo->$field = $value;
+			$this->mo->$field = $this->_checkValForAPI($field, $value, $this->mo);
 		}
 
 		$this->checkRefNumbering();
@@ -206,15 +205,14 @@ class Mos extends DolibarrApi
 	/**
 	 * Update MO
 	 *
-	 * @param int   $id             Id of MO to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   	$id             	Id of MO to update
+	 * @param 	array 	$request_data   	Datas
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->mrp->write) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('mrp', 'write')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->mo->fetch($id);
@@ -223,7 +221,7 @@ class Mos extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -232,11 +230,11 @@ class Mos extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->mo->context['caller'] = $request_data['caller'];
+				$this->mo->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->mo->$field = $value;
+			$this->mo->$field = $this->_checkValForAPI($field, $value, $this->mo);
 		}
 
 		$this->checkRefNumbering();
@@ -256,8 +254,8 @@ class Mos extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->mrp->delete) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('mrp', 'delete')) {
+			throw new RestException(403);
 		}
 		$result = $this->mo->fetch($id);
 		if (!$result) {
@@ -265,7 +263,7 @@ class Mos extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->mo->delete(DolibarrApiAccess::$user)) {
@@ -306,7 +304,7 @@ class Mos extends DolibarrApi
 
 		$error = 0;
 
-		if (!DolibarrApiAccess::$user->rights->mrp->write) {
+		if (!DolibarrApiAccess::$user->hasRight('mrp', 'write')) {
 			throw new RestException(401, 'Not enough permission');
 		}
 		$result = $this->mo->fetch($id);
@@ -349,7 +347,7 @@ class Mos extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$stockmove->context['caller'] = $request_data['caller'];
+				$stockmove->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 		}
@@ -631,8 +629,7 @@ class Mos extends DolibarrApi
 		}
 
 		// Update status of MO
-		dol_syslog("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
-		//var_dump("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
+		dol_syslog("consumptioncomplete = ".json_encode($consumptioncomplete)." productioncomplete = ".json_encode($productioncomplete));
 		if ($consumptioncomplete && $productioncomplete) {
 			$result = $this->mo->setStatut(Mo::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
 		} else {

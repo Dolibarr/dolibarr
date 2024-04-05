@@ -138,7 +138,7 @@ class ImportCsv extends ModeleImports
 	public function write_title_example($outputlangs, $headerlinefields)
 	{
 		// phpcs:enable
-		$s = join($this->separator, array_map('cleansep', $headerlinefields));
+		$s = implode($this->separator, array_map('cleansep', $headerlinefields));
 		return $s."\n";
 	}
 
@@ -153,7 +153,7 @@ class ImportCsv extends ModeleImports
 	public function write_record_example($outputlangs, $contentlinevalues)
 	{
 		// phpcs:enable
-		$s = join($this->separator, array_map('cleansep', $contentlinevalues));
+		$s = implode($this->separator, array_map('cleansep', $contentlinevalues));
 		return $s."\n";
 	}
 
@@ -393,6 +393,7 @@ class ImportCsv extends ModeleImports
 
 						// Is it a required field ?
 						if (preg_match('/\*/', $objimport->array_import_fields[0][$val]) && ((string) $newval == '')) {
+							// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 							$this->errors[$error]['lib'] = $langs->trans('ErrorMissingMandatoryValue', $key);
 							$this->errors[$error]['type'] = 'NOTNULL';
 							$errorforthistable++;
@@ -405,7 +406,7 @@ class ImportCsv extends ModeleImports
 								if ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeid'
 									|| $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromref'
 									|| $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeorlabel'
-									) {
+								) {
 									// New val can be an id or ref. If it start with id: it is forced to id, if it start with ref: it is forced to ref. It not, we try to guess.
 									$isidorref = 'id';
 									if (!is_numeric($newval) && $newval != '' && !preg_match('/^id:/i', $newval)) {
@@ -450,7 +451,9 @@ class ImportCsv extends ModeleImports
 												 }*/
 												$param_array = array('', $newval, 0, $arrayrecord[0]['val']); // Param to fetch parent from account, in chart.
 											}
-
+											if ($class == 'CActionComm') {
+												$param_array = array($newval); // CActionComm fetch method have same parameter for id and code
+											}
 											$result = call_user_func_array(array($classinstance, $method), $param_array);
 
 											// If duplicate record found
@@ -738,7 +741,7 @@ class ImportCsv extends ModeleImports
 							// ...
 						}
 
-						// Define $listfields and $listvalues to build SQL request
+						// Define $listfields and $listvalues to build the SQL request
 						if (isModEnabled("socialnetworks") && strpos($fieldname, "socialnetworks") !== false) {
 							if (!in_array("socialnetworks", $listfields)) {
 								$listfields[] = "socialnetworks";
@@ -765,7 +768,7 @@ class ImportCsv extends ModeleImports
 							$listfields[] = $fieldname;
 							// Note: arrayrecord (and 'type') is filled with ->import_read_record called by import.php page before calling import_insert
 							if (empty($newval) && $arrayrecord[($key - 1)]['type'] < 0) {
-								$listvalues[] = ($newval == '0' ? $newval : "null");
+								$listvalues[] = ($newval == '0' ? (int) $newval : "null");
 							} elseif (empty($newval) && $arrayrecord[($key - 1)]['type'] == 0) {
 								$listvalues[] = "''";
 							} else {
@@ -793,7 +796,7 @@ class ImportCsv extends ModeleImports
 							$lastinsertid = (isset($last_insert_id_array[$tmp[1]])) ? $last_insert_id_array[$tmp[1]] : 0;
 							$keyfield = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $tmpkey);
 							$listfields[] = $keyfield;
-							$listvalues[] = $lastinsertid;
+							$listvalues[] = (int) $lastinsertid;
 							//print $tmpkey."-".$tmpval."-".$listfields."-".$listvalues."<br>";exit;
 						} elseif (preg_match('/^const-/', $tmpval)) {
 							$tmp = explode('-', $tmpval, 2);
@@ -806,6 +809,7 @@ class ImportCsv extends ModeleImports
 									$file = (empty($objimport->array_import_convertvalue[0][$fieldname]['classfile']) ? $objimport->array_import_convertvalue[0][$fieldname]['file'] : $objimport->array_import_convertvalue[0][$fieldname]['classfile']);
 									$class = $objimport->array_import_convertvalue[0][$fieldname]['class'];
 									$method = $objimport->array_import_convertvalue[0][$fieldname]['method'];
+									$type = $objimport->array_import_convertvalue[0][$fieldname]['type'];
 									$resultload = dol_include_once($file);
 									if (empty($resultload)) {
 										dol_print_error(null, 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
@@ -818,8 +822,16 @@ class ImportCsv extends ModeleImports
 										if (count($fieldArr) > 0) {
 											$fieldname = $fieldArr[1];
 										}
+
+										// Set $listfields and $listvalues
 										$listfields[] = $fieldname;
-										$listvalues[] = $res;
+										if ($type == 'int') {
+											$listvalues[] = (int) $res;
+										} elseif ($type == 'double') {
+											$listvalues[] = (float) $res;
+										} else {
+											$listvalues[] = "'".$this->db->escape($res)."'";
+										}
 									} else {
 										$this->errors[$error]['type'] = 'CLASSERROR';
 										$this->errors[$error]['lib'] = implode(
@@ -852,7 +864,7 @@ class ImportCsv extends ModeleImports
 						$fname = 'rowid';
 						if (strpos($tablename, '_categorie_') !== false) {
 							$is_table_category_link = true;
-							$fname='*';
+							$fname = '*';
 						}
 
 						if (!empty($updatekeys)) {
@@ -961,9 +973,9 @@ class ImportCsv extends ModeleImports
 								$data = array_combine($listfields, $listvalues);
 								$set = array();
 								foreach ($data as $key => $val) {
-									$set[] = $key." = ".$val;
+									$set[] = $key." = ".$val;	// $val was escaped/sanitized previously
 								}
-								$sqlstart .= " SET ".implode(', ', $set);
+								$sqlstart .= " SET ".implode(', ', $set).", import_key = '".$this->db->escape($importid)."'";
 
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
@@ -971,6 +983,7 @@ class ImportCsv extends ModeleImports
 								$sqlend = " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								if ($is_table_category_link) {
+									'@phan-var-force string[] $where';
 									$sqlend = " WHERE " . implode(' AND ', $where);
 								}
 

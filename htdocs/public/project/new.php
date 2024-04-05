@@ -6,6 +6,7 @@
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -240,14 +242,14 @@ if (empty($reshook) && $action == 'add') {
 			//var_dump($thirdparty->array_options);exit;
 			if ($ret < 0) {
 				$error++;
-				$errmsg = ($extrafields->error ? $extrafields->error.'<br>' : '').join('<br>', $extrafields->errors);
+				$errmsg = ($extrafields->error ? $extrafields->error.'<br>' : '').implode('<br>', $extrafields->errors);
 			}
 
 			if (!$error) {
 				$result = $thirdparty->create($user);
 				if ($result <= 0) {
 					$error++;
-					$errmsg = ($thirdparty->error ? $thirdparty->error.'<br>' : '').join('<br>', $thirdparty->errors);
+					$errmsg = ($thirdparty->error ? $thirdparty->error.'<br>' : '').implode('<br>', $thirdparty->errors);
 				} else {
 					$proj->socid = $thirdparty->id;
 				}
@@ -409,7 +411,7 @@ if (empty($reshook) && $action == 'add') {
 				dol_syslog("project lead ".$proj->ref." has been created, we redirect to ".$urlback);
 			} else {
 				$error++;
-				$errmsg .= $proj->error.'<br>'.join('<br>', $proj->errors);
+				$errmsg .= $proj->error.'<br>'.implode('<br>', $proj->errors);
 			}
 		} else {
 			setEventMessage($errmsg, 'errors');
@@ -482,7 +484,7 @@ print '<br>';
 print '<br><span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
 //print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
-print dol_get_fiche_head('');
+print dol_get_fiche_head();
 
 print '<script type="text/javascript">
 jQuery(document).ready(function () {
@@ -539,7 +541,7 @@ print '</td></tr>';
 if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
 	if ($country_code) {
-		print $formcompany->select_state(GETPOST("state_id", 'int'), $country_code);
+		print $formcompany->select_state(GETPOSTINT("state_id"), $country_code);
 	} else {
 		print '';
 	}
@@ -547,7 +549,7 @@ if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 }
 
 // Other attributes
-$parameters['tpl_context']='public';	// define template context to public
+$parameters['tpl_context'] = 'public';	// define template context to public
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
 print '<tr>';

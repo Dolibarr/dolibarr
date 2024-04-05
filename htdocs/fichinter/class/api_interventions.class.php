@@ -78,8 +78,8 @@ class Interventions extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->ficheinter->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->fichinter->fetch($id);
@@ -88,7 +88,7 @@ class Interventions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->fichinter->fetchObjectLinked();
@@ -99,23 +99,21 @@ class Interventions extends DolibarrApi
 	 * List of interventions
 	 * Return a list of interventions
 	 *
-	 * @param string		   $sortfield			Sort field
-	 * @param string		   $sortorder			Sort order
-	 * @param int		   $limit				Limit for list
-	 * @param int		   $page				Page number
-	 * @param string		   $thirdparty_ids			Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string           $sqlfilters              Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @return  array                                   Array of order objects
+	 * @param string	$sortfield				Sort field
+	 * @param string	$sortorder				Sort order
+	 * @param int		$limit					Limit for list
+	 * @param int		$page					Page number
+	 * @param string	$thirdparty_ids			Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string    $sqlfilters             Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $properties				Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @return  array                           Array of order objects
 	 *
 	 * @throws RestException
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
-		if (!DolibarrApiAccess::$user->rights->ficheinter->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -125,7 +123,7 @@ class Interventions extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -192,7 +190,7 @@ class Interventions extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->ficheinter->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		// Check mandatory fields
@@ -200,11 +198,11 @@ class Interventions extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->fichinter->context['caller'] = $request_data['caller'];
+				$this->fichinter->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->fichinter->$field = $value;
+			$this->fichinter->$field = $this->_checkValForAPI($field, $value, $this->fichinter);
 		}
 
 		if ($this->fichinter->create(DolibarrApiAccess::$user) < 0) {
@@ -227,8 +225,8 @@ class Interventions extends DolibarrApi
 	/* TODO
 	public function getLines($id)
 	{
-		if(! DolibarrApiAccess::$user->rights->ficheinter->lire) {
-			throw new RestException(401);
+		if(! DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->fichinter->fetch($id);
@@ -237,7 +235,7 @@ class Interventions extends DolibarrApi
 		}
 
 		if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->fichinter->getLinesArray();
 		$result = array();
@@ -260,7 +258,7 @@ class Interventions extends DolibarrApi
 	 */
 	public function postLine($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->ficheinter->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		// Check mandatory fields
@@ -269,11 +267,11 @@ class Interventions extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->fichinter->context['caller'] = $request_data['caller'];
+				$this->fichinter->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->fichinter->$field = $value;
+			$this->fichinter->$field = $this->_checkValForAPI($field, $value, $this->fichinter);
 		}
 
 		if (!$result) {
@@ -281,7 +279,7 @@ class Interventions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$updateRes = $this->fichinter->addLine(
@@ -307,8 +305,8 @@ class Interventions extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->ficheinter->supprimer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'supprimer')) {
+			throw new RestException(403);
 		}
 		$result = $this->fichinter->fetch($id);
 		if (!$result) {
@@ -316,7 +314,7 @@ class Interventions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->fichinter->delete(DolibarrApiAccess::$user)) {
@@ -348,7 +346,7 @@ class Interventions extends DolibarrApi
 	 */
 	public function validate($id, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->ficheinter->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		$result = $this->fichinter->fetch($id);
@@ -357,7 +355,7 @@ class Interventions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->fichinter->setValid(DolibarrApiAccess::$user, $notrigger);
@@ -384,7 +382,7 @@ class Interventions extends DolibarrApi
 	 */
 	public function closeFichinter($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->ficheinter->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		$result = $this->fichinter->fetch($id);
@@ -393,7 +391,7 @@ class Interventions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->fichinter->setStatut(3);

@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Partenariat dédié à cet adhérent
 DatePartnershipStart=Date de début
 DatePartnershipEnd=Date de fin
 ReasonDecline=Raison du refus
-ReasonDeclineOrCancel=Raison du refus
+ReasonDeclineOrCancel=Raison du refus ou de l'annulation
 PartnershipAlreadyExist=Partenariat déjà existant
 ManagePartnership=Gestion de partenariat
 BacklinkNotFoundOnPartnerWebsite=Lien de retour non trouvé sur le site web partenaire
@@ -89,11 +89,9 @@ YourPartnershipCanceledContent=Nous vous informons que votre partenariat a été
 
 CountLastUrlCheckError=Nombre d'erreurs lors de la dernière vérification d'URL
 LastCheckBacklink=Date de la dernière vérification d'URL
-ReasonDeclineOrCancel=Raison du refus
 
 NewPartnershipRequest=Nouvelle demande de partenariat
 NewPartnershipRequestDesc=Ce formulaire vous permet de demander à faire partie de l'un de nos programmes de partenariat. Si vous avez besoin d'aide pour remplir ce formulaire, veuillez contacter par email <b>%s</b> .
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Cette page doit contenir au moins un lien vers l'un des domaines suivants: %s
 
 IPOfApplicant=IP du demandeur
-

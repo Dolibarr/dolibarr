@@ -26,14 +26,12 @@ ModuleKnowledgeManagementDesc=একটি নলেজ ম্যানেজম
 # Admin page
 #
 KnowledgeManagementSetup = নলেজ ম্যানেজমেন্ট সিস্টেম সেটআপ
-Settings = সেটিংস
 KnowledgeManagementSetupPage = নলেজ ম্যানেজমেন্ট সিস্টেম সেটআপ পৃষ্ঠা
 
 
 #
 # About page
 #
-About = সম্পর্কিত
 KnowledgeManagementAbout = জ্ঞান ব্যবস্থাপনা সম্পর্কে
 KnowledgeManagementAboutPage = পৃষ্ঠা সম্পর্কে জ্ঞান ব্যবস্থাপনা
 

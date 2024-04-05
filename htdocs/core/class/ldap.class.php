@@ -27,6 +27,7 @@
  *  Note:
  *  LDAP_ESCAPE_FILTER is to escape char  array('\\', '*', '(', ')', "\x00")
  *  LDAP_ESCAPE_DN is to escape char  array('\\', ',', '=', '+', '<', '>', ';', '"', '#')
+ *  @phan-file-suppress PhanTypeMismatchArgumentInternal (notifications concern 'resource)
  */
 
 /**
@@ -303,17 +304,16 @@ class Ldap
 
 	// Connection handling methods -------------------------------------------
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Connect and bind
-	 * 	Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
-	 * 	After return, this->connection and $this->bind are defined
+	 * Connect and bind
+	 * Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
+	 * After return, this->connection and $this->bind are defined
 	 *
-	 *	@return		int		if KO: <0 || if bind anonymous: 1 || if bind auth: 2
+	 * @see connect_bind renamed
+	 * @return		int		if KO: <0 || if bind anonymous: 1 || if bind auth: 2
 	 */
-	public function connect_bind()
+	public function connectBind()
 	{
-		// phpcs:enable
 		global $dolibarr_main_auth_ldap_debug;
 
 		$connected = 0;
@@ -324,20 +324,20 @@ class Ldap
 		$ldapdebug = ((empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false") ? false : true);
 
 		if ($ldapdebug) {
-			dol_syslog(get_class($this)."::connect_bind");
-			print "DEBUG: connect_bind<br>\n";
+			dol_syslog(get_class($this)."::connectBind");
+			print "DEBUG: connectBind<br>\n";
 		}
 
 		// Check parameters
 		if (count($this->server) == 0 || empty($this->server[0])) {
 			$this->error = 'LDAP setup (file conf.php) is not complete';
-			dol_syslog(get_class($this)."::connect_bind ".$this->error, LOG_WARNING);
+			dol_syslog(get_class($this)."::connectBind ".$this->error, LOG_WARNING);
 			return -1;
 		}
 
 		if (!function_exists("ldap_connect")) {
 			$this->error = 'LDAPFunctionsNotAvailableOnPHP';
-			dol_syslog(get_class($this)."::connect_bind ".$this->error, LOG_WARNING);
+			dol_syslog(get_class($this)."::connectBind ".$this->error, LOG_WARNING);
 			return -1;
 		}
 
@@ -353,7 +353,7 @@ class Ldap
 
 				if ($this->serverPing($host, $this->serverPort)) {
 					if ($ldapdebug) {
-						dol_syslog(get_class($this)."::connect_bind serverPing true, we try ldap_connect to ".$host, LOG_DEBUG);
+						dol_syslog(get_class($this)."::connectBind serverPing true, we try ldap_connect to ".$host, LOG_DEBUG);
 					}
 					$this->connection = ldap_connect($host, $this->serverPort);
 				} else {
@@ -361,12 +361,12 @@ class Ldap
 						// With host = ldaps://server, the serverPing to ssl://server sometimes fails, even if the ldap_connect succeed, so
 						// we test this case and continue in such a case even if serverPing fails.
 						if ($ldapdebug) {
-							dol_syslog(get_class($this)."::connect_bind serverPing false, we try ldap_connect to ".$host, LOG_DEBUG);
+							dol_syslog(get_class($this)."::connectBind serverPing false, we try ldap_connect to ".$host, LOG_DEBUG);
 						}
 						$this->connection = ldap_connect($host, $this->serverPort);
 					} else {
 						if ($ldapdebug) {
-							dol_syslog(get_class($this)."::connect_bind serverPing false, no ldap_connect ".$host, LOG_DEBUG);
+							dol_syslog(get_class($this)."::connectBind serverPing false, no ldap_connect ".$host, LOG_DEBUG);
 						}
 						continue;
 					}
@@ -374,7 +374,7 @@ class Ldap
 
 				if (is_resource($this->connection) || is_object($this->connection)) {
 					if ($ldapdebug) {
-						dol_syslog(get_class($this)."::connect_bind this->connection is ok", LOG_DEBUG);
+						dol_syslog(get_class($this)."::connectBind this->connection is ok", LOG_DEBUG);
 					}
 
 					// Upgrade connection to TLS, if requested by the configuration
@@ -386,7 +386,7 @@ class Ldap
 
 						$resulttls = ldap_start_tls($this->connection);
 						if (!$resulttls) {
-							dol_syslog(get_class($this)."::connect_bind failed to start tls", LOG_WARNING);
+							dol_syslog(get_class($this)."::connectBind failed to start tls", LOG_WARNING);
 							$this->error = 'ldap_start_tls Failed to start TLS '.ldap_errno($this->connection).' '.ldap_error($this->connection);
 							$connected = 0;
 							$this->unbind();
@@ -399,7 +399,7 @@ class Ldap
 
 					if ($this->serverType == "activedirectory") {
 						$result = $this->setReferrals();
-						dol_syslog(get_class($this)."::connect_bind try bindauth for activedirectory on ".$host." user=".$this->searchUser." password=".preg_replace('/./', '*', $this->searchPassword), LOG_DEBUG);
+						dol_syslog(get_class($this)."::connectBind try bindauth for activedirectory on ".$host." user=".$this->searchUser." password=".preg_replace('/./', '*', $this->searchPassword), LOG_DEBUG);
 						$this->result = $this->bindauth($this->searchUser, $this->searchPassword);
 						if ($this->result) {
 							$this->bind = $this->result;
@@ -412,7 +412,7 @@ class Ldap
 					} else {
 						// Try in auth mode
 						if ($this->searchUser && $this->searchPassword) {
-							dol_syslog(get_class($this)."::connect_bind try bindauth on ".$host." user=".$this->searchUser." password=".preg_replace('/./', '*', $this->searchPassword), LOG_DEBUG);
+							dol_syslog(get_class($this)."::connectBind try bindauth on ".$host." user=".$this->searchUser." password=".preg_replace('/./', '*', $this->searchPassword), LOG_DEBUG);
 							$this->result = $this->bindauth($this->searchUser, $this->searchPassword);
 							if ($this->result) {
 								$this->bind = $this->result;
@@ -425,7 +425,7 @@ class Ldap
 						}
 						// Try in anonymous
 						if (!$this->bind) {
-							dol_syslog(get_class($this)."::connect_bind try bind anonymously on ".$host, LOG_DEBUG);
+							dol_syslog(get_class($this)."::connectBind try bind anonymously on ".$host, LOG_DEBUG);
 							$result = $this->bind();
 							if ($result) {
 								$this->bind = $this->result;
@@ -446,11 +446,11 @@ class Ldap
 		}
 
 		if ($connected) {
-			dol_syslog(get_class($this)."::connect_bind ".$connected, LOG_DEBUG);
+			dol_syslog(get_class($this)."::connectBind ".$connected, LOG_DEBUG);
 			return $connected;
 		} else {
 			$this->error = 'Failed to connect to LDAP'.($this->error ? ': '.$this->error : '');
-			dol_syslog(get_class($this)."::connect_bind ".$this->error, LOG_WARNING);
+			dol_syslog(get_class($this)."::connectBind ".$this->error, LOG_WARNING);
 			return -1;
 		}
 	}
@@ -664,7 +664,7 @@ class Ldap
 				$info['unicodePwd'] = mb_convert_encoding("\"".$info['unicodePwd']."\"", "UTF-16LE", "UTF-8");
 			}
 		}
-		$result = @ldap_modify($this->connection, $dn, $info);
+		$result = @ldap_mod_replace($this->connection, $dn, $info);
 
 		if ($result) {
 			dol_syslog(get_class($this)."::modify successful", LOG_DEBUG);
@@ -806,24 +806,23 @@ class Ldap
 		return -1;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Build an LDAP message
+	 * Build an LDAP message
 	 *
-	 *	@param	string		$dn			DN entry key
-	 *	@param	array		$info		Attributes array
-	 *	@return	string					Content of file
+	 * @see dump_content renamed
+	 * @param	string		$dn			DN entry key
+	 * @param	array		$info		Attributes array
+	 * @return	string					Content of file
 	 */
-	public function dump_content($dn, $info)
+	public function dumpContent($dn, $info)
 	{
-		// phpcs:enable
 		$content = '';
 
 		// Create file content
 		if (preg_match('/^ldap/', $this->server[0])) {
-			$target = "-H ".join(',', $this->server);
+			$target = "-H ".implode(',', $this->server);
 		} else {
-			$target = "-h ".join(',', $this->server)." -p ".$this->serverPort;
+			$target = "-h ".implode(',', $this->server)." -p ".$this->serverPort;
 		}
 		$content .= "# ldapadd $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n";
 		$content .= "# ldapmodify $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n";
@@ -856,7 +855,7 @@ class Ldap
 		global $conf;
 		$ldapDirTemp = $conf->ldap->dir_temp;
 		// Create content
-		$content = $this->dump_content($dn, $info);
+		$content = $this->dumpContent($dn, $info);
 
 		//Create directory & file
 		$result = dol_mkdir($ldapDirTemp);
@@ -864,7 +863,7 @@ class Ldap
 			$outputfile = $ldapDirTemp.'/ldapinput.in';
 			$fp = fopen($outputfile, "w");
 			if ($fp) {
-				fputs($fp, $content);
+				fwrite($fp, $content);
 				fclose($fp);
 				dolChmod($outputfile);
 				return 1;
@@ -933,7 +932,7 @@ class Ldap
 	 */
 	public function addAttribute($dn, $info, $user)
 	{
-		dol_syslog(get_class($this)."::addAttribute dn=".$dn." info=".join(',', $info));
+		dol_syslog(get_class($this)."::addAttribute dn=".$dn." info=".implode(',', $info));
 
 		// Check parameters
 		if (!$this->connection) {
@@ -979,7 +978,7 @@ class Ldap
 	 */
 	public function updateAttribute($dn, $info, $user)
 	{
-		dol_syslog(get_class($this)."::updateAttribute dn=".$dn." info=".join(',', $info));
+		dol_syslog(get_class($this)."::updateAttribute dn=".$dn." info=".implode(',', $info));
 
 		// Check parameters
 		if (!$this->connection) {
@@ -1025,7 +1024,7 @@ class Ldap
 	 */
 	public function deleteAttribute($dn, $info, $user)
 	{
-		dol_syslog(get_class($this)."::deleteAttribute dn=".$dn." info=".join(',', $info));
+		dol_syslog(get_class($this)."::deleteAttribute dn=".$dn." info=".implode(',', $info));
 
 		// Check parameters
 		if (!$this->connection) {
@@ -1129,7 +1128,7 @@ class Ldap
 		}
 
 		// Get values
-		if (!$values = @ldap_get_values($this->connection, $entry, $attribute)) {
+		if (!$values = @ldap_get_values_len($this->connection, $entry, $attribute)) {
 			$this->ldapErrorCode = ldap_errno($this->connection);
 			$this->ldapErrorText = ldap_error($this->connection);
 			return false; // No matching attributes
@@ -1155,7 +1154,7 @@ class Ldap
 	{
 		$fulllist = array();
 
-		dol_syslog(get_class($this)."::getRecords search=".$search." userDn=".$userDn." useridentifier=".$useridentifier." attributeArray=array(".join(',', $attributeArray).") activefilter=".$activefilter);
+		dol_syslog(get_class($this)."::getRecords search=".$search." userDn=".$userDn." useridentifier=".$useridentifier." attributeArray=array(".implode(',', $attributeArray).") activefilter=".$activefilter);
 
 		// if the directory is AD, then bind first with the search user first
 		if ($this->serverType == "activedirectory") {
@@ -1182,7 +1181,7 @@ class Ldap
 		if (is_array($attributeArray)) {
 			// Return list with required fields
 			$attributeArray = array_values($attributeArray); // This is to force to have index reordered from 0 (not make ldap_search fails)
-			dol_syslog(get_class($this)."::getRecords connection=".$this->connectedServer.":".$this->serverPort." userDn=".$userDn." filter=".$filter." attributeArray=(".join(',', $attributeArray).")");
+			dol_syslog(get_class($this)."::getRecords connection=".$this->connectedServer.":".$this->serverPort." userDn=".$userDn." filter=".$filter." attributeArray=(".implode(',', $attributeArray).")");
 			//var_dump($attributeArray);
 			$this->result = @ldap_search($this->connection, $userDn, $filter, $attributeArray);
 		} else {

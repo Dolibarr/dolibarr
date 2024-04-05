@@ -3,6 +3,7 @@
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021	Alexis LAURIER			<contact@alexislaurier.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,11 +92,16 @@ if (!$res) {
 
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/AutoLoader.php';
 
-call_user_func(function () {
-	$loader = Luracast\Restler\AutoLoader::instance();
-	spl_autoload_register($loader);
-	return $loader;
-});
+call_user_func(
+	/**
+	 * @return Luracast\Restler\AutoLoader
+	 */
+	static function () {
+		$loader = Luracast\Restler\AutoLoader::instance();
+		spl_autoload_register($loader);
+		return $loader;
+	}
+);
 
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
@@ -150,15 +156,18 @@ preg_match('/index\.php\/([^\/]+)(.*)$/', $url, $reg);
 // .../index.php/categories?sortfield=t.rowid&sortorder=ASC
 
 
+$hookmanager->initHooks(array('api'));
+
 // When in production mode, a file api/temp/routes.php is created with the API available of current call.
 // But, if we set $refreshcache to false, so it may have only one API in the routes.php file if we make a call for one API without
 // using the explorer. And when we make another call for another API, the API is not into the api/temp/routes.php and a 404 is returned.
 // So we force refresh to each call.
-$refreshcache = (!getDolGlobalString('API_PRODUCTION_DO_NOT_ALWAYS_REFRESH_CACHE') ? true : false);
+$refreshcache = (getDolGlobalString('API_PRODUCTION_DO_NOT_ALWAYS_REFRESH_CACHE') ? false : true);
 if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root')) {
 	$refreshcache = true;
 	if (!is_writable($conf->api->dir_temp)) {
 		print 'Erreur temp dir api/temp not writable';
+		header('HTTP/1.1 500 temp dir api/temp not writable');
 		exit(0);
 	}
 }
@@ -231,12 +240,10 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 					$modulenameforenabled = $module;
 					if ($module == 'propale') {
 						$modulenameforenabled = 'propal';
-					}
-					if ($module == 'supplierproposal') {
+					} elseif ($module == 'supplierproposal') {
 						$modulenameforenabled = 'supplier_proposal';
-					}
-					if ($module == 'ficheinter') {
-						$modulenameforenabled = 'ficheinter';
+					} elseif ($module == 'ficheinter') {
+						$modulenameforenabled = 'intervention';
 					}
 
 					dol_syslog("Found module file ".$file." - module=".$module." - modulenameforenabled=".$modulenameforenabled." - moduledirforclass=".$moduledirforclass);

@@ -6,8 +6,9 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
- * Copyright (C) 2019-2020 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021      Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +68,7 @@ class Don extends CommonObject
 	public $picto = 'donation';
 
 	/**
-	 * @var string Date of the donation
+	 * @var int|string Date of the donation
 	 */
 	public $date;
 
@@ -139,6 +140,10 @@ class Don extends CommonObject
 	 */
 	public $fk_typepayment;
 
+	/**
+	 * @var string      Payment reference
+	 *                  (Cheque or bank transfer reference. Can be "ABC123")
+	 */
 	public $num_payment;
 	public $date_valid;
 
@@ -230,7 +235,7 @@ class Don extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -279,7 +284,9 @@ class Don extends CommonObject
 		$this->email = 'email@email.com';
 		$this->phone = '0123456789';
 		$this->phone_mobile = '0606060606';
-		$this->statut = 1;
+		$this->status = 1;
+
+		return 1;
 	}
 
 
@@ -326,12 +333,12 @@ class Don extends CommonObject
 			$err++;
 		}
 
-		$this->amount = trim($this->amount);
+		$this->amount = (float) $this->amount;
 
 		$map = range(0, 9);
-		$len = dol_strlen($this->amount);
+		$len = dol_strlen((string) $this->amount);
 		for ($i = 0; $i < $len; $i++) {
-			if (!isset($map[substr($this->amount, $i, 1)])) {
+			if (!isset($map[substr((string) $this->amount, $i, 1)])) {
 				$error_string[] = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Amount'));
 				$err++;
 				$amount_invalid = 1;
@@ -345,7 +352,7 @@ class Don extends CommonObject
 				$err++;
 			} else {
 				if ($this->amount < $minimum && $minimum > 0) {
-					$error_string[] = $langs->trans('MinimumAmount', $langs->transnoentitiesnoconv('$minimum'));
+					$error_string[] = $langs->trans('MinimumAmount', $minimum);
 					$err++;
 				}
 			}
@@ -376,12 +383,12 @@ class Don extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->address = ($this->address > 0 ? $this->address : $this->address);
-		$this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
-		$this->town = ($this->town > 0 ? $this->town : $this->town);
-		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
-		$this->country = ($this->country ? $this->country : $this->country);
-		$this->amount = price2num($this->amount);
+		// $this->address = ($this->address > 0 ? $this->address : $this->address);
+		// $this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
+		// $this->town = ($this->town > 0 ? $this->town : $this->town);
+		// $this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
+		// $this->country = ($this->country ? $this->country : $this->country);
+		$this->amount = (float) price2num($this->amount);
 
 		// Check parameters
 		if ($this->amount < 0) {
@@ -493,12 +500,12 @@ class Don extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->address = ($this->address > 0 ? $this->address : $this->address);
-		$this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
-		$this->town = ($this->town > 0 ? $this->town : $this->town);
-		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
-		$this->country = ($this->country ? $this->country : $this->country);
-		$this->amount = price2num($this->amount);
+		// $this->address = ($this->address > 0 ? $this->address : $this->address);
+		// $this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
+		// $this->town = ($this->town > 0 ? $this->town : $this->town);
+		// $this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
+		// $this->country = ($this->country ? $this->country : $this->country);
+		$this->amount = (float) price2num($this->amount);
 
 		// Check parameters
 		if ($this->amount < 0) {
@@ -719,6 +726,7 @@ class Don extends CommonObject
 	 */
 	public function setValid($user, $notrigger = 0)
 	{
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		return $this->valid_promesse($this->id, $user->id, $notrigger);
 	}
 
@@ -839,13 +847,6 @@ class Don extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->write))
-		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->bom_advance->validate))))
-		 {
-		 $this->error='Permission denied';
-		 return -1;
-		 }*/
-
 		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'DON_REOPEN');
 	}
 
@@ -958,7 +959,7 @@ class Don extends CommonObject
 		$result .= $linkend;
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1121,9 +1122,9 @@ class Don extends CommonObject
 	}
 
 	/**
-	 * Function to get reamain to pay for a donation
+	 * Function to get remaining amount to pay for a donation
 	 *
-	 * @return   int      					Return integer <0 if KO, > reamain to pay if  OK
+	 * @return   float|int<-2,-1>      					Return integer <0 if KO, > remaining amount to pay if  OK
 	 */
 	public function getRemainToPay()
 	{
@@ -1143,7 +1144,7 @@ class Don extends CommonObject
 			return -2;
 		} else {
 			$sum_amount = (float) $this->db->fetch_object($resql)->sum_amount;
-			return (float) $this->amount - $sum_amount;
+			return (float) ($this->amount - $sum_amount);
 		}
 	}
 

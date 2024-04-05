@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - holiday
 HRM=Personal
-Holidays=Urlaube
+Holidays=Abwesenheiten
 Holiday=Urlaub
 CPTitreMenu=Urlaub
 MenuReportMonth=Monatsaufstellung
@@ -109,7 +109,6 @@ TypeWasDisabledOrRemoved=Urlaubstyp (ID %s) war deaktiviert oder entfernt
 LastHolidays=Letzte %s Urlaubsanträge
 AllHolidays=Alle Urlaubsanträge
 HalfDay=Halber Tag
-NotTheAssignedApprover=Sie sind nicht der zugeordnete Genehmiger
 LEAVE_PAID=Bezahlter Urlaub
 LEAVE_SICK=Krankheit
 LEAVE_OTHER=Andere Gründe

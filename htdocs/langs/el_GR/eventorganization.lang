@@ -34,7 +34,6 @@ PaymentEvent=Πληρωμή εκδήλωσης
 NewRegistration=Εγγραφή
 EventOrganizationSetup=Ρύθμιση οργάνωσης εκδηλώσεων
 EventOrganization=Οργάνωση εκδήλωσης
-Settings=Ρυθμίσεις
 EventOrganizationSetupPage = Σελίδα ρύθμισης οργάνωσης εκδηλώσεων
 EVENTORGANIZATION_TASK_LABEL = Ετικέτα εργασιών για αυτόματη δημιουργία κατά την επικύρωση του έργου
 EVENTORGANIZATION_TASK_LABELTooltip = Όταν επικυρώσετε μια εκδήλωση προς οργάνωση, ορισμένες εργασίες μπορούν να δημιουργηθούν αυτόματα στο πρόγραμμα <br> <br> Για παράδειγμα: <br> Αποστολή Πρόσκλησης για Συνέδρια <br> Αποστολή Πρόσκλησης για Περίπτερα <br> Επικύρωση προτάσεων Συνεδρίων <br>Επικύρωση αίτησης για Περίπτερα <br> Άνοιγμα συνδρομών  για τους συμμετέχοντες στην εκδήλωση<br> Αποστολή μιας υπενθύμισης της εκδήλωσης στους ομιλητές <br> Αποστολή μιας υπενθύμισης της εκδήλωσης στους οικοδεσπότες Περίπτερου<br> Αποστολή μιας υπενθύμισης της εκδήλωσης στους συμμετέχοντες
@@ -98,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = Seed για να εξασφαλίσετε το κ�
 SERVICE_BOOTH_LOCATION = Υπηρεσία που χρησιμοποιείται για τη γραμμή τιμολογίου σχετικά με τη θέση του περιπτέρου
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Υπηρεσία που χρησιμοποιείται για τη γραμμή τιμολογίου σχετικά με τη συνδρομή ενός συμμετέχοντος σε μια εκδήλωση
 NbVotes=Αριθμός ψήφων
+
 #
 # Status
 #
@@ -106,9 +106,10 @@ EvntOrgSuggested = Προτεινόμενα
 EvntOrgConfirmed = Επιβεβαιωμένο
 EvntOrgNotQualified = Μη επιλεγμένο
 EvntOrgDone = Ολοκληρωμένες
-EvntOrgCancelled = Ακυρωμένες
+EvntOrgCancelled = Ακυρώθηκε
+
 #
-# Public page
+# Other
 #
 SuggestForm = Σελίδα πρότασης
 SuggestOrVoteForConfOrBooth = Σελίδα για πρόταση ή ψήφο
@@ -144,13 +145,8 @@ OrganizationEventBulkMailToAttendees=Αυτή είναι μια υπενθύμι
 OrganizationEventBulkMailToSpeakers=Αυτή είναι μια υπενθύμιση για τη συμμετοχή σας στην εκδήλωση ως ομιλητής
 OrganizationEventLinkToThirdParty=Σύνδεσμος με τρίτο μέρος (πελάτη, προμηθευτή ή συνεργάτη)
 OrganizationEvenLabelName=Δημόσια ονομασία του συνεδρίου ή του περιπτέρου
-
 NewSuggestionOfBooth=Αίτηση για περίπτερο
 NewSuggestionOfConference=Αίτηση για τη διεξαγωγή συνεδρίου
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = Καλώς ήρθατε στη σελίδα προτάσεων για συνέδριο ή περίπτερο.
 EvntOrgRegistrationConfWelcomeMessage = Καλώς ήρθατε στη σελίδα προτάσεων συνεδρίων.
 EvntOrgRegistrationBoothWelcomeMessage = Καλώς ήρθατε στη σελίδα προτάσεων περιπτέρων.
@@ -158,8 +154,8 @@ EvntOrgVoteHelpMessage = Εδώ, μπορείτε να δείτε και να ψ
 VoteOk = Η ψήφος σας έγινε αποδεκτή.
 AlreadyVoted = Έχετε ήδη ψηφίσει για αυτήν την εκδήλωση.
 VoteError = Παρουσιάστηκε σφάλμα κατά την ψηφοφορία, παρακαλώ δοκιμάστε ξανά.
-
 SubscriptionOk=Η εγγραφή σας έχει καταγραφεί
+AmountOfRegistrationPaid=Ποσό καταβολής εγγραφής
 ConfAttendeeSubscriptionConfirmation = Επιβεβαίωση της συνδρομής σας σε μια εκδήλωση
 Attendee = Συμμετέχων
 PaymentConferenceAttendee = Πληρωμή συμμετεχόντων στο συνέδριο
@@ -169,8 +165,8 @@ RegistrationAndPaymentWereAlreadyRecorder=Μια εγγραφή και μια π
 EmailAttendee=Email του συμμετέχοντα
 EmailCompany=Εταιρικό email
 EmailCompanyForInvoice=Διεύθυνση ηλεκτρονικού ταχυδρομείου εταιρείας (για τιμολόγιο, εάν διαφέρει από το email του συμμετέχοντα)
-ErrorSeveralCompaniesWithEmailContactUs=Έχουν βρεθεί πολλές εταιρείες με αυτό το email, επομένως δεν μπορούμε να επικυρώσουμε αυτόματα την εγγραφή σας. Παρακαλώ επικοινωνήστε μαζί μας στο %s 
-ErrorSeveralCompaniesWithNameContactUs=Έχουν βρεθεί πολλές εταιρείες με αυτό το όνομα, επομένως δεν μπορούμε να επικυρώσουμε αυτόματα την εγγραφή σας. Παρακαλώ επικοινωνήστε μαζί μας στο %s
+ErrorSeveralCompaniesWithEmailContactUs=Έχουν βρεθεί αρκετές εταιρείες με αυτό το email, επομένως δεν μπορούμε να επικυρώσουμε αυτόματα την εγγραφή σας. Παρακαλώ επικοινωνήστε μαζί μας στο %s 
+ErrorSeveralCompaniesWithNameContactUs=Έχουν βρεθεί αρκετές εταιρείες με αυτό το όνομα, επομένως δεν μπορούμε να επικυρώσουμε αυτόματα την εγγραφή σας. Παρακαλώ επικοινωνήστε μαζί μας στο %s
 NoPublicActionsAllowedForThisEvent=Καμία δημόσια δράση δεν είναι ανοιχτή στο κοινό για αυτήν την εκδήλωση
 MaxNbOfAttendees=Μέγιστος αριθμός συμμετεχόντων
 DateStartEvent=Ημερομηνία έναρξης εκδήλωσης

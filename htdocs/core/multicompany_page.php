@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -42,7 +43,7 @@ if (!defined('NOREQUIREMENU')) {
 require_once '../main.inc.php';
 
 $action = GETPOST('action', 'aZ');
-$entityid = GETPOST('entity', 'int');
+$entityid = GETPOSTINT('entity');
 $backtourl = GETPOST('backtourl');
 if (empty($backtourl)) {
 	$backtourl = DOL_URL_ROOT;
@@ -92,6 +93,7 @@ print '<div>';
 //print '<br>';
 
 
+$bookmarkList = '';
 if (!isModEnabled('multicompany')) {
 	$langs->load("admin");
 	$bookmarkList .= '<br><span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("MultiCompany")).'</span>';
@@ -107,6 +109,8 @@ if (!isModEnabled('multicompany')) {
 
 	if (is_object($mc)) {
 		$listofentities = $mc->getEntitiesList($user->login, false, true);
+	} else {
+		$listofentities = array();
 	}
 
 	$multicompanyList .= '<ul class="ullistonly left" style="list-style: none;">';
@@ -128,7 +132,7 @@ if (!isModEnabled('multicompany')) {
 
 
 	// Execute hook printBookmarks
-	$parameters = array('multicompany'=>$multicompanyList);
+	$parameters = array('multicompany' => $multicompanyList);
 	$reshook = $hookmanager->executeHooks('printMultiCompanyEntities', $parameters); // Note that $action and $object may have been modified by some hooks
 	if (empty($reshook)) {
 		$multicompanyList .= $hookmanager->resPrint;

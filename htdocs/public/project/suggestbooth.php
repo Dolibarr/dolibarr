@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -70,8 +71,8 @@ $email = GETPOST("email");
 $societe = GETPOST("societe");
 $label = GETPOST("label");
 $note = GETPOST("note");
-$datestart = dol_mktime(0, 0, 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'));
-$dateend = dol_mktime(23, 59, 59, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'));
+$datestart = dol_mktime(0, 0, 0, GETPOSTINT('datestartmonth'), GETPOSTINT('datestartday'), GETPOSTINT('datestartyear'));
+$dateend = dol_mktime(23, 59, 59, GETPOSTINT('dateendmonth'), GETPOSTINT('dateendday'), GETPOSTINT('dateendyear'));
 $id = GETPOST('id');
 
 $project = new Project($db);
@@ -278,7 +279,7 @@ if (empty($reshook) && $action == 'add') {
 			}
 			$thirdparty->code_client = $tmpcode;
 			$readythirdparty = $thirdparty->create($user);
-			if ($readythirdparty <0) {
+			if ($readythirdparty < 0) {
 				$error++;
 				$errmsg .= $thirdparty->error;
 				$errors = array_merge($errors, $thirdparty->errors);
@@ -291,7 +292,7 @@ if (empty($reshook) && $action == 'add') {
 		if (!$error) {
 			$contact = new Contact($db);
 			$resultcontact = $contact->fetch('', '', '', $email);
-			if ($resultcontact<=0) {
+			if ($resultcontact <= 0) {
 				// Need to create a contact
 				$contact->socid = $thirdparty->id;
 				$contact->lastname = (string) GETPOST("lastname", 'alpha');
@@ -299,13 +300,13 @@ if (empty($reshook) && $action == 'add') {
 				$contact->address = (string) GETPOST("address", 'alpha');
 				$contact->zip = (string) GETPOST("zipcode", 'alpha');
 				$contact->town = (string) GETPOST("town", 'alpha');
-				$contact->country_id = (int) GETPOST("country_id", 'int');
-				$contact->state_id = (int) GETPOST("state_id", 'int');
+				$contact->country_id = GETPOSTINT("country_id");
+				$contact->state_id = GETPOSTINT("state_id");
 				$contact->email = $email;
 				$contact->statut = 1; //Default status to Actif
 
 				$resultcreatecontact = $contact->create($user);
-				if ($resultcreatecontact<0) {
+				if ($resultcreatecontact < 0) {
 					$error++;
 					$errmsg .= $contact->error;
 				}
@@ -318,7 +319,7 @@ if (empty($reshook) && $action == 'add') {
 
 			$resultcategory = $category->fetch(getDolGlobalString('EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH'));
 
-			if ($resultcategory<=0) {
+			if ($resultcategory <= 0) {
 				$error++;
 				$errmsg .= $category->error;
 			} else {
@@ -403,13 +404,13 @@ if (empty($reshook) && $action == 'add') {
 			} else {
 				$resultconforbooth = $conforbooth->create($user);
 			}
-			if ($resultconforbooth<=0) {
+			if ($resultconforbooth <= 0) {
 				$error++;
 				$errmsg .= $conforbooth->error;
 			} else {
 				// Adding the contact to the project
 				$resultaddcontact = $conforbooth->add_contact($contact->id, 'RESPONSIBLE');
-				if ($resultaddcontact<0) {
+				if ($resultaddcontact < 0) {
 					$error++;
 					$errmsg .= $conforbooth->error;
 				} else {
@@ -621,7 +622,7 @@ print '<input type="hidden" name="securekey" value="'.$securekeyreceived.'" />';
 print '<br><span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
 //print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
-print dol_get_fiche_head('');
+print dol_get_fiche_head();
 
 print '<script type="text/javascript">
 jQuery(document).ready(function () {

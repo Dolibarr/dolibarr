@@ -444,14 +444,14 @@ if (getDolGlobalString('LDAP_MEMBER_ACTIVE')) {
 }
 
 if (function_exists("ldap_connect")) {
-	if ($_GET["action"] == 'testmember') {
+	if ($action == 'testmember') {
 		// Create object
 		$object = new Adherent($db);
 		$object->initAsSpecimen();
 
 		// Test synchro
 		$ldap = new Ldap();
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 
 		if ($result > 0) {
 			$info = $object->_load_ldap_info();
@@ -474,7 +474,7 @@ if (function_exists("ldap_connect")) {
 
 			print "<br>\n";
 			print "LDAP input file used for test:<br><br>\n";
-			print nl2br($ldap->dump_content($dn, $info));
+			print nl2br($ldap->dumpContent($dn, $info));
 			print "\n<br>";
 		} else {
 			print img_picto('', 'error').' ';

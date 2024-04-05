@@ -183,12 +183,9 @@ class ExportCsv extends ModeleExports
 	public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$outputlangs->charset_output = getDolGlobalString('EXPORT_CSV_FORCE_CHARSET');
 
 		$selectlabel = array();
-
 		foreach ($array_selected_sorted as $code => $value) {
 			$newvalue = $outputlangs->transnoentities($array_export_fields_label[$code]); // newvalue is now $outputlangs->charset_output encoded
 			$newvalue = $this->csvClean($newvalue, $outputlangs->charset_output);
@@ -200,6 +197,7 @@ class ExportCsv extends ModeleExports
 				$selectlabel[$code."_label"] = $newvalue."_label";
 			}
 		}
+
 		foreach ($selectlabel as $key => $value) {
 			fwrite($this->handle, $value.$this->separator);
 		}

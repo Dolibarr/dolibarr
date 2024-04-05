@@ -201,7 +201,6 @@ MAIN_MAIL_AUTOCOPY_TO= Copiar (Bcc) todos los correos electrónicos enviados a
 MAIN_DISABLE_ALL_MAILS=Deshabilitar todo el envío de correo electrónico (para propósitos de prueba o demostraciones)
 MAIN_MAIL_FORCE_SENDTO=Enviar todos los correos electrónicos a (en lugar de destinatarios reales, para fines de prueba)
 MAIN_MAIL_ENABLED_USER_DEST_SELECT=Sugerir correos electrónicos de empleados (si están definidos) en la lista de destinatarios predefinidos al escribir un nuevo correo electrónico
-MAIN_MAIL_SENDMODE=Método de envío de correo electrónico
 MAIN_MAIL_SMTPS_ID=ID de SMTP (si el servidor de envío requiere autenticación)
 MAIN_MAIL_SMTPS_PW=Contraseña SMTP (si el servidor de envío requiere autenticación)
 MAIN_MAIL_EMAIL_TLS=Usar cifrado TLS (SSL)

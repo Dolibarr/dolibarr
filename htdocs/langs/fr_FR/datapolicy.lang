@@ -78,15 +78,11 @@ DATAPOLICY_PORTABILITE_CONFIRMATION = Vous souhaitez exporter les données perso
 #
 ANONYMISER_AT = Anonymisé le %s
 
-# V2
-DATAPOLICYReturn = Validation RGPD
 DATAPOLICY_date = Date d'accord/désaccord RGPD
 DATAPOLICY_send = Date d'envoi de l'e-mail d'accord
-DATAPOLICYReturn = Validation RGPD
 DATAPOLICY_SEND = Envoyer un e-mail RGPD
 MailSent = L'email a été envoyé
 
 # ERROR
-ErrorSubjectIsRequired = Erreur : L'objet de l'email est obligatoire. Indiquez-le dans la configuration du module
 =Suite à un problème technique, nous n'avons pas pu enregistrer votre choix. Nous nous en excusons. Contactez-nous pour nous faire part de votre choix.
 NUMBER_MONTH_BEFORE_DELETION = Nombre de mois avant la suppression

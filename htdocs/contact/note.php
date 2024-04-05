@@ -35,7 +35,7 @@ $action = GETPOST('action', 'aZ09');
 // Load translation files required by the page
 $langs->load("companies");
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $object = new Contact($db);
 if ($id > 0) {
@@ -78,7 +78,7 @@ if (empty($reshook)) {
 
 $now = dol_now();
 
-$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$title = $langs->trans("ContactNotes");
 
 $form = new Form($db);
 

@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,16 +48,16 @@ if (empty($mode)) {
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 
 
-$search_statut = GETPOST('search_statut', 'int');
-if ($search_statut == '' || $search_statut == '0') {
-	$search_statut = '1';
+$search_status = GETPOST('search_status', 'intcomma');
+if ($search_status == '' || $search_status == '0') {
+	$search_status = '1';
 }
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
-	$search_statut = "";
+	$search_status = "";
 }
 
 if ($contextpage == 'employeelist') {
@@ -106,7 +106,7 @@ llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'bodyfor
 
 
 // Load hierarchy of users
-$user_arbo = $userstatic->get_full_tree(0, ($search_statut != '' && $search_statut >= 0) ? "statut = ".$search_statut : '');
+$user_arbo = $userstatic->get_full_tree(0, ($search_status != '' && $search_status >= 0) ? "statut = ".$search_status : '');
 
 
 // Count total nb of records
@@ -124,11 +124,11 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	$data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
 	foreach ($fulltree as $key => $val) {
 		$userstatic->id = $val['id'];
-		$userstatic->ref = $val['id'];
+		$userstatic->ref = (string) $val['id'];
 		$userstatic->login = $val['login'];
 		$userstatic->firstname = $val['firstname'];
 		$userstatic->lastname = $val['lastname'];
-		$userstatic->statut = $val['statut'];
+		$userstatic->status = $val['statut'];
 		$userstatic->email = $val['email'];
 		$userstatic->gender = $val['gender'];
 		$userstatic->socid = $val['fk_soc'];
@@ -169,7 +169,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 
 	//var_dump($data);
 
-	$param = "&search_statut=".urlencode($search_statut);
+	$param = "&search_status=".urlencode($search_status);
 	$param = "&contextpage=".urlencode($contextpage);
 
 	$newcardbutton = '';
@@ -212,7 +212,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	print '<td class="liste_titre">&nbsp;</td>';
 	// Status
 	print '<td class="liste_titre right">';
-	print $form->selectarray('search_statut', array('-1'=>'', '1'=>$langs->trans('Enabled')), $search_statut, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
+	print $form->selectarray('search_status', array('-1'=>'', '1'=>$langs->trans('Enabled')), $search_status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td>';
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

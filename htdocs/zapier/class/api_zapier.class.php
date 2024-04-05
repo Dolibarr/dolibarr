@@ -75,8 +75,8 @@ class Zapier extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->zapier->read) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('zapier', 'read')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->hook->fetch($id);
@@ -85,7 +85,7 @@ class Zapier extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('hook', $this->hook->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->hook);
@@ -103,8 +103,8 @@ class Zapier extends DolibarrApi
 	 */
 	public function getModulesChoices()
 	{
-		if (!DolibarrApiAccess::$user->rights->zapier->read) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('zapier', 'read')) {
+			throw new RestException(403);
 		}
 
 		$arraychoices = array(
@@ -120,7 +120,7 @@ class Zapier extends DolibarrApi
 		// }
 
 		// if (! DolibarrApi::_checkAccessToResource('hook', $this->hook->id)) {
-		//     throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		//     throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		// }
 
 		return $arraychoices;
@@ -145,8 +145,8 @@ class Zapier extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
-		if (!DolibarrApiAccess::$user->rights->zapier->read) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('zapier', 'read')) {
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -158,7 +158,7 @@ class Zapier extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if ($restrictonsocid && !DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
+		if ($restrictonsocid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -227,8 +227,8 @@ class Zapier extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->zapier->write) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('zapier', 'write')) {
+			throw new RestException(403);
 		}
 
 		dol_syslog("API Zapier create hook receive : ".print_r($request_data, true), LOG_DEBUG);
@@ -242,11 +242,11 @@ class Zapier extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->hook->context['caller'] = $request_data['caller'];
+				$this->hook->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->hook->$field = $value;
+			$this->hook->$field = $this->_checkValForAPI($field, $value, $this->hook);
 		}
 
 		$this->hook->fk_user = DolibarrApiAccess::$user->id;
@@ -259,44 +259,6 @@ class Zapier extends DolibarrApi
 		);
 	}
 
-	// /**
-	//  * Update hook
-	//  *
-	//  * @param int   $id             Id of hook to update
-	//  * @param array $request_data   Datas
-	//  * @return int
-	//  *
-	//  * @url	PUT /hooks/{id}
-	//  */
-	/*public function put($id, $request_data = null)
-	{
-		if (! DolibarrApiAccess::$user->rights->zapier->write) {
-			throw new RestException(401);
-		}
-
-		$result = $this->hook->fetch($id);
-		if( ! $result ) {
-			throw new RestException(404, 'Hook not found');
-		}
-
-		if( ! DolibarrApi::_checkAccessToResource('hook', $this->hook->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
-
-		foreach($request_data as $field => $value) {
-			if ($field == 'id') {
-				continue;
-			}
-			$this->hook->$field = $value;
-		}
-
-		if ($this->hook->update($id, DolibarrApiAccess::$user) > 0) {
-			return $this->get($id);
-		} else {
-			throw new RestException(500, $this->hook->error);
-		}
-	}*/
-
 	/**
 	 * Delete hook
 	 *
@@ -307,8 +269,8 @@ class Zapier extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->zapier->delete) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('zapier', 'delete')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->hook->fetch($id);
@@ -317,7 +279,7 @@ class Zapier extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('hook', $this->hook->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->hook->delete(DolibarrApiAccess::$user)) {

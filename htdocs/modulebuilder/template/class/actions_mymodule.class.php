@@ -108,7 +108,7 @@ class ActionsMyModule extends CommonHookActions
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
 		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {	    // do something only for the context 'somecontext1' or 'somecontext2'
 			// Do what you want here...
-			// You can for example call global vars like $fieldstosearchall to overwrite them, or update database depending on $action and $_POST values.
+			// You can for example load and use call global vars like $fieldstosearchall to overwrite them, or update database depending on $action and GETPOST values.
 		}
 
 		if (!$error) {
@@ -255,7 +255,7 @@ class ActionsMyModule extends CommonHookActions
 	 */
 	public function loadDataForCustomReports($parameters, &$action, $hookmanager)
 	{
-		global $conf, $user, $langs;
+		global $langs;
 
 		$langs->load("mymodule@mymodule");
 
@@ -280,7 +280,12 @@ class ActionsMyModule extends CommonHookActions
 
 		$this->results['head'] = $head;
 
-		return 1;
+		$arrayoftypes = array();
+		//$arrayoftypes['mymodule_myobject'] = array('label' => 'MyObject', 'picto'=>'myobject@mymodule', 'ObjectClassName' => 'MyObject', 'enabled' => isModEnabled('mymodule'), 'ClassPath' => "/mymodule/class/myobject.class.php", 'langs'=>'mymodule@mymodule')
+
+		$this->results['arrayoftype'] = $arrayoftypes;
+
+		return 0;
 	}
 
 
