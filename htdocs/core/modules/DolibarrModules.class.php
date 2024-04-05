@@ -522,15 +522,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if (!$err) {
 			$this->db->commit();
 
-			// set $conf properties
-			$conf->global->{$this->const_name} = 1;
 			$moduleNameInConf = strtolower(preg_replace('/^MAIN_MODULE_/', '', $this->const_name));
 			// two exceptions to handle
-			if ($moduleNameInConf === 'propale') $moduleNameInConf = 'propal';
-			elseif ($moduleNameInConf === 'supplierproposal') $moduleNameInConf = 'supplier_proposal';
-			if (! isset($conf->{$moduleNameInConf})) {
-				$conf->{$moduleNameInConf} = (object) array('enabled' => 1);
+			if ($moduleNameInConf === 'propale') {
+				$moduleNameInConf = 'propal';
+			} elseif ($moduleNameInConf === 'supplierproposal') {
+				$moduleNameInConf = 'supplier_proposal';
 			}
+
+			$this->modules[$moduleNameInConf] = $moduleNameInConf; // Add this module in list of enabled modules so isModEnabled() will work (conf->module->enabled must no more be used)
 
 			return 1;
 		} else {
@@ -618,13 +618,16 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if (!$err) {
 			$this->db->commit();
 
-			// unset $conf properties
-			if (isset($conf->global->{$this->const_name})) unset($conf->global->{$this->const_name});
+			// Disable modules
 			$moduleNameInConf = strtolower(preg_replace('/^MAIN_MODULE_/', '', $this->const_name));
 			// two exceptions to handle
-			if ($moduleNameInConf === 'propale') $moduleNameInConf = 'propal';
-			elseif ($moduleNameInConf === 'supplierproposal') $moduleNameInConf = 'supplier_proposal';
-			if (isset($conf->{$moduleNameInConf})) unset($conf->{$moduleNameInConf});
+			if ($moduleNameInConf === 'propale') {
+				$moduleNameInConf = 'propal';
+			} elseif ($moduleNameInConf === 'supplierproposal') {
+				$moduleNameInConf = 'supplier_proposal';
+			}
+
+			unset($this->modules[$moduleNameInConf]);	// Add this module in list of enabled modules so isModEnabled() will work (conf->module->enabled must no more be used)
 
 			return 1;
 		} else {
