@@ -9,6 +9,8 @@ pipeline {
     stage('SonarQube Analysis') {
       steps {
         script {
+          withCredentials([string(credentialsId: 'SonarQubeToken', variable: 'SONAR_TOKEN')]) 
+          sh "sonar-scanner -Dsonar.login=$SONAR_TOKEN"
           def scannerHome = tool 'SonarQube_Scanner';
           withSonarQubeEnv('SonarQube_Server') {
             sh 'export SONAR_SCANNER_OPTS="-Xmx512m"'
