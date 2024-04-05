@@ -13,9 +13,9 @@ pipeline {
           // Execute SonarQube analysis
           withSonarQubeEnv('SonarQube_Server') {
             sh 'export SONAR_SCANNER_OPTS="-Xmx4096m -Xms512m"'
-            sh 'export ANT_OPTS="-Xms512m -Xmx1800m"'
-            sh 'export SONAR_RUNNER_OPTS="-Xmx1024m -XX:MaxPermSize=512m"'
-            sh "${scannerHome}/bin/sonar-scanner -X -Dproject.settings=sonar-project.properties"
+            sh 'export ANT_OPTS="-Xms512m -Xmx4096m"'
+            sh 'export SONAR_RUNNER_OPTS="-Xmx4096m -XX:MaxPermSize=512m"'
+            sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar-project.properties"
           }
         }
       }
