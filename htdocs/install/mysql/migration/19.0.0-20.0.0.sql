@@ -294,4 +294,4 @@ ALTER TABLE llx_supplier_proposaldet MODIFY ref_fourn VARCHAR(128) NULL;
 ALTER TABLE llx_projet ADD COLUMN ref_ext varchar(50) after ref;
 
 -- bookcal
-ALTER TABLE llx_bookcal_calendar ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid
+ALTER TABLE llx_bookcal_calendar ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
