@@ -745,8 +745,8 @@ foreach ($arrayofalerts as $key => $alert) {
 		$cve = preg_replace('/\s+/', '-', trim($alert['issueidcve']));
 		$arrayofalerts[$key]['url_cve'] = 'https://nvd.nist.gov/vuln/detail/CVE-'.$cve;
 	}
-	$arrayofalerts[$key]['title'] = 'Security alert - '.($cve ? ' CVE-'.$cve.' - ' : '').'Fix committed as: '.dol_trunc($alert['commitid'], 8);
-	$arrayofalerts[$key]['description'] = 'Security alert '.($cve ? ' CVE-'.$cve.' - ' : '');
+	$arrayofalerts[$key]['title'] = 'Security alert - '.($cve ? 'CVE-'.$cve.' - ' : '').'Fix committed as: '.dol_trunc($alert['commitid'], 8);
+	$arrayofalerts[$key]['description'] = 'Security alert '.($cve ? 'CVE-'.$cve.' - ' : '');
 
 	$html .= '<tr style="vertical-align: top;">';
 	$html .= '<td class="nowrap">';
@@ -810,31 +810,31 @@ if ($fh) {
 	}
 
 	// Generation of the feed
-	fwrite($fh, '<?xml version="1.0" encoding="UTF-8" ?>');
-	fwrite($fh, '<rss version="2.0">');
-	fwrite($fh, '<channel>');
-	fwrite($fh, '<title>' . htmlspecialchars($title_security) . '</title>');
-	fwrite($fh, '<description>' . htmlspecialchars("Feed of the latest security reports on the project") . '</description>');
+	fwrite($fh, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
+	fwrite($fh, '<rss version="2.0">'."\n");
+	fwrite($fh, '<channel>'."\n");
+	fwrite($fh, '<title>' . htmlspecialchars($title_security) . '</title>'."\n");
+	fwrite($fh, '<description>' . htmlspecialchars("Feed of the latest security reports on the project") . '</description>'."\n");
 	if ($url_site) {
-		fwrite($fh, '<link>' . htmlspecialchars($url_site) . '</link>');
+		fwrite($fh, '<link>' . htmlspecialchars($url_site) . '</link>'."\n");
 	}
 	if ($url_flux) {
-		fwrite($fh, '<atom:link href="' . htmlspecialchars($url_flux) . '" rel="self" type="application/rss+xml" />');
+		fwrite($fh, '<atom:link href="' . htmlspecialchars($url_flux) . '" rel="self" type="application/rss+xml" />'."\n");
 	}
 
 	foreach ($arrayofalerts as $alert) {
 		$alert['url_commit'] = 'https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'];
 
-		fwrite($fh, '<item>');
-		fwrite($fh, '<title>' . htmlspecialchars($alert['title']) . '</title>');
-		fwrite($fh, '<description>' . htmlspecialchars($alert['description']) . '</description>');
-		fwrite($fh, '<link>' . htmlspecialchars($alert['url_commit']) . '</link>');
-		fwrite($fh, '<pubDate>' . htmlspecialchars($alert['created_at']) . '</pubDate>');
-		fwrite($fh, '</item>');
+		fwrite($fh, '<item>'."\n");
+		fwrite($fh, '<title>' . htmlspecialchars($alert['title']) . '</title>'."\n");
+		fwrite($fh, '<description>' . htmlspecialchars($alert['description']) . '</description>'."\n");
+		fwrite($fh, '<link>' . htmlspecialchars($alert['url_commit']) . '</link>'."\n");
+		fwrite($fh, '<pubDate>' . htmlspecialchars($alert['created_at']) . '</pubDate>'."\n");
+		fwrite($fh, '</item>'."\n");
 	}
 
-	fwrite($fh, '</channel>');
-	fwrite($fh, '</rss>');
+	fwrite($fh, '</channel>'."\n");
+	fwrite($fh, '</rss>'."\n");
 
 	fclose($fh);
 
