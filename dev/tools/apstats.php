@@ -75,6 +75,7 @@ $dirphpstan = '';
 $dir_phan = '';
 $datatable_script = '';
 $url_root = '';
+$project = '';
 
 $i = 0;
 while ($i < $argc) {
@@ -87,7 +88,10 @@ while ($i < $argc) {
 		$dir_phan = $reg[1];
 	} elseif (preg_match('/^--url-root=(.*)$/', $argv[$i], $reg)) {
 		$url_root = $reg[1];
+	} elseif (preg_match('/^--project-name=(.*)$/', $argv[$i], $reg)) {
+		$project = $reg[1];
 	}
+
 	$i++;
 }
 
@@ -726,7 +730,7 @@ if (count($output_phan_json) != 0) {
 
 
 // Last security errors
-$title_security = "Last security issues";
+$title_security = ($project ? "[".$project."] " : "")."Last security issues";
 
 $html .= '<section class="chapter" id="linesofcode">'."\n";
 $html .= '<h2><span class="fas fa-code pictofixedwidth"></span>'.$title_security.' <span class="opacitymedium">(last '.($nbofmonth != 1 ? $nbofmonth.' months' : 'month').')</span></h2>'."\n";
@@ -737,6 +741,7 @@ $html .= '<table class="list_technical_debt centpercent">'."\n";
 $html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td></tr>'."\n";
 foreach ($arrayofalerts as $key => $alert) {
 	$cve = '';
+	$yogosha = empty($alert['issueidyogosha']) ? '' : $alert['issueidyogosha'];
 	$arrayofalerts[$key]['url_commit'] = 'https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'];
 	if (!empty($alert['issueid'])) {
 		$arrayofalerts[$key]['url_issue'] = 'https://github.com/Dolibarr/dolibarr/issues/'.$alert['issueid'];
@@ -745,18 +750,22 @@ foreach ($arrayofalerts as $key => $alert) {
 		$cve = preg_replace('/\s+/', '-', trim($alert['issueidcve']));
 		$arrayofalerts[$key]['url_cve'] = 'https://nvd.nist.gov/vuln/detail/CVE-'.$cve;
 	}
-	$arrayofalerts[$key]['title'] = 'Security alert - '.($cve ? 'CVE-'.$cve.' - ' : '').'Fix committed as: '.dol_trunc($alert['commitid'], 8);
-	$arrayofalerts[$key]['description'] = 'Security alert '.($cve ? 'CVE-'.$cve.' - ' : '');
+	$arrayofalerts[$key]['title'] = ($project ? "[".$project."] " : "").'Security alert - '.($yogosha ? ' Yogosha #'.$yogosha.' - ' : '').($cve ? 'CVE-'.$cve.' - ' : '');
+	$arrayofalerts[$key]['title'] .= 'Fix committed as: '.dol_trunc($alert['commitid'], 8);
+	$arrayofalerts[$key]['description'] = '<![CDATA[Security alert - '.($yogosha ? ' Yogosha #'.$yogosha.' - ' : '').($cve ? 'CVE-'.$cve.' - ' : '');
 
 	$html .= '<tr style="vertical-align: top;">';
+
+	// Add link to Github
 	$html .= '<td class="nowrap">';
 	$html .= '<a target="_blank" href="'.$arrayofalerts[$key]['url_commit'].'">'.dol_trunc($alert['commitid'], 8).'</a>';
-	$arrayofalerts[$key]['description'] .= "\n".'<br>Commit ID: '.$alert['commitid'];
+	$arrayofalerts[$key]['description'] .= "\n".'Commit ID: <a href="'.$arrayofalerts[$key]['url_commit'].'">'.dol_trunc($alert['commitid'], 8).'</a>';
+
 	if (!empty($alert['commitidbis'])) {
 		$html .= ' <div class="more inline"><span class="seeothercommit badge">+</span><div class="morediv hidden">';
 		foreach ($alert['commitidbis'] as $tmpcommitidbis) {
 			$html .= '<a target="_blank" href="https://github.com/Dolibarr/dolibarr/commit/'.$tmpcommitidbis.'">'.dol_trunc($tmpcommitidbis, 8).'</a><br>';
-			$arrayofalerts[$key]['description'] .= "\n".'<br>Commit ID: '.$tmpcommitidbis;
+			$arrayofalerts[$key]['description'] .= "\n".'Commit ID: https://github.com/Dolibarr/dolibarr/commit/'.$tmpcommitidbis;
 		}
 		$html .= '</div></div>';
 	}
@@ -768,6 +777,7 @@ foreach ($arrayofalerts as $key => $alert) {
 	if (!empty($alert['issueidyogosha'])) {
 		//$html .= '<a target="_blank" href="https://yogosha.com?'.$alert['issueidyogosha'].'">';
 		$html .= '#yogosha'.$alert['issueidyogosha'];
+		$arrayofalerts[$key]['description'] .= "\n".'Yogosha ID #'.$alert['issueidyogosha'];
 		//$html .= '</a>';
 	} else {
 		//$html .= '<span class="opacitymedium">public issue</span>';
@@ -776,6 +786,7 @@ foreach ($arrayofalerts as $key => $alert) {
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['issueid'])) {
 		$html .= '<a target="_blank" href="'.$arrayofalerts[$key]['url_issue'].'">#'.$alert['issueid'].'</a>';
+		$arrayofalerts[$key]['description'] .= "\n".'GitHub ID #'.$alert['issueid'].' at: '.$arrayofalerts[$key]['url_issue'];
 	} else {
 		//$html .= '<span class="opacitymedium">private</span>';
 	}
@@ -784,10 +795,13 @@ foreach ($arrayofalerts as $key => $alert) {
 	if (!empty($alert['issueidcve'])) {
 		$cve = preg_replace('/\s+/', '-', trim($alert['issueidcve']));
 		$html .= '<a target="_blank" href="'.$arrayofalerts[$key]['url_cve'].'">CVE-'.$cve.'</a>';
-		$arrayofalerts[$key]['description'] .= "\n".'<br>CVE-'.$cve.' at: '.$arrayofalerts[$key]['url_cve'];
+		$arrayofalerts[$key]['description'] .= "\n".'CVE-'.$cve.' at: '.$arrayofalerts[$key]['url_cve'];
 	}
 	$html .= '</td>';
 	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.dol_escape_htmltag($alert['title']).'</td>';
+
+	$arrayofalerts[$key]['description'] .= ']]';
+
 	$html .= '</tr>';
 }
 $html .= '</table>';
