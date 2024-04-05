@@ -13,7 +13,7 @@ pipeline {
           // Wrap withCredentials around all steps requiring the credentials
           withCredentials([string(credentialsId: 'SonarQubeToken', variable: 'SONAR_TOKEN')]) {
             // Execute SonarScanner for analysis
-            sh "sonar-scanner -Dsonar.login=$SONAR_TOKEN"
+            sh "${scannerHome} -Dsonar.login=$SONAR_TOKEN"
             
             // Execute SonarQube analysis
             
