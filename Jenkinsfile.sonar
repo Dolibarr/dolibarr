@@ -10,17 +10,10 @@ pipeline {
       steps {
         script {
           def scannerHome = tool 'SonarQube_Scanner';
-          // Wrap withCredentials around all steps requiring the credentials
-          withCredentials([string(credentialsId: 'SonarQubeToken', variable: 'SONAR_TOKEN')]) {
-            // Execute SonarScanner for analysis
-            sh "${scannerHome} -Dsonar.login=$SONAR_TOKEN"
-            
-            // Execute SonarQube analysis
-            
-            withSonarQubeEnv('SonarQube_Server') {
-              sh 'export SONAR_SCANNER_OPTS="-Xmx512m"'
-              sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar-project.properties"
-            }
+          // Execute SonarQube analysis
+          withSonarQubeEnv('SonarQube_Server') {
+            sh 'export SONAR_SCANNER_OPTS="-Xmx512m"'
+            sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar-project.properties"
           }
         }
       }
