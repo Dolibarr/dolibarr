@@ -274,7 +274,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		}
 
 		$object->$key = $value;
-		if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default'])) {
+		if ($val['notnull'] > 0 && $object->$key == '' && (!isset($val['default']) || is_null($val['default']))) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
 		}
