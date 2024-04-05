@@ -788,6 +788,7 @@ $html .= '</table>';
 $html .= '</div>';
 $html .= '</div>';
 
+$html .= '<br>';
 $html .= 'You can use this URL for RSS notifications: <a href="/'.$outputfilerss.'">'.$outputfilerss.'</a><br><br>';
 
 $html .= '</section>';
@@ -924,6 +925,7 @@ if ($fh) {
 } else {
 	print 'Failed to open '.$outputfile.' for output.'."\n";
 }
+
 
 
 /**
