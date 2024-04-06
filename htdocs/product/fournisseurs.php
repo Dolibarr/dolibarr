@@ -66,8 +66,8 @@ $extrafields = new ExtraFields($db);
 
 // If socid provided by ajax company selector
 if (GETPOSTINT('search_fourn_id')) {
-	$_GET['id_fourn'] = GETPOSTINT('search_fourn_id');
-	$_POST['id_fourn'] = GETPOSTINT('search_fourn_id');
+	$_GET['id_fourn'] = GETPOSTINT('search_fourn_id');	// Keep set to $_GET an $_POST. Used later.
+	$_POST['id_fourn'] = GETPOSTINT('search_fourn_id');	// Keep set to $_GET an $_POST. Used later.
 }
 
 // Security check
@@ -391,7 +391,7 @@ if ($id > 0 || $ref) {
 
 			print dol_get_fiche_head($head, 'suppliers', $titre, -1, $picto);
 
-			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 			$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 			$shownav = 1;

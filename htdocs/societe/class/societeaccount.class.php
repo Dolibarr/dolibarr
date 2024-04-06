@@ -47,7 +47,7 @@ class SocieteAccount extends CommonObject
 	public $table_element = 'societe_account';
 
 	/**
-	 * @var int Does societeaccount support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int<0,2>|string Does societeaccount support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
 

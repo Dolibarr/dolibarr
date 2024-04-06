@@ -19,7 +19,7 @@
  */
 
 /**
- * \file        class/target.class.php
+ * \file        htdocs/webhook/class/target.class.php
  * \ingroup     webhook
  * \brief       This file is a CRUD class file for Target (Create/Read/Update/Delete)
  */
@@ -50,7 +50,7 @@ class Target extends CommonObject
 	public $table_element = 'webhook_target';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
+	 * @var int<0,2>|string  Does this object support multicompany module ?
 	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 0;

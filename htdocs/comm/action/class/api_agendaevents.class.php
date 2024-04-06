@@ -84,7 +84,7 @@ class AgendaEvents extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('agenda', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		return $this->_cleanObjectDatas($this->actioncomm);
 	}
@@ -204,7 +204,7 @@ class AgendaEvents extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->actioncomm->context['caller'] = $request_data['caller'];
+				$this->actioncomm->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -253,7 +253,7 @@ class AgendaEvents extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -261,7 +261,7 @@ class AgendaEvents extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->actioncomm->context['caller'] = $request_data['caller'];
+				$this->actioncomm->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -304,7 +304,7 @@ class AgendaEvents extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->actioncomm->delete(DolibarrApiAccess::$user)) {

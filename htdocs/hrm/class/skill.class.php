@@ -57,7 +57,7 @@ class Skill extends CommonObject
 	public $table_element_line = 'skilldet';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
+	 * @var int<0,2>|string  Does this object support multicompany module ?
 	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 0;
@@ -408,7 +408,7 @@ class Skill extends CommonObject
 		$this->lines = array();
 		require_once __DIR__ . '/skilldet.class.php';
 		$skilldet = new Skilldet($this->db);
-		$this->lines = $skilldet->fetchAll('ASC', '', '', '', array('fk_skill' => $this->id), '');
+		$this->lines = $skilldet->fetchAll('ASC', '', 0, 0, '(fk_skill:=:'.$this->id.')');
 
 		if (is_array($this->lines)) {
 			return (count($this->lines) > 0) ? $this->lines : array();

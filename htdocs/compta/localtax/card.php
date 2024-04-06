@@ -87,7 +87,7 @@ if ($action == 'add' && !$cancel) {
 	} else {
 		$db->rollback();
 		setEventMessages($object->error, $object->errors, 'errors');
-		$_GET["action"] = "create";
+		$action = "create";
 	}
 }
 

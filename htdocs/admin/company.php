@@ -281,8 +281,8 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 }
 
 if ($action == 'addthumb' || $action == 'addthumbsquarred') {  // Regenerate thumbs
-	if (file_exists($conf->mycompany->dir_output.'/logos/'.$_GET["file"])) {
-		$isimage = image_format_supported($_GET["file"]);
+	if (file_exists($conf->mycompany->dir_output.'/logos/'.GETPOST("file"))) {
+		$isimage = image_format_supported(GETPOST("file"));
 
 		// Create thumbs of logo
 		if ($isimage > 0) {
@@ -297,7 +297,7 @@ if ($action == 'addthumb' || $action == 'addthumbsquarred') {  // Regenerate thu
 			//$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retrieve value with get...
 
 			// Create small thumb. Used on logon for example
-			$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthsmall, $maxheightsmall, '_small', $quality);
+			$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.GETPOST("file"), $maxwidthsmall, $maxheightsmall, '_small', $quality);
 			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbSmall, $reg)) {
 				$imgThumbSmall = $reg[1]; // Save only basename
 				dolibarr_set_const($db, $constant."_SMALL", $imgThumbSmall, 'chaine', 0, '', $conf->entity);
@@ -306,7 +306,7 @@ if ($action == 'addthumb' || $action == 'addthumbsquarred') {  // Regenerate thu
 			}
 
 			// Create mini thumbs. Used on menu or for setup page for example
-			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthmini, $maxheightmini, '_mini', $quality);
+			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.GETPOST("file"), $maxwidthmini, $maxheightmini, '_mini', $quality);
 			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbMini, $reg)) {
 				$imgThumbMini = $reg[1]; // Save only basename
 				dolibarr_set_const($db, $constant."_MINI", $imgThumbMini, 'chaine', 0, '', $conf->entity);
@@ -642,7 +642,7 @@ print '<input name="capital" id="capital" class="maxwidth100" value="'.dol_escap
 // Juridical Status
 print '<tr class="oddeven"><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';
 if ($mysoc->country_code) {
-	print $formcompany->select_juridicalstatus($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE, $mysoc->country_code, '', 'forme_juridique_code');
+	print $formcompany->select_juridicalstatus(getDolGlobalString('MAIN_INFO_SOCIETE_FORME_JURIDIQUE'), $mysoc->country_code, '', 'forme_juridique_code');
 } else {
 	print $countrynotdefined;
 }
@@ -652,7 +652,7 @@ print '</td></tr>';
 if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid1">'.$langs->transcountry("ProfId1", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="siren" id="profid1" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SIREN') ? $conf->global->MAIN_INFO_SIREN : '').'">';
+		print '<input name="siren" id="profid1" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SIREN')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -663,7 +663,7 @@ if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-') {
 if ($langs->transcountry("ProfId2", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid2">'.$langs->transcountry("ProfId2", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="siret" id="profid2" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SIRET') ? $conf->global->MAIN_INFO_SIRET : '').'">';
+		print '<input name="siret" id="profid2" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SIRET')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -674,7 +674,7 @@ if ($langs->transcountry("ProfId2", $mysoc->country_code) != '-') {
 if ($langs->transcountry("ProfId3", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid3">'.$langs->transcountry("ProfId3", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="ape" id="profid3" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_APE') ? $conf->global->MAIN_INFO_APE : '').'">';
+		print '<input name="ape" id="profid3" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_APE')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -685,7 +685,7 @@ if ($langs->transcountry("ProfId3", $mysoc->country_code) != '-') {
 if ($langs->transcountry("ProfId4", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid4">'.$langs->transcountry("ProfId4", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="rcs" id="profid4" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_RCS') ? $conf->global->MAIN_INFO_RCS : '').'">';
+		print '<input name="rcs" id="profid4" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_RCS')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -696,7 +696,7 @@ if ($langs->transcountry("ProfId4", $mysoc->country_code) != '-') {
 if ($langs->transcountry("ProfId5", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid5">'.$langs->transcountry("ProfId5", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="MAIN_INFO_PROFID5" id="profid5" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_PROFID5') ? $conf->global->MAIN_INFO_PROFID5 : '').'">';
+		print '<input name="MAIN_INFO_PROFID5" id="profid5" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_PROFID5')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -707,7 +707,7 @@ if ($langs->transcountry("ProfId5", $mysoc->country_code) != '-') {
 if ($langs->transcountry("ProfId6", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid6">'.$langs->transcountry("ProfId6", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="MAIN_INFO_PROFID6" id="profid6" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_PROFID6') ? $conf->global->MAIN_INFO_PROFID6 : '').'">';
+		print '<input name="MAIN_INFO_PROFID6" id="profid6" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_PROFID6')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -716,9 +716,9 @@ if ($langs->transcountry("ProfId6", $mysoc->country_code) != '-') {
 
 // ProfId7
 if ($langs->transcountry("ProfId7", $mysoc->country_code) != '-') {
-	print '<tr class="oddeven"><td><label for="profid7">'.$langs->transcountry("profid7", $mysoc->country_code).'</label></td><td>';
+	print '<tr class="oddeven"><td><label for="profid7">'.$langs->transcountry("ProfId7", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="MAIN_INFO_PROFID7" id="profid7" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_PROFID7') ? $conf->global->MAIN_INFO_PROFID7 : '').'">';
+		print '<input name="MAIN_INFO_PROFID7" id="profid7" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_PROFID7')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -727,9 +727,9 @@ if ($langs->transcountry("ProfId7", $mysoc->country_code) != '-') {
 
 // ProfId8
 if ($langs->transcountry("ProfId8", $mysoc->country_code) != '-') {
-	print '<tr class="oddeven"><td><label for="profid8">'.$langs->transcountry("profid8", $mysoc->country_code).'</label></td><td>';
+	print '<tr class="oddeven"><td><label for="profid8">'.$langs->transcountry("ProfId8", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="MAIN_INFO_PROFID8" id="profid8" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_PROFID8') ? $conf->global->MAIN_INFO_PROFID8 : '').'">';
+		print '<input name="MAIN_INFO_PROFID8" id="profid8" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_PROFID8')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -738,9 +738,9 @@ if ($langs->transcountry("ProfId8", $mysoc->country_code) != '-') {
 
 // ProfId9
 if ($langs->transcountry("ProfId9", $mysoc->country_code) != '-') {
-	print '<tr class="oddeven"><td><label for="profid9">'.$langs->transcountry("profid9", $mysoc->country_code).'</label></td><td>';
+	print '<tr class="oddeven"><td><label for="profid9">'.$langs->transcountry("ProfId9", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="MAIN_INFO_PROFID9" id="profid9" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_PROFID9') ? $conf->global->MAIN_INFO_PROFID9 : '').'">';
+		print '<input name="MAIN_INFO_PROFID9" id="profid9" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_PROFID9')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -749,9 +749,9 @@ if ($langs->transcountry("ProfId9", $mysoc->country_code) != '-') {
 
 // ProfId10
 if ($langs->transcountry("ProfId10", $mysoc->country_code) != '-') {
-	print '<tr class="oddeven"><td><label for="profid10">'.$langs->transcountry("profid10", $mysoc->country_code).'</label></td><td>';
+	print '<tr class="oddeven"><td><label for="profid10">'.$langs->transcountry("ProfId10", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="MAIN_INFO_PROFID10" id="profid10" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_PROFID10') ? $conf->global->MAIN_INFO_PROFID10 : '').'">';
+		print '<input name="MAIN_INFO_PROFID10" id="profid10" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_PROFID10')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -760,12 +760,12 @@ if ($langs->transcountry("ProfId10", $mysoc->country_code) != '-') {
 
 // Intra-community VAT number
 print '<tr class="oddeven"><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
-print '<input name="tva" id="intra_vat" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_TVAINTRA') ? $conf->global->MAIN_INFO_TVAINTRA : '').'">';
+print '<input name="tva" id="intra_vat" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_TVAINTRA')).'">';
 print '</td></tr>';
 
 // Object of the company
 print '<tr class="oddeven"><td><label for="socialobject">'.$langs->trans("CompanyObject").'</label></td><td>';
-print '<textarea class="flat quatrevingtpercent" name="socialobject" id="socialobject" rows="'.ROWS_5.'">'.(getDolGlobalString('MAIN_INFO_SOCIETE_OBJECT') ? $conf->global->MAIN_INFO_SOCIETE_OBJECT : '').'</textarea></td></tr>';
+print '<textarea class="flat quatrevingtpercent" name="socialobject" id="socialobject" rows="'.ROWS_5.'">'.(getDolGlobalString('MAIN_INFO_SOCIETE_OBJECT')).'</textarea></td></tr>';
 print '</td></tr>';
 
 print '</table>';
@@ -882,7 +882,7 @@ if ($mysoc->useLocalTax(2)) {
 	$tooltiphelp = ($tooltiphelp != "LocalTax2IsUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample", $mysoc->country_code)."</i>\n" : "");
 	if (!isOnlyOneLocalTax(2)) {
 		print '<br><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
-		$formcompany->select_localtax(2, $conf->global->MAIN_INFO_VALUE_LOCALTAX2, "lt2");
+		$formcompany->select_localtax(2, getDolGlobalString('MAIN_INFO_VALUE_LOCALTAX2'), "lt2");
 	}
 	print '<br><label for="clt2">'.$langs->trans("CalcLocaltax").'</label>: ';
 	print $form->selectarray("clt2", $opcions, getDolGlobalString('MAIN_INFO_LOCALTAX_CALC2'));

@@ -40,11 +40,11 @@ class TraceableDB extends DoliDB
 	 */
 	public $queries;
 	/**
-	 * @var int Request start time
+	 * @var float 	Request start time in second + microseconds as decimal part (Example: 1712305485.1104)
 	 */
 	protected $startTime;
 	/**
-	 * @var int Request start memory
+	 * @var int 	Request start memory
 	 */
 	protected $startMemory;
 	/**
@@ -293,7 +293,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function escapeforlike($stringtoencode)
 	{
-		return str_replace(array('_', '\\', '%'), array('\_', '\\\\', '\%'), (string) $stringtoencode);
+		return $this->db->escapeforlike($stringtoencode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -632,7 +632,7 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param	string			$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 * @param	bool			$gm			1=Input information are GMT values, otherwise local to server TZ
-	 * @return	int|string					Date TMS or ''
+	 * @return	int|''						Date TMS or ''
 	 */
 	public function jdate($string, $gm = false)
 	{

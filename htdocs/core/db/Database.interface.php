@@ -36,12 +36,21 @@ interface Database
 	 */
 	public function ifsql($test, $resok, $resko);
 
+	/**
+	 * Return SQL string to aggregate using the Standard Deviation of population
+	 *
+	 * @param	string	$nameoffield	Name of field
+	 * @return	string					SQL string
+	 */
+	public function stddevPop($nameoffield);
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return datas as an array
+	 * @TODO deprecate this. Use fetch_object() so you can access a field with its name instead of using an index of position of field.
 	 *
-	 * @param   resource $resultset Resultset of request
-	 * @return  array                    Array
+	 * @param   resource $resultset 	Resultset of request
+	 * @return  array                   Array
 	 */
 	public function fetch_row($resultset);
 	// phpcs:enable
@@ -441,6 +450,16 @@ interface Database
 	);
 	// phpcs:enable
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * List information of columns into a table.
+	 *
+	 * @param   string 			$table 			Name of table
+	 * @return  array                			Array with information on table
+	 */
+	public function DDLInfoTable($table);
+	// phpcs:enable
+
 	/**
 	 * Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
 	 * 19700101020000 -> 3600 with TZ+1 and gmt=0
@@ -448,7 +467,7 @@ interface Database
 	 *
 	 * @param	string			$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 * @param	bool			$gm			1=Input information are GMT values, otherwise local to server TZ
-	 * @return	int|string					Date TMS or ''
+	 * @return	int|''						Date TMS or ''
 	 */
 	public function jdate($string, $gm = false);
 
@@ -469,16 +488,6 @@ interface Database
 	 * @return	int                				1 if validation is OK or transaction level no started, 0 if ERROR
 	 */
 	public function commit($log = '');
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * List information of columns into a table.
-	 *
-	 * @param   string 			$table 			Name of table
-	 * @return  array                			Array with information on table
-	 */
-	public function DDLInfoTable($table);
-	// phpcs:enable
 
 	/**
 	 * Free last resultset used.

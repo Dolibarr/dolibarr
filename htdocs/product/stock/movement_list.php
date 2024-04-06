@@ -64,8 +64,8 @@ $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hier
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $msid = GETPOSTINT('msid');
-$idproduct = GETPOSTINT('idproduct');
-$product_id = GETPOSTINT("product_id");
+$idproduct = GETPOST('idproduct', 'intcomma');
+$product_id = GETPOST("product_id", 'intcomma');
 $show_files = GETPOSTINT('show_files');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
@@ -86,8 +86,8 @@ $search_inventorycode = trim(GETPOST("search_inventorycode"));
 $search_user = trim(GETPOST("search_user"));
 $search_batch = trim(GETPOST("search_batch"));
 $search_qty = trim(GETPOST("search_qty"));
-$search_type_mouvement = GETPOSTINT('search_type_mouvement');
-$search_fk_project = GETPOSTINT("search_fk_project");
+$search_type_mouvement = GETPOST('search_type_mouvement');
+$search_fk_project = GETPOST("search_fk_project");
 
 $type = GETPOSTINT("type");
 

@@ -9,23 +9,21 @@
  */
 return [
     // # Issue statistics:
-    // PhanParamSignatureMismatch : 25+ occurrences
+    // PhanParamSignatureMismatch : 20+ occurrences
     // PhanPluginSuspiciousParamPosition : 15+ occurrences
     // PhanUndeclaredConstant : 15+ occurrences
     // PhanPluginDuplicateExpressionBinaryOp : 10+ occurrences
-    // PhanTypeMismatchReturn : 8 occurrences
-    // PhanRedefineFunctionInternal : 6 occurrences
-    // PhanTypeArraySuspiciousNull : 6 occurrences
+    // PhanTypeMismatchReturn : 5 occurrences
     // PhanParamTooMany : 4 occurrences
-    // PhanTypeMismatchReturnNullable : 3 occurrences
     // PhanAccessMethodProtected : 1 occurrence
     // PhanAccessPropertyStaticAsNonStatic : 1 occurrence
     // PhanNoopStringLiteral : 1 occurrence
+    // PhanTypeArraySuspiciousNull : 1 occurrence
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
+        'htdocs/adherents/admin/member.php' => ['PhanParamTooMany'],
         'htdocs/adherents/type.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
-        'htdocs/admin/receiptprinter.php' => ['PhanRedefineFunctionInternal'],
         'htdocs/api/class/api_documents.class.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/barcode/printsheet.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/categories/class/api_categories.class.php' => ['PhanAccessMethodProtected'],
@@ -35,23 +33,15 @@ return [
         'htdocs/compta/cashcontrol/cashcontrol_card.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/compta/prelevement/class/bonprelevement.class.php' => ['PhanParamTooMany'],
         'htdocs/compta/prelevement/create.php' => ['PhanPluginSuspiciousParamPosition'],
-        'htdocs/core/class/commondocgenerator.class.php' => ['PhanTypeArraySuspiciousNull'],
-        'htdocs/core/class/commonobject.class.php' => ['PhanTypeMismatchReturnNullable'],
-        'htdocs/core/class/extrafields.class.php' => ['PhanTypeMismatchReturnNullable'],
         'htdocs/core/class/html.form.class.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/core/db/mysqli.class.php' => ['PhanParamSignatureMismatch'],
         'htdocs/core/db/pgsql.class.php' => ['PhanParamSignatureMismatch'],
-        'htdocs/core/db/sqlite3.class.php' => ['PhanParamSignatureMismatch', 'PhanTypeMismatchReturnNullable'],
+        'htdocs/core/db/sqlite3.class.php' => ['PhanParamSignatureMismatch'],
         'htdocs/core/get_info.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/core/lib/files.lib.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
-        'htdocs/core/lib/functions.lib.php' => ['PhanParamTooMany', 'PhanRedefineFunctionInternal'],
         'htdocs/core/lib/price.lib.php' => ['PhanPluginSuspiciousParamPosition'],
         'htdocs/core/modules/movement/doc/pdf_standard.modules.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
-        'htdocs/core/modules/mrp/doc/pdf_vinci.modules.php' => ['PhanTypeArraySuspiciousNull'],
-        'htdocs/core/modules/syslog/mod_syslog_file.php' => ['PhanParamSignatureMismatch'],
-        'htdocs/core/modules/syslog/mod_syslog_syslog.php' => ['PhanParamSignatureMismatch'],
         'htdocs/don/class/don.class.php' => ['PhanParamTooMany'],
-        'htdocs/expedition/class/api_shipments.class.php' => ['PhanTypeMismatchReturn'],
         'htdocs/expensereport/class/api_expensereports.class.php' => ['PhanTypeMismatchReturn'],
         'htdocs/fourn/class/fournisseur.commande.class.php' => ['PhanTypeMismatchReturn'],
         'htdocs/fourn/class/fournisseur.facture.class.php' => ['PhanTypeMismatchReturn'],

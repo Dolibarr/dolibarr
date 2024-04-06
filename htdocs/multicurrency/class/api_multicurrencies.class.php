@@ -212,8 +212,16 @@ class MultiCurrencies extends DolibarrApi
 		}
 
 		$multicurrency = new MultiCurrency($this->db);
-		$multicurrency->code = $request_data['code'];
-		$multicurrency->name = $request_data['name'];
+
+		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$multicurrency->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			$multicurrency->$field = $this->_checkValForAPI($field, $value, $multicurrency);
+		}
 
 		// Create Currency
 		if ($multicurrency->create(DolibarrApiAccess::$user) < 0) {
@@ -258,11 +266,11 @@ class MultiCurrencies extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$multicurrency->context['caller'] = $request_data['caller'];
+				$multicurrency->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$multicurrency->$field = $value;
+			$multicurrency->$field = $this->_checkValForAPI($field, $value, $multicurrency);
 		}
 
 		if ($multicurrency->update(DolibarrApiAccess::$user) < 0) {

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  * Copyright (C) 2023		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ if (!defined('NOIPCHECK')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
+// Because 2 entities can have the same ref
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -788,7 +789,7 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		//print '<span class="opacitymedium">' . $langs->trans("FieldsWithAreMandatory", '*') . '</span><br>';
 		//print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head();
 
 		print '<script type="text/javascript">
 		jQuery(document).ready(function () {

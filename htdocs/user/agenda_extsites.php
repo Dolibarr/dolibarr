@@ -229,7 +229,7 @@ if ($selectedvalue == 1) {
 }
 
 
-print '<div class="div-table-responsive">';
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print "<tr class=\"liste_titre\">";

@@ -1127,7 +1127,7 @@ class ExtraFields
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
-				$out = $doleditor->Create(1);
+				$out = (string) $doleditor->Create(1);
 			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
@@ -1135,7 +1135,7 @@ class ExtraFields
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor') && $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, '90%');
-				$out = $doleditor->Create(1);
+				$out = (string) $doleditor->Create(1);
 			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
@@ -1672,11 +1672,16 @@ class ExtraFields
 	 * @param   string	$value          		Value to show
 	 * @param	string	$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
 	 * @param	string	$extrafieldsobjectkey	Required (for example $object->table_element).
+	 * @param 	Translate $outputlangs 			Output language
 	 * @return	string							Formatted value
 	 */
-	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '')
+	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null)
 	{
 		global $conf, $langs;
+
+		if (is_null($outputlangs) || !is_object($outputlangs)) {
+			$outputlangs = $langs;
+		}
 
 		if (empty($extrafieldsobjectkey)) {
 			dol_syslog(get_class($this).'::showOutputField extrafieldsobjectkey required', LOG_ERR);
@@ -1726,7 +1731,7 @@ class ExtraFields
 				//$value=price($value);
 				$sizeparts = explode(",", $size);
 				$number_decimals = array_key_exists(1, $sizeparts) ? $sizeparts[1] : 0;
-				$value = price($value, 0, $langs, 0, 0, $number_decimals, '');
+				$value = price($value, 0, $outputlangs, 0, 0, $number_decimals, '');
 			}
 		} elseif ($type == 'boolean') {
 			$checked = '';
@@ -1751,7 +1756,7 @@ class ExtraFields
 		} elseif ($type == 'price') {
 			//$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
 			if ($value || $value == '0') {
-				$value = price($value, 0, $langs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1).' '.$langs->getCurrencySymbol($conf->currency);
+				$value = price($value, 0, $outputlangs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1).' '.$outputlangs->getCurrencySymbol($conf->currency);
 			}
 		} elseif ($type == 'pricecy') {
 			$currency = $conf->currency;
@@ -1762,7 +1767,7 @@ class ExtraFields
 				$value = $pricetmp[0];
 			}
 			if ($value || $value == '0') {
-				$value = price($value, 0, $langs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1, $currency);
+				$value = price($value, 0, $outputlangs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1, $currency);
 			}
 		} elseif ($type == 'select') {
 			$valstr = (!empty($param['options'][$value]) ? $param['options'][$value] : '');
@@ -1770,7 +1775,7 @@ class ExtraFields
 				$valstr = substr($valstr, 0, $pos);
 			}
 			if ($langfile && $valstr) {
-				$value = $langs->trans($valstr);
+				$value = $outputlangs->trans($valstr);
 			} else {
 				$value = $valstr;
 			}
@@ -1829,12 +1834,12 @@ class ExtraFields
 						foreach ($fields_label as $field_toshow) {
 							$translabel = '';
 							if (!empty($obj->$field_toshow)) {
-								$translabel = $langs->trans($obj->$field_toshow);
+								$translabel = $outputlangs->trans($obj->$field_toshow);
 
 								if ($translabel != $obj->$field_toshow) {
-									$value .= dol_trunc($translabel, 24).' ';
+									$value .= dol_trunc($translabel, 24) . ' ';
 								} else {
-									$value .= $obj->$field_toshow.' ';
+									$value .= $obj->$field_toshow . ' ';
 								}
 							}
 						}
@@ -1843,7 +1848,7 @@ class ExtraFields
 						$tmppropname = $InfoFieldList[1];
 						//$obj->$tmppropname = '';
 						if (!empty(isset($obj->$tmppropname) ? $obj->$tmppropname : '')) {
-							$translabel = $langs->trans($obj->$tmppropname);
+							$translabel = $outputlangs->trans($obj->$tmppropname);
 						}
 						if ($translabel != (isset($obj->$tmppropname) ? $obj->$tmppropname : '')) {
 							$value = dol_trunc($translabel, 18);
@@ -1872,10 +1877,10 @@ class ExtraFields
 			}
 		} elseif ($type == 'radio') {
 			if (!isset($param['options'][$value])) {
-				$langs->load('errors');
-				$value = $langs->trans('ErrorNoValueForRadioType');
+				$outputlangs->load('errors');
+				$value = $outputlangs->trans('ErrorNoValueForRadioType');
 			} else {
-				$value = $langs->trans($param['options'][$value]);
+				$value = $outputlangs->trans($param['options'][$value]);
 			}
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
@@ -1939,7 +1944,7 @@ class ExtraFields
 								foreach ($fields_label as $field_toshow) {
 									$translabel = '';
 									if (!empty($obj->$field_toshow)) {
-										$translabel = $langs->trans($obj->$field_toshow);
+										$translabel = $outputlangs->trans($obj->$field_toshow);
 									}
 									if ($translabel != $field_toshow) {
 										$label .= ' '.dol_trunc($translabel, 18);
@@ -1952,7 +1957,7 @@ class ExtraFields
 							} else {
 								$translabel = '';
 								if (!empty($obj->{$InfoFieldList[1]})) {
-									$translabel = $langs->trans($obj->{$InfoFieldList[1]});
+									$translabel = $outputlangs->trans($obj->{$InfoFieldList[1]});
 								}
 								if ($translabel != $obj->{$InfoFieldList[1]}) {
 									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.dol_trunc($translabel, 18).'</li>';
@@ -2188,7 +2193,7 @@ class ExtraFields
 	 */
 	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '', $todefaultifmissing = 0)
 	{
-		global $conf, $_POST, $langs;
+		global $langs;
 
 		$nofillrequired = 0; // For error when required field left blank
 		$error_field_required = array();

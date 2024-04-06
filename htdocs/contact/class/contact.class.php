@@ -57,8 +57,8 @@ class Contact extends CommonObject
 	public $table_element = 'socpeople';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
+	 * @var int<0,2>|string 	Does this object support the multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -337,7 +337,7 @@ class Contact extends CommonObject
 
 	/**
 	 * Old copy
-	 * @var Contact
+	 * @var static
 	 */
 	public $oldcopy; // To contains a clone of this when we need to save old properties of object
 
@@ -975,7 +975,7 @@ class Contact extends CommonObject
 	 *  Load object contact.
 	 *
 	 *  @param      int		$id         	Id of contact
-	 *  @param      User	$user       	Load also alerts of this user (subscribing to alerts) that want alerts about this contact
+	 *  @param      ?User	$user       	Load also alerts of this user (subscribing to alerts) that want alerts about this contact
 	 *  @param      string  $ref_ext    	External reference, not given by Dolibarr
 	 *  @param		string	$email			Email
 	 *  @param		int		$loadalsoroles	Load also roles. Try to always 0 here and load roles with a separate call of fetchRoles().

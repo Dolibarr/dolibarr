@@ -51,8 +51,8 @@ class UserGroup extends CommonObject
 	public $table_element = 'usergroup';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
+	 * @var int<0,2>|string 	Does this object support the multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -218,6 +218,9 @@ class UserGroup extends CommonObject
 					$ret[$obj->rowid] = $newgroup;
 				}
 
+				if (!is_array($ret[$obj->rowid]->usergroup_entity)) {
+					$ret[$obj->rowid]->usergroup_entity = array();
+				}
 				$ret[$obj->rowid]->usergroup_entity[] = $obj->usergroup_entity;
 			}
 
@@ -293,6 +296,9 @@ class UserGroup extends CommonObject
 					}
 				}
 				if ($mode != 1 && !empty($obj->usergroup_entity)) {
+					if (!is_array($ret[$obj->rowid]->usergroup_entity)) {
+						$ret[$obj->rowid]->usergroup_entity = array();
+					}
 					$ret[$obj->rowid]->usergroup_entity[] = $obj->usergroup_entity;
 				}
 			}

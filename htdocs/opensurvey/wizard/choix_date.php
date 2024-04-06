@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -259,8 +260,8 @@ if (!issetAndNoEmpty('choixjourajout') && !issetAndNoEmpty('choixjourretrait') &
 //mise a jour des valeurs de session si mois avant
 if (issetAndNoEmpty('moisavant_x') || issetAndNoEmpty('moisavant')) {
 	if ($_SESSION["mois"] == 1) {
-		$_SESSION["mois"]   = 12;
-		$_SESSION["annee"]  = $_SESSION["annee"] - 1;
+		$_SESSION["mois"]  = 12;
+		$_SESSION["annee"] -= 1;
 	} else {
 		$_SESSION["mois"] -= 1;
 	}
@@ -335,12 +336,12 @@ if (issetAndNoEmpty('anneeapres_x') || issetAndNoEmpty('anneeapres')) {
 }
 
 //valeurs du nombre de jour dans le mois et du premier jour du mois
-$nbrejourmois = date("t", mktime(0, 0, 0, $_SESSION["mois"], 1, $_SESSION["annee"]));
-$premierjourmois = date("N", mktime(0, 0, 0, $_SESSION["mois"], 1, $_SESSION["annee"])) - 1;
+$nbrejourmois = idate("t", mktime(0, 0, 0, (int) $_SESSION["mois"], 1, (int) $_SESSION["annee"]));
+$premierjourmois = idate("N", mktime(0, 0, 0, (int) $_SESSION["mois"], 1, (int) $_SESSION["annee"])) - 1;
 
 //traduction de la valeur du mois
 if (is_int($_SESSION["mois"]) && $_SESSION["mois"] > 0 && $_SESSION["mois"] < 13) {
-	$motmois = dol_print_date(mktime(0, 0, 0, $_SESSION["mois"], 10), '%B');
+	$motmois = dol_print_date(mktime(0, 0, 0, (int) $_SESSION["mois"], 10), '%B');
 } else {
 	$motmois = dol_print_date(dol_now(), '%B');
 }

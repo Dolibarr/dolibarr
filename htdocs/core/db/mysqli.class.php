@@ -481,7 +481,6 @@ class DoliDBMysqli extends DoliDB
 		return $this->db->affected_rows;
 	}
 
-
 	/**
 	 *	Libere le dernier resultset utilise sur cette connection
 	 *
@@ -519,6 +518,7 @@ class DoliDBMysqli extends DoliDB
 	 */
 	public function escapeforlike($stringtoencode)
 	{
+		// We must first replace the \ char into \\, then we can replace _ and % into \_ and \%
 		return str_replace(array('\\', '_', '%'), array('\\\\', '\_', '\%'), (string) $stringtoencode);
 	}
 
@@ -869,10 +869,10 @@ class DoliDBMysqli extends DoliDB
 			if (isset($field_desc['extra']) && $field_desc['extra'] !== '') {
 				$sqlfields[$i] .= " ".$this->sanitize($field_desc['extra'], 0, 0, 1);
 			}
+			if (!empty($primary_key) && $primary_key == $field_name) {
+				$sqlfields[$i] .= " AUTO_INCREMENT PRIMARY KEY";	// mysql instruction that will be converted by driver late
+			}
 			$i++;
-		}
-		if ($primary_key != "") {
-			$pk = "PRIMARY KEY(".$this->sanitize($primary_key).")";
 		}
 
 		if (is_array($unique_keys)) {
@@ -890,9 +890,6 @@ class DoliDBMysqli extends DoliDB
 			}
 		}
 		$sql .= implode(', ', $sqlfields);
-		if ($primary_key != "") {
-			$sql .= ",".$pk;
-		}
 		if ($unique_keys != "") {
 			$sql .= ",".implode(',', $sqluq);
 		}

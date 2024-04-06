@@ -925,7 +925,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 			$curx = $savcurx;
 			$cury += 8;
 		}
-	} else {
+	} elseif (!empty($account->number)) {
 		$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': '.$outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
@@ -2675,7 +2675,7 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 		}
 
 		if (empty($hidedetails) || $hidedetails > 1) {
-			return $sign * (($object->lines[$i]->subprice * $object->lines[$i]->qty) - $object->lines[$i]->total_ht);
+			return $sign * (($object->lines[$i]->subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->total_ht);
 		}
 	}
 	return 0;

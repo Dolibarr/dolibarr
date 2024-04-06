@@ -95,6 +95,7 @@ if ($action == 'specimen') {
 		require_once $file;
 
 		$module = new $classname($db);
+		'@phan-var-force CommonDocGenerator $module';
 
 		if ($module->write_file($supplier_proposal, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=supplier_proposal&file=SPECIMEN.pdf");
@@ -261,6 +262,7 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.'/'.$file.'.php';
 
 					$module = new $file();
+					'@phan-var-force ModeleNumRefSupplierProposal $module';
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -393,6 +395,7 @@ foreach ($dirmodels as $reldir) {
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
+							'@phan-var-force CommonDocGenerator $module';
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

@@ -289,8 +289,8 @@ if (empty($reshook)) {
 
 				// Possibility to add external linked objects with hooks
 				$object->linked_objects[$object->origin] = $object->origin_id;
-				if (is_array($_POST['other_linked_objects']) && !empty($_POST['other_linked_objects'])) {
-					$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
+				if (GETPOSTISARRAY('other_linked_objects')) {
+					$object->linked_objects = array_merge($object->linked_objects, GETPOST('other_linked_objects', 'array:int'));
 				}
 
 				$id = $object->create($user);
@@ -551,11 +551,11 @@ if (empty($reshook)) {
 				// Set unit price to use
 				if (!empty($price_ht) || $price_ht === '0') {
 					$pu_ht = price2num($price_ht, 'MU');
-					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+					$pu_ttc = price2num((float) $pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
 					$price_base_type = 'HT';
 				} elseif (!empty($price_ttc) || $price_ttc === '0') {
 					$pu_ttc = price2num($price_ttc, 'MU');
-					$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+					$pu_ht = price2num((float) $pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
 					$price_base_type = 'TTC';
 				}
 
@@ -591,11 +591,11 @@ if (empty($reshook)) {
 				// Set unit price to use
 				if (!empty($price_ht) || $price_ht === '0') {
 					$pu_ht = price2num($price_ht, 'MU');
-					$pu_ttc = price2num($pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
+					$pu_ttc = price2num((float) $pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
 					$price_base_type = 'HT';
 				} elseif (!empty($price_ttc) || $price_ttc === '0') {
 					$pu_ttc = price2num($price_ttc, 'MU');
-					$pu_ht = price2num($pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
+					$pu_ht = price2num((float) $pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
 					$price_base_type = 'TTC';
 				}
 			}
@@ -617,7 +617,7 @@ if (empty($reshook)) {
 			}
 
 			if (((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('produit', 'ignore_price_min_advance'))
-				|| !getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) && ($price_min && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min)))) {
+				|| !getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) && ($price_min && ((float) price2num($pu_ht) * (1 - (float) price2num($remise_percent) / 100) < (float) price2num($price_min)))) {
 				$object->error = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 				$result = -1;
 			} else {
@@ -707,7 +707,7 @@ if (empty($reshook)) {
 		if (!empty($date_start_update) && !empty($date_end_update) && $date_start_update > $date_end_update) {
 			setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
 			$action = 'editline';
-			$_GET['rowid'] = GETPOST('elrowid');
+			$_GET['rowid'] = GETPOST('elrowid');	// Keep $_GET here. Used by GETPOST('rowid') later
 			$error++;
 		}
 
@@ -769,7 +769,7 @@ if (empty($reshook)) {
 			$price_ht =  price2num(GETPOST('elprice'), 'MU');
 			$remise_percent = price2num(GETPOST('elremise_percent'), '', 2);
 			if ($remise_percent > 0) {
-				$remise = round(($price_ht * $remise_percent / 100), 2);
+				$remise = round(((float) $price_ht * (float) $remise_percent / 100), 2);
 			}
 
 			$objectline->fk_product = GETPOSTINT('idprod');

@@ -1139,7 +1139,9 @@ class Setup extends DolibarrApi
 			$type = 'socpeople';
 		}
 
-		$sql = "SELECT t.rowid, t.name, t.label, t.type, t.size, t.elementtype, t.fieldunique, t.fieldrequired, t.param, t.pos, t.alwayseditable, t.perms, t.list, t.fielddefault, t.fieldcomputed";
+		$sql = "SELECT t.rowid as id, t.name, t.entity, t.elementtype, t.label, t.type, t.size, t.fieldcomputed, t.fielddefault,";
+		$sql .= " t.fieldunique, t.fieldrequired, t.perms, t.enabled, t.pos, t.alwayseditable, t.param, t.list, t.printable,";
+		$sql .= " t.totalizable, t.langs, t.help, t.css, t.cssview, t.fk_user_author, t.fk_user_modif, t.datec, t.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
 		$sql .= " WHERE t.entity IN (".getEntity('extrafields').")";
 		if (!empty($type)) {
@@ -1161,6 +1163,7 @@ class Setup extends DolibarrApi
 			if ($this->db->num_rows($resql)) {
 				while ($tab = $this->db->fetch_object($resql)) {
 					// New usage
+					$list[$tab->elementtype][$tab->name]['id'] = $tab->id;
 					$list[$tab->elementtype][$tab->name]['type'] = $tab->type;
 					$list[$tab->elementtype][$tab->name]['label'] = $tab->label;
 					$list[$tab->elementtype][$tab->name]['size'] = $tab->size;
@@ -1174,6 +1177,17 @@ class Setup extends DolibarrApi
 					$list[$tab->elementtype][$tab->name]['alwayseditable'] = $tab->alwayseditable;
 					$list[$tab->elementtype][$tab->name]['perms'] = $tab->perms;
 					$list[$tab->elementtype][$tab->name]['list'] = $tab->list;
+					$list[$tab->elementtype][$tab->name]['printable'] = $tab->printable;
+					$list[$tab->elementtype][$tab->name]['totalizable'] = $tab->totalizable;
+					$list[$tab->elementtype][$tab->name]['langs'] = $tab->langs;
+					$list[$tab->elementtype][$tab->name]['help'] = $tab->help;
+					$list[$tab->elementtype][$tab->name]['css'] = $tab->css;
+					$list[$tab->elementtype][$tab->name]['cssview'] = $tab->cssview;
+					$list[$tab->elementtype][$tab->name]['csslist'] = $tab->csslist;
+					$list[$tab->elementtype][$tab->name]['fk_user_author'] = $tab->fk_user_author;
+					$list[$tab->elementtype][$tab->name]['fk_user_modif'] = $tab->fk_user_modif;
+					$list[$tab->elementtype][$tab->name]['datec'] = $tab->datec;
+					$list[$tab->elementtype][$tab->name]['tms'] = $tab->tms;
 				}
 			}
 		} else {

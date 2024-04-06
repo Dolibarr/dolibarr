@@ -133,7 +133,7 @@ if ($object->id > 0) {
 	$picto = 'resource';
 
 	$title = $langs->trans("Agenda");
-	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/productnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 		$title = $object->ref." - ".$title;
 	}
 	llxHeader('', $title);

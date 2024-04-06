@@ -75,8 +75,8 @@ class CommandeFournisseur extends CommonOrder
 	public $picto = 'supplier_order';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
+	 * @var int<0,2>|string 	Does this object support the multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -2252,7 +2252,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->db->begin();
 
 			$sql = "INSERT INTO ".$this->db->prefix()."receptiondet_batch";
-			$sql .= " (fk_commande, fk_product, qty, fk_entrepot, fk_user, datec, fk_commandefourndet, status, comment, eatby, sellby, batch, fk_reception) VALUES";
+			$sql .= " (fk_element, fk_product, qty, fk_entrepot, fk_user, datec, fk_elementdet, status, comment, eatby, sellby, batch, fk_reception) VALUES";
 			$sql .= " ('".$this->id."','".$product."','".$qty."',".($entrepot > 0 ? "'".$entrepot."'" : "null").",'".$user->id."','".$this->db->idate($now)."','".$fk_commandefourndet."', ".$dispatchstatus.", '".$this->db->escape($comment)."', ";
 			$sql .= ($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ".($batch ? "'".$this->db->escape($batch)."'" : "null").", ".($fk_reception > 0 ? "'".$this->db->escape($fk_reception)."'" : "null");
 			$sql .= ")";
@@ -2497,11 +2497,11 @@ class CommandeFournisseur extends CommonOrder
 		// List of already dispatched lines
 		$sql = "SELECT p.ref, p.label,";
 		$sql .= " e.rowid as warehouse_id, e.ref as entrepot,";
-		$sql .= " cfd.rowid as dispatchedlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status, cfd.fk_commandefourndet";
+		$sql .= " cfd.rowid as dispatchedlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status, cfd.fk_elementdet";
 		$sql .= " FROM ".$this->db->prefix()."product as p,";
 		$sql .= " ".$this->db->prefix()."receptiondet_batch as cfd";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."entrepot as e ON cfd.fk_entrepot = e.rowid";
-		$sql .= " WHERE cfd.fk_commande = ".((int) $this->id);
+		$sql .= " WHERE cfd.fk_element = ".((int) $this->id);
 		$sql .= " AND cfd.fk_product = p.rowid";
 		if ($status >= 0) {
 			$sql .= " AND cfd.status = ".((int) $status);
@@ -2521,7 +2521,7 @@ class CommandeFournisseur extends CommonOrder
 						'productid' => $objp->fk_product,
 						'warehouseid' => $objp->warehouse_id,
 						'qty' => $objp->qty,
-						'orderlineid' => $objp->fk_commandefourndet
+						'orderlineid' => $objp->fk_elementdet
 					);
 				}
 
@@ -3411,7 +3411,7 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * Returns the rights used for this class
-	 * @return stdClass
+	 * @return int
 	 */
 	public function getRights()
 	{
@@ -3534,7 +3534,7 @@ class CommandeFournisseur extends CommonOrder
 
 			$supplierorderdispatch = new CommandeFournisseurDispatch($this->db);
 
-			$filter = array('t.fk_commande' => $this->id);
+			$filter = array('t.fk_element' => $this->id);
 			if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS')) {
 				$filter['t.status'] = 1; // Restrict to lines with status validated
 			}
@@ -3670,7 +3670,7 @@ class CommandeFournisseur extends CommonOrder
 		if ($filtre_statut >= 0) {
 			$sql .= ' cfd.fk_reception = e.rowid AND';
 		}
-		$sql .= ' cfd.fk_commandefourndet = cd.rowid';
+		$sql .= ' cfd.fk_elementdet = cd.rowid';
 		$sql .= ' AND cd.fk_commande ='.((int) $this->id);
 		if (isset($this->fk_product) && !empty($this->fk_product) > 0) {
 			$sql .= ' AND cd.fk_product = '.((int) $this->fk_product);
@@ -3774,6 +3774,10 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	public $fk_facture;
 
 	public $rang = 0;
+
+	/**
+	 * @var int special code
+	 */
 	public $special_code = 0;
 
 	/**
@@ -4014,7 +4018,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 			$sql .= "null,";
 		}
 		$sql .= "'".$this->db->escape($this->product_type)."',";
-		$sql .= "'".$this->db->escape($this->special_code)."',";
+		$sql .= (int) $this->special_code . ",";
 		$sql .= "'".$this->db->escape($this->rang)."',";
 		$sql .= "'".$this->db->escape($this->qty)."', ";
 		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape($this->vat_src_code)."'").",";

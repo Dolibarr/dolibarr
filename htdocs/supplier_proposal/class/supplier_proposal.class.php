@@ -78,8 +78,8 @@ class SupplierProposal extends CommonObject
 	public $picto = 'supplier_proposal';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
+	 * @var int<0,2>|string 	Does this object support the multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -550,7 +550,7 @@ class SupplierProposal extends CommonObject
 			$price = $pu;
 			$remise = 0;
 			if ($remise_percent > 0) {
-				$remise = round(($pu * $remise_percent / 100), 2);
+				$remise = round(($pu * (float) $remise_percent / 100), 2);
 				$price = $pu - $remise;
 			}
 
@@ -2879,6 +2879,9 @@ class SupplierProposalLine extends CommonObjectLine
 	public $marge_tx;
 	public $marque_tx;
 
+	/**
+	 * @var int special code
+	 */
 	public $special_code; // Tag for special lines (exclusive tags)
 	// 1: frais de port
 	// 2: ecotaxe

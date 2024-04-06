@@ -873,7 +873,7 @@ $title = $langs->trans("ThirdParty");
 if ($action == 'create') {
 	$title = $langs->trans("NewThirdParty");
 }
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name." - ".$langs->trans('Card');
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Geschäftspartner';
@@ -1213,7 +1213,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<input type="hidden" name="code_auto" value="1">';
 		}
 
-		print dol_get_fiche_head(null, 'card', '', 0, '');
+		print dol_get_fiche_head(array(), 'card', '', 0, '');
 
 		// Call Hook tabContentCreateThirdparty
 		$parameters = array();
@@ -1539,9 +1539,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$i = 1;
 			$j = 0;
 			$NBCOLS = ($conf->browser->layout == 'phone' ? 1 : 2);
-			while ($i <= 6) {
+			$NBPROFIDMIN = getDolGlobalInt('THIRDPARTY_MIN_NB_PROF_ID', 2);
+			$NBPROFIDMAX = getDolGlobalInt('THIRDPARTY_MAX_NB_PROF_ID', 6);
+			while ($i <= $NBPROFIDMAX) {
 				$idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
-				if ($idprof != '-') {
+				if ($idprof != '-' && ($i <= $NBPROFIDMIN || !empty($langs->tab_translate['ProfId'.$i.$object->country_code]))) {
 					$key = 'idprof'.$i;
 
 					if (($j % $NBCOLS) == 0) {
@@ -1747,7 +1749,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<td colspan="3" class="maxwidthonsmartphone">';
 			$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'AND u.statut = 1', 0, '', '', 0, 2);
 			// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
-			$selected = (GETPOSTISARRAY('commercial') ? GETPOST('commercial', 'array:int') : (GETPOSTINT('commercial') > 0 ? array(GETPOSTINT('commercial')) : (!$user->hasRight('societe', 'client', 'voir') ? array($user->id) : array())));
+			$selected = (GETPOSTISARRAY('commercial') ? GETPOST('commercial', 'array:int') : (GETPOSTINT('commercial') > 0 ? array(GETPOSTINT('commercial')) : array($user->id)));
 			print img_picto('', 'user').$form->multiselectarray('commercial', $userlist, $selected, null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print '</td></tr>';
 
@@ -2281,9 +2283,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$i = 1;
 				$j = 0;
 				$NBCOLS = ($conf->browser->layout == 'phone' ? 1 : 2);
-				while ($i <= 6) {
+				$NBPROFIDMIN = getDolGlobalInt('THIRDPARTY_MIN_NB_PROF_ID', 2);
+				$NBPROFIDMAX = getDolGlobalInt('THIRDPARTY_MAX_NB_PROF_ID', 6);
+				while ($i <= $NBPROFIDMAX) {
 					$idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
-					if ($idprof != '-') {
+					if ($idprof != '-' && ($i <= $NBPROFIDMIN || !empty($langs->tab_translate['ProfId'.$i.$object->country_code]))) {
 						$key = 'idprof'.$i;
 
 						if (($j % $NBCOLS) == 0) {
@@ -2705,10 +2709,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// Prof ids
 			$i = 1;
 			$j = 0;
-			while ($i <= 6) {
+			$NBPROFIDMIN = getDolGlobalInt('THIRDPARTY_MIN_NB_PROF_ID', 2);
+			$NBPROFIDMAX = getDolGlobalInt('THIRDPARTY_MAX_NB_PROF_ID', 6);
+			while ($i <= $NBPROFIDMAX) {
 				$idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
-				if ($idprof != '-') {
-					//if (($j % 2) == 0) print '<tr>';
+				if ($idprof != '-' && ($i <= $NBPROFIDMIN || !empty($langs->tab_translate['ProfId'.$i.$object->country_code]))) {
 					print '<tr>';
 					print '<td>'.$idprof.'</td><td>';
 					$key = 'idprof'.$i;
@@ -2723,13 +2728,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						}
 					}
 					print '</td>';
-					//if (($j % 2) == 1) print '</tr>';
 					print '</tr>';
 					$j++;
 				}
 				$i++;
 			}
-			//if ($j % 2 == 1)  print '<td colspan="2"></td></tr>';
 
 
 			// This fields are used to know VAT to include in an invoice when the thirdparty is making a sale, so when it is a supplier.

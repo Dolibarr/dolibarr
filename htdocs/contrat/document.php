@@ -47,7 +47,6 @@ $ref		= GETPOST('ref', 'alpha');
 
 // Security check
 if ($user->socid > 0) {
-	unset($_GET["action"]);
 	$action = '';
 	$socid = $user->socid;
 }

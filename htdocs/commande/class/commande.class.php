@@ -79,8 +79,8 @@ class Commande extends CommonOrder
 	public $picto = 'order';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
+	 * @var int<0,2>|string 	Does this object support the multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -1634,8 +1634,8 @@ class Commande extends CommonOrder
 			$price = $pu;
 			$remise = 0;
 			if ($remise_percent > 0) {
-				$remise = round(($pu * $remise_percent / 100), 2);
-				$price = $pu - $remise;
+				$remise = round(((float) $pu * $remise_percent / 100), 2);
+				$price = (float) $pu - $remise;
 			}
 
 			// Insert line
@@ -3187,8 +3187,8 @@ class Commande extends CommonOrder
 			}
 			$remise = 0;
 			if ($remise_percent > 0) {
-				$remise = round(($pu * $remise_percent / 100), 2);
-				$price = ($pu - $remise);
+				$remise = round(((float) $pu * $remise_percent / 100), 2);
+				$price = ((float) $pu - $remise);
 			}
 
 			//Fetch current line from the database and then clone the object and set it in $oldline property
@@ -3353,7 +3353,7 @@ class Commande extends CommonOrder
 		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
 		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
-		$sql .= " fk_user_author=".(isset($this->user_author_id) ? $this->user_author_id : "null").",";
+		$sql .= " fk_user_modif=".(isset($user->id) ? $user->id : "null").",";
 		$sql .= " fk_user_valid=".((isset($this->user_validation_id) && $this->user_validation_id > 0) ? $this->user_validation_id : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
@@ -3764,7 +3764,7 @@ class Commande extends CommonOrder
 				$langs->load('project');
 				if (empty($this->project)) {
 					$res = $this->fetch_project();
-					if ($res > 0) {
+					if ($res > 0 && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
 					}
 				}
@@ -4428,7 +4428,7 @@ class OrderLine extends CommonOrderLine
 
 			dol_syslog("OrderLine::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if ($resql) {
+			if (!$resql) {
 				$this->error = $this->db->lasterror();
 				$error++;
 			}
