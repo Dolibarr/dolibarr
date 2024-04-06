@@ -32,7 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doldeprecationhandler.class.php';
 
 /**
  *  Class to stock current configuration
- *
  */
 class Conf extends stdClass
 {
@@ -251,7 +250,7 @@ class Conf extends stdClass
 	public $fournisseur;
 
 	/**
-	 * @var stdClass
+	 * @var stdClass	Product
 	 */
 	public $product;
 
@@ -282,20 +281,8 @@ class Conf extends stdClass
 
 	/**
 	 * @var stdClass
-	 * @deprecated Use $order
-	 */
-	public $commande;
-
-	/**
-	 * @var stdClass
 	 */
 	public $order;
-
-	/**
-	 * @var stdClass
-	 * @deprecated Use $invoice
-	 */
-	public $facture;
 
 	/**
 	 * @var stdClass
@@ -309,14 +296,9 @@ class Conf extends stdClass
 
 	/**
 	 * @var stdClass
-	 * @deprecated Use $member
-	 */
-	public $adherent;
-
-	/**
-	 * @var stdClass
 	 */
 	public $member;
+
 
 	/**
 	 * @var stdClass
@@ -349,34 +331,6 @@ class Conf extends stdClass
 	public $api;
 
 	/**
-	 * @var stdClass
-	 */
-	public $bank;
-
-	/**
-	 * @var stdClass
-	 */
-	public $notification;
-
-	/**
-	 * @var stdClass
-	 */
-	public $expensereport;
-
-	/**
-	 * @var stdClass
-	 */
-	public $productbatch;
-
-	/**
-	 * @var stdClass
-	 * @deprecated      Use $project
-	 * @see $project
-	 */
-	private $projet;
-
-
-	/**
 	 * @var ?stdClass
 	 */
 	public $project;
@@ -405,34 +359,6 @@ class Conf extends stdClass
 	 * @var ?stdClass
 	 */
 	public $mrp;
-
-	/**
-	 * @var stdClass
-	 * @deprecated      Use $category
-	 * @see $category
-	 */
-	private $categorie;
-
-	/**
-	 * @var stdClass
-	 * @deprecated      Use $supplier_proposal
-	 * @see $supplier_proposal
-	 */
-	private $supplierproposal;
-
-	/**
-	 * @var stdClass
-	 * @deprecated      Use $delivery_note
-	 * @see $delivery_note
-	 */
-	private $expedition;
-
-	/**
-	 * @var stdClass
-	 * @deprecated      Use $bank
-	 * @see $bank
-	 */
-	private $banque;
 
 	/**
 	 * Constructor
