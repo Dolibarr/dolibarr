@@ -19,7 +19,7 @@
  */
 
 /**
- * \file        class/target.class.php
+ * \file        htdocs/webhook/class/target.class.php
  * \ingroup     webhook
  * \brief       This file is a CRUD class file for Target (Create/Read/Update/Delete)
  */
