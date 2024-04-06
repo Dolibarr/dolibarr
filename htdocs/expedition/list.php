@@ -60,9 +60,9 @@ $search_shipping_method_ids = GETPOST('search_shipping_method_ids', 'array:int')
 $search_tracking = GETPOST("search_tracking", 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = GETPOST("search_state");
-$search_country = GETPOSTINT("search_country");
-$search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
+$search_state = GETPOST("search_state", 'alpha');
+$search_country = GETPOST("search_country", 'aZ09');
+$search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
 $search_billed = GETPOST("search_billed", 'intcomma');
 $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOSTINT('search_datedelivery_startmonth'), GETPOSTINT('search_datedelivery_startday'), GETPOSTINT('search_datedelivery_startyear'));
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datedelivery_endmonth'), GETPOSTINT('search_datedelivery_endday'), GETPOSTINT('search_datedelivery_endyear'));
@@ -71,8 +71,8 @@ $search_datereceipt_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datereceipt_
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'intcomma');
 $search_sale = GETPOST('search_sale', 'intcomma');
-$search_categ_cus = GETPOSTINT("search_categ_cus");
-$search_product_category = GETPOSTINT('search_product_category');
+$search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
+$search_product_category = GETPOST('search_product_category', 'intcomma');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -748,7 +748,7 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 // Company type
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'), 'maxwidth75', 1);
 	print '</td>';
 }
 // Weight
@@ -1109,7 +1109,7 @@ while ($i < $imaxinloop) {
 		// Tracking number
 		if (!empty($arrayfields['e.tracking_number']['checked'])) {
 			$shipment->getUrlTrackingStatus($obj->tracking_number);
-			print '<td class="center">'.$shipment->tracking_url."</td>\n";
+			print '<td class="center" title="'.dol_escape_htmltag($shipment->tracking_url).'">'.dol_escape_htmltag($shipment->tracking_url)."</td>\n";
 			//print $form->editfieldval("TrackingNumber", 'tracking_number', $obj->tracking_url, $obj, $user->rights->expedition->creer, 'string', $obj->tracking_number);
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1125,7 +1125,7 @@ while ($i < $imaxinloop) {
 
 			if (!empty($arrayfields['l.ref']['checked'])) {
 				// Ref
-				print '<td>';
+				print '<td class="nowraponall">';
 				print !empty($receiving) ? $receiving->getNomUrl($db) : '';
 				print '</td>';
 			}

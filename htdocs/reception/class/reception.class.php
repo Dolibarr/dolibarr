@@ -68,6 +68,11 @@ class Reception extends CommonObject
 	public $fk_element = "fk_reception";
 	public $table_element = "reception";
 	public $table_element_line = "receptiondet_batch";
+
+	/**
+	 * @var int<0,2>|string 	Does this object support the multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
+	 */
 	public $ismultientitymanaged = 1; // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	/**

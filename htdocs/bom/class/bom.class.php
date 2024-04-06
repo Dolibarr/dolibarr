@@ -59,7 +59,8 @@ class BOM extends CommonObject
 	public $table_element = 'bom_bom';
 
 	/**
-	 * @var int  Does bom support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int<0,2>|string 	Does this object support the multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -1678,7 +1679,7 @@ class BOMLine extends CommonObjectLine
 	public $table_element = 'bom_bomline';
 
 	/**
-	 * @var int  Does bomline support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int<0,2>|string  Does bomline support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
 

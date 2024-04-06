@@ -19,7 +19,7 @@
  */
 
 /**
- * \file        class/availabilities.class.php
+ * \file        htdocs/bookcal/class/availabilities.class.php
  * \ingroup     bookcal
  * \brief       This file is a CRUD class file for Availabilities (Create/Read/Update/Delete)
  */
@@ -50,7 +50,7 @@ class Availabilities extends CommonObject
 	public $table_element = 'bookcal_availabilities';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
+	 * @var int<0,2>|string  Does this object support multicompany module ?
 	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 0;

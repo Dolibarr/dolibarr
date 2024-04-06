@@ -46,7 +46,7 @@ class StockTransferLine extends CommonObjectLine
 	public $table_element = 'stocktransfer_stocktransferline';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
+	 * @var int<0,2>|string  Does this object support multicompany module ?
 	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 0;

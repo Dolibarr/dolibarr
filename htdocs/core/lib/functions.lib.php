@@ -154,6 +154,7 @@ function getMultidirOutput($object, $module = '')
  * @param string $key 		key to return value, return $default if not set
  * @param string $default 	value to return
  * @return string
+ * @see getDolUserString()
  */
 function getDolGlobalString($key, $default = '')
 {
@@ -168,6 +169,7 @@ function getDolGlobalString($key, $default = '')
  * @param string 	$key 		key to return value, return 0 if not set
  * @param int 		$default 	value to return
  * @return int
+ * @see getDolUserInt()
  */
 function getDolGlobalInt($key, $default = 0)
 {
@@ -4717,7 +4719,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'error', 'warning',
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring','rss',
 				'shapes', 'skill', 'square', 'sort-numeric-down', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
-				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
+				'terminal', 'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'uncheck', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
 				'conferenceorbooth', 'eventorganization',
 				'stamp', 'signature',
@@ -6209,8 +6211,14 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 				$pagesizechoices = getDolGlobalString('MAIN_PAGESIZE_CHOICES');
 			}
 
-			print '<li class="pagination">';
-			print '<select class="flat selectlimit" name="limit" title="'.dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")).'">';
+			if (getDolGlobalString('MAIN_USE_HTML5_LIMIT_SELECTOR')) {
+				print '<li class="pagination">';
+				print '<input onfocus="this.value=null;" onchange="this.blur();" class="flat selectlimit nopadding maxwidth75 right pageplusone" id="limit" name="limit" list="limitlist" title="'.dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")).'" value="'.$limit.'">';
+				print '<datalist id="limitlist">';
+			} else {
+				print '<li class="paginationxxx">';
+				print '<select class="flat selectlimit nopadding maxwidth75 center" id="limit" name="limit" title="'.dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")).'">';
+			}
 			$tmpchoice = explode(',', $pagesizechoices);
 			$tmpkey = $limit.':'.$limit;
 			if (!in_array($tmpkey, $tmpchoice)) {
@@ -6233,7 +6241,13 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 					print '<option name="'.$key.'"'.$selected.'>'.dol_escape_htmltag($val).'</option>'."\n";
 				}
 			}
-			print '</select>';
+			if (getDolGlobalString('MAIN_USE_HTML5_LIMIT_SELECTOR')) {
+				print '</datalist>';
+			} else {
+				print '</select>';
+				print ajax_combobox("limit");
+			}
+
 			if ($conf->use_javascript_ajax) {
 				print '<!-- JS CODE TO ENABLE select limit to launch submit of page -->
 	            		<script>
@@ -8794,7 +8808,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = dol_print_phone($object->array_options['options_'.$key]);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'price') {
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
-								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_FORMATED__'] = price($object->array_options['options_'.$key]);
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_FORMATED__'] = price($object->array_options['options_'.$key]);	// For compatibility
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_FORMATTED__'] = price($object->array_options['options_'.$key]);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] != 'separator') {
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = !empty($object->array_options['options_'.$key]) ? $object->array_options['options_'.$key] : '';
 							}
@@ -8944,15 +8959,26 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		}
 
 		// Amount keys formatted in a currency
-		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object) ? ($object->total_ht ? price($object->total_ht, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
-		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
-		$substitutionarray['__AMOUNT_REMAIN_FORMATED__'] = is_object($object) ? ($object->total_ttc ? price($object->total_ttc - $already_payed_all, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
-		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object) ? (isset($object->total_vat) ? price($object->total_vat, 0, $outputlangs, 0, -1, -1, $conf->currency) : ($object->total_tva ? price($object->total_tva, 0, $outputlangs, 0, -1, -1, $conf->currency) : null)) : '';
+		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATTED__'] = is_object($object) ? ($object->total_ht ? price($object->total_ht, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		$substitutionarray['__AMOUNT_FORMATTED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		$substitutionarray['__AMOUNT_REMAIN_FORMATTED__'] = is_object($object) ? ($object->total_ttc ? price($object->total_ttc - $already_payed_all, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		$substitutionarray['__AMOUNT_VAT_FORMATTED__']      = is_object($object) ? (isset($object->total_vat) ? price($object->total_vat, 0, $outputlangs, 0, -1, -1, $conf->currency) : ($object->total_tva ? price($object->total_tva, 0, $outputlangs, 0, -1, -1, $conf->currency) : null)) : '';
 		if ($onlykey != 2 || $mysoc->useLocalTax(1)) {
-			$substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object) ? ($object->total_localtax1 ? price($object->total_localtax1, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+			$substitutionarray['__AMOUNT_TAX2_FORMATTED__']     = is_object($object) ? ($object->total_localtax1 ? price($object->total_localtax1, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		}
 		if ($onlykey != 2 || $mysoc->useLocalTax(2)) {
-			$substitutionarray['__AMOUNT_TAX3_FORMATED__']     = is_object($object) ? ($object->total_localtax2 ? price($object->total_localtax2, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+			$substitutionarray['__AMOUNT_TAX3_FORMATTED__']     = is_object($object) ? ($object->total_localtax2 ? price($object->total_localtax2, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		}
+		// Amount keys formatted in a currency (with the typo error for backward compatibility)
+		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = $substitutionarray['__AMOUNT_EXCL_TAX_FORMATTED__'];
+		$substitutionarray['__AMOUNT_FORMATED__']          = $substitutionarray['__AMOUNT_FORMATTED__'];
+		$substitutionarray['__AMOUNT_REMAIN_FORMATED__']   = $substitutionarray['__AMOUNT_REMAIN_FORMATTED__'];
+		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = $substitutionarray['__AMOUNT_VAT_FORMATTED__'];
+		if ($onlykey != 2 || $mysoc->useLocalTax(1)) {
+			$substitutionarray['__AMOUNT_TAX2_FORMATED__'] = $substitutionarray['__AMOUNT_TAX2_FORMATTED__'];
+		}
+		if ($onlykey != 2 || $mysoc->useLocalTax(2)) {
+			$substitutionarray['__AMOUNT_TAX3_FORMATED__'] = $substitutionarray['__AMOUNT_TAX3_FORMATTED__'];
 		}
 
 		$substitutionarray['__AMOUNT_MULTICURRENCY__']          = (is_object($object) && isset($object->multicurrency_total_ttc)) ? $object->multicurrency_total_ttc : '';
@@ -8968,7 +8994,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		}
 	}
 
-	//var_dump($substitutionarray['__AMOUNT_FORMATED__']);
+
 	if ((empty($exclude) || !in_array('date', $exclude)) && (empty($include) || in_array('date', $include))) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -11877,6 +11903,13 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 	// If $url is an array, we must build a dropdown button
 	if (is_array($url)) {
+		// Loop on $url array to remove entries of disabled modules
+		foreach ($url as $key => $subbutton) {
+			if (isset($subbutton['enabled']) && empty($subbutton['enabled'])) {
+				unset($url[$key]);
+			}
+		}
+
 		$out = '';
 
 		if (count($url) > 1) {
@@ -12641,14 +12674,14 @@ function getNonce()
  * @param string	$header			The first left header of the table (automatic translated)
  * @param string	$link			(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
  * @param string	$arguments		(optional) Additional arguments for the link (e.g. "search_status=0")
- * @param integer	$emptyRows		(optional) The count of empty columns after the first column
+ * @param integer	$emptyColumns	(optional) Number of empty columns to add after the first column
  * @param integer	$number			(optional) The number that is shown right after the first header, when not set the link is shown on the right side of the header as "FullList"
  * @param string	$pictofulllist 	(optional) The picto to use for the full list link
  * @return void
  *
  * @see finishSimpleTable()
  */
-function startSimpleTable($header, $link = "", $arguments = "", $emptyRows = 0, $number = -1, $pictofulllist = '')
+function startSimpleTable($header, $link = "", $arguments = "", $emptyColumns = 0, $number = -1, $pictofulllist = '')
 {
 	global $langs;
 
@@ -12656,7 +12689,7 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyRows = 0, 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 
-	print $emptyRows < 1 ? '<th>' : '<th colspan="'.($emptyRows + 1).'">';
+	print ($emptyColumns < 1) ? '<th>' : '<th colspan="'.($emptyColumns + 1).'">';
 
 	print $langs->trans($header);
 
