@@ -36,7 +36,7 @@ abstract class DoliDB implements Database
 	/** Force subclass to implement LABEL - description of DB type */
 	const LABEL = self::LABEL;
 
-	/** @var bool|resource|mysqli|SQLite3|PgSql\Connection|TraceableDB Database handler */
+	/** @var bool|resource|mysqli|SQLite3|PgSql\Connection|DoliDB Database handler */
 	public $db;
 	/** @var string Database type */
 	public $type;
