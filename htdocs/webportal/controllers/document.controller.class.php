@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ */
 
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
@@ -14,7 +16,7 @@ class DocumentController extends Controller
 	public $action;
 
 	/**
-	 * @var	string	Attachment
+	 * @var	boolean	Is Attachment
 	 */
 	public $attachment;
 

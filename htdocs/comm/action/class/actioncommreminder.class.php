@@ -18,7 +18,7 @@
  */
 
 /**
- * \file        class/actioncommreminder.class.php
+ * \file        htdocs/comm/action/class/actioncommreminder.class.php
  * \ingroup     agenda
  * \brief       This file is a CRUD class file for ActionCommReminder (Create/Read/Update/Delete)
  */
