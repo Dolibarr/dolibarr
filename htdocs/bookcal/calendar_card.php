@@ -228,6 +228,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head(array(), '');
 
+
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
 	// Common attributes
