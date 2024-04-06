@@ -530,7 +530,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$moduleNameInConf = 'supplier_proposal';
 			}
 
-			$this->modules[$moduleNameInConf] = $moduleNameInConf; // Add this module in list of enabled modules so isModEnabled() will work (conf->module->enabled must no more be used)
+			$conf->modules[$moduleNameInConf] = $moduleNameInConf; // Add this module in list of enabled modules so isModEnabled() will work (conf->module->enabled must no more be used)
 
 			return 1;
 		} else {
@@ -627,7 +627,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$moduleNameInConf = 'supplier_proposal';
 			}
 
-			unset($this->modules[$moduleNameInConf]);	// Add this module in list of enabled modules so isModEnabled() will work (conf->module->enabled must no more be used)
+			unset($conf->modules[$moduleNameInConf]);	// Add this module in list of enabled modules so isModEnabled() will work (conf->module->enabled must no more be used)
 
 			return 1;
 		} else {
