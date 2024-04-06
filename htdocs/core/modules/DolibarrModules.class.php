@@ -102,11 +102,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $name;
 
 	/**
-	 * @var array Module list of enabled modules so isModEnabled() will work (conf->module->enabled must no more be used)
-	 */
-	public $modules = array();
-
-	/**
 	 * @var string[] Paths to create when module is activated
 	 *
 	 * e.g.: array('/mymodule/temp')
@@ -176,6 +171,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 *  )
 	 */
 	public $module_parts = array();
+
+	/**
+	 * @var string[] enabled modules
+	 */
+	public $modules = [];
 
 	/**
 	 * @var        string Module documents ?
