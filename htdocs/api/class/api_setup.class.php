@@ -1215,7 +1215,7 @@ class Setup extends DolibarrApi
 
 		$this->extrafields = new ExtraFields($this->db);
 
-		$result = $this->extrafields->fetch_name_optionals_label($elementtype, false, '', $attrname);
+		$result = $this->extrafields->fetch_name_optionals_label($elementtype, false, $attrname);
 		if (!$result) {
 			throw new RestException(404, 'Extrafield not found from attrname and elementtype');
 		}
