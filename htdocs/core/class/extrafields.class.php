@@ -418,10 +418,11 @@ class ExtraFields
 			$sql .= " ".($cssview ? "'".$this->db->escape($cssview)."'" : "null");
 			$sql .= ')';
 
-			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
 			if ($this->db->query($sql)) {
+				dol_syslog(get_class($this)."::create_label_success", LOG_DEBUG);
 				return 1;
 			} else {
+				dol_syslog(get_class($this)."::create_label_error", LOG_DEBUG);
 				$this->error = $this->db->lasterror();
 				$this->errno = $this->db->lasterrno();
 				return -1;
