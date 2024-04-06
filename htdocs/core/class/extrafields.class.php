@@ -823,16 +823,16 @@ class ExtraFields
 		}
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Load the array of extrafields definition $this->attributes
 	 *
 	 * 	@param	string		$elementtype		Type of element ('all' = all or $object->table_element like 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
+	 * 	@param	string		$attrname			The name of the attribute.
 	 * 	@return	array							Array of attributes keys+label for all extra fields.
 	 */
-	public function fetch_name_optionals_label($elementtype, $forceload = false)
+	public function fetch_name_optionals_label($elementtype, $forceload = false, $attrname = '')
 	{
 		// phpcs:enable
 		global $conf;
@@ -863,6 +863,9 @@ class ExtraFields
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
 		if ($elementtype && $elementtype != 'all') {
 			$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element
+		}
+		if ($attrname && $elementtype && $elementtype != 'all') {
+			$sql .= " AND name = '".((string) $attrname)."'";
 		}
 		$sql .= " ORDER BY pos";
 

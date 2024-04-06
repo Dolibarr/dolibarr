@@ -1197,6 +1197,40 @@ class Setup extends DolibarrApi
 		return $list;
 	}
 
+	/**
+	 * Delete extrafield
+	 *
+	 * @param   string     $attrname         extrafield attrname
+	 * @param   string     $elementtype      extrafield elementtype
+	 * @return  array
+	 *
+	 * @url     DELETE extrafields/{elementtype}/{attrname}
+	 *
+	 */
+	public function deleteExtrafieldsFromNames($attrname, $elementtype)
+	{
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(401, 'Only an admin user can delete an extrafield by attrname and elementtype');
+		}
+
+		$this->extrafields = new ExtraFields($this->db);
+
+		$result = $this->extrafields->fetch_name_optionals_label($elementtype, False, '', $attrname);
+		if (!$result) {
+			throw new RestException(404, 'Extrafield not found from attrname and elementtype');
+		}
+
+		if (!$this->extrafields->delete($attrname, $elementtype)) {
+			throw new RestException(500, 'Error when delete extrafield : '.$this->extrafields->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Extrafield deleted from attrname and elementtype'
+			)
+		);
+	}
 
 	/**
 	 * Get the list of towns.
