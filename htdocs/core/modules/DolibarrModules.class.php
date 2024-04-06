@@ -2059,7 +2059,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		// Delete all entities if core module
 		if (empty($this->core_enabled)) {
-			$sql .= " WHERE entity = ".((int) $conf->entity);
+			$sql .= " AND entity = ".((int) $conf->entity);
 		}
 
 		dol_syslog(get_class($this)."::delete_permissions", LOG_DEBUG);
