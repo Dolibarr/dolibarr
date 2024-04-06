@@ -54,7 +54,7 @@ class Deplacement extends CommonObject
 
 	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
+	 * @var int<0,2>|string
 	 */
 	public $ismultientitymanaged = 0;
 

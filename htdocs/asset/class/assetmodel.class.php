@@ -19,7 +19,7 @@
  */
 
 /**
- * \file        class/assetmodel.class.php
+ * \file        htdocs/asset/class/assetmodel.class.php
  * \ingroup     asset
  * \brief       This file is a CRUD class file for AssetModel (Create/Read/Update/Delete)
  */

@@ -809,7 +809,7 @@ class InventoryLine extends CommonObjectLine
 	public $table_element = 'inventorydet';
 
 	/**
-	 * @var int  Does inventory support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int<0,2>|string  Does inventory support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
 
