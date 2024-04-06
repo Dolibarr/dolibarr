@@ -48,7 +48,6 @@ $now = dol_now();
 $NBMAX = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
 $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
-
 /*
  * Actions
  */
@@ -137,6 +136,9 @@ if ($user->hasRight('bookcal', 'availabilities', 'read') && isModEnabled('bookca
 
 print '</div><div class="fichetwothirdright">';
 
+
+$NBMAX = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
 // Last modified myobject
