@@ -175,7 +175,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * @var string[] enabled modules
 	 */
-	public $modules;
+	public $modules = [];
 
 	/**
 	 * @var        string Module documents ?
