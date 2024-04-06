@@ -170,22 +170,8 @@ class Conf extends stdClass
 
 	/**
 	 * @var stdClass
-	 * @deprecated      Use $product
-	 * @see $product
-	 */
-	private $produit;
-
-	/**
-	 * @var stdClass
 	 */
 	public $service;
-
-	/**
-	 * @var stdClass
-	 * @deprecated      Use $contract
-	 * @see $contract
-	 */
-	private $contrat;
 
 	/**
 	 * @var stdClass
@@ -204,13 +190,6 @@ class Conf extends stdClass
 
 	/**
 	 * @var stdClass
-	 * @deprecated      Use $order
-	 * @see $order
-	 */
-	private $commande;
-
-	/**
-	 * @var stdClass
 	 */
 	public $propal;
 
@@ -221,14 +200,6 @@ class Conf extends stdClass
 
 	/**
 	 * @var stdClass
-	 * @deprecated      Use $invoice
-	 * @see $invoice
-	 */
-	private $facture;
-
-
-	/**
-	 * @var stdClass
 	 */
 	public $invoice;
 
@@ -236,14 +207,6 @@ class Conf extends stdClass
 	 * @var stdClass
 	 */
 	public $user;
-
-	/**
-	 * @var stdClass
-	 * @deprecated      Use $member
-	 * @see $member
-	 */
-	private $adherent;
-
 
 	/**
 	 * @var stdClass
@@ -272,14 +235,6 @@ class Conf extends stdClass
 
 	/**
 	 * @var stdClass
-	 * @deprecated      Use $project
-	 * @see $project
-	 */
-	private $projet;
-
-
-	/**
-	 * @var stdClass
 	 */
 	public $project;
 
@@ -302,35 +257,6 @@ class Conf extends stdClass
 	 * @var stdClass
 	 */
 	public $category;
-
-	/**
-	 * @var stdClass
-	 * @deprecated      Use $category
-	 * @see $category
-	 */
-	private $categorie;
-
-	/**
-	 * @var stdClass
-	 * @deprecated      Use $supplier_proposal
-	 * @see $supplier_proposal
-	 */
-	private $supplierproposal;
-
-	/**
-	 * @var stdClass
-	 * @deprecated      Use $delivery_note
-	 * @see $delivery_note
-	 */
-	private $expedition;
-
-	/**
-	 * @var stdClass
-	 * @deprecated      Use $bank
-	 * @see $bank
-	 */
-	private $banque;
-
 
 	/**
 	 * Constructor
