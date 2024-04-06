@@ -64,7 +64,7 @@ class TraceableDB extends DoliDB
 	/**
 	 * Constructor
 	 *
-	 * @param		DoliDB		$db      Database handler
+	 * @param		TraceableDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
