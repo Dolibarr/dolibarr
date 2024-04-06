@@ -1291,6 +1291,26 @@ class Setup extends DolibarrApi
 	}
 
 	/**
+	 * Validate fields before create or update object
+	 *
+	 * @param array $data   Datas to validate
+	 * @return array
+	 *
+	 * @throws RestException
+	 */
+	private function _validateExtrafields($data)
+	{
+		$extrafields = array();
+		foreach (ExtraFields::$attributes as $field) {
+			if (!isset($data[$field])) {
+				throw new RestException(400, "$field field missing");
+			}
+			$extrafields[$field] = $data[$field];
+		}
+		return $extrafields;
+	}
+
+	/**
 	 * Get the list of towns.
 	 *
 	 * @param string    $sortfield  Sort field
