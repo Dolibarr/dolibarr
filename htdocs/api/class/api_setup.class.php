@@ -1233,6 +1233,64 @@ class Setup extends DolibarrApi
 	}
 
 	/**
+	 * Create thirdparty object
+	 *
+	 * @param array $request_data   Request datas
+	 * @return int  ID of extrafield
+	 *
+	 * @url     POST extrafields
+	 *
+	 */
+	public function postExtrafields($request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(401, 'Only an admin user can create an extrafield');
+		}
+
+		$extrafields = new ExtraFields($this->db);
+
+#		// Check mandatory fields
+#		$result = $this->_validateExtrafields($request_data);
+
+		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$extrafields->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+			$extrafields->$field = $this->_checkValForAPI($field, $value, $extrafields);
+		}
+
+		$alwayseditable = $request_data['alwayseditable'];
+		$default_value = $request_data['default_value'];
+		$elementtype = $request_data['elementtype'];
+		$totalizable = $request_data['totalizable'];
+		$printable = $request_data['printable'];
+		$required = $request_data['required'];
+		$langfile = $request_data['langfile'];
+		$attrname = $request_data['attrname'];
+		$computed = $request_data['computed'];
+		$enabled = $request_data['enabled'];
+		$entity = $request_data['entity'];
+		$unique = $request_data['unique'];
+		$label = $request_data['label'];
+		$param = $request_data['param'];
+		$perms = $request_data['perms'];
+		$size = $request_data['size'];
+		$type = $request_data['type'];
+		$list = $request_data['list'];
+		$help = $request_data['help'];
+		$pos = $request_data['pos'];
+		$moreparams = array();
+
+		if ( 0 > $extrafields->addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $default_value, $param, $alwayseditable, $perms, $list, $help, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams)) {
+			throw new RestException(500, 'Error creating extrafield', array_merge(array($extrafields->errno), $extrafields->errors));
+		}
+
+		return $extrafields->id;
+	}
+
+	/**
 	 * Get the list of towns.
 	 *
 	 * @param string    $sortfield  Sort field
