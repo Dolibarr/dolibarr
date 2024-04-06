@@ -63,6 +63,7 @@ if (empty($argv[1])) {
 $outputpath = $argv[1];
 $outputdir = dirname($outputpath);
 $outputfile = basename($outputpath);
+$outputfilerss = preg_replace('/\.\w+$/i', '', $outputfile).'-security.rss';
 
 if (!is_dir($outputdir)) {
 	print 'Error: dir '.$outputdir.' does not exists or is not writable'."\n";
@@ -73,6 +74,8 @@ $dirscc = '';
 $dirphpstan = '';
 $dir_phan = '';
 $datatable_script = '';
+$url_root = '';
+$project = '';
 
 $i = 0;
 while ($i < $argc) {
@@ -83,7 +86,12 @@ while ($i < $argc) {
 		$dirphpstan = $reg[1];
 	} elseif (preg_match('/^--dir-phan=(.*)$/', $argv[$i], $reg)) {
 		$dir_phan = $reg[1];
+	} elseif (preg_match('/^--url-root=(.*)$/', $argv[$i], $reg)) {
+		$url_root = $reg[1];
+	} elseif (preg_match('/^--project-name=(.*)$/', $argv[$i], $reg)) {
+		$project = $reg[1];
 	}
+
 	$i++;
 }
 
@@ -232,14 +240,16 @@ $nbofmonth = 2;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 $arrayofalerts = array();
 
-$commandcheck = "git log --shortstat --no-renames --no-merges --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".escapeshellarg(dol_print_date(dol_now() - $delay, '%Y-%m-%d'))." | grep -E ".escapeshellarg("(yogosha|CVE|Sec:)");
+$commandcheck = "git log --shortstat --no-renames --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".escapeshellarg(dol_print_date(dol_now() - $delay, '%Y-%m-%d'))." | grep -i -E ".escapeshellarg("(#yogosha|CVE|Sec:|Sec )");
 print 'Execute git log to get commits related to security: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;
 exec($commandcheck, $output_arrglpu, $resexecglpu);
 foreach ($output_arrglpu as $val) {
+	// Parse the line to split interesting data
 	$tmpval = cleanVal2($val);
-	if (preg_match('/(yogosha|CVE|Sec:)/i', $tmpval['title'])) {
+
+	if (preg_match('/(#yogosha|CVE|Sec:|Sec\s)/i', $tmpval['title'])) {
 		$alreadyfound = '';
 		$alreadyfoundcommitid = '';
 		foreach ($arrayofalerts as $val) {
@@ -720,22 +730,42 @@ if (count($output_phan_json) != 0) {
 
 
 // Last security errors
+$title_security = ($project ? "[".$project."] " : "")."Last security issues";
 
 $html .= '<section class="chapter" id="linesofcode">'."\n";
-$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Last security issues <span class="opacitymedium">(last '.($nbofmonth != 1 ? $nbofmonth.' months' : 'month').')</span></h2>'."\n";
+$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>'.$title_security.' <span class="opacitymedium">(last '.($nbofmonth != 1 ? $nbofmonth.' months' : 'month').')</span></h2>'."\n";
 
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="list_technical_debt centpercent">'."\n";
 $html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td></tr>'."\n";
-foreach ($arrayofalerts as $alert) {
+foreach ($arrayofalerts as $key => $alert) {
+	$cve = '';
+	$yogosha = empty($alert['issueidyogosha']) ? '' : $alert['issueidyogosha'];
+	$arrayofalerts[$key]['url_commit'] = 'https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'];
+	if (!empty($alert['issueid'])) {
+		$arrayofalerts[$key]['url_issue'] = 'https://github.com/Dolibarr/dolibarr/issues/'.$alert['issueid'];
+	}
+	if (!empty($alert['issueidcve'])) {
+		$cve = preg_replace('/\s+/', '-', trim($alert['issueidcve']));
+		$arrayofalerts[$key]['url_cve'] = 'https://nvd.nist.gov/vuln/detail/CVE-'.$cve;
+	}
+	$arrayofalerts[$key]['title'] = ($project ? "[".$project."] " : "").'Security alert - '.($yogosha ? ' Yogosha #'.$yogosha.' - ' : '').($cve ? 'CVE-'.$cve.' - ' : '');
+	$arrayofalerts[$key]['title'] .= 'Fix committed as: '.dol_trunc($alert['commitid'], 8);
+	$arrayofalerts[$key]['description'] = '<![CDATA[Security alert<br>';
+
 	$html .= '<tr style="vertical-align: top;">';
+
+	// Add link to Github
 	$html .= '<td class="nowrap">';
-	$html .= '<a target="_blank" href="https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'].'">'.dol_trunc($alert['commitid'], 8).'</a>';
+	$html .= '<a target="_blank" href="'.$arrayofalerts[$key]['url_commit'].'">'.dol_trunc($alert['commitid'], 8).'</a>';
+	$arrayofalerts[$key]['description'] .= "\n<br>".'Commit ID: <a href="'.$arrayofalerts[$key]['url_commit'].'">'.dol_trunc($alert['commitid'], 8).'</a>';
+
 	if (!empty($alert['commitidbis'])) {
 		$html .= ' <div class="more inline"><span class="seeothercommit badge">+</span><div class="morediv hidden">';
 		foreach ($alert['commitidbis'] as $tmpcommitidbis) {
 			$html .= '<a target="_blank" href="https://github.com/Dolibarr/dolibarr/commit/'.$tmpcommitidbis.'">'.dol_trunc($tmpcommitidbis, 8).'</a><br>';
+			$arrayofalerts[$key]['description'] .= "\n<br>".'Commit ID: <a href="https://github.com/Dolibarr/dolibarr/commit/'.$tmpcommitidbis.'">'.dol_trunc($tmpcommitidbis, 8).'</a>';
 		}
 		$html .= '</div></div>';
 	}
@@ -747,6 +777,7 @@ foreach ($arrayofalerts as $alert) {
 	if (!empty($alert['issueidyogosha'])) {
 		//$html .= '<a target="_blank" href="https://yogosha.com?'.$alert['issueidyogosha'].'">';
 		$html .= '#yogosha'.$alert['issueidyogosha'];
+		$arrayofalerts[$key]['description'] .= "\n<br>".'Yogosha ID #'.$alert['issueidyogosha'];
 		//$html .= '</a>';
 	} else {
 		//$html .= '<span class="opacitymedium">public issue</span>';
@@ -754,7 +785,8 @@ foreach ($arrayofalerts as $alert) {
 	$html .= '</td>';
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['issueid'])) {
-		$html .= '<a target="_blank" href="https://github.com/Dolibarr/dolibarr/issues/'.$alert['issueid'].'">#'.$alert['issueid'].'</a>';
+		$html .= '<a target="_blank" href="'.$arrayofalerts[$key]['url_issue'].'">#'.$alert['issueid'].'</a>';
+		$arrayofalerts[$key]['description'] .= "\n<br>".'GitHub ID <a href="'.$arrayofalerts[$key]['url_issue'].'" target="_blank">#'.$alert['issueid'].'</a>';
 	} else {
 		//$html .= '<span class="opacitymedium">private</span>';
 	}
@@ -762,16 +794,70 @@ foreach ($arrayofalerts as $alert) {
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['issueidcve'])) {
 		$cve = preg_replace('/\s+/', '-', trim($alert['issueidcve']));
-		$html .= '<a target="_blank" href="https://nvd.nist.gov/vuln/detail/CVE-'.$cve.'">CVE-'.$cve.'</a>';
+		$html .= '<a target="_blank" href="'.$arrayofalerts[$key]['url_cve'].'">CVE-'.$cve.'</a>';
+		$arrayofalerts[$key]['description'] .= "\n<br>".'CVE: <a href="'.$arrayofalerts[$key]['url_cve'].'">CVE-'.$cve.'</a>';
 	}
 	$html .= '</td>';
 	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.dol_escape_htmltag($alert['title']).'</td>';
+
+	$arrayofalerts[$key]['description'] .= ']]>';
+
 	$html .= '</tr>';
 }
 $html .= '</table>';
 $html .= '</div>';
 $html .= '</div>';
+
+$html .= '<br>';
+$html .= 'You can use this URL for RSS notifications: <a href="/'.$outputfilerss.'">'.$outputfilerss.'</a><br><br>';
+
 $html .= '</section>';
+
+
+// Generate the RSS file
+$fh = fopen($outputdir.'/'.$outputfilerss, 'w');
+if ($fh) {
+	$url_site = '';
+	$url_flux = '';
+	if ($url_root) {
+		$url_site = $url_root;
+		$url_flux = $url_root.'/'.$outputfilerss;
+	}
+
+	// Generation of the feed
+	fwrite($fh, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
+	fwrite($fh, '<rss version="2.0">'."\n");
+	fwrite($fh, '<channel>'."\n");
+	fwrite($fh, '<title>' . htmlspecialchars($title_security) . '</title>'."\n");
+	fwrite($fh, '<description>' . htmlspecialchars("Feed of the latest security reports on the project") . '</description>'."\n");
+	if ($url_site) {
+		fwrite($fh, '<link>' . htmlspecialchars($url_site) . '</link>'."\n");
+	}
+	if ($url_flux) {
+		fwrite($fh, '<atom:link href="' . htmlspecialchars($url_flux) . '" rel="self" type="application/rss+xml" />'."\n");
+	}
+
+	foreach ($arrayofalerts as $alert) {
+		$alert['url_commit'] = 'https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'];
+
+		fwrite($fh, '<item>'."\n");
+		fwrite($fh, '<title>' . htmlspecialchars($alert['title']) . '</title>'."\n");
+		fwrite($fh, '<description>' . $alert['description'] . '</description>'."\n");	// no htmlspeciachars here
+		fwrite($fh, '<link>' . htmlspecialchars($alert['url_commit']) . '</link>'."\n");
+		fwrite($fh, '<pubDate>' . htmlspecialchars($alert['created_at']) . '</pubDate>'."\n");
+		fwrite($fh, '</item>'."\n");
+	}
+
+	fwrite($fh, '</channel>'."\n");
+	fwrite($fh, '</rss>'."\n");
+
+	fclose($fh);
+
+	print 'Generation of RSS output file '.$outputfilerss.' done.'."\n";
+} else {
+	print 'Failed to generate the RSS file '.$outputfilerss."\n";
+}
+
 
 
 // Technical debt PHPstan
@@ -861,6 +947,7 @@ if ($fh) {
 } else {
 	print 'Failed to open '.$outputfile.' for output.'."\n";
 }
+
 
 
 /**

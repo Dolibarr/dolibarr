@@ -8,7 +8,8 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Meziane Sof          <virtualsof@yahoo.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	   MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +92,7 @@ $search_date_when_endmonth = GETPOSTINT('search_date_when_endmonth');
 $search_date_when_endyear = GETPOSTINT('search_date_when_endyear');
 $search_date_when_start = dol_mktime(0, 0, 0, $search_date_when_startmonth, $search_date_when_startday, $search_date_when_startyear);	// Use tzserver
 $search_date_when_end = dol_mktime(23, 59, 59, $search_date_when_endmonth, $search_date_when_endday, $search_date_when_endyear);
-$search_recurring = GETPOSTINT('search_recurring');
+$search_recurring = GETPOST('search_recurring', 'intcomma');
 $search_frequency = GETPOST('search_frequency', 'alpha');
 $search_unit_frequency = GETPOST('search_unit_frequency', 'alpha');
 $search_nb_gen_done = GETPOST('search_nb_gen_done', 'alpha');

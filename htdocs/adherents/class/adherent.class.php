@@ -60,8 +60,8 @@ class Adherent extends CommonObject
 	public $table_element = 'adherent';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
+	 * @var int<0,2>|string 	Does this object support the multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 1;
 

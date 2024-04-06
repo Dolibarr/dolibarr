@@ -521,6 +521,17 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		// Return code
 		if (!$err) {
 			$this->db->commit();
+
+			$moduleNameInConf = strtolower(preg_replace('/^MAIN_MODULE_/', '', $this->const_name));
+			// two exceptions to handle
+			if ($moduleNameInConf === 'propale') {
+				$moduleNameInConf = 'propal';
+			} elseif ($moduleNameInConf === 'supplierproposal') {
+				$moduleNameInConf = 'supplier_proposal';
+			}
+
+			$this->modules[$moduleNameInConf] = $moduleNameInConf; // Add this module in list of enabled modules so isModEnabled() will work (conf->module->enabled must no more be used)
+
 			return 1;
 		} else {
 			$this->db->rollback();
@@ -539,6 +550,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	protected function _remove($array_sql, $options = '')
 	{
+		global $conf;
 		// phpcs:enable
 		$err = 0;
 
@@ -605,6 +617,18 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		// Return code
 		if (!$err) {
 			$this->db->commit();
+
+			// Disable modules
+			$moduleNameInConf = strtolower(preg_replace('/^MAIN_MODULE_/', '', $this->const_name));
+			// two exceptions to handle
+			if ($moduleNameInConf === 'propale') {
+				$moduleNameInConf = 'propal';
+			} elseif ($moduleNameInConf === 'supplierproposal') {
+				$moduleNameInConf = 'supplier_proposal';
+			}
+
+			unset($this->modules[$moduleNameInConf]);	// Add this module in list of enabled modules so isModEnabled() will work (conf->module->enabled must no more be used)
+
 			return 1;
 		} else {
 			$this->db->rollback();

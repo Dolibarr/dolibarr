@@ -40,11 +40,11 @@ class TraceableDB extends DoliDB
 	 */
 	public $queries;
 	/**
-	 * @var int Request start time
+	 * @var float 	Request start time in second + microseconds as decimal part (Example: 1712305485.1104)
 	 */
 	protected $startTime;
 	/**
-	 * @var int Request start memory
+	 * @var int 	Request start memory
 	 */
 	protected $startMemory;
 	/**

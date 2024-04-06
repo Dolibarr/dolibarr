@@ -154,6 +154,7 @@ function getMultidirOutput($object, $module = '')
  * @param string $key 		key to return value, return $default if not set
  * @param string $default 	value to return
  * @return string
+ * @see getDolUserString()
  */
 function getDolGlobalString($key, $default = '')
 {
@@ -168,6 +169,7 @@ function getDolGlobalString($key, $default = '')
  * @param string 	$key 		key to return value, return 0 if not set
  * @param int 		$default 	value to return
  * @return int
+ * @see getDolUserInt()
  */
 function getDolGlobalInt($key, $default = 0)
 {
@@ -8806,7 +8808,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = dol_print_phone($object->array_options['options_'.$key]);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'price') {
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
-								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_FORMATED__'] = price($object->array_options['options_'.$key]);
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_FORMATED__'] = price($object->array_options['options_'.$key]);	// For compatibility
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_FORMATTED__'] = price($object->array_options['options_'.$key]);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] != 'separator') {
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = !empty($object->array_options['options_'.$key]) ? $object->array_options['options_'.$key] : '';
 							}
@@ -8956,15 +8959,26 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		}
 
 		// Amount keys formatted in a currency
-		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object) ? ($object->total_ht ? price($object->total_ht, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
-		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
-		$substitutionarray['__AMOUNT_REMAIN_FORMATED__'] = is_object($object) ? ($object->total_ttc ? price($object->total_ttc - $already_payed_all, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
-		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object) ? (isset($object->total_vat) ? price($object->total_vat, 0, $outputlangs, 0, -1, -1, $conf->currency) : ($object->total_tva ? price($object->total_tva, 0, $outputlangs, 0, -1, -1, $conf->currency) : null)) : '';
+		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATTED__'] = is_object($object) ? ($object->total_ht ? price($object->total_ht, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		$substitutionarray['__AMOUNT_FORMATTED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		$substitutionarray['__AMOUNT_REMAIN_FORMATTED__'] = is_object($object) ? ($object->total_ttc ? price($object->total_ttc - $already_payed_all, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		$substitutionarray['__AMOUNT_VAT_FORMATTED__']      = is_object($object) ? (isset($object->total_vat) ? price($object->total_vat, 0, $outputlangs, 0, -1, -1, $conf->currency) : ($object->total_tva ? price($object->total_tva, 0, $outputlangs, 0, -1, -1, $conf->currency) : null)) : '';
 		if ($onlykey != 2 || $mysoc->useLocalTax(1)) {
-			$substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object) ? ($object->total_localtax1 ? price($object->total_localtax1, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+			$substitutionarray['__AMOUNT_TAX2_FORMATTED__']     = is_object($object) ? ($object->total_localtax1 ? price($object->total_localtax1, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		}
 		if ($onlykey != 2 || $mysoc->useLocalTax(2)) {
-			$substitutionarray['__AMOUNT_TAX3_FORMATED__']     = is_object($object) ? ($object->total_localtax2 ? price($object->total_localtax2, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+			$substitutionarray['__AMOUNT_TAX3_FORMATTED__']     = is_object($object) ? ($object->total_localtax2 ? price($object->total_localtax2, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		}
+		// Amount keys formatted in a currency (with the typo error for backward compatibility)
+		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = $substitutionarray['__AMOUNT_EXCL_TAX_FORMATTED__'];
+		$substitutionarray['__AMOUNT_FORMATED__']          = $substitutionarray['__AMOUNT_FORMATTED__'];
+		$substitutionarray['__AMOUNT_REMAIN_FORMATED__']   = $substitutionarray['__AMOUNT_REMAIN_FORMATTED__'];
+		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = $substitutionarray['__AMOUNT_VAT_FORMATTED__'];
+		if ($onlykey != 2 || $mysoc->useLocalTax(1)) {
+			$substitutionarray['__AMOUNT_TAX2_FORMATED__'] = $substitutionarray['__AMOUNT_TAX2_FORMATTED__'];
+		}
+		if ($onlykey != 2 || $mysoc->useLocalTax(2)) {
+			$substitutionarray['__AMOUNT_TAX3_FORMATED__'] = $substitutionarray['__AMOUNT_TAX3_FORMATTED__'];
 		}
 
 		$substitutionarray['__AMOUNT_MULTICURRENCY__']          = (is_object($object) && isset($object->multicurrency_total_ttc)) ? $object->multicurrency_total_ttc : '';
@@ -8980,7 +8994,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		}
 	}
 
-	//var_dump($substitutionarray['__AMOUNT_FORMATED__']);
+
 	if ((empty($exclude) || !in_array('date', $exclude)) && (empty($include) || in_array('date', $include))) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -11889,6 +11903,13 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 	// If $url is an array, we must build a dropdown button
 	if (is_array($url)) {
+		// Loop on $url array to remove entries of disabled modules
+		foreach ($url as $key => $subbutton) {
+			if (isset($subbutton['enabled']) && empty($subbutton['enabled'])) {
+				unset($url[$key]);
+			}
+		}
+
 		$out = '';
 
 		if (count($url) > 1) {

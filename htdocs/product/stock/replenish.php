@@ -164,7 +164,7 @@ if ($action == 'order' && GETPOST('valid')) {
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 		$productsupplier = new ProductFournisseur($db);
 		for ($i = 0; $i < $linecount; $i++) {
-			if (GETPOSTINT('choose'.$i) === 'on' && GETPOSTINT('fourn'.$i) > 0) {
+			if (GETPOST('choose'.$i) === 'on' && GETPOSTINT('fourn'.$i) > 0) {
 				//one line
 				$box = $i;
 				$supplierpriceid = GETPOSTINT('fourn'.$i);

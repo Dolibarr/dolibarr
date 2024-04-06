@@ -238,7 +238,7 @@ class FormAccounting extends Form
 	 * 	@param	int		$maxlen			Max length of text in combo box
 	 * 	@param	int		$help			Add or not the admin help picto
 	 *  @param  int     $allcountries   All countries
-	 * 	@return	string					HTML component with the select
+	 * 	@return	void|string				HTML component with the select
 	 */
 	public function select_accounting_category($selected = 0, $htmlname = 'account_category', $useempty = 0, $maxlen = 0, $help = 1, $allcountries = 0)
 	{
@@ -249,6 +249,8 @@ class FormAccounting extends Form
 			dol_print_error(null, 'Call to select_accounting_account with mysoc country not yet defined');
 			exit;
 		}
+
+		$out = '';
 
 		if (!empty($mysoc->country_id)) {
 			$sql = "SELECT c.rowid, c.label as type, c.range_account";
@@ -280,7 +282,7 @@ class FormAccounting extends Form
 			if ($num) {
 				$this->nbaccounts_category = $num;
 
-				$out = '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'">';
+				$out .= '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'">';
 				$i = 0;
 
 				if ($useempty) {
@@ -308,7 +310,7 @@ class FormAccounting extends Form
 
 				$out .= ajax_combobox($htmlname, array());
 			} else {
-				$out = '<span class="opacitymedium">'.$langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code, $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("AccountingCategories")).'</span>';
+				$out .= '<span class="opacitymedium">'.$langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code, $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("AccountingCategories")).'</span>';
 			}
 		} else {
 			dol_print_error($this->db);
@@ -321,9 +323,9 @@ class FormAccounting extends Form
 	/**
 	 * Return select filter with date of transaction
 	 *
-	 * @param string $htmlname		Name of select field
-	 * @param string $selectedkey	Value
-	 * @return string|int<-1,-1>	HTML edit field, or -1 if error
+	 * @param 	string 				$htmlname       Name of select field
+	 * @param 	string 				$selectedkey    Value
+	 * @return 	string|int<-1,-1>					HTML edit field, or -1 if error
 	 */
 	public function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '')
 	{
