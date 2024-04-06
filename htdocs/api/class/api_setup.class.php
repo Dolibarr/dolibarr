@@ -1213,15 +1213,15 @@ class Setup extends DolibarrApi
 			throw new RestException(401, 'Only an admin user can delete an extrafield by attrname and elementtype');
 		}
 
-		$this->extrafields = new ExtraFields($this->db);
+		$extrafields = new ExtraFields($this->db);
 
-		$result = $this->extrafields->fetch_name_optionals_label($elementtype, false, $attrname);
+		$result = $extrafields->fetch_name_optionals_label($elementtype, false, $attrname);
 		if (!$result) {
 			throw new RestException(404, 'Extrafield not found from attrname and elementtype');
 		}
 
-		if (!$this->extrafields->delete($attrname, $elementtype)) {
-			throw new RestException(500, 'Error when delete extrafield : '.$this->extrafields->error);
+		if (!$extrafields->delete($attrname, $elementtype)) {
+			throw new RestException(500, 'Error when delete extrafield : '.$extrafields->error);
 		}
 
 		return array(
