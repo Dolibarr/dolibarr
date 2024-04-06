@@ -19,7 +19,7 @@
  */
 
 /**
- * \file        class/availabilities.class.php
+ * \file        htdocs/bookcal/class/availabilities.class.php
  * \ingroup     bookcal
  * \brief       This file is a CRUD class file for Availabilities (Create/Read/Update/Delete)
  */

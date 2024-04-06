@@ -19,7 +19,7 @@
  */
 
 /**
- * \file        class/calendar.class.php
+ * \file        htdocs/bookcal/class/calendar.class.php
  * \ingroup     bookcal
  * \brief       This file is a CRUD class file for Calendar (Create/Read/Update/Delete)
  */
