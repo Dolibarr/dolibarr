@@ -76,6 +76,8 @@ class Account extends CommonObject
 
 	/**
 	 * Bank account type. Check TYPE_ constants
+	 * @deprecated
+	 * @see $type
 	 * @var int
 	 */
 	public $courant;
@@ -1051,6 +1053,7 @@ class Account extends CommonObject
 				$this->courant       = $obj->courant;
 				$this->bank          = $obj->bank;
 				$this->clos          = $obj->clos;
+				$this->status = $obj->clos;
 				$this->rappro        = $obj->rappro;
 				$this->url           = $obj->url;
 
@@ -1857,6 +1860,8 @@ class Account extends CommonObject
 		$this->label           = 'My Big Company Bank account';
 		$this->courant         = Account::TYPE_CURRENT;
 		$this->clos            = Account::STATUS_OPEN;
+		$this->type = Account::TYPE_CURRENT;
+		$this->status = Account::STATUS_OPEN;
 		$this->code_banque     = '30001';
 		$this->code_guichet    = '00794';
 		$this->number          = '12345678901';
@@ -1945,11 +1950,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
  */
 class AccountLine extends CommonObjectLine
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
 	/**
 	 * @var DoliDB Database handler.
 	 */
