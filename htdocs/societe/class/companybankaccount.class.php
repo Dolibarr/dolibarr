@@ -174,12 +174,6 @@ class CompanyBankAccount extends Account
 	public $iban_prefix;
 
 	public $bank;
-	/**
-	 * @var string	Bank address
-	 * @deprecated Replaced with address
-	 */
-	public $domiciliation;
-	public $address;
 
 	/**
 	 * @var int state id
@@ -192,17 +186,6 @@ class CompanyBankAccount extends Account
 	public $fk_country;
 
 	public $country_code;
-
-
-	/**
-	 * @var string owner
-	 */
-	public $proprio;
-
-	/**
-	 * @var string owner address
-	 */
-	public $owner_address;
 
 	/**
 	 * @var int $default_rib  1 = this object is the third party's default bank information, 0 if not
@@ -496,7 +479,7 @@ class CompanyBankAccount extends Account
 
 		$sql = "SELECT rowid, label, type, fk_soc as socid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
 		$sql .= " domiciliation as address,";
-		$sql .= " proprio, owner_address, default_rib, datec, tms as datem, rum, frstrecur, date_rum,";
+		$sql .= " proprio as owner_name, owner_address, default_rib, datec, tms as datem, rum, frstrecur, date_rum,";
 		$sql .= " stripe_card_ref, stripe_account, ext_payment_site,";
 		$sql .= " last_main_doc, model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
@@ -534,7 +517,8 @@ class CompanyBankAccount extends Account
 				$this->domiciliation   = $obj->address;
 				$this->address         = $obj->address;
 
-				$this->proprio         = $obj->proprio;
+				$this->proprio = $obj->owner_name;
+				$this->owner_name = $obj->owner_name;
 				$this->owner_address   = $obj->owner_address;
 				$this->label           = $obj->label;
 				$this->default_rib     = $obj->default_rib;
@@ -679,6 +663,7 @@ class CompanyBankAccount extends Account
 	 */
 	public function initAsSpecimen()
 	{
+		$this->id = 0;
 		$this->specimen        = 1;
 		$this->ref             = 'CBA';
 		$this->label           = 'CustomerCorp Bank account';
@@ -696,6 +681,7 @@ class CompanyBankAccount extends Account
 		$this->country_id      = 1;
 
 		$this->proprio         = 'Owner';
+		$this->owner_name = 'Owner';
 		$this->owner_address   = 'Owner address';
 		$this->owner_country_id = 1;
 
