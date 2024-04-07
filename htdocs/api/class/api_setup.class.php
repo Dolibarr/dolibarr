@@ -1309,7 +1309,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT t.rowid as id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
-		$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; 
+		$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'";
 		$sql .= " AND name = '".((string) $attrname)."'";
 
 		$id = $this->db->query($sql);
