@@ -1282,7 +1282,7 @@ class Setup extends DolibarrApi
 		if ($request_data['entity']) {
 			$entity = $request_data['entity'];
 		} else {
-			throw new RestException(400, "Enity field absent");
+			throw new RestException(400, "Entity field absent");
 		}
 		if ($request_data['label']) {
 			$label = $request_data['label'];
