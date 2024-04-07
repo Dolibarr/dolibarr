@@ -51,8 +51,8 @@ class Account extends CommonObject
 	public $table_element = 'bank_account';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
+	 * @var int<0,2>|string 	Does this object support the multicompany module ?
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -81,8 +81,8 @@ class Account extends CommonObject
 	public $courant;
 
 	/**
-	 * Bank account type. Check TYPE_ constants. It's integer but Company bank account use string to identify type account
-	 * @var int|string
+	 * Bank account type. Check TYPE_ constants
+	 * @var int
 	 */
 	public $type;
 

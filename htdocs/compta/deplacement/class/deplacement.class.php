@@ -53,8 +53,8 @@ class Deplacement extends CommonObject
 	public $fk_element = '';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int<0,2>|string
 	 */
 	public $ismultientitymanaged = 0;
 

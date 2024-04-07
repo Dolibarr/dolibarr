@@ -43,8 +43,7 @@ class EmailCollectorAction extends CommonObject
 	public $table_element = 'emailcollector_emailcollectoraction';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
+	 * @var int<0,2>|string  Does emailcollectoraction support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
 
