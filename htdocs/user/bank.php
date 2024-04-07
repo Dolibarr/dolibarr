@@ -132,7 +132,8 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 	$account->iban            = GETPOST('iban', 'alpha');
 	$account->domiciliation   = GETPOST('address', 'alpha');
 	$account->address         = GETPOST('address', 'alpha');
-	$account->proprio         = GETPOST('proprio', 'alpha');
+	$account->owner_name = GETPOST('proprio', 'alpha');
+	$account->proprio = $account->owner_name;
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
 	$account->currency_code = trim(GETPOST("account_currency_code"));

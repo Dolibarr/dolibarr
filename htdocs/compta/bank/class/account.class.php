@@ -1901,6 +1901,7 @@ class Account extends CommonObject
 		$this->bank            = 'MyBank';
 		$this->address         = 'Rue de Paris';
 		$this->proprio         = 'Owner';
+		$this->owner_name = 'Owner';
 		$this->owner_address   = 'Owner address';
 		$this->owner_zip       = 'Owner zip';
 		$this->owner_town      = 'Owner town';

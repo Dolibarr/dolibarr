@@ -13,7 +13,7 @@
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021-2022	Anthony Berton       	<anthony.berton@bb2a.fr>
- * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -825,7 +825,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 /**
  *  Show bank information for PDF generation
  *
- *  @param	TCPDF			$pdf            		Object PDF
+ *  @param	TCPDF		$pdf            		Object PDF
  *  @param  Translate	$outputlangs     		Object lang
  *  @param  int			$curx            		X
  *  @param  int			$cury            		Y
@@ -840,8 +840,8 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
 
-	$diffsizetitle = (!getDolGlobalString('PDF_DIFFSIZE_TITLE') ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);
-	$diffsizecontent = (!getDolGlobalString('PDF_DIFFSIZE_CONTENT') ? 4 : $conf->global->PDF_DIFFSIZE_CONTENT);
+	$diffsizetitle = getDolGlobalInt('PDF_DIFFSIZE_TITLE', 3);
+	$diffsizecontent = getDolGlobalInt('PDF_DIFFSIZE_CONTENT', 4);
 	$pdf->SetXY($curx, $cury);
 
 	if (empty($onlynumber)) {
@@ -953,9 +953,9 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 		$cury += $tmpy;
 	}
 
-	if (!empty($account->proprio)) {
+	if (!empty($account->owner_name)) {
 		$pdf->SetXY($curx, $cury);
-		$val = $outputlangs->transnoentities("BankAccountOwner").': '.$outputlangs->convToOutputCharset($account->proprio);
+		$val = $outputlangs->transnoentities("BankAccountOwner").': '.$outputlangs->convToOutputCharset($account->owner_name);
 		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
 		$tmpy = $pdf->getStringHeight(100, $val);
 		$cury += $tmpy;

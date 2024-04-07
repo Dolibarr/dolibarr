@@ -293,7 +293,7 @@ if (empty($reshook)) {
 		$object->min_desired = GETPOSTFLOAT("account_min_desired");
 		$object->comment = trim(GETPOST("account_comment", 'restricthtml'));
 
-		if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number)) {
+		if (getDolGlobalInt('MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED') && empty($object->account_number)) {
 			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountancyCode")), null, 'errors');
 			$action = 'edit'; // Force chargement page en mode creation
 			$error++;
