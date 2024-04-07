@@ -133,11 +133,6 @@ class Website extends CommonObject
 	public $position;
 
 	/**
-	 * @var Website[] List of containers
-	 */
-	public $lines;
-
-	/**
 	 * @var string name of template
 	 */
 	public $name_template;
@@ -366,8 +361,6 @@ class Website extends CommonObject
 				$this->name_template = $obj->name_template;
 			}
 			$this->db->free($resql);
-
-			$this->lines = [];
 
 			if ($numrows > 0) {
 				return 1;
