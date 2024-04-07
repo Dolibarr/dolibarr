@@ -1926,7 +1926,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					// name of module (default: current module name)
 					$r_module = (empty($this->rights_class) ? strtolower($this->name) : $this->rights_class);
 
-					// name of the module from which the right comes (default: empty)
+					// name of the module from which the right comes (default: empty means sme module the permission is for)
 					$r_module_origin = '';
 
 					if (isset($this->rights[$key][Rights::KEY_MODULE])) {
