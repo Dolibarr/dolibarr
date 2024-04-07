@@ -591,6 +591,7 @@ class ExtraFields
 				$lengthdb = '255';
 			} elseif ($type == 'html') {
 				$typedb = 'text';
+				$lengthdb = $length;
 			} elseif ($type == 'link') {
 				$typedb = 'int';
 				$lengthdb = '11';
