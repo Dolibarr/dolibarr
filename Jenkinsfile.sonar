@@ -19,6 +19,10 @@ pipeline {
             sh 'export ANT_OPTS="-Xms512m -Xmx4096m"'
             sh 'export SONAR_RUNNER_OPTS="-Xmx4096m -XX:MaxPermSize=512m"'
             sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar-project.properties"
+            // Run PHPStan
+            sh "phpstan analyse --level=max > test-reports/phpstan-report.json"
+            // Run Psalm
+            sh "psalm --report-json=test-reports/psalm-report.json"
           }
         }
       }
