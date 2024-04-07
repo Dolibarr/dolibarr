@@ -1249,8 +1249,25 @@ class Setup extends DolibarrApi
 
 		$extrafields = new ExtraFields($this->db);
 
-#		// Check mandatory fields
-#		$result = $this->_validateExtrafields($request_data);
+		// built in validation
+		if ($request_data['attrname']) {
+			$attrname = $request_data['attrname'];
+		} else {
+			throw new RestException(400, "attrname/name field absent");
+		}
+		if ($request_data['elementtype']) {
+			$elementtype = $request_data['elementtype'];
+		} else {
+			throw new RestException(400, "elementtype field absent");
+		}
+
+		$result = $extrafields->fetch_name_optionals_label($elementtype, false, $attrname);
+		if ($result) {
+			throw new RestException(409, 'Duplicate extrafield already found from attrname and elementtype');
+		}
+
+		// Check mandatory fields is not working despise being a modified copy from api_thirdparties.class.php
+		// $result = $this->_validateExtrafields($request_data, $extrafields);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -1261,19 +1278,27 @@ class Setup extends DolibarrApi
 			$extrafields->$field = $this->_checkValForAPI($field, $value, $extrafields);
 		}
 
+		// built in validation
+		if ($request_data['entity']) {
+			$entity = $request_data['entity'];
+		} else {
+			throw new RestException(400, "Enity field absent");
+		}
+		if ($request_data['label']) {
+			$label = $request_data['label'];
+		} else {
+			throw new RestException(400, "label field absent");
+		}
+
 		$alwayseditable = $request_data['alwayseditable'];
 		$default_value = $request_data['default_value'];
-		$elementtype = $request_data['elementtype'];
 		$totalizable = $request_data['totalizable'];
 		$printable = $request_data['printable'];
 		$required = $request_data['required'];
 		$langfile = $request_data['langfile'];
-		$attrname = $request_data['attrname'];
 		$computed = $request_data['computed'];
 		$enabled = $request_data['enabled'];
-		$entity = $request_data['entity'];
 		$unique = $request_data['unique'];
-		$label = $request_data['label'];
 		$param = $request_data['param'];
 		$perms = $request_data['perms'];
 		$size = $request_data['size'];
@@ -1288,26 +1313,6 @@ class Setup extends DolibarrApi
 		}
 
 		return $extrafields->id;
-	}
-
-	/**
-	 * Validate fields before create or update object
-	 *
-	 * @param array $data   Datas to validate
-	 * @return array
-	 *
-	 * @throws RestException
-	 */
-	private function _validateExtrafields($data)
-	{
-		$extrafields = array();
-		foreach (ExtraFields::$attributes as $field) {
-			if (!isset($data[$field])) {
-				throw new RestException(400, "$field field missing");
-			}
-			$extrafields[$field] = $data[$field];
-		}
-		return $extrafields;
 	}
 
 	/**
