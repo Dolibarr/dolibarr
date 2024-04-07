@@ -8,6 +8,7 @@
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,7 +123,7 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
-	$account->courant         = GETPOSTINT('courant');
+	$account->type = GETPOSTINT('courant'); // not used
 	$account->code_banque     = GETPOST('code_banque', 'alpha');
 	$account->code_guichet    = GETPOST('code_guichet', 'alpha');
 	$account->number          = GETPOST('number', 'alpha');
@@ -154,7 +155,7 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
-	$account->courant         = GETPOSTINT('courant');
+	$account->type = GETPOSTINT('courant'); // not used
 	$account->code_banque     = GETPOST('code_banque', 'alpha');
 	$account->code_guichet    = GETPOST('code_guichet', 'alpha');
 	$account->number          = GETPOST('number', 'alpha');

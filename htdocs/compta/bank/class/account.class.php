@@ -76,8 +76,6 @@ class Account extends CommonObject
 
 	/**
 	 * Bank account type. Check TYPE_ constants
-	 * @deprecated
-	 * @see $type
 	 * @var int
 	 * @deprecated
 	 * @see $type
@@ -101,6 +99,7 @@ class Account extends CommonObject
 	 *
 	 * @var int
 	 * @deprecated 	Duplicate field. We already have the field $this->status
+	 * @see $status
 	 */
 	public $clos = self::STATUS_OPEN;
 
@@ -169,15 +168,33 @@ class Account extends CommonObject
 	/**
 	 * Name of account holder
 	 * @var string
+	 * @deprecated
+	 * @see $owner_name
 	 */
 	public $proprio;
+
+	/**
+	 * Name of account holder
+	 * @var string
+	 */
+	public $owner_name;
 
 	/**
 	 * Address of account holder
 	 * @var string
 	 */
 	public $owner_address;
+
+	/**
+	 * Zip of account holder
+	 * @var string
+	 */
 	public $owner_zip;
+
+	/**
+	 * Town of account holder
+	 * @var string
+	 */
 	public $owner_town;
 	public $owner_country_id;
 	public $owner_country_code;
@@ -216,6 +233,7 @@ class Account extends CommonObject
 	 * @var int ID
 	 */
 	public $fk_accountancy_journal;
+
 	/**
 	 * @var string	Label of journal
 	 */
@@ -231,6 +249,7 @@ class Account extends CommonObject
 	 * Currency code
 	 * @var string
 	 * @deprecated Use currency_code instead
+	 * @see $currency_code
 	 */
 	public $account_currency_code;
 
@@ -440,10 +459,10 @@ class Account extends CommonObject
 		if (empty($this->rappro)) {
 			return -1;
 		}
-		if ($this->courant == Account::TYPE_CASH && !getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
+		if ($this->type == Account::TYPE_CASH && !getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
 			return -2;
 		}
-		if ($this->clos) {
+		if ($this->status) {
 			return -3;
 		}
 		return 1;
@@ -471,7 +490,7 @@ class Account extends CommonObject
 		$sql .= ", label";
 		$sql .= ", type";
 		$sql .= ") VALUES (";
-		$sql .= " ".((int) $line_id);
+		$sql .= ((int) $line_id);
 		$sql .= ", ".((int) $url_id);
 		$sql .= ", '".$this->db->escape($url)."'";		// deprecated
 		$sql .= ", '".$this->db->escape($label)."'";
@@ -606,7 +625,7 @@ class Account extends CommonObject
 			$this->error = $langs->trans("ThisIdNotDefined");
 			return -2;
 		}
-		if ($this->courant == Account::TYPE_CASH && $oper != 'LIQ') {
+		if ($this->type == Account::TYPE_CASH && $oper != 'LIQ') {
 			$this->error = "ErrorCashAccountAcceptsOnlyCashMoney";
 			return -3;
 		}
@@ -663,8 +682,7 @@ class Account extends CommonObject
 
 			return $accline->id;
 		} else {
-			$this->error = $accline->error;
-			$this->errors = $accline->errors;
+			$this->setErrorsFromObject($accline);
 			$this->db->rollback();
 
 			return -5;
@@ -1028,9 +1046,9 @@ class Account extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant, ba.clos, ba.rappro, ba.url,";
+		$sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant as type, ba.clos as status, ba.rappro, ba.url,";
 		$sql .= " ba.code_banque, ba.code_guichet, ba.cle_rib, ba.bic, ba.iban_prefix as iban,";
-		$sql .= " ba.domiciliation as address, ba.pti_in_ctti, ba.proprio, ba.owner_address, ba.owner_zip, ba.owner_town, ba.owner_country_id, ba.state_id, ba.fk_pays as country_id,";
+		$sql .= " ba.domiciliation as address, ba.pti_in_ctti, ba.proprio as owner_name, ba.owner_address, ba.owner_zip, ba.owner_town, ba.owner_country_id, ba.state_id, ba.fk_pays as country_id,";
 		$sql .= " ba.account_number, ba.fk_accountancy_journal, ba.currency_code,";
 		$sql .= " ba.min_allowed, ba.min_desired, ba.comment,";
 		$sql .= " ba.datec as date_creation, ba.tms as date_modification, ba.ics, ba.ics_transfer,";
@@ -1059,11 +1077,11 @@ class Account extends CommonObject
 				$this->rowid         = $obj->rowid;
 				$this->ref           = $obj->ref;
 				$this->label         = $obj->label;
-				$this->type          = $obj->courant;
-				$this->courant       = $obj->courant;
+				$this->type          = $obj->type;
+				$this->courant       = $obj->type;
 				$this->bank          = $obj->bank;
-				$this->clos          = $obj->clos;
-				$this->status = $obj->clos;
+				$this->clos          = $obj->status;
+				$this->status = $obj->status;
 				$this->rappro        = $obj->rappro;
 				$this->url           = $obj->url;
 
@@ -1076,7 +1094,8 @@ class Account extends CommonObject
 				$this->domiciliation = $obj->address;
 				$this->address       = $obj->address;
 				$this->pti_in_ctti   = $obj->pti_in_ctti;
-				$this->proprio       = $obj->proprio;
+				$this->proprio = $obj->owner_name;
+				$this->owner_name = $obj->owner_name;
 				$this->owner_address = $obj->owner_address;
 				$this->owner_zip     = $obj->owner_zip;
 				$this->owner_town    = $obj->owner_town;

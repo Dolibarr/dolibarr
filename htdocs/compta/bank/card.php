@@ -184,7 +184,7 @@ if (empty($reshook)) {
 
 		$object->fk_user_author = $user->id;
 
-		if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number)) {
+		if (getDolGlobalInt('MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED') && empty($object->account_number)) {
 			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountancyCode")), null, 'errors');
 			$action = 'create'; // Force chargement page en mode creation
 			$error++;

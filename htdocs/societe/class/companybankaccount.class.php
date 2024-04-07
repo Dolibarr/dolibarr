@@ -656,7 +656,7 @@ class CompanyBankAccount extends Account
 				$result3 = $this->db->query($sql3);
 
 				if (!$result2 || !$result3) {
-					dol_print_error($this->db);
+					$this->errors[] = $this->db->lasterror();
 					$this->db->rollback();
 					return -1;
 				} else {
@@ -665,7 +665,7 @@ class CompanyBankAccount extends Account
 				}
 			}
 		} else {
-			dol_print_error($this->db);
+			$this->errors[] = $this->db->lasterror();
 			return -1;
 		}
 	}
@@ -683,8 +683,8 @@ class CompanyBankAccount extends Account
 		$this->ref             = 'CBA';
 		$this->label           = 'CustomerCorp Bank account';
 		$this->bank            = 'CustomerCorp Bank';
-		$this->courant         = Account::TYPE_CURRENT;
-		$this->clos            = Account::STATUS_OPEN;
+		$this->type = 'ban';
+		$this->status = Account::STATUS_OPEN;
 		$this->code_banque     = '123';
 		$this->code_guichet    = '456';
 		$this->number          = 'CUST12345';
