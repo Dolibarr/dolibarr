@@ -116,8 +116,6 @@ class Availabilities extends CommonObject
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 2, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
-		//useless ?
-		//'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 40, 'index' => 1),
 		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 20, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'csslist' => 'tdoverflowmax150', 'cssview' => 'wordbreak', 'help' => "BookcalLabelAvailabilityHelp", 'showoncombobox' => 2, 'validate' => 1,),
 		'fk_bookcal_calendar' => array('type' => 'integer:Calendar:bookcal/class/calendar.class.php:1', 'label' => 'Calendar', 'enabled' => 1, 'position' => 25, 'notnull' => 1, 'visible' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax100'),
 		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 3, 'validate' => 1,),
@@ -138,8 +136,6 @@ class Availabilities extends CommonObject
 		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 2000, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '9' => 'Closed'), 'default' => '1', 'validate' => 1),
 	);
 	public $rowid;
-	//avoid warning on missing/undef entity
-	public $entity;
 	public $label;
 	public $description;
 	public $note_public;
