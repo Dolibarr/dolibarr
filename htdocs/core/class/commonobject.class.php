@@ -624,7 +624,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var CommonObjectLine[]|CommonObject[]
+	 * @var CommonObjectLine[]|CommonObject[]|stdClass[]
 	 */
 	public $lines;
 

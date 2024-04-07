@@ -28,7 +28,7 @@
 
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
-dol_include_once('/webportal/class/html.formwebportal.class.php');
+require_once DOL_DOCUMENT_ROOT . '/webportal/class/html.formwebportal.class.php';
 
 /**
  *    Class to manage generation of HTML components
