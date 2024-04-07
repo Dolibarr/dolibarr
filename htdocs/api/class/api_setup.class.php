@@ -1270,11 +1270,6 @@ class Setup extends DolibarrApi
 		// $result = $this->_validateExtrafields($request_data, $extrafields);
 
 		foreach ($request_data as $field => $value) {
-			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$extrafields->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
-				continue;
-			}
 			$extrafields->$field = $this->_checkValForAPI($field, $value, $extrafields);
 		}
 
@@ -1312,7 +1307,8 @@ class Setup extends DolibarrApi
 			throw new RestException(500, 'Error creating extrafield', array_merge(array($extrafields->errno), $extrafields->errors));
 		}
 
-		return $extrafields->id;
+		$result = $extrafields->fetch_name_optionals_label($elementtype, false, $attrname);
+		return $result->id;
 	}
 
 	/**
