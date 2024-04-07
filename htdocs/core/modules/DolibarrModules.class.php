@@ -173,11 +173,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $module_parts = array();
 
 	/**
-	 * @var string[] enabled modules
-	 */
-	public $modules = [];
-
-	/**
 	 * @var        string Module documents ?
 	 * @deprecated Seems unused anywhere
 	 */
