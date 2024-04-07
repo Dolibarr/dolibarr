@@ -133,11 +133,6 @@ class Website extends CommonObject
 	public $position;
 
 	/**
-	 * @var array List of containers
-	 */
-	public $lines;
-
-	/**
 	 * @var string name of template
 	 */
 	public $name_template;
@@ -368,11 +363,6 @@ class Website extends CommonObject
 			$this->db->free($resql);
 
 			if ($numrows > 0) {
-				// Lines
-				$this->fetchLines();
-			}
-
-			if ($numrows > 0) {
 				return 1;
 			} else {
 				return 0;
@@ -383,20 +373,6 @@ class Website extends CommonObject
 
 			return -1;
 		}
-	}
-
-	/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetchLines()
-	{
-		$this->lines = array();
-
-		// Load lines with object MyObjectLine
-
-		return count($this->lines) ? 1 : 0;
 	}
 
 

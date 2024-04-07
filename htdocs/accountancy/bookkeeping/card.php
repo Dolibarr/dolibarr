@@ -577,6 +577,16 @@ if ($action == 'create') {
 			print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
 			print '</td>';
 			print '</tr>';
+
+			// Id_import
+			if (!empty($object->import_key)) {
+				print '<tr>';
+				print '<td class="titlefield">' . $langs->trans("ImportId") . '</td>';
+				print '<td>';
+				print $object->import_key;
+				print '</td>';
+				print '</tr>';
+			}
 		}
 
 		// Validate
