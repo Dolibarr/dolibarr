@@ -95,7 +95,15 @@ while ($i < $argc) {
 	$i++;
 }
 
-if (!is_readable("{$path}phan/config.php")) {
+
+// Configuration is required, otherwise phan is disabled.
+$PHAN_CONFIG = "{$path}phan/config_extended.php";
+// BASELINE is ignored if it does not exist
+$PHAN_BASELINE = "{$path}phan/baseline_extended.txt";
+$PHAN_MIN_PHP = "7.0";
+$PHAN_MEMORY_OPT = "--memory-limit 5G";
+
+if (!is_readable($PHAN_CONFIG)) {
 	print "Skipping phan - configuration not found\n";
 	// Disable phan while not integrated yet
 	$dir_phan = 'disabled';
@@ -139,15 +147,15 @@ if ($dirphpstan != 'disabled') {
 $output_phan_json = array();
 $res_exec_phan = 0;
 if ($dir_phan != 'disabled') {
+	if (is_readable($PHAN_BASELINE)) {
+		$PHAN_BASELINE_OPT = "-B '${PHAN_BASELINE}'";
+	} else {
+		$PHAN_BASELINE_OPT = '';
+	}
 	// Get technical debt (phan)
-	$PHAN_CONFIG = "dev/tools/phan/config_extended.php";
-	$PHAN_BASELINE = "dev/tools/phan/baseline.txt";
-	$PHAN_MIN_PHP = "7.0";
-	$PHAN_MEMORY_OPT = "--memory-limit 5G";
-
 	$commandcheck
 		= ($dir_phan ? $dir_phan.DIRECTORY_SEPARATOR : '')
-		  ."phan --output-mode json $PHAN_MEMORY_OPT -k $PHAN_CONFIG -B $PHAN_BASELINE --analyze-twice --minimum-target-php-version $PHAN_MIN_PHP";
+		  ."phan --output-mode json $PHAN_MEMORY_OPT -k '$PHAN_CONFIG' $PHAN_BASELINE_OPT --analyze-twice --minimum-target-php-version $PHAN_MIN_PHP";
 	print 'Execute Phan to get the technical debt: '.$commandcheck."\n";
 	exec($commandcheck, $output_phan_json, $res_exec_phan);
 }

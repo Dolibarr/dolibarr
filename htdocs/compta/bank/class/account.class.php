@@ -76,6 +76,8 @@ class Account extends CommonObject
 
 	/**
 	 * Bank account type. Check TYPE_ constants
+	 * @deprecated
+	 * @see $type
 	 * @var int
 	 * @deprecated
 	 * @see $type
@@ -1958,11 +1960,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
  */
 class AccountLine extends CommonObjectLine
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
 	/**
 	 * @var DoliDB Database handler.
 	 */
