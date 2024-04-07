@@ -1866,6 +1866,8 @@ class Account extends CommonObject
 		$this->specimen        = 1;
 		$this->ref             = 'MBA';
 		$this->label           = 'My Big Company Bank account';
+		$this->courant         = Account::TYPE_CURRENT;
+		$this->clos            = Account::STATUS_OPEN;
 		$this->type = Account::TYPE_CURRENT;
 		$this->status = Account::STATUS_OPEN;
 		$this->code_banque     = '30001';

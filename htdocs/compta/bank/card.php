@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -128,8 +128,10 @@ if (empty($reshook)) {
 
 		$object->ref = dol_string_nospecial(trim(GETPOST('ref', 'alpha')));
 		$object->label = trim(GETPOST("label", 'alphanohtml'));
-		$object->courant = GETPOSTINT("type");
-		$object->clos = GETPOSTINT("clos");
+		$object->type = GETPOSTINT("type");
+		$object->courant = $object->type;	// deprecated
+		$object->status = GETPOSTINT("clos");
+		$object->clos = $object->status;	// deprecated
 		$object->rappro = (GETPOST("norappro", 'alpha') ? 0 : 1);
 		$object->url = trim(GETPOST("url", 'alpha'));
 
@@ -142,8 +144,8 @@ if (empty($reshook)) {
 		$object->iban = trim(GETPOST("iban"));
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
-		$object->domiciliation = trim(GETPOST("account_address", "alphanohtml"));	// deprecated
 		$object->address = trim(GETPOST("account_address", "alphanohtml"));
+		$object->domiciliation = $object->address;	// deprecated
 
 		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
@@ -167,8 +169,8 @@ if (empty($reshook)) {
 			$object->fk_accountancy_journal = $fk_accountancy_journal;
 		}
 
-		$object->solde = GETPOSTFLOAT("solde");
 		$object->balance = GETPOSTFLOAT("solde");
+		$object->solde = $object->balance;	// deprecated
 		$object->date_solde = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT('reday'), GETPOSTINT("reyear"));
 
 		$object->currency_code = trim(GETPOST("account_currency_code"));
@@ -243,8 +245,10 @@ if (empty($reshook)) {
 
 		$object->ref = dol_string_nospecial(trim(GETPOST('ref', 'alpha')));
 		$object->label = trim(GETPOST("label", 'alphanohtml'));
-		$object->courant = GETPOSTINT("type");
-		$object->clos = GETPOSTINT("clos");
+		$object->type = GETPOSTINT("type");
+		$object->courant = $object->type; // deprecated
+		$object->status = GETPOSTINT("clos");
+		$object->clos = $object->status; // deprecated
 		$object->rappro = (GETPOST("norappro", 'alpha') ? 0 : 1);
 		$object->url = trim(GETPOST("url", 'alpha'));
 
@@ -431,7 +435,7 @@ if ($action == 'create') {
 	// Status
 	print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
 	print '<td>';
-	print $form->selectarray("clos", $object->status, (GETPOSTINT('clos') != '' ? GETPOSTINT('clos') : $object->clos), 0, 0, 0, '', 0, 0, 0, '', 'maxwidth150onsmartphone');
+	print $form->selectarray("clos", $object->status, (GETPOSTINT('clos') != '' ? GETPOSTINT('clos') : $object->status), 0, 0, 0, '', 0, 0, 0, '', 'maxwidth150onsmartphone');
 	print '</td></tr>';
 
 	// Country
