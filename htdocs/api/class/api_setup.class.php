@@ -1198,13 +1198,15 @@ class Setup extends DolibarrApi
 	}
 
 	/**
-	 * Create thirdparty object
+	 * Create Extrafield object
 	 *
 	 * @param array $request_data   Request datas
 	 * @return int  ID of extrafield
 	 *
 	 * @url     POST extrafields
 	 *
+	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
+	 * 
 	 */
 	public function postExtrafields($request_data = null)
 	{
