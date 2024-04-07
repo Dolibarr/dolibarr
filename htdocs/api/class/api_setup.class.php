@@ -1307,8 +1307,13 @@ class Setup extends DolibarrApi
 			throw new RestException(500, 'Error creating extrafield', array_merge(array($extrafields->errno), $extrafields->errors));
 		}
 
-		$result = $extrafields->fetch_name_optionals_label($elementtype, false, $attrname);
-		return $result->id;
+		$sql = "SELECT t.rowid as id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
+		$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; 
+		$sql .= " AND name = '".((string) $attrname)."'";
+
+		$id = $this->db->query($sql);
+		return $id;
 	}
 
 	/**
