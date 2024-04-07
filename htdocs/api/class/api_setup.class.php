@@ -1210,7 +1210,7 @@ class Setup extends DolibarrApi
 	public function deleteExtrafieldsFromNames($attrname, $elementtype)
 	{
 		if (!DolibarrApiAccess::$user->admin) {
-			throw new RestException(401, 'Only an admin user can delete an extrafield by attrname and elementtype');
+			throw new RestException(403, 'Only an admin user can delete an extrafield by attrname and elementtype');
 		}
 
 		$extrafields = new ExtraFields($this->db);
