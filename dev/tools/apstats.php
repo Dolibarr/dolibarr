@@ -126,7 +126,7 @@ if ($dirscc != 'disabled') {
 	exec($commandcheck, $output_arrdep, $resexecdep);
 }
 
-// Get technical debt
+// Get technical debt with PHPStan
 $output_arrtd = array();
 if ($dirphpstan != 'disabled') {
 	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$phpstanlevel.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 5G --error-format=github';
@@ -135,6 +135,7 @@ if ($dirphpstan != 'disabled') {
 	exec($commandcheck, $output_arrtd, $resexectd);
 }
 
+// Get technical debt with Phan
 $output_phan_json = array();
 $res_exec_phan = 0;
 if ($dir_phan != 'disabled') {
@@ -235,7 +236,7 @@ $resexecglpu = 0;
 //exec($commandcheck, $output_arrglpu, $resexecglpu);
 
 
-// Retrieve the git information for security alerts
+// Get git information for security alerts
 $nbofmonth = 2;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 $arrayofalerts = array();
@@ -252,6 +253,7 @@ foreach ($output_arrglpu as $val) {
 	if (preg_match('/(#yogosha|CVE|Sec:|Sec\s)/i', $tmpval['title'])) {
 		$alreadyfound = '';
 		$alreadyfoundcommitid = '';
+		$alreadyfoundtitle = '';
 		foreach ($arrayofalerts as $val) {
 			if ($val['issueidyogosha'] && $val['issueidyogosha'] == $tmpval['issueidyogosha']) {	// Already in list
 				$alreadyfound = 'yogosha';
@@ -266,6 +268,11 @@ foreach ($output_arrglpu as $val) {
 			if ($val['issueidcve'] && $val['issueidcve'] == $tmpval['issueidcve']) {	// Already in list
 				$alreadyfound = 'cve';
 				$alreadyfoundcommitid = $val['commitid'];
+				break;
+			}
+			if ($val['title'] && $val['title'] == $tmpval['title']) {	// Already in list
+				$alreadyfound = 'title';
+				$alreadyfoundtitle = $val['title'];
 				break;
 			}
 		}
