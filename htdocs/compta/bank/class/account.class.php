@@ -77,6 +77,8 @@ class Account extends CommonObject
 	/**
 	 * Bank account type. Check TYPE_ constants
 	 * @var int
+	 * @deprecated
+	 * @see $type
 	 */
 	public $courant;
 
@@ -713,6 +715,14 @@ class Account extends CommonObject
 		if (empty($balance)) {
 			$balance = 0;
 		}
+		if (empty($this->address && !empty($this->domiciliation))) {
+			dol_syslog(get_class($this)."::create domiciliation is deprecated use address", LOG_NOTICE);
+			$this->address = $this->domiciliation;
+		}
+		if (empty($this->status && !empty($this->clos))) {
+			dol_syslog(get_class($this)."::create clos is deprecated use status", LOG_NOTICE);
+			$this->status = $this->clos;
+		}
 
 		// Load the library to validate/check a BAN account
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
@@ -765,7 +775,7 @@ class Account extends CommonObject
 		$sql .= ", '".$this->db->escape($this->cle_rib)."'";
 		$sql .= ", '".$this->db->escape($this->bic)."'";
 		$sql .= ", '".$this->db->escape($this->iban)."'";
-		$sql .= ", '".$this->db->escape($this->domiciliation)."'";
+		$sql .= ", '".$this->db->escape($this->address)."'";
 		$sql .= ", ".((int) $this->pti_in_ctti);
 		$sql .= ", '".$this->db->escape($this->proprio)."'";
 		$sql .= ", '".$this->db->escape($this->owner_address)."'";
@@ -878,8 +888,8 @@ class Account extends CommonObject
 		$sql .= " ref   = '".$this->db->escape($this->ref)."'";
 		$sql .= ",label = '".$this->db->escape($this->label)."'";
 
-		$sql .= ",courant = ".((int) $this->courant);
-		$sql .= ",clos = ".((int) $this->clos);
+		$sql .= ",courant = ".((int) $this->type);
+		$sql .= ",clos = ".((int) $this->status);
 		$sql .= ",rappro = ".((int) $this->rappro);
 		$sql .= ",url = ".($this->url ? "'".$this->db->escape($this->url)."'" : "null");
 		$sql .= ",account_number = '".$this->db->escape($this->account_number)."'";
@@ -891,7 +901,7 @@ class Account extends CommonObject
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
+		$sql .= ",domiciliation='".$this->db->escape($this->address)."'";
 		$sql .= ",pti_in_ctti=".((int) $this->pti_in_ctti);
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
@@ -1051,6 +1061,7 @@ class Account extends CommonObject
 				$this->courant       = $obj->courant;
 				$this->bank          = $obj->bank;
 				$this->clos          = $obj->clos;
+				$this->status = $obj->clos;
 				$this->rappro        = $obj->rappro;
 				$this->url           = $obj->url;
 
@@ -1189,7 +1200,7 @@ class Account extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->clos, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1855,8 +1866,8 @@ class Account extends CommonObject
 		$this->specimen        = 1;
 		$this->ref             = 'MBA';
 		$this->label           = 'My Big Company Bank account';
-		$this->courant         = Account::TYPE_CURRENT;
-		$this->clos            = Account::STATUS_OPEN;
+		$this->type = Account::TYPE_CURRENT;
+		$this->status = Account::STATUS_OPEN;
 		$this->code_banque     = '30001';
 		$this->code_guichet    = '00794';
 		$this->number          = '12345678901';
