@@ -1312,7 +1312,18 @@ class Setup extends DolibarrApi
 		$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'";
 		$sql .= " AND name = '".((string) $attrname)."'";
 
-		$id = $this->db->query($sql);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				while ($tab = $this->db->fetch_object($resql)) {
+					// New usage
+					$id = (int) $tab->id;
+				}
+			}
+		} else {
+			$id = -1;
+		}
+
 		return $id;
 	}
 
