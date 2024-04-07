@@ -45,7 +45,7 @@ class ExtraFields
 	public $db;
 
 	/**
-	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>}> New array to store extrafields definition
+	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,loaded?:int,count:int}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
 	 */
 	public $attributes;
 
@@ -201,7 +201,7 @@ class ExtraFields
 	 *  @param	array	$moreparams			More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
 	 *  @return int      	           		Return integer <=0 if KO, >0 if OK
 	 */
-	private function create($attrname, $type = 'varchar', $length = '255', $elementtype = 'member', $unique = 0, $required = 0, $default_value = '', $param = array(), $perms = '', $list = '0', $computed = '', $help = '', $moreparams = array())
+	private function create($attrname, $type = 'varchar', $length = '255', $elementtype = '', $unique = 0, $required = 0, $default_value = '', $param = array(), $perms = '', $list = '0', $computed = '', $help = '', $moreparams = array())
 	{
 		if ($elementtype == 'thirdparty') {
 			$elementtype = 'societe';
@@ -305,7 +305,7 @@ class ExtraFields
 	 *  @return	int								Return integer <=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
-	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = '', $elementtype = 'member', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
+	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = '', $elementtype = '', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
 	{
 		// phpcs:enable
 		global $conf, $user;
@@ -437,7 +437,7 @@ class ExtraFields
 	 *  @param  string	$elementtype    Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @return int              		Return integer < 0 if KO, 0 if nothing is done, 1 if OK
 	 */
-	public function delete($attrname, $elementtype = 'member')
+	public function delete($attrname, $elementtype = '')
 	{
 		if ($elementtype == 'thirdparty') {
 			$elementtype = 'societe';
@@ -495,7 +495,7 @@ class ExtraFields
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', ...)
 	 *  @return int              			Return integer < 0 if KO, 0 if nothing is done, 1 if OK
 	 */
-	private function delete_label($attrname, $elementtype = 'member')
+	private function delete_label($attrname, $elementtype = '')
 	{
 		// phpcs:enable
 		global $conf;
@@ -830,7 +830,7 @@ class ExtraFields
 	 *
 	 * 	@param	string		$elementtype		Type of element ('all' = all or $object->table_element like 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
-	 * 	@return	array							Array of attributes keys+label for all extra fields.
+	 *  @return array{}|array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int>|array<string,string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities?:array<string,string>,loaded?:int,count:int}		Array of attributes keys+label for all extra fields.  Note: count set as present to avoid static analysis notices
 	 */
 	public function fetch_name_optionals_label($elementtype, $forceload = false)
 	{
@@ -883,6 +883,7 @@ class ExtraFields
 					if ($tab->type != 'separate') {
 						$array_name_label[$tab->name] = $tab->label;
 					}
+
 
 					$this->attributes[$tab->elementtype]['type'][$tab->name] = $tab->type;
 					$this->attributes[$tab->elementtype]['label'][$tab->name] = $tab->label;
