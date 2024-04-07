@@ -1129,7 +1129,7 @@ class Setup extends DolibarrApi
 		$list = array();
 
 		if (!DolibarrApiAccess::$user->admin) {
-			throw new RestException(401, 'Only an admin user can get list of extrafields');
+			throw new RestException(403, 'Only an admin user can get list of extrafields');
 		}
 
 		if ($type == 'thirdparty') {
@@ -1197,6 +1197,100 @@ class Setup extends DolibarrApi
 		return $list;
 	}
 
+	/**
+	 * Create thirdparty object
+	 *
+	 * @param array $request_data   Request datas
+	 * @return int  ID of extrafield
+	 *
+	 * @url     POST extrafields
+	 *
+	 */
+	public function postExtrafields($request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(403, 'Only an admin user can create an extrafield');
+		}
+
+		$extrafields = new ExtraFields($this->db);
+
+		// built in validation
+		if ($request_data['attrname']) {
+			$attrname = $request_data['attrname'];
+		} else {
+			throw new RestException(400, "attrname/name field absent");
+		}
+		if ($request_data['elementtype']) {
+			$elementtype = $request_data['elementtype'];
+		} else {
+			throw new RestException(400, "elementtype field absent");
+		}
+
+		$result = $extrafields->fetch_name_optionals_label($elementtype, false, $attrname);
+		if ($result) {
+			throw new RestException(409, 'Duplicate extrafield already found from attrname and elementtype');
+		}
+
+		// Check mandatory fields is not working despise being a modified copy from api_thirdparties.class.php
+		// $result = $this->_validateExtrafields($request_data, $extrafields);
+
+		foreach ($request_data as $field => $value) {
+			$extrafields->$field = $this->_checkValForAPI($field, $value, $extrafields);
+		}
+
+		// built in validation
+		if ($request_data['entity']) {
+			$entity = $request_data['entity'];
+		} else {
+			throw new RestException(400, "Entity field absent");
+		}
+		if ($request_data['label']) {
+			$label = $request_data['label'];
+		} else {
+			throw new RestException(400, "label field absent");
+		}
+
+		$alwayseditable = $request_data['alwayseditable'];
+		$default_value = $request_data['default_value'];
+		$totalizable = $request_data['totalizable'];
+		$printable = $request_data['printable'];
+		$required = $request_data['required'];
+		$langfile = $request_data['langfile'];
+		$computed = $request_data['computed'];
+		$enabled = $request_data['enabled'];
+		$unique = $request_data['unique'];
+		$param = $request_data['param'];
+		$perms = $request_data['perms'];
+		$size = $request_data['size'];
+		$type = $request_data['type'];
+		$list = $request_data['list'];
+		$help = $request_data['help'];
+		$pos = $request_data['pos'];
+		$moreparams = array();
+
+		if ( 0 > $extrafields->addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $default_value, $param, $alwayseditable, $perms, $list, $help, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams)) {
+			throw new RestException(500, 'Error creating extrafield', array_merge(array($extrafields->errno), $extrafields->errors));
+		}
+
+		$sql = "SELECT t.rowid as id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
+		$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'";
+		$sql .= " AND name = '".((string) $attrname)."'";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$tab = $this->db->fetch_object($resql);
+				$id = (int) $tab->id;
+			} else {
+				$id = (int) -1;
+			}
+		} else {
+			$id = (int) -2;
+		}
+
+		return $id;
+	}
 
 	/**
 	 * Get the list of towns.
