@@ -95,7 +95,15 @@ while ($i < $argc) {
 	$i++;
 }
 
-if (!is_readable("{$path}phan/config.php")) {
+
+// Configuration is required, otherwise phan is disabled.
+$PHAN_CONFIG = "{$path}phan/config_extended.php";
+// BASELINE is ignored if it does not exist
+$PHAN_BASELINE = "{$path}phan/baseline_extended.txt";
+$PHAN_MIN_PHP = "7.0";
+$PHAN_MEMORY_OPT = "--memory-limit 5G";
+
+if (!is_readable($PHAN_CONFIG)) {
 	print "Skipping phan - configuration not found\n";
 	// Disable phan while not integrated yet
 	$dir_phan = 'disabled';
@@ -126,7 +134,7 @@ if ($dirscc != 'disabled') {
 	exec($commandcheck, $output_arrdep, $resexecdep);
 }
 
-// Get technical debt
+// Get technical debt with PHPStan
 $output_arrtd = array();
 if ($dirphpstan != 'disabled') {
 	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$phpstanlevel.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 5G --error-format=github';
@@ -135,18 +143,19 @@ if ($dirphpstan != 'disabled') {
 	exec($commandcheck, $output_arrtd, $resexectd);
 }
 
+// Get technical debt with Phan
 $output_phan_json = array();
 $res_exec_phan = 0;
 if ($dir_phan != 'disabled') {
+	if (is_readable($PHAN_BASELINE)) {
+		$PHAN_BASELINE_OPT = "-B '${PHAN_BASELINE}'";
+	} else {
+		$PHAN_BASELINE_OPT = '';
+	}
 	// Get technical debt (phan)
-	$PHAN_CONFIG = "dev/tools/phan/config_extended.php";
-	$PHAN_BASELINE = "dev/tools/phan/baseline.txt";
-	$PHAN_MIN_PHP = "7.0";
-	$PHAN_MEMORY_OPT = "--memory-limit 5G";
-
 	$commandcheck
 		= ($dir_phan ? $dir_phan.DIRECTORY_SEPARATOR : '')
-		  ."phan --output-mode json $PHAN_MEMORY_OPT -k $PHAN_CONFIG -B $PHAN_BASELINE --analyze-twice --minimum-target-php-version $PHAN_MIN_PHP";
+		  ."phan --output-mode json $PHAN_MEMORY_OPT -k '$PHAN_CONFIG' $PHAN_BASELINE_OPT --analyze-twice --minimum-target-php-version $PHAN_MIN_PHP";
 	print 'Execute Phan to get the technical debt: '.$commandcheck."\n";
 	exec($commandcheck, $output_phan_json, $res_exec_phan);
 }
@@ -235,7 +244,7 @@ $resexecglpu = 0;
 //exec($commandcheck, $output_arrglpu, $resexecglpu);
 
 
-// Retrieve the git information for security alerts
+// Get git information for security alerts
 $nbofmonth = 2;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 $arrayofalerts = array();
@@ -252,6 +261,7 @@ foreach ($output_arrglpu as $val) {
 	if (preg_match('/(#yogosha|CVE|Sec:|Sec\s)/i', $tmpval['title'])) {
 		$alreadyfound = '';
 		$alreadyfoundcommitid = '';
+		$alreadyfoundtitle = '';
 		foreach ($arrayofalerts as $val) {
 			if ($val['issueidyogosha'] && $val['issueidyogosha'] == $tmpval['issueidyogosha']) {	// Already in list
 				$alreadyfound = 'yogosha';
@@ -266,6 +276,11 @@ foreach ($output_arrglpu as $val) {
 			if ($val['issueidcve'] && $val['issueidcve'] == $tmpval['issueidcve']) {	// Already in list
 				$alreadyfound = 'cve';
 				$alreadyfoundcommitid = $val['commitid'];
+				break;
+			}
+			if ($val['title'] && $val['title'] == $tmpval['title']) {	// Already in list
+				$alreadyfound = 'title';
+				$alreadyfoundtitle = $val['title'];
 				break;
 			}
 		}

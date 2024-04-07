@@ -278,7 +278,7 @@ class Categories extends DolibarrApi
 		}
 
 		if (!$this->category->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(401, 'error when delete category');
+			throw new RestException(500, 'error when delete category');
 		}
 
 		return array(
@@ -397,7 +397,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Adherent($this->db);
 		} else {
-			throw new RestException(401, "this type is not recognized yet.");
+			throw new RestException(400, "this type is not recognized yet.");
 		}
 
 		if (!empty($object)) {
@@ -477,7 +477,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Adherent($this->db);
 		} else {
-			throw new RestException(401, "this type is not recognized yet.");
+			throw new RestException(400, "this type is not recognized yet.");
 		}
 
 		if (!empty($object)) {
@@ -557,7 +557,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Adherent($this->db);
 		} else {
-			throw new RestException(401, "this type is not recognized yet.");
+			throw new RestException(400, "this type is not recognized yet.");
 		}
 
 		if (!empty($object)) {
@@ -635,7 +635,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Adherent($this->db);
 		} else {
-			throw new RestException(401, "this type is not recognized yet.");
+			throw new RestException(400, "this type is not recognized yet.");
 		}
 
 		if (!empty($object)) {

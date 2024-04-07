@@ -51,8 +51,8 @@ class Account extends CommonObject
 	public $table_element = 'bank_account';
 
 	/**
-	 * @var int<0,2>|string 	Does this object support the multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
+	 * @var int<0,1>|string  	Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -76,13 +76,15 @@ class Account extends CommonObject
 
 	/**
 	 * Bank account type. Check TYPE_ constants
+	 * @deprecated
+	 * @see $type
 	 * @var int
 	 */
 	public $courant;
 
 	/**
-	 * Bank account type. Check TYPE_ constants
-	 * @var int
+	 * Bank account type. Check TYPE_ constants. It's integer but Company bank account use string to identify type account
+	 * @var int|string
 	 */
 	public $type;
 
@@ -1051,6 +1053,7 @@ class Account extends CommonObject
 				$this->courant       = $obj->courant;
 				$this->bank          = $obj->bank;
 				$this->clos          = $obj->clos;
+				$this->status = $obj->clos;
 				$this->rappro        = $obj->rappro;
 				$this->url           = $obj->url;
 
@@ -1857,6 +1860,8 @@ class Account extends CommonObject
 		$this->label           = 'My Big Company Bank account';
 		$this->courant         = Account::TYPE_CURRENT;
 		$this->clos            = Account::STATUS_OPEN;
+		$this->type = Account::TYPE_CURRENT;
+		$this->status = Account::STATUS_OPEN;
 		$this->code_banque     = '30001';
 		$this->code_guichet    = '00794';
 		$this->number          = '12345678901';
@@ -1945,11 +1950,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
  */
 class AccountLine extends CommonObjectLine
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
 	/**
 	 * @var DoliDB Database handler.
 	 */
