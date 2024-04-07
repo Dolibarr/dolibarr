@@ -248,7 +248,7 @@ class Warehouses extends DolibarrApi
 		}
 
 		if (!$this->warehouse->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(401, 'error when delete warehouse');
+			throw new RestException(403, 'error when delete warehouse');
 		}
 
 		return array(
