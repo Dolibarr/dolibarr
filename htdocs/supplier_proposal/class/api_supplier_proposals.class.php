@@ -22,7 +22,7 @@ require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class
 
 
 /**
- * API class for orders
+ * API class for supplier proposal
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
