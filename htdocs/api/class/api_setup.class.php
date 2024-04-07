@@ -1315,13 +1315,13 @@ class Setup extends DolibarrApi
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
-				while ($tab = $this->db->fetch_object($resql)) {
-					// New usage
-					$id = (int) $tab->id;
-				}
+				$tab = $this->db->fetch_object($resql);
+				$id = (int) $tab->id;
+			} else {
+				$id = (int) -1;
 			}
 		} else {
-			$id = -1;
+			$id = (int) -2;
 		}
 
 		return $id;
