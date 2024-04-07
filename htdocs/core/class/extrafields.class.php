@@ -183,6 +183,78 @@ class ExtraFields
 	}
 
 	/**
+	 *  Update an existing extra field parameter
+	 *
+	 *  @param  string			$attrname           Code of attribute
+	 *  @param  string			$label              label of attribute
+	 *  @param  string			$type               Type of attribute ('boolean','int','varchar','text','html','date','datetime','price', 'pricecy', 'phone','mail','password','url','select','checkbox','separate',...)
+	 *  @param  int				$pos                Position of attribute
+	 *  @param  string			$size               Size/length definition of attribute ('5', '24,8', ...). For float, it contains 2 numeric separated with a comma.
+	 *  @param  string			$elementtype        Element type. Same value than object->table_element (Example 'member', 'product', 'thirdparty', ...)
+	 *  @param  int				$unique				Is field unique or not
+	 *  @param  int				$required			Is field required or not
+	 *  @param  string			$default_value		Defaulted value (In database. use the default_value feature for default value on screen. Example: '', '0', 'null', 'avalue')
+	 *  @param  array|string	$param				Params for field (ex for select list : array('options' => array(value'=>'label of option')) )
+	 *  @param  int				$alwayseditable		Is attribute always editable regardless of the document status
+	 *  @param  string			$perms				Permission to check
+	 *  @param  string			$list				Visibility ('0'=never visible, '1'=visible on list+forms, '2'=list only, '3'=form only or 'eval string')
+	 *  @param  string			$help				Text with help tooltip
+	 *  @param  string  		$computed           Computed value
+	 *  @param  string  		$entity    		 	Entity of extrafields (for multicompany modules)
+	 *  @param  string  		$langfile  		 	Language file
+	 *  @param  string  		$enabled  		 	Condition to have the field enabled or not
+	 *  @param  int				$totalizable		Is a measure. Must show a total on lists
+	 *  @param  int             $printable          Is extrafield displayed on PDF
+	 *  @param  array			$moreparams			More parameters. Example: array('css'=>, 'csslist'=>Css on list, 'cssview'=>...)
+	 *  @return int      							Return integer <=0 if KO, >0 if OK
+	 */
+	public function updateExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
+	{
+		if (empty($attrname)) {
+			return -1;
+		}
+		if (empty($label)) {
+			return -1;
+		}
+
+		$result = 0;
+
+		if ($type == 'separator' || $type == 'separate') {
+			$type = 'separate';
+			$unique = 0;
+			$required = 0;
+		}	// Force unique and not required if this is a separator field to avoid troubles.
+		if ($elementtype == 'thirdparty') {
+			$elementtype = 'societe';
+		}
+		if ($elementtype == 'contact') {
+			$elementtype = 'socpeople';
+		}
+
+		// Create field into database except for separator type which is not stored in database
+		if ($type != 'separate') {
+			dol_syslog(get_class($this).'::thisupdate', LOG_DEBUG);
+			$result = $this->update($attrname, $label, $type, $size, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
+		}
+		$err1 = $this->errno;
+		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate') {
+			// Add declaration of field into table
+			dol_syslog(get_class($this).'::thislabel', LOG_DEBUG);
+			$result2 = $this->update_label($attrname, $label, $type, $size, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
+			$err2 = $this->errno;
+			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
+				$this->error = '';
+				$this->errno = '0';
+				return 1;
+			} else {
+				return -2;
+			}
+		} else {
+			return -1;
+		}
+	}
+
+	/**
 	 *	Add a new optional attribute.
 	 *  This is a private method. For public method, use addExtraField.
 	 *
@@ -418,10 +490,11 @@ class ExtraFields
 			$sql .= " ".($cssview ? "'".$this->db->escape($cssview)."'" : "null");
 			$sql .= ')';
 
-			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
 			if ($this->db->query($sql)) {
+				dol_syslog(get_class($this)."::create_label_success", LOG_DEBUG);
 				return 1;
 			} else {
+				dol_syslog(get_class($this)."::create_label_error", LOG_DEBUG);
 				$this->error = $this->db->lasterror();
 				$this->errno = $this->db->lasterrno();
 				return -1;
@@ -616,18 +689,22 @@ class ExtraFields
 				}
 			}
 
+			dol_syslog(get_class($this).'::DDLUpdateField', LOG_DEBUG);
 			if ($type != 'separate') { // No table update when separate type
 				$result = $this->db->DDLUpdateField($this->db->prefix().$table, $attrname, $field_desc);
 			}
 			if ($result > 0 || $type == 'separate') {
 				if ($label) {
+					dol_syslog(get_class($this).'::update_label', LOG_DEBUG);
 					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
 				}
 				if ($result > 0) {
 					$sql = '';
 					if ($unique) {
+						dol_syslog(get_class($this).'::update_unique', LOG_DEBUG);
 						$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
 					} else {
+						dol_syslog(get_class($this).'::update_common', LOG_DEBUG);
 						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$attrname;
 					}
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
@@ -653,6 +730,7 @@ class ExtraFields
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Modify description of personalized attribute
+	 * 	This is a private method. For public method, use updateExtraField.
 	 *
 	 *  @param	string	$attrname			Name of attribute
 	 *  @param	string	$label				Label of attribute
@@ -823,16 +901,16 @@ class ExtraFields
 		}
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Load the array of extrafields definition $this->attributes
 	 *
 	 * 	@param	string		$elementtype		Type of element ('all' = all or $object->table_element like 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
+	 *  @param  string		$attrname           The name of the attribute.
 	 *  @return array{}|array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int>|array<string,string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities?:array<string,string>,loaded?:int,count:int}		Array of attributes keys+label for all extra fields.  Note: count set as present to avoid static analysis notices
 	 */
-	public function fetch_name_optionals_label($elementtype, $forceload = false)
+	public function fetch_name_optionals_label($elementtype, $forceload = false, $attrname = '')
 	{
 		// phpcs:enable
 		global $conf;
@@ -863,6 +941,9 @@ class ExtraFields
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
 		if ($elementtype && $elementtype != 'all') {
 			$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element
+		}
+		if ($attrname && $elementtype && $elementtype != 'all') {
+			$sql .= " AND name = '".((string) $attrname)."'";
 		}
 		$sql .= " ORDER BY pos";
 
