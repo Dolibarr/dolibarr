@@ -375,7 +375,7 @@ class BankAccounts extends DolibarrApi
 		}
 
 		if ($account->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(401, 'error when deleting account');
+			throw new RestException(500, 'error when deleting account');
 		}
 
 		return array(
@@ -628,7 +628,7 @@ class BankAccounts extends DolibarrApi
 	public function updateLine($id, $line_id, $label)
 	{
 		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$account = new Account($this->db);
@@ -664,7 +664,7 @@ class BankAccounts extends DolibarrApi
 	public function deleteLine($id, $line_id)
 	{
 		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
 		$account = new Account($this->db);
@@ -680,7 +680,7 @@ class BankAccounts extends DolibarrApi
 		}
 
 		if ($accountLine->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(401, 'error when deleting account line');
+			throw new RestException(500, 'error when deleting account line');
 		}
 
 		return array(
