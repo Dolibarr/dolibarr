@@ -23,7 +23,7 @@ create table llx_rights_def
   entity			integer DEFAULT 1 NOT NULL,	-- Multicompany id
   libelle			varchar(255),
   module			varchar(64),
-  module_origin		varchar(64),				-- if user right provided by another module
+  module_origin		varchar(64),				-- if the permission is for a module but provided by another module, we add here the name of the module that provides the permission
   module_position	integer DEFAULT 0 NOT NULL,
   family_position	integer DEFAULT 0 NOT NULL,
   perms				varchar(50),
