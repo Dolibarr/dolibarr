@@ -81,8 +81,8 @@ class Account extends CommonObject
 	public $courant;
 
 	/**
-	 * Bank account type. Check TYPE_ constants
-	 * @var int
+	 * Bank account type. Check TYPE_ constants. It's integer but Company bank account use string to identify type account
+	 * @var int|string
 	 */
 	public $type;
 
