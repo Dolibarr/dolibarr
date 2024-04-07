@@ -1206,7 +1206,7 @@ class Setup extends DolibarrApi
 	 * @url     POST extrafields
 	 *
 	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
-	 * 
+	 *
 	 */
 	public function postExtrafields($request_data = null)
 	{
