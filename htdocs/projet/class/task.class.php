@@ -1347,10 +1347,12 @@ class Task extends CommonObjectLine
 
 		//Get list of origin contacts
 		$arraycontactorigin = array_merge($origintask->liste_contact(-1, 'internal'), $origintask->liste_contact(-1, 'external'));
-		foreach ($arraycontactorigin as $key => $contact) {
-			$result = $this->add_contact($contact["id"], $contact["fk_c_type_contact"], $contact["source"]);
-			if ($result < 0) {
-				return false;
+		if (is_array($arraycontactorigin)) {
+			foreach ($arraycontactorigin as $key => $contact) {
+				$result = $this->add_contact($contact["id"], $contact["fk_c_type_contact"], $contact["source"]);
+				if ($result < 0) {
+					return false;
+				}
 			}
 		}
 		return true;
@@ -2595,7 +2597,7 @@ class Task extends CommonObjectLine
 			}
 
 			// Merge extrafields
-			if (!empty($task_origin->array_options) && is_array($task_origin->array_options)) {
+			if (is_array($task_origin->array_options)) {
 				foreach ($task_origin->array_options as $key => $val) {
 					if (empty($this->array_options[$key])) {
 						$this->array_options[$key] = $val;
