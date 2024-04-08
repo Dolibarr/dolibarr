@@ -554,7 +554,7 @@ if (empty($reshook)) {
 
 				$trackid = 'leav'.$object->id;
 
-				$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 1, '', '', $trackid);
+				$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 1, '', '', $trackid, '', 'standard', '', '', '', '', '', 'HRM');
 
 				// Sending the email
 				$result = $mail->sendfile();
@@ -677,7 +677,7 @@ if (empty($reshook)) {
 
 					$trackid = 'leav'.$object->id;
 
-					$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 1, '', '', $trackid);
+					$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 1, '', '', $trackid, '', 'standard', '', '', '', '', '', 'HRM');
 
 					// Sending email
 					$result = $mail->sendfile();
@@ -760,7 +760,7 @@ if (empty($reshook)) {
 
 						$trackid = 'leav'.$object->id;
 
-						$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 1, '', '', $trackid);
+						$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 1, '', '', $trackid, '', 'standard', '', '', '', '', '', 'HRM');
 
 						// sending email
 						$result = $mail->sendfile();
@@ -907,7 +907,7 @@ if (empty($reshook)) {
 
 				$trackid = 'leav'.$object->id;
 
-				$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 1, '', '', $trackid);
+				$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 1, '', '', $trackid, '', 'standard', '', '', '', '', '', 'HRM');
 
 				// sending email
 				$result = $mail->sendfile();
