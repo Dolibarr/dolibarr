@@ -295,3 +295,6 @@ ALTER TABLE llx_projet ADD COLUMN ref_ext varchar(50) after ref;
 
 -- bookcal
 ALTER TABLE llx_bookcal_calendar ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+
+ALTER TABLE llx_rights_def ADD COLUMN module_origin varchar(64) AFTER module;
+ALTER TABLE llx_rights_def ADD COLUMN enabled text NULL AFTER bydefault;
