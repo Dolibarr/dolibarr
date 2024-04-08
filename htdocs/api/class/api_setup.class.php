@@ -1265,7 +1265,7 @@ class Setup extends DolibarrApi
 		$sql = "SELECT t.rowid as id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields as t";
 		$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'";
-		$sql .= " AND name = '".((string) $attrname)."'";
+		$sql .= " AND name = '".$this->db->escape($attrname)."'";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
