@@ -1,5 +1,31 @@
 pipeline {
-  agent any
+   agent {
+    kubernetes {
+      yaml '''
+        apiVersion: v1
+        kind: Pod
+        spec:
+          containers:
+          - name: phpstan
+            image: iyedbnaissa/phpstan:1
+            command:
+            - cat
+            tty: true
+          - name: docker
+            image: docker:latest
+            command:
+            - cat
+            tty: true
+            volumeMounts:
+             - mountPath: /var/run/docker.sock
+               name: docker-sock
+          volumes:
+          - name: docker-sock
+            hostPath:
+              path: /var/run/docker.sock    
+        '''
+    }
+  }
   stages {
     stage('SCM') {
       steps {
@@ -15,12 +41,20 @@ pipeline {
           def scannerHome = tool 'SonarQube_Scanner';
           // Execute SonarQube analysis
           withSonarQubeEnv('SonarQube_Server') {
-            sh 'mkdir -p test-reports'
-            // Run PHPStan
-            sh "${scannerHome}/bin/phpstan analyse --level=max > test-reports/phpstan-report.json"
-            // Run Psalm
-            sh "${scannerHome}/bin/psalm --report-json=test-reports/psalm-report.json"
+           
             sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar-project.properties"
+          }
+        }
+      }
+    }
+    stage(phpstan_scan){
+      steps{
+        container('phpstan'){
+          script{
+            // Create directory for reports
+            sh "mkdir -p test-reports"
+            // Run PHPStan using Docker
+            sh "docker run --rm -v $PWD:/htdocs phpstan analyse /htdocs --level=max > test-reports/phpstan-report.json"
           }
         }
       }
