@@ -1007,7 +1007,7 @@ class FormCompany extends Form
 	 * Return a HTML select with localtax values for thirdparties
 	 *
 	 * @param 	int 		$local			LocalTax
-	 * @param 	int 		$selected		Preselected value
+	 * @param 	float 		$selected		Preselected value
 	 * @param 	string      $htmlname		HTML select name
 	 * @return	void
 	 */

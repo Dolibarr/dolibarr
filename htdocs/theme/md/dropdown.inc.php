@@ -1,7 +1,12 @@
 <?php
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
+}
+
+// When no photo, we show the login name, so we need an offset to output picto at a fixed position.
+$atoploginusername = empty($user->photo) ? 52 : 0;
+
+?>
 /* <style type="text/css" > dont remove this line it's an ide hack */
 /*
  * Dropdown of user popup
@@ -27,17 +32,17 @@ button.dropdown-item.global-search-item {
 
 div#topmenu-global-search-dropdown {
 	position: fixed;
-	<?php echo $right; ?>: 125px;
+	<?php echo $right; ?>: <?php echo (125 + $atoploginusername); ?>px;
 	top: 0px;
 }
 div#topmenu-quickadd-dropdown {
 	position: fixed;
-	<?php echo $right; ?>: 90px;
+	<?php echo $right; ?>: <?php echo (90 + $atoploginusername); ?>px;
 	top: 0px;
 }
 div#topmenu-bookmark-dropdown {
 	position: fixed;
-	<?php echo $right; ?>: 55px;
+	<?php echo $right; ?>: <?php echo (55 + $atoploginusername); ?>px;
 	top: 0px;
 }
 div#topmenu-login-dropdown {
