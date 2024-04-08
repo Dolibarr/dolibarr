@@ -358,6 +358,7 @@ Contact=Contact/Address
 Contacts=Contacts/Addresses
 ContactId=Contact id
 ContactsAddresses=Contacts/Addresses
+ContactsAddressesExt=External Contacts/Addresses
 FromContactName=Name:
 NoContactDefinedForThirdParty=No contact defined for this third party
 NoContactDefined=No contact defined
