@@ -46,8 +46,8 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 %if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version}
 Group: Applications/Productivity
-Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mysqli, php-nusoap, dejavu-sans-fonts, php-mbstring, php-xml
-Requires: mysql-server, mysql
+Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-mysqli, php-nusoap, dejavu-sans-fonts, php-mbstring, php-xml
+Requires: mariadb-server, mariadb
 BuildRequires: desktop-file-utils
 %else
 %if 0%{?mdkversion}

@@ -25,8 +25,8 @@ BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 Group: Applications/Productivity
-Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mysqli, php-nusoap, dejavu-sans-fonts
-Requires: mysql-server, mysql
+Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-mysqli, php-nusoap, dejavu-sans-fonts
+Requires: mariadb-server, mariadb
 #BuildRequires: desktop-file-utils
 
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
